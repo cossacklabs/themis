@@ -1,10 +1,10 @@
-#-------------
-#
-# soter.c
-# tests for Soter
-# (c) CossackLabs
-#
-#-------------
+//-------------
+//
+// soter.c
+// tests for Soter
+// (c) CossackLabs
+//
+//-------------
 
 #include "soter/soter.h"
 

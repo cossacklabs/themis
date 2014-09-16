@@ -1,9 +1,9 @@
-#---------------------
-#
-# soter.h
-# (c) CossackLabs
-#
-#---------------------
+//---------------------
+//
+// soter.h
+// (c) CossackLabs
+//
+//---------------------
 
 #ifndef SOTER_H
 #define SOTER_H
