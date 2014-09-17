@@ -1,11 +1,10 @@
-//--------------------
-//
-// hermes.h
-// (c) CossackLabs
-//
-//--------------------
+/**
+ * @file
+ *
+ * (c) CossackLabs
+ */
 
-#ifndef HARMES_H
+#ifndef HERMES_H
 #define HERMES_H
 
-#endif
+#endif /* HERMES_H */
