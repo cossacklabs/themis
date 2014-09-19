@@ -30,6 +30,7 @@ typedef enum soter_status_type soter_status_t;
  *
  * @param [in,out] buffer pointer to pointer to a buffer for random bits
  * @param [in] length length of the buffer
+ * @return success code
  *
  * This function generates random bits and puts them in memory pointed by buffer pointer. If buffer points to NULL, new memory of size length will be allocated on the heap and the pointer to this memory will be returned using buffer pointer. Otherwise, random bits will be stored in memory pointed by pointer in buffer. It is the responsibility of the caller to free the memory, if it was allocated by this function.
  */
