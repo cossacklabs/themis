@@ -7,7 +7,7 @@
 #ifndef SOTER_OPENSSL_H
 #define SOTER_OPENSSL_H
 
-#include <soter.h>
+#include "soter/soter.h"
 #include <openssl/evp.h>
 
 struct soter_hash_ctx_type

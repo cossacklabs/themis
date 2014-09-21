@@ -7,7 +7,7 @@ TEST_BIN_PATH = build/tests
 
 # We will use OpenSSL/LibreSSL for now
 CRYPTO_ENGINE = $(SRC_PATH)/soter/openssl
-CFLAGS += -I$(SRC_PATH)/soter -fPIC
+CFLAGS += -I$(SRC_PATH) -fPIC
 
 include src/soter/soter.mk
 

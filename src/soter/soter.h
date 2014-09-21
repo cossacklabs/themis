@@ -15,15 +15,8 @@
  *
  * TODO: Should define detailed error codes. What codes will we use for errors? It would be good to make them consistent with errno.h where applicable.
  */
-enum soter_status_type
-{
-	SOTER_SUCCESS = 0,
-	SOTER_FAIL = -1,
-	SOTER_INVALID_PARAMETER = -2,
-	SOTER_NO_MEMORY = -3
-};
 
-typedef enum soter_status_type soter_status_t;
+typedef int soter_status_t;
 
 /**
  * @brief Generates random bits
@@ -36,7 +29,6 @@ typedef enum soter_status_type soter_status_t;
  */
 soter_status_t soter_rand(uint8_t** buffer, size_t length);
 
-/* TODO: Should we convert to #define's here? */
 enum soter_hash_algo_type
 {
 	SOTER_HASH_SHA1,

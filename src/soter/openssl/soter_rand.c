@@ -4,7 +4,8 @@
  * (c) CossackLabs
  */
 
-#include <soter.h>
+#include "common/error.h"
+#include "soter/soter.h"
 #include <openssl/rand.h>
 
 soter_status_t soter_rand(uint8_t** buffer, size_t length)
@@ -12,7 +13,7 @@ soter_status_t soter_rand(uint8_t** buffer, size_t length)
 	uint8_t *bytes;
 
 	if ((!buffer) || (!length))
-		return SOTER_INVALID_PARAMETER;
+		return HERMES_INVALID_PARAMETER;
 
 	bytes = *buffer;
 
@@ -20,13 +21,13 @@ soter_status_t soter_rand(uint8_t** buffer, size_t length)
 	{
 		bytes = malloc(length);
 		if (!bytes)
-			return SOTER_NO_MEMORY;
+			return HERMES_NO_MEMORY;
 	}
 
 	if (RAND_bytes(bytes, (int)length))
 	{
 		*buffer = bytes;
-		return SOTER_SUCCESS;
+		return HERMES_SUCCESS;
 	}
 	else
 	{
@@ -35,6 +36,6 @@ soter_status_t soter_rand(uint8_t** buffer, size_t length)
 			free(bytes);
 
 		/* For some reason OpenSSL generator failed */
-		return SOTER_FAIL;
+		return HERMES_FAIL;
 	}
 }
