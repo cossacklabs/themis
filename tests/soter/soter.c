@@ -64,6 +64,17 @@ static void test_hash(void)
   free(hash);
 }
 
+static void test_sym(void)
+{
+  char key[]="password";
+  char salt[]="salt";
+  const unsigned stack_block_size=1024;
+  char stack_block[stack_block_size];
+  if(soter_sym_create((soter_sym_ctx_t*)stack_block, &stack_block_size, SOTER_AES_CTR_PBKDF2_ENCRYPT, key, strlen(key), salt, strlen(salt))!=HERMES_SUCCESS)
+    return HERMES_FAIL;
+  
+}
+
 int main()
 {
 	test_rand();

@@ -60,14 +60,14 @@ enum soter_sym_alg_type
 
 #define SOTER_AES_KEY_LENGTH 32
 
-typedef soter_sym_alg_type soter_sym_alg_t;
+typedef enum soter_sym_alg_type soter_sym_alg_t;
 
 typedef struct soter_sym_ctx_type soter_sym_ctx_t;
 
 soter_status_t soter_sym_create(soter_sym_ctx_t *sym_ctx, size_t* sym_ctx_length, const soter_sym_alg_t, const void* key, const size_t key_length, const void* salt, const size_t salt_length);
-soter_status_t sym_update(sym_ctx_t *sym_ctx, const void* plain_data,  const size_t data_length, const void* chiper_data, size_t* chipher_data_length);
-soter_status_t sym_final(sym_ctx_t *sym_ctx, const void* chipher_data, size_t* chipher_data_length);
-soter_status_t soter_sym_destroy(sym_ctx_t *ctx);
+soter_status_t sym_update(soter_sym_ctx_t *sym_ctx, const void* plain_data,  const size_t data_length, const void* chiper_data, size_t* chipher_data_length);
+soter_status_t sym_final(soter_sym_ctx_t *sym_ctx, const void* chipher_data, size_t* chipher_data_length);
+soter_status_t soter_sym_destroy(soter_sym_ctx_t *ctx);
 
 
 #endif /* SOTER_H */
