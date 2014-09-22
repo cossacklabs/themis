@@ -31,7 +31,7 @@ const EVP_CIPHER* algId_to_evp(const soter_sym_alg_t algId)
 
 soter_status_t soter_pbkdf2(const void* password, const size_t password_length, const void* salt, const size_t salt_length, void* key)
 {
-   if(key=NULL)
+   if(key==NULL)
      return HERMES_INVALID_PARAMETER;
    if(!PKCS5_PBKDF2_HMAC(password, password_length, salt, salt_length, 0, EVP_sha256(), SOTER_AES_KEY_LENGTH, key))
      return HERMES_FAIL;
