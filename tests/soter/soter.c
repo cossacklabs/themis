@@ -70,9 +70,28 @@ static void test_sym(void)
   char salt[]="salt";
   const unsigned stack_block_size=1024;
   char stack_block[stack_block_size];
+
+  char message[]="test message";
+  unsigned encrypted_message_length=1024;
+  char encrypted_message[1024];
+
   if(soter_sym_create((soter_sym_ctx_t*)stack_block, &stack_block_size, SOTER_AES_CTR_PBKDF2_ENCRYPT, key, strlen(key), salt, strlen(salt))!=HERMES_SUCCESS)
-    return HERMES_FAIL;
+    {
+      HERMES_ERROR_OUT("SOTER SYM OBJECT creation error\n");
+      return;
+    }
+  if(soter_sym_update((soter_sym_ctx_t*)stack_block, message, strlen(message), encrypted_message, &encrypted_message_length)!=HERMES_SUCCESS)
+    {
+      HERMES_ERROR_OUT("SOTER SYM OBJECT update error\n");
+      return;
+    }
+  if(soter_sym_final((soter_sym_ctx_t*)stack_block, encrypted_message+, &encrypted_message_length)!=HERMES_SUCCESS)
+    {
+      HERMES_ERROR_OUT("SOTER SYM OBJECT final error\n");
+      return;
+    }
   
+  fprintf(stdout, "soter sym encrypt ");
 }
 
 int main()
