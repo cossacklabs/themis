@@ -9,6 +9,9 @@ TEST_BIN_PATH = build/tests
 CRYPTO_ENGINE = $(SRC_PATH)/soter/openssl
 CFLAGS += -I$(SRC_PATH) -fPIC
 
+# Should pay attention to warnings (some may be critical for crypto-enabled code (ex. signed-unsigned mismatch)
+CFLAGS += -Werror
+
 include src/soter/soter.mk
 
 all: test

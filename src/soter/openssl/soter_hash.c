@@ -46,42 +46,25 @@ soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, s
 		return HERMES_FAIL;
 }
 
-soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t** hash_value, size_t* hash_length)
+soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value, size_t* hash_length)
 {
 	size_t md_length;
-	uint8_t *bytes;
 
 	if ((!hash_value) || (!hash_length))
 		return HERMES_INVALID_PARAMETER;
 
-	bytes = *hash_value;
 	md_length = (size_t)EVP_MD_CTX_size(&(hash_ctx->evp_md_ctx));
 
-	if (bytes)
-	{
-		if (md_length > *hash_length)
-			return HERMES_INVALID_PARAMETER; /* TODO: Should we add separate "buffer too small" error? */
-	}
-	else
-	{
-		bytes = malloc(md_length);
-		if (!bytes)
-			return HERMES_NO_MEMORY;
-	}
+	if (md_length > *hash_length)
+		return HERMES_INVALID_PARAMETER; /* TODO: Should we add separate "buffer too small" error? */
 
-	if (EVP_DigestFinal(&(hash_ctx->evp_md_ctx), bytes, (unsigned int *)&md_length))
+	if (EVP_DigestFinal(&(hash_ctx->evp_md_ctx), hash_value, (unsigned int *)&md_length))
 	{
-		*hash_value = bytes;
 		*hash_length = md_length;
 		return HERMES_SUCCESS;
 	}
 	else
-	  
-	{
-		if (!(*hash_value))
-			free(bytes);
 		return HERMES_FAIL;
-	}
 }
 
 soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo)

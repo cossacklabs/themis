@@ -21,13 +21,13 @@ typedef int soter_status_t;
 /**
  * @brief Generates random bits
  *
- * @param [in,out] buffer pointer to pointer to a buffer for random bits
+ * @param [out] buffer pointer to a buffer for random bits
  * @param [in] length length of the buffer
  * @return success code
  *
- * This function generates random bits and puts them in memory pointed by buffer pointer. If buffer points to NULL, new memory of size length will be allocated on the heap and the pointer to this memory will be returned using buffer pointer. Otherwise, random bits will be stored in memory pointed by pointer in buffer. It is the responsibility of the caller to free the memory, if it was allocated by this function.
+ * This function generates random bits and puts them in memory pointed by buffer.
  */
-soter_status_t soter_rand(uint8_t** buffer, size_t length);
+soter_status_t soter_rand(uint8_t* buffer, size_t length);
 
 enum soter_hash_algo_type
   {
@@ -43,7 +43,7 @@ typedef struct soter_hash_ctx_type soter_hash_ctx_t;
 soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo);
 soter_status_t soter_hash_destroy(soter_hash_ctx_t *hash_ctx);
 soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, size_t length);
-soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t** hash_value, size_t* hash_length);
+soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value, size_t* hash_length);
 
 
 enum soter_sym_alg_type

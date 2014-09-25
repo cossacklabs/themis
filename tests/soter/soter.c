@@ -21,22 +21,19 @@ static void print_bytes(const uint8_t *bytes, size_t length)
 /* For now, just generate some random bits and print them */
 static void test_rand(void)
 {
-	uint8_t *bytes = NULL;
-	size_t length = 4096;
+	uint8_t bytes[4096];
+	size_t length = sizeof(bytes);
 
-	if (HERMES_SUCCESS == soter_rand(&bytes, length))
-	{
+	if (HERMES_SUCCESS == soter_rand(bytes, length))
 		print_bytes(bytes, length);
-		free(bytes);
-	}
 }
 
 static void test_hash(void)
 {
   uint8_t *bytes = "Test message";
   size_t length=13;
-  uint8_t *hash=NULL;
-  size_t hash_length;
+  uint8_t hash[32];
+  size_t hash_length = sizeof(hash);
   soter_hash_ctx_t* hash_ctx;
   hash_ctx=soter_hash_create(SOTER_HASH_SHA256);
   if(!hash_ctx)
@@ -49,7 +46,7 @@ static void test_hash(void)
       HERMES_ERROR_OUT("can`t update hash_context");
       return;
     }
-  if(soter_hash_final(hash_ctx, &hash, &hash_length))
+  if(soter_hash_final(hash_ctx, hash, &hash_length))
     {
       HERMES_ERROR_OUT("can`t final hash_context");
       return;
@@ -61,10 +58,9 @@ static void test_hash(void)
     }
   fprintf(stdout,"soter hash_context success:\n");
   print_bytes(hash,hash_length);
-  free(hash);
 }
 
-static void test_sym(void)
+/*static void test_sym(void)
 {
   char key[]="password";
   char salt[]="salt";
@@ -92,7 +88,7 @@ static void test_sym(void)
     }
   
   fprintf(stdout, "soter sym encrypt ");
-}
+}*/
 
 int main()
 {
