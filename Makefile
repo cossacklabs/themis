@@ -12,6 +12,9 @@ CFLAGS += -I$(SRC_PATH) -fPIC
 # Should pay attention to warnings (some may be critical for crypto-enabled code (ex. signed-unsigned mismatch)
 CFLAGS += -Werror
 
+# Making debug build for now
+CFLAGS += -g
+
 include src/soter/soter.mk
 
 all: test
@@ -28,7 +31,7 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 
 $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
 	mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -I$(TEST_SRC_PATH) -c $< -o $@
 	
 include tests/test.mk
 	
