@@ -62,6 +62,7 @@ int main()
 
 	run_soter_hash_tests();
 	run_soter_rsa_tests();
+	run_soter_asym_cipher_tests();
 
     return sput_get_return_value();
 }

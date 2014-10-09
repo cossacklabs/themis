@@ -27,4 +27,9 @@ struct soter_asym_ctx_type
 	soter_asym_padding_t pad;
 };
 
+struct soter_asym_cipher_type
+{
+	EVP_PKEY_CTX *pkey_ctx;
+};
+
 #endif /* SOTER_OPENSSL_H */

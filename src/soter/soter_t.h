@@ -15,4 +15,7 @@ soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t alg
 soter_status_t soter_asym_init(soter_asym_ctx_t* asym_ctx, soter_asym_algo_t algo, soter_asym_padding_t pad);
 soter_status_t soter_asym_cleanup(soter_asym_ctx_t* asym_ctx);
 
+soter_status_t soter_asym_cipher_init(soter_asym_ctx_t* asym_ctx, soter_asym_algo_t algo, soter_asym_padding_t pad);
+soter_status_t soter_asym_cipher_cleanup(soter_asym_ctx_t* asym_ctx);
+
 #endif /* SOTER_T_H */

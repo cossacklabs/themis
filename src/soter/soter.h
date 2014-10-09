@@ -8,6 +8,7 @@
 #define SOTER_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 /**
@@ -96,5 +97,23 @@ soter_status_t soter_asym_sign(soter_asym_ctx_t* asym_ctx, const void* hash_data
 soter_status_t soter_asym_verify(soter_asym_ctx_t* asym_ctx, const void* hash_data, size_t hash_data_length, const void* signature, size_t signature_length);
 soter_status_t soter_asym_calc_shared_secret(soter_asym_ctx_t* asym_ctx, const void* peer_key, size_t peer_key_length, void* shared_secret, size_t* shared_secret_length);
 soter_status_t soter_asym_destroy(soter_asym_ctx_t* asym_ctx);
+
+enum soter_asym_cipher_padding_type
+{
+	SOTER_ASYM_CIPHER_NOPAD,
+	SOTER_ASYM_CIPHER_OAEP
+};
+
+typedef enum soter_asym_cipher_padding_type soter_asym_cipher_padding_t;
+
+typedef struct soter_asym_cipher_type soter_asym_cipher_t;
+
+soter_asym_cipher_t* soter_asym_cipher_create(soter_asym_cipher_padding_t pad);
+soter_status_t soter_asym_cipher_gen_key(soter_asym_cipher_t* asym_cipher_ctx);
+soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher_ctx, const void* plain_data, size_t plain_data_length, void* cipher_data, size_t* cipher_data_length);
+soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher_ctx, const void* cipher_data, size_t cipher_data_length, void* plain_data, size_t* plain_data_length);
+soter_status_t soter_asym_cipher_export_key(soter_asym_cipher_t* asym_cipher_ctx, void* key, size_t* key_length, bool isprivate);
+soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx, const void* key, size_t key_length);
+soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher_ctx);
 
 #endif /* SOTER_H */
