@@ -21,12 +21,6 @@ struct soter_sym_ctx_type
   soter_sym_alg_t algId;
 };
 
-struct soter_asym_ctx_type
-{
-	EVP_PKEY_CTX *pkey_ctx;
-	soter_asym_padding_t pad;
-};
-
 struct soter_asym_cipher_type
 {
 	EVP_PKEY_CTX *pkey_ctx;

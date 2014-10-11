@@ -70,34 +70,6 @@ soter_status_t sym_update(soter_sym_ctx_t *sym_ctx, const void* plain_data,  con
 soter_status_t sym_final(soter_sym_ctx_t *sym_ctx, const void* chipher_data, size_t* chipher_data_length);
 soter_status_t soter_sym_destroy(soter_sym_ctx_t *ctx);
 
-enum soter_asym_algo_type
-{
-	SOTER_ASYM_RSA,
-	SOTER_ASYM_EC
-};
-
-typedef enum soter_asym_algo_type soter_asym_algo_t;
-
-enum soter_asym_padding_type
-{
-	SOTER_ASYM_NOPAD,
-	SOTER_ASYM_OAEP,
-	SOTER_ASYM_PSS
-};
-
-typedef enum soter_asym_padding_type soter_asym_padding_t;
-
-typedef struct soter_asym_ctx_type soter_asym_ctx_t;
-
-soter_asym_ctx_t* soter_asym_create(soter_asym_algo_t algo, soter_asym_padding_t pad);
-soter_status_t soter_asym_gen_key(soter_asym_ctx_t* asym_ctx);
-soter_status_t soter_asym_encrypt(soter_asym_ctx_t* asym_ctx, const void* plain_data, size_t plain_data_length, void* cipher_data, size_t* cipher_data_length);
-soter_status_t soter_asym_decrypt(soter_asym_ctx_t* asym_ctx, const void* cipher_data, size_t cipher_data_length, void* plain_data, size_t* plain_data_length);
-soter_status_t soter_asym_sign(soter_asym_ctx_t* asym_ctx, const void* hash_data, size_t hash_data_length, void* signature, size_t* signature_length);
-soter_status_t soter_asym_verify(soter_asym_ctx_t* asym_ctx, const void* hash_data, size_t hash_data_length, const void* signature, size_t signature_length);
-soter_status_t soter_asym_calc_shared_secret(soter_asym_ctx_t* asym_ctx, const void* peer_key, size_t peer_key_length, void* shared_secret, size_t* shared_secret_length);
-soter_status_t soter_asym_destroy(soter_asym_ctx_t* asym_ctx);
-
 enum soter_asym_cipher_padding_type
 {
 	SOTER_ASYM_CIPHER_NOPAD,

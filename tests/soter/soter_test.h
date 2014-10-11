@@ -13,7 +13,6 @@
 #include "soter/soter.h"
 
 void run_soter_hash_tests(void);
-void run_soter_rsa_tests(void);
 void run_soter_asym_cipher_tests(void);
 
 #endif /* SOTER_TEST_H */
