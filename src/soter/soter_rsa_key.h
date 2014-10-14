@@ -7,7 +7,21 @@
 #ifndef SOTER_SOTER_RSA_KEY_H
 #define SOTER_SOTER_RSA_KEY_H
 
-#include "soter_container.h"
+#include <soter/soter_container.h>
+#include <soter/soter.h>
+
+#define RSA_PRIV_KEY_PREF "RRA"
+#define RSA_PUB_KEY_PREF "URA"
+
+#define RSA_1024 "1"
+#define RSA_2048 "2"
+#define RSA_4096 "4"
+#define RSA_8192 "8"
+
+#define RSA_KEY_SUF(_KEY_SIZE_) RSA_##_KEY_SIZE_
+
+#define RSA_PRIV_KEY_TAG(_KEY_SIZE_) (RSA_PRIV_KEY_PREF RSA_KEY_SUF(_KEY_SIZE_))
+#define RSA_PUB_KEY_TAG(_KEY_SIZE_) (RSA_PUB_KEY_PREF RSA_KEY_SUF(_KEY_SIZE_))
 
 #define RSA_BYTE_SIZE(_KEY_SIZE_) (_KEY_SIZE_ / 8)
 
@@ -16,7 +30,7 @@
 	{ \
 		soter_container_hdr_t hdr; \
 		uint8_t mod[RSA_BYTE_SIZE(_KEY_SIZE_)]; \
-		uint32_t pub_exp; \
+		uint32_t pub_exp; /* Network byte order */ \
 	}; \
 	\
 	typedef struct soter_rsa_pub_key_##_KEY_SIZE_##_type soter_rsa_pub_key_##_KEY_SIZE_##_t
@@ -34,7 +48,7 @@
 		uint8_t dq[RSA_BYTE_SIZE(_KEY_SIZE_) / 2]; \
 		uint8_t qp[RSA_BYTE_SIZE(_KEY_SIZE_) / 2]; \
 		uint8_t mod[RSA_BYTE_SIZE(_KEY_SIZE_)]; \
-		uint32_t pub_exp; \
+		uint32_t pub_exp; /* Network byte order */ \
 	}; \
 	\
 	typedef struct soter_rsa_priv_key_##_KEY_SIZE_##_type soter_rsa_priv_key_##_KEY_SIZE_##_t
@@ -48,5 +62,13 @@ DECLARE_RSA_KEY(1024);
 DECLARE_RSA_KEY(2048);
 DECLARE_RSA_KEY(4096);
 DECLARE_RSA_KEY(8192);
+
+/* This is considered internal API */
+typedef void soter_engine_specific_rsa_key_t;
+
+soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t *key, size_t key_length, soter_engine_specific_rsa_key_t **engine_key);
+soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t *key, size_t key_length, soter_engine_specific_rsa_key_t **engine_key);
+soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific_rsa_key_t *engine_key, soter_container_hdr_t *key, size_t* key_length);
+soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_rsa_key_t *engine_key, soter_container_hdr_t *key, size_t* key_length);
 
 #endif /* SOTER_SOTER_RSA_KEY_H */

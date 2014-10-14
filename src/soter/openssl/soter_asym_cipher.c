@@ -4,8 +4,9 @@
  * (c) CossackLabs
  */
 
-#include "common/error.h"
-#include "soter/soter.h"
+#include <common/error.h>
+#include <soter/soter.h>
+#include <soter/soter_rsa_key.h>
 #include "soter_openssl.h"
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
@@ -218,5 +219,55 @@ soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher)
 	else
 	{
 		return status;
+	}
+}
+
+soter_status_t soter_asym_cipher_export_key(soter_asym_cipher_t* asym_cipher_ctx, void* key, size_t* key_length, bool isprivate)
+{
+	EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher_ctx->pkey_ctx);
+
+	if (!pkey)
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	if (EVP_PKEY_RSA != EVP_PKEY_id(pkey))
+	{
+		/* We can only do assymetric encryption with RSA algorithm */
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	if (isprivate)
+	{
+		return soter_engine_specific_to_rsa_priv_key((const soter_engine_specific_rsa_key_t *)pkey, (soter_container_hdr_t *)key, key_length);
+	}
+	else
+	{
+		return soter_engine_specific_to_rsa_pub_key((const soter_engine_specific_rsa_key_t *)pkey, (soter_container_hdr_t *)key, key_length);
+	}
+}
+
+soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx, const void* key, size_t key_length)
+{
+	const soter_container_hdr_t *hdr = key;
+	EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher_ctx->pkey_ctx);
+
+	if (!pkey)
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	if (EVP_PKEY_RSA != EVP_PKEY_id(pkey))
+	{
+		/* We can only do assymetric encryption with RSA algorithm */
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	switch (hdr->tag[0])
+	{
+	case 'R':
+		return soter_rsa_priv_key_to_engine_specific(hdr, key_length, ((soter_engine_specific_rsa_key_t **)&pkey));
+	case 'U':
+		return soter_rsa_pub_key_to_engine_specific(hdr, key_length, ((soter_engine_specific_rsa_key_t **)&pkey));
 	}
 }
