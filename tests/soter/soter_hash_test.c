@@ -6,7 +6,7 @@
  */
 
 #include "soter_test.h"
-#include "common/test_utils.h"
+#include <string.h>
 
 typedef struct test_vector_type test_vector_t;
 
@@ -41,35 +41,35 @@ static void test_known_values(void)
 		input_len = strlen(vectors[i].input) / 2;
 		if (input_len > MAX_TEST_INPUT)
 		{
-			sput_fail_if(input_len > MAX_TEST_INPUT, "input_len > MAX_TEST_INPUT");
+			testsuite_fail_if(input_len > MAX_TEST_INPUT, "input_len > MAX_TEST_INPUT");
 			continue;
 		}
 
 		res = string_to_bytes(vectors[i].input, input, sizeof(input));
 		if (res)
 		{
-			sput_fail_if(res, "input read fail");
+			testsuite_fail_if(res, "input read fail");
 			continue;
 		}
 
 		res = string_to_bytes(vectors[i].result, result, sizeof(result));
 		if (res)
 		{
-			sput_fail_if(res, "result read fail");
+			testsuite_fail_if(res, "result read fail");
 			continue;
 		}
 
 		ctx = soter_hash_create(SOTER_HASH_SHA256);
 		if (!ctx)
 		{
-			sput_fail_if(NULL == ctx, "hash_ctx != NULL");
+			testsuite_fail_if(NULL == ctx, "hash_ctx != NULL");
 			continue;
 		}
 
 		res = soter_hash_update(ctx, input, input_len);
 		if (res)
 		{
-			sput_fail_if(res, "soter_hash_update fail");
+			testsuite_fail_if(res, "soter_hash_update fail");
 			soter_hash_destroy(ctx);
 			continue;
 		}
@@ -77,23 +77,20 @@ static void test_known_values(void)
 		res = soter_hash_final(ctx, hash, &hash_len);
 		if (res)
 		{
-			sput_fail_if(res, "soter_hash_final fail");
+			testsuite_fail_if(res, "soter_hash_final fail");
 			soter_hash_destroy(ctx);
 			continue;
 		}
 
 		soter_hash_destroy(ctx);
 
-		sput_fail_if((hash_len != sizeof(result)) || (memcmp(hash, result, hash_len)), "hash == know value");
+		testsuite_fail_if((hash_len != sizeof(result)) || (memcmp(hash, result, hash_len)), "hash == know value");
 	}
 }
 
 void run_soter_hash_tests(void)
 {
-	sput_start_testing();
+	testsuite_enter_suite("soter hash: known values");
 
-	sput_enter_suite("soter hash: known values");
-	sput_run_test(test_known_values);
-
-	sput_finish_testing();
+	testsuite_run_test(test_known_values);
 }

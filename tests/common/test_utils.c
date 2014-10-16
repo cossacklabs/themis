@@ -7,6 +7,7 @@
 
 #include "test_utils.h"
 #include <string.h>
+#include <common/sput.h>
 
 static uint8_t parse_char(char c)
 {
@@ -47,4 +48,39 @@ test_utils_status_t string_to_bytes(const char *str, uint8_t *bytes, size_t size
 	}
 
 	return HERMES_SUCCESS;
+}
+
+void testsuite_start_testing(void)
+{
+	sput_start_testing();
+}
+
+void testsuite_enter_suite(const char *suite_name)
+{
+	sput_enter_suite(suite_name);
+}
+
+void testsuite_run_test(void (*test_func)(void))
+{
+	sput_run_test(test_func);
+}
+
+void testsuite_finish_testing(void)
+{
+	sput_finish_testing();
+}
+
+void testsuite_fail_if(bool condition, const char *name)
+{
+	sput_fail_if(condition, name);
+}
+
+void testsuite_fail_unless(bool condition, const char *name)
+{
+	sput_fail_unless(condition, name);
+}
+
+int testsuite_get_return_value(void)
+{
+	return sput_get_return_value();
 }

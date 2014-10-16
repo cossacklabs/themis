@@ -6,6 +6,7 @@
  */
 
 #include "soter_test.h"
+#include <stdio.h>
 
 static void print_bytes(const uint8_t *bytes, size_t length)
 {
@@ -60,8 +61,12 @@ int main()
 {
 	test_rand();
 
+	testsuite_start_testing();
+
 	run_soter_hash_tests();
 	run_soter_asym_cipher_tests();
 
-    return sput_get_return_value();
+	testsuite_finish_testing();
+
+    return testsuite_get_return_value();
 }
