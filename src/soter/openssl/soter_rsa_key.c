@@ -151,6 +151,7 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
 
 	memcpy(key->tag, rsa_pub_key_tag(rsa_mod_size), SOTER_CONTAINER_TAG_LENGTH);
 	key->size = htonl(output_length);
+	soter_update_container_checksum(key);
 	*key_length = output_length;
 	res = HERMES_SUCCESS;
 
@@ -268,6 +269,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
 	memcpy(key->tag, rsa_priv_key_tag(rsa_mod_size), SOTER_CONTAINER_TAG_LENGTH);
 	key->size = htonl(output_length);
+	soter_update_container_checksum(key);
 	*key_length = output_length;
 	res = HERMES_SUCCESS;
 
@@ -301,6 +303,11 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t 
 	if (memcmp(key->tag, RSA_PUB_KEY_PREF, strlen(RSA_PUB_KEY_PREF)))
 	{
 		return HERMES_INVALID_PARAMETER;
+	}
+
+	if (HERMES_SUCCESS != soter_verify_container_checksum(key))
+	{
+		return HERMES_DATA_CORRUPT;
 	}
 
 	switch (key->tag[3])
@@ -395,6 +402,11 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 	if (memcmp(key->tag, RSA_PRIV_KEY_PREF, strlen(RSA_PRIV_KEY_PREF)))
 	{
 		return HERMES_INVALID_PARAMETER;
+	}
+
+	if (HERMES_SUCCESS != soter_verify_container_checksum(key))
+	{
+		return HERMES_DATA_CORRUPT;
 	}
 
 	switch (key->tag[3])

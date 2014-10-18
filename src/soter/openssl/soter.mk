@@ -1,5 +1,4 @@
-SOTER_SRC = $(wildcard $(CRYPTO_ENGINE)/*.c)
-SOTER_OBJ = $(patsubst $(SRC_PATH)/%.c,$(OBJ_PATH)/%.o, $(SOTER_SRC))
+SOTER_SRC += $(wildcard $(CRYPTO_ENGINE)/*.c)
 
 # Put path to your OpenSSL/LibreSSL here
 OPENSSL_DIR = libs/librebin
