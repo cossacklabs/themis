@@ -17,7 +17,7 @@ struct soter_hash_ctx_type
 
 struct soter_sym_ctx_type
 {
-  EVP_CIPHER_CTX evp_sym_ctx;
+xb  EVP_CIPHER_CTX evp_sym_ctx;
   soter_sym_alg_t algId;
 };
 

@@ -4,135 +4,143 @@
  * (c) CossackLabs
  */
 
+#include <string.h>
 #include "common/error.h"
 #include "soter/soter.h"
 #include "soter_openssl.h"
+#include <openssl/err.h>
 
-const EVP_CIPHER* algId_to_evp(const soter_sym_alg_t algId)
+
+soter_status_t soter_pbkdf2(const uint8_t* password, const size_t password_length, const uint8_t* salt, const size_t salt_length, uint8_t* key, size_t* key_length)
 {
-  switch(algId)
+  if(!PKCS5_PBKDF2_HMAC(password, password_length, salt, salt_length, 0, EVP_sha256(), (*key_length), key))
     {
-    case SOTER_AES_ECB_PKCS7_PBKDF2_ENCRYPT:
-    case SOTER_AES_ECB_PKCS7_PBKDF2_DECRYPT:
-      return EVP_aes_256_ecb();
-    case SOTER_AES_CTR_PBKDF2_ENCRYPT:
-    case SOTER_AES_CTR_PBKDF2_DECRYPT:
-      return EVP_aes_256_ctr();
-    case SOTER_AES_GCM_PBKDF2_ENCRYPT:
-    case SOTER_AES_GCM_PBKDF2_DECRYPT:
-      return EVP_aes_256_gcm();
-    case SOTER_AES_XTS_PBKDF2_ENCRYPT:
-    case SOTER_AES_XTS_PBKDF2_DECRYPT:
-      return EVP_aes_256_xts();
-    };
-  return NULL;
-}
-
-
-soter_status_t soter_pbkdf2(const void* password, const size_t password_length, const void* salt, const size_t salt_length, void* key)
-{
-   if(key==NULL)
-     return HERMES_INVALID_PARAMETER;
-   if(!PKCS5_PBKDF2_HMAC(password, password_length, salt, salt_length, 0, EVP_sha256(), SOTER_AES_KEY_LENGTH, key))
-     return HERMES_FAIL;
-   return HERMES_SUCCESS;
-   
-}
-
-soter_status_t soter_evp_init_ex(soter_sym_ctx_t *sym_ctx, const soter_sym_alg_t alg, unsigned char *key, unsigned char *iv)
-{
-  switch(alg)
-    {
-    case SOTER_AES_ECB_PKCS7_PBKDF2_ENCRYPT:
-    case SOTER_AES_CTR_PBKDF2_ENCRYPT:
-    case SOTER_AES_GCM_PBKDF2_ENCRYPT:
-    case SOTER_AES_XTS_PBKDF2_ENCRYPT:
-      if(!EVP_EncryptInit_ex(&(sym_ctx->evp_sym_ctx), algId_to_evp(alg), NULL, key, NULL))
-	return HERMES_FAIL;
-      return HERMES_SUCCESS;
-    case SOTER_AES_ECB_PKCS7_PBKDF2_DECRYPT:
-    case SOTER_AES_CTR_PBKDF2_DECRYPT:
-    case SOTER_AES_GCM_PBKDF2_DECRYPT:
-    case SOTER_AES_XTS_PBKDF2_DECRYPT:
-      if(!EVP_DecryptInit_ex(&(sym_ctx->evp_sym_ctx), algId_to_evp(alg), NULL, key, NULL))
-	return HERMES_FAIL;
-      return HERMES_SUCCESS;
-    };
-  return HERMES_FAIL;
-}
-
-soter_status_t soter_evp_sym_update(soter_sym_ctx_t *sym_ctx, const unsigned char *in, const size_t in_length, unsigned char *out, size_t *out_length)
-{
-  switch(sym_ctx->algId)
-    {
-    case SOTER_AES_ECB_PKCS7_PBKDF2_ENCRYPT:
-    case SOTER_AES_CTR_PBKDF2_ENCRYPT:
-    case SOTER_AES_GCM_PBKDF2_ENCRYPT:
-    case SOTER_AES_XTS_PBKDF2_ENCRYPT:
-      if(!EVP_EncryptUpdate(&(sym_ctx->evp_sym_ctx), out, (int*)out_length, in, in_length))
-	return HERMES_FAIL;
-      return HERMES_SUCCESS;
-    case SOTER_AES_ECB_PKCS7_PBKDF2_DECRYPT:
-    case SOTER_AES_CTR_PBKDF2_DECRYPT:
-    case SOTER_AES_GCM_PBKDF2_DECRYPT:
-    case SOTER_AES_XTS_PBKDF2_DECRYPT:
-      if(!EVP_DecryptUpdate(&(sym_ctx->evp_sym_ctx), out, (int*)out_length, in, in_length))
-	return HERMES_FAIL;
-      return HERMES_SUCCESS;
-    };
-  return HERMES_FAIL;
-}
-
-soter_status_t soter_evp_sym_final(soter_sym_ctx_t *sym_ctx, unsigned char *out, size_t *out_length)
-{
-  switch(sym_ctx->algId)
-    {
-    case SOTER_AES_ECB_PKCS7_PBKDF2_ENCRYPT:
-    case SOTER_AES_CTR_PBKDF2_ENCRYPT:
-    case SOTER_AES_GCM_PBKDF2_ENCRYPT:
-    case SOTER_AES_XTS_PBKDF2_ENCRYPT:
-      if(!EVP_EncryptFinal(&(sym_ctx->evp_sym_ctx), out, (int*)out_length))
-	return HERMES_FAIL;
-      return HERMES_SUCCESS;
-    case SOTER_AES_ECB_PKCS7_PBKDF2_DECRYPT:
-    case SOTER_AES_CTR_PBKDF2_DECRYPT:
-    case SOTER_AES_GCM_PBKDF2_DECRYPT:
-    case SOTER_AES_XTS_PBKDF2_DECRYPT:
-      if(!EVP_DecryptFinal(&(sym_ctx->evp_sym_ctx), out, (int*)out_length))
-	return HERMES_FAIL;
-      return HERMES_SUCCESS;
-    };
-  return HERMES_FAIL;
-}
-
-soter_status_t soter_sym_create(soter_sym_ctx_t *sym_ctx, size_t* sym_ctx_length, const soter_sym_alg_t algId, const void* key, const size_t key_length, const void* salt, const size_t salt_length)
-{
-  if(sym_ctx==NULL || key==NULL || key_length==0)
-    {
-      return HERMES_INVALID_PARAMETER;
+      return HERMES_FAIL;
     }
-  if((*sym_ctx_length)<sizeof(soter_sym_ctx_t))
-    {
-      (*sym_ctx_length)=sizeof(soter_sym_ctx_t);
-      return HERMES_NO_MEMORY;
-    }
-  uint8_t key_[SOTER_AES_KEY_LENGTH];
-  if(soter_pbkdf2(key, key_length, salt, salt_length, key_)!=HERMES_SUCCESS)
-    return HERMES_FAIL;
-  sym_ctx->algId=algId;
-  return soter_evp_init_ex(sym_ctx, algId, key_, NULL);
+  return HERMES_SUCCESS;			
 }
 
-soter_status_t soter_sym_update(soter_sym_ctx_t *sym_ctx, const void* plain_data, const size_t data_length, void* cipher_data, size_t* cipher_data_length)
+soter_status_t soter_nonkdf(const uint8_t* password, const size_t password_length, const uint8_t* salt, const size_t salt_length, uint8_t* key, size_t* key_length)
 {
-  return soter_evp_sym_update(sym_ctx, plain_data, data_length, cipher_data, cipher_data_length);
+  if(password_length<(*key_length)){
+    return HERMES_BUFFER_TOO_SMALL;
+  }
+  memcpy(key,password,password_length);
+  return HERMES_SUCCESS;
 }
 
-soter_status_t soter_sym_final(soter_sym_ctx_t *sym_ctx, void* cipher_data, size_t* cipher_data_length)
+#define SOTER_SYM_ALG_IMPL(alg, mode, padding, kdf, e_or_d)		\
+  size_t soter_##alg##_##mode##_##padding##_##kdf##_##e_or_d##_get_key_length(){return 256/8;} \
+  size_t soter_##alg##_##mode##_##padding##_##kdf##_##e_or_d##_get_block_size(){return 16;} \
+  soter_status_t soter_##alg##_##mode##_##padding##_##kdf##_##e_or_d##_derive_key(const uint8_t* key_material, const size_t key_material_length,  const uint8_t* salt, const size_t salt_length, uint8_t* key, size_t* key_length) \
+  {									\
+   if(key==NULL || (*key_length)<soter_##alg##_##mode##_##padding##_##kdf##_##e_or_d##_get_key_length()){ \
+        (*key_length)=soter_##alg##_##mode##_##padding##_##kdf##_##e_or_d##_get_key_length(); \
+        return HERMES_BUFFER_TOO_SMALL;						\
+    }									\
+   return soter_##kdf(key_material, key_material_length, salt, salt_length, key, key_length); \
+  }									\
+  soter_status_t   soter_##alg##_##mode##_##padding##_##kdf##_chipher_##e_or_d##_init(soter_sym_ctx_t *sym_ctx, const uint8_t *key, const uint8_t *iv)\
+  {									\
+    const uint8_t default_iv[12]={0,0,0,0,0,0,0,0,0,0,0,0};		\
+    if(!EVP_##e_or_d##Init_ex(&(sym_ctx->evp_sym_ctx), EVP_##alg##_256_##mode(), NULL, key, (iv==NULL)?default_iv:iv)){ \
+      return HERMES_FAIL;						\
+    }									\
+    return HERMES_SUCCESS;						\
+  }									\
+  soter_status_t soter_##alg##_##mode##_##padding##_##kdf##_chipher_##e_or_d##_update(soter_sym_ctx_t *sym_ctx, const uint8_t *in, const size_t in_length, uint8_t *out, size_t *out_length) \
+  {									\
+   if((*out_length)<(in_length+soter_##alg##_##mode##_##padding##_##kdf##_##e_or_d##_get_block_size()-1)){ \
+      (*out_length)=in_length+soter_##alg##_##mode##_##padding##_##kdf##_##e_or_d##_get_block_size()-1; \
+      return HERMES_BUFFER_TOO_SMALL;					\
+     }									\
+   if(!EVP_##e_or_d##Update(&(sym_ctx->evp_sym_ctx), out, (int*)out_length, in, in_length)){ \
+     return HERMES_FAIL;						\
+   }									\
+   return HERMES_SUCCESS;						\
+  }									\
+  soter_status_t soter_##alg##_##mode##_##padding##_##kdf##_chipher_##e_or_d##_final(soter_sym_ctx_t *sym_ctx, unsigned char *out, size_t *out_length) \
+  {									\
+   EVP_##e_or_d##Final(&(sym_ctx->evp_sym_ctx), out, (int*)out_length);	\
+    return HERMES_SUCCESS;						\
+  }									
+
+#define SOTER_SYM_ALG(alg, mode, padding, kdf)	\
+  SOTER_SYM_ALG_IMPL(alg,mode,padding, kdf, Encrypt)	\
+  SOTER_SYM_ALG_IMPL(alg,mode,padding, kdf, Decrypt)
+
+SOTER_SYM_ALGS
+
+#undef SOTER_SYM_ALG_IMPL
+
+#define SOTER_SYM_ALG_IMPL(alg, mode, padding, kdf, e_or_d)	\
+  case SOTER_##alg##_##mode##_##padding##_##kdf##_##e_or_d:	\
+       key_=malloc(soter_##alg##_##mode##_##padding##_##kdf##_##e_or_d##_get_key_length()); \
+       key_length_=soter_##alg##_##mode##_##padding##_##kdf##_##e_or_d##_get_key_length(); \
+       if(!key_){							\
+	 free(ctx);							\
+         return NULL;					\
+       }								\
+       if(soter_##alg##_##mode##_##padding##_##kdf##_##e_or_d##_derive_key(key, key_length, salt, salt_length, key_, &key_length_)!=HERMES_SUCCESS){ \
+	 free(ctx);							\
+	 return NULL;							\
+       }								\
+       if(soter_##alg##_##mode##_##padding##_##kdf##_chipher_##e_or_d##_init(ctx, key_, NULL)!=HERMES_SUCCESS){ \
+	 free(ctx);							\
+	   return NULL;							\
+       }								\
+      break;
+
+soter_sym_ctx_t* soter_sym_create(const soter_sym_alg_t algId, const void* key, const size_t key_length, const void* salt, const size_t salt_length)
 {
-  return soter_evp_sym_final(sym_ctx, cipher_data, cipher_data_length);
+  soter_sym_ctx_t* ctx=NULL;
+  ctx=malloc(sizeof(soter_sym_ctx_t));
+  if(!ctx){
+    return NULL;
+  }
+  uint8_t* key_=NULL;
+  size_t key_length_=0;
+  EVP_CIPHER_CTX_init(&(ctx->evp_sym_ctx));
+  switch(algId){
+    SOTER_SYM_ALGS
+    default:
+      free(key_);
+      free(ctx);
+      return NULL;
+  }
+  free(key_);
+  ctx->algId=algId;
+  return ctx;
 }
 
+#undef SOTER_SYM_ALG_IMPL
+
+#define SOTER_SYM_ALG_IMPL(alg, mode, padding, kdf, e_or_d)	\
+  case SOTER_##alg##_##mode##_##padding##_##kdf##_##e_or_d:	\
+    return soter_##alg##_##mode##_##padding##_##kdf##_chipher_##e_or_d##_update(ctx, plain_data, data_length, cipher_data, cipher_data_length);
+
+soter_status_t soter_sym_update(soter_sym_ctx_t *ctx, const void* plain_data, const size_t data_length, void* cipher_data, size_t* cipher_data_length)
+{
+  switch(ctx->algId){
+    SOTER_SYM_ALGS
+  }
+}
+
+#undef SOTER_SYM_ALG_IMPL
+
+#define SOTER_SYM_ALG_IMPL(alg, mode, padding, kdf, e_or_d)	\
+  case SOTER_##alg##_##mode##_##padding##_##kdf##_##e_or_d:	\
+    return soter_##alg##_##mode##_##padding##_##kdf##_chipher_##e_or_d##_final(ctx, cipher_data, cipher_data_length);
+ 
+soter_status_t soter_sym_final(soter_sym_ctx_t *ctx, void* cipher_data, size_t* cipher_data_length)
+{
+  switch(ctx->algId){
+    SOTER_SYM_ALGS
+  }
+}
+
+#undef SOTER_SYM_ALG_IMPL
+ 
 soter_status_t soter_sym_destroy(soter_sym_ctx_t *ctx)
 {
   if(!EVP_CIPHER_CTX_cleanup(&(ctx->evp_sym_ctx)))

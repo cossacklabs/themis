@@ -46,28 +46,38 @@ soter_status_t soter_hash_destroy(soter_hash_ctx_t *hash_ctx);
 soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, size_t length);
 soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value, size_t* hash_length);
 
+//#define SOTER_SYM_ALG(alg,mode,padding,kdf)	\
+//  SOTER_##alg##_##mode##_##padding##_##kdf
+
+#define SOTER_SYM_ALGS					\
+  SOTER_SYM_ALG(aes, ecb, pkcs7, pbkdf2)		\
+  SOTER_SYM_ALG(aes, ecb, pkcs7, nonkdf)		\
+  SOTER_SYM_ALG(aes, ctr, none,  pbkdf2)		\
+  SOTER_SYM_ALG(aes, ctr, none,  nonkdf)		\
+  SOTER_SYM_ALG(aes, gcm, none,  pbkdf2)		\
+  SOTER_SYM_ALG(aes, gcm, none,  nonkdf)		
+//  SOTER_SYM_ALG(aes, xts, none,  pbkdf2)	
+//  SOTER_SYM_ALG(aes, xts, none,  nonkdf)	
+
+#define SOTER_SYM_ALG(alg,mode,padding,kdf)	\
+  SOTER_##alg##_##mode##_##padding##_##kdf##_Encrypt,	\
+  SOTER_##alg##_##mode##_##padding##_##kdf##_Decrypt,
+
 
 enum soter_sym_alg_type
   {
-    SOTER_AES_ECB_PKCS7_PBKDF2_ENCRYPT,
-    SOTER_AES_ECB_PKCS7_PBKDF2_DECRYPT,
-    SOTER_AES_CTR_PBKDF2_ENCRYPT,
-    SOTER_AES_CTR_PBKDF2_DECRYPT,
-    SOTER_AES_GCM_PBKDF2_ENCRYPT,
-    SOTER_AES_GCM_PBKDF2_DECRYPT,
-    SOTER_AES_XTS_PBKDF2_ENCRYPT,
-    SOTER_AES_XTS_PBKDF2_DECRYPT    
+    SOTER_SYM_ALGS
   };
 
-#define SOTER_AES_KEY_LENGTH 32
+#undef SOTER_SYM_ALG
 
 typedef enum soter_sym_alg_type soter_sym_alg_t;
 
 typedef struct soter_sym_ctx_type soter_sym_ctx_t;
 
-soter_status_t soter_sym_create(soter_sym_ctx_t *sym_ctx, size_t* sym_ctx_length, const soter_sym_alg_t, const void* key, const size_t key_length, const void* salt, const size_t salt_length);
-soter_status_t sym_update(soter_sym_ctx_t *sym_ctx, const void* plain_data,  const size_t data_length, const void* chiper_data, size_t* chipher_data_length);
-soter_status_t sym_final(soter_sym_ctx_t *sym_ctx, const void* chipher_data, size_t* chipher_data_length);
+soter_sym_ctx_t* soter_sym_create(const soter_sym_alg_t, const void* key, const size_t key_length, const void* salt, const size_t salt_length);
+soter_status_t soter_sym_update(soter_sym_ctx_t *ctx, const void* plain_data,  const size_t data_length, void* chiper_data, size_t* chipher_data_length);
+soter_status_t soter_sym_final(soter_sym_ctx_t *ctx, void* chipher_data, size_t* chipher_data_length);
 soter_status_t soter_sym_destroy(soter_sym_ctx_t *ctx);
 
 enum soter_asym_cipher_padding_type
