@@ -46,9 +46,6 @@ soter_status_t soter_hash_destroy(soter_hash_ctx_t *hash_ctx);
 soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, size_t length);
 soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value, size_t* hash_length);
 
-//#define SOTER_SYM_ALG(alg,mode,padding,kdf)	\
-//  SOTER_##alg##_##mode##_##padding##_##kdf
-
 #define SOTER_SYM_ALGS					\
   SOTER_SYM_ALG(aes, ecb, pkcs7, pbkdf2)		\
   SOTER_SYM_ALG(aes, ecb, pkcs7, nonkdf)		\
