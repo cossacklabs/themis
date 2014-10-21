@@ -84,7 +84,7 @@ size_t solo_test(const soter_sym_alg_t alg, const test_init_vector_t init_data, 
   return result_data_length+final_data_length;
 }
 
-static void alg_test(soter_sym_alg_t encrypt_alg, soter_sym_alg_t decrypt_alg)
+static int alg_test(soter_sym_alg_t encrypt_alg, soter_sym_alg_t decrypt_alg)
 {
   size_t i,j;
   uint8_t* encrypted_data;
@@ -96,25 +96,25 @@ static void alg_test(soter_sym_alg_t encrypt_alg, soter_sym_alg_t decrypt_alg)
       encrypted_data_length=solo_test(encrypt_alg, test_init_vectors[i], test_data_vectors[j].data, test_data_vectors[j].data_length, &encrypted_data);
       if(encrypted_data==NULL || encrypted_data_length == 0){
 	testsuite_fail_if(encrypted_data==NULL || encrypted_data_length == 0, "solo_test encryption failed");
-	return;
+	return -1;
       }
       decrypted_data_length=solo_test(decrypt_alg, test_init_vectors[i], encrypted_data, encrypted_data_length, &decrypted_data);
       if(decrypted_data==NULL || decrypted_data_length == 0){
 	testsuite_fail_if(decrypted_data==NULL || decrypted_data_length == 0, "solo_test decryption failed");
 	free(encrypted_data);
-	return;
+	return -1;
       }
       if(test_data_vectors[j].data_length!=decrypted_data_length){
 	testsuite_fail_if(test_data_vectors[j].data_length!=decrypted_data_length, "data length for encryption and after decription non equal");
 	free(encrypted_data);
 	free(decrypted_data);
-	return;
+	return -1;
       }
       if(memcmp(test_data_vectors[j].data, decrypted_data, decrypted_data_length)){
-	testsuite_fail_if(test_data_vectors[j].data_length!=decrypted_data_length, "data for encryption and after encription is equal");
+	testsuite_fail_if(memcmp(test_data_vectors[j].data, decrypted_data, decrypted_data_length), "data for encryption and after encription is equal");
 	free(encrypted_data);
 	free(decrypted_data);
-	return;
+	return -1;
       }
     }
   }
@@ -124,8 +124,10 @@ static void alg_test(soter_sym_alg_t encrypt_alg, soter_sym_alg_t decrypt_alg)
 
 
 #define SOTER_SYM_ALG(alg, mode, padding, kdf)	\
-  fprintf(stderr, "%s:%s\n", #alg, #mode);				\
-  alg_test( SOTER_##alg##_##mode##_##padding##_##kdf##_Encrypt,  SOTER_##alg##_##mode##_##padding##_##kdf##_Decrypt); \
+  char message##alg##mode##padding##kdf[256];\
+  sprintf(message##alg##mode##padding##kdf, "soter sym  %s:%s:%s:%s", #alg, #mode, #padding, #kdf);				\
+  testsuite_fail_if(alg_test( SOTER_##alg##_##mode##_##padding##_##kdf##_Encrypt,  SOTER_##alg##_##mode##_##padding##_##kdf##_Decrypt),message##alg##mode##padding##kdf);
+  
 
 static void soter_sym_test()
 {

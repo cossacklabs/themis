@@ -46,27 +46,36 @@ soter_status_t soter_hash_destroy(soter_hash_ctx_t *hash_ctx);
 soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, size_t length);
 soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value, size_t* hash_length);
 
+/**
+ * @defgroup SOTER_SYM soter symetric algorithms definition
+ *
+ * @{
+ */
+/** define symmetric algorithms groups */
 #define SOTER_SYM_ALGS					\
   SOTER_SYM_ALG(aes, ecb, pkcs7, pbkdf2)		\
-  SOTER_SYM_ALG(aes, ecb, pkcs7, nonkdf)		\
-  SOTER_SYM_ALG(aes, ctr, none,  pbkdf2)		\
-  SOTER_SYM_ALG(aes, ctr, none,  nonkdf)		\
-  SOTER_SYM_ALG(aes, gcm, none,  pbkdf2)		\
-  SOTER_SYM_ALG(aes, gcm, none,  nonkdf)		
+    SOTER_SYM_ALG(aes, ecb, pkcs7, nonkdf)		\
+    SOTER_SYM_ALG(aes, ctr, none,  pbkdf2)		\
+    SOTER_SYM_ALG(aes, ctr, none,  nonkdf)		\
+    SOTER_SYM_ALG(aes, gcm, none,  pbkdf2)		\
+    SOTER_SYM_ALG(aes, gcm, none,  nonkdf)	
 //  SOTER_SYM_ALG(aes, xts, none,  pbkdf2)	
 //  SOTER_SYM_ALG(aes, xts, none,  nonkdf)	
 
+/** define symmetric algorithm */
 #define SOTER_SYM_ALG(alg,mode,padding,kdf)	\
   SOTER_##alg##_##mode##_##padding##_##kdf##_Encrypt,	\
-  SOTER_##alg##_##mode##_##padding##_##kdf##_Decrypt,
+    SOTER_##alg##_##mode##_##padding##_##kdf##_Decrypt,
 
-
+/** soter symetric algorithms enum  */
 enum soter_sym_alg_type
   {
     SOTER_SYM_ALGS
   };
 
 #undef SOTER_SYM_ALG
+
+/** @} */
 
 typedef enum soter_sym_alg_type soter_sym_alg_t;
 
@@ -76,6 +85,7 @@ soter_sym_ctx_t* soter_sym_create(const soter_sym_alg_t, const void* key, const 
 soter_status_t soter_sym_update(soter_sym_ctx_t *ctx, const void* plain_data,  const size_t data_length, void* chiper_data, size_t* chipher_data_length);
 soter_status_t soter_sym_final(soter_sym_ctx_t *ctx, void* chipher_data, size_t* chipher_data_length);
 soter_status_t soter_sym_destroy(soter_sym_ctx_t *ctx);
+
 
 enum soter_asym_cipher_padding_type
 {
@@ -110,5 +120,17 @@ soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx, void* key,
 soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void* key, size_t key_length);
 soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx, const void* peer_key, size_t peer_key_length);
 soter_status_t soter_asym_ka_destroy(soter_asym_ka_t* asym_ka_ctx);
+
+#define SOTER_SIGH_ALGS				\
+  SOTER_SIGN_ALG(RSA,   PKCS1_PSS, PKCS8)	\
+  SOTER_SIGN_ALG(ECDSA, NONE,      PKCS8)
+
+#define SOTER_SIGN_ALG(alg, padding, pksc8)	\
+  SOTER_SIGN_##alg##_##padding##_##pkcs8,
+
+enum soter_syng_alg_type{
+  SOTER_SIGN_ALGS
+};
+
 
 #endif /* SOTER_H */
