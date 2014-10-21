@@ -7,7 +7,7 @@
 #ifndef SOTER_OPENSSL_H
 #define SOTER_OPENSSL_H
 
-#include "soter/soter.h"
+#include <soter/soter.h>
 #include <openssl/evp.h>
 
 struct soter_hash_ctx_type
@@ -22,6 +22,11 @@ struct soter_sym_ctx_type
 };
 
 struct soter_asym_cipher_type
+{
+	EVP_PKEY_CTX *pkey_ctx;
+};
+
+struct soter_asym_ka_type
 {
 	EVP_PKEY_CTX *pkey_ctx;
 };
