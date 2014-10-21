@@ -4,8 +4,8 @@
  * (c) CossackLabs
  */
 
-#ifndef SOTER_SOTER_RSA_KEY_H
-#define SOTER_SOTER_RSA_KEY_H
+#ifndef SOTER_RSA_KEY_H
+#define SOTER_RSA_KEY_H
 
 #include <soter/soter_container.h>
 #include <soter/soter.h>
@@ -71,4 +71,4 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific_rsa_key_t *engine_key, soter_container_hdr_t *key, size_t* key_length);
 soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_rsa_key_t *engine_key, soter_container_hdr_t *key, size_t* key_length);
 
-#endif /* SOTER_SOTER_RSA_KEY_H */
+#endif /* SOTER_RSA_KEY_H */
