@@ -121,18 +121,20 @@ soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void
 soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx, const void* peer_key, size_t peer_key_length);
 soter_status_t soter_asym_ka_destroy(soter_asym_ka_t* asym_ka_ctx);
 
-#define SOTER_SIGH_ALGS				\
-  SOTER_SIGN_ALG(RSA,   PKCS1_PSS, PKCS8)	\
-  SOTER_SIGN_ALG(ECDSA, NONE,      PKCS8)
+#define SOTER_SIGN_ALGS				\
+  SOTER_SIGN_ALG(rsa,   pss,  pkcs8)	\
+  SOTER_SIGN_ALG(ecdsa, none, pkcs8)
 
-#define SOTER_SIGN_ALG(alg, padding, pksc8)	\
-  SOTER_SIGN_##alg##_##padding##_##pkcs8,
+#define SOTER_SIGN_ALG(alg, padding, kdf)	\
+  SOTER_SIGN_##alg##_##padding##_##kdf,
 
-enum soter_sign_alg_type{
-  SOTER_SIGN_ALGS
-};
+enum soter_sign_alg_type
+  {
+    SOTER_SIGN_ALGS
+  };
+#undef SOTER_SIGN_ALG
 
-typedef enum soter_sign_alg_type soter_sing_alg_t;
+typedef enum soter_sign_alg_type soter_sign_alg_t;
 
 typedef struct soter_sign_ctx_type soter_sign_ctx_t;
 
