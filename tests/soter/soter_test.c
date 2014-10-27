@@ -35,6 +35,7 @@ int main()
 
 	run_soter_hash_tests();
 	run_soter_asym_cipher_tests();
+	run_soter_asym_ka_tests();
 	run_soter_sym_test();
 
     testsuite_finish_testing();

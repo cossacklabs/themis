@@ -263,11 +263,14 @@ soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx
 		return HERMES_INVALID_PARAMETER;
 	}
 
+	/* TODO: what if key_length < sizeof(soter_container_hdr_t) -> buffer overflow! */
 	switch (hdr->tag[0])
 	{
 	case 'R':
 		return soter_rsa_priv_key_to_engine_specific(hdr, key_length, ((soter_engine_specific_rsa_key_t **)&pkey));
 	case 'U':
 		return soter_rsa_pub_key_to_engine_specific(hdr, key_length, ((soter_engine_specific_rsa_key_t **)&pkey));
+	default:
+		return HERMES_INVALID_PARAMETER;
 	}
 }

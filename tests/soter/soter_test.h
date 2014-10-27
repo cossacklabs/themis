@@ -14,6 +14,7 @@
 
 void run_soter_hash_tests(void);
 void run_soter_asym_cipher_tests(void);
+void run_soter_asym_ka_tests(void);
 void run_soter_sym_test(void);
 
 #endif /* SOTER_TEST_H */

@@ -25,16 +25,17 @@ static bool is_curve_supported(int curve)
 	}
 }
 
+/* Input size directly since public key type structures may be aligned to word boundary */
 static size_t ec_pub_key_size(int curve)
 {
 	switch (curve)
 	{
 	case NID_X9_62_prime256v1: /* P-256 */
-		return sizeof(soter_ec_pub_key_256_t);
+		return sizeof(soter_container_hdr_t) + EC_PUB_SIZE(256);
 	case NID_secp384r1: /* P-384 */
-		return sizeof(soter_ec_pub_key_384_t);
+		return sizeof(soter_container_hdr_t) + EC_PUB_SIZE(384);
 	case NID_secp521r1: /* P-521 */
-		return sizeof(soter_ec_pub_key_521_t);
+		return sizeof(soter_container_hdr_t) + EC_PUB_SIZE(521);
 	default:
 		return 0;
 	}

@@ -31,7 +31,7 @@
 	struct soter_ec_pub_key_##_KEY_SIZE_##_type \
 	{ \
 		soter_container_hdr_t hdr; \
-		uint8_t d[EC_PRIV_SIZE(_KEY_SIZE_)]; \
+		uint8_t d[EC_PUB_SIZE(_KEY_SIZE_)]; \
 	}; \
 	\
 	typedef struct soter_ec_pub_key_##_KEY_SIZE_##_type soter_ec_pub_key_##_KEY_SIZE_##_t
@@ -41,7 +41,7 @@
 	struct soter_ec_priv_key_##_KEY_SIZE_##_type \
 	{ \
 		soter_container_hdr_t hdr; \
-		uint8_t Q[EC_PUB_SIZE(_KEY_SIZE_)]; \
+		uint8_t Q[EC_PRIV_SIZE(_KEY_SIZE_)]; \
 	}; \
 	\
 	typedef struct soter_ec_priv_key_##_KEY_SIZE_##_type soter_ec_priv_key_##_KEY_SIZE_##_t
