@@ -74,7 +74,7 @@ static void test_basic_ka_flow(void)
 		goto err;
 	}
 
-	testsuite_fail_unless((peer1_shared_secret_length == peer2_shared_secret_length) && !memcmp(peer1_shared_secret, peer2_shared_secret), "Basic ECDH");
+	testsuite_fail_unless((peer1_shared_secret_length == peer2_shared_secret_length) && !memcmp(peer1_shared_secret, peer2_shared_secret, peer1_shared_secret_length), "Basic ECDH");
 
 err:
 	if (peer1)
