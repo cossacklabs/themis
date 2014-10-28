@@ -21,6 +21,9 @@ static void test_basic_ka_flow(void)
 	uint8_t peer2_shared_secret[SHARED_SECRET_BUFFER_SIZE];
 	size_t peer2_shared_secret_length = sizeof(peer2_shared_secret);
 
+	uint8_t peer2_private[SHARED_SECRET_BUFFER_SIZE];
+	size_t peer2_private_length = sizeof(peer2_private);
+
 	soter_status_t res;
 	soter_asym_ka_t *peer1 = soter_asym_ka_create(SOTER_ASYM_KA_EC_P256);
 	soter_asym_ka_t *peer2 = soter_asym_ka_create(SOTER_ASYM_KA_EC_P256);
@@ -75,6 +78,45 @@ static void test_basic_ka_flow(void)
 	}
 
 	testsuite_fail_unless((peer1_shared_secret_length == peer2_shared_secret_length) && !memcmp(peer1_shared_secret, peer2_shared_secret, peer1_shared_secret_length), "Basic ECDH");
+
+	res = soter_asym_ka_export_key(peer2, peer2_private, &peer2_private_length, true);
+	if (HERMES_SUCCESS != res)
+	{
+		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_export_key fail");
+		goto err;
+	}
+
+	res = soter_asym_ka_destroy(peer2);
+	if (HERMES_SUCCESS != res)
+	{
+		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_destroy fail");
+		goto err;
+	}
+
+	peer2 = soter_asym_ka_create(SOTER_ASYM_KA_EC_P256);
+	if (!peer2)
+	{
+		testsuite_fail_if(NULL == peer2, "soter_asym_ka_create fail");
+		goto err;
+	}
+
+	res = soter_asym_ka_import_key(peer2, peer2_private, peer2_private_length);
+	if (HERMES_SUCCESS != res)
+	{
+		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_import_key fail");
+		goto err;
+	}
+
+	peer2_shared_secret_length = sizeof(peer2_shared_secret);
+
+	res = soter_asym_ka_derive(peer2, key_buffer, key_buffer_length, peer2_shared_secret, &peer2_shared_secret_length);
+	if (HERMES_SUCCESS != res)
+	{
+		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_derive fail");
+		goto err;
+	}
+
+	testsuite_fail_unless((peer1_shared_secret_length == peer2_shared_secret_length) && !memcmp(peer1_shared_secret, peer2_shared_secret, peer1_shared_secret_length), "Basic ECDH with imported key");
 
 err:
 	if (peer1)
