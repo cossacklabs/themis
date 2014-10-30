@@ -37,7 +37,7 @@ int main()
 	run_soter_asym_cipher_tests();
 	run_soter_asym_ka_tests();
 	run_soter_sym_test();
-
+	run_soter_sign_test();
     testsuite_finish_testing();
 
     return testsuite_get_return_value();

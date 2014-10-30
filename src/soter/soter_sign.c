@@ -21,6 +21,7 @@ typedef struct soter_sign_ctx_type soter_sign_ctx_t;
   return soter_sign_init_##alg##_##padding##_##kdf(ctx,private_key,private_key_length, public_key, public_key_length);
 soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
 {
+  ctx->alg=algId;
   switch(algId){
     SOTER_SIGN_ALGS
   };
@@ -33,6 +34,7 @@ soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, co
   return soter_verify_init_##alg##_##padding##_##kdf(ctx,private_key,private_key_length, public_key, public_key_length);
 soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
 {
+  ctx->alg=algId;
   switch(algId){
     SOTER_SIGN_ALGS
   };
@@ -40,17 +42,17 @@ soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, 
 }
 #undef SOTER_SIGN_ALG
 
-/*#define SOTER_SIGN_ALG(alg, padding, kdf)				\
+#define SOTER_SIGN_ALG(alg, padding, kdf)				\
   case SOTER_SIGN_##alg##_##padding##_##kdf:				\
-  return soter_sign_export_key_##alg##_##padding##_##kdf(ctx,key,key_length);
-soter_status_t soter_sign_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length){
+  return soter_sign_export_key_##alg##_##padding##_##kdf(ctx,key,key_length,isprivate);
+soter_status_t soter_sign_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate){
   switch(ctx->alg){
     SOTER_SIGN_ALGS
   };
   return HERMES_INVALID_PARAMETER;
 }
 #undef SOTER_SIGN_ALG
-*/
+
 
 #define SOTER_SIGN_ALG(alg, padding, kdf)	\
   case SOTER_SIGN_##alg##_##padding##_##kdf:				\

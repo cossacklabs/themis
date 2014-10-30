@@ -11,12 +11,11 @@
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
-soter_status_t soter_gen_key_rsa(EVP_PKEY_CTX *pkey_ctx)
+soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx)
 {
   /* it is copy-paste from /src/soter/openssl/soter_asym_cipher.c */
   BIGNUM *pub_exp;
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(pkey_ctx);
-  
   if (!pkey){
     return HERMES_INVALID_PARAMETER;
   }
@@ -53,11 +52,11 @@ soter_status_t soter_gen_key_rsa(EVP_PKEY_CTX *pkey_ctx)
   if(!EVP_PKEY_keygen(pkey_ctx, &pkey)){
     return HERMES_FAIL;
   }
-  return HERMES_FAIL;
+  return HERMES_SUCCESS;
   /* end of copy-paste from /src/soter/openssl/soter_asym_cipher.c*/
 }
 
-soter_status_t soter_import_key_rsa(EVP_PKEY *pkey, const void* key, const size_t key_length)
+soter_status_t soter_rsa_import_key(EVP_PKEY *pkey, const void* key, const size_t key_length)
 {
   const soter_container_hdr_t *hdr = key;
  
@@ -74,5 +73,22 @@ soter_status_t soter_import_key_rsa(EVP_PKEY *pkey, const void* key, const size_
     return soter_rsa_pub_key_to_engine_specific(hdr, key_length, ((soter_engine_specific_rsa_key_t **)&pkey));
   }
   return HERMES_INVALID_PARAMETER;
+}
+
+soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate)
+{
+  EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
+  
+  if (!pkey){
+    return HERMES_INVALID_PARAMETER;
+  }
+  if(isprivate)
+    {
+      return soter_engine_specific_to_rsa_priv_key((const soter_engine_specific_rsa_key_t *)pkey, (soter_container_hdr_t *)key, key_length);
+    }
+  else
+    {
+      return soter_engine_specific_to_rsa_pub_key((const soter_engine_specific_rsa_key_t *)pkey, (soter_container_hdr_t *)key, key_length);
+    }  
 }
 
