@@ -36,5 +36,5 @@ $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
 	
 include tests/test.mk
 	
-clean:
+clean: nist_rng_test_suite
 	rm -rf $(BIN_PATH)

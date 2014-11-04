@@ -1,0 +1,101 @@
+=========================================================
+Template Length = 2
+Number of all possible templates  = 4
+# of nonperiodic templates = 2
+{# nonperiodic}/{# templates} = 0.500000
+=========================================================
+Template Length = 3
+Number of all possible templates  = 8
+# of nonperiodic templates = 4
+{# nonperiodic}/{# templates} = 0.500000
+=========================================================
+Template Length = 4
+Number of all possible templates  = 16
+# of nonperiodic templates = 6
+{# nonperiodic}/{# templates} = 0.375000
+=========================================================
+Template Length = 5
+Number of all possible templates  = 32
+# of nonperiodic templates = 12
+{# nonperiodic}/{# templates} = 0.375000
+=========================================================
+Template Length = 6
+Number of all possible templates  = 160
+# of nonperiodic templates = 20
+{# nonperiodic}/{# templates} = 0.312500
+=========================================================
+Template Length = 7
+Number of all possible templates  = 384
+# of nonperiodic templates = 40
+{# nonperiodic}/{# templates} = 0.312500
+=========================================================
+Template Length = 8
+Number of all possible templates  = 896
+# of nonperiodic templates = 74
+{# nonperiodic}/{# templates} = 0.289062
+=========================================================
+Template Length = 9
+Number of all possible templates  = 2048
+# of nonperiodic templates = 148
+{# nonperiodic}/{# templates} = 0.289062
+=========================================================
+Template Length = 10
+Number of all possible templates  = 4608
+# of nonperiodic templates = 284
+{# nonperiodic}/{# templates} = 0.277344
+=========================================================
+Template Length = 11
+Number of all possible templates  = 10240
+# of nonperiodic templates = 568
+{# nonperiodic}/{# templates} = 0.277344
+=========================================================
+Template Length = 12
+Number of all possible templates  = 22528
+# of nonperiodic templates = 1116
+{# nonperiodic}/{# templates} = 0.272461
+=========================================================
+Template Length = 13
+Number of all possible templates  = 49152
+# of nonperiodic templates = 2232
+{# nonperiodic}/{# templates} = 0.272461
+=========================================================
+Template Length = 14
+Number of all possible templates  = 106496
+# of nonperiodic templates = 4424
+{# nonperiodic}/{# templates} = 0.270020
+=========================================================
+Template Length = 15
+Number of all possible templates  = 229376
+# of nonperiodic templates = 8848
+{# nonperiodic}/{# templates} = 0.270020
+=========================================================
+Template Length = 16
+Number of all possible templates  = 491520
+# of nonperiodic templates = 17622
+{# nonperiodic}/{# templates} = 0.268890
+=========================================================
+Template Length = 17
+Number of all possible templates  = 1048576
+# of nonperiodic templates = 35244
+{# nonperiodic}/{# templates} = 0.268890
+=========================================================
+Template Length = 18
+Number of all possible templates  = 2228224
+# of nonperiodic templates = 70340
+{# nonperiodic}/{# templates} = 0.268326
+=========================================================
+Template Length = 19
+Number of all possible templates  = 4718592
+# of nonperiodic templates = 140680
+{# nonperiodic}/{# templates} = 0.268326
+=========================================================
+Template Length = 20
+Number of all possible templates  = 9961472
+# of nonperiodic templates = 281076
+{# nonperiodic}/{# templates} = 0.268055
+=========================================================
+Template Length = 21
+Number of all possible templates  = 20971520
+# of nonperiodic templates = 562152
+{# nonperiodic}/{# templates} = 0.268055
+=========================================================

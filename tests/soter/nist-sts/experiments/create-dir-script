@@ -1,0 +1,19 @@
+# Create Directory Structure
+
+for dname in AlgorithmTesting BBS CCG G-SHA1 LCG MODEXP MS QCG1 QCG2 XOR ; do 
+	mkdir $dname/Frequency
+	mkdir $dname/BlockFrequency
+	mkdir $dname/Runs
+	mkdir $dname/LongestRun
+	mkdir $dname/Rank
+	mkdir $dname/FFT
+	mkdir $dname/NonOverlappingTemplate
+	mkdir $dname/OverlappingTemplate
+	mkdir $dname/Universal
+	mkdir $dname/LinearComplexity
+	mkdir $dname/Serial
+	mkdir $dname/ApproximateEntropy
+	mkdir $dname/CumulativeSums
+	mkdir $dname/RandomExcursions
+	mkdir $dname/RandomExcursionsVariant
+done
