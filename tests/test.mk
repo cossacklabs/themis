@@ -7,9 +7,14 @@ include tests/soter/soter.mk
 
 nist_rng_test_suite:
 	mkdir -p $(NIST_STS_DIR)/obj
+ifeq (all,$(MAKECMDGOALS))
+	# NIST makefile does not support "all" target, so make default
+	$(MAKE) -C $(NIST_STS_DIR)
+else
 	$(MAKE) -C $(NIST_STS_DIR) $(MAKECMDGOALS)
+endif
 
-soter_test: $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) static
+soter_test: nist_rng_test_suite static $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) static
 	$(CC) -o $(TEST_BIN_PATH)/soter_test $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) -L$(BIN_PATH) -lsoter $(LDFLAGS)
 
-test:	soter_test nist_rng_test_suite
+test: soter_test

@@ -32,8 +32,8 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 
 $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
 	mkdir -p $(@D)
-	$(CC) $(CFLAGS) -I$(TEST_SRC_PATH) -c $< -o $@
-	
+	$(CC) $(CFLAGS) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR)) -I$(TEST_SRC_PATH) -c $< -o $@
+
 include tests/test.mk
 	
 clean: nist_rng_test_suite
