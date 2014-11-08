@@ -10,7 +10,7 @@
 
 #include <common/error.h>
 #include <common/test_utils.h>
-#include <soter/soter.h>
+#include <soter/soter_t.h>
 
 void run_soter_hash_tests(void);
 void run_soter_asym_cipher_tests(void);
