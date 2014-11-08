@@ -7,6 +7,7 @@ include tests/soter/soter.mk
 
 nist_rng_test_suite:
 	mkdir -p $(NIST_STS_DIR)/obj
+	cd $(NIST_STS_DIR)/experiments && ./create-dir-script
 ifeq (all,$(MAKECMDGOALS))
 	# NIST makefile does not support "all" target, so make default
 	$(MAKE) -C $(NIST_STS_DIR)

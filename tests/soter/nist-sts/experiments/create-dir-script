@@ -1,19 +1,19 @@
 # Create Directory Structure
 
 for dname in AlgorithmTesting BBS CCG G-SHA1 LCG MODEXP MS QCG1 QCG2 XOR ; do 
-	mkdir $dname/Frequency
-	mkdir $dname/BlockFrequency
-	mkdir $dname/Runs
-	mkdir $dname/LongestRun
-	mkdir $dname/Rank
-	mkdir $dname/FFT
-	mkdir $dname/NonOverlappingTemplate
-	mkdir $dname/OverlappingTemplate
-	mkdir $dname/Universal
-	mkdir $dname/LinearComplexity
-	mkdir $dname/Serial
-	mkdir $dname/ApproximateEntropy
-	mkdir $dname/CumulativeSums
-	mkdir $dname/RandomExcursions
-	mkdir $dname/RandomExcursionsVariant
+	mkdir -p $dname/Frequency
+	mkdir -p $dname/BlockFrequency
+	mkdir -p $dname/Runs
+	mkdir -p $dname/LongestRun
+	mkdir -p $dname/Rank
+	mkdir -p $dname/FFT
+	mkdir -p $dname/NonOverlappingTemplate
+	mkdir -p $dname/OverlappingTemplate
+	mkdir -p $dname/Universal
+	mkdir -p $dname/LinearComplexity
+	mkdir -p $dname/Serial
+	mkdir -p $dname/ApproximateEntropy
+	mkdir -p $dname/CumulativeSums
+	mkdir -p $dname/RandomExcursions
+	mkdir -p $dname/RandomExcursionsVariant
 done
