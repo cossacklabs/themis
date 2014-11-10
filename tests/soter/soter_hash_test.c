@@ -126,7 +126,6 @@ static void test_api(void)
 
 	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_hash_update(NULL, input, input_len), "soter_hash_update: invalid context");
 	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_hash_update(&ctx, NULL, input_len), "soter_hash_update: invalid data");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_hash_update(&ctx, input, 0), "soter_hash_update: invalid size");
 
 	res = soter_hash_update(&ctx, input, input_len);
 	if (HERMES_SUCCESS != res)

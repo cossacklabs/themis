@@ -29,7 +29,7 @@ soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t alg
 {
 	const EVP_MD *md = soter_algo_to_evp_md(algo);
 
-	if (!md)
+	if (!hash_ctx || !md)
 	{
 		return HERMES_INVALID_PARAMETER;
 	}
@@ -46,6 +46,11 @@ soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t alg
 
 soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, size_t length)
 {
+	if (!hash_ctx || !data)
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
 	if (EVP_DigestUpdate(&(hash_ctx->evp_md_ctx), data, length))
 	{
 		return HERMES_SUCCESS;
@@ -60,16 +65,17 @@ soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value,
 {
 	size_t md_length;
 
-	if ((!hash_value) || (!hash_length))
+	if (!hash_ctx || !hash_length)
 	{
 		return HERMES_INVALID_PARAMETER;
 	}
 
 	md_length = (size_t)EVP_MD_CTX_size(&(hash_ctx->evp_md_ctx));
 
-	if (md_length > *hash_length)
+	if (!hash_value || (md_length > *hash_length))
 	{
-		return HERMES_INVALID_PARAMETER; /* TODO: Should we add separate "buffer too small" error? */
+		*hash_length = md_length;
+		return HERMES_BUFFER_TOO_SMALL;
 	}
 
 	if (EVP_DigestFinal(&(hash_ctx->evp_md_ctx), hash_value, (unsigned int *)&md_length))
