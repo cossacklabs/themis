@@ -167,9 +167,17 @@ static void test_rand_with_nist(void)
 
 #endif
 
+static void test_api(void)
+{
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_rand(NULL, 32), "soter_rand: invalid out buffer");
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_rand((uint8_t *)0x1, 0), "soter_rand: invalid buffer length");
+}
+
 void run_soter_rand_tests(void)
 {
-	testsuite_enter_suite("soter rand: NIST STS (make take some time...)");
+	testsuite_enter_suite("soter rand: api");
+	testsuite_run_test(test_api);
 
+	testsuite_enter_suite("soter rand: NIST STS (make take some time...)");
 	testsuite_run_test(test_rand_with_nist);
 }
