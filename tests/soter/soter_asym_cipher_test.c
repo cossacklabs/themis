@@ -182,6 +182,13 @@ void test_api(void)
 	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_init(&ctx, (soter_asym_cipher_padding_t)0xffffffff), "soter_asym_cipher_init: invalid algorithm type");
 	testsuite_fail_unless(NULL == soter_asym_cipher_create((soter_asym_cipher_padding_t)0xffffffff), "soter_asym_cipher_create: invalid algorithm type");
 
+	res = soter_asym_cipher_init(&ctx, SOTER_ASYM_CIPHER_OAEP);
+	if (HERMES_SUCCESS != res)
+	{
+		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_cipher_init fail");
+		return;
+	}
+
 	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_gen_key(NULL), "soter_asym_cipher_gen_key: invalid context");
 
 	res = soter_asym_cipher_gen_key(&ctx);
@@ -201,6 +208,7 @@ void test_api(void)
 	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_encrypt(NULL, test_data, sizeof(test_data), encrypted_data, &encrypted_data_length), "soter_asym_cipher_encrypt: invalid context");
 	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_encrypt(&ctx, NULL, sizeof(test_data), encrypted_data, &encrypted_data_length), "soter_asym_cipher_encrypt: invalid input data");
 	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_encrypt(&ctx, test_data, 0, encrypted_data, &encrypted_data_length), "soter_asym_cipher_encrypt: invalid input data length");
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_encrypt(&ctx, test_data, sizeof(test_data), encrypted_data, NULL), "soter_asym_cipher_encrypt: invalid output data length");
 
 	encrypted_data_length = 0;
 	res = soter_asym_cipher_encrypt(&ctx, test_data, sizeof(test_data), NULL, &encrypted_data_length);
@@ -220,14 +228,15 @@ void test_api(void)
 	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_decrypt(NULL, encrypted_data, encrypted_data_length, decrypted_data, &decrypted_data_length), "soter_asym_cipher_decrypt: invalid context");
 	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_decrypt(&ctx, NULL, encrypted_data_length, decrypted_data, &decrypted_data_length), "soter_asym_cipher_decrypt: invalid input data");
 	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_decrypt(&ctx, encrypted_data, 0, decrypted_data, &decrypted_data_length), "soter_asym_cipher_decrypt: invalid input data length");
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_decrypt(&ctx, encrypted_data, encrypted_data_length, decrypted_data, NULL), "soter_asym_cipher_decrypt: invalid output data length");
 
 	decrypted_data_length = 0;
 	res = soter_asym_cipher_decrypt(&ctx, encrypted_data, encrypted_data_length, NULL, &decrypted_data_length);
-	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (decrypted_data_length == sizeof(test_data)), "soter_asym_cipher_decrypt: get output size (NULL out buffer)");
+	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (decrypted_data_length > 0), "soter_asym_cipher_decrypt: get output size (NULL out buffer)");
 
-	decrypted_data_length--;
+	decrypted_data_length = 0;
 	res = soter_asym_cipher_encrypt(&ctx, encrypted_data, encrypted_data_length, decrypted_data, &decrypted_data_length);
-	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (decrypted_data_length == sizeof(test_data)), "soter_asym_cipher_decrypt: get output size (small out buffer)");
+	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (decrypted_data_length > 0), "soter_asym_cipher_decrypt: get output size (small out buffer)");
 
 	res = soter_asym_cipher_decrypt(&ctx, encrypted_data, encrypted_data_length, decrypted_data, &decrypted_data_length);
 	if (HERMES_SUCCESS != res)
@@ -236,9 +245,10 @@ void test_api(void)
 		return;
 	}
 
-	testsuite_fail_if(memcmp(test_data, decrypted_data, sizeof(test_data)), "soter_asym_cipher: normal value");
+	testsuite_fail_if((sizeof(test_data) != decrypted_data_length) || (memcmp(test_data, decrypted_data, sizeof(test_data))), "soter_asym_cipher: normal value");
 
 	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_export_key(NULL, key_data, &key_data_length, false), "soter_asym_cipher_export_key: invalid context");
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_export_key(&ctx, key_data, NULL, false), "soter_asym_cipher_export_key: invalid output data length");
 
 	key_data_length = 0;
 	res = soter_asym_cipher_export_key(&ctx, NULL, &key_data_length, false);
@@ -263,6 +273,15 @@ void test_api(void)
 	if (HERMES_SUCCESS != res)
 	{
 		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_cipher_import_key fail");
+		return;
+	}
+
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_cleanup(NULL), "soter_asym_cipher_cleanup: invalid context");
+
+	res = soter_asym_cipher_cleanup(&ctx);
+	if (HERMES_SUCCESS != res)
+	{
+		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_cipher_cleanup fail");
 		return;
 	}
 

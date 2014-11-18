@@ -16,6 +16,11 @@ soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher, soter_as
 {
 	EVP_PKEY *pkey;
 
+	if ((!asym_cipher) || (SOTER_ASYM_CIPHER_OAEP != pad))
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
 	pkey = EVP_PKEY_new();
 	if (!pkey)
 	{
@@ -41,6 +46,11 @@ soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher, soter_as
 
 soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher)
 {
+	if (!asym_cipher)
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
 	if (asym_cipher->pkey_ctx)
 	{
 		EVP_PKEY_CTX_free(asym_cipher->pkey_ctx);
@@ -52,7 +62,14 @@ soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher)
 soter_status_t soter_asym_cipher_gen_key(soter_asym_cipher_t* asym_cipher)
 {
 	BIGNUM *pub_exp;
-	EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher->pkey_ctx);
+	EVP_PKEY *pkey;
+
+	if (!asym_cipher)
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher->pkey_ctx);
 
 	if (!pkey)
 	{
@@ -106,7 +123,15 @@ soter_status_t soter_asym_cipher_gen_key(soter_asym_cipher_t* asym_cipher)
 
 soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const void* plain_data, size_t plain_data_length, void* cipher_data, size_t* cipher_data_length)
 {
-	EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher->pkey_ctx);
+	EVP_PKEY *pkey;
+	size_t output_length;
+
+	if ((!asym_cipher) || (!plain_data) || (0 == plain_data_length) || (!cipher_data_length))
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher->pkey_ctx);
 
 	if (!pkey)
 	{
@@ -132,9 +157,30 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
 		return HERMES_FAIL;
 	}
 
+	/* We will check the size of the output buffer first */
+	if (EVP_PKEY_encrypt(asym_cipher->pkey_ctx, NULL, &output_length, (const unsigned char *)plain_data, plain_data_length))
+	{
+		if (output_length > *cipher_data_length)
+		{
+			*cipher_data_length = output_length;
+			return HERMES_BUFFER_TOO_SMALL;
+		}
+	}
+	else
+	{
+		return HERMES_FAIL;
+	}
+
 	if (EVP_PKEY_encrypt(asym_cipher->pkey_ctx, (unsigned char *)cipher_data, cipher_data_length, (const unsigned char *)plain_data, plain_data_length))
 	{
-		return HERMES_SUCCESS;
+		if (cipher_data)
+		{
+			return HERMES_SUCCESS;
+		}
+		else
+		{
+			return HERMES_BUFFER_TOO_SMALL;
+		}
 	}
 	else
 	{
@@ -144,7 +190,15 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
 
 soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const void* cipher_data, size_t cipher_data_length, void* plain_data, size_t* plain_data_length)
 {
-	EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher->pkey_ctx);
+	EVP_PKEY *pkey;
+	size_t output_length;
+
+	if ((!asym_cipher) || (!cipher_data) || (0 == cipher_data_length) || (!plain_data_length))
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher->pkey_ctx);
 
 	if (!pkey)
 	{
@@ -170,9 +224,30 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
 		return HERMES_FAIL;
 	}
 
+	/* We will check the size of the output buffer first */
+	if (EVP_PKEY_decrypt(asym_cipher->pkey_ctx, NULL, &output_length, (const unsigned char *)cipher_data, cipher_data_length))
+	{
+		if (output_length > *plain_data_length)
+		{
+			*plain_data_length = output_length;
+			return HERMES_BUFFER_TOO_SMALL;
+		}
+	}
+	else
+	{
+		return HERMES_FAIL;
+	}
+
 	if (EVP_PKEY_decrypt(asym_cipher->pkey_ctx, (unsigned char *)plain_data, plain_data_length, (const unsigned char *)cipher_data, cipher_data_length))
 	{
-		return HERMES_SUCCESS;
+		if (plain_data)
+		{
+			return HERMES_SUCCESS;
+		}
+		else
+		{
+			return HERMES_BUFFER_TOO_SMALL;
+		}
 	}
 	else
 	{
@@ -224,7 +299,14 @@ soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher)
 
 soter_status_t soter_asym_cipher_export_key(soter_asym_cipher_t* asym_cipher_ctx, void* key, size_t* key_length, bool isprivate)
 {
-	EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher_ctx->pkey_ctx);
+	EVP_PKEY *pkey;
+
+	if (!asym_cipher_ctx)
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher_ctx->pkey_ctx);
 
 	if (!pkey)
 	{
@@ -250,7 +332,14 @@ soter_status_t soter_asym_cipher_export_key(soter_asym_cipher_t* asym_cipher_ctx
 soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx, const void* key, size_t key_length)
 {
 	const soter_container_hdr_t *hdr = key;
-	EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher_ctx->pkey_ctx);
+	EVP_PKEY *pkey;
+
+	if (!asym_cipher_ctx)
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher_ctx->pkey_ctx);
 
 	if (!pkey)
 	{
@@ -263,7 +352,11 @@ soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx
 		return HERMES_INVALID_PARAMETER;
 	}
 
-	/* TODO: what if key_length < sizeof(soter_container_hdr_t) -> buffer overflow! */
+	if ((!key) || (key_length < sizeof(soter_container_hdr_t)))
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
 	switch (hdr->tag[0])
 	{
 	case 'R':

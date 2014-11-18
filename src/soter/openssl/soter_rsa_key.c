@@ -103,6 +103,11 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
 	size_t output_length;
 	uint32_t *pub_exp;
 
+	if (!key_length)
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
 	if (EVP_PKEY_RSA != EVP_PKEY_id(pkey))
 	{
 		return HERMES_INVALID_PARAMETER;
@@ -122,8 +127,9 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
 	}
 
 	output_length = rsa_pub_key_size(rsa_mod_size);
-	if (output_length > *key_length)
+	if ((!key) || (output_length > *key_length))
 	{
+		*key_length = output_length;
 		res = HERMES_BUFFER_TOO_SMALL;
 		goto err;
 	}
@@ -172,6 +178,11 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 	uint32_t *pub_exp;
 	unsigned char *curr_bn = (unsigned char *)(key + 1);
 
+	if (!key_length)
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
 	if (EVP_PKEY_RSA != EVP_PKEY_id(pkey))
 	{
 		return HERMES_INVALID_PARAMETER;
@@ -191,8 +202,9 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 	}
 
 	output_length = rsa_priv_key_size(rsa_mod_size);
-	if (output_length > *key_length)
+	if ((!key) || (output_length > *key_length))
 	{
+		*key_length = output_length;
 		res = HERMES_BUFFER_TOO_SMALL;
 		goto err;
 	}
