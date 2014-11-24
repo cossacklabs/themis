@@ -60,9 +60,9 @@ void testsuite_enter_suite(const char *suite_name)
 	sput_enter_suite(suite_name);
 }
 
-void testsuite_run_test(void (*test_func)(void))
+void testsuite_run_test_in_file(void (*test_func)(void), const char *test_func_name, const char *test_file_name)
 {
-	sput_run_test(test_func);
+	sput_run_test(test_func, test_func_name, test_file_name);
 }
 
 void testsuite_finish_testing(void)
@@ -70,14 +70,14 @@ void testsuite_finish_testing(void)
 	sput_finish_testing();
 }
 
-void testsuite_fail_if(bool condition, const char *name)
+void testsuite_fail_if_on_line(bool condition, const char *name, unsigned long line)
 {
-	sput_fail_if(condition, name);
+	sput_fail_if(condition, name, line);
 }
 
-void testsuite_fail_unless(bool condition, const char *name)
+void testsuite_fail_unless_on_line(bool condition, const char *name, unsigned long line)
 {
-	sput_fail_unless(condition, name);
+	sput_fail_unless(condition, name, line);
 }
 
 int testsuite_get_return_value(void)

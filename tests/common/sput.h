@@ -92,6 +92,7 @@ extern "C" {
         struct sput_test
         {
             const char   *name;
+            const char	 *file;
             unsigned long nr;
         } test;
 
@@ -148,10 +149,11 @@ extern "C" {
                 "[%lu:%lu]  %s:#%lu  \"%s\"  FAIL\n"                       \
                 "!    Type:      %s\n"                                     \
                 "!    Condition: %s\n"                                     \
+                "!    File:      %s\n"                                     \
                 "!    Line:      %lu\n",                                   \
                 __sput.suite.nr, __sput.suite.checks, __sput.test.name,    \
                 __sput.test.nr, __sput.check.name, __sput.check.type,      \
-                __sput.check.cond, __sput.check.line);                     \
+                __sput.check.cond, __sput.test.file, __sput.check.line);   \
     }
 
 
@@ -251,14 +253,14 @@ extern "C" {
     } while (0)
 
 
-#define sput_fail_if(_cond, _name)                                         \
+#define sput_fail_if(_cond, _name, _line_num)                                         \
     do {                                                                   \
         _sput_die_unless_initialized();                                    \
         _sput_die_unless_suite_set();                                      \
         _sput_die_unless_test_set();                                       \
         __sput.check.name = _name != NULL ?                                \
                             _name : SPUT_DEFAULT_CHECK_NAME;               \
-        __sput.check.line = __LINE__;                                      \
+        __sput.check.line = _line_num;                                      \
         __sput.check.cond = #_cond;                                        \
         __sput.check.type = "fail-if";                                     \
         __sput.test.nr++;                                                  \
@@ -274,14 +276,14 @@ extern "C" {
     } while (0)
 
 
-#define sput_fail_unless(_cond, _name)                                     \
+#define sput_fail_unless(_cond, _name, _line_num)                                     \
     do {                                                                   \
         _sput_die_unless_initialized();                                    \
         _sput_die_unless_suite_set();                                      \
         _sput_die_unless_test_set();                                       \
         __sput.check.name = _name != NULL ?                                \
                             _name : SPUT_DEFAULT_CHECK_NAME;               \
-        __sput.check.line = __LINE__;                                      \
+        __sput.check.line = _line_num;                                      \
         __sput.check.cond = #_cond;                                        \
         __sput.check.type = "fail-unless";                                 \
         __sput.test.nr++;                                                  \
@@ -297,12 +299,13 @@ extern "C" {
     } while (0)
 
 
-#define sput_run_test(_func)                                               \
+#define sput_run_test(_func, _func_name, _file_name)                                               \
     do {                                                                   \
         _sput_die_unless_initialized();                                    \
         _sput_die_unless_suite_set();                                      \
         memset(&__sput.test, 0, sizeof(__sput.test));                      \
-        __sput.test.name = #_func;                                         \
+        __sput.test.name = _func_name;                                         \
+        __sput.test.file = _file_name;                                         \
         _func();                                                           \
     } while (0)
 
