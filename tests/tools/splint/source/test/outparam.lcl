@@ -1,0 +1,7 @@
+typedef struct _st { int a; int b; } *st;
+
+void f(out int *a, int *b) { modifies *a; }
+void h(out st s, out st t) { modifies *t; }
+int g (void) { } 
+
+	

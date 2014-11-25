@@ -1,0 +1,120 @@
+
+erik.c: (in function main)
+erik.c:6:4: Return value (type int) ignored: scanf("%lf %f", ...
+
+Finished LCLint checking --- 1 code error found, as expected
+
+boolcomp.c: (in function f)
+boolcomp.c:5:7: Use of == with bool variables (risks inconsistency because of
+                   multiple true values): a == b
+boolcomp.c:9:13: Use of == with bool variables (risks inconsistency because of
+                    multiple true values): a == b
+boolcomp.c:11:6: Use of != with bool variables (risks inconsistency because of
+                    multiple true values): a != b
+boolcomp.c:16:6: Use of == with bool variables (risks inconsistency because of
+                    multiple true values): b == TRUE
+boolcomp.c:20:2: Path with no return in function declared to return int
+
+Finished LCLint checking --- 5 code errors found, as expected
+
+Finished LCLint checking --- no code errors found
+
+addassign.c: (in function hash)
+addassign.c:7:7: Incompatible types for += (int, char): h += *name++
+
+Finished LCLint checking --- 1 code error found, as expected
+
+toralf.c: (in function func1)
+toralf.c:14:3: Incompatible types for += (char *, char): s += 'c'
+toralf.c:15:3: Variable i1 used before definition
+toralf.c:15:9: Variable f used before definition
+toralf.c: (in function func2)
+toralf.c:23:8: Variable i2 used before definition
+toralf.c: (in function main)
+toralf.c:28:10: Null storage passed as non-null param: func1 (NULL)
+
+Finished LCLint checking --- 5 code errors found, as expected
+
+Finished LCLint checking --- no code errors found
+
+Finished LCLint checking --- no code errors found
+
+arrayparam.c:1:12: Function parameter x is incomplete type (inner array must
+                      have bounds): int [2] []
+arrayparam.c:11:12: Function parameter x is incomplete type (inner array must
+                       have bounds): int [] []
+arrayparam.c:16:12: Function parameter x is incomplete type (inner array must
+                       have bounds): int [] [] [2]
+arrayparam.c:21:12: Function parameter x is incomplete type (inner array must
+                       have bounds): int [2] [] [2]
+arrayparam.c:26:12: Function parameter x declared as manifest array (size
+                       constant is meaningless)
+
+Finished LCLint checking --- 5 code errors found, as expected
+
+Finished LCLint checking --- no code errors found
+
+Finished LCLint checking --- no code errors found
+
+obviousloop.c: (in function f)
+obviousloop.c:14:3: Unreachable code: x = 12
+obviousloop.c: (in function f1)
+obviousloop.c:36:2: Path with no return in function declared to return int
+obviousloop.c: (in function f1b)
+obviousloop.c:59:3: Unreachable code: x = 12
+obviousloop.c: (in function f2)
+obviousloop.c:75:3: Unreachable code: x = 12
+
+Finished LCLint checking --- 4 code errors found, as expected
+
+bitops.c: (in function f)
+bitops.c:3:11: Left operand of & is not unsigned value (int): i1 & i2
+bitops.c:3:11: Variable x initialized to type unsigned int, expects int:
+                  i1 & i2
+bitops.c:4:21: Right operand of & is not unsigned value (int): u1 & i2
+bitops.c:5:13: Left operand of & is not unsigned value (int): i1 & i2
+bitops.c:5:13: Variable s initialized to type unsigned int, expects short int:
+                  i1 & i2
+bitops.c:6:14: Variable s2 initialized to type int, expects short int: i1 + i2
+bitops.c:9:7: Left operand of << is not unsigned value (int): i1 << 3
+bitops.c:14:7: Left operand of ^ is not unsigned value (int): i1 ^ u1
+bitops.c:15:12: Right operand of ^ is not unsigned value (int): u1 ^ i1
+bitops.c:5:9: Variable s declared but not used
+bitops.c:6:9: Variable s2 declared but not used
+
+Finished LCLint checking --- 11 code errors found, as expected
+
+bitops.c: (in function f)
+bitops.c:5:13: Variable s initialized to type int, expects short int: i1 & i2
+bitops.c:6:14: Variable s2 initialized to type int, expects short int: i1 + i2
+bitops.c:9:7: Left operand of << is not unsigned value (int): i1 << 3
+bitops.c:5:9: Variable s declared but not used
+bitops.c:6:9: Variable s2 declared but not used
+
+Finished LCLint checking --- 5 code errors found, as expected
+
+isalpha.c: (in function f)
+isalpha.c:5:19: Function isalpha expects arg 1 to be int gets char: c
+
+Finished LCLint checking --- 1 code error found, as expected
+
+isalpha.c: (in function f)
+isalpha.c:5:19: Function isalpha expects arg 1 to be int gets char: c
+
+Finished LCLint checking --- 1 code error found, as expected
+
+Finished LCLint checking --- no code errors found
+
+popik.c:7:3: Variable has unknown (implicitly int) type: dummy[0]
+popik.c:7:3: Variable has unknown (implicitly int) type: dummy[1]
+popik.c:7:3: Variable has unknown (implicitly int) type: dummy[2]
+popik.c:7:3: Variable has unknown (implicitly int) type: dummy[3]
+popik.c:24:3: Variable has unknown (implicitly int) type: dummy3[0]
+popik.c:24:3: Variable has unknown (implicitly int) type: dummy3[1]
+popik.c:24:3: Variable has unknown (implicitly int) type: dummy3[2]
+popik.c:24:3: Variable has unknown (implicitly int) type: dummy3[3]
+popik.c:1:14: File static variable dummy declared but not used
+popik.c:10:24: File static variable dummy2 declared but not used
+popik.c:18:14: File static variable dummy3 declared but not used
+
+Finished LCLint checking --- 11 code errors found, as expected

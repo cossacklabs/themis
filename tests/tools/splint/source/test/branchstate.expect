@@ -1,0 +1,6 @@
+
+branchstate.c: (in function foo)
+branchstate.c:7:37: Right operand of && is non-boolean (char):
+                       (p != (char *)0) && (*p)
+
+Finished LCLint checking --- 1 code error found, as expected

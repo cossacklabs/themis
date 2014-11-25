@@ -1,0 +1,27 @@
+
+args.c: (in function sumn)
+args.c:14:7: Assignment of char * to int: y = va_arg(args, char *)
+args.c:15:19: First argument to va_arg is not a va_list (type void *): yaba
+args.c: (in function test)
+args.c:22:7: Function sumn called with 0 args, expects at least 1
+args.c:24:12: Function sumn expects arg 1 to be int gets char *: s
+args.c:27:7: Function test called with 3 args, expects 2
+args.c:37:5: Function severalargs declared with 3 args, specified with 2
+   args.lcl:1: Specification of severalargs
+args.c:37:23: Parameter 1, c, of function severalargs has inconsistent type:
+                 declared char, specified int
+   args.lcl:1: Specification of severalargs
+args.c:37:30: Parameter 2, y, of function severalargs has inconsistent type:
+                 declared int, specified char *
+   args.lcl:1: Specification of severalargs
+args.c:43:5: Function severalargs2 declared with 1 arg, specified with 2
+   args.lcl:2: Specification of severalargs2
+args.c:48:5: Function voidargs declared with 1 arg, specified with 0
+   args.lcl:7: Specification of voidargs
+args.c:59:33: Parameter 3, f, of function many1 has inconsistent type:
+                 declared float, specified ...
+   args.lcl:4: Specification of many1
+args.c:73:5: Function many3 declared with 1 arg, specified with 3
+   args.lcl:6: Specification of many3
+
+Finished checking --- 12 code warnings, as expected

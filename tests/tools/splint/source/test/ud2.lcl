@@ -1,0 +1,3 @@
+void f1(out char **x) { modifies *x; }
+void f2(char **x) { modifies *x; }
+void f3(out int *y) { modifies *y; }

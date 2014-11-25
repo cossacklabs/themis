@@ -1,0 +1,126 @@
+
+Finished checking --- no warnings
+
+alias.c: (in function f)
+alias.c:11:3: Possible undocumented modification of *a through alias *x: *x = 3
+alias.c:14:3: Possible undocumented modification of *a through alias *y: *y = 4
+alias.c:16:3: Undocumented modification of globp: globp = a
+alias.c:17:25: Function returns with global variable globp aliasing parameter a
+alias.c:21:7: Undocumented modification of globp: globp = z
+alias.c:21:15: Variable z used before definition
+alias.c:25:3: Undocumented modification of *globp: *globp = 4
+alias.c:25:3: Possible undocumented modification of *a through alias *globp:
+                 *globp = 4
+alias.c:28:3: Possible undocumented modification of *globp through alias *x:
+                 *x = 7
+alias.c:28:3: Possible undocumented modification of *a through alias *x: *x = 7
+alias.c:31:3: Possible undocumented modification of glob through alias *x:
+                 *x = 4
+alias.c:38:3: Possible undocumented modification of **c through alias *x:
+                 *x = 4
+alias.c:40:3: Possible undocumented modification of **c through alias *a:
+                 *a = 4
+alias.c:41:3: Undocumented modification of *globp: *globp = 3
+alias.c:41:3: Possible undocumented modification of *a through alias *globp:
+                 *globp = 3
+alias.c:42:12: Function returns with global variable globp aliasing parameter a
+alias.c: (in function h)
+alias.c:49:3: Undocumented modification of a possible from call to mut_mod:
+                 mut_mod(a)
+alias.c:51:3: Undocumented modification of b possible from call to mut_mod
+                 (through alias a): mut_mod(a)
+alias.c:55:12: Owned storage b not released before return
+   alias.c:52:3: Storage b becomes owned
+
+Finished checking --- 19 code warnings, as expected
+
+alias2.c: (in function f)
+alias2.c:17:3: Variable lx used before definition
+alias2.c:20:7: Possible undocumented modification of *a through alias *lx:
+                  *lx = 4
+alias2.c:29:7: Possible undocumented modification of *a through alias *x:
+                  *x = 3
+alias2.c:34:7: Possible undocumented modification of **c through alias *x:
+                  *x = 3
+alias2.c:38:3: Possible undocumented modification of *a through alias *x:
+                  *x = 4
+alias2.c:38:3: Possible undocumented modification of **c through alias *x:
+                  *x = 4
+alias2.c:41:8: Undocumented modification of **c: **c = b
+alias2.c:43:7: Possible undocumented modification of glob through alias *y:
+                  *y = 3
+alias2.c:43:7: Possible undocumented modification of *globp through alias *y:
+                  *y = 3
+alias2.c:44:7: Undocumented modification of globp: globp = a
+alias2.c:53:3: Possible undocumented modification of glob through alias *a:
+                  *a = 3
+alias2.c:53:3: Undocumented modification of *a: *a = 3
+alias2.c:54:3: Possible undocumented modification of *globp through alias *z:
+                  *z = 6
+alias2.c:54:3: Possible undocumented modification of *a through alias *z:
+                  *z = 6
+alias2.c:55:3: Undocumented modification of *globp: *globp = 5
+alias2.c:55:3: Possible undocumented modification of *a through alias *globp:
+                  *globp = 5
+alias2.c:56:12: Function returns with global variable globp aliasing parameter
+                   a
+
+Finished checking --- 17 code warnings, as expected
+
+alias3.c: (in function model)
+alias3.c:16:3: Undocumented modification of gst.a: gst.a = 3
+alias3.c:17:3: Undocumented modification of gu->a: gu->a = 5
+alias3.c: (in function f)
+alias3.c:38:3: Possible undocumented modification of ia[3] through alias *ip:
+                  *ip = 7
+alias3.c:42:3: Possible undocumented modification of ia[] through alias *ip:
+                  *ip = 8
+alias3.c:44:3: Undocumented modification of ia[6] possible from call to model:
+                  model(ia)
+alias3.c:46:3: Undocumented modification of ia[6] possible from call to model
+                  (through alias ip[6]): model(ip)
+alias3.c:49:3: Undocumented modification of *(s1.b): *(s1.b) = 7
+alias3.c:52:3: Undocumented modification of *(s1.b) possible from call to modst
+                  (through alias *(sl.b)): modst(sl)
+alias3.c:56:3: Undocumented modification of *(s1.b): *(s1.b) = 3
+alias3.c:57:3: Possible undocumented modification of *(s1.b) through alias *ip:
+                  *ip = 6
+alias3.c:58:3: Possible undocumented modification of *(s1.b) through alias
+                  *(sl.b): *(sl.b) = 3
+alias3.c:61:3: Undocumented modification of *u1 possible from call to modu
+                  (through alias *ul): modu(ul)
+alias3.c:62:3: Possible undocumented modification of u1->a through alias ul->a:
+                  ul->a = 3
+alias3.c:65:3: Possible undocumented modification of *(u1->s.b) through alias
+                  *(sl.b): *(sl.b) = 6
+
+Finished checking --- 14 code warnings, as expected
+
+Finished checking --- no warnings
+
+alias4.c: (in function f)
+alias4.c:15:10: Function may return reference to parameter a through alias c: c
+alias4.c:15:10: Function may return reference to parameter b through alias c: c
+alias4.c: (in function h)
+alias4.c:26:12: Function returns reference to global glob: &glob
+alias4.c:28:12: Function returns reference to global globp: globp
+alias4.c:30:12: Function returns reference to global globs: (globs.field)
+alias4.c:32:12: Function returns reference to global globs: (&(globs.val))
+
+Finished checking --- 6 code warnings, as expected
+
+alias5.c: (in function incx1)
+alias5.c:13:3: Possible undocumented modification of p->x through alias p2->x:
+                  p2->x++
+alias5.c: (in function incx2)
+alias5.c:22:2: Fresh storage p2 not released before return
+   alias5.c:20:3: Fresh storage p2 created
+alias5.c: (in function incx3)
+alias5.c:27:3: Only storage p2->x (type int *) not released before assignment:
+                  p2->x = p->x
+alias5.c:28:3: Possible undocumented modification of *(p->x) through alias
+                  *(p2->x): *(p2->x) = 3
+alias5.c:30:2: Storage p->x reachable from parameter is kept (should be only)
+   alias5.c:27:3: Storage p->x becomes kept
+
+Finished checking --- 5 code warnings, as expected

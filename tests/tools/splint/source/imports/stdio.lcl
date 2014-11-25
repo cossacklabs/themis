@@ -1,0 +1,258 @@
+/*
+** stdio.lcl
+**
+** based on /usr/include/stdio.h on red-cross
+*/
+
+imports <stdlib> ;
+
+/*
+** we need to allow casts to and from these types...
+** they should be exposed, but unknown type.
+*/
+
+immutable type FILE;
+
+typedef void *va_list;
+typedef void *fpos_t;
+
+FILE *stdin;
+FILE *stdout;
+FILE *stderr;
+
+constant int EOF ;
+
+| int : char | getc (FILE *stream )
+{
+   ensures true;
+}
+
+| int : char | getchar (void)
+{
+   ensures true;
+}
+
+| int : void | putc (| int : char | c, FILE *stream)
+{
+   ensures true;
+}
+
+int putchar (|int : char| c)
+{
+   ensures true;
+}
+
+| int : bool | feof (FILE *stream)
+{
+   ensures true;
+}
+
+| int : bool | ferror (FILE *stream )
+{
+   ensures true;
+}
+
+int fileno (FILE *stream)
+{
+   ensures true;
+}
+
+int _filbuf (FILE *p)
+{
+   ensures true;
+}
+
+int _flsbuf (unsigned char x, FILE *p)
+{
+   ensures true;
+}
+
+void clearerr (FILE *stream)
+{
+   ensures true;
+}
+ 
+| int : void | fclose (FILE *stream )
+{
+   ensures true;
+}
+
+FILE * fdopen (int filedes, char *ttype)
+{
+   ensures true;
+}
+
+| int : void | fflush (FILE *stream )
+{
+   ensures true;
+}
+
+| int : char | fgetc (FILE *stream )
+{
+   ensures true;
+}
+
+int fgetpos (FILE *stream, fpos_t *pos )
+{
+   ensures true;
+}
+
+char *fgets (char *s, int n, FILE *stream )
+{
+   ensures true;
+}
+
+
+FILE *fopen (char *filename, char *ttype )
+{
+   ensures true;
+}
+
+printflike
+| int : void | fprintf (FILE *stream, char *format, ...)
+{
+   ensures true;
+}
+
+printflike
+| int : void | sprintf (FILE *stream, char *format, ...)
+{
+   ensures true;
+}
+
+| int : void | fputc (| int : char | c, FILE *stream )
+{
+   ensures true;
+}
+
+| int : void | fputs( char *s, FILE *stream )
+{
+   ensures true;
+}
+
+size_t fread (void *ptr, size_t size,
+	      size_t nitems, FILE *stream )
+{
+   ensures true;
+}
+ 
+FILE *freopen (char *filename, char *ttype,
+	       FILE *stream)
+{
+   ensures true;
+}
+
+scanflike
+int fscanf (FILE *stream, char *format, ... )
+{
+   ensures true;
+}
+
+| int : void | fseek (FILE *stream, long offset, int ptrname)
+{
+   ensures true;
+}
+
+int fsetpos (FILE *stream, fpos_t *pos)
+{
+   ensures true;
+}
+
+long ftell (FILE *stream)
+{
+   ensures true;
+}
+
+size_t fwrite (void *ptr, size_t size,
+	       size_t nitems, FILE *stream)
+{
+   ensures true;
+}
+
+char *gets (char *s)
+{
+   ensures true;
+}
+ 
+void perror (char *s)
+{
+   ensures true;
+}
+
+FILE  *popen (char *command, char *ttype)
+{
+   ensures true;
+}
+
+| int : void | ungetc(char c, FILE *stream)
+{
+   ensures true;
+}
+
+printflike
+| int : void | printf (char *format, ...)
+{
+   ensures true;
+}
+ 
+| int : void | puts (char *s)
+{
+   ensures true;
+}
+ 
+| int : bool | remove (char *filename)
+{
+   ensures true;
+}
+
+| int : bool | rename (char *from, char *to)
+{
+   ensures true;
+}
+
+void rewind (FILE *stream)
+{
+   ensures true;
+}
+
+scanflike
+| int : void | scanf (char *format, ...)
+{
+   ensures true;
+}
+ 
+void setbuf (FILE *stream, char *buf)
+{
+   ensures true;
+}
+
+int setvbuf (FILE *stream, char *buf,
+	     int ttype, size_t size )
+{
+   ensures true;
+}
+
+scanflike
+| int : void | sscanf (char *s, char *format, ...)
+{
+   ensures true;
+}
+
+FILE *tmpfile( void )
+{
+   ensures true;
+}
+ 
+char *tmpnam (char *s)
+{
+   ensures true;
+}
+
+
+
+
+
+
+
+
+

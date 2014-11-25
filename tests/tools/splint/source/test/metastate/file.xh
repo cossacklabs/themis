@@ -1,0 +1,11 @@
+extern int fclose (/*@open@*/ FILE *stream) 
+   /*@ensures closed stream@*/ ;
+
+extern /*@open@*/ FILE *fopen (char *filename, char *mode) ;
+
+extern /*@open@*/ FILE *freopen (char *filename, char *mode, /*@closed@*/ FILE
+*stream) /*@ensures open stream@*/ ;
+
+extern /*@null@*/ char *
+  fgets (/*@returned@*/ /*@out@*/ char *s, int n, /*@open@*/ FILE *stream)
+  /*@modifies fileSystem, *s, *stream, errno@*/ ;

@@ -1,0 +1,543 @@
+
+Source files are .c, .h and .lcl files.  If there is no suffix,
+   Splint will look for <file>.c and <file>.lcl.
+
+Use splint -help <topic or flag name> for more information
+
+Topics:
+
+   annotations (describes source-code annotations)
+   comments (describes control comments)
+   flags (describes flag categories)
+   flags <category> (describes flags in category)
+   flags all (short description of all flags)
+   flags alpha (list all flags alphabetically)
+   flags full (full description of all flags)
+   mail (information on mailing lists)
+   modes (show mode settings)
+   parseerrors (help on handling parser errors)
+   prefixcodes (character codes in namespace prefixes)
+   references (sources for more information)
+   vars (environment variables)
+   version (information on compilation, maintainer)
+
+
+Source files are .c, .h and .lcl files.  If there is no suffix,
+   Splint will look for <file>.c and <file>.lcl.
+
+Use splint -help <topic or flag name> for more information
+
+Topics:
+
+   annotations (describes source-code annotations)
+   comments (describes control comments)
+   flags (describes flag categories)
+   flags <category> (describes flags in category)
+   flags all (short description of all flags)
+   flags alpha (list all flags alphabetically)
+   flags full (full description of all flags)
+   mail (information on mailing lists)
+   modes (show mode settings)
+   parseerrors (help on handling parser errors)
+   prefixcodes (character codes in namespace prefixes)
+   references (sources for more information)
+   vars (environment variables)
+   version (information on compilation, maintainer)
+
+
+Command Line: Unrecognized option: -asdf
+  A flag is not recognized or used in an incorrect way (Use -badflag to inhibit
+  warning)
+
+Finished checking --- no code processed
+
+Command Line: Setting +boolint redundant with current value
+Finished checking --- no code processed
+
+   D<initializer>              
+   I<directory>                
+   S<directory>                
+   U<initializer>              
+   abstract                    
+   abstractcompare             
+   accessall                   
+   accessczech                 
+   accessczechoslovak          
+   accessfile                  
+   accessmodule                
+   accessslovak                
+   aliasunique                 
+   allblock                    
+   allempty                    
+   allglobs                    
+   allimponly                  
+   allmacros                   
+   allocmismatch               
+   alwaysexits                 
+   annotationerror             
+   ansi89limits                
+   assignexpose                
+   badflag                     
+   bitwisesigned               
+   boolcompare                 
+   boolfalse                   
+   boolint                     
+   boolops                     
+   booltrue                    
+   booltype                    
+   bounds                      
+   boundscompacterrormessages  
+   boundsread                  
+   boundswrite                 
+   branchstate                 
+   bufferoverflow              
+   bufferoverflowhigh          
+   bugslimit                   
+   casebreak                   
+   caseinsensitivefilenames    
+   castexpose                  
+   castfcnptr                  
+   charindex                   
+   charint                     
+   charintliteral              
+   charunsignedchar            
+   checkedglobalias            
+   checkmodglobalias           
+   checkpost                   
+   checkstrictglobalias        
+   checkstrictglobs            
+   codeimponly                 
+   commentchar                 
+   commenterror                
+   compdef                     
+   compdestroy                 
+   compmempass                 
+   constmacros                 
+   constprefix                 
+   constprefixexclude          
+   constuse                    
+   continuecomment             
+   controlnestdepth            
+   cppnames                    
+   csv                         
+   csvoverwrite                
+   czech                       
+   czechconsts                 
+   czechfcns                   
+   czechmacros                 
+   czechoslovak                
+   czechoslovakconsts          
+   czechoslovakfcns            
+   czechoslovakmacros          
+   czechoslovaktypes           
+   czechoslovakvars            
+   czechtypes                  
+   czechvars                   
+   debugfcnconstraint          
+   declundef                   
+   deepbreak                   
+   deparrays                   
+   dependenttrans              
+   distinctexternalnames       
+   distinctinternalnames       
+   dump                        
+   duplicatecases              
+   duplicatequals              
+   elseifcomplete              
+   emptyret                    
+   enumindex                   
+   enumint                     
+   enummembers                 
+   enummemuse                  
+   enumprefix                  
+   enumprefixexclude           
+   errorstream                 
+   errorstreamstderr           
+   errorstreamstdout           
+   evalorder                   
+   evalorderuncon              
+   exitarg                     
+   expect                      
+   exportany                   
+   exportconst                 
+   exportfcn                   
+   exportheader                
+   exportheadervar             
+   exportiter                  
+   exportlocal                 
+   exportmacro                 
+   exporttype                  
+   exportvar                   
+   exposetrans                 
+   externalnamecaseinsensitive 
+   externalnamelen             
+   externalprefix              
+   externalprefixexclude       
+   f                           
+   fcnderef                    
+   fcnmacros                   
+   fcnpost                     
+   fcnuse                      
+   fielduse                    
+   fileextensions              
+   filestaticprefix            
+   filestaticprefixexclude     
+   firstcase                   
+   fixedformalarray            
+   floatdouble                 
+   forblock                    
+   forcehints                  
+   forempty                    
+   forloopexec                 
+   formalarray                 
+   formatcode                  
+   formatconst                 
+   formattype                  
+   forwarddecl                 
+   freshtrans                  
+   fullinitblock               
+   globalias                   
+   globalprefix                
+   globalprefixexclude         
+   globimponly                 
+   globnoglobs                 
+   globs                       
+   globsimpmodsnothing         
+   globstate                   
+   globuse                     
+   gnuextensions               
+   grammar                     
+   hasyield                    
+   help                        
+   hints                       
+   htmlfileformat              
+   i                           
+   ifblock                     
+   ifempty                     
+   ignorequals                 
+   ignoresigns                 
+   immediatetrans              
+   impabstract                 
+   impboundsconstraints        
+   impcheckedglobs             
+   impcheckedspecglobs         
+   impcheckedstatics           
+   impcheckedstrictglobs       
+   impcheckedstrictspecglobs   
+   impcheckedstrictstatics     
+   impcheckmodglobs            
+   impcheckmodinternals        
+   impcheckmodspecglobs        
+   impcheckmodstatics          
+   impconj                     
+   implementationoptional      
+   impouts                     
+   imptype                     
+   includenest                 
+   incompletetype              
+   incondefs                   
+   incondefslib                
+   indentspaces                
+   infloops                    
+   infloopsuncon               
+   initallelements             
+   initsize                    
+   internalglobs               
+   internalglobsnoglobs        
+   internalnamecaseinsensitive 
+   internalnamelen             
+   internalnamelookalike       
+   iso99limits                 
+   isolib                      
+   isoreserved                 
+   isoreservedinternal         
+   iterbalance                 
+   iterloopexec                
+   iterprefix                  
+   iterprefixexclude           
+   iteryield                   
+   its4low                     
+   its4moderate                
+   its4mostrisky               
+   its4risky                   
+   its4veryrisky               
+   keep                        
+   keeptrans                   
+   kepttrans                   
+   larchpath                   
+   lclexpect                   
+   lclimportdir                
+   lcs                         
+   legacy                      
+   lh                          
+   libmacros                   
+   likelybool                  
+   likelybounds                
+   likelyboundsread            
+   likelyboundswrite           
+   limit                       
+   linelen                     
+   lintcomments                
+   load                        
+   localprefix                 
+   localprefixexclude          
+   locindentspaces             
+   longint                     
+   longintegral                
+   longsignedintegral          
+   longunsignedintegral        
+   longunsignedunsignedintegral
+   loopexec                    
+   looploopbreak               
+   looploopcontinue            
+   loopswitchbreak             
+   macroassign                 
+   macroconstdecl              
+   macroconstdistance          
+   macrodecl                   
+   macroempty                  
+   macrofcndecl                
+   macromatchname              
+   macroparams                 
+   macroparens                 
+   macroredef                  
+   macroret                    
+   macrostmt                   
+   macrounrecog                
+   macrovarprefix              
+   macrovarprefixexclude       
+   maintype                    
+   matchanyintegral            
+   matchfields                 
+   mayaliasunique              
+   memchecks                   
+   memimp                      
+   memtrans                    
+   messagestream               
+   messagestreamstderr         
+   messagestreamstdout         
+   misplacedsharequal          
+   misscase                    
+   modfilesys                  
+   modglobs                    
+   modglobsnomods              
+   modglobsunchecked           
+   modinternalstrict           
+   modnomods                   
+   modobserver                 
+   modobserveruncon            
+   mods                        
+   modsimpnoglobs              
+   modstrictglobsnomods        
+   moduncon                    
+   modunconnomods              
+   modunspec                   
+   mts                         
+   multithreaded               
+   mustdefine                  
+   mustfree                    
+   mustfreefresh               
+   mustfreeonly                
+   mustmod                     
+   mustnotalias                
+   mutrep                      
+   namechecks                  
+   needspec                    
+   nestcomment                 
+   nestedextern                
+   neverinclude                
+   newdecl                     
+   newreftrans                 
+   nextlinemacros              
+   noaccess                    
+   nocomments                  
+   noeffect                    
+   noeffectuncon               
+   nof                         
+   nolib                       
+   noparams                    
+   nopp                        
+   noret                       
+   null                        
+   nullassign                  
+   nullderef                   
+   nullinit                    
+   nullpass                    
+   nullptrarith                
+   nullret                     
+   nullstate                   
+   nullterminated              
+   numabstract                 
+   numabstractcast             
+   numabstractindex            
+   numabstractlit              
+   numabstractprint            
+   numenummembers              
+   numliteral                  
+   numstructfields             
+   observertrans               
+   obviousloopexec             
+   oldstyle                    
+   onlytrans                   
+   onlyunqglobaltrans          
+   orconstraint                
+   overload                    
+   ownedtrans                  
+   paramimptemp                
+   paramuse                    
+   parenfileformat             
+   partial                     
+   passunknown                 
+   portability                 
+   posixlib                    
+   posixstrictlib              
+   predassign                  
+   predbool                    
+   predboolint                 
+   predboolothers              
+   predboolptr                 
+   preproc                     
+   protoparammatch             
+   protoparamname              
+   protoparamprefix            
+   protoparamprefixexclude     
+   ptrarith                    
+   ptrcompare                  
+   ptrnegate                   
+   quiet                       
+   readonlystrings             
+   readonlytrans               
+   realcompare                 
+   realrelatecompare           
+   redecl                      
+   redef                       
+   redundantconstraints        
+   redundantsharequal          
+   refcounttrans               
+   relaxquals                  
+   relaxtypes                  
+   repeatunrecog               
+   repexpose                   
+   retalias                    
+   retexpose                   
+   retimponly                  
+   retval                      
+   retvalbool                  
+   retvalint                   
+   retvalother                 
+   sefparams                   
+   sefuncon                    
+   shadow                      
+   sharedtrans                 
+   shiftimplementation         
+   shiftnegative               
+   shortint                    
+   showallconjs                
+   showalluses                 
+   showcolumn                  
+   showconstraintlocation      
+   showconstraintparens        
+   showdeephistory             
+   showfunc                    
+   showloadloc                 
+   showscan                    
+   showsourceloc               
+   showsummary                 
+   singleinclude               
+   sizeofformalarray           
+   sizeoftype                  
+   skipisoheaders              
+   skipposixheaders            
+   skipsysheaders              
+   slashslashcomment           
+   slovak                      
+   slovakconsts                
+   slovakfcns                  
+   slovakmacros                
+   slovaktypes                 
+   slovakvars                  
+   specglobimponly             
+   specimponly                 
+   specmacros                  
+   specretimponly              
+   specstructimponly           
+   specundecl                  
+   specundef                   
+   stackref                    
+   statemerge                  
+   statetransfer               
+   staticinittrans             
+   statictrans                 
+   stats                       
+   streamoverwrite             
+   strictbranchstate           
+   strictdestroy               
+   strictlib                   
+   strictops                   
+   strictusereleased           
+   stringliterallen            
+   stringliteralnoroom         
+   stringliteralnoroomfinalnull
+   stringliteralsmaller        
+   stringliteraltoolong        
+   structimponly               
+   supcounts                   
+   superuser                   
+   switchloopbreak             
+   switchswitchbreak           
+   syntax                      
+   sysdirerrors                
+   sysdirexpandmacros          
+   sysdirs                     
+   sysunrecog                  
+   tagprefix                   
+   tagprefixexclude            
+   temptrans                   
+   timedist                    
+   tmpcomments                 
+   tmpdir                      
+   toctou                      
+   topuse                      
+   trytorecover                
+   type                        
+   typeprefix                  
+   typeprefixexclude           
+   typeuse                     
+   uncheckedglobalias          
+   uncheckedmacroprefix        
+   uncheckedmacroprefixexclude 
+   uniondef                    
+   unixlib                     
+   unixstandard                
+   unixstrictlib               
+   unqualifiedinittrans        
+   unqualifiedtrans            
+   unreachable                 
+   unrecog                     
+   unrecogcomments             
+   unrecogdirective            
+   unrecogflagcomments         
+   unsignedcompare             
+   unusedspecial               
+   usedef                      
+   usereleased                 
+   usevarargs                  
+   varuse                      
+   voidabstract                
+   warnflags                   
+   warningstream               
+   warningstreamstderr         
+   warningstreamstdout         
+   warnlintcomments            
+   warnmissingglobs            
+   warnmissingglobsnoglobs     
+   warnposixheaders            
+   warnrc                      
+   warnsysfiles                
+   warnunixlib                 
+   warnuse                     
+   whichlib                    
+   whileblock                  
+   whileempty                  
+   whileloopexec               
+   zerobool                    

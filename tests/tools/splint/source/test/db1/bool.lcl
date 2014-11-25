@@ -1,0 +1,5 @@
+immutable type bool;
+
+constant bool TRUE;
+constant bool FALSE;
+

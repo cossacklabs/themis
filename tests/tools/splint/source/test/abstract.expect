@@ -1,0 +1,22 @@
+
+commentcmd.c:1:13: Mutable abstract type abst1 declared without pointer
+                      indirection: int (violates assignment semantics)
+commentcmd.c:1:20: Mutable abstract type abst2 declared without pointer
+                      indirection: int (violates assignment semantics)
+commentcmd.c:2:13: Mutable abstract type abst3 declared without pointer
+                      indirection: int (violates assignment semantics)
+commentcmd.c: (in function main)
+commentcmd.c:11:22: Cast to abstract type abst2: (abst2)i
+commentcmd.c:16:22: Cast to abstract type abst1: (abst1)i
+commentcmd.c:17:22: Cast to abstract type abst2: (abst2)i
+commentcmd.c:18:22: Cast to abstract type abst3: (abst3)i
+commentcmd.c:22:22: Cast to abstract type abst1: (abst1)i
+commentcmd.c:24:22: Cast to abstract type abst3: (abst3)i
+commentcmd.c:34:22: Cast to abstract type abst1: (abst1)i
+commentcmd.c:40:22: Cast to abstract type abst1: (abst1)i
+commentcmd.c:41:22: Cast to abstract type abst2: (abst2)i
+commentcmd.c:46:22: Cast to abstract type abst1: (abst1)i
+commentcmd.c:47:22: Cast to abstract type abst2: (abst2)i
+commentcmd.c:48:22: Cast to abstract type abst3: (abst3)i
+
+Finished checking --- 15 code warnings, as expected

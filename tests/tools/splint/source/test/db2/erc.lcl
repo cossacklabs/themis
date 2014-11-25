@@ -1,0 +1,72 @@
+imports eref;
+
+mutable type erc;
+
+erc erc_create(void) 
+{
+  /* ensures fresh(result) /\ result' = { }; */
+}
+
+void erc_clear(erc c) 
+{
+  /* requires c^.activeIters = 0; */
+  modifies c;
+  /* ensures c' = { }; */
+}
+
+void erc_insert(erc c, eref er) 
+{
+  /* requires c^.activeIters = 0 /\ er \neq erefNIL; */
+  modifies c;
+  /* ensures c' = [insert(er, c^.val), 0]; */
+}
+
+| bool : void | erc_delete(erc c, eref er) 
+{
+  /* requires c^.activeIters = 0; */
+  modifies c;
+  /* ensures result = er \in c^.val
+     /\ c' = [delete(er, c^.val), 0]; */
+}
+
+bool erc_member(eref er, erc c) 
+{
+  /* ensures result = er \in c^.val; */
+}
+
+eref erc_choose(erc c) 
+{
+  /* requires size(c^.val) \neq 0; */
+  /* ensures result \in c^.val; */
+}
+
+int erc_size(erc c) 
+{
+  /* ensures result = size(c^.val); */
+}
+
+void erc_join(erc c1, erc c2) 
+{
+  /* requires c1^.activeIters = 0; */
+  modifies c1;
+  /* ensures c1' = [c1^.val \U c2^.val, 0]; */
+}
+
+char *erc_sprint(erc c) 
+{
+  /* ensures isSprint(result[]', c^) /\ fresh(result[]); */
+}
+
+void erc_final(erc c) 
+{
+  modifies c;
+  /* ensures trashed(c); */
+}
+
+void erc_initMod(void) 
+{
+  modifies internalState;
+  ensures true;
+}
+
+iter erc_elements (erc c, yield eref el);  

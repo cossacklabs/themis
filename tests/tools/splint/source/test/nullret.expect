@@ -1,0 +1,9 @@
+
+nullret.c: (in function f1)
+nullret.c:1:22: Null storage returned as non-null: 0
+nullret.c: (in function f3)
+nullret.c:7:22: Null storage returned as non-null: 0
+
+Finished checking --- 2 code warnings, as expected
+
+Finished checking --- no warnings

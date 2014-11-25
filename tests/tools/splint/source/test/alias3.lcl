@@ -1,0 +1,13 @@
+typedef struct s_st { int a; int *b; } st;
+typedef union  s_ut { int a; st s; st *t; int **c; } ut;
+
+st gst;
+ut *gu;
+
+int f (int ia[], st s1, ut *u1) st gst; ut *gu; { } 
+
+void model (int ia[]) st gst; ut *gu; { modifies ia[6]; }
+
+void modst (st s1) { modifies *s1.b; }
+
+void modu (ut *u)  { modifies *u; }

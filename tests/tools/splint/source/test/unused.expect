@@ -1,0 +1,25 @@
+
+unused.c:13:6: Name _inner is in the implementation name space (any identifier
+                  beginning with underscore)
+unused.c:14:2: Name _st is in the implementation name space (any identifier
+                  beginning with underscore)
+unused.c:19:12: File static function f declared but not used
+   unused.c:22:1: Definition of f
+unused.c:16:12: Function undef declared but not defined
+unused.c:16:12: Function undef exported but not declared in header file
+
+Finished checking --- 5 code warnings, as expected
+
+unused.c:13:6: Name _inner is in the implementation name space (any identifier
+                  beginning with underscore)
+unused.c:14:2: Name _st is in the implementation name space (any identifier
+                  beginning with underscore)
+unused.c:19:12: File static function f declared but not used
+   unused.c:22:1: Definition of f
+unused.c:16:12: Function undef declared but not defined
+unused.c:1:14: Type dumbtype declared but not used
+unused.c:12:11: Field silly of structure struct _inner declared but not used
+unused.c:7:7: Field dumb of structure struct _st declared but not used
+unused.c:16:12: Function undef exported but not declared in header file
+
+Finished checking --- 8 code warnings, as expected

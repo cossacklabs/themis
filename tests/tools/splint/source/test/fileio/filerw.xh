@@ -1,0 +1,10 @@
+extern /*@rweither@*/ FILE *fopen (const char *filename, const char *mode) ;
+
+extern int fgetc (/*@read@*/ FILE *f) ;
+extern int fputc (int, /*@write@*/ FILE *f) ;
+
+/* fseek resets the rw state of a stream */
+int fseek (/*@rweither@*/ FILE *stream, long int offset, int whence) 
+  /*@ensures rweither stream@*/ ;
+  
+

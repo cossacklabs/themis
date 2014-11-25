@@ -1,0 +1,53 @@
+
+Finished checking --- no warnings
+
+boolt.c: (in function test)
+boolt.c:7:16: Function test expects arg 1 to be pan_bool_t gets int: 2
+
+Finished checking --- 1 code warning, as expected
+
+uconstants.c: (in function f)
+uconstants.c:2:16: Variable x0 declared but not used
+uconstants.c:3:21: Variable x1 declared but not used
+
+Finished checking --- 2 code warnings, as expected
+
+hoof.c: (in function main)
+hoof.c:12:16: Function init_arr expects arg 2 to be long int * gets int *: &j
+
+Finished checking --- 1 code warning, as expected
+
+Finished checking --- no warnings
+
+Finished checking --- no warnings
+
+booltest.c: (in function f)
+booltest.c:8:7: Test expression for if not bool, type int: i
+booltest.c:9:12: Return value type int does not match declared type bool: i
+
+Finished checking --- 2 code warnings, as expected
+
+Finished checking --- no warnings
+
+booltest.c: (in function f)
+booltest.c:9:12: Return value type int does not match declared type bool: i
+
+Finished checking --- 1 code warning, as expected
+
+Finished checking --- no warnings
+
+Finished checking --- no warnings
+
+immutable.c: (in function immutable_create)
+immutable.c:7:6: Arrow access from possibly null pointer res: res->x
+   immutable.c:5:19: Storage res may become null
+immutable.c:8:10: Fresh storage returned as unqualified (should be only): res
+   immutable.c:5:54: Fresh storage res created
+
+Finished checking --- 2 code warnings, as expected
+
+impabsmodule.c: (in function isTwo)
+impabsmodule.c:10:7: Variable var used before definition
+impabsmodule.c:10:12: Variable var2 used before definition
+
+Finished checking --- 2 code warnings, as expected

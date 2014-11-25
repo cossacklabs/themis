@@ -1,0 +1,127 @@
+
+Finished checking --- no warnings
+
+enumtest.c:1:9: Variable exported but not used outside enumtest: sig_func
+enumtest.c:2:10: Variable exported but not used outside enumtest: sig_func1
+
+Finished checking --- 2 code warnings, as expected
+
+duffs.c: (in function send)
+duffs.c:7:8: Fall through case (no preceding break)
+duffs.c:8:8: Fall through case (no preceding break)
+duffs.c:9:8: Fall through case (no preceding break)
+duffs.c:10:8: Fall through case (no preceding break)
+duffs.c:11:8: Fall through case (no preceding break)
+duffs.c:12:8: Fall through case (no preceding break)
+duffs.c:13:8: Fall through case (no preceding break)
+
+Finished checking --- 7 code warnings, as expected
+
+Finished checking --- no warnings
+
+Finished checking --- no warnings
+
+bug2.c: (in function main)
+bug2.c:6:8: Fall through case (no preceding break)
+bug2.c:10:10: Fall through case (no preceding break)
+bug2.c:16:8: Fall through case (no preceding break)
+bug2.c:5:5: Statement after switch is not a case: printf("here 1");
+bug2.c:20:2: Path with no return in function declared to return int
+
+Finished checking --- 5 code warnings, as expected
+
+bug3.c: (in function main)
+bug3.c:8:8: Fall through case (no preceding break)
+bug3.c:12:21: Variable j used before definition
+bug3.c:13:2: Path with no return in function declared to return int
+
+Finished checking --- 3 code warnings, as expected
+
+Finished checking --- no warnings
+
+Finished checking --- no warnings
+
+Finished checking --- no warnings
+
+hexconstants.c: (in function f)
+hexconstants.c:5:10: Return value type unsigned int does not match declared
+                        type int: m1 + m2
+
+Finished checking --- 1 code warning, as expected
+
+hexconstants.c: (in function f)
+hexconstants.c:2:21: Variable m1 initialized to type int, expects unsigned int:
+                        0xFF
+hexconstants.c:3:21: Variable m2 initialized to type int, expects unsigned int:
+                        0142
+hexconstants.c:5:10: Return value type unsigned int does not match declared
+                        type int: m1 + m2
+hexconstants.c:1:5: Function f exported but not declared in header file
+   hexconstants.c:6:1: Definition of f
+
+Finished checking --- 4 code warnings, as expected
+
+innercomment.c:1:17: Comment starts inside comment
+innercomment.c:16:3: Comment starts inside comment
+
+Finished checking --- 2 code warnings, as expected
+
+Finished checking --- no warnings
+
+Finished checking --- no warnings
+
+offsetof.c: (in function f)
+offsetof.c:10:3: Assignment of size_t to int: m = offsetof(S,u)
+offsetof.c:12:26: Deep field k in offsetof is not the name of a field of struct
+                     { int m; }: offsetof(S,u.s.k)
+
+Finished checking --- 2 code warnings, as expected
+
+Finished checking --- no warnings
+
+Finished checking --- no warnings
+
+Finished checking --- no warnings
+
+error.c:5:9: Variable x initialized to type char, expects int: 'a'
+
+Finished checking --- 1 code warning, as expected
+
+ulrich.c: (in function utl_calloc)
+ulrich.c:15:12: Possibly null storage newblock returned as non-null: newblock
+   ulrich.c:12:16: Storage newblock may become null
+
+Finished checking --- 1 code warning, as expected
+
+cpptest.c: (in function test)
+cpptest.c:2:11: Variable x initialized to type char, expects int: 'a'
+
+Finished checking --- 1 code warning, as expected
+
+longlong.c: (in function llf)
+longlong.c:2:11: Variable m initialized to type long long, expects int: llx
+longlong.c:3:3: Assignment of long long to int: m = 243LL
+longlong.c:6:3: Assignment of long long to long int: lx = 5234LL
+longlong.c:9:3: Assignment of long long to long int: lx = llx
+
+Finished checking --- 4 code warnings, as expected
+
+Finished checking --- no warnings
+
+Finished checking --- no warnings
+
+Finished checking --- no warnings
+
+alignof.c: (in function f)
+alignof.c:2:23: Variable m initialized to type size_t, expects int: alignof(x)
+alignof.c:3:23: Variable n initialized to type size_t, expects int:
+                   alignof((x))
+
+Finished checking --- 2 code warnings, as expected
+
+Spec file not found: DBL_MANT_DIG=25.lcl
+Command Line: Malformed option `-D'
+Cannot open file: DBL_MANT_DIG=25.c
+Cannot open file: source.c
+
+Finished checking --- 1 code warning, as expected

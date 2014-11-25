@@ -1,0 +1,5 @@
+char gc; 
+int  gi;
+char *gs;
+
+int f (void) char gc; int gi; char *gs; { }

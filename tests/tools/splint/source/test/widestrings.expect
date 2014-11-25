@@ -1,0 +1,8 @@
+
+widestrings.c: (in function main)
+widestrings.c:9:16: Function printf expects arg 1 to be char * gets wchar_t *:
+                       L"English:  Hello, world!\n"
+widestrings.c:10:17: Function wprintf expects arg 1 to be wchar_t * gets char
+                        *: "English:  Hello, world!\n"
+
+Finished checking --- 2 code warnings, as expected

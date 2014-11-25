@@ -1,0 +1,84 @@
+
+ansireserved.c:9: Name EVANS is reserved for future library extensions. Macros
+    beginning with E and a digit or uppercase letter may be added to <errno.h>.
+    (ISO99:7.26.3)
+ansireserved.c:1:5: Name decimal_point is reserved for the standard library
+ansireserved.c:2:5: Name srand is reserved for the standard library
+ansireserved.c:3:5: Name labs is reserved for the standard library
+ansireserved.c:4:5: Name _x is in the implementation name space (any identifier
+                       beginning with underscore)
+ansireserved.c:5:5: Name atan2f is reserved for future library extensions.  The
+    names of all existing functions in <math.h> suffixed with 'f' or 'l' may be
+    added to <math.h>. (ISO:7.26.1)
+ansireserved.c:7:13: Name wcst is reserved for future library extensions. 
+    Functions that begin with "mem" or "wcs" and a lowercase letter may be
+    added to <string.h>. (ISO:7.26.11)
+ansireserved.c:11:5: Name isaFish is reserved for future library extensions. 
+    Functions beginning with "is" or "to" and a lowercase letter may be added
+    to <ctype.h>. (ISO99:7.26.2)
+ansireserved.c: (in function isaFish)
+ansireserved.c:16:20: Name wctomb is reserved for the standard library
+
+Finished checking --- 9 code warnings, as expected
+
+ansireserved.c:9: Name EVANS is reserved for future library extensions. Macros
+    beginning with E and a digit or uppercase letter may be added to <errno.h>.
+    (ISO99:7.26.3)
+ansireserved.c:1:5: Name decimal_point is reserved for the standard library
+ansireserved.c:2:5: Name srand is reserved for the standard library
+ansireserved.c:3:5: Name labs is reserved for the standard library
+ansireserved.c:4:5: Name _x is in the implementation name space (any identifier
+                       beginning with underscore)
+ansireserved.c:5:5: Name atan2f is reserved for future library extensions.  The
+    names of all existing functions in <math.h> suffixed with 'f' or 'l' may be
+    added to <math.h>. (ISO:7.26.1)
+ansireserved.c:7:13: Name wcst is reserved for future library extensions. 
+    Functions that begin with "mem" or "wcs" and a lowercase letter may be
+    added to <string.h>. (ISO:7.26.11)
+ansireserved.c:11:5: Name isaFish is reserved for future library extensions. 
+    Functions beginning with "is" or "to" and a lowercase letter may be added
+    to <ctype.h>. (ISO99:7.26.2)
+ansireserved.c: (in function isaFish)
+ansireserved.c:13:20: Name powl is reserved for future library extensions.  The
+    names of all existing functions in <math.h> suffixed with 'f' or 'l' may be
+    added to <math.h>. (ISO:7.26.1)
+ansireserved.c:15:22: Name memory is reserved for future library extensions. 
+    Functions that begin with "mem" or "wcs" and a lowercase letter may be
+    added to <string.h>. (ISO:7.26.11)
+ansireserved.c:16:20: Name wctomb is reserved for the standard library
+
+Finished checking --- 11 code warnings, as expected
+
+ansireserved.c:9: Name EVANS is reserved for future library extensions. Macros
+    beginning with E and a digit or uppercase letter may be added to <errno.h>.
+    (ISO99:7.26.3)
+ansireserved.c:1:5: Name decimal_point is reserved for the standard library
+ansireserved.c:2:5: Function srand inconsistently declared as variable: int
+   load file standard.lcd: Specification of srand as function:
+   [function (unsigned int) returns void]
+ansireserved.c:2:5: Name srand is reserved for the standard library
+ansireserved.c:3:5: Function labs inconsistently declared as variable: int
+   load file standard.lcd: Specification of labs as function:
+   [function (long int) returns long int]
+ansireserved.c:3:5: Name labs is reserved for the standard library
+ansireserved.c:4:5: Name _x is in the implementation name space (any identifier
+                       beginning with underscore)
+ansireserved.c:5:5: Name atan2f is reserved for future library extensions.  The
+    names of all existing functions in <math.h> suffixed with 'f' or 'l' may be
+    added to <math.h>. (ISO:7.26.1)
+ansireserved.c:7:13: Name wcst is reserved for future library extensions. 
+    Functions that begin with "mem" or "wcs" and a lowercase letter may be
+    added to <string.h>. (ISO:7.26.11)
+ansireserved.c:11:5: Name isaFish is reserved for future library extensions. 
+    Functions beginning with "is" or "to" and a lowercase letter may be added
+    to <ctype.h>. (ISO99:7.26.2)
+ansireserved.c: (in function isaFish)
+ansireserved.c:16:20: Name wctomb is reserved for the standard library
+ansireserved.c:5:5: Function atan2f declared but not defined
+
+Finished checking --- 12 code warnings, as expected
+
+ansireserved2.c:4:2: Name _s1 is in the implementation name space (any
+                        identifier beginning with underscore)
+
+Finished checking --- 1 code warning, as expected

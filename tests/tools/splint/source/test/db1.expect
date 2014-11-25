@@ -1,0 +1,680 @@
+
+employee.c: (in function employee_equal)
+employee.c:25: Function strncmp expects arg 3 to be size_t gets int:
+                  maxEmployeeName
+employee.c: (in function employee_sprint)
+employee.c:33: Buffer overflow possible with sprintf.  Recommend using snprintf
+                  instead: sprintf
+empset.c: (in function empset_insert)
+empset.c:28: Variable er declared but not used
+empset.c: (in function empset_disjointUnion)
+empset.c:85: Undocumented modification of s1 possible from call to
+                erc_iterStart (through alias s2): erc_iterStart(s2)
+empset.c:85: Undocumented modification of s2 possible from call to
+                erc_iterStart: erc_iterStart(s2)
+empset.c: (in function empset_union)
+empset.c:108: Undocumented modification of s2 possible from call to
+                 erc_iterStart (through alias s1): erc_iterStart(s1)
+empset.c:108: Undocumented modification of s1 possible from call to
+                 erc_iterStart: erc_iterStart(s1)
+empset.c: (in function empset_subset)
+empset.c:139: Undocumented modification of s1 possible from call to
+                 erc_iterStart: erc_iterStart(s1)
+empset.c:135: Variable e declared but not used
+ereftab.c: (in function ereftab_lookup)
+ereftab.c:34: Undocumented modification of t possible from call to
+                 erc_iterStart: erc_iterStart(t)
+erc.c: (in function erc_sprint)
+erc.c:141: Function malloc expects arg 1 to be size_t gets int:
+              erc_size(c) * (employeePrintSize + 1) + 1
+erc.c:151: Undocumented modification of c possible from call to erc_iterStart:
+              erc_iterStart(c)
+dbase.c: (in function query)
+dbase.c:210: Variable er declared but not used
+dbase.c:211: Variable e declared but not used
+drive.c: (in function main)
+drive.c:47: Buffer overflow possible with sprintf.  Recommend using snprintf
+               instead: sprintf
+drive.c:63: Buffer overflow possible with sprintf.  Recommend using snprintf
+               instead: sprintf
+drive.c:81: Buffer overflow possible with sprintf.  Recommend using snprintf
+               instead: sprintf
+drive.c:118: Buffer overflow possible with sprintf.  Recommend using snprintf
+                instead: sprintf
+drive.c:123: Return value (type db_status) ignored: hire(e)
+
+Finished checking --- 19 code warnings, as expected
+
+employee.h:2: Name EMPLOYEE_H is reserved for future library extensions. Macros
+    beginning with E and a digit or uppercase letter may be added to <errno.h>.
+    (ISO99:7.26.3)
+eref.h:2: Name EREF_H is reserved for future library extensions. Macros
+    beginning with E and a digit or uppercase letter may be added to <errno.h>.
+    (ISO99:7.26.3)
+empset.h:2: Name EMPSET_H is reserved for future library extensions. Macros
+    beginning with E and a digit or uppercase letter may be added to <errno.h>.
+    (ISO99:7.26.3)
+erc.h:2: Name ERC_H is reserved for future library extensions. Macros beginning
+    with E and a digit or uppercase letter may be added to <errno.h>.
+    (ISO99:7.26.3)
+ereftab.h:4: Name EREFTAB_H is reserved for future library extensions. Macros
+    beginning with E and a digit or uppercase letter may be added to <errno.h>.
+    (ISO99:7.26.3)
+bool.h:20: Modifies list for bool_initMod uses global internal state, not
+              included in globals list.
+   bool.h:20: Declaration of bool_initMod
+employee.h:12: Declaration parameter has name: p_e
+employee.c:5: Definition parameter name e does not match name of corresponding
+                 parameter in declaration: p_e
+   employee.h:12: Previous declaration of p_e
+employee.c: (in function employee_setName)
+employee.c:12: Undefined storage e->name corresponds to storage listed in sets
+                  clause
+   This sub-reference is undefined: *(e->name)
+employee.c:12: Body of if statement is not a block: return FALSE
+employee.c:15: Parameter 1 (e->name) to function strcpy is declared unique but
+                  may be aliased externally by parameter 2 (na)
+employee.c: (in function employee_equal)
+employee.c:25: Function strncmp expects arg 3 to be size_t gets int:
+                  maxEmployeeName
+employee.c: (in function employee_sprint)
+employee.c:30: Read-only string literal storage used as initial value for
+                  unqualified storage: gender[0] = "male"
+employee.c:30: Read-only string literal storage used as initial value for
+                  unqualified storage: gender[1] = "female"
+employee.c:30: Read-only string literal storage used as initial value for
+                  unqualified storage: gender[2] = "?"
+employee.c:31: Read-only string literal storage used as initial value for
+                  unqualified storage: jobs[0] = "manager"
+employee.c:31: Read-only string literal storage used as initial value for
+                  unqualified storage: jobs[1] = "non-manager"
+employee.c:31: Read-only string literal storage used as initial value for
+                  unqualified storage: jobs[2] = "?"
+employee.c:33: Buffer overflow possible with sprintf.  Recommend using snprintf
+                  instead: sprintf
+employee.c:34: Array fetch using non-integer, gender: gender[e.gen]
+employee.c:34: Array fetch using non-integer, job: jobs[e.j]
+employee.h: (in macro employee_initMod)
+employee.h:15: Called procedure bool_initMod may access internal state, but
+                  globals list does not include globals internalState
+employee.h:15: Undocumented modification of internal state possible from call
+                  to bool_initMod: bool_initMod()
+eref.h:9: Constant exported, but not specified: used
+eref.h:9: Constant exported, but not specified: avail
+eref.h:9: Type exported, but not specified: eref_status
+eref.h:14: Type exported, but not specified: eref_ERP
+eref.h:17: Variable exported, but not specified: eref_Pool
+eref.c: (in function eref_alloc)
+eref.c:12: Undocumented use of global eref_Pool
+eref.c:12: Undocumented use of global eref_Pool
+eref.c:12: Body of for statement is empty
+eref.c:12: Undocumented use of global eref_Pool (in post loop test)
+eref.c:16: Undocumented use of global eref_Pool
+eref.c:18: Undocumented use of global eref_Pool
+eref.c:19: Undocumented use of global eref_Pool
+eref.c:20: Undocumented use of global eref_Pool
+eref.c:20: Parameter to sizeof is type employee: sizeof(employee)
+eref.c:19: Undocumented modification of *(eref_Pool.conts) possible from call
+    to realloc: realloc(eref_Pool.conts, 2 * eref_Pool.size * sizeof(employee))
+eref.c:18: Undocumented modification of eref_Pool.conts:
+    eref_Pool.conts = (employee *)realloc(eref_Pool.conts, 2 * eref_Pool.size *
+    sizeof(employee))
+eref.c:22: Undocumented use of global eref_Pool
+eref.c:25: Argument to exit has implementation defined behavior: 1
+eref.c:28: Undocumented use of global eref_Pool
+eref.c:29: Undocumented use of global eref_Pool
+eref.c:30: Undocumented use of global eref_Pool
+eref.c:30: Parameter to sizeof is type eref_status: sizeof(eref_status)
+eref.c:29: Undocumented modification of *(eref_Pool.status) possible from call
+    to realloc: realloc(eref_Pool.status, 2 * eref_Pool.size *
+    sizeof(eref_status))
+eref.c:28: Undocumented modification of eref_Pool.status:
+    eref_Pool.status = (eref_status *)realloc(eref_Pool.status, 2 *
+    eref_Pool.size * sizeof(eref_status))
+eref.c:32: Undocumented use of global eref_Pool
+eref.c:35: Argument to exit has implementation defined behavior: 1
+eref.c:38: Undocumented use of global eref_Pool
+eref.c:38: Undocumented use of global eref_Pool
+eref.c:38: Undocumented modification of eref_Pool.size:
+              eref_Pool.size = 2 * eref_Pool.size
+eref.c:40: Undocumented use of global eref_Pool
+eref.c:41: Undocumented use of global eref_Pool
+eref.c:41: Undocumented modification of eref_Pool.status[]:
+              eref_Pool.status[i] = avail
+eref.c:41: Body of for statement is not a block: eref_Pool.status[i] = avail;
+eref.c:41: Undocumented use of global eref_Pool (in post loop test)
+eref.c:44: Undocumented use of global eref_Pool
+eref.c:44: Undocumented modification of eref_Pool.status[]:
+              eref_Pool.status[res] = used
+eref.c: (in function eref_initMod)
+eref.c:53: Undocumented use of file static needsInit
+eref.c:58: Undocumented use of file static needsInit
+eref.c:58: Undocumented modification of needsInit: needsInit = FALSE
+eref.c:60: Statement has no effect: employee_initMod()
+eref.c:62: Undocumented use of global eref_Pool
+eref.c:62: Parameter to sizeof is type employee: sizeof(employee)
+eref.c:62: Undocumented modification of eref_Pool.conts:
+              eref_Pool.conts = (employee *)malloc(size * sizeof(employee))
+eref.c:62: Implicitly only storage eref_Pool.conts (type employee *) not
+    released before assignment: eref_Pool.conts = (employee *)malloc(size *
+    sizeof(employee))
+eref.c:64: Undocumented use of global eref_Pool
+eref.c:67: Argument to exit has implementation defined behavior: 1
+eref.c:70: Undocumented use of global eref_Pool
+eref.c:70: Parameter to sizeof is type eref_status: sizeof(eref_status)
+eref.c:70: Undocumented modification of eref_Pool.status:
+    eref_Pool.status = (eref_status *)malloc(size * sizeof(eref_status))
+eref.c:70: Implicitly only storage eref_Pool.status (type eref_status *) not
+    released before assignment: eref_Pool.status = (eref_status *)malloc(size *
+    sizeof(eref_status))
+eref.c:72: Undocumented use of global eref_Pool
+eref.c:75: Argument to exit has implementation defined behavior: 1
+eref.c:78: Undocumented use of global eref_Pool
+eref.c:78: Undocumented modification of eref_Pool.size: eref_Pool.size = size
+eref.c:82: Undocumented use of global eref_Pool
+eref.c:82: Undocumented modification of eref_Pool.status[]:
+              eref_Pool.status[i] = avail
+eref.c:84: Global storage *(eref_Pool.conts) contains 5 undefined fields when
+              call returns: ssNum, name, salary, gen, j
+eref.c:84: Global storage eref_Pool contains 1 undefined field when call
+              returns: status
+eref.h: (in macro eref_free)
+eref.h:23: Undocumented use of global eref_Pool
+eref.h:23: Undocumented modification of eref_Pool.status[]:
+              eref_Pool.status[er] = avail
+eref.h: (in macro eref_assign)
+eref.h:24: Undocumented use of global eref_Pool
+eref.h:24: Macro parameter used without parentheses: e
+eref.h:24: Undocumented modification of eref_Pool.conts[]:
+              eref_Pool.conts[er] = e
+eref.h: (in macro eref_get)
+eref.h:25: Undocumented use of global eref_Pool
+eref.h: (in macro eref_equal)
+eref.h:26: Macro parameter used without parentheses: er1
+eref.h:26: Macro parameter used without parentheses: er2
+erc.h:6: Name _elem is in the implementation name space (any identifier
+            beginning with underscore)
+erc.h:6: Type exported, but not specified: ercElem
+erc.h:7: Type exported, but not specified: ercList
+erc.h:8: Type exported, but not specified: ercInfo
+empset.h:10: Variable exported, but not specified: known
+empset.c:5: Name _empset_get is in the implementation name space (any
+               identifier beginning with underscore)
+empset.c: (in function _empset_get)
+empset.c:11: Undocumented modification of s possible from call to
+                erc_iterStart: erc_iterStart(s)
+empset.c:15: Body of if statement is not a block: do { { erc_iterFinal(it);
+                return er } } while (FALSE);
+empset.c: (in function empset_insert)
+empset.c:30: Undetected modification possible from call to unconstrained
+                function _empset_get: _empset_get
+empset.c:28: Variable er declared but not used
+empset.c: (in function empset_insertUnique)
+empset.c:43: Undocumented use of global known
+empset.c:49: Undocumented use of global known
+empset.c:49: Undocumented modification of known possible from call to
+                ereftab_insert: ereftab_insert(known, e, er)
+empset.c: (in function empset_delete)
+empset.c:59: Undetected modification possible from call to unconstrained
+                function _empset_get: _empset_get
+empset.c: (in function empset_disjointUnion)
+empset.c:85: Undocumented modification of s1 possible from call to
+                erc_iterStart (through alias s2): erc_iterStart(s2)
+empset.c:85: Undocumented modification of s2 possible from call to
+                erc_iterStart: erc_iterStart(s2)
+empset.c:86: Body of for statement is not a block:
+                empset_insertUnique(result, eref_get(er));
+empset.c: (in function empset_union)
+empset.c:108: Undocumented modification of s2 possible from call to
+                 erc_iterStart (through alias s1): erc_iterStart(s1)
+empset.c:108: Undocumented modification of s1 possible from call to
+                 erc_iterStart: erc_iterStart(s1)
+empset.c:110: Body of if statement is not a block: erc_insert(result, er);
+empset.c:109: Body of for statement is not a block:
+                 if (!empset_member(eref_get(er), s2)) erc_insert(result, er);
+empset.c: (in function empset_intersect)
+empset.c:125: Body of if statement is not a block: erc_insert(toDelete, er);
+empset.c:124: Body of for statement is not a block:
+    if (!empset_member(eref_get(er), s2)) erc_insert(toDelete, er);
+empset.c:128: Return value (type bool) ignored: erc_delete(s1, er)
+empset.c:128: Body of for statement is not a block: erc_delete(s1, er);
+empset.c: (in function empset_subset)
+empset.c:139: Undocumented modification of s1 possible from call to
+                 erc_iterStart: erc_iterStart(s1)
+empset.c:141: Body of if statement is not a block: do { { erc_iterFinal(it);
+                 return FALSE } } while (FALSE);
+empset.c:140: Body of for statement is not a block:
+    if (!empset_member(eref_get(er), s2)) do { { erc_iterFinal(it);
+    return FALSE } } while (FALSE);
+empset.c:135: Variable e declared but not used
+empset.c: (in function empset_initMod)
+empset.c:148: Undocumented use of file static initDone
+empset.c:148: Body of if statement is not a block: return
+empset.c:151: Statement has no effect: employee_initMod()
+empset.c:153: Statement has no effect: erc_initMod()
+empset.c:154: Statement has no effect: ereftab_initMod()
+empset.c:155: Undocumented use of global known
+empset.c:155: Undocumented modification of known: known = ereftab_create()
+empset.c:156: Undocumented use of file static initDone
+empset.c:156: Undocumented modification of initDone: initDone = TRUE
+empset.h: (in macro empset_member)
+empset.h:30: Undetected modification possible from call to unconstrained
+                function _empset_get: _empset_get
+ereftab.c: (in function ereftab_delete)
+ereftab.c:24: Return value (type bool) ignored: erc_delete(t, er)
+ereftab.c: (in function ereftab_lookup)
+ereftab.c:34: Undocumented modification of t possible from call to
+                 erc_iterStart: erc_iterStart(t)
+ereftab.c:37: Body of if statement is not a block: return er
+ereftab.c: (in function ereftab_initMod)
+ereftab.c:47: Statement has no effect: erc_initMod()
+erc.c: (in function erc_create)
+erc.c:8: Parameter to sizeof is type ercInfo: sizeof(ercInfo)
+erc.c:13: Argument to exit has implementation defined behavior: 1
+erc.c:18: Null storage c->vals derivable from return value: c
+   erc.c:16: Storage c->vals becomes null
+erc.c:18: Fresh storage returned as unqualified (should be only): c
+   erc.c:8: Fresh storage c created
+erc.c: (in function erc_clear)
+erc.c:34: Function returns with null storage derivable from parameter c->vals
+   erc.c:32: Storage c->vals becomes null
+erc.c: (in function erc_final)
+erc.c:39: Implicitly temp storage c passed as only param: free (c)
+erc.c: (in function erc_member)
+erc.c:47: Object equality comparison (==) on objects of abstract type (eref):
+             tmpc->val == er
+erc.c:47: Body of if statement is not a block: return TRUE
+erc.c:47: Body of for statement is not a block:
+             if (tmpc->val == er) return TRUE
+erc.c: (in function erc_insert)
+erc.c:55: Parameter to sizeof is type ercElem: sizeof(ercElem)
+erc.c:60: Argument to exit has implementation defined behavior: 1
+erc.c: (in function erc_delete)
+erc.c:78: Object equality comparison (==) on objects of abstract type (eref):
+             elem->val == er
+erc.c:83: Implicitly only storage prev->next (type struct _elem *) not released
+             before assignment: prev->next = elem->next
+erc.c:84: Clauses exit with elem referencing implicitly only storage in true
+             branch, local storage in false branch
+   erc.c:81: Storage elem becomes implicitly only (through alias c->vals)
+erc.c:87: Released storage c->vals reachable from parameter at return point
+   erc.c:85: Storage c->vals released
+erc.c: (in function erc_iterStart)
+erc.c:98: Parameter to sizeof is type ercList: sizeof(ercList)
+erc.c:103: Argument to exit has implementation defined behavior: 1
+erc.c:107: Fresh storage returned as unqualified (should be only): result
+   erc.c:98: Fresh storage result created
+erc.c:108: Suspect object listed in modifies of erc_iterStart not modified: c
+   erc.lcl:49: Specification of erc_iterStart
+erc.c: (in function erc_yield)
+erc.c:117: Implicitly temp storage it passed as only param: free (it)
+erc.c:117: Unreachable code: free(it)
+erc.c:118: Variable it is released in true branch, but live in continuation.
+   erc.c:118: in true branch:
+   erc.c:117: Storage it released
+erc.c:121: Only storage *it->next assigned to unqualified: *(it) = (*it)->next
+erc.c: (in function erc_join)
+erc.c:130: Body of for statement is not a block: erc_insert(c1, tmpc->val);
+erc.c: (in function erc_sprint)
+erc.c:141: Function malloc expects arg 1 to be size_t gets int:
+              erc_size(c) * (employeePrintSize + 1) + 1
+erc.c:146: Argument to exit has implementation defined behavior: 1
+erc.c:151: Undocumented modification of c possible from call to erc_iterStart:
+              erc_iterStart(c)
+erc.c:159: Fresh storage returned as unqualified (should be only): result
+   erc.c:140: Fresh storage result created
+erc.h: (in macro erc_choose)
+erc.h:15: Macro parameter used without parentheses: c
+erc.h: (in macro erc_initMod)
+erc.h:16: Called procedure bool_initMod may access internal state, but globals
+             list does not include globals internalState
+erc.h:16: Undocumented modification of internal state possible from call to
+             bool_initMod: bool_initMod()
+erc.h:16: Statement has no effect: employee_initMod()
+erc.h: (in macro erc_iterFinal)
+erc.h:20: Only storage *it->next (type struct _elem *) derived from released
+             storage is not released (memory leak): it
+erc.h:20: Implicitly temp storage it passed as only param: free (it)
+dbase.c: (in function db_initMod)
+dbase.c:21: Undocumented use of global initDone
+dbase.c:27: Statement has no effect: employee_initMod()
+dbase.c:29: Statement has no effect: erc_initMod()
+dbase.c:30: Statement has no effect: empset_initMod()
+dbase.c:32: Assignment of enum { mMGRS, fMGRS, mNON, fNON } to int: i = mMGRS
+dbase.c:32: Operands of <= have incompatible types (int, enum { mMGRS, fMGRS,
+               mNON, fNON }): i <= fNON
+dbase.c:34: Undocumented use of global db
+dbase.c:34: Undocumented modification of db[]: db[i] = erc_create()
+dbase.c:32: Incompatible types for <= (int, enum { mMGRS, fMGRS, mNON, fNON })
+               (in post loop test): i <= fNON
+dbase.c:37: Undocumented use of global initDone
+dbase.c:37: Undocumented modification of initDone: initDone = TRUE
+dbase.c:40: Name _db_ercKeyGet is in the implementation name space (any
+               identifier beginning with underscore)
+dbase.c: (in function _db_ercKeyGet)
+dbase.c:45: Undocumented modification of c possible from call to erc_iterStart:
+               erc_iterStart(c)
+dbase.c:56: Name _db_keyGet is in the implementation name space (any identifier
+               beginning with underscore)
+dbase.c: (in function _db_keyGet)
+dbase.c:61: Assignment of enum { mMGRS, fMGRS, mNON, fNON } to int: i = mMGRS
+dbase.c:61: Operands of <= have incompatible types (int, enum { mMGRS, fMGRS,
+               mNON, fNON }): i <= fNON
+dbase.c:63: Undocumented use of global db
+dbase.c:63: Undetected modification possible from call to unconstrained
+               function _db_ercKeyGet: _db_ercKeyGet
+dbase.c:61: Incompatible types for <= (int, enum { mMGRS, fMGRS, mNON, fNON })
+               (in post loop test): i <= fNON
+dbase.c:73: Name _db_addEmpls is in the implementation name space (any
+               identifier beginning with underscore)
+dbase.c: (in function _db_addEmpls)
+dbase.c:81: Undocumented modification of c possible from call to erc_iterStart:
+               erc_iterStart(c)
+dbase.c:86: Undocumented modification of s possible from call to empset_insert:
+               empset_insert(s, e)
+dbase.c:86: Return value (type bool) ignored: empset_insert(s, e)
+dbase.c: (in function hire)
+dbase.c:97: Body of if statement is not a block: return genderERR
+dbase.c:100: Body of if statement is not a block: return jobERR
+dbase.c:103: Body of if statement is not a block: return salERR
+dbase.c:105: Undetected modification possible from call to unconstrained
+                function _db_keyGet: _db_keyGet
+dbase.c:106: Body of if statement is not a block: return duplERR
+dbase.c: (in function uncheckedHire)
+dbase.c:121: Undocumented use of global db
+dbase.c:121: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[mMGRS]
+dbase.c:121: Undocumented modification of db[] possible from call to
+                erc_insert: erc_insert(db[mMGRS], er)
+dbase.c:123: Undocumented use of global db
+dbase.c:123: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[mNON]
+dbase.c:123: Undocumented modification of db[] possible from call to
+                erc_insert: erc_insert(db[mNON], er)
+dbase.c:121: Body of if clause of if statement is not a block:
+                erc_insert(db[mMGRS], er);
+dbase.c:123: Body of else clause of if statement is not a block:
+                erc_insert(db[mNON], er);
+dbase.c:126: Undocumented use of global db
+dbase.c:126: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[fMGRS]
+dbase.c:126: Undocumented modification of db[] possible from call to
+                erc_insert: erc_insert(db[fMGRS], er)
+dbase.c:128: Undocumented use of global db
+dbase.c:128: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[fNON]
+dbase.c:128: Undocumented modification of db[] possible from call to
+                erc_insert: erc_insert(db[fNON], er)
+dbase.c:126: Body of if clause of if statement is not a block:
+                erc_insert(db[fMGRS], er);
+dbase.c:128: Body of else clause of if statement is not a block:
+                erc_insert(db[fNON], er);
+dbase.c:123: Body of if clause of if statement is not a block:
+    if (e.j == MGR) erc_insert(db[mMGRS], er); else erc_insert(db[mNON], er);
+dbase.c: (in function fire)
+dbase.c:137: Assignment of enum { mMGRS, fMGRS, mNON, fNON } to int: i = mMGRS
+dbase.c:137: Operands of <= have incompatible types (int, enum { mMGRS, fMGRS,
+                mNON, fNON }): i <= fNON
+dbase.c:138: Undocumented use of global db
+dbase.c:138: Undocumented modification of db[] possible from call to
+                erc_iterStart: erc_iterStart(db[i])
+dbase.c:142: Undocumented use of global db
+dbase.c:142: Undocumented modification of db[] possible from call to
+                erc_delete: erc_delete(db[i], er)
+dbase.c:142: Return value (type bool) ignored: erc_delete(db[i]...
+dbase.c:139: Body of for statement is not a block:
+                if (eref_get(er).ssNum == ssNum) { erc_iterFinal(it);
+                erc_delete(db[i], er);; return TRUE }
+dbase.c:139: Body of for statement is not a block:
+    for (er = erc_yield(it = erc_iterStart(db[i])); !eref_equal(er, erefNIL);
+    er = erc_yield(it)) if (eref_get(er).ssNum == ssNum) { erc_iterFinal(it);
+    erc_delete(db[i], er);; return TRUE }
+dbase.c:137: Incompatible types for <= (int, enum { mMGRS, fMGRS, mNON, fNON })
+                (in post loop test): i <= fNON
+dbase.c: (in function promote)
+dbase.c:156: Undocumented use of global db
+dbase.c:156: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[mNON]
+dbase.c:156: Undetected modification possible from call to unconstrained
+                function _db_ercKeyGet: _db_ercKeyGet
+dbase.c:160: Undocumented use of global db
+dbase.c:160: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[fNON]
+dbase.c:160: Undetected modification possible from call to unconstrained
+                function _db_ercKeyGet: _db_ercKeyGet
+dbase.c:162: Body of if statement is not a block: return FALSE
+dbase.c:172: Undocumented use of global db
+dbase.c:172: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[mNON]
+dbase.c:172: Undocumented modification of db[] possible from call to
+                erc_delete: erc_delete(db[mNON], er)
+dbase.c:172: Return value (type bool) ignored: erc_delete(db[mN...
+dbase.c:173: Undocumented use of global db
+dbase.c:173: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[mMGRS]
+dbase.c:173: Undocumented modification of db[] possible from call to
+                erc_insert: erc_insert(db[mMGRS], er)
+dbase.c:177: Undocumented use of global db
+dbase.c:177: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[fNON]
+dbase.c:177: Undocumented modification of db[] possible from call to
+                erc_delete: erc_delete(db[fNON], er)
+dbase.c:177: Return value (type bool) ignored: erc_delete(db[fN...
+dbase.c:178: Undocumented use of global db
+dbase.c:178: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[fMGRS]
+dbase.c:178: Undocumented modification of db[] possible from call to
+                erc_insert: erc_insert(db[fMGRS], er)
+dbase.c: (in function setSalary)
+dbase.c:194: Undetected modification possible from call to unconstrained
+                function _db_keyGet: _db_keyGet
+dbase.c: (in function query)
+dbase.c:226: Assignment of enum { mMGRS, fMGRS, mNON, fNON } to int: i = mMGRS
+dbase.c:226: Operands of <= have incompatible types (int, enum { mMGRS, fMGRS,
+                mNON, fNON }): i <= fNON
+dbase.c:227: Undocumented use of global db
+dbase.c:227: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:227: Body of for statement is not a block:
+                numAdded += _db_addEmpls(db[i], l, h, s);
+dbase.c:226: Incompatible types for <= (int, enum { mMGRS, fMGRS, mNON, fNON })
+                (in post loop test): i <= fNON
+dbase.c:230: Undocumented use of global db
+dbase.c:230: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[mMGRS]
+dbase.c:230: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:231: Undocumented use of global db
+dbase.c:231: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[fMGRS]
+dbase.c:231: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:234: Undocumented use of global db
+dbase.c:234: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[mNON]
+dbase.c:234: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:235: Undocumented use of global db
+dbase.c:235: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[fNON]
+dbase.c:235: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:242: Undocumented use of global db
+dbase.c:242: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[mMGRS]
+dbase.c:242: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:243: Undocumented use of global db
+dbase.c:243: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[mNON]
+dbase.c:243: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:246: Undocumented use of global db
+dbase.c:246: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[mMGRS]
+dbase.c:246: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:248: Undocumented use of global db
+dbase.c:248: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[mNON]
+dbase.c:248: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:254: Undocumented use of global db
+dbase.c:254: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[fMGRS]
+dbase.c:254: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:255: Undocumented use of global db
+dbase.c:255: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[fNON]
+dbase.c:255: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:258: Undocumented use of global db
+dbase.c:258: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[fMGRS]
+dbase.c:258: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:260: Undocumented use of global db
+dbase.c:260: Array fetch using non-integer, enum { mMGRS, fMGRS, mNON, fNON }:
+                db[fNON]
+dbase.c:260: Undetected modification possible from call to unconstrained
+                function _db_addEmpls: _db_addEmpls
+dbase.c:210: Variable er declared but not used
+dbase.c:211: Variable e declared but not used
+dbase.c:263: Suspect object listed in modifies of query not modified: s
+   dbase.lcl:49: Specification of query
+dbase.c: (in function db_print)
+dbase.c:272: Assignment of enum { mMGRS, fMGRS, mNON, fNON } to int: i = mMGRS
+dbase.c:272: Operands of <= have incompatible types (int, enum { mMGRS, fMGRS,
+                mNON, fNON }): i <= fNON
+dbase.c:274: Undocumented use of global db
+dbase.c:272: Incompatible types for <= (int, enum { mMGRS, fMGRS, mNON, fNON })
+                (in post loop test): i <= fNON
+drive.c: (in function main)
+drive.c:22: Statement has no effect: employee_initMod()
+drive.c:23: Statement has no effect: empset_initMod()
+drive.c:47: Buffer overflow possible with sprintf.  Recommend using snprintf
+               instead: sprintf
+drive.c:48: Return value (type bool) ignored: employee_setName...
+drive.c:49: Return value (type bool) ignored: empset_insert(em...
+drive.c:63: Buffer overflow possible with sprintf.  Recommend using snprintf
+               instead: sprintf
+drive.c:64: Return value (type bool) ignored: employee_setName...
+drive.c:65: Return value (type bool) ignored: empset_delete(em...
+drive.c:81: Buffer overflow possible with sprintf.  Recommend using snprintf
+               instead: sprintf
+drive.c:82: Return value (type bool) ignored: employee_setName...
+drive.c:83: Return value (type bool) ignored: empset_insert(em...
+drive.c:107: Return value (type bool) ignored: empset_delete(em...
+drive.c:116: Body of if clause of if statement is not a block: e.gen = MALE;
+drive.c:116: Body of else clause of if statement is not a block:
+                e.gen = FEMALE;
+drive.c:117: Body of if clause of if statement is not a block: e.j = NONMGR;
+drive.c:117: Body of else clause of if statement is not a block: e.j = MGR;
+drive.c:118: Buffer overflow possible with sprintf.  Recommend using snprintf
+                instead: sprintf
+drive.c:119: Return value (type bool) ignored: employee_setName...
+drive.c:123: Return value (type db_status) ignored: hire(e)
+drive.c:127: Assignment of db_status to int: j = hire(e)
+drive.c:131: Variable j used before definition
+drive.c:134: Return value (type bool) ignored: fire(17)
+drive.c:158: Return value (type bool) ignored: fire(empset_choo...
+drive.c:11: Parameter argv not used
+dbase.c:11: Type employeeKinds declared but not used
+eref.lh:7: Function exported but not used outside eref: eref_free
+   eref.h:23: Definition of eref_free
+empset.lh:7: Function exported but not used outside empset: empset_final
+   empset.h:29: Definition of empset_final
+empset.lh:8: Function exported but not used outside empset: empset_clear
+   empset.c:24: Definition of empset_clear
+empset.lh:10: Function exported but not used outside empset:
+                 empset_insertUnique
+   empset.c:53: Definition of empset_insertUnique
+empset.lh:16: Function exported but not used outside empset: empset_member
+   empset.h:30: Definition of empset_member
+empset.lh:17: Function exported but not used outside empset: empset_subset
+   empset.c:144: Definition of empset_subset
+ereftab.lh:9: Function exported but not used outside ereftab: ereftab_delete
+   ereftab.c:26: Definition of ereftab_delete
+dbase.c:13: Variable exported but not used outside dbase: db
+dbase.lh:26: Function exported but not used outside dbase: promote
+   dbase.c:182: Definition of promote
+dbase.lh:27: Function exported but not used outside dbase: setSalary
+   dbase.c:206: Definition of setSalary
+empset.h:10: Variable exported but not used outside empset: known
+dbase.c:15: Variable exported but not used outside dbase: initDone
+dbase.c:40: Function exported but not used outside dbase: _db_ercKeyGet
+   dbase.c:54: Definition of _db_ercKeyGet
+dbase.c:56: Function exported but not used outside dbase: _db_keyGet
+   dbase.c:71: Definition of _db_keyGet
+dbase.c:73: Function exported but not used outside dbase: _db_addEmpls
+   dbase.c:92: Definition of _db_addEmpls
+dbase.c:13: Variable db exported but not declared in header file
+empset.c:5: Function _empset_get exported but not declared in header file
+   empset.c:19: Definition of _empset_get
+dbase.c:15: Variable initDone exported but not declared in header file
+dbase.c:40: Function _db_ercKeyGet exported but not declared in header file
+   dbase.c:54: Definition of _db_ercKeyGet
+dbase.c:56: Function _db_keyGet exported but not declared in header file
+   dbase.c:71: Definition of _db_keyGet
+dbase.c:73: Function _db_addEmpls exported but not declared in header file
+   dbase.c:92: Definition of _db_addEmpls
+
+Error Type                Reported  Suppressed
+===================       ========  =========
+nullret                      1           0
+nullstate                    1           0
+usedef                       1           0
+compdef                      3           0
+incondefs                    0           1
+sizeoftype                   7           0
+formalarray                  0          24
+abstractcompare              2           0
+mustfreeonly                 3           0
+usereleased                  1           0
+compdestroy                  1           0
+branchstate                  2           1
+onlytrans                    1           0
+freshtrans                   3           0
+temptrans                    3           2
+readonlytrans                6           0
+mayaliasunique               1           0
+mods                        38           0
+mustmod                      2           0
+modfilesys                   0          25
+modnomods                    4           0
+moduncon                    20           0
+modunconnomods               1           0
+globs                       64           1
+internalglobs                2           0
+warnmissingglobs             1           6
+forempty                     1           0
+forblock                    11           0
+ifblock                     22           0
+unreachable                  1           0
+noeffect                    11           0
+retvalother                  1           0
+retvalbool                  16           0
+macroparens                  4           0
+namechecks                  11           6
+protoparammatch              1           0
+exportlocal                 15           0
+exportheader                 4           0
+exportheadervar              2           0
+paramuse                     1           0
+typeuse                      1           0
+varuse                       4           0
+exitarg                      8           0
+redecl                       0           7
+exporttype                   5           0
+exportvar                    2           0
+exportconst                  2           0
+type                         1           0
+enumindex                   24           0
+enumint                     15           0
+matchanyintegral             2           0
+bufferoverflowhigh           5           0
+                          ========  =========
+Total                      338          73
+
+Finished checking --- 338 code warnings, as expected

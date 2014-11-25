@@ -1,0 +1,5 @@
+/*
+** assert.h
+*/
+
+void assert() { ensures true; }

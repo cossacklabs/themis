@@ -1,0 +1,6 @@
+
+freearray.c: (in function destroyMod2)
+freearray.c:22:9: Only storage *stringTable (type ocp) derived from released
+                     storage is not released (memory leak): stringTable
+
+Finished checking --- 1 code warning, as expected

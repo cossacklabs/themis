@@ -1,0 +1,3 @@
+mutable type stx;
+
+only char *stx_name (stx x) { }

@@ -1,0 +1,7 @@
+
+looptesteffect.c: (in function foo)
+looptesteffect.c:18:43: Arrow access from possibly null pointer e (in post loop
+                           increment): e->next
+   looptesteffect.c:18:43: Storage e may become null
+
+Finished checking --- 1 code warning, as expected

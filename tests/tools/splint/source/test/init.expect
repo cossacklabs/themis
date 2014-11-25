@@ -1,0 +1,46 @@
+
+init.c:1:16: Global c[0] initialized to null value: c[0] = NULL
+init.c:1:43: Initial value of c[2][2] is type int, expects char: 3
+init.c:1:48: Global c[3] initialized to null value: c[3] = NULL
+init.c:4:23: Global st.uname initialized to null value: st.uname = NULL
+init.c:4:29: Initial value of st.y is type double, expects int: 1.2
+init.c:7:7: Initializer block for st2[0] has 3 fields, but struct { char *
+    name; int [] x; char * uname;, ... } has 4 fields: "bob", { 1, 2 }, NULL
+init.c:8:19: Initial value of st2[1].x is type int, expects int []: 3
+init.c:8:22: Global st2[1].uname initialized to null value: st2[1].uname = NULL
+init.c:10:13: Initializer block for a has 7 elements, but declared as int [10]:
+                 1, 2, 3, 4, 3.4, 6, 4
+init.c:10:27: Initial value of a[4] is type double, expects int: 3.4
+init.c:12:34: Initial value of aa[1][1] is type double, expects int: 3.2
+init.c:14:13: Initializer block for b has 2 elements, but declared as int [10]:
+                 { 1, 2 }, { 3, 4 }
+init.c:14:15: Initializer block used for b[0] where int is expected: { 1, 2 }
+init.c:14:25: Initializer block used for b[1] where int is expected: { 3, 4 }
+
+Finished checking --- 14 code warnings, as expected
+
+init.c:1:16: Global c[0] initialized to null value: c[0] = NULL
+init.c:1:22: Read-only string literal storage used as initial value for
+                unqualified storage: c[1] = "hullo"
+init.c:1:43: Initial value of c[2][2] is type int, expects char: 3
+init.c:1:48: Global c[3] initialized to null value: c[3] = NULL
+init.c:4:7: Read-only string literal storage used as initial value for
+               unqualified storage: st.name = "bob"
+init.c:4:23: Global st.uname initialized to null value: st.uname = NULL
+init.c:4:29: Initial value of st.y is type double, expects int: 1.2
+init.c:7:7: Initializer block for st2[0] has 3 fields, but struct { char *
+    name; int [] x; char * uname;, ... } has 4 fields: "bob", { 1, 2 }, NULL
+init.c:8:9: Read-only string literal storage used as initial value for
+               unqualified storage: st2[1].name = "charly"
+init.c:8:19: Initial value of st2[1].x is type int, expects int []: 3
+init.c:8:22: Global st2[1].uname initialized to null value: st2[1].uname = NULL
+init.c:10:13: Initializer block for a has 7 elements, but declared as int [10]:
+                 1, 2, 3, 4, 3.4, 6, 4
+init.c:10:27: Initial value of a[4] is type double, expects int: 3.4
+init.c:12:34: Initial value of aa[1][1] is type double, expects int: 3.2
+init.c:14:13: Initializer block for b has 2 elements, but declared as int [10]:
+                 { 1, 2 }, { 3, 4 }
+init.c:14:15: Initializer block used for b[0] where int is expected: { 1, 2 }
+init.c:14:25: Initializer block used for b[1] where int is expected: { 3, 4 }
+
+Finished checking --- 17 code warnings, as expected

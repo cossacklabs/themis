@@ -1,0 +1,21 @@
+body { font-family: Arial, helvetica, sans-serif }
+h1 { font-family: Arial, helvetica, sans-serif; color: darkblue }
+h2 { font-family: Arial, helvetica, sans-serif; color: darkblue }
+h3 { font-family: Arial, helvetica, sans-serif; color: darkblue }
+h4 { font-family: Arial, helvetica, sans-serif; color: darkblue; top-padding: .2em }
+h5 { font-family: Arial, helvetica, sans-serif; color: darkblue; top-padding: .2em }
+
+body { background: white }
+title { font-family: Ariel, helvetica, sans-serif; color: darkblue }
+A:link { color: blue }
+A:visited { color: darkblue }
+A:active { color: green }
+body { margin-left: 0%; margin-right: 0%; margin-top: 0%; margin-bottom:
+0% }
+h4 { margin-left: 0%; margin-right: 0% }
+h3 { margin-left: 0%; margin-right: 0% }
+h2 { margin-left: 0%; margin-right: 0% }
+h1 { margin-left: 0%; margin-right: 0% }
+
+
+

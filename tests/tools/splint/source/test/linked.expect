@@ -1,0 +1,80 @@
+
+linked.c: (in function node_free1)
+linked.c:10:9: Only storage n->next (type node) derived from released storage
+                  is not released (memory leak): n
+linked.c: (in function node_free2)
+linked.c:17:2: Only storage nn not released before return
+   linked.c:16:9: Storage nn becomes only
+linked.c:15:8: Variable nn declared but not used
+linked.c: (in function node_free3)
+linked.c:23:15: Possibly null storage nn passed as non-null param:
+                   node_free1 (nn)
+   linked.c:21:13: Storage nn may become null
+
+Finished checking --- 4 code warnings, as expected
+
+linked2.c: (in function node_free2)
+linked2.c:15:8: Variable nn declared but not used
+linked2.c: (in function node_free3)
+linked2.c:23:15: Possibly null storage nn passed as non-null param:
+                    node_free1 (nn)
+   linked2.c:21:13: Storage nn may become null
+linked2.c:23:15: Dependent storage nn passed as only param: node_free1 (nn)
+   linked2.c:23:15: Storage nn becomes dependent (through alias n->next)
+
+Finished checking --- 3 code warnings, as expected
+
+linked3.c: (in function node_free1)
+linked3.c:10:9: Only storage n->val (type char *) derived from released storage
+                   is not released (memory leak): n
+linked3.c:10:9: Only storage n->next (type node) derived from released storage
+                   is not released (memory leak): n
+linked3.c: (in function node_free2)
+linked3.c:16:9: Only storage n->val (type char *) derived from released storage
+                   is not released (memory leak): n
+linked3.c:17:2: Only storage nn not released before return
+   linked3.c:16:9: Storage nn becomes only
+linked3.c:15:8: Variable nn declared but not used
+
+Finished checking --- 5 code warnings, as expected
+
+linked4.c: (in function node_free1)
+linked4.c:14:9: Only storage n->val (type item) derived from released storage
+                   is not released (memory leak): n
+linked4.c:14:9: Only storage n->next (type node) derived from released storage
+                   is not released (memory leak): n
+linked4.c: (in function node_free2)
+linked4.c:20:9: Only storage n->val (type item) derived from released storage
+                   is not released (memory leak): n
+linked4.c:21:2: Only storage nn not released before return
+   linked4.c:20:9: Storage nn becomes only
+linked4.c:19:8: Variable nn declared but not used
+linked4.c: (in function node_free3)
+linked4.c:26:9: Only storage n->val->val (type char *) derived from released
+                   storage is not released (memory leak): n->val
+
+Finished checking --- 6 code warnings, as expected
+
+linked5.c: (in function node_free1)
+linked5.c:14:9: Only storage n->next (type node) derived from released storage
+                   is not released (memory leak): n
+linked5.c: (in function node_free2)
+linked5.c:21:2: Only storage nn not released before return
+   linked5.c:20:9: Storage nn becomes only
+linked5.c:19:8: Variable nn declared but not used
+linked5.c: (in function node_free3)
+linked5.c:26:9: Dependent storage n->val passed as only param: free (n->val)
+
+Finished checking --- 4 code warnings, as expected
+
+linked6.c: (in function node_free1)
+linked6.c:16:9: Only storage n->val (type item) derived from released storage
+                   is not released (memory leak): n
+linked6.c:16:9: Only storage n->next (type node) derived from released storage
+                   is not released (memory leak): n
+linked6.c: (in function node_free2)
+linked6.c:24:2: Only storage nn not released before return
+   linked6.c:23:9: Storage nn becomes only
+linked6.c:21:8: Variable nn declared but not used
+
+Finished checking --- 4 code warnings, as expected

@@ -1,0 +1,84 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="http://www.splint.org/splint.css" title="style1">
+<title>Splint Solaris Installation</title>
+</head>
+<body>
+<!--#include virtual="header.html"-->
+
+
+<center><h2>
+Solaris Installation
+</h2></center>
+
+<p> 
+
+<p>
+Instructions for installing Splint using the Solaris binary installation:
+<ol>
+
+<li> Download
+<a
+href="http://www.splint.org/downloads/binaries/splint-3.1.1.SunOS.tgz"><em>
+http://www.splint.org/downloads/binaries/splint-3.1.1.SunOS.tgz
+</em></a>
+<p>
+
+<p>
+<li> <tt>tar -xzf splint-3.1.1.SunOS.tgz</tt>
+<blockquote>
+This will create a splint-3.1.1 directory, containing several
+subdirectories.   The file <tt>splint-3.1.1/bin/splint</tt> is the Splint binary.
+</blockquote>
+<p>
+
+</ol>
+
+To install Splint binaries and libraries in a different directory (optional):
+
+<blockquote>
+<ol start=4>
+<li> <tt>./configure --prefix=<em>directory</em></tt>
+
+<li> <tt> make install</tt>
+
+<blockquote>
+GNU's make utility is required; it may be named
+<tt>gmake</tt> or <tt>gnumake</tt> on your system.
+</blockquote>
+
+<li>Set environment variables:
+
+<blockquote>
+<tt>LARCH_PATH</tt> - path to search for splint libraries and
+initializations files. If you are using the standard directories, this
+should be <em>".:base-directory/splint-3.1.1/lib"</em>.
+<p>
+<tt>LCLIMPORTDIR</tt> - directory containing lcl imports files. If you are using
+the standard directories, this is <em>base-directory/splint-3.1.1/imports</em>.
+
+<p>
+
+If you followed step 4 above set <tt>LARCH_PATH</tt> to
+<tt><em>directory</em>/share/splint/lib</em></tt> and <tt>LCLIMPORTDIR</tt> to
+<tt><em>directory</e>/share/splint/import</em></tt> instead.
+
+</blockquote>
+</p>
+
+Put the commands to set these variables (the actual commands will depend
+on the shell you are using) in one of your initialization dotfiles
+(usually <tt>~/.environment</tt>). 
+<p>
+Set up your command path to include the directory containing
+<tt>splint-3.1.1/bin/splint</tt>, or move the binary to a directory in
+your command path.
+<p>
+   
+</ol>
+<p>
+</blockquote>
+</blockquote>
+
+<p>
+<!--#include virtual="footer.html"-->

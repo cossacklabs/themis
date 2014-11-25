@@ -1,0 +1,35 @@
+/*
+** tainted.xh
+*/
+
+/* Library functions annotated for tainted.mts */
+
+extern int remove (/*@untainted@*/ char *filename) /*@modifies fileSystem, errno@*/ ;
+extern int rename (/*@untainted@*/ char *old, /*@untainted@*/ char *new) ;
+
+extern /*@observer@*/ char *tmpnam (/*@untainted@*/ char *s) ;
+
+extern FILE *fopen (/*@untainted@*/ char *filename, char *mode) ;
+
+extern int printf (/*@untainted@*/ char *format, ...) ;
+
+extern /*@null@*/ FILE *freopen (/*@untainted@*/ char *filename, char *mode, FILE *stream) ;
+
+extern /*@null@*/ /*@tainted@*/ char *
+  fgets (/*@returned@*/ /*@out@*/ char *s, int n, FILE *stream) 
+  /*@ensures tainted s@*/ 
+  /*@modifies *s@*/ ;
+
+extern int system (/*@untainted@*/ /*@null@*/ char *s) /*@modifies fileSystem@*/ ;
+
+extern char *strcpy (/*@returned@*/ char *s1, char *s2) 
+  /*@ensures s1:taintedness = s2:taintedness@*/ ;
+
+extern char *strcat (/*@returned@*/ char *s1, char *s2) 
+  /*@ensures s1:taintedness = s1:taintedness | s2:taintedness@*/ 
+  /*@ensures result:taintedness = s1:taintedness | s2:taintedness @*/ ;
+
+extern char *strcat3 (/*@returned@*/ char *s1, char *s2, char *s3) 
+  /*@ensures s1:taintedness = s1:taintedness | s2:taintedness | s3:taintedness@*/ 
+  /*@ensures result:taintedness = s1:taintedness | s2:taintedness | s3:taintedness @*/ ;
+

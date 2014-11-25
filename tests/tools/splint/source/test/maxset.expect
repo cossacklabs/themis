@@ -1,0 +1,15 @@
+
+Finished checking --- no warnings
+
+maxsetnoannotations.c: (in function noancopy)
+maxsetnoannotations.c:2:3: Possible out-of-bounds store: strcpy(a, b)
+    Unable to resolve constraint:
+    requires maxSet(a @ maxsetnoannotations.c:2:11) >= maxRead(b @
+    maxsetnoannotations.c:2:13)
+     needed to satisfy precondition:
+    requires maxSet(a @ maxsetnoannotations.c:2:11) >= maxRead(b @
+    maxsetnoannotations.c:2:13)
+     derived from strcpy precondition: requires maxSet(<parameter 1>) >=
+    maxRead(<parameter 2>)
+
+Finished checking --- 1 code warning, as expected

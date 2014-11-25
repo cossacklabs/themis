@@ -1,0 +1,37 @@
+# ifndef MTINCLUDES_H
+# define MTINCLUDES_H
+
+# include "mttok.h"
+# include "mtreader.h"
+# include "mtDeclarationNode.h"
+# include "mtDeclarationPiece.h"
+# include "mtDeclarationPieces.h"
+# include "mtContextNode.h"
+# include "mtValuesNode.h"
+# include "mtDefaultsNode.h"
+# include "mtDefaultsDecl.h"
+# include "mtDefaultsDeclList.h"
+# include "mtAnnotationsNode.h"
+# include "mtAnnotationList.h"
+# include "mtAnnotationDecl.h"
+# include "mtMergeNode.h"
+# include "mtTransferClauseList.h"
+# include "mtTransferClause.h"
+# include "mtLoseReferenceList.h"
+# include "mtLoseReference.h"
+# include "mtTransferAction.h"
+# include "mtMergeItem.h"
+# include "mtMergeClause.h"
+# include "mtMergeClauseList.h"
+# include "metaStateConstraint.h"
+# include "metaStateConstraintList.h"
+# include "metaStateSpecifier.h"
+# include "metaStateExpression.h"
+# include "metaStateInfo.h"
+# include "metaStateTable.h"
+# include "annotationInfo.h"
+# include "annotationTable.h"
+
+# else
+# error "Multiple include"
+# endif

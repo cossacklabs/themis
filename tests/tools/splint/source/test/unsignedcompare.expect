@@ -1,0 +1,9 @@
+
+unsignedcompare.c: (in function test)
+unsignedcompare.c:5:3: Assignment of ssize_t to unsigned long int:
+                          res = read(fd, buffer, cnt)
+unsignedcompare.c:7:7: Comparison of unsigned value involving zero: res <= 0
+unsignedcompare.c:12:7: Comparison of unsigned value involving zero: res < 0
+unsignedcompare.c:12:18: Comparison of unsigned value involving zero: res >= 0
+
+Finished checking --- 4 code warnings, as expected

@@ -1,0 +1,90 @@
+
+boolops.c: (in function main)
+boolops.c:12:3: Assignment of int to Kzam: b = 12
+
+Finished checking --- 1 code warning, as expected
+
+mbool.h:1:17: Type implemented as macro: bool
+
+Finished checking --- 1 code warning, as expected
+
+boolenum.c: (in function main)
+boolenum.c:11:8: Use of == with BOOLEAN variables (risks inconsistency because
+                    of multiple true values): a == TRUE
+
+Finished checking --- 1 code warning, as expected
+
+break.c: (in function f)
+break.c:9:4: Dereference of possibly null pointer x: *x
+   break.c:1:24: Storage x may become null
+
+Finished checking --- 1 code warning, as expected
+
+bstring.c:4:14: Initial value of s4[0] is type char *, expects char: "hullo"
+bstring.c:4:23: Initial value of s4[1] is type char *, expects char: "g'bye"
+
+Finished checking --- 2 code warnings, as expected
+
+decl.c:3:21: Structure struct tm declared with fields { int x; }, specified
+                with fields { int tm_sec; int tm_min; int tm_hour;, ... }
+   load file standard.lcd: Specification of struct tm
+   decl.c:3:17: Field tm_sec in specified corresponds to x in declaration
+   load file standard.lcd: Specification of tm_sec
+
+Finished checking --- 1 code warning, as expected
+
+Finished checking --- no warnings
+
+enumbool.c:1:16: Enumerator member false declared with inconsistent type:
+                    enum { false, true }
+   load file standard.lcd: Specification of false: bool
+enumbool.c:1:27: Enumerator member true declared with inconsistent type:
+                    enum { false, true }
+   load file standard.lcd: Specification of true: bool
+enumbool.c:1:34: Member of boolean enumerated type definition does not match
+                    name set to represent true or false: false
+enumbool.c:1:34: Member of boolean enumerated type definition does not match
+                    name set to represent true or false: true
+
+Finished checking --- 4 code warnings, expected 2
+
+Finished checking --- no warnings
+
+extension.c:2:18: Parse Error: New function scope inside function. (For help on
+               parse errors, see splint -help parseerrors.)
+*** Cannot continue.
+
+Finished checking --- no warnings
+
+nestext.c: (in function f)
+nestext.c:3:26: Declaration using extern inside function scope: int test(void)
+
+Finished checking --- 1 code warning, as expected
+
+sizeofarray.c:1:12: Function parameter x declared as manifest array (size
+                       constant is meaningless)
+sizeofarray.c: (in function f)
+sizeofarray.c:5:13: Parameter to sizeof is an array-type function parameter:
+                       sizeof((x))
+sizeofarray.c:10:16: Return value type size_t does not match declared type int:
+                        sizeof((a))
+
+Finished checking --- 3 code warnings, as expected
+
+rex.c: (in function main)
+rex.c:19:12: Only storage re.parent (type struct rx_hash *) derived from
+                variable declared in this scope is not released (memory leak)
+rex.c:19:12: Only storage *(re.children)->parent (type struct rx_hash *)
+    derived from variable declared in this scope is not released (memory leak)
+rex.c:19:12: Only storage *(*(re.children)->children)->parent (type struct
+    rx_hash *) derived from variable declared in this scope is not released
+    (memory leak)
+rex.c:19:12: Only storage *(*(*(re.children)->children)->children)->parent
+    (type struct rx_hash *) derived from variable declared in this scope is not
+    released (memory leak)
+
+Finished checking --- 4 code warnings, as expected
+
+struct.c:13:6: Function main declared to return void, should return int
+
+Finished checking --- 1 code warning, as expected

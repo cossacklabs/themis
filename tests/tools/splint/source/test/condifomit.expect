@@ -1,0 +1,19 @@
+
+condifomit.c: (in function cond1)
+condifomit.c:11:6: Conditionals with Omitted Operands is not supported by ISO
+                      C99
+condifomit.c: (in function cond2)
+condifomit.c:17:9: Conditionals with Omitted Operands is not supported by ISO
+                      C99
+condifomit.c: (in function test_use_before_definition)
+condifomit.c:27:17: Variable i used before definition
+condifomit.c:27:17: Conditionals with Omitted Operands is not supported by ISO
+                       C99
+
+Finished checking --- 4 code warnings, as expected
+
+Command Line: Setting +gnuextensions redundant with current value
+condifomit.c: (in function test_use_before_definition)
+condifomit.c:27:17: Variable i used before definition
+
+Finished checking --- 1 code warning, as expected

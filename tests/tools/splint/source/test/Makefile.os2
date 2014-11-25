@@ -1,0 +1,859 @@
+##################################################
+###                                            ###
+### Makefile for LCLint testing                ###
+###                                            ### 
+### designed for use with GNU make             ### 
+###                                            ###
+##################################################
+
+SHELL = cmd.exe
+
+.SUFFIXES: .out .expect .c .lcl .h .lh .diff
+
+# -u show context
+SPLINT = ../bin/splint.exe
+
+### This is horrible!  Can't we make top_builddir absolute?
+SPLINTNEST = ../../bin/splint.exe
+
+SPLINTPNEST = $(SPLINTNEST) -nof
+SPLINTP = $(SPLINT) -nof
+
+# Make sure .splintrc files are not used so test results do not
+# depend on local settings.
+SPLINTRN = $(SPLINTP) -hints -booltype "bool"
+SPLINTR = $(SPLINTRN) -exportlocal +debugfcnconstraint
+
+SPLINTRNNEST = $(SPLINTPNEST) -hints -booltype "bool"
+SPLINTRNEST = $(SPLINTRNNEST) -exportlocal +debugfcnconstraint
+
+###
+### rcfiles not included becuase file names will not match exactly
+###
+
+UNITTESTS = \
+  help \
+  abstptr abstract alias alttypes ansireserved argorder \
+  args arraydims arrayinit arraylit blocks break cases cast chararraylit charlit clauses commentchar compdestroy \
+  compoundliterals compoundstmt constannot controldepth csyntax czechnames czechoslovaknames deadparam \
+  decl divzero enum enumtag exports external fields flags forbody format freearray \
+  funcpointer functionmacro glob globals impabstract info init inparam internal iter keep libs \
+  linked lintcomments list longint loopexec looptesteffect \
+  macros macrosef merge mergenull modifies modtest moduncon \
+  mongoincludes mystrncat noeffect null nullret nullassign numabstract observer oldstyle outglob outparam \
+  parentype postnotnull preds prefixes printflike rc refcounts release repexpose \
+  returned sharing shifts sizesigns slovaknames \
+  specclauses \
+  special stack staticarray strings \
+  stringliteral \
+  structassign typequals typeof ud ulstypes union unioninit \
+  unnamedsu unreachable unsignedcompare \
+  unused ullint utypes void widestrings
+
+UNITEXPECTS = $(addsuffix .expect, $(UNITTESTS))
+
+### warnuse doesn't work yet!
+SUBDIRTESTS1 = metastate mergestate fileio \
+   simplebufferConstraintTests moreBufferTests moreBufferTests2 globalbufferannotation \
+   maxset strchr sizeoftest for manual
+SUBDIRTESTS1 = tests2.5 db1 db2 db3
+SUBDIRTESTS2 = tainted tests2.2 tests2.4 
+SUBDIRTESTS = $(SUBDIRTESTS1) $(SUBDIRTESTS2)
+
+SPLINTTESTS = $(UNITTESTS) $(SUBDIRTESTS)
+
+QUICKTESTS = db3
+
+all: quicktest
+
+DIFF = diff
+
+### not real .c
+
+quicktest: $(SPLINTTESTS)
+
+
+.PHONY: help
+
+help:
+	-@$(SPLINT)
+	-@$(SPLINT) -help
+	-@$(SPLINTP) -asdf
+	-@$(SPLINTP) +boolint +boolint 
+	-@$(SPLINT) -help flags alpha
+
+### Rules for tests start here
+
+.PHONY: abstptr
+abstptr:
+	$(SPLINTR) abstptr -expect 9
+	$(SPLINTR) abstptr +voidabstract -expect 6
+
+.PHONY: abstract
+abstract:
+	$(SPLINTR) abst_t.lcl commentcmd.c -expect 15
+
+.PHONY: alias
+alias:
+	$(SPLINTR) +lh mut
+	$(SPLINTR) mut alias +globalias -expect 19
+	$(SPLINTR) mut alias2 +globalias -expect 17
+	$(SPLINTR) +lh alias3 -expect 14 
+	$(SPLINTR) +lh alias4 +boolint
+	$(SPLINTR) alias4 -pred +retalias -expect 6
+	$(SPLINTR) +lh alias5 +memchecks -null -specundef -expect 5
+
+.PHONY: alttypes
+alttypes:
+	$(SPLINTR) alttypes.c -expect 2
+
+###
+### evans 2001-06-07 - updated nameCheck.c to reflect C9X.
+### Reports one new errors for ansireserved.c - wctomb is bad even as a local
+###    variable (could be a macro?)
+### Reports 3 additional errors for +checks; no longer suppresses name errors
+###    in the presense of other errors.
+###
+
+.PHONY: ansireserved
+ansireserved:
+	$(SPLINTR) ansireserved.c +ansireserved -nolib -expect 9
+	$(SPLINTR) ansireserved.c +ansireserved +ansireservedlocal -nolib -expect 11
+	$(SPLINTRN) ansireserved.c +checks -exportlocal -exportheadervar -exportheader -expect 12
+	$(SPLINTR) ansireserved2.c +ansireserved -expect 1
+
+.PHONY: argorder
+argorder:
+	$(SPLINTR) argorder.c -expect 4
+	$(SPLINTR) argorder2  -expect 5
+	$(SPLINTR) argorder3.c -expect 8
+	$(SPLINTR) argorder4 -expect 9
+	$(SPLINTR) argorder4 -evalorder -expect 1
+	$(SPLINTR) argorder5.c +evalorderuncon -expect 3
+
+.PHONY: args
+args:
+	$(SPLINTR) args -noeffect -expect 12
+
+.PHONY: arraydims
+arraydims:
+	$(SPLINTR) arraydims.c -varuse -expect 2
+	$(SPLINTR) arraydims.c -initsize -varuse
+
+.PHONY: arrayinit
+arrayinit:
+	$(SPLINTR) arrayinit.c -expect 9
+
+.PHONY: arraylit
+arraylit:
+	$(SPLINTR) arraylit.c -expect 2
+	$(SPLINTR) arraylit.c +stringliteralsmaller -expect 4
+
+.PHONY: blocks
+blocks:
+	$(SPLINTR) blocks.c -expect 4
+	$(SPLINTR) blocks.c +ifblock +elseifcomplete -expect 7
+	$(SPLINTR) blocks.c -ifempty +whileempty +whileblock -expect 3
+	$(SPLINTR) blocks.c -ifempty +forempty +forblock -expect 3
+	$(SPLINTR) blocks.c +allempty -expect 6
+	$(SPLINTRN) blocks.c +strict -exportlocal +partial -exportheader -expect 11
+
+.PHONY: break
+break:
+	$(SPLINTR) break.c -expect 4
+	$(SPLINTR) break.c +deepbreak -expect 6
+	$(SPLINTR) break.c +deepbreak -looploopbreak -expect 5
+
+.PHONY: cases
+cases: 
+	$(SPLINTR) cases.c -expect 5
+	$(SPLINTR) cases2.c -expect 2
+	$(SPLINTRN) cases2.c +checks -exportlocal -exportheader -expect 3
+	$(SPLINTRN) cases2.c +checks -exportlocal -exportheader -branchstate -expect 3
+
+.PHONY: cast
+cast:
+	$(SPLINTR) cast -accessmodule -expect 20
+	$(SPLINTRN) cast2.c +checks -exportlocal -exportheader -expect 3
+
+.PHONY: chararraylit
+chararraylit:
+	$(SPLINTR) chararraylit.c -expect 2
+
+### Two addition errors detected with 2.5 with -numliteral.
+
+### evans 2002-12-15: finds one more but in charlit
+.PHONY: charlit
+charlit:
+	$(SPLINTR) +hints charlit.c -expect 4
+	$(SPLINTR) +hints -numliteral charlit.c -expect 6
+	$(SPLINTR) +hints charlit.c +charintliteral +ignoresigns -expect 1
+
+.PHONY: clauses
+clauses: 
+	$(SPLINTR) clauses.c +memchecks -expect 4
+	$(SPLINTR) clauses2.c +memchecks 
+	$(SPLINTR) clauses3.c +memchecks -expect 2
+	$(SPLINTR) clauses3.c +memchecks +unixlib -expect 3
+
+.PHONY: commentchar
+commentchar:
+	$(SPLINTR) commentchar.c -expect 4
+	$(SPLINTR) -commentchar '#' commentchar.c -expect 4
+
+.PHONY: controldepth
+controldepth:
+	$(SPLINTR) +hints -controlnestdepth 2 controldepth.c -expect 2
+	$(SPLINTR) +hints -controlnestdepth 1 controldepth.c -expect 2
+
+.PHONY: compdestroy
+compdestroy:
+	$(SPLINTRN) compdestroy.c +checks -exportlocal -exportheader -expect 1
+	$(SPLINTRN) compdestroy.c +checks -exportlocal -exportheader +strictdestroy -expect 2
+	$(SPLINTRN) compdestroy.c +checks -exportlocal -exportheader +strictdestroy +strictusereleased -expect 3
+	$(SPLINTRN) compdestroy.c +strict +partial -exportheader -expect 3
+
+.PHONY: compoundliterals
+compoundliterals:
+	${SPLINTRN} compoundliterals.c 
+
+.PHONY: compoundstmt
+compoundstmt:
+	${SPLINTRN} compoundstmt.c -expect 3
+
+.PHONY: constannot
+constannot:
+	${SPLINTRN} constannot.c +boundswrite -exportlocal -expect 2
+
+.PHONY: csyntax
+csyntax:
+	$(SPLINTR) +quiet -incondefs csyntax.c -expect 1 
+	$(SPLINTR) +quiet csyntax2.c -expect 2
+	$(SPLINTR) +quiet csyntax3.c -expect 1
+	$(SPLINTR) +quiet -incondefs csyntax4.c
+	$(SPLINTR) +quiet csyntax5.c
+	$(SPLINTR) +quiet csyntax6.c
+	$(SPLINTR) +quiet csyntax7.c
+	$(SPLINTR) +quiet csyntax8.c
+	$(SPLINTR) +quiet csyntax9.c
+	$(SPLINTR) +quiet csyntax10.c
+	$(SPLINTR) +quiet csyntax11.c
+	$(SPLINTR) +quiet csyntax12.c
+	$(SPLINTR) +quiet csyntax13.c -expect 1
+	$(SPLINTR) +quiet csyntax14.c
+	$(SPLINTR) +quiet csyntax15.c
+	$(SPLINTR) +quiet csyntax16.c -expect 2
+	$(SPLINTR) +quiet csyntax17.c -expect 3
+
+.PHONY: czechnames
+czechnames:
+	$(SPLINTR) czechnames.c
+	$(SPLINTR) +hints +czech czechnames.c -expect 2
+	$(SPLINTR) +hints +czech -czechvars czechnames.c -expect 1
+	$(SPLINTR) +hints +czech -accessczech czechnames.c -expect 6
+
+.PHONY: czechoslovaknames
+czechoslovaknames:
+	$(SPLINTR) +hints +czechoslovak czechnames.c -expect 1
+	$(SPLINTR) +hints +czechoslovak slovaknames.c -expect 1
+	$(SPLINTR) +hints +czechoslovak +slovakvars slovaknames.c -expect 2
+
+###
+### deadparam added 2001-05-27
+###
+
+.PHONY: deadparam
+deadparam:
+	${SPLINTR} deadparam.c -expect 3
+
+#
+# Was expect 3 before 2.4.  Earlier versions did not handle implicit
+# function pointers correctly.
+#
+
+.PHONY: decl
+decl:
+	$(SPLINTR) decl.c -expect 2
+	$(SPLINTRN) decl.c +strict -exportlocal -expect 5
+	$(SPLINTR) decl2 -expect 4
+
+.PHONY: divzero
+divzero:
+	$(SPLINTR) divzero.c -varuse -expect 0
+
+.PHONY: enum
+enum:
+	$(SPLINTR) enum -expect 16
+	$(SPLINTR) enum -misscase -expect 14
+
+.PHONY: enumtag
+enumtag:
+	$(SPLINTR) enumtag.c -expect 2
+
+.PHONY: exports
+exports:
+	$(SPLINTR) exports.c +exporttype +exportvar +exportfcn +topuse +typeuse -expect 6
+	$(SPLINTR) exports.c +exportany -expect 3
+	$(SPLINTR) exports.c
+
+.PHONY: external
+external:
+	$(SPLINTR) external.c +partial
+	$(SPLINTR) external.c +partial +distinctexternalnames +ansi89limits -expect 2
+	$(SPLINTR) external.c -nolib +partial -externalnamelength 3 -expect 3
+	$(SPLINTR) external.c -nolib +partial -externalnamelength 3 +externalnamecaseinsensitive -expect 3
+	$(SPLINTR) external.c +partial -externalnamelength 3 -expect 4
+
+.PHONY: fields
+fields:
+	$(SPLINTR) fields.c +memchecks -expect 6
+	$(SPLINTR) fields2.c +memchecks -expect 5
+	$(SPLINTR) fields3.c +memchecks
+
+.PHONY: flags
+flags:
+	$(SPLINTR) flags.c -expect 8
+	$(SPLINTR) +nocomments flags.c -expect 2
+
+### Added 2001-06-02
+
+.PHONY: forbody
+forbody:
+	${SPLINTR} forbody.c -expect 2
+
+### Added 2001-06-03
+.PHONY: format
+format:
+	${SPLINTR} format.c -expect 3
+	${SPLINTR} format.c -formatconst 
+
+# two new errors (invalid lhs)
+
+.PHONY: funcpointer
+funcpointer:
+	$(SPLINTR) +memchecks +noparams funcpointer.c -expect 18
+
+.PHONY: functionmacro
+functionmacro:
+	$(SPLINTR) functionmacro.c -expect 2
+
+.PHONY: glob
+glob:
+	$(SPLINTR) glob -expect 4
+	$(SPLINTR) glob -globuse -expect 3
+	$(SPLINTR) glob +globunspec -expect 6
+
+.PHONY: globals
+globals:
+	$(SPLINTR) -modifies globals.c -expect 5
+	$(SPLINTR) -modifies globals.c +allglobals -expect 6
+	$(SPLINTR) -modifies globals.c +impcheckedglobals -expect 6
+	$(SPLINTR) -modifies globals.c -globals -checkstrictglobals -expect 2
+	$(SPLINTR) -modifies globals.c +globunspec -expect 6
+	$(SPLINTR) -modifies globals.c +globunspec +allglobals -expect 8
+
+# Was -accessfile
+.PHONY: impabstract
+impabstract: 
+	$(SPLINTR) -accessmodule impabstract.c 
+	$(SPLINTR) -accessmodule +hints +impabstract impabstract.c -expect 2
+	$(SPLINTR) -accessmodule +hints +impabstract impabstract -expect 4
+
+###
+### evans 2001-12-30: Handle unrecognized pre-processor directives
+###    (Reported by Pierluigi Sanzani)
+
+.PHONY: info
+info:
+	${SPLINTR} info.c -expect 4
+
+### evans 2001-10-14: Expected errors updated
+.PHONY: init
+init:
+	$(SPLINTR) init.c -expect 14
+	$(SPLINTRN) init.c +checks -exportlocal -exportheadervar -expect 17
+
+.PHONY: inparam
+inparam:
+	$(SPLINTR) inparam.c -expect 2
+	$(SPLINTR) +impouts inparam.c -expect 1
+
+.PHONY: internal
+internal:
+	$(SPLINTR) internal.c -expect 1
+	$(SPLINTR) internal.c +distinctinternalnames -expect 1
+	$(SPLINTR) internal.c +distinctinternalnames +ansi89limits -expect 2
+	$(SPLINTR) internal.c -internalnamelen 28 -expect 3
+	$(SPLINTR) internal.c +internalnamecaseinsensitive -expect 3
+	$(SPLINTR) internal.c +internalnamecaseinsensitive +internalnamelookalike -expect 11
+
+###
+### iter
+### 2001-06-06: Error message for iter.lcl:3,6 fixed to iter.lcl:3:6
+### 
+
+.PHONY: iter
+iter:
+	$(SPLINTR) iter -expect 14 -lclexpect 1
+	$(SPLINTR) iter2.c -expect 12
+
+.PHONY: keep
+keep:
+	$(SPLINTR) keep.c +memchecks -expect 6
+
+### libs
+### 2001-05-22: 2 new errors found (fixed spec of signal)
+### 2001-05-30: 3 new errors found (formatconst)
+### 2002-07-08: 2 new errors found (getc modifies errno)
+
+.PHONY: libs
+libs:
+	$(SPLINTR) libs.c +longunsignedunsignedintegral -expect 18
+	$(SPLINTR) libs.c -expect 22
+	$(SPLINTR) libs.c +globunspec +modunspec -expect 25
+	$(SPLINTR) libs.c +strictlib +globunspec +modunspec -expect 44
+
+.PHONY: lintcomments
+lintcomments:
+	$(SPLINTR) lintcomments.c -expect 5
+	$(SPLINTR) lintcomments.c -warnlintcomments -expect 1
+	$(SPLINTR) lintcomments.c -lintcomments -expect 4
+
+.PHONY: list
+list:
+	$(SPLINTR) list.c -expect 3
+
+###
+### 2002-12-12: Added test case for +longint and +shortint flags
+###
+
+.PHONY: longint
+longint:
+	$(SPLINTR) longint.c -expect 3
+	$(SPLINTR) longint.c +longint -expect 2
+	$(SPLINTR) longint.c +shortint -expect 2
+	$(SPLINTR) longint.c +shortint +longint -expect 0
+
+###
+### 2002-01-01: Added test case for obvious loop execution.
+###
+
+.PHONY: loopexec
+loopexec:
+	$(SPLINTR) loopexec.c -expect 1
+	$(SPLINTR) loopexec.c -obviousloopexec -expect 3
+
+.PHONY: looptesteffect
+looptesteffect:
+	$(SPLINTR) looptesteffect.c -expect 1
+
+.PHONY: macros
+macros:
+	$(SPLINTR) macros -expect 17 
+	$(SPLINTR) macros.c +allmacros -expect 34
+	$(SPLINTR) macros.c +fcnmacros -expect 31
+
+.PHONY: macrosef
+macrosef:
+	$(SPLINTR) macrosef -expect 4
+	$(SPLINTR) macrosef.c +allmacros -expect 3
+	$(SPLINTR) macrosef.c +allmacros +sefuncon -expect 4
+
+.PHONY: merge
+merge:
+	$(SPLINTRN) merge.c +checks -exportlocal -exportheadervar -exportheader -expect 3
+
+.PHONY: mergenull
+mergenull:
+	$(SPLINTRN) mergenull.c 
+
+.PHONY: modifies
+modifies:
+	$(SPLINTR) modifies.c modclient.c +impcheckedstatics +mustmod -expect 7
+
+.PHONY: modtest
+modtest:
+	$(SPLINTR) modtest -expect 10
+	$(SPLINTR) modtest +modunspec -expect 13
+	$(SPLINTR) modtest +mustmod -expect 14
+
+.PHONY: moduncon
+moduncon:
+	$(SPLINTR) moduncon.c +moduncon -memchecks -expect 4
+	$(SPLINTRN) moduncon.c +strict -exportlocal -expect 22
+
+.PHONY: mongoincludes
+mongoincludes:
+	$(SPLINTR) mongoincludes.c -includenest 1 -expect 19
+	$(SPLINTR) mongoincludes.c -includenest 2 -expect 10
+	$(SPLINTR) mongoincludes.c -includenest 3 -expect 4
+	$(SPLINTR) mongoincludes.c -includenest 4 -expect 1
+	$(SPLINTR) mongoincludes.c -includenest 5 -expect 0
+
+.PHONY: mystrncat
+mystrncat:
+	$(SPLINTR) mystrncat.c +boundsread +boundswrite -expect 4 
+
+.PHONY: noeffect
+noeffect:
+	${SPLINTP} noeffect.c +allmacros +checks -expect 3
+
+###
+### 2002-01-01: null1.c: expect increased to 15 because out must be defined
+###                         checking detects one new error
+###
+
+.PHONY: null
+null: 
+	$(SPLINTR) null1.c -expect 15
+	$(SPLINTR) null1.c -null -mustdefine -expect 4
+	$(SPLINTR) null2.c -expect 11
+	$(SPLINTR) null3.c -expect 15
+	$(SPLINTR) null3.c +unixlib -expect 16
+	$(SPLINTR) null4.c -expect 1
+	$(SPLINTR) null5.c -expect 4
+	$(SPLINTR) null6 -expect 4
+	$(SPLINTR) +quiet null6.lcl -dump null6
+	$(SPLINTR) null6.c -load null6 -expect 4
+
+### Added for 3.0 (bugs reported by Kevin Broady)
+
+.PHONY: nullret
+nullret:
+	$(SPLINTR) nullret.c -expect 2
+	$(SPLINTR) -nullret nullret.c -expect 0
+
+.PHONY: nullassign
+nullassign:
+	$(SPLINTR) nullassign.c -expect 2
+	$(SPLINTR) -nullassign nullassign.c -expect 1
+
+### Added for 3.1 - evans 2002-12-14
+
+.PHONY: numabstract
+numabstract:
+	$(SPLINTR) numabstract.c -expect 11
+	$(SPLINTR) numabstract.c +numabstractlit -expect 9
+	$(SPLINTR) numabstract.c -numabstractcast -expect 10
+
+#
+# Before 2.4, expected one more because error was reported both as 
+# dependent and observer.
+#
+
+.PHONY: observer
+observer:
+	$(SPLINTRN) observer +checks -exportlocal -exportheader -expect 9
+	$(SPLINTRN) observer.c +checks -exportlocal -exportheader -expect 8
+	$(SPLINTR) observer.c -expect 7
+
+.PHONY: oldstyle
+oldstyle:
+	$(SPLINTR) oldstyle oldstyle2.c -expect 5
+
+.PHONY: outglob
+outglob:
+	$(SPLINTR) outglob -expect 10
+
+.PHONY: outparam
+outparam:
+	$(SPLINTR) outparam -expect 12
+
+### evans 2001-08-26: postnotnull new
+
+.PHONY: postnotnull
+postnotnull:
+	${SPLINTR} postnotnull.c -expect 1
+
+### evans 2002-02-09: added parentype.c
+.PHONY: parentype
+parentype:
+	${SPLINTR} parentype.c 
+
+#
+# Four new +fcnuse errors for -strict (evans 2001-07-22)
+# 
+
+.PHONY: preds
+preds:
+	$(SPLINTR) +hints preds.c -expect 6
+	$(SPLINTRN) +hints preds.c -weak -expect 1
+	$(SPLINTRN) +hints preds.c -strict -exportlocal -exportheader -expect 10
+
+.PHONY: prefixes
+prefixes:
+	$(SPLINTR) prefixes.c +partial
+	$(SPLINTRN) prefixes.c +allmacros +checks -exportlocal +partial -exportheader -exportheadervar -expect 4
+	$(SPLINTR) prefixes.c -typeprefix "T" -expect 2
+	$(SPLINTR) prefixes.c -typeprefix "^" -expect 1
+	$(SPLINTR) prefixes.c -typeprefix "^*" -expect 2
+	$(SPLINTR) prefixes.c -typeprefix "^%*" -expect 2
+	$(SPLINTR) prefixes.c -typeprefix "^~*" -expect 2
+	$(SPLINTR) prefixes.c -typeprefix "^" +typeprefixexclude -expect 7
+	$(SPLINTR) prefixes.c -filestaticprefix "^^" -expect 4
+	$(SPLINTR) prefixes.c -filestaticprefix "^#" -expect 5
+	$(SPLINTR) prefixes.c -filestaticprefix "^?&x" -expect 5
+	$(SPLINTR) prefixes.c -globalprefix "G" -expect 1
+	$(SPLINTR) prefixes.c -globalprefix "&G?_^" -expect 1
+	$(SPLINTR) prefixes.c -externalprefix "G" -expect 5
+	$(SPLINTR) prefixes.c -typeprefix "T" -externalprefix "G" -expect 4
+#	Herbert: this does not work under OS/2
+#	$(SPLINTR) prefixes.c -localprefix "?*" +localprefixexclude -expect 13
+
+.PHONY: printflike
+printflike:
+	$(SPLINTR) printflike.c -expect 6
+	$(SPLINTR) printflike.c -warnlintcomments -expect 5
+
+.PHONY: rc
+rc:
+#       herbert unsolved problem with quoting here!
+#	$(SPLINTR) -DMYSTERY='"a flag\"wicked cool"' rc.c -expect 1
+	$(SPLINTR) -DMYSTERY=12 rc.c -expect 1
+	$(SPLINTR) -f rc1.splintrc rc.c -expect 1
+	$(SPLINTR) -UMYSTERY -f rc1.splintrc rc.c -expect 1
+	$(SPLINTR) -f rc3.splintrc.os2 rc.c -expect 1
+
+.PHONY: rcfiles
+rcfiles:
+	cd rcfiles; ${MAKE} SPLINT="-$(SPLINTPNEST)"
+
+.PHONY: refcounts
+refcounts:
+	$(SPLINTR) refcounts.c -expect 7 
+
+.PHONY: release
+release:
+	$(SPLINTR) release.c +memchecks -expect 1
+
+.PHONY: repexpose
+repexpose:
+	$(SPLINTR) +lh repexpose +memchecks -expect 12
+	$(SPLINTR) repexpose +memchecks +retalias -expect 15
+	$(SPLINTRN) repexpose +checks -exportlocal -expect 27
+
+### returned added 2001-05-27
+### (Bug discovered checking splint sources.)
+
+.PHONY: returned
+returned:
+	${SPLINTR} returned.c -expect 1
+
+.PHONY: sharing
+sharing: 
+	$(SPLINTR) sharing1.c -expect 21
+	$(SPLINTR) sharing3.c -expect  3
+	$(SPLINTR) sharing4.c -expect 13
+	$(SPLINTR) sharing4.c -paramimptemp -expect 12
+	$(SPLINTR) sharing5.c -expect 6
+
+.PHONY: shifts
+shifts:
+	$(SPLINTR) shifts.c -expect 4
+	$(SPLINTR) shifts.c -shiftimplementation -expect 3
+	$(SPLINTR) shifts.c -shiftnegative -expect 1
+
+#drl comment this out until sizesigns is added to cvs
+
+### evans - added 2002-08-17: check warnings with arbitrary integral types
+sizesigns:
+	$(SPLINTR) +strict sizesigns.c -expect 5
+	$(SPLINTR) +strict +matchanyintegral sizesigns.c -expect 4
+
+.PHONY: slovaknames
+slovaknames:
+	$(SPLINTR) +hints slovaknames.c -expect 1
+	$(SPLINTR) +hints slovaknames.c +accessslovak 
+	$(SPLINTR) +hints +slovak slovaknames.c -expect 3
+	$(SPLINTR) +hints +slovak -slovakvars slovaknames.c -expect 2
+	$(SPLINTR) +hints +slovak -accessslovak slovaknames.c -expect 7
+
+.PHONY: specclauses
+specclauses:
+	$(SPLINTR) specclauses.c -expect 6
+	$(SPLINTR) specclauses2.c -expect 8
+	$(SPLINTR) specclauses3.c -expect 5
+	$(SPLINTR) specclauses4.c -expect 3
+	$(SPLINTR) specclauses5.c -expect 3
+
+.PHONY: specclauses1
+specclauses1:
+	$(SPLINTR) specclauses.c -expect 6
+
+.PHONY: specclauses2
+specclauses2:
+	$(SPLINTR) specclauses2.c -expect 8
+
+.PHONY: specclauses3
+specclauses3:
+	$(SPLINTR) specclauses3.c -expect 6
+
+.PHONY: specclauses4
+specclauses4:
+	$(SPLINTR) specclauses4.c -expect 3
+
+.PHONY: specclauses5
+specclauses5:
+	$(SPLINTR) specclauses5.c -expect 3
+
+.PHONY: special
+special:
+	$(SPLINTR) special -expect 20
+	$(SPLINTR) special -relaxquals -expect 22
+
+.PHONY: stack
+stack:
+	$(SPLINTR) stack.c -expect 5
+	$(SPLINTR) stack.c -stackref
+
+.PHONY: staticarray
+staticarray:
+	$(SPLINTR) staticarray.c -expect 3
+
+###
+### evans 2002-03-16: Default setting of stringliteralnoroomfinalnull changed
+### 
+
+.PHONY: stringliteral
+stringliteral:
+	$(SPLINTR) stringliteral.c -stringliteralnoroomfinalnull -expect 3
+	$(SPLINTR) stringliteral.c -expect 4
+
+.PHONY: strings
+strings:
+	$(SPLINTR) strings.c -expect 3
+	$(SPLINTR) -readonlystrings -expect 1 strings.c
+	$(SPLINTR) +modobserverstrict -maintype -expect 4 strings.c
+
+.PHONY: structassign
+structassign:
+	$(SPLINTR) structassign.c -expect 4
+
+.PHONY: typeof
+typeof:
+	$(SPLINTR) typeof.c -expect 2
+
+.PHONY: typequals
+typequals:
+	$(SPLINTR) typequals.c tq.lcl -expect 5
+	$(SPLINTR) typequals.c -expect 2
+
+.PHONY: ud
+ud:
+	$(SPLINTR) ud.c -expect 9
+	$(SPLINTR) ud2 -specundef -expect 3
+
+.PHONY: ulstypes
+ulstypes:
+	$(SPLINTR) ulstypes.c -expect 8
+	$(SPLINTR) ulstypes.c +ignorequals 
+	$(SPLINTRN) ulstypes.c +strict -exportheader -exportheadervar -expect 28
+
+# 3 more detected with version 2.5 (change in -numliteral setting)
+
+.PHONY: union
+union:
+	$(SPLINTR) +memchecks union.c -expect 8
+
+###
+### Added 2001-12-30: fixed union initializer checking in response to
+### bug report from Jim Zelenka.
+###
+
+.PHONY: unioninit
+unioninit:
+	$(SPLINTR) unioninit.c -expect 2
+
+.PHONY: unnamedsu
+unnamedsu:
+	$(SPLINTR) unnamedsu.c -expect 0
+
+.PHONY: unreachable
+unreachable:
+	$(SPLINTR) unreachable.c -expect 5
+	$(SPLINTR) -unreachable unreachable.c -expect 2
+	$(SPLINTR) switch.c -expect 4
+
+.PHONY: unsignedcompare
+unsignedcompare:
+	${SPLINTR} +posixlib unsignedcompare.c -expect 4
+
+###
+### 2001-06-08 evans: 2 new errors after fixing ansireserved name checks
+###
+
+.PHONY: unused
+unused:
+	$(SPLINTRN) unused.c +checks -exportlocal -expect 5
+	$(SPLINTRN) unused.c +checks -exportlocal +topuse -expect 8
+
+###
+### 2001-06-10: Provided by Jim Zalenka
+###
+
+.PHONY: ullint
+ullint:
+	${SPLINTRN} ullint.c -expect 5
+	${SPLINTRN} ullint.c +charint +charintliteral -expect 2
+
+###
+### 2001-12-30: Poor warnings reported by Peter Deutsch
+###
+### 2002-07-03: removed warnings for datatype/macro definitions
+###
+
+.PHONY: utypes
+utypes:
+	${SPLINTRN} utypes.c -expect 2
+
+###
+
+.PHONY: void
+void:
+	${SPLINTRN} void.c -expect 2
+
+###
+### 2001-12-30: Problems with wide character strings reported by Nelson Beebe
+###
+
+.PHONY: widestrings
+widestrings:
+	${SPLINTRN} widestrings.c -expect 2
+
+###
+### New since 2.5q:
+###
+
+.PHONY: linked
+linked:
+	${SPLINTR} linked.c -expect 4
+	${SPLINTR} linked2.c -expect 3
+	${SPLINTR} linked3.c -expect 5
+	${SPLINTR} linked4.c -expect 6
+	${SPLINTR} linked5.c -expect 4
+	${SPLINTR} linked6.c -expect 4
+
+.PHONY: freearray
+freearray:
+	${SPLINTR} freearray.c -expect 1
+
+.PHONY: sizeof
+sizeof:
+	$(SPLINTR) +bounds sizeof.c -expect 1
+
+.PHONY: buffertest
+buffertest:
+	$(SPLINTR) +bounds buffertest1.c -expect 5
+
+.PHONY: $(SUBDIRTESTS1)
+$(SUBDIRTESTS1):
+	cd $@; $(MAKE) SPLINT="$(SPLINTRNNEST)"
+
+.PHONY: $(SUBDIRTESTS2)
+$(SUBDIRTESTS2):
+	cd $@; $(MAKE) SPLINT="$(SPLINTRNNEST)" -f Makefile.os2
+
+#		sizesigns.c sizesigns.expect \
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:

@@ -1,0 +1,22 @@
+
+buffertest1.c: (in function t1)
+buffertest1.c:5:3: Variable g used before definition
+buffertest1.c:5:3: Possible out-of-bounds store:
+    Unable to resolve constraint:
+    requires maxSet(g @ buffertest1.c:5:3) >= 100
+     needed to satisfy precondition:
+    requires maxSet(g @ buffertest1.c:5:3) >= 100
+buffertest1.c: (in function t2)
+buffertest1.c:20:3: Variable g used before definition
+buffertest1.c:21:3: Possible out-of-bounds store:
+    Unable to resolve constraint:
+    requires maxSet(g @ buffertest1.c:20:3) >= 1
+     needed to satisfy precondition:
+    requires maxSet(g @ buffertest1.c:21:3) >= 0
+buffertest1.c:21:10: Possible out-of-bounds read:
+    Unable to resolve constraint:
+    requires maxRead(g @ buffertest1.c:20:3) >= 2
+     needed to satisfy precondition:
+    requires maxRead(g @ buffertest1.c:21:10) >= 1
+
+Finished checking --- 5 code warnings, as expected

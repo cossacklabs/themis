@@ -1,0 +1,25 @@
+
+czechnames.c:26:5: Function budweiser name is not consistent with Czechoslovak
+                      naming convention.
+  Function name is not consistent with Czechoslovak naming convention. (Use
+  either -czechoslovakfcns or -namechecks to inhibit warning)
+
+Finished checking --- 1 code warning, as expected
+
+slovaknames.c:32:5: Function budweiser name is not consistent with Czechoslovak
+                       naming convention.
+  Function name is not consistent with Czechoslovak naming convention. (Use
+  either -czechoslovakfcns or -namechecks to inhibit warning)
+
+Finished checking --- 1 code warning, as expected
+
+slovaknames.c:5:5: Variable michelobLight name violates Slovak naming
+    convention.  Slovak prefix michelob is not the name of a type.
+  Variable name is not consistent with Slovak naming convention. (Use either
+  -slovakvars or -namechecks to inhibit warning)
+slovaknames.c:32:5: Function budweiser name is not consistent with Czechoslovak
+                       naming convention.
+  Function name is not consistent with Czechoslovak naming convention. (Use
+  either -czechoslovakfcns or -namechecks to inhibit warning)
+
+Finished checking --- 2 code warnings, as expected

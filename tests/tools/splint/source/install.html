@@ -1,0 +1,134 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="http://www.splint.org/splint.css" title="style1">
+<title>Splint - Source Code Installation</title>
+</head>
+<body>
+<!--#include virtual="header.html"-->
+
+<body>
+<center><h2>
+Source Code Installation
+</h2></center>
+<p>
+
+<p>
+Splint should compile effortlessly on standard Unix systems, and with
+a bit of effort on non-Unix platforms.  If you produce a port for a
+non-Unix platform, please let <a
+href="mailto:splint@cs.virginia.edu"><em>splint@cs.virginia.edu</em></a>
+know.  <p>
+
+<p>
+To build Splint you need:
+<ul>
+<li> a (hopefully ANSI-conforming) C compiler.  GNU <tt>gcc</tt> is recommended,
+but most modern C compilers should work.
+<li> <tt>make</tt>, the GNU make utility. If you don't have <tt>make</tt> installed on your system, download it from <tt>ftp.gnu.org</tt>.
+<li> standard Unix tools: <tt>gzip</tt>, <tt>tar</tt>
+</ul>
+
+<p>
+Instructions:
+<ol>
+  
+<li> 
+Download
+<a href="http://www.splint.org/downloads/splint-3.1.1.src.tgz"><em>http://www.splint.org/downloads/splint-3.1.1.tgz</em></a>.
+ 
+</a> (the latest stable release).  
+<p>
+Copy this package to the directory where you want to build Spint.  When
+the tar file is extracted, it will create a splint-3.1.1 subdirectory. 
+<p>
+<li><tt>tar xzf splint-3.1.1.src.tgz</tt> (extract files from the archive)
+<p>
+<li><tt>cd splint-3.1.1</tt> (enter the extracted directory)
+<p>
+<li><tt>configure</tt>
+  <blockquote>
+   This will create a Makefile with settings for your system.  Use
+   <tt>configure --prefix=<em>directory</em></tt> if you want to install
+   Splint in prefix directory <em>directory</em>. 
+</blockquote>
+<p>
+<li><tt>make</tt> 
+<blockquote>
+GNU's make utility is required; it may be named
+<tt>gmake</tt> or <tt>gnumake</tt> on your system.
+   It is best to do this in an emacs shell or a buffered terminal,
+   so you can scroll through the output.
+<p>
+This builds Splint.  While it is building, subscribe to the
+splint-announce mailing list by visiting
+http://www.splint.org/lists.html
+<p>
+If the build was successful, it then runs the test
+suite.  You should see:
+<blockquote>
+<pre>
+Testing splint 3.1.1...
+
+Version Info:
+Splint 3.1.1 --- 11 Feb 2002
+Maintainer: splint-bug@splint.org
+
+<em>... (about 100 lines of test output elided)</em>
+
+Checking manual...
+Checking tests2.2...
+Checking tests2.4...
+Checking tests2.5...
+Checking db1...
+Checking db2...
+Checking db3...
+</pre>
+</blockquote>
+
+Examine the test output. If there are errors, send a bug report to <a
+href="mailto:splint-bug@cs.virginia.edu"><em>splint-bug@cs.virginia.edu</em></a>.
+</blockquote>
+<blockquote>
+Note: If possible do not built splint in a directory under /usr/.  If the test suite is run in a directory under /usr/ for example /usr/src/, it will report errors even if Splint was built correctly.
+</blockquote>
+<p>
+</ol>
+
+The remaining steps are only necessary if you want to install the Splint
+binary and libraries in a different directory (set when you ran
+configure).
+<p>
+<blockquote>
+<ol start = 6>
+
+<li> <tt>make install</tt>
+
+<li>Set environment variables:
+<blockquote>
+<tt>LARCH_PATH</tt> - path to search for splint libraries and
+initializations files. If you are using the standard directories, this
+should be <tt>.:<em>base-directory</em>/splint-3.1.1/lib</tt>.
+<p>
+<tt>LCLIMPORTDIR</tt> - directory containing lcl imports files. If you are using
+the standard directories, this is <tt><em>base-directory</em>/splint-3.1.1/imports</tt>.
+</blockquote>
+Put the commands to set these variables (the actual commands will depend
+on the shell you are using) in one of your initialization dotfiles
+(usually <tt>~/.environment</tt>). 
+<p>
+Set up your <tt>PATH</tt> to include the directory containing
+<tt>splint-3.1.1/bin/splint</tt>, or move the binary to a directory on
+your command path.
+<p>
+</blockquote>
+
+<p>
+<!--#include virtual="footer.html"-->
+
+
+
+
+
+
+
+

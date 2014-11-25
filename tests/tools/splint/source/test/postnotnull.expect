@@ -1,0 +1,6 @@
+
+postnotnull.c: (in function test)
+postnotnull.c:20:2: Only storage a.x (type char *) derived from variable
+                       declared in this scope is not released (memory leak)
+
+Finished checking --- 1 code warning, as expected

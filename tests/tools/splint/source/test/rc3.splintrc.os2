@@ -1,0 +1,6 @@
+-externalnamelen 		23
+internalnamelen	73
++tmpdir \spool\
+-tmpdir \spool
+                  -dump
+  

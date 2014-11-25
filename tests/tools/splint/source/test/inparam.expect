@@ -1,0 +1,14 @@
+
+inparam.c: (in function f)
+inparam.c:8:16: Passed storage x not completely defined (*x is undefined):
+                   unknown (x)
+inparam.c:12:16: Passed storage x not completely defined (*x is undefined):
+                    inparam (x)
+
+Finished checking --- 2 code warnings, as expected
+
+inparam.c: (in function f)
+inparam.c:12:16: Passed storage x not completely defined (*x is undefined):
+                    inparam (x)
+
+Finished checking --- 1 code warning, as expected

@@ -1,0 +1,31 @@
+
+filerw.c: (in function f)
+filerw.c:6:14: Invalid transfer from rw_write f2 to rw_read (Must reset file
+                  between write and read.): fgetc(..., f2, ...)
+   filerw.c:1:72: f2 becomes rw_write
+   filerw.xh:3:38: f1 becomes rw_read
+filerw.c:8:22: Invalid transfer from rw_read f1 to rw_write (Must reset file
+                  between read and write.): fputc(..., f1, ...)
+   filerw.c:1:39: f1 becomes rw_read
+   filerw.xh:4:44: f1 becomes rw_write
+filerw.c:12:14: Invalid transfer from rw_write f1 to rw_read (Must reset file
+                   between write and read.): fgetc(..., f1, ...)
+   filerw.c:10:22: f1 becomes rw_write
+   filerw.xh:3:38: f1 becomes rw_read
+
+Finished checking --- 3 code warnings, as expected
+
+file.c: (in function f)
+file.c:14:5: Control branches merge with incompatible states for fout (closed
+                and open)
+   file.c:3:27: fout becomes implicitly open
+   file.c:13:14: fout becomes closed
+file.c:23:5: Control branches merge with incompatible states for fin (closed
+                and open)
+   file.c:3:16: fin becomes implicitly open
+   file.c:22:14: fin becomes closed
+file.c:25:10: Variable res used before definition
+
+Finished checking --- 3 code warnings, as expected
+
+Finished checking --- no warnings

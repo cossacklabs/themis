@@ -1,0 +1,16 @@
+int x, y, z;
+
+int useGlob (int a) int x, y, z; 
+{
+   ensures true;
+}
+
+int dontuseGlob (int a)
+{
+   ensures true;
+}
+
+int callsUseGlob (int a) int x;
+{
+  ensures true;
+}

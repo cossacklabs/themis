@@ -1,0 +1,13 @@
+
+noeffect.c: (in macro exprNode_swap)
+noeffect.c:3:59: Assignment to macro parameter: e1
+  A macro parameter is used as the left side of an assignment expression. This
+  exhibits behavior that could not be implemented by a function. (Use
+  -macroassign to inhibit warning)
+noeffect.c:3:72: Assignment to macro parameter: e2
+noeffect.c:2:18: File static function exprNode_swap declared but not used
+  A function is declared but not used. Use /*@unused@*/ in front of function
+  header to suppress message. (Use -fcnuse to inhibit warning)
+   noeffect.c:3: Definition of exprNode_swap
+
+Finished checking --- 3 code warnings, as expected

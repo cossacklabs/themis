@@ -1,0 +1,16 @@
+
+controldepth.c: (in function f)
+controldepth.c:8:15: Maximum control nesting depth (2) exceeded
+  Maximum number of control levels exceeded. (Use -controlnestdepth to inhibit
+  warning)
+controldepth.c:15:17: Maximum control nesting depth (2) exceeded
+
+Finished checking --- 2 code warnings, as expected
+
+controldepth.c: (in function f)
+controldepth.c:6:15: Maximum control nesting depth (1) exceeded
+  Maximum number of control levels exceeded. (Use -controlnestdepth to inhibit
+  warning)
+controldepth.c:11:13: Maximum control nesting depth (1) exceeded
+
+Finished checking --- 2 code warnings, as expected

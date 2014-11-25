@@ -1,0 +1,59 @@
+
+modtest.c: (in function g)
+modtest.lcl:15: Global x listed but not used
+modtest.lcl:15: Global y listed but not used
+modtest.c:9:12: Parameter a not used
+modtest.c:9:22: Parameter p not used
+modtest.c: (in function f)
+modtest.c:16:3: Undocumented modification of i[3]: i[3] = y
+modtest.c:17:3: Undocumented modification of j[2]: j[2] = x
+modtest.c:22:3: Undocumented modification of y: y++
+modtest.c:25:3: Undocumented modification of tstp->b: tstp->b = 6
+modtest.c:26:3: Undocumented modification of y possible from call to g: g(j, i)
+modtest.c:26:3: Return value (type int) ignored: g(j, i)
+
+Finished checking --- 10 code warnings, as expected
+
+modtest.c: (in function g)
+modtest.lcl:15: Global x listed but not used
+modtest.lcl:15: Global y listed but not used
+modtest.c:9:12: Parameter a not used
+modtest.c:9:22: Parameter p not used
+modtest.c: (in function f)
+modtest.c:16:3: Undocumented modification of i[3]: i[3] = y
+modtest.c:17:3: Undocumented modification of j[2]: j[2] = x
+modtest.c:22:3: Undocumented modification of y: y++
+modtest.c:25:3: Undocumented modification of tstp->b: tstp->b = 6
+modtest.c:26:3: Undocumented modification of y possible from call to g: g(j, i)
+modtest.c:26:3: Return value (type int) ignored: g(j, i)
+modtest.c: (in function h)
+modtest.c:33:3: Undocumented modification of y: y++
+modtest.c:34:10: Undocumented modification of x possible from call to g:
+                    g(a, &x)
+modtest.c:34:10: Undocumented modification of y possible from call to g:
+                    g(a, &x)
+
+Finished checking --- 13 code warnings, as expected
+
+modtest.c: (in function g)
+modtest.lcl:15: Global x listed but not used
+modtest.lcl:15: Global y listed but not used
+modtest.c:12:1: Suspect object listed in modifies of g not modified: x
+   modtest.lcl:15: Specification of g
+modtest.c:12:1: Suspect object listed in modifies of g not modified: y
+   modtest.lcl:15: Specification of g
+modtest.c:9:12: Parameter a not used
+modtest.c:9:22: Parameter p not used
+modtest.c: (in function f)
+modtest.c:16:3: Undocumented modification of i[3]: i[3] = y
+modtest.c:17:3: Undocumented modification of j[2]: j[2] = x
+modtest.c:22:3: Undocumented modification of y: y++
+modtest.c:25:3: Undocumented modification of tstp->b: tstp->b = 6
+modtest.c:26:3: Undocumented modification of y possible from call to g: g(j, i)
+modtest.c:26:3: Return value (type int) ignored: g(j, i)
+modtest.c:29:1: Suspect object listed in modifies of f not modified: ai[6]
+   modtest.lcl:8: Specification of f
+modtest.c:29:1: Suspect object listed in modifies of f not modified: tstp->a
+   modtest.lcl:8: Specification of f
+
+Finished checking --- 14 code warnings, as expected

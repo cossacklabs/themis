@@ -1,0 +1,95 @@
+/*
+** strings.lcl
+*/
+
+int strcasecmp(char *s1, char *s2)
+{
+  ensures true ;
+}
+
+int strncasecmp(char *s1, char *s2, int n)
+{
+  ensures true ;
+}
+
+char *strcat(char *s1, char *s2)
+{
+  ensures true ;
+}
+
+char *strncat(char *s1, char *s2, int n)
+{
+  ensures true ;
+}
+
+int strcmp(char *s1, char *s2)
+{
+  ensures true ;
+}
+
+int strncmp(char *s1, char *s2, int n)
+{
+  ensures true ;
+}
+
+| char : void | *strcpy(char *s1, char *s2)
+{
+  ensures true ;
+}
+
+char *strncpy(char *s1, char *s2, int n)
+{
+  ensures true ;
+}
+
+int strlen(char *s)
+{
+  ensures true ;
+}
+
+char *strchr(char *s, int c)
+{
+  ensures true ;
+}
+
+char *strrchr(char *s, int c)
+{
+  ensures true ;
+}
+
+char *strpbrk(char *s1, char *s2)
+{
+  ensures true ;
+}
+
+int strspn(char *s1, char *s2)
+{
+  ensures true ;
+}
+
+int strcspn(char *s1, char *s2)
+{
+  ensures true ;
+}
+
+char *strtok(char *s1, char *s2)
+{
+  ensures true ;
+}
+
+char *index(char *s, char c)
+{
+  ensures true ;
+}
+
+char *rindex(char *s, char c)
+{
+  ensures true ;
+}
+
+char *strstr(char *s1, char *s2)
+{
+  ensures true ;
+}
+
+

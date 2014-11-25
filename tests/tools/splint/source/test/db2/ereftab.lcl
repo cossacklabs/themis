@@ -1,0 +1,36 @@
+imports employee, eref;
+
+mutable type ereftab; 
+
+ereftab ereftab_create(void) 
+{
+  /* ensures result' = empty; */
+}
+
+void ereftab_insert(ereftab t, employee e, eref er) 
+{
+  /* requires getERef(t^, e) = erefNIL; */
+  modifies t;
+  /* ensures t' = add(t^, e, er); */
+}
+
+bool ereftab_delete(ereftab t, eref er) 
+{
+  modifies t;
+  /* ensures result = in(t^, er) /\ t' = delete(t^, er); */
+}
+
+eref ereftab_lookup(employee e, ereftab t) 
+{
+  /* ensures result = getERef(t^, e); */
+}
+
+void ereftab_initMod(void) 
+{
+  modifies internalState;
+  ensures true;
+}
+
+iter ereftab_elements(ereftab s, yield eref x);
+
+

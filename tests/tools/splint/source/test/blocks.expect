@@ -1,0 +1,66 @@
+
+blocks.c: (in function f)
+blocks.c:3:15: Body of if statement is empty
+blocks.c:4:10: Suspected infinite loop.  No value used in loop test (x) is
+                  modified by test or loop body.
+blocks.c:21:16: Body of if clause of if statement is empty
+blocks.c:22:9: Body of else clause of if statement is empty
+
+Finished checking --- 4 code warnings, as expected
+
+blocks.c: (in function f)
+blocks.c:3:15: Body of if statement is empty
+blocks.c:4:10: Suspected infinite loop.  No value used in loop test (x) is
+                  modified by test or loop body.
+blocks.c:6:15: Body of if statement is not a block: x++;
+blocks.c:16:12: Incomplete else if logic (no final else): if (x == 1) { x = 4;
+                   }
+blocks.c:19:8: Body of else clause of if statement is not a block: x = 4;
+blocks.c:21:16: Body of if clause of if statement is empty
+blocks.c:22:9: Body of else clause of if statement is empty
+
+Finished checking --- 7 code warnings, as expected
+
+blocks.c: (in function f)
+blocks.c:4:18: Body of while statement is empty
+blocks.c:4:10: Suspected infinite loop.  No value used in loop test (x) is
+                  modified by test or loop body.
+blocks.c:7:18: Body of while statement is not a block: x++;
+
+Finished checking --- 3 code warnings, as expected
+
+blocks.c: (in function f)
+blocks.c:4:10: Suspected infinite loop.  No value used in loop test (x) is
+                  modified by test or loop body.
+blocks.c:12:23: Body of for statement is empty
+blocks.c:13:23: Body of for statement is not a block: x++;
+
+Finished checking --- 3 code warnings, as expected
+
+blocks.c: (in function f)
+blocks.c:3:15: Body of if statement is empty
+blocks.c:4:18: Body of while statement is empty
+blocks.c:4:10: Suspected infinite loop.  No value used in loop test (x) is
+                  modified by test or loop body.
+blocks.c:12:23: Body of for statement is empty
+blocks.c:21:16: Body of if clause of if statement is empty
+blocks.c:22:9: Body of else clause of if statement is empty
+
+Finished checking --- 6 code warnings, as expected
+
+blocks.c: (in function f)
+blocks.c:3:15: Body of if statement is empty
+blocks.c:4:18: Body of while statement is empty
+blocks.c:4:10: Suspected infinite loop.  No value used in loop test (x) is
+                  modified by test or loop body.
+blocks.c:6:15: Body of if statement is not a block: x++;
+blocks.c:7:18: Body of while statement is not a block: x++;
+blocks.c:12:23: Body of for statement is empty
+blocks.c:13:23: Body of for statement is not a block: x++;
+blocks.c:16:12: Incomplete else if logic (no final else): if (x == 1) { x = 4;
+                   }
+blocks.c:19:8: Body of else clause of if statement is not a block: x = 4;
+blocks.c:21:16: Body of if clause of if statement is empty
+blocks.c:22:9: Body of else clause of if statement is empty
+
+Finished checking --- 11 code warnings, as expected

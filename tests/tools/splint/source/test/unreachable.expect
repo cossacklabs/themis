@@ -1,0 +1,27 @@
+
+unreachable.c: (in function f)
+unreachable.c:6:4: Unreachable code: x++
+unreachable.c: (in function tu)
+unreachable.c:21:7: Unreachable code: return
+unreachable.c: (in function s)
+unreachable.c:33:29: Unreachable code: z--
+unreachable.c:34:10: Fall through case (no preceding break)
+unreachable.c:45:4: Unreachable code: z++
+
+Finished checking --- 5 code warnings, as expected
+
+unreachable.c: (in function s)
+unreachable.c:34:10: Fall through case (no preceding break)
+unreachable.c:46:2: Path with no return in function declared to return int
+
+Finished checking --- 2 code warnings, as expected
+
+switch.c: (in function f3)
+switch.c:31:2: Path with no return in function declared to return int
+switch.c: (in function f5)
+switch.c:49:6: Missing case in switch: THREE
+switch.c:50:2: Path with no return in function declared to return int
+switch.c: (in function f6)
+switch.c:70:2: Path with no return in function declared to return int
+
+Finished checking --- 4 code warnings, as expected

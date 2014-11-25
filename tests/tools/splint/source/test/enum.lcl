@@ -1,0 +1,8 @@
+typedef enum { one, two, three } etype; 
+typedef enum { cero, uno, dos } stype; 
+typedef enum _ietag { siete } itype; /* 11. enum _ietag specified but not defined */
+
+typedef struct { int a; int b; } st;
+typedef struct { int a; int b; int c; } st2; /* (5. Field  present in spec...) */
+
+enum { hasta, pasta, yasta } ;

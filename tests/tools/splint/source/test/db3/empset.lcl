@@ -1,0 +1,91 @@
+imports employee;
+mutable type empset;
+
+only empset empset_create(void) 
+{
+  /* ensures fresh(result) /\ result' = { }; */
+}
+
+void empset_final (only empset s) 
+{
+  modifies s;
+  /* ensures trashed(s); */
+}
+
+void empset_clear(empset s) 
+{
+  modifies s;
+  /* ensures s' = { }; */
+}
+
+| bool : void | empset_insert (empset s, employee e) internalState; 
+{
+  modifies s, internalState;
+  /* ensures result = ~(e \in s^) /\ s' = insert(e, s^); */
+}
+
+void empset_insertUnique (empset s, employee e) internalState;
+{
+  /* requires ~(e \in s^); */
+  modifies s, internalState;
+  /* ensures s' = insert(e, s^); */
+}
+
+| bool : void | empset_delete(empset s, employee e) 
+{
+  modifies s;
+  /* ensures result = e \in s^ /\ s' = delete(e, s^); */
+}
+
+only empset empset_union(empset s1, empset s2) internalState;
+{
+  modifies internalState;
+  /* ensures result' = s1^ \U s2^ /\ fresh(result); */
+}
+
+only empset empset_disjointUnion (empset s1, empset s2) internalState;
+{
+  modifies internalState;
+  /* requires s1^ \I s2^ = { }; */
+  /* ensures result' = s1^ \U s2^ /\ fresh(result); */
+}
+
+void empset_intersect (empset s1, empset s2) internalState;
+{
+  modifies s1, internalState;
+  /* ensures s1' = s1^ \I s2^; */
+}
+
+int empset_size(empset s) 
+{
+  /* ensures result = size(s^); */
+}
+
+bool empset_member(employee e, empset s) 
+{
+  /* ensures result = e \in s^; */
+}
+
+bool empset_subset(empset s1, empset s2) 
+{
+  /* ensures result = s1^ \subseteq s2^; */
+}
+
+employee empset_choose(empset s) 
+{
+  /* requires s^ \neq { }; */
+  /* ensures result \in s^; */
+}
+
+only char *empset_sprint(empset s) 
+{
+  /* ensures isSprint(result[]', s^) /\ fresh(result[]); */
+}
+
+void empset_initMod (void) internalState;
+{
+  modifies internalState;
+  ensures true;
+}
+
+iter empset_elements (empset s, yield employee x);

@@ -1,0 +1,99 @@
+true: -> Bool
+false: -> Bool
+\not __: Bool -> Bool
+__ \and __: Bool, Bool -> Bool
+__ \or __: Bool, Bool -> Bool
+__ \implies __: Bool, Bool -> Bool
+__ \eq __: Bool, Bool -> Bool
+__ \eq __: Int, Int -> Bool
+__ \eq __: double, double -> Bool
+__ \eq __: float, float -> Bool
+__ \eq __: _char_Vec, _char_Vec -> Bool
+__ \eq __: char, char -> Bool
+__ \neq __: Bool, Bool -> Bool
+__ \neq __: Int, Int -> Bool
+__ \neq __: double, double -> Bool
+__ \neq __: float, float -> Bool
+__ \neq __: _char_Vec, _char_Vec -> Bool
+__ \neq __: char, char -> Bool
+if __ then __ else __: Bool, Bool, Bool -> Bool
+if __ then __ else __: Bool, Int, Int -> Int
+if __ then __ else __: Bool, double, double -> double
+if __ then __ else __: Bool, float, float -> float
+if __ then __ else __: Bool, _char_Vec, _char_Vec -> _char_Vec
+if __ then __ else __: Bool, char, char -> char
+__ |- __: _char_Vec, char -> _char_Vec
+__ -| __: char, _char_Vec -> _char_Vec
+__ \leq __: Int, Int -> Bool
+__ \leq __: double, double -> Bool
+__ \leq __: float, float -> Bool
+__ \geq __: Int, Int -> Bool
+__ \geq __: double, double -> Bool
+__ \geq __: float, float -> Bool
+succ: Int -> Int
+pred: Int -> Int
+- __: Int -> Int
+__ - __: Int, Int -> Int
+- __: double -> double
+__ - __: double, double -> double
+- __: float -> float
+__ - __: float, float -> float
+__ + __: Int, Int -> Int
+__ + __: double, double -> double
+__ + __: float, float -> float
+__ * __: Int, Int -> Int
+__ * __: double, double -> double
+__ * __: float, float -> float
+__ < __: Int, Int -> Bool
+__ < __: double, double -> Bool
+__ < __: float, float -> Bool
+__ > __: Int, Int -> Bool
+__ > __: double, double -> Bool
+__ > __: float, float -> Bool
+abs: Int -> Int
+abs: double -> double
+abs: float -> float
+div: Int, Int -> Int
+mod: Int, Int -> Int
+min: Int, Int -> Int
+max: Int, Int -> Int
+0: -> Int
+0: -> double
+0: -> float
+1: -> Int
+1: -> double
+1: -> float
+__ \inv: double -> double
+__ \inv: float -> float
+__ / __: double, double -> double
+__ / __: float, float -> float
+empty: -> _char_Vec
+__ || __: _char_Vec, _char_Vec -> _char_Vec
+__ \in __: char, _char_Vec -> Bool
+count: char, _char_Vec -> Int
+head: _char_Vec -> char
+init: _char_Vec -> _char_Vec
+isEmpty: _char_Vec -> Bool
+last: _char_Vec -> char
+len: _char_Vec -> Int
+prefix: _char_Vec, Int -> _char_Vec
+removePrefix: _char_Vec, Int -> _char_Vec
+substring: _char_Vec, Int, Int -> _char_Vec
+tail: _char_Vec -> _char_Vec
+null: -> char
+nullTerminated: _char_Vec -> Bool
+throughNull: _char_Vec -> _char_Vec
+sameStr: _char_Vec, _char_Vec -> Bool
+lenStr: _char_Vec -> Int
+times10plus: Int, Int -> Int
+plus1: Int -> Int
+2: -> Int
+3: -> Int
+4: -> Int
+5: -> Int
+6: -> Int
+7: -> Int
+8: -> Int
+9: -> Int
+__ [ __ ]: _char_Vec, Int -> char
+{ __ }: char -> _char_Vec

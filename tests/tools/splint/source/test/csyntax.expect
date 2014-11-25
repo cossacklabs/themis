@@ -1,0 +1,24 @@
+csyntax.c:20:5: Function main declared with 1 arg, should have 2 (int argc,
+                   char *argv[])
+
+csyntax2.c: (in function mapping_create)
+csyntax2.c:13:3: Assignment of size_t to int: x = sizeof((t))
+csyntax2.c:14:3: Assignment of size_t to int: x = sizeof(*t)
+
+csyntax3.c:3:4: Function main declared to return a1, should return int
+
+csyntax13.c: (in function f)
+csyntax13.c:9:11: Variable isrs shadows outer declaration
+   csyntax13.c:7:9: Previous definition of isrs: isr_t
+
+csyntax16.c: (in function main)
+csyntax16.c:18:11: Variable getbuiltout used before definition
+csyntax16.c: (in function getbuiltout)
+csyntax16.c:43:14: Variable qpolygon used before definition
+
+csyntax17.c: (in function f)
+csyntax17.c:11:11: Variable x initialized to type EID_UNIT_NUM, expects int:
+                      (EID_UNIT_NUM)3
+csyntax17.c:12:2: Path with no return in function declared to return int
+csyntax17.c:11:7: Variable x declared but not used
+

@@ -1,0 +1,14 @@
+
+oldstyle.c: (in function f1)
+oldstyle.c:5:8: Dereference of non-pointer (int): *y
+oldstyle.c:10:5: Function f2 declared with 1 arg, specified with 2
+   oldstyle.lcl:2: Specification of f2
+oldstyle.c:15:12: Parameter 2, y, of function f3 has inconsistent type:
+                     declared char, specified char *
+   oldstyle.lcl:4:1: Specification of y: char *
+oldstyle2.c: (in function noShadow)
+oldstyle2.c:15:14: Statement after switch is not a case: int x
+oldstyle2.c: (in function unrecognized)
+oldstyle2.c:29:6: Unrecognized identifier: x
+
+Finished checking --- 5 code warnings, as expected

@@ -1,0 +1,43 @@
+
+Finished checking --- no warnings
+
+czechnames.c:5:5: Variable michelob_light name violates Czech naming
+    convention.  Czech prefix michelob is not the name of a type.
+  Variable name is not consistent with Czech naming convention. (Use either
+  -czechvars or -namechecks to inhibit warning)
+czechnames.c:26:5: Function budweiser name is not consistent with Czech naming
+                      convention.  Accessible types: pivo
+  Function or iterator name is not consistent with Czech naming convention.
+  (Use either -czechfcns or -namechecks to inhibit warning)
+
+Finished checking --- 2 code warnings, as expected
+
+czechnames.c:26:5: Function budweiser name is not consistent with Czech naming
+                      convention.  Accessible types: pivo
+  Function or iterator name is not consistent with Czech naming convention.
+  (Use either -czechfcns or -namechecks to inhibit warning)
+
+Finished checking --- 1 code warning, as expected
+
+czechnames.c:4:5: Variable pivo_pyet name violates Czech naming convention.
+    Czech prefix pivo names an abstract type that is not accessible.
+  Use +accessczech to allow access to type <t> in functions named <t>_<name>.
+czechnames.c:5:5: Variable michelob_light name violates Czech naming
+    convention.  Czech prefix michelob is not the name of a type.
+  Variable name is not consistent with Czech naming convention. (Use either
+  -czechvars or -namechecks to inhibit warning)
+czechnames.c:8:17: Constant pivo_devenast name violates Czech naming
+    convention. Czech prefix pivo names an abstract type that is not
+    accessible.
+  Use +accessczech to allow access to type <t> in functions named <t>_<name>.
+czechnames.c:11:6: Function pivo_yedno name violates Czech naming convention.
+    Czech prefix pivo names an abstract type that is not accessible.
+  Use +accessczech to allow access to type <t> in functions named <t>_<name>.
+czechnames.c: (in function pivo_yedno)
+czechnames.c:15:11: Left operand of == is abstract type (pivo): p == 1
+  An abstraction barrier is broken. If necessary, use /*@access <type>@*/ to
+  allow access to an abstract type. (Use -abstract to inhibit warning)
+czechnames.c:26:5: Function budweiser name is not consistent with Czech naming
+                      convention.  Accessible types: pivo
+
+Finished checking --- 6 code warnings, as expected

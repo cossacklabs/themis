@@ -1,0 +1,78 @@
+/*
+** math.h
+*/
+
+int errno, signgam;
+
+typedef struct exception {
+ int ttype ; /* should be type */
+ char *name ;
+ double arg1 ;
+ double arg2 ;
+ double retval ;
+} __exception ;
+
+double acos(double __x ) { ensures true; }
+double acosh(double __x ) { ensures true; }
+double asin(double __x ) { ensures true; }
+double asinh(double __x ) { ensures true; }
+double atan(double __x ) { ensures true; }
+double atanh(double __x) { ensures true; }
+double atan2(double __x,double __y ) { ensures true; }
+double cbrt(double __x ) { ensures true; }
+double ceil(double __x ) { ensures true; }
+double cos(double __x ) { ensures true; }
+double cosh(double __x ) { ensures true; }
+double exp(double __x ) { ensures true; }
+double fabs(double __x ) { ensures true; }
+double floor(double __x ) { ensures true; }
+double fmod(double __x,double __y ) { ensures true; }
+double frexp(double __value, int *__eptr ) { ensures true; }
+double ldexp(double __value, int __exp ) { ensures true; }
+double log(double __x ) { ensures true; }
+double log10(double __x ) { ensures true; }
+double modf(double __value,double *__iptr) { ensures true; }
+double pow(double __x,double __y ) { ensures true; }
+double rint(double __x ) { ensures true; }
+double sin(double __x ) { ensures true; }
+double sinh(double __x ) { ensures true; }
+double sqrt(double __x ) { ensures true; }
+double tan(double __x ) { ensures true; }
+double tanh(double __x ) { ensures true; }
+double trunc(double __x ) { ensures true; }
+
+double j0(double __x ) { ensures true; }
+double j1(double __x ) { ensures true; }
+double jn( int __n,double __x ) { ensures true; }
+double y0(double __x ) { ensures true; }
+double y1(double __x ) { ensures true; }
+double yn( int __n,double __x ) { ensures true; }
+double erf(double __x ) { ensures true; }
+double erfc(double __x ) { ensures true; }
+double gamma(double __x ) { ensures true; }
+double   lgamma(double __x ) { ensures true; }
+double hypot(double __x,double __y ) { ensures true; }
+| int : bool | isnan() { ensures true; }
+int matherr(struct exception *__x) { ensures true; }
+
+constant double M_E;
+constant double M_LOG2E;
+constant double M_LOG10E;
+constant double M_LN2;
+constant double M_LN10;
+constant double M_PI ;
+constant double M_PI_2 ;
+constant double M_PI_4 ;
+constant double M_1_PI ;
+constant double M_2_PI ;
+constant double M_2_SQRTPI ;
+constant double M_SQRT2 ;
+constant double M_SQRT1_2 ;
+
+constant double MAXFLOAT;
+constant double HUGE;
+ 
+enum { DOMAIN, SING, OVERFLOW,
+       UNDERFLOW, TLOSS, PLOSS } _matherrors;
+
+

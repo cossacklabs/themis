@@ -1,0 +1,22 @@
+
+modifies.c:7:29: Modifies list uses internalState which is a variable and has
+    special meaning in a modifies list.  (Special meaning assumed.)
+   modifies.c:4:25: Declaration of internalState
+modifies.c:13:26: Modifies list uses fileSystem which is a parameter and has
+    special meaning in a modifies list.  (Special meaning assumed.)
+modifies.c:17:5: Globals list for f6 includes internal state, mstat, but
+                    previously declared without globals internalState.
+   modifies.c:15:5: Declaration of f6
+modifies.c:17:5: Modifies list for f6 includes internal state, but previously
+                    declared without modifies internal.
+   modifies.c:15:5: Declaration of f6
+modifies.c: (in function f1)
+modifies.c:24:3: Undocumented modification of mstat: mstat++
+modifies.c: (in function g2)
+modifies.c:37:1: Function g2 specified to modify internal state but no internal
+                    state is modified
+   modifies.h:3:12: Declaration of g2
+modclient.c: (in function mod)
+modclient.c:3:3: Statement has no effect: (void)f1(p)
+
+Finished checking --- 7 code warnings, as expected

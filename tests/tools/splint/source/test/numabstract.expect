@@ -1,0 +1,54 @@
+
+numabstract.c: (in function adding)
+numabstract.c:13:3: Assignment of char to apples: a2 = 'a'
+numabstract.c:14:3: Assignment of char to int: i = 'c'
+numabstract.c:15:17: Cast from literal to numabstract type apples: (apples)13
+numabstract.c:16:8: Incompatible types for + (apples, int): a + 5
+numabstract.c:17:3: Assignment of oranges to apples: a2 = o
+numabstract.c:19:3: Assignment of oranges to int: i = o
+numabstract.c:20:3: Assignment of apples to int: i = a2 + a
+numabstract.c:21:10: Operands of + are different numabstract types (apples,
+                        oranges): a + o
+numabstract.c: (in function comparing)
+numabstract.c:26:7: Operands of < have incompatible types (apples, int): a < 3
+numabstract.c:30:7: Operands of < are different numabstract types (apples,
+                       oranges): a < o
+numabstract.c:34:7: Operands of == are different numabstract types (apples,
+                       oranges): a == o
+
+Finished checking --- 11 code warnings, as expected
+
+numabstract.c: (in function adding)
+numabstract.c:13:3: Assignment of char to apples: a2 = 'a'
+numabstract.c:14:3: Assignment of char to int: i = 'c'
+numabstract.c:15:17: Cast from literal to numabstract type apples: (apples)13
+numabstract.c:17:3: Assignment of oranges to apples: a2 = o
+numabstract.c:19:3: Assignment of oranges to int: i = o
+numabstract.c:20:3: Assignment of apples to int: i = a2 + a
+numabstract.c:21:10: Operands of + are different numabstract types (apples,
+                        oranges): a + o
+numabstract.c: (in function comparing)
+numabstract.c:30:7: Operands of < are different numabstract types (apples,
+                       oranges): a < o
+numabstract.c:34:7: Operands of == are different numabstract types (apples,
+                       oranges): a == o
+
+Finished checking --- 9 code warnings, as expected
+
+numabstract.c: (in function adding)
+numabstract.c:13:3: Assignment of char to apples: a2 = 'a'
+numabstract.c:14:3: Assignment of char to int: i = 'c'
+numabstract.c:16:8: Incompatible types for + (apples, int): a + 5
+numabstract.c:17:3: Assignment of oranges to apples: a2 = o
+numabstract.c:19:3: Assignment of oranges to int: i = o
+numabstract.c:20:3: Assignment of apples to int: i = a2 + a
+numabstract.c:21:10: Operands of + are different numabstract types (apples,
+                        oranges): a + o
+numabstract.c: (in function comparing)
+numabstract.c:26:7: Operands of < have incompatible types (apples, int): a < 3
+numabstract.c:30:7: Operands of < are different numabstract types (apples,
+                       oranges): a < o
+numabstract.c:34:7: Operands of == are different numabstract types (apples,
+                       oranges): a == o
+
+Finished checking --- 10 code warnings, as expected

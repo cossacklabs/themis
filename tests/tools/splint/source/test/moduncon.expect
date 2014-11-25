@@ -1,0 +1,57 @@
+
+moduncon.c: (in function g)
+moduncon.c:12:10: Undetected modification possible from call to unconstrained
+                     function umod: umod
+moduncon.c:13:22: Undetected modification possible from call to unconstrained
+                     function umod: umod
+moduncon.c:13:16: Undetected modification possible from call to unconstrained
+                     function mmod: mmod
+moduncon.c:13:10: Undetected modification possible from call to unconstrained
+                     function umod: umod
+
+Finished checking --- 4 code warnings, as expected
+
+moduncon.c: (in function f)
+moduncon.c:6:22: Undetected modification possible from call to unconstrained
+                    function umod: umod
+moduncon.c:6:22: New fresh storage (type int *) passed as implicitly temp (not
+                    released): umod(x)
+moduncon.c:6:16: Undetected modification possible from call to unconstrained
+                    function mmod: mmod
+moduncon.c:6:16: New fresh storage (type int *) passed as implicitly temp (not
+                    released): mmod(umod(x))
+moduncon.c:6:10: Undetected modification possible from call to unconstrained
+                    function umod: umod
+moduncon.c:6:3: Statement has no effect (possible undected modification through
+    call to unconstrained functions umod, mmod): (void)umod(mmod(...
+moduncon.c: (in function g)
+moduncon.c:12:10: Undetected modification possible from call to unconstrained
+                     function umod: umod
+moduncon.c:12:3: Statement has no effect (possible undected modification
+                    through call to unconstrained function umod): (void)umod(x)
+moduncon.c:13:22: Undetected modification possible from call to unconstrained
+                     function umod: umod
+moduncon.c:13:22: New fresh storage (type int *) passed as implicitly temp (not
+                     released): umod(x)
+moduncon.c:13:16: Undetected modification possible from call to unconstrained
+                     function mmod: mmod
+moduncon.c:13:16: New fresh storage (type int *) passed as implicitly temp (not
+                     released): mmod(umod(x))
+moduncon.c:13:10: Undetected modification possible from call to unconstrained
+                     function umod: umod
+moduncon.c:13:3: Statement has no effect (possible undected modification
+    through call to unconstrained functions umod, mmod): (void)umod(mmod(...
+moduncon.c:1:6: Function mmod declared but not defined
+moduncon.c:2:6: Function umod declared but not defined
+moduncon.c:4:5: Function f declared but not used
+   moduncon.c:8:1: Definition of f
+moduncon.c:10:5: Function g declared but not used
+   moduncon.c:15:1: Definition of g
+moduncon.c:1:6: Function mmod exported but not declared in header file
+moduncon.c:2:6: Function umod exported but not declared in header file
+moduncon.c:4:5: Function f exported but not declared in header file
+   moduncon.c:8:1: Definition of f
+moduncon.c:10:5: Function g exported but not declared in header file
+   moduncon.c:15:1: Definition of g
+
+Finished checking --- 22 code warnings, as expected

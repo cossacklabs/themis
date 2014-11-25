@@ -1,0 +1,17 @@
+
+commentchar.c:14:1: Syntactic commentchar comment is not followed by a
+                       whitespace character: 5
+commentchar.c:15:1: Cannot restore commentchar
+commentchar.c:10:5: Variable x redefined
+   commentchar.c:6:5: Previous definition of x
+commentchar.c:10:9: Variable x initialized to type char, expects int: 'c'
+
+Finished checking --- 4 code warnings, as expected
+
+commentchar.c:14:1: Syntactic commentchar comment is not followed by a
+                       whitespace character: 5
+commentchar.c:15:1: Cannot restore commentchar
+commentchar.c:1:26: Unrecognized identifier in modifies comment: x
+commentchar.c:6:9: Variable x initialized to type char, expects int: 'c'
+
+Finished checking --- 4 code warnings, as expected

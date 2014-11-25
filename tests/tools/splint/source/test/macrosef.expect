@@ -1,0 +1,34 @@
+
+macrosef.c: (in macro f)
+macrosef.c:2:14: Macro parameter y used more than once
+macrosef.c: (in function m)
+macrosef.c:12:14: Parameter 1 to f is declared sef, but the argument may modify
+                     file system state: (printf("yo\n"), 3)
+macrosef.c:12:14: Parameter 1 to f is declared sef, but the argument may modify
+                     *stdout: (printf("yo\n"), 3)
+macrosef.c:14:14: Parameter 1 to f is declared sef, but the argument may modify
+                     *p: g(p)
+
+Finished checking --- 4 code warnings, as expected
+
+macrosef.c: (in macro f)
+macrosef.c:2:14: Macro parameter y used more than once
+macrosef.c: (in function m)
+macrosef.c:12:14: Parameter 1 to f is declared sef, but the argument may modify
+                     file system state: (printf("yo\n"), 3)
+macrosef.c:12:14: Parameter 1 to f is declared sef, but the argument may modify
+                     *stdout: (printf("yo\n"), 3)
+
+Finished checking --- 3 code warnings, as expected
+
+macrosef.c: (in macro f)
+macrosef.c:2:14: Macro parameter y used more than once
+macrosef.c: (in function m)
+macrosef.c:12:14: Parameter 1 to f is declared sef, but the argument may modify
+                     file system state: (printf("yo\n"), 3)
+macrosef.c:12:14: Parameter 1 to f is declared sef, but the argument may modify
+                     *stdout: (printf("yo\n"), 3)
+macrosef.c:14:14: Parameter 1 to f is declared sef, but the argument calls
+    unconstrained function g (no guarantee it will not modify something): g(p)
+
+Finished checking --- 4 code warnings, as expected

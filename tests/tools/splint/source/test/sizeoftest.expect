@@ -1,0 +1,9 @@
+
+sizeof.c: (in function main)
+sizeof.c:6:2: Likely out-of-bounds store: x[(sizeof(x))]
+    Unable to resolve constraint:
+    requires 2 >= 3
+     needed to satisfy precondition:
+    requires maxSet(x @ sizeof.c:6:2) >= 3
+
+Finished checking --- 1 code warning, as expected

@@ -1,0 +1,33 @@
+
+break.c: (in function f)
+break.c:12:4: Break preceded by loopbreak is breaking a switch
+break.c:17:14: Suspected infinite loop.  No value used in loop test (x) is
+                  modified by test or loop body.
+break.c:3:10: Suspected infinite loop.  No value used in loop test (x) is
+                 modified by test or loop body.
+break.c:34:24: Break preceded by innerbreak is not in a deep loop
+
+Finished checking --- 4 code warnings, as expected
+
+break.c: (in function f)
+break.c:12:4: Break preceded by loopbreak is breaking a switch
+break.c:14:4: Break statement in switch inside loop
+break.c:21:8: Break statement in nested loop
+break.c:17:14: Suspected infinite loop.  No value used in loop test (x) is
+                  modified by test or loop body.
+break.c:3:10: Suspected infinite loop.  No value used in loop test (x) is
+                 modified by test or loop body.
+break.c:34:24: Break preceded by innerbreak is not in a deep loop
+
+Finished checking --- 6 code warnings, as expected
+
+break.c: (in function f)
+break.c:12:4: Break preceded by loopbreak is breaking a switch
+break.c:14:4: Break statement in switch inside loop
+break.c:17:14: Suspected infinite loop.  No value used in loop test (x) is
+                  modified by test or loop body.
+break.c:3:10: Suspected infinite loop.  No value used in loop test (x) is
+                 modified by test or loop body.
+break.c:34:24: Break preceded by innerbreak is not in a deep loop
+
+Finished checking --- 5 code warnings, as expected

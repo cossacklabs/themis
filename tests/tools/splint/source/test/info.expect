@@ -1,0 +1,12 @@
+
+info.c: (in function huppy_bug)
+info.c:3:3: Unrecognized identifier: i
+info.c:6:57: Unrecognized pre-processor directive:
+                #info "LcLint ignores all code that follows this line!"
+info.c: (in function unhuppy_bug)
+info.c:10:3: Observer storage assigned to unqualified reference: i = "Asdf"
+   info.c:10:7: Storage becomes observer
+info.c:1:13: File static function huppy_bug declared but not used
+   info.c:4:1: Definition of huppy_bug
+
+Finished checking --- 4 code warnings, as expected

@@ -1,0 +1,41 @@
+
+clauses.c: (in function f)
+clauses.c:6:5: Variable x is released in true branch, but live in continuation.
+   clauses.c:6:5: in true branch:
+   clauses.c:5:13: Storage x released
+clauses.c:11:5: Variable y is released in while body, but live if loop is not
+                   taken.
+   clauses.c:11:5: in while body:
+   clauses.c:10:13: Storage y released
+clauses.c:20:5: Variable z2 is released in false branch, but live in true
+                   branch.
+   clauses.c:20:5: in false branch:
+   clauses.c:19:13: Storage z2 released
+clauses.c:20:5: Variable z is released in true branch, but live in false
+                   branch.
+   clauses.c:20:5: in true branch:
+   clauses.c:15:13: Storage z released
+
+Finished checking --- 4 code warnings, as expected
+
+Finished checking --- no warnings
+
+clauses3.c: (in function h)
+clauses3.c:48:5: Storage x->x is released in one path, but live in another.
+   clauses3.c:46:10: Storage x->x released
+clauses3.c: (in function m)
+clauses3.c:61:5: Storage x->x is released in one path, but live in another.
+   clauses3.c:60:13: Storage x->x released
+
+Finished checking --- 2 code warnings, as expected
+
+clauses3.c: (in function h)
+clauses3.c:48:5: Storage x->x is released in one path, but live in another.
+   clauses3.c:46:10: Storage x->x released
+clauses3.c: (in function m)
+clauses3.c:60:13: Possibly null storage x->x passed as non-null param:
+                     free (x->x)
+clauses3.c:61:5: Storage x->x is released in one path, but live in another.
+   clauses3.c:60:13: Storage x->x released
+
+Finished checking --- 3 code warnings, as expected

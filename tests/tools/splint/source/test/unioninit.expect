@@ -1,0 +1,7 @@
+
+unioninit.c:11:23: Initializer block for union test3 has 2 elements, union
+                      initializers should have one element: 0, 1
+unioninit.c:13:25: Initial value of test4.test2_s is type long int, expects
+                      short int: 23L
+
+Finished checking --- 2 code warnings, as expected

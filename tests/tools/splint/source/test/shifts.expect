@@ -1,0 +1,20 @@
+
+shifts.c: (in function f)
+shifts.c:12:14: Right operand of << may be negative (int): u1 << i1
+shifts.c:13:14: Right operand of << may be negative (int): i1 << i1
+shifts.c:13:8: Left operand of << may be negative (int): i1 << i1
+shifts.c:17:14: Right operand of << may be negative (int): u2 << BAD_CONST
+
+Finished checking --- 4 code warnings, as expected
+
+shifts.c: (in function f)
+shifts.c:12:14: Right operand of << may be negative (int): u1 << i1
+shifts.c:13:14: Right operand of << may be negative (int): i1 << i1
+shifts.c:17:14: Right operand of << may be negative (int): u2 << BAD_CONST
+
+Finished checking --- 3 code warnings, as expected
+
+shifts.c: (in function f)
+shifts.c:13:8: Left operand of << may be negative (int): i1 << i1
+
+Finished checking --- 1 code warning, as expected

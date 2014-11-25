@@ -1,0 +1,2 @@
+typedef /*@abstract@*/ char *mstring; 
+ 

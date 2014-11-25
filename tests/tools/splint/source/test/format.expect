@@ -1,0 +1,12 @@
+
+format.c: (in function fn)
+format.c:3:3: Format string parameter to printf is not a compile-time constant:
+                 fmt
+format.c:5:3: Format string parameter to fprintf is not a compile-time
+                 constant: fmt
+format.c:6:3: Format string parameter to fprintf is not a compile-time
+                 constant: fmt
+
+Finished checking --- 3 code warnings, as expected
+
+Finished checking --- no warnings

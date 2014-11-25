@@ -1,0 +1,117 @@
+
+pptest.c:26:21: Preprocessor command #else is not within a conditional
+pptest.c:28:30: Unbalanced #endif
+Preprocessing error for file: pptest.c
+*** Cannot continue.
+
+pptest.c:26:21: Preprocessor command #else is not within a conditional
+pptest.c:28:30: Unbalanced #endif
+Preprocessing error for file: pptest.c
+*** Cannot continue.
+
+pptest.c:26:21: Preprocessor command #else is not within a conditional
+pptest.c:28:30: Unbalanced #endif
+Preprocessing error for file: pptest.c
+*** Cannot continue.
+
+pptest.c:15:15: Parameter list for #define is not parseable
+pptest.c:22:41: Division by zero in #if
+pptest.c:26:21: Preprocessor command #else is not within a conditional
+pptest.c:28:30: Unbalanced #endif
+Preprocessing error for file: pptest.c
+*** Cannot continue.
+
+pptest2.c:1:21: invalid macro name
+pptest2.c:1:21: Missing white space after #define 
+pptest2.c:3:13: invalid macro name
+pptest2.c:5:17: `defined' without an identifier
+pptest2.c:5:24: Division by zero in #if
+pptest2.c:5:25: mismatched parentheses in #if
+pptest2.c:11:1: Macro XFIG already defined
+  pptest2.c:10: Previous definition of XFIG
+pptest2.c:12:1: Macro XFIG already defined
+  pptest2.c:11: Previous definition of XFIG
+Preprocessing error for file: pptest2.c
+*** Cannot continue.
+
+Finished LCLint checking --- no code errors found
+
+fielduse.c:7:18: Field bit of unnamed structure declared but not used
+
+Finished LCLint checking --- 1 code error found, as expected
+
+Finished LCLint checking --- no code errors found
+
+Finished LCLint checking --- no code errors found
+
+Finished LCLint checking --- no code errors found
+
+func.c: (in function x)
+func.c:17:7: Call to non-function (type [function (void) returns int] **):
+                (&pf)
+func.c:23:7: Call to non-function (type [function (void) returns int] ***):
+                (&ppf)
+func.c:24:7: Call to non-function (type [function (void) returns int] **): ppf
+func.c:29:7: Call to non-function (type [function (void) returns int] ****):
+                (&pppf)
+func.c:30:7: Call to non-function (type [function (void) returns int] ***):
+                pppf
+func.c:31:7: Call to non-function (type [function (void) returns int] **):
+                (*pppf)
+func.c:35:3: Invalid left-hand side of assignment (function type [function
+                (void) returns int]): f
+func.c:37:3: Assignment of [function (void) returns int] * to [function (void)
+                returns int] **: ppf = pf
+func.c:40:3: Assignment of [function (void) returns int] ** to [function (void)
+                returns int] ***: pppf = ppf
+
+Finished LCLint checking --- 9 code errors found, as expected
+Command Line: Setting mode checks after setting mode flags will override set
+                 values of flags: exportlocal
+
+func.c: (in function x)
+func.c:13:9: Dereference of function type ([function (void) returns int]): *f
+func.c:14:10: Dereference of function type ([function (void) returns int]): *f
+func.c:14:9: Dereference of function type ([function (void) returns int]): **f
+func.c:15:11: Dereference of function type ([function (void) returns int]): *f
+func.c:15:10: Dereference of function type ([function (void) returns int]): **f
+func.c:15:9: Dereference of function type ([function (void) returns int]): ***f
+func.c:17:7: Call to non-function (type [function (void) returns int] **):
+                (&pf)
+func.c:20:9: Dereference of function type ([function (void) returns int]): **pf
+func.c:21:10: Dereference of function type ([function (void) returns int]):
+                 **pf
+func.c:21:9: Dereference of function type ([function (void) returns int]):
+                ***pf
+func.c:23:7: Call to non-function (type [function (void) returns int] ***):
+                (&ppf)
+func.c:24:7: Call to non-function (type [function (void) returns int] **): ppf
+func.c:27:9: Dereference of function type ([function (void) returns int]):
+                ***ppf
+func.c:29:7: Call to non-function (type [function (void) returns int] ****):
+                (&pppf)
+func.c:30:7: Call to non-function (type [function (void) returns int] ***):
+                pppf
+func.c:31:7: Call to non-function (type [function (void) returns int] **):
+                (*pppf)
+func.c:35:3: Invalid left-hand side of assignment (function type [function
+                (void) returns int]): f
+func.c:37:3: Assignment of [function (void) returns int] * to [function (void)
+                returns int] **: ppf = pf
+func.c:40:3: Assignment of [function (void) returns int] ** to [function (void)
+                returns int] ***: pppf = ppf
+func.c:3:6: Function x exported but not declared in header file
+   func.c:43:1: Definition of x
+
+Finished LCLint checking --- 20 code errors found, as expected
+
+Finished LCLint checking --- no code errors found
+
+unnamedstruct.c:10:7: Field name reused: x
+unnamedstruct.c:5:9: Previous use of x
+
+Finished LCLint checking --- 1 code error found, as expected
+
+Finished LCLint checking --- no code errors found
+
+Finished LCLint checking --- no code errors found

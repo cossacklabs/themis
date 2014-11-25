@@ -1,0 +1,18 @@
+
+structassign.c: (in function copyrecord)
+structassign.c:15:15: Released storage x.name reachable from parameter at
+                         return point
+   structassign.c:14:19: Storage x.name released
+structassign.c: (in function copyrecord2)
+structassign.c:23:15: Released storage x.name reachable from parameter at
+                         return point
+   structassign.c:22:3: Storage x.name released
+structassign.c: (in function copyrecord3)
+structassign.c:28:12: Released storage x.name reachable from parameter at
+                         return point
+   structassign.c:28:12: Storage x.name released
+structassign.c: (in function main)
+structassign.c:45:14: Only storage rc.name (type char *) derived from variable
+                         declared in this scope is not released (memory leak)
+
+Finished checking --- 4 code warnings, as expected

@@ -1,0 +1,30 @@
+
+lintcomments.c: (in function f)
+lintcomments.c:7:51: Traditional lint comment /*FALLTHROUGH*/ used. Splint
+    interprets this in the same way as most Unix lints, but it is preferable to
+    replace it with the /*@fallthrough@*/ semantic comment
+lintcomments.c:8:33: Traditional lint comment /*FALLTHROUGH*/ used. Splint
+    interprets this in the same way as most Unix lints, but it is preferable to
+    replace it with the /*@fallthrough@*/ semantic comment
+lintcomments.c:9:30: Traditional lint comment /*FALLTHRU*/ used. Splint
+    interprets this in the same way as most Unix lints, but it is preferable to
+    replace it with the /*@fallthrough@*/ semantic comment
+lintcomments.c:11:13: Fall through case (no preceding break)
+lintcomments.c:23:21: Traditional lint comment /*NOTREACHED*/ used. Splint
+    interprets this in the same way as most Unix lints, but it is preferable to
+    replace it with the /*@notreached@*/ semantic comment.
+
+Finished checking --- 5 code warnings, as expected
+
+lintcomments.c: (in function f)
+lintcomments.c:11:13: Fall through case (no preceding break)
+
+Finished checking --- 1 code warning, as expected
+
+lintcomments.c: (in function f)
+lintcomments.c:9:10: Fall through case (no preceding break)
+lintcomments.c:10:10: Fall through case (no preceding break)
+lintcomments.c:11:13: Fall through case (no preceding break)
+lintcomments.c:24:8: Unreachable code: i++
+
+Finished checking --- 4 code warnings, as expected

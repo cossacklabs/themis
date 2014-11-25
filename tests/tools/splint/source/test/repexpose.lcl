@@ -1,0 +1,17 @@
+mutable type abst ;
+immutable type immut ;
+
+char **globstring;
+
+only abst abst_create (dependent abst p, only char *x, int i) 
+   char **globstring; { }
+
+only char *abst_name (abst a) { }
+int abst_val (abst a) { }
+int *abst_aval (abst a) { }
+only abst abst_parent (only abst a) { }
+dependent char *immut_name (immut im) { }
+void abst_setIm (abst a, immut im) { }
+immut abst_getIm (abst a) { } 
+
+

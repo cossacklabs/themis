@@ -1,0 +1,28 @@
+
+unknownsize.c: (in function uknSize1)
+unknownsize.c:9:3: Possible out-of-bounds store: c[9]
+    Unable to resolve constraint:
+    requires maxSet(c @ unknownsize.c:9:3) >= 9
+     needed to satisfy precondition:
+    requires maxSet(c @ unknownsize.c:9:3) >= 9
+
+Finished checking --- 1 code warning, as expected
+
+fixedArrayType.c: (in function fixedArrayTouch)
+fixedArrayType.c:9:3: Possible out-of-bounds store: buffer[sizeof(Array) - 1]
+    Unable to resolve constraint:
+    requires sizeof(Array) @ fixedArrayType.c:9:25 <= 10
+     needed to satisfy precondition:
+    requires maxSet(buffer @ fixedArrayType.c:9:3) >= sizeof(Array) @
+    fixedArrayType.c:9:25 - 1
+
+Finished checking --- 1 code warning, as expected
+
+initBlock.c: (in function main)
+initBlock.c:8:3: Likely out-of-bounds store: buf[10]
+    Unable to resolve constraint:
+    requires 9 >= 10
+     needed to satisfy precondition:
+    requires maxSet(buf @ initBlock.c:8:3) >= 10
+
+Finished checking --- 1 code warning, as expected

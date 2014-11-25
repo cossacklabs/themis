@@ -1,0 +1,18 @@
+	  Splint - annotation-assisted static program checker
+			 http://www.splint.org
+
+			Copyright (C) 1994-2007
+			University of Virginia,
+		 Massachusetts Institute of Technology
+		 
+			     Version 3.1.2
+ 		             1 August 2007
+
+Splint Documentation
+====================
+
+Installation instructions are found with this distribution in
+install.html (or at http://www.splint.org/source.html).
+
+For documentation on Splint, please see http://www.splint.org
+

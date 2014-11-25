@@ -1,0 +1,14 @@
+
+loopexec.c: (in function g2)
+loopexec.c:35:2: Out storage x not defined before return
+
+Finished checking --- 1 code warning, as expected
+
+loopexec.c: (in function g)
+loopexec.c:13:2: Out storage x not defined before return
+loopexec.c: (in function g1)
+loopexec.c:24:2: Out storage x not defined before return
+loopexec.c: (in function g2)
+loopexec.c:35:2: Out storage x not defined before return
+
+Finished checking --- 3 code warnings, as expected

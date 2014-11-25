@@ -1,0 +1,170 @@
+
+employee.c: (in function employee_sprint)
+employee.c:38: Buffer overflow possible with sprintf.  Recommend using snprintf
+                  instead: sprintf
+drive.c: (in function main)
+drive.c:50: Buffer overflow possible with sprintf.  Recommend using snprintf
+               instead: sprintf
+drive.c:66: Buffer overflow possible with sprintf.  Recommend using snprintf
+               instead: sprintf
+drive.c:84: Buffer overflow possible with sprintf.  Recommend using snprintf
+               instead: sprintf
+drive.c:138: Buffer overflow possible with sprintf.  Recommend using snprintf
+                instead: sprintf
+
+Error Type                Reported  Suppressed
+===================       ========  =========
+usedef                       0           1
+compdef                      0           3
+incondefs                    0           1
+formalarray                  0          24
+modfilesys                   0          25
+redecl                       0           7
+exporttype                   0           3
+bufferoverflowhigh           5           0
+                          ========  =========
+Total                        5          64
+
+Finished checking --- 5 code warnings, as expected
+
+employee.c: (in function employee_sprint)
+employee.c:38: Buffer overflow possible with sprintf.  Recommend using snprintf
+                  instead: sprintf
+eref.c: (in function eref_alloc)
+eref.c:36: Called procedure printf may access global stdout
+eref.c:36: Undocumented modification of *stdout possible from call to printf:
+              printf("Malloc returned null in eref_alloc\n")
+eref.c:36: Return value (type int) ignored: printf("Malloc r...
+eref.c:46: Called procedure printf may access global stdout
+eref.c:46: Undocumented modification of *stdout possible from call to printf:
+              printf("Malloc returned null in eref_alloc\n")
+eref.c:46: Return value (type int) ignored: printf("Malloc r...
+eref.c: (in function eref_initMod)
+eref.c:82: Called procedure printf may access global stdout
+eref.c:82: Undocumented modification of *stdout possible from call to printf:
+              printf("Malloc returned null in eref_initMod\n")
+eref.c:82: Return value (type int) ignored: printf("Malloc r...
+eref.c:90: Called procedure printf may access global stdout
+eref.c:90: Undocumented modification of *stdout possible from call to printf:
+              printf("Malloc returned null in eref_initMod\n")
+eref.c:90: Return value (type int) ignored: printf("Malloc r...
+erc.c: (in function int_toSize)
+erc.c:11: Undocumented use of global stderr
+erc.c:11: Undocumented modification of *stderr possible from call to fprintf:
+             fprintf(stderr, "Error: int_toSize failure: %d", x)
+erc.c:11: Return value (type int) ignored: fprintf(stderr, ...
+erc.c: (in function erc_create)
+erc.c:28: Called procedure printf may access global stdout
+erc.c:28: Undocumented modification of *stdout possible from call to printf:
+             printf("Malloc returned null in erc_create\n")
+erc.c:28: Return value (type int) ignored: printf("Malloc r...
+erc.c: (in function erc_insert)
+erc.c:80: Called procedure printf may access global stdout
+erc.c:80: Undocumented modification of *stdout possible from call to printf:
+             printf("Malloc returned null in erc_insert\n")
+erc.c:80: Return value (type int) ignored: printf("Malloc r...
+erc.c: (in function erc_sprint)
+erc.c:145: Called procedure printf may access global stdout
+erc.c:145: Undocumented modification of *stdout possible from call to printf:
+              printf("Malloc returned null in erc_sprint\n")
+erc.c:145: Return value (type int) ignored: printf("Malloc r...
+dbase.c: (in function db_print)
+dbase.c:307: Return value (type int) ignored: printf("Employee...
+dbase.c:312: Return value (type int) ignored: printf("%s", pri...
+drive.c: (in function main)
+drive.c:31: Called procedure printf may access global stdout
+drive.c:31: Undocumented modification of *stdout possible from call to printf:
+    printf("FormatPos: Wrong number of arguments. Given %d needs 0.\n", argc -
+    1)
+drive.c:31: Return value (type int) ignored: printf("FormatPo...
+drive.c:41: Called procedure printf may access global stdout
+drive.c:41: Undocumented modification of *stdout possible from call to printf:
+               printf("Size should be 0.\n")
+drive.c:41: Return value (type int) ignored: printf("Size sho...
+drive.c:50: Buffer overflow possible with sprintf.  Recommend using snprintf
+               instead: sprintf
+drive.c:57: Called procedure printf may access global stdout
+drive.c:57: Undocumented modification of *stdout possible from call to printf:
+               printf("Size should be 500.\n")
+drive.c:57: Return value (type int) ignored: printf("Size sho...
+drive.c:66: Buffer overflow possible with sprintf.  Recommend using snprintf
+               instead: sprintf
+drive.c:73: Called procedure printf may access global stdout
+drive.c:73: Undocumented modification of *stdout possible from call to printf:
+               printf("Size should be 250.\n")
+drive.c:73: Return value (type int) ignored: printf("Size sho...
+drive.c:84: Buffer overflow possible with sprintf.  Recommend using snprintf
+               instead: sprintf
+drive.c:93: Called procedure printf may access global stdout
+drive.c:93: Undocumented modification of *stdout possible from call to printf:
+               printf("Size should be 350.\n")
+drive.c:93: Return value (type int) ignored: printf("Size sho...
+drive.c:100: Called procedure printf may access global stdout
+drive.c:100: Undocumented modification of *stdout possible from call to printf:
+                printf("Size should be 350.\n")
+drive.c:100: Return value (type int) ignored: printf("Size sho...
+drive.c:103: Called procedure printf may access global stdout
+drive.c:103: Undocumented modification of *stdout possible from call to printf:
+                printf("Print two different employees:\n")
+drive.c:103: Return value (type int) ignored: printf("Print tw...
+drive.c:109: Called procedure printf may access global stdout
+drive.c:109: Undocumented modification of *stdout possible from call to printf:
+                printf("%s\n", &(na[0]))
+drive.c:109: Return value (type int) ignored: printf("%s\n", &...
+drive.c:138: Buffer overflow possible with sprintf.  Recommend using snprintf
+                instead: sprintf
+drive.c:151: Called procedure printf may access global stdout
+drive.c:151: Undocumented modification of *stdout possible from call to printf:
+    printf("Should print true: %s\n", bool_unparse(status == DBS_DUPLERR))
+drive.c:151: Return value (type int) ignored: printf("Should p...
+drive.c:154: Called procedure printf may access global stdout
+drive.c:154: Undocumented modification of *stdout possible from call to printf:
+                printf("Employees 0 - 19\n")
+drive.c:154: Return value (type int) ignored: printf("Employee...
+drive.c:155: Called procedure db_print may access global stdout
+drive.c:155: Undocumented modification of *stdout possible from call to
+                db_print: db_print()
+drive.c:158: Called procedure printf may access global stdout
+drive.c:158: Undocumented modification of *stdout possible from call to printf:
+                printf("Employees 0 - 16, 18 - 19\n")
+drive.c:158: Return value (type int) ignored: printf("Employee...
+drive.c:159: Called procedure db_print may access global stdout
+drive.c:159: Undocumented modification of *stdout possible from call to
+                db_print: db_print()
+drive.c:164: Called procedure printf may access global stdout
+drive.c:164: Undocumented modification of *stdout possible from call to printf:
+                printf("Should get two females: %d\n%s\n", i, sprintResult)
+drive.c:164: Return value (type int) ignored: printf("Should g...
+drive.c:174: Called procedure printf may access global stdout
+drive.c:174: Undocumented modification of *stdout possible from call to printf:
+    printf("Should get two females and ten males: %d\n%s\n", i, sprintResult)
+drive.c:174: Return value (type int) ignored: printf("Should g...
+drive.c:180: Called procedure printf may access global stdout
+drive.c:180: Undocumented modification of *stdout possible from call to printf:
+                printf("Should get two females: %d\n%s\n", i, sprintResult)
+drive.c:180: Return value (type int) ignored: printf("Should g...
+drive.c:184: Called procedure printf may access global stdout
+drive.c:184: Undocumented modification of *stdout possible from call to printf:
+                printf("Should get 18 employees\n")
+drive.c:184: Return value (type int) ignored: printf("Should g...
+drive.c:185: Called procedure db_print may access global stdout
+drive.c:185: Undocumented modification of *stdout possible from call to
+                db_print: db_print()
+
+Error Type                Reported  Suppressed
+===================       ========  =========
+usedef                       0           1
+compdef                      0           3
+incondefs                    0           1
+formalarray                  0          24
+mods                        26           0
+modfilesys                   0          25
+globs                       26           0
+retvalint                   25           0
+redecl                       0           7
+exporttype                   0           3
+bufferoverflowhigh           5           0
+                          ========  =========
+Total                       82          64
+
+Finished checking --- 82 code warnings, as expected

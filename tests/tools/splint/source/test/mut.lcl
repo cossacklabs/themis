@@ -1,0 +1,5 @@
+mutable type mut;
+
+only mut mut_create (void) { } 
+void mut_mod (mut a) { modifies a; } 
+

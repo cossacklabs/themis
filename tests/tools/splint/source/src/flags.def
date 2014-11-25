@@ -1,0 +1,4444 @@
+/*;-*-C-*-; 
+**
+** flags.def
+**
+** This file is used to generate the flag header files.
+**
+** Don't forget to regenerate flag_codes.gen. (lost the Makefile...bleech!)
+*/
+		 	     /* spec   idem   global  mode  args */
+/*@-namechecks@*/
+/*@notfunction@*/
+# define modeFlag   		FALSE, FALSE, FALSE,  TRUE, ARG_NONE
+/*@notfunction@*/
+# define plainFlag		FALSE, FALSE, FALSE, FALSE, ARG_NONE
+/*@notfunction@*/
+# define specialFlag 		TRUE,  FALSE, FALSE, FALSE, ARG_NONE
+/*@notfunction@*/
+# define plainSpecialFlag   	TRUE,  FALSE, FALSE, FALSE, ARG_NONE
+/*@notfunction@*/
+# define idemSpecialFlag 	TRUE,  TRUE,  FALSE, FALSE, ARG_NONE
+/*@notfunction@*/
+# define valueFlag     		FALSE, FALSE, FALSE, FALSE, ARG_NUMBER
+
+/*@notfunction@*/
+# define charFlag     		FALSE, FALSE, FALSE, FALSE, ARG_CHAR
+
+/*@notfunction@*/
+# define modeValueFlag     	FALSE, FALSE, FALSE, TRUE,  ARG_NUMBER
+/*@notfunction@*/
+# define specialValueFlag       TRUE,  FALSE, FALSE, FALSE, ARG_NUMBER
+/*@notfunction@*/
+# define debugFlag              FALSE, TRUE,  FALSE, FALSE, ARG_NONE
+/*@notfunction@*/
+# define debugValueFlag         FALSE, TRUE,  FALSE, FALSE, ARG_NUMBER
+/*@notfunction@*/
+# define specialDebugFlag       TRUE,  TRUE,  FALSE, FALSE, ARG_NONE
+/*@notfunction@*/
+# define globalFlag             FALSE, FALSE, TRUE,  FALSE, ARG_NONE
+/*@notfunction@*/
+# define idemGlobalFlag         FALSE, TRUE,  TRUE,  FALSE, ARG_NONE
+/*@notfunction@*/
+# define globalValueFlag        FALSE, FALSE, TRUE,  FALSE, ARG_NUMBER
+
+/* Note: type argument missing */ 
+/*@notfunction@*/
+# define regStringFlag          FALSE, FALSE, FALSE, FALSE
+/*@notfunction@*/
+# define idemStringFlag         FALSE, TRUE,  FALSE, FALSE
+/*@notfunction@*/
+# define globalStringFlag       FALSE, FALSE, TRUE,  FALSE
+
+/*@notfunction@*/
+# define extraArgFlag           FALSE, FALSE, FALSE, FALSE, ARG_SPECIAL
+/*@notfunction@*/
+# define globalExtraArgFlag     FALSE, FALSE, TRUE,  FALSE, ARG_SPECIAL
+/*@notfunction@*/
+# define globalFileFlag         FALSE, TRUE,  TRUE,  FALSE, ARG_FILE
+/*@=namechecks@*/
+
+/*
+** Note: the flag code must be on a separate line, since I'm
+** too stupid to write an awk/sed/whatever script that can separate
+** the lines.
+*/
+
+static flaglist flags = 
+{	
+  /*
+  ** Null Dereferences (Manual Section 2)
+  */
+
+  {
+    FK_NULL, FK_MEMORY, specialFlag,
+    "null",
+    FLG_NULL,
+    "misuses of null pointer",
+    "A possibly null pointer is misused (sets nullderef, nullpass, "
+    "nullref, nullassign, and nullstate).",
+    0, 0
+  },
+  {
+    FK_NULL, FK_MEMORY, modeFlag,
+    "nullderef",
+    FLG_NULLDEREF,
+    "possible dereferencce of null pointer",
+    "A possibly null pointer is dereferenced.  Value is "
+    "either the result of a function which may return null "
+    "(in which case, code should check it is not null), or a "
+    "global, parameter or structure field declared with the "
+    "null qualifier.",
+    0, 0
+  },
+  {
+    FK_NULL, FK_MEMORY, modeFlag,
+    "nullpass",
+    FLG_NULLPASS,
+    "possibly null pointer passed as formal with no null annotation",
+    "A possibly null pointer is passed as a parameter corresponding to "
+    "a formal parameter with no /*@null@*/ annotation.  If NULL "
+    "may be used for this parameter, add a /*@null@*/ annotation "
+    "to the function parameter declaration.",
+    0, 0
+  },
+  {
+    FK_NULL, FK_MEMORY, modeFlag,
+    "nullret",
+    FLG_NULLRET,
+    "possibly null pointer returned as result with no null annotation",
+    "Function returns a possibly null pointer, but is not declared "
+    "using /*@null@*/ annotation of result.  If function may "
+    "return NULL, add /*@null@*/ annotation to the return "
+    "value declaration.",
+    0, 0
+  },
+  {
+    FK_NULL, FK_MEMORY, modeFlag,
+    "nullstate",
+    FLG_NULLSTATE,
+    "possibly null pointer reachable from a reference with no null annotation",
+    "A possibly null pointer is reachable from a parameter or global "
+    "variable that is not declared using a /*@null@*/ annotation.",
+    0, 0
+  },
+  {
+    FK_NULL, FK_MEMORY, modeFlag,
+    "nullassign",
+    FLG_NULLASSIGN,
+    "inconsistent assignment or initialization involving null pointer",
+    "A reference with no null annotation is assigned or initialized "
+    "to NULL.  Use /*@null@*/ to declare the reference as "
+    "a possibly null pointer.",
+    0, 0
+  },
+  {
+    FK_NULL, FK_MEMORY, plainFlag,
+    "nullinit",
+    FLG_NULLINIT,
+    "inconsistent initialization involving null pointer",
+    "A reference with no null annotation is initialized "
+    "to NULL.  Use /*@null@*/ to declare the reference as "
+    "a possibly null pointer.",
+    0, 0
+  },
+
+  /*
+  ** Undefined Values (Section 3)
+  */
+
+  {
+    FK_DEF, FK_NONE, modeFlag,
+    "usedef",
+    FLG_USEDEF,
+    "use before definition",
+    "An rvalue is used that may not be initialized to a value on some execution path.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_DEF, modeFlag,
+    "mustdefine",
+    FLG_MUSTDEFINE,
+    "out storage not defined before return or scope exit",
+    "An out parameter or global is not defined before control is transferred.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_DEF, modeFlag,
+    "uniondef",
+    FLG_UNIONDEF,
+    "at least one field of a union must be defined",
+    "No field of a union is defined. Generally, one field of a union is "
+    "expected to be defined.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_DEF, modeFlag,
+    "compdef",
+    FLG_COMPDEF,
+    "parameter, return value or global completely defined",
+    "Storage derivable from a parameter, return value or global is "
+    "not defined. Use /*@out@*/ to denote passed or returned "
+    "storage which need not be defined.",
+    0, 0
+  },
+  {
+    FK_DEF, FK_NONE, plainFlag,
+    "fullinitblock",
+    FLG_FULLINITBLOCK,
+    "initializer sets all fields",
+    "Initializer does not set every field in the structure.",
+    0, 0
+  },
+  {
+    FK_DEF, FK_NONE, plainFlag,
+    "initallelements",
+    FLG_INITALLELEMENTS,
+    "initializer defines all array elements",
+    "Initializer does not define all elements of a declared array.",
+    0, 0
+  },
+  {
+    FK_DEF, FK_NONE, plainFlag,
+    "initsize",
+    FLG_INITSIZE,
+    "initializer defines extra array elements",
+    "Initializer block contains more elements than the size of a declared array.",
+    0, 0
+  },
+
+  {
+    FK_DEF, FK_IMPLICIT, modeFlag,
+    "impouts",
+    FLG_IMPOUTS,
+    "pointer parameters to unspecified functions may be implicit out parameters",
+    NULL, 0, 0
+  },
+
+  /*
+  ** Types (Section 4)
+  */
+
+  {
+    FK_DECL, FK_TYPE, modeFlag,
+    "incondefs",
+    FLG_INCONDEFS,
+    "function, variable or constant redefined with inconsistent type",
+    "A function, variable or constant is redefined with a different type.",
+    0, 0
+  },
+  {
+    FK_DECL, FK_TYPE, modeFlag,
+    "matchfields",
+    FLG_MATCHFIELDS,
+    "struct or enum type redefined with inconsistent fields or members",
+    "A struct, union or enum type is redefined with inconsistent fields or members.",
+    0, 0
+  },
+  {
+    FK_TYPE, FK_NONE, modeFlag,
+    "fcnderef",
+    FLG_FCNDEREF,
+    "dereferencce of a function type",
+    "A function type is dereferenced.  The ANSI standard allows this "
+    "because of implicit conversion of function designators, however the "
+    "dereference is unnecessary.", 
+    0, 0
+  },
+  {
+    FK_OPS, FK_NONE, modeFlag,
+    "realcompare",
+    FLG_REALCOMPARE,
+    "dangerous equality comparison between reals (dangerous because of inexact "
+    "floating point representations)",
+    "Two real (float, double, or long double) values are compared "
+    "directly using == or != primitive. "
+    "This may produce unexpected results since floating point "
+    "representations are inexact. Instead, compare the difference to "
+    "FLT_EPSILON or DBL_EPSILON.",
+    0, 0,
+  },
+  {
+    FK_OPS, FK_NONE, modeFlag,
+    "realrelatecompare",
+    FLG_REALRELATECOMPARE,
+    "possibly dangerous relational comparison between reals (dangerous because of inexact "
+    "floating point representations)",
+    "Two real (float, double, or long double) values are compared "
+    "directly using < or >. "
+    "This may produce unexpected results since floating point "
+    "representations are inexact. Instead, compare the difference to "
+    "FLT_EPSILON or DBL_EPSILON.",
+    0, 0,
+  },
+  {
+    FK_OPS, FK_NONE, modeFlag,
+    "unsignedcompare",
+    FLG_UNSIGNEDCOMPARE,
+    "comparison using <, <=, >= between an unsigned integral and zero constant",
+    "An unsigned value is used in a comparison with zero in a way that is either a bug or confusing.",
+    0, 0,
+  },
+  {
+    FK_OPS, FK_POINTER, modeFlag,
+    "ptrarith",
+    FLG_POINTERARITH,
+    "arithmetic involving pointer and integer",
+    "Pointer arithmetic using pointer and integer.", 0, 0
+  },
+  {
+    FK_OPS, FK_POINTER, modeFlag,
+    "nullptrarith",
+    FLG_NULLPOINTERARITH,
+    "arithmetic involving possibly null pointer and integer",
+    "Pointer arithmetic using a possibly null pointer and integer.", 0, 0
+  },
+  {
+    FK_OPS, FK_POINTER, modeFlag,
+    "ptrcompare",
+    FLG_PTRNUMCOMPARE,
+    "comparison between pointer and number",
+    "A pointer is compared to a number.", 0, 0
+  },
+  {
+    FK_OPS, FK_TYPE, modeFlag,
+    "strictops",
+    FLG_STRICTOPS,
+    "primitive operation does not type check strictly",
+    "A primitive operation does not type check strictly.", 0, 0
+  },
+  {
+    FK_OPS, FK_TYPE, modeFlag,
+    "bitwisesigned",
+    FLG_BITWISEOPS,
+    "a bitwise logical operator does not have unsigned operands",
+    "An operand to a bitwise operator is not an unsigned values.  This "
+    "may have unexpected results depending on the signed "
+    "representations.", 0, 0
+  },
+  {
+    FK_OPS, FK_TYPE, modeFlag,
+    "shiftnegative",
+    FLG_SHIFTNEGATIVE,
+    "a shift right operand may be negative",
+    "The right operand to a shift operator may be negative (behavior undefined).",
+    0, 0
+  },
+  {
+    FK_OPS, FK_TYPE, modeFlag,
+    "shiftimplementation",
+    FLG_SHIFTIMPLEMENTATION,
+    "a shift left operand may be negative",
+    "The left operand to a shift operator may be negative (behavior is implementation-defined).",
+    0, 0
+  },
+  {
+    FK_OPS, FK_TYPE, modeFlag,
+    "sizeoftype",
+    FLG_SIZEOFTYPE,
+    "sizeof operator has a type argument",
+    "Operand of sizeof operator is a type. (Safer to use expression, "
+    "int *x = sizeof (*x); instead of sizeof (int).)", 
+    0, 0
+  },
+  {
+    FK_OPS, FK_TYPE, plainFlag,
+    "sizeofformalarray",
+    FLG_SIZEOFFORMALARRAY,
+    "sizeof operator has an array formal parameter argument",
+    "Operand of a sizeof operator is a function parameter declared as "
+    "an array.  The value of sizeof will be the size of a pointer to the "
+    "element type, not the number of elements in the array.",
+    0, 0
+  },
+  {
+    FK_DECL, FK_TYPE, plainFlag,
+    "fixedformalarray",
+    FLG_FIXEDFORMALARRAY,
+    "formal parameter of type array is declared with size",
+    "A formal parameter is declared as an array with size.  The size of the array "
+    "is ignored in this context, since the array formal parameter is treated "
+    "as a pointer.",
+    0, 0
+  },
+  {
+    FK_DECL, FK_TYPE, plainFlag,
+    "incompletetype",
+    FLG_INCOMPLETETYPE,
+    "formal parameter has an incomplete type",
+    "A formal parameter is declared with an incomplete type.",
+    0, 0
+  },
+  {
+    FK_DECL, FK_TYPE, plainFlag,
+    "formalarray",
+    FLG_FORMALARRAY,
+    "formal parameter is an array",
+    "A formal parameter is declared as an array.  This can be confusing, since "
+    "a formal array parameter is treated as a pointer.",
+    0, 0
+  },
+
+
+  /*
+  ** Booleans (4.2)
+  */
+
+  {
+    FK_BOOL, FK_NONE, regStringFlag, ARG_STRING,
+    "booltype",
+    FLG_BOOLTYPE,
+    "set name of boolean type (default bool)",
+    NULL, 0, 0
+  },
+  {
+    FK_BOOL, FK_NONE, regStringFlag, ARG_STRING,
+    "boolfalse",
+    FLG_BOOLFALSE,
+    "set name of boolean false (default false)",
+    NULL, 0, 0
+  },
+  {
+    FK_BOOL, FK_NONE, regStringFlag, ARG_STRING,
+    "booltrue",
+    FLG_BOOLTRUE, 
+    "set name of boolean true (default true)",
+    NULL, 0, 0
+  },
+  {
+    FK_BOOL, FK_HELP, plainFlag,
+    "likelybool",
+    FLG_LIKELYBOOL,
+    "type name is probably a boolean type but does not match default "
+    "boolean type name, \"bool\", and alternate name is not set",
+    "Use the -booltype, -boolfalse and -booltrue flags to change the "
+    "name of the default boolean type.",
+    0, 0
+  },
+
+  {
+    FK_BOOL, FK_OPS, modeFlag,
+    "boolcompare",
+    FLG_BOOLCOMPARE,
+    "comparison between bools (dangerous because of multiple true values)",
+    "Two bool values are compared directly using a C primitive. This "
+    "may produce unexpected results since all non-zero values are "
+    "considered true, so different true values may not be equal. "
+    "The file bool.h (included in splint/lib) provides bool_equal "
+    "for safe bool comparisons.", 0, 0
+  },
+  {
+    FK_BOOL, FK_OPS, modeFlag,
+    "boolops",
+    FLG_BOOLOPS,
+    "primitive operation (!, && or ||) does not has a boolean argument",
+    "The operand of a boolean operator is not a boolean. Use +ptrnegate "
+    "to allow ! to be used on pointers.",
+    0, 0
+  },
+  {
+    FK_BOOL, FK_POINTER, modeFlag,
+    "ptrnegate",
+    FLG_PTRNEGATE,
+    "allow ! to be used on pointer operand",
+    "The operand of ! operator is a pointer.", 0, 0
+  },
+  {
+    FK_BOOL, FK_PRED,plainFlag,
+    "predassign",
+    FLG_PREDASSIGN,
+    "condition test (if, while or for) is an assignment",
+    "The condition test is an assignment expression. Probably, you mean "
+    "to use == instead of =. If an assignment is intended, add an "
+    "extra parentheses nesting (e.g., if ((a = b)) ...) to suppress "
+    "this message.",
+    0, 0
+  },
+  {
+    FK_BOOL, FK_PRED, specialFlag,
+    "predbool",
+    FLG_PREDBOOL,
+    "type of condition test (if, while or for) not bool (sets predboolint, "
+    "predboolptr and predboolothers)",
+    "Test expression type is not boolean.", 0, 0
+  },
+  {
+    FK_PRED, FK_BOOL, modeFlag,
+    "predboolint",
+    FLG_PREDBOOLINT,
+    "type of condition test (if, while or for) is an integral type",
+    "Test expression type is not boolean or int.", 0, 0
+  },
+  {
+    FK_BOOL, FK_PRED, modeFlag,
+    "predboolptr",
+    FLG_PREDBOOLPTR,
+    "type of condition test (if, while or for) is a pointer",
+    "Test expression type is not boolean.", 0, 0
+  },
+  {
+    FK_BOOL, FK_PRED, modeFlag,
+    "predboolothers",
+    FLG_PREDBOOLOTHERS,
+    "type of condition test (if, while or for) not bool, int or pointer",
+    "Test expression type is not boolean.", 0, 0
+  },
+
+  /*
+  ** 4.3 Abstract types
+  */
+
+  {
+    FK_ABSTRACT, FK_NONE, plainFlag,
+    "abstract",
+    FLG_ABSTRACT,
+    "data abstraction barriers",
+    "An abstraction barrier is broken. If necessary, use /*@access <type>@*/ to allow access to an abstract type.",
+    0, 0
+  },
+  {
+    FK_ABSTRACT, FK_NONE, modeFlag,
+    "abstractcompare",
+    FLG_ABSTRACTCOMPARE,
+    "object equality comparison on abstract type operands",
+    "An object comparison (== or !=) is used on operands of abstract type.",
+    0, 0
+  },
+
+  {
+    FK_ABSTRACT, FK_NONE, plainFlag,
+    "numabstract",
+    FLG_NUMABSTRACT,
+    "data abstraction barriers",
+    "An abstraction barrier involving a numabstract type is broken. If necessary, use /*@access <type>@*/ to allow access to a numabstract type.",
+    0, 0
+  },
+  {
+    FK_ABSTRACT, FK_NONE, modeFlag,
+    "numabstractcast",
+    FLG_NUMABSTRACTCAST,
+    "numeric literal cast to numabstract type",
+    "A numeric literal is cast to a numabstract type.",
+    0, 0
+  },
+  {
+    FK_ABSTRACT, FK_NONE, modeFlag,
+    "numabstractlit",
+    FLG_NUMABSTRACTLIT,
+    "numeric literal can used as numabstract type",
+    "To allow a numeric literal to be used as a numabstract type, use +numabstractlit.",
+    0, 0
+  },
+  {
+    FK_ABSTRACT, FK_TYPEEQ, modeFlag,
+    "numabstractindex",
+    FLG_NUMABSTRACTINDEX,
+    "a numabstract type can be used to index an array",
+    "To allow numabstract types to index arrays, use +numabstractindex.",
+    0, 0
+  },
+  {
+    FK_ABSTRACT, FK_NONE, modeFlag,
+    "numabstractprint",
+    FLG_NUMABSTRACTPRINT,
+    "a numabstract value is printed using %d format code",
+    "A numabstract value is printed usind %d format code in a printf.",
+    0, 0
+  },
+  {
+    FK_ABSTRACT, FK_IMPLICIT, plainFlag,
+    "impabstract",
+    FLG_IMPABSTRACT,
+    "assume user type definitions are abstract (unless /*@concrete@*/ is used)",
+    NULL,
+    0, 0
+  },
+
+  /* 4.3.1 Access */
+
+  {
+    FK_ABSTRACT, FK_NAMES, plainFlag,
+    "accessmodule",
+    FLG_ACCESSMODULE,
+    "allow access to abstract types in definition module",
+    "The representation of an abstract type defined in <M>.<x> is "
+    "accessible anywhere in a file named <M>.<y>.", 
+    0, 0
+  },
+  {
+    FK_ABSTRACT, FK_NAMES, plainFlag,
+    "accessfile",
+    FLG_ACCESSFILE,
+    "allow access to abstract types by file name convention",
+    "The representation of an abstract type named <t> is "
+    "accessible anywhere in a file named <t>.<x>.", 
+    0, 0
+  },
+  {
+    FK_ABSTRACT, FK_NAMES, plainFlag,
+    "accessczech",
+    FLG_ACCESSCZECH,
+    "allow access to abstract types by czech naming convention",
+    "The representation of an abstract type named <t> is accessible "
+    "in the definition of a function or constant named <t>_<name>",
+    0, 0
+  },
+  {
+    FK_ABSTRACT, FK_NAMES, plainFlag,
+    "accessslovak",
+    FLG_ACCESSSLOVAK,
+    "allow access to abstract types by slovak naming convention",
+    "The representation of an abstract type named <t> is accessible "
+    "in the definition of a function or constant named <t><Name>",
+    0, 0
+  },
+  {
+    FK_ABSTRACT, FK_NAMES, plainFlag,
+    "accessczechoslovak",
+    FLG_ACCESSCZECHOSLOVAK,
+    "allow access to abstract types by czechoslovak naming convention",
+    "The representation of an abstract type named <t> is accessible "
+    "in the definition of a function or constant named <t>_<name> or <t><Name>",
+    0, 0
+  },
+  {
+    FK_ABSTRACT, FK_NAMES, specialFlag,
+    "accessall",
+    FLG_ACCESSALL,
+    "set accessmodule, accessfile and accessczech",
+    "Sets accessmodule, accessfile and accessczech",
+    0, 0
+  },
+
+  /* 4.3.2 Mutability */
+  {
+    FK_ABSTRACT, FK_NONE, modeFlag,
+    "mutrep",
+    FLG_MUTREP,
+    "representation of mutable type has sharing semantics",
+    "LCL semantics requires that a mutable type exhibits sharing semantics. "
+    "In order for objects to be shared a indirection is necessary in the representation. "
+    "A mutable type may be represented by a pointer or an abstract mutable type. Handles "
+    "into static data are fine, too, but will generate this error message unless it is suppressed.",
+    0, 0
+  },
+  
+  
+  /*
+  ** Memory Management (5)
+  */
+
+  /* Deallocation Errors */
+  {
+    FK_MEMORY, FK_LEAK, modeFlag,
+    "mustfreefresh",
+    FLG_MUSTFREEFRESH,
+    "freshly allocated storage not released before return or scope exit",
+    "A memory leak has been detected. Storage allocated locally "
+    "is not released before the last reference to it is lost.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_LEAK, modeFlag,
+    "mustfreeonly",
+    FLG_MUSTFREEONLY,
+    "only storage not released before return or scope exit",
+    "A memory leak has been detected. Only-qualified storage is not released before the last "
+    "reference to it is lost.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_LEAK, specialFlag,
+    "mustfree",
+    FLG_MUSTFREE,
+    "fresh or only storage not released before return or scope exit (sets mustfreefresh and mustfreeonly)",
+    "A memory leak has been detected.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_DEAD, modeFlag,
+    "usereleased",
+    FLG_USERELEASED,
+    "storage used after release",
+    "Memory is used after it has been released (either by passing "
+    "as an only param or assigning to an only global).",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_DEAD, modeFlag,
+    "strictusereleased",
+    FLG_STRICTUSERELEASED,
+    "element used after it may have been released",
+    "Memory (through fetch) is used after it may have been released "
+    "(either by passing as an only param or assigning to an only global).",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_LEAK, modeFlag,
+    "compdestroy",
+    FLG_COMPDESTROY,
+    "all only references derivable from void pointer out only parameter are released",
+    "A storage leak due to incomplete deallocation of a structure or deep "
+    "pointer is suspected. Unshared storage that is reachable from "
+    "a reference that is being deallocated has not yet been deallocated. "
+    "Splint assumes when an object is passed "
+    "as an out only void pointer that the outer object will be "
+    "deallocated, but the inner objects will not.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_LEAK, modeFlag,
+    "strictdestroy",
+    FLG_STRICTDESTROY,
+    "report complete destruction errors for array elements that "
+    "may have been released",
+    NULL,
+    0, 0	
+  },	
+  {
+    FK_MEMORY, FK_ARRAY, modeFlag,
+    "deparrays",
+    FLG_DEPARRAYS,
+    "array elements are dependent storage",
+    "When an element is fetched from an array, Splint analysis is "
+    "not able to determine if the same element is reused. "
+    "If +deparrays, Splint will mark local storage assigned from "
+    "array fetches as dependent.", 
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "branchstate",
+    FLG_BRANCHSTATE,
+    "storage has inconsistent states of alternate paths through a branch",
+    "The state of a variable is different depending on which branch "
+    "is taken. This means no annotation can sensibly be applied "
+    "to the storage.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "strictbranchstate",
+    FLG_STRICTBRANCHSTATE,
+    "storage through array fetch has inconsistent states of alternate "
+    "paths through a branch",
+    "The state of a variable through an array fetch is different depending "
+    "on which branch is taken. This means no annotation can sensibly be applied "
+    "to the storage.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, specialFlag,
+    "memchecks",
+    FLG_MEMCHECKS,
+    "sets all dynamic memory checking flags (memimplicit, mustfree, mustdefine, "
+    "mustnotalias, null, memtrans)",
+    NULL, 0, 0
+  },
+  {
+    FK_MEMORY, FK_DEF, modeFlag,
+    "compmempass",
+    FLG_COMPMEMPASS,
+    "actual parameter matches alias kind of formal parameter completely ",
+    "Storage derivable from a parameter does not match the alias kind "
+    "expected for the formal parameter.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_DEAD, modeFlag,
+    "stackref",
+    FLG_RETSTACK,
+    "external reference to stack-allocated storage is created",
+    "A stack reference is pointed to by an external reference when the "
+    "function returns. The stack-allocated storage is destroyed "
+    "after the call, leaving a dangling reference.",
+    0, 0
+  },
+
+  {
+    FK_MEMORY, FK_NONE, specialFlag,
+    "memtrans",
+    FLG_MEMTRANS,
+    "memory transfer errors (sets all *trans flags)",
+    "Memory is transferred in a way that violates annotations.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "dependenttrans",
+    FLG_DEPENDENTTRANS,
+    "dependent transfer errors",
+    "Dependent storage is transferred to a non-dependent reference.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "newreftrans",
+    FLG_NEWREFTRANS,
+    "new reference transfer to reference counted reference",
+    "A new reference is transferred to a reference counted reference.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "onlytrans",
+    FLG_ONLYTRANS,
+    "only storage transferred to non-only reference (memory leak)",
+    "The only reference to this storage is transferred to another "
+    "reference (e.g., by returning it) that does not have the "
+    "only annotation. This may lead to a memory leak, since the "
+    "new reference is not necessarily released.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "onlyunqglobaltrans",
+    FLG_ONLYUNQGLOBALTRANS,
+    "only storage transferred to an unqualified global or "
+    "static reference (memory leak)",
+    "The only reference to this storage is transferred to another "
+    "reference that does not have an aliasing annotation. "
+    "This may lead to a memory leak, since the "
+    "new reference is not necessarily released.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "ownedtrans",
+    FLG_OWNEDTRANS,
+    "owned storage transferred to non-owned reference (memory leak)",
+    "The owned reference to this storage is transferred to another "
+    "reference (e.g., by returning it) that does not have the "
+    "owned annotation. This may lead to a memory leak, since the "
+    "new reference is not necessarily released.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "freshtrans",
+    FLG_FRESHTRANS,
+    "fresh storage transferred to non-only reference (memory leak)",
+    "Fresh storage (newly allocated in this function) is transferred "
+    "in a way that the obligation to release storage is not "
+    "propagated.  Use the /*@only@*/ annotation to indicate "
+    "the a return value is the only reference to the returned "
+    "storage.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "sharedtrans",
+    FLG_SHAREDTRANS,
+    "shared storage transferred to non-shared reference",
+    "Shared storage is transferred to a non-shared reference. The other "
+    "reference may release storage needed by this reference.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "temptrans",
+    FLG_TEMPTRANS,
+    "temp storage transferred to non-temporary reference",
+    "Temp storage (associated with a formal parameter) is transferred "
+    "to a non-temporary reference. The storage may be released "
+    "or new aliases created.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "kepttrans",
+    FLG_KEPTTRANS,
+    "kept storage transferred to non-temporary reference",
+    "storage is transferred "
+    "to a non-temporary reference after being passed as keep parameter. The storage may be released "
+    "or new aliases created.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "keeptrans",
+    FLG_KEEPTRANS,
+    "keep storage transferred inconsistently",
+    "Keep storage is transferred inconsistently --- either in a way "
+    "that may add a new alias to it, or release it.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "immediatetrans",
+    FLG_IMMEDIATETRANS,
+    "an immediate address (result of &) is transferred inconsistently",
+    "An immediate address (result of & operator) is transferred "
+    "inconsistently.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "refcounttrans",
+    FLG_REFCOUNTTRANS,
+    "reference counted storage is transferred in an inconsistent way",
+    "Reference counted storage is transferred in a way that may not "
+    "be consistent with the reference count.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "statictrans",
+    FLG_STATICTRANS,
+    "static storage is transferred in an inconsistent way",
+    "Static storage is transferred in an inconsistent way.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "unqualifiedtrans",
+    FLG_UNKNOWNTRANS,
+    "unqualified storage is transferred in an inconsistent way",
+    "Unqualified storage is transferred in an inconsistent way.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "staticinittrans",
+    FLG_STATICINITTRANS,
+    "static storage is used as an initial value in an inconsistent way",
+    "Static storage is used as an initial value in an inconsistent way.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "unqualifiedinittrans",
+    FLG_UNKNOWNINITTRANS,
+    "unqualified storage is used as an initial value in an inconsistent way",
+    "Unqualified storage is used as an initial value in an inconsistent way.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "readonlytrans",
+    FLG_READONLYTRANS,
+    "report memory transfer errors for initializations to read-only string literals",
+    "A read-only string literal is assigned to a non-observer reference.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_PARAMS, modeFlag,
+    "passunknown",
+    FLG_PASSUNKNOWN,
+    "passing a value as an un-annotated parameter clears its annotation",
+    NULL, 0, 0
+  },
+
+  /* 5.3 Implicit Memory Annotations */
+
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "readonlystrings",
+    FLG_READONLYSTRINGS,
+    "string literals are read-only (error if one is modified or released)",
+    "String literals are read-only. An error is reported "
+    "if a string literal may be modified or released.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_IMPLICIT, modeFlag,
+    "memimp",
+    FLG_MEMIMPLICIT,
+    "memory errors for unqualified storage",
+    NULL, 0, 0
+  },
+  {
+    FK_MEMORY, FK_IMPLICIT, plainFlag,
+    "paramimptemp",
+    FLG_PARAMIMPTEMP,
+    "assume unannotated parameter is temp",
+    NULL, 0, 0
+  },
+  {
+    FK_MEMORY, FK_IMPLICIT, specialFlag,
+    "allimponly",
+    FLG_ALLIMPONLY,
+    "sets globimponly, retimponly, structimponly, specglobimponly, "
+    "specretimponly and specstructimponly",  
+    NULL, 0, 0
+  },	
+  {
+    FK_MEMORY, FK_IMPLICIT, specialFlag,
+    "codeimponly",
+    FLG_CODEIMPONLY,
+    "sets globimponly, retimponly and structimponly",
+    NULL, 0, 0
+  },	
+  {
+    FK_MEMORY, FK_IMPLICIT, specialFlag,
+    "specimponly",
+    FLG_SPECALLIMPONLY,
+    "sets specglobimponly, specretimponly and specstructimponly",
+    NULL, 0, 0
+  },	
+  {
+    FK_MEMORY, FK_IMPLICIT, plainFlag,
+    "globimponly",
+    FLG_GLOBIMPONLY,
+    "assume unannotated global storage is only",
+    NULL, 0, 0
+  },
+  {
+    FK_MEMORY, FK_IMPLICIT, plainFlag,
+    "retimponly",
+    FLG_RETIMPONLY,
+    "assume unannotated returned storage is only",
+    NULL, 0, 0
+  },
+  {
+    FK_MEMORY, FK_IMPLICIT, plainFlag,
+    "structimponly",
+    FLG_STRUCTIMPONLY,
+    "assume unannotated structure field is only",
+    NULL, 0, 0
+  },
+  {
+    FK_MEMORY, FK_IMPLICIT, plainFlag,
+    "specglobimponly",
+    FLG_SPECGLOBIMPONLY,
+    "assume unannotated global storage is only",
+    NULL, 0, 0
+  },
+  {
+    FK_MEMORY, FK_IMPLICIT, plainFlag,
+    "specretimponly",
+    FLG_SPECRETIMPONLY,
+    "assume unannotated returned storage is only",
+    NULL, 0, 0
+  },
+  {
+    FK_MEMORY, FK_IMPLICIT, plainFlag,
+    "specstructimponly",
+    FLG_SPECSTRUCTIMPONLY,
+    "assume unannotated structure field is only",
+    NULL, 0, 0
+  },
+
+  /* Reference Counting */
+
+  
+
+  /*
+  ** 6. Sharing
+  */
+
+  /* 6.1 Aliasing warnings */
+
+  {
+    FK_ALIAS, FK_MEMORY, modeFlag,
+    "aliasunique",
+    FLG_ALIASUNIQUE,
+    "unique parameter is aliased",
+    "A unique or only parameter is aliased by some other parameter or visible global.",
+    0, 0
+  },
+  {
+    FK_ALIAS, FK_MEMORY, modeFlag,
+    "mayaliasunique",
+    FLG_MAYALIASUNIQUE,
+    "unique parameter may be aliased",
+    "A unique or only parameter may be aliased by some other parameter or visible global.",
+    0, 0
+  },
+  {
+    FK_ALIAS, FK_MEMORY, modeFlag,
+    "mustnotalias",
+    FLG_MUSTNOTALIAS,
+    "temp storage aliased at return point or scope exit",
+    "An alias has been added to a temp-qualifier parameter or global that is visible externally when the function returns. If the aliasing is needed, use the /*@shared@*/ annotation to indicate that new aliases to the parameter may be created.",
+    0, 0
+  },
+  {
+    FK_ALIAS, FK_NONE, modeFlag,
+    "retalias",
+    FLG_RETALIAS,
+    "function returns alias to parameter or global",
+    "The returned value shares storage with a parameter or global. If a parameter is to be returned, use the returned qualifier. If the result is not modified, use the observer qualifier on the result type. Otherwise, exposed can be used, but limited checking is done.", 0, 0
+  },
+
+  /* Global aliasing */
+  {
+    FK_ALIAS, FK_GLOBALS, specialFlag,
+    "globalias",
+    FLG_GLOBALIAS,
+    "function returns with global aliasing external state (sets "
+    "checkstrictglobalias, checkedglobalias, checkmodglobalias and "
+    "uncheckedglobalias)",
+    "A global variable aliases externally-visible state when the function returns.",
+    0, 0
+  },
+  {
+    FK_ALIAS, FK_GLOBALS, modeFlag,
+    "checkstrictglobalias",
+    FLG_CHECKSTRICTGLOBALIAS,
+    "function returns with a checkstrict global aliasing external state",
+    "A global variable aliases externally-visible state when the function returns.",
+    0, 0
+  },
+  {
+    FK_ALIAS, FK_GLOBALS, modeFlag,
+    "checkedglobalias",
+    FLG_CHECKEDGLOBALIAS,
+    "function returns with a checked global aliasing external state",
+    "A global variable aliases externally-visible state when the function returns.",
+    0, 0
+  },
+  {
+    FK_ALIAS, FK_GLOBALS, modeFlag,
+    "checkmodglobalias",
+    FLG_CHECKMODGLOBALIAS,
+    "function returns with a checkmod global aliasing external state",
+    "A global variable aliases externally-visible state when the function returns.",
+    0, 0
+  },
+  {
+    FK_ALIAS, FK_GLOBALS, modeFlag,
+    "uncheckedglobalias",
+    FLG_UNCHECKEDGLOBALIAS,
+    "function returns with an unchecked global aliasing external state",
+    "A global variable aliases externally-visible state when the function returns.",
+    0, 0
+  },
+
+  /* 6.2 Exposure */
+
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "exposetrans",
+    FLG_EXPOSETRANS,
+    "exposure transfer errors",
+    "Exposed storage is transferred to a non-exposed, non-observer reference.",
+    0, 0
+  },
+  {
+    FK_MEMORY, FK_NONE, modeFlag,
+    "observertrans",
+    FLG_OBSERVERTRANS,
+    "observer transfer errors",
+    "Observer storage is transferred to a non-observer reference.",
+    0, 0
+  },
+  {
+    FK_EXPOSURE, FK_ABSTRACT, specialFlag,
+    "repexpose",
+    FLG_REPEXPOSE,
+    "abstract representation is exposed (sets assignexpose, retexpose, and castexpose)",
+    "The internal representation of an abstract type is visible to the "
+    "caller. This means clients may have access to a pointer "
+    "into the abstract representation.",
+    0, 0
+  },
+  {
+    FK_EXPOSURE, FK_ABSTRACT, modeFlag,
+    "retexpose",
+    FLG_RETEXPOSE,
+    "abstract representation is exposed (return values only)",
+    "The return value shares storage with an instance of an abstract "
+    "type. This means clients may have access to a pointer into "
+    "the abstract representation. Use the observer qualifier to "
+    "return exposed storage that may not be modified by the "
+    "client. Use the exposed qualifier to return modifiable "
+    "(but not deallocatable) exposed storage (dangerous).",
+    0, 0
+  },
+  {
+    FK_EXPOSURE, FK_ABSTRACT, modeFlag,
+    "assignexpose",
+    FLG_ASSIGNEXPOSE,
+    "abstract representation is exposed (assignments only)",
+    "Storage internal to the representation of an abstract type is "
+    "assigned to an external pointer. This means clients may "
+    "have access to a pointer into the abstract representation. "
+    "If the external pointer is a parameter, the exposed qualifier "
+    "can be used to allow the assignment, however, this is "
+    "considered dangerous programming practice.",
+    0, 0
+  },
+  {
+    FK_EXPOSURE, FK_ABSTRACT, modeFlag,
+    "castexpose",
+    FLG_CASTEXPOSE,
+    "abstract representation is exposed through a cast",
+    "Storage internal to the representation of an abstract type is exposed "
+    "through a type cast. This means clients may have access to a "
+    "pointer into the abstract representation.",
+    0, 0
+  },
+  {
+    FK_DECL, FK_TYPE, modeFlag,
+    "redundantsharequal",
+    FLG_REDUNDANTSHAREQUAL,
+    "declaration uses observer qualifier that is always true",
+    "A declaration of an immutable object uses a redundant observer qualifier.",
+    0, 0
+  } ,
+  {
+    FK_DECL, FK_TYPE, modeFlag,
+    "misplacedsharequal",
+    FLG_MISPLACEDSHAREQUAL,
+    "declaration of unsharable storage uses sharing annotation",
+    "A declaration of an unsharable object uses a sharing annotation.",
+    0, 0
+  } ,
+
+  /*
+  ** 7. Function Interfaces
+  */
+
+  /* 7.1  Modifications */
+
+  {
+    FK_MODIFIES, FK_SPEC, plainFlag,
+    "mods",
+    FLG_MODIFIES,
+    "unspecified modification of caller-visible state",
+    "An externally-visible object is modified by a function, but not "
+    "listed in its modifies clause.",
+    0, 0
+  },
+  {
+    FK_MODIFIES, FK_SPEC, modeFlag,
+    "mustmod",
+    FLG_MUSTMOD,
+    "specified modification is not detected",
+    "An object listed in the modifies clause is not modified by the "
+    "implementation of the function. The modification may not "
+    "be detected if it is done through a call to an unspecified "
+    "function.",
+    0, 0
+  },
+  {
+    FK_MODIFIES, FK_MEMORY, plainFlag,
+    "modobserver",
+    FLG_MODOBSERVER,
+    "possible modification of observer storage",
+    "Storage declared with observer is possibly modified. Observer "
+    "storage may not be modified.",
+    0, 0
+  },
+  {
+    FK_MODIFIES, FK_MEMORY, modeFlag,
+    "modobserveruncon",
+    FLG_MODOBSERVERUNCON,
+    "possible modification of observer storage through unconstrained call",
+    "Storage declared with observer may be modified through a call to an "
+    "unconstrained function.",
+    0, 0
+  },
+  {
+    FK_MODIFIES, FK_MEMORY, modeFlag,
+    "modinternalstrict",
+    FLG_MODINTERNALSTRICT,
+    "possible modification of internal storage through function call",
+    "A function that modifies internalState is called from a function that "
+    "does not list internalState in its modifies clause",
+    0, 0
+  },
+  {
+    FK_MODIFIES, FK_UNSPEC, modeFlag,
+    "modfilesys",
+    FLG_MODFILESYSTEM,
+    "report undocumented file system modifications (applies to unspecified "
+    "functions if modnomods is set)", 
+    NULL, 0, 0
+  },
+  {
+    FK_MODIFIES, FK_UNSPEC, specialFlag,
+    "modunspec",
+    FLG_MODUNSPEC,
+    "modification in unspecified functions (sets modnomods, "
+    "modglobunspec and modstrictglobsunspec)",
+    NULL, 0, 0
+  },
+  {
+    FK_MODIFIES, FK_UNSPEC, modeFlag,
+    "modnomods",
+    FLG_MODNOMODS,
+    "modification in a function with no modifies clause",
+    "An externally-visible object is modified by a function with no "
+    "/*@modifies@*/ comment. The /*@modifies ... @*/ control "
+    "comment can be used to give a modifies list for an "
+    "unspecified function.",
+    0, 0
+  },
+  {
+    FK_MODIFIES, FK_UNSPEC, modeFlag,
+    "moduncon",
+    FLG_MODUNCON,
+    "possible modification through a call to an unconstrained function",
+    "An unconstrained function is called in a function body where "
+    "modifications are checked. Since the unconstrained function "
+    "may modify anything, there may be undetected modifications in "
+    "the checked function.",
+    0, 0
+  },
+  {
+    FK_MODIFIES, FK_UNSPEC, modeFlag,
+    "modunconnomods",
+    FLG_MODUNCONNOMODS,
+    "possible modification through a call to an unconstrained function in "
+    "a function with no modifies clause",
+    "An unconstrained function is called in a function body where "
+    "modifications are checked. Since the unconstrained function "
+    "may modify anything, there may be undetected modifications in "
+    "the checked function.",
+    0, 0
+  },
+  {
+    FK_MODIFIES, FK_GLOBALS, modeFlag,
+    "globsimpmodsnothing",
+    FLG_GLOBALSIMPMODIFIESNOTHING,
+    "functions declared with a globals list but no modifies clause are "
+    "assumed to modify nothing",
+    "An implicit modifies nothing clause is assumed for a function "
+    "declared with a globals list but not modifies clause.",
+    0, 0
+  },
+  {
+    FK_MODIFIES, FK_GLOBALS, modeFlag,
+    "modsimpnoglobs",
+    FLG_MODIFIESIMPNOGLOBALS,
+    "functions declared with a modifies clause but no globals list "
+    "are assumed to use no globals",
+    "An implicit empty globals list is assumed for a function "
+    "declared with a modifies clause but no globals list.",
+    0, 0
+  },
+
+  /*
+  ** Globals
+  */
+
+  {
+    FK_GLOBALS, FK_NONE, modeFlag,
+    "globstate",
+    FLG_GLOBSTATE,
+    "returns with global in inconsistent state (null or undefined)",
+    "A global variable does not satisfy its annotations when control is transferred.",
+    0, 0
+  },
+
+  {
+    FK_GLOBALS, FK_SPEC, plainFlag,
+    "globs",
+    FLG_GLOBALS,
+    "undocumented use of a checked global variable",
+    "A checked global variable is used in the function, but not listed in "
+    "its globals clause. By default, only globals specified in .lcl "
+    "files are checked. To check all globals, use +allglobals. To "
+    "check globals selectively use /*@checked@*/ in the global "
+    "declaration.",
+    0, 0
+  },
+  {
+    FK_GLOBALS, FK_SPEC, modeFlag,
+    "globuse",
+    FLG_USEALLGLOBS,
+    "global listed for a function not used",
+    "A global variable listed in the function's globals list is not used "
+    "in the body of the function.",
+    0, 0
+  },
+  {
+    FK_GLOBALS, FK_NONE, modeFlag,
+    "internalglobs",
+    FLG_INTERNALGLOBS,
+    "use of internalState",
+    "A called function uses internal state, but the globals list for the "
+    "function being checked does not include internalState",
+    0, 0
+  },
+  {
+    FK_GLOBALS, FK_NONE, modeFlag,
+    "internalglobsnoglobs",
+    FLG_INTERNALGLOBSNOGLOBS,
+    "use of internalState (in function with no globals list)",
+    "A called function uses internal state, but the function being checked "
+    "has no globals list",
+    0, 0
+  },
+  {
+    FK_GLOBALS, FK_MODIFIES, modeFlag,
+    "warnmissingglobs",
+    FLG_WARNMISSINGGLOBALS,
+    "global variable used in modifies clause is not listed in globals list",
+    "A global variable is used in the modifies clause, but it is not listed in "
+    "the globals list.  The variable will be added to the globals list.",
+    0, 0
+  },
+
+  {
+    FK_GLOBALS, FK_MODIFIES, modeFlag,
+    "warnmissingglobsnoglobs",
+    FLG_WARNMISSINGGLOBALSNOGLOBS,
+    "global variable used in modifies clause in a function with no globals list",
+    "A global variable is used in the modifies clause, but the function "
+    "has no globals list.  The variable will be added to the globals list.",
+    0, 0
+  },
+  {
+    FK_GLOBALS, FK_UNSPEC, modeFlag,
+    "globnoglobs",
+    FLG_GLOBUNSPEC,
+    "use of checked global in a function with no globals list or specification",
+    "A specified global variable is used in the function, but not listed "
+    "in its globals list. Without +globnoglobs, only globals "
+    "declared with /*@checkedstrict@*/ will produce use "
+    "errors in functions without globals "
+    "lists. The /*@globals ... @*/ control comment can be used to give "
+    "a globals list for an unspecified function.",
+    0, 0
+  },
+  {
+    FK_GLOBALS, FK_IMPLICIT, modeFlag,
+    "allglobs",
+    FLG_ALLGLOBALS,
+    "report use and modification errors for globals not annotated with unchecked",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBALS, FK_UNSPEC, modeFlag,
+    "checkstrictglobs",
+    FLG_CHECKSTRICTGLOBALS,
+    "report use and modification errors for checkedstrict globals",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBALS, FK_UNSPEC, modeFlag,
+    "impcheckedspecglobs",
+    FLG_IMPCHECKEDSPECGLOBALS,
+    "assume checked qualifier for unqualified global declarations in .lcl files",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBALS, FK_UNSPEC, modeFlag,
+    "impcheckmodspecglobs",
+    FLG_IMPCHECKMODSPECGLOBALS,
+    "assume checkmod qualifier for unqualified global declarations in .lcl files",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBALS, FK_UNSPEC, modeFlag,
+    "impcheckedstrictspecglobs",
+    FLG_IMPCHECKEDSTRICTSPECGLOBALS,
+    "assume checkmod qualifier for unqualified global declarations in .lcl files",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBALS, FK_UNSPEC, modeFlag,
+    "impcheckedglobs",
+    FLG_IMPCHECKEDGLOBALS,
+    "assume checked qualifier for unqualified global declarations",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBALS, FK_UNSPEC, modeFlag,
+    "impcheckmodglobs",
+    FLG_IMPCHECKMODGLOBALS,
+    "assume checkmod qualifier for unqualified global declarations",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBALS, FK_UNSPEC, modeFlag,
+    "impcheckedstrictglobs",
+    FLG_IMPCHECKEDSTRICTGLOBALS,
+    "assume checkedstrict qualifier for unqualified global declarations",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBALS, FK_UNSPEC, modeFlag,
+    "impcheckedstatics",
+    FLG_IMPCHECKEDSTATICS,
+    "assume checked qualifier for unqualified file static declarations",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBALS, FK_UNSPEC, modeFlag,
+    "impcheckmodstatics",
+    FLG_IMPCHECKMODSTATICS,
+    "assume checkmod qualifier for unqualified file static declarations",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBALS, FK_UNSPEC, modeFlag,
+    "impcheckmodinternals",
+    FLG_IMPCHECKMODINTERNALS,
+    "assume checkmod qualifier for unqualified local "
+    "static declarations (for internal state modifications)",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBALS, FK_UNSPEC, modeFlag,
+    "impcheckedstrictstatics",
+    FLG_IMPCHECKEDSTRICTSTATICS,
+    "assume checkedstrict qualifier for unqualified file static declarations",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBALS, FK_MODIFIES, modeFlag,
+    "modglobs",
+    FLG_MODGLOBS,
+    "undocumented modification of a checked global variable",
+    "A checked global variable is modified by the function, but not listed in "
+    "its modifies clause.",
+    0, 0
+  },
+  {
+    FK_GLOBALS, FK_MODIFIES, modeFlag,
+    "modglobsnomods",
+    FLG_MODGLOBSUNSPEC,
+    "undocumented modification of a checked global variable in a function "
+    "declared with no modifies clause",
+    "A checked global variable is modified by the function, but not listed in "
+    "its modifies clause.",
+    0, 0
+  },
+  {
+    FK_GLOBALS, FK_MODIFIES, modeFlag,
+    "modstrictglobsnomods",
+    FLG_MODSTRICTGLOBSUNSPEC,
+    "undocumented modification of a strict checked global variable in a "
+    "function declared with no modifies clause",
+    "A checked global variable is modified by the function, but not listed in "
+    "its modifies clause.",
+    0, 0
+  },
+  {
+    FK_GLOBALS, FK_MODIFIES, modeFlag,
+    "modglobsunchecked",
+    FLG_MODGLOBSUNCHECKED,
+    "undocumented modification of an unchecked checked global variable",
+    "An unchecked global variable is modified by the function, but not listed in "
+    "its modifies clause.",
+    0, 0
+  },
+
+  /*
+  ** State Clauses
+  */
+
+  /*
+  ** 8. Control Flow 
+  */
+
+  /* 8.1 Execution */
+
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "noret",
+    FLG_NORETURN,
+    "path with no return detected in non-void function",
+    "There is a path through a function declared to return a value on "
+    "which there is no return statement. This means the execution "
+    "may fall through without returning a meaningful result to "
+    "the caller.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, plainFlag,
+    "emptyret", 
+    FLG_EMPTYRETURN, 
+    "empty return in function declared to return value",
+    NULL,
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, plainFlag,
+    "alwaysexits",
+    FLG_ALWAYSEXITS, 
+    "loop predicate always exits", 
+    NULL,
+    0, 0
+  },
+
+  {
+    FK_CONTROL, FK_MEMORY, specialFlag,
+    "loopexec",
+    FLG_LOOPEXEC,
+    "assume all loops execute at least once (sets forloopexec, whileloopexec and iterloopexec)",
+    NULL, 0, 0
+  },
+  {
+    FK_CONTROL, FK_MEMORY, plainFlag,
+    "forloopexec",
+    FLG_FORLOOPEXEC,
+    "assume all for loops execute at least once",
+    NULL, 0, 0
+  },
+  {
+    FK_CONTROL, FK_MEMORY, plainFlag,
+    "whileloopexec",
+    FLG_WHILELOOPEXEC,
+    "assume all while loops execute at least once",
+    NULL, 0, 0
+  },
+  {
+    FK_CONTROL, FK_MEMORY, plainFlag,
+    "iterloopexec",
+    FLG_ITERLOOPEXEC,
+    "assume all iterator loops execute at least once",
+    NULL, 0, 0
+  },
+  {
+    FK_CONTROL, FK_MEMORY, plainFlag,
+    "obviousloopexec",
+    FLG_OBVIOUSLOOPEXEC,
+    "assume loop that can be determined to always execute always does",
+    NULL, 0, 0
+  },
+
+  /* 8.2 Undefined Behavior */
+
+  {
+    FK_BEHAVIOR, FK_ANSI, modeFlag,
+    "evalorder",
+    FLG_EVALORDER,
+    "code has unspecified or implementation-dependent behavior "
+    "because of order of evaluation",
+    "Code has unspecified behavior. "
+    "Order of evaluation of function parameters or subexpressions "
+    "is not defined, so if a value is used and modified in different "
+    "places not separated by a sequence point constraining "
+    "evaluation order, then the result of the expression is "
+    "unspecified.", 
+    0, 0
+  },
+  {
+    FK_BEHAVIOR, FK_ANSI, modeFlag,
+    "evalorderuncon",
+    FLG_EVALORDERUNCON,
+    "code involving call to unspecified function has undefined or implementation-dependent behavior",
+    "Code involving a call to function with no modifies or globals clause "
+    "may have undefined or implementation-dependent behavior (Splint assumes the "
+    "unconstrained call may modify any reachable state or use any global). Add a "
+    "specification for the function.", 
+    0, 0
+  },
+
+  /* 8.3 Problematic Control Structures */
+
+  /* 8.3.1 Infinite Loops */
+
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "infloops",
+    FLG_INFLOOPS,
+    "likely infinite loop is detected",
+    "This appears to be an infinite loop. Nothing in the body of the "
+    "loop or the loop test modifies the value of the loop test. "
+    "Perhaps the specification of a function called in the loop "
+    "body is missing a modification.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "infloopsuncon",
+    FLG_INFLOOPSUNCON,
+    "likely infinite loop is detected (may result from unconstrained function)",
+    "This appears to be an infinite loop. Nothing in the body of the "
+    "loop or the loop test modifies the value of the loop test. "
+    "There may be a modification through a call to an unconstrained "
+    "function, or an unconstrained function in the loop test may use "
+    "a global variable modified by the loop body.",
+    0, 0
+  },
+
+  /* 8.3.2 Switches */
+
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "casebreak",
+    FLG_CASEBREAK,
+    "non-empty case in a switch without preceding break",
+    "Execution falls through from the previous case (use /*@fallthrough@*/ to mark fallthrough cases).", 0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "misscase",
+    FLG_MISSCASE,
+    "switch on enum type missing case for some value",
+    "Not all values in an enumeration are present as cases in the switch.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "firstcase",
+    FLG_FIRSTCASE,
+    "first statement in switch is not a case",
+    "The first statement after a switch is not a case.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, plainFlag,
+    "duplicatecases",
+    FLG_DUPLICATECASES, 
+    "duplicate cases in switch",
+    "Duplicate cases in switch.",
+    0, 0
+  },
+
+  /* 8.3.3 Deep Breaks */
+
+  {
+    FK_CONTROL, FK_NONE, specialFlag,
+    "deepbreak",
+    FLG_DEEPBREAK,
+    "break inside nested while or for or switch",
+    "A break statement appears inside the body of a nested while, for or "
+    "switch statement. Sets looploopbreak, loopswitchbreak, "
+    "switchloopbreak, switchswitchbreak, and looploopcontinue.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "looploopbreak",
+    FLG_LOOPLOOPBREAK,
+    "break inside nested while or for",
+    "A break statement appears inside the body of a nested while or for "
+    "statement. This is perfectly reasonable code, but check that "
+    "the break is intended to break only the inner loop. The "
+    "break statement may be preceded by /*@innerbreak@*/ to suppress "
+    "the message for this break only.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "switchloopbreak",
+    FLG_SWITCHLOOPBREAK,
+    "break in loop inside switch",
+    "A break statement appears inside the body of a while or for "
+    "statement within a switch. This is perfectly reasonable code, but check that "
+    "the break is intended to break only the inner loop. The "
+    "break statement may be preceded by /*@loopbreak@*/ to suppress "
+    "the message for this break only.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "loopswitchbreak",
+    FLG_LOOPSWITCHBREAK,
+    "break in switch inside loop",
+    "A break statement appears inside a switch statement within a while or "
+    "for loop. This is perfectly reasonable code, but check that "
+    "the break is intended to break only the inner loop. The "
+    "break statement may be preceded by /*@switchbreak@*/ to suppress "
+    "the message for this break only.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "switchswitchbreak",
+    FLG_SWITCHSWITCHBREAK,
+    "break in switch inside switch",
+    "A break statement appears inside a switch statement within another "
+    "switch statement. This is perfectly reasonable code, but check that "
+    "the break is intended to break only the inner switch. The "
+    "break statement may be preceded by /*@innerbreak@*/ to suppress "
+    "the message for this break only.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "looploopcontinue",
+    FLG_LOOPLOOPCONTINUE,
+    "continue inside nested loop",
+    "A continue statement appears inside a loop within a loop. "
+    "This is perfectly reasonable code, but check that "
+    "the continue is intended to continue only the inner loop. The "
+    "continue statement may be preceded by /*@innercontinue@*/ to suppress "
+    "the message for this continue only.",
+    0, 0
+  },
+
+  /* 8.3.4 Loop and If Bodies */
+
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "whileempty",
+    FLG_WHILEEMPTY,
+    "a while statement has no body",
+    "While statement has no body.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "whileblock",
+    FLG_WHILEBLOCK,
+    "the body of a while statement is not a block",
+    "While body is a single statement, not a compound block.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "forempty",
+    FLG_FOREMPTY,
+    "a for statement has no body",
+    "For statement has no body.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "forblock",
+    FLG_FORBLOCK,
+    "the body of a for statement is not a block",
+    "Loop body is a single statement, not a compound block.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "ifempty",
+    FLG_IFEMPTY,
+    "an if statement has no body",
+    "If statement has no body.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "ifblock",
+    FLG_IFBLOCK,
+    "the body of an if statement is not a block",
+    "If body is a single statement, not a compound block.",
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, specialFlag,
+    "allempty",
+    FLG_ALLEMPTY,
+    "an if, while or for statement has no body (sets ifempty, "
+    "whileempty and forempty",
+    NULL,
+    0, 0
+  },
+  {
+    FK_CONTROL, FK_NONE, specialFlag,
+    "allblock",
+    FLG_ALLBLOCK,
+    "the body of an if, while or for statement is not a block "
+    "(sets ifblock, whileblock and forblock)",
+    "Body is a single statement, not a compound block.",
+    0, 0
+  },
+
+  /* 8.3.5 Complete Logic */
+
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "elseifcomplete",
+    FLG_ELSEIFCOMPLETE,
+    "if ... else if chains must have final else",
+    "There is no final else following an else if construct.",
+    0, 0
+  },
+
+  /* 8.4 Suspicious Statements */
+
+  {
+    FK_CONTROL, FK_NONE, modeFlag,
+    "unreachable",
+    FLG_UNREACHABLE,
+    "unreachable code detected",
+    "This code will never be reached on any possible execution.",
+    0, 0
+  },
+
+  /* 8.4.1 Statements with No Effects */
+
+  {
+    FK_EFFECT, FK_CONTROL, modeFlag,
+    "noeffect",
+    FLG_NOEFFECT,
+    "statement with no effect",
+    "Statement has no visible effect --- no values are modified.",
+    0, 0
+  },
+  {
+    FK_EFFECT, FK_CONTROL, modeFlag,
+    "noeffectuncon",
+    FLG_NOEFFECTUNCON,
+    "statement with no effect (except possibly through call to "
+    "unconstrained function)",
+    "Statement has no visible effect --- no values are modified. It may "
+    "modify something through a call to an unconstrained function.",
+    0, 0
+  },
+
+  /* 8.4.2 Ignored Return Values */
+
+  {
+    FK_IGNORERET, FK_NONE, specialFlag,
+    "retval",
+    FLG_RETVAL,
+    "return value ignored (sets retvalint, retvalbool and retvalother)",
+    "Result returned by function call is not used. If this is intended, "
+       "cast result to (void) to eliminate message.",
+    0, 0
+  },
+  {
+    FK_IGNORERET, FK_BOOL, modeFlag,
+    "retvalother",
+    FLG_RETVALOTHER,
+    "return value of type other than bool or int ignored",
+    "Result returned by function call is not used. If this is intended, "
+       "can cast result to (void) to eliminate message.",
+    0, 0
+  },
+  {
+    FK_IGNORERET, FK_BOOL, modeFlag,
+    "retvalbool",
+    FLG_RETVALBOOL,
+    "return value of manifest type bool ignored",
+    "Result returned by function call is not used. If this is intended, "
+       "can cast result to (void) to eliminate message.",
+    0, 0
+  },
+  {
+    FK_IGNORERET, FK_NONE, modeFlag,
+    "retvalint",
+    FLG_RETVALINT,
+    "return value of type int ignored",
+    "Result returned by function call is not used. If this is intended, "
+       "can cast result to (void) to eliminate message.",
+    0, 0
+  },
+
+  /*
+  ** 9. Buffer Sizes 
+  */
+
+  {
+    FK_BOUNDS, FK_MEMORY, modeFlag,
+    "nullterminated",
+    FLG_NULLTERMINATED,
+    "misuse of nullterminated allocation",
+    "A possibly non-nullterminated string/memory is used/referenced as a nullterminated one.",
+    0, 0
+  },
+  {
+    FK_BOUNDS, FK_MEMORY, specialFlag,
+    "bounds",
+    FLG_BOUNDS,
+    "memory bounds checking (sets boundsread and boundswrite)",
+    "Memory read or write may be out of bounds of allocated storage.", 0, 0
+  },
+  {
+    FK_BOUNDS, FK_MEMORY, specialFlag,
+    "likelybounds",
+    FLG_LIKELYBOUNDS,
+    "memory bounds checking (sets likelyboundsread and likelyboundswrite)",
+    "Memory read or write may be out of bounds of allocated storage.", 0, 0
+  },
+  {
+    FK_BOUNDS, FK_MEMORY, modeFlag,
+    "likelyboundsread",
+    FLG_LIKELYBOUNDSREAD,
+    "likely out of bounds read",
+    "A memory read references memory beyond the allocated storage.",
+    0, 0
+  },
+  {
+    FK_BOUNDS, FK_MEMORY, modeFlag,
+    "likelyboundswrite",
+    FLG_LIKELYBOUNDSWRITE,
+    "likely buffer overflow from an out of bounds write",
+    "A memory write may write to an address beyond the allocated buffer.",
+    0, 0
+  },
+  
+  {
+    FK_BOUNDS, FK_MEMORY, modeFlag,
+    "boundsread",
+    FLG_BOUNDSREAD,
+    "possible out of bounds read",
+    "A memory read references memory beyond the allocated storage.",
+    0, 0
+  },
+  {
+    FK_BOUNDS, FK_MEMORY, modeFlag,
+    "boundswrite",
+    FLG_BOUNDSWRITE,
+    "possible buffer overflow from an out of bounds write",
+    "A memory write may write to an address beyond the allocated buffer.",
+    0, 0
+  },
+  
+  {
+    FK_BOUNDS, FK_DISPLAY, plainFlag,
+    "fcnpost",
+    FLG_FUNCTIONPOST,
+    "display function post conditions",
+    "Display function post conditions.",
+    0, 0
+  },
+  {
+    FK_BOUNDS, FK_DISPLAY, plainFlag,
+    "redundantconstraints",
+    FLG_REDUNDANTCONSTRAINTS,
+    "display seemingly redundant constraints",
+    "Display seemingly redundant constraints",
+    0, 0
+  },
+  /*drl7x added 6/18/01 */    
+  {
+    FK_BOUNDS, FK_MEMORY, modeFlag,
+    "checkpost",
+    FLG_CHECKPOST,
+    "unable to verify predicate in ensures clause",
+    "The function implementation may not satisfy a post condition given in an ensures clause.",
+    0, 0
+  },
+
+  {
+    FK_BOUNDS, FK_MEMORY, plainFlag,
+    "impboundsconstraints",
+    FLG_IMPBOUNDSCONSTRAINTS,
+    "generate implicit constraints for functions",
+    NULL,
+    0, 0
+  },
+  /*drl7x added 4/29/01 */    
+  {
+    FK_BOUNDS, FK_MEMORY, plainFlag,
+    "orconstraint",
+    FLG_ORCONSTRAINT,
+    "use limited OR expressions to resolve constraints",
+    NULL,
+    0, 0
+  },
+  {
+    FK_BOUNDS, FK_DISPLAY, plainFlag,
+    "showconstraintparens",
+    FLG_PARENCONSTRAINT,
+    "display parentheses around constraint terms",
+    NULL,
+    0, 0
+  },  
+  /*drl added 2/4/2002*/
+  {
+    FK_BOUNDS, FK_DISPLAY, plainFlag,
+    "boundscompacterrormessages",
+    FLG_BOUNDSCOMPACTERRORMESSAGES,
+    "Display fewer new lines in bounds checking error messages",
+    NULL,
+    0, 0
+  },  
+  {
+    FK_BOUNDS, FK_DISPLAY, plainFlag,
+    "showconstraintlocation",
+    FLG_CONSTRAINTLOCATION,
+    "display location for every constraint generated",
+    NULL,
+    0, 0
+  }, /*drl added flag 4/26/01*/
+
+  { /* evans added 2003-06-08 */
+    FK_BOUNDS, FK_MEMORY, modeFlag,
+    "allocmismatch",
+    FLG_ALLOCMISMATCH,
+    "type conversion involves storage of non-divisble size",
+    NULL, 0, 0
+  },
+
+  /*
+  ** 10. Extensible Checking 
+  */
+
+  {
+    FK_EXTENSIBLE, FK_FILES, globalStringFlag, ARG_FILE,
+    "mts",
+    FLG_MTSFILE,
+    "load meta state declaration and corresponding xh file", 
+    NULL, 0, 0
+  },
+  {
+    FK_EXTENSIBLE, FK_MEMORY, modeFlag,
+    "statetransfer",
+    FLG_STATETRANSFER,
+    "storage has been transfered with invalid state",
+    "Transfer violates user-defined state rules.",
+    0, 0
+  },
+  {
+    FK_EXTENSIBLE, FK_MEMORY, modeFlag,
+    "statemerge",
+    FLG_STATEMERGE,
+    "control paths merge with storage in incompatible states",
+    "Control path merge violates user-defined state merge rules.",
+    0, 0
+  },
+
+  /* 
+  ** 11. Macros 
+  */
+
+  {
+    FK_MACROS, FK_NONE, modeFlag,
+    "macroredef",
+    FLG_MACROREDEF,
+    "macro redefined",
+    "A macro is defined in more than one place.", 0, 0
+  },
+  {
+    FK_MACROS, FK_UNRECOG, modeFlag,
+    "macrounrecog",
+    FLG_MACROUNDEF,
+    "unrecognized identifier in macro",
+    "An unrecognized identifier appears in a macro. If the identifier "
+    "is defined before the macro is used, then this is okay.",
+    0, 0
+  },
+
+  /* 11.1 Constant Macros */
+
+  {
+    FK_MACROS, FK_PROTOS, modeFlag,
+    "macroconstdecl",
+    FLG_MACROCONSTDECL,
+    "non-parameterized macro without prototype or specification",
+    "Macro constant has no declaration. Use /*@constant ...@*/ to "
+    "declare the macro.",
+    0, 0
+  },
+
+  {
+    FK_MACROS, FK_PROTOS, plainFlag,
+    "macroconstdistance",
+    FLG_MACROCONSTDIST,
+    "macro constant name does not match nearby name",
+    "Macro constant name does matches name of a previous declaration, but they are not near each other.",
+    0, 0
+  },
+
+  /* 11.2 Function-like Macros */
+  
+  {
+    FK_MACROS, FK_NONE, modeFlag,
+    "macrostmt",
+    FLG_MACROSTMT,
+    "macro definition is syntactically not equivalent to function",
+    "A macro is defined in a way that may cause syntactic problems. "
+    "If the macro returns a value, use commas to separate expressions; "
+    "otherwise, use do { <macro body> } while (FALSE) construct.",
+    0, 0
+  },
+  {
+    FK_MACROS, FK_NONE, modeFlag,
+    "macroempty",
+    FLG_MACROEMPTY,
+    "macro definition for is empty",
+    "A macro definition has no body.",
+    0, 0
+  },
+  {
+    FK_MACROS, FK_PARAMS, modeFlag,
+    "macroparams",
+    FLG_MACROPARAMS,
+    "macro parameter not used exactly once",
+    "A macro parameter is not used exactly once in all possible "
+    "invocations of the macro. To behave like a function, "
+    "each macro parameter must be used exactly once on all "
+    "invocations of the macro so that parameters with "
+    "side-effects are evaluated exactly once. Use /*@sef@*/ to "
+    "denote parameters that must be side-effect free.",
+    0, 0
+  },
+  {
+    FK_MACROS, FK_CONTROL, modeFlag,
+    "macroret",
+    FLG_MACRORETURN,
+    "return statement in macro body",
+    "The body of a macro declared as a function uses a return statement. "
+    "This exhibits behavior that "
+    "could not be implemented by a function.", 
+    0, 0
+  },
+  {
+    FK_MACROS, FK_PARAMS, modeFlag,
+    "macroassign",
+    FLG_MACROASSIGN,
+    "assignment to a macro parameter",
+    "A macro parameter is used as the left side of an "
+    "assignment expression. This exhibits behavior that "
+    "could not be implemented by a function.", 
+    0, 0
+  },
+  {
+    FK_MACROS, FK_NONE, modeFlag,
+    "macroparens",
+    FLG_MACROPARENS,
+    "macro parameter used without parentheses (in potentially dangerous context)",
+    "A macro parameter is used without parentheses. This could be "
+    "dangerous if the macro is invoked with a complex expression "
+    "and precedence rules will change the evaluation inside the macro.",
+    0, 0
+  },
+  {
+    FK_MACROS, FK_PROTOS, modeFlag,
+    "macrodecl",
+    FLG_MACRODECL,
+    "macro without prototype or specification (sets macrofcndecl and macroconstdecl)",
+    "Argument checking cannot be done well for macros without prototypes "
+    "or specifications, since the types of the arguments are unknown.",
+    0, 0
+  },
+  {
+    FK_MACROS, FK_PROTOS, modeFlag,
+    "macrofcndecl",
+    FLG_MACROFCNDECL,
+    "parameterized macro without prototype or specification",
+    "Function macro has no declaration.",
+    0, 0
+  },
+
+  /* 11.2.1 Side Effect Free Parameters */
+
+  {
+    FK_MACROS, FK_PARAMS, modeFlag,
+    "sefparams",
+    FLG_SEFPARAMS,
+    "a parameter with side-effects is passed as a sef parameter",
+    "An actual parameter corresponding to a sef parameter may have a side-effect.",
+    0, 0
+  },
+  {
+    FK_MACROS, FK_PARAMS, modeFlag,
+    "sefuncon",
+    FLG_SEFUNSPEC,
+    "a parameter with unconstrained side-effects is passed as a sef parameter",
+    "An actual parameter corresponding to a sef parameter involves a call "
+    "to a procedure with no modifies clause that may have a side-effect.",
+    0, 0
+  },
+
+  /* 11.3 Controlling Macro Checking */
+
+  {
+    FK_MACROS, FK_NONE, plainFlag,
+    "constmacros",
+    FLG_CONSTMACROS,
+    "check all macros without parameter lists as constants",
+    "Every non-parameterized macro (not preceded by /*@notfunction@*/) "
+    "is checked as a constant.",
+    0, 0	
+  },
+  {
+    FK_MACROS, FK_NONE, plainFlag,
+    "fcnmacros",
+    FLG_FCNMACROS,
+    "check all macros with parameter lists as functions",
+    "Every parameterized macro (not preceded by /*@notfunction@*/) "
+    "is checked as a function.",
+    0, 0	
+  },
+  {
+    FK_MACROS, FK_NONE, plainSpecialFlag,
+    "allmacros",
+    FLG_ALLMACROS,
+    "sets fcnmacros and constmacros",
+    "All macros (not preceded by /*@notfunction@*/) are checked as functions or "
+    "constants depending on whether or not they have parameter lists.",
+    0, 0	
+  },
+  {
+    FK_MACROS, FK_NONE, plainFlag,
+    "libmacros",
+    FLG_LIBMACROS,
+    "check all macros with declarations in library as functions",
+    "Every macro declared in the load library is checked.",
+    0, 0	
+  },
+  {
+    FK_MACROS, FK_NONE, plainFlag,
+    "specmacros",
+    FLG_SPECMACROS,
+    "check all macros corresponding to specified functions or constants",
+    "Every macro declared a specification file is checked.",
+    0, 0	
+  },
+  {
+    FK_MACROS, FK_NONE, modeFlag,
+    "macromatchname",
+    FLG_MACROMATCHNAME,
+    "macro definition does not match iter or constant declaration",
+    "A iter or constant macro is defined using a different name from the "
+    "one used in the previous syntactic comment",
+    0, 0
+  },
+  {
+    FK_MACROS, FK_NONE, plainFlag,
+    "nextlinemacros",
+    FLG_MACRONEXTLINE,
+    "the line after a constant or iter declaration must be a macro definition",
+    "A constant or iter declaration is not immediately followed by a macro definition.",
+    0, 0
+  },
+
+  /* 11.4 Iterators */
+
+  {
+    FK_ITER, FK_NONE, plainFlag,
+    "iterbalance",
+    FLG_ITERBALANCE,
+    "iter is not balanced with end_<iter>",
+    NULL,
+    0, 0
+  },
+  {
+    FK_ITER, FK_NONE, plainFlag,
+    "iteryield",
+    FLG_ITERYIELD,
+    "iter yield parameter is inappropriate",
+    NULL,
+    0, 0
+  },
+  {
+    FK_ITER, FK_NONE, plainFlag,
+    "hasyield",
+    FLG_HASYIELD,
+    "iter declaration has no yield parameters",
+    "An iterator has been declared with no parameters annotated with "
+    "yield. This may be what you want, if the iterator is meant "
+    "to do something a fixed number of times, but returns no "
+    "information to the calling context. Probably, a parameter "
+    "is missing the yield annotation to indicate that it is "
+    "assigned a value in the calling context.",
+    0, 0
+  },
+
+  /*
+  ** 12. Naming Conventions 
+  */
+
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "namechecks",
+    FLG_NAMECHECKS,
+    "controls name checking without changing other settings",
+    NULL, 0, 0
+  },
+
+  /* 12.1.1 Czech Names */
+
+  {
+    FK_NAMES, FK_ABSTRACT, specialFlag,
+    "czech",
+    FLG_CZECH,
+    "czech naming convention (sets accessczech, czechfunctions, czechvars, "
+    "czechconstants, czechenums, and czechmacros)",
+    "Name is not consistent with Czech naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "czechfcns",
+    FLG_CZECHFUNCTIONS,
+    "czech naming convention violated in a function or iterator declaration",
+    "Function or iterator name is not consistent with Czech naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "czechvars",
+    FLG_CZECHVARS,
+    "czech naming convention violated in a variable declaration",
+    "Variable name is not consistent with Czech naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "czechmacros",
+    FLG_CZECHMACROS,
+    "czech naming convention violated in an expanded macro name",
+    "Expanded macro name is not consistent with Czech naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "czechconsts",
+    FLG_CZECHCONSTANTS,
+    "czech naming convention violated in a constant declaration",
+    "Constant name is not consistent with Czech naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "czechtypes",
+    FLG_CZECHTYPES,
+    "czech naming convention violated in a user-defined type definition",
+    "Type name is not consistent with Czech naming convention. Czech type "
+    "names must not use the underscore character.", 0, 0
+  },
+
+  /* 12.1.2 Slovak Names */
+
+  {
+    FK_NAMES, FK_ABSTRACT, specialFlag,
+    "slovak",
+    FLG_SLOVAK,
+    "slovak naming convention violated",
+    "Name is not consistent with Slovak naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "slovakfcns",
+    FLG_SLOVAKFUNCTIONS,
+    "slovak naming convention violated in a function or iterator declaration",
+    "Function or iterator name is not consistent with Slovak naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "slovakmacros",
+    FLG_SLOVAKMACROS,
+    "slovak naming convention violated in an expanded macro name",
+    "Expanded macro name is not consistent with Slovak naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "slovakvars",
+    FLG_SLOVAKVARS,
+    "slovak naming convention violated in a variable declaration",
+    "Variable name is not consistent with Slovak naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "slovakconsts",
+    FLG_SLOVAKCONSTANTS,
+    "slovak naming convention violated in a constant declaration",
+    "Constant name is not consistent with Slovak naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "slovaktypes",
+    FLG_SLOVAKTYPES,
+    "slovak naming convention violated in a use-defined type definition",
+    "Type name is not consistent with Slovak naming convention. Slovak type "
+    "names may not include uppercase letters.", 0, 0
+  },
+
+  /* 12.1.3 Czechoslovak Names */
+  {
+    FK_NAMES, FK_ABSTRACT, specialFlag,
+    "czechoslovak",
+    FLG_CZECHOSLOVAK,
+    "czech or slovak naming convention violated",
+    "Name is not consistent with either Czech or Slovak naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "czechoslovakfcns",
+    FLG_CZECHOSLOVAKFUNCTIONS,
+    "czechoslovak naming convention violated in a function or iterator declaration",
+    "Function name is not consistent with Czechoslovak naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "czechoslovakmacros",
+    FLG_CZECHOSLOVAKMACROS,
+    "czechoslovak naming convention violated in an expanded macro name",
+    "Expanded macro name is not consistent with Czechoslovak naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "czechoslovakvars",
+    FLG_CZECHOSLOVAKVARS,
+    "czechoslovak naming convention violated in a variable declaration",
+    "Variable name is not consistent with Czechoslovak naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "czechoslovakconsts",
+    FLG_CZECHOSLOVAKCONSTANTS,
+    "czechoslovak naming convention violated in a constant declaration",
+    "Constant name is not consistent with Czechoslovak naming convention.", 0, 0
+  },
+  {
+    FK_NAMES, FK_ABSTRACT, plainFlag,
+    "czechoslovaktypes",
+    FLG_CZECHOSLOVAKTYPES,
+    "czechoslovak naming convention violated in a user-defined type definition",
+    "Type name is not consistent with Czechoslovak naming convention. Czechoslovak "
+    "type names may not include uppercase letters or the underscore character.", 0, 0
+  },
+
+  /* 12.2 Namespace Prefixes */
+
+  {
+    FK_NAMES, FK_PREFIX, idemStringFlag, ARG_STRING,
+    "macrovarprefix",
+    FLG_MACROVARPREFIX,
+    "set namespace prefix for variables declared in a macro body",
+    "A variable declared in a macro body does not start with the macrovarprefix.",
+    0, 0
+  } ,
+  {
+    FK_NAMES, FK_PREFIX, plainFlag,	
+    "macrovarprefixexclude",
+    FLG_MACROVARPREFIXEXCLUDE,
+    "the macrovarprefix may not be used for non-macro variables",
+    "A variable declared outside a macro body starts with the macrovarprefix.",
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, idemStringFlag, ARG_STRING,
+    "tagprefix",
+    FLG_TAGPREFIX,
+    "set namespace prefix for struct, union and enum tags",
+    "A tag identifier does not start with the tagprefix.",
+    0, 0
+  } ,
+  {
+    FK_NAMES, FK_PREFIX, plainFlag,
+    "tagprefixexclude",
+    FLG_TAGPREFIXEXCLUDE,
+    "the tagprefix may not be used for non-tag identifiers",
+    "An identifier that is not a tag starts with the tagprefix.",
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, idemStringFlag, ARG_STRING,
+    "enumprefix",
+    FLG_ENUMPREFIX,
+    "set namespace prefix for enum members",
+    "An enum member does not start with the enumprefix.",
+    0, 0
+  } ,
+  {
+    FK_NAMES, FK_PREFIX, plainFlag,
+    "enumprefixexclude",
+    FLG_ENUMPREFIXEXCLUDE,
+    "the enumprefix may not be used for non-enum member identifiers",
+    "An identifier that is not an enum member starts with the enumprefix.",
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, idemStringFlag, ARG_STRING,
+    "filestaticprefix",
+    FLG_FILESTATICPREFIX,
+    "set namespace prefix for file static declarations",
+    "A file-static identifier does not start with the filestaticprefix.",
+    0, 0
+  } ,
+  {
+    FK_NAMES, FK_PREFIX, plainFlag,
+    "filestaticprefixexclude",
+    FLG_FILESTATICPREFIXEXCLUDE,
+    "the filestaticprefix may not be used for identifiers that are not file static",
+    "An identifier that is not file static starts with the filestaticprefix.",
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, idemStringFlag, ARG_STRING,
+    "globalprefix",
+    FLG_GLOBPREFIX,
+    "set namespace prefix for global variables",
+    "A global variable does not start with the globalprefix",
+    0, 0
+  } ,
+  {
+    FK_NAMES, FK_PREFIX, plainFlag,
+    "globalprefixexclude",
+    FLG_GLOBPREFIXEXCLUDE,
+    "the globalprefix may not be used for non-global identifiers",
+    "An identifier that is not a global variable starts with the globalprefix.",
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, idemStringFlag, ARG_STRING,
+    "typeprefix",
+    FLG_TYPEPREFIX,
+    "set namespace prefix for user-defined types",
+    "A user-defined type does not start with the typeprefix",
+    0, 0
+  } ,
+  {
+    FK_NAMES, FK_PREFIX, plainFlag,
+    "typeprefixexclude",
+    FLG_TYPEPREFIXEXCLUDE,
+    "the typeprefix may not be used for identifiers that are not type names",
+    "An identifier that is not a type name starts with the typeprefix.",
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, idemStringFlag, ARG_STRING,
+    "externalprefix",
+    FLG_EXTERNALPREFIX,
+    "set namespace prefix for external identifiers",
+    "An external identifier does not start with the externalprefix",
+    0, 0
+  } ,
+  {
+    FK_NAMES, FK_PREFIX, plainFlag,
+    "externalprefixexclude",
+    FLG_EXTERNALPREFIXEXCLUDE,
+    "the externalprefix may not be used for non-external identifiers",
+    "An identifier that is not external starts with the externalprefix.",
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, idemStringFlag, ARG_STRING,
+    "localprefix",
+    FLG_LOCALPREFIX,
+    "set namespace prefix for local variables",
+    "A local variable does not start with the localprefix",
+    0, 0
+  } ,
+  {
+    FK_NAMES, FK_PREFIX, plainFlag,
+    "localprefixexclude",
+    FLG_LOCALPREFIXEXCLUDE,
+    "the localprefix may not be used for non-local identifiers",
+    "An identifier that is not a local variable starts with the localprefix.",
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, idemStringFlag, ARG_STRING,
+    "uncheckedmacroprefix",
+    FLG_UNCHECKEDMACROPREFIX,
+    "set namespace prefix for unchecked macros",
+    "An unchecked macro name does not start with the uncheckedmacroprefix",
+    0, 0
+  } ,
+  {
+    FK_NAMES, FK_PREFIX, plainFlag,
+    "uncheckedmacroprefixexclude",
+    FLG_UNCHECKEDMACROPREFIXEXCLUDE,
+    "the uncheckmacroprefix may not be used for identifiers that are not "
+    "unchecked macros",
+    "An identifier that is not the name of an unchecked macro "
+    "starts with the uncheckedmacroprefix.",
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, idemStringFlag, ARG_STRING,
+    "constprefix",
+    FLG_CONSTPREFIX,
+    "set namespace prefix for constants",
+    "A constant does not start with the constantprefix",
+    0, 0
+  } ,
+  {
+    FK_NAMES, FK_PREFIX, plainFlag,
+    "constprefixexclude",
+    FLG_CONSTPREFIXEXCLUDE,
+    "the constprefix may not be used for non-constant identifiers",
+    "An identifier that is not a constant starts with the constantprefix.",
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, idemStringFlag, ARG_STRING,
+    "iterprefix",
+    FLG_ITERPREFIX,
+    "set namespace prefix for iterators",
+    "An iter does not start with the iterator prefix",
+    0, 0
+  } ,
+  {
+    FK_NAMES, FK_PREFIX, plainFlag,
+    "iterprefixexclude",
+    FLG_ITERPREFIXEXCLUDE,
+    "the iterprefix may not be used for non-iter identifiers",
+    "An identifier that is not a iter starts with the iterprefix.",
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, idemStringFlag, ARG_STRING,
+    "protoparamprefix",
+    FLG_DECLPARAMPREFIX,
+    "set namespace prefix for parameters in function prototype declarations",
+    "A parameter name in a function prototype declaration does not start with the "
+    "declaration parameter prefix",
+    0, 0
+  } ,
+
+  /* 12.3 Naming Restrictions */
+  {
+    FK_NAMES, FK_ANSI, modeFlag,
+    "isoreserved",
+    FLG_ISORESERVED,
+    "external name conflicts with name reserved for system or standard library",
+    "External name is reserved for system use by ISO C99 standard.",
+    0, 0
+  },
+  {
+    FK_NAMES, FK_ANSI, modeFlag,
+    "cppnames",
+    FLG_CPPNAMES,
+    "external or internal name is a C++ keyword or reserved word",
+    "External name is a C++ keyword or reserved word. "
+    "This could lead to problems if the "
+    "code is compiled with a C++ compiler.",
+    0, 0
+  },
+  {
+    FK_NAMES, FK_ANSI, modeFlag,
+    "isoreservedinternal",
+    FLG_ISORESERVEDLOCAL,
+    "internal name conflicts with name reserved for system or standard library",
+    "Internal name is reserved for system in ISO C99 standard (this should not be necessary unless you are worried about C library implementations that violate the standard and use macros).",
+    0, 0
+  },
+  {
+    FK_NAMES, FK_ANSI, plainFlag,
+    "distinctexternalnames",
+    FLG_DISTINCTEXTERNALNAMES,
+    "external name is not distinguishable from another external name using "
+    "the number of significant characters",
+    "An external name is not distinguishable from another external name "
+    "using the number of significant characters. According to "
+    "ANSI Standard (3.1), an implementation may only consider the first 6 "
+    "characters significant, and ignore alphabetical case "
+    "distinctions (ISO C99 requires 31). The "
+    "+externalnamelen <n> flag may be used to change the number "
+    "of significant characters, and -externalnamecaseinsensitive to make "
+    "alphabetical case significant in external names.",
+    0, 0
+  },
+  {
+    FK_NAMES, FK_ANSI, specialValueFlag,
+    "externalnamelen",
+    FLG_EXTERNALNAMELEN,
+    "set the number of significant characters in an external name",
+    "Sets the number of significant characters in an external name (default is 6 for old "
+    "ANSI89 limit, C99 requires 31). "
+    "Sets +distinctexternalnames.",
+    0, 0
+  },
+  {
+    FK_NAMES, FK_ANSI, plainSpecialFlag,
+    "externalnamecaseinsensitive",
+    FLG_EXTERNALNAMECASEINSENSITIVE,
+    "alphabetic comparisons for external names are case-insensitive",
+    "Make alphabetic case insignificant in external names. By ANSI89 "
+    "standard, case need not be significant in an external name. "
+    "If +distinctexternalnames is not set, sets "
+    "+distinctexternalnames with unlimited external name length.",
+    0, 0
+  },
+  {
+    FK_NAMES, FK_ANSI, plainFlag,
+    "distinctinternalnames",
+    FLG_DISTINCTINTERNALNAMES,
+    "internal name is not distinguishable from another internal name using "
+    "the number of significant characters",
+    "An internal name is not distinguishable from another internal name "
+    "using the number of significant characters. According to "
+    "ANSI89 Standard (3.1), an implementation may only consider the first 31 "
+    "characters significant (ISO C99 specified 63). The "
+    "+internalnamelen <n> flag changes the number "
+    "of significant characters, -internalnamecaseinsensitive to makes "
+    "alphabetical case significant, and "
+    "+internalnamelookalike to make similar-looking characters "
+    "non-distinct.",
+    0, 0
+  },
+  {
+    FK_NAMES, FK_ANSI, specialValueFlag,
+    "internalnamelen",
+    FLG_INTERNALNAMELEN,
+    "set the number of significant characters in an internal name",
+    "Sets the number of significant characters in an internal name (ANSI89 "
+    "default is 31.)  Sets +distinctinternalnames.",
+    0, 0
+  },
+  {
+    FK_NAMES, FK_ANSI, plainSpecialFlag,
+    "internalnamecaseinsensitive",
+    FLG_INTERNALNAMECASEINSENSITIVE,
+    "set whether case is significant an internal names "
+    "(-internalnamecaseinsensitive means case is significant)" ,
+    "Set whether case is significant an internal names "
+    "(-internalnamecaseinsensitive "
+    "means case is significant). By ANSI89 default, case is not "
+    "significant.  If +distinctinternalnames is not set, sets "
+    "+distinctinternalnames with unlimited internal name length.",
+    0, 0
+  },
+  {
+    FK_NAMES, FK_ANSI, plainSpecialFlag,
+    "internalnamelookalike",
+    FLG_INTERNALNAMELOOKALIKE,
+    "lookalike characters match in internal names",
+    "Set whether similar looking characters (e.g., \"1\" and \"l\") "
+    "match in internal names.",
+    0, 0
+  },
+  {
+    FK_NAMES, FK_PREFIX, modeFlag,
+    "protoparamname",
+    FLG_DECLPARAMNAME,
+    "a parameter in a function prototype has a name",
+    "A parameter in a function prototype has a name.  This is dangerous, "
+    "since a macro definition could be visible here.",
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, modeFlag,
+    "protoparammatch",
+    FLG_DECLPARAMMATCH,
+    "the name of a parameter in a function prototype and corresponding "
+    "declaration must match (after removing the protoparamprefix", 
+    "A parameter in a function definition does not have the same name as "
+    "the corresponding in the declaration of the function after "
+    "removing the protoparamprefix", 
+    0, 0	
+  } ,	
+  {
+    FK_NAMES, FK_PREFIX, plainFlag,
+    "protoparamprefixexclude",
+    FLG_DECLPARAMPREFIXEXCLUDE,
+    "the protoparamprefix may not be used for non-declaraction parameter identifiers",
+    "An identifier that is not a parameter name in a function prototype "
+    "starts with the protoparamprefix.",
+    0, 0	
+  } ,	
+
+  /*
+  ** 13. Completeness 
+  */
+
+  /* 13.1 Unused Declarations */
+
+  {
+    FK_USE, FK_COMPLETE, modeFlag,
+    "topuse",
+    FLG_TOPUNUSED,
+    "declaration at top level not used",
+    "An external declaration not used in any source file.", 0, 0
+  },
+  {
+    FK_USE, FK_EXPORT, modeFlag,
+    "exportlocal",
+    FLG_EXPORTLOCAL,
+    "a declaration is exported but not used outside this module",
+    "A declaration is exported, but not used outside this module. "
+    "Declaration can use static qualifier.",
+    0, 0
+  },
+  {
+    FK_USE, FK_EXPORT, modeFlag,
+    "exportheader",
+    FLG_EXPORTHEADER,
+    "a declaration is exported but does not appear in a header file",
+    "A declaration is exported, but does not appear in a header file.",
+    0, 0
+  },
+  {
+    FK_USE, FK_EXPORT, modeFlag,
+    "exportheadervar",
+    FLG_EXPORTHEADERVAR,
+    "a variable declaration is exported but does not appear in a header file",
+    "A variable declaration is exported, but does not appear in a header "
+    "file. (Used with exportheader.)",
+    0, 0
+  },
+  {
+    FK_USE, FK_NONE, modeFlag,
+    "fielduse",
+    FLG_FIELDUNUSED,
+    "field of structure type not used",
+    "A field is present in a structure type but never used. Use /*@unused@*/ in front of field declaration to suppress message.",
+    0, 0
+  },
+  {
+    FK_USE, FK_NONE, modeFlag,
+    "enummemuse",
+    FLG_ENUMMEMUNUSED,
+    "member of an enum type not used",
+    "A member of an enum type is never used.",
+    0, 0
+  },
+  {
+    FK_USE, FK_NONE, modeFlag,
+    "constuse",
+    FLG_CONSTUNUSED,
+    "constant declared but not used",
+    "A constant is declared but not used. Use unused in the constant declaration to suppress message.",
+    0, 0
+  },
+  {
+    FK_USE, FK_NONE, modeFlag,
+    "fcnuse",
+    FLG_FUNCUNUSED,
+    "function declared but not used",
+    "A function is declared but not used. Use /*@unused@*/ in front of function header to suppress message.",
+    0, 0
+  },
+  {
+    FK_USE, FK_PARAMS, modeFlag,
+    "paramuse",
+    FLG_PARAMUNUSED,
+    "function parameter not used ",
+    "A function parameter is not used in the body of the function. If the argument is needed for type compatibility or future plans, use /*@unused@*/ in the argument declaration.",
+    0, 0
+  },
+  {
+    FK_USE, FK_TYPE, modeFlag,
+    "typeuse",
+    FLG_TYPEUNUSED,
+    "type declared but not used",
+    "A type is declared but not used. Use /*@unused@*/ in front of typedef to suppress messages.",
+    0, 0
+  },
+  {
+    FK_USE, FK_NONE, modeFlag,
+    "varuse",
+    FLG_VARUNUSED,
+    "variable declared but not used",
+    "A variable is declared but never used. Use /*@unused@*/ in front "
+    "of declaration to suppress message.",
+    0, 0
+  },
+  {
+    FK_USE, FK_COMPLETE, modeFlag,
+    "unusedspecial",
+    FLG_UNUSEDSPECIAL,
+    "unused declaration in special file (corresponding to .l or .y file)",
+    NULL, 0, 0
+  } ,
+
+  /* 13.2 Complete Programs */
+
+  {
+    FK_COMPLETE, FK_NONE, modeFlag,
+    "declundef",
+    FLG_DECLUNDEF,
+    "function or variable declared but never defined",
+    "A function or variable is declared, but not defined in any source code file.",
+    0, 0
+  },
+  {
+    FK_COMPLETE, FK_SPEC, modeFlag,
+    "specundef",
+    FLG_SPECUNDEF,
+    "function or variable specified but never defined",
+    "A function or variable is declared in an .lcl file, but not defined in any source code file.",
+    0, 0
+  },
+  {
+    FK_COMPLETE, FK_SPEC, plainFlag,
+    "specundecl",
+    FLG_SPECUNDECL,
+    "function or variable specified but never declared in a source file",
+    "A function or variable is declared in an .lcl file, but not declared "
+    "in any source code file.",
+    0, 0
+  },
+  {
+    FK_DECL, FK_LIBS, plainFlag,
+    "newdecl",
+    FLG_NEWDECL,
+    "report new global declarations in source files",
+    "There is a new declaration that is not declared in a loaded library "
+    "or earlier file.  (Use this flag to check for consistency "
+    "against a library.)",
+    0, 0
+  },
+  {
+    FK_INIT, FK_SPEC, plainFlag,
+    "needspec",
+    FLG_NEEDSPEC,
+    "information in specifications is not also included in syntactic comments",
+    "There is information in the specification that is not duplicated "
+    "in syntactic comments. Normally, this is not an "
+    "error, but it may be useful to detect it to make "
+    "sure checking incomplete systems without the specifications will "
+    "still use this information.",
+    0, 0
+  },
+
+  /*
+  ** 14. Libraries and Header File Inclusion 
+  */
+
+  /* 14.1 Standard Libraries */
+
+  {
+    FK_LIBS, FK_INIT, idemGlobalFlag,
+    "nolib",
+    FLG_NOLIB,
+    "do not load standard library",
+    NULL, 0, 0
+  },
+  {
+    FK_LIBS, FK_INIT, idemGlobalFlag,
+    "isolib",
+    FLG_ANSILIB,
+    "use normal standard library",
+    "Library based on the ISO standard library specification is used.", 
+    0, 0
+  },
+  {
+    FK_LIBS, FK_INIT, idemGlobalFlag,
+    "strictlib",
+    FLG_STRICTLIB,
+    "interpret standard library strictly",
+    "Stricter version of the standard library is used. (The default "
+    "library is standard.lcd;  strict library is strict.lcd.)", 
+    0, 0
+  },
+  {
+    FK_LIBS, FK_INIT, idemGlobalFlag,
+    "unixlib",
+    FLG_UNIXLIB,
+    "use UNIX (sort-of) standard library",
+    "UNIX version of the standard library is used.",
+    0, 0
+  },
+  {
+    FK_LIBS, FK_INIT, idemGlobalFlag,
+    "unixstrictlib",
+    FLG_UNIXSTRICTLIB,
+    "use strict version of UNIX (sort-of) library",
+    "strict version of the UNIX library is used.",
+    0, 0
+  },
+  {
+    FK_LIBS, FK_INIT, idemGlobalFlag,
+    "posixlib",
+    FLG_POSIXLIB,
+    "use POSIX standard library",
+    "POSIX version of the standard library is used.",
+    0, 0
+  },
+  {
+    FK_LIBS, FK_INIT, idemGlobalFlag,
+    "posixstrictlib",
+    FLG_POSIXSTRICTLIB,
+    "use strict POSIX standard library",
+    "POSIX version of the strict standard library is used.",
+    0, 0
+  },
+  {
+    FK_LIBS, FK_INIT, idemGlobalFlag,
+    "whichlib",
+    FLG_WHICHLIB,
+    "show standard library filename",
+    NULL, 0, 0
+  },
+  {
+    FK_LIBS, FK_ANSI, plainFlag,
+    "warnposixheaders",
+    FLG_WARNPOSIX,
+    "a POSIX header is included, but the POSIX library is not used",
+    "Header name matches a POSIX header, but the POSIX library is not selected.",
+    0, 0
+  },
+  {
+    FK_LIBS, FK_ANSI, plainFlag,
+    "warnunixlib",
+    FLG_WARNUNIXLIB,
+    "warn when the unix library is used",
+    "Unix library may not be compatible with all platforms", 
+    0, 0
+  },
+  {
+    FK_LIBS, FK_ANSI, plainFlag,
+    "usevarargs",
+    FLG_USEVARARGS,
+    "non-standard <varargs.h> included",
+    "Header <varargs.h> is not part of ANSI Standard. "
+    "Should use <stdarg.h> instead.",
+    0, 0
+  },
+  {
+    FK_HEADERS, FK_FILES, plainFlag,
+    "caseinsensitivefilenames",
+    FLG_CASEINSENSITIVEFILENAMES,
+    "file names are case insensitive (file.h and FILE.H are the same file)",
+    NULL, 0, 0
+  },
+
+  /* 14.2 Generating Libraries */
+
+  {
+    FK_LIBS, FK_FILES, globalStringFlag, ARG_FILE,
+    "dump",
+    FLG_DUMP,
+    "save state for merging (default suffix .lcd)",
+    NULL, 0, 0
+  },
+  {
+    FK_LIBS, FK_FILES, globalStringFlag, ARG_FILE,
+    "load",
+    FLG_MERGE,
+    "load state from dump file (default suffix .lcd)",
+    NULL, 0, 0
+  },
+
+  /* 14.3 Header File Inclusion */
+
+  {
+    FK_HEADERS, FK_SPEED, globalFlag,
+    "singleinclude",
+    FLG_SINGLEINCLUDE,
+    "optimize header inclusion to eliminate redundant includes",
+    "When checking multiple files, each header file is processed only "
+    "once. This may change the meaning of the code, if the "
+    "same header file is included in different contexts (e.g., the "
+    "header file includes #if directives and the values are "
+    "different when it is included in different places.)",
+    0, 0
+  },
+  {
+    FK_HEADERS, FK_SPEED, globalFlag,
+    "neverinclude",
+    FLG_NEVERINCLUDE,
+    "optimize header inclusion to not include any header files",
+    "Ignore header includes. Only works if relevant information is "
+    "loaded from a library.",
+    0, 0
+  },
+  {
+    FK_HEADERS, FK_SPEED, globalFlag,
+    "skipsysheaders",
+    FLG_SKIPSYSHEADERS,
+    "do not include header files in system directories (set by -sysdirs)",
+    "Do not include header files in system directories (set by -sysdirs)",
+    0, 0
+  },
+
+  /* 
+  ** A. Operation?
+  */
+
+
+  /*
+  ** Syntax 
+  */
+
+  {
+    FK_SYNTAX, FK_ANSI, plainFlag,
+    "gnuextensions",
+    FLG_GNUEXTENSIONS,
+    "support some gnu (gcc) language extensions",
+    "ANSI C does not allow some language features supported by gcc and other compilers. "
+    "Use +gnuextensions to allow some of these extensions.", 0, 0
+  },
+
+  /* Prototypes */
+
+  {
+    FK_PROTOS, FK_ANSI, modeFlag,
+    "noparams",
+    FLG_NOPARAMS,
+    "function declaration has no parameter list",
+    "A function declaration does not have a parameter list.",
+    0, 0
+  },
+  {
+    FK_PROTOS, FK_ANSI, modeFlag,
+    "oldstyle",
+    FLG_OLDSTYLE,
+    "old style function definition",
+    "Function definition is in old style syntax. Standard prototype "
+    "syntax is preferred.",
+    0, 0
+  },
+
+
+  /*
+  ** System functions
+  */
+
+  {
+    FK_SYSTEMFUNCTIONS, FK_TYPE, plainFlag,
+    "maintype",
+    FLG_MAINTYPE,
+    "type of main does not match expected type",
+    "The function main does not match the expected type.",
+    0, 0
+  },
+  {
+    FK_SYSTEMFUNCTIONS, FK_BEHAVIOR, modeFlag,
+    "exitarg",
+    FLG_EXITARG,
+    "argument to exit has implementation defined behavior",
+    "The argument to exit should be 0, EXIT_SUCCESS or EXIT_FAILURE",
+    0, 0
+  },
+
+  {
+    FK_DECL, FK_NONE, modeFlag,
+    "shadow",
+    FLG_SHADOW,
+    "declaration reuses name visible in outer scope",
+    "An outer declaration is shadowed by the local declaration.",
+    0, 0
+  },
+  {
+    FK_DECL, FK_LIBS, modeFlag,
+    "incondefslib",
+    FLG_INCONDEFSLIB,
+    "function, variable or constant defined in a library is redefined with inconsistent type",
+    "A function, variable or constant previously defined in a library is "
+    "redefined with a different type.",
+    0, 0
+  },
+  {
+    FK_DECL, FK_LIBS, modeFlag,
+    "overload",
+    FLG_WARNOVERLOAD,
+    "library function overloaded",
+    "A function, variable or constant defined in the library is redefined "
+    "with a different type.",
+    0, 0
+  },
+  {
+    FK_DECL, FK_NONE, modeFlag,
+    "nestedextern",
+    FLG_NESTEDEXTERN,
+    "an extern declaration is inside a function scope",
+    "An extern declaration is used inside a function scope.",
+    0, 0
+  },	
+  {
+    FK_DECL, FK_NONE, modeFlag,
+    "redecl",
+    FLG_REDECL,
+    "function or variable redeclared",
+    "A function or variable is declared in more than one place. This is "
+    "not necessarily a problem, since the declarations are consistent.",
+    0, 0
+  },	
+  {
+    FK_DECL, FK_NONE, plainFlag,
+    "redef",
+    FLG_REDEF,
+    "function or variable redefined",
+    "A function or variable is redefined. One of the declarations should use extern.",
+    0, 0
+  },
+  {
+    FK_DECL, FK_TYPE, modeFlag,
+    "imptype",
+    FLG_IMPTYPE,
+    "variable declaration has unknown (implicitly int) type",
+    "A variable declaration has no explicit type.  The type is implicitly int.",
+    0, 0
+  },
+
+  {
+    FK_DIRECT, FK_FILES, globalStringFlag, ARG_DIRECTORY,
+    "tmpdir",
+    FLG_TMPDIR,
+    "set directory for writing temp files",
+    NULL, 0, 0
+  },
+  {
+    FK_DIRECT, FK_FILES, globalStringFlag, ARG_PATH,
+    "larchpath",
+    FLG_LARCHPATH,
+    "set path for searching for library files (overrides LARCH_PATH environment variable)",
+    NULL, 0, 0
+  },
+  {
+    FK_DIRECT, FK_FILES, globalStringFlag, ARG_DIRECTORY,
+    "lclimportdir",
+    FLG_LCLIMPORTDIR,
+    "set directory to search for LCL import files (overrides LCLIMPORTDIR)",
+    NULL, 0, 0
+  },
+  {
+    FK_DIRECT, FK_FILES, globalStringFlag, ARG_PATH,
+    "sysdirs",
+    FLG_SYSTEMDIRS,
+    "set directories for system files (default /usr/include). Separate "
+    "directories with path separator (colons in Unix, semi-colons in Windows). "
+    "Flag settings propagate to files in a system directory. If "
+    "-sysdirerrors is set, no errors are reported for files in "
+    "system directories.",
+    NULL, 0, 0
+  },
+  {
+    FK_DIRECT, FK_FILES, plainFlag,
+    "skipisoheaders",
+    FLG_SKIPISOHEADERS,
+    "prevent inclusion of header files in a system directory with "
+    "names that match standard ANSI headers. The symbolic information "
+    "in the standard library is used instead.  Flag in effect only "
+    "if a library including the ANSI library is loaded.  The ANSI "
+    "headers are: assert, ctype, errno, float, limits, locale, math, "
+    "setjmp, signal, stdarg, stddef, stdio, stdlib, strings, string, "
+    "time, and wchar.",
+    NULL, 0, 0
+  },
+  {
+    FK_DIRECT, FK_FILES, plainFlag,
+    "skipposixheaders",
+    FLG_SKIPPOSIXHEADERS,
+    "prevent inclusion of header files in a system directory with "
+    "names that match standard POSIX headers. The symbolic information "
+    "in the posix library is used instead.  The POSIX headers are: "
+    "dirent, fcntl, grp, pwd, termios, sys/stat, sys/times, "
+    "sys/types, sys/utsname, sys/wait, unistd, and utime.",
+    NULL, 0, 0
+  },
+  {
+    FK_DIRECT, FK_SUPPRESS, modeFlag,
+    "sysdirerrors",
+    FLG_SYSTEMDIRERRORS,
+    "report errors in files in system directories (set by -sysdirs)",
+    NULL, 0, 0
+  },
+  {
+    FK_DIRECT, FK_MACROS, plainFlag,
+    "sysdirexpandmacros",
+    FLG_SYSTEMDIREXPAND,
+    "expand macros in system directories regardless of other settings, "
+    "except for macros corresponding to names defined in a load library",
+    NULL, 0, 0
+  },
+
+  {
+    FK_DIRECT, FK_HEADERS, globalExtraArgFlag,
+    "I<directory>",
+    FLG_INCLUDEPATH,
+    "add to C include path",
+    NULL, 0, 0
+  },
+  {
+    FK_DIRECT, FK_SPEC, globalExtraArgFlag,
+    "S<directory>",
+    FLG_SPECPATH,
+    "add to spec path",
+    NULL, 0, 0
+  },
+  {
+    FK_EXPORT, FK_SPEC, specialFlag,
+    "exportany",
+    FLG_EXPORTANY,
+    "variable, function or type exported but not specified",
+    "A variable, function or type is exported, but not specified.",
+    0, 0
+  },
+  {
+    FK_EXPORT, FK_SPEC, modeFlag,
+    "exportfcn",
+    FLG_EXPORTFCN,
+    "function exported but not specified",
+    "A function is exported, but not specified.", 0, 0
+  },
+  {
+    FK_EXPORT, FK_SPEC, modeFlag,
+    "exportmacro",
+    FLG_EXPORTMACRO,
+    "expanded macro exported but not specified",
+    "A macro is exported, but not specified.", 0, 0
+  },
+  {
+    FK_EXPORT, FK_SPEC, modeFlag,
+    "exporttype",
+    FLG_EXPORTTYPE,
+    "type definition exported but not specified",
+    "A type is exported, but not specified.", 0, 0
+  },
+  {
+    FK_EXPORT, FK_SPEC, modeFlag,
+    "exportvar",
+    FLG_EXPORTVAR,
+    "variable exported but not specified",
+    "A variable is exported, but not specified.", 0, 0
+  },
+  {
+    FK_EXPORT, FK_SPEC, modeFlag,
+    "exportconst",
+    FLG_EXPORTCONST,
+    "constant exported but not specified",
+    "A constant is exported, but not specified.", 0, 0
+  },
+  {
+    FK_EXPORT, FK_SPEC, modeFlag,
+    "exportiter",
+    FLG_EXPORTITER,
+    "constant exported but not specified",
+    "A constant is exported, but not specified.", 0, 0
+  },
+
+  {
+    FK_FORMAT, FK_DISPLAY, valueFlag,
+    "linelen",
+    FLG_LINELEN,
+    "set length of messages (number of chars)",
+    NULL, 0, 0
+  },
+  {
+    FK_FORMAT, FK_DISPLAY, valueFlag,
+    "indentspaces",
+    FLG_INDENTSPACES,
+    "set number of spaces to indent sub-messages",
+    NULL, 0, 0
+  },
+  {
+    FK_FORMAT, FK_DISPLAY, valueFlag,
+    "locindentspaces",
+    FLG_LOCINDENTSPACES,
+    "set number of spaces to indent sub-messages that start with file locations",
+    NULL, 0, 0
+  },
+  {
+    FK_FORMAT, FK_DISPLAY, plainFlag,
+    "showdeephistory",
+    FLG_SHOWDEEPHISTORY,
+    "show all available information about storage mentioned in warnings",
+    NULL, 0, 0
+  },
+  {
+    FK_FORMAT, FK_DISPLAY, plainFlag,
+    "showcolumn",
+    FLG_SHOWCOL,
+    "show column number where error is found",
+    NULL, 0, 0
+  },
+  {
+    FK_FORMAT, FK_DISPLAY, plainFlag,
+    "showloadloc",
+    FLG_SHOWLOADLOC,
+    "show location information for load files",
+    NULL, 0, 0
+  },
+  {
+    FK_FORMAT, FK_DISPLAY, globalFileFlag,
+    "csv",
+    FLG_CSV,
+    "produce comma-separated values (CSV) warnings output file",
+    NULL, 0, 0
+  },
+  {
+    FK_FORMAT, FK_DISPLAY, plainFlag,
+    "csvoverwrite",
+    FLG_CSVOVERWRITE,
+    "overwrite exisiting CVS output file",
+    NULL, 0, 0
+  },
+  {
+    FK_FORMAT, FK_DISPLAY, plainFlag,
+    "parenfileformat",
+    FLG_PARENFILEFORMAT,
+    "show column number where error is found",
+    NULL, 0, 0
+  },
+  {
+    FK_FORMAT, FK_DISPLAY, plainFlag,
+    "htmlfileformat",
+    FLG_HTMLFILEFORMAT,
+    "show file locations as links",
+    NULL, 0, 0
+  },
+  {
+    FK_FORMAT, FK_NONE, plainFlag,
+    "showfunc",
+    FLG_SHOWFUNC,
+    "show name of function containing error",
+    NULL, 0, 0
+  },
+  {
+    FK_FORMAT, FK_NONE, plainFlag,
+    "showallconjs",
+    FLG_SHOWALLCONJS,
+    "show all possible types",
+    "When a library function is declared with multiple possible type, the "
+    "alternate types are shown only if +showallconjs.", 
+    0, 0
+  },
+  {
+    FK_LIBS, FK_NONE, plainFlag, 
+    "impconj",
+    FLG_IMPCONJ, 
+    "make all alternate types implicit (useful for making system libraries",
+    NULL, 0, 0
+  } ,
+  {
+    FK_GLOBAL, FK_ERRORS, globalValueFlag,
+    "expect",
+    FLG_EXPECT,
+    "expect <int> code errors",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBAL, FK_ERRORS, globalValueFlag,
+    "lclexpect",
+    FLG_LCLEXPECT,
+    "expect <int> spec errors",
+    NULL, 0, 0
+  },
+  {
+    FK_GLOBAL, FK_USE, idemSpecialFlag,
+    "partial",
+    FLG_PARTIAL,
+    "check as partial system (-specundef, -declundef, -exportlocal, "
+    "don't check macros in headers without corresponding .c files)",
+    NULL, 0, 0
+  },
+
+  /*
+  ** Appendix D. Specifications 
+  */
+
+  {
+    FK_HEADERS, FK_SPEC, globalFlag,
+    "lh",
+    FLG_DOLH,
+    "generate .lh files", NULL,
+    0, 0
+  },
+  {
+    FK_HEADERS, FK_SPEC, globalFlag,
+    "lcs",
+    FLG_DOLCS,
+    "generate .lcs files", NULL,
+    0, 0
+  },
+
+  /*
+  ** 1. Operation
+  */
+
+  {
+    FK_HELP, FK_NONE, plainFlag,
+    "warnflags",
+    FLG_WARNFLAGS,
+    "warn when command line sets flag in abnormal way",
+    "Command line sets flag in abnormal way",
+    0, 0
+  },
+  {
+    FK_HELP, FK_NONE, plainFlag,
+    "warnrc",
+    FLG_WARNRC,
+    "warn when there are problems with reading the initialization files",
+    "There was a problem reading an initialization file",
+    0, 0
+  },
+  {
+    FK_HELP, FK_NONE, plainFlag,
+    "badflag",
+    FLG_BADFLAG,
+    "warn about bad command line flags", 
+    "A flag is not recognized or used in an incorrect way",
+    0, 0
+  },
+  {
+    FK_HELP, FK_NONE, plainFlag,
+    "fileextensions",
+    FLG_FILEEXTENSIONS,
+    "warn when command line file does not have a recognized extension",
+    NULL, 0, 0
+  },
+  {
+    FK_HELP, FK_NONE, globalExtraArgFlag,
+    "help",
+    FLG_HELP,
+    "-help <flags> will describe flags",
+    "Display help",
+    0, 0
+  },
+  {
+    FK_INIT, FK_FILES, globalFileFlag,
+    "f",
+    FLG_OPTF,
+    "read an options file (default ~/.splintrc not loaded)",
+    "Read an options file (instead of loading default ~/.splintc)",
+    0, 0
+  },
+  {
+    FK_INIT, FK_FILES, globalFileFlag,
+    "i",
+    FLG_INIT,
+    "set LCL initilization file",
+    NULL, 0, 0
+  },
+  {
+    FK_INIT, FK_FILES, globalFlag,
+    "nof",
+    FLG_NOF,
+    "do not read options file",
+    "Do not read the default options file (~/.splintrc)",
+    0, 0
+  },
+  {
+    FK_INIT, FK_COMMENTS, charFlag,
+    "commentchar",
+    FLG_COMMENTCHAR,
+    "set marker character for syntactic comments (default is '@')",
+    "Set the marker character for syntactic comments. Comments beginning "
+    "with /*<char> are interpreted by Splint, where <char> is the "
+    "comment marker character.",
+    0, 0
+  },
+
+  /*
+  ** Limits 
+  */
+
+  {
+    FK_LIMITS, FK_ANSI, modeValueFlag,
+    "controlnestdepth",
+    FLG_CONTROLNESTDEPTH,
+    "set maximum nesting depth of compound statements, iteration control "
+    "structures, and selection control structures (ANSI89 minimum is 15; ISO99 is 63)",
+    "Maximum number of control levels exceeded.",
+    0, 0
+  },
+  {
+    FK_LIMITS, FK_ANSI, modeValueFlag,
+    "stringliterallen",
+    FLG_STRINGLITERALLEN,
+    "set maximum length of string literals (ANSI89 minimum is 509; ISO99 is 4095)",
+    "Maximum length of string literal exceeded.",
+    0, 0
+  },
+  {
+    FK_LIMITS, FK_ANSI, modeValueFlag,
+    "numstructfields",
+    FLG_NUMSTRUCTFIELDS,
+    "set maximum number of fields in a struct or union (ANSI89 minimum is 127; ISO99 is 1023)",
+    "Maximum number of fields in a struct or union exceeded.",
+    0, 0
+  },
+  {
+    FK_LIMITS, FK_ANSI, modeValueFlag,
+    "numenummembers",
+    FLG_NUMENUMMEMBERS,
+    "set maximum number of members of an enum (ANSI89 minimum is 127; ISO99 is 1023)",
+    "Limit on maximum number of members of an enum is exceeded.",
+    0, 0
+  },
+  {
+    FK_LIMITS, FK_ANSI, modeValueFlag,
+    "includenest",
+    FLG_INCLUDENEST,
+    "set maximum number of nested #include files (ANSI89 minimum is 8; ISO99 is 63)",
+    "Maximum number of nested #include files exceeded.",
+    0, 0
+  },
+  {
+    FK_LIMITS, FK_ANSI, specialFlag,
+    "ansi89limits",
+    FLG_ANSI89LIMITS,
+    "check for violations of standard limits (controlnestdepth, "
+    "stringliterallen, includenest, numstructfields, numenummembers) based on ANSI89 standard",
+    NULL,
+    0, 0
+  },
+  {
+    FK_LIMITS, FK_ANSI, specialFlag,
+    "iso99limits",
+    FLG_ISO99LIMITS,
+    "check for violations of standard limits (controlnestdepth, "
+    "stringliterallen, includenest, numstructfields, numenummembers) based on ISO99 standard",
+    NULL,
+    0, 0
+  },
+
+  {
+    FK_PREPROC, FK_NONE, globalExtraArgFlag,
+    "D<initializer>",
+    FLG_DEFINE,
+    "passed to pre-processor",
+    NULL, 0, 0
+  },
+  {
+    FK_PREPROC, FK_NONE, globalExtraArgFlag,
+    "U<initializer>",
+    FLG_UNDEFINE,
+    "passed to pre-processor",
+    NULL, 0, 0
+  },
+  {
+    FK_PREPROC, FK_SYNTAX, plainFlag,
+    "unrecogdirective",
+    FLG_UNRECOGDIRECTIVE,
+    "unrecognized pre-processor directive",
+    "Pre-processor directive is not recognized.", 
+    0, 0
+  },
+  {
+    FK_SUPPRESS, FK_COMMENTS, globalFlag,
+    "supcounts",
+    FLG_SUPCOUNTS,
+    "The number of errors detected does not match number in /*@i<n>@*/.",
+    NULL, 0, 0
+  },
+  {
+    FK_SUPPRESS, FK_ERRORS, valueFlag,
+    "limit",
+    FLG_LIMIT,
+    "limit <int> consecutive repeated errors",
+    NULL, 0, 0
+  },
+  {
+    FK_SYNTAX, FK_NONE, plainFlag,
+    "syntax",
+    FLG_SYNTAX,
+    "syntax error in parsing",
+    "Code cannot be parsed.  For help on parse errors, see splint -help parseerrors.", 
+    0, 0
+  },
+  {
+    FK_SYNTAX, FK_NONE, plainFlag,
+    "trytorecover",
+    FLG_TRYTORECOVER,
+    "try to recover from parse error",
+    "Try to recover from parse error.  It really means try - this doesn't usually work.", 0, 0
+  },
+  {
+    FK_SYNTAX, FK_PREPROC, plainFlag,
+    "preproc",
+    FLG_PREPROC,
+    "preprocessing error",
+    "Preprocessing error.",
+    0, 0
+  },
+
+  {
+    FK_TYPE, FK_NONE, plainFlag,
+    "type",
+    FLG_TYPE,
+    "type mismatch",
+    "Types are incompatible.",
+    0, 0
+  },
+
+  {
+    FK_TYPE, FK_NONE, plainFlag,
+    "stringliteraltoolong",
+    FLG_STRINGLITTOOLONG,
+    "string literal too long for character array",
+    "A string literal is assigned to a char array too small to hold it.",
+    0, 0
+  },
+  {
+    FK_TYPE, FK_NONE, modeFlag,
+    "stringliteralnoroomfinalnull",
+    FLG_STRINGLITNOROOMFINALNULL,
+    "string literal leaves no room for null terminator",
+    "A string literal is assigned to a char array that is not big enough to hold the final null terminator.  This may not be a problem because a null character has been explictedly included in the string literal using an escape sequence",
+    0, 0
+  },
+  {
+    FK_TYPE, FK_NONE, modeFlag,
+    "stringliteralnoroom",
+    FLG_STRINGLITNOROOM,
+    "string literal leaves no room for null terminator",
+    "A string literal is assigned to a char array that is not big enough to hold the null terminator.",
+    0, 0
+  },
+  {
+    FK_TYPE, FK_NONE, modeFlag,
+    "stringliteralsmaller",
+    FLG_STRINGLITSMALLER,
+    "string literal is smaller than the char array it is assigned to",
+    "A string literal is assigned to a char array that smaller than the string literal needs.",
+    0, 0
+  },
+  {
+    FK_TYPE, FK_NONE, modeFlag,
+    "enummembers",
+    FLG_ENUMMEMBERS,
+    "enum members must be int values",
+    "Type of initial values for enum members must be int.",
+    0, 0
+  },
+
+  {
+    FK_TYPE, FK_NONE, plainFlag,
+    "formattype",
+    FLG_FORMATTYPE,
+    "type-mismatch in parameter corresponding to format code in a printf or scanf-like function",
+    "Type of parameter is not consistent with corresponding code in format string.",
+    0, 0
+  },
+  {
+    FK_TYPE, FK_NONE, modeFlag,
+    "formatconst",
+    FLG_FORMATCONST,
+    "format parameter is not a string constant (hence variable arguments cannot be typechecked)",
+    "Format parameter is not known at compile-time.  This can lead to security vulnerabilities because the arguments cannot be type checked.",
+    0, 0
+  },
+  {
+    FK_TYPE, FK_NONE, plainFlag,
+    "formatcode",
+    FLG_FORMATCODE,
+    "invalid format code in format string for printf or scanf-like function",
+    "Format code in a format string is not valid.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_ABSTRACT, modeFlag,
+    "forwarddecl",
+    FLG_FORWARDDECL,
+    "forward declarations of pointers to abstract representation match abstract type",
+    NULL, 0, 0
+  },
+  {
+    FK_TYPEEQ, FK_ABSTRACT, modeFlag,
+    "voidabstract",
+    FLG_ABSTVOIDP,
+    "void * matches pointers to abstract types, casting ok (dangerous)",
+    "A pointer to void is cast to a pointer to an abstract type (or vice versa).",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_POINTER, plainFlag,
+    "castfcnptr",
+    FLG_CASTFCNPTR,
+    "a pointer to a function is cast to a pointer to void (or vice versa)",
+    "A pointer to a function is cast to (or used as) a pointer to void (or vice versa).",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_ARRAY, modeFlag,
+    "charindex",
+    FLG_CHARINDEX,
+    "char can be used to index arrays",
+    "To allow char types to index arrays, use +charindex.", 0, 0
+  },
+  {
+    FK_TYPEEQ, FK_ARRAY, modeFlag,
+    "enumindex",
+    FLG_ENUMINDEX,
+    "enum can be used to index arrays",
+    "To allow enum types to index arrays, use +enumindex.", 0, 0
+  },
+  {
+    FK_TYPEEQ, FK_BOOL, modeFlag,
+    "boolint",
+    FLG_BOOLINT,
+    "bool and int are equivalent",
+    "To make bool and int types equivalent, use +boolint.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NONE, modeFlag,
+    "charint",
+    FLG_CHARINT,
+    "char and int are equivalent",
+    "To make char and int types equivalent, use +charint.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NONE, modeFlag,
+    "enumint",
+    FLG_ENUMINT,
+    "enum and int are equivalent",
+    "To make enum and int types equivalent, use +enumint.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NONE, modeFlag,
+    "longint",
+    FLG_LONGINT,
+    "long int and int are equivalent",
+    "To make long int and int types equivalent, use +longint.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NONE, modeFlag,
+    "shortint",
+    FLG_SHORTINT,
+    "short int and int are equivalent",
+    "To make short int and int types equivalent, use +shortint.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NONE, modeFlag,
+    "floatdouble",
+    FLG_FLOATDOUBLE,
+    "float and double are equivalent",
+    "To make float and double types equivalent, use +floatdouble.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NUMBERS, modeFlag,
+    "ignorequals",
+    FLG_IGNOREQUALS,
+    "ignore type qualifiers (long, short, unsigned)",
+    "To ignore type qualifiers in type comparisons use +ignorequals.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_SYNTAX, plainFlag,
+    "duplicatequals",
+    FLG_DUPLICATEQUALS,
+    "report duplicate type qualifiers (e.g., unsigned unsigned)",
+    "Duplicate type qualifiers not supported by ISO standard.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NUMBERS, modeFlag,
+    "ignoresigns",
+    FLG_IGNORESIGNS,
+    "ignore signs in type comparisons (unsigned matches signed)",
+    "To ignore signs in type comparisons use +ignoresigns",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NUMBERS, modeFlag,
+    "numliteral",
+    FLG_NUMLITERAL,
+    "int literals can be reals",
+    "An int literal is used as any numeric type (including float and long long). Use +numliteral to "
+    "allow int literals to be used as any numeric type.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NUMBERS, modeFlag,
+    "charintliteral",
+    FLG_CHARINTLITERAL,
+    "character constants (e.g., 'a') can be used as ints",
+    "A character constant is used as an int. Use +charintliteral to "
+    "allow character constants to be used as ints.  (This is safe "
+    "since the actual type of a char constant is int.)",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NUMBERS, modeFlag,
+    "relaxquals",
+    FLG_RELAXQUALS,
+    "report qualifier mismatches only if dangerous",
+    "To allow qualifier mismatches that are not dangerous, use +relaxquals.", 0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NUMBERS, modeFlag,
+    "relaxtypes",
+    FLG_RELAXTYPES,
+    "allow all numeric types to match",
+    "To allow all numeric types to match, use +relaxtypes.", 0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NONE, modeFlag,
+    "charunsignedchar",
+    FLG_CHARUNSIGNEDCHAR,
+    "allow char and unsigned char types to match",
+    "To allow char and unsigned char types to match use +charunsignedchar.", 
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NUMBERS, modeFlag,
+    "matchanyintegral",
+    FLG_MATCHANYINTEGRAL,
+    "allow any intergral type to match an arbitrary integral type (e.g., dev_t)",
+    "To allow arbitrary integral types to match any integral type, use +matchanyintegral.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NUMBERS, modeFlag,
+    "longunsignedintegral",
+    FLG_LONGUNSIGNEDINTEGRAL,
+    "allow long unsigned type to match an arbitrary integral type (e.g., dev_t)",
+    "To allow arbitrary integral types to match long unsigned, use +longunsignedintegral.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NUMBERS, modeFlag,
+    "longintegral",
+    FLG_LONGINTEGRAL,
+    "allow long type to match an arbitrary integral type (e.g., dev_t)",
+    "To allow arbitrary integral types to match long unsigned, use +longintegral.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NUMBERS, modeFlag,
+    "longunsignedunsignedintegral",
+    FLG_LONGUNSIGNEDUNSIGNEDINTEGRAL,
+    "allow long unsigned type to match an arbitrary unsigned integral type (e.g., size_t)",
+    "To allow arbitrary unsigned integral types to match long unsigned, "
+    "use +longunsignedunsignedintegral.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_NUMBERS, modeFlag,
+    "longsignedintegral",
+    FLG_LONGSIGNEDINTEGRAL,
+    "allow long type to match an arbitrary signed integral type (e.g., ssize_t)",
+    "To allow arbitrary signed integral types to match long unsigned, use +longsignedintegral.",
+    0, 0
+  },
+  {
+    FK_TYPEEQ, FK_POINTER, plainFlag,
+    "zeroptr",
+    FLG_ZEROPTR,
+    "treat 0 as a pointer",
+    NULL, 0, 0
+  },
+  {
+    FK_TYPEEQ, FK_BOOL, modeFlag,
+    "zerobool",
+    FLG_ZEROBOOL,
+    "treat 0 as a boolean",
+    NULL, 0, 0
+  },
+  {
+    FK_UNRECOG, FK_DISPLAY, plainFlag,
+    "repeatunrecog",
+    FLG_REPEATUNRECOG,
+    "do not suppress repeated unrecognized identifier messages (instead of only reporting the first error)",
+    "Identifier used in code has not been declared. (Message repeated for future uses in this file.)",
+    0, 0
+  },
+  {
+    FK_UNRECOG, FK_DISPLAY, plainFlag,
+    "sysunrecog",
+    FLG_SYSTEMUNRECOG,
+    "report unrecognized identifiers with system (__) prefix",
+    "Identifier used in code has not been declared. (Message repeated for "
+    "future uses in this file.)  Use +gnuextensions to make Splint "
+    "recognize some keywords that are gnu extensions.",
+    0, 0
+  },
+  {
+    FK_UNRECOG, FK_NONE, plainFlag,
+    "unrecog",
+    FLG_UNRECOG,
+    "unrecognized identifier",
+    "Identifier used in code has not been declared.", 0, 0
+  },
+
+
+  {
+    FK_DECL, FK_TYPE, plainFlag,
+    "annotationerror",
+    FLG_ANNOTATIONERROR,
+    "annotation is used in inconsistent location",
+    "A declaration uses an invalid annotation.",
+    0, 0
+  } ,
+  {
+    FK_DECL, FK_TYPE, plainFlag,
+    "commenterror",
+    FLG_COMMENTERROR,
+    "inconsistent syntactic comment",
+    "A syntactic comment is used inconsistently.",
+    0, 0
+  } ,
+
+  /*
+  ** Use Warnings
+  */
+
+  {
+    FK_WARNUSE, FK_NONE, plainFlag,
+    "warnuse",
+    FLG_WARNUSE,
+    "warn when declaration marked with warn is used",
+    "Declaration marked with warn clause is used (can be suppresed by more specific flags).",
+    0, 0
+  },
+  {
+    FK_WARNUSE, FK_SECURITY, modeFlag,
+    "bufferoverflow",
+    FLG_BUFFEROVERFLOW,
+    "possible buffer overflow vulnerability",
+    "Use of function that may lead to buffer overflow.",
+    0, 0
+  }, 
+  {
+    FK_WARNUSE, FK_SECURITY, modeFlag,
+    "bufferoverflowhigh",
+    FLG_BUFFEROVERFLOWHIGH,
+    "likely buffer overflow vulnerability",
+    "Use of function that may lead to buffer overflow.",
+    0, 0
+  }, 
+  {
+    FK_WARNUSE, FK_SECURITY, modeFlag,
+    "implementationoptional",
+    FLG_IMPLEMENTATIONOPTIONAL,
+    "declarator is implementation optional (ISO99 does not require an implementation to provide it)",
+    "Use of a declarator that is implementation optional, not required by ISO99.",
+    0, 0
+  }, 
+  {
+    FK_WARNUSE, FK_NONE, modeFlag,
+    "legacy",
+    FLG_LEGACY,
+    "legacy declaration in Unix Standard",
+    "Use of a declarator that is marked as a legacy entry in the Unix Standard.",
+    0, 0
+  }, 
+  {
+    FK_WARNUSE, FK_SECURITY, modeFlag,
+    "multithreaded",
+    FLG_MULTITHREADED,
+    "function is not reentrant",
+    "Non-reentrant function should not be used in multithreaded code.",
+    0, 0
+  },
+  {
+    FK_WARNUSE, FK_SECURITY, modeFlag,
+    "portability",
+    FLG_PORTABILITY,
+    "function may have undefined behavior",
+    "Use of function that may have implementation-dependent behavior.",
+    0, 0
+  },
+  {
+    FK_WARNUSE, FK_SECURITY, modeFlag,
+    "superuser",
+    FLG_SUPERUSER,
+    "function is restricted to superusers",
+    "Call to function restricted to superusers.",
+    0, 0
+  },
+  {
+    FK_WARNUSE, FK_SECURITY, modeFlag,
+    "toctou",
+    FLG_TOCTOU,
+    "possible time of check, time of use vulnerability",
+    "Possible time of check, time of use vulnerability.",
+    0, 0
+  },
+  {
+    FK_WARNUSE, FK_SECURITY, modeFlag,
+    "unixstandard",
+    FLG_UNIXSTANDARD,
+    "function is not required in Standard UNIX Specification",
+    "Use of function that need not be provided by UNIX implementations",
+    0, 0
+  },
+
+  /*
+  ** ITS4 Compability Flags
+  **
+  ** These flags flags must appear in order (most severe -> weakest).
+  */
+
+  {
+    FK_ITS4, FK_SECURITY, specialFlag,
+    "its4mostrisky",
+    FLG_ITS4MOSTRISKY,
+    "most risky security vulnerabilities (from its4 database)",
+    "Security vulnerability classified as most risky in its4 database.",
+    0, 0
+  },
+  {
+    FK_ITS4, FK_SECURITY, specialFlag,
+    "its4veryrisky",
+    FLG_ITS4VERYRISKY,
+    "very risky security vulnerabilities (from its4 database)",
+    "Security vulnerability classified as very risky in its4 database.",
+    0, 0
+  },
+  {
+    FK_ITS4, FK_SECURITY, specialFlag,
+    "its4risky",
+    FLG_ITS4RISKY,
+    "risky security vulnerabilities (from its4 database)",
+    "Security vulnerability classified as risky in its4 database.",
+    0, 0
+  },
+  {
+    FK_ITS4, FK_SECURITY, specialFlag,
+    "its4moderate",
+    FLG_ITS4MODERATERISK,
+    "moderately risky security vulnerabilities (from its4 database)",
+    "Security vulnerability classified as moderate risk in its4 database.",
+    0, 0
+  },
+  {
+    FK_ITS4, FK_SECURITY, specialFlag,
+    "its4low",
+    FLG_ITS4LOWRISK,
+    "risky security vulnerabilities (from its4 database)",
+    "Security vulnerability classified as risky in its4 database.",
+    0, 0
+  },
+
+  /*
+  ** Syntactic comments
+  */
+
+  {
+    FK_SYNCOMMENTS, FK_SUPPRESS, plainFlag,
+    "nocomments",
+    FLG_NOCOMMENTS,
+    "ignore all stylized comments",
+    NULL, 0, 0
+  },
+  {
+    FK_SYNCOMMENTS, FK_ABSTRACT, plainFlag,
+    "noaccess",
+    FLG_NOACCESS,
+    "ignore access comments",
+    NULL, 0, 0
+  },
+
+  {
+    FK_SYNCOMMENTS, FK_SYNTAX, plainFlag,
+    "unrecogcomments",
+    FLG_UNRECOGCOMMENTS,
+    "stylized comment is unrecognized",
+    "Word after a stylized comment marker does not correspond to a "
+    "stylized comment.",
+    0, 0
+  },
+  {
+    FK_SYNCOMMENTS, FK_SYNTAX, plainFlag,
+    "unrecogflagcomments",
+    FLG_UNRECOGFLAGCOMMENTS,
+    "stylized flag comment uses an unrecognized flag",
+    "Semantic comment attempts to set a flag that is not recognized.",
+    0, 0
+  },
+  {
+    FK_SYNCOMMENTS, FK_SUPPRESS, modeFlag,
+    "tmpcomments",
+    FLG_TMPCOMMENTS,
+    "interpret t comments (ignore errors in lines marked with /*@t<n>@*/", 
+    NULL, 0, 0
+  },
+  {
+    FK_SYNCOMMENTS, FK_SUPPRESS, plainFlag,
+    "lintcomments",
+    FLG_LINTCOMMENTS,
+    "interpret traditional lint comments (/*FALLTHROUGH*/, /*NOTREACHED*/)",
+    NULL, 0, 0
+  },
+  {
+    FK_SYNCOMMENTS, FK_SUPPRESS, modeFlag,
+    "warnlintcomments",
+    FLG_WARNLINTCOMMENTS,
+    "warn when a traditional lint comment is used",
+    "A traditional lint comment is used. Some traditional lint comments "
+    "are interpreted by Splint to enable easier checking of legacy "
+    "code. It is preferable to replace these comments with the "
+    "suggested Splint alternative.",
+    0, 0
+  },
+
+  /*
+  ** Comments
+  */
+
+  {
+    FK_COMMENTS, FK_SYNTAX, plainFlag,
+    "continuecomment",
+    FLG_CONTINUECOMMENT,
+    "line continuation marker (\\) in comment before */ on same line",
+    "A line continuation marker (\\) appears inside a comment on the same "
+    "line as the comment close. Preprocessors should handle this "
+    "correctly, but it causes problems for some preprocessors.",
+    0, 0
+  },
+  {
+    FK_COMMENTS, FK_SYNTAX, plainFlag,
+    "slashslashcomment",
+    FLG_SLASHSLASHCOMMENT,
+    "use of // comment", 
+    "A // comment is used.  ISO C99 allows // comments, but earlier standards did not.",
+    0, 0
+  },
+  {
+    FK_COMMENTS, FK_SYNTAX, plainFlag,
+    "nestcomment",
+    FLG_NESTCOMMENT,
+    "comment begins inside comment", 
+    "A comment open sequence (/*) appears within a comment.  This usually "
+    "means an earlier comment was not closed.",
+    0, 0
+  },
+
+  /*
+  ** Flags for controlling warning message printing.
+  */
+
+  /* Display */
+
+  {
+    FK_DISPLAY, FK_ERRORS, plainFlag,
+    "quiet",
+    FLG_QUIET,
+    "suppress herald and error count",
+    NULL, 0, 0
+  },
+
+  /*
+  ** Default is to send messages, warnings and errors to stderr
+  */
+
+  {
+    FK_DISPLAY, FK_ERRORS, idemGlobalFlag,
+    "messagestreamstdout",
+    FLG_MESSAGESTREAMSTDOUT,
+    "send status messages to standard output stream",
+    NULL, 0, 0
+  },
+  {
+    FK_DISPLAY, FK_ERRORS, idemGlobalFlag,
+    "messagestreamstderr",
+    FLG_MESSAGESTREAMSTDERR,
+    "send status messages to standard error stream",
+    NULL, 0, 0
+  },
+  {
+    FK_DISPLAY, FK_ERRORS, globalStringFlag, ARG_FILE,
+    "messagestream",
+    FLG_MESSAGESTREAM,
+    "send status messages to <file>",
+    NULL, 0, 0
+  },
+
+  {
+    FK_DISPLAY, FK_ERRORS, idemGlobalFlag,
+    "warningstreamstdout",
+    FLG_WARNINGSTREAMSTDOUT,
+    "send warnings to standard output stream",
+    NULL, 0, 0
+  },
+  {
+    FK_DISPLAY, FK_ERRORS, idemGlobalFlag,
+    "warningstreamstderr",
+    FLG_WARNINGSTREAMSTDERR,
+    "send warnings to standard error stream",
+    NULL, 0, 0
+  },
+  {
+    FK_DISPLAY, FK_ERRORS, globalStringFlag, ARG_FILE,
+    "warningstream",
+    FLG_WARNINGSTREAM,
+    "send warnings to <file>",
+    NULL, 0, 0
+  },
+
+  {
+    FK_DISPLAY, FK_ERRORS, idemGlobalFlag,
+    "errorstreamstdout",
+    FLG_ERRORSTREAMSTDOUT,
+    "send fatal errors to standard output stream",
+    NULL, 0, 0
+  },
+  {
+    FK_DISPLAY, FK_ERRORS, idemGlobalFlag,
+    "errorstreamstderr",
+    FLG_ERRORSTREAMSTDERR,
+    "send fatal errors to standard error stream",
+    NULL, 0, 0
+  },
+  {
+    FK_DISPLAY, FK_ERRORS, globalStringFlag, ARG_FILE,
+    "errorstream",
+    FLG_ERRORSTREAM,
+    "send fatal errors to <file>",
+    NULL, 0, 0
+  },
+  
+  {
+    FK_DISPLAY, FK_ERRORS, globalFlag,
+    "streamoverwrite",
+    FLG_STREAMOVERWRITE,
+    "warn and exit if a stream output file would overwrite an existing file",
+    NULL, 0, 0
+  },
+
+
+  {
+    FK_DISPLAY, FK_ERRORS, plainFlag,
+    "showsummary",
+    FLG_SHOWSUMMARY,
+    "show summary of all errors reported and suppressed",
+    NULL, 0, 0
+  },
+  {
+    FK_DISPLAY, FK_FILES, plainFlag,
+    "showscan",
+    FLG_SHOWSCAN,
+    "show file names are they are processed",
+    NULL, 0, 0
+  },
+  {
+    FK_DISPLAY, FK_FILES, plainFlag,
+    "warnsysfiles",
+    FLG_WARNSYSFILES,
+    "Splint has been run on a system file, by default no errors are reported for system files.  Use +systemdirerrors if you want splint to report errors in system files.  A file is considered a system file if it is in a system directory or a subdirectory of a system directory.  The sysdirs flag can be used to control the directories treated as system directories.",
+    NULL, 0, 0
+  },
+  {
+    FK_DISPLAY, FK_NONE, globalFlag,
+    "stats",
+    FLG_STATS,
+    "display lines processed and time",
+    NULL, 0, 0
+  },
+  {
+    FK_DISPLAY, FK_NONE, globalFlag,
+    "timedist",
+    FLG_TIMEDIST,
+    "display time distribution",
+    NULL, 0, 0
+  },
+  {
+    FK_DISPLAY, FK_USE, globalFlag,
+    "showalluses",
+    FLG_SHOWUSES,
+    "show sorted list of uses of all globals",
+    NULL, 0, 0
+  },
+
+  /* Hints */
+
+  {
+    FK_HINTS, FK_FORMAT, plainFlag,
+    "hints",
+    FLG_HINTS,
+    "provide a hint the first time a particular warning appears",
+    "Provide a hint the first time a particular warning appears", 
+    0, 0
+  },
+  {
+    FK_HINTS, FK_FORMAT, plainFlag,
+    "forcehints",
+    FLG_FORCEHINTS,
+    "provide a hint for every warnings",
+    "Provide a hint for every warning",
+    0, 0
+  },
+
+  /*
+  ** Flags for debugging
+  */
+
+  {
+    FK_DEBUG, FK_NONE, valueFlag,
+    "bugslimit",
+    FLG_BUGSLIMIT,
+    "set maximum number of bugs detected before giving up",
+    NULL, 0, 0
+  },
+  {
+    FK_DEBUG, FK_BOUNDS, plainFlag,
+    "debugfcnconstraint",
+    FLG_DEBUGFUNCTIONCONSTRAINT,
+    "debug function constraints",
+    "Perform buffer overflow checking even if the errors would be surpressed.",
+    0, 0
+  },
+  {
+    FK_DEBUG, FK_NONE, specialDebugFlag,
+    "grammar",
+    FLG_GRAMMAR, 
+    "debug parsing", NULL,
+    0, 0
+  },
+  {
+    FK_DEBUG, FK_NONE, debugFlag,
+    "keep",
+    FLG_KEEP,
+    "do not delete temporary files", NULL,
+    0, 0
+  },
+  {
+    FK_DEBUG, FK_NONE, debugFlag,
+    "nopp",
+    FLG_NOPP,
+    "do not pre-process input files", NULL,
+    0, 0
+  },
+  {
+    FK_DEBUG, FK_NONE, debugFlag,
+    "showsourceloc",
+    FLG_SHOWSOURCELOC,
+    "display the source code location where a warning is produced", NULL,
+    0, 0
+  },
+} ;
+
+

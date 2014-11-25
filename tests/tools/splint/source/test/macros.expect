@@ -1,0 +1,129 @@
+
+macros.c: (in macro needparen)
+macros.c:7:26: Macro parameter used without parentheses: a
+macros.c:7:30: Macro parameter used without parentheses: b
+macros.c: (in macro needuse)
+macros.c:8:21: Macro parameter b not used
+   macros.lcl:6:1: Specification of b
+macros.c: (in macro multuse)
+macros.c:9:18: Macro parameter a used more than once
+macros.c: (in macro badassign)
+macros.c:10:26: Assignment to macro parameter: a
+macros.c:11: Macro badassign already defined
+   macros.c:10: Previous definition of badassign
+macros.c: (in macro badassign)
+macros.c:11:26: Operand of ++ is macro parameter (non-functional): (a)++
+macros.c:11:35: Operand of ++ is macro parameter (non-functional): ++(b)
+macros.c: (in macro predbad)
+macros.c:15:20: Macro parameter b used in true clause, but not in false clause
+macros.c: (in macro predbad2)
+macros.c:16:19: Macro parameter a used more than once
+macros.c:16:22: Macro parameter b used more than once
+macros.c: (in macro badval)
+macros.c:22:23: Function badval specified to return int, implemented as macro
+                   having type bool: ((a) == (b))
+   macros.lcl:14: Specification of badval
+macros.c: (in macro badconst)
+macros.c:23:20: Constant badconst specified as bool, but defined as int: 5
+   macros.lcl:18:15: Specification of badconst
+macros.c:25:21: Constant worseconst implemented as parameterized macro
+   macros.lcl:20:14: Specification of worseconst
+macros.c:27: Variable var implemented by a macro
+   macros.lcl:22:5: Specification of var
+macros.c:28: Variable var2 implemented as parameterized macro
+   macros.lcl:23:5: Specification of var2
+macros.c: (in macro var2)
+macros.c:28:15: Macro parameter x used more than once
+
+Finished checking --- 17 code warnings, as expected
+
+macros.c:3: Parameterized macro has no prototype or specification: mustard 
+macros.c: (in macro mustard)
+macros.c:3:30: Macro parameter used without parentheses: b
+macros.c:3:18: Macro parameter a used more than once
+macros.c:3:34: Macro parameter used without parentheses: a
+macros.c:4: Parameterized macro has no prototype or specification: ketchup 
+macros.c:6: Parameterized macro has no prototype or specification: ok 
+macros.c:7: Parameterized macro has no prototype or specification: needparen 
+macros.c: (in macro needparen)
+macros.c:7:26: Macro parameter used without parentheses: a
+macros.c:7:30: Macro parameter used without parentheses: b
+macros.c:8: Parameterized macro has no prototype or specification: needuse 
+macros.c: (in macro needuse)
+macros.c:8:21: Macro parameter b not used
+macros.c:9: Parameterized macro has no prototype or specification: multuse 
+macros.c: (in macro multuse)
+macros.c:9:18: Macro parameter a used more than once
+macros.c:10: Parameterized macro has no prototype or specification: badassign 
+macros.c: (in macro badassign)
+macros.c:10:26: Assignment to macro parameter: a
+macros.c:11: Macro badassign already defined
+   macros.c:10: Previous definition of badassign
+macros.c: (in macro badassign)
+macros.c:11:26: Operand of ++ is macro parameter (non-functional): (a)++
+macros.c:11:35: Operand of ++ is macro parameter (non-functional): ++(b)
+macros.c:14: Parameterized macro has no prototype or specification: predok 
+macros.c:15: Parameterized macro has no prototype or specification: predbad 
+macros.c: (in macro predbad)
+macros.c:15:20: Macro parameter b used in true clause, but not in false clause
+macros.c:16: Parameterized macro has no prototype or specification: predbad2 
+macros.c: (in macro predbad2)
+macros.c:16:19: Macro parameter a used more than once
+macros.c:16:22: Macro parameter b used more than once
+macros.c:18: Parameterized macro has no prototype or specification: badorder 
+macros.c:19: Parameterized macro has no prototype or specification: okorder 
+macros.c:20: Parameterized macro has no prototype or specification: okorder2 
+macros.c:22: Parameterized macro has no prototype or specification: badval 
+macros.c:23: Macro constant badconst not declared
+macros.c:24: Macro constant goodconst not declared
+macros.c:25: Parameterized macro has no prototype or specification: worseconst 
+macros.c:27: Macro constant var not declared
+macros.c:28: Parameterized macro has no prototype or specification: var2 
+macros.c: (in macro var2)
+macros.c:28:15: Macro parameter x used more than once
+
+Finished checking --- 34 code warnings, as expected
+
+macros.c:3: Parameterized macro has no prototype or specification: mustard 
+macros.c: (in macro mustard)
+macros.c:3:30: Macro parameter used without parentheses: b
+macros.c:3:18: Macro parameter a used more than once
+macros.c:3:34: Macro parameter used without parentheses: a
+macros.c:4: Parameterized macro has no prototype or specification: ketchup 
+macros.c:6: Parameterized macro has no prototype or specification: ok 
+macros.c:7: Parameterized macro has no prototype or specification: needparen 
+macros.c: (in macro needparen)
+macros.c:7:26: Macro parameter used without parentheses: a
+macros.c:7:30: Macro parameter used without parentheses: b
+macros.c:8: Parameterized macro has no prototype or specification: needuse 
+macros.c: (in macro needuse)
+macros.c:8:21: Macro parameter b not used
+macros.c:9: Parameterized macro has no prototype or specification: multuse 
+macros.c: (in macro multuse)
+macros.c:9:18: Macro parameter a used more than once
+macros.c:10: Parameterized macro has no prototype or specification: badassign 
+macros.c: (in macro badassign)
+macros.c:10:26: Assignment to macro parameter: a
+macros.c:11: Macro badassign already defined
+   macros.c:10: Previous definition of badassign
+macros.c: (in macro badassign)
+macros.c:11:26: Operand of ++ is macro parameter (non-functional): (a)++
+macros.c:11:35: Operand of ++ is macro parameter (non-functional): ++(b)
+macros.c:14: Parameterized macro has no prototype or specification: predok 
+macros.c:15: Parameterized macro has no prototype or specification: predbad 
+macros.c: (in macro predbad)
+macros.c:15:20: Macro parameter b used in true clause, but not in false clause
+macros.c:16: Parameterized macro has no prototype or specification: predbad2 
+macros.c: (in macro predbad2)
+macros.c:16:19: Macro parameter a used more than once
+macros.c:16:22: Macro parameter b used more than once
+macros.c:18: Parameterized macro has no prototype or specification: badorder 
+macros.c:19: Parameterized macro has no prototype or specification: okorder 
+macros.c:20: Parameterized macro has no prototype or specification: okorder2 
+macros.c:22: Parameterized macro has no prototype or specification: badval 
+macros.c:25: Parameterized macro has no prototype or specification: worseconst 
+macros.c:28: Parameterized macro has no prototype or specification: var2 
+macros.c: (in macro var2)
+macros.c:28:15: Macro parameter x used more than once
+
+Finished checking --- 31 code warnings, as expected

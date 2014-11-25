@@ -1,0 +1,41 @@
+
+flags.c:1:9: Variable x initialized to type char, expects int: 'c'
+flags.c:5:9: Variable y
+    initialized to type
+    char, expects int:
+    'c'
+flags.c:7:18: Value for
+    linelen must be at
+    least 20 (given 13)
+flags.c:11:5:
+    Internal identifier
+    xx2 is not
+    distinguishable
+    from xx1 in the
+    first 2 characters
+    (xx)
+   flags.c:10:5:
+   Declaration of
+   xx1
+flags.c:13:4:
+    Semantic comment
+    attempts to restore
+    flag linelen.  A
+    flag for setting a
+    value cannot be
+    restored.
+flags.c:15:4: Semantic comment attempts to set global flag dump.  A
+                 global flag cannot be set locally.
+flags.c:16:22: Flag macrovarprefix (in semantic comment) must be
+                  followed by an argument
+flags.c:17:26: Flag macrovarprefix (in semantic comment) must be
+                  followed by an argument
+flags.c:18:20: Flag linelen must be followed by a positive number
+                  number.  Followed by asdf
+
+Finished checking --- 8 code warnings, as expected
+
+flags.c:1:9: Variable x initialized to type char, expects int: 'c'
+flags.c:5:9: Variable y initialized to type char, expects int: 'c'
+
+Finished checking --- 2 code warnings, as expected

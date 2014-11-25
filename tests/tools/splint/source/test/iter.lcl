@@ -1,0 +1,5 @@
+iter intFor (int from, int to, int by, yield int x) ;
+
+iter noYield (int from, int to) ; /* 1 <spec>. no yield param, 9, 10. noYield, end_noYield not defined */
+
+iter arrayElements (int from, int to, int *a, yield int x) ;

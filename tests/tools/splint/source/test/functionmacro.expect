@@ -1,0 +1,7 @@
+
+functionmacro.c: (in function blah)
+functionmacro.c:7:3: Assignment of size_t to int: len = strlen(__FUNCTION__)
+functionmacro.c: (in function main)
+functionmacro.c:19:2: Path with no return in function declared to return int
+
+Finished checking --- 2 code warnings, as expected

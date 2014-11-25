@@ -1,0 +1,7 @@
+#
+# rc1.splintrc
+#
+
+-DMYSTERY="a silly\"flag\"\\"
+
+-f rc2.splintrc

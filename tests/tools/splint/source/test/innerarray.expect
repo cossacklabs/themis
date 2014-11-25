@@ -1,0 +1,23 @@
+
+innerarray.c: (in function fn)
+innerarray.c:4:12: Parameter arr not used
+innerarray.c:9:13: Function parameter arr is incomplete type (inner array must
+                      have bounds): int [10][]
+innerarray.c: (in function fn2)
+innerarray.c:9:13: Parameter arr not used
+innerarray.c:14:13: Function parameter arr is incomplete type (inner array must
+                       have bounds): int [][]
+innerarray.c: (in function fn3)
+innerarray.c:14:13: Parameter arr not used
+innerarray.c: (in function fn4)
+innerarray.c:19:13: Parameter arr not used
+innerarray.c:24:13: Function parameter arr is incomplete type (inner array must
+                       have bounds): int [][10][][4]
+innerarray.c: (in function fn5)
+innerarray.c:24:13: Parameter arr not used
+innerarray.c: (in function main)
+innerarray.c:33:13: Passed storage array not completely defined (*array is
+                       undefined): fn (array)
+innerarray.c:32:7: Variable array2 declared but not used
+
+Finished checking --- 10 code warnings, as expected

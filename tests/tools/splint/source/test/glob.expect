@@ -1,0 +1,31 @@
+
+glob.c: (in function useGlob)
+glob.lcl:3: Global z listed but not used
+glob.c: (in function dontuseGlob)
+glob.c:13:11: Undocumented use of global x
+glob.c: (in function callsUseGlob)
+glob.c:23:11: Called procedure useGlob may access global y
+glob.c:23:11: Called procedure useGlob may access global z
+
+Finished checking --- 4 code warnings, as expected
+
+glob.c: (in function dontuseGlob)
+glob.c:13:11: Undocumented use of global x
+glob.c: (in function callsUseGlob)
+glob.c:23:11: Called procedure useGlob may access global y
+glob.c:23:11: Called procedure useGlob may access global z
+
+Finished checking --- 3 code warnings, as expected
+
+glob.c: (in function useGlob)
+glob.lcl:3: Global z listed but not used
+glob.c: (in function dontuseGlob)
+glob.c:13:11: Undocumented use of global x
+glob.c: (in function unspec)
+glob.c:18:11: Undocumented use of global y
+glob.c:18:15: Undocumented use of global z
+glob.c: (in function callsUseGlob)
+glob.c:23:11: Called procedure useGlob may access global y
+glob.c:23:11: Called procedure useGlob may access global z
+
+Finished checking --- 6 code warnings, as expected

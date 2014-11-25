@@ -1,0 +1,3 @@
+int f (sef int x, int y);
+
+int g (int *x) { modifies *x; }

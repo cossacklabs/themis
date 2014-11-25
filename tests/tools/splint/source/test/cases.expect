@@ -1,0 +1,46 @@
+
+cases.c: (in function f)
+cases.c:12:10: Fall through case (no preceding break)
+cases.c:13:11: Variable i used before definition
+cases.c:30:10: Fall through case (no preceding break)
+cases.c:37:13: Fall through case (no preceding break)
+cases.c:40:2: Path with no return in function declared to return int
+
+Finished checking --- 5 code warnings, as expected
+
+cases2.c: (in function f2)
+cases2.c:26:5: Variable x is released in one possible execution, but live in
+                  other possible execution.
+   cases2.c:26:5: in one possible execution:
+   cases2.c:23:16: Storage x released
+cases2.c: (in function f3)
+cases2.c:37:5: Variable x is released in one possible execution, but live in
+                  other possible execution.
+   cases2.c:37:5: in one possible execution:
+   cases2.c:36:16: Storage x released
+
+Finished checking --- 2 code warnings, as expected
+
+cases2.c: (in function f2)
+cases2.c:26:5: Variable x is released in one possible execution, but live in
+                  other possible execution.
+   cases2.c:26:5: in one possible execution:
+   cases2.c:23:16: Storage x released
+cases2.c: (in function f3)
+cases2.c:37:5: Variable x is released in one possible execution, but live in
+                  other possible execution.
+   cases2.c:37:5: in one possible execution:
+   cases2.c:36:16: Storage x released
+cases2.c:1:24: Function g declared but not defined
+
+Finished checking --- 3 code warnings, as expected
+
+cases2.c: (in function f2)
+cases2.c:28:12: Variable x used after being released
+   cases2.c:23:16: Storage x released
+cases2.c: (in function f3)
+cases2.c:39:12: Variable x used after being released
+   cases2.c:36:16: Storage x released
+cases2.c:1:24: Function g declared but not defined
+
+Finished checking --- 3 code warnings, as expected

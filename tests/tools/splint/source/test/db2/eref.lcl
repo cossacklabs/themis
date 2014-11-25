@@ -1,0 +1,44 @@
+imports employee;
+
+immutable type eref;
+spec immutable type map;
+
+spec map m;
+constant eref erefNIL;
+
+eref eref_alloc(void) map m; 
+{
+  modifies m;
+  /* ensures newInd(result, m^, m'); */
+}
+
+void eref_free(eref er) map m; 
+{
+  /* requires er \in domain(m^); */
+  modifies m;
+  /* ensures m' = delete(m^, er); */
+}
+
+void eref_assign(eref er, employee e) map m; 
+{
+  /* requires er \in domain(m^); */
+  modifies m;
+  /* ensures m' = assign(m^, er, e); */
+}
+
+employee eref_get(eref er) map m; 
+{
+  /* requires er \in domain(m^); */
+  /* ensures result = m^[er]; */
+}
+
+bool eref_equal(eref er1, eref er2) 
+{
+  /* ensures result = (er1 = er2); */
+}
+
+void eref_initMod(void) map m; 
+{
+  modifies m;
+  /* ensures m' = new; */
+}

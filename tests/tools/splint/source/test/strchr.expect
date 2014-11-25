@@ -1,0 +1,8 @@
+
+strchr.c: (in function func)
+strchr.c:5:4: Dereference of possibly null pointer c: *c
+   strchr.c:4:7: Storage c may become null
+strchr.c:5:3: Suspect modification of observer c: *c = 'd'
+   strchr.c:4:7: Storage *c becomes observer
+
+Finished checking --- 2 code warnings, as expected

@@ -1,0 +1,6 @@
+
+returned.c: (in function f)
+returned.c:6:4: Dereference of possibly null pointer s: *s
+   returned.c:5:13: Storage s may become null
+
+Finished checking --- 1 code warning, as expected

@@ -1,0 +1,5 @@
+mutable type tam;
+immutable type tai;
+mutable type tmixm;
+immutable type tmixi;
+typedef int *tmixa;

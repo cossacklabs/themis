@@ -1,0 +1,167 @@
+/*
+** signal.h
+*/
+
+constant int NSIG;
+
+constant int SIGHUP;
+constant int SIGINT;
+constant int SIGQUIT;
+constant int SIGILL;
+
+
+constant int     ILL_RESAD_FAULT;
+constant int     ILL_PRIVIN_FAULT;
+constant int     ILL_RESOP_FAULT;
+constant int     ILL_VECOP_FAULT;
+constant int     ILL_VECINST_FAULT;
+ 				 
+ 
+
+
+constant int SIGTRAP;
+constant int SIGIOT;
+constant int SIGEMT;
+constant int SIGFPE;
+
+
+constant int     FPE_INTOVF_TRAP;
+constant int     FPE_INTDIV_TRAP;
+constant int     FPE_FLTOVF_TRAP;
+constant int     FPE_FLTDIV_TRAP;
+constant int     FPE_FLTUND_TRAP;
+constant int     FPE_DECOVF_TRAP;
+constant int     FPE_SUBRNG_TRAP;
+constant int     FPE_FLTOVF_FAULT;
+constant int     FPE_FLTDIV_FAULT;
+constant int     FPE_FLTUND_FAULT;
+
+ 
+
+constant int FPE_VECTOR          ;
+constant int VFPE_FLTUND_TRAP    ;
+constant int VFPE_FLTDIV_TRAP    ;
+constant int VFPE_FLTRSV_TRAP    ;
+constant int VPFE_FLTOVF_FAULT   ;
+constant int VFPE_INTOVF_TRAP    ;
+
+
+constant int SIGKILL  ;
+constant int SIGBUS   ;
+constant int SIGSEGV  ;
+constant int SIGSYS   ;
+constant int SIGPIPE  ;
+constant int SIGALRM  ;
+constant int SIGTERM  ;
+
+
+constant int     TERM_VECT_HARD	;
+constant int     TERM_VECT_TOOMANY ;
+
+
+constant int SIGURG    ;
+constant int SIGSTOP   ;
+constant int SIGTSTP   ;
+constant int SIGCONT   ;
+constant int SIGCHLD   ;
+constant int SIGTTIN   ;
+constant int SIGTTOU   ;
+constant int SIGIO     ;
+constant int SIGXCPU   ;
+constant int SIGXFSZ   ;
+constant int SIGVTALRM ;
+constant int SIGPROF   ;
+constant int SIGWINCH  ;
+constant int SIGLOST   ;
+constant int SIGUSR1   ;
+constant int SIGUSR2   ;
+ 
+constant int SIGCLD ;
+constant int SIGABRT;
+
+constant int BRK_USERBP	;
+constant int BRK_KERNELBP ;
+constant int BRK_ABORT	;
+constant int BRK_BD_TAKEN ;
+constant int BRK_BD_NOTTAKEN ;
+constant int BRK_SSTEPBP ;
+constant int BRK_OVERFLOW ;
+constant int BRK_DIVZERO; 
+constant int BRK_RANGE ;
+constant int BRK_STACKOVERFLOW;
+
+typedef long sig_atomic_t;
+typedef int sigset_t;  
+
+typedef struct sigvec {
+ void	 (*sv_handler)();	 
+ sigset_t sv_mask;		 
+ int	sv_flags;		 
+} __sigvec;
+
+typedef struct sigaction {
+ void	 (*sa_handler)();	 
+ sigset_t sa_mask;		 
+ int	 sa_flags;		 
+} __sigaction;
+
+constant int SV_ONSTACK      ;
+constant int SV_INTERRUPT    ;
+
+constant int SA_NOCLDSTOP  ;
+
+constant int SV_OLDSIG	; 
+constant int sv_onstack ; 
+
+constant int SIG_BLOCK ;
+constant int SIG_UNBLOCK ;
+constant int SIG_SETMASK	;
+
+typedef struct sigstack {
+ char	*ss_sp;			 
+ int	ss_onstack;		 
+} __sigstack ;
+
+typedef struct sigcontext {
+ int	sc_onstack;		 
+ int	sc_mask;		 
+ int	sc_pc;			 
+ int	sc_regs[32];	 
+ int	sc_mdlo;	 
+ int	sc_mdhi;	 
+ int	sc_ownedfp;	 
+ int	sc_fpregs[32];	 
+ int	sc_fpc_csr;	 
+ int	sc_fpc_eir;	 
+ int	sc_cause;	 
+ int	sc_badvaddr;	 
+ int	sc_badpaddr;	 
+} __sigcontext; 
+
+typedef void(*__scp)(int);
+
+constant __scp BADSIG;
+constant __scp SIG_ERR;
+constant __scp SIG_DFL;
+constant __scp SIG_IGN;
+
+typedef int pid_t;
+
+/*
+   void (*signal(int __sig, void(*__func)(int)))(int) { ensures true; }
+*/
+int raise( int __sig ) { ensures true; }
+int  kill( pid_t __pid, int __sig ) { ensures true; }
+int  sigemptyset( sigset_t *__set ) { ensures true; }
+int  sigfillset( sigset_t *__set ) { ensures true; }
+int  sigaddset( sigset_t *__set, int __signo ) { ensures true; }
+int sigdelset( sigset_t *__set, int __signo ) { ensures true; }
+int sigismember(  sigset_t *__set, int __signo ) { ensures true; }
+int  sigaction( int __sig,  struct sigaction *__act,
+ 	struct sigaction *__oact ) { ensures true; }
+int  sigprocmask( int __how,  sigset_t *__set, sigset_t *__oset ) { ensures true; }
+int sigpending( sigset_t *__set ) { ensures true; }
+int sigsuspend(  sigset_t *__sigmask ) { ensures true; }
+
+int sigmask(int m) { ensures true; } /* i think...? */
+

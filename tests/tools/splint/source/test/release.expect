@@ -1,0 +1,6 @@
+
+release.c: (in function f)
+release.c:25:12: Owned storage z not released before return
+   release.c:22:7: Storage z becomes owned
+
+Finished checking --- 1 code warning, as expected

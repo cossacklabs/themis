@@ -1,0 +1,8 @@
+imports mut;
+
+int glob;
+int *globp;
+
+int f (int *a, int b, int **c) int glob; int *globp; { }
+
+int h (mut a, mut b) { }

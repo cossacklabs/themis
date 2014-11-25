@@ -1,0 +1,35 @@
+
+rc.c: (in function f)
+rc.c:3:10: Observer storage returned without qualification:
+              "a flag\"wicked cool"
+   rc.c:3:10: Storage becomes observer
+
+Finished checking --- 1 code warning, as expected
+
+rc.c: (in function f)
+rc.c:3:10: Return value type int does not match declared type char *: 12
+
+Finished checking --- 1 code warning, as expected
+
+rc2.splintrc:1:18: Setting +boolint redundant with current value
+rc.c: (in function f)
+rc.c:3:10: Observer storage returned without qualification: "a silly\"flag\"\\"
+   rc.c:3:10: Storage becomes observer
+
+Finished checking --- 1 code warning, as expected
+
+rc2.splintrc:1:18: Setting +boolint redundant with current value
+rc.c: (in function f)
+rc.c:3:10: Unrecognized identifier: MYSTERY
+
+Finished checking --- 1 code warning, as expected
+
+rc3.splintrc:6:3: Flag dump must be followed by a string
+  A flag is not recognized or used in an incorrect way (Use -badflag to inhibit
+  warning)
+rc3.splintrc:6:3: Cannot list files in .splintrc files:
+                     internalnamelen, 73 (probable missing + or -)
+rc.c: (in function f)
+rc.c:3:10: Unrecognized identifier: MYSTERY
+
+Finished checking --- 1 code warning, as expected

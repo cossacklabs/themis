@@ -1,0 +1,9 @@
+mutable type pair;
+
+void incx1 (pair p) { }
+void incx2 (pair p) { }
+void incx3 (pair p) { }
+void incx4 (pair p) { }
+
+only pair pair_create (void) { }
+void pair_free (out only pair p) { modifies p; }

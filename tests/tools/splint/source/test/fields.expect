@@ -1,0 +1,44 @@
+
+fields.c: (in function pair_create1)
+fields.c:37:10: Storage p->z reachable from return value is owned (should be
+                   dependent)
+   fields.c:34:3: Storage p->z becomes owned (through alias p->y)
+fields.c: (in function mangle)
+fields.c:43:2: Released storage p->x reachable from parameter at return point
+   fields.c:42:9: Storage p->x released
+fields.c: (in function mangle2)
+fields.c:49:2: Storage p->y reachable from parameter is dependent (should be
+                  owned)
+   fields.c:48:3: Storage p->y becomes dependent
+fields.c: (in function mangle3)
+fields.c:55:10: Storage p->y reachable from return value is dependent (should
+                   be owned)
+   fields.c:54:3: Storage p->y becomes dependent
+fields.c: (in function f)
+fields.c:60:3: Owned storage p->x (type int *) not released before assignment:
+                  p->x = NULL
+fields.c:62:18: Function returns with null storage derivable from parameter
+                   p->x
+   fields.c:60:10: Storage p->x becomes null
+
+Finished checking --- 6 code warnings, as expected
+
+fields2.c: (in function pair_copy)
+fields2.c:21:16: Storage p->x reachable from parameter is kept (should be
+                    implicitly only)
+   fields2.c:17:3: Storage p->x becomes kept
+fields2.c:21:16: Storage p->y reachable from parameter is kept (should be
+                    implicitly only)
+   fields2.c:18:3: Storage p->y becomes kept
+fields2.c: (in function pair_create)
+fields2.c:30:3: Only storage p->y assigned to dependent: p->z = p->y
+fields2.c:35:10: Storage p->y reachable from return value is unqualified
+                    (should be implicitly only)
+fields2.c: (in function pair_swankle)
+fields2.c:43:14: Storage p->x reachable from passed parameter is kept (should
+                    be implicitly only): p
+   fields2.c:42:3: Storage p->x becomes kept
+
+Finished checking --- 5 code warnings, as expected
+
+Finished checking --- no warnings
