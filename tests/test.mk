@@ -4,6 +4,7 @@ COMMON_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.c,$(TEST_OBJ_PATH)/%.o, $(COMMON
 NIST_STS_DIR = tests/soter/nist-sts
 
 include tests/soter/soter.mk
+include tests/tools/tools.mk
 
 nist_rng_test_suite:
 	mkdir -p $(NIST_STS_DIR)/obj
