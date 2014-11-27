@@ -6,7 +6,7 @@ SPLINT_OUT_FILE = static_analysis.txt
 
 build_splint:
 	mkdir -p $(SPLINT_BIN_DIR)
-	cd $(SPLINT_SRC_DIR) && make clean && ./configure --prefix=$(realpath $(SPLINT_BIN_DIR)) && make && make install
+	cd $(SPLINT_SRC_DIR) && ./configure --prefix=$(realpath $(SPLINT_BIN_DIR)) && make && make install
 	-rm $(SPLINT_OUT_FILE)
 
 SPLINT_FILES = $(patsubst %.c,%.splint, $(SOTER_SRC))

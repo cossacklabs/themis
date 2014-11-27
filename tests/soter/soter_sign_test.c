@@ -106,6 +106,7 @@ static int sign_test(soter_sign_alg_t alg)
 static void soter_sign_test()
 {
   testsuite_fail_if(sign_test(SOTER_SIGN_rsa_pss_pkcs8),"soter sign SOTER_SIGN_rsa_pss_pkcs8");
+  testsuite_fail_if(sign_test(SOTER_SIGN_ecdsa_none_pkcs8),"soter sign SOTER_SIGN_ecdsa_none_pkcs8");
 }
 
 void run_soter_sign_test(){

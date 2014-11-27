@@ -14,6 +14,7 @@
 
 soter_status_t soter_ecdsa_gen_key(EVP_PKEY_CTX *pkey_ctx);
 soter_status_t soter_ecdsa_import_key(EVP_PKEY *pkey, const void* key, const size_t key_length);
+soter_status_t soter_ec_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate);
 
 #endif
 
