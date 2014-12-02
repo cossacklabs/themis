@@ -63,7 +63,7 @@ static bool generate_test_data(void)
 
 static bool run_nist_suite(void)
 {
-	FILE *nist_file = popen("./assess 1000000", "w");
+	FILE *nist_file = popen("./assess 1000000 > /dev/null", "w");
 	char cmd[128];
 
 	if (!nist_file)

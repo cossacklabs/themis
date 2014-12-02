@@ -21,6 +21,7 @@ typedef int soter_status_t;
 
 #include <soter/soter_rand.h>
 #include <soter/soter_hash.h>
+#include <soter/soter_hmac.h>
 #include <soter/soter_sym.h>
 #include <soter/soter_asym_cipher.h>
 #include <soter/soter_asym_ka.h>
