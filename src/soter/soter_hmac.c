@@ -111,7 +111,7 @@ soter_status_t soter_hmac_cleanup(soter_hmac_ctx_t *hmac_ctx)
 
 soter_status_t soter_hmac_update(soter_hmac_ctx_t *hmac_ctx, const void *data, size_t length)
 {
-	if ((NULL == hmac_ctx) || (NULL == data) || (0 == length))
+	if ((NULL == hmac_ctx) || (NULL == data))
 	{
 		return HERMES_INVALID_PARAMETER;
 	}
@@ -131,7 +131,7 @@ soter_status_t soter_hmac_final(soter_hmac_ctx_t *hmac_ctx, uint8_t* hmac_value,
 	}
 
 	res = soter_hash_final(&(hmac_ctx->hash_ctx), NULL, &output_length);
-	if (HERMES_SUCCESS != res)
+	if (HERMES_BUFFER_TOO_SMALL != res)
 	{
 		return res;
 	}

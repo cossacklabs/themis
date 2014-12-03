@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     testsuite_start_testing();
 
 	run_soter_hash_tests();
+	run_soter_hmac_tests();
 	run_soter_asym_cipher_tests();
 	run_soter_asym_ka_tests();
 	run_soter_sym_test();
