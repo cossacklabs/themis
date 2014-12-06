@@ -5,6 +5,7 @@ NIST_STS_DIR = tests/soter/nist-sts
 
 include tests/soter/soter.mk
 include tests/tools/tools.mk
+include tests/themis/themis.mk
 
 nist_rng_test_suite:
 	mkdir -p $(NIST_STS_DIR)/obj
@@ -16,7 +17,10 @@ else
 	$(MAKE) -C $(NIST_STS_DIR) $(MAKECMDGOALS)
 endif
 
-soter_test: nist_rng_test_suite static $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) static
+soter_test: nist_rng_test_suite soter_static $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ)
 	$(CC) -o $(TEST_BIN_PATH)/soter_test $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) -L$(BIN_PATH) -lsoter $(LDFLAGS)
+	
+themis_test: themis_static $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ)
+	$(CC) -o $(TEST_BIN_PATH)/themis_test $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ) -L$(BIN_PATH) -lthemis -lsoter $(LDFLAGS)
 
-test: soter_test
+test: soter_test themis_test

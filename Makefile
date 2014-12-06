@@ -17,14 +17,21 @@ CFLAGS += -Werror
 CFLAGS += -g
 
 include src/soter/soter.mk
+include src/themis/themis.mk
 
 all: test
 
-static: $(SOTER_OBJ)
+soter_static: $(SOTER_OBJ)
 	$(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
 	
-shared: $(SOTER_OBJ)
+soter_shared: $(SOTER_OBJ)
 	$(CC) -shared -o $(BIN_PATH)/lib$(SOTER_BIN).so $(SOTER_OBJ)
+	
+themis_static: soter_static $(THEMIS_OBJ)
+	$(AR) rcs $(BIN_PATH)/lib$(THEMIS_BIN).a $(THEMIS_OBJ)
+	
+themis_shared: soter_shared $(THEMIS_OBJ)
+	$(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_BIN).so $(THEMIS_OBJ)
 	
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 	mkdir -p $(@D)
