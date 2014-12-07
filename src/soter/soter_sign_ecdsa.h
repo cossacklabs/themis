@@ -4,8 +4,8 @@
  * (c) CossackLabs
  */
 
-#ifndef SOTER_SIGN_RSA_H
-#definr SOTER_SIGN_RSA_H
+#ifndef SOTER_SIGN_ECDSA_H
+#define SOTER_SIGN_ECDSA_H
 
 #include "soter/soter.h"
 
@@ -17,4 +17,4 @@ soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const v
 soter_status_t soter_verify_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const void* data, const size_t data_length);
 soter_status_t soter_verify_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* signature, size_t signature_length);
 
-#endif /*SOTER_SIGN_RSA_H*/
+#endif /*SOTER_SIGN_ECDSA_H*/
