@@ -29,13 +29,20 @@ soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const v
     EVP_PKEY_free(pkey);
     return HERMES_FAIL;
   }
-  if(soter_ec_import_key(pkey, private_key, private_key_length)!=HERMES_SUCCESS){
-    EVP_PKEY_free(pkey);
-    return HERMES_FAIL;
+
+  /* TODO: Review needed */
+  if ((private_key) && (private_key_length)) {
+	  if(soter_ec_import_key(pkey, private_key, private_key_length)!=HERMES_SUCCESS){
+		EVP_PKEY_free(pkey);
+		return HERMES_FAIL;
+	  }
   }
-  if(soter_ec_import_key(pkey, public_key, public_key_length)!=HERMES_SUCCESS){
-    EVP_PKEY_free(pkey);
-    return HERMES_FAIL;
+
+  if ((public_key) && (public_key_length)) {
+	  if(soter_ec_import_key(pkey, public_key, public_key_length)!=HERMES_SUCCESS){
+		EVP_PKEY_free(pkey);
+		return HERMES_FAIL;
+	  }
   }
 
   /*md_ctx init*/
@@ -59,14 +66,21 @@ soter_status_t soter_verify_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const
   return HERMES_SUCCESS;
 }
 
+/* TODO: Review needed */
 soter_status_t soter_verify_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* signature, size_t signature_length)
 {
+  int res;
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
   if (!pkey){
     return HERMES_INVALID_PARAMETER;
   }
-  if(!EVP_DigestVerifyFinal(ctx->md_ctx, signature, signature_length)){
-    return HERMES_FAIL;
+
+  switch (EVP_DigestVerifyFinal(ctx->md_ctx, signature, signature_length)) {
+  case 0:
+	  return HERMES_INVALID_SIGNATURE;
+  case 1:
+	  return HERMES_SUCCESS;
+  default:
+	  return HERMES_FAIL;
   }
-  return HERMES_SUCCESS;
 }

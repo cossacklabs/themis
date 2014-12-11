@@ -11,5 +11,6 @@
 
 int main(int argc, char *argv[])
 {
+	themis_test_func();
 	return 0;
 }

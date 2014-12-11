@@ -53,11 +53,34 @@ typedef struct secure_session_user_callbacks_type secure_session_user_callbacks_
 
 /* TODO: probably move this to private headers */
 #include <soter/soter_t.h>
+#include <themis/secure_session_peer.h>
+/* TODO: move to separate header */
+struct secure_session_peer_type
+{
+	uint8_t *id;
+	size_t id_length;
+
+	uint8_t *ecdh_key;
+	size_t ecdh_key_length;
+
+	uint8_t *sign_key;
+	size_t sign_key_length;
+};
+
+typedef struct secure_session_peer_type secure_session_peer_t;
+
+themis_status_t secure_session_peer_init(secure_session_peer_t *peer, const void *id, size_t id_len, const void *ecdh_key, size_t ecdh_key_len, const void *sign_key, size_t sign_key_len);
+void secure_session_peer_cleanup(secure_session_peer_t *peer);
+
 struct secure_session_type
 {
 	soter_asym_ka_t ecdh_ctx;
 	const secure_session_user_callbacks_t *user_callbacks;
-	uint8_t *id;
+
+	struct secure_session_peer_type we;
+	struct secure_session_peer_type peer;
+
+	/*uint8_t *id;
 	size_t id_length;
 	uint8_t *sign_key;
 	size_t sign_key_length;
@@ -66,6 +89,9 @@ struct secure_session_type
 	size_t peer_id_length;
 	uint8_t *peer_key;
 	size_t peer_key_length;
+
+	uint8_t *peer_sign_key;
+	size_t peer_sign_key_length;*/
 };
 
 typedef struct secure_session_type secure_session_t;
@@ -82,6 +108,8 @@ themis_status_t secure_session_uwrap(secure_session_t *session_ctx, const void *
 
 themis_status_t secure_session_send(secure_session_t *session_ctx, const void *message, size_t message_length);
 #define secure_session_receive secure_session_uwrap
+
+void themis_test_func(void);
 
 #endif /* THEMIS_H */
 
