@@ -18,4 +18,10 @@
 #define HERMES_ERROR_OUT(message) fprintf(stderr, "%s:%u - error: %s",__FILE__,__LINE__,message) 
 #define HERMES_DEBUG_OUT(message) fprintf(stdout, "%s:%u - debug: %s",__FILE__,__LINE__,message) 
 
+#define HERMES_CHECK(x) if(!(x)){	\
+	HERMES_ERROR_OUT(#x);		\
+	return HERMES_FAIL;		\
+    }
+
+
 #endif /* HERMES_ERROR_H */

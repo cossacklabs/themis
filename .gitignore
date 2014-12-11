@@ -7,3 +7,4 @@ tests/tools/splint/source/src/.deps/**
 **.so
 **.**~
 **.**#
+static_analysis.txt
