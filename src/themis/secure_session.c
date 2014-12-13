@@ -4,7 +4,7 @@
  * (c) CossackLabs
  */
 
-#include <themis/themis.h>
+#include <themis/secure_session.h>
 #include <common/error.h>
 #include <soter/soter_rsa_key.h>
 #include <soter/soter_ec_key.h>
@@ -246,6 +246,8 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 	uint8_t *data_to_send = NULL;
 	size_t length_to_send;
 
+	soter_container_hdr_t *container;
+
 	size_t ecdh_key_length = 0;
 	size_t signature_length = 0;
 
@@ -267,7 +269,7 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 		goto err;
 	}
 
-	length_to_send = session_ctx->we.id_length + ecdh_key_length + signature_length;
+	length_to_send = 2 * sizeof(soter_container_hdr_t) + session_ctx->we.id_length + ecdh_key_length + signature_length;
 	data_to_send = malloc(length_to_send);
 	if (NULL == data_to_send)
 	{
@@ -275,23 +277,36 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 		goto err;
 	}
 
-	memcpy(data_to_send, session_ctx->we.id, session_ctx->we.id_length);
+	/* Storing ID in a container */
+	container = (soter_container_hdr_t *)data_to_send + 1;
 
-	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), data_to_send + session_ctx->we.id_length, &ecdh_key_length, false);
+	memcpy(container->tag, THEMIS_SESSION_ID_TAG, SOTER_CONTAINER_TAG_LENGTH);
+	soter_container_set_data_size(container, session_ctx->we.id_length);
+	memcpy(soter_container_data(container), session_ctx->we.id, session_ctx->we.id_length);
+	soter_update_container_checksum(container);
+
+	/* Moving back to beginning of allocated buffer */
+	container = (soter_container_hdr_t *)data_to_send;
+
+	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length, &ecdh_key_length, false);
 	if (HERMES_SUCCESS != soter_status)
 	{
 		res = soter_status;
 		goto err;
 	}
 
-	sign_data.data = data_to_send + session_ctx->we.id_length;
+	sign_data.data = data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length;
 	sign_data.length = ecdh_key_length;
 
-	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, &sign_data, 1, data_to_send + session_ctx->we.id_length + ecdh_key_length, &signature_length);
+	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, &sign_data, 1, data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length + ecdh_key_length, &signature_length);
 	if (HERMES_SUCCESS != res)
 	{
 		goto err;
 	}
+
+	memcpy(container->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH);
+	soter_container_set_data_size(container, length_to_send - sizeof(soter_container_hdr_t));
+	soter_update_container_checksum(container);
 
 	session_ctx->user_callbacks->send_data(data_to_send, length_to_send, session_ctx->user_callbacks->user_data);
 
@@ -307,8 +322,10 @@ err:
 
 themis_status_t secure_session_accept(secure_session_t *session_ctx, const void *data, size_t data_length)
 {
-	const uint8_t *peer_id = data;
-	const soter_container_hdr_t *peer_ecdh_key = (const soter_container_hdr_t *)(peer_id + session_ctx->we.id_length);
+	const soter_container_hdr_t *proto_message = data;
+	const soter_container_hdr_t *peer_id;
+
+	const soter_container_hdr_t *peer_ecdh_key;
 	size_t peer_ecdh_key_length;
 
 	const uint8_t *signature;
@@ -323,11 +340,39 @@ themis_status_t secure_session_accept(secure_session_t *session_ctx, const void 
 	const soter_container_hdr_t *peer_sign_key;
 	data_buf_t sign_data;
 
-	/* TODO: This code assumes that ids are same length within the system */
-	if (data_length < (session_ctx->we.id_length + sizeof(soter_container_hdr_t)))
+	if (data_length < sizeof(soter_container_hdr_t))
 	{
 		return HERMES_INVALID_PARAMETER;
 	}
+
+	if (memcmp(proto_message->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH))
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	if (data_length < (soter_container_data_size(proto_message) + sizeof(soter_container_hdr_t)))
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	if (HERMES_SUCCESS != soter_verify_container_checksum(proto_message))
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	peer_id = (const soter_container_hdr_t *)soter_container_const_data(proto_message);
+
+	if (memcmp(peer_id->tag, THEMIS_SESSION_ID_TAG, SOTER_CONTAINER_TAG_LENGTH))
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	if (HERMES_SUCCESS != soter_verify_container_checksum(peer_id))
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	peer_ecdh_key = (const soter_container_hdr_t *)(soter_container_const_data(peer_id) + soter_container_data_size(peer_id));
 
 	if (memcmp(peer_ecdh_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)))
 	{
@@ -336,15 +381,10 @@ themis_status_t secure_session_accept(secure_session_t *session_ctx, const void 
 
 	peer_ecdh_key_length = ntohl(peer_ecdh_key->size);
 
-	if (data_length < (session_ctx->we.id_length + peer_ecdh_key_length))
-	{
-		return HERMES_INVALID_PARAMETER;
-	}
+	signature = soter_container_const_data(peer_ecdh_key) + peer_ecdh_key_length;
+	signature_length = (const uint8_t *)data + soter_container_data_size(proto_message) + sizeof(soter_container_hdr_t) - signature;
 
-	signature = peer_id + data_length + peer_ecdh_key_length;
-	signature_length = peer_id + data_length - signature;
-
-	if (session_ctx->user_callbacks->get_public_key_for_id(peer_id, session_ctx->we.id_length, sign_key, sizeof(sign_key), session_ctx->user_callbacks->user_data))
+	if (session_ctx->user_callbacks->get_public_key_for_id(soter_container_const_data(peer_id), soter_container_data_size(peer_id), sign_key, sizeof(sign_key), session_ctx->user_callbacks->user_data))
 	{
 		res = HERMES_INVALID_PARAMETER;
 		goto err;
@@ -375,7 +415,7 @@ themis_status_t secure_session_accept(secure_session_t *session_ctx, const void 
 		goto err;
 	}
 
-	res = secure_session_peer_init(&(session_ctx->peer), peer_id, session_ctx->we.id_length, peer_ecdh_key, peer_ecdh_key_length, peer_sign_key, sign_key_length);
+	res = secure_session_peer_init(&(session_ctx->peer), soter_container_const_data(peer_id), soter_container_data_size(peer_id), peer_ecdh_key, peer_ecdh_key_length, peer_sign_key, sign_key_length);
 	if (HERMES_SUCCESS != res)
 	{
 		goto err;
