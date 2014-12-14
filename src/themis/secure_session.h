@@ -49,6 +49,8 @@ typedef struct secure_session_peer_type secure_session_peer_t;
 themis_status_t secure_session_peer_init(secure_session_peer_t *peer, const void *id, size_t id_len, const void *ecdh_key, size_t ecdh_key_len, const void *sign_key, size_t sign_key_len);
 void secure_session_peer_cleanup(secure_session_peer_t *peer);
 
+#define SESSION_MASTER_KEY_LENGTH 32
+
 struct secure_session_type
 {
 	soter_asym_ka_t ecdh_ctx;
@@ -57,18 +59,8 @@ struct secure_session_type
 	struct secure_session_peer_type we;
 	struct secure_session_peer_type peer;
 
-	/*uint8_t *id;
-	size_t id_length;
-	uint8_t *sign_key;
-	size_t sign_key_length;
-
-	uint8_t *peer_id;
-	size_t peer_id_length;
-	uint8_t *peer_key;
-	size_t peer_key_length;
-
-	uint8_t *peer_sign_key;
-	size_t peer_sign_key_length;*/
+	uint32_t session_id;
+	uint8_t session_master_key[SESSION_MASTER_KEY_LENGTH];
 };
 
 typedef struct secure_session_type secure_session_t;
