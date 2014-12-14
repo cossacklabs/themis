@@ -7,6 +7,9 @@
 #ifndef HERMES_ERROR_H
 #define HERMES_ERROR_H
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #define HERMES_SUCCESS 0
 #define HERMES_FAIL   -1
 #define HERMES_INVALID_PARAMETER -2

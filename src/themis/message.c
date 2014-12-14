@@ -7,15 +7,22 @@
 #include <string.h>
 #include "themis/message.h"
 
-themis_message_t* themis_message_init(){
+themis_message_t* themis_message_init(const uint8_t* message, const size_t message_length){
   themis_message_t* msg=malloc(sizeof(themis_message_t));
   if(!msg){
     return NULL;
   }
   msg->length=0;
   msg->data=NULL;
+  if(message!=NULL && message_length!=0){
+    if(themis_message_set(msg, message, message_length)==HERMES_FAIL){
+      themis_message_destroy(msg);
+      return NULL;
+    }
+  }
   return msg;
 }
+
 themis_status_t themis_message_set(themis_message_t* ctx, const uint8_t* message, const size_t message_length){
   HERMES_CHECK(ctx);
   HERMES_CHECK(message);
@@ -57,9 +64,9 @@ themis_status_t themis_message_destroy(themis_message_t* ctx){
     free(ctx->data);
   }
   free(ctx);
+  ctx=NULL;
   return HERMES_SUCCESS;
 }
-
 
 
 
