@@ -93,8 +93,8 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* si
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
   if (!pkey){
     return HERMES_INVALID_PARAMETER;
-  }
-  if((*signature_length)<EVP_PKEY_size(pkey)){
+  } /* TODO: need review */
+  if(!signature || (*signature_length)<EVP_PKEY_size(pkey)){
     (*signature_length)=EVP_PKEY_size(pkey);
     return HERMES_BUFFER_TOO_SMALL;
   }

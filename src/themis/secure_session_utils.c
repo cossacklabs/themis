@@ -13,7 +13,7 @@
 #include <common/error.h>
 
 #define MAX_HMAC_SIZE 64 /* For HMAC-SHA512 */
-#define MAX_VAL(_X_, _Y_) ((_X_ > _Y_) ? (_X_) : (_Y_))
+#define MIN_VAL(_X_, _Y_) ((_X_ < _Y_) ? (_X_) : (_Y_))
 
 soter_sign_alg_t get_key_sign_type(const void *sign_key, size_t sign_key_length)
 {
@@ -209,13 +209,13 @@ themis_status_t themis_kdf(const void *key, size_t key_length, const char *label
 	{
 		memset(implicit_key, 0, sizeof(implicit_key));
 
-		memcpy(implicit_key, label, MAX_VAL(sizeof(implicit_key), strlen(label)));
+		memcpy(implicit_key, label, MIN_VAL(sizeof(implicit_key), strlen(label)));
 
 		for (i = 0; i < context_count; i++)
 		{
 			if (context[i].data)
 			{
-				for (j = 0; j < MAX_VAL(sizeof(implicit_key), context[i].length); j++)
+				for (j = 0; j < MIN_VAL(sizeof(implicit_key), context[i].length); j++)
 				{
 					implicit_key[j] ^= context[i].data[j];
 				}
