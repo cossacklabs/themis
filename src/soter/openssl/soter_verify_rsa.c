@@ -67,7 +67,7 @@ soter_status_t soter_verify_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const vo
   return HERMES_SUCCESS;
 }
 
-soter_status_t soter_verify_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signature, size_t signature_length)
+soter_status_t soter_verify_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* signature, const size_t signature_length)
 {
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
   if (!pkey){
@@ -76,7 +76,7 @@ soter_status_t soter_verify_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* sig
   if(signature_length!=EVP_PKEY_size(pkey)){
     return HERMES_FAIL;
   }
-  if(!EVP_DigestVerifyFinal(ctx->md_ctx, signature, signature_length)){
+  if(!EVP_DigestVerifyFinal(ctx->md_ctx, (unsigned char*)signature, signature_length)){
     return HERMES_FAIL;
   }
   return HERMES_SUCCESS;

@@ -29,6 +29,7 @@ soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, co
 }
 #undef SOTER_SIGN_ALG
 
+
 #define SOTER_SIGN_ALG(alg, padding, kdf)				\
   case SOTER_SIGN_##alg##_##padding##_##kdf :				\
   return soter_verify_init_##alg##_##padding##_##kdf(ctx,private_key,private_key_length, public_key, public_key_length);
@@ -88,7 +89,7 @@ soter_status_t soter_sign_final(soter_sign_ctx_t* ctx, void* signature, size_t* 
 #define SOTER_SIGN_ALG(alg, padding, kdf)	\
   case SOTER_SIGN_##alg##_##padding##_##kdf:				\
   return soter_verify_final_##alg##_##padding##_##kdf(ctx,signature,signature_length);
-soter_status_t soter_verify_final(soter_sign_ctx_t* ctx, void* signature, size_t signature_length){
+soter_status_t soter_verify_final(soter_sign_ctx_t* ctx, const void* signature, const size_t signature_length){
   switch(ctx->alg){
     SOTER_SIGN_ALGS
   };
@@ -133,3 +134,12 @@ soter_status_t soter_verify_destroy(soter_sign_ctx_t* ctx){
   return soter_sign_destroy(ctx);
 }
 
+soter_sign_alg_t soter_sign_get_alg_id(soter_sign_ctx_t* ctx)
+{
+  return ctx->alg;
+}
+
+soter_sign_alg_t soter_verify_get_alg_id(soter_verify_ctx_t* ctx)
+{
+  return ctx->alg;
+}

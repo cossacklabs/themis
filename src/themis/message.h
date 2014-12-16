@@ -21,6 +21,7 @@ themis_message_t* themis_message_init(const uint8_t* message, const size_t messa
 themis_status_t themis_message_set(themis_message_t* ctx, const uint8_t* message, const size_t message_length);
 
 const uint8_t* themis_message_get_data(themis_message_t* ctx);
+
 size_t themis_message_get_length(themis_message_t* ctx);
 
 themis_status_t themis_message_destroy(themis_message_t* ctx);
