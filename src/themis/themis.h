@@ -13,10 +13,6 @@
 
 typedef int themis_status_t; 
 
-themis_status_t themis_gen_key_pair(uint8_t* private_key,
-				    size_t* private_key_length,
-				    uint8_t* public_key,
-				    size_t* public_key_length);
 
 themis_status_t wrap_message(const uint8_t* message,
 			     const uint8_t* private_key,

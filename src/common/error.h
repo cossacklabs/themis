@@ -26,11 +26,17 @@
 	return HERMES_FAIL;		\
     }
 
+#define HERMES_CHECK_PARAM(x) if(!(x)){	\
+	HERMES_ERROR_OUT(#x);		\
+	return HERMES_INVALID_PARAMETER;\
+    }
+
 #define HERMES_CHECK_FREE(x,y)if(!(x)){	\
 	HERMES_ERROR_OUT(#x);		\
 	free(y);			\
 	return HERMES_FAIL;		\
     }
+
 
 
 #endif /* HERMES_ERROR_H */

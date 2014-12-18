@@ -9,6 +9,16 @@
 
 #include <themis/themis.h>
 
+themis_status_t themis_gen_rsa_key_pair(uint8_t* private_key,
+					size_t* private_key_length,
+					uint8_t* public_key,
+					size_t* public_key_length);
+
+themis_status_t themis_gen_ec_key_pair(uint8_t* private_key,
+				       size_t* private_key_length,
+				       uint8_t* public_key,
+				       size_t* public_key_length);
+
 themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
 					   const size_t private_key_length,
 					   const uint8_t* public_key,
