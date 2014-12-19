@@ -29,13 +29,17 @@ soter_status_t soter_verify_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void
     EVP_PKEY_free(pkey);
     return HERMES_FAIL;
   }
-  if(soter_rsa_import_key(pkey, private_key, private_key_length)!=HERMES_SUCCESS){
-    EVP_PKEY_free(pkey);
-    return HERMES_FAIL;
+  if(private_key && private_key_length!=0){
+    if(soter_rsa_import_key(pkey, private_key, private_key_length)!=HERMES_SUCCESS){
+	EVP_PKEY_free(pkey);
+	return HERMES_FAIL;
+    }
   }
-  if(soter_rsa_import_key(pkey, public_key, public_key_length)!=HERMES_SUCCESS){
-    EVP_PKEY_free(pkey);
-    return HERMES_FAIL;
+  if(public_key && public_key_length!=0){
+    if(soter_rsa_import_key(pkey, public_key, public_key_length)!=HERMES_SUCCESS){
+	EVP_PKEY_free(pkey);
+	return HERMES_FAIL;
+    }
   }
 
   /*md_ctx init*/

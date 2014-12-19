@@ -23,7 +23,40 @@ static int sign_test(soter_sign_alg_t alg)
     return -1;
   }
 
+  uint8_t private_key[8192];
+  size_t private_key_length=sizeof(private_key);
+
+  uint8_t public_key[8192];
+  size_t public_key_length=sizeof(public_key);
+
   soter_status_t res;
+  res=soter_sign_export_key(ctx, private_key, &private_key_length, true);
+  if(res!=HERMES_SUCCESS){
+    testsuite_fail_if(res!=HERMES_SUCCESS,"soter_sign_export_key (private key) fail");
+    soter_sign_destroy(ctx);
+    return -6;
+  }
+
+  res=soter_sign_export_key(ctx, public_key, &public_key_length, false);
+  if(res!=HERMES_SUCCESS){
+    testsuite_fail_if(res!=HERMES_SUCCESS,"soter_sign_export_key (public key) fail");
+    soter_sign_destroy(ctx);
+    return -7;
+  }
+
+  res=soter_sign_destroy(ctx);
+  if(res!=HERMES_SUCCESS){
+    testsuite_fail_if(res!=HERMES_SUCCESS,"soter_sign_destroy fail");
+    return -8;
+  }
+  
+
+  ctx=soter_sign_create(alg,private_key,private_key_length,NULL,0);
+  if(!ctx){
+    testsuite_fail_if(!ctx, "soter_sign_ctx_t == NULL 2");
+    return -1;
+  }
+
   res=soter_sign_update(ctx, test_data, test_data_length);
   if(res!=HERMES_SUCCESS){
     testsuite_fail_if(res!=HERMES_SUCCESS, "soter_sign_update fail");
@@ -52,27 +85,6 @@ static int sign_test(soter_sign_alg_t alg)
     return -5;
   }
 
-
-  uint8_t private_key[8192];
-  size_t private_key_length=sizeof(private_key);
-
-  uint8_t public_key[8192];
-  size_t public_key_length=sizeof(public_key);
-
-  res=soter_sign_export_key(ctx, private_key, &private_key_length, true);
-  if(res!=HERMES_SUCCESS){
-    testsuite_fail_if(res!=HERMES_SUCCESS,"soter_sign_export_key (private key) fail");
-    soter_sign_destroy(ctx);
-    return -6;
-  }
-
-  res=soter_sign_export_key(ctx, public_key, &public_key_length, false);
-  if(res!=HERMES_SUCCESS){
-    testsuite_fail_if(res!=HERMES_SUCCESS,"soter_sign_export_key (public key) fail");
-    soter_sign_destroy(ctx);
-    return -7;
-  }
-
   res=soter_sign_destroy(ctx);
   if(res!=HERMES_SUCCESS){
     testsuite_fail_if(res!=HERMES_SUCCESS,"soter_sign_destroy fail");
@@ -81,7 +93,7 @@ static int sign_test(soter_sign_alg_t alg)
   
   soter_verify_ctx_t* vctx=NULL;
 
-  vctx=soter_verify_create(alg, private_key, private_key_length, public_key, public_key_length);
+  vctx=soter_verify_create(alg, NULL, 0, public_key, public_key_length);
   if(!vctx){
     testsuite_fail_if(!vctx, "soter_verify_ctx_t == NULL");
     return -9;

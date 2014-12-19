@@ -18,8 +18,8 @@
 #define HERMES_DATA_CORRUPT -5
 #define HERMES_INVALID_SIGNATURE -6
 
-#define HERMES_ERROR_OUT(message) fprintf(stderr, "%s:%u - error: %s",__FILE__,__LINE__,message) 
-#define HERMES_DEBUG_OUT(message) fprintf(stdout, "%s:%u - debug: %s",__FILE__,__LINE__,message) 
+#define HERMES_ERROR_OUT(message) fprintf(stderr, "%s:%u - error: %s\n",__FILE__,__LINE__,message) 
+#define HERMES_DEBUG_OUT(message) fprintf(stdout, "%s:%u - debug: %s\n",__FILE__,__LINE__,message) 
 
 #define HERMES_CHECK(x) if(!(x)){	\
 	HERMES_ERROR_OUT(#x);		\
