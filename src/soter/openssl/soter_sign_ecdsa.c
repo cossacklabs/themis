@@ -100,13 +100,7 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* si
     return HERMES_BUFFER_TOO_SMALL;
   }
 
-  int res=EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length);
-  if(res!=1){
-    unsigned long ss=ERR_get_error();
-    char error_str[1024];
-    ERR_load_crypto_strings();
-    ERR_error_string(ss, error_str);
-    fprintf(stderr, "%s", error_str);
+  if(EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length)!=1){
     return HERMES_FAIL;
   }
   return HERMES_SUCCESS;
