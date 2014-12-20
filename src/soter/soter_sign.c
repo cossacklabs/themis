@@ -125,6 +125,7 @@ soter_sign_ctx_t* soter_verify_create(soter_sign_alg_t alg, const void* private_
 soter_status_t soter_sign_destroy(soter_sign_ctx_t* ctx){
   if(ctx->pkey_ctx){
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
+    ctx->pkey_ctx=NULL;
   }
   free(ctx);
   return HERMES_SUCCESS;

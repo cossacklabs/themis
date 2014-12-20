@@ -50,24 +50,25 @@ static int sign_test(soter_sign_alg_t alg)
     return -8;
   }
   
+  soter_sign_ctx_t* sctx=NULL;
 
-  ctx=soter_sign_create(alg,private_key,private_key_length,NULL,0);
-  if(!ctx){
-    testsuite_fail_if(!ctx, "soter_sign_ctx_t == NULL 2");
+  sctx=soter_sign_create(alg,private_key,private_key_length,NULL,0);
+  if(!sctx){
+    testsuite_fail_if(!sctx, "soter_sign_ctx_t == NULL 2");
     return -1;
   }
 
-  res=soter_sign_update(ctx, test_data, test_data_length);
+  res=soter_sign_update(sctx, test_data, test_data_length);
   if(res!=HERMES_SUCCESS){
     testsuite_fail_if(res!=HERMES_SUCCESS, "soter_sign_update fail");
-    soter_sign_destroy(ctx);
+    soter_sign_destroy(sctx);
     return -2;
   }
 
-  res=soter_sign_final(ctx, signature, &signature_length);
+  res=soter_sign_final(sctx, signature, &signature_length);
   if(res!=HERMES_BUFFER_TOO_SMALL){
     testsuite_fail_if(res!=HERMES_BUFFER_TOO_SMALL, "soter_sign_final (signature length determine) fail");
-    soter_sign_destroy(ctx);
+    soter_sign_destroy(sctx);
     return -3;
   }
 
@@ -78,14 +79,14 @@ static int sign_test(soter_sign_alg_t alg)
     return -4;
   }
 
-  res=soter_sign_final(ctx, signature, &signature_length);
+  res=soter_sign_final(sctx, signature, &signature_length);
   if(res!=HERMES_SUCCESS){
     testsuite_fail_if(res!=HERMES_SUCCESS, "soter_sign_final fail");
-    soter_sign_destroy(ctx);
+    soter_sign_destroy(sctx);
     return -5;
   }
 
-  res=soter_sign_destroy(ctx);
+  res=soter_sign_destroy(sctx);
   if(res!=HERMES_SUCCESS){
     testsuite_fail_if(res!=HERMES_SUCCESS,"soter_sign_destroy fail");
     return -8;

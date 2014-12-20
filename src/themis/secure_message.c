@@ -52,14 +52,14 @@ themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
 					   const size_t message_length,
 					   uint8_t* wrapped_message,
 					   size_t* wrapped_message_length){
-  HERMES_CHECK_PARAM(public_key!=NULL);
-  HERMES_CHECK_PARAM(public_key_length!=0);
+  HERMES_CHECK_PARAM(private_key!=NULL);
+  HERMES_CHECK_PARAM(private_key_length!=0);
   HERMES_CHECK_PARAM(message!=NULL);
   HERMES_CHECK_PARAM(message_length!=0);
   HERMES_CHECK_PARAM(wrapped_message_length!=NULL);
-  if(private_key==NULL && private_key_length==0){ 
+  if(public_key==NULL && public_key_length==0){ 
     themis_secure_message_signer_t* ctx=NULL;
-    ctx = themis_secure_message_signer_init(public_key, public_key_length);
+    ctx = themis_secure_message_signer_init(private_key, private_key_length);
     HERMES_CHECK(ctx!=NULL);
     themis_status_t res=themis_secure_message_signer_proceed(ctx, message, message_length, wrapped_message, wrapped_message_length);
     secure_message_signer_destroy(ctx);
@@ -76,17 +76,17 @@ themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
 					   const size_t wrapped_message_length,
 					   uint8_t* message,
 					   size_t* message_length){
-  HERMES_CHECK_PARAM(private_key!=NULL);
-  HERMES_CHECK_PARAM(private_key_length!=0);
+  HERMES_CHECK_PARAM(public_key!=NULL);
+  HERMES_CHECK_PARAM(public_key_length!=0);
   HERMES_CHECK_PARAM(wrapped_message!=NULL);
   HERMES_CHECK_PARAM(wrapped_message_length!=0);
   HERMES_CHECK_PARAM(message_length!=NULL);
   themis_secure_message_hdr_t* message_hdr=(themis_secure_message_hdr_t*)wrapped_message;
   HERMES_CHECK_PARAM(IS_THEMIS_SECURE_MESSAGE_SIGNED(message_hdr->message_type) || IS_THEMIS_SECURE_MESSAGE_SIGNED(message_hdr->message_type));
-  HERMES_CHECK_PARAM(wrapped_message_length<THEMIS_SECURE_MESSAGE_LENGTH(message_hdr));
+  HERMES_CHECK_PARAM(wrapped_message_length>=THEMIS_SECURE_MESSAGE_LENGTH(message_hdr));
   if(IS_THEMIS_SECURE_MESSAGE_SIGNED(message_hdr->message_type)){
     themis_secure_message_verifier_t* ctx=NULL;
-    ctx = themis_secure_message_verifier_init(private_key, private_key_length);
+    ctx = themis_secure_message_verifier_init(public_key, public_key_length);
     HERMES_CHECK(ctx!=NULL);
     themis_status_t res=themis_secure_message_verifier_proceed(ctx, wrapped_message, wrapped_message_length, message, message_length);
     secure_message_verifier_destroy(ctx);

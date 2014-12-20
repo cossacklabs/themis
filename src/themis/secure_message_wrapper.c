@@ -34,6 +34,7 @@ themis_secure_message_signer_t* themis_secure_message_signer_init(const uint8_t*
   if(!ctx){
     return NULL;
   }
+  ctx->sign_ctx=NULL;
   ctx->sign_ctx=soter_sign_create(get_alg_id(key,key_length),NULL,0,key, key_length);
   if(!(ctx->sign_ctx)){
     free(ctx);
@@ -49,9 +50,9 @@ themis_status_t themis_secure_message_signer_proceed(themis_secure_message_signe
   HERMES_CHECK(message!=NULL && message_length!=0 && wrapped_message_length!=NULL);
   uint8_t* signature=NULL;
   size_t signature_length=0;
-  if(!ctx->precompute_signature_present){
+  //  if(!ctx->precompute_signature_present){
     HERMES_CHECK(soter_sign_update(ctx->sign_ctx, message, message_length)==HERMES_SUCCESS);
-  }
+    //}
   HERMES_CHECK(soter_sign_final(ctx->sign_ctx, signature, &signature_length)==HERMES_BUFFER_TOO_SMALL);
   if((message_length+signature_length+sizeof(themis_secure_message_hdr_t)>(*wrapped_message_length))){
     (*wrapped_message_length)=message_length+signature_length+sizeof(themis_secure_message_hdr_t);
@@ -59,14 +60,10 @@ themis_status_t themis_secure_message_signer_proceed(themis_secure_message_signe
   }
   signature=malloc(signature_length);
   HERMES_CHECK(signature!=NULL);
-  fprintf(stderr, "%u\n", signature_length);
   if(soter_sign_final(ctx->sign_ctx, signature, &signature_length)!=HERMES_SUCCESS){
-    fprintf(stderr, "ccccc\n");
     free(signature);
     return HERMES_FAIL;
   }
-  fprintf(stderr, "bbbbb\n");
-
   themis_secure_message_hdr_t hdr;
   switch(soter_sign_get_alg_id(ctx->sign_ctx)){
   case SOTER_SIGN_ecdsa_none_pkcs8:
@@ -90,6 +87,7 @@ themis_status_t themis_secure_message_signer_proceed(themis_secure_message_signe
 themis_status_t secure_message_signer_destroy(themis_secure_message_signer_t* ctx)
 {
   soter_sign_destroy(ctx->sign_ctx);
+  ctx->sign_ctx=NULL;
   free(ctx);
   return HERMES_SUCCESS;
 }
@@ -119,10 +117,11 @@ themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_ver
     return HERMES_INVALID_PARAMETER;
   }
   if((*message_length)<msg->message_length){
+    (*message_length)=msg->message_length;
     return HERMES_BUFFER_TOO_SMALL;
   }
-  HERMES_CHECK(soter_verify_update(ctx->verify_ctx, wrapped_message+sizeof(themis_secure_message_hdr_t), msg->message_length)!=HERMES_SUCCESS);
-  HERMES_CHECK(soter_verify_final(ctx->verify_ctx, wrapped_message+sizeof(themis_secure_message_hdr_t)+msg->message_length, msg->signature_length)!=HERMES_SUCCESS);
+  HERMES_CHECK(soter_verify_update(ctx->verify_ctx, wrapped_message+sizeof(themis_secure_message_hdr_t), msg->message_length)==HERMES_SUCCESS);
+  HERMES_CHECK(soter_verify_final(ctx->verify_ctx, wrapped_message+sizeof(themis_secure_message_hdr_t)+msg->message_length, msg->signature_length)==HERMES_SUCCESS);
   memcpy(message,wrapped_message+sizeof(themis_secure_message_hdr_t),msg->message_length);
   (*message_length)=msg->message_length;
   return HERMES_SUCCESS;
