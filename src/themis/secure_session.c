@@ -444,6 +444,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	size_t length_to_send;
 
 	soter_container_hdr_t *container;
+	uint8_t *mac;
 
 	if (data_length < sizeof(soter_container_hdr_t))
 	{
@@ -603,6 +604,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	}
 
 	container = (soter_container_hdr_t *)data_to_send;
+	mac = soter_container_data(container) + signature_length;
 
 	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, sign_data, 4, soter_container_data(container), &signature_length);
 	if (HERMES_SUCCESS != res)
@@ -616,7 +618,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	sign_data[1].data = (const uint8_t *)(&(session_ctx->session_id));
 	sign_data[1].length = sizeof(session_ctx->session_id);
 
-	res = compute_mac(session_ctx->session_master_key, sizeof(session_ctx->session_master_key), sign_data, 2, soter_container_data(container) + signature_length, &sign_key_length);
+	res = compute_mac(session_ctx->session_master_key, sizeof(session_ctx->session_master_key), sign_data, 2, mac, &sign_key_length);
 	if (HERMES_SUCCESS != res)
 	{
 		goto err;
