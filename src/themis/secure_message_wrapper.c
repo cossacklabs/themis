@@ -40,7 +40,6 @@ themis_secure_message_signer_t* themis_secure_message_signer_init(const uint8_t*
     free(ctx);
     return NULL;
   }
-  ctx->precompute_signature_present=false;
   return ctx;
 }
 
@@ -132,3 +131,4 @@ themis_status_t secure_message_verifier_destroy(themis_secure_message_verifier_t
   free(ctx);
   return HERMES_SUCCESS;  
 }
+

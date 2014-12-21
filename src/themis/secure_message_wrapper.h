@@ -38,7 +38,6 @@ typedef struct themis_secure_message_hdr_type themis_secure_message_hdr_t;
 
 struct themis_secure_message_sign_worker_type{
   soter_sign_ctx_t* sign_ctx;
-  bool precompute_signature_present;
 };
 
 typedef struct themis_secure_message_sign_worker_type themis_secure_message_signer_t;
