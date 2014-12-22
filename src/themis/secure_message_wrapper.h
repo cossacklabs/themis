@@ -55,9 +55,9 @@ themis_secure_message_verifier_t* themis_secure_message_verifier_init(const uint
 themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_verifier_t* ctx, const uint8_t* wrapped_message, const size_t wrapped_message_length, uint8_t* message, size_t* message_length);
 themis_status_t secure_message_verifier_destroy(themis_secure_message_verifier_t* ctx);
 
-struct themis_secure_message_rsa_encrypt_worker_t
+struct themis_secure_message_rsa_encrypt_worker_type
 {
-  themis_secure_message_signer_t* signer_;
+  
 };
 
 #endif /* _THEMIS_SECURE_MESSAGE_WRAPPER_H_ */
