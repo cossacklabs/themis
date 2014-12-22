@@ -94,6 +94,28 @@ static bool is_mod_size_supported(int mod_size)
 	}
 }
 
+static soter_status_t bignum_to_bytes(BIGNUM *bn, uint8_t *to, size_t to_length)
+{
+	size_t bn_size = (size_t)BN_num_bytes(bn);
+	size_t bytes_copied;
+
+	if (bn_size > to_length)
+	{
+		return HERMES_FAIL;
+	}
+
+	bytes_copied = BN_bn2bin(bn, to + (to_length - bn_size));
+
+	if (bytes_copied != bn_size)
+	{
+		return HERMES_FAIL;
+	}
+
+	memset(to, 0, to_length - bn_size);
+
+	return HERMES_SUCCESS;
+}
+
 soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_rsa_key_t *engine_key, soter_container_hdr_t *key, size_t* key_length)
 {
 	EVP_PKEY *pkey = (EVP_PKEY *)engine_key;
@@ -149,9 +171,9 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
 		goto err;
 	}
 
-	if (rsa_mod_size != BN_bn2bin(rsa->n, (unsigned char *)(key + 1)))
+	res = bignum_to_bytes(rsa->n, (unsigned char *)(key + 1), rsa_mod_size);
+	if (HERMES_SUCCESS != res)
 	{
-		res = HERMES_FAIL;
 		goto err;
 	}
 
@@ -225,57 +247,57 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 	}
 
 	/* Private exponent */
-	if (rsa_mod_size != BN_bn2bin(rsa->d, curr_bn))
+	res = bignum_to_bytes(rsa->d, curr_bn, rsa_mod_size);
+	if (HERMES_SUCCESS != res)
 	{
-		res = HERMES_FAIL;
 		goto err;
 	}
 	curr_bn += rsa_mod_size;
 
 	/* p */
-	if ((rsa_mod_size / 2) != BN_bn2bin(rsa->p, curr_bn))
+	res = bignum_to_bytes(rsa->p, curr_bn, rsa_mod_size / 2);
+	if (HERMES_SUCCESS != res)
 	{
-		res = HERMES_FAIL;
 		goto err;
 	}
 	curr_bn += rsa_mod_size / 2;
 
 	/* q */
-	if ((rsa_mod_size / 2) != BN_bn2bin(rsa->q, curr_bn))
+	res = bignum_to_bytes(rsa->q, curr_bn, rsa_mod_size / 2);
+	if (HERMES_SUCCESS != res)
 	{
-		res = HERMES_FAIL;
 		goto err;
 	}
 	curr_bn += rsa_mod_size / 2;
 
 	/* dp */
-	if ((rsa_mod_size / 2) != BN_bn2bin(rsa->dmp1, curr_bn))
+	res = bignum_to_bytes(rsa->dmp1, curr_bn, rsa_mod_size / 2);
+	if (HERMES_SUCCESS != res)
 	{
-		res = HERMES_FAIL;
 		goto err;
 	}
 	curr_bn += rsa_mod_size / 2;
 
 	/* dq */
-	if ((rsa_mod_size / 2) != BN_bn2bin(rsa->dmq1, curr_bn))
+	res = bignum_to_bytes(rsa->dmq1, curr_bn, rsa_mod_size / 2);
+	if (HERMES_SUCCESS != res)
 	{
-		res = HERMES_FAIL;
 		goto err;
 	}
 	curr_bn += rsa_mod_size / 2;
 
 	/* qp */
-	if ((rsa_mod_size / 2) != BN_bn2bin(rsa->iqmp, curr_bn))
+	res = bignum_to_bytes(rsa->iqmp, curr_bn, rsa_mod_size / 2);
+	if (HERMES_SUCCESS != res)
 	{
-		res = HERMES_FAIL;
 		goto err;
 	}
 	curr_bn += rsa_mod_size / 2;
 
 	/* modulus */
-	if (rsa_mod_size != BN_bn2bin(rsa->n, curr_bn))
+	res = bignum_to_bytes(rsa->n, curr_bn, rsa_mod_size);
+	if (HERMES_SUCCESS != res)
 	{
-		res = HERMES_FAIL;
 		goto err;
 	}
 
