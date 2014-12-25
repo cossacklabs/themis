@@ -21,74 +21,6 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 static themis_status_t secure_session_finish_client(secure_session_t *session_ctx, const void *data, size_t data_length);
 static themis_status_t secure_session_finish_server(secure_session_t *session_ctx, const void *data, size_t data_length);
 
-static void print_bytes(const uint8_t *bytes, size_t length)
-{
-	size_t i;
-
-	for (i = 0; i < length; i++)
-	{
-		printf("0x%02x, ", bytes[i]);
-	}
-	puts("");
-}
-
-void themis_test_func(void)
-{
-	uint8_t sign_key[1024];
-	size_t sign_key_length = sizeof(sign_key);
-
-	uint8_t verify_key[1024];
-	size_t verify_key_length = sizeof(verify_key);
-
-	soter_sign_ctx_t sign_ctx;
-	soter_status_t status;
-
-	uint8_t sign_data[123];
-
-	data_buf_t data = {sign_data, sizeof(sign_data)};
-
-	uint8_t sig[512];
-	size_t sig_len = sizeof(sig);
-
-	status = soter_sign_init(&sign_ctx, SOTER_SIGN_ecdsa_none_pkcs8, NULL, 0, NULL, 0);
-	if (status)
-	{
-		printf("soter_sign_init: %d\n", status);
-		return;
-	}
-
-	status = soter_sign_export_key(&sign_ctx, sign_key, &sign_key_length, true);
-	if (status)
-	{
-		printf("soter_sign_init: %d\n", status);
-		return;
-	}
-
-	print_bytes(sign_key, sign_key_length);
-
-	status = soter_sign_export_key(&sign_ctx, verify_key, &verify_key_length, false);
-	if (status)
-	{
-		printf("soter_sign_init: %d\n", status);
-		return;
-	}
-	printf("%d: %d %d\n", __LINE__, (int)sign_key_length, (int)verify_key_length);
-
-	print_bytes(verify_key, verify_key_length);
-
-	status = compute_signature(sign_key, sign_key_length, &data, 1, sig, &sig_len);
-	printf("%d: %d %d\n", __LINE__, status, (int)sig_len);
-
-	status = verify_signature(verify_key, verify_key_length, &data, 1, sig, sig_len);
-	printf("%d: %d %d\n", __LINE__, status, (int)sig_len);
-
-	sign_data[2] ^= 0xff;
-
-	status = verify_signature(verify_key, verify_key_length, &data, 1, sig, sig_len);
-	printf("%d: %d %d\n", __LINE__, status, (int)sig_len);
-
-}
-
 themis_status_t secure_session_cleanup(secure_session_t *session_ctx)
 {
 	if (NULL == session_ctx)
@@ -217,6 +149,7 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 
 	/* In "client mode" awaiting initial response from the server */
 	session_ctx->state_handler = secure_session_proceed_client;
+	session_ctx->is_client = true;
 
 err:
 
@@ -648,6 +581,62 @@ err:
 	return res;
 }
 
+static themis_status_t secure_session_derive_message_keys(secure_session_t *session_ctx)
+{
+	const char *out_key_label;
+	const char *in_key_label;
+
+	const char *out_seq_label;
+	const char *in_seq_label;
+
+	themis_status_t res;
+
+	data_buf_t context = {(const uint8_t *)&(session_ctx->session_id), sizeof(session_ctx->session_id)};
+
+	if (session_ctx->is_client)
+	{
+		out_key_label = "Themis secure session client key";
+		in_key_label = "Themis secure session server key";
+
+		out_seq_label = "Themis secure session client initial sequence number";
+		in_seq_label = "Themis secure session server initial sequence number";
+	}
+	else
+	{
+		out_key_label = "Themis secure session server key";
+		in_key_label = "Themis secure session client key";
+
+		out_seq_label = "Themis secure session server initial sequence number";
+		in_seq_label = "Themis secure session client initial sequence number";
+	}
+
+	res = themis_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, out_key_label, &context, 1, session_ctx->out_cipher_key, SESSION_MESSAGE_KEY_LENGTH);
+	if (HERMES_SUCCESS != res)
+	{
+		return res;
+	}
+
+	res = themis_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, in_key_label, &context, 1, session_ctx->in_cipher_key, SESSION_MESSAGE_KEY_LENGTH);
+	if (HERMES_SUCCESS != res)
+	{
+		return res;
+	}
+
+	res = themis_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, out_seq_label, &context, 1, &(session_ctx->out_seq), sizeof(session_ctx->out_seq));
+	if (HERMES_SUCCESS != res)
+	{
+		return res;
+	}
+
+	res = themis_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, in_seq_label, &context, 1, &(session_ctx->in_seq), sizeof(session_ctx->in_seq));
+	if (HERMES_SUCCESS != res)
+	{
+		return res;
+	}
+
+	return res;
+}
+
 static themis_status_t secure_session_finish_server(secure_session_t *session_ctx, const void *data, size_t data_length)
 {
 	const soter_container_hdr_t *proto_message = data;
@@ -769,6 +758,12 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 		return res;
 	}
 
+	res = secure_session_derive_message_keys(session_ctx);
+	if (HERMES_SUCCESS != res)
+	{
+		return res;
+	}
+
 	memcpy(response_message->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH);
 	soter_container_set_data_size(response_message, ecdh_key_length);
 	soter_update_container_checksum(response_message);
@@ -823,8 +818,13 @@ static themis_status_t secure_session_finish_client(secure_session_t *session_ct
 	sign_data[1].data = (const uint8_t *)(&(session_ctx->session_id));
 	sign_data[1].length = sizeof(session_ctx->session_id);
 
-	res = verify_mac(session_ctx->session_master_key, sizeof(session_ctx->session_master_key), sign_data, 2, soter_container_const_data(proto_message), soter_container_data_size(proto_message));;
+	res = verify_mac(session_ctx->session_master_key, sizeof(session_ctx->session_master_key), sign_data, 2, soter_container_const_data(proto_message), soter_container_data_size(proto_message));
+	if (HERMES_SUCCESS != res)
+	{
+		return res;
+	}
 
+	res = secure_session_derive_message_keys(session_ctx);
 	if (HERMES_SUCCESS != res)
 	{
 		return res;
