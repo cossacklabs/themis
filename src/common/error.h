@@ -17,6 +17,7 @@
 #define HERMES_BUFFER_TOO_SMALL -4
 #define HERMES_DATA_CORRUPT -5
 #define HERMES_INVALID_SIGNATURE -6
+#define HERMES_NOT_SUPPORTED -7
 
 #define HERMES_ERROR_OUT(message) fprintf(stderr, "%s:%u - error: %s\n",__FILE__,__LINE__,message) 
 #define HERMES_DEBUG_OUT(message) fprintf(stdout, "%s:%u - debug: %s\n",__FILE__,__LINE__,message) 

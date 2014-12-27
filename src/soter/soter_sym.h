@@ -25,6 +25,8 @@
 //  SOTER_SYM_ALG(aes, xts, none,  pbkdf2)
 //  SOTER_SYM_ALG(aes, xts, none,  nonkdf)
 
+#define SOTER_SYM_AUTHTAG_LENGTH 16
+
 /** define symmetric algorithm */
 #define SOTER_SYM_ALG(alg,mode,padding,kdf)	\
   SOTER_##alg##_##mode##_##padding##_##kdf##_Encrypt,	\

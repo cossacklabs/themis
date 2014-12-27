@@ -73,6 +73,15 @@ size_t solo_test(const soter_sym_alg_t alg, const test_init_vector_t init_data, 
     soter_sym_destroy(ctx);
     return 0;
   }
+  uint8_t auth_tag[16];
+  size_t auth_tag_length=16;
+  res=soter_sym_get_auth_tag(ctx, auth_tag, &auth_tag_length);
+  if(res!=HERMES_SUCCESS){
+    testsuite_fail_if(res!=HERMES_SUCCESS, "soter sym get auth tag failed");
+    free(result_data);
+    soter_sym_destroy(ctx);
+    return 0;
+  }
   res=soter_sym_destroy(ctx);
   if(res!=HERMES_SUCCESS){
     testsuite_fail_if(res!=HERMES_SUCCESS, "soter sym destroy failed");

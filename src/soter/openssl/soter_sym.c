@@ -29,6 +29,41 @@ soter_status_t soter_nonkdf(const uint8_t* password, const size_t password_lengt
   return HERMES_SUCCESS;
 }
 
+soter_status_t soter_set_auth_tag_gcm(soter_sym_ctx_t *sym_ctx, const unsigned char * tag, const size_t tag_length){
+  if(!(tag_length==SOTER_SYM_AUTHTAG_LENGTH && EVP_CIPHER_CTX_ctrl(&(sym_ctx->evp_sym_ctx), EVP_CTRL_GCM_SET_TAG, SOTER_SYM_AUTHTAG_LENGTH, (void*)tag))){
+    return HERMES_FAIL;
+  }
+  return HERMES_SUCCESS;
+}
+
+soter_status_t soter_set_auth_tag_ecb(soter_sym_ctx_t *sym_ctx, const unsigned char * tag, const size_t tag_length){
+  return HERMES_NOT_SUPPORTED;
+}
+
+soter_status_t soter_set_auth_tag_ctr(soter_sym_ctx_t *sym_ctx, const unsigned char * tag, const size_t tag_length){
+  return HERMES_NOT_SUPPORTED;
+}
+
+soter_status_t soter_get_auth_tag_gcm(soter_sym_ctx_t *sym_ctx, unsigned char * tag, size_t* tag_length){
+  if((*tag_length)<SOTER_SYM_AUTHTAG_LENGTH){
+    (*tag_length)=SOTER_SYM_AUTHTAG_LENGTH;
+    return HERMES_BUFFER_TOO_SMALL;
+  }
+  if(EVP_CIPHER_CTX_ctrl(&(sym_ctx->evp_sym_ctx), EVP_CTRL_GCM_GET_TAG, SOTER_SYM_AUTHTAG_LENGTH, tag)!=1){
+    return HERMES_FAIL;
+  }
+  (*tag_length)=SOTER_SYM_AUTHTAG_LENGTH;
+  return HERMES_SUCCESS;
+}
+
+soter_status_t soter_get_auth_tag_ecb(soter_sym_ctx_t *sym_ctx, unsigned char * tag, size_t* tag_length){
+  return HERMES_NOT_SUPPORTED;
+}
+
+soter_status_t soter_get_auth_tag_ctr(soter_sym_ctx_t *sym_ctx, const unsigned char * tag, size_t* tag_length){
+  return HERMES_NOT_SUPPORTED;
+}
+
 #define SOTER_SYM_ALG_IMPL(alg, mode, padding, kdf, e_or_d)		\
   size_t soter_##alg##_##mode##_##padding##_##kdf##_##e_or_d##_get_key_length(){return 256/8;} \
   size_t soter_##alg##_##mode##_##padding##_##kdf##_##e_or_d##_get_block_size(){return 16;} \
@@ -61,9 +96,18 @@ soter_status_t soter_nonkdf(const uint8_t* password, const size_t password_lengt
   }									\
   soter_status_t soter_##alg##_##mode##_##padding##_##kdf##_chipher_##e_or_d##_final(soter_sym_ctx_t *sym_ctx, unsigned char *out, size_t *out_length) \
   {									\
-   EVP_##e_or_d##Final(&(sym_ctx->evp_sym_ctx), out, (int*)out_length);	\
+    EVP_##e_or_d##Final(&(sym_ctx->evp_sym_ctx), out, (int*)out_length);	\
     return HERMES_SUCCESS;						\
-  }									
+  }		                                                        \
+  soter_status_t soter_##alg##_##mode##_##padding##_##kdf##_chipher_##e_or_d##_set_auth_tag(soter_sym_ctx_t *sym_ctx, const unsigned char * tag, const size_t tag_length) \
+  {                                                                     \
+    return soter_set_auth_tag_##mode(sym_ctx, tag, tag_length);         \
+  }                                                                     \
+  soter_status_t soter_##alg##_##mode##_##padding##_##kdf##_chipher_##e_or_d##_get_auth_tag(soter_sym_ctx_t *sym_ctx, unsigned char * tag, size_t* tag_length) \
+  {                                                                     \
+    return soter_get_auth_tag_##mode(sym_ctx, tag, tag_length);         \
+  }                                                                     
+  
 
 #define SOTER_SYM_ALG(alg, mode, padding, kdf)	\
   SOTER_SYM_ALG_IMPL(alg,mode,padding, kdf, Encrypt)	\
@@ -133,6 +177,32 @@ soter_status_t soter_sym_update(soter_sym_ctx_t *ctx, const void* plain_data, co
     return soter_##alg##_##mode##_##padding##_##kdf##_chipher_##e_or_d##_final(ctx, cipher_data, cipher_data_length);
  
 soter_status_t soter_sym_final(soter_sym_ctx_t *ctx, void* cipher_data, size_t* cipher_data_length)
+{
+  switch(ctx->algId){
+    SOTER_SYM_ALGS
+  }
+}
+
+#undef SOTER_SYM_ALG_IMPL
+
+#define SOTER_SYM_ALG_IMPL(alg, mode, padding, kdf, e_or_d)	\
+  case SOTER_##alg##_##mode##_##padding##_##kdf##_##e_or_d:	\
+    return soter_##alg##_##mode##_##padding##_##kdf##_chipher_##e_or_d##_get_auth_tag(ctx, tag, tag_length);
+ 
+soter_status_t soter_sym_get_auth_tag(soter_sym_ctx_t *ctx, void* tag, size_t* tag_length)
+{
+  switch(ctx->algId){
+    SOTER_SYM_ALGS
+  }
+}
+
+#undef SOTER_SYM_ALG_IMPL
+
+#define SOTER_SYM_ALG_IMPL(alg, mode, padding, kdf, e_or_d)	\
+  case SOTER_##alg##_##mode##_##padding##_##kdf##_##e_or_d:	\
+    return soter_##alg##_##mode##_##padding##_##kdf##_chipher_##e_or_d##_set_auth_tag(ctx, tag, tag_length);
+ 
+soter_status_t soter_sym_set_auth_tag(soter_sym_ctx_t *ctx, const void* tag, const size_t tag_length)
 {
   switch(ctx->algId){
     SOTER_SYM_ALGS
