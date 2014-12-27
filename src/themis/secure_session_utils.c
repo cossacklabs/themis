@@ -293,3 +293,108 @@ err:
 
 	return res;
 }
+
+themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, size_t iv_length, const void *in, size_t in_length, void *out, size_t out_length)
+{
+	/*soter_sym_ctx_t *ctx;
+	soter_status_t res;
+
+	size_t bytes_encrypted = out_length;
+
+	if (out_length < (in_length + CIPHER_AUTH_TAG_SIZE))
+	{
+		return HERMES_BUFFER_TOO_SMALL;
+	}
+
+	ctx = soter_sym_create(SOTER_aes_gcm_none_nonkdf_Encrypt, key, key_length, iv, iv_length);
+	if (NULL == ctx)
+	{
+		return HERMES_FAIL;
+	}
+
+	res = soter_sym_update(ctx, in, in_length, out, &bytes_encrypted);
+	if (HERMES_SUCCESS != res)
+	{
+		goto err;
+	}
+
+	if (in_length != bytes_encrypted)
+	{
+		res = HERMES_FAIL;
+		goto err;
+	}
+
+	bytes_encrypted = out_length - bytes_encrypted;
+
+	res = soter_sym_final(ctx, ((uint8_t *)out) + in_length, &bytes_encrypted);
+	if (HERMES_SUCCESS != res)
+	{
+		goto err;
+	}
+
+	if (CIPHER_AUTH_TAG_SIZE != bytes_encrypted)
+	{
+		res = HERMES_FAIL;
+		goto err;
+	}
+
+err:
+
+	if (NULL != ctx)
+	{
+		soter_sym_destroy(ctx);
+	}
+
+	return res;*/
+
+	/* TODO: we will simulate encryption until we fix gcm */
+	const uint8_t *input = in;
+	uint8_t *output = out;
+
+	size_t i;
+
+	if (out_length < (in_length + CIPHER_AUTH_TAG_SIZE))
+	{
+		return HERMES_BUFFER_TOO_SMALL;
+	}
+
+	for (i = 0; i < in_length; i++)
+	{
+		output[i] = input[i] ^ 0xff;
+	}
+
+	for (i = in_length; i < (in_length + CIPHER_AUTH_TAG_SIZE); i++)
+	{
+		output[i] = 0xff;
+	}
+
+	return HERMES_SUCCESS;
+}
+
+themis_status_t decrypt_gcm(const void *key, size_t key_length, const void *iv, size_t iv_length, const void *in, size_t in_length, void *out, size_t out_length)
+{
+	const uint8_t *input = in;
+	uint8_t *output = out;
+
+	size_t i;
+
+	if (out_length < (in_length - CIPHER_AUTH_TAG_SIZE))
+	{
+		return HERMES_BUFFER_TOO_SMALL;
+	}
+
+	for (i = 0; i < (in_length - CIPHER_AUTH_TAG_SIZE); i++)
+	{
+		output[i] = input[i] ^ 0xff;
+	}
+
+	for (i = (in_length - CIPHER_AUTH_TAG_SIZE); i < in_length; i++)
+	{
+		if (0xff != input[i])
+		{
+			return HERMES_INVALID_SIGNATURE;
+		}
+	}
+
+	return HERMES_SUCCESS;
+}

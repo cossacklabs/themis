@@ -176,8 +176,45 @@ err:
 	}
 }
 
+/*static void print_bytes(uint8_t *bytes, size_t len)
+{
+	size_t i;
+
+	for (i = 0; i < len; i++)
+		printf("%02x", bytes[i]);
+	puts("");
+}
+
+static void init_bytes(uint8_t *bytes, size_t len)
+{
+	size_t i;
+
+	for (i = 0; i < len; i++)
+		bytes[i] = i;
+}
+
+#include <themis/secure_session_utils.h>
+static void test_func(void)
+{
+	uint8_t in[] = {'a', 'b', 'c'};
+	uint8_t out[64];
+
+	uint8_t key[32];
+	uint8_t iv[16];
+
+	memset (out, 0, sizeof(out));
+	init_bytes(key, sizeof(key));
+	init_bytes(iv, sizeof(iv));
+
+	printf("%d\n", encrypt_gcm(key, sizeof(key), iv, sizeof(iv), in, sizeof(in), out, sizeof(out)));
+
+	print_bytes(out, sizeof(out));
+}*/
+
 void run_secure_session_test(void)
 {
 	testsuite_enter_suite("secure session: basic flow");
 	testsuite_run_test(test_basic_flow);
+
+	//test_func();
 }
