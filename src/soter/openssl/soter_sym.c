@@ -30,7 +30,7 @@ soter_status_t soter_nonkdf(const uint8_t* password, const size_t password_lengt
 }
 
 soter_status_t soter_set_auth_tag_gcm(soter_sym_ctx_t *sym_ctx, const unsigned char * tag, const size_t tag_length){
-  if(!(tag_length==SOTER_SYM_AUTHTAG_LENGTH && EVP_CIPHER_CTX_ctrl(&(sym_ctx->evp_sym_ctx), EVP_CTRL_GCM_SET_TAG, SOTER_SYM_AUTHTAG_LENGTH, (void*)tag))){
+  if(!(tag_length==SOTER_SYM_AUTHTAG_LENGTH_gcm && EVP_CIPHER_CTX_ctrl(&(sym_ctx->evp_sym_ctx), EVP_CTRL_GCM_SET_TAG, SOTER_SYM_AUTHTAG_LENGTH_gcm, (void*)tag))){
     return HERMES_FAIL;
   }
   return HERMES_SUCCESS;
@@ -45,14 +45,14 @@ soter_status_t soter_set_auth_tag_ctr(soter_sym_ctx_t *sym_ctx, const unsigned c
 }
 
 soter_status_t soter_get_auth_tag_gcm(soter_sym_ctx_t *sym_ctx, unsigned char * tag, size_t* tag_length){
-  if((*tag_length)<SOTER_SYM_AUTHTAG_LENGTH){
-    (*tag_length)=SOTER_SYM_AUTHTAG_LENGTH;
+  if((*tag_length)<SOTER_SYM_AUTHTAG_LENGTH_gcm){
+    (*tag_length)=SOTER_SYM_AUTHTAG_LENGTH_gcm;
     return HERMES_BUFFER_TOO_SMALL;
   }
-  if(EVP_CIPHER_CTX_ctrl(&(sym_ctx->evp_sym_ctx), EVP_CTRL_GCM_GET_TAG, SOTER_SYM_AUTHTAG_LENGTH, tag)!=1){
+  if(EVP_CIPHER_CTX_ctrl(&(sym_ctx->evp_sym_ctx), EVP_CTRL_GCM_GET_TAG, SOTER_SYM_AUTHTAG_LENGTH_gcm, tag)!=1){
     return HERMES_FAIL;
   }
-  (*tag_length)=SOTER_SYM_AUTHTAG_LENGTH;
+  (*tag_length)=SOTER_SYM_AUTHTAG_LENGTH_gcm;
   return HERMES_SUCCESS;
 }
 

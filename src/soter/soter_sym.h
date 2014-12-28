@@ -25,7 +25,7 @@
 //  SOTER_SYM_ALG(aes, xts, none,  pbkdf2)
 //  SOTER_SYM_ALG(aes, xts, none,  nonkdf)
 
-#define SOTER_SYM_AUTHTAG_LENGTH 16
+#define SOTER_SYM_AUTHTAG_LENGTH_gcm 16
 
 /** define symmetric algorithm */
 #define SOTER_SYM_ALG(alg,mode,padding,kdf)	\
@@ -49,6 +49,8 @@ typedef struct soter_sym_ctx_type soter_sym_ctx_t;
 soter_sym_ctx_t* soter_sym_create(const soter_sym_alg_t, const void* key, const size_t key_length, const void* salt, const size_t salt_length);
 soter_status_t soter_sym_update(soter_sym_ctx_t *ctx, const void* plain_data,  const size_t data_length, void* chiper_data, size_t* chipher_data_length);
 soter_status_t soter_sym_final(soter_sym_ctx_t *ctx, void* chipher_data, size_t* chipher_data_length);
+soter_status_t soter_sym_get_auth_tag(soter_sym_ctx_t *ctx, void* tag, size_t* tag_length);
+soter_status_t soter_sym_set_auth_tag(soter_sym_ctx_t *ctx, const void* tag, const size_t tag_length);
 soter_status_t soter_sym_destroy(soter_sym_ctx_t *ctx);
 
 #endif /* SOTER_SYM_H */

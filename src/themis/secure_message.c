@@ -64,6 +64,11 @@ themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
     themis_status_t res=themis_secure_message_signer_proceed(ctx, message, message_length, wrapped_message, wrapped_message_length);
     secure_message_signer_destroy(ctx);
     return res;
+  } else {
+    HERMES_CHECK_PARAM(public_key);
+    HERMES_CHECK_PARAM(public_key_length);
+    
+    
   }
   return HERMES_INVALID_PARAMETER;
 }
