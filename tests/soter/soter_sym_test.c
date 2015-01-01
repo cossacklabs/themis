@@ -17,7 +17,7 @@ struct test_init_vector_type{
 typedef struct test_init_vector_type test_init_vector_t;
 
 static test_init_vector_t test_init_vectors[]={
-  {"test_password1234567890123456789", "1234567890123456",16}
+  {"test_password1234567890123456789", (uint8_t*)"1234567890123456",16}
 };
 
 struct test_data_vector_type{
@@ -28,7 +28,7 @@ struct test_data_vector_type{
 typedef struct test_data_vector_type test_data_vector_t;
 
 static test_data_vector_t test_data_vectors[]={
-  {"test message test",12}
+  {(uint8_t*)"test message test",12}
 };
 
 size_t solo_test(const soter_sym_alg_t alg, const test_init_vector_t init_data, const uint8_t *data, const size_t data_length, uint8_t** res_data)
@@ -127,6 +127,7 @@ static int alg_test(soter_sym_alg_t encrypt_alg, soter_sym_alg_t decrypt_alg)
       }
     }
   }
+  return 0;
 }
 
 #define SOTER_SYM_TESTS SOTER_SYM_ALGS

@@ -10,6 +10,8 @@
 #include <soter/soter_container.h>
 #include <soter/soter.h>
 
+#include <arpa/inet.h>
+
 #define EC_PRIV_KEY_PREF "REC"
 #define EC_PUB_KEY_PREF "UEC"
 

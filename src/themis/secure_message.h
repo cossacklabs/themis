@@ -28,7 +28,7 @@ themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
 					   uint8_t* wrapped_message,
 					   size_t* wrapped_message_length);
 
-themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
+themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
 					   const size_t private_key_length,
 					   const uint8_t* public_key,
 					   const size_t public_key_length,

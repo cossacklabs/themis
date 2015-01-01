@@ -23,7 +23,7 @@ static int themis_secure_message_generic_test(int alg){
   if(alg==RSA_ALG){
     res=themis_gen_rsa_key_pair(private_key, &private_key_length, public_key, &public_key_length);
   }
-  else if(alg=EC_ALG){
+  else if(alg==EC_ALG){
     res=themis_gen_ec_key_pair(private_key, &private_key_length, public_key, &public_key_length);
   }
   
@@ -32,7 +32,7 @@ static int themis_secure_message_generic_test(int alg){
     return -1;
   }
 
-  uint8_t message[]="Hit http://ftp.us.debian.org[1] wheezy Release.gpg"
+  char    message[]="Hit http://ftp.us.debian.org[1] wheezy Release.gpg"
                     "Hit http://ftp.us.debian.org[2] wheezy-updates Release.gpg"
                     "Hit http://ftp.us.debian.org[3] wheezy Release"
                     "Hit http://ftp.us.debian.org[4] wheezy-updates Release"
@@ -49,7 +49,7 @@ static int themis_secure_message_generic_test(int alg){
   uint8_t* wrapped_message=NULL;
   size_t wrapped_message_length=0;
 
-  res=themis_secure_message_wrap(private_key ,private_key_length, NULL, 0, message, message_length, NULL, &wrapped_message_length);
+  res=themis_secure_message_wrap(private_key ,private_key_length, NULL, 0, (uint8_t*)message, message_length, NULL, &wrapped_message_length);
   if(res!=HERMES_BUFFER_TOO_SMALL){
     testsuite_fail_if(res!=HERMES_BUFFER_TOO_SMALL, "themis_secure_message_wrap (wrapped_message_length determination) fail");
     return -2;
@@ -60,7 +60,7 @@ static int themis_secure_message_generic_test(int alg){
     testsuite_fail_if(!wrapped_message, "malloc fail");
     return -3;
   }
-  res=themis_secure_message_wrap(private_key, private_key_length, NULL, 0, message, message_length, wrapped_message, &wrapped_message_length);
+  res=themis_secure_message_wrap(private_key, private_key_length, NULL, 0, (uint8_t*)message, message_length, wrapped_message, &wrapped_message_length);
   if(res!=HERMES_SUCCESS){
     free(wrapped_message);
     testsuite_fail_if(res!=HERMES_SUCCESS, "themis_secure_message_wrap fail");

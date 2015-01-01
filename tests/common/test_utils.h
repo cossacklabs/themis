@@ -24,6 +24,7 @@ void testsuite_run_test_in_file(void (*test_func)(void), const char *test_func_n
 void testsuite_finish_testing(void);
 void testsuite_fail_if_on_line(bool condition, const char *name, unsigned long line);
 void testsuite_fail_unless_on_line(bool condition, const char *name, unsigned long line);
+int testsuite_get_return_value(void);
 
 #define testsuite_fail_if(_COND_, _NAME_) testsuite_fail_if_on_line(_COND_, _NAME_, __LINE__)
 #define testsuite_fail_unless(_COND_, _NAME_) testsuite_fail_unless_on_line(_COND_, _NAME_, __LINE__)

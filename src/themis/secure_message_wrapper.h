@@ -43,8 +43,8 @@ struct themis_secure_message_sign_worker_type{
 typedef struct themis_secure_message_sign_worker_type themis_secure_message_signer_t;
 
 themis_secure_message_signer_t* themis_secure_message_signer_init(const uint8_t* key, const size_t key_length);
-themis_status_t themis_secure_message_signer_wrapper_proceed(themis_secure_message_signer_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length);
-themis_status_t secure_message_singer_destroy(themis_secure_message_signer_t* ctx);
+themis_status_t themis_secure_message_signer_proceed(themis_secure_message_signer_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length);
+themis_status_t secure_message_signer_destroy(themis_secure_message_signer_t* ctx);
 
 struct themis_secure_message_verify_worker_type{
   soter_verify_ctx_t* verify_ctx;

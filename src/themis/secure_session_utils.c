@@ -23,7 +23,7 @@ soter_sign_alg_t get_key_sign_type(const void *sign_key, size_t sign_key_length)
 	{
 		if (sign_key_length < ntohl(key->size))
 		{
-			(soter_sign_alg_t)0xffffffff;
+			return (soter_sign_alg_t)0xffffffff;
 		}
 
 		if (!memcmp(key->tag, EC_PRIV_KEY_PREF, strlen(EC_PRIV_KEY_PREF)))
@@ -48,7 +48,7 @@ soter_sign_alg_t get_peer_key_sign_type(const void *sign_key, size_t sign_key_le
 	{
 		if (sign_key_length < ntohl(key->size))
 		{
-			(soter_sign_alg_t)0xffffffff;
+			return (soter_sign_alg_t)0xffffffff;
 		}
 
 		if (!memcmp(key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)))

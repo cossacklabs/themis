@@ -10,6 +10,8 @@
 #include <soter/soter_container.h>
 #include <soter/soter.h>
 
+#include <arpa/inet.h>
+
 #define RSA_PRIV_KEY_PREF "RRA"
 #define RSA_PUB_KEY_PREF "URA"
 

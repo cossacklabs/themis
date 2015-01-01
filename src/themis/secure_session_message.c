@@ -12,6 +12,8 @@
 
 #include <string.h>
 
+#include <arpa/inet.h>
+
 #define THEMIS_SESSION_WRAP_TAG "TSWM"
 
 /* Message size + session id + iv + length + sequence number + timestamp + MAC */

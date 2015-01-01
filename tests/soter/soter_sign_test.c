@@ -9,7 +9,7 @@
 
 static int sign_test(soter_sign_alg_t alg)
 {
-  uint8_t test_data[]="test message";
+  char test_data[]="test message";
   size_t test_data_length=strlen(test_data);
   
   soter_sign_ctx_t* ctx=NULL;

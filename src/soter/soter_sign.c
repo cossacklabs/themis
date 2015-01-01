@@ -14,8 +14,6 @@
 #include <soter/soter_sign_rsa.h>
 #include <soter/soter_sign_ecdsa.h>
 
-typedef struct soter_sign_ctx_type soter_sign_ctx_t;
-
 #define SOTER_SIGN_ALG(alg, padding, kdf)				\
   case SOTER_SIGN_##alg##_##padding##_##kdf :				\
   return soter_sign_init_##alg##_##padding##_##kdf(ctx,private_key,private_key_length, public_key, public_key_length);

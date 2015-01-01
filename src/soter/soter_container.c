@@ -8,7 +8,7 @@
 #include <soter/soter.h>
 #include <common/error.h>
 #include <soter/soter_crc32.h>
-
+#include <arpa/inet.h>
 soter_status_t soter_update_container_checksum(soter_container_hdr_t *hdr)
 {
 	hdr->crc = 0;
