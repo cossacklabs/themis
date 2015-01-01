@@ -296,7 +296,7 @@ err:
 
 themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, size_t iv_length, const void *in, size_t in_length, void *out, size_t out_length)
 {
-	/*soter_sym_ctx_t *ctx;
+	soter_sym_ctx_t *ctx;
 	soter_status_t res;
 
 	size_t bytes_encrypted = out_length;
@@ -325,8 +325,21 @@ themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, 
 	}
 
 	bytes_encrypted = out_length - bytes_encrypted;
+	out_length = bytes_encrypted;
 
-	res = soter_sym_final(ctx, ((uint8_t *)out) + in_length, &bytes_encrypted);
+	res = soter_sym_final(ctx, ((uint8_t *)out) + in_length, &out_length);
+	if (HERMES_SUCCESS != res)
+	{
+		goto err;
+	}
+
+	if (0 != out_length)
+	{
+		res = HERMES_FAIL;
+		goto err;
+	}
+
+	res = soter_sym_get_auth_tag(ctx, ((uint8_t *)out) + in_length, &bytes_encrypted);
 	if (HERMES_SUCCESS != res)
 	{
 		goto err;
@@ -345,10 +358,10 @@ err:
 		soter_sym_destroy(ctx);
 	}
 
-	return res;*/
+	return res;
 
 	/* TODO: we will simulate encryption until we fix gcm */
-	const uint8_t *input = in;
+	/*const uint8_t *input = in;
 	uint8_t *output = out;
 
 	size_t i;
@@ -368,7 +381,7 @@ err:
 		output[i] = 0xff;
 	}
 
-	return HERMES_SUCCESS;
+	return HERMES_SUCCESS;*/
 }
 
 themis_status_t decrypt_gcm(const void *key, size_t key_length, const void *iv, size_t iv_length, const void *in, size_t in_length, void *out, size_t out_length)

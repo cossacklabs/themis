@@ -112,6 +112,7 @@ static void test_basic_flow(void)
 	themis_status_t res;
 
 	uint8_t dummy[128];
+	size_t dummy_length = sizeof(dummy);
 
 	memcpy(&(clients[0].transport), &transport, sizeof(secure_session_user_callbacks_t));
 	clients[0].transport.user_data = &(clients[0]);
@@ -161,6 +162,20 @@ static void test_basic_flow(void)
 	if (res)
 	{
 		testsuite_fail_if(res, "secure_session_receive failed");
+		return;
+	}
+
+	res = secure_session_wrap(&(clients[0].session), "abc", sizeof("abc"), dummy, &dummy_length);
+	if (res)
+	{
+		testsuite_fail_if(res, "secure_session_wrap failed");
+		return;
+	}
+
+	res = secure_session_unwrap(&(clients[1].session), dummy, dummy_length, dummy, &dummy_length);
+	if (res)
+	{
+		testsuite_fail_if(res, "secure_session_unwrap failed");
 		return;
 	}
 

@@ -78,18 +78,21 @@ themis_status_t secure_session_wrap(secure_session_t *session_ctx, const void *m
 	return HERMES_SUCCESS;
 }
 
-themis_status_t secure_session_uwrap(secure_session_t *session_ctx, const void *wrapped_message, size_t wrapped_message_length, void *message, size_t *message_length)
+themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void *wrapped_message, size_t wrapped_message_length, void *message, size_t *message_length)
 {
 	const uint32_t *session_id = (const uint32_t *)wrapped_message;
 	const uint8_t *iv = (const uint8_t *)(session_id + 1);
 
 	uint8_t message_header[sizeof(uint32_t) + sizeof(uint32_t) + sizeof(time_t)];
+	size_t message_header_size = sizeof(message_header);
 	uint32_t length;
 	uint32_t seq;
 	time_t ts;
 
 	time_t curr_time;
 	themis_status_t res;
+
+	soter_sym_ctx_t *sym_ctx;
 
 	if ((NULL == session_ctx) || (NULL == wrapped_message) || (WRAP_AUX_DATA > wrapped_message_length) || (NULL == message_length))
 	{
@@ -113,8 +116,14 @@ themis_status_t secure_session_uwrap(secure_session_t *session_ctx, const void *
 		return HERMES_INVALID_PARAMETER;
 	}
 
-	/* TODO: change to GCM when fixed */
+	sym_ctx = soter_sym_create(SOTER_aes_gcm_none_nonkdf_Decrypt, session_ctx->in_cipher_key, sizeof(session_ctx->in_cipher_key), iv, CIPHER_MAX_BLOCK_SIZE);
+	if (NULL == sym_ctx)
 	{
+		return HERMES_FAIL;
+	}
+
+	/* TODO: change to GCM when fixed */
+	/*{
 		size_t i;
 
 		for (i = 0; i < sizeof(message_header); i++)
@@ -125,36 +134,80 @@ themis_status_t secure_session_uwrap(secure_session_t *session_ctx, const void *
 		length = ntohl(*((uint32_t *)message_header));
 		seq = ntohl(*((uint32_t *)(message_header + sizeof(uint32_t))));
 		ts = be64toh(*((time_t *)(message_header + sizeof(uint32_t) + sizeof(uint32_t))));
+	}*/
+
+	res = soter_sym_update(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE, sizeof(message_header), message_header, &message_header_size);
+	if (HERMES_SUCCESS != res)
+	{
+		goto err;
 	}
+
+	if (sizeof(message_header) != message_header_size)
+	{
+		res = HERMES_FAIL;
+		goto err;
+	}
+
+	length = ntohl(*((uint32_t *)message_header));
+	seq = ntohl(*((uint32_t *)(message_header + sizeof(uint32_t))));
+	ts = be64toh(*((time_t *)(message_header + sizeof(uint32_t) + sizeof(uint32_t))));
 
 	if (length > (UNWRAPPED_SIZE(wrapped_message_length) + sizeof(uint32_t) + 8))
 	{
-		return HERMES_INVALID_PARAMETER;
+		res = HERMES_INVALID_PARAMETER;
+		goto err;
 	}
 
 	if ((seq < (session_ctx->in_seq - SEQ_MAX_DIFF)) || (seq > (session_ctx->in_seq + SEQ_MAX_DIFF)))
 	{
-		return HERMES_INVALID_PARAMETER;
+		res = HERMES_INVALID_PARAMETER;
+		goto err;
 	}
 
 	if ((ts < (curr_time - TS_MAX_DIFF)) || (ts > (curr_time + TS_MAX_DIFF)))
 	{
-		return HERMES_INVALID_PARAMETER;
+		res = HERMES_INVALID_PARAMETER;
+		goto err;
 	}
 
 	*message_length = length - (sizeof(uint32_t) + sizeof(time_t));
 
 	/* TODO: change to GCM when fixed */
-	{
+	/*{
 		size_t i;
 
 		for (i = 0; i < *message_length; i++)
 		{
 			((uint8_t *)message)[i] = iv[CIPHER_MAX_BLOCK_SIZE + sizeof(message_header) + i] ^ 0xff;
 		}
+	}*/
+
+	res = soter_sym_update(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header), *message_length, message, message_length);
+	if (HERMES_SUCCESS != res)
+	{
+		goto err;
+	}
+
+	res = soter_sym_set_auth_tag(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header) + *message_length, CIPHER_AUTH_TAG_SIZE);
+	if (HERMES_SUCCESS != res)
+	{
+		goto err;
+	}
+
+	res = soter_sym_final(sym_ctx, message_header, &message_header_size);
+	if (HERMES_SUCCESS != res)
+	{
+		goto err;
 	}
 
 	session_ctx->in_seq = seq;
 
-	return HERMES_SUCCESS;
+err:
+
+	if (NULL != sym_ctx)
+	{
+		soter_sym_destroy(sym_ctx);
+	}
+
+	return res;
 }
