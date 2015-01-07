@@ -8,7 +8,7 @@
 #include "soter_test.h"
 #include <string.h>
 
-#define TEST_DATA_SIZE 70
+#define TEST_DATA_SIZE 7000
 
 static void test_basic_encryption_flow(void)
 {

@@ -369,7 +369,7 @@ static void test_known_values(void)
 void run_soter_sym_test()
 {
   testsuite_enter_suite("soter sym");
-  testsuite_run_test(soter_sym_test);
+  //testsuite_run_test(soter_sym_test);
   testsuite_run_test(test_known_values);
   //  soter_sym_test();
 }

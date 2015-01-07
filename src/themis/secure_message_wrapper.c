@@ -132,3 +132,81 @@ themis_status_t secure_message_verifier_destroy(themis_secure_message_verifier_t
   return HERMES_SUCCESS;  
 }
 
+typedef struct symm_init_ctx_type{
+  uint8_t passwd[THEMIS_RSA_SYMM_PASSWD_LENGTH];
+  uint8_t salt[THEMIS_RSA_SYMM_SALT_LENGTH];
+} symm_init_ctx_t;
+
+themis_secure_message_rsa_encrypter_t* themis_secure_message_rsa_encrypter_init(const uint8_t* peer_public_key, const size_t peer_public_key_length){
+  if(peer_public_key==NULL || peer_public_key_length==0){
+    return NULL;
+  }
+  themis_secure_message_rsa_encrypter_t* ctx=malloc(sizeof(themis_secure_message_rsa_encrypter_t));
+  if(!ctx){
+    return NULL;
+  }
+
+  symm_init_ctx_t symm_passwd_salt;
+  if(soter_rand((uint8_t*)(&symm_passwd_salt), sizeof(symm_passwd_salt))!=HERMES_SUCCESS){
+    free(ctx);
+    return NULL;
+  }
+  ctx->cipher=soter_sym_create(THEMIS_RSA_SYMM_ENC_ALG, symm_passwd_salt.passwd, THEMIS_RSA_SYMM_PASSWD_LENGTH, symm_passwd_salt.salt, THEMIS_RSA_SYMM_SALT_LENGTH);
+  if(ctx->cipher!=NULL){
+    secure_message_rsa_encrypter_destroy(ctx);
+    return NULL;
+  }
+  soter_asym_cipher_t* sym_key_encryptor=soter_asym_cipher_create(SOTER_ASYM_CIPHER_OAEP);
+  if(sym_key_encryptor!=NULL){
+    secure_message_rsa_encrypter_destroy(ctx);
+    return NULL;
+  }
+  if(soter_asym_cipher_import_key(sym_key_encryptor, peer_public_key, peer_public_key_length)!=HERMES_SUCCESS){
+    secure_message_rsa_encrypter_destroy(ctx);
+    soter_asym_cipher_destroy(sym_key_encryptor);
+    return NULL;
+  }
+  size_t symm_passwd_length=sizeof(ctx->encrypted_symm_passwd);
+  if(soter_asym_cipher_encrypt(sym_key_encryptor, (uint8_t*)(&symm_passwd_salt), sizeof(symm_passwd_salt), ctx->encrypted_symm_passwd, &symm_passwd_length)!=HERMES_SUCCESS){
+    secure_message_rsa_encrypter_destroy(ctx);
+    soter_asym_cipher_destroy(sym_key_encryptor);
+    return NULL;
+  }
+  soter_asym_cipher_destroy(sym_key_encryptor);  
+  return ctx;
+}
+
+themis_status_t themis_secure_message_rsa_encrypter_proceed(themis_secure_message_rsa_encrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length){
+}
+
+themis_status_t secure_message_rsa_encrypter_destroy(themis_secure_message_rsa_encrypter_t* ctx){
+  HERMES_CHECK_PARAM(ctx!=NULL);
+  if(ctx->cipher!=NULL){
+    soter_sym_destroy(ctx->cipher);
+  }
+  soter_rand((uint8_t*)(&(ctx->encrypted_symm_passwd)), sizeof(THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH));
+  free(ctx);
+  return HERMES_SUCCESS;
+}
+
+themis_secure_message_rsa_decrypter_t* themis_secure_message_rsa_decrypter_init(const uint8_t* private_key, const size_t private_key_length){
+}
+themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_message_rsa_decrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length){
+}
+themis_status_t secure_message_rsa_decrypter_destroy(themis_secure_message_rsa_decrypter_t* ctx){
+}
+
+themis_secure_message_ec_encrypter_t* themis_secure_message_ec_encrypter_init(const uint8_t* private_key, const size_t private_key_length, const uint8_t* peer_public_key, const size_t peer_public_key_length){
+}
+themis_status_t themis_secure_message_ec_encrypter_proceed(themis_secure_message_ec_encrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length){
+}
+themis_status_t secure_message_ec_encrypter_destroy(themis_secure_message_ec_encrypter_t* ctx){
+}
+
+themis_secure_message_ec_decrypter_t* themis_secure_message_ec_decrypter_init(const uint8_t* private_key, const size_t private_key_length, const uint8_t* peer_public_key, const size_t peer_public_key_length){
+}
+themis_status_t themis_secure_message_ec_decrypter_proceed(themis_secure_message_ec_decrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length){
+}
+themis_status_t secure_message_ec_decrypter_destroy(themis_secure_message_ec_decrypter_t* ctx){
+}
+

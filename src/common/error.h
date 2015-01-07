@@ -32,6 +32,11 @@
 	return HERMES_INVALID_PARAMETER;\
     }
 
+#define HERMES_CHECK_MALLOC(x)if(!(x)){	\
+	HERMES_ERROR_OUT(#x);		\
+	return HERMES_NO_MEMORY;\
+    }
+
 #define HERMES_CHECK_FREE(x,y)if(!(x)){	\
 	HERMES_ERROR_OUT(#x);		\
 	free(y);			\
