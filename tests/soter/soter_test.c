@@ -14,9 +14,9 @@ int main(int argc, char *argv[])
 
 //	run_soter_hash_tests();
 //	run_soter_hmac_tests();
-	run_soter_asym_cipher_tests();
+//	run_soter_asym_cipher_tests();
 //	run_soter_asym_ka_tests();
-//	run_soter_sym_test();
+	run_soter_sym_test();
 //	run_soter_sign_test();
 //	run_soter_rand_tests();
 

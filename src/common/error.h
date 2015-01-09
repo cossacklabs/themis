@@ -32,15 +32,42 @@
 	return HERMES_INVALID_PARAMETER;\
     }
 
+#define HERMES_CHECK_PARAM_(x) if(!(x)){	\
+	HERMES_ERROR_OUT(#x);		\
+	return NULL;\
+    }
+
 #define HERMES_CHECK_MALLOC(x)if(!(x)){	\
 	HERMES_ERROR_OUT(#x);		\
 	return HERMES_NO_MEMORY;\
+    }
+
+#define HERMES_CHECK_MALLOC_(x)if(!(x)){	\
+	HERMES_ERROR_OUT(#x);		\
+	return NULL;\
+    }
+
+#define HERMES_CHECK_MALLOC_(x)if(!(x)){	\
+	HERMES_ERROR_OUT(#x);		\
+	return NULL;\
     }
 
 #define HERMES_CHECK_FREE(x,y)if(!(x)){	\
 	HERMES_ERROR_OUT(#x);		\
 	free(y);			\
 	return HERMES_FAIL;		\
+    }
+
+#define HERMES_IF_FAIL(x,y)if(!(x)){	\
+	HERMES_ERROR_OUT(#x);		\
+	{y;}			\
+	return HERMES_FAIL;		\
+    }
+
+#define HERMES_IF_FAIL_(x,y)if(!(x)){	\
+	HERMES_ERROR_OUT(#x);		\
+	{y;}			\
+	return NULL;		\
     }
 
 
