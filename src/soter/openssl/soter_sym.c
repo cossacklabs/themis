@@ -74,7 +74,7 @@ soter_status_t soter_sym_ctx_final(soter_sym_ctx_t *ctx,
 				   void* out_data,
 				   size_t* out_data_length,
 				   int (*evp_final)(EVP_CIPHER_CTX *ctx, unsigned char *out, int *outl)){
-   HERMES_CHECK(evp_final(&(ctx->evp_sym_ctx), out_data, (int*)out_data_length));
+   HERMES_CHECK(evp_final(&(ctx->evp_sym_ctx), out_data, (int*)out_data_length)!=0);
    return HERMES_SUCCESS;
 }
 
@@ -159,7 +159,7 @@ soter_sym_ctx_t* soter_aes_ctr_decrypt_create(const soter_sym_kdf_t kdf, const v
 soter_status_t soter_aes_ctr_decrypt_update(soter_sym_ctx_t *ctx, const void* cipher_data,  const size_t cipher_data_length, void* plain_data, size_t* plain_data_length){
    if((*plain_data_length)<(cipher_data_length+SOTER_AES_BLOCK_LENGTH)){
      (*plain_data_length)=cipher_data_length+SOTER_AES_BLOCK_LENGTH;
-      return HERMES_BUFFER_TOO_SMALL;
+     return HERMES_BUFFER_TOO_SMALL;
    }
    return soter_sym_ctx_update(ctx, cipher_data,  cipher_data_length, plain_data, plain_data_length, EVP_DecryptUpdate);
 }
@@ -190,16 +190,22 @@ soter_status_t soter_aes_gcm_encrypt_final(soter_sym_ctx_t *ctx, void* auth_tag,
     (*auth_tag_length)=SOTER_AES_GCM_AUTH_TAG_LENGTH;
     return HERMES_BUFFER_TOO_SMALL;
   }
-  HERMES_CHECK(EVP_CIPHER_CTX_ctrl(&(ctx->evp_sym_ctx), EVP_CTRL_GCM_GET_TAG, SOTER_AES_GCM_AUTH_TAG_LENGTH, auth_tag)==1);
-  return  soter_sym_ctx_final(ctx, cipher_data, cipher_data_length, EVP_EncryptFinal);
+  HERMES_CHECK(soter_sym_ctx_final(ctx, cipher_data, cipher_data_length, EVP_EncryptFinal)==HERMES_SUCCESS);
+  HERMES_CHECK(EVP_CIPHER_CTX_ctrl(&(ctx->evp_sym_ctx), EVP_CTRL_GCM_GET_TAG, SOTER_AES_GCM_AUTH_TAG_LENGTH, auth_tag));
+  return HERMES_SUCCESS;
 }
 
 soter_status_t soter_aes_gcm_encrypt_destroy(soter_sym_ctx_t *ctx){
   return soter_sym_ctx_destroy(ctx);
 }
 
-soter_sym_ctx_t* soter_aes_gcm_decrypt_create(const soter_sym_kdf_t kdf, const void* key, const size_t key_length, const void* salt, const size_t salt_length){
-  return soter_sym_ctx_init(kdf, key,key_length, salt, salt_length, EVP_DecryptInit_ex, EVP_aes_256_gcm());
+soter_sym_ctx_t* soter_aes_gcm_decrypt_create(const soter_sym_kdf_t kdf, const void* key, const size_t key_length, const void* salt, const size_t salt_length, const void* auth_tag, const size_t auth_tag_length){
+  HERMES_CHECK_PARAM_(auth_tag!=NULL);
+  HERMES_CHECK_PARAM_(auth_tag_length>=SOTER_AES_GCM_AUTH_TAG_LENGTH);
+  soter_sym_ctx_t* ctx=soter_sym_ctx_init(kdf, key,key_length, salt, salt_length, EVP_DecryptInit_ex, EVP_aes_256_gcm());
+  HERMES_CHECK_(ctx!=NULL);
+  HERMES_IF_FAIL_(EVP_CIPHER_CTX_ctrl(&(ctx->evp_sym_ctx), EVP_CTRL_GCM_SET_TAG, SOTER_AES_GCM_AUTH_TAG_LENGTH, (void*)auth_tag), soter_aes_gcm_decrypt_destroy(ctx));
+  return ctx;
 }
 
 soter_status_t soter_aes_gcm_decrypt_update(soter_sym_ctx_t *ctx, const void* cipher_data,  const size_t cipher_data_length, void* plain_data, size_t* plain_data_length){
@@ -210,14 +216,12 @@ soter_status_t soter_aes_gcm_decrypt_update(soter_sym_ctx_t *ctx, const void* ci
    return soter_sym_ctx_update(ctx, cipher_data,  cipher_data_length, plain_data, plain_data_length, EVP_DecryptUpdate);
 }
 
-soter_status_t soter_aes_gcm_decrypt_final(soter_sym_ctx_t *ctx, const void* auth_tag, const size_t auth_tag_length, void* plain_data, size_t* plain_data_length)
+soter_status_t soter_aes_gcm_decrypt_final(soter_sym_ctx_t *ctx, void* plain_data, size_t* plain_data_length)
 {
-  HERMES_CHECK_PARAM(ctx!=NULL);
-  HERMES_CHECK_PARAM(auth_tag!=NULL);
-  HERMES_CHECK_PARAM(auth_tag_length>=SOTER_AES_GCM_AUTH_TAG_LENGTH);
-  HERMES_CHECK(EVP_CIPHER_CTX_ctrl(&(ctx->evp_sym_ctx), EVP_CTRL_GCM_SET_TAG, SOTER_AES_GCM_AUTH_TAG_LENGTH, (void*)auth_tag)==1);
   return  soter_sym_ctx_final(ctx, plain_data, plain_data_length, EVP_DecryptFinal);
 }
 soter_status_t soter_aes_gcm_decrypt_destroy(soter_sym_ctx_t *ctx){
   return soter_sym_ctx_destroy(ctx);
 }
+
+

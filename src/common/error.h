@@ -27,6 +27,11 @@
 	return HERMES_FAIL;		\
     }
 
+#define HERMES_CHECK_(x) if(!(x)){	\
+	HERMES_ERROR_OUT(#x);		\
+	return NULL;		\
+    }
+
 #define HERMES_CHECK_PARAM(x) if(!(x)){	\
 	HERMES_ERROR_OUT(#x);		\
 	return HERMES_INVALID_PARAMETER;\
