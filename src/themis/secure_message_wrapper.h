@@ -28,15 +28,6 @@
 
 #define IS_THEMIS_SECURE_MESSAGE_ENCLYPTED(tag)    ((tag&0x00002700)==0x00002700?true:false)      
 
-struct themis_secure_message_hdr_type{
-  uint32_t message_type;
-  uint32_t message_length;
-  uint32_t signature_length;
-};
-
-typedef struct themis_secure_message_hdr_type themis_secure_message_hdr_t;
-
-#define THEMIS_SECURE_MESSAGE_LENGTH(hdr) (sizeof(themis_secure_message_hdr_t)+hdr->message_length+hdr->signature_length)
 
 struct themis_secure_message_sign_worker_type{
   soter_sign_ctx_t* sign_ctx;
@@ -57,16 +48,7 @@ themis_secure_message_verifier_t* themis_secure_message_verifier_init(const uint
 themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_verifier_t* ctx, const uint8_t* wrapped_message, const size_t wrapped_message_length, uint8_t* message, size_t* message_length);
 themis_status_t secure_message_verifier_destroy(themis_secure_message_verifier_t* ctx);
 
-#define THEMIS_RSA_SYMM_ENC_ALG SOTER_aes_ctr_none_pbkdf2_Encrypt
-#define THEMIS_RSA_SYMM_DEC_ALG SOTER_aes_ctr_none_pbkdf2_Decrypt
-#define THEMIS_RSA_SYMM_PASSWD_LENGTH 70 //!!! need to aprove
-#define THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH 256 //encrypted password for rsa 256 
-#define THEMIS_RSA_SYMM_SALT_LENGTH 16
-
-struct themis_secure_message_rsa_encrypt_worker_type{
-  soter_sym_ctx_t* cipher;
-  uint8_t encrypted_symm_passwd[THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH];
-};
+struct themis_secure_message_rsa_encrypt_worker_type;
 
 typedef struct themis_secure_message_rsa_encrypt_worker_type themis_secure_message_rsa_encrypter_t; 
 
