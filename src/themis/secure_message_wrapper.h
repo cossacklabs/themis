@@ -28,6 +28,25 @@
 
 #define IS_THEMIS_SECURE_MESSAGE_ENCLYPTED(tag)    ((tag&0x00002700)==0x00002700?true:false)      
 
+struct themis_secure_message_hdr_type{
+  uint32_t message_type;
+  uint32_t message_length;
+};
+typedef struct themis_secure_message_hdr_type themis_secure_message_hdr_t;
+
+#define THEMIS_SECURE_MESSAGE_LENGTH(hdr) (sizeof(themis_secure_message_hdr_t)+hdr->message_length)
+
+struct themis_secure_signed_message_hdr_type{
+  themis_secure_message_hdr_t message_hdr;
+  uint32_t signature_length;
+};
+
+typedef struct themis_secure_signed_message_hdr_type themis_secure_signed_message_hdr_t; 
+
+typedef struct themis_secure_encrypted_message_hdr_type{
+  themis_secure_message_hdr_t message_hdr;
+} themis_secure_encrypted_message_hdr_t;
+
 
 struct themis_secure_message_sign_worker_type{
   soter_sign_ctx_t* sign_ctx;

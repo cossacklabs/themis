@@ -19,21 +19,6 @@
 #define THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH 256 //encrypted password for rsa 256 
 #define THEMIS_RSA_SYMM_SALT_LENGTH 16
 
-struct themis_secure_message_hdr_type{
-  uint32_t message_type;
-  uint32_t message_length;
-};
-typedef struct themis_secure_message_hdr_type themis_secure_message_hdr_t;
-
-#define THEMIS_SECURE_MESSAGE_LENGTH(hdr) (sizeof(themis_secure_message_hdr_t)+hdr->message_length)
-
-struct themis_secure_signed_message_hdr_type{
-  themis_secure_message_hdr_t message_hdr;
-  uint32_t signature_length;
-};
-
-typedef struct themis_secure_signed_message_hdr_type themis_secure_signed_message_hdr_t; 
-
 soter_sign_alg_t get_alg_id(const uint8_t* key, size_t key_length)
 {
   if (key_length < sizeof(soter_container_hdr_t) && key_length < ((const soter_container_hdr_t*)key)->size){
@@ -162,18 +147,14 @@ struct themis_secure_message_rsa_encrypt_worker_type{
   //  uint8_t encrypted_symm_passwd[THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH];
 };
 
-typedef struct themis_secure_encrypted_message_hdr_type{
-  themis_secure_message_hdr_t message_hdr;
-} themis_secure_encrypted_message_hdr_t;
-
 themis_secure_message_rsa_encrypter_t* themis_secure_message_rsa_encrypter_init(const uint8_t* peer_public_key, const size_t peer_public_key_length){
   HERMES_CHECK_PARAM_(peer_public_key==NULL);
   HERMES_CHECK_PARAM_(peer_public_key_length==0);
   themis_secure_message_rsa_encrypter_t* ctx=malloc(sizeof(themis_secure_message_rsa_encrypter_t));
   HERMES_CHECK_(ctx!=NULL);
   ctx->asym_cipher=soter_asym_cipher_create(SOTER_ASYM_CIPHER_OAEP);
-  HERMES_FAIL_IF_(ctx->asym_cipher!=NULL, secure_message_rsa_encrypter_destroy(ctx));
-  HERMES_FAIL_IF(soter_asym_cipher_import_key(ctx->asym_cipher, peer_public_key, peer_public_key_length)!=HERMES_SUCCESS, secure_message_rsa_encrypter_destroy(ctx));
+  HERMES_IF_FAIL_(ctx->asym_cipher!=NULL, secure_message_rsa_encrypter_destroy(ctx));
+  HERMES_IF_FAIL_(soter_asym_cipher_import_key(ctx->asym_cipher, peer_public_key, peer_public_key_length)!=HERMES_SUCCESS, secure_message_rsa_encrypter_destroy(ctx));
   return ctx;
 }
 
@@ -187,8 +168,9 @@ themis_status_t themis_secure_message_rsa_encrypter_proceed(themis_secure_messag
   soter_sym_ctx_t* cipher=soter_aes_ctr_encrypt_create(PBKDF2, symm_passwd_salt.passwd, THEMIS_RSA_SYMM_PASSWD_LENGTH, symm_passwd_salt.salt, THEMIS_RSA_SYMM_SALT_LENGTH);
   HERMES_CHECK(cipher!=NULL);
   size_t symm_passwd_length=THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH;
-  HERMES_FAIL_IF(soter_asym_cipher_encrypt(ctx->asym_cipher, (uint8_t*)(&symm_passwd_salt), sizeof(symm_passwd_salt), wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t), &symm_passwd_length)!=HERMES_SUCCESS, soter_aes_ctr_encrypt_destroy(cipher));
-  HERMES_FAIL_IF(soter_aes_ctr_encrypt_update(cipher, message, message_length, wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t)+THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH, wrapped_message_length), soter_aes_ctr_encrypt_destroy(cipher));
+  HERMES_IF_FAIL(soter_asym_cipher_encrypt(ctx->asym_cipher, (uint8_t*)(&symm_passwd_salt), sizeof(symm_passwd_salt), wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t), &symm_passwd_length)!=HERMES_SUCCESS, soter_aes_ctr_encrypt_destroy(cipher));
+  HERMES_IF_FAIL(soter_aes_ctr_encrypt_update(cipher, message, message_length, wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t)+THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH, wrapped_message_length), soter_aes_ctr_encrypt_destroy(cipher));
+  HERMES_CHECK(soter_aes_ctr_encrypt_destroy(cipher)==HERMES_SUCCESS);
   (*wrapped_message_length)+=sizeof(themis_secure_encrypted_message_hdr_t)+THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH;
   ((themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_type=THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED;
   ((themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length=(*wrapped_message_length);  
@@ -198,30 +180,57 @@ themis_status_t themis_secure_message_rsa_encrypter_proceed(themis_secure_messag
 themis_status_t secure_message_rsa_encrypter_destroy(themis_secure_message_rsa_encrypter_t* ctx){
   HERMES_CHECK_PARAM(ctx!=NULL);
   if(ctx->asym_cipher!=NULL){
-    soter_asim_cipher_destroy(ctx->asym_cipher);
+    soter_asym_cipher_destroy(ctx->asym_cipher);
   }
   free(ctx);
   return HERMES_SUCCESS;
 }
 
 themis_secure_message_rsa_decrypter_t* themis_secure_message_rsa_decrypter_init(const uint8_t* private_key, const size_t private_key_length){
+  HERMES_CHECK_PARAM_(private_key==NULL);
+  HERMES_CHECK_PARAM_(private_key_length==0);
+  themis_secure_message_rsa_decrypter_t* ctx=malloc(sizeof(themis_secure_message_rsa_decrypter_t));
+  HERMES_CHECK_(ctx!=NULL);
+  ctx->asym_cipher=soter_asym_cipher_create(SOTER_ASYM_CIPHER_OAEP);
+  HERMES_IF_FAIL_(ctx->asym_cipher!=NULL, secure_message_rsa_encrypter_destroy(ctx));
+  HERMES_IF_FAIL_(soter_asym_cipher_import_key(ctx->asym_cipher, private_key, private_key_length)!=HERMES_SUCCESS, secure_message_rsa_decrypter_destroy(ctx));
+  return ctx;
 }
-themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_message_rsa_decrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length){
+themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_message_rsa_decrypter_t* ctx, const uint8_t* wrapped_message, const size_t wrapped_message_length, uint8_t* message, size_t* message_length){
+  HERMES_CHECK_PARAM(wrapped_message_length>sizeof(themis_secure_encrypted_message_hdr_t));
+  HERMES_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_type==THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED);
+  HERMES_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length==wrapped_message_length);
+  symm_init_ctx_t sym_ctx_;
+  size_t sym_ctx_length_=sizeof(sym_ctx_);
+  HERMES_CHECK(soter_asym_cipher_decrypt(ctx->asym_cipher, wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t), THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH, (uint8_t*)(&sym_ctx_), &sym_ctx_length_)!=HERMES_SUCCESS);
+  soter_sym_ctx_t* cipher=soter_aes_ctr_decrypt_create(PBKDF2, sym_ctx_.passwd, THEMIS_RSA_SYMM_PASSWD_LENGTH, sym_ctx_.salt, THEMIS_RSA_SYMM_SALT_LENGTH);
+  HERMES_CHECK(cipher!=NULL);
+  HERMES_IF_FAIL(soter_aes_ctr_encrypt_update(cipher, wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t)+THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH, wrapped_message_length-sizeof(themis_secure_encrypted_message_hdr_t)-THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH, message, message_length), soter_aes_ctr_decrypt_destroy(cipher));
+  HERMES_CHECK(soter_aes_ctr_decrypt_destroy(cipher)==HERMES_SUCCESS);
+  return HERMES_SUCCESS;
 }
+
 themis_status_t secure_message_rsa_decrypter_destroy(themis_secure_message_rsa_decrypter_t* ctx){
+  return secure_message_rsa_encrypter_destroy(ctx);
 }
 
 themis_secure_message_ec_encrypter_t* themis_secure_message_ec_encrypter_init(const uint8_t* private_key, const size_t private_key_length, const uint8_t* peer_public_key, const size_t peer_public_key_length){
+  return NULL;
 }
 themis_status_t themis_secure_message_ec_encrypter_proceed(themis_secure_message_ec_encrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length){
+  return HERMES_FAIL;
 }
 themis_status_t secure_message_ec_encrypter_destroy(themis_secure_message_ec_encrypter_t* ctx){
+  return HERMES_FAIL;
 }
 
 themis_secure_message_ec_decrypter_t* themis_secure_message_ec_decrypter_init(const uint8_t* private_key, const size_t private_key_length, const uint8_t* peer_public_key, const size_t peer_public_key_length){
+  return NULL;
 }
 themis_status_t themis_secure_message_ec_decrypter_proceed(themis_secure_message_ec_decrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length){
+  return HERMES_FAIL;
 }
 themis_status_t secure_message_ec_decrypter_destroy(themis_secure_message_ec_decrypter_t* ctx){
+  return HERMES_FAIL;
 }
 
