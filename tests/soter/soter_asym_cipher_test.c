@@ -8,7 +8,7 @@
 #include "soter_test.h"
 #include <string.h>
 
-#define TEST_DATA_SIZE 7000
+#define TEST_DATA_SIZE 70
 
 static void test_basic_encryption_flow(void)
 {
@@ -218,6 +218,8 @@ void test_api(void)
 	res = soter_asym_cipher_encrypt(&ctx, test_data, sizeof(test_data), encrypted_data, &encrypted_data_length);
 	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (encrypted_data_length > 0), "soter_asym_cipher_encrypt: get output size (small out buffer)");
 
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_encrypt(&ctx, test_data, 2048, encrypted_data, &encrypted_data_length), "soter_asym_cipher_encrypt: plaintext too large");
+
 	res = soter_asym_cipher_encrypt(&ctx, test_data, sizeof(test_data), encrypted_data, &encrypted_data_length);
 	if (HERMES_SUCCESS != res)
 	{
@@ -235,8 +237,10 @@ void test_api(void)
 	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (decrypted_data_length > 0), "soter_asym_cipher_decrypt: get output size (NULL out buffer)");
 
 	decrypted_data_length = 0;
-	res = soter_asym_cipher_encrypt(&ctx, encrypted_data, encrypted_data_length, decrypted_data, &decrypted_data_length);
+	res = soter_asym_cipher_decrypt(&ctx, encrypted_data, encrypted_data_length, decrypted_data, &decrypted_data_length);
 	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (decrypted_data_length > 0), "soter_asym_cipher_decrypt: get output size (small out buffer)");
+
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_cipher_decrypt(&ctx, encrypted_data, encrypted_data_length - 1, decrypted_data, &decrypted_data_length), "soter_asym_cipher_decrypt: ciphertext too small");
 
 	res = soter_asym_cipher_decrypt(&ctx, encrypted_data, encrypted_data_length, decrypted_data, &decrypted_data_length);
 	if (HERMES_SUCCESS != res)

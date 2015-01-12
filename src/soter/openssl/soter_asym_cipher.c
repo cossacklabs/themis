@@ -11,6 +11,9 @@
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
+/* We use only SHA1 for now */
+#define OAEP_HASH_SIZE 20
+
 /* Padding is ignored. We use OAEP by default. Parameter is to support more paddings in the future */
 soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher, soter_asym_cipher_padding_t pad)
 {
@@ -124,6 +127,8 @@ soter_status_t soter_asym_cipher_gen_key(soter_asym_cipher_t* asym_cipher)
 soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const void* plain_data, size_t plain_data_length, void* cipher_data, size_t* cipher_data_length)
 {
 	EVP_PKEY *pkey;
+	RSA *rsa;
+	int rsa_mod_size;
 	size_t output_length;
 
 	if ((!asym_cipher) || (!plain_data) || (0 == plain_data_length) || (!cipher_data_length))
@@ -141,6 +146,20 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
 	if (EVP_PKEY_RSA != EVP_PKEY_id(pkey))
 	{
 		/* We can only do assymetric encryption with RSA algorithm */
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	rsa = EVP_PKEY_get0(pkey);
+	if (NULL == rsa)
+	{
+		return HERMES_FAIL;
+	}
+
+	rsa_mod_size = RSA_size(rsa);
+
+	if (plain_data_length > (rsa_mod_size - 2 - (2 * OAEP_HASH_SIZE)))
+	{
+		/* The plaindata is too large for this key size */
 		return HERMES_INVALID_PARAMETER;
 	}
 
@@ -191,6 +210,8 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
 soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const void* cipher_data, size_t cipher_data_length, void* plain_data, size_t* plain_data_length)
 {
 	EVP_PKEY *pkey;
+	RSA *rsa;
+	int rsa_mod_size;
 	size_t output_length;
 
 	if ((!asym_cipher) || (!cipher_data) || (0 == cipher_data_length) || (!plain_data_length))
@@ -208,6 +229,20 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
 	if (EVP_PKEY_RSA != EVP_PKEY_id(pkey))
 	{
 		/* We can only do assymetric encryption with RSA algorithm */
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	rsa = EVP_PKEY_get0(pkey);
+	if (NULL == rsa)
+	{
+		return HERMES_FAIL;
+	}
+
+	rsa_mod_size = RSA_size(rsa);
+
+	if (cipher_data_length < rsa_mod_size)
+	{
+		/* The cipherdata is too small for this key size */
 		return HERMES_INVALID_PARAMETER;
 	}
 
