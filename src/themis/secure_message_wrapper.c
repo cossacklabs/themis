@@ -137,6 +137,8 @@ themis_status_t secure_message_verifier_destroy(themis_secure_message_verifier_t
   return HERMES_SUCCESS;  
 }
 
+
+/* secure_encryptet_message*/ 
 typedef struct symm_init_ctx_type{
   uint8_t passwd[THEMIS_RSA_SYMM_PASSWD_LENGTH];
   uint8_t salt[THEMIS_RSA_SYMM_SALT_LENGTH];
@@ -144,7 +146,6 @@ typedef struct symm_init_ctx_type{
 
 struct themis_secure_message_rsa_encrypt_worker_type{
   soter_asym_cipher_t* asym_cipher;
-  //  uint8_t encrypted_symm_passwd[THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH];
 };
 
 themis_secure_message_rsa_encrypter_t* themis_secure_message_rsa_encrypter_init(const uint8_t* peer_public_key, const size_t peer_public_key_length){
@@ -213,8 +214,12 @@ themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_messag
 themis_status_t secure_message_rsa_decrypter_destroy(themis_secure_message_rsa_decrypter_t* ctx){
   return secure_message_rsa_encrypter_destroy(ctx);
 }
+struct themis_secure_message_ec_worker_type{
+  soter_asym_ka_t* cipher;
+};
 
 themis_secure_message_ec_encrypter_t* themis_secure_message_ec_encrypter_init(const uint8_t* private_key, const size_t private_key_length, const uint8_t* peer_public_key, const size_t peer_public_key_length){
+
   return NULL;
 }
 themis_status_t themis_secure_message_ec_encrypter_proceed(themis_secure_message_ec_encrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length){
