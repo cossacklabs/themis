@@ -194,7 +194,7 @@ static void test_known_values(void)
 	  testsuite_fail_if(HERMES_SUCCESS != res, "soter_sym_destroy");
 	}
 
-      testsuite_fail_if(memcmp(computed, ciphertext, computed_length)!=0, "known encryption");
+      testsuite_fail_if(memcmp(computed, ciphertext, strlen(vectors[i].ciphertext) / 2)!=0, "known encryption");
 
       /* Decryption */
       if(strlen(vectors[i].iv)==0){
@@ -231,7 +231,7 @@ static void test_known_values(void)
 	  soter_sym_decrypt_destroy(ctx);
 	  continue;
 	}
-      testsuite_fail_if(memcmp(computed2, plaintext, computed_length), "known decryption");
+      testsuite_fail_if(memcmp(computed2, plaintext, strlen(vectors[i].plaintext) / 2), "known decryption");
     }
 }
 
