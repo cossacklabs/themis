@@ -118,7 +118,7 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 		return HERMES_INVALID_PARAMETER;
 	}
 
-	sym_ctx = soter_sym_create(SOTER_aes_gcm_none_nonkdf_Decrypt, session_ctx->in_cipher_key, sizeof(session_ctx->in_cipher_key), iv, CIPHER_MAX_BLOCK_SIZE);
+	sym_ctx = soter_sym_decrypt_create(SOTER_SYM_AES_CTR|SOTER_SYM_256_KEY_LENGTH, session_ctx->in_cipher_key, sizeof(session_ctx->in_cipher_key), NULL, 0,iv, CIPHER_MAX_BLOCK_SIZE);
 	if (NULL == sym_ctx)
 	{
 		return HERMES_FAIL;
@@ -138,7 +138,7 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 		ts = be64toh(*((time_t *)(message_header + sizeof(uint32_t) + sizeof(uint32_t))));
 	}*/
 
-	res = soter_sym_update(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE, sizeof(message_header), message_header, &message_header_size);
+	res = soter_sym_decrypt_update(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE, sizeof(message_header), message_header, &message_header_size);
 	if (HERMES_SUCCESS != res)
 	{
 		goto err;
@@ -184,31 +184,31 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 		}
 	}*/
 
-	res = soter_sym_update(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header), *message_length, message, message_length);
+	res = soter_sym_decrypt_update(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header), *message_length, message, message_length);
 	if (HERMES_SUCCESS != res)
 	{
 		goto err;
 	}
 
-	res = soter_sym_set_auth_tag(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header) + *message_length, CIPHER_AUTH_TAG_SIZE);
-	if (HERMES_SUCCESS != res)
-	{
-		goto err;
-	}
+	//	res = soter_sym_set_auth_tag(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header) + *message_length, CIPHER_AUTH_TAG_SIZE);
+	//	if (HERMES_SUCCESS != res)
+	//	{
+	//		goto err;
+	//	}
 
-	res = soter_sym_final(sym_ctx, message_header, &message_header_size);
-	if (HERMES_SUCCESS != res)
-	{
-		goto err;
-	}
+	//	res = soter_sym_final(sym_ctx, message_header, &message_header_size);
+	//	if (HERMES_SUCCESS != res)
+	//	{
+	//		goto err;
+	//	}
 
 	session_ctx->in_seq = seq;
 
 err:
 
-	if (NULL != sym_ctx)
+       	if (NULL != sym_ctx)
 	{
-		soter_sym_destroy(sym_ctx);
+		soter_sym_decrypt_destroy(sym_ctx);
 	}
 
 	return res;

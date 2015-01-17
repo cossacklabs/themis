@@ -14,6 +14,10 @@
 #include <soter/soter_sign_rsa.h>
 #include <soter/soter_sign_ecdsa.h>
 
+#define SOTER_SIGN_ALGS \
+    SOTER_SIGN_ALG(rsa,pss,pkcs8)	\
+    SOTER_SIGN_ALG(ecdsa,none,pkcs8)
+
 #define SOTER_SIGN_ALG(alg, padding, kdf)				\
   case SOTER_SIGN_##alg##_##padding##_##kdf :				\
   return soter_sign_init_##alg##_##padding##_##kdf(ctx,private_key,private_key_length, public_key, public_key_length);
@@ -21,6 +25,7 @@ soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, co
 {
   ctx->alg=algId;
   switch(algId){
+
     SOTER_SIGN_ALGS
   };
   return HERMES_INVALID_PARAMETER;

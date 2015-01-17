@@ -9,18 +9,12 @@
 
 #include <soter/soter.h>
 
-#define SOTER_SIGN_ALGS				\
-  SOTER_SIGN_ALG(rsa,   pss,  pkcs8)	\
-  SOTER_SIGN_ALG(ecdsa, none, pkcs8)
-
-#define SOTER_SIGN_ALG(alg, padding, kdf)	\
-  SOTER_SIGN_##alg##_##padding##_##kdf,
-
 enum soter_sign_alg_type
 {
-    SOTER_SIGN_ALGS
+  SOTER_SIGN_undefined,
+  SOTER_SIGN_rsa_pss_pkcs8,
+  SOTER_SIGN_ecdsa_none_pkcs8
 };
-#undef SOTER_SIGN_ALG
 
 typedef enum soter_sign_alg_type soter_sign_alg_t;
 

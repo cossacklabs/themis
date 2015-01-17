@@ -306,13 +306,13 @@ themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, 
 		return HERMES_BUFFER_TOO_SMALL;
 	}
 
-	ctx = soter_sym_create(SOTER_aes_gcm_none_nonkdf_Encrypt, key, key_length, iv, iv_length);
+	ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AES_GCM|SOTER_SYM_256_KEY_LENGTH, key, key_length, NULL, 0, iv, iv_length);
 	if (NULL == ctx)
 	{
 		return HERMES_FAIL;
 	}
 
-	res = soter_sym_update(ctx, in, in_length, out, &bytes_encrypted);
+	res = soter_sym_aead_encrypt_update(ctx, in, in_length, out, &bytes_encrypted);
 	if (HERMES_SUCCESS != res)
 	{
 		goto err;
@@ -327,23 +327,23 @@ themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, 
 	bytes_encrypted = out_length - bytes_encrypted;
 	out_length = bytes_encrypted;
 
-	res = soter_sym_final(ctx, ((uint8_t *)out) + in_length, &out_length);
-	if (HERMES_SUCCESS != res)
-	{
-		goto err;
-	}
+	//	res = soter_sym_aead_encrypt_final(ctx, ((uint8_t *)out) + in_length, &out_length);
+	//	if (HERMES_SUCCESS != res)
+	//	{
+	//		goto err;
+	//	}
 
-	if (0 != out_length)
-	{
-		res = HERMES_FAIL;
-		goto err;
-	}
+	//	if (0 != out_length)
+	//	{
+	//		res = HERMES_FAIL;
+	//		goto err;
+	//}
 
-	res = soter_sym_get_auth_tag(ctx, ((uint8_t *)out) + in_length, &bytes_encrypted);
-	if (HERMES_SUCCESS != res)
-	{
-		goto err;
-	}
+	//	res = soter_sym_get_auth_tag(ctx, ((uint8_t *)out) + in_length, &bytes_encrypted);
+	//	if (HERMES_SUCCESS != res)
+	//	{
+	//		goto err;
+	//	}
 
 	if (CIPHER_AUTH_TAG_SIZE != bytes_encrypted)
 	{
@@ -355,7 +355,7 @@ err:
 
 	if (NULL != ctx)
 	{
-		soter_sym_destroy(ctx);
+		soter_sym_encrypt_destroy(ctx);
 	}
 
 	return res;

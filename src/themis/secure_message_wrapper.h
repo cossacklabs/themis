@@ -34,7 +34,7 @@ struct themis_secure_message_hdr_type{
 };
 typedef struct themis_secure_message_hdr_type themis_secure_message_hdr_t;
 
-#define THEMIS_SECURE_MESSAGE_LENGTH(hdr) (sizeof(themis_secure_message_hdr_t)+hdr->message_length)
+#define THEMIS_SECURE_MESSAGE_LENGTH(hdr) (hdr->message_length)
 
 struct themis_secure_signed_message_hdr_type{
   themis_secure_message_hdr_t message_hdr;
@@ -67,33 +67,19 @@ themis_secure_message_verifier_t* themis_secure_message_verifier_init(const uint
 themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_verifier_t* ctx, const uint8_t* wrapped_message, const size_t wrapped_message_length, uint8_t* message, size_t* message_length);
 themis_status_t secure_message_verifier_destroy(themis_secure_message_verifier_t* ctx);
 
-struct themis_secure_message_rsa_encrypt_worker_type;
+struct themis_secure_message_encrypt_worker_type;
 
-typedef struct themis_secure_message_rsa_encrypt_worker_type themis_secure_message_rsa_encrypter_t; 
+typedef struct themis_secure_message_encrypt_worker_type themis_secure_message_encrypter_t; 
 
-themis_secure_message_rsa_encrypter_t* themis_secure_message_rsa_encrypter_init(const uint8_t* peer_public_key, const size_t peer_public_key_length);
-themis_status_t themis_secure_message_rsa_encrypter_proceed(themis_secure_message_rsa_encrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length);
-themis_status_t secure_message_rsa_encrypter_destroy(themis_secure_message_rsa_encrypter_t* ctx);
+themis_secure_message_encrypter_t* themis_secure_message_encrypter_init(const uint8_t* private_key, const size_t private_key_length, const uint8_t* peer_public_key, const size_t peer_public_key_length);
+themis_status_t themis_secure_message_encrypter_proceed(themis_secure_message_encrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length);
+themis_status_t secure_message_encrypter_destroy(themis_secure_message_encrypter_t* ctx);
 
-typedef struct themis_secure_message_rsa_encrypt_worker_type themis_secure_message_rsa_decrypter_t; 
+typedef struct themis_secure_message_encrypt_worker_type themis_secure_message_decrypter_t; 
 
-themis_secure_message_rsa_decrypter_t* themis_secure_message_rsa_decrypter_init(const uint8_t* private_key, const size_t private_key_length);
-themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_message_rsa_decrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length);
-themis_status_t secure_message_rsa_decrypter_destroy(themis_secure_message_rsa_decrypter_t* ctx);
-
-struct themis_secure_message_ec_worker_type;
-typedef struct themis_secure_message_ec_worker_type themis_secure_message_ec_encrypter_t; 
-
-themis_secure_message_ec_encrypter_t* themis_secure_message_ec_encrypter_init(const uint8_t* private_key, const size_t private_key_length, const uint8_t* peer_public_key, const size_t peer_public_key_length);
-themis_status_t themis_secure_message_ec_encrypter_proceed(themis_secure_message_ec_encrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length);
-themis_status_t secure_message_ec_encrypter_destroy(themis_secure_message_ec_encrypter_t* ctx);
-
-typedef struct themis_secure_message_ec_worker_type themis_secure_message_ec_decrypter_t; 
-
-themis_secure_message_ec_decrypter_t* themis_secure_message_ec_decrypter_init(const uint8_t* private_key, const size_t private_key_length, const uint8_t* peer_public_key, const size_t peer_public_key_length);
-themis_status_t themis_secure_message_ec_decrypter_proceed(themis_secure_message_ec_decrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length);
-themis_status_t secure_message_ec_decrypter_destroy(themis_secure_message_ec_decrypter_t* ctx);
-
+themis_secure_message_decrypter_t* themis_secure_message_decrypter_init(const uint8_t* private_key, const size_t private_key_length, const uint8_t* peer_public_key, const size_t peer_public_key_length);
+themis_status_t themis_secure_message_decrypter_proceed(themis_secure_message_decrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length);
+themis_status_t secure_message_decrypter_destroy(themis_secure_message_decrypter_t* ctx);
 
 
 

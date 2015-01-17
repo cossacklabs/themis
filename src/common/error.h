@@ -42,9 +42,11 @@
 	return NULL;\
     }
 
-#define HERMES_CHECK_MALLOC(x)if(!(x)){	\
+#define HERMES_CHECK_MALLOC(x,y)	\
+	y=malloc(sizeof(x));		\
+	if(!(x)){			\
 	HERMES_ERROR_OUT(#x);		\
-	return HERMES_NO_MEMORY;\
+	return HERMES_NO_MEMORY;	\
     }
 
 #define HERMES_CHECK_MALLOC_(x)if(!(x)){	\
