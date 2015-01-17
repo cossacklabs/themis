@@ -39,14 +39,14 @@ static test_vector_t vectors[] = {
     "2b7e151628aed2a6abf7158809cf4f3c",
     "",
     "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3710",
-    "3ad77bb40d7a3660a89ecaf32466ef97f5d3d58503b9699de785895a96fdbaaf43b1cd7f598ece23881b00e3ed0306887b0c785e27e8ad3f8223207104725dd4"
+    "3ad77bb40d7a3660a89ecaf32466ef97f5d3d58503b9699de785895a96fdbaaf43b1cd7f598ece23881b00e3ed0306887b0c785e27e8ad3f8223207104725dd4a254be88e037ddd9d79fb6411c3f9df8"
   },
   {
     SOTER_SYM_AES_ECB_PKCS7|SOTER_SYM_256_KEY_LENGTH,
     "603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4",
     "",
     "6bc1bee22e409f96e93d7e117393172aae2d8a571e03ac9c9eb76fac45af8e5130c81c46a35ce411e5fbc1191a0a52eff69f2445df4f9b17ad2b417be66c3710",
-    "f3eed1bdb5d2a03c064b5a7e3db181f8591ccb10d410ed26dc5ba74a31362870b6ed21b99ca6f4f9f153e7b1beafed1d23304b7a39f9f3ff067d8d8f9e24ecc7"
+    "f3eed1bdb5d2a03c064b5a7e3db181f8591ccb10d410ed26dc5ba74a31362870b6ed21b99ca6f4f9f153e7b1beafed1d23304b7a39f9f3ff067d8d8f9e24ecc74c45dfb3b3b484ec35b0512dc8c1c4d6"
   },
   {
     SOTER_SYM_AES_CTR|SOTER_SYM_128_KEY_LENGTH,
@@ -194,7 +194,7 @@ static void test_known_values(void)
 	  testsuite_fail_if(HERMES_SUCCESS != res, "soter_sym_destroy");
 	}
 
-      testsuite_fail_if(memcmp(computed, ciphertext, strlen(vectors[i].ciphertext) / 2)!=0, "known encryption");
+      testsuite_fail_if(memcmp(computed, ciphertext, computed_length)!=0, "known encryption");
 
       /* Decryption */
       if(strlen(vectors[i].iv)==0){
@@ -231,7 +231,7 @@ static void test_known_values(void)
 	  soter_sym_decrypt_destroy(ctx);
 	  continue;
 	}
-      testsuite_fail_if(memcmp(computed2, plaintext, strlen(vectors[i].plaintext) / 2), "known decryption");
+      testsuite_fail_if(memcmp(computed2, plaintext, computed_length2), "known decryption");
     }
 }
 
