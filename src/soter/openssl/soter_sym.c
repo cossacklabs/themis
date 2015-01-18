@@ -42,7 +42,7 @@ soter_status_t soter_kdf(uint32_t alg, const uint8_t* password, const size_t pas
 }
 
 const EVP_CIPHER* algid_to_evp(uint32_t alg){
-  switch(alg&(SOTER_SYM_ALG_MASK|SOTER_SYM_BLOCK_LENGTH_MASK|SOTER_SYM_KEY_LENGTH_MASK)){
+  switch(alg&(SOTER_SYM_ALG_MASK|SOTER_SYM_PADDING_MASK|SOTER_SYM_KEY_LENGTH_MASK)){
     case SOTER_SYM_AES_ECB_PKCS7|SOTER_SYM_256_KEY_LENGTH:
   return EVP_aes_256_ecb();
     case SOTER_SYM_AES_ECB_PKCS7|SOTER_SYM_192_KEY_LENGTH:
@@ -62,7 +62,7 @@ const EVP_CIPHER* algid_to_evp(uint32_t alg){
 }
 
 const EVP_CIPHER* algid_to_evp_aead(uint32_t alg){
-  switch(alg&(SOTER_SYM_ALG_MASK|SOTER_SYM_BLOCK_LENGTH_MASK|SOTER_SYM_KEY_LENGTH_MASK)){
+  switch(alg&(SOTER_SYM_ALG_MASK|SOTER_SYM_PADDING_MASK|SOTER_SYM_KEY_LENGTH_MASK)){
     case SOTER_SYM_AES_GCM|SOTER_SYM_256_KEY_LENGTH:
       return EVP_aes_256_gcm();
     case SOTER_SYM_AES_GCM|SOTER_SYM_192_KEY_LENGTH:
@@ -149,10 +149,12 @@ soter_status_t soter_sym_ctx_final(soter_sym_ctx_t *ctx,
 				   void* out_data,
 				   size_t* out_data_length,
 				   bool encrypt){
-  if((*out_data_length)<EVP_CIPHER_CTX_block_size(&(ctx->evp_sym_ctx))){
-    (*out_data_length)=EVP_CIPHER_CTX_block_size(&(ctx->evp_sym_ctx));
-    return HERMES_BUFFER_TOO_SMALL;
-  }  
+  if((ctx->alg&SOTER_SYM_PADDING_MASK)!=0){
+    if((*out_data_length)<EVP_CIPHER_CTX_block_size(&(ctx->evp_sym_ctx))){
+      (*out_data_length)=EVP_CIPHER_CTX_block_size(&(ctx->evp_sym_ctx));
+      return HERMES_BUFFER_TOO_SMALL;
+    }
+  }
   if(encrypt){
     HERMES_CHECK(EVP_EncryptFinal(&(ctx->evp_sym_ctx), out_data, (int*)out_data_length)!=0);
   } else {

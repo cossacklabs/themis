@@ -9,6 +9,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #define HERMES_SUCCESS 0
 #define HERMES_FAIL   -1
@@ -77,6 +78,14 @@
 	return NULL;		\
     }
 
-
+#ifdef DEBUG
+    static void hermes_out_buffer(const uint8_t* buffer, const size_t buffer_length){
+    int i;
+    for(i=0;i<buffer_length;++i){    
+	fprintf(stderr, "%x ",buffer[i]);
+    }
+    fprintf(stderr, "\n");
+}
+#endif
 
 #endif /* HERMES_ERROR_H */

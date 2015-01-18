@@ -11,14 +11,13 @@
 
 /** soter symetric algorithms  */
 #define SOTER_SYM_AES_ECB_PKCS7     0x10010000
-#define SOTER_SYM_AES_CTR           0x20010000
-#define SOTER_SYM_AES_XTS           0x30010000
-
+#define SOTER_SYM_AES_CTR           0x20000000
+#define SOTER_SYM_AES_XTS           0x30000000
+#define SOTER_SYM_PADDING_MASK      0x000f0000
 /** soter AEAD symetric algorithms  */
 #define SOTER_SYM_AES_GCM      0x40010000
 
-#define SOTER_SYM_ALG_MASK          0xf00ff000
-#define SOTER_SYM_BLOCK_LENGTH_MASK 0x000ff000
+#define SOTER_SYM_ALG_MASK          0xf0000000
 
 /** soter symetric kdf algorithms */
 #define SOTER_SYM_NOKDF             0x00000000

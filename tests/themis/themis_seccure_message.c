@@ -138,18 +138,18 @@ static int themis_secure_encrypted_message_generic_test(int alg, const char* mes
   uint8_t* unwrapped_message=NULL;
   size_t unwrapped_message_length=0;
 
-  test_check_free(themis_secure_message_unwrap(peer_private_key ,private_key_length, public_key, public_key_length, (uint8_t*)wrapped_message, wrapped_message_length, NULL, &unwrapped_message_length), HERMES_BUFFER_TOO_SMALL, "themis secure message wrap (wrapped message length determination) failed", free(wrapped_message));
+  test_check_free(themis_secure_message_unwrap(peer_private_key ,private_key_length, public_key, public_key_length, (uint8_t*)wrapped_message, wrapped_message_length, NULL, &unwrapped_message_length), HERMES_BUFFER_TOO_SMALL, "themis secure message unwrap (unwrapped message length determination) failed", free(wrapped_message));
   unwrapped_message=malloc(unwrapped_message_length);
   if(!unwrapped_message){
     testsuite_fail_if(!unwrapped_message, "malloc fail (unwrapped_message)");
     return -2;
   }
-  test_check_free(themis_secure_message_unwrap(peer_private_key ,peer_private_key_length, public_key, public_key_length, (uint8_t*)wrapped_message, wrapped_message_length, unwrapped_message, &unwrapped_message_length), HERMES_SUCCESS, "themis secure message wrap failed", (free(wrapped_message), free(unwrapped_message)));
+  test_check_free(themis_secure_message_unwrap(peer_private_key ,peer_private_key_length, public_key, public_key_length, (uint8_t*)wrapped_message, wrapped_message_length, unwrapped_message, &unwrapped_message_length), HERMES_SUCCESS, "themis secure message unwrap failed", (free(wrapped_message), free(unwrapped_message)));
 
   if((message_length!=unwrapped_message_length) || (memcmp(message, unwrapped_message, message_length)!=0)){
     free(wrapped_message);
     free(unwrapped_message);
-    testsuite_fail_if(true, "message not equal unwrapped_message_length");
+    testsuite_fail_if(true, "message not equal unwrapped_message");
     return -3;
   }
   free(wrapped_message);

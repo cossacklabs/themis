@@ -9,7 +9,7 @@ TEST_BIN_PATH = build/tests
 # We will use OpenSSL/LibreSSL for now
 CRYPTO_ENGINE_DEF = OPENSSL
 CRYPTO_ENGINE = $(SRC_PATH)/soter/openssl
-CFLAGS += -I$(SRC_PATH) -fPIC -D$(CRYPTO_ENGINE_DEF)
+CFLAGS += -I$(SRC_PATH) -fPIC -D$(CRYPTO_ENGINE_DEF) -DDEBUG
 
 # Should pay attention to warnings (some may be critical for crypto-enabled code (ex. signed-unsigned mismatch)
 CFLAGS += -Werror
