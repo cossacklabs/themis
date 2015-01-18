@@ -43,7 +43,6 @@ themis_secure_message_signer_t* themis_secure_message_signer_init(const uint8_t*
   ctx->sign_ctx=NULL;
   ctx->sign_ctx=soter_sign_create(get_alg_id(key,key_length),NULL,0,key, key_length);
   if(!(ctx->sign_ctx)){
-    fprintf(stderr,"aaa\n");
     free(ctx);
     return NULL;
   }
@@ -56,12 +55,10 @@ themis_status_t themis_secure_message_signer_proceed(themis_secure_message_signe
   HERMES_CHECK(message!=NULL && message_length!=0 && wrapped_message_length!=NULL);
   uint8_t* signature=NULL;
   size_t signature_length=0;
-  //  if(!ctx->precompute_signature_present){
-    HERMES_CHECK(soter_sign_update(ctx->sign_ctx, message, message_length)==HERMES_SUCCESS);
-    //}
+  HERMES_CHECK(soter_sign_update(ctx->sign_ctx, message, message_length)==HERMES_SUCCESS);
   HERMES_CHECK(soter_sign_final(ctx->sign_ctx, signature, &signature_length)==HERMES_BUFFER_TOO_SMALL);
-  if((message_length+signature_length+sizeof(themis_secure_message_hdr_t)>(*wrapped_message_length))){
-    (*wrapped_message_length)=message_length+signature_length+sizeof(themis_secure_message_hdr_t);
+  if((message_length+signature_length+sizeof(themis_secure_signed_message_hdr_t)>(*wrapped_message_length))){
+    (*wrapped_message_length)=message_length+signature_length+sizeof(themis_secure_signed_message_hdr_t);
     return HERMES_BUFFER_TOO_SMALL;
   }
   signature=malloc(signature_length);
@@ -83,10 +80,10 @@ themis_status_t themis_secure_message_signer_proceed(themis_secure_message_signe
   };
   hdr.message_hdr.message_length=message_length;
   hdr.signature_length=signature_length;
-  memcpy(wrapped_message,&hdr,sizeof(themis_secure_message_hdr_t));
-  memcpy(wrapped_message+sizeof(themis_secure_message_hdr_t),message,message_length);
-  memcpy(wrapped_message+sizeof(themis_secure_message_hdr_t)+message_length,signature,signature_length);
-  (*wrapped_message_length)=message_length+signature_length+sizeof(themis_secure_message_hdr_t);
+  memcpy(wrapped_message,&hdr,sizeof(themis_secure_signed_message_hdr_t));
+  memcpy(wrapped_message+sizeof(themis_secure_signed_message_hdr_t),message,message_length);
+  memcpy(wrapped_message+sizeof(themis_secure_signed_message_hdr_t)+message_length,signature,signature_length);
+  (*wrapped_message_length)=message_length+signature_length+sizeof(themis_secure_signed_message_hdr_t);
   return HERMES_SUCCESS;
 }
 
@@ -126,9 +123,9 @@ themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_ver
     (*message_length)=msg->message_hdr.message_length;
     return HERMES_BUFFER_TOO_SMALL;
   }
-  HERMES_CHECK(soter_verify_update(ctx->verify_ctx, wrapped_message+sizeof(themis_secure_message_hdr_t), msg->message_hdr.message_length)==HERMES_SUCCESS);
-  HERMES_CHECK(soter_verify_final(ctx->verify_ctx, wrapped_message+sizeof(themis_secure_message_hdr_t)+msg->message_hdr.message_length, msg->signature_length)==HERMES_SUCCESS);
-  memcpy(message,wrapped_message+sizeof(themis_secure_message_hdr_t),msg->message_hdr.message_length);
+  HERMES_CHECK(soter_verify_update(ctx->verify_ctx, wrapped_message+sizeof(themis_secure_signed_message_hdr_t), msg->message_hdr.message_length)==HERMES_SUCCESS);
+  HERMES_CHECK(soter_verify_final(ctx->verify_ctx, wrapped_message+sizeof(themis_secure_signed_message_hdr_t)+msg->message_hdr.message_length, msg->signature_length)==HERMES_SUCCESS);
+  memcpy(message,wrapped_message+sizeof(themis_secure_signed_message_hdr_t),msg->message_hdr.message_length);
   (*message_length)=msg->message_hdr.message_length;
   return HERMES_SUCCESS;
 }
@@ -185,7 +182,7 @@ themis_status_t themis_secure_message_rsa_encrypter_proceed(themis_secure_messag
   HERMES_IF_FAIL(soter_sym_encrypt_final(cipher, curr_wrapped_message, &curr_wrapped_message_length), soter_sym_encrypt_destroy(cipher));
   HERMES_CHECK(soter_sym_encrypt_destroy(cipher)==HERMES_SUCCESS);
   (*wrapped_message_length)+=sizeof(themis_secure_encrypted_message_hdr_t)+THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH+curr_wrapped_message_length;
-  ((themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_type=THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED;
+  ((themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_type=THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED_AES_CTR;
   ((themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length=(*wrapped_message_length);  
   return HERMES_SUCCESS;
 }
@@ -214,7 +211,7 @@ themis_secure_message_rsa_decrypter_t* themis_secure_message_rsa_decrypter_init(
 }
 themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_message_rsa_decrypter_t* ctx, const uint8_t* wrapped_message, const size_t wrapped_message_length, uint8_t* message, size_t* message_length){
   HERMES_CHECK_PARAM(wrapped_message_length>sizeof(themis_secure_encrypted_message_hdr_t)+THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH);
-  HERMES_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_type==THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED);
+  HERMES_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_type==THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED_AES_CTR);
   HERMES_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length==wrapped_message_length);
   symm_init_ctx_t sym_ctx_;
   size_t sym_ctx_length_=sizeof(sym_ctx_);

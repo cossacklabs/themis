@@ -93,6 +93,7 @@ themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
   themis_secure_message_hdr_t* message_hdr=(themis_secure_message_hdr_t*)wrapped_message;
   HERMES_CHECK_PARAM(IS_THEMIS_SECURE_MESSAGE_SIGNED(message_hdr->message_type) || IS_THEMIS_SECURE_MESSAGE_SIGNED(message_hdr->message_type));
   HERMES_CHECK_PARAM(wrapped_message_length>=THEMIS_SECURE_MESSAGE_LENGTH(message_hdr));
+  printf("%x\n",message_hdr->message_type);
   if(IS_THEMIS_SECURE_MESSAGE_SIGNED(message_hdr->message_type)){
     themis_secure_message_verifier_t* ctx=NULL;
     ctx = themis_secure_message_verifier_init(public_key, public_key_length);

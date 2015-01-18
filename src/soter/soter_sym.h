@@ -44,13 +44,15 @@ soter_status_t soter_sym_decrypt_final(soter_sym_ctx_t *ctx, void* chipher_data,
 soter_status_t soter_sym_decrypt_destroy(soter_sym_ctx_t *ctx);
 
 soter_sym_ctx_t* soter_sym_aead_encrypt_create(const uint32_t alg, const void* key, const size_t key_length, const void* salt, const size_t salt_length, const void* iv, const size_t iv_length);
+soter_status_t soter_sym_aead_encrypt_aad(soter_sym_ctx_t *ctx, const void* plain_data,  const size_t data_length);
 soter_status_t soter_sym_aead_encrypt_update(soter_sym_ctx_t *ctx, const void* plain_data,  const size_t data_length, void* chiper_data, size_t* chipher_data_length);
-soter_status_t soter_sym_aead_encrypt_final(soter_sym_ctx_t *ctx, void* chipher_data, size_t* chipher_data_length, void* auth_tag, size_t* auth_tag_length);
+soter_status_t soter_sym_aead_encrypt_final(soter_sym_ctx_t *ctx, void* auth_tag, size_t* auth_tag_length);
 soter_status_t soter_sym_aead_encrypt_destroy(soter_sym_ctx_t *ctx);
 
 soter_sym_ctx_t* soter_sym_aead_decrypt_create(const uint32_t alg, const void* key, const size_t key_length, const void* salt, const size_t salt_length, const void* iv, const size_t iv_length);
+soter_status_t soter_sym_aead_decrypt_aad(soter_sym_ctx_t *ctx, const void* plain_data,  const size_t data_length);
 soter_status_t soter_sym_aead_decrypt_update(soter_sym_ctx_t *ctx, const void* plain_data,  const size_t data_length, void* chiper_data, size_t* chipher_data_length);
-soter_status_t soter_sym_aead_decrypt_final(soter_sym_ctx_t *ctx, void* chipher_data, size_t* chipher_data_length, const void* auth_tag, const size_t auth_tag_length);
+soter_status_t soter_sym_aead_decrypt_final(soter_sym_ctx_t *ctx, const void* auth_tag, const size_t auth_tag_length);
 soter_status_t soter_sym_aead_decrypt_destroy(soter_sym_ctx_t *ctx);
 #endif /* SOTER_SYM_H */
 
