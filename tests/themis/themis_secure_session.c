@@ -179,6 +179,8 @@ static void test_basic_flow(void)
 		return;
 	}
 
+	testsuite_fail_if(memcmp("abc", dummy, dummy_length), "secure_session message send/receive");
+
 err:
 
 	for (i = 0; i < 2; i++)

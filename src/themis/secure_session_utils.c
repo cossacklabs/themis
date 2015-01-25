@@ -327,25 +327,13 @@ themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, 
 	bytes_encrypted = out_length - bytes_encrypted;
 	out_length = bytes_encrypted;
 
-	//	res = soter_sym_aead_encrypt_final(ctx, ((uint8_t *)out) + in_length, &out_length);
-	//	if (HERMES_SUCCESS != res)
-	//	{
-	//		goto err;
-	//	}
+	res = soter_sym_aead_encrypt_final(ctx, ((uint8_t *)out) + in_length, &out_length);
+	if (HERMES_SUCCESS != res)
+	{
+		goto err;
+	}
 
-	//	if (0 != out_length)
-	//	{
-	//		res = HERMES_FAIL;
-	//		goto err;
-	//}
-
-	//	res = soter_sym_get_auth_tag(ctx, ((uint8_t *)out) + in_length, &bytes_encrypted);
-	//	if (HERMES_SUCCESS != res)
-	//	{
-	//		goto err;
-	//	}
-
-	if (CIPHER_AUTH_TAG_SIZE != bytes_encrypted)
+	if (CIPHER_AUTH_TAG_SIZE != out_length)
 	{
 		res = HERMES_FAIL;
 		goto err;
