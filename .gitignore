@@ -1,6 +1,7 @@
 libs/**
 build/**
 tests/tools/splint/splbin/**
+tests/tools/splint/source/**
 tests/tools/splint/source/src/.deps/**
 **.o
 **.a
