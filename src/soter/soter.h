@@ -26,5 +26,6 @@ typedef int soter_status_t;
 #include <soter/soter_asym_cipher.h>
 #include <soter/soter_asym_ka.h>
 #include <soter/soter_asym_sign.h>
+#include <soter/soter_kdf.h>
 
 #endif /* SOTER_H */

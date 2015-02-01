@@ -91,7 +91,7 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 	soter_status_t soter_status;
 	themis_status_t res = HERMES_SUCCESS;
 
-	data_buf_t sign_data;
+	soter_kdf_context_buf_t sign_data;
 
 	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), NULL, &ecdh_key_length, false);
 	if (HERMES_BUFFER_TOO_SMALL != soter_status)
@@ -179,7 +179,7 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	size_t sign_key_length;
 
 	const soter_container_hdr_t *peer_sign_key;
-	data_buf_t sign_data[4];
+	soter_kdf_context_buf_t sign_data[4];
 
 	uint8_t *data_to_send = NULL;
 	size_t length_to_send;
@@ -371,7 +371,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	size_t ecdh_key_length = sizeof(ecdh_key);
 
 	const soter_container_hdr_t *peer_sign_key;
-	data_buf_t sign_data[4];
+	soter_kdf_context_buf_t sign_data[4];
 
 	uint8_t *data_to_send = NULL;
 	size_t length_to_send;
@@ -488,7 +488,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	sign_data[3].data = soter_container_const_data(peer_id);
 	sign_data[3].length = soter_container_data_size(peer_id);
 
-	res = themis_kdf(NULL, 0, SESSION_ID_GENERATION_LABEL, sign_data, 4, &(session_ctx->session_id), sizeof(session_ctx->session_id));
+	res = soter_kdf(NULL, 0, SESSION_ID_GENERATION_LABEL, sign_data, 4, &(session_ctx->session_id), sizeof(session_ctx->session_id));
 	if (HERMES_SUCCESS != res)
 	{
 		goto err;
@@ -505,7 +505,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	sign_data[0].data = (const uint8_t *)(&(session_ctx->session_id));
 	sign_data[0].length = sizeof(session_ctx->session_id);
 
-	res = themis_kdf(sign_key, sign_key_length, SESSION_MASTER_KEY_GENERATION_LABEL, sign_data, 1, session_ctx->session_master_key, sizeof(session_ctx->session_master_key));
+	res = soter_kdf(sign_key, sign_key_length, SESSION_MASTER_KEY_GENERATION_LABEL, sign_data, 1, session_ctx->session_master_key, sizeof(session_ctx->session_master_key));
 	if (HERMES_SUCCESS != res)
 	{
 		goto err;
@@ -591,7 +591,7 @@ static themis_status_t secure_session_derive_message_keys(secure_session_t *sess
 
 	themis_status_t res;
 
-	data_buf_t context = {(const uint8_t *)&(session_ctx->session_id), sizeof(session_ctx->session_id)};
+	soter_kdf_context_buf_t context = {(const uint8_t *)&(session_ctx->session_id), sizeof(session_ctx->session_id)};
 
 	if (session_ctx->is_client)
 	{
@@ -610,25 +610,25 @@ static themis_status_t secure_session_derive_message_keys(secure_session_t *sess
 		in_seq_label = "Themis secure session client initial sequence number";
 	}
 
-	res = themis_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, out_key_label, &context, 1, session_ctx->out_cipher_key, SESSION_MESSAGE_KEY_LENGTH);
+	res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, out_key_label, &context, 1, session_ctx->out_cipher_key, SESSION_MESSAGE_KEY_LENGTH);
 	if (HERMES_SUCCESS != res)
 	{
 		return res;
 	}
 
-	res = themis_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, in_key_label, &context, 1, session_ctx->in_cipher_key, SESSION_MESSAGE_KEY_LENGTH);
+	res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, in_key_label, &context, 1, session_ctx->in_cipher_key, SESSION_MESSAGE_KEY_LENGTH);
 	if (HERMES_SUCCESS != res)
 	{
 		return res;
 	}
 
-	res = themis_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, out_seq_label, &context, 1, &(session_ctx->out_seq), sizeof(session_ctx->out_seq));
+	res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, out_seq_label, &context, 1, &(session_ctx->out_seq), sizeof(session_ctx->out_seq));
 	if (HERMES_SUCCESS != res)
 	{
 		return res;
 	}
 
-	res = themis_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, in_seq_label, &context, 1, &(session_ctx->in_seq), sizeof(session_ctx->in_seq));
+	res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, in_seq_label, &context, 1, &(session_ctx->in_seq), sizeof(session_ctx->in_seq));
 	if (HERMES_SUCCESS != res)
 	{
 		return res;
@@ -649,7 +649,7 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 	const uint8_t *signature;
 	size_t signature_length;
 
-	data_buf_t sign_data[4];
+	soter_kdf_context_buf_t sign_data[4];
 
 	uint8_t ecdh_key[1024];
 	size_t ecdh_key_length = sizeof(ecdh_key);
@@ -718,7 +718,7 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 		return res;
 	}
 
-	res = themis_kdf(NULL, 0, SESSION_ID_GENERATION_LABEL, sign_data, 4, &(session_ctx->session_id), sizeof(session_ctx->session_id));
+	res = soter_kdf(NULL, 0, SESSION_ID_GENERATION_LABEL, sign_data, 4, &(session_ctx->session_id), sizeof(session_ctx->session_id));
 	if (HERMES_SUCCESS != res)
 	{
 		return res;
@@ -727,7 +727,7 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 	sign_data[0].data = (const uint8_t *)(&(session_ctx->session_id));
 	sign_data[0].length = sizeof(session_ctx->session_id);
 
-	res = themis_kdf(shared_secret, shared_secret_length, SESSION_MASTER_KEY_GENERATION_LABEL, sign_data, 1, session_ctx->session_master_key, sizeof(session_ctx->session_master_key));
+	res = soter_kdf(shared_secret, shared_secret_length, SESSION_MASTER_KEY_GENERATION_LABEL, sign_data, 1, session_ctx->session_master_key, sizeof(session_ctx->session_master_key));
 	if (HERMES_SUCCESS != res)
 	{
 		return res;
@@ -784,7 +784,7 @@ static themis_status_t secure_session_finish_client(secure_session_t *session_ct
 	uint8_t ecdh_key[1024];
 	size_t ecdh_key_length = sizeof(ecdh_key);
 
-	data_buf_t sign_data[2];
+	soter_kdf_context_buf_t sign_data[2];
 
 	if (data_length < sizeof(soter_container_hdr_t))
 	{

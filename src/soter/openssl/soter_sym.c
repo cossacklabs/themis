@@ -29,7 +29,7 @@ soter_status_t soter_nokdf(const uint8_t* password, const size_t password_length
   return HERMES_SUCCESS;
 }
 
-soter_status_t soter_kdf(uint32_t alg, const uint8_t* password, const size_t password_length, const uint8_t* salt, const size_t salt_length, uint8_t* key, size_t* key_length){
+soter_status_t soter_withkdf(uint32_t alg, const uint8_t* password, const size_t password_length, const uint8_t* salt, const size_t salt_length, uint8_t* key, size_t* key_length){
   switch(alg&SOTER_SYM_KDF_MASK){
   case SOTER_SYM_NOKDF:
     return soter_nokdf(password, password_length, key, key_length);
@@ -94,7 +94,7 @@ soter_sym_ctx_t* soter_sym_ctx_init(const uint32_t alg,
   //  if(iv!=NULL && (iv_length<SOTER_SYM_BLOCK_LENGTH(alg))){ // как проверить длину iv??
   //  return NULL;
   //}
-  HERMES_IF_FAIL_(soter_kdf(alg,key, key_length, salt, salt_length, key_, &key_length_)==HERMES_SUCCESS, soter_sym_encrypt_destroy(ctx));
+  HERMES_IF_FAIL_(soter_withkdf(alg,key, key_length, salt, salt_length, key_, &key_length_)==HERMES_SUCCESS, soter_sym_encrypt_destroy(ctx));
   if(encrypt){
     HERMES_IF_FAIL_(EVP_EncryptInit_ex(&(ctx->evp_sym_ctx), algid_to_evp(alg), NULL, key_, iv), soter_sym_encrypt_destroy(ctx));
   } else {
@@ -120,7 +120,7 @@ soter_sym_ctx_t* soter_sym_aead_ctx_init(const uint32_t alg,
   uint8_t key_[SOTER_SYM_MAX_KEY_LENGTH];
   size_t key_length_=(alg&SOTER_SYM_KEY_LENGTH_MASK)/8;
   EVP_CIPHER_CTX_init(&(ctx->evp_sym_ctx));
-  HERMES_IF_FAIL_(soter_kdf(alg,key, key_length, salt, salt_length, key_, &key_length_)==HERMES_SUCCESS, soter_sym_encrypt_destroy(ctx));
+  HERMES_IF_FAIL_(soter_withkdf(alg,key, key_length, salt, salt_length, key_, &key_length_)==HERMES_SUCCESS, soter_sym_encrypt_destroy(ctx));
   if(encrypt){
     HERMES_IF_FAIL_(EVP_EncryptInit_ex(&(ctx->evp_sym_ctx), algid_to_evp_aead(alg), NULL, key_, iv), soter_sym_encrypt_destroy(ctx));
   } else {
