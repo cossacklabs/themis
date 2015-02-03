@@ -28,7 +28,6 @@ themis_status_t themis_sym_kdf(const uint8_t* master_key,
 			       size_t key_length){
   HERMES_CHECK_PARAM(master_key!=NULL && master_key_length!=0);
   HERMES_CHECK_PARAM(context!=NULL && context_length!=0);
-  HERMES_CHECK_PARAM(key!=NULL && key_length==THEMIS_SYM_KEY_LENGTH/8);
   soter_kdf_context_buf_t ctx={context, context_length};
   HERMES_CHECK(soter_kdf(master_key, master_key_length, label, &ctx, 1, key, key_length)==HERMES_SUCCESS);
 }
@@ -57,7 +56,7 @@ themis_status_t themis_auth_sym_plain_encrypt(uint32_t alg,
   return HERMES_SUCCESS;
 }
 
-themis_status_t themis_auth_sym_plain_decrypt_(uint32_t alg,
+themis_status_t themis_auth_sym_plain_decrypt(uint32_t alg,
 					      const uint8_t* key,
 					      const size_t key_length,
 					      const uint8_t* iv,
@@ -167,7 +166,8 @@ themis_status_t themis_auth_sym_encrypt_message_(const uint8_t* key,
   hdr->aad_length=THEMIS_AUTH_SYM_AAD_LENGTH;
   hdr->auth_tag_length=THEMIS_AUTH_SYM_AUTH_TAG_LENGTH;
   hdr->message_length=message_length;
-  HERMES_CHECK(themis_auth_sym_plain_encrypt(THEMIS_AUTH_SYM_ALG, key, key_length, iv, THEMIS_AUTH_SYM_IV_LENGTH, aad, THEMIS_AUTH_SYM_AAD_LENGTH, message, message_length, encrypted_message, (size_t*)(&(hdr->message_length)), auth_tag, (size_t*)(&(hdr->auth_tag_length)))==HERMES_SUCCESS && hdr->auth_tag_length!=THEMIS_AUTH_SYM_AUTH_TAG_LENGTH);  
+  size_t auth_tag_length=THEMIS_AUTH_SYM_AUTH_TAG_LENGTH;
+  HERMES_CHECK(themis_auth_sym_plain_encrypt(THEMIS_AUTH_SYM_ALG, key, key_length, iv, THEMIS_AUTH_SYM_IV_LENGTH, aad, THEMIS_AUTH_SYM_AAD_LENGTH, message, message_length, encrypted_message, encrypted_message_length, auth_tag, &auth_tag_length)==HERMES_SUCCESS && auth_tag_length==THEMIS_AUTH_SYM_AUTH_TAG_LENGTH);
   return HERMES_SUCCESS;
 }
 
@@ -199,6 +199,7 @@ themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
     (*message_length)=hdr->message_length;
     return HERMES_BUFFER_TOO_SMALL;
   }
+  (*message_length)=hdr->message_length;
   HERMES_CHECK_PARAM(encrypted_message_length>=hdr->message_length);
   HERMES_CHECK_PARAM(context_length >= (sizeof(themis_auth_sym_message_hdr_t)+hdr->iv_length+hdr->aad_length+hdr->auth_tag_length));
   const uint8_t* iv=context+sizeof(themis_auth_sym_message_hdr_t);
@@ -217,7 +218,7 @@ themis_status_t themis_auth_sym_decrypt_message(const uint8_t* key,
 						uint8_t* message,
 						size_t* message_length){
   uint8_t key_[THEMIS_SYM_KEY_LENGTH/8];
-  HERMES_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&message_length), sizeof(message_length), key_, sizeof(key_))==HERMES_SUCCESS);
+  HERMES_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&encrypted_message_length), sizeof(encrypted_message_length), key_, sizeof(key_))==HERMES_SUCCESS);
   return themis_auth_sym_decrypt_message_(key_, sizeof(key_), context, context_length, encrypted_message, encrypted_message_length, message, message_length);
 }
 #define THEMIS_SYM_ALG (SOTER_SYM_AES_CTR|THEMIS_SYM_KEY_LENGTH)
@@ -329,7 +330,7 @@ themis_status_t themis_sym_encrypt_message_u_(const uint8_t* key,
   (*encrypted_message_length)=message_length;
   uint8_t iv[THEMIS_SYM_IV_LENGTH];
   HERMES_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_IV_LABEL, context, context_length, iv, THEMIS_SYM_IV_LENGTH)==HERMES_SUCCESS);
-  HERMES_CHECK(themis_sym_plain_encrypt(THEMIS_AUTH_SYM_ALG, key, key_length, iv, THEMIS_SYM_IV_LENGTH, message, message_length, encrypted_message, encrypted_message_length)==HERMES_SUCCESS);  
+  HERMES_CHECK(themis_sym_plain_encrypt(THEMIS_SYM_ALG, key, key_length, iv, THEMIS_SYM_IV_LENGTH, message, message_length, encrypted_message, encrypted_message_length)==HERMES_SUCCESS);  
   return HERMES_SUCCESS;
 }
 
@@ -362,7 +363,7 @@ themis_status_t themis_sym_decrypt_message_u_(const uint8_t* key,
   (*message_length)=encrypted_message_length;
   uint8_t iv[THEMIS_SYM_IV_LENGTH];
   HERMES_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_IV_LABEL, context, context_length, iv, THEMIS_SYM_IV_LENGTH)==HERMES_SUCCESS);
-  HERMES_CHECK(themis_sym_plain_decrypt(THEMIS_AUTH_SYM_ALG, key, key_length, iv, THEMIS_SYM_IV_LENGTH, encrypted_message, encrypted_message_length, message, message_length)==HERMES_SUCCESS);
+  HERMES_CHECK(themis_sym_plain_decrypt(THEMIS_SYM_ALG, key, key_length, iv, THEMIS_SYM_IV_LENGTH, encrypted_message, encrypted_message_length, message, message_length)==HERMES_SUCCESS);
   return HERMES_SUCCESS;
 }
 

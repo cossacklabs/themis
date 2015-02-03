@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 
   run_secure_message_test();
   run_secure_session_test();
-
+  run_secure_cell_test();
   testsuite_finish_testing();
   return testsuite_get_return_value();
 }

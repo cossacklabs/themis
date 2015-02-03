@@ -229,6 +229,7 @@ soter_status_t soter_sym_aead_encrypt_update(soter_sym_ctx_t *ctx, const void* p
     (*cipher_data_length)=plain_data_length+EVP_CIPHER_CTX_block_size(&(ctx->evp_sym_ctx))-1;
     return HERMES_BUFFER_TOO_SMALL;
   }
+  (*cipher_data_length)=plain_data_length+EVP_CIPHER_CTX_block_size(&(ctx->evp_sym_ctx))-1;
   return soter_sym_ctx_update(ctx, plain_data, plain_data_length, cipher_data, cipher_data_length, true);
 }
 

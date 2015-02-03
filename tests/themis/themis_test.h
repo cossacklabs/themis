@@ -12,5 +12,6 @@
 
 void run_secure_message_test(void);
 void run_secure_session_test(void);
+void run_secure_cell_test(void);
 
 #endif /* _THEMIS_TEST_H_ */
