@@ -4,67 +4,60 @@
  * (c) CossackLabs
  */
 
+#include <themis/themis.h>
+
 #ifndef _SECURE_CELL_H_
 #define _SECURE_CELL_H_
 
-typedef struct themis_secure_cell_type themis_secure_cell_t;
+themis_status_t themis_secure_cell_encrypt_full(const uint8_t* master_key,
+						const size_t master_key_length,
+						const uint8_t* message,
+						const size_t message_length,
+						uint8_t* encrypted_message,
+						size_t* encrypted_message_length);
 
-themis_secure_cell_t* themis_secure_cell_create(const uint8_t* master_key, const size_t master_key_length);
+themis_status_t themis_secure_cell_decrypt_full(const uint8_t* master_key,
+						const size_t master_key_length,
+						const uint8_t* encrypted_message,
+						const size_t encrypted_message_length,
+						uint8_t* plain_message,
+						size_t* plain_message_length);
 
-themis_status_t themis_secure_cell_encrypt_full(themis_secure_cell_t* ctx,
-					       const uint8_t* message,
-					       const size_t message_length,
-					       uint8_t* encrypted_message,
-					       size_t* encrypted_message_length);
+themis_status_t themis_secure_cell_encrypt_auto_split(const uint8_t* master_key,
+						      const size_t master_key_length,
+						      const uint8_t* message,
+						      const size_t message_length,
+						      uint8_t* context,
+						      size_t* context_length,
+						      uint8_t* encrypted_message,
+						      size_t* encrypted_message_length);
 
-themis_status_t themis_secure_cell_decrypt_full(themis_secure_cell_t* ctx,
-					       const uint8_t* encrypted_message,
-					       const size_t encrypted_message_length,
-					       uint8_t* plain_message,
-					       size_t* plain_message_length);
+themis_status_t themis_secure_cell_decrypt_auto_split(const uint8_t* master_key,
+						      const size_t master_key_length,
+						      const uint8_t* encrypted_message,
+						      const size_t encrypted_message_length,
+						      const uint8_t* context,
+						      const size_t context_length,
+						      uint8_t* plain_message,
+						      size_t* plain_message_length);
 
-themis_status_t themis_secure_cell_encrypt_auto_split(themis_secure_cell_t* ctx,
-					       const uint8_t* message,
-					       const size_t message_length,
-					       uint8_t* iv,
-					       size_t* iv_length,
-					       uint8_t* auth_tag,
-					       size_t* auth_tag_length,
-					       uint8_t* encrypted_message,
-					       size_t* encrypted_message_length);
+themis_status_t themis_secure_cell_encrypt_user_split(const uint8_t* master_key,
+						      const size_t master_key_length,
+						      const uint8_t* message,
+						      const size_t message_length,
+						      const uint8_t* context,
+						      const size_t context_length,
+						      uint8_t* encrypted_message,
+						      size_t* encrypted_message_length);
 
-themis_status_t themis_secure_cell_decrypt_auto_split(themis_secure_cell_t* ctx,
-					       const uint8_t* encrypted_message,
-					       const size_t encrypted_message_length,
-					       const uint8_t* iv,
-					       const size_t iv_length,
-					       const uint8_t* auth_tag,
-					       const size_t auth_tag_length,
-					       uint8_t* plain_message,
-					       size_t* plain_message_length);
-
-themis_status_t themis_secure_cell_encrypt_user_split(themis_secure_cell_t* ctx,
-					       const uint8_t* message,
-					       const size_t message_length,
-					       const uint8_t* iv,
-					       const size_t iv_length,
-					       uint8_t* auth_tag,
-					       size_t* auth_tag_length,
-					       uint8_t* encrypted_message,
-					       size_t* encrypted_message_length);
-
-themis_status_t themis_secure_cell_decrypt_user_split(themis_secure_cell_t* ctx,
-					       const uint8_t* encrypted_message,
-					       const size_t encrypted_message_length,
-					       const uint8_t* iv,
-					       const size_t iv_length,
-					       const uint8_t* auth_tag,
-					       const size_t auth_tag_length,
-					       uint8_t* plain_message,
-					       size_t* plain_message_length);
-
-themis_status_t themis_secure_cell_destroy(themis_secure_cell_t* ctx);
-
+themis_status_t themis_secure_cell_decrypt_user_split(const uint8_t* master_key,
+						      const size_t master_key_length,
+						      const uint8_t* encrypted_message,
+						      const size_t encrypted_message_length,
+						      const uint8_t* context,
+						      const size_t context_length,
+						      uint8_t* plain_message,
+						      size_t* plain_message_length);
 
 #endif /* _SECURE_CELL_H_ */
 
