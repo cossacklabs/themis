@@ -5,6 +5,7 @@
  */
 
 #include <themis/secure_session_utils.h>
+#include <themis/secure_session.h>
 
 #include <soter/soter_t.h>
 #include <soter/soter_rsa_key.h>
@@ -294,3 +295,60 @@ themis_status_t decrypt_gcm(const void *key, size_t key_length, const void *iv, 
 
 	return HERMES_SUCCESS;
 }
+
+themis_status_t secure_session_derive_message_keys(secure_session_t *session_ctx)
+{
+	const char *out_key_label;
+	const char *in_key_label;
+
+	const char *out_seq_label;
+	const char *in_seq_label;
+
+	themis_status_t res;
+
+	soter_kdf_context_buf_t context = {(const uint8_t *)&(session_ctx->session_id), sizeof(session_ctx->session_id)};
+
+	if (session_ctx->is_client)
+	{
+		out_key_label = "Themis secure session client key";
+		in_key_label = "Themis secure session server key";
+
+		out_seq_label = "Themis secure session client initial sequence number";
+		in_seq_label = "Themis secure session server initial sequence number";
+	}
+	else
+	{
+		out_key_label = "Themis secure session server key";
+		in_key_label = "Themis secure session client key";
+
+		out_seq_label = "Themis secure session server initial sequence number";
+		in_seq_label = "Themis secure session client initial sequence number";
+	}
+
+	res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, out_key_label, &context, 1, session_ctx->out_cipher_key, SESSION_MESSAGE_KEY_LENGTH);
+	if (HERMES_SUCCESS != res)
+	{
+		return res;
+	}
+
+	res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, in_key_label, &context, 1, session_ctx->in_cipher_key, SESSION_MESSAGE_KEY_LENGTH);
+	if (HERMES_SUCCESS != res)
+	{
+		return res;
+	}
+
+	res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, out_seq_label, &context, 1, &(session_ctx->out_seq), sizeof(session_ctx->out_seq));
+	if (HERMES_SUCCESS != res)
+	{
+		return res;
+	}
+
+	res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, in_seq_label, &context, 1, &(session_ctx->in_seq), sizeof(session_ctx->in_seq));
+	if (HERMES_SUCCESS != res)
+	{
+		return res;
+	}
+
+	return res;
+}
+
