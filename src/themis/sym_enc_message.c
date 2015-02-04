@@ -13,7 +13,7 @@
 #define THEMIS_SYM_KEY_LENGTH SOTER_SYM_256_KEY_LENGTH
 #define THEMIS_AUTH_SYM_ALG (SOTER_SYM_AES_GCM|THEMIS_SYM_KEY_LENGTH)
 #define THEMIS_AUTH_SYM_IV_LENGTH 12
-#define THEMIS_AUTH_SYM_AAD_LENGTH 32
+#define THEMIS_AUTH_SYM_AAD_LENGTH 0
 #define THEMIS_AUTH_SYM_AUTH_TAG_LENGTH 16
 
 #define THEMIS_SYM_KDF_KEY_LABEL "Themis secure cell message key"
@@ -155,11 +155,11 @@ themis_status_t themis_auth_sym_encrypt_message_(const uint8_t* key,
   uint8_t* auth_tag=aad+THEMIS_AUTH_SYM_AAD_LENGTH;
   if(in_context!=NULL && in_context_length!=0){
     memcpy(iv, in_context, THEMIS_AUTH_SYM_IV_LENGTH);
-    memcpy(aad,in_context+THEMIS_AUTH_SYM_IV_LENGTH, THEMIS_AUTH_SYM_AAD_LENGTH);    
+    //    memcpy(aad,in_context+THEMIS_AUTH_SYM_IV_LENGTH, THEMIS_AUTH_SYM_AAD_LENGTH);    
   }
   else{
     HERMES_CHECK(soter_rand(iv, THEMIS_AUTH_SYM_IV_LENGTH)==HERMES_SUCCESS);
-    HERMES_CHECK(soter_rand(aad,THEMIS_AUTH_SYM_AAD_LENGTH)==HERMES_SUCCESS);
+    //HERMES_CHECK(soter_rand(aad,THEMIS_AUTH_SYM_AAD_LENGTH)==HERMES_SUCCESS);
   }
   hdr->alg=THEMIS_AUTH_SYM_ALG;
   hdr->iv_length=THEMIS_AUTH_SYM_IV_LENGTH;
