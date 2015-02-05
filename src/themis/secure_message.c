@@ -17,16 +17,19 @@ themis_status_t themis_gen_key_pair(soter_sign_alg_t alg,
   soter_sign_ctx_t* ctx=soter_sign_create(alg,NULL,0,NULL,0);
   HERMES_CHECK(ctx!=NULL);
   soter_status_t res=soter_sign_export_key(ctx, private_key, private_key_length, true);
-  if(res!=HERMES_SUCCESS){
+  if(res!=HERMES_SUCCESS && res != HERMES_BUFFER_TOO_SMALL){
     soter_sign_destroy(ctx);
     return res;
   }
-  res=soter_sign_export_key(ctx, public_key, public_key_length, false);
-  if(res!=HERMES_SUCCESS){
+  soter_status_t res2=soter_sign_export_key(ctx, public_key, public_key_length, false);
+  if(res2!=HERMES_SUCCESS && res2!=HERMES_BUFFER_TOO_SMALL){
     soter_sign_destroy(ctx);
     return res;
   }
   soter_sign_destroy(ctx);
+  if(res==HERMES_BUFFER_TOO_SMALL || res2==HERMES_BUFFER_TOO_SMALL){
+    return HERMES_BUFFER_TOO_SMALL;
+  }
   return HERMES_SUCCESS;
 }
 
