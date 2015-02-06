@@ -1,31 +1,6 @@
+import exception;
 from ctypes import *
 themis = cdll.LoadLibrary('./libthemis.so')
-
-class themis_exception(Exception):
-    def __init__(self, value):
-	 self.value = value
-    def __str__(self):
-	return repr(self.value)
-
-class themis_gen_key_pair(object):
-    def __init__(self, alg):
-	self.private_key_length = c_int(4096);
-	self.public_key_length = c_int(4096);
-	self.private_key = create_string_buffer(self.private_key_length.value);
-	self.public_key = create_string_buffer(self.public_key_length.value);
-	if alg == "EC" :
-	    if themis.themis_gen_ec_key_pair(self.private_key, byref(self.private_key_length), self.public_key, byref(self.public_key_length)) != 0:
-		raise themis_exception("themis_gen_ec_key_pair error")
-	elif alg == "RSA" :
-	    if themis.themis_gen_rsa_key_pair(self.private_key, byref(self.private_key_length), self.public_key, byref(self.public_key_length)) !=0:
-		raise themis_exception("themis_gen_rsa_key_pair error")
-
-    def export_private_key(self):
-	return (self.private_key, self.private_key_length.value);
-
-    def export_public_key(self):
-	return (self.public_key, self.public_key_length.value);
-
 
 class themis_smessage_signer(object):
     def __init__(self, private_key_):
@@ -82,32 +57,3 @@ class themis_smessage_decrypter(object):
 	return (plain_message, plain_message_length.value);
 
 
-alg="EC";
-
-obj = themis_gen_key_pair(alg);
-private_key = obj.export_private_key();
-public_key = obj.export_public_key();
-signer = themis_smessage_signer(private_key);
-verifier = themis_smessage_verifier(public_key);
-
-message = "Hello world!!!";
-signed_message = signer.sign((message, len(message)));
-print signed_message[1], repr(signed_message[0].raw);
-
-plain_message = verifier.verify(signed_message);
-print plain_message[1], repr(plain_message[0].raw);
-
-obj2 = themis_gen_key_pair(alg);
-
-peer_private_key = obj2.export_private_key();
-peer_public_key = obj2.export_public_key();
-
-encrypter = themis_smessage_encrypter(private_key, peer_public_key);
-
-decrypter = themis_smessage_decrypter(peer_private_key, public_key);
-
-encrypted_message = encrypter.encrypt((message, len(message)));
-print encrypted_message[1], repr(encrypted_message[0].raw);
-
-decrypted_message = decrypter.decrypt(encrypted_message);
-print decrypted_message[1], repr(decrypted_message[0].raw);

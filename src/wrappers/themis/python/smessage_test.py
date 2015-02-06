@@ -1,3 +1,4 @@
+from skeygen import *
 from smessage import *
 
 alg="EC";
@@ -5,6 +6,8 @@ alg="EC";
 obj = themis_gen_key_pair(alg);
 private_key = obj.export_private_key();
 public_key = obj.export_public_key();
+
+print private_key[1], private_key[0][:private_key[1]].encode('hex');
 signer = themis_smessage_signer(private_key);
 verifier = themis_smessage_verifier(public_key);
 
