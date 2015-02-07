@@ -37,6 +37,18 @@ themis_status_t secure_session_cleanup(secure_session_t *session_ctx)
 	return HERMES_SUCCESS;
 }
 
+themis_status_t secure_session_destroy(secure_session_t *session_ctx)
+{
+	themis_status_t res = secure_session_cleanup(session_ctx);
+
+	if (HERMES_SUCCESS == res)
+	{
+		free(session_ctx);
+	}
+
+	return res;
+}
+
 themis_status_t secure_session_init(secure_session_t *session_ctx, const void *id, size_t id_length, const void *sign_key, size_t sign_key_length, const secure_session_user_callbacks_t *user_callbacks)
 {
 	soter_status_t soter_status;
@@ -76,6 +88,26 @@ err:
 	}
 
 	return res;
+}
+
+secure_session_t* secure_session_create(const void *id, size_t id_length, const void *sign_key, size_t sign_key_length, const secure_session_user_callbacks_t *user_callbacks)
+{
+	secure_session_t *ctx = malloc(sizeof(secure_session_t));
+
+	if (!ctx)
+	{
+		return NULL;
+	}
+
+	if (HERMES_SUCCESS == secure_session_init(ctx, id, id_length, sign_key, sign_key_length, user_callbacks))
+	{
+		return ctx;
+	}
+	else
+	{
+		free(ctx);
+		return NULL;
+	}
 }
 
 themis_status_t secure_session_connect(secure_session_t *session_ctx)
