@@ -780,23 +780,137 @@ static themis_status_t secure_session_finish_client(secure_session_t *session_ct
 	return res;
 }
 
+ssize_t secure_session_send(secure_session_t *session_ctx, const void *message, size_t message_length)
+{
+	uint8_t stack_buf[2048];
+
+	uint8_t *out;
+	size_t out_size = sizeof(stack_buf);
+
+	themis_status_t res;
+
+	ssize_t bytes_sent;
+
+	if ((!session_ctx) || (!message) || (!message_length))
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	if (NULL != session_ctx->state_handler)
+	{
+		/* The key agreement is not finished yet, cannot send any message */
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	out_size = WRAPPED_SIZE(message_length);
+
+	if (out_size <= sizeof(stack_buf))
+	{
+		/* We may use stack buffer */
+		out = stack_buf;
+	}
+	else
+	{
+		out = malloc(out_size);
+		if (!out)
+		{
+			return HERMES_NO_MEMORY;
+		}
+	}
+
+	res = secure_session_wrap(session_ctx, message, message_length, out, &out_size);
+	if (HERMES_SUCCESS != res)
+	{
+		bytes_sent = (ssize_t)res;
+		goto err;
+	}
+
+	session_ctx->user_callbacks->send_data(out, out_size, session_ctx->user_callbacks->user_data);
+	bytes_sent = (ssize_t)message_length;
+
+err:
+
+	if (out != stack_buf)
+	{
+		free(out);
+	}
+
+	return bytes_sent;
+}
+
 ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, size_t message_length)
 {
-	uint8_t buffer[2048];
+	uint8_t stack_buf[2048];
+	uint8_t *in;
+	size_t in_size = sizeof(stack_buf);
 	size_t bytes_received;
+	ssize_t res;
 
-	ssize_t res = session_ctx->user_callbacks->receive_data(buffer, sizeof(buffer), session_ctx->user_callbacks->user_data);
+
+	if (!session_ctx)
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
+	if (!session_ctx->state_handler)
+	{
+		if (!message || !message_length)
+		{
+			return HERMES_INVALID_PARAMETER;
+		}
+	}
+
+	if (session_ctx->state_handler)
+	{
+		/* We are in key agreement stage. We may always use stack buffer here */
+		in = stack_buf;
+	}
+	else
+	{
+		/* If user is expecting to receive message_length, then we need a buffer to receive at least WRAPPED_SIZE(message_length) */
+		in_size = WRAPPED_SIZE(message_length);
+
+		if (in_size < sizeof(stack_buf))
+		{
+			in = stack_buf;
+		}
+		else
+		{
+			in = malloc(in_size);
+			if (!in)
+			{
+				return HERMES_NO_MEMORY;
+			}
+		}
+	}
+
+	res = session_ctx->user_callbacks->receive_data(in, in_size, session_ctx->user_callbacks->user_data);
 
 	if (res < 0)
 	{
-		return res;
+		goto err;
 	}
 
 	bytes_received = (size_t)res;
 
-	if (HERMES_SUCCESS == session_ctx->state_handler(session_ctx, buffer, bytes_received))
+	if (session_ctx->state_handler)
 	{
-		return 0;
+		res = session_ctx->state_handler(session_ctx, stack_buf, bytes_received);
+	}
+	else
+	{
+		res = secure_session_unwrap(session_ctx, in, bytes_received, message, &message_length);
+		if (HERMES_SUCCESS == res)
+		{
+			res = (ssize_t)message_length;
+		}
+	}
+
+err:
+
+	if (in != stack_buf)
+	{
+		free(in);
 	}
 
 	return res;

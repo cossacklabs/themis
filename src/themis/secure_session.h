@@ -90,7 +90,8 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx);
 themis_status_t secure_session_wrap(secure_session_t *session_ctx, const void *message, size_t message_length, void *wrapped_message, size_t *wrapped_message_length);
 themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void *wrapped_message, size_t wrapped_message_length, void *message, size_t *message_length);
 
-themis_status_t secure_session_send(secure_session_t *session_ctx, const void *message, size_t message_length);
+/* Trying to mimic socket functions */
+ssize_t secure_session_send(secure_session_t *session_ctx, const void *message, size_t message_length);
 ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, size_t message_length);
 
 themis_status_t secure_session_save(const secure_session_t *session_ctx, void *out, size_t *out_length);
