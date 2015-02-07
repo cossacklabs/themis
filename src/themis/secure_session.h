@@ -93,4 +93,7 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 themis_status_t secure_session_send(secure_session_t *session_ctx, const void *message, size_t message_length);
 ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, size_t message_length);
 
+themis_status_t secure_session_save(const secure_session_t *session_ctx, void *out, size_t *out_length);
+themis_status_t secure_session_load(secure_session_t *session_ctx, const void *in, size_t in_length);
+
 #endif /* THEMIS_SECURE_SESSION_H */
