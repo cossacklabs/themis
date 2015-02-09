@@ -72,7 +72,7 @@ themis_status_t secure_session_save(const secure_session_t *session_ctx, void *o
 	return HERMES_SUCCESS;
 }
 
-themis_status_t secure_session_load(secure_session_t *session_ctx, const void *in, size_t in_length)
+themis_status_t secure_session_load(secure_session_t *session_ctx, const void *in, size_t in_length, const secure_session_user_callbacks_t *user_callbacks)
 {
 	const soter_container_hdr_t *hdr = in;
 	soter_status_t soter_res;
@@ -123,6 +123,8 @@ themis_status_t secure_session_load(secure_session_t *session_ctx, const void *i
 	curr++;
 
 	session_ctx->in_seq = ntohl(*curr);
+
+	session_ctx->user_callbacks = user_callbacks;
 
 	return HERMES_SUCCESS;
 }
