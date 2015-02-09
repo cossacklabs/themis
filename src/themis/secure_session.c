@@ -128,16 +128,14 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), NULL, &ecdh_key_length, false);
 	if (HERMES_BUFFER_TOO_SMALL != soter_status)
 	{
-		res = soter_status;
+	        res = soter_status;
 		goto err;
 	}
-
 	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, NULL, 0, NULL, &signature_length);
 	if (HERMES_BUFFER_TOO_SMALL != res)
 	{
 		goto err;
 	}
-
 	length_to_send = 2 * sizeof(soter_container_hdr_t) + session_ctx->we.id_length + ecdh_key_length + signature_length;
 	data_to_send = malloc(length_to_send);
 	if (NULL == data_to_send)
@@ -145,7 +143,6 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 		res = HERMES_NO_MEMORY;
 		goto err;
 	}
-
 	/* Storing ID in a container */
 	container = ((soter_container_hdr_t *)data_to_send) + 1;
 
@@ -163,7 +160,6 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 		res = soter_status;
 		goto err;
 	}
-
 	sign_data.data = data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length;
 	sign_data.length = ecdh_key_length;
 
@@ -172,13 +168,10 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 	{
 		goto err;
 	}
-
 	memcpy(container->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH);
 	soter_container_set_data_size(container, length_to_send - sizeof(soter_container_hdr_t));
 	soter_update_container_checksum(container);
-
 	session_ctx->user_callbacks->send_data(data_to_send, length_to_send, session_ctx->user_callbacks->user_data);
-
 	/* In "client mode" awaiting initial response from the server */
 	session_ctx->state_handler = secure_session_proceed_client;
 	session_ctx->is_client = true;
@@ -236,6 +229,7 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 
 	if (HERMES_SUCCESS != soter_verify_container_checksum(proto_message))
 	{
+
 		return HERMES_INVALID_PARAMETER;
 	}
 
@@ -831,7 +825,7 @@ ssize_t secure_session_send(secure_session_t *session_ctx, const void *message, 
 	if (NULL != session_ctx->state_handler)
 	{
 		/* The key agreement is not finished yet, cannot send any message */
-		return HERMES_INVALID_PARAMETER;
+		return HERMES_SSESSION_KA_NOT_FINISHED;
 	}
 
 	out_size = WRAPPED_SIZE(message_length);
@@ -901,7 +895,6 @@ ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, siz
 	{
 		/* If user is expecting to receive message_length, then we need a buffer to receive at least WRAPPED_SIZE(message_length) */
 		in_size = WRAPPED_SIZE(message_length);
-
 		if (in_size < sizeof(stack_buf))
 		{
 			in = stack_buf;
@@ -922,7 +915,6 @@ ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, siz
 	{
 		goto err;
 	}
-
 	bytes_received = (size_t)res;
 
 	if (session_ctx->state_handler)
