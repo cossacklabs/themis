@@ -14,7 +14,7 @@
 #define THEMIS_SESSION_ID_TAG "TSID"
 #define THEMIS_SESSION_PROTO_TAG "TSPM"
 
-typedef void (*send_protocol_data_callback)(const uint8_t *data, size_t data_length, void *user_data);
+typedef ssize_t (*send_protocol_data_callback)(const uint8_t *data, size_t data_length, void *user_data);
 typedef ssize_t (*receive_protocol_data_callback)(uint8_t *data, size_t data_length, void *user_data);
 typedef void (*protocol_state_changed_callback)(int event, void *user_data);
 typedef int (*get_public_key_for_id_callback)(const void *id, size_t id_length, void *key_buffer, size_t key_buffer_length, void *user_data);
