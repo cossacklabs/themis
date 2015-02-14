@@ -113,6 +113,7 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 {
 	uint8_t *data_to_send = NULL;
 	size_t length_to_send;
+	ssize_t bytes_sent;
 
 	soter_container_hdr_t *container;
 
@@ -170,7 +171,14 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 	memcpy(container->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH);
 	soter_container_set_data_size(container, length_to_send - sizeof(soter_container_hdr_t));
 	soter_update_container_checksum(container);
-	session_ctx->user_callbacks->send_data(data_to_send, length_to_send, session_ctx->user_callbacks->user_data);
+
+	bytes_sent = session_ctx->user_callbacks->send_data(data_to_send, length_to_send, session_ctx->user_callbacks->user_data);
+	if (bytes_sent != (ssize_t)length_to_send)
+	{
+		res = HERMES_SSESSION_TRANSPORT_ERROR;
+		goto err;
+	}
+
 	/* In "client mode" awaiting initial response from the server */
 	session_ctx->state_handler = secure_session_proceed_client;
 	session_ctx->is_client = true;
@@ -207,6 +215,7 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 
 	uint8_t *data_to_send = NULL;
 	size_t length_to_send;
+	ssize_t bytes_sent;
 
 	size_t ecdh_key_length = 0;
 	soter_container_hdr_t *container;
@@ -354,7 +363,12 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	soter_container_set_data_size(container, length_to_send - sizeof(soter_container_hdr_t));
 	soter_update_container_checksum(container);
 
-	session_ctx->user_callbacks->send_data(data_to_send, length_to_send, session_ctx->user_callbacks->user_data);
+	bytes_sent = session_ctx->user_callbacks->send_data(data_to_send, length_to_send, session_ctx->user_callbacks->user_data);
+	if (bytes_sent != (ssize_t)length_to_send)
+	{
+		res = HERMES_SSESSION_TRANSPORT_ERROR;
+		goto err;
+	}
 
 	/* "Server mode": waiting response from the client */
 	session_ctx->state_handler = secure_session_finish_server;
@@ -399,6 +413,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 
 	uint8_t *data_to_send = NULL;
 	size_t length_to_send;
+	ssize_t bytes_sent;
 
 	soter_container_hdr_t *container;
 	uint8_t *mac;
@@ -585,7 +600,12 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	soter_container_set_data_size(container, length_to_send - sizeof(soter_container_hdr_t));
 	soter_update_container_checksum(container);
 
-	session_ctx->user_callbacks->send_data(data_to_send, length_to_send, session_ctx->user_callbacks->user_data);
+	bytes_sent = session_ctx->user_callbacks->send_data(data_to_send, length_to_send, session_ctx->user_callbacks->user_data);
+	if (bytes_sent != (ssize_t)length_to_send)
+	{
+		res = HERMES_SSESSION_TRANSPORT_ERROR;
+		goto err;
+	}
 
 	/* "Client mode": waiting final confirmation from server */
 	session_ctx->state_handler = secure_session_finish_client;
@@ -624,6 +644,8 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 
 	uint8_t shared_secret[1024];
 	size_t shared_secret_length = sizeof(shared_secret);
+
+	ssize_t bytes_sent;
 
 	if (data_length < sizeof(soter_container_hdr_t))
 	{
@@ -736,7 +758,11 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 	soter_container_set_data_size(response_message, ecdh_key_length);
 	soter_update_container_checksum(response_message);
 
-	session_ctx->user_callbacks->send_data(ecdh_key, soter_container_data_size(response_message) + sizeof(soter_container_hdr_t), session_ctx->user_callbacks->user_data);
+	bytes_sent = session_ctx->user_callbacks->send_data(ecdh_key, soter_container_data_size(response_message) + sizeof(soter_container_hdr_t), session_ctx->user_callbacks->user_data);
+	if (bytes_sent != (ssize_t)(soter_container_data_size(response_message) + sizeof(soter_container_hdr_t)))
+	{
+		return HERMES_SSESSION_TRANSPORT_ERROR;
+	}
 
 	/* "Server mode": negotiation completed */
 	session_ctx->state_handler = NULL;
@@ -849,8 +875,7 @@ ssize_t secure_session_send(secure_session_t *session_ctx, const void *message, 
 		goto err;
 	}
 
-	session_ctx->user_callbacks->send_data(out, out_size, session_ctx->user_callbacks->user_data);
-	bytes_sent = (ssize_t)message_length;
+	bytes_sent = session_ctx->user_callbacks->send_data(out, out_size, session_ctx->user_callbacks->user_data);
 
 err:
 

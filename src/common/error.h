@@ -20,6 +20,7 @@
 #define HERMES_INVALID_SIGNATURE -6
 #define HERMES_NOT_SUPPORTED -7
 #define HERMES_SSESSION_KA_NOT_FINISHED -8
+#define HERMES_SSESSION_TRANSPORT_ERROR -9
 
 #define HERMES_ERROR_OUT(message) fprintf(stderr, "%s:%u - error: %s\n",__FILE__,__LINE__,message) 
 #define HERMES_DEBUG_OUT(message) fprintf(stdout, "%s:%u - debug: %s\n",__FILE__,__LINE__,message) 
