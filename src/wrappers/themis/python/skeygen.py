@@ -16,7 +16,7 @@ class themis_gen_key_pair(object):
 		raise themis_exception("themis_gen_rsa_key_pair error")
 
     def export_private_key(self):
-	return (self.private_key, self.private_key_length.value);
+	return string_at(self.private_key, self.private_key_length.value);
 
     def export_public_key(self):
-	return (self.public_key, self.public_key_length.value);
+	return string_at(self.public_key, self.public_key_length.value);

@@ -86,7 +86,6 @@ err:
 	{
 		secure_session_cleanup(session_ctx);
 	}
-
 	return res;
 }
 
@@ -104,7 +103,7 @@ secure_session_t* secure_session_create(const void *id, size_t id_length, const 
 		return ctx;
 	}
 	else
-	{
+	  {
 		free(ctx);
 		return NULL;
 	}
@@ -256,7 +255,6 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 
 	signature = (const uint8_t *)peer_ecdh_key + peer_ecdh_key_length;
 	signature_length = (const uint8_t *)data + soter_container_data_size(proto_message) + sizeof(soter_container_hdr_t) - signature;
-
 	if (session_ctx->user_callbacks->get_public_key_for_id(soter_container_const_data(peer_id), soter_container_data_size(peer_id), sign_key, sizeof(sign_key), session_ctx->user_callbacks->user_data))
 	{
 		res = HERMES_INVALID_PARAMETER;
@@ -872,7 +870,6 @@ ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, siz
 	size_t bytes_received;
 	ssize_t res;
 
-
 	if (!session_ctx)
 	{
 		return HERMES_INVALID_PARAMETER;
@@ -908,7 +905,6 @@ ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, siz
 			}
 		}
 	}
-
 	res = session_ctx->user_callbacks->receive_data(in, in_size, session_ctx->user_callbacks->user_data);
 
 	if (res < 0)

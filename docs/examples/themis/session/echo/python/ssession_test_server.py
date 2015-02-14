@@ -2,62 +2,47 @@ import ssession;
 import socket;
 import ctypes;
 
-client_pub_type = ctypes.c_byte*45;
-client_pub = client_pub_type(0x55, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2d, 0x13, 0x8b, 0xdf, 0x0c, 0x02, 0x1f, 0x09, 0x88, 0x39, 0xd9, 0x73, 0x3a, 0x84, 0x8f, 0xa8, 0x50, 0xd9, 0x2b, 0xed, 0x3d, 0x38, 0xcf, 0x1d, 0xd0, 0xce, 0xf4, 0xae, 0xdb, 0xcf, 0xaf, 0xcb, 0x6b, 0xa5, 0x4a, 0x08, 0x11, 0x21);
+client_pub = str('\x55\x45\x43\x32\x00\x00\x00\x2d\x13\x8b\xdf\x0c\x02\x1f\x09\x88\x39\xd9\x73\x3a\x84\x8f\xa8\x50\xd9\x2b\xed\x3d\x38\xcf\x1d\xd0\xce\xf4\xae\xdb\xcf\xaf\xcb\x6b\xa5\x4a\x08\x11\x21');
 
-server_priv_type = ctypes.c_byte*45;
-server_priv=server_priv_type(0x52, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2d, 0x49, 0x87, 0x04, 0x6b, 0x00, 0xf2, 0x06, 0x07, 0x7d, 0xc7, 0x1c, 0x59, 0xa1, 0x8f, 0x39, 0xfc, 0x94, 0x81, 0x3f, 0x9e, 0xc5, 0xba, 0x70, 0x6f, 0x93, 0x08, 0x8d, 0xe3, 0x85, 0x82, 0x5b, 0xf8, 0x3f, 0xc6, 0x9f, 0x0b, 0xdf);
+server_priv= str('\x52\x45\x43\x32\x00\x00\x00\x2d\x49\x87\x04\x6b\x00\xf2\x06\x07\x7d\xc7\x1c\x59\xa1\x8f\x39\xfc\x94\x81\x3f\x9e\xc5\xba\x70\x6f\x93\x08\x8d\xe3\x85\x82\x5b\xf8\x3f\xc6\x9f\x0b\xdf');
 
-def on_send(data, data_length, user_data):
-#    print("send ", data_length, "bytes:", ctypes.string_at(data,data_length));
-    user_data[0].sendall(ctypes.string_at(data,data_length));
-    return data_length;
+class transport(object):
+    def __init__(self, socket):
+        self.socket=socket;
 
-def on_receive(buffer, buffer_length, user_data):
-    received_data=user_data[0].recv(buffer_length);
-    ctypes.memmove(buffer, received_data, len(received_data));
-#    print "receive", len(received_data), "bytes", repr(buffer);
-    return len(received_data);
+    def __del__(self):
+        self.socket.close();
+        
+    def send(self, message):
+        self.socket.sendall(message);
 
-def on_get_pub_key(user_id, id_length, key_buffer, key_buffer_length, user_data):
-    real_user_id=ctypes.string_at(user_id, id_length);
-    if id_length != len("client"):
-	return -1;
-    if real_user_id != "client":
-	return -1;
-    ctypes.memmove(key_buffer, client_pub, len(client_pub));
-    return 0;
+    def receive(self, buffer_length):
+        return self.socket.recv(buffer_length);
 
-def on_change_status(buffer_length, user_data):
-    return 0;
+    def get_pub_key_by_id(self, user_id):
+        if user_id != "client":
+            raise Exception("no such id");
+        return client_pub; 
+        
+    
+conn = socket.socket();
+conn.bind(("127.0.0.1", 26260));
+conn.listen(1);
+accepted, addr = conn.accept();
+transport_=transport(accepted);
 
-conn = ctypes.py_object(socket.socket());
-conn.value.bind(("127.0.0.1", 26260));
-conn.value.listen(1);
-accepted, addr = conn.value.accept();
+print transport_.get_pub_key_by_id;
 
-lp_conn_type=ctypes.POINTER(ctypes.py_object);
-lp_conn=lp_conn_type(ctypes.py_object(accepted));
-
-on_send_=ssession.ON_SEND_DATA(on_send);
-on_receive_=ssession.ON_RECEIVE_DATA(on_receive);
-on_change_status_=ssession.ON_STATE_CHANGE(on_change_status);
-on_get_pub_key_=ssession.ON_GET_PUBLIC_KEY(on_get_pub_key);
-
-transport=ssession.transport_t(on_send_,on_receive_, on_change_status_, on_get_pub_key_, lp_conn);
-lp_transport_type=ctypes.POINTER(ssession.transport_t);
-lp_transport=lp_transport_type(transport)
-
-
-session=ssession.ssession("server", server_priv, lp_transport);
-
+session=ssession.ssession("server", server_priv, transport_);
 while True:
-    message, res=session.receive();
-    if res > 0:
-	print "receive: ", message;
-	if message == "finish":
-	    break;
-	session.send(message);
+    try:
+        message = session.receive();
+    except Exception as e:
+        e;        
+    if len(message) > 0:
+        print "receive: ", message;
+        if message == "finish":
+            break;
+        session.send(message);
 
-accepted.close();
-conn.value.close();
+conn.close();
