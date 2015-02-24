@@ -32,6 +32,7 @@ def on_receive(data, data_length, user_data):
     try:
         received_data=user_data[0].receive(data_length);
     except Exception as e:
+	print e;
         return -2222;
     ctypes.memmove(data, received_data, len(received_data));
 #    print "receive", len(received_data), "bytes";
@@ -90,4 +91,6 @@ class ssession(object):
 	res=themis.secure_session_receive(self.session_ctx, message, message_length);
 	if res == -2222 :
 	    raise exception.themis_exception("secure_session_receive failed: " + str(res));
+	elif res<0:
+	    return "";
         return ctypes.string_at(message, res);
