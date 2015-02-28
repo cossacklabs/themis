@@ -846,7 +846,7 @@ ssize_t secure_session_send(secure_session_t *session_ctx, const void *message, 
 		return HERMES_INVALID_PARAMETER;
 	}
 
-	if (NULL != session_ctx->state_handler)
+	if (!secure_session_is_established(session_ctx))
 	{
 		/* The key agreement is not finished yet, cannot send any message */
 		return HERMES_SSESSION_KA_NOT_FINISHED;
@@ -900,7 +900,7 @@ ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, siz
 		return HERMES_INVALID_PARAMETER;
 	}
 
-	if (!session_ctx->state_handler)
+	if (secure_session_is_established(session_ctx))
 	{
 		if (!message || !message_length)
 		{
@@ -908,7 +908,7 @@ ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, siz
 		}
 	}
 
-	if (session_ctx->state_handler)
+	if (!secure_session_is_established(session_ctx))
 	{
 		/* We are in key agreement stage. We may always use stack buffer here */
 		in = stack_buf;
@@ -938,7 +938,7 @@ ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, siz
 	}
 	bytes_received = (size_t)res;
 
-	if (session_ctx->state_handler)
+	if (!secure_session_is_established(session_ctx))
 	{
 		res = session_ctx->state_handler(session_ctx, stack_buf, bytes_received);
 	}
@@ -959,4 +959,9 @@ err:
 	}
 
 	return res;
+}
+
+bool secure_session_is_established(const secure_session_t *session_ctx)
+{
+	return (NULL == session_ctx->state_handler);
 }
