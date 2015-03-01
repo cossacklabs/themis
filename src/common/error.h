@@ -22,8 +22,13 @@
 #define HERMES_SSESSION_KA_NOT_FINISHED -8
 #define HERMES_SSESSION_TRANSPORT_ERROR -9
 
+#ifdef DEBUG
 #define HERMES_ERROR_OUT(message) fprintf(stderr, "%s:%u - error: %s\n",__FILE__,__LINE__,message) 
-#define HERMES_DEBUG_OUT(message) fprintf(stdout, "%s:%u - debug: %s\n",__FILE__,__LINE__,message) 
+#define HERMES_DEBUG_OUT(message) fprintf(stdout, "%s:%u - debug: %s\n",__FILE__,__LINE__,message)
+#else
+#define HERMES_ERROR_OUT(message)  
+#define HERMES_DEBUG_OUT(message) 
+#endif
 
 #define HERMES_CHECK(x) if(!(x)){	\
 	HERMES_ERROR_OUT(#x);		\
@@ -79,6 +84,14 @@
 	{y;}			\
 	return NULL;		\
     }
+
+#define HERMES_STATUS_CHECK(x,y){		\
+  int res=x;					\
+  if(res!=y){					\
+     HERMES_ERROR_OUT(#x);				\
+     return res;					\
+  }							\
+  }
 
 #ifdef DEBUG
     static void hermes_out_buffer(const uint8_t* buffer, const size_t buffer_length){

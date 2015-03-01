@@ -225,7 +225,6 @@ static void secure_cell_api_test_full(void)
 	}
 
 	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_secure_cell_encrypt_full(key, key_length, message, message_length, NULL, &encrypted_length), "themis_secure_cell_encrypt_full: get output size (NULL out buffer)");
-
 	encrypted = malloc(encrypted_length);
 	if (!encrypted)
 	{
@@ -243,7 +242,7 @@ static void secure_cell_api_test_full(void)
 	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_secure_cell_encrypt_full(key, key_length, message, message_length, encrypted, &encrypted_length), "themis_secure_cell_encrypt_full: get output size (small out buffer)");
 
 	testsuite_fail_unless(HERMES_SUCCESS == themis_secure_cell_encrypt_full(key, key_length, message, message_length, encrypted, &encrypted_length), "themis_secure_cell_encrypt_full: normal flow");
-
+	fprintf(stderr, "%u", encrypted_length);
 	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_secure_cell_decrypt_full(key, key_length, encrypted, encrypted_length, NULL, &decrypted_length), "themis_secure_cell_decrypt_full: get output size (NULL out buffer)");
 
 	decrypted = malloc(decrypted_length);

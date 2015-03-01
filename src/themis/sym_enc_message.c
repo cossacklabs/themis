@@ -182,7 +182,8 @@ themis_status_t themis_auth_sym_encrypt_message(const uint8_t* key,
 						 uint8_t* encrypted_message,
 						 size_t* encrypted_message_length){
   uint8_t key_[THEMIS_SYM_KEY_LENGTH/8];
-  HERMES_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&message_length), sizeof(message_length), key_, sizeof(key_))==HERMES_SUCCESS);
+  HERMES_CHECK_PARAM(message!=NULL && message_length!=0);
+  HERMES_STATUS_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&message_length), sizeof(message_length), key_, sizeof(key_)),HERMES_SUCCESS);
   return themis_auth_sym_encrypt_message_(key_, sizeof(key_), message, message_length, in_context, in_context_length, out_context, out_context_length, encrypted_message, encrypted_message_length);
 }
 themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
@@ -218,7 +219,8 @@ themis_status_t themis_auth_sym_decrypt_message(const uint8_t* key,
 						uint8_t* message,
 						size_t* message_length){
   uint8_t key_[THEMIS_SYM_KEY_LENGTH/8];
-  HERMES_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&encrypted_message_length), sizeof(encrypted_message_length), key_, sizeof(key_))==HERMES_SUCCESS);
+  HERMES_CHECK_PARAM(context!=NULL && context_length!=0);
+  HERMES_STATUS_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&encrypted_message_length), sizeof(encrypted_message_length), key_, sizeof(key_)),HERMES_SUCCESS);
   return themis_auth_sym_decrypt_message_(key_, sizeof(key_), context, context_length, encrypted_message, encrypted_message_length, message, message_length);
 }
 #define THEMIS_SYM_ALG (SOTER_SYM_AES_CTR|THEMIS_SYM_KEY_LENGTH)
