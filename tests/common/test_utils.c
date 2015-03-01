@@ -50,6 +50,19 @@ test_utils_status_t string_to_bytes(const char *str, uint8_t *bytes, size_t size
 	return HERMES_SUCCESS;
 }
 
+size_t rand_int(size_t max_val)
+{
+	size_t res;
+
+	do
+	{
+		soter_rand(&res, sizeof(size_t));
+		res %= max_val;
+	} while (!res);
+
+	return res;
+}
+
 void testsuite_start_testing(void)
 {
 	sput_start_testing();

@@ -16,6 +16,7 @@
 typedef int test_utils_status_t;
 
 test_utils_status_t string_to_bytes(const char *str, uint8_t *bytes, size_t size);
+size_t rand_int(size_t max_val);
 
 /* These are wrappers for sput test framework. Since sput uses a static state variable, when called from different files, it resets test number count (since for each file different test context is used). */
 void testsuite_start_testing(void);
