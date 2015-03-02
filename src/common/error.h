@@ -93,6 +93,15 @@
   }							\
   }
 
+#define HERMES_STATUS_CHECK_FREE(x,y,z){		\
+  int res=x;					\
+  if(res!=y){					\
+     HERMES_ERROR_OUT(#x);				\
+     free(z);						\
+     return res;					\
+  }							\
+  }
+
 #ifdef DEBUG
     static void hermes_out_buffer(const uint8_t* buffer, const size_t buffer_length){
     int i;

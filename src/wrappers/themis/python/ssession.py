@@ -55,17 +55,11 @@ on_get_pub_key_=ON_GET_PUBLIC_KEY(on_get_pub_key);
 lp_conn_type=ctypes.POINTER(ctypes.py_object);
 
 
-class ssession(object):
+class ssession_(object):
     def __init__(self, user_id, sign_key, transport):
         self.lp_conn=lp_conn_type(ctypes.py_object(transport));
         self.transport_=transport_t(on_send_, on_receive_, on_change_status_, on_get_pub_key_, self.lp_conn);
 	self.session_ctx=ctypes.POINTER(ctypes.c_int);
-#        print self.transport_, on_send_, on_receive_;
-#        print "send_data", hex(ctypes.cast(self.transport_.send_data, ctypes.c_void_p).value);
-#        print "receive_d", hex(ctypes.cast(self.transport_.receive_data, ctypes.c_void_p).value); 
-#        print "on_get_pub", hex(ctypes.cast(self.transport_.get_public_key_for_id, ctypes.c_void_p).value);
-       
-#        print self.session_ctx;       
 	self.session_ctx=ssession_create(ctypes.byref(ctypes.create_string_buffer(user_id)), len(user_id), ctypes.byref(ctypes.create_string_buffer(sign_key)), len(sign_key), ctypes.byref(self.transport_));
 	if self.session_ctx==None:
 	    raise exception.themis_exception("secure_session_create fail");
@@ -94,3 +88,32 @@ class ssession(object):
 	elif res<0:
 	    return "";
         return ctypes.string_at(message, res);
+
+    def is_established(self):
+        return themis.secure_session_is_established(self.session_ctx);
+
+class ssession_server(object):
+    def __init__(self, user_id, sign_key, transport):
+        self.session=ssession_(user_id, sign_key, transport);
+        while self.session.is_established()!=True:
+            self.session.receive();
+
+    def receive(self):
+        self.session.receive();
+
+    def send(self, message):
+        self.session.send(message);
+
+class ssession_client(object):
+    def __init__(self, user_id, sign_key, transport):
+        self.session=ssession_(user_id, sign_key, transport);
+        self.session.connect();
+        while self.session.is_established()!=True:
+            self.session.receive();
+
+    def receive(self):
+        self.session.receive();
+
+    def send(self, message):
+        self.session.send(message);
+    
