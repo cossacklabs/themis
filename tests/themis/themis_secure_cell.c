@@ -193,11 +193,9 @@ static void secure_cell_test(){
 static void secure_cell_api_test_full(void)
 {
 	uint8_t key[MAX_KEY_SIZE];
-	uint8_t context[MAX_CONTEXT_SIZE];
 	uint8_t message[MAX_MESSAGE_SIZE];
 
 	size_t key_length = rand_int(MAX_KEY_SIZE);
-	size_t context_length = rand_int(MAX_CONTEXT_SIZE);
 	size_t message_length = rand_int(MAX_MESSAGE_SIZE);
 
 	uint8_t *encrypted = NULL;
@@ -207,12 +205,6 @@ static void secure_cell_api_test_full(void)
 	size_t decrypted_length;
 
 	if (HERMES_SUCCESS != soter_rand(key, key_length))
-	{
-		testsuite_fail_if(true, "soter_rand fail");
-		return;
-	}
-
-	if (HERMES_SUCCESS != soter_rand(context, context_length))
 	{
 		testsuite_fail_if(true, "soter_rand fail");
 		return;
@@ -242,7 +234,7 @@ static void secure_cell_api_test_full(void)
 	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_secure_cell_encrypt_full(key, key_length, message, message_length, encrypted, &encrypted_length), "themis_secure_cell_encrypt_full: get output size (small out buffer)");
 
 	testsuite_fail_unless(HERMES_SUCCESS == themis_secure_cell_encrypt_full(key, key_length, message, message_length, encrypted, &encrypted_length), "themis_secure_cell_encrypt_full: normal flow");
-	fprintf(stderr, "%u", encrypted_length);
+
 	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_secure_cell_decrypt_full(key, key_length, encrypted, encrypted_length, NULL, &decrypted_length), "themis_secure_cell_decrypt_full: get output size (NULL out buffer)");
 
 	decrypted = malloc(decrypted_length);
@@ -280,9 +272,89 @@ static void secure_cell_api_test_full(void)
 	free(encrypted);
 }
 
+static void secure_cell_api_test_user_split(void)
+{
+	uint8_t key[MAX_KEY_SIZE];
+	uint8_t context[MAX_CONTEXT_SIZE];
+	uint8_t message[MAX_MESSAGE_SIZE];
+
+	size_t key_length = rand_int(MAX_KEY_SIZE);
+	size_t context_length = rand_int(MAX_CONTEXT_SIZE);
+	size_t message_length = rand_int(MAX_MESSAGE_SIZE);
+
+	uint8_t encrypted[MAX_MESSAGE_SIZE];
+	size_t encrypted_length = message_length;
+
+	uint8_t decrypted[MAX_MESSAGE_SIZE];
+	size_t decrypted_length = message_length;
+
+	if (HERMES_SUCCESS != soter_rand(key, key_length))
+	{
+		testsuite_fail_if(true, "soter_rand fail");
+		return;
+	}
+
+	if (HERMES_SUCCESS != soter_rand(context, context_length))
+	{
+		testsuite_fail_if(true, "soter_rand fail");
+		return;
+	}
+
+	if (HERMES_SUCCESS != soter_rand(message, message_length))
+	{
+		testsuite_fail_if(true, "soter_rand fail");
+		return;
+	}
+
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_cell_encrypt_user_split(NULL, key_length, message, message_length, context, context_length, encrypted, &encrypted_length), "themis_secure_cell_encrypt_user_split: invalid key");
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_cell_encrypt_user_split(key, 0, message, message_length, context, context_length, encrypted, &encrypted_length), "themis_secure_cell_encrypt_user_split: invalid key length");
+
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_cell_encrypt_user_split(key, key_length, NULL, message_length, context, context_length, encrypted, &encrypted_length), "themis_secure_cell_encrypt_user_split: invalid message");
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_cell_encrypt_user_split(key, key_length, message, 0, context, context_length, encrypted, &encrypted_length), "themis_secure_cell_encrypt_user_split: invalid message length");
+
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_cell_encrypt_user_split(key, key_length, message, message_length, NULL, context_length, encrypted, &encrypted_length), "themis_secure_cell_encrypt_user_split: invalid context");
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_cell_encrypt_user_split(key, key_length, message, message_length, context, 0, encrypted, &encrypted_length), "themis_secure_cell_encrypt_user_split: invalid context length");
+
+	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == themis_secure_cell_encrypt_user_split(key, key_length, message, message_length, context, context_length, NULL, &encrypted_length)) && (encrypted_length == message_length), "themis_secure_cell_encrypt_user_split: get output size (NULL out buffer)");
+
+	encrypted_length--;
+	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == themis_secure_cell_encrypt_user_split(key, key_length, message, message_length, context, context_length, encrypted, &encrypted_length)) && (encrypted_length == message_length) , "themis_secure_cell_encrypt_user_split: get output size (small out buffer)");
+
+	testsuite_fail_unless((HERMES_SUCCESS == themis_secure_cell_encrypt_user_split(key, key_length, message, message_length, context, context_length, encrypted, &encrypted_length)) && (encrypted_length == message_length), "themis_secure_cell_encrypt_user_split: normal flow");
+
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_cell_decrypt_user_split(NULL, key_length, encrypted, encrypted_length, context, context_length, decrypted, &decrypted_length), "themis_secure_cell_decrypt_user_split: invalid key");
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_cell_decrypt_user_split(key, 0, encrypted, encrypted_length, context, context_length, decrypted, &decrypted_length), "themis_secure_cell_decrypt_user_split: invalid key length");
+
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_cell_decrypt_user_split(key, key_length, NULL, encrypted_length, context, context_length, decrypted, &decrypted_length), "themis_secure_cell_decrypt_user_split: invalid message");
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, 0, context, context_length, decrypted, &decrypted_length), "themis_secure_cell_decrypt_user_split: invalid message length");
+
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, NULL, context_length, decrypted, &decrypted_length), "themis_secure_cell_decrypt_user_split: invalid context");
+	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, context, 0, decrypted, &decrypted_length), "themis_secure_cell_decrypt_user_split: invalid context length");
+
+	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, context, context_length, NULL, &decrypted_length)) && (decrypted_length == encrypted_length), "themis_secure_cell_decrypt_user_split: get output size (NULL out buffer)");
+
+	decrypted_length--;
+	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, context, context_length, decrypted, &decrypted_length)) && (decrypted_length == encrypted_length), "themis_secure_cell_decrypt_user_split: get output size (small out buffer)");
+
+	encrypted[0]++;
+	testsuite_fail_unless(HERMES_FAIL == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, context, context_length, decrypted, &decrypted_length), "themis_secure_cell_decrypt_user_split: header corrupt");
+	encrypted[0]--;
+
+	encrypted[encrypted_length / 2]++;
+	testsuite_fail_unless(HERMES_FAIL == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, context, context_length, decrypted, &decrypted_length), "themis_secure_cell_decrypt_user_split: message corrupt");
+	encrypted[encrypted_length / 2]--;
+
+	encrypted[encrypted_length - 1]++;
+	testsuite_fail_unless(HERMES_FAIL == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, context, context_length, decrypted, &decrypted_length), "themis_secure_cell_decrypt_user_split: tag corrupt");
+	encrypted[encrypted_length - 1]--;
+
+	testsuite_fail_unless(HERMES_SUCCESS == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, context, context_length, decrypted, &decrypted_length) && (message_length == decrypted_length) && !memcmp(message, decrypted, message_length), "themis_secure_cell_decrypt_user_split: normal flow");
+}
+
 static void secure_cell_api_test(void)
 {
 	secure_cell_api_test_full();
+	secure_cell_api_test_user_split();
 }
 
 void run_secure_cell_test(){
