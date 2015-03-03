@@ -99,7 +99,7 @@ class ssession_server(object):
             self.session.receive();
 
     def receive(self):
-        self.session.receive();
+        return self.session.receive();
 
     def send(self, message):
         self.session.send(message);
@@ -112,7 +112,7 @@ class ssession_client(object):
             self.session.receive();
 
     def receive(self):
-        self.session.receive();
+        return self.session.receive();
 
     def send(self, message):
         self.session.send(message);

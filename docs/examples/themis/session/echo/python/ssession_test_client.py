@@ -26,13 +26,10 @@ class transport(object):
         return server_pub; 
 
 transport_ = transport();
-session=ssession.ssession("client", client_priv, transport_);
-session.connect();
-
+session=ssession.ssession_client("client", client_priv, transport_);
 for i in range(0, 9):
     session.send("This is a test message");
     message=session.receive();
-    if len(message) > 0:
-	print "receive: ", message;
+    print "receive: ", message;
 
 session.send("finish");

@@ -31,18 +31,15 @@ conn.listen(1);
 accepted, addr = conn.accept();
 transport_=transport(accepted);
 
-print transport_.get_pub_key_by_id;
+session=ssession.ssession_server("server", server_priv, transport_);
 
-session=ssession.ssession("server", server_priv, transport_);
 while True:
     try:
         message = session.receive();
-    except Exception as e:
-        e;        
-    if len(message) > 0:
-        print "receive: ", message;
+        print message;
         if message == "finish":
             break;
         session.send(message);
-
+    except Exception as e:
+        e;        
 conn.close();
