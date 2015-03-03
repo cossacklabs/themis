@@ -100,7 +100,7 @@ themis_status_t secure_session_load(secure_session_t *session_ctx, const void *i
 		return (themis_status_t)soter_res;
 	}
 
-	memset(session_ctx, 0, sizeof(session_ctx));
+	memset(session_ctx, 0, sizeof(secure_session_t)); //Правильно ли
 	curr = (const uint32_t *)soter_container_const_data(hdr);
 
 	session_ctx->session_id = ntohl(*curr);

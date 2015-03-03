@@ -8,6 +8,8 @@
 #include "test_utils.h"
 #include <string.h>
 #include <common/sput.h>
+#include <soter/soter.h>
+#include <stdio.h>
 
 static uint8_t parse_char(char c)
 {
@@ -56,7 +58,7 @@ size_t rand_int(size_t max_val)
 
 	do
 	{
-		soter_rand(&res, sizeof(size_t));
+		soter_rand((uint8_t*)(&res), sizeof(size_t));
 		res %= max_val;
 	} while (!res);
 

@@ -30,6 +30,7 @@ themis_status_t themis_sym_kdf(const uint8_t* master_key,
   HERMES_CHECK_PARAM(context!=NULL && context_length!=0);
   soter_kdf_context_buf_t ctx={context, context_length};
   HERMES_CHECK(soter_kdf(master_key, master_key_length, label, &ctx, 1, key, key_length)==HERMES_SUCCESS);
+  return HERMES_SUCCESS;
 }
 
 themis_status_t themis_auth_sym_plain_encrypt(uint32_t alg,

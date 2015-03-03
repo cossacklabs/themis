@@ -12,7 +12,7 @@ CRYPTO_ENGINE = $(SRC_PATH)/soter/openssl
 CFLAGS += -I$(SRC_PATH) -fPIC -D$(CRYPTO_ENGINE_DEF) -DDEBUG
 
 # Should pay attention to warnings (some may be critical for crypto-enabled code (ex. signed-unsigned mismatch)
-CFLAGS += -Werror
+CFLAGS += -Werror -Wno-switch
 
 # Making debug build for now
 CFLAGS += -g

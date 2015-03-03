@@ -65,6 +65,7 @@ soter_status_t soter_sign_update(soter_sign_ctx_t* ctx, const void* data, const 
   switch(ctx->alg){
     SOTER_SIGN_ALGS
   };
+  return HERMES_INVALID_PARAMETER;
 }
 #undef SOTER_SIGN_ALG
 
@@ -75,6 +76,7 @@ soter_status_t soter_verify_update(soter_sign_ctx_t* ctx, const void* data, cons
   switch(ctx->alg){
     SOTER_SIGN_ALGS
   };
+  return HERMES_INVALID_PARAMETER;
 }
 #undef SOTER_SIGN_ALG
 

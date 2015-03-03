@@ -135,7 +135,7 @@ static int secure_cell_user_split(){
   uint8_t* encrypted_message;
   size_t encrypted_message_length=0;
   
-  if(themis_secure_cell_encrypt_user_split((uint8_t*)passwd, sizeof(passwd), (uint8_t*)message, sizeof(message), user_context, strlen(user_context), NULL, &encrypted_message_length)!=HERMES_BUFFER_TOO_SMALL || encrypted_message_length==0){
+  if(themis_secure_cell_encrypt_user_split((uint8_t*)passwd, sizeof(passwd), (uint8_t*)message, sizeof(message), (uint8_t*)user_context, strlen(user_context), NULL, &encrypted_message_length)!=HERMES_BUFFER_TOO_SMALL || encrypted_message_length==0){
     testsuite_fail_if(true, "themis_secure_cell_encrypt_user_split (encrypted_message_length determination) fail");
     return -1;
   }
@@ -145,7 +145,7 @@ static int secure_cell_user_split(){
     return -2;
   }
   
-  if(themis_secure_cell_encrypt_user_split((uint8_t*)passwd, sizeof(passwd), (uint8_t*)message, sizeof(message), user_context, strlen(user_context), encrypted_message, &encrypted_message_length)!=HERMES_SUCCESS){
+  if(themis_secure_cell_encrypt_user_split((uint8_t*)passwd, sizeof(passwd), (uint8_t*)message, sizeof(message), (uint8_t*)user_context, strlen(user_context), encrypted_message, &encrypted_message_length)!=HERMES_SUCCESS){
     testsuite_fail_if(true, "themis_secure_cell_encrypt_user_split fail");
     free(encrypted_message);
     return -3;
@@ -154,7 +154,7 @@ static int secure_cell_user_split(){
   uint8_t* decrypted_message;
   size_t decrypted_message_length=0;
 
-  if(themis_secure_cell_decrypt_user_split((uint8_t*)passwd, sizeof(passwd), encrypted_message, encrypted_message_length, user_context, strlen(user_context), NULL, &decrypted_message_length)!=HERMES_BUFFER_TOO_SMALL || decrypted_message_length==0){
+  if(themis_secure_cell_decrypt_user_split((uint8_t*)passwd, sizeof(passwd), encrypted_message, encrypted_message_length, (uint8_t*)user_context, strlen(user_context), NULL, &decrypted_message_length)!=HERMES_BUFFER_TOO_SMALL || decrypted_message_length==0){
     testsuite_fail_if(true, "themis_secure_cell_decrypt_user_split (decrypted_message_length determination) fail");
     free(encrypted_message);
     return -4;
@@ -165,7 +165,7 @@ static int secure_cell_user_split(){
     free(encrypted_message);
     return -5;
   }
-    if(themis_secure_cell_encrypt_user_split((uint8_t*)passwd, sizeof(passwd), encrypted_message, encrypted_message_length, user_context, strlen(user_context), decrypted_message, &decrypted_message_length)!=HERMES_SUCCESS){
+    if(themis_secure_cell_encrypt_user_split((uint8_t*)passwd, sizeof(passwd), encrypted_message, encrypted_message_length, (uint8_t*)user_context, strlen(user_context), decrypted_message, &decrypted_message_length)!=HERMES_SUCCESS){
     testsuite_fail_if(true, "themis_secure_cell_decrypt_user_split fail");
     free(encrypted_message);
     free(decrypted_message);

@@ -23,6 +23,7 @@
 
 #define THEMIS_EC_SYM_ALG (SOTER_SYM_AES_CTR|SOTER_SYM_256_KEY_LENGTH|SOTER_SYM_PBKDF2)
 
+
 soter_sign_alg_t get_alg_id(const uint8_t* key, size_t key_length)
 {
   if (key_length < sizeof(soter_container_hdr_t) && key_length < ((const soter_container_hdr_t*)key)->size){
@@ -151,6 +152,7 @@ struct themis_secure_message_rsa_encrypt_worker_type{
 };
 
 typedef struct themis_secure_message_rsa_encrypt_worker_type themis_secure_message_rsa_encrypter_t;
+themis_status_t themis_secure_message_rsa_encrypter_destroy(themis_secure_message_rsa_encrypter_t* ctx);
 
 
 themis_secure_message_rsa_encrypter_t* themis_secure_message_rsa_encrypter_init(const uint8_t* peer_public_key, const size_t peer_public_key_length){
@@ -200,7 +202,7 @@ themis_status_t themis_secure_message_rsa_encrypter_destroy(themis_secure_messag
 }
 
 typedef struct themis_secure_message_rsa_encrypt_worker_type themis_secure_message_rsa_decrypter_t;
-
+themis_status_t themis_secure_message_rsa_decrypter_destroy(themis_secure_message_rsa_decrypter_t* ctx);
 
 themis_secure_message_rsa_decrypter_t* themis_secure_message_rsa_decrypter_init(const uint8_t* private_key, const size_t private_key_length){
   HERMES_CHECK_PARAM_(private_key!=NULL);
@@ -250,6 +252,9 @@ struct themis_secure_message_ec_worker_type{
 };
 
 typedef struct themis_secure_message_ec_worker_type themis_secure_message_ec_t;
+
+themis_status_t themis_secure_message_ec_encrypter_destroy(themis_secure_message_ec_t* ctx);
+
 
 themis_secure_message_ec_t* themis_secure_message_ec_encrypter_init(const uint8_t* private_key, const size_t private_key_length, const uint8_t* peer_public_key, const size_t peer_public_key_length){
   HERMES_CHECK_PARAM_(private_key!=NULL);
@@ -302,7 +307,7 @@ themis_status_t themis_secure_message_ec_decrypter_proceed(themis_secure_message
     (*message_length)=computed_length;
     return HERMES_BUFFER_TOO_SMALL;
   }
-HERMES_CHECK(themis_secure_cell_decrypt_full(ctx->shared_secret, ctx->shared_secret_length, wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t), wrapped_message_length-sizeof(themis_secure_encrypted_message_hdr_t), message, &message_length)==HERMES_SUCCESS);
+HERMES_CHECK(themis_secure_cell_decrypt_full(ctx->shared_secret, ctx->shared_secret_length, wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t), wrapped_message_length-sizeof(themis_secure_encrypted_message_hdr_t), message, message_length)==HERMES_SUCCESS);
   return HERMES_SUCCESS;
 }
     
