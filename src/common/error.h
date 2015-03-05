@@ -11,6 +11,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#define HERMES_SSESSION_SEND_OUTPUT_TO_PEER 1
+
 #define HERMES_SUCCESS 0
 #define HERMES_FAIL   -1
 #define HERMES_INVALID_PARAMETER -2

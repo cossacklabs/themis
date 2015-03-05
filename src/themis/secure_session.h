@@ -58,7 +58,7 @@ void secure_session_peer_cleanup(secure_session_peer_t *peer);
 #define SESSION_MESSAGE_KEY_LENGTH SESSION_MASTER_KEY_LENGTH
 
 typedef struct secure_session_type secure_session_t;
-typedef themis_status_t (*secure_session_handler)(secure_session_t *session_ctx, const void *data, size_t data_length);
+typedef themis_status_t (*secure_session_handler)(secure_session_t *session_ctx, const void *data, size_t data_length, void *output, size_t *output_length);
 
 struct secure_session_type
 {
@@ -89,6 +89,7 @@ secure_session_t* secure_session_create(const void *id, size_t id_length, const 
 themis_status_t secure_session_destroy(secure_session_t *session_ctx);
 
 themis_status_t secure_session_connect(secure_session_t *session_ctx);
+themis_status_t secure_session_generate_connect_request(secure_session_t *session_ctx, void *output, size_t *output_length);
 
 themis_status_t secure_session_wrap(secure_session_t *session_ctx, const void *message, size_t message_length, void *wrapped_message, size_t *wrapped_message_length);
 themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void *wrapped_message, size_t wrapped_message_length, void *message, size_t *message_length);

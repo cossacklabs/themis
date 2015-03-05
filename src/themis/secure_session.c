@@ -16,10 +16,10 @@
 #define SESSION_ID_GENERATION_LABEL "Themis secure session unique identifier"
 #define SESSION_MASTER_KEY_GENERATION_LABEL "Themis secure session master key"
 
-static themis_status_t secure_session_accept(secure_session_t *session_ctx, const void *data, size_t data_length);
-static themis_status_t secure_session_proceed_client(secure_session_t *session_ctx, const void *data, size_t data_length);
-static themis_status_t secure_session_finish_client(secure_session_t *session_ctx, const void *data, size_t data_length);
-static themis_status_t secure_session_finish_server(secure_session_t *session_ctx, const void *data, size_t data_length);
+static themis_status_t secure_session_accept(secure_session_t *session_ctx, const void *data, size_t data_length, void *output, size_t *output_length);
+static themis_status_t secure_session_proceed_client(secure_session_t *session_ctx, const void *data, size_t data_length, void *output, size_t *output_length);
+static themis_status_t secure_session_finish_client(secure_session_t *session_ctx, const void *data, size_t data_length, void *output, size_t *output_length);
+static themis_status_t secure_session_finish_server(secure_session_t *session_ctx, const void *data, size_t data_length, void *output, size_t *output_length);
 
 themis_status_t secure_session_cleanup(secure_session_t *session_ctx)
 {
@@ -109,9 +109,9 @@ secure_session_t* secure_session_create(const void *id, size_t id_length, const 
 	}
 }
 
-themis_status_t secure_session_connect(secure_session_t *session_ctx)
+themis_status_t secure_session_generate_connect_request(secure_session_t *session_ctx, void *output, size_t *output_length)
 {
-	uint8_t *data_to_send = NULL;
+	uint8_t *data_to_send = output;
 	size_t length_to_send;
 	ssize_t bytes_sent;
 
@@ -128,21 +128,22 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), NULL, &ecdh_key_length, false);
 	if (HERMES_BUFFER_TOO_SMALL != soter_status)
 	{
-	        res = soter_status;
-		goto err;
+	    return soter_status;
 	}
 	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, NULL, 0, NULL, &signature_length);
 	if (HERMES_BUFFER_TOO_SMALL != res)
 	{
-		goto err;
+		return res;
 	}
 	length_to_send = 2 * sizeof(soter_container_hdr_t) + session_ctx->we.id_length + ecdh_key_length + signature_length;
-	data_to_send = malloc(length_to_send);
-	if (NULL == data_to_send)
+	if ((NULL == output) || (*output_length < length_to_send))
 	{
-		res = HERMES_NO_MEMORY;
-		goto err;
+		*output_length = length_to_send;
+		return HERMES_BUFFER_TOO_SMALL;
 	}
+
+	*output_length = length_to_send;
+
 	/* Storing ID in a container */
 	container = ((soter_container_hdr_t *)data_to_send) + 1;
 
@@ -157,8 +158,7 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length, &ecdh_key_length, false);
 	if (HERMES_SUCCESS != soter_status)
 	{
-		res = soter_status;
-		goto err;
+		return soter_status;
 	}
 	sign_data.data = data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length;
 	sign_data.length = ecdh_key_length;
@@ -166,34 +166,61 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, &sign_data, 1, data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length + ecdh_key_length, &signature_length);
 	if (HERMES_SUCCESS != res)
 	{
-		goto err;
+		return res;
 	}
 	memcpy(container->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH);
 	soter_container_set_data_size(container, length_to_send - sizeof(soter_container_hdr_t));
 	soter_update_container_checksum(container);
 
-	bytes_sent = session_ctx->user_callbacks->send_data(data_to_send, length_to_send, session_ctx->user_callbacks->user_data);
-	if (bytes_sent != (ssize_t)length_to_send)
-	{
-		res = HERMES_SSESSION_TRANSPORT_ERROR;
-		goto err;
-	}
-
 	/* In "client mode" awaiting initial response from the server */
 	session_ctx->state_handler = secure_session_proceed_client;
 	session_ctx->is_client = true;
 
-err:
+	return HERMES_SUCCESS;
+}
 
-	if (data_to_send)
+themis_status_t secure_session_connect(secure_session_t *session_ctx)
+{
+	uint8_t stack_buf[2048];
+
+	size_t request_length = sizeof(stack_buf);
+	uint8_t *request = stack_buf;
+
+	themis_status_t res = secure_session_generate_connect_request(session_ctx, request, &request_length);
+
+	if (HERMES_BUFFER_TOO_SMALL == res)
 	{
-		free(data_to_send);
+		request = malloc(request_length);
+		if (!request)
+		{
+			return HERMES_NO_MEMORY;
+		}
+
+		res = secure_session_generate_connect_request(session_ctx, request, &request_length);
+	}
+
+	if (HERMES_SUCCESS == res)
+	{
+		ssize_t bytes_sent = session_ctx->user_callbacks->send_data(request, request_length, session_ctx->user_callbacks->user_data);
+		if (bytes_sent != (ssize_t)request_length)
+		{
+			res = HERMES_SSESSION_TRANSPORT_ERROR;
+
+			/* revert the state back */
+			session_ctx->state_handler = secure_session_accept;
+			session_ctx->is_client = false;
+		}
+	}
+
+	if (request != stack_buf)
+	{
+		free(request);
 	}
 
 	return res;
 }
 
-static themis_status_t secure_session_accept(secure_session_t *session_ctx, const void *data, size_t data_length)
+static themis_status_t secure_session_accept(secure_session_t *session_ctx, const void *data, size_t data_length, void *output, size_t *output_length)
 {
 	const soter_container_hdr_t *proto_message = data;
 	const soter_container_hdr_t *peer_id;
@@ -213,7 +240,7 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	const soter_container_hdr_t *peer_sign_key;
 	soter_kdf_context_buf_t sign_data[4];
 
-	uint8_t *data_to_send = NULL;
+	uint8_t *data_to_send = output;
 	size_t length_to_send;
 	ssize_t bytes_sent;
 
@@ -266,24 +293,21 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	signature_length = (const uint8_t *)data + soter_container_data_size(proto_message) + sizeof(soter_container_hdr_t) - signature;
 	if (session_ctx->user_callbacks->get_public_key_for_id(soter_container_const_data(peer_id), soter_container_data_size(peer_id), sign_key, sizeof(sign_key), session_ctx->user_callbacks->user_data))
 	{
-		res = HERMES_INVALID_PARAMETER;
-		goto err;
+		return HERMES_INVALID_PARAMETER;
 	}
 
 	peer_sign_key = (const soter_container_hdr_t *)sign_key;
 
 	if (memcmp(peer_sign_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)))
 	{
-		res = HERMES_INVALID_PARAMETER;
-		goto err;
+		return HERMES_INVALID_PARAMETER;
 	}
 
 	sign_key_length = ntohl(peer_sign_key->size);
 
 	if (sizeof(soter_container_hdr_t) >= sign_key_length)
 	{
-		res = HERMES_INVALID_PARAMETER;
-		goto err;
+		return HERMES_INVALID_PARAMETER;
 	}
 
 	sign_data[0].data = (const uint8_t *)peer_ecdh_key;
@@ -292,34 +316,34 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	res = verify_signature(peer_sign_key, sign_key_length, sign_data, 1, signature, signature_length);
 	if (HERMES_SUCCESS != res)
 	{
-		goto err;
-	}
-
-	res = secure_session_peer_init(&(session_ctx->peer), soter_container_const_data(peer_id), soter_container_data_size(peer_id), peer_ecdh_key, peer_ecdh_key_length, peer_sign_key, sign_key_length);
-	if (HERMES_SUCCESS != res)
-	{
-		goto err;
+		return res;
 	}
 
 	/* Preparing to send response */
 	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, NULL, 0, NULL, &signature_length);
 	if (HERMES_BUFFER_TOO_SMALL != res)
 	{
-		goto err;
+		return res;
 	}
 
 	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), NULL, &ecdh_key_length, false);
 	if (HERMES_BUFFER_TOO_SMALL != soter_status)
 	{
-		res = soter_status;
-		goto err;
+		return soter_status;
 	}
 
 	length_to_send = 2 * sizeof(soter_container_hdr_t) + session_ctx->we.id_length + ecdh_key_length + signature_length;
-	data_to_send = malloc(length_to_send);
-	if (NULL == data_to_send)
+	if ((NULL == output) || (*output_length < length_to_send))
 	{
-		res = HERMES_NO_MEMORY;
+		*output_length = length_to_send;
+		return HERMES_BUFFER_TOO_SMALL;
+	}
+
+	*output_length = length_to_send;
+
+	res = secure_session_peer_init(&(session_ctx->peer), soter_container_const_data(peer_id), soter_container_data_size(peer_id), peer_ecdh_key, peer_ecdh_key_length, peer_sign_key, sign_key_length);
+	if (HERMES_SUCCESS != res)
+	{
 		goto err;
 	}
 
@@ -363,22 +387,10 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	soter_container_set_data_size(container, length_to_send - sizeof(soter_container_hdr_t));
 	soter_update_container_checksum(container);
 
-	bytes_sent = session_ctx->user_callbacks->send_data(data_to_send, length_to_send, session_ctx->user_callbacks->user_data);
-	if (bytes_sent != (ssize_t)length_to_send)
-	{
-		res = HERMES_SSESSION_TRANSPORT_ERROR;
-		goto err;
-	}
-
 	/* "Server mode": waiting response from the client */
 	session_ctx->state_handler = secure_session_finish_server;
 
 err:
-
-	if (data_to_send)
-	{
-		free(data_to_send);
-	}
 
 	if (HERMES_SUCCESS != res)
 	{
@@ -388,7 +400,7 @@ err:
 	return res;
 }
 
-static themis_status_t secure_session_proceed_client(secure_session_t *session_ctx, const void *data, size_t data_length)
+static themis_status_t secure_session_proceed_client(secure_session_t *session_ctx, const void *data, size_t data_length, void *output, size_t *output_length)
 {
 	const soter_container_hdr_t *proto_message = data;
 	const soter_container_hdr_t *peer_id;
@@ -411,7 +423,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	const soter_container_hdr_t *peer_sign_key;
 	soter_kdf_context_buf_t sign_data[4];
 
-	uint8_t *data_to_send = NULL;
+	uint8_t *data_to_send = output;
 	size_t length_to_send;
 	ssize_t bytes_sent;
 
@@ -464,31 +476,27 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 
 	if (session_ctx->user_callbacks->get_public_key_for_id(soter_container_const_data(peer_id), soter_container_data_size(peer_id), sign_key, sizeof(sign_key), session_ctx->user_callbacks->user_data))
 	{
-		res = HERMES_INVALID_PARAMETER;
-		goto err;
+		return HERMES_INVALID_PARAMETER;
 	}
 
 	peer_sign_key = (const soter_container_hdr_t *)sign_key;
 
 	if (memcmp(peer_sign_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)))
 	{
-		res = HERMES_INVALID_PARAMETER;
-		goto err;
+		return HERMES_INVALID_PARAMETER;
 	}
 
 	sign_key_length = ntohl(peer_sign_key->size);
 
 	if (sizeof(soter_container_hdr_t) >= sign_key_length)
 	{
-		res = HERMES_INVALID_PARAMETER;
-		goto err;
+		return HERMES_INVALID_PARAMETER;
 	}
 
 	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), ecdh_key, &ecdh_key_length, false);
 	if (HERMES_SUCCESS != soter_status)
 	{
-		res = soter_status;
-		goto err;
+		return soter_status;
 	}
 
 	sign_data[0].data = (const uint8_t *)peer_ecdh_key;
@@ -506,7 +514,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	res = verify_signature(peer_sign_key, sign_key_length, sign_data, 4, signature, signature_length);
 	if (HERMES_SUCCESS != res)
 	{
-		goto err;
+		return res;
 	}
 
 	res = secure_session_peer_init(&(session_ctx->peer), soter_container_const_data(peer_id), soter_container_data_size(peer_id), peer_ecdh_key, peer_ecdh_key_length, peer_sign_key, sign_key_length);
@@ -568,12 +576,14 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	}
 
 	length_to_send = sizeof(soter_container_hdr_t) + signature_length + sign_key_length;
-	data_to_send = malloc(length_to_send);
-	if (NULL == data_to_send)
+	if ((NULL == output) || (*output_length < length_to_send))
 	{
-		res = HERMES_NO_MEMORY;
+		*output_length = length_to_send;
+		res = HERMES_BUFFER_TOO_SMALL;
 		goto err;
 	}
+
+	*output_length = length_to_send;
 
 	container = (soter_container_hdr_t *)data_to_send;
 	mac = soter_container_data(container) + signature_length;
@@ -600,22 +610,10 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	soter_container_set_data_size(container, length_to_send - sizeof(soter_container_hdr_t));
 	soter_update_container_checksum(container);
 
-	bytes_sent = session_ctx->user_callbacks->send_data(data_to_send, length_to_send, session_ctx->user_callbacks->user_data);
-	if (bytes_sent != (ssize_t)length_to_send)
-	{
-		res = HERMES_SSESSION_TRANSPORT_ERROR;
-		goto err;
-	}
-
 	/* "Client mode": waiting final confirmation from server */
 	session_ctx->state_handler = secure_session_finish_client;
 
 err:
-
-	if (data_to_send)
-	{
-		free(data_to_send);
-	}
 
 	if (HERMES_SUCCESS != res)
 	{
@@ -625,7 +623,7 @@ err:
 	return res;
 }
 
-static themis_status_t secure_session_finish_server(secure_session_t *session_ctx, const void *data, size_t data_length)
+static themis_status_t secure_session_finish_server(secure_session_t *session_ctx, const void *data, size_t data_length, void *output, size_t *output_length)
 {
 	const soter_container_hdr_t *proto_message = data;
 	soter_container_hdr_t *response_message;
@@ -748,6 +746,14 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 		return res;
 	}
 
+	if ((NULL == output) || (*output_length < (ecdh_key_length + sizeof(soter_container_hdr_t))))
+	{
+		*output_length = ecdh_key_length + sizeof(soter_container_hdr_t);
+		return HERMES_BUFFER_TOO_SMALL;
+	}
+
+	*output_length = ecdh_key_length + sizeof(soter_container_hdr_t);
+
 	res = secure_session_derive_message_keys(session_ctx);
 	if (HERMES_SUCCESS != res)
 	{
@@ -758,11 +764,7 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 	soter_container_set_data_size(response_message, ecdh_key_length);
 	soter_update_container_checksum(response_message);
 
-	bytes_sent = session_ctx->user_callbacks->send_data(ecdh_key, soter_container_data_size(response_message) + sizeof(soter_container_hdr_t), session_ctx->user_callbacks->user_data);
-	if (bytes_sent != (ssize_t)(soter_container_data_size(response_message) + sizeof(soter_container_hdr_t)))
-	{
-		return HERMES_SSESSION_TRANSPORT_ERROR;
-	}
+	memcpy(output, ecdh_key, soter_container_data_size(response_message) + sizeof(soter_container_hdr_t));
 
 	/* "Server mode": negotiation completed */
 	session_ctx->state_handler = NULL;
@@ -770,7 +772,7 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 	return res;
 }
 
-static themis_status_t secure_session_finish_client(secure_session_t *session_ctx, const void *data, size_t data_length)
+static themis_status_t secure_session_finish_client(secure_session_t *session_ctx, const void *data, size_t data_length, void *output, size_t *output_length)
 {
 	const soter_container_hdr_t *proto_message = data;
 	themis_status_t res;
@@ -823,6 +825,8 @@ static themis_status_t secure_session_finish_client(secure_session_t *session_ct
 	{
 		return res;
 	}
+
+	*output_length = 0;
 
 	/* "Client mode": negotiation completed */
 	session_ctx->state_handler = NULL;
@@ -940,7 +944,26 @@ ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, siz
 
 	if (!secure_session_is_established(session_ctx))
 	{
-		res = session_ctx->state_handler(session_ctx, stack_buf, bytes_received);
+		/*TODO: Needs refactoring */
+		uint8_t ka_buf[2048];
+		size_t ka_buf_length = sizeof(ka_buf);
+
+		/* save current session state */
+		secure_session_handler state = session_ctx->state_handler;
+
+		res = session_ctx->state_handler(session_ctx, stack_buf, bytes_received, ka_buf, &ka_buf_length);
+		if ((HERMES_SUCCESS == res) && (ka_buf_length > 0))
+		{
+			ssize_t bytes_sent = session_ctx->user_callbacks->send_data(ka_buf, ka_buf_length, session_ctx->user_callbacks->user_data);
+			if (bytes_sent != (ssize_t)ka_buf_length)
+			{
+				res = HERMES_SSESSION_TRANSPORT_ERROR;
+
+				/* revert the state back */
+				session_ctx->state_handler = state;
+				goto err;
+			}
+		}
 	}
 	else
 	{
