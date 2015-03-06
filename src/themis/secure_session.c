@@ -875,11 +875,15 @@ ssize_t secure_session_send(secure_session_t *session_ctx, const void *message, 
 	res = secure_session_wrap(session_ctx, message, message_length, out, &out_size);
 	if (HERMES_SUCCESS != res)
 	{
-		bytes_sent = (ssize_t)res;
+		message_length = (ssize_t)res;
 		goto err;
 	}
 
 	bytes_sent = session_ctx->user_callbacks->send_data(out, out_size, session_ctx->user_callbacks->user_data);
+	if (bytes_sent != out_size)
+	{
+		message_length = (ssize_t)HERMES_SSESSION_TRANSPORT_ERROR;
+	}
 
 err:
 
@@ -888,7 +892,7 @@ err:
 		free(out);
 	}
 
-	return bytes_sent;
+	return message_length;
 }
 
 ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, size_t message_length)
