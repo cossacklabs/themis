@@ -55,12 +55,15 @@ on_get_pub_key_=ON_GET_PUBLIC_KEY(on_get_pub_key);
 lp_conn_type=ctypes.POINTER(ctypes.py_object);
 
 
-class ssession_(object):
+class ssession(object):
     def __init__(self, user_id, sign_key, transport):
-        self.lp_conn=lp_conn_type(ctypes.py_object(transport));
-        self.transport_=transport_t(on_send_, on_receive_, on_change_status_, on_get_pub_key_, self.lp_conn);
 	self.session_ctx=ctypes.POINTER(ctypes.c_int);
-	self.session_ctx=ssession_create(ctypes.byref(ctypes.create_string_buffer(user_id)), len(user_id), ctypes.byref(ctypes.create_string_buffer(sign_key)), len(sign_key), ctypes.byref(self.transport_));
+        if transport != None:
+            self.lp_conn=lp_conn_type(ctypes.py_object(transport));
+            self.transport_=transport_t(on_send_, on_receive_, on_change_status_, on_get_pub_key_, self.lp_conn);
+            self.session_ctx=ssession_create(ctypes.byref(ctypes.create_string_buffer(user_id)), len(user_id), ctypes.byref(ctypes.create_string_buffer(sign_key)), len(sign_key), ctypes.byref(self.transport_));
+        else:
+            self.session_ctx=ssession_create(ctypes.byref(ctypes.create_string_buffer(user_id)), len(user_id), ctypes.byref(ctypes.create_string_buffer(sign_key)), len(sign_key), 0);            
 	if self.session_ctx==None:
 	    raise exception.themis_exception("secure_session_create fail");
 
@@ -92,9 +95,46 @@ class ssession_(object):
     def is_established(self):
         return themis.secure_session_is_established(self.session_ctx);
 
+    def connect_request(self):
+        req_size=ctypes.c_int(0);
+ 	res = themis.secure_session_generate_connect_request(self.session_ctx, None, ctypes.byref(req_size));
+        if res!=-4:
+	    raise exception.themis_exception("secure_session_generate_connect_request (buffer_length determination) failed: " + str(res));
+        req_buffer=ctypes.create_string_buffer(req_size.value);
+ 	res = themis.secure_session_generate_connect_request(self.session_ctx, ctypes.byref(req_buffer), ctypes.byref(req_size));
+        if res!=0:
+	    raise exception.themis_exception("secure_session_generate_connect_request failed: " + str(res));
+        return ctypes.string_at(req_buffer, req_size);
+
+    def wrap(self, message):
+	send_message=ctypes.create_string_buffer(message);
+        wrapped_message_length=ctypes.c_int(0);
+	res = themis.secure_session_wrap(self.session_ctx, ctypes.byref(send_message), len(message), 0, ctypes.byref(wrapped_message_length));
+        if res!=-4:
+	    raise exception.themis_exception("secure_session_wrap (buffer_length determination) failed: " + str(res));
+        wrapped_message=ctypes.create_string_buffer(wrapped_message_length.value);
+	res = themis.secure_session_wrap(self.session_ctx, ctypes.byref(send_message), len(message), ctypes.byref(wrapped_message), ctypes.byref(wrapped_message_length));
+        if res!=0:
+	    raise exception.themis_exception("secure_session_wrap failed: " + str(res));
+	return ctypes.string_at(wrapped_message, wrapped_message_length);
+
+    def unwrap(self, message):
+	wrapped_message=ctypes.create_string_buffer(message);
+	unwrapped_message_length=ctypes.c_int(0);
+	res=themis.secure_session_unwrap(self.session_ctx, wrapped_message, len(message), 0, ctypes.byref(unwrapped_message_length));
+        if res==0:
+            return (res, "");
+        if res!=-4:
+	    raise exception.themis_exception("secure_session_unwrap (buffer_length determination) failed: " + str(res));
+        unwrapped_message=ctypes.create_string_buffer(unwrapped_message_length.value);
+	res=themis.secure_session_unwrap(self.session_ctx, wrapped_message, len(message), ctypes.byref(unwrapped_message), ctypes.byref(unwrapped_message_length));
+        if res<0:
+	    raise exception.themis_exception("secure_session_unwrap failed: " + str(res));
+        return (res, ctypes.string_at(unwrapped_message, unwrapped_message_length));    
+
 class ssession_server(object):
     def __init__(self, user_id, sign_key, transport):
-        self.session=ssession_(user_id, sign_key, transport);
+        self.session=ssession(user_id, sign_key, transport);
         while self.session.is_established()!=True:
             self.session.receive();
 
@@ -103,10 +143,10 @@ class ssession_server(object):
 
     def send(self, message):
         self.session.send(message);
-
+        
 class ssession_client(object):
     def __init__(self, user_id, sign_key, transport):
-        self.session=ssession_(user_id, sign_key, transport);
+        self.session=ssession(user_id, sign_key, transport);
         self.session.connect();
         while self.session.is_established()!=True:
             self.session.receive();

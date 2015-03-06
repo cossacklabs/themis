@@ -1,6 +1,7 @@
 import ssession;
 import ssession_mem_transport;
-from twisted.internet import protocol, reactor, endpoints;
+import tornado.ioloop
+import tornado.web
 
 client_pub = str('\x55\x45\x43\x32\x00\x00\x00\x2d\x13\x8b\xdf\x0c\x02\x1f\x09\x88\x39\xd9\x73\x3a\x84\x8f\xa8\x50\xd9\x2b\xed\x3d\x38\xcf\x1d\xd0\xce\xf4\xae\xdb\xcf\xaf\xcb\x6b\xa5\x4a\x08\x11\x21');
 
@@ -12,23 +13,24 @@ class transport(ssession_mem_transport.mem_transport):
             raise Exception("no such id");
         return client_pub; 
 
+session=ssession.ssession("server", server_priv, transport());
 
-class Tw_protocol(protocol.Protocol):
-    def __init__(self):
-	self.transport_=transport();
-	self.session=ssession.ssession("server", server_priv, self.transport_);
+class MainHandler(tornado.web.RequestHandler):        
+#    def initialize(self):
+#       self.session=ssession.ssession("server", server_priv, transport());
 
-    def dataReceived(self, data):
-        status, message = self.session.unwrap(data);
+    def post(self):
+        status, message = session.unwrap(self.request.body);
         if status==1:
-            self.transport.write(message);
+            self.write(message);
         else:
             print message;
-            self.transport.write(self.session.wrap(message));
+            self.write(session.wrap(message));
+            
+application = tornado.web.Application([
+    (r"/", MainHandler),
+])
 
-class Tw_Factory(protocol.Factory):
-    def buildProtocol(self, addr):
-        return Tw_protocol();
-
-endpoints.serverFromString(reactor, "tcp:26260").listen(Tw_Factory());
-reactor.run();
+if __name__ == "__main__":
+    application.listen(26260)
+    tornado.ioloop.IOLoop.instance().start()
