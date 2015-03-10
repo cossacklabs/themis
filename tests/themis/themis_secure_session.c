@@ -215,6 +215,146 @@ static int client_function(void)
 	}
 }
 
+static int client_function_no_transport(void)
+{
+	static bool connected = false;
+	themis_status_t res;
+	uint8_t recv_buf[2048];
+	ssize_t bytes_received = 0;
+	ssize_t bytes_sent;
+
+	/* Client is not connected yet. Initiate key agreement */
+	if (!connected)
+	{
+		res = secure_session_generate_connect_request(&(client.session), recv_buf, &bytes_received);
+		if (HERMES_BUFFER_TOO_SMALL != res)
+		{
+			testsuite_fail_if(res, "secure_session_generate_connect_request failed");
+			return TEST_STOP_ERROR;
+		}
+
+		res = secure_session_generate_connect_request(&(client.session), recv_buf, &bytes_received);
+		if (HERMES_SUCCESS == res)
+		{
+			/* This test-send function never fails, so we do not check for error here */
+			on_send_data(recv_buf, bytes_received, NULL);
+			connected = true;
+			return TEST_CONTINUE;
+		}
+		else
+		{
+			testsuite_fail_if(res, "secure_session_generate_connect_request failed");
+			return TEST_STOP_ERROR;
+		}
+	}
+
+	if (secure_session_is_established(&(client.session)))
+	{
+		static int messages_to_send = MESSAGES_TO_SEND;
+
+		/* Connection is already established. */
+		static uint8_t data_to_send[MAX_MESSAGE_SIZE];
+		static size_t length_to_send;
+
+		/* If there is anything to receive, receive it */
+		if (current_length)
+		{
+			bytes_received = on_receive_data(recv_buf, sizeof(recv_buf), NULL);
+			if (bytes_received > 0)
+			{
+				res = secure_session_unwrap(&(client.session), recv_buf, bytes_received, recv_buf, &bytes_received);
+				if (HERMES_SUCCESS != res)
+				{
+					testsuite_fail_if(res, "secure_session_unwrap failed");
+					return TEST_STOP_ERROR;
+				}
+
+				/* The server should echo our previously sent data */
+				testsuite_fail_if(current_length == (size_t)bytes_received, "secure_session message send/receive");
+				messages_to_send--;
+
+				if (!messages_to_send)
+				{
+					return TEST_STOP_SUCCESS;
+				}
+			}
+			else
+			{
+				/* We shoud receive something. */
+				testsuite_fail_if(bytes_received, "secure_session_receive failed");
+				return TEST_STOP_ERROR;
+			}
+		}
+
+		length_to_send = rand_int(MAX_MESSAGE_SIZE);
+
+		if (HERMES_SUCCESS != soter_rand(data_to_send, length_to_send))
+		{
+			testsuite_fail_if(true, "soter_rand failed");
+			return TEST_STOP_ERROR;
+		}
+
+		bytes_sent = sizeof(data_to_send);
+		res = secure_session_wrap(&(client.session), data_to_send, length_to_send, data_to_send, &bytes_sent);
+		if (HERMES_SUCCESS != res)
+		{
+			testsuite_fail_if(res, "secure_session_wrap failed");
+			return TEST_STOP_ERROR;
+		}
+
+		/* This test-send function never fails, so we do not check for error here */
+		on_send_data(data_to_send, bytes_sent, NULL);
+	    testsuite_fail_if(length_to_send == current_length, "secure_session client message wrap");
+	    return TEST_CONTINUE;
+	}
+	else
+	{
+		/* Connection is not established. We should receive some key agreement data. */
+
+		bytes_received = on_receive_data(recv_buf, sizeof(recv_buf), NULL);
+		if (bytes_received <= 0)
+		{
+			testsuite_fail_if(bytes_received, "secure_session_receive failed");
+			return TEST_STOP_ERROR;
+		}
+
+		bytes_sent = 0;
+		res = secure_session_unwrap(&(client.session), recv_buf, bytes_received, recv_buf, &bytes_sent);
+		if (HERMES_SUCCESS == res)
+		{
+			if (secure_session_is_established(&(client.session)))
+			{
+				/* Negotiation completed. Clear the shared memory. */
+				current_length = 0;
+				return TEST_CONTINUE;
+			}
+			else
+			{
+				testsuite_fail_if(true, "secure_session_unwrap failed");
+				return TEST_STOP_ERROR;
+			}
+		}
+		else if (HERMES_BUFFER_TOO_SMALL != res)
+		{
+			testsuite_fail_if(true, "secure_session_unwrap failed");
+			return TEST_STOP_ERROR;
+		}
+
+		res = secure_session_unwrap(&(client.session), recv_buf, bytes_received, recv_buf, &bytes_sent);
+		if ((HERMES_SSESSION_SEND_OUTPUT_TO_PEER == res) && (bytes_sent > 0))
+		{
+			/* This test-send function never fails, so we do not check for error here */
+			on_send_data(recv_buf, bytes_sent, NULL);
+			return TEST_CONTINUE;
+		}
+		else
+		{
+			testsuite_fail_if(true, "secure_session_unwrap failed");
+			return TEST_STOP_ERROR;
+		}
+	}
+}
+
 static void server_function(void)
 {
 	uint8_t recv_buf[2048];
@@ -259,6 +399,65 @@ static void server_function(void)
 	}
 }
 
+static void server_function_no_transport(void)
+{
+	uint8_t recv_buf[2048];
+	ssize_t bytes_received;
+	themis_status_t res;
+
+	if (current_length > 0)
+	{
+		bytes_received = on_receive_data(recv_buf, sizeof(recv_buf), NULL);
+		res = secure_session_unwrap(&(server.session), recv_buf, bytes_received, recv_buf, &bytes_received);
+	}
+	else
+	{
+		/* Nothing to receive. Do nothing */
+		return;
+	}
+
+	if ((HERMES_SSESSION_SEND_OUTPUT_TO_PEER == res) && (bytes_received > 0))
+	{
+		/* This is key agreement data. Return response to the client. */
+		on_send_data(recv_buf, bytes_received, NULL);
+		return;
+	}
+	else if ((HERMES_SUCCESS == res) && (bytes_received > 0))
+	{
+		ssize_t bytes_sent = 0;
+
+		/* This is actual data. Echo it to the client. */
+		if (!secure_session_is_established(&(server.session)))
+		{
+			/* Should not happed */
+			testsuite_fail_if(true, "secure_session_unwrap failed");
+			return;
+		}
+
+		res = secure_session_wrap(&(server.session), recv_buf, bytes_received, recv_buf, &bytes_sent);
+		if (HERMES_BUFFER_TOO_SMALL != res)
+		{
+			testsuite_fail_if(true, "secure_session_wrap failed");
+			return;
+		}
+
+		res = secure_session_wrap(&(server.session), recv_buf, bytes_received, recv_buf, &bytes_sent);
+		if (HERMES_SUCCESS != res)
+		{
+			testsuite_fail_if(true, "secure_session_wrap failed");
+			return;
+		}
+
+		testsuite_fail_if(bytes_received == bytes_sent, "secure_session server message wrap");
+		on_send_data(recv_buf, bytes_sent, NULL);
+		return;
+	}
+	else
+	{
+		testsuite_fail_if(true, "secure_session_unwrap failed");
+	}
+}
+
 static void schedule(void)
 {
 	int res = client_function();
@@ -270,6 +469,19 @@ static void schedule(void)
 	}
 
 	testsuite_fail_if(res, "secure session: basic flow");
+}
+
+static void schedule_no_transport(void)
+{
+	int res = client_function_no_transport();
+
+	while (TEST_CONTINUE == res)
+	{
+		server_function_no_transport();
+		res = client_function_no_transport();
+	}
+
+	testsuite_fail_if(res, "secure session: basic flow (no transport)");
 }
 
 static void test_basic_flow(void)
@@ -312,8 +524,51 @@ static void test_basic_flow(void)
 	}
 }
 
+static void test_basic_flow_no_transport(void)
+{
+	themis_status_t res;
+
+	memcpy(&(client.transport), &transport, sizeof(secure_session_user_callbacks_t));
+	client.transport.user_data = &client;
+
+	memcpy(&(server.transport), &transport, sizeof(secure_session_user_callbacks_t));
+	server.transport.user_data = &server;
+
+	res = secure_session_init(&(client.session), client.id, strlen(client.id), client.priv, client.priv_length, &(client.transport));
+	if (res)
+	{
+		testsuite_fail_if(res, "secure_session_init failed");
+		return;
+	}
+
+	res = secure_session_init(&(server.session), server.id, strlen(server.id), server.priv, server.priv_length, &(server.transport));
+	if (res)
+	{
+		testsuite_fail_if(res, "secure_session_init failed");
+		secure_session_cleanup(&(client.session));
+		return;
+	}
+
+	schedule_no_transport();
+
+	res = secure_session_cleanup(&(server.session));
+	if (res)
+	{
+		testsuite_fail_if(res, "secure_session_cleanup failed");
+	}
+
+	res = secure_session_cleanup(&(client.session));
+	if (res)
+	{
+		testsuite_fail_if(res, "secure_session_cleanup failed");
+	}
+}
+
 void run_secure_session_test(void)
 {
 	testsuite_enter_suite("secure session: basic flow");
 	testsuite_run_test(test_basic_flow);
+
+	testsuite_enter_suite("secure session: basic flow (no transport)");
+	testsuite_run_test(test_basic_flow_no_transport);
 }
