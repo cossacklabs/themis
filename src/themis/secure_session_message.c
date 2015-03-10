@@ -90,7 +90,11 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 
 	soter_sym_ctx_t *sym_ctx;
 
-	/* TODO: needs refactoring */
+	if ((NULL == session_ctx) || (NULL == wrapped_message) || (NULL == message_length))
+	{
+		return HERMES_INVALID_PARAMETER;
+	}
+
 	if (!secure_session_is_established(session_ctx))
 	{
 		res = session_ctx->state_handler(session_ctx, wrapped_message, wrapped_message_length, message, message_length);
@@ -102,7 +106,7 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 		return res;
 	}
 
-	if ((NULL == session_ctx) || (NULL == wrapped_message) || (WRAP_AUX_DATA > wrapped_message_length) || (NULL == message_length))
+	if (WRAP_AUX_DATA > wrapped_message_length)
 	{
 		return HERMES_INVALID_PARAMETER;
 	}
