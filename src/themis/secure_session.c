@@ -594,8 +594,8 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 		goto err;
 	}
 
-	sign_data[0].data = (const uint8_t *)peer_ecdh_key;
-	sign_data[0].length = peer_ecdh_key_length;
+	sign_data[0].data = (const uint8_t *)(session_ctx->peer.ecdh_key);
+	sign_data[0].length = session_ctx->peer.ecdh_key_length;
 
 	sign_data[1].data = (const uint8_t *)(&(session_ctx->session_id));
 	sign_data[1].length = sizeof(session_ctx->session_id);
