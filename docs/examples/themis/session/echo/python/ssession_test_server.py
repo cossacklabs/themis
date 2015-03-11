@@ -31,15 +31,15 @@ conn.listen(1);
 accepted, addr = conn.accept();
 transport_=transport(accepted);
 
-session=ssession.ssession_server("server", server_priv, transport_);
+with ssession.ssession_server("server", server_priv, transport_) as session:
+    while True:
+        try:
+            message = session.receive();
+            print message;
+            if message == "finish":
+                break;
+                session.send(message);
+        except Exception as e:
+            e;        
 
-while True:
-    try:
-        message = session.receive();
-        print message;
-        if message == "finish":
-            break;
-        session.send(message);
-    except Exception as e:
-        e;        
 conn.close();
