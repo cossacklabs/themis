@@ -6,21 +6,29 @@ class scell_full(object):
     def __init__(self, key_):
 	self.key=key_;
 
-    def encrypt(self, message):
+    def encrypt(self, message, context=None):
+        if context==None:
+            context_length=0;
+        else:
+            context_length=len(context);
 	encrypted_message_length=c_int(0);
-	if themis.themis_secure_cell_encrypt_full(self.key ,len(self.key), None, 0, message, len(message), None, byref(encrypted_message_length)) != -4:
+	if themis.themis_secure_cell_encrypt_full(self.key ,len(self.key), context, context_length, message, len(message), None, byref(encrypted_message_length)) != -4:
 	    raise themis_exception("themis_secure_cell_encrypt_full (encrypted message length determination) error");
 	encrypted_message=create_string_buffer(encrypted_message_length.value);
-	if themis.themis_secure_cell_encrypt_full(self.key ,len(self.key), None, 0, message, len(message), encrypted_message, byref(encrypted_message_length)) != 0:
+	if themis.themis_secure_cell_encrypt_full(self.key ,len(self.key), context, context_length, message, len(message), encrypted_message, byref(encrypted_message_length)) != 0:
 	    raise themis_exception("themis_secure_cell_encrypt_full error");
 	return string_at(encrypted_message, encrypted_message_length.value);
 
-    def decrypt(self, message):
+    def decrypt(self, message, context=None):
+        if context==None:
+            context_length=0;
+        else:
+            context_length=len(context);
 	decrypted_message_length=c_int(0);
-	if themis.themis_secure_cell_decrypt_full(self.key ,len(self.key), None, 0, message, len(message), None, byref(decrypted_message_length)) != -4:
+	if themis.themis_secure_cell_decrypt_full(self.key ,len(self.key), context, context_length, message, len(message), None, byref(decrypted_message_length)) != -4:
 	    raise themis_exception("themis_secure_cell_decrypt_full (decrypted message length determination) error");
 	decrypted_message=create_string_buffer(decrypted_message_length.value);
-	if themis.themis_secure_cell_decrypt_full(self.key ,len(self.key), None, 0, message, len(message), decrypted_message, byref(decrypted_message_length)) != 0:
+	if themis.themis_secure_cell_decrypt_full(self.key ,len(self.key), context, context_length, message, len(message), decrypted_message, byref(decrypted_message_length)) != 0:
 	    raise themis_exception("themis_secure_cell_decrypt_full error");
 	return string_at(decrypted_message, decrypted_message_length.value);
 
