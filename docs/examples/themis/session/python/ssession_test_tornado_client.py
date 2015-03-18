@@ -1,5 +1,5 @@
-import ssession;
-import ssession_mem_transport;
+from themis import ssession;
+#import ssession_mem_transport;
 import tornado.ioloop
 import tornado.httpclient;
 
@@ -7,7 +7,7 @@ client_priv = str('\x52\x45\x43\x32\x00\x00\x00\x2d\x51\xf4\xaa\x72\x00\x9f\x0f\
 
 server_pub  = str('\x55\x45\x43\x32\x00\x00\x00\x2d\x75\x58\x33\xd4\x02\x12\xdf\x1f\xe9\xea\x48\x11\xe1\xf9\x71\x8e\x24\x11\xcb\xfd\xc0\xa3\x6e\xd6\xac\x88\xb6\x44\xc2\x9a\x24\x84\xee\x50\x4c\x3e\xa0');
 
-class transport(ssession_mem_transport.mem_transport):
+class transport(ssession.mem_transport):
     def get_pub_key_by_id(self, user_id):
         if user_id != "server":
             raise Exception("no such id");

@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET;
 import base64;
-import scell;
+from themis import scell;
 
 password="password";
 

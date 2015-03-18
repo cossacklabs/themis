@@ -1,6 +1,6 @@
 from exception import themis_exception;
 from ctypes import *
-themis = cdll.LoadLibrary('./libthemis.so')
+themis = cdll.LoadLibrary('libthemis.so')
 
 class smessage(object):
     def __init__(self, private_key_, peer_public_key_):

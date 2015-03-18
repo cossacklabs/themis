@@ -1,6 +1,6 @@
 import exception;
 from ctypes import *
-themis = cdll.LoadLibrary('./libthemis.so')
+themis = cdll.LoadLibrary('libthemis.so')
 
 class themis_gen_key_pair(object):
     def __init__(self, alg):

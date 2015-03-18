@@ -1,6 +1,6 @@
 from exception import themis_exception;
 from ctypes import *
-themis = cdll.LoadLibrary('./libthemis.so')
+themis = cdll.LoadLibrary('libthemis.so')
 
 class scell_full(object):
     def __init__(self, key_):

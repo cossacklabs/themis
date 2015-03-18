@@ -1,4 +1,4 @@
-import ssession;
+import ssession_wrappers;
 import socket;
 import ctypes;
 
@@ -18,7 +18,8 @@ class transport(object):
         self.socket.sendall(message);
 
     def receive(self, buffer_length):
-        return self.socket.recv(buffer_length);
+	a=self.socket.recv(buffer_length);
+        return a;
 
     def get_pub_key_by_id(self, user_id):
         if user_id != "server":
@@ -26,7 +27,7 @@ class transport(object):
         return server_pub; 
 
 transport_ = transport();
-session=ssession.ssession_client("client", client_priv, transport_);
+session=ssession_wrappers.ssession_client("client", client_priv, transport_);
 for i in range(0, 9):
     session.send("This is a test message");
     message=session.receive();

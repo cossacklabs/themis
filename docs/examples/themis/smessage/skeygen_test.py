@@ -1,9 +1,9 @@
 import sys
-from skeygen import *
+from themis import skeygen
 
 alg="EC";
 
-obj = themis_gen_key_pair(alg);
+obj = skeygen.themis_gen_key_pair(alg);
 private_key = obj.export_private_key();
 public_key = obj.export_public_key();
 

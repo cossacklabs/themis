@@ -1,4 +1,4 @@
-import smessage;
+from themis import smessage;
 import tornado.ioloop
 import tornado.web
 
@@ -6,14 +6,13 @@ client_pub = str('\x55\x45\x43\x32\x00\x00\x00\x2d\x13\x8b\xdf\x0c\x02\x1f\x09\x
 
 server_priv= str('\x52\x45\x43\x32\x00\x00\x00\x2d\x49\x87\x04\x6b\x00\xf2\x06\x07\x7d\xc7\x1c\x59\xa1\x8f\x39\xfc\x94\x81\x3f\x9e\xc5\xba\x70\x6f\x93\x08\x8d\xe3\x85\x82\x5b\xf8\x3f\xc6\x9f\x0b\xdf');
 
-encrypter=smessage.themis_smessage_encrypter(server_priv, client_pub);
-decrypter=smessage.themis_smessage_decrypter(server_priv, client_pub);
+encrypter=smessage.smessage(server_priv, client_pub);
 
 class MainHandler(tornado.web.RequestHandler):        
     def post(self):
-        message = decrypter.decrypt(self.request.body);
+        message = encrypter.unwrap(self.request.body);
         print message;
-        self.write(encrypter.encrypt(message));
+        self.write(encrypter.wrap(message));
             
 application = tornado.web.Application([
     (r"/", MainHandler),

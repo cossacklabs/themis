@@ -1,6 +1,10 @@
+#!/usr/bin/env python
+
 import exception;
 import ctypes;
-themis = ctypes.cdll.LoadLibrary('./libthemis.so');
+from collections import deque;
+import time;
+themis = ctypes.cdll.LoadLibrary('libthemis.so');
 
 
 ON_GET_PUBLIC_KEY = ctypes.CFUNCTYPE(ctypes.c_int, ctypes.POINTER(ctypes.c_byte), ctypes.c_size_t, ctypes.POINTER(ctypes.c_byte), ctypes.c_size_t, ctypes.POINTER(ctypes.py_object));
@@ -8,20 +12,18 @@ ON_SEND_DATA = ctypes.CFUNCTYPE(ctypes.c_ssize_t, ctypes.POINTER(ctypes.c_byte),
 ON_RECEIVE_DATA = ctypes.CFUNCTYPE(ctypes.c_ssize_t, ctypes.POINTER(ctypes.c_byte), ctypes.c_size_t, ctypes.POINTER(ctypes.py_object));
 ON_STATE_CHANGE = ctypes.CFUNCTYPE(ctypes.c_int, ctypes.c_int, ctypes.c_void_p);
 
-class transport_t(ctypes.Structure):
-    _fields_ = [("send_data", ON_SEND_DATA),
-		("receive_data", ON_RECEIVE_DATA),
-		("state_changed", ON_STATE_CHANGE),
-		("get_public_key_for_id", ON_GET_PUBLIC_KEY),
-		("user_data", ctypes.POINTER(ctypes.py_object))];
+class transport_t(ctypes.Structure):                             # set of callbacks 
+    _fields_ = [("send_data", ON_SEND_DATA),                     # use for "sending" data. if set to None - secure session methods send/receive not usable
+		("receive_data", ON_RECEIVE_DATA),               # use for "receiving" data. if set to None - secure session methods send/receive not usable
+		("state_changed", ON_STATE_CHANGE),              # not used for in current version
+		("get_public_key_for_id", ON_GET_PUBLIC_KEY),    # [necessery] use for getting peer public key by it ID (see ssession.__init__ method). 
+		("user_data", ctypes.POINTER(ctypes.py_object))];# some user_data, that will be passed to any of callbacks 
 
 ssession_create=themis.secure_session_create;
 ssession_create.restype = ctypes.POINTER(ctypes.c_int);
 ssession_create.argtypes = [ctypes.c_void_p, ctypes.c_size_t, ctypes.c_void_p, ctypes.c_size_t, ctypes.POINTER(transport_t)];
 
-
 def on_send(data, data_length, user_data):
-#    print("send ", data_length, "bytes:", ctypes.string_at(data,data_length));
     try:
         user_data[0].send(ctypes.string_at(data,data_length));
     except Exception as e:
@@ -35,12 +37,10 @@ def on_receive(data, data_length, user_data):
 	print e;
         return -2222;
     ctypes.memmove(data, received_data, len(received_data));
-#    print "receive", len(received_data), "bytes";
     return len(received_data);
 
 def on_get_pub_key(user_id, id_length, key_buffer, key_buffer_length, user_data):
     real_user_id=ctypes.string_at(user_id, id_length);
-#    print "get_pub_key", real_user_id, user_data;
     pub_key=user_data[0].get_pub_key_by_id(real_user_id);
     ctypes.memmove(key_buffer, pub_key, len(pub_key));
     return 0;
@@ -56,7 +56,7 @@ lp_conn_type=ctypes.POINTER(ctypes.py_object);
 
 
 class ssession(object):
-    def __init__(self, user_id, sign_key, transport):
+    def __init__(self, user_id, sign_key, transport): # user_id - user identification ("server" for example), sign_key - private key of session owner, transport - refference for transport_t object.
 	self.session_ctx=ctypes.POINTER(ctypes.c_int);
         if transport != None:
             self.lp_conn=lp_conn_type(ctypes.py_object(transport));
@@ -71,7 +71,7 @@ class ssession(object):
 	themis.secure_session_destroy(self.session_ctx);
 
     def connect(self):
- 	res = themis.secure_session_connect(self.session_ctx);
+ 	res = themis.secure_session_connect(self.session_ctx); 
 	if res != 0:
 	    raise exception.themis_exception("secure_session_connect failed: " + str(res));
 
@@ -92,7 +92,7 @@ class ssession(object):
 	    return "";
         return ctypes.string_at(message, res);
 
-    def is_established(self):
+    def is_established(self): 
         return themis.secure_session_is_established(self.session_ctx);
 
     def connect_request(self):
@@ -132,28 +132,15 @@ class ssession(object):
 	    raise exception.themis_exception("secure_session_unwrap failed: " + str(res));
         return (res, ctypes.string_at(unwrapped_message, unwrapped_message_length));    
 
-class ssession_server(object):
-    def __init__(self, user_id, sign_key, transport):
-        self.session=ssession(user_id, sign_key, transport);
-        while self.session.is_established()!=True:
-            self.session.receive();
-
-    def receive(self):
-        return self.session.receive();
+class mem_transport(object):
+    def __init__(self):
+        self.message_list=deque();
 
     def send(self, message):
-        self.session.send(message);
-        
-class ssession_client(object):
-    def __init__(self, user_id, sign_key, transport):
-        self.session=ssession(user_id, sign_key, transport);
-        self.session.connect();
-        while self.session.is_established()!=True:
-            self.session.receive();
+        self.message_list.append(message);
 
-    def receive(self):
-        return self.session.receive();
+    def receive(self, buffer_length):
+        return self.message_list.popleft();
 
-    def send(self, message):
-        self.session.send(message);
-    
+#    def get_pub_key_by_id(self, user_id); //need pure virtual function
+

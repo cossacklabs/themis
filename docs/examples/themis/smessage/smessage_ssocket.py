@@ -1,4 +1,4 @@
-import smessage;
+from themis import smessage;
 import socket;
 
 class ssocket(object):

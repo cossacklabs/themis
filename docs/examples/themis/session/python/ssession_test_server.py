@@ -1,4 +1,4 @@
-import ssession;
+import ssession_wrappers;
 import socket;
 import ctypes;
 
@@ -14,6 +14,7 @@ class transport(object):
         self.socket.close();
         
     def send(self, message):
+	a=1;
         self.socket.sendall(message);
 
     def receive(self, buffer_length):
@@ -31,15 +32,13 @@ conn.listen(1);
 accepted, addr = conn.accept();
 transport_=transport(accepted);
 
-with ssession.ssession_server("server", server_priv, transport_) as session:
-    while True:
-        try:
-            message = session.receive();
-            print message;
-            if message == "finish":
-                break;
-                session.send(message);
-        except Exception as e:
-            e;        
+session=ssession_wrappers.ssession_server("server", server_priv, transport_);
+while True:
+    message = session.receive();
+    print "receive:", message;
+    if message == "finish":
+	break;
+    session.send(message);
 
+accepted.close();
 conn.close();

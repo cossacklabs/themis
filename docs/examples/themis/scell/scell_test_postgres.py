@@ -1,5 +1,5 @@
 import psycopg2;
-import scell;
+from themis import scell;
 
 password="password";
 

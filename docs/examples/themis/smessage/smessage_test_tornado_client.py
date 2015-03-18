@@ -1,4 +1,4 @@
-import smessage;
+from themis import smessage;
 import tornado.ioloop
 import tornado.httpclient;
 
@@ -7,11 +7,10 @@ client_priv = str('\x52\x45\x43\x32\x00\x00\x00\x2d\x51\xf4\xaa\x72\x00\x9f\x0f\
 server_pub  = str('\x55\x45\x43\x32\x00\x00\x00\x2d\x75\x58\x33\xd4\x02\x12\xdf\x1f\xe9\xea\x48\x11\xe1\xf9\x71\x8e\x24\x11\xcb\xfd\xc0\xa3\x6e\xd6\xac\x88\xb6\x44\xc2\x9a\x24\x84\xee\x50\x4c\x3e\xa0');
 
 http_client = tornado.httpclient.HTTPClient();
-encrypter=smessage.themis_smessage_encrypter(client_priv, server_pub);
-decrypter=smessage.themis_smessage_decrypter(client_priv, server_pub);
+encrypter=smessage.smessage(client_priv, server_pub);
 try:
-    response = http_client.fetch(tornado.httpclient.HTTPRequest("http://127.0.0.1:26260", "POST", None, encrypter.encrypt("This is test message")));
-    message = decrypter.decrypt(response.body);
+    response = http_client.fetch(tornado.httpclient.HTTPRequest("http://127.0.0.1:26260", "POST", None, encrypter.wrap("This is test message")));
+    message = encrypter.unwrap(response.body);
     print message;
     
 except tornado.httpclient.HTTPError as e:
