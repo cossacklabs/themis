@@ -1,0 +1,80 @@
+/**
+ * @file
+ *
+ * Created by Andrey Mnatsakanov on 03/18/2015
+ * (c) CossackLabs
+ */
+
+#import "scell_token.h"
+
+@implementation SCell_token
+
+- (id)init: (NSData*)key{
+  self = [super init];
+  key_=[[NSData alloc]initWithData:key];
+  return self;
+}
+
+- (struct Encrypted_data)wrap: (NSData*)message{
+  return [self wrap:message context:NULL];
+}
+
+- (NSData*)unwrap: (struct Encrypted_data)message{
+  return [self unwrap:message context:NULL];
+}
+
+- (struct Encrypted_data)wrap: (NSData*)message context:(NSData*)context{
+  size_t wrapped_message_length=0;
+  size_t token_length=0;
+  const void* context_data=(context!=NULL)?[context bytes]:NULL;
+  size_t context_length=(context!=NULL)?[context length]:0;
+  int res = themis_secure_cell_encrypt_auto_split([key_ bytes], [key_ length], context_data, context_length, [message bytes], [message length], NULL, &token_length, NULL, &wrapped_message_length);
+  if(res!=-4)
+    {
+        NSException *e = [NSException
+                          exceptionWithName:@"ThemisException"
+                          reason:@"themis_scell_token_wrap (length detrmination) failed"
+                          userInfo:nil];
+        @throw e;
+    }
+   unsigned char* wrapped_message=malloc(wrapped_message_length);
+   unsigned char* token=malloc(token_length);
+   res = themis_secure_cell_encrypt_auto_split([key_ bytes], [key_ length], context_data, context_length, [message bytes], [message length], token, &token_length, wrapped_message, &wrapped_message_length);
+   if(res!=-4)
+     {
+       NSException *e = [NSException
+                          exceptionWithName:@"ThemisException"
+				     reason:@"themis_scell_token_wrap failed"
+				   userInfo:nil];
+       @throw e;
+     }
+   struct Encrypted_data ed={[[NSData alloc]initWithBytes:wrapped_message length:wrapped_message_length],[[NSData alloc]initWithBytes:token length:token_length]};
+   return ed;
+}
+- (NSData*)unwrap: (struct Encrypted_data)message context:(NSData*)context{
+  size_t unwrapped_message_length=0;
+  const void* context_data=(context!=NULL)?[context bytes]:NULL;
+  size_t context_length=(context!=NULL)?[context length]:0;
+  int res = themis_secure_cell_decrypt_auto_split([key_ bytes], [key_ length], context_data, context_length, [message.cipher_text bytes], [message.cipher_text length], [message.token bytes], [message.token length], NULL, &unwrapped_message_length);
+  if(res!=-4)
+    {
+      NSException *e = [NSException
+                          exceptionWithName:@"ThemisException"
+				     reason:@"themis_scell_token_unwrap (length detrmination) failed"
+				   userInfo:nil];
+      @throw e;
+    }
+  unsigned char* unwrapped_message=malloc(unwrapped_message_length);
+  res = themis_secure_cell_decrypt_auto_split([key_ bytes], [key_ length], context_data, context_length, [message.cipher_text bytes], [message.cipher_text length], [message.token bytes], [message.token length], unwrapped_message, &unwrapped_message_length);
+  if(res!=-4)
+    {
+      NSException *e = [NSException
+                          exceptionWithName:@"ThemisException"
+				     reason:@"themis_scell_token_unwrap failed"
+				   userInfo:nil];
+      @throw e;
+    }
+  return [[NSData alloc]initWithBytes:unwrapped_message length:unwrapped_message_length];
+}
+
+@end
