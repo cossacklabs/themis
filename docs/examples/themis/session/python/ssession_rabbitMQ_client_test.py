@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#echo client for rabbitMQ
 from themis import ssession;
 import pika
 import uuid
@@ -7,9 +7,9 @@ client_priv = str('\x52\x45\x43\x32\x00\x00\x00\x2d\x51\xf4\xaa\x72\x00\x9f\x0f\
 
 server_pub  = str('\x55\x45\x43\x32\x00\x00\x00\x2d\x75\x58\x33\xd4\x02\x12\xdf\x1f\xe9\xea\x48\x11\xe1\xf9\x71\x8e\x24\x11\xcb\xfd\xc0\xa3\x6e\xd6\xac\x88\xb6\x44\xc2\x9a\x24\x84\xee\x50\x4c\x3e\xa0');
 
-class transport(ssession.mem_transport):
+class transport(ssession.mem_transport):	#necessary callback
     def get_pub_key_by_id(self, user_id):
-        if user_id != "server":
+        if user_id != "server":			#we have only one peer with id "server"
             raise Exception("no such id");
         return server_pub;
 
@@ -25,7 +25,7 @@ class SsessionRpcClient(object):
 
     def on_response(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
-            self.status, self.response = session.unwrap(body)
+            self.status, self.response = session.unwrap(body)			#unwrap response message
 
     def call(self, message):
         self.response = None
@@ -43,14 +43,14 @@ class SsessionRpcClient(object):
 
 ssession_rpc = SsessionRpcClient()
 
-res, response = ssession_rpc.call(session.connect_request());
-while res==1:
-    res, response = ssession_rpc.call(response);
+res, response = ssession_rpc.call(session.connect_request());			#make and send session initialisation message and get unwrapped reply message
+while res==1:									#if res==1 then session is not established yet
+    res, response = ssession_rpc.call(response);				#send response message to client as is and get new unwrapped reply message
 
-res, response = ssession_rpc.call(session.wrap("This is test message!"));
-res, response = ssession_rpc.call(session.wrap("This is test message #2!"));
-res, response = ssession_rpc.call(session.wrap("This is test message #3!"));
-res, response = ssession_rpc.call(session.wrap("This is test message #4!"));
+res, response = ssession_rpc.call(session.wrap("This is test message!"));	#encrypt,send information message and get unwrapped reply message
+res, response = ssession_rpc.call(session.wrap("This is test message #2!"));	#encrypt,send information message and get unwrapped reply message
+res, response = ssession_rpc.call(session.wrap("This is test message #3!"));	#encrypt,send information message and get unwrapped reply message
+res, response = ssession_rpc.call(session.wrap("This is test message #4!"));	#encrypt,send information message and get unwrapped reply message
 
 
-print response;
+print response;									#print message

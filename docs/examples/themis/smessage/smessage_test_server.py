@@ -1,3 +1,5 @@
+#echo server on handmade secure socket (see smessage_socket.py)
+
 import smessage_ssocket;
 import socket;
 
@@ -14,11 +16,11 @@ accepted.set_peer_pub_key(client_pub);
 
 while True:
     try:
-        message = accepted.recv(1024);
+        message = accepted.recv(1024); #receive message
         print message;
-        if message == "finish":
+        if message == "finish": #"finish" - last message
             break;
-        accepted.sendall(message);
+        accepted.sendall(message); #send message
     except Exception as e:
         e;        
 conn.close();

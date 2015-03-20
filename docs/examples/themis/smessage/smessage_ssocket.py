@@ -1,3 +1,4 @@
+#hadmade secure socket 
 from themis import smessage;
 import socket;
 
@@ -17,11 +18,11 @@ class ssocket(object):
         return self.socket.connect(conn_param);
     
     def sendall(self, message):
-        self.socket.sendall(self.smessage.wrap(message));
+        self.socket.sendall(self.smessage.wrap(message)); #encrypt and send message
 
     def recv(self, buffer_length):
         aa=self.socket.recv(buffer_length);
-        return self.smessage.unwrap(aa);
+        return self.smessage.unwrap(aa); #decrypt received message
 
     def close(self):
         return self.socket.close();

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#echo server for rabbitMQ
 from themis import smessage;
 import pika;
 
@@ -6,7 +6,7 @@ client_pub = str('\x55\x45\x43\x32\x00\x00\x00\x2d\x13\x8b\xdf\x0c\x02\x1f\x09\x
 
 server_priv= str('\x52\x45\x43\x32\x00\x00\x00\x2d\x49\x87\x04\x6b\x00\xf2\x06\x07\x7d\xc7\x1c\x59\xa1\x8f\x39\xfc\x94\x81\x3f\x9e\xc5\xba\x70\x6f\x93\x08\x8d\xe3\x85\x82\x5b\xf8\x3f\xc6\x9f\x0b\xdf');
 
-encrypter=smessage.smessage(server_priv, client_pub);
+smessage=smessage.smessage(server_priv, client_pub);
 
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost'))
 
@@ -15,9 +15,10 @@ channel = connection.channel()
 channel.queue_declare(queue='smessage_queue')
 
 def on_request(ch, method, props, body):
-    message = encrypter.unwrap(body);
+    message = smessage.unwrap(body); #decrypt received message
     print message;
-    ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=encrypter.wrap(message));
+    ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=smessage.wrap(message));
+    #encrypt and send reply message
     ch.basic_ack(delivery_tag = method.delivery_tag);
 
 channel.basic_qos(prefetch_count=1)

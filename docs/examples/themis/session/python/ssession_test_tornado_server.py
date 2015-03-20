@@ -1,5 +1,5 @@
+#echo server for tornado
 from themis import ssession;
-#import ssession_mem_transport;
 import tornado.ioloop
 import tornado.web
 
@@ -8,24 +8,21 @@ client_pub = str('\x55\x45\x43\x32\x00\x00\x00\x2d\x13\x8b\xdf\x0c\x02\x1f\x09\x
 server_priv= str('\x52\x45\x43\x32\x00\x00\x00\x2d\x49\x87\x04\x6b\x00\xf2\x06\x07\x7d\xc7\x1c\x59\xa1\x8f\x39\xfc\x94\x81\x3f\x9e\xc5\xba\x70\x6f\x93\x08\x8d\xe3\x85\x82\x5b\xf8\x3f\xc6\x9f\x0b\xdf');
 
 class transport(ssession.mem_transport):
-    def get_pub_key_by_id(self, user_id):
-        if user_id != "client":
+    def get_pub_key_by_id(self, user_id):	#necessary callback function
+        if user_id != "client":			#we have only one peer with id "client"
             raise Exception("no such id");
         return client_pub; 
 
 session=ssession.ssession("server", server_priv, transport());
 
 class MainHandler(tornado.web.RequestHandler):        
-#    def initialize(self):
-#       self.session=ssession.ssession("server", server_priv, transport());
-
     def post(self):
-        status, message = session.unwrap(self.request.body);
-        if status==1:
-            self.write(message);
-        else:
-            print message;
-            self.write(session.wrap(message));
+        status, message = session.unwrap(self.request.body);	#decrypt received message
+        if status==1:						#if status==1 then session is not ectablish yet
+            self.write(message);				#send unwraped message to client as is
+        else:							#if status!=1 then session is established
+            print message;					#print accepted plain message
+            self.write(session.wrap(message));			#encrypt and send reply message 
             
 application = tornado.web.Application([
     (r"/", MainHandler),

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#echo client for rabbitMQ
 from themis import smessage;
 import pika
 import uuid
@@ -7,7 +7,7 @@ client_priv = str('\x52\x45\x43\x32\x00\x00\x00\x2d\x51\xf4\xaa\x72\x00\x9f\x0f\
 
 server_pub  = str('\x55\x45\x43\x32\x00\x00\x00\x2d\x75\x58\x33\xd4\x02\x12\xdf\x1f\xe9\xea\x48\x11\xe1\xf9\x71\x8e\x24\x11\xcb\xfd\xc0\xa3\x6e\xd6\xac\x88\xb6\x44\xc2\x9a\x24\x84\xee\x50\x4c\x3e\xa0');
 
-encrypter=smessage.smessage(client_priv, server_pub);
+smessage=smessage.smessage(client_priv, server_pub);
 
 class SsessionRpcClient(object):
     def __init__(self):
@@ -19,7 +19,7 @@ class SsessionRpcClient(object):
 
     def on_response(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
-            self.response = encrypter.unwrap(body)
+            self.response = smessage.unwrap(body) #decrypt acceptedd message
 
     def call(self, message):
         self.response = None
@@ -37,10 +37,10 @@ class SsessionRpcClient(object):
 
 smessage_rpc = SsessionRpcClient()
 
-response = smessage_rpc.call(encrypter.wrap("This is test message!"));
-response = smessage_rpc.call(encrypter.wrap("This is test message #2!"));
-response = smessage_rpc.call(encrypter.wrap("This is test message #3!"));
-response = smessage_rpc.call(encrypter.wrap("This is test message #4!"));
+response = smessage_rpc.call(smessage.wrap("This is test message!")); #encrypt and send message
+response = smessage_rpc.call(smessage.wrap("This is test message #2!")); #encrypt and send message
+response = smessage_rpc.call(smessage.wrap("This is test message #3!")); #encrypt and send message
+response = smessage_rpc.call(smessage.wrap("This is test message #4!")); #encrypt and send message
 
 
 print response;

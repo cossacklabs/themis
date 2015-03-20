@@ -1,3 +1,4 @@
+#echo server for twisted
 from themis import ssession;
 from twisted.internet import protocol, reactor, endpoints;
 
@@ -6,8 +7,8 @@ client_pub = str('\x55\x45\x43\x32\x00\x00\x00\x2d\x13\x8b\xdf\x0c\x02\x1f\x09\x
 server_priv= str('\x52\x45\x43\x32\x00\x00\x00\x2d\x49\x87\x04\x6b\x00\xf2\x06\x07\x7d\xc7\x1c\x59\xa1\x8f\x39\xfc\x94\x81\x3f\x9e\xc5\xba\x70\x6f\x93\x08\x8d\xe3\x85\x82\x5b\xf8\x3f\xc6\x9f\x0b\xdf');
 
 class transport(ssession.mem_transport):
-    def get_pub_key_by_id(self, user_id):
-        if user_id != "client":
+    def get_pub_key_by_id(self, user_id):	#necessary callback function
+        if user_id != "client":			#we have only one peer with id="client"
             raise Exception("no such id");
         return client_pub; 
 
@@ -18,12 +19,11 @@ class Tw_protocol(protocol.Protocol):
 	self.session=ssession.ssession("server", server_priv, self.transport_);
 
     def dataReceived(self, data):
-        status, message = self.session.unwrap(data);
-        if status==1:
-            self.transport.write(message);
-        else:
-            print message;
-            self.transport.write(self.session.wrap(message));
+        status, message = self.session.unwrap(data); 		#decrypt message
+        if status==1:						#if status==1 session is not established yet
+            self.transport.write(message);			#send unwrapped message to client as is
+        else:							#if status!=1 session is established
+            self.transport.write(self.session.wrap(message));	#wrap reply message and send it
 
 class Tw_Factory(protocol.Factory):
     def buildProtocol(self, addr):

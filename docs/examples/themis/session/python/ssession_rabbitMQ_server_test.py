@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#echo server for rabbitMQ
 from themis import ssession;
 import pika;
 
@@ -6,9 +6,9 @@ client_pub = str('\x55\x45\x43\x32\x00\x00\x00\x2d\x13\x8b\xdf\x0c\x02\x1f\x09\x
 
 server_priv= str('\x52\x45\x43\x32\x00\x00\x00\x2d\x49\x87\x04\x6b\x00\xf2\x06\x07\x7d\xc7\x1c\x59\xa1\x8f\x39\xfc\x94\x81\x3f\x9e\xc5\xba\x70\x6f\x93\x08\x8d\xe3\x85\x82\x5b\xf8\x3f\xc6\x9f\x0b\xdf');
 
-class transport(ssession.mem_transport):
+class transport(ssession.mem_transport):	#necessary callback
     def get_pub_key_by_id(self, user_id):
-        if user_id != "client":
+        if user_id != "client":			#we have only one peer with id "client"
             raise Exception("no such id");
         return client_pub; 
 
@@ -21,13 +21,13 @@ channel = connection.channel()
 channel.queue_declare(queue='ssession_queue')
 
 def on_request(ch, method, props, body):
-    status, message = session.unwrap(body);
-    if status==1:
-        ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=message);
+    status, message = session.unwrap(body);	#decrypt accepted message
+    if status==1:				#if status==1 then session is not established yet
+        ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=message);#send unwrapped message to client as is
         ch.basic_ack(delivery_tag = method.delivery_tag);
-    else:
-        print message;
-        ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=session.wrap(message));
+    else:					#if status!=1 then session is established
+        print message;				#print accepted plain message
+        ch.basic_publish(exchange='', routing_key=props.reply_to, properties=pika.BasicProperties(correlation_id = props.correlation_id), body=session.wrap(message));#encrypt and send reply message
         ch.basic_ack(delivery_tag = method.delivery_tag);
 
 channel.basic_qos(prefetch_count=1)

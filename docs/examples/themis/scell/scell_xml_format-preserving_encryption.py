@@ -1,3 +1,6 @@
+#encrypt all leafs data in xml tree.
+#as format preserving the path to leaf is additional cotext for enryption parameters deriving
+
 import xml.etree.ElementTree as ET;
 import base64;
 from themis import scell;
@@ -11,7 +14,7 @@ def enc_children(node, context):
             enc_children(node[i], context+"/"+node.tag);
     else:
         if node.text!=None:
-            node.text=base64.b64encode(enc.encrypt(node.text, context+"/"+node.tag));
+            node.text=base64.b64encode(enc.encrypt(node.text, context+"/"+node.tag)); #encrypt leaf data and replace it in file by base64 encoding
 
 def dec_children(node, context):
     if len(node)!=0:
@@ -19,7 +22,7 @@ def dec_children(node, context):
             dec_children(node[i], context+"/"+node.tag);
     else:
         if node.text!=None:
-            node.text=enc.decrypt(base64.b64decode(node.text), context+"/"+node.tag);
+            node.text=enc.decrypt(base64.b64decode(node.text), context+"/"+node.tag); #decrypt base64 encoded leaf data and replace it by plain value
 
 #encoding file data.xml and save result to encoded_data.xml
 tree = ET.parse('data.xml');

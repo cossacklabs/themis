@@ -1,3 +1,4 @@
+#key generation example
 import sys
 from themis import skeygen
 
