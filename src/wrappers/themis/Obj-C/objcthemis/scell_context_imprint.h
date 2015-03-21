@@ -7,14 +7,12 @@
 
 #import <Foundation/Foundation.h>
 #import <themis/themis.h>
+#import "scell.h"
 
-@interface SCell_context_imprint : NSObject
-{
-  NSData* key_;
-}
+@interface SCell_context_imprint : SCell
 
-- (id)init: (NSData*)key;
-- (NSData*)wrap: (NSData*)message context:(NSData*)contex;
-- (NSData*)unwrap: (NSData*)message context:(NSData*)contex;
+- (id)initWithKey: (NSData*)key;
+- (NSData*)wrapData: (NSData*)message context:(NSData*)context error:(NSError**)errorPtr;
+- (NSData*)unwrapData: (NSData*)message context:(NSData*)context error:(NSError**)errorPtr;
 
 @end

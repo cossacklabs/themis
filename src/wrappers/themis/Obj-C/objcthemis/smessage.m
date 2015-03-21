@@ -6,63 +6,58 @@
  */
 
 #import "smessage.h"
+#import "error.h"
 
 @implementation SMessage
 
-- (id)init: (NSData*)private_key peer_pub_key:(NSData*)peer_pub_key{
+- (id)initWithPrivateKey: (NSData*)private_key peerPublicKey:(NSData*)peer_pub_key{
   self = [super init];
-  priv_key_=[[NSData alloc]initWithData:private_key];
-  peer_pub_key_=[[NSData alloc]initWithData:peer_pub_key];
+  if(self){
+    _priv_key=[[NSData alloc]initWithData:private_key];
+    _peer_pub_key=[[NSData alloc]initWithData:peer_pub_key];
+  }
   return self;
 }
 
-- (NSData*)wrap: (NSData*)message{
+- (NSData*)wrap: (NSData*)message error:(NSError**)errorPtr{
   size_t wrapped_message_length=0;
-  int res = themis_secure_message_wrap([priv_key_ bytes], [priv_key_ length], [peer_pub_key_ bytes], [peer_pub_key_ length], [message bytes], [message length], NULL, &wrapped_message_length);
-  if(res!=-4)
+  int res = themis_secure_message_wrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], NULL, &wrapped_message_length);
+  if(res!=TErrorTypeBufferTooSmall)
     {
-        NSException *e = [NSException
-                          exceptionWithName:@"ThemisException"
-                          reason:@"themis_secure_wrap (length detrmination) failed"
-                          userInfo:nil];
-        @throw e;
+	*errorPtr=SCERROR(res, @"themis_secure_message_wrap (length detrmination) failed");
+	return NULL;
     }
   unsigned char* wrapped_message=malloc(wrapped_message_length);
-  res = themis_secure_message_wrap([priv_key_ bytes], [priv_key_ length], [peer_pub_key_ bytes], [peer_pub_key_ length], [message bytes], [message length], wrapped_message, &wrapped_message_length);
-  if(res!=0)
+  res = themis_secure_message_wrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], wrapped_message, &wrapped_message_length);
+  if(res!=TErrorTypeSuccess)
     {
-        NSException *e = [NSException
-                          exceptionWithName:@"ThemisException"
-                          reason:@"themis_secure_wrap failed"
-                          userInfo:nil];
-        @throw e;
+	*errorPtr=SCERROR(res, @"themis_secure_message_wrap failed");
+	free(wrapped_message);
+	return NULL;
     }
   NSData* wr=[[NSData alloc]initWithBytes:wrapped_message length:wrapped_message_length];
+  free(wrapped_message);
   return wr;
 }
 
-- (NSData*)unwrap: (NSData*)message{
+- (NSData*)unwrap: (NSData*)message error:(NSError**)errorPtr{
   size_t unwrapped_message_length=0;
-  int res = themis_secure_message_unwrap([priv_key_ bytes], [priv_key_ length], [peer_pub_key_ bytes], [peer_pub_key_ length], [message bytes], [message length], NULL, &unwrapped_message_length);
-  if(res!=-4)
+  int res = themis_secure_message_unwrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], NULL, &unwrapped_message_length);
+  if(res!=TErrorTypeBufferTooSmall)
     {
-        NSException *e = [NSException
-                          exceptionWithName:@"ThemisException"
-                          reason:@"themis_secure_unwrap (length detrmination) failed"
-                          userInfo:nil];
-        @throw e;
+	*errorPtr=SCERROR(res, @"themis_secure_message_unwrap (length detrmination) failed");
+	return NULL;
     }
   unsigned char* unwrapped_message=malloc(unwrapped_message_length);
-  res = themis_secure_message_unwrap([priv_key_ bytes], [priv_key_ length], [peer_pub_key_ bytes], [peer_pub_key_ length], [message bytes], [message length], unwrapped_message, &unwrapped_message_length);
-  if(res!=0)
+  res = themis_secure_message_unwrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], unwrapped_message, &unwrapped_message_length);
+  if(res!=TErrorTypeSuccess)
     {
-        NSException *e = [NSException
-                          exceptionWithName:@"ThemisException"
-                          reason:@"themis_secure_unwrap failed"
-                          userInfo:nil];
-        @throw e;
+	*errorPtr=SCERROR(res, @"themis_secure_message_unwrap failed");
+	free(unwrapped_message);
+	return NULL;
     }
   NSData* wr=[[NSData alloc]initWithBytes:unwrapped_message length:unwrapped_message_length];
+//  free(unwrapped_message);
   return wr;
 }
 

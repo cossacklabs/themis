@@ -7,16 +7,14 @@
 
 #import <Foundation/Foundation.h>
 #import <themis/themis.h>
+#import "scell.h"
 
-@interface SCell_seal : NSObject
-{
-  NSData* key_;
-}
+@interface SCell_seal : SCell
 
-- (id)init: (NSData*)key;
-- (NSData*)wrap: (NSData*)message;
-- (NSData*)unwrap: (NSData*)message;
-- (NSData*)wrap: (NSData*)message context:(NSData*)contex;
-- (NSData*)unwrap: (NSData*)message context:(NSData*)contex;
+- (id)initWithKey: (NSData*)key;
+- (NSData*)wrap: (NSData*)message error:(NSError**)error;
+- (NSData*)unwrap: (NSData*)message error:(NSError**)error;
+- (NSData*)wrap: (NSData*)message context:(NSData*)contex  error:(NSError**)error;
+- (NSData*)unwrap: (NSData*)message context:(NSData*)contex  error:(NSError**)error;
 
 @end

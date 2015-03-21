@@ -11,12 +11,12 @@
 @interface SMessage : NSObject
 
 {
-  NSData* priv_key_;
-  NSData* peer_pub_key_;
+  NSData* _priv_key;
+  NSData* _peer_pub_key;
 }
 
-- (id)init: (NSData*)private_key peer_pub_key:(NSData*)peer_pub_key;
-- (NSData*)wrap: (NSData*)message;
-- (NSData*)unwrap: (NSData*)message;
+- (id)initWithPrivateKey: (NSData*)private_key peerPublicKey:(NSData*)peer_pub_key;
+- (NSData*)wrap: (NSData*)message error:(NSError**)errorPtr;
+- (NSData*)unwrap: (NSData*)message error:(NSError**)errorPtr;
 
 @end

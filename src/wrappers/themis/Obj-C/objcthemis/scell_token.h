@@ -7,6 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <themis/themis.h>
+#import "scell.h"
 
 struct Encrypted_data{
   NSData* cipher_text;
@@ -14,15 +15,12 @@ struct Encrypted_data{
 };
 
 
-@interface SCell_token : NSObject
-{
-  NSData* key_;
-}
+@interface SCell_token : SCell
 
-- (id)init: (NSData*)key;
-- (struct Encrypted_data)wrap: (NSData*)message;
-- (NSData*)unwrap: (struct Encrypted_data)message;
-- (struct Encrypted_data)wrap: (NSData*)message context:(NSData*)contex;
-- (NSData*)unwrap: (struct Encrypted_data)message context:(NSData*)contex;
+- (id)initWithKey: (NSData*)key;
+- (struct Encrypted_data)wrap: (NSData*)message error:(NSError**)errorPtr;
+- (NSData*)unwrap: (struct Encrypted_data)message error:(NSError**)errorPtr;
+- (struct Encrypted_data)wrap: (NSData*)message context:(NSData*)contex error:(NSError**)errorPtr;
+- (NSData*)unwrap: (struct Encrypted_data)message context:(NSData*)contex error:(NSError**)errorPtr;
 
 @end
