@@ -6,11 +6,17 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <themis/themis.h>
 
-@interface SSession_transport_intergace: NSObject
+@interface SSession_transport_interface: NSObject
 
--(void)send: (NSData*)data error(NSError**)errorPtr;
--(NSDtata*) receive: (NSError**)errorPtr;
--(NSDtata*) get_public_key: (NSData*)Id;
+{
+  secure_session_user_callbacks_t _callbacks;
+}
 
+-(instancetype)init;
+-(void)send: (NSData*)data error:(NSError**)errorPtr;
+-(NSData*) receive: (NSError**)errorPtr;
+-(NSData*) get_public_key: (NSData*)Id error:(NSError**)errorPtr;
+-(secure_session_user_callbacks_t*)callbacks;
 @end
