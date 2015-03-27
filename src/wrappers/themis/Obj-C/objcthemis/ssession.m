@@ -59,14 +59,23 @@
   size_t unwrapped_message_length=0;
   TErrorType res=secure_session_unwrap(_session, [message bytes], [message length], NULL, &unwrapped_message_length);
   if(res!=TErrorTypeBufferTooSmall){
+    if(res==TErrorTypeSuccess){
+      return NULL;
+    }
     *errorPtr=SCERROR(res, @"secure_session_unwrap (length determination) fail");
     return NULL;
   }
   NSMutableData* unwrapped_message=[[NSMutableData alloc]initWithLength:unwrapped_message_length];
   res=secure_session_unwrap(_session, [message bytes], [message length], [unwrapped_message mutableBytes], &unwrapped_message_length);
   if(res!=TErrorTypeSuccess){
-    *errorPtr=SCERROR(res, @"secure_session_unwrap fail");
-    return NULL;
+    if(res==TErrorTypeSendAsIs){
+      *errorPtr=SCERROR(res, @"secure_session_unwrap send as is");
+      return unwrapped_message;      
+    }
+    else{
+      *errorPtr=SCERROR(res, @"secure_session_unwrap fail");
+      return NULL;
+    }
   }
   return unwrapped_message; 
 }
@@ -86,6 +95,10 @@
     return NULL;    
   }
   return received_data;
+}
+
+-(bool)is_established{
+  return secure_session_is_established(_session);
 }
 
 @end

@@ -5,58 +5,50 @@
  * (c) CossackLabs
  */
 
-#import <Foundation/Foundation.h>
-#import "objcthemis/ssession.h"
-#import "objcthemis/error.h"
 
-@interface Transport: SSession_transport_interface
-{
-  NSData* _client_pub_key;
-}
+#import "ssession_nsurlsession_wrapper.h"
 
--(instancetype)init;
--(NSData*) get_public_key: (NSData*)Id error:(NSError**)errorPtr;
+@interface SecureSession_client: SecureSession_NSURLSession_wrapper
+
+-(instancetype)initWithId: (NSString*)id andPrivKey:(NSData*)priv_key andServerUrl:(NSURL*)url;
+-(void) on_receive: (NSData*)message error:(NSError*)error;
 
 @end
 
-@implementation Transport
+@implementation SecureSession_client
 
--(instancetype)init{
-  self=[super init];
-  if(self){
-    _client_pub_key=[NSData dataWithContentsOfFile:@"client.pub"];
-  }
+-(instancetype)initWithId: (NSString*)id andPrivKey:(NSData*)priv_key andServerUrl:(NSURL*)url{
+  self=[super initWithId:id andPrivKey:priv_key andServerUrl:url];
   return self;
 }
 
--(NSData*) get_public_key: (NSData*)Id error:(NSError**)errorPtr{
-  if([Id isEqualToData:[NSData initWithBytes:"client"]]){
-    return _client_pub_key;
+-(void) on_receive: (NSData*)message error:(NSError*)error_{
+  if(error_){
+    NSLog(@"Error occured: %@", error_);
+    return;
   }
-  *errorPtr=SCERROR(TErrorTypeFail, @"client Id not found in db");
-  return NULL;
+  NSLog(@"received message: %@", [[NSString alloc] initWithData:message encoding:NSUTF8StringEncoding]);
+  NSError* error=NULL;
+  [self send:[@"Test message" dataUsingEncoding:NSUTF8StringEncoding] error:&error];
+  if(error){
+    NSLog(@"Error occured: %@", error);
+    return;
+  }  
 }
 
 @end
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-      NSString* id_str=@"server";
-      NSData* id=[id_str dataUsingEncoding:NSUTF8StringEncoding];
-      NSData* server_priv=[NSData dataWithContentsOfFile:@"server.priv"];
-      Transport* transport=[[Transport alloc] init];
-      SSession* session=[[SSession alloc]initWithId:id andPrivateKey:server_priv andCallbacks:transport];\
-
-
-      NSString *londonWeatherUrl =  @"http://api.openweathermap.org/data/2.5/weather?q=London,uk";
-      NSURLSession *session = [NSURLSession sharedSession];
-      [[session dataTaskWithURL:[NSURL URLWithString:londonWeatherUrl]
-	      completionHandler:^(NSData *data,
-				  NSURLResponse *response,
-				  NSError *error) {
-            NSLog(@"data: @%", data);
-	    
-	  }] resume];
+      NSData* client_priv=[NSData dataWithContentsOfFile:@"client2.priv"];
+      SecureSession_client* session=[[SecureSession_client alloc]initWithId:@"client" andPrivKey:client_priv andServerUrl:[NSURL URLWithString:@"http://192.168.144.1:26260"]];
+      NSError* error=NULL;
+      [session connect: &error];
+      if(error){
+	NSLog(@"Error occured: %@", error);
+	return -4;
+      }
+      getc(stdin);
     }
     return 0;
 }

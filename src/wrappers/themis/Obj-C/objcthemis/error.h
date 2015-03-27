@@ -8,7 +8,8 @@
 typedef enum{
   TErrorTypeSuccess=0,
   TErrorTypeBufferTooSmall=-4,
-  TErrorTypeFail=-1
+  TErrorTypeFail=-1,
+  TErrorTypeSendAsIs=1
 } TErrorType;
 
 #define SCERROR(error_code, error_message)				\

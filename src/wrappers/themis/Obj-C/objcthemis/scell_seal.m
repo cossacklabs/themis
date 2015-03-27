@@ -27,7 +27,7 @@
   size_t wrapped_message_length=0;
   const void* context_data=(context!=NULL)?[context bytes]:NULL;
   size_t context_length=(context!=NULL)?[context length]:0;
-  int res = themis_secure_cell_encrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], NULL, &wrapped_message_length);
+  TErrorType res = themis_secure_cell_encrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], NULL, &wrapped_message_length);
   if(res!=TErrorTypeBufferTooSmall)
     {
       *errorPtr = SCERROR(res, @"themis_secure_cell_encrypt_full (length determination) fail");
@@ -37,7 +37,7 @@
   res = themis_secure_cell_encrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], wrapped_message, &wrapped_message_length);
   if(res!=TErrorTypeSuccess)
     {
-      *errorPtr = SCEERROR(res, @"themis_secure_cell_encrypt_full fail");
+      *errorPtr = SCERROR(res, @"themis_secure_cell_encrypt_full fail");
       free(wrapped_message);
       return NULL;
     }
@@ -46,11 +46,11 @@
   return wr;
 
 }
-- (NSData*)unwrapData: (NSData*)message context:(NSData*)context error:(NSError**)errorPtr{
+- (NSData*)unwrap: (NSData*)message context:(NSData*)context error:(NSError**)errorPtr{
   size_t unwrapped_message_length=0;
   const void* context_data=(context!=NULL)?[context bytes]:NULL;
   size_t context_length=(context!=Nil)?[context length]:0;
-  int res = themis_secure_cell_decrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], NULL, &unwrapped_message_length);
+  TErrorType res = themis_secure_cell_decrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], NULL, &unwrapped_message_length);
   if(res!=TErrorTypeBufferTooSmall)
     {
       *errorPtr = SCERROR(res, @"themis_secure_cell_decrypt_full (length determination) fail");
