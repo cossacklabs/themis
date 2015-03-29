@@ -226,14 +226,14 @@ static int client_function_no_transport(void)
 	/* Client is not connected yet. Initiate key agreement */
 	if (!connected)
 	{
-		res = secure_session_generate_connect_request(&(client.session), recv_buf, &bytes_received);
+		res = secure_session_generate_connect_request(&(client.session), recv_buf, (size_t*)(&bytes_received));
 		if (HERMES_BUFFER_TOO_SMALL != res)
 		{
 			testsuite_fail_if(res, "secure_session_generate_connect_request failed");
 			return TEST_STOP_ERROR;
 		}
 
-		res = secure_session_generate_connect_request(&(client.session), recv_buf, &bytes_received);
+		res = secure_session_generate_connect_request(&(client.session), recv_buf, (size_t*)(&bytes_received));
 		if (HERMES_SUCCESS == res)
 		{
 			/* This test-send function never fails, so we do not check for error here */
@@ -262,7 +262,7 @@ static int client_function_no_transport(void)
 			bytes_received = on_receive_data(recv_buf, sizeof(recv_buf), NULL);
 			if (bytes_received > 0)
 			{
-				res = secure_session_unwrap(&(client.session), recv_buf, bytes_received, recv_buf, &bytes_received);
+				res = secure_session_unwrap(&(client.session), recv_buf, (size_t)bytes_received, recv_buf, (size_t*)(&bytes_received));
 				if (HERMES_SUCCESS != res)
 				{
 					testsuite_fail_if(res, "secure_session_unwrap failed");
@@ -295,7 +295,7 @@ static int client_function_no_transport(void)
 		}
 
 		bytes_sent = sizeof(data_to_send);
-		res = secure_session_wrap(&(client.session), data_to_send, length_to_send, data_to_send, &bytes_sent);
+		res = secure_session_wrap(&(client.session), data_to_send, length_to_send, data_to_send, (size_t*)(&bytes_sent));
 		if (HERMES_SUCCESS != res)
 		{
 			testsuite_fail_if(res, "secure_session_wrap failed");
@@ -319,7 +319,7 @@ static int client_function_no_transport(void)
 		}
 
 		bytes_sent = 0;
-		res = secure_session_unwrap(&(client.session), recv_buf, bytes_received, recv_buf, &bytes_sent);
+		res = secure_session_unwrap(&(client.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_sent));
 		if (HERMES_SUCCESS == res)
 		{
 			if (secure_session_is_established(&(client.session)))
@@ -340,7 +340,7 @@ static int client_function_no_transport(void)
 			return TEST_STOP_ERROR;
 		}
 
-		res = secure_session_unwrap(&(client.session), recv_buf, bytes_received, recv_buf, &bytes_sent);
+		res = secure_session_unwrap(&(client.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_sent));
 		if ((HERMES_SSESSION_SEND_OUTPUT_TO_PEER == res) && (bytes_sent > 0))
 		{
 			/* This test-send function never fails, so we do not check for error here */
@@ -408,7 +408,7 @@ static void server_function_no_transport(void)
 	if (current_length > 0)
 	{
 		bytes_received = on_receive_data(recv_buf, sizeof(recv_buf), NULL);
-		res = secure_session_unwrap(&(server.session), recv_buf, bytes_received, recv_buf, &bytes_received);
+		res = secure_session_unwrap(&(server.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_received));
 	}
 	else
 	{
@@ -434,14 +434,14 @@ static void server_function_no_transport(void)
 			return;
 		}
 
-		res = secure_session_wrap(&(server.session), recv_buf, bytes_received, recv_buf, &bytes_sent);
+		res = secure_session_wrap(&(server.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_sent));
 		if (HERMES_BUFFER_TOO_SMALL != res)
 		{
 			testsuite_fail_if(true, "secure_session_wrap failed");
 			return;
 		}
 
-		res = secure_session_wrap(&(server.session), recv_buf, bytes_received, recv_buf, &bytes_sent);
+		res = secure_session_wrap(&(server.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_sent));
 		if (HERMES_SUCCESS != res)
 		{
 			testsuite_fail_if(true, "secure_session_wrap failed");
