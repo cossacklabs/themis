@@ -81,6 +81,6 @@ soter_status_t soter_verify_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const 
   case 1:
 	  return HERMES_SUCCESS;
   default:
-	  return HERMES_FAIL;
+	  return HERMES_INVALID_SIGNATURE;
   }
 }

@@ -101,7 +101,7 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* si
   }
 
   if(EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length)!=1){
-    return HERMES_FAIL;
+    return HERMES_INVALID_SIGNATURE;
   }
   return HERMES_SUCCESS;
 }

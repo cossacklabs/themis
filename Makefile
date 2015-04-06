@@ -1,4 +1,4 @@
-CC= clang
+#CC = clang
 SRC_PATH = src
 BIN_PATH = build
 OBJ_PATH = build/obj
