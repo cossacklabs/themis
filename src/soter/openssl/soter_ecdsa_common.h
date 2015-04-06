@@ -4,8 +4,8 @@
  * (c) CossackLabs
  */
 
-#ifndef SOTER_RSA_COMMON_H
-#define SOTER_RSA_COMMON_H
+#ifndef SOTER_EC_COMMON_H
+#define SOTER_EC_COMMON_H
 
 #include <common/error.h>
 #include <soter/soter.h>
