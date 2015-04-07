@@ -286,7 +286,7 @@ static int client_function_no_transport(void)
 			}
 		}
 
-		length_to_send = rand_int(MAX_MESSAGE_SIZE);
+		length_to_send = rand_int(MAX_MESSAGE_SIZE - 64);
 
 		if (HERMES_SUCCESS != soter_rand(data_to_send, length_to_send))
 		{
@@ -403,12 +403,13 @@ static void server_function_no_transport(void)
 {
 	uint8_t recv_buf[2048];
 	ssize_t bytes_received;
+	ssize_t bytes_unwrapped = sizeof(recv_buf);
 	themis_status_t res;
 
 	if (current_length > 0)
 	{
 		bytes_received = on_receive_data(recv_buf, sizeof(recv_buf), NULL);
-		res = secure_session_unwrap(&(server.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_received));
+		res = secure_session_unwrap(&(server.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_unwrapped));
 	}
 	else
 	{
@@ -416,39 +417,39 @@ static void server_function_no_transport(void)
 		return;
 	}
 
-	if ((HERMES_SSESSION_SEND_OUTPUT_TO_PEER == res) && (bytes_received > 0))
+	if ((HERMES_SSESSION_SEND_OUTPUT_TO_PEER == res) && (bytes_unwrapped > 0))
 	{
 		/* This is key agreement data. Return response to the client. */
-		on_send_data(recv_buf, bytes_received, NULL);
+		on_send_data(recv_buf, bytes_unwrapped, NULL);
 		return;
 	}
-	else if ((HERMES_SUCCESS == res) && (bytes_received > 0))
+	else if ((HERMES_SUCCESS == res) && (bytes_unwrapped > 0))
 	{
 		ssize_t bytes_sent = 0;
 
 		/* This is actual data. Echo it to the client. */
 		if (!secure_session_is_established(&(server.session)))
 		{
-			/* Should not happed */
+			/* Should not happen */
 			testsuite_fail_if(true, "secure_session_unwrap failed");
 			return;
 		}
 
-		res = secure_session_wrap(&(server.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_sent));
+		res = secure_session_wrap(&(server.session), recv_buf, bytes_unwrapped, recv_buf, (size_t*)(&bytes_sent));
 		if (HERMES_BUFFER_TOO_SMALL != res)
 		{
 			testsuite_fail_if(true, "secure_session_wrap failed");
 			return;
 		}
 
-		res = secure_session_wrap(&(server.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_sent));
+		res = secure_session_wrap(&(server.session), recv_buf, bytes_unwrapped, recv_buf, (size_t*)(&bytes_sent));
 		if (HERMES_SUCCESS != res)
 		{
 			testsuite_fail_if(true, "secure_session_wrap failed");
 			return;
 		}
 
-		testsuite_fail_if(bytes_received == bytes_sent, "secure_session server message wrap");
+		testsuite_fail_if(bytes_unwrapped == bytes_sent, "secure_session server message wrap");
 		on_send_data(recv_buf, bytes_sent, NULL);
 		return;
 	}

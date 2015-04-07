@@ -142,8 +142,6 @@ themis_status_t secure_session_generate_connect_request(secure_session_t *sessio
 		return HERMES_BUFFER_TOO_SMALL;
 	}
 
-	*output_length = length_to_send;
-
 	/* Storing ID in a container */
 	container = ((soter_container_hdr_t *)data_to_send) + 1;
 
@@ -163,11 +161,18 @@ themis_status_t secure_session_generate_connect_request(secure_session_t *sessio
 	sign_data.data = data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length;
 	sign_data.length = ecdh_key_length;
 
+	/* Actual signature may be 1 or 2 bytes less than reported above because leading zeroes are stripped */
+	length_to_send -= signature_length;
+
 	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, &sign_data, 1, data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length + ecdh_key_length, &signature_length);
 	if (HERMES_SUCCESS != res)
 	{
 		return res;
 	}
+
+	length_to_send += signature_length;
+	*output_length = length_to_send;
+
 	memcpy(container->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH);
 	soter_container_set_data_size(container, length_to_send - sizeof(soter_container_hdr_t));
 	soter_update_container_checksum(container);
@@ -339,8 +344,6 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 		return HERMES_BUFFER_TOO_SMALL;
 	}
 
-	*output_length = length_to_send;
-
 	res = secure_session_peer_init(&(session_ctx->peer), soter_container_const_data(peer_id), soter_container_data_size(peer_id), peer_ecdh_key, peer_ecdh_key_length, peer_sign_key, sign_key_length);
 	if (HERMES_SUCCESS != res)
 	{
@@ -377,11 +380,17 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	sign_data[3].data = session_ctx->peer.id;
 	sign_data[3].length = session_ctx->peer.id_length;
 
+	/* Actual signature may be 1 or 2 bytes less than reported above because leading zeroes are stripped */
+	length_to_send -= signature_length;
+
 	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, sign_data, 4, data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length + ecdh_key_length, &signature_length);
 	if (HERMES_SUCCESS != res)
 	{
 		goto err;
 	}
+
+	length_to_send += signature_length;
+	*output_length = length_to_send;
 
 	memcpy(container->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH);
 	soter_container_set_data_size(container, length_to_send - sizeof(soter_container_hdr_t));
@@ -583,16 +592,19 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 		goto err;
 	}
 
-	*output_length = length_to_send;
-
 	container = (soter_container_hdr_t *)data_to_send;
-	mac = soter_container_data(container) + signature_length;
+
+	/* Actual signature may be 1 or 2 bytes less than reported above because leading zeroes are stripped */
+	length_to_send -= signature_length;
 
 	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, sign_data, 4, soter_container_data(container), &signature_length);
 	if (HERMES_SUCCESS != res)
 	{
 		goto err;
 	}
+
+	length_to_send += signature_length;
+	mac = soter_container_data(container) + signature_length;
 
 	sign_data[0].data = (const uint8_t *)(session_ctx->peer.ecdh_key);
 	sign_data[0].length = session_ctx->peer.ecdh_key_length;
@@ -605,6 +617,8 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	{
 		goto err;
 	}
+
+	*output_length = length_to_send;
 
 	memcpy(container->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH);
 	soter_container_set_data_size(container, length_to_send - sizeof(soter_container_hdr_t));
