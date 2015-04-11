@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import exception;
+from exception import THEMIS_CODES;
 import ctypes;
 from collections import deque;
 import time;
@@ -55,6 +56,23 @@ on_get_pub_key_=ON_GET_PUBLIC_KEY(on_get_pub_key);
 lp_conn_type=ctypes.POINTER(ctypes.py_object);
 
 
+class sstring(str):
+    def __new__(cls, value):
+	obj=str.__new__(cls, value);
+	obj.is_control=False;
+	return obj;
+
+    def set_control(self):
+	self.is_control=True;
+
+    def unset_control(self):
+	self.is_control=False;
+
+    def is_control(self):
+	return self.is_control;
+    def __str__(self):
+        return str.__str__(self)
+
 class ssession(object):
     def __init__(self, user_id, sign_key, transport): # user_id - user identification ("server" for example), sign_key - private key of session owner, transport - refference for transport_t object.
 	self.session_ctx=ctypes.POINTER(ctypes.c_int);
@@ -65,29 +83,29 @@ class ssession(object):
         else:
             self.session_ctx=ssession_create(ctypes.byref(ctypes.create_string_buffer(user_id)), len(user_id), ctypes.byref(ctypes.create_string_buffer(sign_key)), len(sign_key), 0);            
 	if self.session_ctx==None:
-	    raise exception.themis_exception("secure_session_create fail");
+	    raise exception.themis_exception(THEMIS_CODES.FAIL, "secure_session_create fail");
 
     def __del__(self):
 	themis.secure_session_destroy(self.session_ctx);
 
     def connect(self):
  	res = themis.secure_session_connect(self.session_ctx); 
-	if res != 0:
-	    raise exception.themis_exception("secure_session_connect failed: " + str(res));
+	if res != THEMIS_CODES.SUCCESS:
+	    raise exception.themis_exception(res, "secure_session_connect failed");
 
     def send(self, message):
 	send_message=ctypes.create_string_buffer(message);
 	res = themis.secure_session_send(self.session_ctx, ctypes.byref(send_message), len(message));
-        if res == -2222:
-	    raise exception.themis_exception("secure_session_send failed: " + str(res));            
+        if res == THEMIS_CODES.NETWORK_ERROR:
+	    raise exception.themis_exception(res, "secure_session_send failed");
 	return res;
 
     def receive(self):
 	message=ctypes.create_string_buffer(1024);
 	message_length=ctypes.c_size_t(1024);
 	res=themis.secure_session_receive(self.session_ctx, message, message_length);
-	if res == -2222 :
-	    raise exception.themis_exception("secure_session_receive failed: " + str(res));
+	if res == THEMIS_CODES.NETWORK_ERROR:
+	    raise exception.themis_exception(res, "secure_session_receive failed");
 	elif res<0:
 	    return "";
         return ctypes.string_at(message, res);
@@ -98,39 +116,42 @@ class ssession(object):
     def connect_request(self):
         req_size=ctypes.c_int(0);
  	res = themis.secure_session_generate_connect_request(self.session_ctx, None, ctypes.byref(req_size));
-        if res!=-4:
-	    raise exception.themis_exception("secure_session_generate_connect_request (buffer_length determination) failed: " + str(res));
+        if res!=THEMIS_CODES.BUFFER_TOO_SMALL:
+	    raise exception.themis_exception(res, "secure_session_generate_connect_request (buffer_length determination) failed");
         req_buffer=ctypes.create_string_buffer(req_size.value);
  	res = themis.secure_session_generate_connect_request(self.session_ctx, ctypes.byref(req_buffer), ctypes.byref(req_size));
-        if res!=0:
-	    raise exception.themis_exception("secure_session_generate_connect_request failed: " + str(res));
+        if res!=THEMIS_CODES.SUCCESS:
+	    raise exception.themis_exception(res, "secure_session_generate_connect_request failed");
         return ctypes.string_at(req_buffer, req_size);
 
     def wrap(self, message):
 	send_message=ctypes.create_string_buffer(message);
         wrapped_message_length=ctypes.c_int(0);
 	res = themis.secure_session_wrap(self.session_ctx, ctypes.byref(send_message), len(message), 0, ctypes.byref(wrapped_message_length));
-        if res!=-4:
-	    raise exception.themis_exception("secure_session_wrap (buffer_length determination) failed: " + str(res));
+        if res!=THEMIS_CODES.BUFFER_TOO_SMALL:
+	    raise exception.themis_exception(res,"secure_session_wrap (buffer_length determination) failed");
         wrapped_message=ctypes.create_string_buffer(wrapped_message_length.value);
 	res = themis.secure_session_wrap(self.session_ctx, ctypes.byref(send_message), len(message), ctypes.byref(wrapped_message), ctypes.byref(wrapped_message_length));
-        if res!=0:
-	    raise exception.themis_exception("secure_session_wrap failed: " + str(res));
+        if res!=THEMIS_CODES.SUCCESS:
+	    raise exception.themis_exception(res,"secure_session_wrap failed");
 	return ctypes.string_at(wrapped_message, wrapped_message_length);
 
     def unwrap(self, message):
 	wrapped_message=ctypes.create_string_buffer(message);
 	unwrapped_message_length=ctypes.c_int(0);
 	res=themis.secure_session_unwrap(self.session_ctx, wrapped_message, len(message), 0, ctypes.byref(unwrapped_message_length));
-        if res==0:
-            return (res, "");
-        if res!=-4:
-	    raise exception.themis_exception("secure_session_unwrap (buffer_length determination) failed: " + str(res));
+        if res==THEMIS_CODES.SUCCESS:
+            return sstring("");
+        if res!=THEMIS_CODES.BUFFER_TOO_SMALL:
+	    raise exception.themis_exception(res,"secure_session_unwrap (buffer_length determination) failed");
         unwrapped_message=ctypes.create_string_buffer(unwrapped_message_length.value);
 	res=themis.secure_session_unwrap(self.session_ctx, wrapped_message, len(message), ctypes.byref(unwrapped_message), ctypes.byref(unwrapped_message_length));
-        if res<0:
-	    raise exception.themis_exception("secure_session_unwrap failed: " + str(res));
-        return (res, ctypes.string_at(unwrapped_message, unwrapped_message_length));    
+	rez=sstring(ctypes.string_at(unwrapped_message, unwrapped_message_length));
+        if res==THEMIS_CODES.SEND_AS_IS:
+	    rez.set_control();
+	elif res!=THEMIS_CODES.SUCCESS:
+	    raise exception.themis_exception(res,"secure_session_unwrap failed");
+        return rez;    
 
 class mem_transport(object):
     def __init__(self):

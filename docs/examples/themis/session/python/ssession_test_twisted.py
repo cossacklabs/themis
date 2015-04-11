@@ -19,10 +19,11 @@ class Tw_protocol(protocol.Protocol):
 	self.session=ssession.ssession("server", server_priv, self.transport_);
 
     def dataReceived(self, data):
-        status, message = self.session.unwrap(data); 		#decrypt message
-        if status==1:						#if status==1 session is not established yet
-            self.transport.write(message);			#send unwrapped message to client as is
-        else:							#if status!=1 session is established
+        message = self.session.unwrap(data); 		#decrypt message
+        if message.is_control:				#if status==1 session is not established yet
+            self.transport.write(message);		#send unwrapped message to client as is
+        else:						#if status!=1 session is established
+	    print message;
             self.transport.write(self.session.wrap(message));	#wrap reply message and send it
 
 class Tw_Factory(protocol.Factory):

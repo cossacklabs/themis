@@ -17,13 +17,13 @@ http_client = tornado.httpclient.HTTPClient();
 session=ssession.ssession("client", client_priv, transport());
 try:
     response = http_client.fetch(tornado.httpclient.HTTPRequest("http://127.0.0.1:26260", "POST", None, session.connect_request())); #send initial message to server
-    res, message=session.unwrap(response.body);		#decrypt accepted message
-    while res==1:					#if status==1 then session is not established yet
+    message=session.unwrap(response.body);		#decrypt accepted message
+    while message.is_control:					#if status==1 then session is not established yet
         response = http_client.fetch(tornado.httpclient.HTTPRequest("http://127.0.0.1:26260", "POST", None, message)); #send unwrapped message to server as is
-        res, message = session.unwrap(response.body);	#decrypt accepted message
+        message = session.unwrap(response.body);	#decrypt accepted message
 
     response = http_client.fetch(tornado.httpclient.HTTPRequest("http://127.0.0.1:26260", "POST", None, session.wrap("This is test message")));#wrap and send inform message
-    res, message = session.unwrap(response.body);	#decrypt accepted message
+    message = session.unwrap(response.body);	#decrypt accepted message
     print message;					#print accepted plain message
     
 except tornado.httpclient.HTTPError as e:
