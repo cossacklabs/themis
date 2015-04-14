@@ -14,6 +14,7 @@
 
 #include <arpa/inet.h>
 #include "portable_endian.h"
+
 #define THEMIS_SESSION_WRAP_TAG "TSWM"
 
 /* How much sequence number may differ from expected for message to be considered valid */
