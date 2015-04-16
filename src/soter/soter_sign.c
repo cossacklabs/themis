@@ -7,6 +7,10 @@
 #include <common/error.h>
 #include <soter/soter.h>
 
+#ifdef LIBRESSL
+#include <soter/openssl/soter_openssl.h>
+#endif
+
 #ifdef OPENSSL
 #include <soter/openssl/soter_openssl.h>
 #endif

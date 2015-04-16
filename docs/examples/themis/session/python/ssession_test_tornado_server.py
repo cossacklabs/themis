@@ -18,6 +18,7 @@ session=ssession.ssession("server", server_priv, transport());
 
 class MainHandler(tornado.web.RequestHandler):        
     def post(self):
+	print repr(self.request.body);
         message = session.unwrap(self.request.body);	#decrypt received message
         if message.is_control:				#if status==1 then session is not ectablish yet
             self.write(message);			#send unwraped message to client as is
