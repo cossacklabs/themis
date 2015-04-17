@@ -28,4 +28,5 @@ typedef int soter_status_t;
 #include <soter/soter_asym_sign.h>
 #include <soter/soter_kdf.h>
 
+const char* soter_version();
 #endif /* SOTER_H */

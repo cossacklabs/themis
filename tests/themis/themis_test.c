@@ -11,6 +11,7 @@
 
 int main(int argc, char* argv[])
 {
+  printf("themis version %s\n", themis_version());
   testsuite_start_testing();
 
   run_secure_message_test();
