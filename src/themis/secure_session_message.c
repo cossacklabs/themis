@@ -31,6 +31,7 @@ themis_status_t secure_session_wrap(secure_session_t *session_ctx, const void *m
 	uint32_t *seq = length + 1;
 	uint8_t *ts = (uint8_t *)(seq + 1);
 
+	uint64_t curr_time;
 	themis_status_t res;
 
 	if ((NULL == session_ctx) || (NULL == message) || (0 == message_length) || (NULL == wrapped_message_length))
@@ -44,18 +45,19 @@ themis_status_t secure_session_wrap(secure_session_t *session_ctx, const void *m
 		return HERMES_BUFFER_TOO_SMALL;
 	}
 
-	if (-1 == time((time_t *)ts))
+	curr_time = time(NULL);
+	if (-1 == curr_time)
 	{
 		return HERMES_FAIL;
 	}
 
-	*((time_t *)ts) = htobe64(*((time_t *)ts));
+	*((uint64_t *)ts) = htobe64(curr_time);
 
 	*wrapped_message_length = WRAPPED_SIZE(message_length);
 	memmove(ts + 8, message, message_length);
 
 	*seq = htonl(session_ctx->out_seq);
-	*length = htonl(message_length + sizeof(uint32_t) + sizeof(time_t));
+	*length = htonl(message_length + sizeof(uint32_t) + sizeof(uint64_t));
 
 	res = soter_rand(iv, CIPHER_MAX_BLOCK_SIZE);
 	if (HERMES_SUCCESS != res)
@@ -63,7 +65,7 @@ themis_status_t secure_session_wrap(secure_session_t *session_ctx, const void *m
 		return res;
 	}
 
-	res = encrypt_gcm(session_ctx->out_cipher_key, sizeof(session_ctx->out_cipher_key), iv, CIPHER_MAX_BLOCK_SIZE, length, message_length + sizeof(uint32_t) + sizeof(time_t) + sizeof(uint32_t), length, message_length + sizeof(uint32_t) + sizeof(time_t) + sizeof(uint32_t) + CIPHER_AUTH_TAG_SIZE);
+	res = encrypt_gcm(session_ctx->out_cipher_key, sizeof(session_ctx->out_cipher_key), iv, CIPHER_MAX_BLOCK_SIZE, length, message_length + sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint32_t), length, message_length + sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint32_t) + CIPHER_AUTH_TAG_SIZE);
 	if (HERMES_SUCCESS != res)
 	{
 		return res;
@@ -80,11 +82,11 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 	const uint32_t *session_id = (const uint32_t *)wrapped_message;
 	const uint8_t *iv = (const uint8_t *)(session_id + 1);
 
-	uint8_t message_header[sizeof(uint32_t) + sizeof(uint32_t) + sizeof(time_t)];
+	uint8_t message_header[sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint64_t)];
 	size_t message_header_size = sizeof(message_header);
 	uint32_t length;
 	uint32_t seq;
-	time_t ts;
+	uint64_t ts;
 
 	time_t curr_time;
 	themis_status_t res;
@@ -163,7 +165,7 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 
 	length = ntohl(*((uint32_t *)message_header));
 	seq = ntohl(*((uint32_t *)(message_header + sizeof(uint32_t))));
-	ts = be64toh(*((time_t *)(message_header + sizeof(uint32_t) + sizeof(uint32_t))));
+	ts = be64toh(*((uint64_t *)(message_header + sizeof(uint32_t) + sizeof(uint32_t))));
 
 	if (length > (UNWRAPPED_SIZE(wrapped_message_length) + sizeof(uint32_t) + 8))
 	{
@@ -183,7 +185,7 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 		goto err;
 	}
 
-	*message_length = length - (sizeof(uint32_t) + sizeof(time_t));
+	*message_length = length - (sizeof(uint32_t) + sizeof(uint64_t));
 
 	/* TODO: change to GCM when fixed */
 	/*{
