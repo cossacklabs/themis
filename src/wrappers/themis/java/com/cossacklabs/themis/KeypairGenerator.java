@@ -12,12 +12,12 @@ public abstract class KeypairGenerator {
 	
 	static native byte[][] generateKeys();
 	
-	public static Keypair generateKeypair() {
+	public static Keypair generateKeypair() throws KeyGenerationException {
 		
 		byte[][] keys = generateKeys();
 		
 		if (null == keys) {
-			return null;
+			throw new KeyGenerationException();
 		}
 		
 		return new Keypair(new PrivateKey(keys[0]), new PublicKey(keys[1]));
