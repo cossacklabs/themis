@@ -18,6 +18,12 @@ android {
     	main {
     		java.srcDirs = ['src/wrappers/themis/java']
     		manifest.srcFile 'src/wrappers/themis/android/AndroidManifest.xml'
+    		
+    		jniLibs.srcDirs = ['libs']
     	}
+    	
+    	androidTest.setRoot('tests/themis/wrappers/android')
+        androidTest.java.srcDirs = ['tests/themis/wrappers/android']
+
 	}
 }
