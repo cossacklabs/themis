@@ -77,7 +77,7 @@ public class SecureCellTest extends AndroidTestCase {
 		
 		assertTrue(protectedData.getProtectedData().length == data.length);
 		
-		cell = new SecureCell(key);
+		cell = new SecureCell(key, SecureCell.MODE_TOKEN_PROTECT);
 		byte[] unprotectedData = cell.unprotect(context, protectedData);
 		
 		assertTrue(Arrays.equals(data, unprotectedData));
@@ -97,7 +97,7 @@ public class SecureCellTest extends AndroidTestCase {
 		
 		assertTrue(protectedData.getProtectedData().length == data.length);
 		
-		cell = new SecureCell(key);
+		cell = new SecureCell(key, SecureCell.MODE_CONTEXT_IMPRINT);
 		byte[] unprotectedData = cell.unprotect(context, protectedData);
 		
 		assertTrue(Arrays.equals(data, unprotectedData));

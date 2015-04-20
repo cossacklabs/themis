@@ -45,7 +45,7 @@ LOCAL_STATIC_LIBRARIES := libthemis libsoter
 LOCAL_SHARED_LIBRARIES := libcrypto
 
 LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
-# LOCAL_LDFLAGS := -llog
+LOCAL_LDFLAGS := -llog
 
 include $(BUILD_SHARED_LIBRARY)
 

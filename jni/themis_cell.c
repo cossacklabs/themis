@@ -186,8 +186,6 @@ err:
 	return protected_data;
 }
 
-#include <android/log.h>
-
 JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(JNIEnv *env, jclass thiz, jbyteArray key, jbyteArray context, jobjectArray protected_data, jint mode)
 {
 	size_t key_length = (*env)->GetArrayLength(env, key);
