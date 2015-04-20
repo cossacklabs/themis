@@ -47,7 +47,7 @@ public class SecureMessageTest extends AndroidTestCase {
 			
 			byte[] wrappedMessage = aWrapper.wrap(message);
 			
-			assertFalse(message.length == wrappedMessage.length);
+			assertTrue(message.length < wrappedMessage.length);
 			
 			byte[] unwrappedMessage = bWrapper.unwrap(wrappedMessage);
 			
