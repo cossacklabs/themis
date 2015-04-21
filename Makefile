@@ -12,14 +12,20 @@ ifeq ($(ENGINE),)
 	ENGINE=libressl
 endif
 
+ifeq ($(PREFIX),)
+PREFIX = /usr
+endif
+
 ifneq ($(ENGINE),)
 ifeq ($(ENGINE),openssl)
-	CRYPTO_ENGINE_DEF = OPENSSL	
-	CRYPTO_ENGINE = $(SRC_PATH)/soter/openssl
+	CRYPTO_ENGINE_DEF = OPENSSL
+	CRYPTO_ENGINE_PATH=openssl
+	CRYPTO_ENGINE = $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)
 	CFLAGS += -D$(CRYPTO_ENGINE_DEF)
 else ifeq ($(ENGINE),libressl)
 	CRYPTO_ENGINE_DEF = LIBRESSL	
-	CRYPTO_ENGINE = $(SRC_PATH)/soter/openssl
+	CRYPTO_ENGINE_PATH=openssl
+	CRYPTO_ENGINE = $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)
 	CFLAGS += -D$(CRYPTO_ENGINE_DEF)
 else
 	ERROR = $(error error: engine $(ENGINE) unsupported...)
@@ -34,22 +40,25 @@ ifneq ($(ENGINE_LIB_PATH),)
 endif
 
 UNAME=$(shell uname)
-IS_LINUX = $(shell $(CXX) -dumpmachine 2>&1 | $(EGREP) -c "linux")
-IS_MINGW = $(shell $(CXX) -dumpmachine 2>&1 | $(EGREP) -c "mingw")
-CLANG_COMPILER = $(shell $(CXX) --version 2>&1 | $(EGREP) -i -c "clang version")
+IS_LINUX = $(shell $(CC) -dumpmachine 2>&1 | $(EGREP) -c "linux")
+IS_MINGW = $(shell $(CC) -dumpmachine 2>&1 | $(EGREP) -c "mingw")
+IS_CLANG_COMPILER = $(shell $(CC) --version 2>&1 | $(EGREP) -i -c "clang version")
 
-ifeq ($(UNAME),Darwin)
-AR = libtool
-ARFLAGS = -static -o
-CXX = c++
-IS_GCC2 = $(shell $(CXX) -v 2>&1 | $(EGREP) -c gcc-932)
-ifeq ($(IS_GCC2),1)
-CXXFLAGS += -fno-coalesce-templates -fno-coalesce-static-vtables
-LDLIBS += -lstdc++
-LDFLAGS += -flat_namespace -undefined suppress -m
+ifeq ($(shell uname),Darwin)
+ifneq ($(SDK),)
+SDK_PLATFORM_VERSION=$(shell xcrun --sdk $(SDK) --show-sdk-platform-version)
+XCODE_BASE=$(shell xcode-select --print-path)
+CC=$(XCODE_BASE)/usr/bin/gcc
+BASE=$(shell xcrun --sdk $(SDK) --show-sdk-platform-path)
+SDK_BASE=$(shell xcrun --sdk $(SDK) --show-sdk-path)
+FRAMEWORKS=$(SDK_BASE)/System/Library/Frameworks/
+SDK_INCLUDES=$(SDK_BASE)/usr/include
+CFLAFS += -isysroot $(SDK_BASE) 
+endif
+ifneq ($(ARCH),)
+CFLAFS += -isysroot $(ARCH)
 endif
 endif
-
 
 ifdef DEBUG
 # Making debug build for now
@@ -95,3 +104,20 @@ err: ; $(ERROR)
 
 clean: nist_rng_test_suite
 	rm -rf $(BIN_PATH)
+
+install: err all
+	mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/themis/soter $(PREFIX)/include/themis/themis $(PREFIX)/include/themis/soter/$(CRYPTO_ENGINE_PATH) $(PREFIX)/include/themis/common $(PREFIX)/lib
+	cp $(SRC_PATH)/common/*.h $(PREFIX)/include/themis/common
+	cp $(SRC_PATH)/soter/*.h $(PREFIX)/include//themis/soter
+	cp $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)/*.h $(PREFIX)/include/themis//soter/$(CRYPTO_ENGINE_PATH)
+	cp $(SRC_PATH)/themis/*.h $(PREFIX)/include/themis/themis
+	cp themis.h $(PREFIX)/themis
+	cp $(BIN_PATH)/*.a $(PREFIX)/lib
+	cp $(BIN_PATH)/*.so $(PREFIX)/lib
+
+uninstall:
+	rm -rf $(PREFIX)/include/themis
+	rm $(PREFIX)/lib/libsoter.a
+	rm $(PREFIX)/lib/libthemis.a
+	rm $(PREFIX)/lib/libsoter.so
+	rm $(PREFIX)/lib/libthemis.so
