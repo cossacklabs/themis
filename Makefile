@@ -106,17 +106,19 @@ clean: nist_rng_test_suite
 	rm -rf $(BIN_PATH)
 
 install: err all
-	mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/themis/soter $(PREFIX)/include/themis/themis $(PREFIX)/include/themis/soter/$(CRYPTO_ENGINE_PATH) $(PREFIX)/include/themis/common $(PREFIX)/lib
-	cp $(SRC_PATH)/common/*.h $(PREFIX)/include/themis/common
-	cp $(SRC_PATH)/soter/*.h $(PREFIX)/include//themis/soter
-	cp $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)/*.h $(PREFIX)/include/themis//soter/$(CRYPTO_ENGINE_PATH)
-	cp $(SRC_PATH)/themis/*.h $(PREFIX)/include/themis/themis
-	cp themis.h $(PREFIX)/themis
+	mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter $(PREFIX)/include/soter/$(CRYPTO_ENGINE_PATH) $(PREFIX)/include/common $(PREFIX)/lib
+	cp $(SRC_PATH)/common/*.h $(PREFIX)/include/common
+	cp $(SRC_PATH)/soter/*.h $(PREFIX)/include/soter
+	cp $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)/*.h $(PREFIX)/include/soter/$(CRYPTO_ENGINE_PATH)
+	cp $(SRC_PATH)/themis/*.h $(PREFIX)/include/themis
+#	cp themis.h $(PREFIX)/themis
 	cp $(BIN_PATH)/*.a $(PREFIX)/lib
 	cp $(BIN_PATH)/*.so $(PREFIX)/lib
 
 uninstall:
 	rm -rf $(PREFIX)/include/themis
+	rm -rf $(PREFIX)/include/soter
+	rm -rf $(PREFIX)/include/common/error.h
 	rm $(PREFIX)/lib/libsoter.a
 	rm $(PREFIX)/lib/libthemis.a
 	rm $(PREFIX)/lib/libsoter.so
