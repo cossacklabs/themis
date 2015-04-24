@@ -8,7 +8,7 @@
 #include <common/error.h>
 #include <themis/secure_message.h>
 
-JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(JNIEnv *env, jclass thiz, jbyteArray private, jbyteArray public, jbyteArray message, jboolean is_wrap)
+JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(JNIEnv *env, jobject thiz, jbyteArray private, jbyteArray public, jbyteArray message, jboolean is_wrap)
 {
 	size_t private_length = (*env)->GetArrayLength(env, private);
 	size_t public_length = (*env)->GetArrayLength(env, public);

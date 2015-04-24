@@ -13,7 +13,7 @@
 #define MODE_TOKEN_PROTECT 1
 #define MODE_CONTEXT_IMPRINT 2
 
-JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(JNIEnv *env, jclass thiz, jbyteArray key, jbyteArray context, jbyteArray data, jint mode)
+JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(JNIEnv *env, jobject thiz, jbyteArray key, jbyteArray context, jbyteArray data, jint mode)
 {
 	size_t key_length = (*env)->GetArrayLength(env, key);
 	size_t data_length = (*env)->GetArrayLength(env, data);
@@ -186,7 +186,7 @@ err:
 	return protected_data;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(JNIEnv *env, jclass thiz, jbyteArray key, jbyteArray context, jobjectArray protected_data, jint mode)
+JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(JNIEnv *env, jobject thiz, jbyteArray key, jbyteArray context, jobjectArray protected_data, jint mode)
 {
 	size_t key_length = (*env)->GetArrayLength(env, key);
 	size_t data_length = 0;

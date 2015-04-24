@@ -38,14 +38,14 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libthemis_jni
 
-LOCAL_SRC_FILES := themis_jni.c themis_message.c themis_keygen.c themis_cell.c
+LOCAL_SRC_FILES := themis_jni.c themis_message.c themis_keygen.c themis_cell.c themis_session.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src
 
 LOCAL_STATIC_LIBRARIES := libthemis libsoter
 LOCAL_SHARED_LIBRARIES := libcrypto
 
 LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
-LOCAL_LDFLAGS := -llog
+# LOCAL_LDFLAGS := -llog
 
 include $(BUILD_SHARED_LIBRARY)
 

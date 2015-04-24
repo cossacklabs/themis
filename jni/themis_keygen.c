@@ -8,7 +8,7 @@
 #include <common/error.h>
 #include <themis/secure_message.h>
 
-JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_generateKeys(JNIEnv *env, jclass thiz)
+JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_generateKeys(JNIEnv *env, jobject thiz)
 {
 	size_t private_length = 0;
 	size_t public_length = 0;
