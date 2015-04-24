@@ -7,7 +7,6 @@
 #ifndef SOTER_EC_COMMON_H
 #define SOTER_EC_COMMON_H
 
-#include <common/error.h>
 #include <soter/soter.h>
 #include <soter/soter_ec_key.h>
 #include "soter_openssl.h"

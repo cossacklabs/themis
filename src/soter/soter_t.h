@@ -6,8 +6,8 @@
 
 #ifndef SOTER_T_H
 #define SOTER_T_H
+#include <soter/soter.h>
 
-/* TODO: #ifdef type definition includes when we support different crypto engines */
 #ifdef LIBRESSL
 #include <soter/openssl/soter_openssl.h>
 #elif OPENSSL

@@ -4,6 +4,7 @@
  * (c) CossackLabs
  */
 
+#include <common/error.h>
 #include <themis/secure_message.h>
 #include <themis/secure_message_wrapper.h>
 #include <soter/soter_t.h>

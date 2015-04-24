@@ -7,7 +7,6 @@
 
 #include "common.h"
 
-#include <common/error.h>
 #include <themis/secure_session.h>
 
 #define SERVER_ID "server"
@@ -103,7 +102,7 @@ void* run_server(void *arg)
 	}
 
 	status = secure_session_init(&(server.ctx), SERVER_ID, strlen(SERVER_ID), server_priv, sizeof(server_priv), &clb);
-	if (HERMES_SUCCESS != status)
+	if (0 != status)
 	{
 		return NULL;
 	}

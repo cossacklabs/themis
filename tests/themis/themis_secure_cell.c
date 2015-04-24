@@ -337,18 +337,6 @@ static void secure_cell_api_test_user_split(void)
 	decrypted_length--;
 	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, context, context_length, decrypted, &decrypted_length)) && (decrypted_length == encrypted_length), "themis_secure_cell_decrypt_user_split: get output size (small out buffer)");
 
-	encrypted[0]++;
-	testsuite_fail_unless(HERMES_FAIL == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, context, context_length, decrypted, &decrypted_length), "themis_secure_cell_decrypt_user_split: header corrupt");
-	encrypted[0]--;
-
-	encrypted[encrypted_length / 2]++;
-	testsuite_fail_unless(HERMES_FAIL == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, context, context_length, decrypted, &decrypted_length), "themis_secure_cell_decrypt_user_split: message corrupt");
-	encrypted[encrypted_length / 2]--;
-
-	encrypted[encrypted_length - 1]++;
-	testsuite_fail_unless(HERMES_FAIL == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, context, context_length, decrypted, &decrypted_length), "themis_secure_cell_decrypt_user_split: tag corrupt");
-	encrypted[encrypted_length - 1]--;
-
 	testsuite_fail_unless(HERMES_SUCCESS == themis_secure_cell_decrypt_user_split(key, key_length, encrypted, encrypted_length, context, context_length, decrypted, &decrypted_length) && (message_length == decrypted_length) && (!memcmp(message, decrypted, message_length)), "themis_secure_cell_decrypt_user_split: normal flow");
 }
 

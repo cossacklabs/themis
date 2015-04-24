@@ -10,7 +10,7 @@
 #include <themis/themis.h>
 
 #include <sys/types.h>
-
+#include <soter/soter.h>
 #define THEMIS_SESSION_ID_TAG "TSID"
 #define THEMIS_SESSION_PROTO_TAG "TSPM"
 
@@ -33,7 +33,7 @@ typedef struct secure_session_user_callbacks_type secure_session_user_callbacks_
 
 
 /* TODO: probably move this to private headers */
-#include <soter/soter_t.h>
+//#include <soter/soter_t.h>
 #include <themis/secure_session_peer.h>
 /* TODO: move to separate header */
 struct secure_session_peer_type
@@ -60,7 +60,7 @@ void secure_session_peer_cleanup(secure_session_peer_t *peer);
 typedef struct secure_session_type secure_session_t;
 typedef themis_status_t (*secure_session_handler)(secure_session_t *session_ctx, const void *data, size_t data_length, void *output, size_t *output_length);
 
-struct secure_session_type
+/*struct secure_session_type
 {
 	soter_asym_ka_t ecdh_ctx;
 	const secure_session_user_callbacks_t *user_callbacks;
@@ -84,7 +84,7 @@ struct secure_session_type
 
 themis_status_t secure_session_init(secure_session_t *session_ctx, const void *id, size_t id_length, const void *sign_key, size_t sign_key_length, const secure_session_user_callbacks_t *user_callbacks);
 themis_status_t secure_session_cleanup(secure_session_t *session_ctx);
-
+*/
 secure_session_t* secure_session_create(const void *id, size_t id_length, const void *sign_key, size_t sign_key_length, const secure_session_user_callbacks_t *user_callbacks);
 themis_status_t secure_session_destroy(secure_session_t *session_ctx);
 

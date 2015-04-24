@@ -7,8 +7,7 @@
 
 #include "common.h"
 
-#include <common/error.h>
-#include <themis/secure_session.h>
+#include <themis/themis.h>
 
 #define SERVER_ID "server"
 #define CLIENT_ID "client"
@@ -92,7 +91,7 @@ void* run_client(void *arg)
 	//unlink(SOCKET_NAME);
 
 	status = secure_session_init(&(client.ctx), CLIENT_ID, strlen(CLIENT_ID), client_priv, sizeof(client_priv), &clb);
-	if (HERMES_SUCCESS != status)
+	if (0 != status)
 	{
 		return NULL;
 	}
@@ -103,7 +102,7 @@ void* run_client(void *arg)
 	}
 
 	status = secure_session_connect(&(client.ctx));
-	if (HERMES_SUCCESS != status)
+	if (0 != status)
 	{
 		return NULL;
 	}

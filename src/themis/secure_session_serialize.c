@@ -5,6 +5,7 @@
  */
 
 #include <themis/secure_session_utils.h>
+#include <themis/secure_session_t.h>
 #include <common/error.h>
 
 #include <soter/soter_container.h>

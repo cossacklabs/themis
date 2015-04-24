@@ -5,6 +5,7 @@
  */
 
 #include <themis/secure_session.h>
+#include <themis/secure_session_t.h>
 #include <themis/secure_session_utils.h>
 #include <common/error.h>
 

@@ -6,6 +6,7 @@
 
 #include <themis/secure_session_utils.h>
 #include <themis/secure_session.h>
+#include <themis/secure_session_t.h>
 
 #include <soter/soter_t.h>
 #include <soter/soter_rsa_key.h>

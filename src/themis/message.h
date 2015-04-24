@@ -7,8 +7,7 @@
 #ifndef THEMIS_MESSAGE_H_
 #define THEMIS_MESSAGE_H_
 
-#include "common/error.h"
-#include "themis/themis.h"
+#include <themis/themis.h>
 
 struct themis_message_type{
   size_t length;

@@ -5,7 +5,8 @@
  */
 
 #include <string.h>
-#include "themis/message.h"
+#include <common/error.h>
+#include <themis/message.h>
 
 themis_message_t* themis_message_init(const uint8_t* message, const size_t message_length){
   themis_message_t* msg=malloc(sizeof(themis_message_t));

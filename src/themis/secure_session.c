@@ -5,6 +5,7 @@
  */
 
 #include <themis/secure_session.h>
+#include <themis/secure_session_t.h>
 #include <common/error.h>
 #include <soter/soter_rsa_key.h>
 #include <soter/soter_ec_key.h>
@@ -12,6 +13,7 @@
 #include <string.h>
 
 #include <themis/secure_session_utils.h>
+#include <soter/soter_t.h>
 
 #define SESSION_ID_GENERATION_LABEL "Themis secure session unique identifier"
 #define SESSION_MASTER_KEY_GENERATION_LABEL "Themis secure session master key"

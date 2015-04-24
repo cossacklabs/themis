@@ -7,9 +7,8 @@
 #ifndef _THEMIS_SECURE_MESSAGE_WRAPPER_H_
 #define _THEMIS_SECURE_MESSAGE_WRAPPER_H_
 
-#include "common/error.h"
-#include "themis/themis.h"
-#include "soter/soter.h"
+#include <themis/themis.h>
+#include <soter/soter.h>
 
 #define THEMIS_SECURE_MESSAGE                      0x26040000
 
