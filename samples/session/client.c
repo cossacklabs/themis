@@ -8,13 +8,14 @@
 #include "common.h"
 
 #include <themis/themis.h>
+#include <stdio.h>
 
 #define SERVER_ID "server"
 #define CLIENT_ID "client"
 
 struct client_type
 {
-	secure_session_t ctx;
+	secure_session_t* ctx;
 	int sock;
 };
 
@@ -61,7 +62,7 @@ static int on_get_pub_key(const void *id, size_t id_length, void *key_buffer, si
 }
 
 /* This is client session ctx */
-static client_t client = {{0}, -1};
+static client_t client = {NULL, -1};
 
 static secure_session_user_callbacks_t clb =
 {
@@ -90,8 +91,8 @@ void* run_client(void *arg)
 
 	//unlink(SOCKET_NAME);
 
-	status = secure_session_init(&(client.ctx), CLIENT_ID, strlen(CLIENT_ID), client_priv, sizeof(client_priv), &clb);
-	if (0 != status)
+	client.ctx = secure_session_create(CLIENT_ID, strlen(CLIENT_ID), client_priv, sizeof(client_priv), &clb);
+	if (NULL == client.ctx)
 	{
 		return NULL;
 	}
@@ -101,7 +102,7 @@ void* run_client(void *arg)
 		return NULL;
 	}
 
-	status = secure_session_connect(&(client.ctx));
+	status = secure_session_connect(client.ctx);
 	if (0 != status)
 	{
 		return NULL;
@@ -113,7 +114,7 @@ void* run_client(void *arg)
 		ssize_t bytes_received;
 		const char *message = "This is a test message";
 
-		bytes_sent = secure_session_send(&(client.ctx), message, strlen(message));
+		bytes_sent = secure_session_send(client.ctx, message, strlen(message));
 		if (bytes_sent < 0)
 		{
 			/* Some error, log and continue */
@@ -121,7 +122,7 @@ void* run_client(void *arg)
 		}
 
 		/* Wait for response */
-		bytes_received = secure_session_receive(&(client.ctx), buffer, sizeof(buffer));
+		bytes_received = secure_session_receive(client.ctx, buffer, sizeof(buffer));
 		if (bytes_received < 0)
 		{
 			/* Some error, log and continue */
@@ -140,7 +141,7 @@ void* run_client(void *arg)
 	}
 
 	/* send "finish" message to server */
-	bytes_sent = secure_session_send(&(client.ctx), "finish", strlen("finish"));
+	bytes_sent = secure_session_send(client.ctx, "finish", strlen("finish"));
 	if (bytes_sent < 0)
 	{
 		/* Some error, log and continue */

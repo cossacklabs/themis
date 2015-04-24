@@ -8,13 +8,13 @@
 #include "common.h"
 
 #include <themis/secure_session.h>
-
+#include <stdio.h>
 #define SERVER_ID "server"
 #define CLIENT_ID "client"
 
 struct server_type
 {
-	secure_session_t ctx;
+	secure_session_t* ctx;
 	int listen_socket;
 	int client_socket;
 };
@@ -62,7 +62,7 @@ static int on_get_pub_key(const void *id, size_t id_length, void *key_buffer, si
 }
 
 /* This is server session ctx */
-static server_t server = {{0}, -1, -1};
+static server_t server = {NULL, -1, -1};
 
 static secure_session_user_callbacks_t clb =
 {
@@ -101,8 +101,8 @@ void* run_server(void *arg)
 		return NULL;
 	}
 
-	status = secure_session_init(&(server.ctx), SERVER_ID, strlen(SERVER_ID), server_priv, sizeof(server_priv), &clb);
-	if (0 != status)
+	server.ctx = secure_session_create(SERVER_ID, strlen(SERVER_ID), server_priv, sizeof(server_priv), &clb);
+	if (NULL == server.ctx)
 	{
 		return NULL;
 	}
@@ -117,7 +117,7 @@ void* run_server(void *arg)
 	while (1)
 	{
 		uint8_t buffer[BUF_SIZE];
-		ssize_t bytes_received = secure_session_receive(&(server.ctx), buffer, sizeof(buffer));
+		ssize_t bytes_received = secure_session_receive(server.ctx, buffer, sizeof(buffer));
 		ssize_t bytes_sent;
 
 		if (bytes_received < 0)
@@ -138,7 +138,7 @@ void* run_server(void *arg)
 			}
 
 			/* For other messages, just echo them back */
-			bytes_sent = secure_session_send(&(server.ctx), buffer, bytes_received);
+			bytes_sent = secure_session_send(server.ctx, buffer, bytes_received);
 			if (bytes_sent < 0)
 			{
 				/* Some error, log and continue */
