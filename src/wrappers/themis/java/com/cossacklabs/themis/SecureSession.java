@@ -48,7 +48,7 @@ public class SecureSession {
 	
 	static final String CHARSET = "UTF-16";
 	
-	private ISessionCallbacks callbacks;
+	protected ISessionCallbacks callbacks;
 	private long sessionPtr;
 	
 	native long create(byte[] id, byte[] signKey);
@@ -88,10 +88,14 @@ public class SecureSession {
 		return request;
 	}
 	
-	public byte[] wrap(byte[] data) throws SecureSessionException {
+	public byte[] wrap(byte[] data) throws SecureSessionException, NullArgumentException {
 		
 		if (0 == sessionPtr) {
 			throw new SecureSessionException("session is closed");
+		}
+		
+		if (null == data) {
+			throw new NullArgumentException();
 		}
 		
 		byte[] wrappedData = jniWrap(data);
@@ -102,10 +106,14 @@ public class SecureSession {
 		return wrappedData;
 	}
 	
-	public UnwrapResult unwrap(byte[] wrappedData) throws SecureSessionException {
+	public UnwrapResult unwrap(byte[] wrappedData) throws SecureSessionException, NullArgumentException {
 		
 		if (0 == sessionPtr) {
 			throw new SecureSessionException("session is closed");
+		}
+		
+		if (null == wrappedData) {
+			throw new NullArgumentException();
 		}
 		
 		byte[][] result = jniUnwrap(wrappedData);
