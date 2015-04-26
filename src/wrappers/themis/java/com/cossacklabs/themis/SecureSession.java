@@ -9,6 +9,12 @@ public class SecureSession {
 		System.loadLibrary("themis_jni");
 	}
 	
+	public enum State {
+		IDLE,
+		NEGOTIATING,
+		ESTABLISHED
+	}
+	
 	public enum SessionDataType {
 		NO_DATA,
 		PROTOCOL_DATA,
@@ -50,6 +56,7 @@ public class SecureSession {
 	
 	protected ISessionCallbacks callbacks;
 	private long sessionPtr;
+	private State sessionState = State.IDLE;
 	
 	native long create(byte[] id, byte[] signKey);
 	native void destroy();
@@ -57,6 +64,9 @@ public class SecureSession {
 	native byte[] jniGenerateConntect();
 	native byte[] jniWrap(byte[] data);
 	native byte[][] jniUnwrap(byte[] wrappedData);
+	native boolean jniIsEstablished();
+	native byte[] jniSave();
+	static native long jniLoad(byte[] state);
 	
 	public SecureSession(byte[] id, PrivateKey signPrivateKey, ISessionCallbacks callbacks) throws SecureSessionException {
 		
@@ -72,6 +82,10 @@ public class SecureSession {
 	public SecureSession(String id, PrivateKey signPrivateKey, ISessionCallbacks callbacks) throws UnsupportedEncodingException, SecureSessionException {
 		this(id.getBytes(CHARSET), signPrivateKey, callbacks);
 	}
+	
+	private SecureSession() {
+		
+	};
 	
 	public byte[] generateConnectRequest() throws SecureSessionException {
 		
@@ -148,5 +162,57 @@ public class SecureSession {
 		} else {
 			return publicKey.toByteArray();
 		}
+	}
+	
+	private void stateChanged(int state) {
+		switch (state) {
+		case 0:
+			this.sessionState = State.IDLE;
+			break;
+		case 1:
+			this.sessionState = State.NEGOTIATING;
+			break;
+		case 2:
+			this.sessionState = State.ESTABLISHED;
+		}
+		
+		this.callbacks.stateChanged(this);
+	}
+	
+	public boolean isEstablished() throws SecureSessionException {
+		if (0 == sessionPtr) {
+			throw new SecureSessionException("session is closed");
+		}
+		
+		return jniIsEstablished();
+	}
+	
+	public byte[] save() throws SecureSessionException {
+		if (0 == sessionPtr) {
+			throw new SecureSessionException("session is closed");
+		}
+		
+		byte[] state = jniSave();
+		if (null == state) {
+			throw new SecureSessionException();
+		}
+		
+		return state;
+	}
+	
+	public static SecureSession restore(byte[] state, ISessionCallbacks callbacks) throws SecureSessionException {
+		SecureSession session = new SecureSession();
+		
+		session.sessionPtr = jniLoad(state);
+		if (0 == session.sessionPtr) {
+			throw new SecureSessionException();
+		}
+		
+		session.callbacks = callbacks;
+		return session;
+	}
+	
+	public State getState() {
+		return sessionState;
 	}
 }

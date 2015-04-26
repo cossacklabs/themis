@@ -38,8 +38,7 @@ public class SecureSessionTest extends AndroidTestCase {
 
 		@Override
 		public void stateChanged(SecureSession session) {
-			// TODO Auto-generated method stub
-			
+
 		}
 	};
 	

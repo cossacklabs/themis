@@ -14,6 +14,11 @@
 #define THEMIS_SESSION_ID_TAG "TSID"
 #define THEMIS_SESSION_PROTO_TAG "TSPM"
 
+/* session states */
+#define STATE_IDLE 0
+#define STATE_NEGOTIATING 1
+#define STATE_ESTABLISHED 2
+
 typedef ssize_t (*send_protocol_data_callback)(const uint8_t *data, size_t data_length, void *user_data);
 typedef ssize_t (*receive_protocol_data_callback)(uint8_t *data, size_t data_length, void *user_data);
 typedef void (*protocol_state_changed_callback)(int event, void *user_data);

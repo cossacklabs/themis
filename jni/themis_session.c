@@ -7,6 +7,7 @@
 #include <jni.h>
 #include <common/error.h>
 #include <themis/secure_session.h>
+#include <themis/secure_session_t.h>
 /*extern JavaVM *g_vm;*/
 
 #define SESSION_BUFFER_FIELD_NAME "sessionPtr"
@@ -14,6 +15,9 @@
 
 #define SESSION_GET_PUB_KEY_NAME "getPublicKeyForId"
 #define SESSION_GET_PUB_KEY_SIG "([B)[B"
+
+#define SESSION_STATE_CHANGED_NAME "stateChanged"
+#define SESSION_STATE_CHANGED_SIG "(I)V"
 
 /* These should correspond to SessionDataType enum in SecureSession.java */
 #define NO_DATA 0
@@ -63,6 +67,26 @@ static session_with_callbacks_t *get_native_session(JNIEnv *env, jobject session
 {
 	return (jint)sizeof(session_with_callbacks_t);
 }*/
+
+/* Make sure this method is called in the context of Java thread */
+static void on_state_changed(int event, void *user_data)
+{
+	session_with_callbacks_t *ctx = (session_with_callbacks_t *)user_data;
+	jmethodID state_changed_method = NULL;
+
+	if (!ctx)
+	{
+		return;
+	}
+
+	state_changed_method = (*(ctx->env))->GetMethodID(ctx->env, (*(ctx->env))->GetObjectClass(ctx->env, ctx->thiz), SESSION_STATE_CHANGED_NAME, SESSION_STATE_CHANGED_SIG);
+	if (!state_changed_method)
+	{
+		return;
+	}
+
+	(*(ctx->env))->CallObjectMethod(ctx->env, ctx->thiz, state_changed_method, (jint)event);
+}
 
 /* Make sure this method is called in the context of Java thread */
 static int on_get_public_key_for_id(const void *id, size_t id_length, void *key_buffer, size_t key_buffer_length, void *user_data)
@@ -122,6 +146,114 @@ static int on_get_public_key_for_id(const void *id, size_t id_length, void *key_
 
 	(*(ctx->env))->GetByteArrayRegion(ctx->env, public_key, 0, public_key_length, key_buffer);
 	return HERMES_SUCCESS;
+}
+
+JNIEXPORT jlong JNICALL Java_com_cossacklabs_themis_SecureSession_jniLoad(JNIEnv *env, jobject thiz, jbyteArray state)
+{
+	size_t state_length = (*env)->GetArrayLength(env, state);
+
+	themis_status_t themis_status;
+	session_with_callbacks_t *ctx = NULL;
+
+	jbyte *state_buf = (*env)->GetByteArrayElements(env, state, NULL);
+	if (!state_buf)
+	{
+		return 0;
+	}
+
+	ctx = malloc(sizeof(session_with_callbacks_t));
+	if (!ctx)
+	{
+		goto err;
+	}
+
+	memset(ctx, 0, sizeof(session_with_callbacks_t));
+
+	ctx->callbacks.get_public_key_for_id = on_get_public_key_for_id;
+	ctx->callbacks.state_changed = on_state_changed;
+	ctx->callbacks.user_data = ctx;
+
+	themis_status = secure_session_load(&(ctx->session), state_buf, state_length, &(ctx->callbacks));
+	if (HERMES_SUCCESS != themis_status)
+	{
+		free(ctx);
+		ctx = NULL;
+		goto err;
+	}
+
+err:
+
+	if (state_buf)
+	{
+		(*env)->ReleaseByteArrayElements(env, state, state_buf, 0);
+	}
+
+	return (intptr_t)ctx;
+}
+
+JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniSave(JNIEnv *env, jobject thiz)
+{
+	session_with_callbacks_t *ctx = get_native_session(env, thiz);
+
+	size_t state_length = 0;
+	jbyteArray state = NULL;
+	jbyte *state_buf = NULL;
+
+	themis_status_t res;
+
+	if (!ctx)
+	{
+		return NULL;
+	}
+
+	res = secure_session_save(&(ctx->session), NULL, &state_length);
+	if (HERMES_BUFFER_TOO_SMALL != res)
+	{
+		return NULL;
+	}
+
+	state = (*env)->NewByteArray(env, state_length);
+	if (!state)
+	{
+		return NULL;
+	}
+
+	state_buf = (*env)->GetByteArrayElements(env, state, NULL);
+	if (!state_buf)
+	{
+		return NULL;
+	}
+
+	res = secure_session_save(&(ctx->session), state_buf, &state_length);
+	(*env)->ReleaseByteArrayElements(env, state, state_buf, 0);
+
+	if (HERMES_SUCCESS == res)
+	{
+		return state;
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+JNIEXPORT jboolean JNICALL Java_com_cossacklabs_themis_SecureSession_jniIsEstablished(JNIEnv *env, jobject thiz)
+{
+	session_with_callbacks_t *ctx = get_native_session(env, thiz);
+
+	if (!ctx)
+	{
+		return JNI_FALSE;
+	}
+
+	if (secure_session_is_established(&(ctx->session)))
+	{
+		return JNI_TRUE;
+	}
+	else
+	{
+		return JNI_FALSE;
+	}
 }
 
 JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniWrap(JNIEnv *env, jobject thiz, jbyteArray data)
@@ -417,6 +549,7 @@ JNIEXPORT jlong JNICALL Java_com_cossacklabs_themis_SecureSession_create(JNIEnv 
 	}*/
 
 	ctx->callbacks.get_public_key_for_id = on_get_public_key_for_id;
+	ctx->callbacks.state_changed = on_state_changed;
 	ctx->callbacks.user_data = ctx;
 
 	themis_status = secure_session_init(&(ctx->session), id_buf, id_length, sign_key_buf, sign_key_length, &(ctx->callbacks));

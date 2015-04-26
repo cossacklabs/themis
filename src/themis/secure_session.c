@@ -183,6 +183,11 @@ themis_status_t secure_session_generate_connect_request(secure_session_t *sessio
 	session_ctx->state_handler = secure_session_proceed_client;
 	session_ctx->is_client = true;
 
+	if (session_ctx->user_callbacks->state_changed)
+	{
+		session_ctx->user_callbacks->state_changed(STATE_NEGOTIATING, session_ctx->user_callbacks->user_data);
+	}
+
 	return HERMES_SUCCESS;
 }
 
@@ -400,6 +405,11 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 
 	/* "Server mode": waiting response from the client */
 	session_ctx->state_handler = secure_session_finish_server;
+
+	if (session_ctx->user_callbacks->state_changed)
+	{
+		session_ctx->user_callbacks->state_changed(STATE_NEGOTIATING, session_ctx->user_callbacks->user_data);
+	}
 
 err:
 
@@ -785,6 +795,11 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 	/* "Server mode": negotiation completed */
 	session_ctx->state_handler = NULL;
 
+	if (session_ctx->user_callbacks->state_changed)
+	{
+		session_ctx->user_callbacks->state_changed(STATE_ESTABLISHED, session_ctx->user_callbacks->user_data);
+	}
+
 	return res;
 }
 
@@ -846,6 +861,11 @@ static themis_status_t secure_session_finish_client(secure_session_t *session_ct
 
 	/* "Client mode": negotiation completed */
 	session_ctx->state_handler = NULL;
+
+	if (session_ctx->user_callbacks->state_changed)
+	{
+		session_ctx->user_callbacks->state_changed(STATE_ESTABLISHED, session_ctx->user_callbacks->user_data);
+	}
 
 	return res;
 }
