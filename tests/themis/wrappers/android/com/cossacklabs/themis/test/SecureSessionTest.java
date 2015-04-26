@@ -38,7 +38,25 @@ public class SecureSessionTest extends AndroidTestCase {
 
 		@Override
 		public void stateChanged(SecureSession session) {
-
+			assertFalse(SecureSession.State.IDLE == session.getState());
+			
+			try {
+				if (SecureSession.State.NEGOTIATING == session.getState()) {
+					assertFalse(session.isEstablished());
+				}
+				
+				if (SecureSession.State.ESTABLISHED == session.getState()) {
+					assertTrue(session.isEstablished());
+				}
+			} catch (Exception e) {
+				String failMessage = e.getClass().getCanonicalName();
+				
+				if (null != e.getMessage()) {
+					failMessage += ": " + e.getMessage();
+				}
+				
+				fail(failMessage);
+			}
 		}
 	};
 	
@@ -137,6 +155,11 @@ public class SecureSessionTest extends AndroidTestCase {
 			assertTrue(wrappedMessage.length > result.getData().length);
 			
 			// server --> wrappedMessage --> client
+			
+			byte[] clientState = clientSession.save();
+			clientSession.close();
+			
+			clientSession = SecureSession.restore(clientState, callbacks);
 			
 			result = clientSession.unwrap(wrappedMessage);
 			
