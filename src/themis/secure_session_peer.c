@@ -27,7 +27,6 @@ themis_status_t secure_session_peer_init(secure_session_peer_t *peer, const void
 	{
 		total_len += ecdh_key_len;
 	}
-
 	peer->id = malloc(total_len);
 	if (NULL == peer->id)
 	{

@@ -23,6 +23,7 @@ static int soter_alg_to_curve_nid(soter_asym_ka_alg_t alg)
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_alg_t alg)
 {
 	EVP_PKEY *pkey;
+	asym_ka_ctx->pkey_ctx=NULL;
 	int nid = soter_alg_to_curve_nid(alg);
 
 	if ((!asym_ka_ctx) || (0 == nid))
@@ -48,7 +49,6 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_al
 		EVP_PKEY_free(pkey);
 		return HERMES_FAIL;
 	}
-
 	if (1 != EVP_PKEY_paramgen_init(asym_ka_ctx->pkey_ctx))
 	{
 		EVP_PKEY_free(pkey);
@@ -82,12 +82,11 @@ soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
 	{
 		return HERMES_INVALID_PARAMETER;
 	}
-
 	if (asym_ka_ctx->pkey_ctx)
 	{
+
 		EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
 	}
-
 	return HERMES_SUCCESS;
 }
 

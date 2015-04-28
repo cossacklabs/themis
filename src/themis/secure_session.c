@@ -34,6 +34,7 @@ themis_status_t secure_session_cleanup(secure_session_t *session_ctx)
 	secure_session_peer_cleanup(&(session_ctx->we));
 
 	soter_asym_ka_cleanup(&(session_ctx->ecdh_ctx));
+
 	memset(session_ctx, 0, sizeof(secure_session_t));
 
 	return HERMES_SUCCESS;
@@ -105,7 +106,7 @@ secure_session_t* secure_session_create(const void *id, size_t id_length, const 
 		return ctx;
 	}
 	else
-	  {
+	{
 		free(ctx);
 		return NULL;
 	}
