@@ -8,7 +8,7 @@
 #ifndef TEST_UTILS_H
 #define TEST_UTILS_H
 
-#include "common/error.h"
+#include <themis/error.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>

@@ -4,7 +4,7 @@
  * (c) CossackLabs
  */
 
-#include <common/error.h>
+#include <soter/error.h>
 #include <soter/soter_ec_key.h>
 
 #include <openssl/evp.h>
@@ -107,26 +107,26 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
 
 	if ((!key_length) || (EVP_PKEY_EC != EVP_PKEY_id(pkey)))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	ec = EVP_PKEY_get1_EC_KEY((EVP_PKEY *)pkey);
 	if (NULL == ec)
 	{
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	group = EC_KEY_get0_group(ec);
 	if (NULL == group)
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = SOTER_INVALID_PARAMETER;
 		goto err;
 	}
 
 	curve = EC_GROUP_get_curve_name(group);
 	if (!is_curve_supported(curve))
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = SOTER_INVALID_PARAMETER;
 		goto err;
 	}
 
@@ -134,7 +134,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
 	if ((!key) || (output_length > *key_length))
 	{
 		*key_length = output_length;
-		res = HERMES_BUFFER_TOO_SMALL;
+		res = SOTER_BUFFER_TOO_SMALL;
 		goto err;
 	}
 
@@ -143,13 +143,13 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
 	Q = EC_KEY_get0_public_key(ec);
 	if (NULL == Q)
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = SOTER_INVALID_PARAMETER;
 		goto err;
 	}
 
 	if ((output_length - sizeof(soter_container_hdr_t)) != EC_POINT_point2oct(group, Q, POINT_CONVERSION_COMPRESSED, (unsigned char *)(key + 1), output_length - sizeof(soter_container_hdr_t), NULL))
 	{
-		res = HERMES_FAIL;
+		res = SOTER_FAIL;
 		goto err;
 	}
 
@@ -157,7 +157,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
 	key->size = htonl(output_length);
 	soter_update_container_checksum(key);
 	*key_length = output_length;
-	res = HERMES_SUCCESS;
+	res = SOTER_SUCCESS;
 
 err:
 	/* Free extra reference on EC_KEY object provided by EVP_PKEY_get1_EC_KEY */
@@ -178,26 +178,26 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
 
 	if ((!key_length) || (EVP_PKEY_EC != EVP_PKEY_id(pkey)))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	ec = EVP_PKEY_get1_EC_KEY((EVP_PKEY *)pkey);
 	if (NULL == ec)
 	{
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	group = EC_KEY_get0_group(ec);
 	if (NULL == group)
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = SOTER_INVALID_PARAMETER;
 		goto err;
 	}
 
 	curve = EC_GROUP_get_curve_name(group);
 	if (!is_curve_supported(curve))
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = SOTER_INVALID_PARAMETER;
 		goto err;
 	}
 
@@ -205,7 +205,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
 	if ((!key) || (output_length > *key_length))
 	{
 		*key_length = output_length;
-		res = HERMES_BUFFER_TOO_SMALL;
+		res = SOTER_BUFFER_TOO_SMALL;
 		goto err;
 	}
 
@@ -214,13 +214,13 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
 	d = EC_KEY_get0_private_key(ec);
 	if (NULL == d)
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = SOTER_INVALID_PARAMETER;
 		goto err;
 	}
 
 	if ((output_length - sizeof(soter_container_hdr_t)) != bn_encode(d, (unsigned char *)(key + 1), output_length - sizeof(soter_container_hdr_t)))
 	{
-		res = HERMES_FAIL;
+		res = SOTER_FAIL;
 		goto err;
 	}
 
@@ -228,7 +228,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
 	key->size = htonl(output_length);
 	soter_update_container_checksum(key);
 	*key_length = output_length;
-	res = HERMES_SUCCESS;
+	res = SOTER_SUCCESS;
 
 err:
 	/* Free extra reference on EC_KEY object provided by EVP_PKEY_get1_EC_KEY */
@@ -248,23 +248,23 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t *
 
 	if ((!key) || (key_length < sizeof(soter_container_hdr_t)))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (key_length != ntohl(key->size))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	/* Validate tag */
 	if (memcmp(key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
-	if (HERMES_SUCCESS != soter_verify_container_checksum(key))
+	if (SOTER_SUCCESS != soter_verify_container_checksum(key))
 	{
-		return HERMES_DATA_CORRUPT;
+		return SOTER_DATA_CORRUPT;
 	}
 
 	switch (key->tag[3])
@@ -279,43 +279,43 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t *
 		curve = NID_secp521r1;
 		break;
 	default:
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (key_length < ec_pub_key_size(curve))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	ec = EC_KEY_new_by_curve_name(curve);
 	if (NULL == ec)
 	{
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	group = EC_KEY_get0_group(ec);
 	if (NULL == group)
 	{
-		res = HERMES_FAIL;
+		res = SOTER_FAIL;
 		goto err;
 	}
 
 	Q = EC_POINT_new(group);
 	if (NULL == group)
 	{
-		res = HERMES_NO_MEMORY;
+		res = SOTER_NO_MEMORY;
 		goto err;
 	}
 
 	if (1 != EC_POINT_oct2point(group, Q, (const unsigned char *)(key + 1), key_length - sizeof(soter_container_hdr_t), NULL))
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = SOTER_INVALID_PARAMETER;
 		goto err;
 	}
 
 	if (1 != EC_KEY_set_public_key(ec, Q))
 	{
-		res = HERMES_FAIL;
+		res = SOTER_FAIL;
 		goto err;
 	}
 
@@ -324,12 +324,12 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t *
 
 	if (EVP_PKEY_assign_EC_KEY(pkey, ec))
 	{
-		res = HERMES_SUCCESS;
+		res = SOTER_SUCCESS;
 		ec = NULL;
 	}
 	else
 	{
-		res = HERMES_FAIL;
+		res = SOTER_FAIL;
 	}
 
 err:
@@ -358,18 +358,18 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t 
 
 	if (key_length != ntohl(key->size))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	/* Validate tag */
 	if (memcmp(key->tag, EC_PRIV_KEY_PREF, strlen(EC_PRIV_KEY_PREF)))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
-	if (HERMES_SUCCESS != soter_verify_container_checksum(key))
+	if (SOTER_SUCCESS != soter_verify_container_checksum(key))
 	{
-		return HERMES_DATA_CORRUPT;
+		return SOTER_DATA_CORRUPT;
 	}
 
 	switch (key->tag[3])
@@ -384,37 +384,37 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t 
 		curve = NID_secp521r1;
 		break;
 	default:
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (key_length < ec_priv_key_size(curve))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	ec = EC_KEY_new_by_curve_name(curve);
 	if (NULL == ec)
 	{
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	group = EC_KEY_get0_group(ec);
 	if (NULL == group)
 	{
-		res = HERMES_FAIL;
+		res = SOTER_FAIL;
 		goto err;
 	}
 
 	d = BN_bin2bn((const unsigned char *)(key + 1), key_length - sizeof(soter_container_hdr_t), NULL);
 	if (NULL == d)
 	{
-		res = HERMES_NO_MEMORY;
+		res = SOTER_NO_MEMORY;
 		goto err;
 	}
 
 	if (1 != EC_KEY_set_private_key(ec, d))
 	{
-		res = HERMES_FAIL;
+		res = SOTER_FAIL;
 		goto err;
 	}
 
@@ -423,12 +423,12 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t 
 
 	if (EVP_PKEY_assign_EC_KEY(pkey, ec))
 	{
-		res = HERMES_SUCCESS;
+		res = SOTER_SUCCESS;
 		ec = NULL;
 	}
 	else
 	{
-		res = HERMES_FAIL;
+		res = SOTER_FAIL;
 	}
 
 err:

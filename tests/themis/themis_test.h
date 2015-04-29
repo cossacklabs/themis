@@ -7,7 +7,7 @@
 #ifndef _THEMIS_TEST_H_
 #define _THEMIS_TEST_H_
 
-#include <common/error.h>
+#include <themis/error.h>
 #include <common/test_utils.h>
 #include <themis/themis.h>
 void run_secure_message_test(void);

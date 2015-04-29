@@ -4,7 +4,7 @@
  * (c) CossackLabs
  */
 
-#include <common/error.h>
+#include <soter/error.h>
 #include <soter/soter.h>
 #include <soter/soter_rsa_key.h>
 #include "soter_openssl.h"
@@ -17,42 +17,42 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx)
   BIGNUM *pub_exp;
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(pkey_ctx);
   if (!pkey){
-    return HERMES_INVALID_PARAMETER;
+    return SOTER_INVALID_PARAMETER;
   }
   
   if (EVP_PKEY_RSA != EVP_PKEY_id(pkey)){
-    return HERMES_INVALID_PARAMETER;
+    return SOTER_INVALID_PARAMETER;
   }
   
   if (!EVP_PKEY_keygen_init(pkey_ctx)){
-    return HERMES_INVALID_PARAMETER;
+    return SOTER_INVALID_PARAMETER;
   }
   
   /* Although it seems that OpenSSL/LibreSSL use 0x10001 as default public exponent, we will set it explicitly just in case */
   pub_exp = BN_new();
   if (!pub_exp){
-    return HERMES_NO_MEMORY;
+    return SOTER_NO_MEMORY;
   }
   
   if (!BN_set_word(pub_exp, RSA_F4)){
     BN_free(pub_exp);
-    return HERMES_FAIL;
+    return SOTER_FAIL;
   }
   
   if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_PUBEXP, 0, pub_exp)){
     BN_free(pub_exp);
-    return HERMES_FAIL;
+    return SOTER_FAIL;
   }
   
   /* Override default key size for RSA key. Currently OpenSSL has default key size of 1024. LibreSSL has 2048. We will put 2048 explicitly */
   if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_BITS, 2048, NULL)){
-    return HERMES_FAIL;
+    return SOTER_FAIL;
   }
   
   if(!EVP_PKEY_keygen(pkey_ctx, &pkey)){
-    return HERMES_FAIL;
+    return SOTER_FAIL;
   }
-  return HERMES_SUCCESS;
+  return SOTER_SUCCESS;
   /* end of copy-paste from /src/soter/openssl/soter_asym_cipher.c*/
 }
 
@@ -61,10 +61,10 @@ soter_status_t soter_rsa_import_key(EVP_PKEY *pkey, const void* key, const size_
   const soter_container_hdr_t *hdr = key;
  
   if (!pkey){
-    return HERMES_INVALID_PARAMETER;
+    return SOTER_INVALID_PARAMETER;
   }
   if (EVP_PKEY_RSA != EVP_PKEY_id(pkey) || key_length < sizeof(soter_container_hdr_t)){
-    return HERMES_INVALID_PARAMETER;
+    return SOTER_INVALID_PARAMETER;
   }
   switch (hdr->tag[0]){
   case 'R':
@@ -72,7 +72,7 @@ soter_status_t soter_rsa_import_key(EVP_PKEY *pkey, const void* key, const size_
   case 'U':
     return soter_rsa_pub_key_to_engine_specific(hdr, key_length, ((soter_engine_specific_rsa_key_t **)&pkey));
   }
-  return HERMES_INVALID_PARAMETER;
+  return SOTER_INVALID_PARAMETER;
 }
 
 soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate)
@@ -80,7 +80,7 @@ soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* ke
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
   
   if (!pkey){
-    return HERMES_INVALID_PARAMETER;
+    return SOTER_INVALID_PARAMETER;
   }
   if(isprivate)
     {

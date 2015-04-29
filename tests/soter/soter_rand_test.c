@@ -41,7 +41,7 @@ static bool generate_test_data(void)
 	for (i = 0; i < ((TEST_BIT_STREAM_SAMPLE_LENGTH * TEST_BIT_STREAM_SAMPLE_COUNT) / 8); )
 	{
 		res = soter_rand(rand_buf, sizeof(rand_buf));
-		if (HERMES_SUCCESS != res)
+		if (SOTER_SUCCESS != res)
 		{
 			fclose(test_file);
 			return false;
@@ -169,8 +169,8 @@ static void test_rand_with_nist(void)
 
 static void test_api(void)
 {
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_rand(NULL, 32), "soter_rand: invalid out buffer");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_rand((uint8_t *)0x1, 0), "soter_rand: invalid buffer length");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_rand(NULL, 32), "soter_rand: invalid out buffer");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_rand((uint8_t *)0x1, 0), "soter_rand: invalid buffer length");
 }
 
 void run_soter_rand_tests(void)

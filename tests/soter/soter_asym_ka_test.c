@@ -35,62 +35,62 @@ static void test_basic_ka_flow(void)
 	}
 
 	res = soter_asym_ka_gen_key(peer1);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_gen_key fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_gen_key fail");
 		goto err;
 	}
 
 	res = soter_asym_ka_gen_key(peer2);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_gen_key fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_gen_key fail");
 		goto err;
 	}
 
 	res = soter_asym_ka_export_key(peer2, key_buffer, &key_buffer_length, false);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_export_key fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_export_key fail");
 		goto err;
 	}
 
 	res = soter_asym_ka_derive(peer1, key_buffer, key_buffer_length, peer1_shared_secret, &peer1_shared_secret_length);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_derive fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_derive fail");
 		goto err;
 	}
 
 	key_buffer_length = sizeof(key_buffer);
 
 	res = soter_asym_ka_export_key(peer1, key_buffer, &key_buffer_length, false);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_export_key fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_export_key fail");
 		goto err;
 	}
 
 	res = soter_asym_ka_derive(peer2, key_buffer, key_buffer_length, peer2_shared_secret, &peer2_shared_secret_length);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_derive fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_derive fail");
 		goto err;
 	}
 
 	testsuite_fail_unless((peer1_shared_secret_length == peer2_shared_secret_length) && !memcmp(peer1_shared_secret, peer2_shared_secret, peer1_shared_secret_length), "Basic ECDH");
 
 	res = soter_asym_ka_export_key(peer2, peer2_private, &peer2_private_length, true);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_export_key fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_export_key fail");
 		goto err;
 	}
 
 	res = soter_asym_ka_destroy(peer2);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_destroy fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_destroy fail");
 		goto err;
 	}
 
@@ -102,18 +102,18 @@ static void test_basic_ka_flow(void)
 	}
 
 	res = soter_asym_ka_import_key(peer2, peer2_private, peer2_private_length);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_import_key fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_import_key fail");
 		goto err;
 	}
 
 	peer2_shared_secret_length = sizeof(peer2_shared_secret);
 
 	res = soter_asym_ka_derive(peer2, key_buffer, key_buffer_length, peer2_shared_secret, &peer2_shared_secret_length);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_derive fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_derive fail");
 		goto err;
 	}
 
@@ -123,18 +123,18 @@ err:
 	if (peer1)
 	{
 		res = soter_asym_ka_destroy(peer1);
-		if (HERMES_SUCCESS != res)
+		if (SOTER_SUCCESS != res)
 		{
-			testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_destroy fail");
+			testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_destroy fail");
 		}
 	}
 
 	if (peer2)
 	{
 		res = soter_asym_ka_destroy(peer2);
-		if (HERMES_SUCCESS != res)
+		if (SOTER_SUCCESS != res)
 		{
-			testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_destroy fail");
+			testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_destroy fail");
 		}
 	}
 }
@@ -152,78 +152,78 @@ static void test_api(void)
 
 	memset(&ctx, 0, sizeof(soter_asym_ka_t));
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_init(NULL, SOTER_ASYM_KA_EC_P256), "soter_asym_ka_init: invalid context");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_init(&ctx, (soter_asym_ka_alg_t)0xffffffff), "soter_asym_ka_init: invalid algorithm type");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_init(NULL, SOTER_ASYM_KA_EC_P256), "soter_asym_ka_init: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_init(&ctx, (soter_asym_ka_alg_t)0xffffffff), "soter_asym_ka_init: invalid algorithm type");
 	testsuite_fail_unless(NULL == soter_asym_ka_create((soter_asym_ka_alg_t)0xffffffff), "soter_asym_ka_create: invalid algorithm type");
 
 	res = soter_asym_ka_init(&ctx, SOTER_ASYM_KA_EC_P256);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_init fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_init fail");
 		return;
 	}
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_gen_key(NULL), "soter_asym_ka_gen_key: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_gen_key(NULL), "soter_asym_ka_gen_key: invalid context");
 
 	res = soter_asym_ka_gen_key(&ctx);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_gen_key fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_gen_key fail");
 		return;
 	}
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_export_key(NULL, key_buffer, &key_buffer_length, true), "soter_asym_ka_export_key: invalid context");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_export_key(&ctx, key_buffer, NULL, false), "soter_asym_ka_export_key: invalid output data length");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_export_key(NULL, key_buffer, &key_buffer_length, true), "soter_asym_ka_export_key: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_export_key(&ctx, key_buffer, NULL, false), "soter_asym_ka_export_key: invalid output data length");
 
 	key_buffer_length = 0;
 	res = soter_asym_ka_export_key(&ctx, NULL, &key_buffer_length, false);
-	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (key_buffer_length > 0), "soter_asym_ka_export_key: get output size (NULL out buffer)");
+	testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (key_buffer_length > 0), "soter_asym_ka_export_key: get output size (NULL out buffer)");
 
 	key_buffer_length--;
 	res = soter_asym_ka_export_key(&ctx, key_buffer, &key_buffer_length, false);
-	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (key_buffer_length > 0), "soter_asym_ka_export_key: get output size (small out buffer)");
+	testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (key_buffer_length > 0), "soter_asym_ka_export_key: get output size (small out buffer)");
 
 	res = soter_asym_ka_export_key(&ctx, key_buffer, &key_buffer_length, false);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_export_key fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_export_key fail");
 		return;
 	}
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_import_key(NULL, key_buffer, key_buffer_length), "soter_asym_ka_import_key: invalid context");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_import_key(&ctx, NULL, key_buffer_length), "soter_asym_ka_import_key: invalid input data");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_import_key(NULL, key_buffer, 0), "soter_asym_ka_import_key: invalid input data length");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_import_key(NULL, key_buffer, key_buffer_length), "soter_asym_ka_import_key: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_import_key(&ctx, NULL, key_buffer_length), "soter_asym_ka_import_key: invalid input data");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_import_key(NULL, key_buffer, 0), "soter_asym_ka_import_key: invalid input data length");
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_derive(NULL, key_buffer, key_buffer_length, shared_secret, &shared_secret_length), "soter_asym_ka_derive: invalid context");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_derive(&ctx, NULL, key_buffer_length, shared_secret, &shared_secret_length), "soter_asym_ka_derive: invalid input data");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_derive(&ctx, key_buffer, 0, shared_secret, &shared_secret_length), "soter_asym_ka_derive: invalid input data length");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_derive(&ctx, key_buffer, key_buffer_length, shared_secret, NULL), "soter_asym_ka_derive: invalid output data length");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_derive(NULL, key_buffer, key_buffer_length, shared_secret, &shared_secret_length), "soter_asym_ka_derive: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_derive(&ctx, NULL, key_buffer_length, shared_secret, &shared_secret_length), "soter_asym_ka_derive: invalid input data");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_derive(&ctx, key_buffer, 0, shared_secret, &shared_secret_length), "soter_asym_ka_derive: invalid input data length");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_derive(&ctx, key_buffer, key_buffer_length, shared_secret, NULL), "soter_asym_ka_derive: invalid output data length");
 
 	shared_secret_length = 0;
 	res = soter_asym_ka_derive(&ctx, key_buffer, key_buffer_length, NULL, &shared_secret_length);
-	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (shared_secret_length > 0), "soter_asym_ka_derive: get output size (NULL out buffer)");
+	testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (shared_secret_length > 0), "soter_asym_ka_derive: get output size (NULL out buffer)");
 
 	shared_secret_length--;
 	res = soter_asym_ka_derive(&ctx, key_buffer, key_buffer_length, shared_secret, &shared_secret_length);
-	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (shared_secret_length > 0), "soter_asym_ka_derive: get output size (small out buffer)");
+	testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (shared_secret_length > 0), "soter_asym_ka_derive: get output size (small out buffer)");
 
 	res = soter_asym_ka_derive(&ctx, key_buffer, key_buffer_length, shared_secret, &shared_secret_length);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_derive fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_derive fail");
 		return;
 	}
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_cleanup(NULL), "soter_asym_ka_cleanup: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_cleanup(NULL), "soter_asym_ka_cleanup: invalid context");
 
 	res = soter_asym_ka_cleanup(&ctx);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_unless(HERMES_SUCCESS == res, "soter_asym_ka_cleanup fail");
+		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_ka_cleanup fail");
 		return;
 	}
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_asym_ka_destroy(NULL), "soter_asym_ka_destroy: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_ka_destroy(NULL), "soter_asym_ka_destroy: invalid context");
 }
 
 void run_soter_asym_ka_tests(void)

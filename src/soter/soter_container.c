@@ -6,7 +6,7 @@
 
 #include <soter/soter_container.h>
 #include <soter/soter.h>
-#include <common/error.h>
+#include <soter/error.h>
 #include <soter/soter_crc32.h>
 #include <arpa/inet.h>
 soter_status_t soter_update_container_checksum(soter_container_hdr_t *hdr)
@@ -14,7 +14,7 @@ soter_status_t soter_update_container_checksum(soter_container_hdr_t *hdr)
 	hdr->crc = 0;
 	hdr->crc = htonl(soter_crc32(hdr, ntohl(hdr->size)));
 
-	return HERMES_SUCCESS;
+	return SOTER_SUCCESS;
 }
 
 soter_status_t soter_verify_container_checksum(const soter_container_hdr_t *hdr)
@@ -28,10 +28,10 @@ soter_status_t soter_verify_container_checksum(const soter_container_hdr_t *hdr)
 
 	if (hdr->crc == htonl(soter_crc32_final(&crc)))
 	{
-		return HERMES_SUCCESS;
+		return SOTER_SUCCESS;
 	}
 	else
 	{
-		return HERMES_DATA_CORRUPT;
+		return SOTER_DATA_CORRUPT;
 	}
 }

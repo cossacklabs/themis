@@ -7,7 +7,7 @@
 #include <themis/secure_session.h>
 #include <themis/secure_session_t.h>
 #include <themis/secure_session_utils.h>
-#include <common/error.h>
+#include <themis/error.h>
 
 #include <soter/soter_container.h>
 
@@ -37,19 +37,19 @@ themis_status_t secure_session_wrap(secure_session_t *session_ctx, const void *m
 
 	if ((NULL == session_ctx) || (NULL == message) || (0 == message_length) || (NULL == wrapped_message_length))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return THEMIS_INVALID_PARAMETER;
 	}
 
 	if ((NULL == wrapped_message) || (WRAPPED_SIZE(message_length) > *wrapped_message_length))
 	{
 		*wrapped_message_length = WRAPPED_SIZE(message_length);
-		return HERMES_BUFFER_TOO_SMALL;
+		return THEMIS_BUFFER_TOO_SMALL;
 	}
 
 	curr_time = time(NULL);
 	if (-1 == curr_time)
 	{
-		return HERMES_FAIL;
+		return THEMIS_FAIL;
 	}
 
 	*((uint64_t *)ts) = htobe64(curr_time);
@@ -61,13 +61,13 @@ themis_status_t secure_session_wrap(secure_session_t *session_ctx, const void *m
 	*length = htonl(message_length + sizeof(uint32_t) + sizeof(uint64_t));
 
 	res = soter_rand(iv, CIPHER_MAX_BLOCK_SIZE);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		return res;
 	}
 
 	res = encrypt_gcm(session_ctx->out_cipher_key, sizeof(session_ctx->out_cipher_key), iv, CIPHER_MAX_BLOCK_SIZE, length, message_length + sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint32_t), length, message_length + sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint32_t) + CIPHER_AUTH_TAG_SIZE);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		return res;
 	}
@@ -75,7 +75,7 @@ themis_status_t secure_session_wrap(secure_session_t *session_ctx, const void *m
 	*session_id = htonl(session_ctx->session_id);
 	session_ctx->out_seq++;
 
-	return HERMES_SUCCESS;
+	return THEMIS_SUCCESS;
 }
 
 themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void *wrapped_message, size_t wrapped_message_length, void *message, size_t *message_length)
@@ -96,15 +96,15 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 
 	if ((NULL == session_ctx) || (NULL == wrapped_message) || (NULL == message_length))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return THEMIS_INVALID_PARAMETER;
 	}
 
 	if (!secure_session_is_established(session_ctx))
 	{
 		res = session_ctx->state_handler(session_ctx, wrapped_message, wrapped_message_length, message, message_length);
-		if ((HERMES_SUCCESS == res) && (*message_length > 0))
+		if ((THEMIS_SUCCESS == res) && (*message_length > 0))
 		{
-			return HERMES_SSESSION_SEND_OUTPUT_TO_PEER;
+			return THEMIS_SSESSION_SEND_OUTPUT_TO_PEER;
 		}
 
 		return res;
@@ -112,30 +112,30 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 
 	if (WRAP_AUX_DATA > wrapped_message_length)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return THEMIS_INVALID_PARAMETER;
 	}
 
 	if ((NULL == message) || (UNWRAPPED_SIZE(wrapped_message_length) > *message_length))
 	{
 		*message_length = UNWRAPPED_SIZE(wrapped_message_length);
-		return HERMES_BUFFER_TOO_SMALL;
+		return THEMIS_BUFFER_TOO_SMALL;
 	}
 
 	curr_time = time(NULL);
 	if (-1 == curr_time)
 	{
-		return HERMES_FAIL;
+		return THEMIS_FAIL;
 	}
 
 	if (ntohl(*session_id) != session_ctx->session_id)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return THEMIS_INVALID_PARAMETER;
 	}
 
 	sym_ctx = soter_sym_aead_decrypt_create(SOTER_SYM_AES_GCM|SOTER_SYM_256_KEY_LENGTH, session_ctx->in_cipher_key, sizeof(session_ctx->in_cipher_key), NULL, 0,iv, CIPHER_MAX_BLOCK_SIZE);
 	if (NULL == sym_ctx)
 	{
-		return HERMES_FAIL;
+		return THEMIS_FAIL;
 	}
 
 	/* TODO: change to GCM when fixed */
@@ -153,14 +153,14 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 	}*/
 
 	res = soter_sym_aead_decrypt_update(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE, sizeof(message_header), message_header, &message_header_size);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		goto err;
 	}
 
 	if (sizeof(message_header) != message_header_size)
 	{
-		res = HERMES_FAIL;
+		res = THEMIS_FAIL;
 		goto err;
 	}
 
@@ -170,19 +170,19 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 
 	if (length > (UNWRAPPED_SIZE(wrapped_message_length) + sizeof(uint32_t) + 8))
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = THEMIS_INVALID_PARAMETER;
 		goto err;
 	}
 
 	if ((seq < (session_ctx->in_seq - SEQ_MAX_DIFF)) || (seq > (session_ctx->in_seq + SEQ_MAX_DIFF)))
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = THEMIS_INVALID_PARAMETER;
 		goto err;
 	}
 
 	if ((ts < (curr_time - TS_MAX_DIFF)) || (ts > (curr_time + TS_MAX_DIFF)))
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = THEMIS_INVALID_PARAMETER;
 		goto err;
 	}
 
@@ -199,13 +199,13 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 	}*/
 
 	res = soter_sym_aead_decrypt_update(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header), *message_length, message, message_length);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		goto err;
 	}
 
 	res = soter_sym_aead_decrypt_final(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header) + *message_length, CIPHER_AUTH_TAG_SIZE);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		goto err;
 	}

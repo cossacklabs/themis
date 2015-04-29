@@ -131,28 +131,28 @@ static void test_known_values(void)
   for (i = 0; i < (sizeof(vectors) / sizeof(test_vector_t)); i++)
     {
       res = string_to_bytes(vectors[i].key, key, sizeof(key));
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "string_to_bytes");
 	  continue;
 	}
       
       res = string_to_bytes(vectors[i].iv, iv, sizeof(iv));
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "string_to_bytes");
 	  continue;
 	}
       
       res = string_to_bytes(vectors[i].plaintext, plaintext, sizeof(plaintext));
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "string_to_bytes");
 	  continue;
 	}
       
       res = string_to_bytes(vectors[i].ciphertext, ciphertext, sizeof(ciphertext));
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "string_to_bytes");
 	  continue;
@@ -172,26 +172,26 @@ static void test_known_values(void)
       
       computed_length = sizeof(computed);
       res = soter_sym_encrypt_update(ctx, plaintext, strlen(vectors[i].plaintext) / 2, computed, &computed_length);
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
-	  testsuite_fail_if(HERMES_SUCCESS != res, "soter_sym_update");
+	  testsuite_fail_if(SOTER_SUCCESS != res, "soter_sym_update");
 	  soter_sym_encrypt_destroy(ctx);
 	  continue;
 	}
       
       pad_length=sizeof(pad);
       res = soter_sym_encrypt_final(ctx, computed+computed_length, &pad_length);
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
-	  testsuite_fail_if(HERMES_SUCCESS != res, "soter_sym_final");
+	  testsuite_fail_if(SOTER_SUCCESS != res, "soter_sym_final");
 	  soter_sym_encrypt_destroy(ctx);
  	  continue;
 	}
         computed_length+=pad_length;
       res = soter_sym_encrypt_destroy(ctx);
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
-	  testsuite_fail_if(HERMES_SUCCESS != res, "soter_sym_destroy");
+	  testsuite_fail_if(SOTER_SUCCESS != res, "soter_sym_destroy");
 	}
 
       testsuite_fail_if(memcmp(computed, ciphertext, computed_length)!=0, "known encryption");
@@ -209,7 +209,7 @@ static void test_known_values(void)
 	}
       computed_length2=MAX_DATA_LENGTH;
       res = soter_sym_decrypt_update(ctx, computed, computed_length, computed2, &computed_length2);
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "soter_sym_update");
 	  soter_sym_decrypt_destroy(ctx);
@@ -217,7 +217,7 @@ static void test_known_values(void)
 	}
       pad_length=sizeof(pad);
       res = soter_sym_decrypt_final(ctx, computed2+computed_length2, &pad_length);
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "soter_sym_final");
 	  soter_sym_decrypt_destroy(ctx);
@@ -225,7 +225,7 @@ static void test_known_values(void)
 	}
       computed_length2+=pad_length;
       res = soter_sym_decrypt_destroy(ctx);
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "soter_sym_destroy");
 	  soter_sym_decrypt_destroy(ctx);
@@ -267,35 +267,35 @@ static void test_known_values_gcm(void)
   for (i = 0; i < (sizeof(vectors_aead) / sizeof(test_vector_aead_t)); i++)
     {
       res = string_to_bytes(vectors_aead[i].key, key, sizeof(key));
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "string_to_bytes");
 	  continue;
 	}
       
       res = string_to_bytes(vectors_aead[i].iv, iv, sizeof(iv));
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "string_to_bytes");
 	  continue;
 	}
       
       res = string_to_bytes(vectors_aead[i].plaintext, plaintext, sizeof(plaintext));
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "string_to_bytes");
 	  continue;
 	}
 
       res = string_to_bytes(vectors_aead[i].ciphertext, ciphertext, sizeof(ciphertext));
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "string_to_bytes");
 	  continue;
 	}
 
       res = string_to_bytes(vectors_aead[i].aad, aad, sizeof(aad));
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "string_to_bytes");
 	  continue;
@@ -311,7 +311,7 @@ static void test_known_values_gcm(void)
       if(strlen(vectors_aead[i].aad)!=0){
 	computed_length = sizeof(computed);     
 	res = soter_sym_aead_encrypt_aad(ctx, aad, strlen(vectors_aead[i].aad) / 2);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	  {
 	    testsuite_fail_if(res, "soter_sym_update aad");
 	    soter_sym_encrypt_destroy(ctx);
@@ -322,7 +322,7 @@ static void test_known_values_gcm(void)
       computed_length = sizeof(computed);
       
       res = soter_sym_aead_encrypt_update(ctx, plaintext, strlen(vectors_aead[i].plaintext) / 2, computed, &computed_length);
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "soter_sym_update");
 	  soter_sym_aead_encrypt_destroy(ctx);
@@ -330,7 +330,7 @@ static void test_known_values_gcm(void)
 	}
 
       res = soter_sym_aead_encrypt_final(ctx, auth_tag, &auth_tag_length);
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "soter_sym_final");
 	  soter_sym_aead_encrypt_destroy(ctx);
@@ -338,7 +338,7 @@ static void test_known_values_gcm(void)
 	}
       
       res = soter_sym_aead_encrypt_destroy(ctx);
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "soter_sym_destroy");
 	}
@@ -355,7 +355,7 @@ static void test_known_values_gcm(void)
       if(strlen(vectors_aead[i].aad)!=0){
 	computed_length2 = sizeof(computed2);     
 	res = soter_sym_aead_decrypt_aad(ctx, aad, strlen(vectors_aead[i].aad) / 2);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	  {
 	    testsuite_fail_if(res, "soter_sym_update aad");
 	    soter_sym_aead_encrypt_destroy(ctx);
@@ -365,7 +365,7 @@ static void test_known_values_gcm(void)
 
       computed_length2= sizeof(computed2);     
       res = soter_sym_aead_decrypt_update(ctx, computed, computed_length, computed2, &computed_length2);
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "soter_sym_decrypt_update");
 	  soter_sym_aead_decrypt_destroy(ctx);
@@ -373,14 +373,14 @@ static void test_known_values_gcm(void)
 	}
 
       res = soter_sym_aead_decrypt_final(ctx, auth_tag, auth_tag_length);
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "soter_sym_final");
 	  soter_sym_aead_decrypt_destroy(ctx);
 	  continue;
 	}
       res = soter_sym_aead_decrypt_destroy(ctx);
-      if (HERMES_SUCCESS != res)
+      if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "soter_sym_destroy");
 	  soter_sym_aead_decrypt_destroy(ctx);
@@ -408,28 +408,28 @@ static void test_auth_tag(void)
 	  soter_status_t res;
 
 	  res = soter_rand(key, sizeof(key));
-	  if (HERMES_SUCCESS != res)
+	  if (SOTER_SUCCESS != res)
 	  {
 		  testsuite_fail_if(res, "key gen");
 		  return;
 	  }
 
 	  res = soter_rand(iv, sizeof(iv));
-	  if (HERMES_SUCCESS != res)
+	  if (SOTER_SUCCESS != res)
 	  {
 		  testsuite_fail_if(res, "iv gen");
 		  return;
 	  }
 
 	  res = soter_rand(plaintext, sizeof(plaintext));
-	  if (HERMES_SUCCESS != res)
+	  if (SOTER_SUCCESS != res)
 	  {
 		  testsuite_fail_if(res, "plaintext gen");
 		  return;
 	  }
 
 	  res = soter_rand(aad, sizeof(aad));
-	  if (HERMES_SUCCESS != res)
+	  if (SOTER_SUCCESS != res)
 	  {
 		  testsuite_fail_if(res, "aad gen");
 		  return;
@@ -443,7 +443,7 @@ static void test_auth_tag(void)
 	  }
 
 	  res = soter_sym_aead_encrypt_aad(ctx, aad, sizeof(aad));
-	  if (HERMES_SUCCESS != res)
+	  if (SOTER_SUCCESS != res)
 	  {
 		  testsuite_fail_if(res, "soter_sym_aead_encrypt_aad");
 		  soter_sym_aead_encrypt_destroy(ctx);
@@ -451,7 +451,7 @@ static void test_auth_tag(void)
 	  }
 
 	  res = soter_sym_aead_encrypt_update(ctx, plaintext, sizeof(plaintext), ciphertext, &bytes_processed);
-	  if (HERMES_SUCCESS != res)
+	  if (SOTER_SUCCESS != res)
 	  {
 		  testsuite_fail_if(res, "soter_sym_aead_encrypt_update");
 		  soter_sym_aead_encrypt_destroy(ctx);
@@ -459,7 +459,7 @@ static void test_auth_tag(void)
 	  }
 
 	  res = soter_sym_aead_encrypt_final(ctx, tag, &tag_length);
-	  if (HERMES_SUCCESS != res)
+	  if (SOTER_SUCCESS != res)
 	  {
 		  testsuite_fail_if(res, "soter_sym_aead_encrypt_final");
 		  soter_sym_aead_encrypt_destroy(ctx);
@@ -479,7 +479,7 @@ static void test_auth_tag(void)
 	  aad[2] ^= 0xff;
 
 	  res = soter_sym_aead_decrypt_aad(ctx, aad, sizeof(aad));
-	  if (HERMES_SUCCESS != res)
+	  if (SOTER_SUCCESS != res)
 	  {
 		  testsuite_fail_if(res, "soter_sym_aead_decrypt_aad");
 		  soter_sym_aead_decrypt_destroy(ctx);
@@ -487,7 +487,7 @@ static void test_auth_tag(void)
 	  }
 
 	  res = soter_sym_aead_decrypt_update(ctx, ciphertext, sizeof(ciphertext), decrypted, &bytes_processed);
-	  if (HERMES_SUCCESS != res)
+	  if (SOTER_SUCCESS != res)
 	  {
 		  testsuite_fail_if(res, "soter_sym_aead_decrypt_update");
 		  soter_sym_aead_decrypt_destroy(ctx);
@@ -504,7 +504,7 @@ static void test_auth_tag(void)
 		  return;
 	  }
 
-	  testsuite_fail_unless(HERMES_FAIL == res, "detect data tamper");
+	  testsuite_fail_unless(SOTER_FAIL == res, "detect data tamper");
 }
 
 void run_soter_sym_test()

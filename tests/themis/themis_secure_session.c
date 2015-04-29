@@ -127,7 +127,7 @@ static int client_function(void)
 	if (!connected)
 	{
 		res = secure_session_connect((client.session));
-		if (HERMES_SUCCESS == res)
+		if (THEMIS_SUCCESS == res)
 		{
 			connected = true;
 			return TEST_CONTINUE;
@@ -172,7 +172,7 @@ static int client_function(void)
 
 		length_to_send = rand_int(MAX_MESSAGE_SIZE);
 
-		if (HERMES_SUCCESS != soter_rand(data_to_send, length_to_send))
+		if (THEMIS_SUCCESS != soter_rand(data_to_send, length_to_send))
 		{
 			testsuite_fail_if(true, "soter_rand failed");
 			return TEST_STOP_ERROR;
@@ -227,14 +227,14 @@ static int client_function_no_transport(void)
 	if (!connected)
 	{
 		res = secure_session_generate_connect_request((client.session), recv_buf, (size_t*)(&bytes_received));
-		if (HERMES_BUFFER_TOO_SMALL != res)
+		if (THEMIS_BUFFER_TOO_SMALL != res)
 		{
 			testsuite_fail_if(res, "secure_session_generate_connect_request failed");
 			return TEST_STOP_ERROR;
 		}
 
 		res = secure_session_generate_connect_request((client.session), recv_buf, (size_t*)(&bytes_received));
-		if (HERMES_SUCCESS == res)
+		if (THEMIS_SUCCESS == res)
 		{
 			/* This test-send function never fails, so we do not check for error here */
 			on_send_data(recv_buf, bytes_received, NULL);
@@ -263,7 +263,7 @@ static int client_function_no_transport(void)
 			if (bytes_received > 0)
 			{
 				res = secure_session_unwrap((client.session), recv_buf, (size_t)bytes_received, recv_buf, (size_t*)(&bytes_received));
-				if (HERMES_SUCCESS != res)
+				if (THEMIS_SUCCESS != res)
 				{
 					testsuite_fail_if(res, "secure_session_unwrap failed");
 					return TEST_STOP_ERROR;
@@ -288,7 +288,7 @@ static int client_function_no_transport(void)
 
 		length_to_send = rand_int(MAX_MESSAGE_SIZE - 64);
 
-		if (HERMES_SUCCESS != soter_rand(data_to_send, length_to_send))
+		if (THEMIS_SUCCESS != soter_rand(data_to_send, length_to_send))
 		{
 			testsuite_fail_if(true, "soter_rand failed");
 			return TEST_STOP_ERROR;
@@ -296,7 +296,7 @@ static int client_function_no_transport(void)
 
 		bytes_sent = sizeof(data_to_send);
 		res = secure_session_wrap((client.session), data_to_send, length_to_send, data_to_send, (size_t*)(&bytes_sent));
-		if (HERMES_SUCCESS != res)
+		if (THEMIS_SUCCESS != res)
 		{
 			testsuite_fail_if(res, "secure_session_wrap failed");
 			return TEST_STOP_ERROR;
@@ -320,7 +320,7 @@ static int client_function_no_transport(void)
 
 		bytes_sent = 0;
 		res = secure_session_unwrap((client.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_sent));
-		if (HERMES_SUCCESS == res)
+		if (THEMIS_SUCCESS == res)
 		{
 			if (secure_session_is_established((client.session)))
 			{
@@ -334,14 +334,14 @@ static int client_function_no_transport(void)
 				return TEST_STOP_ERROR;
 			}
 		}
-		else if (HERMES_BUFFER_TOO_SMALL != res)
+		else if (THEMIS_BUFFER_TOO_SMALL != res)
 		{
 			testsuite_fail_if(true, "secure_session_unwrap failed");
 			return TEST_STOP_ERROR;
 		}
 
 		res = secure_session_unwrap((client.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_sent));
-		if ((HERMES_SSESSION_SEND_OUTPUT_TO_PEER == res) && (bytes_sent > 0))
+		if ((THEMIS_SSESSION_SEND_OUTPUT_TO_PEER == res) && (bytes_sent > 0))
 		{
 			/* This test-send function never fails, so we do not check for error here */
 			on_send_data(recv_buf, bytes_sent, NULL);
@@ -417,13 +417,13 @@ static void server_function_no_transport(void)
 		return;
 	}
 
-	if ((HERMES_SSESSION_SEND_OUTPUT_TO_PEER == res) && (bytes_unwrapped > 0))
+	if ((THEMIS_SSESSION_SEND_OUTPUT_TO_PEER == res) && (bytes_unwrapped > 0))
 	{
 		/* This is key agreement data. Return response to the client. */
 		on_send_data(recv_buf, bytes_unwrapped, NULL);
 		return;
 	}
-	else if ((HERMES_SUCCESS == res) && (bytes_unwrapped > 0))
+	else if ((THEMIS_SUCCESS == res) && (bytes_unwrapped > 0))
 	{
 		ssize_t bytes_sent = 0;
 
@@ -436,14 +436,14 @@ static void server_function_no_transport(void)
 		}
 
 		res = secure_session_wrap((server.session), recv_buf, bytes_unwrapped, recv_buf, (size_t*)(&bytes_sent));
-		if (HERMES_BUFFER_TOO_SMALL != res)
+		if (THEMIS_BUFFER_TOO_SMALL != res)
 		{
 			testsuite_fail_if(true, "secure_session_wrap failed");
 			return;
 		}
 
 		res = secure_session_wrap((server.session), recv_buf, bytes_unwrapped, recv_buf, (size_t*)(&bytes_sent));
-		if (HERMES_SUCCESS != res)
+		if (THEMIS_SUCCESS != res)
 		{
 			testsuite_fail_if(true, "secure_session_wrap failed");
 			return;

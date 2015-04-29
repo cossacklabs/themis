@@ -12,7 +12,7 @@
 #include <soter/soter_rsa_key.h>
 #include <soter/soter_ec_key.h>
 
-#include <common/error.h>
+#include <themis/error.h>
 
 #define MAX_HMAC_SIZE 64 /* For HMAC-SHA512 */
 
@@ -73,7 +73,7 @@ themis_status_t compute_signature(const void *sign_key, size_t sign_key_length, 
 	size_t i;
 
 	soter_status = soter_sign_init(&sign_ctx, get_key_sign_type(sign_key, sign_key_length), sign_key, sign_key_length, NULL, 0);
-	if (HERMES_SUCCESS != soter_status)
+	if (THEMIS_SUCCESS != soter_status)
 	{
 		return soter_status;
 	}
@@ -84,7 +84,7 @@ themis_status_t compute_signature(const void *sign_key, size_t sign_key_length, 
 		for (i = 0; i < sign_data_count; i++)
 		{
 			soter_status = soter_sign_update(&sign_ctx, sign_data[i].data, sign_data[i].length);
-			if (HERMES_SUCCESS != soter_status)
+			if (THEMIS_SUCCESS != soter_status)
 			{
 				goto err;
 			}
@@ -107,7 +107,7 @@ themis_status_t verify_signature(const void *verify_key, size_t verify_key_lengt
 	size_t i;
 
 	soter_status = soter_verify_init(&sign_ctx, get_peer_key_sign_type(verify_key, verify_key_length), NULL, 0, verify_key, verify_key_length);
-	if (HERMES_SUCCESS != soter_status)
+	if (THEMIS_SUCCESS != soter_status)
 	{
 		return soter_status;
 	}
@@ -115,7 +115,7 @@ themis_status_t verify_signature(const void *verify_key, size_t verify_key_lengt
 	for (i = 0; i < sign_data_count; i++)
 	{
 		soter_status = soter_verify_update(&sign_ctx, sign_data[i].data, sign_data[i].length);
-		if (HERMES_SUCCESS != soter_status)
+		if (THEMIS_SUCCESS != soter_status)
 		{
 			goto err;
 		}
@@ -138,7 +138,7 @@ themis_status_t compute_mac(const void *key, size_t key_length, const soter_kdf_
 	size_t i;
 
 	soter_status = soter_hmac_init(&mac_ctx, SOTER_HASH_SHA256, key, key_length);
-	if (HERMES_SUCCESS != soter_status)
+	if (THEMIS_SUCCESS != soter_status)
 	{
 		return soter_status;
 	}
@@ -149,7 +149,7 @@ themis_status_t compute_mac(const void *key, size_t key_length, const soter_kdf_
 		for (i = 0; i < data_count; i++)
 		{
 			soter_status = soter_hmac_update(&mac_ctx, data[i].data, data[i].length);
-			if (HERMES_SUCCESS != soter_status)
+			if (THEMIS_SUCCESS != soter_status)
 			{
 				goto err;
 			}
@@ -171,23 +171,23 @@ themis_status_t verify_mac(const void *key, size_t key_length, const soter_kdf_c
 	size_t computed_mac_length = sizeof(computed_mac);
 
 	themis_status_t res = compute_mac(key, key_length, data, data_count, computed_mac, &computed_mac_length);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		return res;
 	}
 
 	if (mac_length > computed_mac_length)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return THEMIS_INVALID_PARAMETER;
 	}
 
 	if (memcmp(mac, computed_mac, mac_length))
 	{
-		return HERMES_INVALID_SIGNATURE;
+		return THEMIS_INVALID_SIGNATURE;
 	}
 	else
 	{
-		return HERMES_SUCCESS;
+		return THEMIS_SUCCESS;
 	}
 }
 
@@ -200,24 +200,24 @@ themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, 
 
 	if (out_length < (in_length + CIPHER_AUTH_TAG_SIZE))
 	{
-		return HERMES_BUFFER_TOO_SMALL;
+		return THEMIS_BUFFER_TOO_SMALL;
 	}
 
 	ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AES_GCM|SOTER_SYM_256_KEY_LENGTH, key, key_length, NULL, 0, iv, iv_length);
 	if (NULL == ctx)
 	{
-		return HERMES_FAIL;
+		return THEMIS_FAIL;
 	}
 
 	res = soter_sym_aead_encrypt_update(ctx, in, in_length, out, &bytes_encrypted);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		goto err;
 	}
 
 	if (in_length != bytes_encrypted)
 	{
-		res = HERMES_FAIL;
+		res = THEMIS_FAIL;
 		goto err;
 	}
 
@@ -225,14 +225,14 @@ themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, 
 	out_length = bytes_encrypted;
 
 	res = soter_sym_aead_encrypt_final(ctx, ((uint8_t *)out) + in_length, &out_length);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		goto err;
 	}
 
 	if (CIPHER_AUTH_TAG_SIZE != out_length)
 	{
-		res = HERMES_FAIL;
+		res = THEMIS_FAIL;
 		goto err;
 	}
 
@@ -253,7 +253,7 @@ err:
 
 	if (out_length < (in_length + CIPHER_AUTH_TAG_SIZE))
 	{
-		return HERMES_BUFFER_TOO_SMALL;
+		return THEMIS_BUFFER_TOO_SMALL;
 	}
 
 	for (i = 0; i < in_length; i++)
@@ -266,7 +266,7 @@ err:
 		output[i] = 0xff;
 	}
 
-	return HERMES_SUCCESS;*/
+	return THEMIS_SUCCESS;*/
 }
 
 themis_status_t decrypt_gcm(const void *key, size_t key_length, const void *iv, size_t iv_length, const void *in, size_t in_length, void *out, size_t out_length)
@@ -278,7 +278,7 @@ themis_status_t decrypt_gcm(const void *key, size_t key_length, const void *iv, 
 
 	if (out_length < (in_length - CIPHER_AUTH_TAG_SIZE))
 	{
-		return HERMES_BUFFER_TOO_SMALL;
+		return THEMIS_BUFFER_TOO_SMALL;
 	}
 
 	for (i = 0; i < (in_length - CIPHER_AUTH_TAG_SIZE); i++)
@@ -290,11 +290,11 @@ themis_status_t decrypt_gcm(const void *key, size_t key_length, const void *iv, 
 	{
 		if (0xff != input[i])
 		{
-			return HERMES_INVALID_SIGNATURE;
+			return THEMIS_INVALID_SIGNATURE;
 		}
 	}
 
-	return HERMES_SUCCESS;
+	return THEMIS_SUCCESS;
 }
 
 themis_status_t secure_session_derive_message_keys(secure_session_t *session_ctx)
@@ -327,25 +327,25 @@ themis_status_t secure_session_derive_message_keys(secure_session_t *session_ctx
 	}
 
 	res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, out_key_label, &context, 1, session_ctx->out_cipher_key, SESSION_MESSAGE_KEY_LENGTH);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		return res;
 	}
 
 	res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, in_key_label, &context, 1, session_ctx->in_cipher_key, SESSION_MESSAGE_KEY_LENGTH);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		return res;
 	}
 
 	res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, out_seq_label, &context, 1, &(session_ctx->out_seq), sizeof(session_ctx->out_seq));
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		return res;
 	}
 
 	res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, in_seq_label, &context, 1, &(session_ctx->in_seq), sizeof(session_ctx->in_seq));
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		return res;
 	}

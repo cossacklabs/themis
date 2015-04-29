@@ -6,7 +6,7 @@
 
 #include <themis/secure_session_utils.h>
 #include <themis/secure_session_t.h>
-#include <common/error.h>
+#include <themis/error.h>
 
 #include <soter/soter_container.h>
 
@@ -25,13 +25,13 @@ themis_status_t secure_session_save(const secure_session_t *session_ctx, void *o
 
 	if ((!session_ctx) || (!out_length))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return THEMIS_INVALID_PARAMETER;
 	}
 
 	if (session_ctx->state_handler)
 	{
 		/* Key agreement is not complete. We cannot save session state at this stage. */
-		return HERMES_INVALID_PARAMETER;
+		return THEMIS_INVALID_PARAMETER;
 	}
 
 	/* | session_id | is_client | master_key | out_seq | in_seq | */
@@ -39,7 +39,7 @@ themis_status_t secure_session_save(const secure_session_t *session_ctx, void *o
 	if ((!out) || (*out_length < (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIZALIZED_SIZE(session_ctx))))
 	{
 		*out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIZALIZED_SIZE(session_ctx));
-		return HERMES_BUFFER_TOO_SMALL;
+		return THEMIS_BUFFER_TOO_SMALL;
 	}
 
 	*out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIZALIZED_SIZE(session_ctx));
@@ -70,7 +70,7 @@ themis_status_t secure_session_save(const secure_session_t *session_ctx, void *o
 
 	soter_update_container_checksum(hdr);
 
-	return HERMES_SUCCESS;
+	return THEMIS_SUCCESS;
 }
 
 themis_status_t secure_session_load(secure_session_t *session_ctx, const void *in, size_t in_length, const secure_session_user_callbacks_t *user_callbacks)
@@ -82,21 +82,21 @@ themis_status_t secure_session_load(secure_session_t *session_ctx, const void *i
 
 	if ((!session_ctx) || (!in))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return THEMIS_INVALID_PARAMETER;
 	}
 
 	if (in_length < sizeof(soter_container_hdr_t))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return THEMIS_INVALID_PARAMETER;
 	}
 
 	if (in_length < (sizeof(soter_container_hdr_t) + soter_container_data_size(hdr)))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return THEMIS_INVALID_PARAMETER;
 	}
 
 	soter_res = soter_verify_container_checksum(hdr);
-	if (HERMES_SUCCESS != soter_res)
+	if (THEMIS_SUCCESS != soter_res)
 	{
 		return (themis_status_t)soter_res;
 	}
@@ -115,7 +115,7 @@ themis_status_t secure_session_load(secure_session_t *session_ctx, const void *i
 
 	/* We have to derive session keys before extracting sequence numbers, because this function overwrites them */
 	res = secure_session_derive_message_keys(session_ctx);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		return res;
 	}
@@ -127,5 +127,5 @@ themis_status_t secure_session_load(secure_session_t *session_ctx, const void *i
 
 	session_ctx->user_callbacks = user_callbacks;
 
-	return HERMES_SUCCESS;
+	return THEMIS_SUCCESS;
 }

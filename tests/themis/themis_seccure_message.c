@@ -53,8 +53,8 @@ static int themis_secure_signed_message_generic_test(int alg, const char* messag
 
   res=themis_gen_key_pair(alg, private_key, &private_key_length, public_key, &public_key_length);
   
-  if(res!=HERMES_SUCCESS){
-    testsuite_fail_if(res!=HERMES_SUCCESS, "themis_gen_key_pair fail");
+  if(res!=THEMIS_SUCCESS){
+    testsuite_fail_if(res!=THEMIS_SUCCESS, "themis_gen_key_pair fail");
     return -1;
   }
 
@@ -62,8 +62,8 @@ static int themis_secure_signed_message_generic_test(int alg, const char* messag
   size_t wrapped_message_length=0;
 
   res=themis_secure_message_wrap(private_key ,private_key_length, NULL, 0, (uint8_t*)message, message_length, NULL, &wrapped_message_length);
-  if(res!=HERMES_BUFFER_TOO_SMALL){
-    testsuite_fail_if(res!=HERMES_BUFFER_TOO_SMALL, "themis_secure_message_wrap (wrapped_message_length determination) fail");
+  if(res!=THEMIS_BUFFER_TOO_SMALL){
+    testsuite_fail_if(res!=THEMIS_BUFFER_TOO_SMALL, "themis_secure_message_wrap (wrapped_message_length determination) fail");
     return -2;
   }
 
@@ -73,9 +73,9 @@ static int themis_secure_signed_message_generic_test(int alg, const char* messag
     return -3;
   }
   res=themis_secure_message_wrap(private_key, private_key_length, NULL, 0, (uint8_t*)message, message_length, wrapped_message, &wrapped_message_length);
-  if(res!=HERMES_SUCCESS){
+  if(res!=THEMIS_SUCCESS){
     free(wrapped_message);
-    testsuite_fail_if(res!=HERMES_SUCCESS, "themis_secure_message_wrap fail");
+    testsuite_fail_if(res!=THEMIS_SUCCESS, "themis_secure_message_wrap fail");
     return -4;
   }
 
@@ -83,9 +83,9 @@ static int themis_secure_signed_message_generic_test(int alg, const char* messag
   size_t unwrapped_message_length=0;
   
   res=themis_secure_message_unwrap(NULL , 0, public_key, public_key_length, wrapped_message, wrapped_message_length, NULL, &unwrapped_message_length);
-  if(res!=HERMES_BUFFER_TOO_SMALL){
+  if(res!=THEMIS_BUFFER_TOO_SMALL){
     free(wrapped_message);
-    testsuite_fail_if(res!=HERMES_BUFFER_TOO_SMALL, "themis_secure_message_unwrap (unwrapped_message_length determination) fail");
+    testsuite_fail_if(res!=THEMIS_BUFFER_TOO_SMALL, "themis_secure_message_unwrap (unwrapped_message_length determination) fail");
     return -5;
   }
   unwrapped_message=malloc(unwrapped_message_length);
@@ -95,10 +95,10 @@ static int themis_secure_signed_message_generic_test(int alg, const char* messag
     return -3;
   }
   res=themis_secure_message_unwrap(NULL, 0, public_key, public_key_length, wrapped_message, wrapped_message_length, unwrapped_message, &unwrapped_message_length);
-  if(res!=HERMES_SUCCESS){
+  if(res!=THEMIS_SUCCESS){
     free(wrapped_message);
     free(unwrapped_message);
-    testsuite_fail_if(res!=HERMES_SUCCESS, "themis_secure_message_unwrap fail");
+    testsuite_fail_if(res!=THEMIS_SUCCESS, "themis_secure_message_unwrap fail");
     return -2;
   }
 
@@ -125,30 +125,30 @@ static int themis_secure_encrypted_message_generic_test(int alg, const char* mes
   size_t peer_public_key_length=10240;
 
 
-  test_check(themis_gen_key_pair(alg, private_key, &private_key_length, public_key, &public_key_length), HERMES_SUCCESS, "gen key pair fail");
-  test_check(themis_gen_key_pair(alg, peer_private_key, &peer_private_key_length, peer_public_key, &peer_public_key_length), HERMES_SUCCESS, "gen peer key pair fail");
+  test_check(themis_gen_key_pair(alg, private_key, &private_key_length, public_key, &public_key_length), THEMIS_SUCCESS, "gen key pair fail");
+  test_check(themis_gen_key_pair(alg, peer_private_key, &peer_private_key_length, peer_public_key, &peer_public_key_length), THEMIS_SUCCESS, "gen peer key pair fail");
 
   uint8_t* wrapped_message=NULL;
   size_t wrapped_message_length=0;
 
-  test_check(themis_secure_message_wrap(private_key ,private_key_length, peer_public_key, peer_public_key_length, (uint8_t*)message, message_length, NULL, &wrapped_message_length), HERMES_BUFFER_TOO_SMALL, "themis secure message wrap (wrapped message length determination) failed");
+  test_check(themis_secure_message_wrap(private_key ,private_key_length, peer_public_key, peer_public_key_length, (uint8_t*)message, message_length, NULL, &wrapped_message_length), THEMIS_BUFFER_TOO_SMALL, "themis secure message wrap (wrapped message length determination) failed");
   wrapped_message=malloc(wrapped_message_length);
   if(!wrapped_message){
     testsuite_fail_if(!wrapped_message, "malloc fail (wrapped_message)");
     return -2;
   }
-  test_check_free(themis_secure_message_wrap(private_key ,private_key_length, peer_public_key, peer_public_key_length, (uint8_t*)message, message_length, wrapped_message, &wrapped_message_length), HERMES_SUCCESS, "themis secure message wrap failed", free(wrapped_message));
+  test_check_free(themis_secure_message_wrap(private_key ,private_key_length, peer_public_key, peer_public_key_length, (uint8_t*)message, message_length, wrapped_message, &wrapped_message_length), THEMIS_SUCCESS, "themis secure message wrap failed", free(wrapped_message));
 
   uint8_t* unwrapped_message=NULL;
   size_t unwrapped_message_length=0;
 
-  test_check_free(themis_secure_message_unwrap(peer_private_key ,private_key_length, public_key, public_key_length, (uint8_t*)wrapped_message, wrapped_message_length, NULL, &unwrapped_message_length), HERMES_BUFFER_TOO_SMALL, "themis secure message unwrap (unwrapped message length determination) failed", free(wrapped_message));
+  test_check_free(themis_secure_message_unwrap(peer_private_key ,private_key_length, public_key, public_key_length, (uint8_t*)wrapped_message, wrapped_message_length, NULL, &unwrapped_message_length), THEMIS_BUFFER_TOO_SMALL, "themis secure message unwrap (unwrapped message length determination) failed", free(wrapped_message));
   unwrapped_message=malloc(unwrapped_message_length);
   if(!unwrapped_message){
     testsuite_fail_if(!unwrapped_message, "malloc fail (unwrapped_message)");
     return -2;
   }
-  test_check_free(themis_secure_message_unwrap(peer_private_key ,peer_private_key_length, public_key, public_key_length, (uint8_t*)wrapped_message, wrapped_message_length, unwrapped_message, &unwrapped_message_length), HERMES_SUCCESS, "themis secure message unwrap failed", (free(wrapped_message), free(unwrapped_message)));
+  test_check_free(themis_secure_message_unwrap(peer_private_key ,peer_private_key_length, public_key, public_key_length, (uint8_t*)wrapped_message, wrapped_message_length, unwrapped_message, &unwrapped_message_length), THEMIS_SUCCESS, "themis secure message unwrap failed", (free(wrapped_message), free(unwrapped_message)));
 
   if((message_length!=unwrapped_message_length) || (memcmp(message, unwrapped_message, message_length)!=0)){
     free(wrapped_message);
@@ -207,64 +207,64 @@ static void secure_message_api_test(void)
 
 	themis_status_t res;
 
-	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(NULL, &priv_length, pub, &pub_length), "themis_gen_ec_key_pair: get output size (NULL out buffer for private key)");
+	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(NULL, &priv_length, pub, &pub_length), "themis_gen_ec_key_pair: get output size (NULL out buffer for private key)");
 	priv_length--;
-	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(priv, &priv_length, pub, &pub_length), "themis_gen_ec_key_pair: get output size (small out buffer for private key)");
+	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(priv, &priv_length, pub, &pub_length), "themis_gen_ec_key_pair: get output size (small out buffer for private key)");
 
-	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(peer_priv, &priv_length, NULL, &pub_length), "themis_gen_ec_key_pair: get output size (NULL out buffer for public key)");
+	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(peer_priv, &priv_length, NULL, &pub_length), "themis_gen_ec_key_pair: get output size (NULL out buffer for public key)");
 	pub_length--;
-	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(peer_priv, &priv_length, pub, &pub_length), "themis_gen_ec_key_pair: get output size (small out buffer for public key)");
+	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(peer_priv, &priv_length, pub, &pub_length), "themis_gen_ec_key_pair: get output size (small out buffer for public key)");
 
 	res = themis_gen_ec_key_pair(priv, &priv_length, pub, &pub_length);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "themis_gen_ec_key_pair fail");
 		return;
 	}
 
 	res = themis_gen_ec_key_pair(peer_priv, &peer_priv_length, peer_pub, &peer_pub_length);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "themis_gen_ec_key_pair fail");
 		return;
 	}
 
-	if (HERMES_SUCCESS != soter_rand(plaintext, plaintext_length))
+	if (THEMIS_SUCCESS != soter_rand(plaintext, plaintext_length))
 	{
 		testsuite_fail_if(true, "soter_rand fail");
 		return;
 	}
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_message_wrap(NULL, priv_length, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid private key");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_message_wrap(priv, priv_length - 1, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid private key length");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_message_wrap(priv, priv_length, peer_pub, peer_pub_length - 1, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid peer public key length");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_message_wrap(priv, priv_length, peer_pub, peer_pub_length, NULL, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid plaintext");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_message_wrap(priv, priv_length, peer_pub, peer_pub_length, plaintext, 0, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid plaintext length");
-	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_secure_message_wrap(priv, priv_length, pub, pub_length, plaintext, plaintext_length, NULL, &ciphertext_length), "themis_secure_message_wrap: get output size (NULL out buffer)");
+	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_wrap(NULL, priv_length, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid private key");
+	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_wrap(priv, priv_length - 1, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid private key length");
+	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_wrap(priv, priv_length, peer_pub, peer_pub_length - 1, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid peer public key length");
+	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_wrap(priv, priv_length, peer_pub, peer_pub_length, NULL, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid plaintext");
+	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_wrap(priv, priv_length, peer_pub, peer_pub_length, plaintext, 0, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid plaintext length");
+	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_wrap(priv, priv_length, pub, pub_length, plaintext, plaintext_length, NULL, &ciphertext_length), "themis_secure_message_wrap: get output size (NULL out buffer)");
 	ciphertext_length--;
-	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_secure_message_wrap(priv, priv_length, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: get output size (small out buffer)");
+	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_wrap(priv, priv_length, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: get output size (small out buffer)");
 
 	res = themis_secure_message_wrap(priv, priv_length, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "themis_secure_message_wrap fail");
 		return;
 	}
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_message_unwrap(NULL, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid private key");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length - 1, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid private key length");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length - 1, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid peer public key length");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, NULL, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid ciphertext");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, ciphertext, 0, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid ciphertext length");
-	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, NULL, &decryptext_length), "themis_secure_message_unwrap: get output size (NULL out buffer)");
+	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(NULL, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid private key");
+	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length - 1, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid private key length");
+	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length - 1, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid peer public key length");
+	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, NULL, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid ciphertext");
+	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, ciphertext, 0, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid ciphertext length");
+	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, NULL, &decryptext_length), "themis_secure_message_unwrap: get output size (NULL out buffer)");
 	decryptext_length--;
-	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: get output size (small out buffer)");
+	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: get output size (small out buffer)");
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, NULL, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: treating encrypted message as signed (NULL peer public key)");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, 0, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: treating encrypted message as signed (zero peer public key length)");
+	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, NULL, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: treating encrypted message as signed (NULL peer public key)");
+	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, 0, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: treating encrypted message as signed (zero peer public key length)");
 
 	res = themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "themis_secure_message_unwrap fail");
 		return;

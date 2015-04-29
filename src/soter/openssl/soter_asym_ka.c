@@ -4,7 +4,7 @@
  * (c) CossackLabs
  */
 
-#include <common/error.h>
+#include <soter/error.h>
 #include "soter_openssl.h"
 #include <soter/soter_ec_key.h>
 #include <openssl/ec.h>
@@ -28,66 +28,66 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_al
 
 	if ((!asym_ka_ctx) || (0 == nid))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	pkey = EVP_PKEY_new();
 	if (!pkey)
 	{
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	if (!EVP_PKEY_set_type(pkey, EVP_PKEY_EC))
 	{
 		EVP_PKEY_free(pkey);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	asym_ka_ctx->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
 	if (!(asym_ka_ctx->pkey_ctx))
 	{
 		EVP_PKEY_free(pkey);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 	if (1 != EVP_PKEY_paramgen_init(asym_ka_ctx->pkey_ctx))
 	{
 		EVP_PKEY_free(pkey);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	if (1 != EVP_PKEY_CTX_set_ec_paramgen_curve_nid(asym_ka_ctx->pkey_ctx, nid))
 	{
 		EVP_PKEY_free(pkey);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	if (1 != EVP_PKEY_paramgen(asym_ka_ctx->pkey_ctx, &pkey))
 	{
 		EVP_PKEY_free(pkey);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	/*if (1 != EVP_PKEY_CTX_ctrl(asym_ka_ctx->pkey_ctx, EVP_PKEY_EC, -1, EVP_PKEY_CTRL_EC_PARAMGEN_CURVE_NID, nid, NULL))
 	{
 		EVP_PKEY_free(pkey);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}*/
 
-	return HERMES_SUCCESS;
+	return SOTER_SUCCESS;
 }
 
 soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
 {
 	if (!asym_ka_ctx)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 	if (asym_ka_ctx->pkey_ctx)
 	{
 
 		EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
 	}
-	return HERMES_SUCCESS;
+	return SOTER_SUCCESS;
 }
 
 soter_asym_ka_t* soter_asym_ka_create(soter_asym_ka_alg_t alg)
@@ -100,7 +100,7 @@ soter_asym_ka_t* soter_asym_ka_create(soter_asym_ka_alg_t alg)
 	}
 
 	status = soter_asym_ka_init(ctx, alg);
-	if (HERMES_SUCCESS == status)
+	if (SOTER_SUCCESS == status)
 	{
 		return ctx;
 	}
@@ -117,14 +117,14 @@ soter_status_t soter_asym_ka_destroy(soter_asym_ka_t* asym_ka_ctx)
 
 	if (!asym_ka_ctx)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	status = soter_asym_ka_cleanup(asym_ka_ctx);
-	if (HERMES_SUCCESS == status)
+	if (SOTER_SUCCESS == status)
 	{
 		free(asym_ka_ctx);
-		return HERMES_SUCCESS;
+		return SOTER_SUCCESS;
 	}
 	else
 	{
@@ -139,34 +139,34 @@ soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx)
 
 	if (!asym_ka_ctx)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
 
 	if (!pkey)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (EVP_PKEY_EC != EVP_PKEY_id(pkey))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	ec = EVP_PKEY_get0(pkey);
 	if (NULL == ec)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (1 == EC_KEY_generate_key(ec))
 	{
-		return HERMES_SUCCESS;
+		return SOTER_SUCCESS;
 	}
 	else
 	{
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 }
 
@@ -177,24 +177,24 @@ soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void
 
 	if ((!asym_ka_ctx) || (!key))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (key_length < sizeof(soter_container_hdr_t))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
 
 	if (!pkey)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (EVP_PKEY_EC != EVP_PKEY_id(pkey))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	switch (hdr->tag[0])
@@ -204,7 +204,7 @@ soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void
 	case 'U':
 		return soter_ec_pub_key_to_engine_specific(hdr, key_length, ((soter_engine_specific_ec_key_t **)&pkey));
 	default:
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 }
 
@@ -214,19 +214,19 @@ soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx, void* key,
 
 	if (!asym_ka_ctx)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
 
 	if (!pkey)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (EVP_PKEY_EC != EVP_PKEY_id(pkey))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (isprivate)
@@ -247,17 +247,17 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx, const void* pe
 
 	if (NULL == peer_pkey)
 	{
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	if ((!asym_ka_ctx) || (!shared_secret_length))
 	{
 		EVP_PKEY_free(peer_pkey);
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	res = soter_ec_pub_key_to_engine_specific((const soter_container_hdr_t *)peer_key, peer_key_length, ((soter_engine_specific_ec_key_t **)&peer_pkey));
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		EVP_PKEY_free(peer_pkey);
 		return res;
@@ -266,34 +266,34 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx, const void* pe
 	if (1 != EVP_PKEY_derive_init(asym_ka_ctx->pkey_ctx))
 	{
 		EVP_PKEY_free(peer_pkey);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	if (1 != EVP_PKEY_derive_set_peer(asym_ka_ctx->pkey_ctx, peer_pkey))
 	{
 		EVP_PKEY_free(peer_pkey);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	if (1 != EVP_PKEY_derive(asym_ka_ctx->pkey_ctx, NULL, &out_length))
 	{
 		EVP_PKEY_free(peer_pkey);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	if (out_length > *shared_secret_length)
 	{
 		EVP_PKEY_free(peer_pkey);
 		*shared_secret_length = out_length;
-		return HERMES_BUFFER_TOO_SMALL;
+		return SOTER_BUFFER_TOO_SMALL;
 	}
 
 	if (1 != EVP_PKEY_derive(asym_ka_ctx->pkey_ctx, (unsigned char *)shared_secret, shared_secret_length))
 	{
 		EVP_PKEY_free(peer_pkey);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	EVP_PKEY_free(peer_pkey);
-	return HERMES_SUCCESS;
+	return SOTER_SUCCESS;
 }

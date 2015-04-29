@@ -8,7 +8,7 @@
 #ifndef SOTER_TEST_H
 #define SOTER_TEST_H
 
-#include <common/error.h>
+#include <soter/error.h>
 #include <common/test_utils.h>
 #include <soter/soter_t.h>
 

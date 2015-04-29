@@ -33,22 +33,22 @@ static int sign_test(soter_sign_alg_t alg)
 
   soter_status_t res;
   res=soter_sign_export_key(ctx, private_key, &private_key_length, true);
-  if(res!=HERMES_SUCCESS){
-    testsuite_fail_if(res!=HERMES_SUCCESS,"soter_sign_export_key (private key) fail");
+  if(res!=SOTER_SUCCESS){
+    testsuite_fail_if(res!=SOTER_SUCCESS,"soter_sign_export_key (private key) fail");
     soter_sign_destroy(ctx);
     return -6;
   }
 
   res=soter_sign_export_key(ctx, public_key, &public_key_length, false);
-  if(res!=HERMES_SUCCESS){
-    testsuite_fail_if(res!=HERMES_SUCCESS,"soter_sign_export_key (public key) fail");
+  if(res!=SOTER_SUCCESS){
+    testsuite_fail_if(res!=SOTER_SUCCESS,"soter_sign_export_key (public key) fail");
     soter_sign_destroy(ctx);
     return -7;
   }
 
   res=soter_sign_destroy(ctx);
-  if(res!=HERMES_SUCCESS){
-    testsuite_fail_if(res!=HERMES_SUCCESS,"soter_sign_destroy fail");
+  if(res!=SOTER_SUCCESS){
+    testsuite_fail_if(res!=SOTER_SUCCESS,"soter_sign_destroy fail");
     return -8;
   }
   
@@ -61,15 +61,15 @@ static int sign_test(soter_sign_alg_t alg)
   }
 
   res=soter_sign_update(sctx, test_data, test_data_length);
-  if(res!=HERMES_SUCCESS){
-    testsuite_fail_if(res!=HERMES_SUCCESS, "soter_sign_update fail");
+  if(res!=SOTER_SUCCESS){
+    testsuite_fail_if(res!=SOTER_SUCCESS, "soter_sign_update fail");
     soter_sign_destroy(sctx);
     return -2;
   }
 
   res=soter_sign_final(sctx, signature, &signature_length);
-  if(res!=HERMES_BUFFER_TOO_SMALL){
-    testsuite_fail_if(res!=HERMES_BUFFER_TOO_SMALL, "soter_sign_final (signature length determine) fail");
+  if(res!=SOTER_BUFFER_TOO_SMALL){
+    testsuite_fail_if(res!=SOTER_BUFFER_TOO_SMALL, "soter_sign_final (signature length determine) fail");
     soter_sign_destroy(sctx);
     return -3;
   }
@@ -82,15 +82,15 @@ static int sign_test(soter_sign_alg_t alg)
   }
 
   res=soter_sign_final(sctx, signature, &signature_length);
-  if(res!=HERMES_SUCCESS){
-    testsuite_fail_if(res!=HERMES_SUCCESS, "soter_sign_final fail");
+  if(res!=SOTER_SUCCESS){
+    testsuite_fail_if(res!=SOTER_SUCCESS, "soter_sign_final fail");
     soter_sign_destroy(sctx);
     return -5;
   }
 
   res=soter_sign_destroy(sctx);
-  if(res!=HERMES_SUCCESS){
-    testsuite_fail_if(res!=HERMES_SUCCESS,"soter_sign_destroy fail");
+  if(res!=SOTER_SUCCESS){
+    testsuite_fail_if(res!=SOTER_SUCCESS,"soter_sign_destroy fail");
     return -8;
   }
   
@@ -103,15 +103,15 @@ static int sign_test(soter_sign_alg_t alg)
   }
 
   res=soter_verify_update(ctx, test_data, test_data_length);
-  if(res!=HERMES_SUCCESS){
-    testsuite_fail_if(res!=HERMES_SUCCESS, "soter_verify_update fail");
+  if(res!=SOTER_SUCCESS){
+    testsuite_fail_if(res!=SOTER_SUCCESS, "soter_verify_update fail");
     soter_verify_destroy(ctx);
     return -10;
   }
 
   res=soter_verify_final(ctx, signature, signature_length);
-  if(res!=HERMES_SUCCESS){
-    testsuite_fail_if(res!=HERMES_SUCCESS, "soter_verify_final fail");
+  if(res!=SOTER_SUCCESS){
+    testsuite_fail_if(res!=SOTER_SUCCESS, "soter_verify_final fail");
     soter_verify_destroy(ctx);
     return -11;
   }
@@ -154,7 +154,7 @@ static void soter_sign_api_test()
 	}
 
 	res = soter_sign_export_key(sign_ctx, priv, &priv_length, true);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "soter_sign_export_key failed");
 		soter_sign_destroy(sign_ctx);
@@ -162,7 +162,7 @@ static void soter_sign_api_test()
 	}
 
 	res = soter_sign_export_key(sign_ctx, pub, &pub_length, false);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "soter_sign_export_key failed");
 		soter_sign_destroy(sign_ctx);
@@ -183,33 +183,33 @@ static void soter_sign_api_test()
 		testsuite_fail_if(true, "soter_sign_create failed");
 		return;
 	}
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_sign_update(NULL, message, message_length), "soter_sign_update: invalid context");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_sign_update(sign_ctx, NULL, message_length), "soter_sign_update: invalid message");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_sign_update(sign_ctx, message, 0), "soter_sign_update: invalid message length");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_update(NULL, message, message_length), "soter_sign_update: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_update(sign_ctx, NULL, message_length), "soter_sign_update: invalid message");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_update(sign_ctx, message, 0), "soter_sign_update: invalid message length");
 
 	res = soter_sign_update(sign_ctx, message, message_length);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "soter_sign_update failed");
 		soter_sign_destroy(sign_ctx);
 		return;
 	}
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_sign_final(NULL, signature, &signature_length), "soter_sign_final: invalid context");
-	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == soter_sign_final(sign_ctx, NULL, &signature_length), "soter_sign_final: get output size (NULL out buffer)");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_final(NULL, signature, &signature_length), "soter_sign_final: invalid context");
+	testsuite_fail_unless(SOTER_BUFFER_TOO_SMALL == soter_sign_final(sign_ctx, NULL, &signature_length), "soter_sign_final: get output size (NULL out buffer)");
 	signature_length--;
-	testsuite_fail_unless(HERMES_BUFFER_TOO_SMALL == soter_sign_final(sign_ctx, signature, &signature_length), "soter_sign_final: get output size (small out buffer)");
+	testsuite_fail_unless(SOTER_BUFFER_TOO_SMALL == soter_sign_final(sign_ctx, signature, &signature_length), "soter_sign_final: get output size (small out buffer)");
 
 	res = soter_sign_final(sign_ctx, signature, &signature_length);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "soter_sign_final failed");
 		soter_sign_destroy(sign_ctx);
 		return;
 	}
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_sign_destroy(NULL), "soter_sign_destroy: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_destroy(NULL), "soter_sign_destroy: invalid context");
 	res = soter_sign_destroy(sign_ctx);
-	if (HERMES_SUCCESS != res){
+	if (SOTER_SUCCESS != res){
 		testsuite_fail_if(true, "soter_sign_destroy failed");
 		return;
 	}
@@ -227,30 +227,30 @@ static void soter_sign_api_test()
 		return;
 	}
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_verify_update(NULL, message, message_length), "soter_verify_update: invalid context");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_verify_update(sign_ctx, NULL, message_length), "soter_verify_update: invalid message");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_verify_update(sign_ctx, message, 0), "soter_verify_update: invalid message length");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_verify_update(NULL, message, message_length), "soter_verify_update: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_verify_update(sign_ctx, NULL, message_length), "soter_verify_update: invalid message");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_verify_update(sign_ctx, message, 0), "soter_verify_update: invalid message length");
 
 	res = soter_verify_update(sign_ctx, message, message_length);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "soter_verify_update failed");
 		soter_verify_destroy(sign_ctx);
 		return;
 	}
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_verify_final(NULL, signature, signature_length), "soter_verify_final: invalid context");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_verify_final(sign_ctx, NULL, signature_length), "soter_verify_final: invalid signature buffer");
-	testsuite_fail_unless(HERMES_INVALID_SIGNATURE == soter_verify_final(sign_ctx, signature, signature_length - 1), "soter_verify_final: invalid signature length");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_verify_final(NULL, signature, signature_length), "soter_verify_final: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_verify_final(sign_ctx, NULL, signature_length), "soter_verify_final: invalid signature buffer");
+	testsuite_fail_unless(SOTER_INVALID_SIGNATURE == soter_verify_final(sign_ctx, signature, signature_length - 1), "soter_verify_final: invalid signature length");
 	signature[signature_length / 2]++;
-	testsuite_fail_unless(HERMES_INVALID_SIGNATURE == soter_verify_final(sign_ctx, signature, signature_length), "soter_verify_final: invalid signature value");
+	testsuite_fail_unless(SOTER_INVALID_SIGNATURE == soter_verify_final(sign_ctx, signature, signature_length), "soter_verify_final: invalid signature value");
 	signature[signature_length / 2]--;
 
-	testsuite_fail_unless(HERMES_SUCCESS == soter_verify_final(sign_ctx, signature, signature_length), "soter_verify_final: normal flow");
+	testsuite_fail_unless(SOTER_SUCCESS == soter_verify_final(sign_ctx, signature, signature_length), "soter_verify_final: normal flow");
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_verify_destroy(NULL), "soter_verify_destroy: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_verify_destroy(NULL), "soter_verify_destroy: invalid context");
 	res = soter_verify_destroy(sign_ctx);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "soter_verify_destroy failed");
 		return;
@@ -266,7 +266,7 @@ static void soter_sign_api_test()
 	message[message_length / 2]++;
 
 	res = soter_verify_update(sign_ctx, message, message_length);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "soter_verify_update failed");
 		soter_verify_destroy(sign_ctx);
@@ -275,7 +275,7 @@ static void soter_sign_api_test()
 
 	message[message_length / 2]--;
 
-	testsuite_fail_unless(HERMES_INVALID_SIGNATURE == soter_verify_final(sign_ctx, signature, signature_length), "soter_verify_final: wrong signed message");
+	testsuite_fail_unless(SOTER_INVALID_SIGNATURE == soter_verify_final(sign_ctx, signature, signature_length), "soter_verify_final: wrong signed message");
 
 	soter_verify_destroy(sign_ctx);
 }

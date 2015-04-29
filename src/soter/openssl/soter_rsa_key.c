@@ -4,7 +4,7 @@
  * (c) CossackLabs
  */
 
-#include <common/error.h>
+#include <soter/error.h>
 #include <soter/soter_rsa_key.h>
 
 #include <openssl/evp.h>
@@ -101,19 +101,19 @@ static soter_status_t bignum_to_bytes(BIGNUM *bn, uint8_t *to, size_t to_length)
 
 	if (bn_size > to_length)
 	{
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	bytes_copied = BN_bn2bin(bn, to + (to_length - bn_size));
 
 	if (bytes_copied != bn_size)
 	{
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	memset(to, 0, to_length - bn_size);
 
-	return HERMES_SUCCESS;
+	return SOTER_SUCCESS;
 }
 
 soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_rsa_key_t *engine_key, soter_container_hdr_t *key, size_t* key_length)
@@ -127,24 +127,24 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
 
 	if (!key_length)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (EVP_PKEY_RSA != EVP_PKEY_id(pkey))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	rsa = EVP_PKEY_get1_RSA((EVP_PKEY *)pkey);
 	if (NULL == rsa)
 	{
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	rsa_mod_size = RSA_size(rsa);
 	if (!is_mod_size_supported(rsa_mod_size))
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = SOTER_INVALID_PARAMETER;
 		goto err;
 	}
 
@@ -152,7 +152,7 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
 	if ((!key) || (output_length > *key_length))
 	{
 		*key_length = output_length;
-		res = HERMES_BUFFER_TOO_SMALL;
+		res = SOTER_BUFFER_TOO_SMALL;
 		goto err;
 	}
 
@@ -167,12 +167,12 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
 	}
 	else
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = SOTER_INVALID_PARAMETER;
 		goto err;
 	}
 
 	res = bignum_to_bytes(rsa->n, (unsigned char *)(key + 1), rsa_mod_size);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		goto err;
 	}
@@ -181,7 +181,7 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
 	key->size = htonl(output_length);
 	soter_update_container_checksum(key);
 	*key_length = output_length;
-	res = HERMES_SUCCESS;
+	res = SOTER_SUCCESS;
 
 err:
 	/* Free extra reference on RSA object provided by EVP_PKEY_get1_RSA */
@@ -202,24 +202,24 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
 	if (!key_length)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (EVP_PKEY_RSA != EVP_PKEY_id(pkey))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	rsa = EVP_PKEY_get1_RSA((EVP_PKEY *)pkey);
 	if (NULL == rsa)
 	{
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	rsa_mod_size = RSA_size(rsa);
 	if (!is_mod_size_supported(rsa_mod_size))
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = SOTER_INVALID_PARAMETER;
 		goto err;
 	}
 
@@ -227,7 +227,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 	if ((!key) || (output_length > *key_length))
 	{
 		*key_length = output_length;
-		res = HERMES_BUFFER_TOO_SMALL;
+		res = SOTER_BUFFER_TOO_SMALL;
 		goto err;
 	}
 
@@ -242,13 +242,13 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 	}
 	else
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = SOTER_INVALID_PARAMETER;
 		goto err;
 	}
 
 	/* Private exponent */
 	res = bignum_to_bytes(rsa->d, curr_bn, rsa_mod_size);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		goto err;
 	}
@@ -256,7 +256,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
 	/* p */
 	res = bignum_to_bytes(rsa->p, curr_bn, rsa_mod_size / 2);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		goto err;
 	}
@@ -264,7 +264,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
 	/* q */
 	res = bignum_to_bytes(rsa->q, curr_bn, rsa_mod_size / 2);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		goto err;
 	}
@@ -272,7 +272,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
 	/* dp */
 	res = bignum_to_bytes(rsa->dmp1, curr_bn, rsa_mod_size / 2);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		goto err;
 	}
@@ -280,7 +280,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
 	/* dq */
 	res = bignum_to_bytes(rsa->dmq1, curr_bn, rsa_mod_size / 2);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		goto err;
 	}
@@ -288,7 +288,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
 	/* qp */
 	res = bignum_to_bytes(rsa->iqmp, curr_bn, rsa_mod_size / 2);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		goto err;
 	}
@@ -296,7 +296,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
 	/* modulus */
 	res = bignum_to_bytes(rsa->n, curr_bn, rsa_mod_size);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		goto err;
 	}
@@ -305,13 +305,13 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 	key->size = htonl(output_length);
 	soter_update_container_checksum(key);
 	*key_length = output_length;
-	res = HERMES_SUCCESS;
+	res = SOTER_SUCCESS;
 
 err:
 	/* Free extra reference on RSA object provided by EVP_PKEY_get1_RSA */
 	RSA_free(rsa);
 
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		/* Zero output memory to avoid leaking private key information */
 		memset(key, 0, *key_length);
@@ -330,18 +330,18 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t 
 
 	if (key_length != ntohl(key->size))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	/* Validate tag */
 	if (memcmp(key->tag, RSA_PUB_KEY_PREF, strlen(RSA_PUB_KEY_PREF)))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
-	if (HERMES_SUCCESS != soter_verify_container_checksum(key))
+	if (SOTER_SUCCESS != soter_verify_container_checksum(key))
 	{
-		return HERMES_DATA_CORRUPT;
+		return SOTER_DATA_CORRUPT;
 	}
 
 	switch (key->tag[3])
@@ -359,12 +359,12 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t 
 		rsa_mod_size = 1024;
 		break;
 	default:
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (key_length < rsa_pub_key_size(rsa_mod_size))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	pub_exp = (const uint32_t *)((unsigned char *)(key + 1) + rsa_mod_size);
@@ -374,49 +374,49 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t 
 	case RSA_F4:
 		break;
 	default:
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	rsa = RSA_new();
 	if (!rsa)
 	{
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	rsa->e = BN_new();
 	if (!(rsa->e))
 	{
 		RSA_free(rsa);
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	if (!BN_set_word(rsa->e, ntohl(*pub_exp)))
 	{
 		RSA_free(rsa);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	rsa->n = BN_new();
 	if (!(rsa->n))
 	{
 		RSA_free(rsa);
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	if (!BN_bin2bn((const unsigned char *)(key + 1), rsa_mod_size, rsa->n))
 	{
 		RSA_free(rsa);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	if (!EVP_PKEY_assign_RSA(pkey, rsa))
 	{
 		RSA_free(rsa);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	/* EVP_PKEY_assign_RSA does not increment the reference count, so no need to free RSA object */
-	return HERMES_SUCCESS;
+	return SOTER_SUCCESS;
 }
 
 soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t *key, size_t key_length, soter_engine_specific_rsa_key_t **engine_key)
@@ -429,18 +429,18 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 
 	if (key_length != ntohl(key->size))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	/* Validate tag */
 	if (memcmp(key->tag, RSA_PRIV_KEY_PREF, strlen(RSA_PRIV_KEY_PREF)))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
-	if (HERMES_SUCCESS != soter_verify_container_checksum(key))
+	if (SOTER_SUCCESS != soter_verify_container_checksum(key))
 	{
-		return HERMES_DATA_CORRUPT;
+		return SOTER_DATA_CORRUPT;
 	}
 
 	switch (key->tag[3])
@@ -458,12 +458,12 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 		rsa_mod_size = 1024;
 		break;
 	default:
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (key_length < rsa_priv_key_size(rsa_mod_size))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	pub_exp = (const uint32_t *)(curr_bn + ((rsa_mod_size * 4) + (rsa_mod_size / 2)));;
@@ -473,26 +473,26 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 	case RSA_F4:
 		break;
 	default:
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	rsa = RSA_new();
 	if (!rsa)
 	{
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	rsa->e = BN_new();
 	if (!(rsa->e))
 	{
 		RSA_free(rsa);
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	if (!BN_set_word(rsa->e, ntohl(*pub_exp)))
 	{
 		RSA_free(rsa);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	/* Private exponent */
@@ -500,13 +500,13 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 	if (!(rsa->d))
 	{
 		RSA_free(rsa);
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	if (!BN_bin2bn(curr_bn, rsa_mod_size, rsa->d))
 	{
 		RSA_free(rsa);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 	curr_bn += rsa_mod_size;
 
@@ -515,13 +515,13 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 	if (!(rsa->p))
 	{
 		RSA_free(rsa);
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa->p))
 	{
 		RSA_free(rsa);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 	curr_bn += rsa_mod_size / 2;
 
@@ -530,13 +530,13 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 	if (!(rsa->q))
 	{
 		RSA_free(rsa);
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa->q))
 	{
 		RSA_free(rsa);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 	curr_bn += rsa_mod_size / 2;
 
@@ -545,13 +545,13 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 	if (!(rsa->dmp1))
 	{
 		RSA_free(rsa);
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa->dmp1))
 	{
 		RSA_free(rsa);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 	curr_bn += rsa_mod_size / 2;
 
@@ -560,13 +560,13 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 	if (!(rsa->dmq1))
 	{
 		RSA_free(rsa);
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa->dmq1))
 	{
 		RSA_free(rsa);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 	curr_bn += rsa_mod_size / 2;
 
@@ -575,13 +575,13 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 	if (!(rsa->iqmp))
 	{
 		RSA_free(rsa);
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa->iqmp))
 	{
 		RSA_free(rsa);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 	curr_bn += rsa_mod_size / 2;
 
@@ -590,13 +590,13 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 	if (!(rsa->n))
 	{
 		RSA_free(rsa);
-		return HERMES_NO_MEMORY;
+		return SOTER_NO_MEMORY;
 	}
 
 	if (!BN_bin2bn(curr_bn, rsa_mod_size, rsa->n))
 	{
 		RSA_free(rsa);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	/* If at least one CRT parameter is zero, free them */
@@ -621,9 +621,9 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 	if (!EVP_PKEY_assign_RSA(pkey, rsa))
 	{
 		RSA_free(rsa);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 
 	/* EVP_PKEY_assign_RSA does not increment the reference count, so no need to free RSA object */
-	return HERMES_SUCCESS;
+	return SOTER_SUCCESS;
 }

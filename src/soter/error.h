@@ -1,0 +1,117 @@
+/**
+ * @file
+ *
+ * (c) CossackLabs
+ */
+
+#ifndef SOTER_ERROR_H
+#define SOTER_ERROR_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+
+#define SOTER_SSESSION_SEND_OUTPUT_TO_PEER 1
+
+#define SOTER_SUCCESS 0
+#define SOTER_FAIL   -1
+#define SOTER_INVALID_PARAMETER -2
+#define SOTER_NO_MEMORY -3
+#define SOTER_BUFFER_TOO_SMALL -4
+#define SOTER_DATA_CORRUPT -5
+#define SOTER_INVALID_SIGNATURE -6
+#define SOTER_NOT_SUPPORTED -7
+#define SOTER_SSESSION_KA_NOT_FINISHED -8
+#define SOTER_SSESSION_TRANSPORT_ERROR -9
+
+#ifdef DEBUG
+#define SOTER_ERROR_OUT(message) fprintf(stderr, "%s:%u - error: %s\n",__FILE__,__LINE__,message) 
+#define SOTER_DEBUG_OUT(message) fprintf(stdout, "%s:%u - debug: %s\n",__FILE__,__LINE__,message)
+#else
+#define SOTER_ERROR_OUT(message)  
+#define SOTER_DEBUG_OUT(message) 
+#endif
+
+#define SOTER_CHECK(x) if(!(x)){	\
+	SOTER_ERROR_OUT(#x);		\
+	return SOTER_FAIL;		\
+    }
+
+#define SOTER_CHECK_(x) if(!(x)){	\
+	SOTER_ERROR_OUT(#x);		\
+	return NULL;		\
+    }
+
+#define SOTER_CHECK_PARAM(x) if(!(x)){	\
+	SOTER_ERROR_OUT(#x);		\
+	return SOTER_INVALID_PARAMETER;\
+    }
+
+#define SOTER_CHECK_PARAM_(x) if(!(x)){	\
+	SOTER_ERROR_OUT(#x);		\
+	return NULL;\
+    }
+
+#define SOTER_CHECK_MALLOC(x,y)	\
+	y=malloc(sizeof(x));		\
+	if(!(x)){			\
+	SOTER_ERROR_OUT(#x);		\
+	return SOTER_NO_MEMORY;	\
+    }
+
+#define SOTER_CHECK_MALLOC_(x)if(!(x)){	\
+	SOTER_ERROR_OUT(#x);		\
+	return NULL;\
+    }
+
+#define SOTER_CHECK_MALLOC_(x)if(!(x)){	\
+	SOTER_ERROR_OUT(#x);		\
+	return NULL;\
+    }
+
+#define SOTER_CHECK_FREE(x,y)if(!(x)){	\
+	SOTER_ERROR_OUT(#x);		\
+	free(y);			\
+	return SOTER_FAIL;		\
+    }
+
+#define SOTER_IF_FAIL(x,y)if(!(x)){	\
+	SOTER_ERROR_OUT(#x);		\
+	{y;}			\
+	return SOTER_FAIL;		\
+    }
+
+#define SOTER_IF_FAIL_(x,y)if(!(x)){	\
+	SOTER_ERROR_OUT(#x);		\
+	{y;}			\
+	return NULL;		\
+    }
+
+#define SOTER_STATUS_CHECK(x,y){		\
+  int res=x;					\
+  if(res!=y){					\
+     SOTER_ERROR_OUT(#x);				\
+     return res;					\
+  }							\
+  }
+
+#define SOTER_STATUS_CHECK_FREE(x,y,z){		\
+  int res=x;					\
+  if(res!=y){					\
+     SOTER_ERROR_OUT(#x);				\
+     free(z);						\
+     return res;					\
+  }							\
+  }
+
+#ifdef DEBUG
+    static void hermes_out_buffer(const uint8_t* buffer, const size_t buffer_length){
+    int i;
+    for(i=0;i<buffer_length;++i){    
+	fprintf(stderr, "%x ",buffer[i]);
+    }
+    fprintf(stderr, "\n");
+}
+#endif
+
+#endif /* SOTER_ERROR_H */

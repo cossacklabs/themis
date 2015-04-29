@@ -32,11 +32,11 @@ test_utils_status_t string_to_bytes(const char *str, uint8_t *bytes, size_t size
 
 	/* strings with hex data should at least be even in size */
 	if (0x1 & str_size)
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 
 	/* check if we have enough memory for output */
 	if (size < (str_size / 2))
-		return HERMES_BUFFER_TOO_SMALL;
+		return SOTER_BUFFER_TOO_SMALL;
 
 	for (i = 0; i < str_size; i += 2)
 	{
@@ -44,12 +44,12 @@ test_utils_status_t string_to_bytes(const char *str, uint8_t *bytes, size_t size
 		uint8_t lower = parse_char(str[i + 1]);
 
 		if ((0xf0 & upper) || (0xf0 & lower))
-			return HERMES_INVALID_PARAMETER;
+			return SOTER_INVALID_PARAMETER;
 
 		bytes[i / 2] = lower | (upper << 4);
 	}
 
-	return HERMES_SUCCESS;
+	return SOTER_SUCCESS;
 }
 
 size_t rand_int(size_t max_val)

@@ -5,7 +5,7 @@
  */
 
 #include <themis/secure_session_peer.h>
-#include <common/error.h>
+#include <themis/error.h>
 
 #include <string.h>
 
@@ -30,7 +30,7 @@ themis_status_t secure_session_peer_init(secure_session_peer_t *peer, const void
 	peer->id = malloc(total_len);
 	if (NULL == peer->id)
 	{
-		return HERMES_NO_MEMORY;
+		return THEMIS_NO_MEMORY;
 	}
 
 	peer->id_length = id_len;
@@ -47,5 +47,5 @@ themis_status_t secure_session_peer_init(secure_session_peer_t *peer, const void
 		memcpy(peer->ecdh_key, ecdh_key, ecdh_key_len);
 	}
 
-	return HERMES_SUCCESS;
+	return THEMIS_SUCCESS;
 }

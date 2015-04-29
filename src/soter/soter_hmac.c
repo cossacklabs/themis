@@ -5,7 +5,7 @@
  */
 
 #include <soter/soter_t.h>
-#include <common/error.h>
+#include <soter/error.h>
 
 #include <string.h>
 
@@ -33,25 +33,25 @@ soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, soter_hash_algo_t alg
 
 	if ((NULL == hmac_ctx) || (0 == block_size) || (HASH_MAX_BLOCK_SIZE < block_size) || (NULL == key) || (0 == key_length))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (key_length > block_size)
 	{
 		res = soter_hash_init(&(hmac_ctx->hash_ctx), algo);
-		if (HERMES_SUCCESS != res)
+		if (SOTER_SUCCESS != res)
 		{
 			return res;
 		}
 
 		res = soter_hash_update(&(hmac_ctx->hash_ctx), key, key_length);
-		if (HERMES_SUCCESS != res)
+		if (SOTER_SUCCESS != res)
 		{
 			return res;
 		}
 
 		res = soter_hash_final(&(hmac_ctx->hash_ctx), hmac_ctx->o_key_pad, &o_key_pad_length);
-		if (HERMES_SUCCESS != res)
+		if (SOTER_SUCCESS != res)
 		{
 			return res;
 		}
@@ -73,14 +73,14 @@ soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, soter_hash_algo_t alg
 	}
 
 	res = soter_hash_init(&(hmac_ctx->hash_ctx), algo);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		soter_hmac_cleanup(hmac_ctx);
 		return res;
 	}
 
 	res = soter_hash_update(&(hmac_ctx->hash_ctx), i_key_pad, block_size);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		soter_hmac_cleanup(hmac_ctx);
 		return res;
@@ -95,25 +95,25 @@ soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, soter_hash_algo_t alg
 
 	hmac_ctx->block_size = block_size;
 	hmac_ctx->algo = algo;
-	return HERMES_SUCCESS;
+	return SOTER_SUCCESS;
 }
 
 soter_status_t soter_hmac_cleanup(soter_hmac_ctx_t *hmac_ctx)
 {
 	if (NULL == hmac_ctx)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	memset(hmac_ctx->o_key_pad, 0, sizeof(hmac_ctx->o_key_pad));
-	return HERMES_SUCCESS;
+	return SOTER_SUCCESS;
 }
 
 soter_status_t soter_hmac_update(soter_hmac_ctx_t *hmac_ctx, const void *data, size_t length)
 {
 	if ((NULL == hmac_ctx) || (NULL == data))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	return soter_hash_update(&(hmac_ctx->hash_ctx), data, length);
@@ -127,11 +127,11 @@ soter_status_t soter_hmac_final(soter_hmac_ctx_t *hmac_ctx, uint8_t* hmac_value,
 
 	if ((NULL == hmac_ctx) || (NULL == hmac_length))
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	res = soter_hash_final(&(hmac_ctx->hash_ctx), NULL, &output_length);
-	if (HERMES_BUFFER_TOO_SMALL != res)
+	if (SOTER_BUFFER_TOO_SMALL != res)
 	{
 		return res;
 	}
@@ -139,25 +139,25 @@ soter_status_t soter_hmac_final(soter_hmac_ctx_t *hmac_ctx, uint8_t* hmac_value,
 	if ((NULL == hmac_value) || (output_length > *hmac_length))
 	{
 		*hmac_length = output_length;
-		return HERMES_BUFFER_TOO_SMALL;
+		return SOTER_BUFFER_TOO_SMALL;
 	}
 
 	output_length = sizeof(i_hash);
 
 	res = soter_hash_final(&(hmac_ctx->hash_ctx), i_hash, &output_length);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		return res;
 	}
 
 	res = soter_hash_init(&(hmac_ctx->hash_ctx), hmac_ctx->algo);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		return res;
 	}
 
 	res = soter_hash_update(&(hmac_ctx->hash_ctx), hmac_ctx->o_key_pad, hmac_ctx->block_size);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		return res;
 	}
@@ -165,7 +165,7 @@ soter_status_t soter_hmac_final(soter_hmac_ctx_t *hmac_ctx, uint8_t* hmac_value,
 	memset(hmac_ctx->o_key_pad, 0, sizeof(hmac_ctx->o_key_pad));
 
 	res = soter_hash_update(&(hmac_ctx->hash_ctx), i_hash, output_length);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
 		return res;
 	}
@@ -183,7 +183,7 @@ soter_hmac_ctx_t* soter_hmac_create(soter_hash_algo_t algo, const uint8_t* key, 
 	}
 
 	status = soter_hmac_init(ctx, algo, key, key_length);
-	if (HERMES_SUCCESS == status)
+	if (SOTER_SUCCESS == status)
 	{
 		return ctx;
 	}
@@ -198,7 +198,7 @@ soter_status_t soter_hmac_destroy(soter_hmac_ctx_t *hmac_ctx)
 {
 	soter_status_t res = soter_hmac_cleanup(hmac_ctx);
 
-	if (HERMES_SUCCESS == res)
+	if (SOTER_SUCCESS == res)
 	{
 		free(hmac_ctx);
 	}

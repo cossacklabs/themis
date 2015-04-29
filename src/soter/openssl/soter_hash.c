@@ -4,7 +4,7 @@
  * (c) CossackLabs
  */
 
-#include "common/error.h"
+#include "soter/error.h"
 #include "soter/soter.h"
 #include "soter_openssl.h"
 #include <openssl/evp.h>
@@ -31,16 +31,16 @@ soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t alg
 
 	if (!hash_ctx || !md)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (EVP_DigestInit(&(hash_ctx->evp_md_ctx), md))
 	{
-		return HERMES_SUCCESS;
+		return SOTER_SUCCESS;
 	}
 	else
 	{
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 }
 
@@ -48,16 +48,16 @@ soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, s
 {
 	if (!hash_ctx || !data)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	if (EVP_DigestUpdate(&(hash_ctx->evp_md_ctx), data, length))
 	{
-		return HERMES_SUCCESS;
+		return SOTER_SUCCESS;
 	}
 	else
 	{
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 }
 
@@ -67,7 +67,7 @@ soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value,
 
 	if (!hash_ctx || !hash_length)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	md_length = (size_t)EVP_MD_CTX_size(&(hash_ctx->evp_md_ctx));
@@ -75,17 +75,17 @@ soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value,
 	if (!hash_value || (md_length > *hash_length))
 	{
 		*hash_length = md_length;
-		return HERMES_BUFFER_TOO_SMALL;
+		return SOTER_BUFFER_TOO_SMALL;
 	}
 
 	if (EVP_DigestFinal(&(hash_ctx->evp_md_ctx), hash_value, (unsigned int *)&md_length))
 	{
 		*hash_length = md_length;
-		return HERMES_SUCCESS;
+		return SOTER_SUCCESS;
 	}
 	else
 	{
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	}
 }
 
@@ -99,7 +99,7 @@ soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo)
 	}
 
 	status = soter_hash_init(ctx, algo);
-	if (HERMES_SUCCESS == status)
+	if (SOTER_SUCCESS == status)
 	{
 		return ctx;
 	}
@@ -114,9 +114,9 @@ soter_status_t soter_hash_destroy(soter_hash_ctx_t *hash_ctx)
 {
 	if (!hash_ctx)
 	{
-		return HERMES_INVALID_PARAMETER;
+		return SOTER_INVALID_PARAMETER;
 	}
 
 	free(hash_ctx);
-	return HERMES_SUCCESS;
+	return SOTER_SUCCESS;
 }

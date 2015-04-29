@@ -6,7 +6,7 @@
 
 #include <soter/soter_kdf.h>
 #include <soter/soter_t.h>
-#include <common/error.h>
+#include <soter/error.h>
 
 #include <string.h>
 
@@ -19,7 +19,7 @@ soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, 
 	soter_hmac_ctx_t hmac_ctx;
 	soter_status_t soter_status;
 
-	soter_status_t res = HERMES_SUCCESS;
+	soter_status_t res = SOTER_SUCCESS;
 	uint8_t out[MAX_HMAC_SIZE] = {0, 0, 0, 1};
 	size_t out_length = sizeof(out);
 	size_t i;
@@ -50,14 +50,14 @@ soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, 
 	}
 
 	soter_status = soter_hmac_init(&hmac_ctx, SOTER_HASH_SHA256, key, key_length);
-	if (HERMES_SUCCESS != soter_status)
+	if (SOTER_SUCCESS != soter_status)
 	{
 		return soter_status;
 	}
 
 	/* i (counter) */
 	soter_status = soter_hmac_update(&hmac_ctx, out, 4);
-	if (HERMES_SUCCESS != soter_status)
+	if (SOTER_SUCCESS != soter_status)
 	{
 		res = soter_status;
 		goto err;
@@ -65,7 +65,7 @@ soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, 
 
 	/* label */
 	soter_status = soter_hmac_update(&hmac_ctx, label, strlen(label));
-	if (HERMES_SUCCESS != soter_status)
+	if (SOTER_SUCCESS != soter_status)
 	{
 		res = soter_status;
 		goto err;
@@ -73,7 +73,7 @@ soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, 
 
 	/* 0x00 delimiter */
 	soter_status = soter_hmac_update(&hmac_ctx, out, 1);
-	if (HERMES_SUCCESS != soter_status)
+	if (SOTER_SUCCESS != soter_status)
 	{
 		res = soter_status;
 		goto err;
@@ -85,7 +85,7 @@ soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, 
 		if (context[i].data)
 		{
 			soter_status = soter_hmac_update(&hmac_ctx, context[i].data, context[i].length);
-			if (HERMES_SUCCESS != soter_status)
+			if (SOTER_SUCCESS != soter_status)
 			{
 				res = soter_status;
 				goto err;
@@ -94,7 +94,7 @@ soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, 
 	}
 
 	soter_status = soter_hmac_final(&hmac_ctx, out, &out_length);
-	if (HERMES_SUCCESS != soter_status)
+	if (SOTER_SUCCESS != soter_status)
 	{
 		res = soter_status;
 		goto err;
@@ -102,7 +102,7 @@ soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, 
 
 	if (output_length > out_length)
 	{
-		res = HERMES_INVALID_PARAMETER;
+		res = SOTER_INVALID_PARAMETER;
 		goto err;
 	}
 

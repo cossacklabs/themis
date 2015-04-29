@@ -4,7 +4,7 @@
  * (c) CossackLabs
  */
 
-#include <common/error.h>
+#include <soter/error.h>
 #include <soter/soter.h>
 #include <soter/soter_ec_key.h>
 #include "soter_openssl.h"
@@ -18,30 +18,30 @@ soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const v
   EVP_PKEY *pkey;
   pkey = EVP_PKEY_new();
   if (!pkey){
-    return HERMES_NO_MEMORY;
+    return SOTER_NO_MEMORY;
   }
   if (!EVP_PKEY_set_type(pkey, EVP_PKEY_EC)){
     EVP_PKEY_free(pkey);
-    return HERMES_FAIL;
+    return SOTER_FAIL;
   }
   ctx->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
   if (!(ctx->pkey_ctx)){
     EVP_PKEY_free(pkey);
-    return HERMES_FAIL;
+    return SOTER_FAIL;
   }
 
   /* TODO: Review needed */
   if ((private_key) && (private_key_length)) {
-	  if(soter_ec_import_key(pkey, private_key, private_key_length)!=HERMES_SUCCESS){
+	  if(soter_ec_import_key(pkey, private_key, private_key_length)!=SOTER_SUCCESS){
 		EVP_PKEY_free(pkey);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	  }
   }
 
   if ((public_key) && (public_key_length)) {
-	  if(soter_ec_import_key(pkey, public_key, public_key_length)!=HERMES_SUCCESS){
+	  if(soter_ec_import_key(pkey, public_key, public_key_length)!=SOTER_SUCCESS){
 		EVP_PKEY_free(pkey);
-		return HERMES_FAIL;
+		return SOTER_FAIL;
 	  }
   }
 
@@ -49,21 +49,21 @@ soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const v
   ctx->md_ctx = EVP_MD_CTX_create();
   if(!(ctx->md_ctx)){
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    return HERMES_NO_MEMORY;
+    return SOTER_NO_MEMORY;
   }
   if(!EVP_DigestVerifyInit(ctx->md_ctx, &(ctx->pkey_ctx), EVP_sha256(), NULL, pkey)){
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    return HERMES_FAIL;
+    return SOTER_FAIL;
   }
-  return HERMES_SUCCESS;
+  return SOTER_SUCCESS;
 }
 
 soter_status_t soter_verify_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const void* data, const size_t data_length)
 {
   if(!EVP_DigestVerifyUpdate(ctx->md_ctx, data, data_length)){
-    return HERMES_FAIL;
+    return SOTER_FAIL;
   }
-  return HERMES_SUCCESS;
+  return SOTER_SUCCESS;
 }
 
 /* TODO: Review needed */
@@ -72,15 +72,15 @@ soter_status_t soter_verify_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const 
   int res;
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
   if (!pkey){
-    return HERMES_INVALID_PARAMETER;
+    return SOTER_INVALID_PARAMETER;
   }
 
   switch (EVP_DigestVerifyFinal(ctx->md_ctx, (unsigned char*)signature, signature_length)) {
   case 0:
-	  return HERMES_INVALID_SIGNATURE;
+	  return SOTER_INVALID_SIGNATURE;
   case 1:
-	  return HERMES_SUCCESS;
+	  return SOTER_SUCCESS;
   default:
-	  return HERMES_INVALID_SIGNATURE;
+	  return SOTER_INVALID_SIGNATURE;
   }
 }

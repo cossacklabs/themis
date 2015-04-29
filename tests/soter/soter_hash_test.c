@@ -99,8 +99,8 @@ static void test_api(void)
 
 	memset(&ctx, 0, sizeof(soter_hash_ctx_t));
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_hash_init(NULL, SOTER_HASH_SHA256), "soter_hash_init: invalid context");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_hash_init(&ctx, (soter_hash_algo_t)0xffffffff), "soter_hash_init: invalid algorithm type");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_init(NULL, SOTER_HASH_SHA256), "soter_hash_init: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_init(&ctx, (soter_hash_algo_t)0xffffffff), "soter_hash_init: invalid algorithm type");
 	testsuite_fail_unless(NULL == soter_hash_create((soter_hash_algo_t)0xffffffff), "soter_hash_create: invalid algorithm type");
 
 	input_len = strlen(vectors[4].input) / 2;
@@ -118,31 +118,31 @@ static void test_api(void)
 	}
 
 	res = soter_hash_init(&ctx, SOTER_HASH_SHA256);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_if(HERMES_SUCCESS != res, "soter_hash_init failed");
+		testsuite_fail_if(SOTER_SUCCESS != res, "soter_hash_init failed");
 		return;
 	}
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_hash_update(NULL, input, input_len), "soter_hash_update: invalid context");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_hash_update(&ctx, NULL, input_len), "soter_hash_update: invalid data");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_update(NULL, input, input_len), "soter_hash_update: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_update(&ctx, NULL, input_len), "soter_hash_update: invalid data");
 
 	res = soter_hash_update(&ctx, input, input_len);
-	if (HERMES_SUCCESS != res)
+	if (SOTER_SUCCESS != res)
 	{
-		testsuite_fail_if(HERMES_SUCCESS != res, "soter_hash_update failed");
+		testsuite_fail_if(SOTER_SUCCESS != res, "soter_hash_update failed");
 		return;
 	}
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_hash_final(NULL, hash, &hash_len), "soter_hash_final: invalid context");
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_hash_final(&ctx, hash, NULL), "soter_hash_final: invalid size pointer");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_final(NULL, hash, &hash_len), "soter_hash_final: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_final(&ctx, hash, NULL), "soter_hash_final: invalid size pointer");
 
 	res = soter_hash_final(&ctx, NULL, &hash_len);
-	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (32 == hash_len), "soter_hash_final: get output size (NULL out buffer)");
+	testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (32 == hash_len), "soter_hash_final: get output size (NULL out buffer)");
 
 	hash_len--;
 	res = soter_hash_final(&ctx, hash, &hash_len);
-	testsuite_fail_unless((HERMES_BUFFER_TOO_SMALL == res) && (32 == hash_len), "soter_hash_final: get output size (small out buffer)");
+	testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (32 == hash_len), "soter_hash_final: get output size (small out buffer)");
 
 	util_res = string_to_bytes(vectors[4].result, result, sizeof(result));
 	if (util_res)
@@ -152,9 +152,9 @@ static void test_api(void)
 	}
 
 	res = soter_hash_final(&ctx, hash, &hash_len);
-	testsuite_fail_unless((HERMES_SUCCESS == res) && (32 == hash_len) && !memcmp(hash, result, hash_len), "soter_hash_final: normal value");
+	testsuite_fail_unless((SOTER_SUCCESS == res) && (32 == hash_len) && !memcmp(hash, result, hash_len), "soter_hash_final: normal value");
 
-	testsuite_fail_unless(HERMES_INVALID_PARAMETER == soter_hash_destroy(NULL), "soter_hash_destroy: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_destroy(NULL), "soter_hash_destroy: invalid context");
 }
 
 void run_soter_hash_tests(void)
