@@ -128,10 +128,18 @@ install: err all
 	install $(BIN_PATH)/*.a $(PREFIX)/lib
 	install $(BIN_PATH)/*.so $(PREFIX)/lib
 
-uninstall:
+phpthemis_uninstall:
+	cd src/wrappers/themis/php
+	make clean
+
+uninstall: phpthemis_uninstall
 	rm -rf $(PREFIX)/include/themis
 	rm -rf $(PREFIX)/include/soter
 	rm $(PREFIX)/lib/libsoter.a
 	rm $(PREFIX)/lib/libthemis.a
 	rm $(PREFIX)/lib/libsoter.so
 	rm $(PREFIX)/lib/libthemis.so
+
+phpthemis_install: install
+	cd src/wrappers/themis/php && phpize && ./configure && make install
+	
