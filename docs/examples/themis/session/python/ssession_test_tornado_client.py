@@ -1,3 +1,19 @@
+#
+# Copyright (C) 2015 CossackLabs
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
 #echo client for tornado
 from themis import ssession;
 import tornado.ioloop
@@ -16,7 +32,8 @@ class transport(ssession.mem_transport):
 http_client = tornado.httpclient.HTTPClient();
 session=ssession.ssession("client", client_priv, transport());
 try:
-    response = http_client.fetch(tornado.httpclient.HTTPRequest("http://127.0.0.1:26260", "POST", None, session.connect_request())); #send initial message to server
+    aaa=session.connect_request();
+    response = http_client.fetch(tornado.httpclient.HTTPRequest("http://127.0.0.1:26260", "POST", None, aaa));#, follow_redirects=False)); #send initial message to server
     message=session.unwrap(response.body);		#decrypt accepted message
     while message.is_control:					#if status==1 then session is not established yet
         response = http_client.fetch(tornado.httpclient.HTTPRequest("http://127.0.0.1:26260", "POST", None, message)); #send unwrapped message to server as is
