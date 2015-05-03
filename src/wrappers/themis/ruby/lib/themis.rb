@@ -55,7 +55,7 @@ module ThemisImport
 
     attach_function :themis_gen_rsa_key_pair, [:pointer, :int, :pointer, :int], :int
     attach_function :themis_gen_ec_key_pair, [:pointer, :int, :pointer, :int], :int
-
+    attach_function :themis_version, [], :string
 end
 
 module Themis
@@ -64,6 +64,7 @@ module Themis
     SUCCESS = 0
     FAIL = -1
     SEND_AS_IS = 1
+
 
     class ThemisError < StandardError
     end
