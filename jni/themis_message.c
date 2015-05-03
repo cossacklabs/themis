@@ -5,7 +5,7 @@
  */
 
 #include <jni.h>
-#include <common/error.h>
+#include <themis/error.h>
 #include <themis/secure_message.h>
 
 JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(JNIEnv *env, jobject thiz, jbyteArray private, jbyteArray public, jbyteArray message, jboolean is_wrap)
@@ -50,7 +50,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
 		res = themis_secure_message_unwrap(priv_buf, private_length, pub_buf, public_length, message_buf, message_length, NULL, &output_length);
 	}
 
-	if (HERMES_BUFFER_TOO_SMALL != res)
+	if (THEMIS_BUFFER_TOO_SMALL != res)
 	{
 		goto err;
 	}
@@ -77,7 +77,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
 		res = themis_secure_message_unwrap(priv_buf, private_length, pub_buf, public_length, message_buf, message_length, output_buf, &output_length);
 	}
 
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		output = NULL;
 	}

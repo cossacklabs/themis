@@ -5,7 +5,7 @@
  */
 
 #include <jni.h>
-#include <common/error.h>
+#include <themis/error.h>
 #include <themis/secure_message.h>
 
 JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_generateKeys(JNIEnv *env, jobject thiz)
@@ -22,7 +22,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_gene
 	jobjectArray keys;
 
 	themis_status_t res = themis_gen_ec_key_pair(NULL, &private_length, NULL, &public_length);
-	if (HERMES_BUFFER_TOO_SMALL != res)
+	if (THEMIS_BUFFER_TOO_SMALL != res)
 	{
 		return NULL;
 	}
@@ -57,7 +57,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_gene
 	(*env)->ReleaseByteArrayElements(env, public, pub_buf, 0);
 	(*env)->ReleaseByteArrayElements(env, private, priv_buf, 0);
 
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		return NULL;
 	}
