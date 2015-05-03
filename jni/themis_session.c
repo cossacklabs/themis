@@ -5,7 +5,7 @@
  */
 
 #include <jni.h>
-#include <common/error.h>
+#include <themis/error.h>
 #include <themis/secure_session.h>
 #include <themis/secure_session_t.h>
 /*extern JavaVM *g_vm;*/
@@ -103,30 +103,30 @@ static int on_get_public_key_for_id(const void *id, size_t id_length, void *key_
 
 	if (!ctx)
 	{
-		return HERMES_FAIL;
+		return THEMIS_FAIL;
 	}
 
 	if (!(ctx->env) || !(ctx->thiz))
 	{
-		return HERMES_FAIL;
+		return THEMIS_FAIL;
 	}
 
 	get_key_method = (*(ctx->env))->GetMethodID(ctx->env, (*(ctx->env))->GetObjectClass(ctx->env, ctx->thiz), SESSION_GET_PUB_KEY_NAME, SESSION_GET_PUB_KEY_SIG);
 	if (!get_key_method)
 	{
-		return HERMES_FAIL;
+		return THEMIS_FAIL;
 	}
 
 	peer_id = (*(ctx->env))->NewByteArray(ctx->env, id_length);
 	if (!peer_id)
 	{
-		return HERMES_FAIL;
+		return THEMIS_FAIL;
 	}
 
 	peer_id_buf = (*(ctx->env))->GetByteArrayElements(ctx->env, peer_id, NULL);
 	if (!peer_id_buf)
 	{
-		return HERMES_FAIL;
+		return THEMIS_FAIL;
 	}
 
 	memcpy(peer_id_buf, id, id_length);
@@ -135,17 +135,17 @@ static int on_get_public_key_for_id(const void *id, size_t id_length, void *key_
 	public_key = (*(ctx->env))->CallObjectMethod(ctx->env, ctx->thiz, get_key_method, peer_id);
 	if (!public_key)
 	{
-		return HERMES_FAIL;
+		return THEMIS_FAIL;
 	}
 
 	public_key_length = (*(ctx->env))->GetArrayLength(ctx->env, public_key);
 	if (public_key_length > key_buffer_length)
 	{
-		return HERMES_BUFFER_TOO_SMALL;
+		return THEMIS_BUFFER_TOO_SMALL;
 	}
 
 	(*(ctx->env))->GetByteArrayRegion(ctx->env, public_key, 0, public_key_length, key_buffer);
-	return HERMES_SUCCESS;
+	return THEMIS_SUCCESS;
 }
 
 JNIEXPORT jlong JNICALL Java_com_cossacklabs_themis_SecureSession_jniLoad(JNIEnv *env, jobject thiz, jbyteArray state)
@@ -174,7 +174,7 @@ JNIEXPORT jlong JNICALL Java_com_cossacklabs_themis_SecureSession_jniLoad(JNIEnv
 	ctx->callbacks.user_data = ctx;
 
 	themis_status = secure_session_load(&(ctx->session), state_buf, state_length, &(ctx->callbacks));
-	if (HERMES_SUCCESS != themis_status)
+	if (THEMIS_SUCCESS != themis_status)
 	{
 		free(ctx);
 		ctx = NULL;
@@ -207,7 +207,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniSave(J
 	}
 
 	res = secure_session_save(&(ctx->session), NULL, &state_length);
-	if (HERMES_BUFFER_TOO_SMALL != res)
+	if (THEMIS_BUFFER_TOO_SMALL != res)
 	{
 		return NULL;
 	}
@@ -227,7 +227,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniSave(J
 	res = secure_session_save(&(ctx->session), state_buf, &state_length);
 	(*env)->ReleaseByteArrayElements(env, state, state_buf, 0);
 
-	if (HERMES_SUCCESS == res)
+	if (THEMIS_SUCCESS == res)
 	{
 		return state;
 	}
@@ -286,7 +286,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniWrap(J
 	ctx->thiz = thiz;
 
 	res = secure_session_wrap(&(ctx->session), data_buf, data_length, NULL, &wrapped_data_length);
-	if (HERMES_BUFFER_TOO_SMALL != res)
+	if (THEMIS_BUFFER_TOO_SMALL != res)
 	{
 		goto err;
 	}
@@ -304,7 +304,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniWrap(J
 	}
 
 	res = secure_session_wrap(&(ctx->session), data_buf, data_length, wrapped_data_buf, &wrapped_data_length);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		goto err;
 	}
@@ -375,7 +375,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniUnwr
 	ctx->thiz = thiz;
 
 	res = secure_session_unwrap(&(ctx->session), wrapped_data_buf, wrapped_data_length, NULL, &data_length);
-	if ((HERMES_SUCCESS == res) && (0 == data_length))
+	if ((THEMIS_SUCCESS == res) && (0 == data_length))
 	{
 		/* This is the end of negotiation. No return data */
 		data_type = NO_DATA;
@@ -384,7 +384,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniUnwr
 		output = unwrapped_data;
 		goto err;
 	}
-	else if (HERMES_BUFFER_TOO_SMALL != res)
+	else if (THEMIS_BUFFER_TOO_SMALL != res)
 	{
 		goto err;
 	}
@@ -402,7 +402,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniUnwr
 	}
 
 	res = secure_session_unwrap(&(ctx->session), wrapped_data_buf, wrapped_data_length, data_buf, &data_length);
-	if ((HERMES_SUCCESS == res) && (0 == data_length))
+	if ((THEMIS_SUCCESS == res) && (0 == data_length))
 	{
 		/* This is the end of negotiation. No return data */
 		data_type = NO_DATA;
@@ -411,7 +411,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniUnwr
 		output = unwrapped_data;
 		goto err;
 	}
-	else if ((HERMES_SSESSION_SEND_OUTPUT_TO_PEER == res) && (data_length > 0))
+	else if ((THEMIS_SSESSION_SEND_OUTPUT_TO_PEER == res) && (data_length > 0))
 	{
 		/* Negotiation continues. Send output to peer */
 		data_type = PROTOCOL_DATA;
@@ -421,7 +421,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniUnwr
 		output = unwrapped_data;
 		goto err;
 	}
-	else if ((HERMES_SUCCESS == res) && (data_length > 0))
+	else if ((THEMIS_SUCCESS == res) && (data_length > 0))
 	{
 		/* This is user data */
 		data_type = USER_DATA;
@@ -470,7 +470,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniGenera
 	ctx->thiz = thiz;
 
 	res = secure_session_generate_connect_request(&(ctx->session), NULL, &request_length);
-	if (HERMES_BUFFER_TOO_SMALL != res)
+	if (THEMIS_BUFFER_TOO_SMALL != res)
 	{
 		goto err;
 	}
@@ -488,7 +488,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniGenera
 	}
 
 	res = secure_session_generate_connect_request(&(ctx->session), request_buf, &request_length);
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		goto err;
 	}
@@ -553,7 +553,7 @@ JNIEXPORT jlong JNICALL Java_com_cossacklabs_themis_SecureSession_create(JNIEnv 
 	ctx->callbacks.user_data = ctx;
 
 	themis_status = secure_session_init(&(ctx->session), id_buf, id_length, sign_key_buf, sign_key_length, &(ctx->callbacks));
-	if (HERMES_SUCCESS != themis_status)
+	if (THEMIS_SUCCESS != themis_status)
 	{
 		free(ctx);
 		ctx = NULL;

@@ -5,7 +5,7 @@
  */
 
 #include <jni.h>
-#include <common/error.h>
+#include <themis/error.h>
 #include <themis/secure_cell.h>
 
 /* These definitions should correspond to the ones in SecureCell.java */
@@ -82,7 +82,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(JN
 		goto err;
 	}
 
-	if (HERMES_BUFFER_TOO_SMALL != res)
+	if (THEMIS_BUFFER_TOO_SMALL != res)
 	{
 		goto err;
 	}
@@ -138,7 +138,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(JN
 		goto err;
 	}
 
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		goto err;
 	}
@@ -284,7 +284,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(JNIE
 		goto err;
 	}
 
-	if (HERMES_BUFFER_TOO_SMALL != res)
+	if (THEMIS_BUFFER_TOO_SMALL != res)
 	{
 		goto err;
 	}
@@ -328,7 +328,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(JNIE
 		goto err;
 	}
 
-	if (HERMES_SUCCESS != res)
+	if (THEMIS_SUCCESS != res)
 	{
 		goto err;
 	}
