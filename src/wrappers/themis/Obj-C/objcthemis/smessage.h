@@ -17,15 +17,15 @@
 #import <Foundation/Foundation.h>
 #import <themis/themis.h>
 
-@interface SKeygen : NSObject
+@interface SMessage : NSObject
 
 {
-  NSData* _priv_key;
-  NSData* _pub_key;
+  NSMutableData* _priv_key;
+  NSMutableData* _pub_key;
 }
 
-- (id)init;
-- (NSData*)priv_key: error:(NSError**)errorPtr;
-- (NSData*)pub_key: error:(NSError**)errorPtr;
+- (id)initWithPrivateKey: (NSData*)private_key peerPublicKey:(NSData*)peer_pub_key;
+- (NSData*)wrap: (NSData*)message error:(NSError**)errorPtr;
+- (NSData*)unwrap: (NSData*)message error:(NSError**)errorPtr;
 
 @end
