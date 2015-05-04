@@ -56,6 +56,15 @@ module ThemisImport
     attach_function :themis_gen_rsa_key_pair, [:pointer, :int, :pointer, :int], :int
     attach_function :themis_gen_ec_key_pair, [:pointer, :int, :pointer, :int], :int
     attach_function :themis_version, [], :string
+
+    attach_function :themis_secure_cell_encrypt_full, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+    attach_function :themis_secure_cell_decrypt_full, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+
+    attach_function :themis_secure_cell_encrypt_auto_split, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer, :pointer, :pointer], :int
+    attach_function :themis_secure_cell_decrypt_auto_split, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+
+    attach_function :themis_secure_cell_encrypt_user_split, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+    attach_function :themis_secure_cell_decrypt_user_split, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
 end
 
 module Themis
@@ -179,6 +188,88 @@ module Themis
 	    res=themis_secure_message_unwrap(@private_key, @private_key_length, @peer_public_key, @peer_public_key_length, message_, message_length_, unwrapped_message, unwrapped_message_length)
 	    raise ThemisError, "themis_secure_message_unwrap error: #{res}" unless res == SUCCESS
 	    return unwrapped_message.get_bytes(0, unwrapped_message_length.read_uint);
+	end
+    end
+
+    class Scell
+	include ThemisCommon
+	include ThemisImport
+
+	FULL_MODE = 0
+	AUTO_SPLIT_MODE = 1
+	USER_SPLIT_MODE = 2
+
+	def initialize(key, mode)
+	    @key, @key_length = string_to_pointer_size(key)
+	    @mode = mode
+	end
+
+	def encrypt(message, context=nil)
+	    message_, message_length_ = string_to_pointer_size(message)
+	    context_, context_length_ = context.nil? ? [nil,0] : string_to_pointer_size(context)
+	    encrypted_message_length=FFI::MemoryPointer.new(:uint)
+	    enccontext_length=FFI::MemoryPointer.new(:uint)
+	    case @mode
+	    when FULL_MODE
+		res=themis_secure_cell_encrypt_full(@key, @key_length, context_, context_length_, message_, message_length_, nil, encrypted_message_length)
+		raise ThemisError, "themis_secure_cell_encrypt_... (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		encrypted_message = FFI::MemoryPointer.new(:char, encrypted_message_length.read_uint)
+		res=themis_secure_cell_encrypt_full(@key, @key_length, context_, context_length_, message_, message_length_, encrypted_message, encrypted_message_length)
+		raise ThemisError, "themis_secure_cell_encrypt_full (length determination) error: #{res}" unless res == SUCCESS
+		return encrypted_message.get_bytes(0, encrypted_message_length.read_uint)
+	    when AUTO_SPLIT_MODE
+		res=themis_secure_cell_encrypt_auto_split(@key, @key_length, context_, context_length_, message_, message_length_, nil, enccontext_length, nil, encrypted_message_length)
+		raise ThemisError, "themis_secure_cell_encrypt_... (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		encrypted_message = FFI::MemoryPointer.new(:char, encrypted_message_length.read_uint)
+		enccontext = FFI::MemoryPointer.new(:char, enccontext_length.read_uint)
+		res=themis_secure_cell_encrypt_auto_split(@key, @key_length, context_, context_length_, message_, message_length_, enccontext, enccontext_length, encrypted_message, encrypted_message_length)
+		raise ThemisError, "themis_secure_cell_encrypt_auto_split (length determination) error: #{res}" unless res == SUCCESS
+		return enccontext.get_bytes(0, enccontext_length.read_uint), encrypted_message.get_bytes(0, encrypted_message_length.read_uint)
+	    when USER_SPLIT_MODE
+		res=themis_secure_cell_encrypt_user_split(@key, @key_length, message_, message_length_, context_, context_length_, nil, encrypted_message_length)
+		raise ThemisError, "themis_secure_cell_encrypt_... (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		encrypted_message = FFI::MemoryPointer.new(:char, encrypted_message_length.read_uint)
+		res=themis_secure_cell_encrypt_user_split(@key, @key_length, message_, message_length_, context_, context_length_, encrypted_message, encrypted_message_length)
+		raise ThemisError, "themis_secure_cell_encrypt_user_split (length determination) error: #{res}" unless res == SUCCESS
+		return encrypted_message.get_bytes(0, encrypted_message_length.read_uint)
+	    else
+		raise ThemisError, "themis_secure_cell not supported mode"
+	    end
+	end
+
+	def decrypt(message, context=nil)
+	    context_, context_length_ = context.nil? ? [nil,0] : string_to_pointer_size(context)
+	    decrypted_message_length=FFI::MemoryPointer.new(:uint)
+	    case @mode
+	    when FULL_MODE
+		message_, message_length_ = string_to_pointer_size(message)
+		res=themis_secure_cell_decrypt_full(@key, @key_length, context_, context_length_, message_, message_length_, nil, decrypted_message_length)
+		raise ThemisError, "themis_secure_cell_decrypt_full (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		decrypted_message = FFI::MemoryPointer.new(:char, decrypted_message_length.read_uint)
+		res=themis_secure_cell_decrypt_full(@key, @key_length, context_, context_length_, message_, message_length_, decrypted_message, decrypted_message_length)
+		raise ThemisError, "themis_secure_cell_decrypt_full (length determination) error: #{res}" unless res == SUCCESS
+		return decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
+	    when AUTO_SPLIT_MODE
+		enccontext, message_ = message
+		message__, message_length__ = string_to_pointer_size(message_)
+		enccontext_, enccontext_length = string_to_pointer_size(enccontext)
+		res=themis_secure_cell_decrypt_auto_split(@key, @key_length, context_, context_length_, message__, message_length__, enccontext_, enccontext_length, nil, decrypted_message_length)
+		raise ThemisError, "themis_secure_cell_encrypt_auto_split (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		decrypted_message = FFI::MemoryPointer.new(:char, decrypted_message_length.read_uint)
+		res=themis_secure_cell_decrypt_auto_split(@key, @key_length, context_, context_length_, message__, message_length__, enccontext_, enccontext_length, decrypted_message, decrypted_message_length)
+		raise ThemisError, "themis_secure_cell_encrypt_auto_split (length determination) error: #{res}" unless res == SUCCESS
+		return  decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
+	    when USER_SPLIT_MODE
+		message_, message_length_ = string_to_pointer_size(message)
+		res=themis_secure_cell_decrypt_user_split(@key, @key_length, message_, message_length_, context_, context_length_, nil, decrypted_message_length)
+		raise ThemisError, "themis_secure_cell_decrypt_user_split (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		decrypted_message = FFI::MemoryPointer.new(:char, decrypted_message_length.read_uint)
+		res=themis_secure_cell_decrypt_user_split(@key, @key_length, message_, message_length_, context_, context_length_, decrypted_message, decrypted_message_length)
+		raise ThemisError, "themis_secure_cell_decrypt_user_split (length determination) error: #{res}" unless res == SUCCESS
+		return decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
+	    else
+		raise ThemisError, "themis_secure_cell not supported mode"
+	    end
 	end
 
     end
