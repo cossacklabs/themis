@@ -516,22 +516,22 @@ static void test_basic_flow(void)
 	if (server.session==NULL)
 	{
 		testsuite_fail_if(res, "secure_session_init failed");
-		secure_session_cleanup((client.session));
+		secure_session_destroy((client.session));
 		return;
 	}
 
 	schedule();
 
-	res = secure_session_cleanup((server.session));
+	res = secure_session_destroy((server.session));
 	if (res)
 	{
-		testsuite_fail_if(res, "secure_session_cleanup failed");
+		testsuite_fail_if(res, "secure_session_destroy failed");
 	}
 
-	res = secure_session_cleanup((client.session));
+	res = secure_session_destroy((client.session));
 	if (res)
 	{
-		testsuite_fail_if(res, "secure_session_cleanup failed");
+		testsuite_fail_if(res, "secure_session_destroy failed");
 	}
 }
 
@@ -556,22 +556,22 @@ static void test_basic_flow_no_transport(void)
 	if (server.session==NULL)
 	{
 		testsuite_fail_if(res, "secure_session_init failed");
-		secure_session_cleanup((client.session));
+		secure_session_destroy((client.session));
 		return;
 	}
 
 	schedule_no_transport();
 
-	res = secure_session_cleanup((server.session));
+	res = secure_session_destroy((server.session));
 	if (res)
 	{
-		testsuite_fail_if(res, "secure_session_cleanup failed");
+		testsuite_fail_if(res, "secure_session_destroy failed");
 	}
 
-	res = secure_session_cleanup((client.session));
+	res = secure_session_destroy((client.session));
 	if (res)
 	{
-		testsuite_fail_if(res, "secure_session_cleanup failed");
+		testsuite_fail_if(res, "secure_session_destroy failed");
 	}
 }
 

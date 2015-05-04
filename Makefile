@@ -58,6 +58,7 @@ endif
 PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 
+SHARED_EXT = so
 
 UNAME=$(shell uname)
 IS_LINUX = $(shell $(CC) -dumpmachine 2>&1 | $(EGREP) -c "linux")
@@ -65,6 +66,7 @@ IS_MINGW = $(shell $(CC) -dumpmachine 2>&1 | $(EGREP) -c "mingw")
 IS_CLANG_COMPILER = $(shell $(CC) --version 2>&1 | $(EGREP) -i -c "clang version")
 
 ifeq ($(shell uname),Darwin)
+SHARED_EXT = dylib
 ifneq ($(SDK),)
 SDK_PLATFORM_VERSION=$(shell xcrun --sdk $(SDK) --show-sdk-platform-version)
 XCODE_BASE=$(shell xcode-select --print-path)
@@ -76,7 +78,7 @@ SDK_INCLUDES=$(SDK_BASE)/usr/include
 CFLAFS += -isysroot $(SDK_BASE) 
 endif
 ifneq ($(ARCH),)
-CFLAFS += -isysroot $(ARCH)
+CFLAFS += -arch $(ARCH)
 endif
 endif
 
@@ -102,13 +104,13 @@ soter_static: $(SOTER_OBJ)
 	$(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
 
 soter_shared: $(SOTER_OBJ)
-	$(CC) -shared -o $(BIN_PATH)/lib$(SOTER_BIN).so $(SOTER_OBJ) $(LDFLAGS)
+	$(CC) -shared -o $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT) $(SOTER_OBJ) $(LDFLAGS)
 
 themis_static: soter_static $(THEMIS_OBJ)
 	$(AR) rcs $(BIN_PATH)/lib$(THEMIS_BIN).a $(THEMIS_OBJ)
 
 themis_shared: soter_shared $(THEMIS_OBJ)
-	$(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_BIN).so $(THEMIS_OBJ) -L$(BIN_PATH) -l$(SOTER_BIN)
+	$(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT) $(THEMIS_OBJ) -L$(BIN_PATH) -l$(SOTER_BIN)
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 	mkdir -p $(@D)
@@ -130,7 +132,7 @@ install: err all
 	install $(SRC_PATH)/soter/*.h $(PREFIX)/include/soter
 	install $(SRC_PATH)/themis/*.h $(PREFIX)/include/themis
 	install $(BIN_PATH)/*.a $(PREFIX)/lib
-	install $(BIN_PATH)/*.so $(PREFIX)/lib
+	install $(BIN_PATH)/*.$(SHARED_EXT) $(PREFIX)/lib
 
 phpthemis_uninstall:
 	cd src/wrappers/themis/php
@@ -144,10 +146,12 @@ endif
 uninstall: phpthemis_uninstall rubythemis_uninstall
 	rm -rf $(PREFIX)/include/themis
 	rm -rf $(PREFIX)/include/soter
-	rm $(PREFIX)/lib/libsoter.a
-	rm $(PREFIX)/lib/libthemis.a
-	rm $(PREFIX)/lib/libsoter.so
-	rm $(PREFIX)/lib/libthemis.so
+	rm -f $(PREFIX)/lib/libsoter.a
+	rm -f $(PREFIX)/lib/libthemis.a
+	rm -f $(PREFIX)/lib/libsoter.so
+	rm -f $(PREFIX)/lib/libthemis.so
+	rm -f $(PREFIX)/lib/libsoter.dylib
+	rm -f $(PREFIX)/lib/libthemis.dylib
 
 phpthemis_install: install
 ifdef PHP_VERSION
