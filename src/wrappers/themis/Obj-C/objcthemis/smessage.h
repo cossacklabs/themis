@@ -20,8 +20,8 @@
 @interface SMessage : NSObject
 
 {
-  NSMutableData* _priv_key;
-  NSMutableData* _pub_key;
+  NSData* _priv_key;
+  NSData* _peer_pub_key;
 }
 
 - (id)initWithPrivateKey: (NSData*)private_key peerPublicKey:(NSData*)peer_pub_key;

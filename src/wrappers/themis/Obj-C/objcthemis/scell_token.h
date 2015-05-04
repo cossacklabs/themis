@@ -19,8 +19,8 @@
 #import "scell.h"
 
 struct Encrypted_data{
-  NSData* cipher_text;
-  NSData* token;
+  __unsafe_unretained NSData* cipher_text;
+  __unsafe_unretained NSData* token;
 };
 
 
