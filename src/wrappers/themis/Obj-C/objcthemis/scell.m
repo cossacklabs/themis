@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-#import "scell.h"
+#import <objcthemis/scell.h>
 
 @implementation SCell
 

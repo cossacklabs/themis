@@ -16,7 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import <themis/themis.h>
-#import "scell.h"
+#import <objcthemis/scell.h>
 
 @interface SCell_seal : SCell
 

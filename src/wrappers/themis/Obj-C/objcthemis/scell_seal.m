@@ -14,8 +14,8 @@
 * limitations under the License.
 */
 
-#import "scell_seal.h"
-#import "error.h"
+#import <objcthemis/scell_seal.h>
+#import <objcthemis/error.h>
 
 @implementation SCell_seal
 

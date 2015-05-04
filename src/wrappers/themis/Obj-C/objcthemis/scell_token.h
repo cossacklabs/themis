@@ -16,7 +16,7 @@
 
 #import <Foundation/Foundation.h>
 #import <themis/themis.h>
-#import "scell.h"
+#import <objcthemis/scell.h>
 
 struct Encrypted_data{
   __unsafe_unretained NSData* cipher_text;

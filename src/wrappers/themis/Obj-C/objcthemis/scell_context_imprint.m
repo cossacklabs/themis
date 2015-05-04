@@ -14,8 +14,8 @@
 * limitations under the License.
 */
 
-#import "scell_context_imprint.h"
-#import "error.h"
+#import <objcthemis/scell_context_imprint.h>
+#import <objcthemis/error.h>
 
 @implementation SCell_context_imprint
 

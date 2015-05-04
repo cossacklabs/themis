@@ -14,8 +14,8 @@
 * limitations under the License.
 */
 
-#import "scell_token.h"
-#import "error.h"
+#import <objcthemis/scell_token.h>
+#import <objcthemis/error.h>
 
 @implementation SCell_token
 
