@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.authors     = ["CossackLabs"]
   s.email       = 'andrey@cossacklabs.com'
   s.files       = ["lib/themis.rb"]
-  s.homepage    =
-    'http://cossacklabs.com/'
-  s.license       = 'Apache 2.0'
+  s.homepage    = 'http://cossacklabs.com/'
+  s.license     = 'Apache 2.0'
+  s.requirements << 'libthemis, v0.2.0'
 end

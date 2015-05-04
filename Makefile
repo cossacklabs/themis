@@ -55,6 +55,10 @@ ifneq ($(ENGINE_LIB_PATH),)
 	CRYPTO_ENGINE_LIB_PATH = $(ENGINE_LIB_PATH)
 endif
 
+PHP_VERSION := $(shell php --version 2>/dev/null)
+RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
+
+
 UNAME=$(shell uname)
 IS_LINUX = $(shell $(CC) -dumpmachine 2>&1 | $(EGREP) -c "linux")
 IS_MINGW = $(shell $(CC) -dumpmachine 2>&1 | $(EGREP) -c "mingw")
@@ -132,7 +136,12 @@ phpthemis_uninstall:
 	cd src/wrappers/themis/php
 	make clean
 
-uninstall: phpthemis_uninstall
+rubythemis_uninstall:
+ifdef RUBY_GEM_VERSION
+	gem uninstall themis
+endif
+
+uninstall: phpthemis_uninstall rubythemis_uninstall
 	rm -rf $(PREFIX)/include/themis
 	rm -rf $(PREFIX)/include/soter
 	rm $(PREFIX)/lib/libsoter.a
@@ -141,5 +150,17 @@ uninstall: phpthemis_uninstall
 	rm $(PREFIX)/lib/libthemis.so
 
 phpthemis_install: install
+ifdef PHP_VERSION
 	cd src/wrappers/themis/php && phpize && ./configure && make install
-	
+else
+	@echo "Error: php not found"
+	@exit 1
+endif
+
+rubythemis_install: install
+ifdef RUBY_GEM_VERSION
+	cd src/wrappers/themis/ruby && gem build themis.gemspec && gem install ./*.gem
+else
+	@echo "Error: ruby gem not found"
+	@exit 1
+endif
