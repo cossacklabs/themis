@@ -87,7 +87,7 @@ public class SecureSession {
 		
 	};
 	
-	public byte[] generateConnectRequest() throws SecureSessionException {
+	public synchronized byte[] generateConnectRequest() throws SecureSessionException {
 		
 		if (0 == sessionPtr) {
 			throw new SecureSessionException("session is closed");
@@ -102,7 +102,7 @@ public class SecureSession {
 		return request;
 	}
 	
-	public byte[] wrap(byte[] data) throws SecureSessionException, NullArgumentException {
+	public synchronized byte[] wrap(byte[] data) throws SecureSessionException, NullArgumentException {
 		
 		if (0 == sessionPtr) {
 			throw new SecureSessionException("session is closed");
@@ -120,7 +120,7 @@ public class SecureSession {
 		return wrappedData;
 	}
 	
-	public UnwrapResult unwrap(byte[] wrappedData) throws SecureSessionException, NullArgumentException {
+	public synchronized UnwrapResult unwrap(byte[] wrappedData) throws SecureSessionException, NullArgumentException {
 		
 		if (0 == sessionPtr) {
 			throw new SecureSessionException("session is closed");
@@ -179,7 +179,7 @@ public class SecureSession {
 		this.callbacks.stateChanged(this);
 	}
 	
-	public boolean isEstablished() throws SecureSessionException {
+	public synchronized boolean isEstablished() throws SecureSessionException {
 		if (0 == sessionPtr) {
 			throw new SecureSessionException("session is closed");
 		}
@@ -187,7 +187,7 @@ public class SecureSession {
 		return jniIsEstablished();
 	}
 	
-	public byte[] save() throws SecureSessionException {
+	public synchronized byte[] save() throws SecureSessionException {
 		if (0 == sessionPtr) {
 			throw new SecureSessionException("session is closed");
 		}
