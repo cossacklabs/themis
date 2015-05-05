@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 buildscript {
     repositories {
         mavenCentral()
@@ -14,6 +16,10 @@ android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
     
+    defaultConfig {
+    	minSdkVersion 16
+    }
+    
     sourceSets {
     	main {
     		java.srcDirs = ['src/wrappers/themis/java']
@@ -24,6 +30,36 @@ android {
     	
     	androidTest.setRoot('tests/themis/wrappers/android')
         androidTest.java.srcDirs = ['tests/themis/wrappers/android']
+        androidTest.manifest.srcFile 'tests/themis/wrappers/android/AndroidManifest.xml'
 
 	}
+
+    task ndkBuild(type: Exec) {
+        commandLine getNdkBuildCmd()
+    }
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
+    }
+
+    task cleanNative(type: Exec) {
+        commandLine getNdkBuildCmd(), 'clean'
+    }
+
+    clean.dependsOn cleanNative
+}
+
+def getNdkDir() {
+    if (System.env.ANDROID_NDK_ROOT != null)
+        return System.env.ANDROID_NDK_ROOT
+        
+    throw new GradleException("NDK location not found. Define location with an ANDROID_NDK_ROOT environment variable.")
+}
+
+def getNdkBuildCmd() {
+    def ndkbuild = getNdkDir() + "/ndk-build"
+    if (Os.isFamily(Os.FAMILY_WINDOWS))
+        ndkbuild += ".cmd"
+
+    return ndkbuild
 }
