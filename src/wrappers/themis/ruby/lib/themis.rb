@@ -48,13 +48,13 @@ module ThemisImport
     attach_function :secure_session_generate_connect_request, [ :pointer, :pointer, :pointer], :int
     attach_function :secure_session_wrap, [ :pointer, :pointer, :int, :pointer, :pointer], :int
     attach_function :secure_session_unwrap, [ :pointer, :pointer, :int, :pointer, :pointer], :int
-    attach_function :secure_session_is_established, [ :pointer], :int
+    attach_function :secure_session_is_established, [ :pointer], :bool
 
     attach_function :themis_secure_message_wrap, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
     attach_function :themis_secure_message_unwrap, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
 
-    attach_function :themis_gen_rsa_key_pair, [:pointer, :int, :pointer, :int], :int
-    attach_function :themis_gen_ec_key_pair, [:pointer, :int, :pointer, :int], :int
+    attach_function :themis_gen_rsa_key_pair, [:pointer, :pointer, :pointer, :pointer], :int
+    attach_function :themis_gen_ec_key_pair, [:pointer, :pointer, :pointer, :pointer], :int
     attach_function :themis_version, [], :string
 
     attach_function :themis_secure_cell_encrypt_full, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
@@ -92,6 +92,34 @@ module Themis
 	end
     end
 
+    class SKeyPairGen
+	include ThemisCommon
+	include ThemisImport
+
+	def ec()
+		private_key_length=FFI::MemoryPointer.new(:uint)
+		public_key_length= FFI::MemoryPointer.new(:uint)
+		res=themis_gen_ec_key_pair(nil, private_key_length, nil, public_key_length)
+		raise ThemisError, "themis_gen_ec_key_pair (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL 
+		private_key = FFI::MemoryPointer.new(:char, private_key_length.read_uint)
+		public_key = FFI::MemoryPointer.new(:char, public_key_length.read_uint)
+		res=themis_gen_ec_key_pair(private_key, private_key_length, public_key, public_key_length)
+		raise ThemisError, "themis_gen_ec_key_pair error: #{res}" unless res == SUCCESS
+		return private_key.get_bytes(0, private_key_length.read_uint), public_key.get_bytes(0, public_key_length.read_uint)
+	end
+
+	def rsa()
+		private_key_length=FFI::MemoryPointer.new(:uint)
+		public_key_length= FFI::MemoryPointer.new(:uint)
+		res=themis_gen_rsa_key_pair(nil, private_key_length, nil, public_key_length)
+		raise ThemisError, "themis_gen_ec_key_pair (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL 
+		private_key = FFI::MemoryPointer.new(:char, private_key_length.read_uint)
+		public_key = FFI::MemoryPointer.new(:char, public_key_length.read_uint)
+		res=themis_gen_rsa_key_pair(private_key, private_key_length, public_key, public_key_length)
+		raise ThemisError, "themis_gen_ec_key_pair error: #{res}" unless res == SUCCESS
+		return private_key.get_bytes(0, private_key_length.read_uint), public_key.get_bytes(0, public_key_length.read_uint)
+	end
+    end
     class Ssession
 	include ThemisCommon
 	include ThemisImport
@@ -118,6 +146,10 @@ module Themis
 	        raise ThemisError, "secure_session_create error" unless @session
 	end
 	
+	def is_established()
+		return secure_session_is_established(@session)
+	end
+
 	def connect_request()
 		connect_request_length = FFI::MemoryPointer.new(:uint)
 		res=secure_session_generate_connect_request(@session, nil, connect_request_length)

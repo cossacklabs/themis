@@ -11,29 +11,39 @@ Pod::Spec.new do |s|
 
     s.ios.platform = :ios, '7.0'
     s.ios.deployment_target = '7.0'
+
+    s.osx.platform = :ios, '10.9'
+    s.osx.deployment_target = '10.9'
+    
     s.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL' } 
 
+    s.subspec 'themis' do |ss|
+        ss.source_files = "src/themis/*.{h,c}"
+        ss.public_header_files = 'src/themis/*.h'
+        ss.header_dir = 'themis'
+    end
+    
     s.subspec 'soter' do |ss|
-        ss.ios.source_files = "src/soter/*.{h,c}"
-        ss.ios.public_header_files = 'src/soter/*.h'
-        ss.ios.header_dir = 'soter'
+        ss.source_files = "src/soter/*.{h,c}"
+        ss.public_header_files = 'src/soter/*.h'
+        ss.header_dir = 'soter'
+        ss.dependency 'themis/themis'
+        ss.dependency 'themis/soter_openssl'
     end
 
     s.subspec 'soter_openssl' do |ss|
-        ss.ios.source_files = "src/soter/openssl/*.{h,c}"
-        ss.ios.public_header_files = 'src/soter/openssl/*.h'
-        ss.ios.header_dir = 'soter/openssl'
+        ss.source_files = "src/soter/openssl/*.{h,c}"
+        ss.public_header_files = 'src/soter/openssl/*.h'
+        ss.header_dir = 'soter/openssl'
+        ss.dependency 'themis/themis'
     end
 
-    s.subspec 'themis' do |ss|
-        ss.ios.source_files = "src/themis/*.{h,c}"
-        ss.ios.public_header_files = 'src/themis/*.h'
-        ss.ios.header_dir = 'themis'
-    end
-
-    s.subspec 'objthemis' do |ss|
-        ss.ios.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{h,m}"
-        ss.ios.public_header_files = 'src/wrappers/themis/Obj-C/objcthemis/*.h'
-        ss.ios.header_dir = 'objcthemis'
+    s.subspec 'objcthemis' do |ss|
+        ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{h,m}"
+        ss.public_header_files = 'src/wrappers/themis/Obj-C/objcthemis/*.h'
+        ss.header_dir = 'objcthemis'        
+        ss.dependency 'themis/themis'
+        ss.dependency 'themis/soter'
+        ss.dependency 'themis/soter_openssl'
     end
 end

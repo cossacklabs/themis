@@ -18,7 +18,7 @@
 
 require 'rubygems'
 require 'eventmachine'
-require './themis'
+require 'themis'
 
 module HttpHeaders 
 
@@ -39,7 +39,7 @@ module HttpHeaders
   
   def receive_data(data)
     res, mes = @session.unwrap(data)
-    if res==Themis::SEND_AS_IS
+    if !(@session.is_established())
 	send_data mes
     else
 	puts mes
