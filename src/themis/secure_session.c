@@ -111,6 +111,8 @@ secure_session_t* secure_session_create(const void *id, size_t id_length, const 
 		return NULL;
 	}
 
+	memset(ctx, 0, sizeof(secure_session_t));
+
 	if (THEMIS_SUCCESS == secure_session_init(ctx, id, id_length, sign_key, sign_key_length, user_callbacks))
 	{
 		return ctx;
