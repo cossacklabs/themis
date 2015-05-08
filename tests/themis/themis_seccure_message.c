@@ -195,9 +195,9 @@ static void themis_secure_message_test(){
 static void secure_message_api_test(void)
 {
 	uint8_t plaintext[MAX_MESSAGE_SIZE];
-	size_t plaintext_length = rand_int(MAX_MESSAGE_SIZE);
+	size_t plaintext_length = 2048; //rand_int(MAX_MESSAGE_SIZE);
 
-	uint8_t ciphertext[MAX_MESSAGE_SIZE];
+	uint8_t ciphertext[MAX_MESSAGE_SIZE+52]; //chipther text allwais bigger then plain text (24 bytes of header + 12 bytes of iv + 16 bytes of auth_tag)
 	size_t ciphertext_length = sizeof(ciphertext);
 
 	uint8_t decryptext[MAX_MESSAGE_SIZE];
@@ -279,8 +279,9 @@ static void secure_message_api_test(void)
 		testsuite_fail_if(true, "themis_secure_message_unwrap fail");
 		return;
 	}
-
-	testsuite_fail_unless((decryptext_length == plaintext_length) && (!memcmp(plaintext, decryptext, plaintext_length)), "generic secure message: normal flow");
+	printf("aaaaaaaaaaa %u", plaintext_length);
+	testsuite_fail_unless((decryptext_length == plaintext_length), "generic secure message: normal flow");
+	testsuite_fail_unless((!memcmp(plaintext, decryptext, plaintext_length)), "generic secure message: normal flow 2");
 }
 
 void run_secure_message_test(){
