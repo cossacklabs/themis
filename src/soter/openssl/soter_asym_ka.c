@@ -33,7 +33,6 @@ static int soter_alg_to_curve_nid(soter_asym_ka_alg_t alg)
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_alg_t alg)
 {
 	EVP_PKEY *pkey;
-	asym_ka_ctx->pkey_ctx=NULL;
 	int nid = soter_alg_to_curve_nid(alg);
 
 	if ((!asym_ka_ctx) || (0 == nid))
