@@ -14,19 +14,43 @@
 * limitations under the License.
 */
 
+/**
+ * @file soter_kdf.h 
+ * @brief key derivation function
+ */
 #ifndef SOTER_KDF_H
 #define SOTER_KDF_H
 
 #include <soter/soter.h>
 
+/** @addtogroup SOTER
+ * @{
+ * @defgroup SOTER_KDF key derivation function
+ * @brief key derivation function
+ * @{
+ */
+
+/** @brief context buffer type */ 
 struct soter_kdf_context_buf_type
 {
 	const uint8_t *data;
 	size_t length;
 };
 
+/** @brief context buffer typedef */
 typedef struct soter_kdf_context_buf_type soter_kdf_context_buf_t;
 
+/** @brief derive
+ * @param [in] key master key
+ * @param [in] key_length length of key
+ * @param [in] context pointer to array of context buffers 
+ * @param [in] context_count count of context buffers in context
+ * @param [out] output buffer for derived data store
+ * @param [in] output_length length of data to derive
+ * @return SOTER_SUCCESS on success or SOTER_FAIL on failure
+ */
 soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, const soter_kdf_context_buf_t *context, size_t context_count, void *output, size_t output_length);
+/** @} */
+/** @} */
 
 #endif /* SOTER_KDF_H */
