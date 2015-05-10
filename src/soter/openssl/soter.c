@@ -21,7 +21,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define SOTER_VERSION_TEXT "0.2.0 with "
 #define SOTER_VERSION_TEXT_LENGTH sizeof(SOTER_VERSION_TEXT)
 
 char soter_version_text[256]=SOTER_VERSION_TEXT;

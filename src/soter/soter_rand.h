@@ -14,10 +14,23 @@
 * limitations under the License.
 */
 
+/**
+ * @file soter_rand.h
+ * @brief random bits generator
+ */
+
 #ifndef SOTER_RAND_H
 #define SOTER_RAND_H
 
 #include <soter/soter.h>
+
+/**
+ * @addtogroup SOTER
+ * @{
+ * @defgroup SOTER_RAND random bits generator
+ * @brief Routine for rundom bits generation
+ * @{
+ */
 
 /**
  * @brief Generates random bits
@@ -29,5 +42,7 @@
  * This function generates random bits and puts them in memory pointed by buffer.
  */
 soter_status_t soter_rand(uint8_t* buffer, size_t length);
+
+/**@}@}*/
 
 #endif /* SOTER_RAND_H */

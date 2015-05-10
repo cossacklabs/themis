@@ -14,12 +14,30 @@
 * limitations under the License.
 */
 
+/**
+ * @file soter/error.h
+ * @brief Soter return type, return codes and check macroses
+ *
+ * 
+ */
 #ifndef SOTER_ERROR_H
 #define SOTER_ERROR_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+
+/**
+ * Soter return type
+ */
+typedef int soter_status_t;
+
+/**
+ * @addtogroup SOTER
+ * @{
+ * @defgroup SOTER_ERROR_CODES status codes
+ * @{
+ */
 
 #define SOTER_SSESSION_SEND_OUTPUT_TO_PEER 1
 
@@ -34,6 +52,13 @@
 #define SOTER_SSESSION_KA_NOT_FINISHED -8
 #define SOTER_SSESSION_TRANSPORT_ERROR -9
 
+/** @} */
+
+/**
+ * @defgroup SOTER_ERROR_OUT routines for error and debug output
+ * @{
+ */
+
 #ifdef DEBUG
 #define SOTER_ERROR_OUT(message) fprintf(stderr, "%s:%u - error: %s\n",__FILE__,__LINE__,message) 
 #define SOTER_DEBUG_OUT(message) fprintf(stdout, "%s:%u - debug: %s\n",__FILE__,__LINE__,message)
@@ -42,6 +67,13 @@
 #define SOTER_DEBUG_OUT(message) 
 #endif
 
+
+/**@}*/
+
+/**
+ * @defgroup SOTER_CHECK_ROUTINES routines for parameters and variables checking
+ * @{
+ */
 #define SOTER_CHECK(x) if(!(x)){	\
 	SOTER_ERROR_OUT(#x);		\
 	return SOTER_FAIL;		\
@@ -113,6 +145,10 @@
      return res;					\
   }							\
   }
+
+/** @} 
+ * @}
+ */
 
 #ifdef DEBUG
     static void hermes_out_buffer(const uint8_t* buffer, const size_t buffer_length){

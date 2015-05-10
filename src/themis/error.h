@@ -21,6 +21,9 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <soter/error.h>
+
+typedef int themis_status_t;
+
 #define THEMIS_SSESSION_SEND_OUTPUT_TO_PEER 1
 
 #define THEMIS_SUCCESS SOTER_SUCCESS

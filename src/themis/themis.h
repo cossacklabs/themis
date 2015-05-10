@@ -19,8 +19,10 @@
 
 #include <stdint.h>
 #include <stddef.h>
-typedef int themis_status_t;
 
+#define THEMIS_VERSION_TEXT "themis 0.2.0: "
+
+#include <themis/error.h>
 #include <themis/secure_message.h>
 #include <themis/secure_cell.h>
 #include <themis/secure_session.h>
