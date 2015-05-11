@@ -16,7 +16,7 @@
 
 /**
  * @file soter/error.h
- * @brief Soter return type, return codes and check macroses
+ * @brief Soter return type, return codes and check macros
  *
  * 
  */
@@ -27,9 +27,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-/**
- * Soter return type
- */
+/** @brief return type */
 typedef int soter_status_t;
 
 /**
@@ -39,8 +37,6 @@ typedef int soter_status_t;
  * @{
  */
 
-#define SOTER_SSESSION_SEND_OUTPUT_TO_PEER 1
-
 #define SOTER_SUCCESS 0
 #define SOTER_FAIL   -1
 #define SOTER_INVALID_PARAMETER -2
@@ -49,8 +45,6 @@ typedef int soter_status_t;
 #define SOTER_DATA_CORRUPT -5
 #define SOTER_INVALID_SIGNATURE -6
 #define SOTER_NOT_SUPPORTED -7
-#define SOTER_SSESSION_KA_NOT_FINISHED -8
-#define SOTER_SSESSION_TRANSPORT_ERROR -9
 
 /** @} */
 

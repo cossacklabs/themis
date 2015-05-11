@@ -14,11 +14,21 @@
 * limitations under the License.
 */
 
+/**
+ * @file themis.h
+ * @brief main header
+ */
 #ifndef THEMIS_H
 #define THEMIS_H
 
 #include <stdint.h>
 #include <stddef.h>
+
+/**
+ * @defgroup THEMIS Themis
+ * @brief Data security library for network communication and data storage
+ * @{
+ */
 
 #define THEMIS_VERSION_TEXT "themis 0.2.0: "
 
@@ -28,6 +38,8 @@
 #include <themis/secure_session.h>
 
 const char* themis_version();
+
+/** @} */
 #endif /* THEMIS_H */
 
 

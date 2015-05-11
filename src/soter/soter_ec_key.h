@@ -22,11 +22,16 @@
 
 #include <arpa/inet.h>
 
+/** private key header part */
 #define EC_PRIV_KEY_PREF "REC"
+/** public key header part */
 #define EC_PUB_KEY_PREF "UEC"
 
+/** elliptic curve header part for 256bits key*/
 #define EC_256 "2"
+/** @brief elliptic curve header part for 384bits key*/
 #define EC_384 "3"
+/** @brief elliptic curve header part for 521bits key*/
 #define EC_521 "5"
 
 #define EC_KEY_SUF(_KEY_SIZE_) EC_##_KEY_SIZE_

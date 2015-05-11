@@ -14,6 +14,11 @@
 * limitations under the License.
 */
 
+/**
+ * @file themis/error.h
+ * @brief return type, return codes and check macros
+ */
+
 #ifndef THEMIS_ERROR_H
 #define THEMIS_ERROR_H
 
@@ -22,10 +27,16 @@
 #include <stdint.h>
 #include <soter/error.h>
 
+/** @brief return type */
 typedef int themis_status_t;
 
+/**
+ * @addtogroup THEMIS
+ * @{
+ * @defgroup SOTER_ERROR_CODES status codes
+ * @{
+ */
 #define THEMIS_SSESSION_SEND_OUTPUT_TO_PEER 1
-
 #define THEMIS_SUCCESS SOTER_SUCCESS
 #define THEMIS_FAIL   SOTER_FAIL
 #define THEMIS_INVALID_PARAMETER SOTER_INVALID_PARAMETER
@@ -36,6 +47,12 @@ typedef int themis_status_t;
 #define THEMIS_NOT_SUPPORTED SOTER_NOT_SUPPORTED
 #define THEMIS_SSESSION_KA_NOT_FINISHED -8
 #define THEMIS_SSESSION_TRANSPORT_ERROR -9
+/** @} */
+
+/**
+ * @defgroup THEMIS_ERROR_OUT routines for error and debug output
+ * @{
+ */
 
 #ifdef DEBUG
 #define THEMIS_ERROR_OUT(message) SOTER_ERROR_OUT(message) 
@@ -44,6 +61,13 @@ typedef int themis_status_t;
 #define THEMIS_ERROR_OUT(message)  
 #define THEMIS_DEBUG_OUT(message) 
 #endif
+
+/**@}*/
+
+/**
+ * @defgroup SOTER_CHECK_ROUTINES routines for parameters and variables checking
+ * @{
+ */
 
 #define THEMIS_CHECK(x) SOTER_CHECK(x)
 #define THEMIS_CHECK_(x) SOTER_CHECK_(x)
@@ -64,5 +88,9 @@ typedef int themis_status_t;
 #define THEMIS_STATUS_CHECK(x,y) SOTER_STATUS_CHECK(x,y)
 
 #define THEMIS_STATUS_CHECK_FREE(x,y,z) SOTER_STATUS_CHECK_FREE(x,y,z)
+
+/** @} 
+ * @}
+ */
 
 #endif /* THEMIS_ERROR_H */

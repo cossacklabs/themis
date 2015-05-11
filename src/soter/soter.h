@@ -23,6 +23,13 @@
 #ifndef SOTER_H
 #define SOTER_H
 
+
+/** 
+ * @defgroup SOTER Soter 
+ * @brief Soter is a cross-platform multipurpose cryptographic library. It provides a set of highly secure cryptographic primitives through a well-defined, consistent and simple interface.
+ * @{
+ */
+
 #define SOTER_VERSION_TEXT "soter 0.2.0: "
 
 #include <stdint.h>
@@ -38,14 +45,6 @@
 #include <soter/soter_asym_ka.h>
 #include <soter/soter_asym_sign.h>
 #include <soter/soter_kdf.h>
-
-
-
-/** 
- * @defgroup SOTER Soter 
- * @brief Soter is a cross-platform multipurpose cryptographic library. It provides a set of highly secure cryptographic primitives through a well-defined, consistent and simple interface.
- * @{
- */
 
 /** 
  *  @brief get version string of soter
