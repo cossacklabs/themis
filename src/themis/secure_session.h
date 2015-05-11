@@ -14,6 +14,10 @@
 * limitations under the License.
 */
 
+/**
+ * @file secure_session.h
+ * @brief Secure session is a lightweight mechanism to secure any network communications (both private and public networks including Internet)
+ */
 #ifndef THEMIS_SECURE_SESSION_H
 #define THEMIS_SECURE_SESSION_H
 
@@ -21,17 +25,34 @@
 
 #include <sys/types.h>
 #include <soter/soter.h>
+
+/**
+ * @addtogroup THEMIS
+ * @{
+ * @defgroup THEMIS_SECURE_SESSION secure session
+ * @brief Secure session is a lightweight mechanism to secure any network communications (both private and public networks including Internet)
+ * @{
+ */
+
+/** @brief id tag */
 #define THEMIS_SESSION_ID_TAG "TSID"
+/** @brief protocol tag */
 #define THEMIS_SESSION_PROTO_TAG "TSPM"
 
-/* session states */
-#define STATE_IDLE 0
+/** @brief idle state define */
+#define STATE_IDLE 0 
+/** @brief negotiating state define */
 #define STATE_NEGOTIATING 1
+/** @brief established state define */
 #define STATE_ESTABLISHED 2
 
+/** @brief send data callbeck tyoedef*/
 typedef ssize_t (*send_protocol_data_callback)(const uint8_t *data, size_t data_length, void *user_data);
+/** @brief receive data callbeck tyoedef*/
 typedef ssize_t (*receive_protocol_data_callback)(uint8_t *data, size_t data_length, void *user_data);
+/** @brief state change callbeck tyoedef*/
 typedef void (*protocol_state_changed_callback)(int event, void *user_data);
+/** @brief get public key by id callbeck tyoedef*/
 typedef int (*get_public_key_for_id_callback)(const void *id, size_t id_length, void *key_buffer, size_t key_buffer_length, void *user_data);
 
 struct secure_session_user_callbacks_type
@@ -118,4 +139,6 @@ themis_status_t secure_session_load(secure_session_t *session_ctx, const void *i
 
 bool secure_session_is_established(const secure_session_t *session_ctx);
 
+/** @} */
+/** @} */
 #endif /* THEMIS_SECURE_SESSION_H */
