@@ -18,12 +18,20 @@ package com.cossacklabs.themis;
 
 import java.io.UnsupportedEncodingException;
 
+/**
+ * Themis secure cell
+ */
 public class SecureCell {
 	
 	static {
 		System.loadLibrary("themis_jni");
 	}
 	
+	/**
+	 * Creates new SecureCell in specified mode
+	 * @param SecureCell mode
+	 * @throws InvalidArgumentException when unsupported mode is specified
+	 */
 	public SecureCell(int mode) throws InvalidArgumentException {
 		
 		if (mode < MODE_SEAL || mode > MODE_CONTEXT_IMPRINT) {
@@ -33,19 +41,41 @@ public class SecureCell {
 		this.mode = mode;
 	}
 	
+	/**
+	 * Creates new SecureCell with default master key in SEAL mode
+	 * @param default master key
+	 */
 	public SecureCell(byte[] key) {
 		this.key = key;
 	}
 	
+	/**
+	 * Creates new SecureCell with default master key in specified mode
+	 * @param default master key
+	 * @param SecureCell mode
+	 * @throws InvalidArgumentException when unsupported mode is specified
+	 */
 	public SecureCell(byte[] key, int mode) throws InvalidArgumentException {
 		this(mode);
 		this.key = key;
 	}
 	
+	/**
+	 * Creates new SecureCell with default master password in SEAL mode
+	 * @param default master password
+	 * @throws UnsupportedEncodingException when UTF-16 decoding is not supported
+	 */
 	public SecureCell(String password) throws UnsupportedEncodingException {
 		this(password.getBytes(CHARSET));
 	}
 	
+	/**
+	 * Creates new SecureCell with default master password in specified mode
+	 * @param default master password
+	 * @param SecureCell mode
+	 * @throws UnsupportedEncodingException when UTF-16 decoding is not supported
+	 * @throws InvalidArgumentException when unsupported mode is specified
+	 */
 	public SecureCell(String password, int mode) throws UnsupportedEncodingException, InvalidArgumentException {
 		this(mode);
 		this.key = password.getBytes(CHARSET);
@@ -124,34 +154,110 @@ public class SecureCell {
 		return data;
 	}
 	
+	/**
+	 * Protects data with specified master key
+	 * @param master key to use for protecting data
+	 * @param context to which protected data will be bound (may be null)
+	 * @param data to protect
+	 * @return SecureCellData with protected data
+	 * @throws NullArgumentException when key or data is null
+	 * @throws SecureCellException when cannot protect the data
+	 */
 	public SecureCellData protect(byte[] key, byte[] context, byte[] data) throws NullArgumentException, SecureCellException {
 		return protect(key, context, data, this.mode);
 	}
 	
+	/**
+	 * Protects data with default master key
+	 * @param context to which protected data will be bound (may be null)
+	 * @param data to protect
+	 * @return SecureCellData with protected data
+	 * @throws NullArgumentException when default master key or data is null
+	 * @throws SecureCellException when cannot protect the data
+	 */
 	public SecureCellData protect(byte[] context, byte[] data) throws NullArgumentException, SecureCellException {
 		return this.protect(this.key, context, data);
 	}
 	
+	/**
+	 * Protects data with specified master password
+	 * @param master password to use for protecting data
+	 * @param context to which protected data will be bound (may be null)
+	 * @param data to protect
+	 * @return SecureCellData with protected data
+	 * @throws NullArgumentException when key or data is null
+	 * @throws SecureCellException when cannot protect the data
+	 * @throws UnsupportedEncodingException when UTF-16 decoding is not supported
+	 */
 	public SecureCellData protect(String password, String context, byte[] data) throws UnsupportedEncodingException, NullArgumentException, SecureCellException {
 		return this.protect(password.getBytes(CHARSET), context.getBytes(CHARSET), data);
 	}
 	
+	/**
+	 * Protects data with default master password
+	 * @param context to which protected data will be bound (may be null)
+	 * @param data to protect
+	 * @return SecureCellData with protected data
+	 * @throws NullArgumentException when key or data is null
+	 * @throws SecureCellException when cannot protect the data
+	 * @throws UnsupportedEncodingException when UTF-16 decoding is not supported
+	 */
 	public SecureCellData protect(String context, byte[] data) throws UnsupportedEncodingException, NullArgumentException, SecureCellException {
 		return this.protect(this.key, context.getBytes(CHARSET), data);
 	}
 	
+	/**
+	 * Decrypts and verifies protected data
+	 * @param master key
+	 * @param context to which protected data will is bound (may be null, must be same as provided in protect call)
+	 * @param protectedData to verify
+	 * @return original data
+	 * @throws NullArgumentException when key or protectedData is null
+	 * @throws SecureCellException when cannot decrypt protectedData
+	 * @throws InvalidArgumentException when protectedData is incorrect
+	 */
 	public byte[] unprotect(byte[] key, byte[] context, SecureCellData protectedData) throws NullArgumentException, SecureCellException, InvalidArgumentException {
 		return unprotect(key, context, protectedData, this.mode);
 	}
 	
+	/**
+	 * Decrypts and verifies protected data with default master key
+	 * @param context to which protected data will is bound (may be null, must be same as provided in protect call)
+	 * @param protectedData to verify
+	 * @return original data
+	 * @throws NullArgumentException when key or protectedData is null
+	 * @throws SecureCellException when cannot decrypt protectedData
+	 * @throws InvalidArgumentException when protectedData is incorrect
+	 */
 	public byte[] unprotect(byte[] context, SecureCellData protectedData) throws NullArgumentException, SecureCellException, InvalidArgumentException {
 		return this.unprotect(this.key, context, protectedData);
 	}
 	
+	/**
+	 * Decrypts and verifies protected data
+	 * @param master password
+	 * @param context to which protected data will is bound (may be null, must be same as provided in protect call)
+	 * @param protectedData to verify
+	 * @return original data
+	 * @throws NullArgumentException when key or protectedData is null
+	 * @throws SecureCellException when cannot decrypt protectedData
+	 * @throws InvalidArgumentException when protectedData is incorrect
+	 * @throws UnsupportedEncodingException when UTF-16 decoding is not supported
+	 */
 	public byte[] unprotect(String password, String context, SecureCellData protectedData) throws UnsupportedEncodingException, NullArgumentException, SecureCellException, InvalidArgumentException {
 		return this.unprotect(password.getBytes(CHARSET), context.getBytes(CHARSET), protectedData);
 	}
 	
+	/**
+	 * Decrypts and verifies protected data with default master password
+	 * @param context to which protected data will is bound (may be null, must be same as provided in protect call)
+	 * @param protectedData to verify
+	 * @return original data
+	 * @throws NullArgumentException when key or protectedData is null
+	 * @throws SecureCellException when cannot decrypt protectedData
+	 * @throws InvalidArgumentException when protectedData is incorrect
+	 * @throws UnsupportedEncodingException when UTF-16 decoding is not supported
+	 */
 	public byte[] unprotect(String context, SecureCellData protectedData) throws UnsupportedEncodingException, NullArgumentException, SecureCellException, InvalidArgumentException {
 		return this.unprotect(this.key, context.getBytes(CHARSET), protectedData);
 	}
