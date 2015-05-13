@@ -18,7 +18,7 @@
 
 require 'rubygems'
 require 'eventmachine'
-require 'themis'
+require 'rubythemis'
 
 module HttpHeaders 
 

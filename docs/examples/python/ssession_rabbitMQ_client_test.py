@@ -15,7 +15,7 @@
 #
 
 #echo client for rabbitMQ
-from themis import ssession;
+from pythemis import ssession;
 import pika
 import uuid
 

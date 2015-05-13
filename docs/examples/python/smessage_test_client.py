@@ -24,9 +24,6 @@ server_pub  = str('\x55\x45\x43\x32\x00\x00\x00\x2d\x75\x58\x33\xd4\x02\x12\xdf\
 socket_=ssocket(client_priv, server_pub);
 socket_.connect(("127.0.0.1", 26260));
 
-print 1
-
-
 for i in range(0, 9):
     socket_.sendall("This is a test message #" + `i`);
     message = socket_.recv(1024);

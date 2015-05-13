@@ -19,7 +19,7 @@
 #for store additional encryption data we will use separate table "scell_data_auth"
 #stored object is represented by two independent string value
 import psycopg2;
-from themis import scell;
+from pythemis import scell;
 
 password="password";
 

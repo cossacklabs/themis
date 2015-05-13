@@ -14,19 +14,20 @@
 # limitations under the License.
 #
 
-#key generation example
-import sys
-from pythemis import skeygen
+from enum import Enum;
 
-alg="EC";
+class THEMIS_CODES(Enum):
+    NETWORK_ERROR=-2222
+    BUFFER_TOO_SMALL=-4
+    FAIL=-1
+    SUCCESS=0
+    SEND_AS_IS=1
 
-obj = skeygen.themis_gen_key_pair(alg);
-private_key = obj.export_private_key();
-public_key = obj.export_public_key();
 
-private_key_file = open(sys.argv[1],"w");
-private_key_file.write(private_key);
-private_key_file.close();
-public_key_file = open(sys.argv[2],"w");
-public_key_file.write(public_key);
-public_key_file.close();
+class themis_exception(Exception):
+    def __init__(self, error_code, message):
+	self.error_code=error_code
+	self.message = message
+    def __str__(self):
+	return repr("Themis error: "+str(error_code)+" --"+self.message)
+

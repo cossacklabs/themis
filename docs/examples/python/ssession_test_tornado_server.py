@@ -15,7 +15,7 @@
 #
 
 #echo server for tornado
-from themis import ssession;
+from pythemis import ssession;
 import tornado.ioloop
 import tornado.web
 

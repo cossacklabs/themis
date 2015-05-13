@@ -15,7 +15,7 @@
 #
 
 #hadmade secure socket 
-from themis import smessage;
+from pythemis import smessage;
 import socket;
 
 class ssocket(object):

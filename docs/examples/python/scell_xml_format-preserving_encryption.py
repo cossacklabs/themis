@@ -19,7 +19,7 @@
 
 import xml.etree.ElementTree as ET;
 import base64;
-from themis import scell;
+from pythemis import scell;
 
 password="password";
 

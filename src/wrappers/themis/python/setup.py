@@ -17,14 +17,14 @@ from setuptools import setup
 
 import sys
 
-import themis
+import pythemis
 
 
 install_requires = [
 ]
 
 setup(
-    name='themis',
+    name='pythemis',
     version='0.2.0',
 
     description='',
@@ -56,7 +56,7 @@ setup(
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
 
-    packages=["themis"],
+    packages=["pythemis"],
 
     entry_points={
     },

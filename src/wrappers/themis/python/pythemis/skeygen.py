@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-import exception;
+from exception import themis_exception;
 from ctypes import *
 themis = cdll.LoadLibrary('libthemis.so')
 

@@ -27,17 +27,15 @@ conn=smessage_ssocket.ssocket(server_priv);
 conn.bind(("127.0.0.1", 26260));
 conn.listen(1);
 accepted, addr = conn.accept();
-print 1
 accepted.set_peer_pub_key(client_pub);
 
 while True:
     try:
-	print 2;
         message = accepted.recv(1024); #receive message
         print message;
         if message == "finish": #"finish" - last message
             break;
         accepted.sendall(message); #send message
     except Exception as e:
-        e;        
+        print e;        
 conn.close();

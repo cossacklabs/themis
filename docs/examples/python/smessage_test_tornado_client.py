@@ -15,7 +15,7 @@
 #
 
 #echo client for tornado
-from themis import smessage;
+from pythemis import smessage;
 import tornado.ioloop
 import tornado.httpclient;
 
