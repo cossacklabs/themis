@@ -25,7 +25,7 @@ install_requires = [
 
 setup(
     name='pythemis',
-    version='0.2.0',
+    version='0.9',
 
     description='',
     long_description=open("README.rst").read(),
