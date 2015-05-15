@@ -30,7 +30,7 @@ typedef enum{
 }
 
 - (id)init: (AsymAlg)alg;
-- (NSData*)getPrivKey: (NSError**)errorPtr;
-- (NSData*)getPubKey: (NSError**)errorPtr;
+- (NSData*)getPrivKey;
+- (NSData*)getPubKey;
 
 @end

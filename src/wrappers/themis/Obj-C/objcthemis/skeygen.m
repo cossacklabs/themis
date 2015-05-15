@@ -24,42 +24,40 @@
   if(self){
     size_t private_key_length=0;
     size_t public_key_length=0;
-    int res=TErrorFail;
+    int res=TErrorTypeFail;
     switch(alg){
     case EC:
-	res = themis_gen_ec_key_pair(NULL, &priv_length, NULL, &pub_length);
-	break;
+    	res = themis_gen_ec_key_pair(NULL, &private_key_length, NULL, &public_key_length);
+    	break;
     case RSA:
-	res = themis_gen_rsa_key_pair(NULL, &priv_length, NULL, &pub_length);
+	res = themis_gen_rsa_key_pair(NULL, &private_key_length, NULL, &public_key_length);
     }
     if (res != TErrorTypeBufferTooSmall) {
-	[super release];
 	return nil;
     }
 
     _priv_key = [[NSMutableData alloc] initWithLength:private_key_length];
     _pub_key = [[NSMutableData alloc] initWithLength:public_key_length];
-    res=TErrorFail;
-    swotch(alg){
+    res=TErrorTypeFail;
+    switch(alg){
     case EC:
-	res = themis_gen_ec_key_pair([_priv_key mutableBytes], &private_key_length, [_pub_key mutableBytes], &publik_key_length);
+	res = themis_gen_ec_key_pair([_priv_key mutableBytes], &private_key_length, [_pub_key mutableBytes], &public_key_length);
 	break;
     case RSA:
-	res = themis_gen_rsa_key_pair([_priv_key mutableBytes], &private_key_length, [_pub_key mutableBytes], &publik_key_length);
+	res = themis_gen_rsa_key_pair([_priv_key mutableBytes], &private_key_length, [_pub_key mutableBytes], &public_key_length);
     }
     if (res != TErrorTypeSuccess) {
-	[super release];
 	return nil;
     }
   }
   return self;
 }
 
-- (NSData*)getPrivKey: (NSError**)errorPtr{
+- (NSData*)getPrivKey{
     return _priv_key;
 }
 
-- (NSData*)getPubKye: (NSError**)errorPtr{
+- (NSData*)getPubKey{
     return _pub_key;
 }
 
