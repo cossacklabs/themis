@@ -15,7 +15,8 @@
 */
 
 #import "AppDelegate.h"
-#import "smessage.h"
+#import <objcthemis/smessage.h>
+#import <objcthemis/skeygen.h>
 
 
 @interface AppDelegate ()
@@ -34,6 +35,29 @@
 
 
 - (void)testingThemis {
+    NSData * generated_priv_key;
+    NSData * generated_pub_key;
+    
+    SKeyGen * keygen = [[SKeyGen alloc]init:(RSA)];
+    if(!keygen){
+        NSLog(@"Error occured %s", "RSA keygen");
+        return;
+    }
+    generated_priv_key = [keygen getPrivKey];
+    NSLog(@"RSA priv: %@", generated_priv_key);
+    generated_pub_key = [keygen getPubKey];
+    NSLog(@"RSA pub:%@", generated_pub_key);
+
+    SKeyGen * keygen2 = [[SKeyGen alloc]init:(EC)];
+    if(!keygen2){
+        NSLog(@"Error occured %s", "EC keygen");
+        return;
+    }
+    generated_priv_key = [keygen2 getPrivKey];
+    NSLog(@"EC priv: %@", generated_priv_key);
+    generated_pub_key = [keygen2 getPubKey];
+    NSLog(@"EC pub:%@", generated_pub_key);
+
     NSData * serverPrivateKey = [[NSFileManager defaultManager] contentsAtPath:[[NSBundle mainBundle] pathForResource:@"server"
                                                                                                                ofType:@"priv"]];
     NSData * serverPublicKey = [[NSFileManager defaultManager] contentsAtPath:[[NSBundle mainBundle] pathForResource:@"server"
