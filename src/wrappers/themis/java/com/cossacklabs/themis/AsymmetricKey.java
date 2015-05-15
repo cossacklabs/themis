@@ -21,6 +21,9 @@ package com.cossacklabs.themis;
  */
 public abstract class AsymmetricKey {
 	
+	public static final int KEYTYPE_EC = 0;
+	public static final int KEYTYPE_RSA = 1;
+	
 	byte[] key;
 
 	/**

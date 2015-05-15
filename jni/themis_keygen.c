@@ -18,7 +18,11 @@
 #include <themis/error.h>
 #include <themis/secure_message.h>
 
-JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_generateKeys(JNIEnv *env, jobject thiz)
+/* Should be same as in AsymmetricKey.java */
+#define KEYTYPE_EC 0
+#define KEYTYPE_RSA 1
+
+JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_generateKeys(JNIEnv *env, jobject thiz, jint key_type)
 {
 	size_t private_length = 0;
 	size_t public_length = 0;
@@ -31,7 +35,20 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_gene
 
 	jobjectArray keys;
 
-	themis_status_t res = themis_gen_ec_key_pair(NULL, &private_length, NULL, &public_length);
+	themis_status_t res;
+
+	switch (key_type)
+	{
+	case KEYTYPE_EC:
+		res = themis_gen_ec_key_pair(NULL, &private_length, NULL, &public_length);
+		break;
+	case KEYTYPE_RSA:
+		res = themis_gen_rsa_key_pair(NULL, &private_length, NULL, &public_length);
+		break;
+	default:
+		return NULL;
+	}
+
 	if (THEMIS_BUFFER_TOO_SMALL != res)
 	{
 		return NULL;
@@ -62,7 +79,19 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_gene
 		return NULL;
 	}
 
-	res = themis_gen_ec_key_pair(priv_buf, &private_length, pub_buf, &public_length);
+	switch (key_type)
+	{
+	case KEYTYPE_EC:
+		res = themis_gen_ec_key_pair(priv_buf, &private_length, pub_buf, &public_length);
+		break;
+	case KEYTYPE_RSA:
+		res = themis_gen_rsa_key_pair(priv_buf, &private_length, pub_buf, &public_length);
+		break;
+	default:
+		(*env)->ReleaseByteArrayElements(env, public, pub_buf, 0);
+		(*env)->ReleaseByteArrayElements(env, private, priv_buf, 0);
+		return NULL;
+	}
 
 	(*env)->ReleaseByteArrayElements(env, public, pub_buf, 0);
 	(*env)->ReleaseByteArrayElements(env, private, priv_buf, 0);
