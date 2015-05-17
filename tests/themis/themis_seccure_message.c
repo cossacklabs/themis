@@ -279,7 +279,7 @@ static void secure_message_api_test(void)
 		testsuite_fail_if(true, "themis_secure_message_unwrap fail");
 		return;
 	}
-	printf("aaaaaaaaaaa %u", plaintext_length);
+
 	testsuite_fail_unless((decryptext_length == plaintext_length), "generic secure message: normal flow");
 	testsuite_fail_unless((!memcmp(plaintext, decryptext, plaintext_length)), "generic secure message: normal flow 2");
 }
