@@ -33,7 +33,6 @@ import com.cossacklabs.themis.KeyGenerationException;
 import com.cossacklabs.themis.Keypair;
 import com.cossacklabs.themis.KeypairGenerator;
 import com.cossacklabs.themis.PublicKey;
-import com.cossacklabs.themis.SecureDatagramSocket;
 import com.cossacklabs.themis.SecureServerSocket;
 import com.cossacklabs.themis.SecureSession;
 import com.cossacklabs.themis.SecureSocket;
