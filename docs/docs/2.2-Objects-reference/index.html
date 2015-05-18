@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Objects reference - Themis 0.9</title>
+
+        <link href="../css/bootstrap-3.0.3.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+        <link href="../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">Themis 0.9</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="..">Introduction</a>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">How to use <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../2.-How-to-use-Themis/">Intro</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.1-Building-and-installing/">Building and installing</a>
+                        </li>
+                    
+                        <li class="active">
+                            <a href="./">Objects reference</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.3-Key-management/">Key management advice</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Language reference <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../2.4-Language-reference/">Intro</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.1-Python-Howto/">Python</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.2-PHP-Howto/">PHP</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.3-Ruby-Howto/">Ruby</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.4-Objective-C-Howto/">Objective C</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.5-Java---Android/">Java/Android</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../3.-FAQ/">FAQ</a>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Fundamentals <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../4.1-General-design-principles/">General design principles</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.2-Architecture/">Architecture</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.3-Soter-cryptostack/">Soter cryptostack</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.4-Cryptosystems/">Cryptosystems</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.4.1-Secure-message/">Secure Message</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.4.2-Secure-Session/">Secure Session</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.4.3-Secure-Cell/">Secure Cell</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../5.-Contributing-to-Themis/">Intro</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing  <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../5.1-Development-status/">Development roadmap</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../5.2-Getting-started-with-development/">Getting started with development</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../5.3-Directory-structure/">Directory structure</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../5.4-Implementation-details/">Some implementation details</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+           <ul class="nav navbar-nav navbar-right">
+
+                
+                <li>
+                    <a href="https://github.com/cossacklabs/themis/">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#objects-reference">Objects reference</a></li>
+        
+            <li><a href="#secure-message">Secure Message</a></li>
+        
+            <li><a href="#secure-session">Secure Session</a></li>
+        
+            <li><a href="#secure-cell">Secure Cell</a></li>
+        
+            <li><a href="#key-generation">Key generation</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h2 id="objects-reference">Objects reference</h2>
+<p>There are three main crypto-objects in our library:</p>
+<h3 id="secure-message">Secure Message</h3>
+<p>Secure Message is a sequence-independent, stateless, contextless messaging system. Works best for cases which don't require frequent sequential message exchange, APIs, low-bandwidth contexts.</p>
+<p>Available modes:
+- sign/verify: message is signed by signature algorithm (ECDSA by default) and packed in special container.
+- encrypt/decrypt: message will be encrypted by randomly generated key (in RSA) or derived by ECDH (in ECDSA) symmetric algorithm with secure cell in seal mode. </p>
+<p><strong>Secure Message mode</strong> is selected by key parameters of <code>themis_secure_message_wrap</code> function or it's high-level representation in your language: </p>
+<ul>
+<li>If <code>peer_public_key</code> parameter is set to NULL, Secure Message will work in sign/verify mode and use signed message container.</li>
+<li>If <code>peer_public_key</code> parameter is set to real public key, Secure Message will work in encrypt/decrypt mode and use encrypted message container.</li>
+</ul>
+<p>Using Secure Message is simple: 
+- each party initializes the <code>smessage</code> object with it's private key and peer's public key.
+- then parties exchange messages and encrypt/decrypt them.</p>
+<h3 id="secure-session">Secure Session</h3>
+<p>Secure Session is a sequence and session dependent, stateful messaging system. Works best for RPC, IPC, message and data exchange, socket-like datagram and event-passing layouts.</p>
+<p>Possible usage scenarios:
+- A drop-in replacement for SSL/TLS
+- Protecting long-lived peer-to-peer message exchange
+- Secure data exchange with each piece of data bound to specific session (channel) context</p>
+<p>Secure Session works in two stages:
+- session negotiation: getting the keys, exchanging of cryptographic material, generating ephemeral keys.
+- data exchange: exchanging messages.</p>
+<p>Secure Session is separated from network layer, and works in two modes: 
+- wrap/unwrap (callback API)
+- encrypt/decrypt (buffer API)</p>
+<p>We suggest you dig <a href="../4.4.2-Secure-Session/">a little bit of theory</a> on Secure Session to understand various strategies better, or simply pick default behavior from examples and go on - they all are built safe.</p>
+<h3 id="secure-cell">Secure Cell</h3>
+<p>a multi-mode protected data container, can be used on files, SQL records, structured data records. </p>
+<p>Available modes: </p>
+<ul>
+<li>seal: Themis takes care of everything, you encrypt and decrypt your container.</li>
+<li>token-protect: Length-preserving cipher. Themis automatically derives additional cryptographic material from user's context. Uses auth tag to authenticate decryption, auth tag is returned in separate buffer (as tokens) and can be stored separately. Requires some effort from the user.</li>
+<li>context-imprint: Length-preserving cipher without extra cryptomaterial and auth tag. Convenient, less demanding, but less secure. </li>
+</ul>
+<h3 id="key-generation">Key generation</h3>
+<p>Themis's objects rely on key generation / storage. Themis service object <code>skeygen</code> upon calling <code>themis_gen_key_pair</code> with algorithm parameter ("EC" or "RSA") generates a pair of keys, which exports via <code>export_private_key()</code> and <code>export_public_key()</code> functions.</p></div>
+        </div>
+
+	<footer class="col-md-12">
+		<hr>
+		
+		<p>(c) 2015 Cossack Labs Limited</p>
+		
+		<p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+	</footer>
+
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script src="../js/base.js"></script>
+    </body>
+</html>

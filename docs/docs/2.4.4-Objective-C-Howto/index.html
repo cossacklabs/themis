@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Objective C - Themis 0.9</title>
+
+        <link href="../css/bootstrap-3.0.3.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+        <link href="../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">Themis 0.9</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="..">Introduction</a>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">How to use <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../2.-How-to-use-Themis/">Intro</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.1-Building-and-installing/">Building and installing</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.2-Objects-reference/">Objects reference</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.3-Key-management/">Key management advice</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Language reference <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../2.4-Language-reference/">Intro</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.1-Python-Howto/">Python</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.2-PHP-Howto/">PHP</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.3-Ruby-Howto/">Ruby</a>
+                        </li>
+                    
+                        <li class="active">
+                            <a href="./">Objective C</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.5-Java---Android/">Java/Android</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../3.-FAQ/">FAQ</a>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Fundamentals <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../4.1-General-design-principles/">General design principles</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.2-Architecture/">Architecture</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.3-Soter-cryptostack/">Soter cryptostack</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.4-Cryptosystems/">Cryptosystems</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.4.1-Secure-message/">Secure Message</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.4.2-Secure-Session/">Secure Session</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.4.3-Secure-Cell/">Secure Cell</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../5.-Contributing-to-Themis/">Intro</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing  <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../5.1-Development-status/">Development roadmap</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../5.2-Getting-started-with-development/">Getting started with development</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../5.3-Directory-structure/">Directory structure</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../5.4-Implementation-details/">Some implementation details</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+           <ul class="nav navbar-nav navbar-right">
+
+                
+                <li>
+                    <a href="https://github.com/cossacklabs/themis/">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#objective-c">Objective C</a></li>
+        
+            <li><a href="#installation">Installation</a></li>
+        
+            <li><a href="#usage">Usage</a></li>
+        
+            <li><a href="#key-pair-generation">Key Pair Generation</a></li>
+        
+            <li><a href="#secure-message">Secure Message</a></li>
+        
+            <li><a href="#secure-cell">Secure Cell</a></li>
+        
+            <li><a href="#secure-session">Secure Session</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="objective-c">Objective C</h1>
+<h2 id="installation">Installation</h2>
+<p>Install Themis using CocoaPods</p>
+<pre><code>source 'https://ph.cossacklabs.com/diffusion/CPDS/'
+pod 'themis'
+</code></pre>
+<h2 id="usage">Usage</h2>
+<h2 id="key-pair-generation">Key Pair Generation</h2>
+<p>To generate a pair of keys, <code>objcthemis</code> has class <code>SKeyGen</code>. Method <code>init</code> has one parameter - type of algorithm (Themis supports Elliptic Curve (EC) and RSA algorithms).</p>
+<pre><code>#import "skeуgen.h"
+SKeyGen * generator = [[SkeyGen alloc]init(EC /*or RSA can be used*/)];
+if(!generator){
+    NSLog(@"Error occured %s", "key generate");
+    return;
+}
+NSData *private_key = [generator getPrivKey];
+NSData *public_key = [generator getPubKey];
+</code></pre>
+<h2 id="secure-message">Secure Message</h2>
+<p>For detailed explanation of Secure Message, see corresponding page in <a href="../2.2-Objects-reference/">Objects guide</a></p>
+<h3 id="encryption">Encryption</h3>
+<p>To encrypt a message, use client private key and server public key, and convert them to <code>NSData</code>:</p>
+<pre><code>// base64 encoded keys
+NSString * serverPublicKeyString = @"VUVDMgAAAC2ELbj5Aue5xjiJWW3P2KNrBX+HkaeJAb+Z4MrK0cWZlAfpBUql";
+NSString * clientPrivateKeyString = @"UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg";
+
+NSData * serverPublicKey = [[NSData alloc] initWithBase64EncodedString:serverPublicKeyString options:NSDataBase64DecodingIgnoreUnknownCharacters];
+NSData * clientPrivateKey = [[NSData alloc] initWithBase64EncodedString:clientPrivateKeyString options:NSDataBase64DecodingIgnoreUnknownCharacters];
+</code></pre>
+<p>Initialize encrypter: </p>
+<pre><code>#import "smessage.h"
+SMessage * encrypter = [[SMessage alloc] initWithPrivateKey:clientPrivateKey peerPublicKey:serverPublicKey];
+</code></pre>
+<p>Encrypt message:</p>
+<pre><code>NSString * message = @"All your base are belong to us!";
+
+NSError * themisError;
+NSData * encryptedMessage = [encrypter wrap:[message dataUsingEncoding:NSUTF8StringEncoding] error:&amp;themisError];
+if (themisError) {
+    NSLog(@"Error occured %@", themisError);
+    return;
+}
+NSLog(@"%@", encryptedMessage);
+</code></pre>
+<p>Result (the encryption result on same data chunk is different every time and can't be used as test):</p>
+<pre><code>$ &lt;20270426 53000000 00010140 0c000000 10000000 1f000000 ad443c21 d6d7df98 a101e48b b3757b04 c5710e04 5720b3c2 fe674f54 73e10ad4 ee722d3e 42244b6d c5099ac4 89dfda90 75fae62a aa733872 c8180d&gt;
+</code></pre>
+<h3 id="decryption">Decryption</h3>
+<p>Use server private key and client public key for decryption:</p>
+<pre><code>// base64 encoded keys
+NSString * serverPrivateKeyString = @"UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR";
+NSString * clientPublicKeyString = @"VUVDMgAAAC1SsL32Axjosnf2XXUwm/4WxPlZauQ+v+0eOOjpwMN/EO+Huh5d";
+
+NSData * serverPrivateKey = [[NSData alloc] initWithBase64EncodedString:serverPrivateKeyString options:NSDataBase64DecodingIgnoreUnknownCharacters];
+NSData * clientPublicKey = [[NSData alloc] initWithBase64EncodedString:clientPublicKeyString options:NSDataBase64DecodingIgnoreUnknownCharacters];
+</code></pre>
+<p>Initialize decrypter:</p>
+<pre><code>#import "smessage.h"
+SMessage * decrypter = [[SMessage alloc] initWithPrivateKey:serverPrivateKey peerPublicKey:clientPublicKey];
+</code></pre>
+<p>Decrypt message:</p>
+<pre><code>NSData * decryptedMessage = [decrypter unwrap:encryptedMessage error:&amp;themisError];
+if (themisError) {
+    NSLog(@"Error occured %@", themisError);
+    return;
+}
+
+NSString * resultString = [[NSString alloc] initWithData:decryptedMessage encoding:NSUTF8StringEncoding];
+NSLog(@"%@", resultString);
+</code></pre>
+<p>Result:</p>
+<pre><code>$ All your base are belong to us!
+</code></pre>
+<h2 id="secure-cell">Secure Cell</h2>
+<p>All Secure Cell modes has an optional parameter <code>context</code>. For detailed explanation of various modes and their strengths and weaknesses, see <a href="../2.2-Objects-reference/">objects guide</a> and <a href="../4.4.3-Secure-Cell/">cryptosystem description for Secure Cell</a>.</p>
+<p>To initialize secure cell object, use master key in NSData format:</p>
+<pre><code>NSString * masterKeyString = @"UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg";
+NSData * Key = [[NSData alloc] initWithBase64EncodedString:MasterKeyString options:NSDataBase64DecodingIgnoreUnknownCharacters];
+</code></pre>
+<h4 id="seal-mode">Seal Mode</h4>
+<p>Initialize encrypter/decrypter:</p>
+<pre><code>#import "scell_seal.h"
+SCell_seal* enc_dec = [[SCell_seal alloc] initWithKey:Key];
+</code></pre>
+<p>Encrypt:</p>
+<pre><code>NSString * message = @"All your base are belong to us!";
+NSString * context = @"context for message";
+NSError * themisError;
+
+NSData * encryptedMessage = [enc_dec wrap:[message dataUsingEncoding:NSUTF8StringEncoding] context: [context dataUsingEncoding:NSUTF8StringEncoding] error:&amp;themisError]; 
+// context is optional parameter and may be involved 
+if (themisError) {
+    NSLog(@"Error occured %@", themisError);
+    return;
+}
+NSLog(@"%@", encryptedMessage);
+</code></pre>
+<p>Decrypt:</p>
+<pre><code>NSString * context = @"context for message";
+NSError * themisError;
+
+NSData * decryptedMessage = [enc_dec unwrap:encryptedMessage context:[context dataUsingEncoding:NSUTF8StringEncoding] error:&amp;themisError]; 
+// context is optional parameter and may be involved 
+if (themisError) {
+    NSLog(@"Error occured %@", themisError);
+    return;
+}
+NSString * resultString = [[NSString alloc] initWithData:decryptedMessage encoding:NSUTF8StringEncoding];
+NSLog(@"%@", resultString);
+</code></pre>
+<h4 id="token-protect-mode">Token-protect Mode</h4>
+<p>Initialize encrypter/decrypter</p>
+<pre><code>#import "scell_token.h"
+SCell_token* enc_dec = [[SCell_token alloc] initWithKey:Key];
+</code></pre>
+<p>Encrypt:</p>
+<pre><code>NSString * message = @"All your base are belong to us!";
+NSString * context = @"context for message";
+NSError * themisError;
+
+struct Encrypted_data encryptedMessage = [enc_dec wrap:[message dataUsingEncoding:NSUTF8StringEncoding] context:[context dataUsingEncoding:NSUTF8StringEncoding] error:&amp;themisError]; 
+// context is optional parameter and may be involved 
+if (themisError) {
+    NSLog(@"Error occured %@", themisError);
+    return;
+}
+NSLog(@"%@: %@", encryptedMessage.cipher_text, encryptedMessage.token);
+</code></pre>
+<p>Decrypt:</p>
+<pre><code>NSString * context = @"context for message";
+NSError * themisError;
+
+NSData * decryptedMessage = [enc_dec unwrap:encryptedMessage context:[context dataUsingEncoding:NSUTF8StringEncoding] error:&amp;themisError];
+
+// context is optional parameter and may be involved 
+if (themisError) {
+    NSLog(@"Error occured %@", themisError);
+    return;
+}
+NSString * resultString = [[NSString alloc] initWithData:decryptedMessage encoding:NSUTF8StringEncoding];
+NSLog(@"%@", resultString);
+</code></pre>
+<h4 id="context-imprint-mode">Context-Imprint Mode</h4>
+<p>Initialize encrypter/decrypter</p>
+<pre><code>#import "scell_context_impirit.h"
+SCell_context_impirit* enc_dec = [[SCell_context_impirit alloc] initWithKey:Key];
+</code></pre>
+<p>Encrypt</p>
+<pre><code>NSString * message = @"All your base are belong to us!";
+NSString * context = @"context for message";
+NSError * themisError;
+
+NSData * encryptedMessage = [enc_dec wrap:[message dataUsingEncoding:NSUTF8StringEncoding] context:[context dataUsingEncoding:NSUTF8StringEncoding] error:&amp;themisError]; 
+// context is not optional parameter here
+if (themisError) {
+    NSLog(@"Error occured %@", themisError);
+    return;
+}
+NSLog(@"%@", encryptedMessage);
+</code></pre>
+<p>Decrypt</p>
+<pre><code>NSString * context = @"context for message";
+NSError * themisError;
+
+NSData * decryptedMessage = [enc_dec unwrap:encryptedMessage context:[context dataUsingEncoding:NSUTF8StringEncoding] error:&amp;themisError]; 
+// context is not optional parameter here
+if (themisError) {
+    NSLog(@"Error occured %@", themisError);
+    return;
+}
+NSString * resultString = [[NSString alloc] initWithData:decryptedMessage encoding:NSUTF8StringEncoding];
+NSLog(@"%@", resultString);
+</code></pre>
+<h2 id="secure-session">Secure Session</h2>
+<p>Secure Session for iOS is yet untested. It comes as is, and will be properly documented, covered with examples in next release.</p></div>
+        </div>
+
+	<footer class="col-md-12">
+		<hr>
+		
+		<p>(c) 2015 Cossack Labs Limited</p>
+		
+		<p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+	</footer>
+
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script src="../js/base.js"></script>
+    </body>
+</html>

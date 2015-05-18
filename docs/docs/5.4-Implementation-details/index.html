@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+
+	<title>Some implementation details - Themis 0.9</title>
+
+        <link href="../css/bootstrap-3.0.3.min.css" rel="stylesheet">
+        <link href="../css/font-awesome-4.0.3.css" rel="stylesheet">
+        <link rel="stylesheet" href="../css/highlight.css">
+        <link href="../css/base.css" rel="stylesheet">
+
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+
+        
+    </head>
+
+    <body>
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <!-- Main title -->
+            <a class="navbar-brand" href="..">Themis 0.9</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+            <!-- Main navigation -->
+            <ul class="nav navbar-nav">
+            
+            
+                <li >
+                    <a href="..">Introduction</a>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">How to use <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../2.-How-to-use-Themis/">Intro</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.1-Building-and-installing/">Building and installing</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.2-Objects-reference/">Objects reference</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.3-Key-management/">Key management advice</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Language reference <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../2.4-Language-reference/">Intro</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.1-Python-Howto/">Python</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.2-PHP-Howto/">PHP</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.3-Ruby-Howto/">Ruby</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.4-Objective-C-Howto/">Objective C</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../2.4.5-Java---Android/">Java/Android</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li >
+                    <a href="../3.-FAQ/">FAQ</a>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Fundamentals <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../4.1-General-design-principles/">General design principles</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.2-Architecture/">Architecture</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.3-Soter-cryptostack/">Soter cryptostack</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.4-Cryptosystems/">Cryptosystems</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.4.1-Secure-message/">Secure Message</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.4.2-Secure-Session/">Secure Session</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../4.4.3-Secure-Cell/">Secure Cell</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../5.-Contributing-to-Themis/">Intro</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing  <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../5.1-Development-status/">Development roadmap</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            
+                <li class="dropdown active">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Contributing <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                    
+                        <li >
+                            <a href="../5.2-Getting-started-with-development/">Getting started with development</a>
+                        </li>
+                    
+                        <li >
+                            <a href="../5.3-Directory-structure/">Directory structure</a>
+                        </li>
+                    
+                        <li class="active">
+                            <a href="./">Some implementation details</a>
+                        </li>
+                    
+                    </ul>
+                </li>
+            
+            
+            </ul>
+
+            <!-- Search, Navigation and Repo links -->
+           <ul class="nav navbar-nav navbar-right">
+
+                
+                <li>
+                    <a href="https://github.com/cossacklabs/themis/">
+                        
+                            <i class="fa fa-github"></i>
+                        
+                        GitHub
+                    </a>
+                </li>
+                
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+            <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+    
+        <li class="main active"><a href="#implementation-details">Implementation details</a></li>
+        
+            <li><a href="#secure-message">Secure Message</a></li>
+        
+            <li><a href="#secure-session">Secure Session</a></li>
+        
+            <li><a href="#secure-cell">Secure Cell</a></li>
+        
+    
+    </ul>
+</div></div>
+            <div class="col-md-9" role="main">
+
+<h1 id="implementation-details">Implementation details</h1>
+<p>This page outlines some high-level details how Themis objects are implemented. This can be used as starting point in reading code. We hope that this section will get extended soon.</p>
+<h2 id="secure-message">Secure Message</h2>
+<p>Secure Message is data protection, integrity and authenticity method, available in a very simple wrapper.</p>
+<p>Secure Message may be used in two modes:</p>
+<ol>
+<li>sign/verify (integrity and authenticity only)</li>
+<li>encrypt/decrypt (confidentiality, integrity and authenticity)</li>
+</ol>
+<p>In <em>sign/verify mode</em> message will be signed by appropriate signature algorithm (ECDSA by default) and packed in <code>THEMIS_SIGNED_MESSAGE_CONTAINER</code>.</p>
+<p>In <em>encrypt/decrypt</em> mode message will be encrypted by randomly generated (in RSA) or derived by ECDH (in ECDSA) symmetric key. All additional necessary data for encryption will be derived by Themis and packed to <code>THEMIS_ENCRYPTED_MESSAGE_CONTAINER</code>.</p>
+<p>Selection of secure message mode can be made by setting key parameters to themis_secure_message_wrap function. If peer_public_key parameter set to NULL secure message will work in sign/verify mode, message will be signed and packet in <code>THEMIS_SIGNED_MESSAGE_CONTAINER</code>:</p>
+<pre><code>themis_secure_message_wrap(
+                           private_key, 
+                           private_key_length, 
+                           NULL,               // peer_public_key 
+                           0,                  // peer_public_key_length
+                           message, 
+                           message_length,  
+                           wrapped_message, 
+                           &amp;wrapped_message_length);
+</code></pre>
+<p>If <code>peer_public_key</code> parameter is set to peer's public key secure message will work in encrypt/decrypt mode, message will be encrypted and packed in <code>THEMIS_ENCRYPTED_MESSAGE_CONTAINER</code>:</p>
+<pre><code>themis_secure_message_wrap(
+                           private_key, 
+                           private_key_length, 
+                           peer_public_key,
+                           peer_public_key_length
+                           message, 
+                           message_length,  
+                           wrapped_message, 
+                           &amp;wrapped_message_length);
+</code></pre>
+<p>Unwrapping mode is selected by parsing <code>wrapped_message</code> header.</p>
+<pre><code>themis_secure_message_unwrap(
+                           peer_private_key ,
+                           peer_private_key_length, 
+                           public_key, 
+                           public_key_length, 
+                           wrapped_message, 
+                           wrapped_message_length, 
+                           unwrapped_message, 
+                           &amp;unwrapped_message_length);
+</code></pre>
+<h2 id="secure-session">Secure Session</h2>
+<p><strong>Secure Session</strong> depends on transport object which must be set by <code>secure_session_create(init)</code> method:</p>
+<pre><code>themis_status_t secure_session_init(
+                secure_session_t *session_ctx, 
+                const void *id, size_t id_length, 
+                const void *sign_key, 
+                size_t sign_key_length, 
+                const secure_session_user_callbacks_t *user_callbacks);
+
+secure_session_t* secure_session_create(
+                const void *id, 
+                size_t id_length, 
+                const void *sign_key, 
+                size_t sign_key_length, 
+                const secure_session_user_callbacks_t *user_callbacks);
+</code></pre>
+<p>transport object is represented by following stucture:</p>
+<pre><code>struct secure_session_user_callbacks_type
+{
+    send_protocol_data_callback send_data;
+    receive_protocol_data_callback receive_data;
+    protocol_state_changed_callback state_changed;
+    get_public_key_for_id_callback get_public_key_for_id;
+
+    void *user_data;
+};
+</code></pre>
+<p>with callbacks function pointers:</p>
+<pre><code> ssize_t (*send_protocol_data_callback)(
+            const uint8_t *data, 
+            size_t data_length, 
+            void *user_data);
+
+ ssize_t (*receive_protocol_data_callback)(
+            uint8_t *data, 
+            size_t data_length, 
+            void *user_data);
+
+ void (*protocol_state_changed_callback)(
+            int event, 
+            void *user_data);
+ int (*get_public_key_for_id_callback)(
+            const void *id, 
+            size_t id_length, 
+            void *key_buffer, 
+            size_t key_buffer_length, 
+            void *user_data);
+</code></pre>
+<p>Function <code>get_public_key_for_id_callback</code> is used to get public key for client id as necessary. This callback is mandatory, otherwise secure session will have no means to authenticate key exchange.</p>
+<p>Functions <code>send_protocol_data_callback</code> and <code>receive_protocol_data_callback</code> used for sending and receiving data from communication channel respectively. <code>send_protocol_data_callback</code>, if set, may be triggered by key exchange on session establishment, both <code>send_protocol_data_callback</code> and <code>receive_protocol_data_callback</code> will be triggered by <code>secure_session_send</code> and <code>secure_session_receive</code> to communicate over actual communication channel. If these functions are not set <strong>secure session</strong> object can still be used in wrap/unwrap mode (see below).</p>
+<p>function <code>protocol_state_changed_callback</code> is an optional callback which delivers <strong>secure_session</strong> state transitions to client applications.</p>
+<p><strong>Secure session</strong> object may be used in two modes:</p>
+<ul>
+<li>
+<p><strong>send/receive</strong> In this mode <strong>secure session</strong> object manage communication channel by itself with the help of <code>send_protocol_data_callback</code> and <code>receive_protocol_data_callback</code> methods.</p>
+<p>ssize_t secure_session_send(
+             secure_session_t <em>session_ctx, 
+             const void </em>message, 
+             size_t message_length);
+ssize_t secure_session_receive(
+             secure_session_t <em>session_ctx, 
+             void </em>message, 
+             size_t message_length);</p>
+</li>
+<li>
+<p><strong>wrap/unwrap</strong> In this mode <code>send_protocol_data_callback</code> and <code>receive_protocol_data_callback</code> methods are not used. Wrapped message will be returned to the user in a buffer. </p>
+<p>themis_status_t secure_session_wrap(
+             secure_session_t <em>session_ctx, 
+             const void </em>message, 
+             size_t message_length, 
+             void <em>wrapped_message, 
+             size_t </em>wrapped_message_length);
+themis_status_t secure_session_unwrap(
+             secure_session_t <em>session_ctx, 
+             const void </em>wrapped_message, 
+             size_t wrapped_message_length, 
+             void <em>message, 
+             size_t </em>message_length);</p>
+</li>
+<li>
+<p>mixed mode. Any combination of the above may work as well. For example, <code>send_protocol_data_callback</code> may be set and <code>secure_session_send</code> may be used to send data, and <code>secure_session_unwrap</code> may be used to decrypt data in application receive path.</p>
+</li>
+</ul>
+<h2 id="secure-cell">Secure Cell</h2>
+<p><strong>Secure cell</strong> may work in three modes:</p>
+<p><strong>seal mode</strong> - all output data (encrypted message, auth tag, iv etc.) will be generated by themis and packed in one output buffer</p>
+<pre><code>/* encrypt */
+themis_secure_cell_encrypt_full(passwd, passwd_length, message, message_length, encrypted_message, &amp;encrypted_message_length);
+/* decrypt */
+themis_secure_cell_decrypt_full(passwd, passwd_length, encrypted_message, encrypted_message_length,
+</code></pre>
+<p>decrypted_message, &amp;decrypted_message_length);</p>
+<p><strong>token-protect mode</strong> - additional encrypting data (auth_tag, iv etc.) named as token is generated by themis and stored in separate buffer from encrypted message (preserving the length of the original message).</p>
+<pre><code>/* encrypt */
+themis_secure_cell_encrypt_auto_split(passwd, passwd_length, message, message_length, additional_encrypting_data, &amp;additional_encrypting_data_length, encrypted_message, &amp;encrypted_message_length);
+/* decrypt */
+themis_secure_cell_decrypt_auto_split(passwd, passwd_length, encrypted_message, encrypted_message_length, additional_encrypting_data, additional_encrypting_data_length, decrypted_message, &amp;decrypted_message_length);
+</code></pre>
+<p><strong>context-imprint mode</strong> - all necessary additional encrypting data is derived from user`s context data:</p>
+<pre><code>/* encrypt */
+themis_secure_cell_encrypt_user_split(passwd, passwd_length, message, message_length, user_context,     user_context_length, encrypted_message, &amp;encrypted_message_length);
+/* decrypt */
+themis_secure_cell_decrypt_user_split(passwd, passwd_length, encrypted_message, encrypted_message_length, user_context, user_context_length, decrypted_message, &amp;decrypted_message_length);
+</code></pre></div>
+        </div>
+
+	<footer class="col-md-12">
+		<hr>
+		
+		<p>(c) 2015 Cossack Labs Limited</p>
+		
+		<p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+	</footer>
+
+
+        <script src="../js/jquery-1.10.2.min.js"></script>
+        <script src="../js/bootstrap-3.0.3.min.js"></script>
+        <script src="../js/highlight.pack.js"></script>
+        <script src="../js/base.js"></script>
+    </body>
+</html>
