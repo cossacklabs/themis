@@ -30,7 +30,7 @@
  * @{
  */
 
-#define SOTER_VERSION_TEXT "soter 0.2.0: "
+#define SOTER_VERSION_TEXT "soter 0.9: "
 
 #include <stdint.h>
 #include <stdbool.h>

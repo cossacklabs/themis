@@ -28,25 +28,27 @@ ifeq ($(ENGINE),)
 	ENGINE=libressl
 endif
 
+#default engine
 ifeq ($(PREFIX),)
 PREFIX = /usr
 endif
 
+#engine selection block
 ifneq ($(ENGINE),)
 ifeq ($(ENGINE),openssl)
 	CRYPTO_ENGINE_DEF = OPENSSL
 	CRYPTO_ENGINE_PATH=openssl
-	CRYPTO_ENGINE = $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)
-	CFLAGS += -D$(CRYPTO_ENGINE_DEF)
 else ifeq ($(ENGINE),libressl)
 	CRYPTO_ENGINE_DEF = LIBRESSL	
 	CRYPTO_ENGINE_PATH=openssl
-	CRYPTO_ENGINE = $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)
-	CFLAGS += -D$(CRYPTO_ENGINE_DEF)
 else
 	ERROR = $(error error: engine $(ENGINE) unsupported...)
 endif
 endif
+#end of engine selection block
+
+CRYPTO_ENGINE = $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)
+CFLAGS += -D$(CRYPTO_ENGINE_DEF)
 
 ifneq ($(ENGINE_INCLUDE_PATH),)
 	CRYPTO_ENGINE_INCLUDE_PATH = $(ENGINE_INCLUDE_PATH)

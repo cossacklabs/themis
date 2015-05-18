@@ -30,7 +30,7 @@
  * @{
  */
 
-#define THEMIS_VERSION_TEXT "themis 0.2.0: "
+#define THEMIS_VERSION_TEXT "themis 0.9: "
 
 #include <themis/error.h>
 #include <themis/secure_message.h>

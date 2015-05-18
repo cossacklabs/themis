@@ -14,31 +14,23 @@
 * limitations under the License.
 */
 
-package com.cossacklabs.themis;
+#import <Foundation/Foundation.h>
+#import <themis/themis.h>
 
-/**
- * Base class for Themis asymmetric keys
- */
-public abstract class AsymmetricKey {
-	
-	public static final int KEYTYPE_EC = 0;
-	public static final int KEYTYPE_RSA = 1;
-	
-	byte[] key;
+typedef enum{
+    RSA,
+    EC
+} AsymAlg;
 
-	/**
-	 * Creates asymmetric key from byte array
-	 * @param [in] key
-	 */
-	public AsymmetricKey(byte[] key) {
-		this.key = key;
-	}
-	
-	/**
-	 * Serializes this key to a byte array
-	 * @return key as byte array
-	 */
-	public byte[] toByteArray() {
-		return key.clone();
-	}
+@interface SKeyGen : NSObject
+
+{
+  NSMutableData* _priv_key;
+  NSMutableData* _pub_key;
 }
+
+- (id)init: (AsymAlg)alg;
+- (NSData*)getPrivKey;
+- (NSData*)getPubKey;
+
+@end
