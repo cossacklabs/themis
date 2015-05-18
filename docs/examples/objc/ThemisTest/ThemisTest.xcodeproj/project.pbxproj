@@ -119,34 +119,10 @@
 			children = (
 				73156E0D1ADBDF0800E3E520 /* AppDelegate.h */,
 				73156E0E1ADBDF0800E3E520 /* AppDelegate.m */,
-				73156E0F1ADBDF0800E3E520 /* Facades */,
-				73156E111ADBDF0800E3E520 /* View Controllers */,
 				73156E121ADBDF0800E3E520 /* ViewController.h */,
 				73156E131ADBDF0800E3E520 /* ViewController.m */,
 			);
 			path = Classes;
-			sourceTree = "<group>";
-		};
-		73156E0F1ADBDF0800E3E520 /* Facades */ = {
-			isa = PBXGroup;
-			children = (
-				73156E101ADBDF0800E3E520 /* Request Manager */,
-			);
-			path = Facades;
-			sourceTree = "<group>";
-		};
-		73156E101ADBDF0800E3E520 /* Request Manager */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Request Manager";
-			sourceTree = "<group>";
-		};
-		73156E111ADBDF0800E3E520 /* View Controllers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "View Controllers";
 			sourceTree = "<group>";
 		};
 		731624891ADB174200972A7A = {
