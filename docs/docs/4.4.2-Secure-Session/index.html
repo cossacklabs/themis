@@ -41,7 +41,7 @@
             </button>
 
             <!-- Main title -->
-            <a class="navbar-brand" href="..">Themis 0.9</a>
+            <a class="navbar-brand" href="../index.html">Themis 0.9</a>
         </div>
 
         <!-- Expanded navigation -->
@@ -51,7 +51,7 @@
             
             
                 <li >
-                    <a href="..">Introduction</a>
+                    <a href="../index.html">Introduction</a>
                 </li>
             
             
@@ -61,19 +61,19 @@
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../2.-How-to-use-Themis/">Intro</a>
+                            <a href="../2.-How-to-use-Themis/index.html">Intro</a>
                         </li>
                     
                         <li >
-                            <a href="../2.1-Building-and-installing/">Building and installing</a>
+                            <a href="../2.1-Building-and-installing/index.html">Building and installing</a>
                         </li>
                     
                         <li >
-                            <a href="../2.2-Objects-reference/">Objects reference</a>
+                            <a href="../2.2-Objects-reference/index.html">Objects reference</a>
                         </li>
                     
                         <li >
-                            <a href="../2.3-Key-management/">Key management advice</a>
+                            <a href="../2.3-Key-management/index.html">Key management advice</a>
                         </li>
                     
                     </ul>
@@ -86,27 +86,27 @@
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../2.4-Language-reference/">Intro</a>
+                            <a href="../2.4-Language-reference/index.html">Intro</a>
                         </li>
                     
                         <li >
-                            <a href="../2.4.1-Python-Howto/">Python</a>
+                            <a href="../2.4.1-Python-Howto/index.html">Python</a>
                         </li>
                     
                         <li >
-                            <a href="../2.4.2-PHP-Howto/">PHP</a>
+                            <a href="../2.4.2-PHP-Howto/index.html">PHP</a>
                         </li>
                     
                         <li >
-                            <a href="../2.4.3-Ruby-Howto/">Ruby</a>
+                            <a href="../2.4.3-Ruby-Howto/index.html">Ruby</a>
                         </li>
                     
                         <li >
-                            <a href="../2.4.4-Objective-C-Howto/">Objective C</a>
+                            <a href="../2.4.4-Objective-C-Howto/index.html">Objective C</a>
                         </li>
                     
                         <li >
-                            <a href="../2.4.5-Java---Android/">Java/Android</a>
+                            <a href="../2.4.5-Java---Android/index.html">Java/Android</a>
                         </li>
                     
                     </ul>
@@ -115,7 +115,7 @@
             
             
                 <li >
-                    <a href="../3.-FAQ/">FAQ</a>
+                    <a href="../3.-FAQ/index.html">FAQ</a>
                 </li>
             
             
@@ -125,23 +125,23 @@
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../4.1-General-design-principles/">General design principles</a>
+                            <a href="../4.1-General-design-principles/index.html">General design principles</a>
                         </li>
                     
                         <li >
-                            <a href="../4.2-Architecture/">Architecture</a>
+                            <a href="../4.2-Architecture/index.html">Architecture</a>
                         </li>
                     
                         <li >
-                            <a href="../4.3-Soter-cryptostack/">Soter cryptostack</a>
+                            <a href="../4.3-Soter-cryptostack/index.html">Soter cryptostack</a>
                         </li>
                     
                         <li >
-                            <a href="../4.4-Cryptosystems/">Cryptosystems</a>
+                            <a href="../4.4-Cryptosystems/index.html">Cryptosystems</a>
                         </li>
                     
                         <li >
-                            <a href="../4.4.1-Secure-message/">Secure Message</a>
+                            <a href="../4.4.1-Secure-message/index.html">Secure Message</a>
                         </li>
                     
                         <li class="active">
@@ -149,7 +149,7 @@
                         </li>
                     
                         <li >
-                            <a href="../4.4.3-Secure-Cell/">Secure Cell</a>
+                            <a href="../4.4.3-Secure-Cell/index.html">Secure Cell</a>
                         </li>
                     
                     </ul>
@@ -162,7 +162,7 @@
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../5.-Contributing-to-Themis/">Intro</a>
+                            <a href="../5.-Contributing-to-Themis/index.html">Intro</a>
                         </li>
                     
                     </ul>
@@ -175,7 +175,7 @@
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../5.1-Development-status/">Development roadmap</a>
+                            <a href="../5.1-Development-status/index.html">Development roadmap</a>
                         </li>
                     
                     </ul>
@@ -188,15 +188,15 @@
                     <ul class="dropdown-menu">
                     
                         <li >
-                            <a href="../5.2-Getting-started-with-development/">Getting started with development</a>
+                            <a href="../5.2-Getting-started-with-development/index.html">Getting started with development</a>
                         </li>
                     
                         <li >
-                            <a href="../5.3-Directory-structure/">Directory structure</a>
+                            <a href="../5.3-Directory-structure/index.html">Directory structure</a>
                         </li>
                     
                         <li >
-                            <a href="../5.4-Implementation-details/">Some implementation details</a>
+                            <a href="../5.4-Implementation-details/index.html">Some implementation details</a>
                         </li>
                     
                     </ul>
@@ -248,13 +248,15 @@
 </em> easy to integrate into existing applications</p>
 <p>Communications over secure session contains 2 stages: negotiation (key agreement) stage and actual data exchange.</p>
 <p><strong>Negotiation stage</strong></p>
-<p>During negotiation stage peers exchange their cryptographic material and authenticate each other. After successful mutual authentication each peer derives session shared secret and other session auxiliary info (session id, initial vectors etc).
-NOTE: session id is random and derived from negotiated cryptographic material by each peer independently. There is no way specific value can be enforced by one of the peers.</p>
+<p>During negotiation stage peers exchange their cryptographic material and authenticate each other. After successful mutual authentication each peer derives session shared secret and other session auxiliary info (session id, initial vectors etc).</p>
+<blockquote>
+<p>NOTE: session id is random and derived from negotiated cryptographic material by each peer independently. There is no way specific value can be enforced by one of the peers.</p>
+</blockquote>
 <p><img alt="" src="../images/secure_session_negotiation.png" /></p>
 <p><strong>Data exchange stage</strong></p>
 <p>During data exchange stage peers securely exchange data which is provided by higher layer protocols. Session parameters (state) can be saved and restored in any time, so the lifetime of the session expand the underlying environment's powercycle.</p>
 <blockquote>
-<p>WARNING: session state contains sensitive information and should be stored and handled in a secure manner. For example, <a href="../4.4.3-Secure-Cell/">Secure cell</a> may be used.</p>
+<p>WARNING: session state contains sensitive information and should be stored and handled in a secure manner. For example, <a href="../4.4.3-Secure-Cell/index.html">Secure cell</a> may be used.</p>
 </blockquote>
 <p>Here is how data is protected within the session:</p>
 <p><img alt="" src="../images/secure_session_message.png" /></p>
