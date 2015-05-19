@@ -26,6 +26,8 @@
 - (id)init;
 - (NSMutableData *)getCipherText;
 - (NSMutableData *)getToken;
+- (void)setCipherData:(NSMutableData*)data;
+- (void)setToken:(NSMutableData*)data;
 
 @end
 

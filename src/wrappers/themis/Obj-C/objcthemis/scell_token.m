@@ -24,13 +24,20 @@
     return self;
 }
 
-- (NSMutableData *)getCipherText{
+- (NSMutableData*)getCipherText{
     return cipher_text;
 }
-- (NSMutableData *)getToken{
+- (NSMutableData*)getToken{
     return token;
 }
 
+- (void)setCipherText: (NSMutableData*)data{
+    cipher_text=data;
+}
+
+- (void)setToken: (NSMutableData*)data{
+    Token=data;
+}
 @end
 
 
@@ -61,9 +68,9 @@
         *errorPtr = SCERROR(res, @"themis_scell_token_wrap (length detrmination) failed");
 	return NULL;
     }
-   [encrypted_message getCipherText] = [[NSMutableData alloc]initWithLength:wrapped_message_length];
-   [encrypted_message getToken] = [[NSMutableData alloc]initWithLength:token_length];
-   res = themis_secure_cell_encrypt_auto_split([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], [encrypted_message getToken], &token_length, [encrypted_message getCipherText], &wrapped_message_length);
+   [encrypted_message setCipherText:[[NSMutableData alloc]initWithLength:wrapped_message_length]];
+   [encrypted_message setToken: [[NSMutableData alloc]initWithLength:token_length]];
+   res = themis_secure_cell_encrypt_auto_split([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], [[encrypted_message getToken] mutableBytes], &token_length, [[encrypted_message getCipherText] mutableBytes], &wrapped_message_length);
    if(res!=TErrorTypeSuccess)
      {
        *errorPtr=SCERROR(res, @"themis_scell_token_wrap failed");
@@ -81,7 +88,7 @@
       *errorPtr=SCERROR(res,@"themis_scell_token_unwrap (length detrmination) failed");
       return NULL;
     }
-  NSMutableData* unwrapped_message=[[NSMutableDatas alloc]initWithLength: unwrapped_message_length];
+  NSMutableData* unwrapped_message=[[NSMutableData alloc]initWithLength: unwrapped_message_length];
   res = themis_secure_cell_decrypt_auto_split([_key bytes], [_key length], context_data, context_length, [[message getCipherText] bytes], [[message getCipherText] length], [[message getToken] bytes], [[message getToken] length], [unwrapped_message mutableBytes], &unwrapped_message_length);
   if(res!=TErrorTypeSuccess)
     {
