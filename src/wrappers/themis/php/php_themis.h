@@ -20,12 +20,18 @@
 #define PHP_THEMIS_VERSION "0.1.0"
 #define PHP_THEMIS_EXTNAME "phpthemis"
 
-PHP_FUNCTION(hello_world);
-
 PHP_FUNCTION(phpthemis_secure_message_wrap);
 PHP_FUNCTION(phpthemis_secure_message_unwrap);
 PHP_FUNCTION(phpthemis_gen_rsa_key_pair);
 PHP_FUNCTION(phpthemis_gen_ec_key_pair);
+
+PHP_FUNCTION(phpthemis_scell_full_encrypt);
+PHP_FUNCTION(phpthemis_scell_full_decrypt);
+PHP_FUNCTION(phpthemis_scell_auto_split_encrypt);
+PHP_FUNCTION(phpthemis_scell_auto_split_decrypt);
+PHP_FUNCTION(phpthemis_scell_user_split_encrypt);
+PHP_FUNCTION(phpthemis_scell_user_split_decrypt);
+
 
 PHP_FUNCTION(phpthemis_secure_session_create);
 PHP_FUNCTION(phpthemis_secure_session_destroy);
