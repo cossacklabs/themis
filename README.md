@@ -10,8 +10,10 @@ Themis is set to provide a wide set of instruments, three main of which are bein
 
 # Quickstart Crash Course
 
-1. Fetch the repository
-2. Have OpenSSL/LibreSSL + OpenSSL/LibreSSL Dev pack (libssl-dev) installed
+1. Fetch the repository: git clone https://github.com/cossacklabs/themis.git
+2. Have OpenSSL/LibreSSL + OpenSSL/LibreSSL Dev pack (libssl-dev) installed at typical paths: /usr/lib /usr/include. 
 3. Have typical gcc environment installed
 4. Fire 'make install' and you're good most of the cases
 5. Dive into [our wiki](https://github.com/cossacklabs/themis/wiki) for the docs, take a look at docs/examples for examples. 
+
+It is really advisable to [go the long way and read the docs](https://github.com/cossacklabs/themis/wiki/2.1-Building-and-installing), but god blessed the brave.
