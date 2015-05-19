@@ -175,11 +175,16 @@ static zend_function_entry themis_secure_session_functions[] = {
 };
 
 static zend_function_entry php_themis_functions[] = {
-  PHP_FE(hello_world, NULL)
   PHP_FE(phpthemis_secure_message_wrap, NULL)
   PHP_FE(phpthemis_secure_message_unwrap, NULL)
   PHP_FE(phpthemis_gen_rsa_key_pair, NULL)
   PHP_FE(phpthemis_gen_ec_key_pair, NULL)
+  PHP_FE(phpthemis_scell_full_encrypt, NULL)
+  PHP_FE(phpthemis_scell_full_decrypt, NULL)
+  PHP_FE(phpthemis_scell_auto_split_encrypt,NULL)
+  PHP_FE(phpthemis_scell_auto_split_decrypt, NULL)
+  PHP_FE(phpthemis_scell_user_split_encrypt, NULL)
+  PHP_FE(phpthemis_scell_user_split_decrypt, NULL)
   {NULL, NULL, NULL}
 };
 
@@ -216,11 +221,6 @@ zend_module_entry phpthemis_module_entry = {
 ZEND_GET_MODULE(phpthemis)
 #endif
 
-PHP_FUNCTION(hello_world)
-{
-    RETURN_STRING("Hello World", 1);
-}
-
 PHP_FUNCTION(phpthemis_secure_message_wrap){
   char* private_key;
   int private_key_length;
@@ -232,14 +232,14 @@ PHP_FUNCTION(phpthemis_secure_message_wrap){
     RETURN_NULL();
   }
   size_t wrapped_message_length=0;
-  if(themis_secure_message_wrap(private_key, private_key_length, public_key, public_key_length, message, message_length, NULL, &wrapped_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+  if(themis_secure_message_wrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, NULL, &wrapped_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
     RETURN_EMPTY_STRING();
   }
   char* wrapped_message=emalloc((int)wrapped_message_length);
   if(wrapped_message==NULL){
     RETURN_EMPTY_STRING();    
   }
-  if(themis_secure_message_wrap(private_key, private_key_length, public_key, public_key_length, message, message_length, wrapped_message, &wrapped_message_length)!=0/*HERMES_SUCCESS*/){
+  if(themis_secure_message_wrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, (uint8_t*)wrapped_message, &wrapped_message_length)!=0/*HERMES_SUCCESS*/){
     efree(wrapped_message);
     RETURN_EMPTY_STRING();
   }
@@ -258,14 +258,14 @@ PHP_FUNCTION(phpthemis_secure_message_unwrap){
     RETURN_NULL();
   }
   size_t unwrapped_message_length=0;
-  if(themis_secure_message_unwrap(private_key, private_key_length, public_key, public_key_length, message, message_length, NULL, &unwrapped_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+  if(themis_secure_message_unwrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, NULL, &unwrapped_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
     RETURN_EMPTY_STRING();
   }
   char* unwrapped_message=emalloc((int)unwrapped_message_length);
   if(unwrapped_message==NULL){
     RETURN_EMPTY_STRING();    
   }
-  if(themis_secure_message_unwrap(private_key, private_key_length, public_key, public_key_length, message, message_length, unwrapped_message, &unwrapped_message_length)!=0/*HERMES_SUCCESS*/){
+  if(themis_secure_message_unwrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, (uint8_t*)unwrapped_message, &unwrapped_message_length)!=0/*HERMES_SUCCESS*/){
     efree(unwrapped_message);
     RETURN_EMPTY_STRING();
   }
@@ -288,7 +288,7 @@ PHP_FUNCTION(phpthemis_gen_rsa_key_pair){
   if(public_key==NULL){
     RETURN_NULL();
   }
-  if(themis_gen_rsa_key_pair(private_key, &private_key_length, public_key, &public_key_length)!=0/*HERMES_SUCCESS*/){
+  if(themis_gen_rsa_key_pair((uint8_t*)private_key, &private_key_length, (uint8_t*)public_key, &public_key_length)!=0/*HERMES_SUCCESS*/){
     RETURN_NULL();
   }
   array_init(return_value);
@@ -310,7 +310,7 @@ PHP_FUNCTION(phpthemis_gen_ec_key_pair){
   if(public_key==NULL){
     RETURN_NULL();
   }
-  if(themis_gen_ec_key_pair(private_key, &private_key_length, public_key, &public_key_length)!=0/*HERMES_SUCCESS*/){
+  if(themis_gen_ec_key_pair((uint8_t*)private_key, &private_key_length, (uint8_t*)public_key, &public_key_length)!=0/*HERMES_SUCCESS*/){
     RETURN_NULL();
   }
   array_init(return_value);
@@ -318,7 +318,161 @@ PHP_FUNCTION(phpthemis_gen_ec_key_pair){
   add_assoc_stringl(return_value, "public_key", public_key, public_key_length, 0);
 }
 
+PHP_FUNCTION(phpthemis_scell_full_encrypt){
+  char* key;
+  int key_length;
+  char* message;
+  int message_length;
+  char* context=NULL;
+  int context_length=0;
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|s", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
+    RETURN_NULL();
+  }
+  size_t encrypted_message_length=0;
+  if(themis_secure_cell_encrypt_full((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &encrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    RETURN_EMPTY_STRING();
+  }
+  char* encrypted_message=emalloc((int)encrypted_message_length);
+  if(encrypted_message==NULL){
+    RETURN_EMPTY_STRING();
+  }
+  if(themis_secure_cell_encrypt_full((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=0/*HERMES_SUCCESS*/){
+    RETURN_EMPTY_STRING();
+  }
+  ZVAL_STRINGL(return_value, encrypted_message, (int)encrypted_message_length, 0);
+  return;
+}
 
+PHP_FUNCTION(phpthemis_scell_full_decrypt){
+  char* key;
+  int key_length;
+  char* message;
+  int message_length;
+  char* context=NULL;
+  int context_length=0;
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|s", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
+    RETURN_NULL();
+  }
+  size_t decrypted_message_length=0;
+  if(themis_secure_cell_decrypt_full((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &decrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    RETURN_EMPTY_STRING();
+  }
+  char* decrypted_message=emalloc((int)decrypted_message_length);
+  if(decrypted_message==NULL){
+    RETURN_EMPTY_STRING();
+  }
+  if(themis_secure_cell_decrypt_full((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=0/*HERMES_SUCCESS*/){
+    RETURN_EMPTY_STRING();
+  }
+  ZVAL_STRINGL(return_value, decrypted_message, (int)decrypted_message_length, 0);
+  return;
+}
 
+PHP_FUNCTION(phpthemis_scell_auto_split_encrypt){
+  char* key;
+  int key_length;
+  char* message;
+  int message_length;
+  char* context=NULL;
+  int context_length=0;
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|s", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
+    RETURN_NULL();
+  }
+  size_t encrypted_message_length=0;
+  size_t additional_auth_data_length=0;
+  if(themis_secure_cell_encrypt_auto_split((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &additional_auth_data_length, NULL, &encrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    RETURN_EMPTY_STRING();
+  }
+  char* encrypted_message=emalloc((int)encrypted_message_length);
+  if(encrypted_message==NULL){
+    RETURN_EMPTY_STRING();
+  }
+  char* additional_auth_data=emalloc((int)additional_auth_data_length);
+  if(additional_auth_data==NULL){
+    RETURN_EMPTY_STRING();
+  }
+  if(themis_secure_cell_encrypt_auto_split((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, &additional_auth_data_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=0/*HERMES_SUCCESS*/){
+    RETURN_EMPTY_STRING();
+  }
+  array_init(return_value);
+  add_assoc_stringl(return_value, "encrypted_message", encrypted_message, encrypted_message_length, 0);
+  add_assoc_stringl(return_value, "additional_auth_data", additional_auth_data, additional_auth_data_length, 0);
+  return;
+}
 
+PHP_FUNCTION(phpthemis_scell_auto_split_decrypt){
+  char* key;
+  int key_length;
+  char* message;
+  int message_length;
+  char* additional_auth_data;
+  int additional_auth_data_length;
+  char* context=NULL;
+  int context_length=0;
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|s", &key, &key_length, &message, &message_length, &additional_auth_data, &additional_auth_data_length, &context, &context_length) == FAILURE) {
+    RETURN_NULL();
+  }
+  size_t decrypted_message_length=0;
+  if(themis_secure_cell_decrypt_auto_split((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, additional_auth_data_length, NULL, &decrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    RETURN_EMPTY_STRING();
+  }
+  char* decrypted_message=emalloc((int)decrypted_message_length);
+  if(decrypted_message==NULL){
+    RETURN_EMPTY_STRING();
+  }
+  if(themis_secure_cell_decrypt_auto_split((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, additional_auth_data_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=0/*HERMES_SUCCESS*/){
+    RETURN_EMPTY_STRING();
+  }
+  ZVAL_STRINGL(return_value, decrypted_message, (int)decrypted_message_length, 0);
+  return;
+}
 
+PHP_FUNCTION(phpthemis_scell_user_split_encrypt){
+  char* key;
+  int key_length;
+  char* message;
+  int message_length;
+  char* context;
+  int context_length;
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
+    RETURN_NULL();
+  }
+  size_t encrypted_message_length=0;
+  if(themis_secure_cell_encrypt_user_split((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, NULL, &encrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    RETURN_EMPTY_STRING();
+  }
+  char* encrypted_message=emalloc((int)encrypted_message_length);
+  if(encrypted_message==NULL){
+    RETURN_EMPTY_STRING();
+  }
+  if(themis_secure_cell_encrypt_user_split((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=0/*HERMES_SUCCESS*/){
+    RETURN_EMPTY_STRING();
+  }
+  ZVAL_STRINGL(return_value, encrypted_message, (int)encrypted_message_length, 0);
+  return;
+}
+
+PHP_FUNCTION(phpthemis_scell_user_split_decrypt){
+  char* key;
+  int key_length;
+  char* message;
+  int message_length;
+  char* context=NULL;
+  int context_length=0;
+  if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
+    RETURN_NULL();
+  }
+  size_t decrypted_message_length=0;
+  if(themis_secure_cell_decrypt_user_split((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, NULL, &decrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    RETURN_EMPTY_STRING();
+  }
+  char* decrypted_message=emalloc((int)decrypted_message_length);
+  if(decrypted_message==NULL){
+    RETURN_EMPTY_STRING();
+  }
+  if(themis_secure_cell_decrypt_user_split((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=0/*HERMES_SUCCESS*/){
+    RETURN_EMPTY_STRING();
+  }
+  ZVAL_STRINGL(return_value, decrypted_message, (int)decrypted_message_length, 0);
+  return;
+}

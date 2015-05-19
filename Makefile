@@ -142,8 +142,7 @@ install: err all
 	install $(BIN_PATH)/*.$(SHARED_EXT) $(PREFIX)/lib
 
 phpthemis_uninstall:
-	cd src/wrappers/themis/php
-	make clean
+	cd src/wrappers/themis/php && make distclean
 
 rubythemis_uninstall:
 ifdef RUBY_GEM_VERSION
