@@ -33,16 +33,22 @@
 
     // Please, look in debug console to see results
 
+    // Generating/reading keys:
+    
     [self runExampleGeneratingKeys];
-    [self runExampleSecureMessageEncryptionDecryption];
     [self readingKeysFromFile];
 
+    
+    // Secure Message:
+    
+    [self runExampleSecureMessageEncryptionDecryption];
+    
+    
+    // Secure Cell:
+    
     [self runExampleSecureCellSealMode];
-
     [self runExampleSecureCellTokenProtectMode];
-
     [self runExampleSecureCellImprint];
-
 
     return YES;
 }
@@ -101,7 +107,7 @@
 
 - (void)runExampleSecureCellTokenProtectMode {
     NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
-    
+
     NSData * masterKeyData = [self generateMasterKey];
     SCell_token * sCellToken = [[SCell_token alloc] initWithKey:masterKeyData];
 
@@ -115,14 +121,14 @@
     NSError * themisError;
 
     // context is optional parameter and may be ignored
-    SCellTokenEncryptedData* encryptedMessage = [sCellToken wrap:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                                      context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                        error:&themisError];
+    SCellTokenEncryptedData * encryptedMessage = [sCellToken wrap:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                                            error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occured while enrypting %@", sel_getName(_cmd), themisError);
         return;
     }
-    NSLog(@"cipher = %@:\ntoken = %@", (NSData *)[encryptedMessage getCipherText], (NSData *)[encryptedMessage getToken]);
+    NSLog(@"%s\ncipher = %@:\ntoken = %@", sel_getName(_cmd), [encryptedMessage getCipherText],[encryptedMessage getToken]);
 
     NSData * decryptedMessage = [sCellToken unwrap:encryptedMessage
                                            context:[context dataUsingEncoding:NSUTF8StringEncoding] error:&themisError];
