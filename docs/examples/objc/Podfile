@@ -15,23 +15,13 @@
 #
 
 source 'https://github.com/CocoaPods/Specs.git'
-source 'https://ph.cossacklabs.com/diffusion/CPDS/'
 
-platform :ios, '8.2'
+platform :ios, '7.0'
 xcodeproj 'ThemisTest/ThemisTest.xcodeproj'
 inhibit_all_warnings!
 
 target :"ThemisTest" do
 
   pod 'themis'
-
-  # stanfy
-  pod 'SFCoreUtils', :git => 'https://github.com/stanfy/SFCoreUtils.git', :tag => '0.1.10'
-
-  # RAC
-  pod 'ReactiveCocoa', '~> 2.4.7'
-
-  # nimbus
-  pod 'AFNetworking', '~> 2.5.2'
 
 end
