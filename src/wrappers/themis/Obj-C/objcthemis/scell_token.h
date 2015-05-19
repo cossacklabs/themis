@@ -19,13 +19,13 @@
 #import <objcthemis/scell.h>
 
 @interface SCellTokenEncryptedData : NSObject{
-  NSData* cipher_text;
-  NSData* token;
+  NSMutableData* cipher_text;
+  NSMutableData* token;
 };
 
 - (id)init;
-- (NSData *)getCipherText;
-- (NSData *)getToken;
+- (NSMutableData *)getCipherText;
+- (NSMutableData *)getToken;
 
 @end
 

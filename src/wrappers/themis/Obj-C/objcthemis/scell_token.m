@@ -59,8 +59,7 @@
   if(res!=TErrorTypeBufferTooSmall)
     {
         *errorPtr = SCERROR(res, @"themis_scell_token_wrap (length detrmination) failed");
-        struct Encrypted_data ed={NULL, NULL};
-        return ed;
+	return NULL;
     }
    [encrypted_message getCipherText] = [[NSMutableData alloc]initWithLength:wrapped_message_length];
    [encrypted_message getToken] = [[NSMutableData alloc]initWithLength:token_length];
@@ -82,7 +81,7 @@
       *errorPtr=SCERROR(res,@"themis_scell_token_unwrap (length detrmination) failed");
       return NULL;
     }
-  NSMutableData* unwrapped_message=[[NSMutableBytes alloc]initWithLength: unwrapped_message_length];
+  NSMutableData* unwrapped_message=[[NSMutableDatas alloc]initWithLength: unwrapped_message_length];
   res = themis_secure_cell_decrypt_auto_split([_key bytes], [_key length], context_data, context_length, [[message getCipherText] bytes], [[message getCipherText] length], [[message getToken] bytes], [[message getToken] length], [unwrapped_message mutableBytes], &unwrapped_message_length);
   if(res!=TErrorTypeSuccess)
     {
