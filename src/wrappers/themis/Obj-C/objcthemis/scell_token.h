@@ -18,18 +18,24 @@
 #import <themis/themis.h>
 #import <objcthemis/scell.h>
 
-struct Encrypted_data{
-  __unsafe_unretained NSData* cipher_text;
-  __unsafe_unretained NSData* token;
+@interface SCellTokenEncryptedData : NSObject{
+  NSData* cipher_text;
+  NSData* token;
 };
+
+- (id)init;
+- (NSData *)getCipherText;
+- (NSData *)getToken;
+
+@end
 
 
 @interface SCell_token : SCell
 
 - (id)initWithKey: (NSData*)key;
-- (struct Encrypted_data)wrap: (NSData*)message error:(NSError**)errorPtr;
-- (NSData*)unwrap: (struct Encrypted_data)message error:(NSError**)errorPtr;
-- (struct Encrypted_data)wrap: (NSData*)message context:(NSData*)contex error:(NSError**)errorPtr;
-- (NSData*)unwrap: (struct Encrypted_data)message context:(NSData*)contex error:(NSError**)errorPtr;
+- (SCellTokenEncryptedData*)wrap: (NSData*)message error:(NSError**)errorPtr;
+- (NSData*)unwrap: (SCellTokenEncryptedData*)message error:(NSError**)errorPtr;
+- (SCellTokenEncryptedData*)wrap: (NSData*)message context:(NSData*)contex error:(NSError**)errorPtr;
+- (NSData*)unwrap: (SCellTokenEncryptedData*)message context:(NSData*)contex error:(NSError**)errorPtr;
 
 @end

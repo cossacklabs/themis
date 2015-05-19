@@ -40,7 +40,7 @@
     [self runExampleSecureCellSealMode];
 
     // doesn't look like working. uncomment on your own risk ;)
-    //[self runExampleSecureCellTokenProtectMode];
+    [self runExampleSecureCellTokenProtectMode];
 
     [self runExampleSecureCellImprint];
 
@@ -116,14 +116,14 @@
     NSError * themisError;
 
     // context is optional parameter and may be ignored
-    struct Encrypted_data encryptedMessage = [sCellToken wrap:[message dataUsingEncoding:NSUTF8StringEncoding]
+    SCellTokenEncryptData* encryptedMessage = [sCellToken wrap:[message dataUsingEncoding:NSUTF8StringEncoding]
                                                       context:[context dataUsingEncoding:NSUTF8StringEncoding]
                                                         error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occured while enrypting %@", sel_getName(_cmd), themisError);
         return;
     }
-    //NSLog(@"cipher = %@:\ntoken = %@", (NSData *)encryptedMessage.cipher_text, (NSData *)encryptedMessage.token);
+    NSLog(@"cipher = %@:\ntoken = %@", (NSData *)[encryptedMessage getCipherText], (NSData *)[encryptedMessage getToken]);
 
     NSData * decryptedMessage = [sCellToken unwrap:encryptedMessage
                                            context:[context dataUsingEncoding:NSUTF8StringEncoding] error:&themisError];
