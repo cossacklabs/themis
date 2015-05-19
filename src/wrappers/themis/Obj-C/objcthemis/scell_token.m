@@ -36,7 +36,7 @@
 }
 
 - (void)setToken: (NSMutableData*)data{
-    Token=data;
+    token=data;
 }
 @end
 

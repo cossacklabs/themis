@@ -39,7 +39,6 @@
 
     [self runExampleSecureCellSealMode];
 
-    // doesn't look like working. uncomment on your own risk ;)
     [self runExampleSecureCellTokenProtectMode];
 
     [self runExampleSecureCellImprint];
@@ -116,7 +115,7 @@
     NSError * themisError;
 
     // context is optional parameter and may be ignored
-    SCellTokenEncryptData* encryptedMessage = [sCellToken wrap:[message dataUsingEncoding:NSUTF8StringEncoding]
+    SCellTokenEncryptedData* encryptedMessage = [sCellToken wrap:[message dataUsingEncoding:NSUTF8StringEncoding]
                                                       context:[context dataUsingEncoding:NSUTF8StringEncoding]
                                                         error:&themisError];
     if (themisError) {
