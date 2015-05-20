@@ -17,33 +17,18 @@ Pod::Spec.new do |s|
     
     s.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL' } 
 
+    
     s.subspec 'themis' do |ss|
-        ss.source_files = "src/themis/*.{h,c}"
-        ss.public_header_files = 'src/themis/*.h'
-        ss.header_dir = 'themis'
+        ss.source_files = "src/themis/*.{h,c}", "src/soter/*.{h,c}", "src/soter/openssl/*.{h,c}"
+        ss.header_mappings_dir = "src"
+        ss.public_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/openssl/*.h"
     end
     
-    s.subspec 'soter' do |ss|
-        ss.source_files = "src/soter/*.{h,c}"
-        ss.public_header_files = 'src/soter/*.h'
-        ss.header_dir = 'soter'
-        ss.dependency 'themis/themis'
-        ss.dependency 'themis/soter_openssl'
-    end
-
-    s.subspec 'soter_openssl' do |ss|
-        ss.source_files = "src/soter/openssl/*.{h,c}"
-        ss.public_header_files = 'src/soter/openssl/*.h'
-        ss.header_dir = 'soter/openssl'
-        ss.dependency 'themis/themis'
-    end
-
     s.subspec 'objcthemis' do |ss|
+        ss.header_mappings_dir = 'src/wrappers/themis/Obj-C/objcthemis'
         ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{h,m}"
         ss.public_header_files = 'src/wrappers/themis/Obj-C/objcthemis/*.h'
         ss.header_dir = 'objcthemis'        
         ss.dependency 'themis/themis'
-        ss.dependency 'themis/soter'
-        ss.dependency 'themis/soter_openssl'
     end
 end
