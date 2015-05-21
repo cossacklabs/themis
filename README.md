@@ -1,6 +1,9 @@
 # Themis 0.9 
 
-Themis is a high-level cryptographic services library. Themis was designed to provide complicated cryptosystems in easy-to-use infrastructure, suitable for modern rapid development. It is open source, Apache 2 Licensed.
+Themis is a high-level cryptographic services library: a library providing easy to use, highly abstracted set of functions to solve real-world security problems. We would like you to focus on building your software with security 
+taken care of by cryptographers, instead of scrupulously assembling building blocks into cryptosystems yourself, resolving implementations, platform availability, vulnerabilities and performance constraints yourself.
+
+Themis was designed to provide complicated cryptosystems in easy-to-use infrastructure, suitable for modern rapid development. It is open source, Apache 2 Licensed.
 
 Themis is set to provide a wide set of instruments, three main of which are being present in current, 0.9 release:
 
