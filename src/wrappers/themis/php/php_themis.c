@@ -231,6 +231,9 @@ PHP_FUNCTION(phpthemis_secure_message_wrap){
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &private_key, &private_key_length, &public_key, &public_key_length, &message, &message_length) == FAILURE) {
     RETURN_NULL();
   }
+  if(!public_key_length){
+    public_key=NULL;
+  }
   size_t wrapped_message_length=0;
   if(themis_secure_message_wrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, NULL, &wrapped_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
     RETURN_EMPTY_STRING();
