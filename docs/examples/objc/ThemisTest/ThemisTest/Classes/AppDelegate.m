@@ -42,6 +42,7 @@
     // Secure Message:
     
     [self runExampleSecureMessageEncryptionDecryption];
+    [self runExampleSecureMessageSignVerify];
     
     
     // Secure Cell:
@@ -275,6 +276,62 @@
     NSLog(@"%@", resultString);
 }
 
+- (void)runExampleSecureMessageSignVerify {
+    NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
+    
+    // ---------- signing
+
+    // base64 encoded keys:
+    // client private key
+    // server public key
+    NSString * serverPublicKeyString = @"VUVDMgAAAC2ELbj5Aue5xjiJWW3P2KNrBX+HkaeJAb+Z4MrK0cWZlAfpBUql";
+    NSString * clientPrivateKeyString = @"UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg";
+
+    NSData * serverPublicKey = [[NSData alloc] initWithBase64EncodedString:serverPublicKeyString
+                                                                   options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    NSData * clientPrivateKey = [[NSData alloc] initWithBase64EncodedString:clientPrivateKeyString
+                                                                    options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+    // initialize encrypter
+    SMessage * encrypter = [[SMessage alloc] initSVWithPrivateKey:clientPrivateKey peerPublicKey:serverPublicKey];
+
+    NSString * message = @"- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java.";
+
+    NSError * themisError;
+    NSData * encryptedMessage = [encrypter wrap:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                          error:&themisError];
+    if (themisError) {
+        NSLog(@"%s Error occured while encrypting %@", sel_getName(_cmd), themisError);
+        return;
+    }
+    NSLog(@"%@", encryptedMessage);
+
+
+    // -------- verification
+
+    // base64 encoded keys:
+    // server private key
+    // client public key
+    NSString * serverPrivateKeyString = @"UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR";
+    NSString * clientPublicKeyString = @"VUVDMgAAAC1SsL32Axjosnf2XXUwm/4WxPlZauQ+v+0eOOjpwMN/EO+Huh5d";
+
+    NSData * serverPrivateKey = [[NSData alloc] initWithBase64EncodedString:serverPrivateKeyString
+                                                                    options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    NSData * clientPublicKey = [[NSData alloc] initWithBase64EncodedString:clientPublicKeyString
+                                                                   options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+    // initialize decrypter
+    SMessage * decrypter = [[SMessage alloc] initSVWithPrivateKey:serverPrivateKey peerPublicKey:clientPublicKey];
+
+    NSData * decryptedMessage = [decrypter unwrap:encryptedMessage error:&themisError];
+    if (themisError) {
+        NSLog(@"%s Error occured while decrypting %@", sel_getName(_cmd), themisError);
+        return;
+    }
+
+    NSString * resultString = [[NSString alloc] initWithData:decryptedMessage encoding:NSUTF8StringEncoding];
+    NSLog(@"%@", resultString);
+}
 
 // Sometimes you will need to read keys from files
 - (void)readingKeysFromFile {

@@ -42,7 +42,7 @@
 - (NSData*)wrap: (NSData*)message error:(NSError**)errorPtr{
   size_t wrapped_message_length=0;
   int res = TErrorTypeFail;
-  swich(_mode){
+  switch(_mode){
     case SMessageModeEncryptDecrypt:
 	res=themis_secure_message_wrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], NULL, &wrapped_message_length);
 	break;
@@ -59,7 +59,18 @@
 	return NULL;
     }
   unsigned char* wrapped_message=malloc(wrapped_message_length);
-  res = themis_secure_message_wrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], wrapped_message, &wrapped_message_length);
+  switch(_mode){
+    case SMessageModeEncryptDecrypt:
+	res = themis_secure_message_wrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], wrapped_message, &wrapped_message_length);
+	break;
+    case SMessageModeSignVerify:
+	res = themis_secure_message_wrap([_priv_key bytes], [_priv_key length], NULL, 0, [message bytes], [message length], wrapped_message, &wrapped_message_length);
+	break;
+    default:
+	*errorPtr=SCERROR(TErrorTypeFail, @"themis_secure_message_wrap (undefined secure session mode) failed");
+	return NULL;
+  }
+
   if(res!=TErrorTypeSuccess)
     {
 	*errorPtr=SCERROR(res, @"themis_secure_message_wrap failed");
