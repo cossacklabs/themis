@@ -71,7 +71,7 @@ themis_status_t themis_secure_message_signer_proceed(themis_secure_message_signe
   size_t signature_length=0;
   THEMIS_CHECK(soter_sign_update(ctx->sign_ctx, message, message_length)==THEMIS_SUCCESS);
   THEMIS_CHECK(soter_sign_final(ctx->sign_ctx, signature, &signature_length)==THEMIS_BUFFER_TOO_SMALL);
-  if((message_length+signature_length+sizeof(themis_secure_signed_message_hdr_t)>(*wrapped_message_length))){
+  if(wrapped_message==NULL ||(message_length+signature_length+sizeof(themis_secure_signed_message_hdr_t)>(*wrapped_message_length))){
     (*wrapped_message_length)=message_length+signature_length+sizeof(themis_secure_signed_message_hdr_t);
     return THEMIS_BUFFER_TOO_SMALL;
   }
@@ -133,7 +133,7 @@ themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_ver
      && (msg->message_hdr.message_length+msg->signature_length+sizeof(themis_secure_message_hdr_t)>wrapped_message_length)){
     return THEMIS_INVALID_PARAMETER;
   }
-  if((*message_length)<msg->message_hdr.message_length){
+  if(message == NULL || (*message_length)<msg->message_hdr.message_length){
     (*message_length)=msg->message_hdr.message_length;
     return THEMIS_BUFFER_TOO_SMALL;
   }

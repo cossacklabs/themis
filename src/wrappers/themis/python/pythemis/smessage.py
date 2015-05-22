@@ -47,3 +47,24 @@ class smessage(object):
 	return string_at(plain_message, plain_message_length.value);
 
 
+def ssign(private_key, message):
+	encrypted_message_length=c_int(0);
+	res=themis.themis_secure_message_wrap(private_key ,len(private_key), None, 0, message, len(message), None, byref(encrypted_message_length));
+        if res!=THEMIS_CODES.BUFFER_TOO_SMALL:
+	    raise themis_exception(res,"themis_secure_message_wrap (wrapped message length determination) error");
+	encrypted_message=create_string_buffer(encrypted_message_length.value);
+	res=themis.themis_secure_message_wrap(private_key ,len(private_key), None, 0, message, len(message), encrypted_message, byref(encrypted_message_length));
+        if res!=THEMIS_CODES.SUCCESS:
+	    raise themis_exception(res, "themis_secure_message_wrap singing error");
+        return string_at(encrypted_message, encrypted_message_length.value);
+
+def sverify(public_key, message):
+        plain_message_length=c_int(0);
+	res=themis.themis_secure_message_unwrap(None, 0, public_key ,len(public_key), message, len(message), None, byref(plain_message_length));
+        if res!=THEMIS_CODES.BUFFER_TOO_SMALL:
+	    raise themis_exception(res, "themis_secure_message_unwrap (plain message length determination) error");
+	plain_message=create_string_buffer(plain_message_length.value);
+	res=themis.themis_secure_message_unwrap(None, 0, public_key ,len(public_key), message, len(message), plain_message, byref(plain_message_length));
+        if res!=THEMIS_CODES.SUCCESS:
+            raise themis_exception(res,"themis_secure_message_unwrap verification error");
+	return string_at(plain_message, plain_message_length.value);

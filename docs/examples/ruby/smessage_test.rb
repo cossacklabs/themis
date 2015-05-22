@@ -25,11 +25,25 @@ public_key = "\x55\x45\x43\x32\x00\x00\x00\x2d\x13\x8b\xdf\x0c\x02\x1f\x09\x88\x
 peer_private_key= "\x52\x45\x43\x32\x00\x00\x00\x2d\x49\x87\x04\x6b\x00\xf2\x06\x07\x7d\xc7\x1c\x59\xa1\x8f\x39\xfc\x94\x81\x3f\x9e\xc5\xba\x70\x6f\x93\x08\x8d\xe3\x85\x82\x5b\xf8\x3f\xc6\x9f\x0b\xdf";
 peer_public_key  = "\x55\x45\x43\x32\x00\x00\x00\x2d\x75\x58\x33\xd4\x02\x12\xdf\x1f\xe9\xea\x48\x11\xe1\xf9\x71\x8e\x24\x11\xcb\xfd\xc0\xa3\x6e\xd6\xac\x88\xb6\x44\xc2\x9a\x24\x84\xee\x50\x4c\x3e\xa0";
 
+# encrypt/decrypt mode
 
+# encryption
 smessage = Themis::Smessage.new(private_key, peer_public_key)
-aaa= smessage.wrap("test message")
-p aaa
-smessage2=Themis::Smessage.new(peer_private_key, public_key)
+encrypted_message = smessage.wrap("test message")
+p encrypted_message
 
-bbb= smessage2.unwrap(aaa)
-p bbb
+#decryption
+smessage2=Themis::Smessage.new(peer_private_key, public_key)
+decrypted_message = smessage2.unwrap(encrypted_message)
+p decrypted_message
+
+# sign/verify mode
+
+# signing
+signed_message = Themis::Ssign(private_key, "test message to sign")
+p signed_message
+
+# verifying
+
+verifyed_message = Themis::Sverify(public_key, signed_message)
+p verifyed_message

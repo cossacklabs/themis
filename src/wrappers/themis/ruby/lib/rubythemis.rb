@@ -18,9 +18,9 @@ require 'ffi'
 
 module ThemisCommon
     def string_to_pointer_size(string)
-	string_buf = FFI::MemoryPointer.new(:char, string.size)
-	string_buf.put_bytes(0, string)
-	return string_buf, string.size
+	string_buf = FFI::MemoryPointer.new(:char, string.force_encoding("BINARY").size)
+	string_buf.put_bytes(0, string.force_encoding("BINARY"), 0, string.force_encoding("BINARY").size)
+	return string_buf, string.force_encoding("BINARY").size
     end
     module_function :string_to_pointer_size
 end
@@ -68,6 +68,8 @@ module ThemisImport
 end
 
 module Themis
+    extend ThemisCommon
+    extend ThemisImport
 
     BUFFER_TOO_SMALL = -4
     SUCCESS = 0
@@ -223,6 +225,32 @@ module Themis
 	end
     end
 
+    def Ssign(private_key, message)
+	    private_key_, private_key_length_= string_to_pointer_size(private_key)
+	    message_, message_length_=string_to_pointer_size(message)
+	    wrapped_message_length = FFI::MemoryPointer.new(:uint)
+	    res=themis_secure_message_wrap(private_key_, private_key_length_, nil, 0, message_, message_length_, nil, wrapped_message_length)
+	    raise ThemisError, "themis_secure_message_wrap (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+	    wrapped_message = FFI::MemoryPointer.new(:char, wrapped_message_length.read_uint)
+	    res=themis_secure_message_wrap(private_key_, private_key_length_, nil, 0, message_, message_length_, wrapped_message, wrapped_message_length)
+	    raise ThemisError, "themis_secure_message_wrap error: #{res}" unless res == SUCCESS
+	    return wrapped_message.get_bytes(0, wrapped_message_length.read_uint);
+    end
+
+    def Sverify(peer_public_key, message)
+	    include ThemisCommon
+	    include ThemisImport
+	    public_key_, public_key_length_= string_to_pointer_size(peer_public_key)
+	    message_, message_length_=string_to_pointer_size(message)
+	    unwrapped_message_length = FFI::MemoryPointer.new(:uint)
+	    res=themis_secure_message_unwrap(nil, 0, public_key_, public_key_length_, message_, message_length_, nil, unwrapped_message_length)
+	    raise ThemisError, "themis_secure_message_unwrap (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+	    unwrapped_message = FFI::MemoryPointer.new(:char, unwrapped_message_length.read_uint)
+	    res=themis_secure_message_unwrap(nil, 0, public_key_, public_key_length_, message_, message_length_, unwrapped_message, unwrapped_message_length)
+	    raise ThemisError, "themis_secure_message_unwrap error: #{res}" unless res == SUCCESS
+	    return unwrapped_message.get_bytes(0, unwrapped_message_length.read_uint);
+    end
+
     class Scell
 	include ThemisCommon
 	include ThemisImport
@@ -303,6 +331,9 @@ module Themis
 		raise ThemisError, "themis_secure_cell not supported mode"
 	    end
 	end
-
     end
+
+    module_function :Ssign
+    module_function :Sverify
+
 end
