@@ -17,15 +17,21 @@
 #import <Foundation/Foundation.h>
 #import <themis/themis.h>
 
+typedef enum{
+    SMessageModeEncryptDecrypt,
+    SMessageModeSignVerify
+} SMessageMode;
+
 @interface SMessage : NSObject
 
 {
   NSData* _priv_key;
   NSData* _peer_pub_key;
+  SMessageMode _mode;
 }
 
 - (id)initWithPrivateKey: (NSData*)private_key peerPublicKey:(NSData*)peer_pub_key;
+- (id)initSVWithPrivateKey: (NSData*)private_key peerPublicKey:(NSData*)peer_pub_key;
 - (NSData*)wrap: (NSData*)message error:(NSError**)errorPtr;
 - (NSData*)unwrap: (NSData*)message error:(NSError**)errorPtr;
-
 @end

@@ -24,13 +24,35 @@
   if(self){
     _priv_key=[[NSData alloc]initWithData:private_key];
     _peer_pub_key=[[NSData alloc]initWithData:peer_pub_key];
+    _mode=SMessageModeEncryptDecrypt;
+  }
+  return self;
+}
+
+- (id)initSVWithPrivateKey: (NSData*)private_key peerPublicKey:(NSData*)peer_pub_key{
+  self = [super init];
+  if(self){
+    _priv_key=[[NSData alloc]initWithData:private_key];
+    _peer_pub_key=[[NSData alloc]initWithData:peer_pub_key];
+    _mode=SMessageModeSignVerify;
   }
   return self;
 }
 
 - (NSData*)wrap: (NSData*)message error:(NSError**)errorPtr{
   size_t wrapped_message_length=0;
-  int res = themis_secure_message_wrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], NULL, &wrapped_message_length);
+  int res = TErrorTypeFail;
+  swich(_mode){
+    case SMessageModeEncryptDecrypt:
+	res=themis_secure_message_wrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], NULL, &wrapped_message_length);
+	break;
+    case SMessageModeSignVerify:
+	res=themis_secure_message_wrap([_priv_key bytes], [_priv_key length], NULL, 0, [message bytes], [message length], NULL, &wrapped_message_length);
+	break;
+    default:
+	*errorPtr=SCERROR(TErrorTypeFail, @"themis_secure_message_wrap (undefined secure session mode) failed");
+	return NULL;
+  }
   if(res!=TErrorTypeBufferTooSmall)
     {
 	*errorPtr=SCERROR(res, @"themis_secure_message_wrap (length detrmination) failed");
