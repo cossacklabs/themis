@@ -33,7 +33,7 @@ typedef enum{
   TErrorTypeSuccess=0,             /**< Success */
   TErrorTypeBufferTooSmall=-4,     /**< Buffer too small */
   TErrorTypeFail=-1,               /**< Fail */
-  TErrorTypeSendAsIs=1             /**< Sand as is */
+  TErrorTypeSendAsIs=1             /**< Send as is */
 } TErrorType;
 
 /** @brief Error generation macro 

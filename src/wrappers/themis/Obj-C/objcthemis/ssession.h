@@ -29,7 +29,21 @@
  * @{
  */
 
-/** @brief Secure session interface */
+/** @brief Secure session interface 
+ *
+ * Secure session is a lightweight mechanism to secure any network communications (both private and public networks including Internet). It is protocol agnostic and operates on the 5th layer of the network OSI model. Some features:
+ *    - secure end-to-end communication
+ *    - perfect forward secrecy
+ *    - strong mutual peer authentication
+ *    - replay protection
+ *    - low negotiation round-trip
+ *    - uses strong cryptography (including ECC)
+ *    - lightweight, easy to use
+ *    - easy to integrate into existing applications
+ *
+ *  Communications over secure session contains 2 stages: negotiation (key agreement) stage and actual data exchange.
+ *
+ */
 @interface SSession : NSObject
 {
   secure_session_t* _session; /**< session */

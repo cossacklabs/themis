@@ -30,7 +30,12 @@
  * @{
  */
 
-/** @brief Secure Cell Context Imprint mode interface */
+/** @brief Secure Cell Context Imprint mode interface 
+ *
+ * This object mode is for environments where storage constraints do not allow the size of the data to grow and there is no auxiliary storage available. Secure Cell context imprint relies on the user to provide the data context along with the secret to protect the information. Also, no authentication tag is computed or verified. This means the integrity of the data is not enforced, so the overall security level is slightly lower than preceding two cases.
+ * @image html scell-context_imprint.png Secure Cell Context imprint mode
+ * @note To ensure highest security level possible user has to supply different context for each encryption invocation of the object for the same secret.
+ */
 @interface SCell_context_imprint : SCell
 
 /**
