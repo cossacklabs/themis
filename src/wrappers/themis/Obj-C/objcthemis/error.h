@@ -14,14 +14,37 @@
 * limitations under the License.
 */
 
+/**
+ * @file objthemis/error.h
+ * @brief Status codes defenitions for Obj-C wrapper for themis
+ */
+
+/**
+ * @defgroup WRAPPERS wrappers 
+ * @brief Themis wrappers for high level languages
+ * @{
+ * @defgroup OBJC Objective C
+ * @brief Themis wrapper fro Obj-C
+ * @{
+ */
+
+/** @brief Status codes */
 typedef enum{
-  TErrorTypeSuccess=0,
-  TErrorTypeBufferTooSmall=-4,
-  TErrorTypeFail=-1,
-  TErrorTypeSendAsIs=1
+  TErrorTypeSuccess=0,             /**< Success */
+  TErrorTypeBufferTooSmall=-4,     /**< Buffer too small */
+  TErrorTypeFail=-1,               /**< Fail */
+  TErrorTypeSendAsIs=1             /**< Sand as is */
 } TErrorType;
+
+/** @brief Error generation macro 
+ * @param [in] error_code error code
+ * @param [in] error_message human readable error message
+*/
 
 #define SCERROR(error_code, error_message)				\
   [NSError errorWithDomain:@"com.CossackLabs.Themis.ErrorDomain"	\
   code:error_code \
   userInfo:[[NSDictionary alloc] initWithObjectsAndKeys:error_message, @"NSLocalizedDescriptionKey",NULL]]
+
+/** @} */
+/** @} */
