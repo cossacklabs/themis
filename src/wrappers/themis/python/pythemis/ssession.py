@@ -20,7 +20,8 @@ from exception import THEMIS_CODES;
 import ctypes;
 from collections import deque;
 import time;
-themis = ctypes.cdll.LoadLibrary('libthemis.so');
+from ctypes.util import find_library
+themis = cdll.LoadLibrary(find_library('themis'))
 
 
 ON_GET_PUBLIC_KEY = ctypes.CFUNCTYPE(ctypes.c_int, ctypes.POINTER(ctypes.c_byte), ctypes.c_size_t, ctypes.POINTER(ctypes.c_byte), ctypes.c_size_t, ctypes.POINTER(ctypes.py_object));

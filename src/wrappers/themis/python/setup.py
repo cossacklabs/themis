@@ -61,5 +61,7 @@ setup(
     entry_points={
     },
 
-    install_requires=install_requires,
+    install_requires=[
+	'enum',
+    ],
 )

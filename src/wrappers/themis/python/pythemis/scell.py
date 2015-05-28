@@ -17,7 +17,8 @@
 from exception import themis_exception;
 from exception import THEMIS_CODES;
 from ctypes import *
-themis = cdll.LoadLibrary('libthemis.so')
+from ctypes.util import find_library
+themis = cdll.LoadLibrary(find_library('themis'))
 
 class scell_full(object):
     def __init__(self, key_):
