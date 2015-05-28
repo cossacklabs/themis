@@ -39,7 +39,7 @@
  * @endcode
  * @{
  *
- * @defgroup SOTER_SYM_ALGORYTHMS_IDS symmetric encription/decryption  algorithms
+ * @defgroup SOTER_SYM_ALGORYTHMS_IDS symmetric encription/decryption  algorithms ids
  * @brief supported symmetric encryption/decription algorithms definitions
  * @{
  */
