@@ -14,30 +14,80 @@
 * limitations under the License.
 */
 
+/**
+ * @file objthemis/scell_token.h
+ * @brief secure cell token protect mode interface
+ */
+
 #import <Foundation/Foundation.h>
 #import <themis/themis.h>
 #import <objcthemis/scell.h>
 
+/**
+ * @addtogroup WRAPPERS
+ * @{
+ * @addtogroup OBJC
+ * @{
+ */
+
+/** @brief encrypted message by secure cell in token protect mode */ 
 @interface SCellTokenEncryptedData : NSObject{
-  NSMutableData* cipher_text;
-  NSMutableData* token;
+  NSMutableData* cipher_text; /**< chipher text */
+  NSMutableData* token; /**< token */
 };
 
-- (id)init;
-- (NSMutableData *)getCipherText;
-- (NSMutableData *)getToken;
-- (void)setCipherData:(NSMutableData*)data;
-- (void)setToken:(NSMutableData*)data;
+- (id)init; /**< @breaf initialize */
+- (NSMutableData *)getCipherText; /**< @breaf return chipher text */
+- (NSMutableData *)getToken;      /**< @breaf return token */
+- (void)setCipherData:(NSMutableData*)data;  /**< @breaf set chipher text */
+- (void)setToken:(NSMutableData*)data;       /**< @breaf set token */
 
 @end
 
-
+/** @brief Secure Cell Context Token Protect interface */
 @interface SCell_token : SCell
 
+/**
+ * @brief Initialize Secure cell object in context imprint mode
+ * @param [in] key master key
+ */
 - (id)initWithKey: (NSData*)key;
+
+/**
+ * @brief Wrap message
+ * @param [in] message message to wrap
+ * @param [in] errorPtr pointer to Error on failure
+ * @return Wrapped message as NSData object on success or NULL on failure
+ */
 - (SCellTokenEncryptedData*)wrap: (NSData*)message error:(NSError**)errorPtr;
+
+/**
+ * @brief Unwrap message
+ * @param [in] message message to unwrap
+ * @param [in] errorPtr pointer to Error on failure
+ * @return Unwrapped message as NSData object on success or NULL on failure
+ */
 - (NSData*)unwrap: (SCellTokenEncryptedData*)message error:(NSError**)errorPtr;
+
+/**
+ * @brief Wrap message with context
+ * @param [in] message message to wrap
+ * @param [in] context user context
+ * @param [in] errorPtr pointer to Error on failure
+ * @return Wrapped message as NSData object on success or NULL on failure
+ */
 - (SCellTokenEncryptedData*)wrap: (NSData*)message context:(NSData*)contex error:(NSError**)errorPtr;
+
+/**
+ * @brief Unwrap message with context
+ * @param [in] message message to unwrap
+ * @param [in] context user context
+ * @param [in] errorPtr pointer to Error on failure
+ * @return Unwrapped message as NSData object on success or NULL on failure
+ */
 - (NSData*)unwrap: (SCellTokenEncryptedData*)message context:(NSData*)contex error:(NSError**)errorPtr;
 
 @end
+
+/** @} */
+/** @} */

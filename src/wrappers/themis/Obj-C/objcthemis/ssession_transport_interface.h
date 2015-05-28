@@ -14,18 +14,32 @@
 * limitations under the License.
 */
 
+/**
+ * @file objthemis/ssession_transport_interface.h
+ * @brief secure session trancport callbacs interface
+ */
 #import <Foundation/Foundation.h>
 #import <themis/themis.h>
 
-@interface SSession_transport_interface: NSObject
 
+/** @brief Secure session trancport callbacs interface */
+@interface SSession_transport_interface: NSObject
 {
   secure_session_user_callbacks_t _callbacks;
 }
 
+/** @brief Initialisation */
 -(instancetype)init;
+
+/** @brief Send \b data to peer */ 
 -(void)send: (NSData*)data error:(NSError**)errorPtr;
+
+/** @brief Receive data fron peer and return it in NSData object */ 
 -(NSData*) receive: (NSError**)errorPtr;
+
+/** @brief Return public key assosiated with \b Id as NSData object or NULL on failure */ 
 -(NSData*) get_public_key: (NSData*)Id error:(NSError**)errorPtr;
+
+/** @brief Get callbacks */
 -(secure_session_user_callbacks_t*)callbacks;
 @end

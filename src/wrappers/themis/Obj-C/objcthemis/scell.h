@@ -14,13 +14,31 @@
 * limitations under the License.
 */
 
+/**
+ * @file objthemis/scell.h
+ * @brief Base Secure Cell class
+ */
 #import <Foundation/Foundation.h>
 
+/** @addtogroup WRAPPERS
+ * @{
+ * @addtogroup OBJC
+ * @{
+ */
+
+/** @brief Base Secure cell interface */
 @interface SCell : NSObject
 {
+  /** @brief store master key */
   NSData* _key;
 }
 
+/** @brief Initialize Secure Cell object
+ * @param [in] key master key
+ */
 -(instancetype)initWithKey: (NSData*)key;
 
 @end
+
+/** @} */
+/** @} */  
