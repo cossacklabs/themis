@@ -36,14 +36,14 @@
   size_t wrapped_message_length=0;
   const void* context_data=(context!=NULL)?[context bytes]:NULL;
   size_t context_length=(context!=NULL)?[context length]:0;
-  TErrorType res = themis_secure_cell_encrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], NULL, &wrapped_message_length);
+  TErrorType res = themis_secure_cell_encrypt_full([self.key bytes], [self.key length], context_data, context_length, [message bytes], [message length], NULL, &wrapped_message_length);
   if(res!=TErrorTypeBufferTooSmall)
     {
       *errorPtr = SCERROR(res, @"themis_secure_cell_encrypt_full (length determination) fail");
       return NULL;
     }
   unsigned char* wrapped_message=malloc(wrapped_message_length);
-  res = themis_secure_cell_encrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], wrapped_message, &wrapped_message_length);
+  res = themis_secure_cell_encrypt_full([self.key bytes], [self.key length], context_data, context_length, [message bytes], [message length], wrapped_message, &wrapped_message_length);
   if(res!=TErrorTypeSuccess)
     {
       *errorPtr = SCERROR(res, @"themis_secure_cell_encrypt_full fail");
@@ -59,14 +59,14 @@
   size_t unwrapped_message_length=0;
   const void* context_data=(context!=NULL)?[context bytes]:NULL;
   size_t context_length=(context!=Nil)?[context length]:0;
-  TErrorType res = themis_secure_cell_decrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], NULL, &unwrapped_message_length);
+  TErrorType res = themis_secure_cell_decrypt_full([self.key bytes], [self.key length], context_data, context_length, [message bytes], [message length], NULL, &unwrapped_message_length);
   if(res!=TErrorTypeBufferTooSmall)
     {
       *errorPtr = SCERROR(res, @"themis_secure_cell_decrypt_full (length determination) fail");
       return NULL;
     }
   unsigned char* unwrapped_message=malloc(unwrapped_message_length);
-  res = themis_secure_cell_decrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], unwrapped_message, &unwrapped_message_length);
+  res = themis_secure_cell_decrypt_full([self.key bytes], [self.key length], context_data, context_length, [message bytes], [message length], unwrapped_message, &unwrapped_message_length);
   if(res!=TErrorTypeSuccess)
     {
       *errorPtr = SCERROR(res, @"themis_secure_cell_decrypt_full fail");

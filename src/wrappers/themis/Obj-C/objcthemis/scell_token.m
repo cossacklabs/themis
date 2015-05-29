@@ -62,7 +62,7 @@
   const void* context_data=(context!=NULL)?[context bytes]:NULL;
   size_t context_length=(context!=NULL)?[context length]:0;
   SCellTokenEncryptedData* encrypted_message = [[SCellTokenEncryptedData alloc] init];
-  int res = themis_secure_cell_encrypt_auto_split([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], NULL, &token_length, NULL, &wrapped_message_length);
+  int res = themis_secure_cell_encrypt_auto_split([self.key bytes], [self.key length], context_data, context_length, [message bytes], [message length], NULL, &token_length, NULL, &wrapped_message_length);
   if(res!=TErrorTypeBufferTooSmall)
     {
         *errorPtr = SCERROR(res, @"themis_scell_token_wrap (length detrmination) failed");
@@ -70,7 +70,7 @@
     }
    [encrypted_message setCipherText:[[NSMutableData alloc]initWithLength:wrapped_message_length]];
    [encrypted_message setToken: [[NSMutableData alloc]initWithLength:token_length]];
-   res = themis_secure_cell_encrypt_auto_split([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], [[encrypted_message getToken] mutableBytes], &token_length, [[encrypted_message getCipherText] mutableBytes], &wrapped_message_length);
+   res = themis_secure_cell_encrypt_auto_split([self.key bytes], [self.key length], context_data, context_length, [message bytes], [message length], [[encrypted_message getToken] mutableBytes], &token_length, [[encrypted_message getCipherText] mutableBytes], &wrapped_message_length);
    if(res!=TErrorTypeSuccess)
      {
        *errorPtr=SCERROR(res, @"themis_scell_token_wrap failed");
@@ -82,14 +82,14 @@
   size_t unwrapped_message_length=0;
   const void* context_data=(context!=NULL)?[context bytes]:NULL;
   size_t context_length=(context!=NULL)?[context length]:0;
-  int res = themis_secure_cell_decrypt_auto_split([_key bytes], [_key length], context_data, context_length, [[message getCipherText] bytes], [[message getCipherText] length], [[message getToken] bytes], [[message getToken] length], NULL, &unwrapped_message_length);
+  int res = themis_secure_cell_decrypt_auto_split([self.key bytes], [self.key length], context_data, context_length, [[message getCipherText] bytes], [[message getCipherText] length], [[message getToken] bytes], [[message getToken] length], NULL, &unwrapped_message_length);
   if(res!=TErrorTypeBufferTooSmall)
     {
       *errorPtr=SCERROR(res,@"themis_scell_token_unwrap (length detrmination) failed");
       return NULL;
     }
   NSMutableData* unwrapped_message=[[NSMutableData alloc]initWithLength: unwrapped_message_length];
-  res = themis_secure_cell_decrypt_auto_split([_key bytes], [_key length], context_data, context_length, [[message getCipherText] bytes], [[message getCipherText] length], [[message getToken] bytes], [[message getToken] length], [unwrapped_message mutableBytes], &unwrapped_message_length);
+  res = themis_secure_cell_decrypt_auto_split([self.key bytes], [self.key length], context_data, context_length, [[message getCipherText] bytes], [[message getCipherText] length], [[message getToken] bytes], [[message getToken] length], [unwrapped_message mutableBytes], &unwrapped_message_length);
   if(res!=TErrorTypeSuccess)
     {
       *errorPtr=SCERROR(res,@"themis_scell_token_unwrap failed");

@@ -16,14 +16,25 @@
 
 #import <objcthemis/scell.h>
 
-@implementation SCell
 
--(instancetype)initWithKey: (NSData*)key{
-  self=[super init];
-  if (self){
-    _key=[[NSData alloc]initWithData:key];
-  }
-  return self;
+@interface TSCell ()
+
+
+/** @brief store master key, rewrite
+*/
+@property (nonatomic, readwrite) NSData * key;
+
+@end
+
+
+@implementation TSCell
+
+- (instancetype)initWithKey:(NSData *)key {
+    self = [super init];
+    if (self) {
+        self.key = [[NSData alloc] initWithData:key];
+    }
+    return self;
 }
 
 @end

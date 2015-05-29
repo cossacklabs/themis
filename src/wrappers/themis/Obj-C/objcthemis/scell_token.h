@@ -49,7 +49,7 @@
  * This object mode is designed for cases when underlying storage constraints do not allow the size of the data to grow (so @ref SCell_seal "Secure cell seal" cannot be used), however the user has access to a different storage location (ex. another table in the database) where he can store needed security parameters. The Secure Cell object puts authentication tag and other auxiliary information (aka data token) to a separate buffer, so user can store it elsewhere, while keeping the original encrypted data size. The same token has to be provided along with the correct secret for data to be decrypted successfully. Since the same security parameters are used (just stored in a different location) this object mode has same security level as @ref SCell_seal "Secure cell seal" but requires slightly more effort from the user. Also, user has the ability to bind the data to its context as before.
  * @image html scell-token_protect.png "Secure Cell Token protect mode"
  */
-@interface SCell_token : SCell
+@interface SCell_token : TSCell
 
 /**
  * @brief Initialize Secure cell object in context imprint mode

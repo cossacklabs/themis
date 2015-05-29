@@ -26,22 +26,31 @@
  * @{
  */
 
-/** @brief Base Secure cell interface 
- *
- * Secure Сell is a high-level cryptographic service, aimed to protect arbitrary data being stored in various types of storages (like databases, filesystem files, document archives, cloud storage etc). It provides a simple way to secure your data using strong encryption and data authentication mechanisms, with easy-to-use interfaces for broad range of use-cases.
+/** @brief Base Secure cell interface
+*
+* Secure Сell is a high-level cryptographic service, aimed to protect arbitrary data being stored in various types of
+* storages (like databases, filesystem files, document archives, cloud storage etc).
+* It provides a simple way to secure your data using strong encryption and data authentication mechanisms,
+* with easy-to-use interfaces for broad range of use-cases.
+*
+*  Implementing secure storage is often constrained by various practical matters - ability to store keys,
+* existence of length-sensitive code bound to database structure, requirements to preserve structure.
+* To cover a broader range of usage scenarios and provide highest security level for systems with such constraints,
+* we've designed several types of interfaces and implementations of secure data container, Secure Cell.
+* They slightly differ in overall security level and ease of use: more complicated and slightly less secure ones can
+* cover more constrained environments though. Interfaces below are prioritized by our preference,
+* which takes only security and ease of use into account.
+*/
+@interface TSCell : NSObject
 
-Implementing secure storage is often constrained by various practical matters - ability to store keys, existence of length-sensitive code bound to database structure, requirements to preserve structure. To cover a broader range of usage scenarios and provide highest security level for systems with such constraints, we've designed several types of interfaces and implementations of secure data container, Secure Cell. They slightly differ in overall security level and ease of use: more complicated and slightly less secure ones can cover more constrained environments though. Interfaces below are prioritized by our preference, which takes only security and ease of use into account.
- */
-@interface SCell : NSObject
-{
-  /** @brief store master key */
-  NSData* _key;
-}
+/** @brief store master key
+*/
+@property (nonatomic, readonly) NSData * key;
 
 /** @brief Initialize Secure Cell object
- * @param [in] key master key
- */
--(instancetype)initWithKey: (NSData*)key;
+* @param [in] key master key
+*/
+- (instancetype)initWithKey:(NSData *)key;
 
 @end
 

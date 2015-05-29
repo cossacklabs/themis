@@ -147,7 +147,7 @@
     NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
     
     NSData * masterKeyData = [self generateMasterKey];
-    SCell_context_imprint * contextImprint = [[SCell_context_imprint alloc] initWithKey:masterKeyData];
+    TSCellContextImprint * contextImprint = [[TSCellContextImprint alloc] initWithKey:masterKeyData];
 
     if (!contextImprint) {
         NSLog(@"%s Error occured while initializing object contextImprint", sel_getName(_cmd));
