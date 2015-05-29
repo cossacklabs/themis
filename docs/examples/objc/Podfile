@@ -22,7 +22,7 @@ inhibit_all_warnings!
 
 target :"ThemisTest" do
 
-  # it's temporary solution until we will have always stable code in master :)
-  pod 'themis', :git => 'https://github.com/cossacklabs/themis.git', :commit => '33e0697d722c85ec999c0f18019ed6c30e6bdb25'
+  # example should work with head
+  pod 'themis', :git => 'https://github.com/cossacklabs/themis.git'
 
 end
