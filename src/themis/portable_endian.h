@@ -26,6 +26,12 @@
 #if defined(__linux__) || defined(__CYGWIN__)
  
 # include <endian.h>
+
+#if defined(ANDROID) && !defined(be64toh)
+
+#define be64toh(x) htobe64(x)
+
+#endif
  
 #elif defined(__APPLE__)
  

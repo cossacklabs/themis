@@ -35,6 +35,7 @@ android {
 	}
 
     task ndkBuild(type: Exec) {
+		workingDir 'jni'
         commandLine getNdkBuildCmd()
     }
 
@@ -43,6 +44,7 @@ android {
     }
 
     task cleanNative(type: Exec) {
+		workingDir 'jni'
         commandLine getNdkBuildCmd(), 'clean'
     }
 
