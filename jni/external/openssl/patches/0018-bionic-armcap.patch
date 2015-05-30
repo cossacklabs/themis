@@ -1,0 +1,42 @@
+From ad36797d76d658cee72057a50473eb98152a3fbe Mon Sep 17 00:00:00 2001
+From: Kenny Root <kroot@google.com>
+Date: Fri, 30 Jan 2015 09:16:43 -0800
+Subject: [PATCH] Work-around for bionic sigsetjmp bug
+
+In versions of bionic libc up to and including Android L, the sigsetjmp
+didn't properly restore the signal mask when returning from a nonlocal
+goto. Add a small wrapper to make sure we call sigprocmask each time we
+call sigsetjmp which ensures the SIGILL is masked.
+
+The symptoms of this problem include receiving a SIGILL with a stack
+trace or simply receiving the text "Illegal instruction" when running an
+application from the command line.
+
+Bug: 15732256
+Change-Id: Ic792583da5ccf601afc10828b1a666d24b903a19
+---
+ crypto/armcap.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/crypto/armcap.c b/crypto/armcap.c
+index 7e46d07..59b7494 100644
+--- a/crypto/armcap.c
++++ b/crypto/armcap.c
+@@ -68,6 +68,14 @@ static unsigned long (*getauxval)(unsigned long) = NULL;
+ # define HWCAP_CE_SHA256	(1 << 6)
+ #endif
+ 
++#ifdef ANDROID
++// Works around a bug where Android versions up to and including L don't
++// properly restore the signal mask when asked.
++#define sigsetjmp(env,savesigs) \
++	(sigprocmask(SIG_SETMASK,&ill_act.sa_mask,NULL), \
++	 sigsetjmp(env,savesigs))
++#endif
++
+ void OPENSSL_cpuid_setup(void)
+ 	{
+ 	char *e;
+-- 
+2.2.0.rc0.207.ga3a616c
+

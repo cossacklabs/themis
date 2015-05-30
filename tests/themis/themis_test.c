@@ -20,7 +20,7 @@
 
 int main(int argc, char* argv[])
 {
-  printf("%s\n", themis_version());
+  //printf("%s\n", themis_version());
   testsuite_start_testing();
 
   run_secure_message_test();

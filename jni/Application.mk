@@ -14,5 +14,6 @@
 # limitations under the License.
 #
 
-APP_PLATFORM := 16
-#APP_ABI := all
+APP_PLATFORM := android-16
+APP_MODULES := libthemis_jni
+APP_ABI := armeabi armeabi-v7a x86
