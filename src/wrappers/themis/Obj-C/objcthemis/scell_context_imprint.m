@@ -30,20 +30,20 @@
 - (NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
     size_t wrappedMessageLength = 0;
 
-    TErrorType encryptionResult = (TErrorType) themis_secure_cell_encrypt_user_split([self.key bytes], [self.key length],
+    TSErrorType encryptionResult = (TSErrorType) themis_secure_cell_encrypt_user_split([self.key bytes], [self.key length],
             [message bytes], [message length], [context bytes], [context length], NULL, &wrappedMessageLength);
 
-    if (encryptionResult != TErrorTypeBufferTooSmall) {
+    if (encryptionResult != TSErrorTypeBufferTooSmall) {
         *error = SCERROR(encryptionResult, @"themis_secure_cell_encrypt_user_split (length determination) fail");
         return nil;
     }
 
     unsigned char * wrappedMessage = malloc(wrappedMessageLength);
 
-    encryptionResult = (TErrorType) themis_secure_cell_encrypt_user_split([self.key bytes], [self.key length],
+    encryptionResult = (TSErrorType) themis_secure_cell_encrypt_user_split([self.key bytes], [self.key length],
             [message bytes], [message length], [context bytes], [context length], wrappedMessage, &wrappedMessageLength);
 
-    if (encryptionResult != TErrorTypeSuccess) {
+    if (encryptionResult != TSErrorTypeSuccess) {
         free(wrappedMessage);
         *error = SCERROR(encryptionResult, @"themis_secure_cell_encrypt_user_split fail");
         return nil;
@@ -61,7 +61,7 @@
     int decryptionResult = themis_secure_cell_decrypt_user_split([self.key bytes], [self.key length],
         [message bytes], [message length], [context bytes], [context length], NULL, &unwrappedMessageLength);
 
-    if (decryptionResult != TErrorTypeBufferTooSmall) {
+    if (decryptionResult != TSErrorTypeBufferTooSmall) {
         *error = SCERROR(decryptionResult, @"themis_secure_cell_encrypt_user_split (length determination) fail");
         return nil;
     }
@@ -71,7 +71,7 @@
     decryptionResult = themis_secure_cell_decrypt_user_split([self.key bytes], [self.key length],
         [message bytes], [message length], [context bytes], [context length], unwrappedMessage, &unwrappedMessageLength);
 
-    if (decryptionResult != TErrorTypeSuccess) {
+    if (decryptionResult != TSErrorTypeSuccess) {
         *error = SCERROR(decryptionResult, @"themis_scell_context_imprint_unwrap failed");
         return nil;
     }

@@ -17,49 +17,68 @@
 #import <objcthemis/skeygen.h>
 #import <objcthemis/error.h>
 
-@implementation SKeyGen
 
-- (id)init: (AsymAlg)alg{
-  self = [super init];
-  if(self){
-    size_t private_key_length=0;
-    size_t public_key_length=0;
-    int res=TErrorTypeFail;
-    switch(alg){
-    case EC:
-    	res = themis_gen_ec_key_pair(NULL, &private_key_length, NULL, &public_key_length);
-    	break;
-    case RSA:
-	res = themis_gen_rsa_key_pair(NULL, &private_key_length, NULL, &public_key_length);
-    }
-    if (res != TErrorTypeBufferTooSmall) {
-	return nil;
-    }
+@interface TSKeyGen ()
 
-    _priv_key = [[NSMutableData alloc] initWithLength:private_key_length];
-    _pub_key = [[NSMutableData alloc] initWithLength:public_key_length];
-    res=TErrorTypeFail;
-    switch(alg){
-    case EC:
-	res = themis_gen_ec_key_pair([_priv_key mutableBytes], &private_key_length, [_pub_key mutableBytes], &public_key_length);
-	break;
-    case RSA:
-	res = themis_gen_rsa_key_pair([_priv_key mutableBytes], &private_key_length, [_pub_key mutableBytes], &public_key_length);
+@property (nonatomic, readwrite) TSKeyGenAsymmetricAlgorithm algorithm;
+
+/** @brief private key */
+@property (nonatomic, readwrite) NSMutableData * privateKey;
+/** @brief public key */
+@property (nonatomic, readwrite) NSMutableData * publicKey;
+
+@end
+
+
+@implementation TSKeyGen
+
+- (instancetype)initWithAlgorithm:(TSKeyGenAsymmetricAlgorithm)algorithm {
+    self = [super init];
+    if (self) {
+        self.algorithm = algorithm;
+        [self generateKeys];
     }
-    if (res != TErrorTypeSuccess) {
-	return nil;
-    }
-  }
-  return self;
+    return self;
 }
 
-- (NSData*)getPrivKey{
-    return _priv_key;
-}
 
-- (NSData*)getPubKey{
-    return _pub_key;
-}
+- (void)generateKeys {
+    size_t privateKeyLength = 0;
+    size_t publicKeyLength = 0;
 
+    // Initialize key length for both keys
+    TSErrorType result = TSErrorTypeFail;
+    switch (self.algorithm) {
+        case TSKeyGenAsymmetricAlgorithmEC:
+            result = (TSErrorType) themis_gen_ec_key_pair(NULL, &privateKeyLength, NULL, &publicKeyLength);
+            break;
+        case TSKeyGenAsymmetricAlgorithmRSA:
+            result = (TSErrorType) themis_gen_rsa_key_pair(NULL, &privateKeyLength, NULL, &publicKeyLength);
+    }
+    if (result != TSErrorTypeBufferTooSmall) {
+        return;
+    }
+
+    // Initialize keys
+    self.privateKey = [[NSMutableData alloc] initWithLength:privateKeyLength];
+    self.publicKey = [[NSMutableData alloc] initWithLength:publicKeyLength];
+
+    // Fill keys with binary data
+    result = TSErrorTypeFail;
+    switch (self.algorithm) {
+        case TSKeyGenAsymmetricAlgorithmEC:
+            result = (TSErrorType) themis_gen_ec_key_pair([self.privateKey mutableBytes], &privateKeyLength,
+                            [self.publicKey mutableBytes], &publicKeyLength);
+            break;
+        case TSKeyGenAsymmetricAlgorithmRSA:
+            result = (TSErrorType) themis_gen_rsa_key_pair([self.privateKey mutableBytes], &privateKeyLength,
+                            [self.publicKey mutableBytes], &publicKeyLength);
+    }
+
+    if (result != TSErrorTypeSuccess) {
+        // Error occurred, but user will never know about it :P
+        return;
+    }
+}
 
 @end

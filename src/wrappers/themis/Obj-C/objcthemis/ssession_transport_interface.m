@@ -18,11 +18,11 @@
 #import <objcthemis/error.h>
 
 ssize_t on_send_callback(const uint8_t *data, size_t data_length, void *user_data){
-  return TErrorTypeFail;
+  return TSErrorTypeFail;
 }
 
 ssize_t on_receive_callback(uint8_t *data, size_t data_length, void *user_data){
-  return TErrorTypeFail;  
+  return TSErrorTypeFail;
 }
 
 void on_state_changed_callback(int event, void *user_data){
@@ -34,10 +34,10 @@ int on_get_public_key_for_id_callback(const void *id, size_t id_length, void *ke
   NSError* error=NULL;
   NSData* pub_key=[ref_obj get_public_key:[[NSData alloc]initWithBytes:id length:id_length] error:&error];
   if(error || key_buffer_length<[pub_key length]){
-    return TErrorTypeFail;
+    return TSErrorTypeFail;
   }
   memcpy(key_buffer, [pub_key bytes], [pub_key length]);
-  return TErrorTypeSuccess;
+  return TSErrorTypeSuccess;
 }
 
 
@@ -55,18 +55,18 @@ int on_get_public_key_for_id_callback(const void *id, size_t id_length, void *ke
   return self;
 }
 -(void)send: (NSData*)data error:(NSError**)errorPtr{
-  *errorPtr=SCERROR(TErrorTypeFail, @"secure session send callback");
+  *errorPtr=SCERROR(TSErrorTypeFail, @"secure session send callback");
   return;
 }
 -(NSData*) receive: (NSError**)errorPtr{
-  *errorPtr=SCERROR(TErrorTypeFail, @"secure session receive callback");
+  *errorPtr=SCERROR(TSErrorTypeFail, @"secure session receive callback");
   return NULL;
 }
 -(NSData*) get_public_key: (NSData*)Id error:(NSError**)errorPtr{
   NSMutableData *key=[[NSMutableData alloc]initWithLength:1024]; //must to approve
   int res=on_get_public_key_for_id_callback([Id bytes], [Id length], [key mutableBytes], [key length], (__bridge void*)self);
-  if(res!=TErrorTypeSuccess){
-    *errorPtr=SCERROR(TErrorTypeFail, @"secure session get_pub_key_calback error");
+  if(res!=TSErrorTypeSuccess){
+    *errorPtr=SCERROR(TSErrorTypeFail, @"secure session get_pub_key_calback error");
     return NULL;
   }
   return key;

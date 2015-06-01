@@ -28,21 +28,21 @@
 }
 
 -(void)connect: (NSError**)errorPtr{
-  TErrorType res=secure_session_connect(_session);
-  if(res!=TErrorTypeSuccess){
+  TSErrorType res=secure_session_connect(_session);
+  if(res!=TSErrorTypeSuccess){
     *errorPtr=SCERROR(res, @"secure_session_connect fail");
   }
 }
 -(NSData*)connect_request: (NSError**)errorPtr{
   size_t connect_request_length=0;
-  TErrorType res=secure_session_generate_connect_request(_session, NULL, &connect_request_length);
-  if(res!=TErrorTypeBufferTooSmall){
+  TSErrorType res=secure_session_generate_connect_request(_session, NULL, &connect_request_length);
+  if(res!=TSErrorTypeBufferTooSmall){
     *errorPtr=SCERROR(res, @"secure_session_generate_connect_request (length determination) fail");
     return NULL;
   }
   NSMutableData* connect_request=[[NSMutableData alloc]initWithLength:connect_request_length];
   res=secure_session_generate_connect_request(_session, [connect_request mutableBytes], &connect_request_length);
-  if(res!=TErrorTypeSuccess){
+  if(res!=TSErrorTypeSuccess){
     *errorPtr=SCERROR(res, @"secure_session_generate_connect_request fail");
     return NULL;
   }
@@ -51,14 +51,14 @@
 
 -(NSData*)wrap: (NSData*)message error:(NSError**)errorPtr{
   size_t wrapped_message_length=0;
-  TErrorType res=secure_session_wrap(_session, [message bytes], [message length], NULL, &wrapped_message_length);
-  if(res!=TErrorTypeBufferTooSmall){
+  TSErrorType res=secure_session_wrap(_session, [message bytes], [message length], NULL, &wrapped_message_length);
+  if(res!=TSErrorTypeBufferTooSmall){
     *errorPtr=SCERROR(res, @"secure_session_wrap (length determination) fail");
     return NULL;
   }
   NSMutableData* wrapped_message=[[NSMutableData alloc]initWithLength:wrapped_message_length];
   res=secure_session_wrap(_session, [message bytes], [message length], [wrapped_message mutableBytes], &wrapped_message_length);
-  if(res!=TErrorTypeSuccess){
+  if(res!=TSErrorTypeSuccess){
     *errorPtr=SCERROR(res, @"secure_session_wrap fail");
     return NULL;
   }
@@ -66,9 +66,9 @@
 }
 -(NSData*)unwrap: (NSData*)message error:(NSError**)errorPtr{
   size_t unwrapped_message_length=0;
-  TErrorType res=secure_session_unwrap(_session, [message bytes], [message length], NULL, &unwrapped_message_length);
-  if(res!=TErrorTypeBufferTooSmall){
-    if(res==TErrorTypeSuccess){
+  TSErrorType res=secure_session_unwrap(_session, [message bytes], [message length], NULL, &unwrapped_message_length);
+  if(res!=TSErrorTypeBufferTooSmall){
+    if(res==TSErrorTypeSuccess){
       return NULL;
     }
     *errorPtr=SCERROR(res, @"secure_session_unwrap (length determination) fail");
@@ -76,8 +76,8 @@
   }
   NSMutableData* unwrapped_message=[[NSMutableData alloc]initWithLength:unwrapped_message_length];
   res=secure_session_unwrap(_session, [message bytes], [message length], [unwrapped_message mutableBytes], &unwrapped_message_length);
-  if(res!=TErrorTypeSuccess){
-    if(res==TErrorTypeSendAsIs){
+  if(res!=TSErrorTypeSuccess){
+    if(res==TSErrorTypeSendAsIs){
       *errorPtr=SCERROR(res, @"secure_session_unwrap send as is");
       return unwrapped_message;      
     }
@@ -90,16 +90,16 @@
 }
 
 -(void)send: (NSData*)message error:(NSError**)errorPtr{
-  TErrorType res=secure_session_send(_session, [message bytes], [message length]);
-  if(res!=TErrorTypeSuccess){
+  TSErrorType res=secure_session_send(_session, [message bytes], [message length]);
+  if(res!=TSErrorTypeSuccess){
     *errorPtr=SCERROR(res, @"secure_session_send fail");    
   }
 }
 
 -(NSData*)recv: (NSInteger)length error:(NSError**)errorPtr{
   NSMutableData* received_data=[[NSMutableData alloc]initWithLength:length];
-  TErrorType res=secure_session_receive(_session, [received_data mutableBytes], [received_data length]);
-  if(res!=TErrorTypeSuccess){
+  TSErrorType res=secure_session_receive(_session, [received_data mutableBytes], [received_data length]);
+  if(res!=TSErrorTypeSuccess){
     *errorPtr=SCERROR(res, @"secure_session_receive fail");
     return NULL;    
   }

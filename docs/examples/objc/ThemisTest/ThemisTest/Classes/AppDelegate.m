@@ -189,32 +189,32 @@
     NSData * publicKey;
 
     // Generating RSA keys
-    SKeyGen * keygenRSA = [[SKeyGen alloc] init:(RSA)];
+    TSKeyGen * keygenRSA = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmRSA];
 
     if (!keygenRSA) {
         NSLog(@"%s Error occured while initializing object keygenRSA", sel_getName(_cmd));
         return;
     }
 
-    privateKey = [keygenRSA getPrivKey];
+    privateKey = keygenRSA.privateKey;
     NSLog(@"RSA private key: %@", privateKey);
 
-    publicKey = [keygenRSA getPubKey];
+    publicKey = keygenRSA.publicKey;
     NSLog(@"RSA public key:%@", publicKey);
 
     // Generating EC keys
 
-    SKeyGen * keygenEC = [[SKeyGen alloc] init:(EC)];
+    TSKeyGen * keygenEC = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmEC];
 
     if (!keygenEC) {
         NSLog(@"%s Error occured while initializing object keygenEC", sel_getName(_cmd));
         return;
     }
 
-    privateKey = [keygenEC getPrivKey];
+    privateKey = keygenEC.privateKey;
     NSLog(@"EC private key: %@", privateKey);
 
-    publicKey = [keygenEC getPubKey];
+    publicKey = keygenEC.publicKey;
     NSLog(@"EC public key:%@", publicKey);
 }
 
@@ -236,7 +236,7 @@
                                                                     options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
     // initialize encrypter
-    SMessage * encrypter = [[SMessage alloc] initWithPrivateKey:clientPrivateKey peerPublicKey:serverPublicKey];
+    TSMessage * encrypter = [[TSMessage alloc] initWithPrivateKey:clientPrivateKey peerPublicKey:serverPublicKey];
 
     NSString * message = @"- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java.";
 
@@ -264,7 +264,7 @@
                                                                    options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
     // initialize decrypter
-    SMessage * decrypter = [[SMessage alloc] initWithPrivateKey:serverPrivateKey peerPublicKey:clientPublicKey];
+    TSMessage * decrypter = [[TSMessage alloc] initWithPrivateKey:serverPrivateKey peerPublicKey:clientPublicKey];
 
     NSData * decryptedMessage = [decrypter unwrap:encryptedMessage error:&themisError];
     if (themisError) {
@@ -293,7 +293,7 @@
                                                                     options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
     // initialize encrypter
-    SMessage * encrypter = [[SMessage alloc] initSVWithPrivateKey:clientPrivateKey peerPublicKey:serverPublicKey];
+    TSMessage * encrypter = [[TSMessage alloc] initSVWithPrivateKey:clientPrivateKey peerPublicKey:serverPublicKey];
 
     NSString * message = @"- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java.";
 
@@ -321,7 +321,7 @@
                                                                    options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
     // initialize decrypter
-    SMessage * decrypter = [[SMessage alloc] initSVWithPrivateKey:serverPrivateKey peerPublicKey:clientPublicKey];
+    TSMessage * decrypter = [[TSMessage alloc] initSVWithPrivateKey:serverPrivateKey peerPublicKey:clientPublicKey];
 
     NSData * decryptedMessage = [decrypter unwrap:encryptedMessage error:&themisError];
     if (themisError) {

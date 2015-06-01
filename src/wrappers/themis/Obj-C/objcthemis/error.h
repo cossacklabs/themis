@@ -29,11 +29,11 @@
  */
 
 /** @brief Status codes */
-typedef NS_ENUM(NSInteger, TErrorType) {
-    TErrorTypeSuccess = 0, /**< Success */
-    TErrorTypeBufferTooSmall = -4, /**< Buffer is too small */
-    TErrorTypeFail = -1, /**< Fail */
-    TErrorTypeSendAsIs = 1   /**< Send as is */
+typedef NS_ENUM(NSInteger, TSErrorType) {
+    TSErrorTypeSuccess = 0, /**< Success */
+    TSErrorTypeBufferTooSmall = -4, /**< Buffer is too small */
+    TSErrorTypeFail = -1, /**< Fail */
+    TSErrorTypeSendAsIs = 1   /**< Send as is */
 };
 
 
