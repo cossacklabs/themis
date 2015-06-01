@@ -136,6 +136,10 @@ public class SecureSocketTest extends AndroidTestCase {
 		try {
 			
 			serverThread.start();
+			
+			// Give some time for server thread to start before trying to connect
+			Thread.sleep(500);
+			
 			clientThread.start();
 			
 			clientThread.join();

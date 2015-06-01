@@ -150,7 +150,7 @@ public class SecureSessionTest extends AndroidTestCase {
 			assertTrue(result.getData().length == 0);
 			
 			// client got NO_DATA: it means secure session is established. Client may send user data now
-			
+		
 			byte[] message = generateTestData();
 			byte[] wrappedMessage = clientSession.wrap(message);
 			
@@ -173,7 +173,7 @@ public class SecureSessionTest extends AndroidTestCase {
 			// server --> wrappedMessage --> client
 			
 			byte[] clientState = clientSession.save();
-			clientSession.close();
+			//clientSession.close();
 			
 			clientSession = SecureSession.restore(clientState, callbacks);
 			
@@ -185,7 +185,7 @@ public class SecureSessionTest extends AndroidTestCase {
 			
 			clientSession.close();
 			serverSession.close();
-			
+		
 		} catch (Exception e) {
 			String failMessage = e.getClass().getCanonicalName();
 			

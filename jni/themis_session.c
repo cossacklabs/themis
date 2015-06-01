@@ -95,7 +95,7 @@ static void on_state_changed(int event, void *user_data)
 		return;
 	}
 
-	(*(ctx->env))->CallObjectMethod(ctx->env, ctx->thiz, state_changed_method, (jint)event);
+	(*(ctx->env))->CallVoidMethod(ctx->env, ctx->thiz, state_changed_method, (jint)event);
 }
 
 /* Make sure this method is called in the context of Java thread */
