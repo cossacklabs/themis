@@ -21,7 +21,7 @@
 
 @implementation TSCellContextImprint
 
-- (id)initWithKey:(NSData *)key {
+- (instancetype)initWithKey:(NSData *)key {
     self = [super initWithKey:key];
     return self;
 }
@@ -30,8 +30,8 @@
 - (NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
     size_t wrappedMessageLength = 0;
 
-    int encryptionResult = themis_secure_cell_encrypt_user_split([self.key bytes], [self.key length],
-        [message bytes], [message length], [context bytes], [context length], NULL, &wrappedMessageLength);
+    TErrorType encryptionResult = (TErrorType) themis_secure_cell_encrypt_user_split([self.key bytes], [self.key length],
+            [message bytes], [message length], [context bytes], [context length], NULL, &wrappedMessageLength);
 
     if (encryptionResult != TErrorTypeBufferTooSmall) {
         *error = SCERROR(encryptionResult, @"themis_secure_cell_encrypt_user_split (length determination) fail");
@@ -40,8 +40,8 @@
 
     unsigned char * wrappedMessage = malloc(wrappedMessageLength);
 
-    encryptionResult = themis_secure_cell_encrypt_user_split([self.key bytes], [self.key length],
-        [message bytes], [message length], [context bytes], [context length], wrappedMessage, &wrappedMessageLength);
+    encryptionResult = (TErrorType) themis_secure_cell_encrypt_user_split([self.key bytes], [self.key length],
+            [message bytes], [message length], [context bytes], [context length], wrappedMessage, &wrappedMessageLength);
 
     if (encryptionResult != TErrorTypeSuccess) {
         free(wrappedMessage);

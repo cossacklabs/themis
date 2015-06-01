@@ -33,7 +33,7 @@
 typedef enum{
   /** @brief Encrypted message
    * 
-   * Encrypted message is useful when you need full stack of protection for your data and in most cases you will use this flavor. Currently, internally, encrypted message uses @ref SCell_seal "Secure Cell in seal" mode for data protection.
+   * Encrypted message is useful when you need full stack of protection for your data and in most cases you will use this flavor. Currently, internally, encrypted message uses @ref TSCellSeal "Secure Cell in seal" mode for data protection.
    * @image html encrypted_message.png Secure Encrypted message
    */
   SMessageModeEncryptDecrypt, 

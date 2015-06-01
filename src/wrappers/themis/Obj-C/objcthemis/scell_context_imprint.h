@@ -48,7 +48,7 @@
 * @brief Initialize Secure cell object in context imprint mode
 * @param [in] key master key
 */
-- (id)initWithKey:(NSData *)key;
+- (instancetype)initWithKey:(NSData *)key;
 
 /**
 * @brief Wrap message with context

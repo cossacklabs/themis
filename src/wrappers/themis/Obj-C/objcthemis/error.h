@@ -29,12 +29,13 @@
  */
 
 /** @brief Status codes */
-typedef enum {
+typedef NS_ENUM(NSInteger, TErrorType) {
     TErrorTypeSuccess = 0, /**< Success */
-        TErrorTypeBufferTooSmall = -4, /**< Buffer too small */
-        TErrorTypeFail = -1, /**< Fail */
-        TErrorTypeSendAsIs = 1             /**< Send as is */
-} TErrorType;
+    TErrorTypeBufferTooSmall = -4, /**< Buffer is too small */
+    TErrorTypeFail = -1, /**< Fail */
+    TErrorTypeSendAsIs = 1   /**< Send as is */
+};
+
 
 /** @brief Error generation macro
 * @param [in] error_code error code

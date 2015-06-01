@@ -70,7 +70,7 @@
     NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
     
     NSData * masterKeyData = [self generateMasterKey];
-    SCell_seal * sCellSeal = [[SCell_seal alloc] initWithKey:masterKeyData];
+    TSCellSeal * sCellSeal = [[TSCellSeal alloc] initWithKey:masterKeyData];
 
     if (!sCellSeal) {
         NSLog(@"%s Error occured while initializing object sCellSeal", sel_getName(_cmd));
