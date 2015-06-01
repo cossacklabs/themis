@@ -39,7 +39,7 @@
 - (NSData *)wrap:(NSData *)message context:(NSData *)context error:(NSError **)error {
     size_t wrappedMessageLength = 0;
 
-    const void * contextData = (context != nil) ? [context bytes] : nil;
+    const void * contextData = (context != nil) ? [context bytes] : NULL;
     size_t contextLength = (context != nil) ? [context length] : 0;
 
     TErrorType result = (TErrorType) themis_secure_cell_encrypt_full([self.key bytes], [self.key length],

@@ -110,7 +110,7 @@
     NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
 
     NSData * masterKeyData = [self generateMasterKey];
-    SCell_token * sCellToken = [[SCell_token alloc] initWithKey:masterKeyData];
+    TSCellToken * sCellToken = [[TSCellToken alloc] initWithKey:masterKeyData];
 
     if (!sCellToken) {
         NSLog(@"%s Error occured while initializing object sCellToken", sel_getName(_cmd));
@@ -122,14 +122,14 @@
     NSError * themisError;
 
     // context is optional parameter and may be ignored
-    SCellTokenEncryptedData * encryptedMessage = [sCellToken wrap:[message dataUsingEncoding:NSUTF8StringEncoding]
+    TSCellTokenEncryptedData * encryptedMessage = [sCellToken wrap:[message dataUsingEncoding:NSUTF8StringEncoding]
                                                           context:[context dataUsingEncoding:NSUTF8StringEncoding]
                                                             error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occured while enrypting %@", sel_getName(_cmd), themisError);
         return;
     }
-    NSLog(@"%s\ncipher = %@:\ntoken = %@", sel_getName(_cmd), [encryptedMessage getCipherText],[encryptedMessage getToken]);
+    NSLog(@"%s\ncipher = %@:\ntoken = %@", sel_getName(_cmd), encryptedMessage.cipherText,encryptedMessage.token);
 
     NSData * decryptedMessage = [sCellToken unwrap:encryptedMessage
                                            context:[context dataUsingEncoding:NSUTF8StringEncoding] error:&themisError];
