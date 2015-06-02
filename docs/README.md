@@ -1,0 +1,1 @@
+Full cool documentation is available in our [wiki](https://github.com/cossacklabs/themis/wiki).
