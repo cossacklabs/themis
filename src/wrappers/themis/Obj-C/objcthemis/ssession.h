@@ -15,74 +15,95 @@
 */
 
 /**
- * @file objthemis/ssession.h
- * @brief secure session interface
- */
+* @file objthemis/ssession.h
+* @brief secure session interface
+*/
 
 #import <objcthemis/ssession_transport_interface.h>
 #import <themis/themis.h>
 
 /**
- * @addtogroup WRAPPERS
- * @{
- * @addtogroup OBJC
- * @{
- */
+* @addtogroup WRAPPERS
+* @{
+* @addtogroup OBJC
+* @{
+*/
 
-/** @brief Secure session interface 
- *
- * Secure session is a lightweight mechanism to secure any network communications (both private and public networks including Internet). It is protocol agnostic and operates on the 5th layer of the network OSI model. Some features:
- *    - secure end-to-end communication
- *    - perfect forward secrecy
- *    - strong mutual peer authentication
- *    - replay protection
- *    - low negotiation round-trip
- *    - uses strong cryptography (including ECC)
- *    - lightweight, easy to use
- *    - easy to integrate into existing applications
- *
- *  Communications over secure session contains 2 stages: negotiation (key agreement) stage and actual data exchange.
- *
- */
-@interface SSession : NSObject
-{
-  secure_session_t* _session; /**< session */
-}
+/** @brief Secure session interface
+*
+* Secure session is a lightweight mechanism to secure any network communications (both private and public networks
+* including Internet). It is protocol agnostic and operates on the 5th layer of the network OSI model.
+* Some features:
+*    - secure end-to-end communication
+*    - perfect forward secrecy
+*    - strong mutual peer authentication
+*    - replay protection
+*    - low negotiation round-trip
+*    - uses strong cryptography (including ECC)
+*    - lightweight, easy to use
+*    - easy to integrate into existing applications
+*
+*  Communications over secure session contains 2 stages: negotiation (key agreement) stage and actual data exchange.*
+*/
+@interface TSSession : NSObject
 
 /**
- * @brief Initialise Secure session object
- * @param [in] id User id
- * @param [in] private_key User private key
- * @param [in] callbacks Reference to SSession_transport_interface object
- */
--(instancetype)initWithId: (NSData*)id andPrivateKey:(NSData*)private_key andCallbacks:(SSession_transport_interface*)callbacks;
-
-
-/** @brief Connection initialization message 
- * @return Connection initialization message on success or NULL on failure
+* @brief Initialise Secure session object
+* @param [in] id User id
+* @param [in] privateKey User private key
+* @param [in] callbacks Reference to TSSessionTransportInterface object
 */
--(NSData*)connect_request: (NSError**)errorPtr;
+- (instancetype)initWithUserId:(NSData *)id privateKey:(NSData *)privateKey callbacks:(TSSessionTransportInterface *)callbacks;
 
-/** @brief Create connection initialization message and send it to peer by \b send method from callbacks object. @see SSession_transport_interface. */
--(void)connect: (NSError**)errorPtr;
+
+/**
+* @brief Connection initialization message
+* @return Connection initialization message on success or nil on failure
+*/
+// TODO: rename method to reflect it's goal
+- (NSData *)connectRequest:(NSError **)error;
+
+
+/**
+* @brief Create connection initialization message and send it to peer by \b send method from callbacks object.
+* @see TSSessionTransportInterface.
+*/
+// TODO: rename method to reflect it's goal
+- (void)connect:(NSError **)error;
+
 
 /** @brief Wrap message
- * @return Wrapped message in NSData object on success or NULL on failure.
- */ 
--(NSData*)wrap: (NSData*)message error:(NSError**)errorPtr;
+* @param [in] message message to wrap
+* @param [in] error pointer to Error on failure
+* @return Wrapped message in NSData object on success or nil on failure.
+*/
+- (NSData *)wrapData:(NSData *)message error:(NSError **)error;
+
 
 /** @brief Unwrap message
- * @return Unwrapped message in NSData object on success or NULL on failure.
- */ 
--(NSData*)unwrap: (NSData*)message error:(NSError**)errorPtr;
+* @param [in] message message to unwrap
+* @param [in] error pointer to Error on failure
+* @return Unwrapped message in NSData object on success or nil on failure.
+*/
+- (NSData *)unwrapData:(NSData *)message error:(NSError **)error;
 
-/** @brief Wrap message and sent it to peer by \b send method from callbacks object. @see SSession_transport_interface. */
--(void)send: (NSData*)message error:(NSError**)errorPtr;
 
-/** @brief Unwrap received from peer by \b receive method from callbacks object message. @see SSession_transport_interface. 
- * @return Plain message in NSData object on success or NULL on failure. 
- */
--(NSData*)recv: (NSInteger)length error:(NSError**)errorPtr;
+/** @brief Wrap message and sent it to peer by \b send method from callbacks object.
+* @param [in] message message to wrap
+* @param [in] error pointer to Error on failure
+* @see TSSessionTransportInterface. */
+// TODO: rename method to reflect it's goal
+ - (void)wrapAndSend:(NSData *)message error:(NSError **)error;
+
+
+/** @brief Unwrap received from peer by \b receive method from callbacks object message.
+* @see TSSessionTransportInterface.
+* @param [in] length
+* @param [in] error pointer to Error on failure
+* @return Plain message in NSData object on success or nil on failure.
+*/
+// TODO: rename method to reflect it's goal
+- (NSData *)unwrapAndReceive:(NSUInteger)length error:(NSError **)error;
 
 @end
 /** @} */

@@ -29,22 +29,25 @@
  */
 
 /** @brief Status codes */
-typedef enum{
-  TErrorTypeSuccess=0,             /**< Success */
-  TErrorTypeBufferTooSmall=-4,     /**< Buffer too small */
-  TErrorTypeFail=-1,               /**< Fail */
-  TErrorTypeSendAsIs=1             /**< Send as is */
-} TErrorType;
+typedef NS_ENUM(NSInteger, TSErrorType) {
+    TSErrorTypeSuccess = 0, /**< Success */
+    TSErrorTypeBufferTooSmall = -4, /**< Buffer is too small */
+    TSErrorTypeFail = -1, /**< Fail */
+    TSErrorTypeSendAsIs = 1   /**< Send as is */
+};
 
-/** @brief Error generation macro 
- * @param [in] error_code error code
- * @param [in] error_message human readable error message
+
+/** @brief Error generation macro
+* @param [in] error_code error code
+* @param [in] error_message human readable error message
 */
 
-#define SCERROR(error_code, error_message)				\
-  [NSError errorWithDomain:@"com.CossackLabs.Themis.ErrorDomain"	\
+#define SCERROR_DOMAIN @"com.CossackLabs.Themis.ErrorDomain"
+
+#define SCERROR(error_code, error_message)                \
+  [NSError errorWithDomain:SCERROR_DOMAIN    \
   code:error_code \
-  userInfo:[[NSDictionary alloc] initWithObjectsAndKeys:error_message, @"NSLocalizedDescriptionKey",NULL]]
+  userInfo:@{ NSLocalizedDescriptionKey : error_message}]
 
 /** @} */
 /** @} */

@@ -16,68 +16,68 @@
 
 #import <objcthemis/scell_context_imprint.h>
 #import <objcthemis/error.h>
+#import "error.h"
 
-@implementation SCell_context_imprint
 
-- (id)initWithKey: (NSData*)key{
-  self = [super initWithKey: key];
-  return self;
+@implementation TSCellContextImprint
+
+- (instancetype)initWithKey:(NSData *)key {
+    self = [super initWithKey:key];
+    return self;
 }
 
-- (NSData*)wrapData: (NSData*)message context:(NSData*)context error:(NSError**)errorPtr{
-  size_t wrapped_message_length=0;
-  int res = themis_secure_cell_encrypt_user_split([_key bytes], [_key length], [message bytes], [message length], [context bytes], [context length], NULL, &wrapped_message_length);
-  if(res!=TErrorTypeBufferTooSmall)
-    {
-      *errorPtr = [NSError errorWithDomain:@"com.CossackLabs.Themis.ErrorDomain"
-				      code:res 
-				  userInfo:[[NSDictionary alloc] 
-					     initWithObjectsAndKeys:@"themis_secure_cell_encrypt_user_split (length determination) fail",
-					     @"NSLocalizedDescriptionKey",NULL]];
-      return NULL;
-    }
-  unsigned char* wrapped_message=malloc(wrapped_message_length);
-  res = themis_secure_cell_encrypt_user_split([_key bytes], [_key length], [message bytes], [message length], [context bytes], [context length], wrapped_message, &wrapped_message_length);
-  if(res!=TErrorTypeSuccess)
-    {
-      free(wrapped_message);
-      *errorPtr = [NSError errorWithDomain:@"com.CossackLabs.Themis.ErrorDomain"
-				      code:res 
-				  userInfo:[[NSDictionary alloc] 
-					     initWithObjectsAndKeys:@"themis_secure_cell_encrypt_user_split fail",
-					     @"NSLocalizedDescriptionKey",NULL]];
-      return NULL;
-    }
-  NSData* wr=[[NSData alloc]initWithBytes:wrapped_message length:wrapped_message_length];
-  free(wrapped_message);
-  return wr;
 
+- (NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
+    size_t wrappedMessageLength = 0;
+
+    TSErrorType encryptionResult = (TSErrorType) themis_secure_cell_encrypt_user_split([self.key bytes], [self.key length],
+            [message bytes], [message length], [context bytes], [context length], NULL, &wrappedMessageLength);
+
+    if (encryptionResult != TSErrorTypeBufferTooSmall) {
+        *error = SCERROR(encryptionResult, @"themis_secure_cell_encrypt_user_split (length determination) fail");
+        return nil;
+    }
+
+    unsigned char * wrappedMessage = malloc(wrappedMessageLength);
+
+    encryptionResult = (TSErrorType) themis_secure_cell_encrypt_user_split([self.key bytes], [self.key length],
+            [message bytes], [message length], [context bytes], [context length], wrappedMessage, &wrappedMessageLength);
+
+    if (encryptionResult != TSErrorTypeSuccess) {
+        free(wrappedMessage);
+        *error = SCERROR(encryptionResult, @"themis_secure_cell_encrypt_user_split fail");
+        return nil;
+    }
+
+    NSData * wrappedData = [[NSData alloc] initWithBytes:wrappedMessage length:wrappedMessageLength];
+    free(wrappedMessage);
+    return wrappedData;
 }
 
-- (NSData*)unwrapData: (NSData*)message context:(NSData*)context error:(NSError**)errorPtr{
-  size_t unwrapped_message_length=0;
-  int res = themis_secure_cell_decrypt_user_split([_key bytes], [_key length], [message bytes], [message length], [context bytes], [context length], NULL, &unwrapped_message_length);
-  if(res!=TErrorTypeBufferTooSmall)
-    {
-      *errorPtr = [NSError errorWithDomain:@"com.CossackLabs.Themis.ErrorDomain"
-				      code:res 
-				  userInfo:[[NSDictionary alloc] 
-					     initWithObjectsAndKeys:@"themis_secure_cell_encrypt_user_split (length determination) fail",
-					     @"NSLocalizedDescriptionKey",NULL]];
-      return NULL;
+
+- (NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
+    size_t unwrappedMessageLength = 0;
+
+    int decryptionResult = themis_secure_cell_decrypt_user_split([self.key bytes], [self.key length],
+        [message bytes], [message length], [context bytes], [context length], NULL, &unwrappedMessageLength);
+
+    if (decryptionResult != TSErrorTypeBufferTooSmall) {
+        *error = SCERROR(decryptionResult, @"themis_secure_cell_encrypt_user_split (length determination) fail");
+        return nil;
     }
-  unsigned char* unwrapped_message=malloc(unwrapped_message_length);
-  res = themis_secure_cell_decrypt_user_split([_key bytes], [_key length], [message bytes], [message length], [context bytes], [context length], unwrapped_message, &unwrapped_message_length);
-  if(res!=TErrorTypeSuccess)
-    {
-        NSException *e = [NSException
-                          exceptionWithName:@"ThemisException"
-                          reason:@"themis_scell_context_imprint_unwrap failed"
-                          userInfo:nil];
-        @throw e;
+
+    unsigned char * unwrappedMessage = malloc(unwrappedMessageLength);
+
+    decryptionResult = themis_secure_cell_decrypt_user_split([self.key bytes], [self.key length],
+        [message bytes], [message length], [context bytes], [context length], unwrappedMessage, &unwrappedMessageLength);
+
+    if (decryptionResult != TSErrorTypeSuccess) {
+        *error = SCERROR(decryptionResult, @"themis_scell_context_imprint_unwrap failed");
+        return nil;
     }
-  NSData* wr=[[NSData alloc]initWithBytes:unwrapped_message length:unwrapped_message_length];
-  return wr;
+
+    NSData * unwrappedData = [[NSData alloc] initWithBytes:unwrappedMessage length:unwrappedMessageLength];
+    return unwrappedData;
 }
 
 @end

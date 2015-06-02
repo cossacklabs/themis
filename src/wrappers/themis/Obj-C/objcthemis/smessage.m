@@ -17,90 +17,125 @@
 #import <objcthemis/smessage.h>
 #import <objcthemis/error.h>
 
-@implementation SMessage
 
-- (id)initWithPrivateKey: (NSData*)private_key peerPublicKey:(NSData*)peer_pub_key{
-  self = [super init];
-  if(self){
-    _priv_key=[[NSData alloc]initWithData:private_key];
-    _peer_pub_key=[[NSData alloc]initWithData:peer_pub_key];
-    _mode=SMessageModeEncryptDecrypt;
-  }
-  return self;
+@interface TSMessage ()
+
+/** @brief private key */
+@property (nonatomic, readwrite) NSData * privateKey;
+
+/** @brief public key */
+@property (nonatomic, readwrite) NSData * publicKey;
+
+/** @brief mode */
+@property (nonatomic, readwrite) TSMessageMode mode;
+
+@end
+
+
+@implementation TSMessage
+
+- (instancetype)initInEncryptModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey {
+    self = [super init];
+    if (self) {
+        self.privateKey = [privateKey copy];
+        self.publicKey = [peerPublicKey copy];
+        self.mode = TSMessageModeEncryptDecrypt;
+    }
+    return self;
 }
 
-- (id)initSVWithPrivateKey: (NSData*)private_key peerPublicKey:(NSData*)peer_pub_key{
-  self = [super init];
-  if(self){
-    _priv_key=[[NSData alloc]initWithData:private_key];
-    _peer_pub_key=[[NSData alloc]initWithData:peer_pub_key];
-    _mode=SMessageModeSignVerify;
-  }
-  return self;
+
+- (instancetype)initInSignVerifyModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey {
+    self = [super init];
+    if (self) {
+        self.privateKey = [privateKey copy];
+        self.publicKey = [peerPublicKey copy];
+        self.mode = TSMessageModeSignVerify;
+    }
+    return self;
 }
 
-- (NSData*)wrap: (NSData*)message error:(NSError**)errorPtr{
-  size_t wrapped_message_length=0;
-  int res = TErrorTypeFail;
-  switch(_mode){
-    case SMessageModeEncryptDecrypt:
-	res=themis_secure_message_wrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], NULL, &wrapped_message_length);
-	break;
-    case SMessageModeSignVerify:
-	res=themis_secure_message_wrap([_priv_key bytes], [_priv_key length], NULL, 0, [message bytes], [message length], NULL, &wrapped_message_length);
-	break;
-    default:
-	*errorPtr=SCERROR(TErrorTypeFail, @"themis_secure_message_wrap (undefined secure session mode) failed");
-	return NULL;
-  }
-  if(res!=TErrorTypeBufferTooSmall)
-    {
-	*errorPtr=SCERROR(res, @"themis_secure_message_wrap (length detrmination) failed");
-	return NULL;
-    }
-  unsigned char* wrapped_message=malloc(wrapped_message_length);
-  switch(_mode){
-    case SMessageModeEncryptDecrypt:
-	res = themis_secure_message_wrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], wrapped_message, &wrapped_message_length);
-	break;
-    case SMessageModeSignVerify:
-	res = themis_secure_message_wrap([_priv_key bytes], [_priv_key length], NULL, 0, [message bytes], [message length], wrapped_message, &wrapped_message_length);
-	break;
-    default:
-	*errorPtr=SCERROR(TErrorTypeFail, @"themis_secure_message_wrap (undefined secure session mode) failed");
-	return NULL;
-  }
 
-  if(res!=TErrorTypeSuccess)
-    {
-	*errorPtr=SCERROR(res, @"themis_secure_message_wrap failed");
-	free(wrapped_message);
-	return NULL;
+- (NSData *)wrapData:(NSData *)message error:(NSError **)error {
+    size_t wrappedMessageLength = 0;
+    TSErrorType result = TSErrorTypeFail;
+
+    switch (self.mode) {
+        case TSMessageModeEncryptDecrypt:
+            result = (TSErrorType) themis_secure_message_wrap([self.privateKey bytes], [self.privateKey length],
+                [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
+                NULL, &wrappedMessageLength);
+            break;
+
+        case TSMessageModeSignVerify:
+            result = (TSErrorType) themis_secure_message_wrap([self.privateKey bytes], [self.privateKey length], NULL, 0,
+                [message bytes], [message length], NULL, &wrappedMessageLength);
+            break;
+        default:
+            *error = SCERROR(TSErrorTypeFail, @"themis_secure_message_wrap (undefined secure session mode) failed");
+            return nil;
     }
-  NSData* wr=[[NSData alloc]initWithBytes:wrapped_message length:wrapped_message_length];
-  free(wrapped_message);
-  return wr;
+
+    if (result != TSErrorTypeBufferTooSmall) {
+        *error = SCERROR(result, @"themis_secure_message_wrap (length determination) failed");
+        return nil;
+    }
+
+    unsigned char * wrappedMessage = malloc(wrappedMessageLength);
+    switch (self.mode) {
+        case TSMessageModeEncryptDecrypt:
+            result = (TSErrorType) themis_secure_message_wrap([self.privateKey bytes], [self.privateKey length],
+                [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
+                wrappedMessage, &wrappedMessageLength);
+            break;
+
+        case TSMessageModeSignVerify:
+            result = (TSErrorType) themis_secure_message_wrap([self.privateKey bytes], [self.privateKey length], NULL, 0,
+                [message bytes], [message length], wrappedMessage, &wrappedMessageLength);
+            break;
+        default:
+            *error = SCERROR(TSErrorTypeFail, @"themis_secure_message_wrap (undefined secure session mode) failed");
+            return NULL;
+    }
+
+    if (result != TSErrorTypeSuccess) {
+        *error = SCERROR(result, @"themis_secure_message_wrap failed");
+        free(wrappedMessage);
+        return NULL;
+    }
+
+    NSData * wrappedData = [[NSData alloc] initWithBytes:wrappedMessage length:wrappedMessageLength];
+    free(wrappedMessage);
+    return wrappedData;
 }
 
-- (NSData*)unwrap: (NSData*)message error:(NSError**)errorPtr{
-  size_t unwrapped_message_length=0;
-  int res = themis_secure_message_unwrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], NULL, &unwrapped_message_length);
-  if(res!=TErrorTypeBufferTooSmall)
-    {
-	*errorPtr=SCERROR(res, @"themis_secure_message_unwrap (length detrmination) failed");
-	return NULL;
+
+- (NSData *)unwrapData:(NSData *)message error:(NSError **)error {
+    size_t unwrappedMessageLength = 0;
+
+    TSErrorType result = (TSErrorType) themis_secure_message_unwrap([self.privateKey bytes], [self.privateKey length],
+        [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
+        NULL, &unwrappedMessageLength);
+
+    if (result != TSErrorTypeBufferTooSmall) {
+        *error = SCERROR(result, @"themis_secure_message_unwrap (length determination) failed");
+        return nil;
     }
-  unsigned char* unwrapped_message=malloc(unwrapped_message_length);
-  res = themis_secure_message_unwrap([_priv_key bytes], [_priv_key length], [_peer_pub_key bytes], [_peer_pub_key length], [message bytes], [message length], unwrapped_message, &unwrapped_message_length);
-  if(res!=TErrorTypeSuccess)
-    {
-	*errorPtr=SCERROR(res, @"themis_secure_message_unwrap failed");
-	free(unwrapped_message);
-	return NULL;
+
+    unsigned char * unwrappedMessage = malloc(unwrappedMessageLength);
+    result = (TSErrorType) themis_secure_message_unwrap([self.privateKey bytes], [self.privateKey length],
+        [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
+        unwrappedMessage, &unwrappedMessageLength);
+
+    if (result != TSErrorTypeSuccess) {
+        *error = SCERROR(result, @"themis_secure_message_unwrap failed");
+        free(unwrappedMessage);
+        return nil;
     }
-  NSData* wr=[[NSData alloc]initWithBytes:unwrapped_message length:unwrapped_message_length];
-//  free(unwrapped_message);
-  return wr;
+
+    NSData * unwrappedData = [[NSData alloc] initWithBytes:unwrappedMessage length:unwrappedMessageLength];
+    free(unwrappedMessage);
+    return unwrappedData;
 }
 
 

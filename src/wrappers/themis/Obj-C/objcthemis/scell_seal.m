@@ -17,65 +17,83 @@
 #import <objcthemis/scell_seal.h>
 #import <objcthemis/error.h>
 
-@implementation SCell_seal
 
-- (id)initWithKey: (NSData*)key{
-  self = [super initWithKey: key];
-  return self;
+@implementation TSCellSeal
+
+- (instancetype)initWithKey:(NSData *)key {
+    self = [super initWithKey:key];
+    return self;
 }
 
-- (NSData*)wrap: (NSData*)message error:(NSError**)errorPtr{
-  return [self wrap:message context:NULL error:errorPtr];  
+
+- (NSData *)wrapData:(NSData *)message error:(NSError **)error {
+    return [self wrapData:message context:nil error:error];
 }
 
-- (NSData*)unwrap: (NSData*)message error:(NSError**)errorPtr{
-  return [self unwrap:message context:NULL error:errorPtr];
+
+- (NSData *)unwrapData:(NSData *)message error:(NSError **)error {
+    return [self unwrapData:message context:nil error:error];
 }
 
-- (NSData*)wrap: (NSData*)message context:(NSData*)context error:(NSError**)errorPtr{
-  size_t wrapped_message_length=0;
-  const void* context_data=(context!=NULL)?[context bytes]:NULL;
-  size_t context_length=(context!=NULL)?[context length]:0;
-  TErrorType res = themis_secure_cell_encrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], NULL, &wrapped_message_length);
-  if(res!=TErrorTypeBufferTooSmall)
-    {
-      *errorPtr = SCERROR(res, @"themis_secure_cell_encrypt_full (length determination) fail");
-      return NULL;
+
+- (NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
+    size_t wrappedMessageLength = 0;
+
+    const void * contextData = (context != nil) ? [context bytes] : NULL;
+    size_t contextLength = (context != nil) ? [context length] : 0;
+
+    TSErrorType result = (TSErrorType) themis_secure_cell_encrypt_full([self.key bytes], [self.key length],
+        contextData, contextLength, [message bytes], [message length], NULL, &wrappedMessageLength);
+
+    if (result != TSErrorTypeBufferTooSmall) {
+        *error = SCERROR(result, @"themis_secure_cell_encrypt_full (length determination) fail");
+        return nil;
     }
-  unsigned char* wrapped_message=malloc(wrapped_message_length);
-  res = themis_secure_cell_encrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], wrapped_message, &wrapped_message_length);
-  if(res!=TErrorTypeSuccess)
-    {
-      *errorPtr = SCERROR(res, @"themis_secure_cell_encrypt_full fail");
-      free(wrapped_message);
-      return NULL;
+
+    unsigned char * wrappedMessage = malloc(wrappedMessageLength);
+    result = (TSErrorType) themis_secure_cell_encrypt_full([self.key bytes], [self.key length],
+        contextData, contextLength, [message bytes], [message length], wrappedMessage, &wrappedMessageLength);
+
+    if (result != TSErrorTypeSuccess) {
+        *error = SCERROR(result, @"themis_secure_cell_encrypt_full fail");
+        free(wrappedMessage);
+        return nil;
     }
-  NSData* wr=[[NSData alloc]initWithBytes:wrapped_message length:wrapped_message_length];
-  free(wrapped_message);
-  return wr;
+
+    NSData * wrappedData = [[NSData alloc] initWithBytes:wrappedMessage length:wrappedMessageLength];
+    free(wrappedMessage);
+    return wrappedData;
 
 }
-- (NSData*)unwrap: (NSData*)message context:(NSData*)context error:(NSError**)errorPtr{
-  size_t unwrapped_message_length=0;
-  const void* context_data=(context!=NULL)?[context bytes]:NULL;
-  size_t context_length=(context!=Nil)?[context length]:0;
-  TErrorType res = themis_secure_cell_decrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], NULL, &unwrapped_message_length);
-  if(res!=TErrorTypeBufferTooSmall)
-    {
-      *errorPtr = SCERROR(res, @"themis_secure_cell_decrypt_full (length determination) fail");
-      return NULL;
+
+
+- (NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
+    size_t unwrappedMessageLength = 0;
+
+    const void * contextData = (context != nil) ? [context bytes] : nil;
+    size_t contextLength = (context != Nil) ? [context length] : 0;
+
+    TSErrorType result = (TSErrorType) themis_secure_cell_decrypt_full([self.key bytes], [self.key length],
+        contextData, contextLength, [message bytes], [message length], NULL, &unwrappedMessageLength);
+
+    if (result != TSErrorTypeBufferTooSmall) {
+        *error = SCERROR(result, @"themis_secure_cell_decrypt_full (length determination) fail");
+        return nil;
     }
-  unsigned char* unwrapped_message=malloc(unwrapped_message_length);
-  res = themis_secure_cell_decrypt_full([_key bytes], [_key length], context_data, context_length, [message bytes], [message length], unwrapped_message, &unwrapped_message_length);
-  if(res!=TErrorTypeSuccess)
-    {
-      *errorPtr = SCERROR(res, @"themis_secure_cell_decrypt_full fail");
-      free(unwrapped_message);
-      return NULL;
+
+    unsigned char * unwrappedMessage = malloc(unwrappedMessageLength);
+    result = (TSErrorType) themis_secure_cell_decrypt_full([self.key bytes], [self.key length],
+        contextData, contextLength, [message bytes], [message length], unwrappedMessage, &unwrappedMessageLength);
+
+    if (result != TSErrorTypeSuccess) {
+        *error = SCERROR(result, @"themis_secure_cell_decrypt_full fail");
+        free(unwrappedMessage);
+        return nil;
     }
-  NSData* wr=[[NSData alloc]initWithBytes:unwrapped_message length:unwrapped_message_length];
-  free(unwrapped_message);
-  return wr;
+
+    NSData * unwrappedData = [[NSData alloc] initWithBytes:unwrappedMessage length:unwrappedMessageLength];
+    free(unwrappedMessage);
+    return unwrappedData;
 }
 
 @end

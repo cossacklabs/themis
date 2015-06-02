@@ -15,31 +15,43 @@
 */
 
 /**
- * @file objthemis/ssession_transport_interface.h
- * @brief secure session trancport callbacs interface
- */
+* @file objthemis/ssession_transport_interface.h
+* @brief secure session trancport callbacs interface
+*/
 #import <Foundation/Foundation.h>
 #import <themis/themis.h>
 
 
-/** @brief Secure session trancport callbacs interface */
-@interface SSession_transport_interface: NSObject
-{
-  secure_session_user_callbacks_t _callbacks;
+/** @brief Secure session transport callbacks interface */
+@interface TSSessionTransportInterface : NSObject {
+    secure_session_user_callbacks_t _callbacks;
 }
 
-/** @brief Initialisation */
--(instancetype)init;
 
-/** @brief Send \b data to peer */ 
--(void)send: (NSData*)data error:(NSError**)errorPtr;
+/** @brief Send binary data to peer
+* @param [in] data binary data
+* @param [in] error pointer to Error on failure
+*/
+- (void)sendData:(NSData *)data error:(NSError **)error;
 
-/** @brief Receive data fron peer and return it in NSData object */ 
--(NSData*) receive: (NSError**)errorPtr;
 
-/** @brief Return public key assosiated with \b Id as NSData object or NULL on failure */ 
--(NSData*) get_public_key: (NSData*)Id error:(NSError**)errorPtr;
+/** @brief Receive data from peer and return it in NSData object
+* @param [in] error pointer to Error on failure
+* @return data object or nil on failure
+*/
+- (NSData *)receiveDataWithError:(NSError **)error;
+
+
+/** @brief Return public key associated with binaryId as NSData object or nil on failure
+* @param [in] binaryId
+* @param [in] error pointer to Error on failure
+* @return binary public key associated with binaryId or nil on failure
+*/
+- (NSData *)publicKeyFor:(NSData *)binaryId error:(NSError **)error;
+
 
 /** @brief Get callbacks */
--(secure_session_user_callbacks_t*)callbacks;
+- (secure_session_user_callbacks_t *)callbacks;
+
+
 @end
