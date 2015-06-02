@@ -26,17 +26,17 @@
 }
 
 
-- (NSData *)wrap:(NSData *)message error:(NSError **)error {
-    return [self wrap:message context:nil error:error];
+- (NSData *)wrapData:(NSData *)message error:(NSError **)error {
+    return [self wrapData:message context:nil error:error];
 }
 
 
-- (NSData *)unwrap:(NSData *)message error:(NSError **)error {
-    return [self unwrap:message context:nil error:error];
+- (NSData *)unwrapData:(NSData *)message error:(NSError **)error {
+    return [self unwrapData:message context:nil error:error];
 }
 
 
-- (NSData *)wrap:(NSData *)message context:(NSData *)context error:(NSError **)error {
+- (NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
     size_t wrappedMessageLength = 0;
 
     const void * contextData = (context != nil) ? [context bytes] : NULL;
@@ -67,7 +67,7 @@
 }
 
 
-- (NSData *)unwrap:(NSData *)message context:(NSData *)context error:(NSError **)error {
+- (NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
     size_t unwrappedMessageLength = 0;
 
     const void * contextData = (context != nil) ? [context bytes] : nil;

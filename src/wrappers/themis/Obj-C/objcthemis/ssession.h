@@ -77,7 +77,7 @@
 * @param [in] error pointer to Error on failure
 * @return Wrapped message in NSData object on success or nil on failure.
 */
-- (NSData *)wrap:(NSData *)message error:(NSError **)error;
+- (NSData *)wrapData:(NSData *)message error:(NSError **)error;
 
 
 /** @brief Unwrap message
@@ -85,7 +85,7 @@
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message in NSData object on success or nil on failure.
 */
-- (NSData *)unwrap:(NSData *)message error:(NSError **)error;
+- (NSData *)unwrapData:(NSData *)message error:(NSError **)error;
 
 
 /** @brief Wrap message and sent it to peer by \b send method from callbacks object.

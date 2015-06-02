@@ -31,17 +31,17 @@
 }
 
 
-- (TSCellTokenEncryptedData *)wrap:(NSData *)message error:(NSError **)error {
-    return [self wrap:message context:nil error:error];
+- (TSCellTokenEncryptedData *)wrapData:(NSData *)message error:(NSError **)error {
+    return [self wrapData:message context:nil error:error];
 }
 
 
-- (NSData *)unwrap:(TSCellTokenEncryptedData *)message error:(NSError **)error {
-    return [self unwrap:message context:nil error:error];
+- (NSData *)unwrapData:(TSCellTokenEncryptedData *)message error:(NSError **)error {
+    return [self unwrapData:message context:nil error:error];
 }
 
 
-- (TSCellTokenEncryptedData *)wrap:(NSData *)message context:(NSData *)context error:(NSError **)error {
+- (TSCellTokenEncryptedData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
     size_t wrappedMessageLength = 0;
     size_t tokenLength = 0;
 
@@ -73,7 +73,7 @@
 }
 
 
-- (NSData *)unwrap:(TSCellTokenEncryptedData *)message context:(NSData *)context error:(NSError **)error {
+- (NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(NSData *)context error:(NSError **)error {
     size_t unwrappedMessageLength = 0;
     const void * contextData = (context != nil) ? [context bytes] : NULL;
     size_t contextLength = (context != nil) ? [context length] : 0;

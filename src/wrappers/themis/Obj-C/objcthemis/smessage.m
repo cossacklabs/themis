@@ -34,7 +34,7 @@
 
 @implementation TSMessage
 
-- (instancetype)initWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey {
+- (instancetype)initInEncryptModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey {
     self = [super init];
     if (self) {
         self.privateKey = [privateKey copy];
@@ -45,7 +45,7 @@
 }
 
 
-- (instancetype)initSVWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey {
+- (instancetype)initInSignVerifyModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey {
     self = [super init];
     if (self) {
         self.privateKey = [privateKey copy];
@@ -56,7 +56,7 @@
 }
 
 
-- (NSData *)wrap:(NSData *)message error:(NSError **)error {
+- (NSData *)wrapData:(NSData *)message error:(NSError **)error {
     size_t wrappedMessageLength = 0;
     TSErrorType result = TSErrorTypeFail;
 
@@ -110,7 +110,7 @@
 }
 
 
-- (NSData *)unwrap:(NSData *)message error:(NSError **)error {
+- (NSData *)unwrapData:(NSData *)message error:(NSError **)error {
     size_t unwrappedMessageLength = 0;
 
     TSErrorType result = (TSErrorType) themis_secure_message_unwrap([self.privateKey bytes], [self.privateKey length],

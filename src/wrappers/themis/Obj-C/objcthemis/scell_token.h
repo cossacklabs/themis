@@ -69,7 +69,7 @@
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
-- (TSCellTokenEncryptedData *)wrap:(NSData *)message error:(NSError **)error;
+- (TSCellTokenEncryptedData *)wrapData:(NSData *)message error:(NSError **)error;
 
 /**
 * @brief Unwrap message
@@ -77,7 +77,7 @@
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (NSData *)unwrap:(TSCellTokenEncryptedData *)message error:(NSError **)error;
+- (NSData *)unwrapData:(TSCellTokenEncryptedData *)message error:(NSError **)error;
 
 /**
 * @brief Wrap message with context
@@ -86,7 +86,7 @@
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
-- (TSCellTokenEncryptedData *)wrap:(NSData *)message context:(NSData *)context error:(NSError **)error;
+- (TSCellTokenEncryptedData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error;
 
 /**
 * @brief Unwrap message with context
@@ -95,7 +95,7 @@
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (NSData *)unwrap:(TSCellTokenEncryptedData *)message context:(NSData *)context error:(NSError **)error;
+- (NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(NSData *)context error:(NSError **)error;
 
 @end
 

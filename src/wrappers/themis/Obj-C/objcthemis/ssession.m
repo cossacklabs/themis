@@ -66,7 +66,7 @@
 }
 
 
-- (NSData *)wrap:(NSData *)message error:(NSError **)error {
+- (NSData *)wrapData:(NSData *)message error:(NSError **)error {
     size_t wrappedMessageLength = 0;
 
     TSErrorType result = (TSErrorType) secure_session_wrap(self.session, [message bytes], [message length],
@@ -89,7 +89,7 @@
 }
 
 
-- (NSData *)unwrap:(NSData *)message error:(NSError **)error {
+- (NSData *)unwrapData:(NSData *)message error:(NSError **)error {
     size_t unwrappedMessageLength = 0;
     TSErrorType result = (TSErrorType) secure_session_unwrap(self.session, [message bytes], [message length],
         NULL, &unwrappedMessageLength);
