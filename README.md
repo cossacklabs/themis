@@ -14,7 +14,7 @@ Themis is set to provide a wide set of instruments, three main of which are bein
 # Quickstart Crash Course
 
 1. Fetch the repository: git clone https://github.com/cossacklabs/themis.git
-2. Have OpenSSL/LibreSSL + OpenSSL/LibreSSL Dev pack (libssl-dev) installed at typical paths: /usr/lib /usr/include. 
+2. Have OpenSSL/LibreSSL + OpenSSL/LibreSSL Dev pack (libssl-dev) installed at typical paths: `/usr/lib`, `/usr/include`. 
 3. Have typical gcc environment installed
 4. Fire 'make install' and you're good most of the cases
 5. Dive into [our wiki](https://github.com/cossacklabs/themis/wiki) for the docs of language of your choice, take a look at docs/examples for examples. 
@@ -43,7 +43,7 @@ It is checked to compile on:
 * Android 4.4.2
 * Android 4.4.4 / CyanogenMod 11
 * Android 5
-* iOS 7
+* iOS 7+, x32/x64
 
 Themis is available as original C library and has Python, Objective-C, Ruby, PHP and Android wrappers.
 
