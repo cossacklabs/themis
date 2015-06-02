@@ -54,7 +54,7 @@
 /**
 * @brief Wrap message
 * @param [in] message message to wrap
-* @param [in] errorPtr pointer to Error on failure
+* @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
 - (NSData *)wrap:(NSData *)message error:(NSError **)error;
@@ -62,7 +62,7 @@
 /**
 * @brief Unwrap message
 * @param [in] message message to unwrap
-* @param [in] errorPtr pointer to Error on failure
+* @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
 - (NSData *)unwrap:(NSData *)message error:(NSError **)error;
@@ -71,7 +71,7 @@
 * @brief Wrap message with context
 * @param [in] message message to wrap
 * @param [in] context user context
-* @param [in] errorPtr pointer to Error on failure
+* @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
 - (NSData *)wrap:(NSData *)message context:(NSData *)context error:(NSError **)error;
@@ -79,7 +79,7 @@
 /**
 * @brief Unwrap message
 * @param [in] message message to unwrap
-* @param [in] errorPtr pointer to Error on failure
+* @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
 - (NSData *)unwrap:(NSData *)message context:(NSData *)context error:(NSError **)error;
