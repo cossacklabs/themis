@@ -22,6 +22,7 @@ inhibit_all_warnings!
 
 target :"ThemisTest" do
 
-  pod 'themis', :git => "https://github.com/cossacklabs/themis.git", :branch => 'ios-wrapper-refactoring'
+  # example should work with head
+  pod 'themis', :git => "https://github.com/cossacklabs/themis.git"
 
 end
