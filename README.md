@@ -1,5 +1,7 @@
 # Themis 0.9.1
 
+[![Join the chat at https://gitter.im/cossacklabs/themis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cossacklabs/themis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Themis is a high-level cryptographic services library: a library providing easy to use, highly abstracted set of functions to solve real-world security problems. We would like you to focus on building your software with security 
 taken care of by cryptographers, instead of scrupulously assembling building blocks into cryptosystems yourself, resolving implementations, platform availability, vulnerabilities and performance constraints yourself.
 
