@@ -32,18 +32,6 @@ PHP_FUNCTION(phpthemis_scell_auto_split_decrypt);
 PHP_FUNCTION(phpthemis_scell_user_split_encrypt);
 PHP_FUNCTION(phpthemis_scell_user_split_decrypt);
 
-
-PHP_FUNCTION(phpthemis_secure_session_create);
-PHP_FUNCTION(phpthemis_secure_session_destroy);
-PHP_FUNCTION(phpthemis_secure_session_connect);
-PHP_FUNCTION(phpthemis_secure_session_generate_connect_request);
-PHP_FUNCTION(phpthemis_secure_session_wrap);
-PHP_FUNCTION(phpthemis_secure_session_unwrap);
-PHP_FUNCTION(phpthemis_secure_session_send);
-PHP_FUNCTION(phpthemis_secure_session_receive);
-PHP_FUNCTION(phpthemis_secure_session_save);
-PHP_FUNCTION(phpthemis_secure_session_load);
-
 extern zend_module_entry phpthemis_module_entry;
 #define phpext_themis_ptr &phpthemis_module_entry
 
