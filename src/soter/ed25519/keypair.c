@@ -1,4 +1,5 @@
-#include <string.h>
+/* not used for now */
+/* #include <string.h>
 #include "randombytes.h"
 #include "crypto_sign.h"
 #include "crypto_hash_sha512.h"
@@ -20,4 +21,4 @@ int crypto_sign_keypair(unsigned char *pk,unsigned char *sk)
 
   memmove(sk + 32,pk,32);
   return 0;
-}
+} */
