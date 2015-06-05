@@ -139,6 +139,7 @@ PHP_METHOD(themis_secure_session, wrap){
   return;
 }
 
+
 PHP_METHOD(themis_secure_session, unwrap){
   char* message;
   int message_length;
@@ -167,10 +168,50 @@ PHP_METHOD(themis_secure_session, unwrap){
   return;
 }
 
+PHP_METHOD(themis_secure_session, connect_request){
+  zval *object = getThis();
+  themis_secure_session_object *obj = (themis_secure_session_object *)zend_object_store_get_object(object TSRMLS_CC);
+    if(obj->session == NULL){
+    RETURN_NULL();
+  }
+  size_t connect_request_length=0;
+  themis_status_t res=secure_session_generate_connect_request(obj->session, NULL, &connect_request_length);
+  if(res!=-4/*THEMIS_BUFFER_TOO_SMALL*/){
+    RETURN_NULL();
+  }
+  char* connect_request=emalloc((int)connect_request_length);
+  if(connect_request==NULL){
+    RETURN_NULL();    
+  }
+  if(secure_session_generate_connect_request(obj->session, connect_request, &connect_request_length)<0/*HERMES_SUCCESS*/){
+    efree(connect_request);
+    RETURN_EMPTY_STRING();
+  }
+  ZVAL_STRINGL(return_value, connect_request, connect_request_length, 0);
+  return;
+}
+
+PHP_METHOD(themis_secure_session, is_established){
+  zval *object = getThis();
+  themis_secure_session_object *obj = (themis_secure_session_object *)zend_object_store_get_object(object TSRMLS_CC);
+    if(obj->session == NULL){
+    RETURN_NULL();
+  }
+  size_t connect_request_length=0;
+  bool res=secure_session_is_established(obj->session);
+  if(res){
+    RETURN_TRUE;
+  }
+  RETURN_FALSE;
+}
+
+
 static zend_function_entry themis_secure_session_functions[] = {
   PHP_ME(themis_secure_session, __construct, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
   PHP_ME(themis_secure_session, unwrap, NULL, ZEND_ACC_PUBLIC)
   PHP_ME(themis_secure_session, wrap, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(themis_secure_session, connect_request, NULL, ZEND_ACC_PUBLIC)
+  PHP_ME(themis_secure_session, is_established, NULL, ZEND_ACC_PUBLIC)
   {NULL, NULL, NULL}
 };
 
