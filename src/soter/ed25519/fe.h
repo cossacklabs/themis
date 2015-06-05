@@ -1,7 +1,13 @@
 #ifndef FE_H
 #define FE_H
 
-#include "crypto_int32.h"
+/* #include "crypto_int32.h" */
+#include <stdint.h>
+
+typedef int32_t crypto_int32;
+typedef int64_t crypto_int64;
+typedef uint32_t crypto_uint32;
+typedef uint64_t crypto_uint64;
 
 typedef crypto_int32 fe[10];
 

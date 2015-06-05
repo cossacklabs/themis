@@ -1,5 +1,5 @@
 #include "fe.h"
-#include "crypto_int64.h"
+/* #include "crypto_int64.h" */
 
 /*
 h = f * g

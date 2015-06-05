@@ -1,4 +1,5 @@
-#include <string.h>
+/* not used for now */
+/* #include <string.h>
 #include "crypto_sign.h"
 #include "crypto_hash_sha512.h"
 #include "crypto_verify_32.h"
@@ -45,4 +46,4 @@ badsig:
   *mlen = -1;
   memset(m,0,smlen);
   return -1;
-}
+} */

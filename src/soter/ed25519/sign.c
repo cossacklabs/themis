@@ -1,4 +1,5 @@
-#include <string.h>
+/* not used for now */
+/* #include <string.h>
 #include "crypto_sign.h"
 #include "crypto_hash_sha512.h"
 #include "ge.h"
@@ -38,4 +39,4 @@ int crypto_sign(
   sc_muladd(sm + 32,hram,az,nonce);
 
   return 0;
-}
+} */
