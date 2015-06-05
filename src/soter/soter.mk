@@ -16,6 +16,9 @@
 
 SOTER_SRC = $(wildcard $(SRC_PATH)/soter/*.c)
 
+# ed25519 we specify here, because it should be portable and does not depend on $(CRYPTO_ENGINE)
+SOTER_SRC += $(wildcard $(SRC_PATH)/soter/ed25519/*.c)
+
 include $(CRYPTO_ENGINE)/soter.mk
 
 SOTER_OBJ = $(patsubst $(SRC_PATH)/%.c,$(OBJ_PATH)/%.o, $(SOTER_SRC))
