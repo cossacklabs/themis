@@ -6,7 +6,7 @@ dependencies:
   override:
     - make
     - make test
-    - make install
+    - sudo make install
 
 ## Customize test commands
 test:
