@@ -1,0 +1,15 @@
+## Customize dependencies
+dependencies:
+  pre:
+    - sudo apt-get install libssl-dev
+
+  override:
+    - make
+    - make test
+    - sudo make install
+
+## Customize test commands
+test:
+  override:
+    - build/tests/soter_test
+    - build/tests/themis_test
