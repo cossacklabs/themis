@@ -1,3 +1,7 @@
+machine:
+  environment:
+    ANDROID_NDK_ROOT: $ANDROID_NDK
+
 ## Customize dependencies
 dependencies:
   pre:
@@ -13,3 +17,12 @@ test:
   override:
     - build/tests/soter_test
     - build/tests/themis_test
+    # start Android emulator
+    - emulator -avd circleci-android22 -no-audio -no-window:
+        background: true
+        parallel: true
+    # wait for it to have booted
+    - circle-android wait-for-boot
+    # run Android tests
+    - ./gradlew connectedAndroidTest
+
