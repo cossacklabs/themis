@@ -31,7 +31,7 @@ module ThemisImport
 
 
 
-    callback :get_pub_key_by_id_type, 	[:pointer, :int, :pointer, :int, :uint], :int
+    callback :get_pub_key_by_id_type, 	[:pointer, :int, :pointer, :int, :pointer], :int
     callback :send_callback_type,	[:pointer, :int, :uint], :int
     callback :receive_callback_type,	[:pointer, :int, :uint], :int
 
@@ -40,7 +40,7 @@ module ThemisImport
 		:receive_data,		:receive_callback_type,
 		:state_changed,		:pointer,
 		:get_pub_key_for_id,	:get_pub_key_by_id_type,
-		:user_data,		:uint
+		:user_data,		:pointer
     end
 
     attach_function :secure_session_create, [ :pointer, :uint, :pointer, :uint, :pointer], :pointer
@@ -128,8 +128,8 @@ module Themis
 
 	MAPPING = {}
 
-	Get_pub_key_by_id_callback = FFI::Function.new(:int, [:pointer, :int, :pointer, :int, :uint]) do |id_buf, id_length, pubkey_buf, pubkey_length, obj|
-	    pub_key=MAPPING[obj].get_pub_key_by_id(id_buf.get_bytes(0,id_length))
+	Get_pub_key_by_id_callback = FFI::Function.new(:int, [:pointer, :int, :pointer, :int, :pointer]) do |id_buf, id_length, pubkey_buf, pubkey_length, obj|
+	    pub_key=MAPPING[obj.read_uint64].get_pub_key_by_id(id_buf.get_bytes(0,id_length))
 	    if !pub_key
 		-1
 	    end
@@ -143,7 +143,9 @@ module Themis
 		@callbacks = Callbacks_struct.new
 		@callbacks[:get_pub_key_for_id] = Get_pub_key_by_id_callback
 		MAPPING[transport.object_id]=transport
-		@callbacks[:user_data] =transport.object_id
+		@transport_obj_id=transport.object_id
+		@callbacks[:user_data] = FFI::MemoryPointer.new(:uint64)
+		@callbacks[:user_data].write_uint64(@transport_obj_id)
 		@session=secure_session_create(id_buf, id_length, private_key_buf, private_key_length, @callbacks);
 	        raise ThemisError, "secure_session_create error" unless @session
 	end
