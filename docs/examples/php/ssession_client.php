@@ -14,18 +14,23 @@
 	];
 	return $key_array[$id];
     }
-
-    $session = new themis_secure_session("client", $client_priv);
-    $msg_to_send= $session->connect_request();
-    $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-    $result = socket_connect($socket, "127.0.0.1", 26026);
-    do{
-	socket_send($socket, $msg_to_send, strlen($msg_to_send), MSG_EOR);
-	if(false === socket_recv($socket, $readed_msg, 2048, 0)){exit;}
-	$msg_to_send = $session->unwrap($readed_msg);
-    }while(! $session->is_established());
-    $msg_to_send = $session->wrap("This is test message");
-    socket_write($socket, $msg_to_send, strlen($msg_to_send));
-    echo $session->unwrap(socket_read($socket, 2048, 0))."\n";
-    socket_close($socket);
+    try{
+	$session = new themis_secure_session("client", $client_priv);
+        echo is_null($session);
+        $msg_to_send= $session->connect_request();
+        $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
+        $result = socket_connect($socket, "127.0.0.1", 26026);
+        do{
+	    socket_send($socket, $msg_to_send, strlen($msg_to_send), MSG_EOR);
+	    if(false === socket_recv($socket, $readed_msg, 2048, 0)){exit;}
+	    $msg_to_send = $session->unwrap($readed_msg);
+	}while(! $session->is_established());
+	$msg_to_send = $session->wrap("This is test message");
+	socket_write($socket, $msg_to_send, strlen($msg_to_send));
+	echo $session->unwrap(socket_read($socket, 2048, 0))."\n";
+	socket_close($socket);
+    }
+    catch(Exception $e) {
+	echo $e->getMessage();
+    }
 ?>
