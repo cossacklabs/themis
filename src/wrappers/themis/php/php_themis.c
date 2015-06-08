@@ -20,6 +20,7 @@
 
 #include "php.h"
 #include "php_themis.h"
+#include "zend_exceptions.h"
 #include <themis/themis.h>
 
 ssize_t send_callback(const uint8_t *data, size_t data_length, void *user_data){
@@ -97,6 +98,7 @@ PHP_METHOD(themis_secure_session, __construct){
   int private_key_length;
   
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &id, &id_length, &private_key, &private_key_length) == FAILURE) {
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in __construct: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   secure_session_user_callbacks_t* callbacks_=pemalloc(sizeof(secure_session_user_callbacks_t), 1);
@@ -106,6 +108,7 @@ PHP_METHOD(themis_secure_session, __construct){
   callbacks_->get_public_key_for_id=get_public_key_by_id_callback;
   session=secure_session_create(id, id_length, private_key, private_key_length, callbacks_);
   if(session==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in __construct secure session creation error.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   themis_secure_session_object *obj = (themis_secure_session_object *)zend_object_store_get_object(object TSRMLS_CC);
@@ -116,24 +119,29 @@ PHP_METHOD(themis_secure_session, wrap){
   char* message;
   int message_length;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &message, &message_length) == FAILURE) {
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in wrap: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   zval *object = getThis();
   themis_secure_session_object *obj = (themis_secure_session_object *)zend_object_store_get_object(object TSRMLS_CC);
   if(obj->session == NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in wrap: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   size_t wrapped_message_length=0;
   if(secure_session_wrap(obj->session, message, message_length, NULL, &wrapped_message_length)!=-4/*THEMIS_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in wrap: wrapped length determination failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* wrapped_message=emalloc((int)wrapped_message_length);
   if(wrapped_message==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in wrap: not enough mamory.", 0 TSRMLS_CC);
     RETURN_NULL();    
   }
   if(secure_session_wrap(obj->session, message, message_length, wrapped_message, &wrapped_message_length)!=0/*HERMES_SUCCESS*/){
     efree(wrapped_message);
-    RETURN_EMPTY_STRING();
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in wrap: wrapping failed.", 0 TSRMLS_CC);
+    RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, wrapped_message, wrapped_message_length, 0);
   return;
@@ -144,25 +152,33 @@ PHP_METHOD(themis_secure_session, unwrap){
   char* message;
   int message_length;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &message, &message_length) == FAILURE) {
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in uwrap: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   zval *object = getThis();
   themis_secure_session_object *obj = (themis_secure_session_object *)zend_object_store_get_object(object TSRMLS_CC);
     if(obj->session == NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in unwrap: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   size_t unwrapped_message_length=0;
   themis_status_t res=secure_session_unwrap(obj->session, message, message_length, NULL, &unwrapped_message_length);
+  if(res==0/*THEMIS_SUCCESS*/){
+    RETURN_EMPTY_STRING();
+  }
   if(res!=-4/*THEMIS_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in unwrap: unwrapped message length determination failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* unwrapped_message=emalloc((int)unwrapped_message_length);
   if(unwrapped_message==NULL){
-    RETURN_NULL();    
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in unwrap: not enough memory.", 0 TSRMLS_CC);
+    RETURN_NULL();
   }
   if(secure_session_unwrap(obj->session, message, message_length, unwrapped_message, &unwrapped_message_length)<0/*HERMES_SUCCESS*/){
     efree(unwrapped_message);
-    RETURN_EMPTY_STRING();
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in unwrap: unwrapping failed.", 0 TSRMLS_CC);
+    RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, unwrapped_message, unwrapped_message_length, 0);
   return;
@@ -172,20 +188,24 @@ PHP_METHOD(themis_secure_session, connect_request){
   zval *object = getThis();
   themis_secure_session_object *obj = (themis_secure_session_object *)zend_object_store_get_object(object TSRMLS_CC);
     if(obj->session == NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in connect_request: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   size_t connect_request_length=0;
   themis_status_t res=secure_session_generate_connect_request(obj->session, NULL, &connect_request_length);
   if(res!=-4/*THEMIS_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in connect_request: request length determination failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* connect_request=emalloc((int)connect_request_length);
   if(connect_request==NULL){
-    RETURN_NULL();    
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in connect_request: not enough memory.", 0 TSRMLS_CC);
+    RETURN_NULL();
   }
   if(secure_session_generate_connect_request(obj->session, connect_request, &connect_request_length)<0/*HERMES_SUCCESS*/){
     efree(connect_request);
-    RETURN_EMPTY_STRING();
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in connect_request: request construction failed.", 0 TSRMLS_CC);
+    RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, connect_request, connect_request_length, 0);
   return;
@@ -195,6 +215,7 @@ PHP_METHOD(themis_secure_session, is_established){
   zval *object = getThis();
   themis_secure_session_object *obj = (themis_secure_session_object *)zend_object_store_get_object(object TSRMLS_CC);
     if(obj->session == NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in is_established: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   size_t connect_request_length=0;
@@ -277,15 +298,15 @@ PHP_FUNCTION(phpthemis_secure_message_wrap){
   }
   size_t wrapped_message_length=0;
   if(themis_secure_message_wrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, NULL, &wrapped_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   char* wrapped_message=emalloc((int)wrapped_message_length);
   if(wrapped_message==NULL){
-    RETURN_EMPTY_STRING();    
+    RETURN_NULL();    
   }
   if(themis_secure_message_wrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, (uint8_t*)wrapped_message, &wrapped_message_length)!=0/*HERMES_SUCCESS*/){
     efree(wrapped_message);
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, wrapped_message, wrapped_message_length, 0);
   return;
@@ -303,17 +324,16 @@ PHP_FUNCTION(phpthemis_secure_message_unwrap){
   }
   size_t unwrapped_message_length=0;
   if(themis_secure_message_unwrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, NULL, &unwrapped_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   char* unwrapped_message=emalloc((int)unwrapped_message_length);
   if(unwrapped_message==NULL){
-    RETURN_EMPTY_STRING();    
+    RETURN_NULL();    
   }
   if(themis_secure_message_unwrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, (uint8_t*)unwrapped_message, &unwrapped_message_length)!=0/*HERMES_SUCCESS*/){
     efree(unwrapped_message);
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
-  //  RETURN_STRINGL(unwrapped_message, unwrapped_message_length, 0);
   ZVAL_STRINGL(return_value, unwrapped_message, (int)unwrapped_message_length, 0);
   return;
 }
@@ -374,14 +394,14 @@ PHP_FUNCTION(phpthemis_scell_full_encrypt){
   }
   size_t encrypted_message_length=0;
   if(themis_secure_cell_encrypt_full((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &encrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   char* encrypted_message=emalloc((int)encrypted_message_length);
   if(encrypted_message==NULL){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   if(themis_secure_cell_encrypt_full((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=0/*HERMES_SUCCESS*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, encrypted_message, (int)encrypted_message_length, 0);
   return;
@@ -399,14 +419,14 @@ PHP_FUNCTION(phpthemis_scell_full_decrypt){
   }
   size_t decrypted_message_length=0;
   if(themis_secure_cell_decrypt_full((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &decrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   char* decrypted_message=emalloc((int)decrypted_message_length);
   if(decrypted_message==NULL){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   if(themis_secure_cell_decrypt_full((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=0/*HERMES_SUCCESS*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, decrypted_message, (int)decrypted_message_length, 0);
   return;
@@ -425,18 +445,18 @@ PHP_FUNCTION(phpthemis_scell_auto_split_encrypt){
   size_t encrypted_message_length=0;
   size_t additional_auth_data_length=0;
   if(themis_secure_cell_encrypt_auto_split((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &additional_auth_data_length, NULL, &encrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   char* encrypted_message=emalloc((int)encrypted_message_length);
   if(encrypted_message==NULL){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   char* additional_auth_data=emalloc((int)additional_auth_data_length);
   if(additional_auth_data==NULL){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   if(themis_secure_cell_encrypt_auto_split((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, &additional_auth_data_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=0/*HERMES_SUCCESS*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   array_init(return_value);
   add_assoc_stringl(return_value, "encrypted_message", encrypted_message, encrypted_message_length, 0);
@@ -458,14 +478,14 @@ PHP_FUNCTION(phpthemis_scell_auto_split_decrypt){
   }
   size_t decrypted_message_length=0;
   if(themis_secure_cell_decrypt_auto_split((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, additional_auth_data_length, NULL, &decrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   char* decrypted_message=emalloc((int)decrypted_message_length);
   if(decrypted_message==NULL){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   if(themis_secure_cell_decrypt_auto_split((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, additional_auth_data_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=0/*HERMES_SUCCESS*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, decrypted_message, (int)decrypted_message_length, 0);
   return;
@@ -483,14 +503,14 @@ PHP_FUNCTION(phpthemis_scell_user_split_encrypt){
   }
   size_t encrypted_message_length=0;
   if(themis_secure_cell_encrypt_user_split((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, NULL, &encrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   char* encrypted_message=emalloc((int)encrypted_message_length);
   if(encrypted_message==NULL){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   if(themis_secure_cell_encrypt_user_split((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=0/*HERMES_SUCCESS*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, encrypted_message, (int)encrypted_message_length, 0);
   return;
@@ -508,14 +528,14 @@ PHP_FUNCTION(phpthemis_scell_user_split_decrypt){
   }
   size_t decrypted_message_length=0;
   if(themis_secure_cell_decrypt_user_split((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, NULL, &decrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   char* decrypted_message=emalloc((int)decrypted_message_length);
   if(decrypted_message==NULL){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   if(themis_secure_cell_decrypt_user_split((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=0/*HERMES_SUCCESS*/){
-    RETURN_EMPTY_STRING();
+    RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, decrypted_message, (int)decrypted_message_length, 0);
   return;

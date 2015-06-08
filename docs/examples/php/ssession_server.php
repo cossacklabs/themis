@@ -26,22 +26,26 @@ $sock = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
 socket_bind($sock, $address, $port);
 socket_listen($sock, 5);
 
-do {
-    if(($msgsock = socket_accept($sock))===false){break;}
-    $session = new themis_secure_session("server", $server_priv);
+try{
+    do {
+	if(($msgsock = socket_accept($sock))===false){break;}
+	$session = new themis_secure_session("server", $server_priv);
 
-    while (! $session->is_established()) {
-	if(false==socket_recv($msgsock, $buf, 2048, 0)){break 2;}
-	$unwrapped_message=$session->unwrap($buf);
-	if(FALSE === socket_send($msgsock, $unwrapped_message, strlen($unwrapped_message), MSG_EOR)){echo socket_strerror(socket_last_error($sock))."\n";exit;}
-    };
-    $buf = socket_read($msgsock, 2048, PHP_BINARY_READ);
-    $msg=$session->unwrap($buf);
-    echo $msg."\n";
-    $wrapped_reply = $session->wrap($msg." reply");
-    socket_write($msgsock, $wrapped_reply, strlen($wrapped_reply));
-    socket_close($msgsock);
-} while (true);
-
+	while (! $session->is_established()) {
+	    if(false==socket_recv($msgsock, $buf, 2048, 0)){break 2;}
+	    $unwrapped_message=$session->unwrap($buf);
+	    if(FALSE === socket_send($msgsock, $unwrapped_message, strlen($unwrapped_message), MSG_EOR)){echo socket_strerror(socket_last_error($sock))."\n";exit;}
+	};
+	$buf = socket_read($msgsock, 2048, PHP_BINARY_READ);
+	$msg=$session->unwrap($buf);
+	echo $msg."\n";
+	$wrapped_reply = $session->wrap($msg." reply");
+	socket_write($msgsock, $wrapped_reply, strlen($wrapped_reply));
+	socket_close($msgsock);
+    } while (true);
+}
+catch (Exception $e){
+    echo $e->getMessage();
+}
 socket_close($sock);
 ?>
