@@ -108,7 +108,6 @@
 
     if (result != TSErrorTypeSuccess) {
         if (result == TSErrorTypeSendAsIs) {
-            *error = SCERROR(result, @"secure_session_unwrap send as is");
             return unwrappedMessage;
         }
         else {
