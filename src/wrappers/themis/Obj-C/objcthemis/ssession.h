@@ -105,6 +105,12 @@
 // TODO: rename method to reflect it's goal
 - (NSData *)unwrapAndReceive:(NSUInteger)length error:(NSError **)error;
 
+/** @brief indicate session established state.
+* @return TRUE is session establishing phase complete or FALSE in overwise.
+*/
+
+- (BOOL)isSessionEstablishe;
+
 @end
 /** @} */
 /** @} */
