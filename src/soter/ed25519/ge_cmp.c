@@ -16,14 +16,22 @@
 
 #include "ge_utils.h"
 #include <string.h>
+#include <stdint.h>
 
-int ge_cmp_vartime(const ge_p3 *a, const ge_p3 *b)
+int ge_cmp(const ge_p3 *a, const ge_p3 *b)
 {
 	unsigned char a_comp[ED25519_GE_LENGTH];
 	unsigned char b_comp[ED25519_GE_LENGTH];
+	uint32_t r = 0;
+	uint32_t i;
 
 	ge_p3_tobytes(a_comp, a);
 	ge_p3_tobytes(b_comp, b);
 
-	return memcmp(a_comp, b_comp, ED25519_GE_LENGTH);
+	for (i = 0; i < (ED25519_GE_LENGTH / sizeof(uint32_t)); i++)
+	{
+		r |= ((uint32_t *)a_comp)[i] ^ ((uint32_t *)b_comp)[i];
+	}
+
+	return (int)r;
 }
