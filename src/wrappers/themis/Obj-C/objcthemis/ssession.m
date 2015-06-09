@@ -141,7 +141,6 @@
 }
 
 
-// not used currently. why?
 - (BOOL)isSessionEstablished {
     return secure_session_is_established(self.session);
 }
