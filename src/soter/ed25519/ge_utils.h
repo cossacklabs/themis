@@ -25,6 +25,7 @@
 
 /* Generates valid ed25519 private key. r should be 32 bytes */
 extern void generate_random_32(unsigned char *r);
+extern void clip_random_32(unsigned char *r);
 
 extern int ge_frombytes_vartime(ge_p3 *h, const unsigned char *s);
 extern void ge_p2_to_p3(ge_p3 *r, const ge_p2 *p);

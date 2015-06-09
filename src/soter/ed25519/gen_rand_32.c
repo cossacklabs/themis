@@ -17,6 +17,13 @@
 #include "ge_utils.h"
 #include <soter/soter.h>
 
+void clip_random_32(unsigned char *r)
+{
+    r[0] &= 248;
+    r[31] &= 63;
+    r[31] |= 64;
+}
+
 void generate_random_32(unsigned char *r)
 {
 	soter_status_t res = soter_rand(r, ED25519_GE_LENGTH);
@@ -27,7 +34,5 @@ void generate_random_32(unsigned char *r)
 		exit(1);
 	}
 
-    r[0] &= 248;
-    r[31] &= 63;
-    r[31] |= 64;
+	clip_random_32(r);
 }
