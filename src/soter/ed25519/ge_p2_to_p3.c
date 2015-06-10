@@ -18,6 +18,13 @@
 
 void ge_p2_to_p3(ge_p3 *r, const ge_p2 *p)
 {
+	if (p != (const ge_p2 *)r)
+	{
+		fe_copy(r->X, p->X);
+		fe_copy(r->Y, p->Y);
+		fe_copy(r->Z, p->Z);
+	}
+
 	fe_invert(r->T, p->Z);
 	fe_mul(r->T, r->T, p->X);
 	fe_mul(r->T, r->T, p->Y);
