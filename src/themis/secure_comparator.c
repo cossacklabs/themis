@@ -358,7 +358,7 @@ static themis_status_t secure_comparator_alice_step5(secure_comparator_t *comp_c
 
 	*output_length = 0;
 
-	ge_scalarmult(&Rab, comp_ctx->rand3, &Rb);
+	ge_scalarmult_blinded(&Rab, comp_ctx->rand3, &Rb);
 	ge_p3_sub(&Pa_Pb, &(comp_ctx->P), &Pb);
 
 	comp_ctx->result = ge_cmp(&Rab, &Pa_Pb) ? THEMIS_SCOMPARE_NO_MATCH : THEMIS_SCOMPARE_MATCH;
