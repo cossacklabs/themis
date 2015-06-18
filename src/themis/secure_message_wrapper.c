@@ -283,7 +283,7 @@ themis_secure_message_ec_t* themis_secure_message_ec_encrypter_init(const uint8_
 themis_status_t themis_secure_message_ec_encrypter_proceed(themis_secure_message_ec_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length){
   THEMIS_CHECK_PARAM(ctx!=NULL);
   size_t encrypted_message_length=0;
-  THEMIS_CHECK(themis_secure_cell_encrypt_full(ctx->shared_secret, ctx->shared_secret_length, NULL, 0, message, message_length, NULL, &encrypted_message_length)==THEMIS_BUFFER_TOO_SMALL && encrypted_message_length!=0);
+  THEMIS_CHECK(themis_secure_cell_encrypt_seal(ctx->shared_secret, ctx->shared_secret_length, NULL, 0, message, message_length, NULL, &encrypted_message_length)==THEMIS_BUFFER_TOO_SMALL && encrypted_message_length!=0);
   if(wrapped_message==NULL || (*wrapped_message_length)<(sizeof(themis_secure_encrypted_message_hdr_t)+encrypted_message_length)){
     (*wrapped_message_length)=(sizeof(themis_secure_encrypted_message_hdr_t)+encrypted_message_length);
     return THEMIS_BUFFER_TOO_SMALL;
@@ -292,7 +292,7 @@ themis_status_t themis_secure_message_ec_encrypter_proceed(themis_secure_message
   hdr->message_hdr.message_type=THEMIS_SECURE_MESSAGE_EC_ENCRYPTED;
   hdr->message_hdr.message_length=sizeof(themis_secure_encrypted_message_hdr_t)+encrypted_message_length;
   encrypted_message_length=(*wrapped_message_length)-sizeof(themis_secure_encrypted_message_hdr_t);
-  THEMIS_CHECK(themis_secure_cell_encrypt_full(ctx->shared_secret, ctx->shared_secret_length, NULL,0, message, message_length, wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t), &encrypted_message_length)==THEMIS_SUCCESS);
+  THEMIS_CHECK(themis_secure_cell_encrypt_seal(ctx->shared_secret, ctx->shared_secret_length, NULL,0, message, message_length, wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t), &encrypted_message_length)==THEMIS_SUCCESS);
   (*wrapped_message_length)=encrypted_message_length+sizeof(themis_secure_encrypted_message_hdr_t);
   return THEMIS_SUCCESS;
 }
@@ -312,12 +312,12 @@ themis_status_t themis_secure_message_ec_decrypter_proceed(themis_secure_message
   themis_secure_encrypted_message_hdr_t* hdr=(themis_secure_encrypted_message_hdr_t*)wrapped_message;
   THEMIS_CHECK_PARAM(hdr->message_hdr.message_type==THEMIS_SECURE_MESSAGE_EC_ENCRYPTED && wrapped_message_length==hdr->message_hdr.message_length);
   size_t computed_length=0;
-  THEMIS_CHECK(themis_secure_cell_decrypt_full(ctx->shared_secret, ctx->shared_secret_length, NULL,0,wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t), wrapped_message_length-sizeof(themis_secure_encrypted_message_hdr_t), NULL, &computed_length));
+  THEMIS_CHECK(themis_secure_cell_decrypt_seal(ctx->shared_secret, ctx->shared_secret_length, NULL,0,wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t), wrapped_message_length-sizeof(themis_secure_encrypted_message_hdr_t), NULL, &computed_length));
   if(message==NULL || (*message_length)<computed_length){
     (*message_length)=computed_length;
     return THEMIS_BUFFER_TOO_SMALL;
   }
-  THEMIS_CHECK(themis_secure_cell_decrypt_full(ctx->shared_secret, ctx->shared_secret_length, NULL,0,wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t), wrapped_message_length-sizeof(themis_secure_encrypted_message_hdr_t), message, message_length)==THEMIS_SUCCESS);
+  THEMIS_CHECK(themis_secure_cell_decrypt_seal(ctx->shared_secret, ctx->shared_secret_length, NULL,0,wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t), wrapped_message_length-sizeof(themis_secure_encrypted_message_hdr_t), message, message_length)==THEMIS_SUCCESS);
   return THEMIS_SUCCESS;
 }
     
