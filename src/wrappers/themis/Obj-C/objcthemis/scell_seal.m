@@ -42,20 +42,20 @@
     const void * contextData = (context != nil) ? [context bytes] : NULL;
     size_t contextLength = (context != nil) ? [context length] : 0;
 
-    TSErrorType result = (TSErrorType) themis_secure_cell_encrypt_full([self.key bytes], [self.key length],
+    TSErrorType result = (TSErrorType) themis_secure_cell_encrypt_seal([self.key bytes], [self.key length],
         contextData, contextLength, [message bytes], [message length], NULL, &wrappedMessageLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"themis_secure_cell_encrypt_full (length determination) fail");
+        *error = SCERROR(result, @"themis_secure_cell_encrypt_seal (length determination) fail");
         return nil;
     }
 
     unsigned char * wrappedMessage = malloc(wrappedMessageLength);
-    result = (TSErrorType) themis_secure_cell_encrypt_full([self.key bytes], [self.key length],
+    result = (TSErrorType) themis_secure_cell_encrypt_seal([self.key bytes], [self.key length],
         contextData, contextLength, [message bytes], [message length], wrappedMessage, &wrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"themis_secure_cell_encrypt_full fail");
+        *error = SCERROR(result, @"themis_secure_cell_encrypt_seal fail");
         free(wrappedMessage);
         return nil;
     }
@@ -73,20 +73,20 @@
     const void * contextData = (context != nil) ? [context bytes] : nil;
     size_t contextLength = (context != Nil) ? [context length] : 0;
 
-    TSErrorType result = (TSErrorType) themis_secure_cell_decrypt_full([self.key bytes], [self.key length],
+    TSErrorType result = (TSErrorType) themis_secure_cell_decrypt_seal([self.key bytes], [self.key length],
         contextData, contextLength, [message bytes], [message length], NULL, &unwrappedMessageLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"themis_secure_cell_decrypt_full (length determination) fail");
+        *error = SCERROR(result, @"themis_secure_cell_decrypt_seal (length determination) fail");
         return nil;
     }
 
     unsigned char * unwrappedMessage = malloc(unwrappedMessageLength);
-    result = (TSErrorType) themis_secure_cell_decrypt_full([self.key bytes], [self.key length],
+    result = (TSErrorType) themis_secure_cell_decrypt_seal([self.key bytes], [self.key length],
         contextData, contextLength, [message bytes], [message length], unwrappedMessage, &unwrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"themis_secure_cell_decrypt_full fail");
+        *error = SCERROR(result, @"themis_secure_cell_decrypt_seal fail");
         free(unwrappedMessage);
         return nil;
     }
