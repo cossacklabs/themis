@@ -43,7 +43,7 @@ def dec_children(node, context):
 #encoding file data.xml and save result to encoded_data.xml
 tree = ET.parse('data.xml');
 root = tree.getroot();
-enc=scell.scell_full(password);
+enc=scell.scell_seal(password);
 enc_children(root, "");
 tree.write("encoded_data.xml");
 

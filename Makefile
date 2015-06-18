@@ -175,7 +175,7 @@ endif
 
 rubythemis_install: install
 ifdef RUBY_GEM_VERSION
-	cd src/wrappers/themis/ruby && gem build themis.gemspec && gem install ./*.gem
+	cd src/wrappers/themis/ruby && gem build rubythemis.gemspec && gem install ./*.gem
 else
 	@echo "Error: ruby gem not found"
 	@exit 1

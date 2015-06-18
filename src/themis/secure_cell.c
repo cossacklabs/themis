@@ -17,7 +17,7 @@
 #include <themis/secure_cell.h>
 #include <themis/error.h>
 #include "sym_enc_message.h"
-themis_status_t themis_secure_cell_encrypt_full(const uint8_t* master_key,
+themis_status_t themis_secure_cell_encrypt_seal(const uint8_t* master_key,
 						const size_t master_key_length,
 						const uint8_t* user_context,
 						const size_t user_context_length,
@@ -35,7 +35,7 @@ themis_status_t themis_secure_cell_encrypt_full(const uint8_t* master_key,
   return themis_auth_sym_encrypt_message(master_key, master_key_length, message, message_length, user_context, user_context_length, encrypted_message, &ctx_length_, encrypted_message+ctx_length_, &msg_length_);
 }
 
-themis_status_t themis_secure_cell_decrypt_full(const uint8_t* master_key,
+themis_status_t themis_secure_cell_decrypt_seal(const uint8_t* master_key,
 						const size_t master_key_length,
 						const uint8_t* user_context,
 						const size_t user_context_length,
@@ -50,17 +50,88 @@ themis_status_t themis_secure_cell_decrypt_full(const uint8_t* master_key,
   return themis_auth_sym_decrypt_message(master_key, master_key_length, user_context, user_context_length, encrypted_message, ctx_length_, encrypted_message+ctx_length_, msg_length_, plain_message, plain_message_length);
 }
 
+themis_status_t themis_secure_cell_encrypt_token_protect(const uint8_t* master_key,
+							 const size_t master_key_length,
+							 const uint8_t* user_context,
+							 const size_t user_context_length,
+							 const uint8_t* message,
+							 const size_t message_length,
+							 uint8_t* context,
+							 size_t* context_length,
+							 uint8_t* encrypted_message,
+							 size_t* encrypted_message_length){
+  return themis_auth_sym_encrypt_message(master_key, master_key_length, message, message_length, user_context, user_context_length, context, context_length, encrypted_message, encrypted_message_length);  
+}
+
+themis_status_t themis_secure_cell_decrypt_token_protect(const uint8_t* master_key,
+							 const size_t master_key_length,
+							 const uint8_t* user_context,
+							 const size_t user_context_length,
+							 const uint8_t* encrypted_message,
+							 const size_t encrypted_message_length,
+							 const uint8_t* context,
+							 const size_t context_length,
+							 uint8_t* plain_message,
+							 size_t* plain_message_length){
+  return themis_auth_sym_decrypt_message(master_key, master_key_length, user_context, user_context_length, context, context_length, encrypted_message, encrypted_message_length, plain_message, plain_message_length);
+}
+
+themis_status_t themis_secure_cell_encrypt_context_imprint(const uint8_t* master_key,
+							   const size_t master_key_length,
+							   const uint8_t* message,
+							   const size_t message_length,
+							   const uint8_t* context,
+							   const size_t context_length,
+							   uint8_t* encrypted_message,
+							   size_t* encrypted_message_length){
+  return themis_sym_encrypt_message_u(master_key, master_key_length, context, context_length, message, message_length, encrypted_message, encrypted_message_length);
+}
+
+themis_status_t themis_secure_cell_decrypt_context_imprint(const uint8_t* master_key,
+							   const size_t master_key_length,
+							   const uint8_t* encrypted_message,
+							   const size_t encrypted_message_length,
+							   const uint8_t* context,
+							   const size_t context_length,
+							   uint8_t* plain_message,
+							   size_t* plain_message_length){
+  return themis_sym_decrypt_message_u(master_key, master_key_length, context, context_length, encrypted_message, encrypted_message_length, plain_message, plain_message_length);
+}
+
+/* for backward compatibility */
+themis_status_t themis_secure_cell_encrypt_full(const uint8_t* master_key,
+						const size_t master_key_length,
+						const uint8_t* user_context,
+						const size_t user_context_length,
+						const uint8_t* message,
+						const size_t message_length,
+						uint8_t* encrypted_message,
+						size_t* encrypted_message_length){
+  return  themis_secure_cell_encrypt_seal(master_key, master_key_length, user_context, user_context_length, message, message_length, encrypted_message, encrypted_message_length);
+}
+
+themis_status_t themis_secure_cell_decrypt_full(const uint8_t* master_key,
+						const size_t master_key_length,
+						const uint8_t* user_context,
+						const size_t user_context_length,
+						const uint8_t* encrypted_message,
+						const size_t encrypted_message_length,
+						uint8_t* plain_message,
+						size_t* plain_message_length){
+  return  themis_secure_cell_decrypt_seal(master_key, master_key_length, user_context, user_context_length, encrypted_message, encrypted_message_length, plain_message, plain_message_length);
+}
+
 themis_status_t themis_secure_cell_encrypt_auto_split(const uint8_t* master_key,
 						      const size_t master_key_length,
 						      const uint8_t* user_context,
 						      const size_t user_context_length,
 						      const uint8_t* message,
 						      const size_t message_length,
-						      uint8_t* context,
-						      size_t* context_length,
+						      uint8_t* token,
+						      size_t* token_length,
 						      uint8_t* encrypted_message,
 						      size_t* encrypted_message_length){
-  return themis_auth_sym_encrypt_message(master_key, master_key_length, message, message_length, user_context, user_context_length, context, context_length, encrypted_message, encrypted_message_length);  
+  return themis_secure_cell_encrypt_token_protect(master_key, master_key_length, user_context, user_context_length, message, message_length, token, token_length, encrypted_message, encrypted_message_length);
 }
 
 themis_status_t themis_secure_cell_decrypt_auto_split(const uint8_t* master_key,
@@ -69,11 +140,11 @@ themis_status_t themis_secure_cell_decrypt_auto_split(const uint8_t* master_key,
 						      const size_t user_context_length,
 						      const uint8_t* encrypted_message,
 						      const size_t encrypted_message_length,
-						      const uint8_t* context,
-						      const size_t context_length,
+						      const uint8_t* token,
+						      const size_t token_length,
 						      uint8_t* plain_message,
 						      size_t* plain_message_length){
-  return themis_auth_sym_decrypt_message(master_key, master_key_length, user_context, user_context_length, context, context_length, encrypted_message, encrypted_message_length, plain_message, plain_message_length);
+  return themis_secure_cell_decrypt_token_protect(master_key, master_key_length, user_context, user_context_length, encrypted_message, encrypted_message_length, token, token_length, plain_message, plain_message_length);  
 }
 
 themis_status_t themis_secure_cell_encrypt_user_split(const uint8_t* master_key,
@@ -84,7 +155,7 @@ themis_status_t themis_secure_cell_encrypt_user_split(const uint8_t* master_key,
 						      const size_t context_length,
 						      uint8_t* encrypted_message,
 						      size_t* encrypted_message_length){
-  return themis_sym_encrypt_message_u(master_key, master_key_length, context, context_length, message, message_length, encrypted_message, encrypted_message_length);
+  return themis_secure_cell_encrypt_context_imprint(master_key, master_key_length, message, message_length, context, context_length, encrypted_message, encrypted_message_length);
 }
 
 themis_status_t themis_secure_cell_decrypt_user_split(const uint8_t* master_key,
@@ -95,6 +166,5 @@ themis_status_t themis_secure_cell_decrypt_user_split(const uint8_t* master_key,
 						      const size_t context_length,
 						      uint8_t* plain_message,
 						      size_t* plain_message_length){
-  return themis_sym_decrypt_message_u(master_key, master_key_length, context, context_length, encrypted_message, encrypted_message_length, plain_message, plain_message_length);
+  return themis_secure_cell_decrypt_context_imprint(master_key, master_key_length, encrypted_message, encrypted_message_length, context, context_length, plain_message, plain_message_length);
 }
-
