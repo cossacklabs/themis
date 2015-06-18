@@ -30,7 +30,7 @@
 - (NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
     size_t wrappedMessageLength = 0;
 
-    TSErrorType encryptionResult = (TSErrorType) themis_secure_cell_encrypt_user_split([self.key bytes], [self.key length],
+    TSErrorType encryptionResult = (TSErrorType) themis_secure_cell_encrypt_context_imprint([self.key bytes], [self.key length],
             [message bytes], [message length], [context bytes], [context length], NULL, &wrappedMessageLength);
 
     if (encryptionResult != TSErrorTypeBufferTooSmall) {
@@ -40,7 +40,7 @@
 
     unsigned char * wrappedMessage = malloc(wrappedMessageLength);
 
-    encryptionResult = (TSErrorType) themis_secure_cell_encrypt_user_split([self.key bytes], [self.key length],
+    encryptionResult = (TSErrorType) themis_secure_cell_encrypt_context_imprint([self.key bytes], [self.key length],
             [message bytes], [message length], [context bytes], [context length], wrappedMessage, &wrappedMessageLength);
 
     if (encryptionResult != TSErrorTypeSuccess) {
@@ -58,7 +58,7 @@
 - (NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
     size_t unwrappedMessageLength = 0;
 
-    int decryptionResult = themis_secure_cell_decrypt_user_split([self.key bytes], [self.key length],
+    int decryptionResult = themis_secure_cell_decrypt_context_imprint([self.key bytes], [self.key length],
         [message bytes], [message length], [context bytes], [context length], NULL, &unwrappedMessageLength);
 
     if (decryptionResult != TSErrorTypeBufferTooSmall) {
@@ -68,7 +68,7 @@
 
     unsigned char * unwrappedMessage = malloc(unwrappedMessageLength);
 
-    decryptionResult = themis_secure_cell_decrypt_user_split([self.key bytes], [self.key length],
+    decryptionResult = themis_secure_cell_decrypt_context_imprint([self.key bytes], [self.key length],
         [message bytes], [message length], [context bytes], [context length], unwrappedMessage, &unwrappedMessageLength);
 
     if (decryptionResult != TSErrorTypeSuccess) {
