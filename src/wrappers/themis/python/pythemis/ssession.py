@@ -21,7 +21,7 @@ import ctypes;
 from collections import deque;
 import time;
 from ctypes.util import find_library
-themis = cdll.LoadLibrary(find_library('themis'))
+themis = ctypes.cdll.LoadLibrary(find_library('themis'))
 
 
 ON_GET_PUBLIC_KEY = ctypes.CFUNCTYPE(ctypes.c_int, ctypes.POINTER(ctypes.c_byte), ctypes.c_size_t, ctypes.POINTER(ctypes.c_byte), ctypes.c_size_t, ctypes.POINTER(ctypes.py_object));
