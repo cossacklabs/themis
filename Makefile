@@ -56,6 +56,13 @@ endif
 ifneq ($(ENGINE_LIB_PATH),)
 	CRYPTO_ENGINE_LIB_PATH = $(ENGINE_LIB_PATH)
 endif
+ifneq ($(AUTH_SYM_ALG),)
+	CFLAGS += -D$(AUTH_SYM_ALG)
+endif
+ifneq ($(SYM_ALG),)
+	CFLAGS += -D$(SYM_ALG)
+endif
+
 
 PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
