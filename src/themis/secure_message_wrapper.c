@@ -28,7 +28,7 @@
 
 #define THEMIS_RSA_SYM_ALG (SOTER_SYM_AES_CTR|SOTER_SYM_256_KEY_LENGTH|SOTER_SYM_PBKDF2)
 #define THEMIS_RSA_SYMM_PASSWD_LENGTH 70 //!!! need to aprove
-#define THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH 256 //encrypted password for rsa 256 
+//#define THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH 256 //encrypted password for rsa 256 
 #define THEMIS_RSA_SYMM_SALT_LENGTH 16
 
 #define THEMIS_EC_SYM_ALG (SOTER_SYM_AES_CTR|SOTER_SYM_256_KEY_LENGTH|SOTER_SYM_PBKDF2)
@@ -151,7 +151,7 @@ themis_status_t themis_secure_message_verifier_destroy(themis_secure_message_ver
 }
 
 
-/* secure_encryptet_message*/ 
+/* secure_encrypted_message*/ 
 typedef struct symm_init_ctx_type{
   uint8_t passwd[THEMIS_RSA_SYMM_PASSWD_LENGTH];
   uint8_t salt[THEMIS_RSA_SYMM_SALT_LENGTH];
@@ -170,35 +170,38 @@ themis_secure_message_rsa_encrypter_t* themis_secure_message_rsa_encrypter_init(
   THEMIS_CHECK_PARAM_(peer_public_key_length!=0);
   themis_secure_message_rsa_encrypter_t* ctx=malloc(sizeof(themis_secure_message_rsa_encrypter_t));
   THEMIS_CHECK_(ctx!=NULL);
-  ctx->asym_cipher=soter_asym_cipher_create(SOTER_ASYM_CIPHER_OAEP);
+  ctx->asym_cipher=soter_asym_cipher_create(peer_public_key, peer_public_key_length, SOTER_ASYM_CIPHER_OAEP);
   THEMIS_IF_FAIL_(ctx->asym_cipher!=NULL, themis_secure_message_rsa_encrypter_destroy(ctx));
-  THEMIS_IF_FAIL_(soter_asym_cipher_import_key(ctx->asym_cipher, peer_public_key, peer_public_key_length)==THEMIS_SUCCESS, themis_secure_message_rsa_encrypter_destroy(ctx));
   return ctx;
 }
 
+typedef struct themis_secure_rsa_encrypted_message_hdr_type{
+    themis_secure_encrypted_message_hdr_t msg;
+    uint32_t encrypted_passwd_length;
+} themis_secure_rsa_encrypted_message_hdr_t;
+
 themis_status_t themis_secure_message_rsa_encrypter_proceed(themis_secure_message_rsa_encrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length){
-  if(wrapped_message==NULL || (*wrapped_message_length)<(sizeof(themis_secure_encrypted_message_hdr_t)+THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH+message_length)){
-    (*wrapped_message_length)=(sizeof(themis_secure_encrypted_message_hdr_t)+THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH+message_length);
+  size_t symm_passwd_length=0;
+  size_t seal_message_length=0;
+  THEMIS_CHECK(soter_asym_cipher_encrypt(ctx->asym_cipher, "123", 3, NULL, &symm_passwd_length)==THEMIS_BUFFER_TOO_SMALL);
+  THEMIS_CHECK(themis_secure_cell_encrypt_seal("123", 3, NULL, 0, message, message_length, NULL, &seal_message_length)==THEMIS_BUFFER_TOO_SMALL);
+  if(wrapped_message==NULL || (*wrapped_message_length)<(sizeof(themis_secure_rsa_encrypted_message_hdr_t)+symm_passwd_length+seal_message_length)){
+    (*wrapped_message_length)=(sizeof(themis_secure_rsa_encrypted_message_hdr_t)+symm_passwd_length+seal_message_length);
     return THEMIS_BUFFER_TOO_SMALL;
   }
-  symm_init_ctx_t symm_passwd_salt;
-  THEMIS_CHECK(soter_rand((uint8_t*)(&symm_passwd_salt), sizeof(symm_passwd_salt))==THEMIS_SUCCESS);
-  soter_sym_ctx_t* cipher=soter_sym_encrypt_create(THEMIS_RSA_SYM_ALG, symm_passwd_salt.passwd, THEMIS_RSA_SYMM_PASSWD_LENGTH, symm_passwd_salt.salt, THEMIS_RSA_SYMM_SALT_LENGTH, NULL,0);
-  THEMIS_CHECK(cipher!=NULL);
-  size_t symm_passwd_length=THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH;
-  uint8_t* curr_wrapped_message=wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t);
-  size_t curr_wrapped_message_length=(THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH+message_length);
-  THEMIS_IF_FAIL(soter_asym_cipher_encrypt(ctx->asym_cipher, (uint8_t*)(&symm_passwd_salt), sizeof(symm_passwd_salt), curr_wrapped_message, &symm_passwd_length)==THEMIS_SUCCESS, soter_sym_encrypt_destroy(cipher));
-  curr_wrapped_message+=THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH;
-  curr_wrapped_message_length-=THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH;  
-  THEMIS_IF_FAIL(soter_sym_encrypt_update(cipher, message, message_length, curr_wrapped_message, wrapped_message_length)==THEMIS_SUCCESS, soter_sym_encrypt_destroy(cipher));
-  curr_wrapped_message+=(*wrapped_message_length);
-  curr_wrapped_message_length-=(*wrapped_message_length);    
-  THEMIS_IF_FAIL(soter_sym_encrypt_final(cipher, curr_wrapped_message, &curr_wrapped_message_length)==THEMIS_SUCCESS, soter_sym_encrypt_destroy(cipher));
-  THEMIS_CHECK(soter_sym_encrypt_destroy(cipher)==THEMIS_SUCCESS);
-  (*wrapped_message_length)+=sizeof(themis_secure_encrypted_message_hdr_t)+THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH+curr_wrapped_message_length;
-  ((themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_type=THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED_AES_CTR;
-  ((themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length=(*wrapped_message_length);  
+//  symm_init_ctx_t symm_passwd_salt;
+  uint8_t symm_passwd[THEMIS_RSA_SYMM_PASSWD_LENGTH];
+  THEMIS_CHECK(soter_rand(symm_passwd, sizeof(symm_passwd))==THEMIS_SUCCESS);
+  uint8_t* encrypted_symm_pass=wrapped_message+sizeof(themis_secure_rsa_encrypted_message_hdr_t);
+  size_t encrypted_symm_pass_length=symm_passwd_length;
+  THEMIS_CHECK(soter_asym_cipher_encrypt(ctx->asym_cipher, symm_passwd, sizeof(symm_passwd), encrypted_symm_pass, &encrypted_symm_pass_length)==THEMIS_SUCCESS);
+  (((themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length)=encrypted_symm_pass_length;
+  uint8_t* encrypted_message=encrypted_symm_pass+encrypted_symm_pass_length;
+  size_t encrypted_message_length=seal_message_length;
+  THEMIS_CHECK(themis_secure_cell_encrypt_seal(symm_passwd, sizeof(symm_passwd), NULL, 0, message, message_length, encrypted_message, &encrypted_message_length)==THEMIS_SUCCESS);
+  (*wrapped_message_length)=sizeof(themis_secure_rsa_encrypted_message_hdr_t)+encrypted_symm_pass_length+encrypted_message_length;
+  ((themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_type=THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED;
+  ((themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length=(*wrapped_message_length);
   return THEMIS_SUCCESS;
 }
 
@@ -219,35 +222,33 @@ themis_secure_message_rsa_decrypter_t* themis_secure_message_rsa_decrypter_init(
   THEMIS_CHECK_PARAM_(private_key_length!=0);
   themis_secure_message_rsa_decrypter_t* ctx=malloc(sizeof(themis_secure_message_rsa_decrypter_t));
   THEMIS_CHECK_(ctx!=NULL);
-  ctx->asym_cipher=soter_asym_cipher_create(SOTER_ASYM_CIPHER_OAEP);
+  ctx->asym_cipher=soter_asym_cipher_create(private_key, private_key_length, SOTER_ASYM_CIPHER_OAEP);
   THEMIS_IF_FAIL_(ctx->asym_cipher!=NULL, themis_secure_message_rsa_encrypter_destroy(ctx));
-  THEMIS_IF_FAIL_(soter_asym_cipher_import_key(ctx->asym_cipher, private_key, private_key_length)==THEMIS_SUCCESS, themis_secure_message_rsa_decrypter_destroy(ctx));
   return ctx;
 }
 
 themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_message_rsa_decrypter_t* ctx, const uint8_t* wrapped_message, const size_t wrapped_message_length, uint8_t* message, size_t* message_length){
-  THEMIS_CHECK_PARAM(wrapped_message_length>sizeof(themis_secure_encrypted_message_hdr_t)+THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH);
-  THEMIS_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_type==THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED_AES_CTR);
+  THEMIS_CHECK_PARAM(wrapped_message_length>sizeof(themis_secure_rsa_encrypted_message_hdr_t));
+  THEMIS_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_type==THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED);
   THEMIS_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length==wrapped_message_length);
-  if((*message_length)<(wrapped_message_length-sizeof(themis_secure_encrypted_message_hdr_t)+THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH)){
-    (*message_length)=(wrapped_message_length-sizeof(themis_secure_encrypted_message_hdr_t)+THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH);
+  size_t ml=0;
+  THEMIS_CHECK(themis_secure_cell_decrypt_seal("123",3,NULL,0,wrapped_message+sizeof(themis_secure_rsa_encrypted_message_hdr_t)+((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length, wrapped_message_length-sizeof(themis_secure_rsa_encrypted_message_hdr_t)-((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length, NULL, &ml)==THEMIS_BUFFER_TOO_SMALL);
+  if((*message_length)<ml){
+    (*message_length)=ml;
     return THEMIS_BUFFER_TOO_SMALL;
   }
-  uint8_t sym_ctx_buffer[THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH];
+  uint8_t sym_ctx_buffer[1024];
   size_t sym_ctx_length_=sizeof(sym_ctx_buffer);
-  wrapped_message+=sizeof(themis_secure_encrypted_message_hdr_t);
+  const uint8_t* wrapped_message_=wrapped_message;
+  wrapped_message_+=sizeof(themis_secure_rsa_encrypted_message_hdr_t);
   size_t wrapped_message_length_=wrapped_message_length;
-  wrapped_message_length_-=sizeof(themis_secure_encrypted_message_hdr_t);
-  THEMIS_CHECK(soter_asym_cipher_decrypt(ctx->asym_cipher, wrapped_message, THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH, sym_ctx_buffer, &sym_ctx_length_)==THEMIS_SUCCESS && sym_ctx_length_==sizeof(symm_init_ctx_t));
-  wrapped_message+=THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH;
-  wrapped_message_length_-=THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH;
-  soter_sym_ctx_t* cipher=soter_sym_decrypt_create( THEMIS_RSA_SYM_ALG, ((symm_init_ctx_t*)sym_ctx_buffer)->passwd, THEMIS_RSA_SYMM_PASSWD_LENGTH, ((symm_init_ctx_t*)sym_ctx_buffer)->salt, THEMIS_RSA_SYMM_SALT_LENGTH, NULL,0);
-  THEMIS_CHECK(cipher!=NULL);
-  THEMIS_IF_FAIL(soter_sym_decrypt_update(cipher, wrapped_message, wrapped_message_length_, message, message_length)==THEMIS_SUCCESS, soter_sym_decrypt_destroy(cipher));
-  size_t pad_length=16;
-  THEMIS_IF_FAIL(soter_sym_decrypt_final(cipher, message+(*message_length), &pad_length)==THEMIS_SUCCESS, soter_sym_decrypt_destroy(cipher));
-  (*message_length)+=pad_length;
-  THEMIS_CHECK(soter_sym_decrypt_destroy(cipher)==THEMIS_SUCCESS);
+  wrapped_message_length_-=sizeof(themis_secure_rsa_encrypted_message_hdr_t);
+  printf("%u\n", ((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length);
+      THEMIS_CHECK(soter_asym_cipher_decrypt(ctx->asym_cipher, wrapped_message_, ((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length, sym_ctx_buffer, &sym_ctx_length_)==THEMIS_SUCCESS);
+  wrapped_message_+=((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length;
+  wrapped_message_length_-=((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length;
+  printf("%u\n", sym_ctx_length_);
+  THEMIS_CHECK(themis_secure_cell_decrypt_seal(sym_ctx_buffer,sym_ctx_length_,NULL,0,wrapped_message_, wrapped_message_length_, message, message_length)==THEMIS_SUCCESS);
   return THEMIS_SUCCESS;
 }
 

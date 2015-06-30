@@ -36,6 +36,10 @@ struct soter_asym_cipher_type
 	EVP_PKEY_CTX *pkey_ctx;
 };
 
+struct soter_rsa_key_pair_gen_type{
+	EVP_PKEY_CTX *pkey_ctx;
+};
+
 struct soter_asym_ka_type
 {
 	EVP_PKEY_CTX *pkey_ctx;

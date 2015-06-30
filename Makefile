@@ -63,6 +63,21 @@ ifneq ($(SYM_ALG),)
 	CFLAGS += -D$(SYM_ALG)
 endif
 
+ifeq ($(RSA_KEY_LENGTH),1024)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_1024
+endif
+
+ifeq ($(RSA_KEY_LENGTH),2048)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_2048
+endif
+
+ifeq ($(RSA_KEY_LENGTH),4096)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_4096
+endif
+
+ifeq ($(RSA_KEY_LENGTH),8196)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8196
+endif
 
 PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)

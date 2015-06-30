@@ -238,9 +238,6 @@ themis_status_t themis_sym_encrypt_message_(const uint8_t* key,
 					   size_t* out_context_length,
 					   uint8_t* encrypted_message,
 					   size_t* encrypted_message_length){
-  //  if(in_context!=NULL && in_context_length!=0){
-  //  THEMIS_CHECK_PARAM(in_context_length>THEMIS_SYM_IV_LENGTH);
-  //}
   if(encrypted_message==NULL || (*encrypted_message_length)<message_length || out_context==NULL  || (*out_context_length)<(sizeof(themis_sym_message_hdr_t)+THEMIS_SYM_IV_LENGTH)){
     (*out_context_length)=(sizeof(themis_sym_message_hdr_t)+THEMIS_SYM_IV_LENGTH);
     (*encrypted_message_length)=message_length;
@@ -250,12 +247,7 @@ themis_status_t themis_sym_encrypt_message_(const uint8_t* key,
   (*out_context_length)=(sizeof(themis_sym_message_hdr_t)+THEMIS_SYM_IV_LENGTH);
   themis_sym_message_hdr_t* hdr=(themis_sym_message_hdr_t*)out_context;
   uint8_t* iv=out_context+sizeof(themis_sym_message_hdr_t);
-  //if(in_context!=NULL && in_context_length!=0){
-  //  memcpy(iv, in_context, THEMIS_SYM_IV_LENGTH);
-  //}
-  //else{
   THEMIS_CHECK(soter_rand(iv, THEMIS_SYM_IV_LENGTH)==THEMIS_SUCCESS);
-    //}
   hdr->alg=THEMIS_SYM_ALG;
   hdr->iv_length=THEMIS_AUTH_SYM_IV_LENGTH;
   hdr->message_length=message_length;
