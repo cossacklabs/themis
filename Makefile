@@ -128,6 +128,9 @@ endif
 all: err themis_static themis_shared
 
 test_all: err test
+	echo "./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" > ./$(BIN_PATH)/tests/phpthemis_test.sh
+	echo "./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
+
 
 soter_static: $(SOTER_OBJ)
 	$(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
