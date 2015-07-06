@@ -63,6 +63,21 @@ ifneq ($(SYM_ALG),)
 	CFLAGS += -D$(SYM_ALG)
 endif
 
+ifeq ($(RSA_KEY_LENGTH),1024)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_1024
+endif
+
+ifeq ($(RSA_KEY_LENGTH),2048)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_2048
+endif
+
+ifeq ($(RSA_KEY_LENGTH),4096)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_4096
+endif
+
+ifeq ($(RSA_KEY_LENGTH),8192)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
+endif
 
 PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
@@ -113,6 +128,9 @@ endif
 all: err themis_static themis_shared
 
 test_all: err test
+	echo "./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" > ./$(BIN_PATH)/tests/phpthemis_test.sh
+	echo "./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
+
 
 soter_static: $(SOTER_OBJ)
 	$(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)

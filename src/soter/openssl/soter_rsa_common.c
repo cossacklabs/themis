@@ -21,6 +21,10 @@
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
+#ifndef SOTER_RSA_KEY_LENGTH
+#define SOTER_RSA_KEY_LENGTH 2048
+#endif
+
 soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx)
 {
   /* it is copy-paste from /src/soter/openssl/soter_asym_cipher.c */
@@ -55,7 +59,7 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx)
   }
   
   /* Override default key size for RSA key. Currently OpenSSL has default key size of 1024. LibreSSL has 2048. We will put 2048 explicitly */
-  if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_BITS, 2048, NULL)){
+  if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_BITS, SOTER_RSA_KEY_LENGTH, NULL)){
     return SOTER_FAIL;
   }
   

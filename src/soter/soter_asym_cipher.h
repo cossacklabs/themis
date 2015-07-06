@@ -48,17 +48,12 @@ typedef struct soter_asym_cipher_type soter_asym_cipher_t;
 
 /**
  * @brief create asymmetric encription/decription context
+ * @param [in] key cipher key. If key point to public key soter_asym_cipher_create return pointer to encrypter object. Owervise will return pointer to decrypter object.
+ * @param [in] key_length length of key
  * @param [in] pad padding algorithm to be used. See @ref soter_asym_cipher_padding_type
  * @return pointer to created asymmetric encription/decription context on success or NULL on failure
  */
-soter_asym_cipher_t* soter_asym_cipher_create(soter_asym_cipher_padding_t pad);
-
-/**
- * @brief asymmetric keys pair generation for asymmetric encription/decription context
- * @param [in] asym_cipher_ctx pointer to asymmetric encription/decription context previously created by soter_asym_cipher_create
- * @return SOTER_SUCESS on success or SOTER_FAIL on failure
- */
-soter_status_t soter_asym_cipher_gen_key(soter_asym_cipher_t* asym_cipher_ctx);
+soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_length, soter_asym_cipher_padding_t pad);
 
 /**
  * @brief encrypt data
@@ -85,24 +80,13 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher_ctx, c
 soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher_ctx, const void* cipher_data, size_t cipher_data_length, void* plain_data, size_t* plain_data_length);
 
 /**
- * @brief export key from asymmetric encription/decription context
- * @param [in] asym_cipher_ctx pointer to asymmetric encription/decription context previously created by soter_asym_cipher_create
- * @param [out] key buffer to store exported key
- * @param [in,out] key_length length of key. May be set to NULL for key length determination
- * @param [in] isprivate if set private key will be exported. If not set public key will be exported
- * @return  SOTER_SUCESS on success or SOTER_FAIL on failure
- * @note If key==NULL or key_length less then need to store key, @ref SOTER_BUFFER_TOO_SMALL will return and key_length will contain length of buffer thet need to store key.
- */
-soter_status_t soter_asym_cipher_export_key(soter_asym_cipher_t* asym_cipher_ctx, void* key, size_t* key_length, bool isprivate);
-
-/**
  * @brief import key to asymmetric encription/decription context
  * @param [in] asym_cipher_ctx pointer to asymmetric encription/decription context previously created by soter_asym_cipher_create
  * @param [in] key buffer with stored key
  * @param [in] key_length length of key
  * @return  SOTER_SUCESS on success or SOTER_FAIL on failure
  */
-soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx, const void* key, size_t key_length);
+//soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx, const void* key, size_t key_length);
 
 /**
  * @brief destroy asymmetric encription/decription context
