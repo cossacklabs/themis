@@ -233,7 +233,7 @@ themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_messag
   THEMIS_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length==wrapped_message_length);
   size_t ml=0;
   THEMIS_CHECK(themis_secure_cell_decrypt_seal("123",3,NULL,0,wrapped_message+sizeof(themis_secure_rsa_encrypted_message_hdr_t)+((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length, wrapped_message_length-sizeof(themis_secure_rsa_encrypted_message_hdr_t)-((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length, NULL, &ml)==THEMIS_BUFFER_TOO_SMALL);
-  if((*message_length)<ml){
+  if((message==NULL)||((*message_length)<ml)){
     (*message_length)=ml;
     return THEMIS_BUFFER_TOO_SMALL;
   }
