@@ -132,6 +132,8 @@ test_all: err test
 	echo "./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 	echo "ruby ./tests/rubythemis/scell_test.rb" > ./$(BIN_PATH)/tests/rubythemis_test.sh
 	echo "ruby ./tests/rubythemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
+	echo "python ./tests/pythemis/scell_test.py" > ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "python ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 
 
 soter_static: $(SOTER_OBJ)
