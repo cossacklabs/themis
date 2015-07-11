@@ -22,6 +22,8 @@ themis = cdll.LoadLibrary(find_library('themis'))
 
 class smessage(object):
     def __init__(self, private_key_, peer_public_key_):
+	if len(private_key_)==0 or len(peer_public_key_)==0:
+	    raise themis_exception(THEMIS_CODES.FAIL,"themis_secure_message creation error");
 	self.private_key=private_key_;
         self.peer_public_key=peer_public_key_;
 
