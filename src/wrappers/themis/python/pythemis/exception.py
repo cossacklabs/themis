@@ -29,5 +29,5 @@ class themis_exception(Exception):
         self.error_code=error_code
         self.message = message
     def __str__(self):
-        return repr("Themis error: "+str(error_code)+" --"+self.message)
+        return repr("Themis error: "+str(self.error_code)+" --"+self.message)
 

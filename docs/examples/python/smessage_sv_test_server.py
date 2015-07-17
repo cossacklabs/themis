@@ -29,7 +29,7 @@ accepted, addr = conn.accept();
 accepted.set_peer_pub_key(client_pub);
 
 while True:
-    try:
+code    try:
         message = accepted.recv(1024); #receive message
         print message;
         if message == "finish": #"finish" - last message
