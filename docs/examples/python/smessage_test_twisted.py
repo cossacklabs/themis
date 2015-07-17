@@ -25,10 +25,10 @@ server_priv= str('\x52\x45\x43\x32\x00\x00\x00\x2d\x49\x87\x04\x6b\x00\xf2\x06\x
 
 class Tw_protocol(protocol.Protocol):
     def __init__(self):
-	self.smessage=smessage.smessage(server_priv, client_pub);
+        self.smessage=smessage.smessage(server_priv, client_pub);
 
-    def dataReceived(self, data):		#receive message
-        message = self.smessage.unwrap(data);	#decrypt_message
+    def dataReceived(self, data):                #receive message
+        message = self.smessage.unwrap(data);        #decrypt_message
         print message;
         self.transport.write(self.smessage.wrap(message)); #encrypt -> send message
 

@@ -28,9 +28,9 @@ smessage=smessage.smessage(server_priv, client_pub);
 
 class MainHandler(tornado.web.RequestHandler):        
     def post(self):
-        message = smessage.unwrap(self.request.body); 	#decrypt accepted message
+        message = smessage.unwrap(self.request.body);         #decrypt accepted message
         print message;
-        self.write(smessage.wrap(message));		#encrypt and send message
+        self.write(smessage.wrap(message));                #encrypt and send message
             
 application = tornado.web.Application([
     (r"/", MainHandler),

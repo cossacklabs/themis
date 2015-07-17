@@ -25,8 +25,8 @@ server_priv= str('\x52\x45\x43\x32\x00\x00\x00\x2d\x49\x87\x04\x6b\x00\xf2\x06\x
 
 
 class transport(ssession.mem_transport):
-    def get_pub_key_by_id(self, user_id):	#necessary callback function
-        if user_id != "client":			#we have only one peer with id "client"
+    def get_pub_key_by_id(self, user_id):        #necessary callback function
+        if user_id != "client":                        #we have only one peer with id "client"
             raise Exception("no such id");
         return client_pub; 
 
@@ -34,13 +34,13 @@ session=ssession.ssession("server", server_priv, transport());
 
 class MainHandler(tornado.web.RequestHandler):        
     def post(self):
-	print repr(self.request.body);
-        message = session.unwrap(self.request.body);	#decrypt received message
-        if message.is_control:				#if status==1 then session is not ectablish yet
-            self.write(message);			#send unwraped message to client as is
-        else:						#if status!=1 then session is established
-            print message;				#print accepted plain message
-            self.write(session.wrap(message));		#encrypt and send reply message 
+        print repr(self.request.body);
+        message = session.unwrap(self.request.body);        #decrypt received message
+        if message.is_control:                                #if status==1 then session is not ectablish yet
+            self.write(message);                        #send unwraped message to client as is
+        else:                                                #if status!=1 then session is established
+            print message;                                #print accepted plain message
+            self.write(session.wrap(message));                #encrypt and send reply message 
 application = tornado.web.Application([
     (r"/", MainHandler),
 ])

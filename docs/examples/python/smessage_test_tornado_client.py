@@ -28,8 +28,8 @@ smessage=smessage.smessage(client_priv, server_pub);
 try:
     response = http_client.fetch(tornado.httpclient.HTTPRequest("http://127.0.0.1:26260", "POST", None, smessage.wrap("This is test message")));
     #decrypt request body(message)
-    message = smessage.unwrap(response.body); 	#encrypt message
-    print message;				#send message
+    message = smessage.unwrap(response.body);         #encrypt message
+    print message;                                #send message
     
 except tornado.httpclient.HTTPError as e:
     print("Error: " + str(e));
