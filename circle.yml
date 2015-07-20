@@ -5,23 +5,29 @@ machine:
 ## Customize dependencies
 dependencies:
   pre:
-    - sudo apt-get install libssl-dev
+    - sudo apt-get install libssl-dev python python3 ruby php
 
   override:
     - make
     - make test
+    - make tes_all
     - sudo make install
+    - sudo make pythonthemis_install
+    - sudo make rubythemis_install
+    - sudo make phpthemis_install
 
 ## Customize test commands
 test:
   override:
     - build/tests/soter_test
     - build/tests/themis_test
+    - build/tests/pythemis_test.sh
+    - build/test/rubythemis_test.sh
     # start Android emulator
-    - emulator -avd circleci-android22 -no-audio -no-window:
-        background: true
+    #- emulator -avd circleci-android22 -no-audio -no-window:
+    #    background: true
     # wait for it to have booted
-    - circle-android wait-for-boot
+    #- circle-android wait-for-boot
     # run Android tests
-    - ./gradlew connectedAndroidTest
+    #- ./gradlew connectedAndroidTest
 
