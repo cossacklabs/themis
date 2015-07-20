@@ -198,7 +198,7 @@ ifdef RUBY_GEM_VERSION
 	gem uninstall themis
 endif
 
-pythonthemis_uninstall: 
+pythemis_uninstall: 
 ifdef PIP_THEMIS_INSTALL
 	pip -q uninstall -y themis
 endif
@@ -230,10 +230,13 @@ else
 	@exit 1
 endif
 
-pythonthemis_install: install
+pythemis_install: install
 ifdef PYTHON_VERSION
 	cd src/wrappers/themis/python/ && python setup.py install
 else
 	@echo "Error: python not found"
 	@exit 1
+endif
+ifdef PYTHON3_VERSION
+	cd src/wrappers/themis/python/ && python3 setup.py install
 endif
