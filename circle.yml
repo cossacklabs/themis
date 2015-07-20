@@ -13,7 +13,7 @@ dependencies:
     - make test_all
     - sudo make install
     - sudo make pythonthemis_install
-    - make rubythemis_install
+    - sudo make rubythemis_install
 
 ## Customize test commands
 test:
