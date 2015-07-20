@@ -10,7 +10,7 @@ dependencies:
   override:
     - make
     - make test
-    - make tes_all
+    - make test_all
     - sudo make install
     - sudo make pythonthemis_install
     - sudo make rubythemis_install
