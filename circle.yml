@@ -5,7 +5,7 @@ machine:
 ## Customize dependencies
 dependencies:
   pre:
-    - sudo apt-get install libssl-dev python python3 ruby php5
+    - sudo apt-get install libssl-dev python python3 ruby php5-common
 
   override:
     - make
