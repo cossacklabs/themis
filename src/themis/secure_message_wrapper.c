@@ -183,8 +183,8 @@ typedef struct themis_secure_rsa_encrypted_message_hdr_type{
 themis_status_t themis_secure_message_rsa_encrypter_proceed(themis_secure_message_rsa_encrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length){
   size_t symm_passwd_length=0;
   size_t seal_message_length=0;
-  THEMIS_CHECK(soter_asym_cipher_encrypt(ctx->asym_cipher, "123", 3, NULL, &symm_passwd_length)==THEMIS_BUFFER_TOO_SMALL);
-  THEMIS_CHECK(themis_secure_cell_encrypt_seal("123", 3, NULL, 0, message, message_length, NULL, &seal_message_length)==THEMIS_BUFFER_TOO_SMALL);
+  THEMIS_CHECK(soter_asym_cipher_encrypt(ctx->asym_cipher, (const uint8_t*)"123", 3, NULL, &symm_passwd_length)==THEMIS_BUFFER_TOO_SMALL);
+  THEMIS_CHECK(themis_secure_cell_encrypt_seal((const uint8_t*)"123", 3, NULL, 0, message, message_length, NULL, &seal_message_length)==THEMIS_BUFFER_TOO_SMALL);
   if(wrapped_message==NULL || (*wrapped_message_length)<(sizeof(themis_secure_rsa_encrypted_message_hdr_t)+symm_passwd_length+seal_message_length)){
     (*wrapped_message_length)=(sizeof(themis_secure_rsa_encrypted_message_hdr_t)+symm_passwd_length+seal_message_length);
     return THEMIS_BUFFER_TOO_SMALL;
@@ -232,7 +232,7 @@ themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_messag
   THEMIS_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_type==THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED);
   THEMIS_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length==wrapped_message_length);
   size_t ml=0;
-  THEMIS_CHECK(themis_secure_cell_decrypt_seal("123",3,NULL,0,wrapped_message+sizeof(themis_secure_rsa_encrypted_message_hdr_t)+((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length, wrapped_message_length-sizeof(themis_secure_rsa_encrypted_message_hdr_t)-((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length, NULL, &ml)==THEMIS_BUFFER_TOO_SMALL);
+  THEMIS_CHECK(themis_secure_cell_decrypt_seal((const uint8_t*)"123",3,NULL,0,wrapped_message+sizeof(themis_secure_rsa_encrypted_message_hdr_t)+((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length, wrapped_message_length-sizeof(themis_secure_rsa_encrypted_message_hdr_t)-((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length, NULL, &ml)==THEMIS_BUFFER_TOO_SMALL);
   if((message==NULL)||((*message_length)<ml)){
     (*message_length)=ml;
     return THEMIS_BUFFER_TOO_SMALL;
