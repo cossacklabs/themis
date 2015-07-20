@@ -22,7 +22,7 @@ test:
     - build/tests/themis_test
     - sudo /sbin/ldconfig
     - build/tests/pythemis_test.sh
-    - build/tests/rubythemis_test.sh
+    - sudo build/tests/rubythemis_test.sh
     # start Android emulator
     #- emulator -avd circleci-android22 -no-audio -no-window:
     #    background: true
