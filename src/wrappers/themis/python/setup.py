@@ -62,6 +62,6 @@ setup(
     },
 
     install_requires=[
-	'enum',
+        'enum34',
     ],
 )
