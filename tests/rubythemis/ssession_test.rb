@@ -19,6 +19,7 @@
 require 'rubygems'
 require 'rubythemis'
 require 'test/unit'
+require 'thread'
 
 $q1 = Queue.new
 $q2 = Queue.new
