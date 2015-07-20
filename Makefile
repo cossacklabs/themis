@@ -83,6 +83,7 @@ PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
 PYTHON_VERSION := $(shell python --version 2>&1)
+PYTHON3_VERSION := $(shell python3 --version 2>&1)
 ifdef PIP_VERSION
 PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
 endif
@@ -128,14 +129,29 @@ endif
 all: err themis_static themis_shared
 
 test_all: err test
+ifdef PHP_VERSION
 	echo "./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" > ./$(BIN_PATH)/tests/phpthemis_test.sh
 	echo "./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
+endif
+ifdef RUBY_GEM_VERSION
 	echo "ruby ./tests/rubythemis/scell_test.rb" > ./$(BIN_PATH)/tests/rubythemis_test.sh
 	echo "ruby ./tests/rubythemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
 	echo "ruby ./tests/rubythemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
+endif
+ifdef PYTHON_VERSION
 	echo "python ./tests/pythemis/scell_test.py" > ./$(BIN_PATH)/tests/pythemis_test.sh
 	echo "python ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 	echo "python ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+ifdef PYTHON3_VERSION
+	echo "echo Python3 $(PYTHON3_VERSION) tests" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "echo ----- pythemis secure cell tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "python3 ./tests/pythemis/scell_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "echo ----- pythemis secure message tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "python3 ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "echo ----- pythemis secure session tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "python3 ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+endif
+endif
 	chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
 	chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
 	chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh

@@ -16,6 +16,7 @@
 #!/usr/bin/env python
 
 import pythemis;
+import pythemis.exception as exception
 from pythemis.exception import THEMIS_CODES;
 import ctypes;
 from collections import deque;
