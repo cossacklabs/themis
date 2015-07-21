@@ -36,13 +36,15 @@
     self = [super init];
     if (self) {
         self.algorithm = algorithm;
-        [self generateKeys];
+        if ([self generateKeys]!=TSErrorTypeSuccess) {
+            return nil;
+        }
     }
     return self;
 }
 
 
-- (void)generateKeys {
+- (TSErrorType)generateKeys {
     size_t privateKeyLength = 0;
     size_t publicKeyLength = 0;
 
@@ -74,11 +76,7 @@
             result = (TSErrorType) themis_gen_rsa_key_pair([self.privateKey mutableBytes], &privateKeyLength,
                             [self.publicKey mutableBytes], &publicKeyLength);
     }
-
-    if (result != TSErrorTypeSuccess) {
-        // Error occurred, but user will never know about it :P
-        return;
-    }
+    return result;
 }
 
 @end
