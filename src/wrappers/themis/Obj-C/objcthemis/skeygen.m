@@ -37,7 +37,7 @@
     if (self) {
         self.algorithm = algorithm;
         if ([self generateKeys]!=TSErrorTypeSuccess) {
-            return nil;
+            return NULL;
         }
     }
     return self;
@@ -58,7 +58,7 @@
             result = (TSErrorType) themis_gen_rsa_key_pair(NULL, &privateKeyLength, NULL, &publicKeyLength);
     }
     if (result != TSErrorTypeBufferTooSmall) {
-        return;
+        return result;
     }
 
     // Initialize keys
