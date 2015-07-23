@@ -1,7 +1,6 @@
 machine:
   environment:
     ANDROID_NDK_ROOT: $ANDROID_NDK
-    IOS_BUILD_NUMBER: tests/start_ios_test.sh
 
 ## Customize dependencies
 dependencies:
@@ -18,17 +17,13 @@ dependencies:
 
 ## Customize test commands
 test:
-  pre:
-#    - export IOS_BUILD_NUMBER=`tests/start_ios_test.sh`
-    - echo $IOS_BUILD_NUMBER
-  post:
-    - tests/check_ios_test.sh $IOS_BUILD_NUMBER
   override:
     - build/tests/soter_test
     - build/tests/themis_test
     - sudo /sbin/ldconfig
     - build/tests/pythemis_test.sh
     - sudo build/tests/rubythemis_test.sh
+    - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
     #- emulator -avd circleci-android22 -no-audio -no-window:
     #    background: true
