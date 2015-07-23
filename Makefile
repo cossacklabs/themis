@@ -130,8 +130,8 @@ all: err themis_static themis_shared
 
 test_all: err test
 ifdef PHP_VERSION
-	echo "php -c tests/phpthemis/php.ini /usr/bin/phpunit ./tests/phpthemis/scell_test.php" > ./$(BIN_PATH)/tests/phpthemis_test.sh
-	echo "php -c tests/phpthemis/php.ini /usr/bin/phpunit ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
+	echo "php -c tests/phpthemis/php.ini tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" > ./$(BIN_PATH)/tests/phpthemis_test.sh
+	echo "php -c tests/phpthemis/php.ini tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 endif
 ifdef RUBY_GEM_VERSION
 	echo "ruby ./tests/rubythemis/scell_test.rb" > ./$(BIN_PATH)/tests/rubythemis_test.sh
