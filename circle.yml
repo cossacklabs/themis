@@ -17,6 +17,10 @@ dependencies:
 
 ## Customize test commands
 test:
+  pre:
+    - IOS_BUILD_NUMBER=tests/start_ios_test.sh
+  post:
+    - tests/check_ios_buid $IOS_BUILD_NUMBER
   override:
     - build/tests/soter_test
     - build/tests/themis_test
