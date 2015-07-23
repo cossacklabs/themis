@@ -14,6 +14,7 @@ dependencies:
     - sudo make install
     - sudo make pythemis_install
     - sudo make rubythemis_install
+    - sudo make phpthemis_install
 
 ## Customize test commands
 test:
