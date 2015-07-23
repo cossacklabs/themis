@@ -5,7 +5,7 @@ machine:
 ## Customize dependencies
 dependencies:
   pre:
-    - sudo apt-get install libssl-dev python python3 python3-setuptools ruby
+    - sudo apt-get install libssl-dev python3 python3-setuptools ruby phpunit
 
   override:
     - make
@@ -14,6 +14,7 @@ dependencies:
     - sudo make install
     - sudo make pythemis_install
     - sudo make rubythemis_install
+    - sudo make phpthemis_install
 
 ## Customize test commands
 test:
@@ -23,6 +24,8 @@ test:
     - sudo /sbin/ldconfig
     - build/tests/pythemis_test.sh
     - sudo build/tests/rubythemis_test.sh
+    - build/tests/phpthemis_test.sh
+    - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
     #- emulator -avd circleci-android22 -no-audio -no-window:
     #    background: true
