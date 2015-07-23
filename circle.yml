@@ -18,7 +18,8 @@ dependencies:
 ## Customize test commands
 test:
   pre:
-    - IOS_BUILD_NUMBER=tests/start_ios_test.sh
+    - export IOS_BUILD_NUMBER=`tests/start_ios_test.sh`
+    - echo $IOS_BUILD_NUMBER
   post:
     - tests/check_ios_test.sh $IOS_BUILD_NUMBER
   override:
