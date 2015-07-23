@@ -5,7 +5,7 @@ machine:
 ## Customize dependencies
 dependencies:
   pre:
-    - sudo apt-get install libssl-dev python python3 python3-setuptools ruby
+    - sudo apt-get install libssl-dev python3 python3-setuptools ruby
 
   override:
     - make
