@@ -40,6 +40,11 @@
         self.privateKey = [privateKey copy];
         self.publicKey = [peerPublicKey copy];
         self.mode = TSMessageModeEncryptDecrypt;
+	NSString* ms = @"123";
+	NSDtata m[] =  [ms dataUsingEncoding:NSUTF8StringEncoding];
+	NSError* error=NULL;
+	NSData* s=[self wrapData:m error:error];
+	if(!s){return nil;}
     }
     return self;
 }
@@ -51,6 +56,11 @@
         self.privateKey = [privateKey copy];
         self.publicKey = [peerPublicKey copy];
         self.mode = TSMessageModeSignVerify;
+	NSString* ms = @"123";
+	NSDtata m[] =  [ms dataUsingEncoding:NSUTF8StringEncoding];
+	NSError* error=NULL;
+	NSData* s=[self wrapData:m error:error];
+	if(!s){return nil;}
     }
     return self;
 }
