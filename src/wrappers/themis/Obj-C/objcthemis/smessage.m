@@ -42,7 +42,7 @@
         self.publicKey = [peerPublicKey copy];
         self.mode = TSMessageModeEncryptDecrypt;
 	NSString* ms = @"123";
-	NSDtata m[] =  [ms dataUsingEncoding:NSUTF8StringEncoding];
+	NSData* m =  [ms dataUsingEncoding:NSUTF8StringEncoding];
 	NSError* error=NULL;
 	NSData* s=[self wrapData:m error:error];
 	if(!s){return nil;}
@@ -58,7 +58,7 @@
         self.publicKey = [peerPublicKey copy];
         self.mode = TSMessageModeSignVerify;
 	NSString* ms = @"123";
-	NSDtata m[] =  [ms dataUsingEncoding:NSUTF8StringEncoding];
+	NSData* m =  [ms dataUsingEncoding:NSUTF8StringEncoding];
 	NSError* error=NULL;
 	NSData* s=[self wrapData:m error:error];
 	if(!s){return nil;}
