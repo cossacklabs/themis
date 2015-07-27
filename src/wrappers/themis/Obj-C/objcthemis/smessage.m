@@ -44,7 +44,7 @@
 	NSString* ms = @"123";
 	NSData* m =  [ms dataUsingEncoding:NSUTF8StringEncoding];
 	NSError* error=NULL;
-	NSData* s=[self wrapData:m error:error];
+	NSData* s=[self wrapData:m error:&error];
 	if(!s){return nil;}
     }
     return self;
@@ -60,7 +60,7 @@
 	NSString* ms = @"123";
 	NSData* m =  [ms dataUsingEncoding:NSUTF8StringEncoding];
 	NSError* error=NULL;
-	NSData* s=[self wrapData:m error:error];
+	NSData* s=[self wrapData:m error:&error];
 	if(!s){return nil;}
     }
     return self;
