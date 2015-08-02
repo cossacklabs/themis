@@ -28,7 +28,7 @@ soter_status_t soter_pbkdf2(const uint8_t* password, const size_t password_lengt
   if(!PKCS5_PBKDF2_HMAC((const char*)password, password_length, salt, salt_length, 0, EVP_sha256(), (*key_length), key)){
       return SOTER_FAIL;
     }
-  return SOTER_SUCCESS;			
+  return SOTER_SUCCESS;
 }
 
 soter_status_t soter_nokdf(const uint8_t* password, const size_t password_length, uint8_t* key, size_t* key_length){
@@ -292,13 +292,3 @@ soter_status_t soter_sym_aead_decrypt_final(soter_sym_ctx_t *ctx, const void* au
 soter_status_t soter_sym_aead_decrypt_destroy(soter_sym_ctx_t *ctx){
   return soter_sym_ctx_destroy(ctx);
 }
-
-
-
-
-
-
-
-
-
-

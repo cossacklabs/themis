@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 
-from enum import Enum;
+from enum import IntEnum;
 
-class THEMIS_CODES(Enum):
+class THEMIS_CODES(IntEnum):
     NETWORK_ERROR=-2222
     BUFFER_TOO_SMALL=-4
     FAIL=-1
@@ -26,8 +26,8 @@ class THEMIS_CODES(Enum):
 
 class themis_exception(Exception):
     def __init__(self, error_code, message):
-	self.error_code=error_code
-	self.message = message
+        self.error_code=error_code
+        self.message = message
     def __str__(self):
-	return repr("Themis error: "+str(error_code)+" --"+self.message)
+        return repr("Themis error: "+str(self.error_code)+" --"+self.message)
 

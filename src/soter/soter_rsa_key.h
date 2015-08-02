@@ -30,6 +30,11 @@
 #define RSA_4096 "4"
 #define RSA_8192 "8"
 
+#define RSA_KEY_LENGTH_1024 1
+#define RSA_KEY_LENGTH_2048 2
+#define RSA_KEY_LENGTH_4096 3
+#define RSA_KEY_LENGTH_8192 4
+
 #define RSA_KEY_SUF(_KEY_SIZE_) RSA_##_KEY_SIZE_
 
 #define RSA_PRIV_KEY_TAG(_KEY_SIZE_) (RSA_PRIV_KEY_PREF RSA_KEY_SUF(_KEY_SIZE_))
@@ -53,8 +58,7 @@
 	struct soter_rsa_priv_key_##_KEY_SIZE_##_type \
 	{ \
 		soter_container_hdr_t hdr; \
-		uint8_t priv_exp[RSA_BYTE_SIZE(_KEY_SIZE_)]; \
-		uint8_t p[RSA_BYTE_SIZE(_KEY_SIZE_) / 2]; \
+		uint8_t priv_exp[RSA_BYTE_SIZE(_KEY_SIZE_)];		uint8_t p[RSA_BYTE_SIZE(_KEY_SIZE_) / 2]; \
 		uint8_t q[RSA_BYTE_SIZE(_KEY_SIZE_) / 2]; \
 		uint8_t dp[RSA_BYTE_SIZE(_KEY_SIZE_) / 2]; \
 		uint8_t dq[RSA_BYTE_SIZE(_KEY_SIZE_) / 2]; \
@@ -68,7 +72,6 @@
 #define DECLARE_RSA_KEY(_KEY_SIZE_) \
 	DECLARE_RSA_PUBLIC_KEY(_KEY_SIZE_); \
 	DECLARE_RSA_PRIVATE_KEY(_KEY_SIZE_)
-
 /* We support 1024, 2048, 4096, 8192 RSA keys */
 DECLARE_RSA_KEY(1024);
 DECLARE_RSA_KEY(2048);
@@ -82,5 +85,4 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t 
 soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t *key, size_t key_length, soter_engine_specific_rsa_key_t **engine_key);
 soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific_rsa_key_t *engine_key, soter_container_hdr_t *key, size_t* key_length);
 soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_rsa_key_t *engine_key, soter_container_hdr_t *key, size_t* key_length);
-
 #endif /* SOTER_RSA_KEY_H */

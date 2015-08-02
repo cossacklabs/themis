@@ -49,7 +49,7 @@
     size_t contextLength = (context != nil) ? [context length] : 0;
 
     TSCellTokenEncryptedData * encryptedMessage = [[TSCellTokenEncryptedData alloc] init];
-    TSErrorType result = (TSErrorType) themis_secure_cell_encrypt_auto_split([self.key bytes], [self.key length],
+    TSErrorType result = (TSErrorType) themis_secure_cell_encrypt_token_protect([self.key bytes], [self.key length],
             contextData, contextLength, [message bytes], [message length], NULL, &tokenLength,
             NULL, &wrappedMessageLength);
 
@@ -61,7 +61,7 @@
     encryptedMessage.cipherText = [[NSMutableData alloc] initWithLength:wrappedMessageLength];
     encryptedMessage.token = [[NSMutableData alloc] initWithLength:tokenLength];
 
-    result = (TSErrorType) themis_secure_cell_encrypt_auto_split([self.key bytes], [self.key length], contextData, contextLength,
+    result = (TSErrorType) themis_secure_cell_encrypt_token_protect([self.key bytes], [self.key length], contextData, contextLength,
             [message bytes], [message length], [encryptedMessage.token mutableBytes], &tokenLength,
             [encryptedMessage.cipherText mutableBytes], &wrappedMessageLength);
 
@@ -78,7 +78,7 @@
     const void * contextData = (context != nil) ? [context bytes] : NULL;
     size_t contextLength = (context != nil) ? [context length] : 0;
 
-    TSErrorType result = (TSErrorType) themis_secure_cell_decrypt_auto_split([self.key bytes], [self.key length], contextData, contextLength,
+    TSErrorType result = (TSErrorType) themis_secure_cell_decrypt_token_protect([self.key bytes], [self.key length], contextData, contextLength,
             [message.cipherText bytes], [message.cipherText length], [message.token bytes], [message.token length],
             NULL, &unwrappedMessageLength);
 
@@ -88,7 +88,7 @@
     }
 
     NSMutableData * unwrapped_message = [[NSMutableData alloc] initWithLength:unwrappedMessageLength];
-    result = (TSErrorType) themis_secure_cell_decrypt_auto_split([self.key bytes], [self.key length], contextData, contextLength,
+    result = (TSErrorType) themis_secure_cell_decrypt_token_protect([self.key bytes], [self.key length], contextData, contextLength,
             [message.cipherText bytes], [message.cipherText length], [message.token bytes], [message.token length],
             [unwrapped_message mutableBytes], &unwrappedMessageLength);
 

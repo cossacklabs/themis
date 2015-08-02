@@ -241,12 +241,12 @@ static zend_function_entry php_themis_functions[] = {
   PHP_FE(phpthemis_secure_message_unwrap, NULL)
   PHP_FE(phpthemis_gen_rsa_key_pair, NULL)
   PHP_FE(phpthemis_gen_ec_key_pair, NULL)
-  PHP_FE(phpthemis_scell_full_encrypt, NULL)
-  PHP_FE(phpthemis_scell_full_decrypt, NULL)
-  PHP_FE(phpthemis_scell_auto_split_encrypt,NULL)
-  PHP_FE(phpthemis_scell_auto_split_decrypt, NULL)
-  PHP_FE(phpthemis_scell_user_split_encrypt, NULL)
-  PHP_FE(phpthemis_scell_user_split_decrypt, NULL)
+  PHP_FE(phpthemis_scell_seal_encrypt, NULL)
+  PHP_FE(phpthemis_scell_seal_decrypt, NULL)
+  PHP_FE(phpthemis_scell_token_protect_encrypt,NULL)
+  PHP_FE(phpthemis_scell_token_protect_decrypt, NULL)
+  PHP_FE(phpthemis_scell_context_imprint_encrypt, NULL)
+  PHP_FE(phpthemis_scell_context_imprint_decrypt, NULL)
   {NULL, NULL, NULL}
 };
 
@@ -291,6 +291,7 @@ PHP_FUNCTION(phpthemis_secure_message_wrap){
   char* message;
   int message_length;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &private_key, &private_key_length, &public_key, &public_key_length, &message, &message_length) == FAILURE) {
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_message in wrap: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   if(!public_key_length){
@@ -298,14 +299,17 @@ PHP_FUNCTION(phpthemis_secure_message_wrap){
   }
   size_t wrapped_message_length=0;
   if(themis_secure_message_wrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, NULL, &wrapped_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_message in wrap: wrapped message length determination failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* wrapped_message=emalloc((int)wrapped_message_length);
   if(wrapped_message==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_message in wrap: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();    
   }
   if(themis_secure_message_wrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, (uint8_t*)wrapped_message, &wrapped_message_length)!=0/*HERMES_SUCCESS*/){
     efree(wrapped_message);
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_message in wrap: wrapping failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, wrapped_message, wrapped_message_length, 0);
@@ -320,18 +324,22 @@ PHP_FUNCTION(phpthemis_secure_message_unwrap){
   char* message;
   int message_length;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &private_key, &private_key_length, &public_key, &public_key_length, &message, &message_length) == FAILURE) {
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_message in unwrap: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   size_t unwrapped_message_length=0;
   if(themis_secure_message_unwrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, NULL, &unwrapped_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_message in unwrap: unwrapped message length determination failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* unwrapped_message=emalloc((int)unwrapped_message_length);
   if(unwrapped_message==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_message in unwrap: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();    
   }
   if(themis_secure_message_unwrap((uint8_t*)private_key, private_key_length, (uint8_t*)public_key, public_key_length, (uint8_t*)message, message_length, (uint8_t*)unwrapped_message, &unwrapped_message_length)!=0/*HERMES_SUCCESS*/){
     efree(unwrapped_message);
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_message in unwrap: unwrapping failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, unwrapped_message, (int)unwrapped_message_length, 0);
@@ -342,17 +350,21 @@ PHP_FUNCTION(phpthemis_gen_rsa_key_pair){
   size_t private_key_length;
   size_t public_key_length;
   if(themis_gen_rsa_key_pair(NULL, &private_key_length, NULL, &public_key_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_gen_rsa_key_pair: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* private_key=emalloc(private_key_length);
   if(private_key==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_gen_rsa_key_pair: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* public_key=emalloc(public_key_length);
   if(public_key==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_gen_rsa_key_pair: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   if(themis_gen_rsa_key_pair((uint8_t*)private_key, &private_key_length, (uint8_t*)public_key, &public_key_length)!=0/*HERMES_SUCCESS*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_gen_rsa_key_pair: generation failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   array_init(return_value);
@@ -364,17 +376,21 @@ PHP_FUNCTION(phpthemis_gen_ec_key_pair){
   size_t private_key_length;
   size_t public_key_length;
   if(themis_gen_ec_key_pair(NULL, &private_key_length, NULL, &public_key_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_gen_ec_key_pair: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* private_key=emalloc(private_key_length);
   if(private_key==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_gen_ec_key_pair: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* public_key=emalloc(public_key_length);
   if(public_key==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_gen_ec_key_pair: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   if(themis_gen_ec_key_pair((uint8_t*)private_key, &private_key_length, (uint8_t*)public_key, &public_key_length)!=0/*HERMES_SUCCESS*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_gen_ec_key_pair: generation failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   array_init(return_value);
@@ -382,7 +398,7 @@ PHP_FUNCTION(phpthemis_gen_ec_key_pair){
   add_assoc_stringl(return_value, "public_key", public_key, public_key_length, 0);
 }
 
-PHP_FUNCTION(phpthemis_scell_full_encrypt){
+PHP_FUNCTION(phpthemis_scell_seal_encrypt){
   char* key;
   int key_length;
   char* message;
@@ -390,24 +406,28 @@ PHP_FUNCTION(phpthemis_scell_full_encrypt){
   char* context=NULL;
   int context_length=0;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|s", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_encrypt: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   size_t encrypted_message_length=0;
-  if(themis_secure_cell_encrypt_full((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &encrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+  if(themis_secure_cell_encrypt_seal((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &encrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_encrypt: encrypted message length determination failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* encrypted_message=emalloc((int)encrypted_message_length);
   if(encrypted_message==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_encrypt: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
-  if(themis_secure_cell_encrypt_full((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=0/*HERMES_SUCCESS*/){
+  if(themis_secure_cell_encrypt_seal((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=0/*HERMES_SUCCESS*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_encrypt: encryption failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, encrypted_message, (int)encrypted_message_length, 0);
   return;
 }
 
-PHP_FUNCTION(phpthemis_scell_full_decrypt){
+PHP_FUNCTION(phpthemis_scell_seal_decrypt){
   char* key;
   int key_length;
   char* message;
@@ -415,24 +435,28 @@ PHP_FUNCTION(phpthemis_scell_full_decrypt){
   char* context=NULL;
   int context_length=0;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|s", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_decrypt: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   size_t decrypted_message_length=0;
-  if(themis_secure_cell_decrypt_full((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &decrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+  if(themis_secure_cell_decrypt_seal((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &decrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_decrypt: decrypted message length determination failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* decrypted_message=emalloc((int)decrypted_message_length);
   if(decrypted_message==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_decrypt: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
-  if(themis_secure_cell_decrypt_full((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=0/*HERMES_SUCCESS*/){
+  if(themis_secure_cell_decrypt_seal((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=0/*HERMES_SUCCESS*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_decrypt: decription failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, decrypted_message, (int)decrypted_message_length, 0);
   return;
 }
 
-PHP_FUNCTION(phpthemis_scell_auto_split_encrypt){
+PHP_FUNCTION(phpthemis_scell_token_protect_encrypt){
   char* key;
   int key_length;
   char* message;
@@ -440,31 +464,36 @@ PHP_FUNCTION(phpthemis_scell_auto_split_encrypt){
   char* context=NULL;
   int context_length=0;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|s", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_encrypt: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   size_t encrypted_message_length=0;
   size_t additional_auth_data_length=0;
-  if(themis_secure_cell_encrypt_auto_split((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &additional_auth_data_length, NULL, &encrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+  if(themis_secure_cell_encrypt_token_protect((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &additional_auth_data_length, NULL, &encrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_encrypt: encrypted message length determination failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* encrypted_message=emalloc((int)encrypted_message_length);
   if(encrypted_message==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_encrypt: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* additional_auth_data=emalloc((int)additional_auth_data_length);
   if(additional_auth_data==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_encrypt: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
-  if(themis_secure_cell_encrypt_auto_split((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, &additional_auth_data_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=0/*HERMES_SUCCESS*/){
+  if(themis_secure_cell_encrypt_token_protect((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, &additional_auth_data_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=0/*HERMES_SUCCESS*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_encrypt: encryption failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   array_init(return_value);
   add_assoc_stringl(return_value, "encrypted_message", encrypted_message, encrypted_message_length, 0);
-  add_assoc_stringl(return_value, "additional_auth_data", additional_auth_data, additional_auth_data_length, 0);
+  add_assoc_stringl(return_value, "token", additional_auth_data, additional_auth_data_length, 0);
   return;
 }
 
-PHP_FUNCTION(phpthemis_scell_auto_split_decrypt){
+PHP_FUNCTION(phpthemis_scell_token_protect_decrypt){
   char* key;
   int key_length;
   char* message;
@@ -474,24 +503,28 @@ PHP_FUNCTION(phpthemis_scell_auto_split_decrypt){
   char* context=NULL;
   int context_length=0;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|s", &key, &key_length, &message, &message_length, &additional_auth_data, &additional_auth_data_length, &context, &context_length) == FAILURE) {
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_decrypt: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   size_t decrypted_message_length=0;
-  if(themis_secure_cell_decrypt_auto_split((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, additional_auth_data_length, NULL, &decrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+  if(themis_secure_cell_decrypt_token_protect((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, additional_auth_data_length, NULL, &decrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_decrypt: dectipt message length determination failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* decrypted_message=emalloc((int)decrypted_message_length);
   if(decrypted_message==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_decrypt: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
-  if(themis_secure_cell_decrypt_auto_split((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, additional_auth_data_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=0/*HERMES_SUCCESS*/){
+  if(themis_secure_cell_decrypt_token_protect((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, additional_auth_data_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=0/*HERMES_SUCCESS*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_decrypt: decryption failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, decrypted_message, (int)decrypted_message_length, 0);
   return;
 }
 
-PHP_FUNCTION(phpthemis_scell_user_split_encrypt){
+PHP_FUNCTION(phpthemis_scell_context_imprint_encrypt){
   char* key;
   int key_length;
   char* message;
@@ -499,24 +532,28 @@ PHP_FUNCTION(phpthemis_scell_user_split_encrypt){
   char* context;
   int context_length;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_context_imprint_encrypt: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   size_t encrypted_message_length=0;
-  if(themis_secure_cell_encrypt_user_split((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, NULL, &encrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+  if(themis_secure_cell_encrypt_context_imprint((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, NULL, &encrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_context_imprint_encrypt: encrypt message length determination failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* encrypted_message=emalloc((int)encrypted_message_length);
   if(encrypted_message==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_context_imprint_encrypt: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
-  if(themis_secure_cell_encrypt_user_split((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=0/*HERMES_SUCCESS*/){
+  if(themis_secure_cell_encrypt_context_imprint((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=0/*HERMES_SUCCESS*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_context_imprint_encrypt: encryption failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, encrypted_message, (int)encrypted_message_length, 0);
   return;
 }
 
-PHP_FUNCTION(phpthemis_scell_user_split_decrypt){
+PHP_FUNCTION(phpthemis_scell_context_imprint_decrypt){
   char* key;
   int key_length;
   char* message;
@@ -524,17 +561,21 @@ PHP_FUNCTION(phpthemis_scell_user_split_decrypt){
   char* context=NULL;
   int context_length=0;
   if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_context_imprint_decrypt: invalid parameters.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   size_t decrypted_message_length=0;
-  if(themis_secure_cell_decrypt_user_split((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, NULL, &decrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+  if(themis_secure_cell_decrypt_context_imprint((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, NULL, &decrypted_message_length)!=-4/*HERMES_BUFFER_TOO_SMALL*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_context_imprint_decrypt: decrypt message length determination failed.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   char* decrypted_message=emalloc((int)decrypted_message_length);
   if(decrypted_message==NULL){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_context_imprint_decrypt: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
-  if(themis_secure_cell_decrypt_user_split((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=0/*HERMES_SUCCESS*/){
+  if(themis_secure_cell_decrypt_context_imprint((uint8_t*)key, key_length, (uint8_t*)message, message_length, (uint8_t*)context, context_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=0/*HERMES_SUCCESS*/){
+    zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_context_imprint_decrypt: decrypting failure.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
   ZVAL_STRINGL(return_value, decrypted_message, (int)decrypted_message_length, 0);

@@ -23,7 +23,7 @@ from pythemis import scell;
 
 password="password";
 
-def init_table(conn):	#table initialisation
+def init_table(conn):        #table initialisation
     cur = conn.cursor();
     cur.execute("select exists(select * from information_schema.tables where table_name=%s)", ('scell_data',));
     if cur.fetchone()[0]==False:
@@ -34,8 +34,8 @@ def init_table(conn):	#table initialisation
     conn.commit();
     cur.close();
 
-def add_record(conn, field1, field2):	#store record
-    enc=scell.scell_auto_split(password);
+def add_record(conn, field1, field2):        #store record
+    enc=scell.scell_token_protect(password);
     enc_field1, field1_auth_data = enc.encrypt(str(field1)); #encrypt field1
     enc_field2, field2_auth_data = enc.encrypt(str(field2)); #encrypt field2
     
@@ -47,8 +47,8 @@ def add_record(conn, field1, field2):	#store record
     cur.close();
     return new_id_value;
 
-def get_record(conn, id):		#retrieve record from db by id
-    dec=scell.scell_auto_split(password);
+def get_record(conn, id):                #retrieve record from db by id
+    dec=scell.scell_token_protect(password);
     cur = conn.cursor();
     cur.execute("SELECT * FROM scell_data INNER JOIN scell_data_auth ON scell_data.id = %s AND scell_data.id=scell_data_auth.id;", (id,))
     x = cur.fetchone();
@@ -59,7 +59,7 @@ def get_record(conn, id):		#retrieve record from db by id
     return (num,data);
 
 
-conn = psycopg2.connect("dbname=scell_auto_split_test user=postgres");
+conn = psycopg2.connect("dbname=scell_token_protect_test user=postgres");
 init_table(conn);
 id=add_record(conn, "First record", "Second record");
 rec=get_record(conn, id);

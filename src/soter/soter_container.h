@@ -18,7 +18,7 @@
 #define SOTER_CONTAINER_H
 
 #include <stdint.h>
-#include <soter/soter.h>
+#include <soter/error.h>
 
 #define SOTER_CONTAINER_TAG_LENGTH 4
 

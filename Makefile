@@ -56,11 +56,34 @@ endif
 ifneq ($(ENGINE_LIB_PATH),)
 	CRYPTO_ENGINE_LIB_PATH = $(ENGINE_LIB_PATH)
 endif
+ifneq ($(AUTH_SYM_ALG),)
+	CFLAGS += -D$(AUTH_SYM_ALG)
+endif
+ifneq ($(SYM_ALG),)
+	CFLAGS += -D$(SYM_ALG)
+endif
+
+ifeq ($(RSA_KEY_LENGTH),1024)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_1024
+endif
+
+ifeq ($(RSA_KEY_LENGTH),2048)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_2048
+endif
+
+ifeq ($(RSA_KEY_LENGTH),4096)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_4096
+endif
+
+ifeq ($(RSA_KEY_LENGTH),8192)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
+endif
 
 PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
 PYTHON_VERSION := $(shell python --version 2>&1)
+PYTHON3_VERSION := $(shell python3 --version 2>&1)
 ifdef PIP_VERSION
 PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
 endif
@@ -106,6 +129,32 @@ endif
 all: err themis_static themis_shared
 
 test_all: err test
+ifdef PHP_VERSION
+	echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" > ./$(BIN_PATH)/tests/phpthemis_test.sh
+	echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
+endif
+ifdef RUBY_GEM_VERSION
+	echo "ruby ./tests/rubythemis/scell_test.rb" > ./$(BIN_PATH)/tests/rubythemis_test.sh
+	echo "ruby ./tests/rubythemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
+	echo "ruby ./tests/rubythemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
+endif
+ifdef PYTHON_VERSION
+	echo "python ./tests/pythemis/scell_test.py" > ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "python ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "python ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+ifdef PYTHON3_VERSION
+	echo "echo Python3 $(PYTHON3_VERSION) tests" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "echo ----- pythemis secure cell tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "python3 ./tests/pythemis/scell_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "echo ----- pythemis secure message tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "python3 ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "echo ----- pythemis secure session tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	echo "python3 ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+endif
+endif
+	chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
+	chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
+	chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
 
 soter_static: $(SOTER_OBJ)
 	$(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
@@ -149,7 +198,7 @@ ifdef RUBY_GEM_VERSION
 	gem uninstall themis
 endif
 
-pythonthemis_uninstall: 
+pythemis_uninstall: 
 ifdef PIP_THEMIS_INSTALL
 	pip -q uninstall -y themis
 endif
@@ -175,16 +224,19 @@ endif
 
 rubythemis_install: install
 ifdef RUBY_GEM_VERSION
-	cd src/wrappers/themis/ruby && gem build themis.gemspec && gem install ./*.gem
+	cd src/wrappers/themis/ruby && gem build rubythemis.gemspec && gem install ./*.gem
 else
 	@echo "Error: ruby gem not found"
 	@exit 1
 endif
 
-pythonthemis_install: install
+pythemis_install: install
 ifdef PYTHON_VERSION
 	cd src/wrappers/themis/python/ && python setup.py install
 else
 	@echo "Error: python not found"
 	@exit 1
+endif
+ifdef PYTHON3_VERSION
+	cd src/wrappers/themis/python/ && python3 setup.py install
 endif

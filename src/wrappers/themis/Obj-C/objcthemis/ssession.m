@@ -108,7 +108,6 @@
 
     if (result != TSErrorTypeSuccess) {
         if (result == TSErrorTypeSendAsIs) {
-            *error = SCERROR(result, @"secure_session_unwrap send as is");
             return unwrappedMessage;
         }
         else {
@@ -142,7 +141,6 @@
 }
 
 
-// not used currently. why?
 - (BOOL)isSessionEstablished {
     return secure_session_is_established(self.session);
 }
