@@ -14,15 +14,18 @@
 * limitations under the License.
 */
 
-#ifndef _THEMIS_TEST_H_
-#define _THEMIS_TEST_H_
+#include "ge_utils.h"
 
-#include <themis/error.h>
-#include <common/test_utils.h>
-#include <themis/themis.h>
-void run_secure_message_test(void);
-void run_secure_session_test(void);
-void run_secure_cell_test(void);
-void run_secure_comparator_test(void);
+void ge_p2_to_p3(ge_p3 *r, const ge_p2 *p)
+{
+	if (p != (const ge_p2 *)r)
+	{
+		fe_copy(r->X, p->X);
+		fe_copy(r->Y, p->Y);
+		fe_copy(r->Z, p->Z);
+	}
 
-#endif /* _THEMIS_TEST_H_ */
+	fe_invert(r->T, p->Z);
+	fe_mul(r->T, r->T, p->X);
+	fe_mul(r->T, r->T, p->Y);
+}

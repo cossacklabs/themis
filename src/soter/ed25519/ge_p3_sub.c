@@ -14,15 +14,15 @@
 * limitations under the License.
 */
 
-#ifndef _THEMIS_TEST_H_
-#define _THEMIS_TEST_H_
+#include "ge_utils.h"
 
-#include <themis/error.h>
-#include <common/test_utils.h>
-#include <themis/themis.h>
-void run_secure_message_test(void);
-void run_secure_session_test(void);
-void run_secure_cell_test(void);
-void run_secure_comparator_test(void);
+void ge_p3_sub(ge_p3 *r, const ge_p3 *p, const ge_p3 *q)
+{
+	ge_cached q_cached;
+	ge_p1p1 r_p1p1;
 
-#endif /* _THEMIS_TEST_H_ */
+	ge_p3_to_cached(&q_cached, q);
+	ge_sub(&r_p1p1, p, &q_cached);
+
+	ge_p1p1_to_p3(r, &r_p1p1);
+}

@@ -14,15 +14,24 @@
 * limitations under the License.
 */
 
-#ifndef _THEMIS_TEST_H_
-#define _THEMIS_TEST_H_
+#include "ge_utils.h"
+#include <string.h>
+#include <stdint.h>
 
-#include <themis/error.h>
-#include <common/test_utils.h>
-#include <themis/themis.h>
-void run_secure_message_test(void);
-void run_secure_session_test(void);
-void run_secure_cell_test(void);
-void run_secure_comparator_test(void);
+int ge_cmp(const ge_p3 *a, const ge_p3 *b)
+{
+	unsigned char a_comp[ED25519_GE_LENGTH];
+	unsigned char b_comp[ED25519_GE_LENGTH];
+	uint32_t r = 0;
+	uint32_t i;
 
-#endif /* _THEMIS_TEST_H_ */
+	ge_p3_tobytes(a_comp, a);
+	ge_p3_tobytes(b_comp, b);
+
+	for (i = 0; i < (ED25519_GE_LENGTH / sizeof(uint32_t)); i++)
+	{
+		r |= ((uint32_t *)a_comp)[i] ^ ((uint32_t *)b_comp)[i];
+	}
+
+	return (int)r;
+}

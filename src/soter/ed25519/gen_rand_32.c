@@ -14,15 +14,25 @@
 * limitations under the License.
 */
 
-#ifndef _THEMIS_TEST_H_
-#define _THEMIS_TEST_H_
+#include "ge_utils.h"
+#include <soter/soter.h>
 
-#include <themis/error.h>
-#include <common/test_utils.h>
-#include <themis/themis.h>
-void run_secure_message_test(void);
-void run_secure_session_test(void);
-void run_secure_cell_test(void);
-void run_secure_comparator_test(void);
+void clip_random_32(unsigned char *r)
+{
+    r[0] &= 248;
+    r[31] &= 63;
+    r[31] |= 64;
+}
 
-#endif /* _THEMIS_TEST_H_ */
+void generate_random_32(unsigned char *r)
+{
+	soter_status_t res = soter_rand(r, ED25519_GE_LENGTH);
+
+	if (SOTER_SUCCESS != res)
+	{
+		/* TODO: How to handle this to keep non-error nature of ed25519 ? */
+		exit(1);
+	}
+
+	clip_random_32(r);
+}
