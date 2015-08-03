@@ -14,15 +14,18 @@
 * limitations under the License.
 */
 
-#ifndef _THEMIS_TEST_H_
-#define _THEMIS_TEST_H_
+#include "ge_utils.h"
 
-#include <themis/error.h>
-#include <common/test_utils.h>
-#include <themis/themis.h>
-void run_secure_message_test(void);
-void run_secure_session_test(void);
-void run_secure_cell_test(void);
-void run_secure_comparator_test(void);
+void ge_scalarmult_blinded(ge_p3 *r, const unsigned char *a, const ge_p3 *A)
+{
+	unsigned char rnd[32];
+	ge_p3 sub;
 
-#endif /* _THEMIS_TEST_H_ */
+	generate_random_32(rnd);
+
+	ge_double_scalarmult_vartime((ge_p2 *)r, a, A, rnd);
+	ge_p2_to_p3(r, (ge_p2 *)r);
+
+	ge_scalarmult_base(&sub, rnd);
+	ge_p3_sub(r, r, &sub);
+}

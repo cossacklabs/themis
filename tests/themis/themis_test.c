@@ -20,12 +20,14 @@
 
 int main(int argc, char* argv[])
 {
-  //printf("%s\n", themis_version());
+  printf("%s\n", themis_version());
   testsuite_start_testing();
 
   run_secure_message_test();
   run_secure_session_test();
   run_secure_cell_test();
+  run_secure_comparator_test();
+
   testsuite_finish_testing();
   return testsuite_get_return_value();
 }

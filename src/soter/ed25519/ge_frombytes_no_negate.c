@@ -14,15 +14,18 @@
 * limitations under the License.
 */
 
-#ifndef _THEMIS_TEST_H_
-#define _THEMIS_TEST_H_
+#include "ge_utils.h"
 
-#include <themis/error.h>
-#include <common/test_utils.h>
-#include <themis/themis.h>
-void run_secure_message_test(void);
-void run_secure_session_test(void);
-void run_secure_cell_test(void);
-void run_secure_comparator_test(void);
+int ge_frombytes_vartime(ge_p3 *h, const unsigned char *s)
+{
+	int res = ge_frombytes_negate_vartime(h, s);
 
-#endif /* _THEMIS_TEST_H_ */
+	if (0 == res)
+	{
+		/* Undo negate */
+		fe_neg(h->X, h->X);
+		fe_neg(h->T, h->T);
+	}
+
+	return res;
+}
