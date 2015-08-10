@@ -22,6 +22,7 @@ LOCAL_MODULE := libsoter
 
 LOCAL_SRC_FILES := $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/soter/*.c))
 LOCAL_SRC_FILES += $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/soter/openssl/*.c))
+LOCAL_SRC_FILES += $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/soter/ed25519/*.c))
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src $(LOCAL_PATH)/external/openssl/include
 LOCAL_CFLAGS := -DOPENSSL
@@ -46,7 +47,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libthemis_jni
 
-LOCAL_SRC_FILES := themis_jni.c themis_message.c themis_keygen.c themis_cell.c themis_session.c
+LOCAL_SRC_FILES := themis_jni.c themis_message.c themis_keygen.c themis_cell.c themis_session.c themis_compare.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src $(LOCAL_PATH)/external/openssl/include
 
 LOCAL_STATIC_LIBRARIES := libthemis libsoter
