@@ -117,6 +117,13 @@ ifdef DEBUG
 	CFLAGS += -DDEBUG -g
 endif
 
+ifdef SECURE_COMPARATOR
+ifeq ($(SECURE_COMPARATOR),enable)
+	CFLAGS += -DSECURE_COMPARATOR_ENABLED
+	SECURE_COMPARATOR_ENABLED=enable
+endif
+endif
+
 # Should pay attention to warnings (some may be critical for crypto-enabled code (ex. signed-unsigned mismatch)
 CFLAGS += -Werror -Wno-switch
 

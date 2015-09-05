@@ -14,6 +14,8 @@
 * limitations under the License.
 */
 
+#ifdef SECURE_COMPARATOR_ENABLED
+
 #include "secure_comparator_t.h"
 #include <string.h>
 
@@ -411,3 +413,5 @@ themis_status_t secure_comparator_get_result(const secure_comparator_t *comp_ctx
 
 	return comp_ctx->result;
 }
+
+#endif
