@@ -23,7 +23,6 @@ class THEMIS_CODES(IntEnum):
     SUCCESS=0
     SEND_AS_IS=1
 
-
 class themis_exception(Exception):
     def __init__(self, error_code, message):
         self.error_code=error_code
