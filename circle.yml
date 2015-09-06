@@ -13,8 +13,8 @@ dependencies:
     - make SECURE_COMPARATOR=enable test_all
     - sudo make SECURE_COMPARATOR=enable install
     - sudo make SECURE_COMPARATOR=enable pythemis_install
-    - sudo make rubythemis_install
-    - sudo make phpthemis_install
+    - sudo make SECURE_COMPARATOR=enable rubythemis_install
+    - sudo make SECURE_COMPARATOR=enable phpthemis_install
 
 ## Customize test commands
 test:
