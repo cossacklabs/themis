@@ -119,8 +119,8 @@ endif
 
 ifdef SECURE_COMPARATOR
 ifeq ($(SECURE_COMPARATOR),enable)
-	CFLAGS += -DSECURE_COMPARATOR_ENABLED
-	SECURE_COMPARATOR_ENABLED=enable
+CFLAGS += -DSECURE_COMPARATOR_ENABLED
+SECURE_COMPARATOR_ENABLED = enable
 endif
 endif
 
@@ -149,6 +149,9 @@ ifdef PYTHON_VERSION
 	echo "python ./tests/pythemis/scell_test.py" > ./$(BIN_PATH)/tests/pythemis_test.sh
 	echo "python ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 	echo "python ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+ifdef SECURE_COMPARATOR_ENABLED
+	echo "python ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+endif
 ifdef PYTHON3_VERSION
 	echo "echo Python3 $(PYTHON3_VERSION) tests" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 	echo "echo ----- pythemis secure cell tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
@@ -157,6 +160,9 @@ ifdef PYTHON3_VERSION
 	echo "python3 ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 	echo "echo ----- pythemis secure session tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 	echo "python3 ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+ifdef SECURE_COMPARATOR_ENABLED
+	echo "python3 ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+endif
 endif
 endif
 	chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
