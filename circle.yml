@@ -25,7 +25,7 @@ test:
     - build/tests/pythemis_test.sh
     - sudo build/tests/rubythemis_test.sh
     - build/tests/phpthemis_test.sh
-    - make clean && make SECURE_COMPARATOR=enable && sudo make SECURE_COMPARATOR=enable install && sudo make SECURE_COMPARATOR=enable pythemis_install && build/tests/themis_test && build/tests/pythemis_test.sh
+    - make clean && make SECURE_COMPARATOR=enable && sudo make SECURE_COMPARATOR=enable install && sudo make SECURE_COMPARATOR=enable pythemis_install && ./themis/build/tests/themis_test && ./themis/build/tests/pythemis_test.sh
     - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
     - emulator -avd circleci-android22 -no-audio -no-window:
