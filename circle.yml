@@ -27,10 +27,10 @@ test:
     - build/tests/phpthemis_test.sh
     - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
-    #- emulator -avd circleci-android22 -no-audio -no-window:
-    #    background: true
+    - emulator -avd circleci-android22 -no-audio -no-window:
+        background: true
     # wait for it to have booted
-    #- circle-android wait-for-boot
+    - circle-android wait-for-boot
     # run Android tests
-    #- ./gradlew connectedAndroidTest
+    - ./gradlew connectedAndroidTest
 
