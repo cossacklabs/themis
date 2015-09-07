@@ -17,6 +17,7 @@
 #ifndef THEMIS_SECURE_COMPARATOR_H
 #define THEMIS_SECURE_COMPARATOR_H
 
+#ifdef SECURE_COMPARATOR_ENABLED
 #include <themis/themis.h>
 
 #define THEMIS_SCOMPARE_MATCH 0xf0f0f0f0
@@ -35,4 +36,5 @@ themis_status_t secure_comparator_proceed_compare(secure_comparator_t *comp_ctx,
 
 themis_status_t secure_comparator_get_result(const secure_comparator_t *comp_ctx);
 
+#endif
 #endif /* THEMIS_SECURE_COMPARATOR_H */

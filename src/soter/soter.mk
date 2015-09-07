@@ -16,8 +16,10 @@
 
 SOTER_SRC = $(wildcard $(SRC_PATH)/soter/*.c)
 
+ifdef SECURE_COMPARATOR_ENABLED
 # ed25519 we specify here, because it should be portable and does not depend on $(CRYPTO_ENGINE)
 SOTER_SRC += $(wildcard $(SRC_PATH)/soter/ed25519/*.c)
+endif
 
 include $(CRYPTO_ENGINE)/soter.mk
 

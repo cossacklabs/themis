@@ -11,6 +11,9 @@ while true; do
     if [[ $BUILD_STATUS = "success" ]] 
 	then exit 0
     fi
+    if [[ $BUILD_STATUS = "fixed" ]] 
+	then exit 0
+    fi
     if [[ $BUILD_STATUS = "canceled" ]] 
 	then exit 0
     fi
