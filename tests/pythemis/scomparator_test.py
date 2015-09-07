@@ -32,8 +32,6 @@ class TestSComparator(unittest.TestCase):
         bob=scomparator.scomparator(self.message)
         data=alice.begin_compare()
         while alice.result() == scomparator.SCOMPARATOR_CODES.NOT_READY and bob.result() == scomparator.SCOMPARATOR_CODES.NOT_READY:
-            with self.assertRaises(themis_exception):
-                data=alice.proceed_compare(bob.proceed_compare(b"aa"+data))
             data=alice.proceed_compare(bob.proceed_compare(data))
         self.assertNotEqual(alice.result(), scomparator.SCOMPARATOR_CODES.NOT_MATCH)
         self.assertNotEqual(bob.result(), scomparator.SCOMPARATOR_CODES.NOT_MATCH)
