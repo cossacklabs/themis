@@ -2,7 +2,7 @@
 
 
 while true; do
-    BUILD_STATUS=`curl --header "Accept: application/json" https://circleci.com/api/v1/project/mnaza/objcthemis-tests/$1 | python -c 'import sys; import json; print(json.load(sys.stdin)["status"])'`
+    BUILD_STATUS=`curl --header "Accept: application/json" https://circleci.com/api/v1/project/cossacklabs/themis-ios-tests/$1 | python -c 'import sys; import json; print(json.load(sys.stdin)["status"])'`
     if [ "$?" != "0" ]
 	then echo "Can't get build $1 status"
 	exit 1
