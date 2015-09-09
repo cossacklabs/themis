@@ -14,6 +14,8 @@
 * limitations under the License.
 */
 
+#ifdef SECURE_COMPARATOR_ENABLED
+
 #include <themis/secure_comparator.h>
 #include <stdio.h>
 #include <string.h>
@@ -238,3 +240,5 @@ void run_secure_comparator_test(void)
 	testsuite_enter_suite("secure comparator: api test");
 	testsuite_run_test(secure_comparator_api_test);
 }
+
+#endif

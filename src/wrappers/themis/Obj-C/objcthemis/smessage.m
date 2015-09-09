@@ -37,6 +37,7 @@
 - (instancetype)initInEncryptModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey {
     self = [super init];
     if (self) {
+        if (!privateKey || [privateKey length] == 0 || !peerPublicKey || [peerPublicKey length] == 0) {return nil;}
         self.privateKey = [privateKey copy];
         self.publicKey = [peerPublicKey copy];
         self.mode = TSMessageModeEncryptDecrypt;
@@ -68,6 +69,10 @@
             break;
 
         case TSMessageModeSignVerify:
+            if (!(self.privateKey) || [self.privateKey length] == 0) {
+                *error = SCERROR(TSErrorTypeFail, @"themis_secure_message_wrap (signing without private key) failed");
+                return nil;
+            }
             result = (TSErrorType) themis_secure_message_wrap([self.privateKey bytes], [self.privateKey length], NULL, 0,
                 [message bytes], [message length], NULL, &wrappedMessageLength);
             break;

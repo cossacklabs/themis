@@ -17,6 +17,7 @@
 #ifndef THEMIS_SECURE_COMPARATOR_T_H
 #define THEMIS_SECURE_COMPARATOR_T_H
 
+#ifdef SECURE_COMPARATOR_ENABLED
 #include "secure_comparator.h"
 #include <soter/ed25519/ge_utils.h>
 #include <soter/soter_t.h>
@@ -47,4 +48,5 @@ struct secure_comparator_type
 themis_status_t secure_comparator_init(secure_comparator_t *comp_ctx);
 themis_status_t secure_comparator_cleanup(secure_comparator_t *comp_ctx);
 
+#endif
 #endif /* THEMIS_SECURE_COMPARATOR_T_H */
