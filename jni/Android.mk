@@ -16,13 +16,22 @@
 
 LOCAL_PATH := $(call my-dir)
 
+ifdef SECURE_COMPARATOR
+ifeq ($(SECURE_COMPARATOR),enable)
+SECURE_COMPARATOR_ENABLED = enable
+endif
+endif
+
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := libsoter
 
 LOCAL_SRC_FILES := $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/soter/*.c))
 LOCAL_SRC_FILES += $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/soter/openssl/*.c))
+
+ifdef SECURE_COMPARATOR_ENABLED
 LOCAL_SRC_FILES += $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/soter/ed25519/*.c))
+endif
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src $(LOCAL_PATH)/external/openssl/include
 LOCAL_CFLAGS := -DOPENSSL
@@ -39,6 +48,10 @@ LOCAL_MODULE := libthemis
 LOCAL_SRC_FILES := $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/themis/*.c))
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src $(LOCAL_PATH)/external/openssl/include
 
+ifdef SECURE_COMPARATOR_ENABLED
+LOCAL_CFLAGS += -DSECURE_COMPARATOR_ENABLED
+endif
+
 LOCAL_STATIC_LIBRARIES := libsoter
 
 include $(BUILD_STATIC_LIBRARY)
@@ -47,7 +60,13 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE := libthemis_jni
 
-LOCAL_SRC_FILES := themis_jni.c themis_message.c themis_keygen.c themis_cell.c themis_session.c themis_compare.c
+LOCAL_SRC_FILES := themis_jni.c themis_message.c themis_keygen.c themis_cell.c themis_session.c
+
+ifdef SECURE_COMPARATOR_ENABLED
+LOCAL_CFLAGS += -DSECURE_COMPARATOR_ENABLED
+LOCAL_SRC_FILES += themis_compare.c
+endif
+
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src $(LOCAL_PATH)/external/openssl/include
 
 LOCAL_STATIC_LIBRARIES := libthemis libsoter
@@ -80,6 +99,10 @@ LOCAL_SRC_FILES += $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../tests/common/
 LOCAL_SHARED_LIBRARIES := libthemis_jni
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src $(LOCAL_PATH)/../tests
+
+ifdef SECURE_COMPARATOR_ENABLED
+LOCAL_CFLAGS += -DSECURE_COMPARATOR_ENABLED
+endif
 
 include $(BUILD_EXECUTABLE)
 
