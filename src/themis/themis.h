@@ -37,7 +37,15 @@
 #include <themis/secure_cell.h>
 #include <themis/secure_session.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 const char* themis_version();
+
+#ifdef __cplusplus
+}
+#endif
 
 /** @} */
 #endif /* THEMIS_H */

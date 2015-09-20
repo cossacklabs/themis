@@ -21,6 +21,10 @@
 #ifndef THEMIS_SECURE_SESSION_H
 #define THEMIS_SECURE_SESSION_H
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 #include <themis/themis.h>
 
 #include <sys/types.h>
@@ -141,4 +145,8 @@ bool secure_session_is_established(const secure_session_t *session_ctx);
 
 /** @} */
 /** @} */
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* THEMIS_SECURE_SESSION_H */

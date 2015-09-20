@@ -23,6 +23,9 @@
 #ifndef _SECURE_CELL_H_
 #define _SECURE_CELL_H_
 
+#ifdef __cplusplus
+extern "C"{
+#endif
 /** 
  * @addtogroup THEMIS
  * @{
@@ -254,6 +257,9 @@ themis_status_t themis_secure_cell_decrypt_user_split(const uint8_t* master_key,
 						      size_t* plain_message_length);
 
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _SECURE_CELL_H_ */
 
 
