@@ -17,6 +17,7 @@
 #include <themis/secure_cell.h>
 #include <themis/error.h>
 #include "sym_enc_message.h"
+
 themis_status_t themis_secure_cell_encrypt_seal(const uint8_t* master_key,
 						const size_t master_key_length,
 						const uint8_t* user_context,
@@ -97,6 +98,7 @@ themis_status_t themis_secure_cell_decrypt_context_imprint(const uint8_t* master
 							   size_t* plain_message_length){
   return themis_sym_decrypt_message_u(master_key, master_key_length, context, context_length, encrypted_message, encrypted_message_length, plain_message, plain_message_length);
 }
+
 
 /* for backward compatibility */
 themis_status_t themis_secure_cell_encrypt_full(const uint8_t* master_key,

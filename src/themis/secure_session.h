@@ -26,6 +26,10 @@
 #include <sys/types.h>
 #include <soter/soter.h>
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 /**
  * @addtogroup THEMIS
  * @{
@@ -139,6 +143,11 @@ themis_status_t secure_session_load(secure_session_t *session_ctx, const void *i
 
 bool secure_session_is_established(const secure_session_t *session_ctx);
 
+
 /** @} */
 /** @} */
+
+#ifdef __cplusplus
+}
+#endif
 #endif /* THEMIS_SECURE_SESSION_H */
