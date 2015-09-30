@@ -22,11 +22,11 @@
 #ifndef _THEMIS_SECURE_MESSAGE_H_
 #define _THEMIS_SECURE_MESSAGE_H_
 
+#include <themis/themis.h>
+
 #ifdef __cplusplus
 extern "C"{
 #endif
-
-#include <themis/themis.h>
 
 /**
  * @addtogroup THEMIS
@@ -109,9 +109,12 @@ themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
 					   size_t* message_length);
 /** @} */
 /** @} */
+
 #ifdef __cplusplus
 }
 #endif
+
+
 #endif /* _THEMIS_SECURE_MESSAGE_H_ */
 
 

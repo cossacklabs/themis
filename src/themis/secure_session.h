@@ -21,14 +21,14 @@
 #ifndef THEMIS_SECURE_SESSION_H
 #define THEMIS_SECURE_SESSION_H
 
-#ifdef __cplusplus
-extern "C"{
-#endif
-
 #include <themis/themis.h>
 
 #include <sys/types.h>
 #include <soter/soter.h>
+
+#ifdef __cplusplus
+extern "C"{
+#endif
 
 /**
  * @addtogroup THEMIS
@@ -142,6 +142,7 @@ themis_status_t secure_session_save(const secure_session_t *session_ctx, void *o
 themis_status_t secure_session_load(secure_session_t *session_ctx, const void *in, size_t in_length, const secure_session_user_callbacks_t *user_callbacks);
 
 bool secure_session_is_established(const secure_session_t *session_ctx);
+
 
 /** @} */
 /** @} */

@@ -79,7 +79,6 @@ soter_status_t soter_verify_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const
 /* TODO: Review needed */
 soter_status_t soter_verify_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const void* signature, const size_t signature_length)
 {
-  int res;
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
   if (!pkey){
     return SOTER_INVALID_PARAMETER;

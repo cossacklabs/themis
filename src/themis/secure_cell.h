@@ -26,6 +26,7 @@
 #ifdef __cplusplus
 extern "C"{
 #endif
+
 /** 
  * @addtogroup THEMIS
  * @{
@@ -197,6 +198,10 @@ themis_status_t themis_secure_cell_decrypt_context_imprint(const uint8_t* master
 /** @} */
 /** @} */
 
+#ifdef __cplusplus
+}
+#endif
+
 /* for backward compatibility */
 themis_status_t themis_secure_cell_encrypt_full(const uint8_t* master_key,
 						const size_t master_key_length,
@@ -257,9 +262,6 @@ themis_status_t themis_secure_cell_decrypt_user_split(const uint8_t* master_key,
 						      size_t* plain_message_length);
 
 
-#ifdef __cplusplus
-}
-#endif
 #endif /* _SECURE_CELL_H_ */
 
 

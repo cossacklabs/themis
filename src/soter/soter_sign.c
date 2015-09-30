@@ -44,6 +44,8 @@ soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, co
   switch(algId){
 
     SOTER_SIGN_ALGS
+  default:
+    return SOTER_INVALID_PARAMETER;
   };
   return SOTER_INVALID_PARAMETER;
 }
@@ -61,6 +63,8 @@ soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, 
   ctx->alg=algId;
   switch(algId){
     SOTER_SIGN_ALGS
+  default:
+    return SOTER_INVALID_PARAMETER;
   };
   return SOTER_INVALID_PARAMETER;
 }
@@ -75,6 +79,8 @@ soter_status_t soter_sign_export_key(soter_sign_ctx_t* ctx, void* key, size_t* k
   }
   switch(ctx->alg){
     SOTER_SIGN_ALGS
+  default:
+    return SOTER_INVALID_PARAMETER;
   };
   return SOTER_INVALID_PARAMETER;
 }
@@ -90,6 +96,8 @@ soter_status_t soter_sign_update(soter_sign_ctx_t* ctx, const void* data, const 
   }
   switch(ctx->alg){
     SOTER_SIGN_ALGS
+  default:
+    return SOTER_INVALID_PARAMETER;
   };
   return SOTER_INVALID_PARAMETER;
 }
@@ -104,6 +112,8 @@ soter_status_t soter_verify_update(soter_sign_ctx_t* ctx, const void* data, cons
   }
   switch(ctx->alg){
     SOTER_SIGN_ALGS
+  default:
+    return SOTER_INVALID_PARAMETER;
   };
   return SOTER_INVALID_PARAMETER;
 }
@@ -118,6 +128,8 @@ soter_status_t soter_sign_final(soter_sign_ctx_t* ctx, void* signature, size_t* 
   }
   switch(ctx->alg){
     SOTER_SIGN_ALGS
+  default:
+    return SOTER_INVALID_PARAMETER;
   };
   return SOTER_INVALID_PARAMETER;
 }
@@ -132,6 +144,8 @@ soter_status_t soter_verify_final(soter_sign_ctx_t* ctx, const void* signature, 
   }
   switch(ctx->alg){
     SOTER_SIGN_ALGS
+  default:
+    return SOTER_INVALID_PARAMETER;
   };
   return SOTER_INVALID_PARAMETER;
 }

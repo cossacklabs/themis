@@ -92,8 +92,8 @@ themis_status_t themis_secure_message_signer_proceed(themis_secure_message_signe
   default:
     return THEMIS_INVALID_PARAMETER;  
   };
-  hdr.message_hdr.message_length=message_length;
-  hdr.signature_length=signature_length;
+  hdr.message_hdr.message_length=(uint32_t)message_length;
+  hdr.signature_length=(uint32_t)signature_length;
   memcpy(wrapped_message,&hdr,sizeof(themis_secure_signed_message_hdr_t));
   memcpy(wrapped_message+sizeof(themis_secure_signed_message_hdr_t),message,message_length);
   memcpy(wrapped_message+sizeof(themis_secure_signed_message_hdr_t)+message_length,signature,signature_length);
@@ -195,13 +195,13 @@ themis_status_t themis_secure_message_rsa_encrypter_proceed(themis_secure_messag
   uint8_t* encrypted_symm_pass=wrapped_message+sizeof(themis_secure_rsa_encrypted_message_hdr_t);
   size_t encrypted_symm_pass_length=symm_passwd_length;
   THEMIS_CHECK(soter_asym_cipher_encrypt(ctx->asym_cipher, symm_passwd, sizeof(symm_passwd), encrypted_symm_pass, &encrypted_symm_pass_length)==THEMIS_SUCCESS);
-  (((themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length)=encrypted_symm_pass_length;
+  (((themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length)=(uint32_t)encrypted_symm_pass_length;
   uint8_t* encrypted_message=encrypted_symm_pass+encrypted_symm_pass_length;
   size_t encrypted_message_length=seal_message_length;
   THEMIS_CHECK(themis_secure_cell_encrypt_seal(symm_passwd, sizeof(symm_passwd), NULL, 0, message, message_length, encrypted_message, &encrypted_message_length)==THEMIS_SUCCESS);
   (*wrapped_message_length)=sizeof(themis_secure_rsa_encrypted_message_hdr_t)+encrypted_symm_pass_length+encrypted_message_length;
   ((themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_type=THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED;
-  ((themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length=(*wrapped_message_length);
+  ((themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length=(uint32_t)(*wrapped_message_length);
   return THEMIS_SUCCESS;
 }
 
@@ -289,7 +289,7 @@ themis_status_t themis_secure_message_ec_encrypter_proceed(themis_secure_message
   }
   themis_secure_encrypted_message_hdr_t* hdr=(themis_secure_encrypted_message_hdr_t*)wrapped_message;
   hdr->message_hdr.message_type=THEMIS_SECURE_MESSAGE_EC_ENCRYPTED;
-  hdr->message_hdr.message_length=sizeof(themis_secure_encrypted_message_hdr_t)+encrypted_message_length;
+  hdr->message_hdr.message_length=(uint32_t)(sizeof(themis_secure_encrypted_message_hdr_t)+encrypted_message_length);
   encrypted_message_length=(*wrapped_message_length)-sizeof(themis_secure_encrypted_message_hdr_t);
   THEMIS_CHECK(themis_secure_cell_encrypt_seal(ctx->shared_secret, ctx->shared_secret_length, NULL,0, message, message_length, wrapped_message+sizeof(themis_secure_encrypted_message_hdr_t), &encrypted_message_length)==THEMIS_SUCCESS);
   (*wrapped_message_length)=encrypted_message_length+sizeof(themis_secure_encrypted_message_hdr_t);
@@ -351,6 +351,8 @@ themis_secure_message_encrypter_t* themis_secure_message_encrypter_init(const ui
     THEMIS_CHECK_(ctx);
     ctx->alg=alg;
     return ctx;
+  default:
+    return NULL;
   }
   return NULL;
 }
@@ -361,6 +363,8 @@ themis_status_t themis_secure_message_encrypter_proceed(themis_secure_message_en
     return themis_secure_message_ec_encrypter_proceed(ctx->ctx.ec_encrypter, message, message_length, wrapped_message, wrapped_message_length);
   case SOTER_SIGN_rsa_pss_pkcs8:
     return themis_secure_message_rsa_encrypter_proceed(ctx->ctx.rsa_encrypter, message, message_length, wrapped_message, wrapped_message_length);
+  default:
+    return THEMIS_FAIL;
   }
   return THEMIS_FAIL;
 }
@@ -371,6 +375,8 @@ themis_status_t themis_secure_message_encrypter_destroy(themis_secure_message_en
     return themis_secure_message_ec_encrypter_destroy(ctx->ctx.ec_encrypter);
   case SOTER_SIGN_rsa_pss_pkcs8:
     return themis_secure_message_rsa_encrypter_destroy(ctx->ctx.rsa_encrypter);
+  default:
+    return THEMIS_FAIL;
   }
   return THEMIS_FAIL;  
 }
@@ -394,6 +400,8 @@ themis_secure_message_decrypter_t* themis_secure_message_decrypter_init(const ui
     THEMIS_CHECK_(ctx);
     ctx->alg=alg;
     return ctx;
+  default:
+    return NULL;
   }
   return NULL;
 }
@@ -405,6 +413,8 @@ themis_status_t themis_secure_message_decrypter_proceed(themis_secure_message_de
     return themis_secure_message_ec_decrypter_proceed(ctx->ctx.ec_encrypter, wrapped_message, wrapped_message_length, message, message_length);
   case SOTER_SIGN_rsa_pss_pkcs8:
     return themis_secure_message_rsa_decrypter_proceed(ctx->ctx.rsa_encrypter, wrapped_message, wrapped_message_length, message, message_length);
+  default:
+    return THEMIS_FAIL;
   }
   return THEMIS_FAIL;
 }
@@ -416,6 +426,8 @@ themis_status_t themis_secure_message_decrypter_destroy(themis_secure_message_de
     return themis_secure_message_ec_decrypter_destroy(ctx->ctx.ec_encrypter);
   case SOTER_SIGN_rsa_pss_pkcs8:
     return themis_secure_message_rsa_decrypter_destroy(ctx->ctx.rsa_encrypter);
+  default:
+    return THEMIS_FAIL;
   }
   return THEMIS_INVALID_PARAMETER;;  
 }
