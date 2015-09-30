@@ -128,7 +128,6 @@ themis_status_t secure_session_generate_connect_request(secure_session_t *sessio
 {
 	uint8_t *data_to_send = output;
 	size_t length_to_send;
-	ssize_t bytes_sent;
 
 	soter_container_hdr_t *container;
 
@@ -267,7 +266,6 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 
 	uint8_t *data_to_send = output;
 	size_t length_to_send;
-	ssize_t bytes_sent;
 
 	size_t ecdh_key_length = 0;
 	soter_container_hdr_t *container;
@@ -459,7 +457,6 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 
 	uint8_t *data_to_send = output;
 	size_t length_to_send;
-	ssize_t bytes_sent;
 
 	soter_container_hdr_t *container;
 	uint8_t *mac;
@@ -682,7 +679,6 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 	uint8_t shared_secret[1024];
 	size_t shared_secret_length = sizeof(shared_secret);
 
-	ssize_t bytes_sent;
 
 	if (data_length < sizeof(soter_container_hdr_t))
 	{
