@@ -25,7 +25,7 @@
 #define SOTER_AES_GCM_AUTH_TAG_LENGTH 16
 
 soter_status_t soter_pbkdf2(const uint8_t* password, const size_t password_length, const uint8_t* salt, const size_t salt_length, uint8_t* key, size_t* key_length){
-  if(!PKCS5_PBKDF2_HMAC((const char*)password, password_length, salt, (const int)salt_length, 0, EVP_sha256(), (const int)(*key_length), key)){
+  if(!PKCS5_PBKDF2_HMAC((const char*)password, (const int)password_length, salt, (const int)salt_length, 0, EVP_sha256(), (const int)(*key_length), key)){
       return SOTER_FAIL;
     }
   return SOTER_SUCCESS;
@@ -148,9 +148,9 @@ soter_status_t soter_sym_ctx_update(soter_sym_ctx_t *ctx,
 				    size_t* out_data_length,
 				    bool encrypt){
   if(encrypt){
-    SOTER_CHECK(EVP_EncryptUpdate(&(ctx->evp_sym_ctx), out_data, (int*)out_data_length, (void*)in_data, in_data_length)==1);
+    SOTER_CHECK(EVP_EncryptUpdate(&(ctx->evp_sym_ctx), out_data, (int*)out_data_length, (void*)in_data, (int)in_data_length)==1);
   } else {
-    SOTER_CHECK(EVP_DecryptUpdate(&(ctx->evp_sym_ctx), out_data, (int*)out_data_length, (void*)in_data, in_data_length)==1);
+    SOTER_CHECK(EVP_DecryptUpdate(&(ctx->evp_sym_ctx), out_data, (int*)out_data_length, (void*)in_data, (int)in_data_length)==1);
   }    
   return SOTER_SUCCESS;
 }
