@@ -317,7 +317,7 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t *
 		goto err;
 	}
 
-	if (1 != EC_POINT_oct2point(group, Q, (const unsigned char *)(key + 1), key_length - sizeof(soter_container_hdr_t), NULL))
+	if (1 != EC_POINT_oct2point(group, Q, (const unsigned char *)(key + 1), (int)(key_length - sizeof(soter_container_hdr_t)), NULL))
 	{
 		res = SOTER_INVALID_PARAMETER;
 		goto err;
