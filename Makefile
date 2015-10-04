@@ -22,7 +22,8 @@ TEST_SRC_PATH = tests
 TEST_OBJ_PATH = build/tests/obj
 TEST_BIN_PATH = build/tests
 
-CFLAGS += -I$(SRC_PATH) -fPIC 
+CFLAGS += -I$(SRC_PATH) -I/usr/local/include -fPIC 
+LDFLAGS += -L/usr/local/lib
 
 ifeq ($(ENGINE),)
 	ENGINE=libressl
@@ -97,6 +98,7 @@ IS_CLANG_COMPILER = $(shell $(CC) --version 2>&1 | $(EGREP) -i -c "clang version
 
 ifeq ($(shell uname),Darwin)
 SHARED_EXT = dylib
+PREFIX = /usr/local
 ifneq ($(SDK),)
 SDK_PLATFORM_VERSION=$(shell xcrun --sdk $(SDK) --show-sdk-platform-version)
 XCODE_BASE=$(shell xcode-select --print-path)

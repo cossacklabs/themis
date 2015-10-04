@@ -19,9 +19,9 @@ PHP_ARG_ENABLE(phpthemis, whether to enable themis support,[ --enable-phpthemis 
 if test "$PHP_PHPTHEMIS" = "yes"; then
   AC_DEFINE(HAVE_PHPTHEMIS, 1, [Whether you have themis])
   for i in /usr/local /usr; do
-      if test -r $i/lib/libthemis.a; then
+      if test -r $i/lib/libthemis.a && test -r $i/lib/libsoter.a; then
         THEMIS_DIR=$i
-        AC_MSG_RESULT(found in $i)
+        AC_MSG_RESULT(themis found in $i)
       fi
   done
   
@@ -29,9 +29,7 @@ if test "$PHP_PHPTHEMIS" = "yes"; then
     AC_MSG_RESULT(not found)
     AC_MSG_ERROR(Please reinstall the libthemis distribution)
   fi
+  PHP_ADD_LIBRARY_WITH_PATH(themis, $THEMIS_DIR/lib, PHPTHEMIS_SHARED_LIBADD)
   PHP_SUBST(PHPTHEMIS_SHARED_LIBADD)
-  PHP_ADD_LIBRARY(themis, 1, PHPTHEMIS_SHARED_LIBADD)
-  PHP_ADD_LIBRARY(soter, 1, PHPTHEMIS_SHARED_LIBADD)
-  PHP_ADD_LIBRARY(crypto, 1, PHPTHEMIS_SHARED_LIBADD)
   PHP_NEW_EXTENSION(phpthemis, php_themis.c, $ext_shared)
 fi
