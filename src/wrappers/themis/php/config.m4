@@ -23,25 +23,13 @@ if test "$PHP_PHPTHEMIS" = "yes"; then
         THEMIS_DIR=$i
         AC_MSG_RESULT(themis found in $i)
       fi
-      if test -r $i/lib/libcrypto.a; then
-        LIBRESSL_DIR=$i
-        AC_MSG_RESULT(OpenSSL/LibreSSL found in $i)
-      fi
   done
   
   if test -z "$THEMIS_DIR"; then
     AC_MSG_RESULT(not found)
     AC_MSG_ERROR(Please reinstall the libthemis distribution)
   fi
-  if test -z "$LIBRESSL_DIR"; then
-    AC_MSG_RESULT(not found)
-    AC_MSG_ERROR(Please reinstall the OpenSSL/LibreSSL distribution)
-  fi
   PHP_ADD_LIBRARY_WITH_PATH(themis, $THEMIS_DIR/lib, PHPTHEMIS_SHARED_LIBADD)
-  PHP_SUBST(PHPTHEMIS_SHARED_LIBADD)
-  PHP_ADD_LIBRARY_WITH_PATH(soter, $THEMIS_DIR/lib, PHPTHEMIS_SHARED_LIBADD)
-  PHP_SUBST(PHPTHEMIS_SHARED_LIBADD)
-  PHP_ADD_LIBRARY_WITH_PATH(crypto, $LIBRESSL_DIR/lib, PHPTHEMIS_SHARED_LIBADD)
   PHP_SUBST(PHPTHEMIS_SHARED_LIBADD)
   PHP_NEW_EXTENSION(phpthemis, php_themis.c, $ext_shared)
 fi
