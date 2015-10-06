@@ -52,6 +52,13 @@ Themis is available as original C library and has Python, Objective-C, Ruby, PHP
 
 We plan to expand this minuscule availability scope with broader set of platforms. If you'd like to help Themis arrive (or get better) on your favourite platform / language — get in touch.
 
+# Tutorials
+
+As long as it is feasible, we'll accumulate list of all tutorials we publish on how to use Themis in different cases here:
+
+* [Releasing Themis into public: usability testing](https://www.cossacklabs.com/02-usability-testing.html), which goes a bit into how to use Secure Message for iOS and Python.
+* [Building encrypted chat service with Themis and mobile websocket example](https://www.cossacklabs.com/building-secure-chat), which outlines stages necessary to build encrypted chat service around Ruby websocket server, with clients in iOS and Android. 
+
 # Docs
 
 [https://www.github.com/cossacklabs/themis/wiki] contains ever-evolving official documentation, which contains everything from how to use it to ways to contribute to it, with a brief explanation of cryptosystems and architecture behind main Themis library in between. 
