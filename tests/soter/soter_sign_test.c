@@ -113,18 +113,24 @@ static int sign_test(soter_sign_alg_t alg)
     return -9;
   }
 
-  res=soter_verify_update(ctx, test_data, test_data_length);
+  res=soter_verify_update(vctx, test_data, test_data_length);
   if(res!=SOTER_SUCCESS){
     testsuite_fail_if(res!=SOTER_SUCCESS, "soter_verify_update fail");
-    soter_verify_destroy(ctx);
+    soter_verify_destroy(vctx);
     return -10;
   }
 
-  res=soter_verify_final(ctx, signature, signature_length);
+  res=soter_verify_final(vctx, signature, signature_length);
   if(res!=SOTER_SUCCESS){
     testsuite_fail_if(res!=SOTER_SUCCESS, "soter_verify_final fail");
-    soter_verify_destroy(ctx);
+    soter_verify_destroy(vctx);
     return -11;
+  }
+
+  res=soter_sign_destroy(vctx);
+  if(res!=SOTER_SUCCESS){
+    testsuite_fail_if(res!=SOTER_SUCCESS,"soter_sign_destroy fail");
+    return -12;
   }
   return 0;
 }
