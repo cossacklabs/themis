@@ -83,6 +83,9 @@ soter_status_t soter_verify_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const vo
 
 soter_status_t soter_verify_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* signature, const size_t signature_length)
 {
+  if (!ctx){
+    return SOTER_INVALID_PARAMETER;
+  }
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
   if (!pkey){
     return SOTER_INVALID_PARAMETER;
