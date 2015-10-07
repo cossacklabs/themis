@@ -415,7 +415,7 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t 
 		goto err;
 	}
 
-	d = BN_bin2bn((const unsigned char *)(key + 1), key_length - sizeof(soter_container_hdr_t), NULL);
+	d = BN_bin2bn((const unsigned char *)(key + 1),(int)(key_length - sizeof(soter_container_hdr_t)), NULL);
 	if (NULL == d)
 	{
 		res = SOTER_NO_MEMORY;
