@@ -7,6 +7,6 @@ install:
   - make SECURE_COMPARATOR=enable
   - make SECURE_COMPARATOR=enable test
 
-scrypt:
+script:
   - build/test/soter_test
   - build/test/themis_test
