@@ -1,4 +1,4 @@
-sudo: false
+sudo: required
 language: c
 
 addons:
@@ -8,7 +8,7 @@ addons:
 
 install:
   - make SECURE_COMPARATOR=enable
-  - make SECURE_COMPARATOR=enable install
+  - sudo make SECURE_COMPARATOR=enable install
   - make SECURE_COMPARATOR=enable test
 
 script:
