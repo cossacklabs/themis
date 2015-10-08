@@ -65,6 +65,13 @@ module ThemisImport
 
     attach_function :themis_secure_cell_encrypt_context_imprint, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
     attach_function :themis_secure_cell_decrypt_context_imprint, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+
+    attach_function :secure_comparator_create, [], :pointer
+    attach_function :secure_comparator_destroy, [ :pointer], :int
+    attach_function :secure_comparator_append_secret, [:pointer, :pointer, :int], :int
+    attach_function :secure_comparator_begin_compare [:pointer, :pointer, :int], :int
+    attach_function :secure_comparator_proceed_compare, [:pointer, :pointer, :int, :pointer, :int], :int
+    attach_function :secure_comparator_get_result, [:pointer], :int
 end
 
 module Themis
@@ -338,4 +345,31 @@ module Themis
     module_function :Ssign
     module_function :Sverify
 
+    class SComparator
+	include ThemisCommon
+	include ThemisImport
+
+	MATCH=0xf0f0f0f0
+	NOT_MATCH = -1
+	NOT_READY = 0
+
+	def initialize(shared_secret)
+	    shared_secret_buf, shared_secret_length = string_to_pointer_size(shared_secret)
+	    @comparator=secure_comparator_create()
+	    raise ThemisError, "secure_comparator_create error" unless @comparator
+	end
+
+	def finalize()
+	end
+
+	def begin_compare()
+	end
+
+	def proceed_compare(control_message)
+	end
+
+	def result()
+	    return secure_comparator_get_result(@comaprator)
+	end
+    end
 end
