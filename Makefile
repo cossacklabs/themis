@@ -84,7 +84,7 @@ PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
 PYTHON_VERSION := $(shell python --version 2>&1)
-PYTHON3_VERSION := $(shell python3 --version 2>&1)
+PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
 ifdef PIP_VERSION
 PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
 endif
@@ -141,11 +141,13 @@ test_all: err test
 ifdef PHP_VERSION
 	echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" > ./$(BIN_PATH)/tests/phpthemis_test.sh
 	echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
+	chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
 endif
 ifdef RUBY_GEM_VERSION
 	echo "ruby ./tests/rubythemis/scell_test.rb" > ./$(BIN_PATH)/tests/rubythemis_test.sh
 	echo "ruby ./tests/rubythemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
 	echo "ruby ./tests/rubythemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
+	chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
 endif
 ifdef PYTHON_VERSION
 	echo "python ./tests/pythemis/scell_test.py" > ./$(BIN_PATH)/tests/pythemis_test.sh
@@ -166,10 +168,8 @@ ifdef SECURE_COMPARATOR_ENABLED
 	echo "python3 ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 endif
 endif
-endif
 	chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
-	chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
-	chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
+endif
 
 soter_static: $(SOTER_OBJ)
 	$(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
