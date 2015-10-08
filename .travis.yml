@@ -12,5 +12,5 @@ install:
   - make SECURE_COMPARATOR=enable test
 
 script:
-  - build/tests/soter_test
-  - build/tests/themis_test
+  - LD_LIBRARY_PATH=build build/tests/soter_test
+  - LD_LIBRARY_PATH=build build/tests/themis_test
