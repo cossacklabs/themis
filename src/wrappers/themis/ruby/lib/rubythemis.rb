@@ -69,7 +69,7 @@ module ThemisImport
     attach_function :secure_comparator_create, [], :pointer
     attach_function :secure_comparator_destroy, [ :pointer], :int
     attach_function :secure_comparator_append_secret, [:pointer, :pointer, :int], :int
-    attach_function :secure_comparator_begin_compare [:pointer, :pointer, :int], :int
+    attach_function :secure_comparator_begin_compare, [:pointer, :pointer, :int], :int
     attach_function :secure_comparator_proceed_compare, [:pointer, :pointer, :int, :pointer, :int], :int
     attach_function :secure_comparator_get_result, [:pointer], :int
 end
