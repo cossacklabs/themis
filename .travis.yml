@@ -5,6 +5,7 @@ before_install:
 
 install:
   - make SECURE_COMPARATOR=enable
+  - sudo make SECURE_COMPARATOR=enable install
   - make SECURE_COMPARATOR=enable test
 
 script:
