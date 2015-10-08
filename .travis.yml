@@ -8,5 +8,5 @@ install:
   - make SECURE_COMPARATOR=enable test
 
 script:
-  - build/test/soter_test
-  - build/test/themis_test
+  - build/tests/soter_test
+  - build/tests/themis_test
