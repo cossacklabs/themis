@@ -88,6 +88,9 @@ PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
 ifdef PIP_VERSION
 PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
 endif
+ifneq ("$(wildcard src/wrappers/themis/php/Makefile)","")
+PHP_THEMIS_INSTALL = 1
+endif
 
 SHARED_EXT = so
 
@@ -214,7 +217,9 @@ install: err all
 	install $(BIN_PATH)/*.$(SHARED_EXT) $(PREFIX)/lib
 
 phpthemis_uninstall:
-	cd src/wrappers/themis/php && make distclean
+ifdef PHP_THEMIS_ISTALL
+	if [ -a src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
+endif
 
 rubythemis_uninstall:
 ifdef RUBY_GEM_VERSION
@@ -223,11 +228,11 @@ endif
 
 pythemis_uninstall: 
 ifdef PIP_THEMIS_INSTALL
-	pip -q uninstall -y themis
+	pip -q uninstall -y pythemis
 endif
 
 
-uninstall: phpthemis_uninstall rubythemis_uninstall pythonthemis_uninstall
+uninstall: phpthemis_uninstall rubythemis_uninstall pythemis_uninstall
 	rm -rf $(PREFIX)/include/themis
 	rm -rf $(PREFIX)/include/soter
 	rm -f $(PREFIX)/lib/libsoter.a
