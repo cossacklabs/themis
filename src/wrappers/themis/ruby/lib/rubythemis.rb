@@ -354,19 +354,41 @@ module Themis
 	NOT_READY = 0
 
 	def initialize(shared_secret)
-	    shared_secret_buf, shared_secret_length = string_to_pointer_size(shared_secret)
-	    @comparator=secure_comparator_create()
-	    raise ThemisError, "secure_comparator_create error" unless @comparator
+	  shared_secret_buf, shared_secret_length = string_to_pointer_size(shared_secret)
+	  @comparator=secure_comparator_create()
+	  raise ThemisError, "secure_comparator_create error" unless @comparator
+          res=secure_comparator_append_secret(@comparator, shared_secret_buf, shared_secret_length)
+	  raise ThemisError, "secure_comparator_append_secret error" unless res==SUCCESS            
 	end
 
 	def finalize()
+          res=secure_comparator_destroy(@comparator)
+	  raise ThemisError, "secure_comparator_destroy error" unless res==SUCCESS                      
 	end
 
 	def begin_compare()
+          res_length=FFI::MemoryPointer.new(:uint)
+          res=secure_comparator_begin_compare(@comparator, nil, res_length)
+          raise ThemisError, "secure_comparator_begin_compare (length determination) error" unless res==BUFFER_TOO_SMALL
+          res_buffer=FFI::MemoryPointer.new(:char, res_length.read_uint)
+          res=secure_comparator_begin_compare(@comparator, res_buffer, res_length)
+          raise ThemisError, "secure_comparator_begin_compare error" unless res==SUCCESS
+          return res_buffer.get_bytes(0,res_length.read_uint)
 	end
 
 	def proceed_compare(control_message)
-	end
+          message, message_length = string_to_pointer_size(control_message)
+          res_length=FFI::MemoryPointer.new(:uint)
+          res=secure_comparator_proceed_compare(@comparator, message, message_length, nil, res_length)
+          raise ThemisError, "secure_comparator_proceed_compare (length determination) error" unless res==SUCCESS || res == BUFFER_TOO_SMALL
+          if res == SUCCESS
+            return ""
+          end
+          res_buffer=FFI::MemoryPointer.new(:char, res_length.read_uint)
+          res=secure_comparator_proceed_compare(@comparator, message, message_length, res_buffer, res_length)
+          raise ThemisError, "secure_comparator_proceed_compare error" unless res==SUCCESS || res==SEND_AS_IS
+          return res_buffer.get_bytes(0,res_length.read_uint)          
+        end
 
 	def result()
 	    return secure_comparator_get_result(@comaprator)
