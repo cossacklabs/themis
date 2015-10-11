@@ -69,8 +69,8 @@ module ThemisImport
     attach_function :secure_comparator_create, [], :pointer
     attach_function :secure_comparator_destroy, [ :pointer], :int
     attach_function :secure_comparator_append_secret, [:pointer, :pointer, :int], :int
-    attach_function :secure_comparator_begin_compare, [:pointer, :pointer, :int], :int
-    attach_function :secure_comparator_proceed_compare, [:pointer, :pointer, :int, :pointer, :int], :int
+    attach_function :secure_comparator_begin_compare, [:pointer, :pointer, :pointer], :int
+    attach_function :secure_comparator_proceed_compare, [:pointer, :pointer, :int, :pointer, :pointer], :int
     attach_function :secure_comparator_get_result, [:pointer], :int
 end
 
@@ -342,14 +342,11 @@ module Themis
 	end
     end
 
-    module_function :Ssign
-    module_function :Sverify
-
-    class SComparator
+    class Scomparator
 	include ThemisCommon
 	include ThemisImport
 
-	MATCH=0xf0f0f0f0
+	MATCH=-252645136
 	NOT_MATCH = -1
 	NOT_READY = 0
 
@@ -372,7 +369,7 @@ module Themis
           raise ThemisError, "secure_comparator_begin_compare (length determination) error" unless res==BUFFER_TOO_SMALL
           res_buffer=FFI::MemoryPointer.new(:char, res_length.read_uint)
           res=secure_comparator_begin_compare(@comparator, res_buffer, res_length)
-          raise ThemisError, "secure_comparator_begin_compare error" unless res==SUCCESS
+          raise ThemisError, "secure_comparator_begin_compare error" unless res==SUCCESS || res==SEND_AS_IS
           return res_buffer.get_bytes(0,res_length.read_uint)
 	end
 
@@ -391,7 +388,11 @@ module Themis
         end
 
 	def result()
-	    return secure_comparator_get_result(@comaprator)
+	  return secure_comparator_get_result(@comparator)
 	end
     end
+
+    module_function :Ssign
+    module_function :Sverify
+
 end
