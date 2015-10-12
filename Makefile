@@ -150,6 +150,9 @@ ifdef RUBY_GEM_VERSION
 	echo "ruby ./tests/rubythemis/scell_test.rb" > ./$(BIN_PATH)/tests/rubythemis_test.sh
 	echo "ruby ./tests/rubythemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
 	echo "ruby ./tests/rubythemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
+ifdef SECURE_COMPARATOR_ENABLED
+	echo "ruby ./tests/rubythemis/scomparator_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
+endif
 	chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
 endif
 ifdef PYTHON_VERSION
