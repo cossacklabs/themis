@@ -47,7 +47,6 @@
   if(self.comparator){
     secure_comparator_destroy(self.comparator);
   }
-  [super dealloc];
 }
 
 
@@ -61,7 +60,7 @@
     }
 
     NSMutableData * requestData = [[NSMutableData alloc] initWithLength:comparationRequestLength];
-    result = (TSErrorType) secure_session_generate_connect_request(self.session, [requestData mutableBytes], &comparationRequestLength);
+    result = (TSErrorType) secure_session_generate_connect_request(self.comparator, [requestData mutableBytes], &comparationRequestLength);
 
     if (result != TSErrorTypeSuccess) {
         *error = SCERROR(result, @"secure_comparator_begin_compare fail");
@@ -98,7 +97,7 @@
 }
 
 - (BOOL)status {
-    return secure_comparator_get_result(self.comprator);
+    return secure_comparator_get_result(self.comparator);
 }
 
 @end
