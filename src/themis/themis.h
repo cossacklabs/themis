@@ -37,6 +37,10 @@
 #include <themis/secure_cell.h>
 #include <themis/secure_session.h>
 
+#ifdef SECURE_COMPARATOR_ENABLED
+#include <themis/secure_comparator.h>
+#endif
+
 const char* themis_version();
 
 /** @} */
