@@ -14,6 +14,9 @@
 * limitations under the License.
 */
 
+#ifndef OBJCTHEMIS_SCELL_H
+#define OBJCTHEMIS_SCELL_H
+
 /**
  * @file objthemis/scell.h
  * @brief Base Secure Cell class
@@ -56,3 +59,5 @@
 
 /** @} */
 /** @} */  
+
+#endif
