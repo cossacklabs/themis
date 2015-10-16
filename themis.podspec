@@ -19,9 +19,9 @@ Pod::Spec.new do |s|
 
     
     s.subspec 'core' do |ss|
-        ss.source_files = "src/**/*.{h,c}"
+        ss.source_files = "src/themis/*.{h,c}", "src/soter/**/*.{h,c}"
         ss.header_mappings_dir = "src"
-        ss.public_header_files = "src/**/*.h"
+        ss.public_header_files = "src/themis/*.h", "src/soter/**/*.h"
     end
     
     s.subspec 'objcwrapper' do |ss|
