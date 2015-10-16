@@ -26,45 +26,55 @@ module ThemisCommon
 end
 
 module ThemisImport
-    extend FFI::Library
-    ffi_lib 'themis'
+  extend FFI::Library
+  ffi_lib 'themis'
 
 
 
-    callback :get_pub_key_by_id_type, 	[:pointer, :int, :pointer, :int, :pointer], :int
-    callback :send_callback_type,	[:pointer, :int, :uint], :int
-    callback :receive_callback_type,	[:pointer, :int, :uint], :int
+  callback :get_pub_key_by_id_type, 	[:pointer, :int, :pointer, :int, :pointer], :int
+  callback :send_callback_type,	[:pointer, :int, :uint], :int
+  callback :receive_callback_type,	[:pointer, :int, :uint], :int
 
-    class Callbacks_struct < FFI::Struct
+  class Callbacks_struct < FFI::Struct
     layout	:send_data,		:send_callback_type,
 		:receive_data,		:receive_callback_type,
 		:state_changed,		:pointer,
 		:get_pub_key_for_id,	:get_pub_key_by_id_type,
 		:user_data,		:pointer
-    end
+  end
 
-    attach_function :secure_session_create, [ :pointer, :uint, :pointer, :uint, :pointer], :pointer
-    attach_function :secure_session_destroy, [ :pointer], :int
-    attach_function :secure_session_generate_connect_request, [ :pointer, :pointer, :pointer], :int
-    attach_function :secure_session_wrap, [ :pointer, :pointer, :int, :pointer, :pointer], :int
-    attach_function :secure_session_unwrap, [ :pointer, :pointer, :int, :pointer, :pointer], :int
-    attach_function :secure_session_is_established, [ :pointer], :bool
+  attach_function :secure_session_create, [ :pointer, :uint, :pointer, :uint, :pointer], :pointer
+  attach_function :secure_session_destroy, [ :pointer], :int
+  attach_function :secure_session_generate_connect_request, [ :pointer, :pointer, :pointer], :int
+  attach_function :secure_session_wrap, [ :pointer, :pointer, :int, :pointer, :pointer], :int
+  attach_function :secure_session_unwrap, [ :pointer, :pointer, :int, :pointer, :pointer], :int
+  attach_function :secure_session_is_established, [ :pointer], :bool
 
-    attach_function :themis_secure_message_wrap, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
-    attach_function :themis_secure_message_unwrap, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+  attach_function :themis_secure_message_wrap, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+  attach_function :themis_secure_message_unwrap, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
 
-    attach_function :themis_gen_rsa_key_pair, [:pointer, :pointer, :pointer, :pointer], :int
-    attach_function :themis_gen_ec_key_pair, [:pointer, :pointer, :pointer, :pointer], :int
-    attach_function :themis_version, [], :string
+  attach_function :themis_gen_rsa_key_pair, [:pointer, :pointer, :pointer, :pointer], :int
+  attach_function :themis_gen_ec_key_pair, [:pointer, :pointer, :pointer, :pointer], :int
+  attach_function :themis_version, [], :string
 
-    attach_function :themis_secure_cell_encrypt_seal, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
-    attach_function :themis_secure_cell_decrypt_seal, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+  attach_function :themis_secure_cell_encrypt_seal, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+  attach_function :themis_secure_cell_decrypt_seal, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
 
-    attach_function :themis_secure_cell_encrypt_token_protect, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer, :pointer, :pointer], :int
-    attach_function :themis_secure_cell_decrypt_token_protect, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+  attach_function :themis_secure_cell_encrypt_token_protect, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer, :pointer, :pointer], :int
+  attach_function :themis_secure_cell_decrypt_token_protect, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
 
-    attach_function :themis_secure_cell_encrypt_context_imprint, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
-    attach_function :themis_secure_cell_decrypt_context_imprint, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+  attach_function :themis_secure_cell_encrypt_context_imprint, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+  attach_function :themis_secure_cell_decrypt_context_imprint, [:pointer, :int, :pointer, :int, :pointer, :int, :pointer, :pointer], :int
+
+  begin
+    attach_function :secure_comparator_create, [], :pointer
+    attach_function :secure_comparator_destroy, [ :pointer], :int
+    attach_function :secure_comparator_append_secret, [:pointer, :pointer, :int], :int
+    attach_function :secure_comparator_begin_compare, [:pointer, :pointer, :pointer], :int
+    attach_function :secure_comparator_proceed_compare, [:pointer, :pointer, :int, :pointer, :pointer], :int
+    attach_function :secure_comparator_get_result, [:pointer], :int
+  rescue FFI::NotFoundError => e
+  end
 end
 
 module Themis
@@ -333,6 +343,56 @@ module Themis
 		raise ThemisError, "themis_secure_cell not supported mode"
 	    end
 	end
+    end
+
+    class Scomparator
+      include ThemisCommon
+      include ThemisImport
+      
+      MATCH=-252645136
+      NOT_MATCH = -1
+      NOT_READY = 0
+
+      def initialize(shared_secret)
+	shared_secret_buf, shared_secret_length = string_to_pointer_size(shared_secret)
+	@comparator=secure_comparator_create()
+	raise ThemisError, "secure_comparator_create error" unless @comparator
+        res=secure_comparator_append_secret(@comparator, shared_secret_buf, shared_secret_length)
+	raise ThemisError, "secure_comparator_append_secret error" unless res==SUCCESS            
+      end
+
+      def finalize()
+        res=secure_comparator_destroy(@comparator)
+	raise ThemisError, "secure_comparator_destroy error" unless res==SUCCESS                      
+      end
+
+      def begin_compare()
+        res_length=FFI::MemoryPointer.new(:uint)
+        res=secure_comparator_begin_compare(@comparator, nil, res_length)
+        raise ThemisError, "secure_comparator_begin_compare (length determination) error" unless res==BUFFER_TOO_SMALL
+        res_buffer=FFI::MemoryPointer.new(:char, res_length.read_uint)
+        res=secure_comparator_begin_compare(@comparator, res_buffer, res_length)
+        raise ThemisError, "secure_comparator_begin_compare error" unless res==SUCCESS || res==SEND_AS_IS
+        return res_buffer.get_bytes(0,res_length.read_uint)
+      end
+
+      def proceed_compare(control_message)
+        message, message_length = string_to_pointer_size(control_message)
+        res_length=FFI::MemoryPointer.new(:uint)
+        res=secure_comparator_proceed_compare(@comparator, message, message_length, nil, res_length)
+        raise ThemisError, "secure_comparator_proceed_compare (length determination) error" unless res==SUCCESS || res == BUFFER_TOO_SMALL
+        if res == SUCCESS
+          return ""
+        end
+        res_buffer=FFI::MemoryPointer.new(:char, res_length.read_uint)
+        res=secure_comparator_proceed_compare(@comparator, message, message_length, res_buffer, res_length)
+        raise ThemisError, "secure_comparator_proceed_compare error" unless res==SUCCESS || res==SEND_AS_IS
+        return res_buffer.get_bytes(0,res_length.read_uint)          
+      end
+
+      def result()
+	return secure_comparator_get_result(@comparator)
+      end
     end
 
     module_function :Ssign
