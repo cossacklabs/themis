@@ -5,39 +5,30 @@ Pod::Spec.new do |s|
     s.description = "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern development practices, with high level OOP wrappers for Ruby, Python, PHP, Java / Android and iOS / OSX. It is designed with ease of use in mind, high security and cross-platform availability."
     s.homepage = "http://cossacklabs.com"
     s.license = { :type => 'Apache 2.0'}
-#    s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "0.9.1" }
+    s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "0.9.1" }
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
     s.dependency 'OpenSSL-Universal', '~> 1.0.1l'
 
     s.ios.platform = :ios, '7.0'
     s.ios.deployment_target = '7.0'
 
-    s.osx.platform = :osx, '10.9'
+    s.osx.platform = :ios, '10.9'
     s.osx.deployment_target = '10.9'
     
     s.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL' } 
 
     
-    s.subspec 'soter' do |sss|
-        sss.source_files = "src/soter/**/*.{h,c}"
-        sss.header_mappings_dir = "src/soter"
-        sss.public_header_files = "src/soter/**/*.h"
-        ss.header_dir = 'soter'
+    s.subspec 'core' do |ss|
+        ss.source_files = "src/themis/*.{h,c}", "src/soter/*.{h,c}", "src/soter/openssl/*.{h,c}"
+        ss.header_mappings_dir = "src"
+        ss.public_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/openssl/*.h"
     end
-
-    s.subspec 'core' do |sss|
-        sss.source_files = "src/themis/**/*.{h,c}"
-        sss.header_mappings_dir = "src/themis"
-        sss.public_header_files = "src/themis/*.h"
-        sss.header_dir = 'themis'
-	sss.dependency 'themis/soter'
-    end
-
+    
     s.subspec 'objcwrapper' do |ss|
         ss.header_mappings_dir = 'src/wrappers/themis/Obj-C/objcthemis'
         ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{h,m}"
         ss.public_header_files = 'src/wrappers/themis/Obj-C/objcthemis/*.h'
-        ss.header_dir = 'objcthemis'
+        ss.header_dir = 'objcthemis'        
         ss.dependency 'themis/core'
     end
 end
