@@ -34,7 +34,7 @@ Pod::Spec.new do |s|
     end
 
     s.subspec 'objcwrapper' do |ss|
-        ss.header_mappings_dir = 'src/wrappers/themis/Obj-C/'
+        ss.header_mappings_dir = 'src/wrappers/themis/Obj-C/objcthemis'
         ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{h,m}"
         ss.public_header_files = 'src/wrappers/themis/Obj-C/objcthemis/*.h'
         ss.header_dir = 'objcthemis'
