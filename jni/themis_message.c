@@ -20,8 +20,8 @@
 
 JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(JNIEnv *env, jobject thiz, jbyteArray private, jbyteArray public, jbyteArray message, jboolean is_wrap)
 {
-	size_t private_length = (*env)->GetArrayLength(env, private);
-	size_t public_length = (*env)->GetArrayLength(env, public);
+	size_t private_length = 0;
+	size_t public_length = 0;
 	size_t message_length = (*env)->GetArrayLength(env, message);
 	size_t output_length = 0;
 
@@ -30,19 +30,35 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
 	jbyte *message_buf = NULL;
 	jbyte *output_buf = NULL;
 
-	themis_status_t res;
+	themis_status_t res = THEMIS_FAIL;
 	jbyteArray output = NULL;
 
-	priv_buf = (*env)->GetByteArrayElements(env, private, NULL);
-	if (!priv_buf)
+	if (private)
 	{
-		return NULL;
+		private_length = (*env)->GetArrayLength(env, private);
 	}
 
-	pub_buf = (*env)->GetByteArrayElements(env, public, NULL);
-	if (!pub_buf)
+	if (public)
 	{
-		goto err;
+		public_length = (*env)->GetArrayLength(env, public);
+	}
+
+	if (private)
+	{
+		priv_buf = (*env)->GetByteArrayElements(env, private, NULL);
+		if (!priv_buf)
+		{
+			return NULL;
+		}
+	}
+
+	if (public)
+	{
+		pub_buf = (*env)->GetByteArrayElements(env, public, NULL);
+		if (!pub_buf)
+		{
+			goto err;
+		}
 	}
 
 	message_buf = (*env)->GetByteArrayElements(env, message, NULL);
@@ -74,7 +90,6 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
 	output_buf = (*env)->GetByteArrayElements(env, output, NULL);
 	if (!output_buf)
 	{
-		output = NULL;
 		goto err;
 	}
 
@@ -85,11 +100,6 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
 	else
 	{
 		res = themis_secure_message_unwrap(priv_buf, private_length, pub_buf, public_length, message_buf, message_length, output_buf, &output_length);
-	}
-
-	if (THEMIS_SUCCESS != res)
-	{
-		output = NULL;
 	}
 
 err:
@@ -114,5 +124,12 @@ err:
 		(*env)->ReleaseByteArrayElements(env, private, priv_buf, 0);
 	}
 
-	return output;
+	if (THEMIS_SUCCESS == res)
+	{
+		return output;
+	}
+	else
+	{
+		return NULL;
+	}
 }
