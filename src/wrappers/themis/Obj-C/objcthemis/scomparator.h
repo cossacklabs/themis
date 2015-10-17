@@ -81,3 +81,4 @@ typedef NS_ENUM(NSInteger, TSComparatorStateType){
 /** @} */
 /** @} */
 #endif
+#endif
