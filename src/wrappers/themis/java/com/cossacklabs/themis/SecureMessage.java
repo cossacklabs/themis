@@ -41,6 +41,20 @@ public class SecureMessage {
 		
 		this.privateKey = privateKey;
 	}
+
+	/**
+	 * Creates new SecureMessage with default peer PublicKey (can be used only for signature verification)
+	 * @param default peer PublicKey
+	 * @throws NullArgumentException when peerPublicKey is null
+	 */
+	public SecureMessage(PublicKey peerPublicKey) throws NullArgumentException {
+		
+		if (null == peerPublicKey) {
+			throw new NullArgumentException("Peer public key was not provided");
+		}
+		
+		this.peerPublicKey = peerPublicKey;
+	}
 	
 	/**
 	 * Creates new SecureMessage with specified PrivateKey and default peer PublicKey
@@ -138,5 +152,65 @@ public class SecureMessage {
 	 */
 	public byte[] unwrap(byte[] message) throws NullArgumentException, SecureMessageWrapException {
 		return unwrap(message, this.peerPublicKey);
+	}
+
+	/**
+	 * Signs message
+	 * @param message to sign
+	 * @return signed message
+	 * @throws NullArgumentException when message or default peer PublicKey is null
+	 * @throws SecureMessageWrapException when cannot wrap message
+	 */
+	public byte[] sign(byte[] message) throws NullArgumentException, SecureMessageWrapException {
+
+		if (null == privateKey) {
+			throw new NullArgumentException("Private key was not provided");
+		}
+
+		if (null == message) {
+			throw new NullArgumentException("No message was provided");
+		}
+
+		byte[] signedMessage = process(this.privateKey.toByteArray(), null, message, true);
+		
+		if (null == signedMessage) {
+			throw new SecureMessageWrapException();
+		}
+		
+		return signedMessage;
+	}
+
+	/**
+	 * Verifies signed message from peer
+	 * @param signed message
+	 * @param sender's PublicKey
+	 * @throws NullArgumentException when message or peerPublicKey is null
+	 * @throws SecureMessageWrapException when cannot verify message
+	 */
+	public void verify(byte[] message, PublicKey peerPublicKey) throws NullArgumentException, SecureMessageWrapException {
+
+		if (null == peerPublicKey) {
+			throw new NullArgumentException("Peer public key was not provided");
+		}
+
+		if (null == message) {
+			throw new NullArgumentException("No message was provided");
+		}
+
+		byte[] verifiedMessage = process(null, peerPublicKey.toByteArray(), message, false);
+
+		if (null == verifiedMessage) {
+			throw new SecureMessageWrapException();
+		}
+	}
+
+	/**
+	 * Verifies message from default peer
+	 * @param signed message
+	 * @throws NullArgumentException when message or default peer PublicKey is null
+	 * @throws SecureMessageWrapException when cannot verify message
+	 */
+	public void verify(byte[] message) throws NullArgumentException, SecureMessageWrapException {
+		verify(message, this.peerPublicKey);
 	}
 }
