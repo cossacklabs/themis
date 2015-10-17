@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.9.1"
+    s.version = "0.9.1.1"
     s.summary = "Data security library for network communication and data storage for iOS and OS X "
     s.description = "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern development practices, with high level OOP wrappers for Ruby, Python, PHP, Java / Android and iOS / OSX. It is designed with ease of use in mind, high security and cross-platform availability."
     s.homepage = "http://cossacklabs.com"
@@ -19,9 +19,20 @@ Pod::Spec.new do |s|
 
     
     s.subspec 'core' do |ss|
-        ss.source_files = "src/themis/*.{h,c}", "src/soter/**/*.{h,c}"
-        ss.header_mappings_dir = "src"
-        ss.public_header_files = "src/themis/*.h", "src/soter/**/*.h"
+	ss.subspec 'soter' do |sss|
+	    sss.source_files = "src/soter/**/*.{h,c}"
+	    sss.header_mappings_dir = "src/soter"
+	    sss.public_header_files = "src/soter/**/*.h"
+	    ss.header_dir = 'soter'
+
+	end
+
+	ss.subspec 'themis' do |sss|
+	    sss.source_files = "src/themis/**/*.{h,c}"
+	    sss.header_mappings_dir = "src/themis"
+	    sss.public_header_files = "src/themis/**/*.h"
+	    sss.header_dir = 'themis'
+	end
     end
     
     s.subspec 'objcwrapper' do |ss|
