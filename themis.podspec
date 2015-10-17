@@ -18,28 +18,26 @@ Pod::Spec.new do |s|
     s.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL' } 
 
     
-    s.subspec 'core' do |ss|
-	ss.subspec 'soter' do |sss|
-	    sss.source_files = "src/soter/**/*.{h,c}"
-	    sss.header_mappings_dir = "src/soter"
-	    sss.public_header_files = "src/soter/**/*.h"
-	    ss.header_dir = 'soter'
-
-	end
-
-	ss.subspec 'themis' do |sss|
-	    sss.source_files = "src/themis/**/*.{h,c}"
-	    sss.header_mappings_dir = "src/themis"
-	    sss.public_header_files = "src/themis/**/*.h"
-	    sss.header_dir = 'themis'
-	end
+    s.subspec 'soter' do |sss|
+        sss.source_files = "src/soter/**/*.{h,c}"
+        sss.header_mappings_dir = "src/soter"
+        sss.public_header_files = "src/soter/**/*.h"
+        ss.header_dir = 'soter'
     end
-    
+
+    s.subspec 'themis' do |sss|
+        sss.source_files = "src/themis/**/*.{h,c}"
+        sss.header_mappings_dir = "src/themis"
+        sss.public_header_files = "src/themis/*.h"
+        sss.header_dir = 'themis'
+	sss.dependency 'themis/soter'
+    end
+
     s.subspec 'objcwrapper' do |ss|
         ss.header_mappings_dir = 'src/wrappers/themis/Obj-C/'
         ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{h,m}"
         ss.public_header_files = 'src/wrappers/themis/Obj-C/objcthemis/*.h'
         ss.header_dir = 'objcthemis'
-        ss.dependency 'themis/core'
+        ss.dependency 'themis/themis'
     end
 end
