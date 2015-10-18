@@ -96,7 +96,7 @@
     return unwrappedMessage;
 }
 
-- (BOOL)status {
+- (TSComparatorStateType)status {
     return secure_comparator_get_result(self.comparator);
 }
 

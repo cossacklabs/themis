@@ -14,8 +14,8 @@
 * limitations under the License.
 */
 
-#ifndef OBJCTHEMIS_SCOMPARATOR_H
-#define OBJCTHEMIS_SCOMPARATOR_H
+#ifndef SCOMPARATOR_H
+#define SCOMPARATOR_H
 
 /**
 * @file objthemis/scomparator.h
@@ -75,10 +75,9 @@ typedef NS_ENUM(NSInteger, TSComparatorStateType){
 /** @brief indicate comparation state.
 * @return comparation state.
 */
-- (TSComparatorStateType)isSessionEstablished;
+- (TSComparatorStateType)status;
 
 @end
 /** @} */
 /** @} */
-#endif
 #endif
