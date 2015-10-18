@@ -68,6 +68,19 @@ public class SecureMessageTest extends AndroidTestCase {
 			byte[] unwrappedMessage = bWrapper.unwrap(wrappedMessage);
 			
 			assertTrue(Arrays.equals(message, unwrappedMessage));
+
+
+			SecureMessage signer = new SecureMessage(aPair.getPrivateKey());
+			SecureMessage verifier = new SecureMessage(aPair.getPublicKey());
+
+			byte[] signedMessage = signer.sign(message);
+
+			assertTrue(message.length < signedMessage.length);
+
+			byte[] verifiedMessage = verifier.verify(signedMessage);
+
+			assertTrue(Arrays.equals(message, verifiedMessage));
+
 		} catch (NullArgumentException e) {
 			fail(e.getClass().getCanonicalName() + ": " + e.getMessage());
 		} catch (SecureMessageWrapException e) {
