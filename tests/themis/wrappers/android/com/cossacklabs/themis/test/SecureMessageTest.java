@@ -77,7 +77,9 @@ public class SecureMessageTest extends AndroidTestCase {
 
 			assertTrue(message.length < signedMessage.length);
 
-			verifier.verify(signedMessage);
+			byte[] verifiedMessage = verifier.verify(signedMessage);
+
+			assertTrue(Arrays.equals(message, verifiedMessage));
 
 		} catch (NullArgumentException e) {
 			fail(e.getClass().getCanonicalName() + ": " + e.getMessage());
