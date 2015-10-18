@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
     s.osx.platform = :ios, '10.9'
     s.osx.deployment_target = '10.9'
     
-    s.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL' } 
+    s.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL', 'USE_HEADERMAP' => 'NO'} 
 
     
     s.subspec 'core' do |ss|
