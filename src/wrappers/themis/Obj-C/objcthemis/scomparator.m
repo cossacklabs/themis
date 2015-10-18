@@ -60,7 +60,7 @@
     }
 
     NSMutableData * requestData = [[NSMutableData alloc] initWithLength:comparationRequestLength];
-    result = (TSErrorType) secure_session_generate_connect_request(self.comparator, [requestData mutableBytes], &comparationRequestLength);
+    result = (TSErrorType) secure_comparator_begin_compare(self.comparator, [requestData mutableBytes], &comparationRequestLength);
 
     if (result != TSErrorTypeSuccess) {
         *error = SCERROR(result, @"secure_comparator_begin_compare fail");
