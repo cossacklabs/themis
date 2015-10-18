@@ -14,9 +14,6 @@
 * limitations under the License.
 */
 
-#ifndef SCOMPARATOR_H
-#define SCOMPARATOR_H
-
 /**
 * @file objthemis/scomparator.h
 * @brief secure comparator interface
