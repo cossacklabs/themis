@@ -62,7 +62,7 @@
     NSMutableData * requestData = [[NSMutableData alloc] initWithLength:comparationRequestLength];
     result = (TSErrorType) secure_comparator_begin_compare(self.comparator, [requestData mutableBytes], &comparationRequestLength);
 
-    if (result != TSErrorTypeSuccess) {
+    if (result != TSErrorTypeSuccess && result !=TSErrorTypeSendAsIs) {
         *error = SCERROR(result, @"secure_comparator_begin_compare fail");
         return nil;
     }
