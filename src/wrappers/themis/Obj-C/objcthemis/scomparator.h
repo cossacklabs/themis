@@ -32,9 +32,9 @@
 
 /** @brief Secure comparator states */
 typedef NS_ENUM(NSInteger, TSComparatorStateType){
-  TSComparatorNotReady = 0,
-    TSComparatorMatch = -252645136,
-    TSCompatarorNotMatch = -1
+  TSComparatorNotReady = 0;
+  TSComparatorMatch = -252645136;
+  TSCompatarorNotMatch = -1;
 };
 /** @brief Secure comparator interface
 *
