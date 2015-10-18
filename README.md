@@ -56,8 +56,8 @@ We plan to expand this minuscule availability scope with broader set of platform
 
 As long as it is feasible, we'll accumulate list of all tutorials we publish on how to use Themis in different cases here:
 
-* [Releasing Themis into public: usability testing](https://www.cossacklabs.com/02-usability-testing.html), which goes a bit into how to use Secure Message for iOS and Python.
-* [Building encrypted chat service with Themis and mobile websocket example](https://www.cossacklabs.com/building-secure-chat), which outlines stages necessary to build encrypted chat service around Ruby websocket server, with clients in iOS and Android. 
+* [Releasing Themis into public: usability testing](https://github.com/cossacklabs/themis-ux-testing), which goes a bit into how to use Secure Message for iOS and Python.
+* [Building encrypted chat service with Themis and mobile websocket example](https://github.com/cossacklabs/mobile-websocket-example), which outlines stages necessary to build encrypted chat service around Ruby websocket server, with clients in iOS and Android. 
 
 # Docs
 
