@@ -19,14 +19,14 @@ Pod::Spec.new do |s|
 
     
     s.subspec 'core' do |ss|
-        ss.source_files = "src/themis/*.{h,c}", "src/soter/**/*.c"
+        ss.source_files = "src/themis/*.{h,c}", "src/soter/**/*.{c,h}"
         ss.header_mappings_dir = "src"
         ss.public_header_files = "src/themis/*.h", "src/soter/**/*.h"
     end
     
     s.subspec 'objcwrapper' do |ss|
         ss.header_mappings_dir = 'src/wrappers/themis/Obj-C/objcthemis'
-        ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.m"
+        ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{m,h}"
         ss.public_header_files = 'src/wrappers/themis/Obj-C/objcthemis/*.h'
         ss.header_dir = 'objcthemis'
         ss.dependency 'themis/core'
