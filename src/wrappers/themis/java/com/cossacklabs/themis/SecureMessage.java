@@ -184,10 +184,11 @@ public class SecureMessage {
 	 * Verifies signed message from peer
 	 * @param signed message
 	 * @param sender's PublicKey
+	 * @return verified message
 	 * @throws NullArgumentException when message or peerPublicKey is null
 	 * @throws SecureMessageWrapException when cannot verify message
 	 */
-	public void verify(byte[] message, PublicKey peerPublicKey) throws NullArgumentException, SecureMessageWrapException {
+	public byte[] verify(byte[] message, PublicKey peerPublicKey) throws NullArgumentException, SecureMessageWrapException {
 
 		if (null == peerPublicKey) {
 			throw new NullArgumentException("Peer public key was not provided");
@@ -202,15 +203,18 @@ public class SecureMessage {
 		if (null == verifiedMessage) {
 			throw new SecureMessageWrapException();
 		}
+
+		return verifiedMessage;
 	}
 
 	/**
 	 * Verifies message from default peer
 	 * @param signed message
+	 * @return verified message
 	 * @throws NullArgumentException when message or default peer PublicKey is null
 	 * @throws SecureMessageWrapException when cannot verify message
 	 */
-	public void verify(byte[] message) throws NullArgumentException, SecureMessageWrapException {
-		verify(message, this.peerPublicKey);
+	public byte[] verify(byte[] message) throws NullArgumentException, SecureMessageWrapException {
+		return verify(message, this.peerPublicKey);
 	}
 }
