@@ -15,20 +15,20 @@ Pod::Spec.new do |s|
     s.osx.platform = :ios, '10.9'
     s.osx.deployment_target = '10.9'
     
-    s.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL' } 
+    s.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL', 'USE_HEADERMAP' => 'NO'} 
 
     
     s.subspec 'core' do |ss|
-        ss.source_files = "src/themis/*.{h,c}", "src/soter/*.{h,c}", "src/soter/openssl/*.{h,c}"
+        ss.source_files = "src/themis/*.{h,c}", "src/soter/**/*.{c,h}"
         ss.header_mappings_dir = "src"
-        ss.public_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/openssl/*.h"
+        ss.public_header_files = "src/themis/*.h", "src/soter/**/*.h"
     end
     
     s.subspec 'objcwrapper' do |ss|
         ss.header_mappings_dir = 'src/wrappers/themis/Obj-C/objcthemis'
-        ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{h,m}"
+        ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{m,h}"
         ss.public_header_files = 'src/wrappers/themis/Obj-C/objcthemis/*.h'
-        ss.header_dir = 'objcthemis'        
+        ss.header_dir = 'objcthemis'
         ss.dependency 'themis/core'
     end
 end
