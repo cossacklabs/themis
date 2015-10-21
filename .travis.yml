@@ -4,12 +4,13 @@ language: c
 addons:
   apt:
     packages:
+    - openssl
     - libssl-dev
 
 install:
   - make SECURE_COMPARATOR=enable
-  - make SECYRE_COMPARATOR=enable PREFIX=~/lib install
-  - make SECURE_COMPARATOR=enable PREFIX=~/lib test
+  #- make SECYRE_COMPARATOR=enable PREFIX=~ install
+  - make SECURE_COMPARATOR=enable test
 
 script:
   - LD_LIBRARY_PATH=build build/tests/soter_test
