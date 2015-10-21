@@ -9,7 +9,7 @@ addons:
 install:
   - make SECURE_COMPARATOR=enable
   - make SECYRE_COMPARATOR=enable PREFIX=~/lib install
-  - make SECURE_COMPARATOR=enable test
+  - make SECURE_COMPARATOR=enable PREFIX=~/lib test
 
 script:
   - LD_LIBRARY_PATH=build build/tests/soter_test
