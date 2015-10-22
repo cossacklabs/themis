@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
     s.license = { :type => 'Apache 2.0'}
     s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "0.9.1" }
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
-    s.dependency 'OpenSSL-Universal', :git => 'https://github.com/mnaza/OpenSSL.git', :branch => :master
+    s.dependency 'OpenSSL-Universal', '~> 1.0.1l'
 
     s.ios.platform = :ios, '7.0'
     s.ios.deployment_target = '7.0'
