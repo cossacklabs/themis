@@ -16,6 +16,13 @@
 
 source 'https://github.com/CocoaPods/Specs.git'
 
+platform :ios, '7.0'
+xcodeproj 'WorkingWithThemisServer/WorkingWithThemisServer.xcodeproj'
 inhibit_all_warnings!
-pod 'OpenSSL-Universal', :git => 'https://github.com/mnaza/OpenSSL.git', :branch => :master
-pod 'themis', :git => "https://github.com/mnaza/themis.git"
+
+target :"WorkingWithThemisServer" do
+
+  # example should work with head
+  pod 'themis', :git => "https://github.com/cossacklabs/themis.git"
+
+end

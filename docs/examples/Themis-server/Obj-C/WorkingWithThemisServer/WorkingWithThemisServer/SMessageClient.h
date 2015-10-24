@@ -3,6 +3,6 @@
 
 @interface SMessageClient : NSObject
 
-- (void)secureMessageCITest;
+- (void)runSecureMessageCITest;
 
 @end

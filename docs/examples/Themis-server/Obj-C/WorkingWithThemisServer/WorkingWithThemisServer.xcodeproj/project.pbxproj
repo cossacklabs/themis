@@ -1,0 +1,595 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		17A690C2DD702DBECAAC0D9D /* libPods-WorkingWithThemisServer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2CAC1415E10977FB1A1D82B0 /* libPods-WorkingWithThemisServer.a */; };
+		733BD9BC1BDBF58500C6DA2F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9BB1BDBF58500C6DA2F /* main.m */; };
+		733BD9BF1BDBF58600C6DA2F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9BE1BDBF58600C6DA2F /* AppDelegate.m */; };
+		733BD9C21BDBF58600C6DA2F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9C11BDBF58600C6DA2F /* ViewController.m */; };
+		733BD9C51BDBF58600C6DA2F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 733BD9C31BDBF58600C6DA2F /* Main.storyboard */; };
+		733BD9C71BDBF58600C6DA2F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 733BD9C61BDBF58600C6DA2F /* Assets.xcassets */; };
+		733BD9CA1BDBF58600C6DA2F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 733BD9C81BDBF58600C6DA2F /* LaunchScreen.storyboard */; };
+		733BD9D51BDBF58600C6DA2F /* WorkingWithThemisServerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9D41BDBF58600C6DA2F /* WorkingWithThemisServerTests.m */; };
+		733BD9E01BDBF58600C6DA2F /* WorkingWithThemisServerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9DF1BDBF58600C6DA2F /* WorkingWithThemisServerUITests.m */; };
+		733BD9F11BDBF77700C6DA2F /* SMessageClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9EE1BDBF77700C6DA2F /* SMessageClient.m */; };
+		733BD9F21BDBF77700C6DA2F /* SSessionClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9F01BDBF77700C6DA2F /* SSessionClient.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		733BD9D11BDBF58600C6DA2F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 733BD9AF1BDBF58500C6DA2F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 733BD9B61BDBF58500C6DA2F;
+			remoteInfo = WorkingWithThemisServer;
+		};
+		733BD9DC1BDBF58600C6DA2F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 733BD9AF1BDBF58500C6DA2F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 733BD9B61BDBF58500C6DA2F;
+			remoteInfo = WorkingWithThemisServer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		28336B99F9EE3E3D6067A060 /* Pods-WorkingWithThemisServer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkingWithThemisServer.release.xcconfig"; path = "../Pods/Target Support Files/Pods-WorkingWithThemisServer/Pods-WorkingWithThemisServer.release.xcconfig"; sourceTree = "<group>"; };
+		2CAC1415E10977FB1A1D82B0 /* libPods-WorkingWithThemisServer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WorkingWithThemisServer.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		733BD9B71BDBF58500C6DA2F /* WorkingWithThemisServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorkingWithThemisServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		733BD9BB1BDBF58500C6DA2F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		733BD9BD1BDBF58500C6DA2F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		733BD9BE1BDBF58600C6DA2F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		733BD9C01BDBF58600C6DA2F /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		733BD9C11BDBF58600C6DA2F /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		733BD9C41BDBF58600C6DA2F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		733BD9C61BDBF58600C6DA2F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		733BD9C91BDBF58600C6DA2F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		733BD9CB1BDBF58600C6DA2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		733BD9D01BDBF58600C6DA2F /* WorkingWithThemisServerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WorkingWithThemisServerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		733BD9D41BDBF58600C6DA2F /* WorkingWithThemisServerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WorkingWithThemisServerTests.m; sourceTree = "<group>"; };
+		733BD9D61BDBF58600C6DA2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		733BD9DB1BDBF58600C6DA2F /* WorkingWithThemisServerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WorkingWithThemisServerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		733BD9DF1BDBF58600C6DA2F /* WorkingWithThemisServerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WorkingWithThemisServerUITests.m; sourceTree = "<group>"; };
+		733BD9E11BDBF58600C6DA2F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		733BD9ED1BDBF77700C6DA2F /* SMessageClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMessageClient.h; sourceTree = "<group>"; };
+		733BD9EE1BDBF77700C6DA2F /* SMessageClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMessageClient.m; sourceTree = "<group>"; };
+		733BD9EF1BDBF77700C6DA2F /* SSessionClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSessionClient.h; sourceTree = "<group>"; };
+		733BD9F01BDBF77700C6DA2F /* SSessionClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSessionClient.m; sourceTree = "<group>"; };
+		7BF2B6BC9F2C251AF8BEE008 /* Pods-WorkingWithThemisServer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkingWithThemisServer.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-WorkingWithThemisServer/Pods-WorkingWithThemisServer.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		733BD9B41BDBF58500C6DA2F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				17A690C2DD702DBECAAC0D9D /* libPods-WorkingWithThemisServer.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		733BD9CD1BDBF58600C6DA2F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		733BD9D81BDBF58600C6DA2F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		171F5839941189D406CB473E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				7BF2B6BC9F2C251AF8BEE008 /* Pods-WorkingWithThemisServer.debug.xcconfig */,
+				28336B99F9EE3E3D6067A060 /* Pods-WorkingWithThemisServer.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		733BD9AE1BDBF58500C6DA2F = {
+			isa = PBXGroup;
+			children = (
+				733BD9B91BDBF58500C6DA2F /* WorkingWithThemisServer */,
+				733BD9D31BDBF58600C6DA2F /* WorkingWithThemisServerTests */,
+				733BD9DE1BDBF58600C6DA2F /* WorkingWithThemisServerUITests */,
+				733BD9B81BDBF58500C6DA2F /* Products */,
+				171F5839941189D406CB473E /* Pods */,
+				745288F89BE375F8662ECEF3 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		733BD9B81BDBF58500C6DA2F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				733BD9B71BDBF58500C6DA2F /* WorkingWithThemisServer.app */,
+				733BD9D01BDBF58600C6DA2F /* WorkingWithThemisServerTests.xctest */,
+				733BD9DB1BDBF58600C6DA2F /* WorkingWithThemisServerUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		733BD9B91BDBF58500C6DA2F /* WorkingWithThemisServer */ = {
+			isa = PBXGroup;
+			children = (
+				733BD9BD1BDBF58500C6DA2F /* AppDelegate.h */,
+				733BD9BE1BDBF58600C6DA2F /* AppDelegate.m */,
+				733BD9C01BDBF58600C6DA2F /* ViewController.h */,
+				733BD9ED1BDBF77700C6DA2F /* SMessageClient.h */,
+				733BD9EE1BDBF77700C6DA2F /* SMessageClient.m */,
+				733BD9EF1BDBF77700C6DA2F /* SSessionClient.h */,
+				733BD9F01BDBF77700C6DA2F /* SSessionClient.m */,
+				733BD9C11BDBF58600C6DA2F /* ViewController.m */,
+				733BD9C31BDBF58600C6DA2F /* Main.storyboard */,
+				733BD9C61BDBF58600C6DA2F /* Assets.xcassets */,
+				733BD9C81BDBF58600C6DA2F /* LaunchScreen.storyboard */,
+				733BD9CB1BDBF58600C6DA2F /* Info.plist */,
+				733BD9BA1BDBF58500C6DA2F /* Supporting Files */,
+			);
+			path = WorkingWithThemisServer;
+			sourceTree = "<group>";
+		};
+		733BD9BA1BDBF58500C6DA2F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				733BD9BB1BDBF58500C6DA2F /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		733BD9D31BDBF58600C6DA2F /* WorkingWithThemisServerTests */ = {
+			isa = PBXGroup;
+			children = (
+				733BD9D41BDBF58600C6DA2F /* WorkingWithThemisServerTests.m */,
+				733BD9D61BDBF58600C6DA2F /* Info.plist */,
+			);
+			path = WorkingWithThemisServerTests;
+			sourceTree = "<group>";
+		};
+		733BD9DE1BDBF58600C6DA2F /* WorkingWithThemisServerUITests */ = {
+			isa = PBXGroup;
+			children = (
+				733BD9DF1BDBF58600C6DA2F /* WorkingWithThemisServerUITests.m */,
+				733BD9E11BDBF58600C6DA2F /* Info.plist */,
+			);
+			path = WorkingWithThemisServerUITests;
+			sourceTree = "<group>";
+		};
+		745288F89BE375F8662ECEF3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2CAC1415E10977FB1A1D82B0 /* libPods-WorkingWithThemisServer.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		733BD9B61BDBF58500C6DA2F /* WorkingWithThemisServer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 733BD9E41BDBF58600C6DA2F /* Build configuration list for PBXNativeTarget "WorkingWithThemisServer" */;
+			buildPhases = (
+				794624F656ED293B3C272CF1 /* Check Pods Manifest.lock */,
+				733BD9B31BDBF58500C6DA2F /* Sources */,
+				733BD9B41BDBF58500C6DA2F /* Frameworks */,
+				733BD9B51BDBF58500C6DA2F /* Resources */,
+				013706136CE1D47ABDFEC437 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WorkingWithThemisServer;
+			productName = WorkingWithThemisServer;
+			productReference = 733BD9B71BDBF58500C6DA2F /* WorkingWithThemisServer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		733BD9CF1BDBF58600C6DA2F /* WorkingWithThemisServerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 733BD9E71BDBF58600C6DA2F /* Build configuration list for PBXNativeTarget "WorkingWithThemisServerTests" */;
+			buildPhases = (
+				733BD9CC1BDBF58600C6DA2F /* Sources */,
+				733BD9CD1BDBF58600C6DA2F /* Frameworks */,
+				733BD9CE1BDBF58600C6DA2F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				733BD9D21BDBF58600C6DA2F /* PBXTargetDependency */,
+			);
+			name = WorkingWithThemisServerTests;
+			productName = WorkingWithThemisServerTests;
+			productReference = 733BD9D01BDBF58600C6DA2F /* WorkingWithThemisServerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		733BD9DA1BDBF58600C6DA2F /* WorkingWithThemisServerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 733BD9EA1BDBF58600C6DA2F /* Build configuration list for PBXNativeTarget "WorkingWithThemisServerUITests" */;
+			buildPhases = (
+				733BD9D71BDBF58600C6DA2F /* Sources */,
+				733BD9D81BDBF58600C6DA2F /* Frameworks */,
+				733BD9D91BDBF58600C6DA2F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				733BD9DD1BDBF58600C6DA2F /* PBXTargetDependency */,
+			);
+			name = WorkingWithThemisServerUITests;
+			productName = WorkingWithThemisServerUITests;
+			productReference = 733BD9DB1BDBF58600C6DA2F /* WorkingWithThemisServerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		733BD9AF1BDBF58500C6DA2F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0710;
+				ORGANIZATIONNAME = Stanfy;
+				TargetAttributes = {
+					733BD9B61BDBF58500C6DA2F = {
+						CreatedOnToolsVersion = 7.1;
+					};
+					733BD9CF1BDBF58600C6DA2F = {
+						CreatedOnToolsVersion = 7.1;
+						TestTargetID = 733BD9B61BDBF58500C6DA2F;
+					};
+					733BD9DA1BDBF58600C6DA2F = {
+						CreatedOnToolsVersion = 7.1;
+						TestTargetID = 733BD9B61BDBF58500C6DA2F;
+					};
+				};
+			};
+			buildConfigurationList = 733BD9B21BDBF58500C6DA2F /* Build configuration list for PBXProject "WorkingWithThemisServer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 733BD9AE1BDBF58500C6DA2F;
+			productRefGroup = 733BD9B81BDBF58500C6DA2F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				733BD9B61BDBF58500C6DA2F /* WorkingWithThemisServer */,
+				733BD9CF1BDBF58600C6DA2F /* WorkingWithThemisServerTests */,
+				733BD9DA1BDBF58600C6DA2F /* WorkingWithThemisServerUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		733BD9B51BDBF58500C6DA2F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				733BD9CA1BDBF58600C6DA2F /* LaunchScreen.storyboard in Resources */,
+				733BD9C71BDBF58600C6DA2F /* Assets.xcassets in Resources */,
+				733BD9C51BDBF58600C6DA2F /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		733BD9CE1BDBF58600C6DA2F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		733BD9D91BDBF58600C6DA2F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		013706136CE1D47ABDFEC437 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-WorkingWithThemisServer/Pods-WorkingWithThemisServer-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		794624F656ED293B3C272CF1 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		733BD9B31BDBF58500C6DA2F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				733BD9C21BDBF58600C6DA2F /* ViewController.m in Sources */,
+				733BD9F21BDBF77700C6DA2F /* SSessionClient.m in Sources */,
+				733BD9BF1BDBF58600C6DA2F /* AppDelegate.m in Sources */,
+				733BD9F11BDBF77700C6DA2F /* SMessageClient.m in Sources */,
+				733BD9BC1BDBF58500C6DA2F /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		733BD9CC1BDBF58600C6DA2F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				733BD9D51BDBF58600C6DA2F /* WorkingWithThemisServerTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		733BD9D71BDBF58600C6DA2F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				733BD9E01BDBF58600C6DA2F /* WorkingWithThemisServerUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		733BD9D21BDBF58600C6DA2F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 733BD9B61BDBF58500C6DA2F /* WorkingWithThemisServer */;
+			targetProxy = 733BD9D11BDBF58600C6DA2F /* PBXContainerItemProxy */;
+		};
+		733BD9DD1BDBF58600C6DA2F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 733BD9B61BDBF58500C6DA2F /* WorkingWithThemisServer */;
+			targetProxy = 733BD9DC1BDBF58600C6DA2F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		733BD9C31BDBF58600C6DA2F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				733BD9C41BDBF58600C6DA2F /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		733BD9C81BDBF58600C6DA2F /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				733BD9C91BDBF58600C6DA2F /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		733BD9E21BDBF58600C6DA2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		733BD9E31BDBF58600C6DA2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		733BD9E51BDBF58600C6DA2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7BF2B6BC9F2C251AF8BEE008 /* Pods-WorkingWithThemisServer.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = WorkingWithThemisServer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.stanfy.WorkingWithThemisServer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		733BD9E61BDBF58600C6DA2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 28336B99F9EE3E3D6067A060 /* Pods-WorkingWithThemisServer.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = WorkingWithThemisServer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.stanfy.WorkingWithThemisServer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		733BD9E81BDBF58600C6DA2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = WorkingWithThemisServerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.stanfy.WorkingWithThemisServerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WorkingWithThemisServer.app/WorkingWithThemisServer";
+			};
+			name = Debug;
+		};
+		733BD9E91BDBF58600C6DA2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = WorkingWithThemisServerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.stanfy.WorkingWithThemisServerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WorkingWithThemisServer.app/WorkingWithThemisServer";
+			};
+			name = Release;
+		};
+		733BD9EB1BDBF58600C6DA2F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = WorkingWithThemisServerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.stanfy.WorkingWithThemisServerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = WorkingWithThemisServer;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		733BD9EC1BDBF58600C6DA2F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = WorkingWithThemisServerUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.stanfy.WorkingWithThemisServerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = WorkingWithThemisServer;
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		733BD9B21BDBF58500C6DA2F /* Build configuration list for PBXProject "WorkingWithThemisServer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				733BD9E21BDBF58600C6DA2F /* Debug */,
+				733BD9E31BDBF58600C6DA2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		733BD9E41BDBF58600C6DA2F /* Build configuration list for PBXNativeTarget "WorkingWithThemisServer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				733BD9E51BDBF58600C6DA2F /* Debug */,
+				733BD9E61BDBF58600C6DA2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		733BD9E71BDBF58600C6DA2F /* Build configuration list for PBXNativeTarget "WorkingWithThemisServerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				733BD9E81BDBF58600C6DA2F /* Debug */,
+				733BD9E91BDBF58600C6DA2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		733BD9EA1BDBF58600C6DA2F /* Build configuration list for PBXNativeTarget "WorkingWithThemisServerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				733BD9EB1BDBF58600C6DA2F /* Debug */,
+				733BD9EC1BDBF58600C6DA2F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 733BD9AF1BDBF58500C6DA2F /* Project object */;
+}

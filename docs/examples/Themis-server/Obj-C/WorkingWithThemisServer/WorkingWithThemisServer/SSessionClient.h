@@ -2,6 +2,6 @@
 
 @interface SSessionClient : NSObject
 
-- (void) secureSessionCITest;
+- (void)runSecureSessionCITest;
 
 @end
