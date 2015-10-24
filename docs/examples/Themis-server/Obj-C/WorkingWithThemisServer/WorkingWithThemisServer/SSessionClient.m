@@ -133,7 +133,7 @@ static NSString * kClientPublicKey = @"VUVDMgAAAC20Xw4LA2U1an4xYPPw9zrxgdcxm5zML
 
 
 - (void)runSecureSessionCITest {
-    NSData * clientId = [[NSData alloc] initWithBase64EncodedString:kClientId options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    NSData * clientId = [kClientId dataUsingEncoding:NSUTF8StringEncoding];
     NSData * clientPrivateKey = [[NSData alloc] initWithBase64EncodedString:kClientPrivateKey options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
     self.transport = [Transport new];
