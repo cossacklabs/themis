@@ -26,7 +26,7 @@
     [request setValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-type"];
     
     NSString* bodystr=[NSString stringWithFormat:@"%@%@", @"message=", [message base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed]];
-    NSData* body = [bodystr dataUsingEncoding:NSUTF8StringEncoding];
+    NSData* body = [[bodystr stringByReplacingOccurrencesOfString:@"+" withString:@"2B"] dataUsingEncoding:NSUTF8StringEncoding];
     
     NSURLSessionDataTask * uploadTask = [session uploadTaskWithRequest:request
                                                               fromData:body
