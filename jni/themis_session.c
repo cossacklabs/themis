@@ -15,6 +15,7 @@
 */
 
 #include <jni.h>
+#include <string.h>
 #include <themis/error.h>
 #include <themis/secure_session.h>
 #include <themis/secure_session_t.h>
