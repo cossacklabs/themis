@@ -15,11 +15,11 @@
 */
 
 #import "AppDelegate.h"
-#import "skeygen.h"
-#import "scell_token.h"
-#import "scell_seal.h"
-#import "scell_context_imprint.h"
-#import "smessage.h"
+#import <objcthemis/scell_seal.h>
+#import <objcthemis/scell_token.h>
+#import <objcthemis/scell_context_imprint.h>
+#import <objcthemis/skeygen.h>
+#import <objcthemis/smessage.h>
 
 
 @interface AppDelegate ()
