@@ -54,6 +54,8 @@ static NSString * kClientPublicKey = @"<generated client public key>";
 
 
 - (void)runSecureMessageCITest {
+    [self checkKeysNotEmpty];
+    
     NSData * serverPublicKey = [[NSData alloc] initWithBase64EncodedString:kServerPublicKey options:NSDataBase64DecodingIgnoreUnknownCharacters];
     NSData * clientPrivateKey = [[NSData alloc] initWithBase64EncodedString:kClientPrivateKey options:NSDataBase64DecodingIgnoreUnknownCharacters];
     TSMessage * encrypter = [[TSMessage alloc] initInEncryptModeWithPrivateKey:clientPrivateKey
@@ -106,6 +108,17 @@ static NSString * kClientPublicKey = @"<generated client public key>";
 
     NSLog(@"client private key %@", [privateKey base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength]);
     NSLog(@"client public key %@", [publicKey base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength]);
+}
+
+
+- (void)checkKeysNotEmpty {
+    NSAssert(![kUserId isEqualToString:@"<user id>"], @"Get user id from https://themis.cossacklabs.com/interactive-simulator/setup/");
+    
+    NSAssert(![kServerPublicKey isEqualToString:@"<server public key>"], @"Get server key from https://themis.cossacklabs.com/interactive-simulator/setup/");
+    
+    NSAssert(![kClientPrivateKey isEqualToString:@"<generated client private key>"], @"Generate client keys by running `[self generateClientKeys]` or obtain from server https://themis.cossacklabs.com/interactive-simulator/setup/");
+    
+    NSAssert(![kClientPublicKey isEqualToString:@"<generated client public key>"], @"Generate client keys by running `[self generateClientKeys]` or obtain from server https://themis.cossacklabs.com/interactive-simulator/setup/");
 }
 
 @end

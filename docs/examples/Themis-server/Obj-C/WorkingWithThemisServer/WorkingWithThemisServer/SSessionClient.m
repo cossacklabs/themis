@@ -6,9 +6,9 @@
 //  Copyright © 2015 Cossacklabs. All rights reserved.
 //
 
+#import <objcthemis/skeygen.h>
 #import <objcthemis/ssession.h>
 #import "SSessionClient.h"
-#import "skeygen.h"
 
 
 // user id and server public key are copied from server setup
@@ -133,6 +133,8 @@ static NSString * kClientPublicKey = @"<generated client public key>";
 
 
 - (void)runSecureSessionCITest {
+    [self checkKeysNotEmpty];
+    
     NSData * clientId = [kClientId dataUsingEncoding:NSUTF8StringEncoding];
     NSData * clientPrivateKey = [[NSData alloc] initWithBase64EncodedString:kClientPrivateKey options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
@@ -185,5 +187,17 @@ static NSString * kClientPublicKey = @"<generated client public key>";
     NSLog(@"client public key %@", [publicKey base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength]);
 }
 
+
+- (void)checkKeysNotEmpty {
+    NSAssert(![kClientId isEqualToString:@"<client id>"], @"Get client id from https://themis.cossacklabs.com/interactive-simulator/setup/");
+
+    NSAssert(![kServerId isEqualToString:@"<server id>"], @"Get server id from https://themis.cossacklabs.com/interactive-simulator/setup/");
+    
+    NSAssert(![kServerPublicKey isEqualToString:@"<server public key>"], @"Get server key from https://themis.cossacklabs.com/interactive-simulator/setup/");
+
+    NSAssert(![kClientPrivateKey isEqualToString:@"<generated client private key>"], @"Generate client keys by running `[self generateClientKeys]` or obtain from server https://themis.cossacklabs.com/interactive-simulator/setup/");
+    
+    NSAssert(![kClientPublicKey isEqualToString:@"<generated client public key>"], @"Generate client keys by running `[self generateClientKeys]` or obtain from server https://themis.cossacklabs.com/interactive-simulator/setup/");
+}
 
 @end
