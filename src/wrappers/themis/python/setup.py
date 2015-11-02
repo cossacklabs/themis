@@ -13,15 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import sys
 from setuptools import setup
 
-import sys
 
-import pythemis
-
-
-install_requires = [
-]
+install_requires = []
+if sys.version_info < (3, 4):
+    install_requires.append('enum34')
 
 setup(
     name='pythemis',
@@ -58,10 +56,7 @@ setup(
 
     packages=["pythemis"],
 
-    entry_points={
-    },
+    entry_points={},
 
-    install_requires=[
-        'enum34',
-    ],
+    install_requires=install_requires,
 )
