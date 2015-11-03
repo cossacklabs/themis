@@ -14,19 +14,22 @@
 # limitations under the License.
 #
 
-from enum import IntEnum;
+from enum import IntEnum
+
 
 class THEMIS_CODES(IntEnum):
-    NETWORK_ERROR=-2222
-    BUFFER_TOO_SMALL=-4
-    FAIL=-1
-    SUCCESS=0
-    SEND_AS_IS=1
+    NETWORK_ERROR = -2222
+    BUFFER_TOO_SMALL = -4
+    FAIL = -1
+    SUCCESS = 0
+    SEND_AS_IS = 1
+
 
 class themis_exception(Exception):
     def __init__(self, error_code, message):
-        self.error_code=error_code
+        self.error_code = error_code
         self.message = message
-    def __str__(self):
-        return repr("Themis error: "+str(self.error_code)+" --"+self.message)
 
+    def __str__(self):
+        return repr("Themis error: {} -- {}".format(str(self.error_code),
+                                                    self.message))
