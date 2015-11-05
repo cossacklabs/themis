@@ -250,9 +250,9 @@ err:
 soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t *key, size_t key_length, soter_engine_specific_ec_key_t **engine_key)
 {
 	int curve;
-	EC_KEY *ec;
+	EC_KEY *ec=NULL;
 	const EC_GROUP *group;
-	EC_POINT *Q;
+	EC_POINT *Q=NULL;
 	EVP_PKEY *pkey = (EVP_PKEY *)(*engine_key);
 	soter_status_t res;
 
@@ -360,9 +360,9 @@ err:
 soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t *key, size_t key_length, soter_engine_specific_ec_key_t **engine_key)
 {
 	int curve;
-	EC_KEY *ec;
+	EC_KEY *ec=NULL;
 	const EC_GROUP *group;
-	BIGNUM *d;
+	BIGNUM *d=NULL;
 	EVP_PKEY *pkey = (EVP_PKEY *)(*engine_key);
 	soter_status_t res;
 
