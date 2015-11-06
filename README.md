@@ -23,17 +23,17 @@ Themis is set to provide a wide set of instruments, three main of which are bein
 4. Fire 'make install' and you're good most of the cases
 5. Dive into [our wiki](https://github.com/cossacklabs/themis/wiki) for the docs of language of your choice, take a look at docs/examples for examples. 
 
-It is really advisable to [go the long way and read the docs](https://github.com/cossacklabs/themis/wiki/2.1-Building-and-installing), but god blesses the brave.
+It is really advisable to [go the long way and read the docs](https://github.com/cossacklabs/themis/wiki/3.1-Building-and-installing), but god blesses the brave.
 
-# High level language reference
+# Languages
 
-Themis currently comes for 5 languages: 
+Themis works for 5 languages: 
 
-- [Python](https://github.com/cossacklabs/themis/wiki/2.4.1-Python-Howto): fully documented, examples for typical Python frameworks (twisted, tornado), thoroughly tested by practicing Python developers, Python interface is considered stable. 
-- [Ruby](https://github.com/cossacklabs/themis/wiki/2.4.3-Ruby-Howto): fully documented, examples for typical Ruby development models (event-based async, around Rails and Eventmachine), being tested right now, yet is considered stable enough to run everything.
-- [PHP](https://github.com/cossacklabs/themis/wiki/2.4.2-PHP-Howto): developed and tested as both stand-alone PHP (invoked from command line) and typical Apache request-bound forking. Examples are provided for the latter as more common practice. Should work in raw stand-alone way too.
-- [Objective-C](https://github.com/cossacklabs/themis/wiki/2.4.4-Objective-C-Howto): 2 objects out of 3 are documented, one is tested in real-world case (Demo project w/ [blog post](http://cossacklabs.com/blog.html) coming soon).
-- [Java / Android](https://github.com/cossacklabs/themis/wiki/2.4.5-Java---Android): 3 objects out of 3, all are tested and covered in simple examples. Demo project and real-world "let's hackathon this" testing [blog post](http://cossacklabs.com/blog.html) coming soon.
+- Objective C / iOS [documentation](https://github.com/cossacklabs/themis/wiki/2.2-Objective-C) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)]
+- Java / Android [documentation](https://github.com/cossacklabs/themis/wiki/2.1-Android)
+- Ruby [documentation](https://github.com/cossacklabs/themis/wiki/2.5-Ruby-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby)
+- Python [documentation](https://github.com/cossacklabs/themis/wiki/2.3-Python-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/python)
+- PHP [documentation](https://github.com/cossacklabs/themis/wiki/2.4-PHP-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/php)
 
 # Availability
 
@@ -42,12 +42,12 @@ Themis supports the following architectures: x86/x64, armv*, various androids
 It is checked to compile on:
 
 * Debian 7.8, CentOS 6.6, CentOS Linux 7.1.1503, Ubuntu 14.04 LTS 
-* MS Windows 7 - 64bit
+* MS Windows 7, 8
 * OSX 10.10
 * Android 4.4.2
 * Android 4.4.4 / CyanogenMod 11
 * Android 5
-* iOS 7+, x32/x64
+* iOS 7-9, x32/x64
 
 Themis is available as original C library and has Python, Objective-C, Ruby, PHP and Android wrappers.
 
@@ -62,4 +62,4 @@ As long as it is feasible, we'll accumulate list of all tutorials we publish on 
 
 # Docs
 
-[https://www.github.com/cossacklabs/themis/wiki] contains ever-evolving official documentation, which contains everything from how to use it to ways to contribute to it, with a brief explanation of cryptosystems and architecture behind main Themis library in between. 
+[Project's github wiki](https://www.github.com/cossacklabs/themis/wiki) contains ever-evolving official documentation, which contains everything from how to use it to ways to contribute to it, with a brief explanation of cryptosystems and architecture behind main Themis library in between. 
