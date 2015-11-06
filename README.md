@@ -24,7 +24,7 @@ It is really advisable to [go the long way and read the docs](https://github.com
 
 # Languages
 
-Themis works for 5 languages: 
+Themis has wrapper libraries for 5 languages: 
 
 - Objective C / iOS [documentation](https://github.com/cossacklabs/themis/wiki/2.2-Objective-C) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)
 - Java / Android [documentation](https://github.com/cossacklabs/themis/wiki/2.1-Android)
@@ -57,6 +57,6 @@ As long as it is feasible, we'll accumulate list of all tutorials we publish on 
 * [Releasing Themis into public: usability testing](https://www.cossacklabs.com/02-usability-testing.html), which goes a bit into how to use Secure Message for iOS and Python. Go directly into [corresponding github repository](https://github.com/cossacklabs/themis-ux-testing) to play with code. 
 * [Building encrypted chat service with Themis and mobile websocket example](https://www.cossacklabs.com/building-secure-chat), which outlines stages necessary to build encrypted chat service around Ruby websocket server, with clients in iOS and Android. [Github repository](https://github.com/cossacklabs/mobile-websocket-example) with code for the post.
 
-# Docs
+# Documentation
 
 [Project's github wiki](https://www.github.com/cossacklabs/themis/wiki) contains ever-evolving official documentation, which contains everything from how to use it to ways to contribute to it, with a brief explanation of cryptosystems and architecture behind main Themis library in between. 
