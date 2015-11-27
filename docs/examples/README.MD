@@ -15,8 +15,6 @@
 - [/python/](https://github.com/cossacklabs/themis/tree/master/docs/examples/python) : Python sample code
   - [/python/scell_test_postgres.py](https://github.com/cossacklabs/themis/blob/master/docs/examples/python/scell_test_postgres.py) : Using Secure Cell in PostgreSQL in Python
   - [/python/scell_xml_format-preserving_encryption.py](https://github.com/cossacklabs/themis/blob/master/docs/examples/python/scell_xml_format-preserving_encryption.py) : Using Secure Cell to do format preserving encryption within XML tree in Python
-  - [/python/scomparator_test_client.py](https://github.com/cossacklabs/themis/blob/master/docs/examples/python/scomparator_test_client.py) : Python Secure Comparator client (warning! experimental feature)
-  - [/python/scomparator_test_server.py](https://github.com/cossacklabs/themis/blob/master/docs/examples/python/scomparator_test_server.py) : Python Secure Comparator server (warning! experimental feature)
   - [/python/skeygen_test.py](https://github.com/cossacklabs/themis/blob/master/docs/examples/python/skeygen_test.py) : Python key generation example
   - [/python/smessage_ssocket.py](https://github.com/cossacklabs/themis/blob/master/docs/examples/python/smessage_ssocket.py) : Python Secure Message encryption selfmade-socket example - core object
   - [/python/smessage_test_client.py](https://github.com/cossacklabs/themis/blob/master/docs/examples/python/smessage_test_client.py) : Python Secure Message encrypt mode selfmade-socket example - client
@@ -35,19 +33,22 @@
   - [/python/ssession_test_tornado_client.py](https://github.com/cossacklabs/themis/blob/master/docs/examples/python/ssession_test_tornado_client.py) : Python Secure Session for Tornado - client
   - [/python/ssession_test_tornado_server.py](https://github.com/cossacklabs/themis/blob/master/docs/examples/python/ssession_test_tornado_server.py) : Python Secure Session for Tornado - server
   - [/python/ssession_test_twisted.py](https://github.com/cossacklabs/themis/blob/master/docs/examples/python/ssession_test_twisted.py) : Python Secure Session for Twisted - echo server
+  - [/python/scomparator_test_client.py](https://github.com/cossacklabs/themis/blob/master/docs/examples/python/scomparator_test_client.py) : Python Secure Comparator client (warning! experimental feature)
+  - [/python/scomparator_test_server.py](https://github.com/cossacklabs/themis/blob/master/docs/examples/python/scomparator_test_server.py) : Python Secure Comparator server (warning! experimental feature)
+
   
 - [/ruby/](https://github.com/cossacklabs/themis/blob/master/docs/examples/ruby/) : Ruby Sample code
   - [/ruby/scell_test.rb](https://github.com/cossacklabs/themis/blob/master/docs/examples/ruby/scell_test.rb) : Ruby Secure Cell example
-  - [/ruby/scomparator_test_eventmachine_client.rb](https://github.com/cossacklabs/themis/blob/master/docs/examples/ruby/scomparator_test_eventmachine_client.rb) : Secure Comparator example client (warning! experimental feature!)
-  - [/ruby/scomparator_test_eventmachine_server.rb](https://github.com/cossacklabs/themis/blob/master/docs/examples/ruby/scomparator_test_eventmachine_server.rb) : Secure Comparator example client (warning! experimental feature!)
   - [/ruby/skeygen.rb](https://github.com/cossacklabs/themis/blob/master/docs/examples/ruby/skeygen.rb) : Key generation in Ruby example
   - [/ruby/smessage_test.rb](https://github.com/cossacklabs/themis/blob/master/docs/examples/ruby/smessage_test.rb) : Very simple local Secure Message example
   - [/ruby/ssession_test_eventmachine_client.rb](https://github.com/cossacklabs/themis/blob/master/docs/examples/ruby/ssession_test_eventmachine_client.rb) : Secure Session on Ruby EventMachine framework - client
   - [/ruby/ssession_test_eventmachine_server.rb](https://github.com/cossacklabs/themis/blob/master/docs/examples/ruby/ssession_test_eventmachine_server.rb) : Secure Session on Ruby EventMachine framework - server
+  - [/ruby/scomparator_test_eventmachine_client.rb](https://github.com/cossacklabs/themis/blob/master/docs/examples/ruby/scomparator_test_eventmachine_client.rb) : Secure Comparator example client (warning! experimental feature!)
+  - [/ruby/scomparator_test_eventmachine_server.rb](https://github.com/cossacklabs/themis/blob/master/docs/examples/ruby/scomparator_test_eventmachine_server.rb) : Secure Comparator example client (warning! experimental feature!)
 
 ### Tutorials, etc. 
 
-You might also enjoy: 
+You might also enjoy tutorials with real-world projects: 
 
-- Mobile websocket example | 
-- Hackathon example | 
+- [Securing websocket chat tutorial](https://cossacklabs.com/building-secure-chat) | [code](https://github.com/cossacklabs/mobile-websocket-example)
+- [Themis usability testing hackathon](https://cossacklabs.com/02-usability-testing.html) | [code](https://github.com/cossacklabs/themis-ux-testing) 
