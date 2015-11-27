@@ -5,10 +5,10 @@
 
 Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure messaging and secure data storage.
 
-Themis provides users few important cryptographic services:
-* Secure Message: a simple encrypted messaging solutions for widest scope of application
-* Secure Session: session-oriented, forward secrecy messaging solution with better security guarantees
-* Secure Cell: a multi-mode cryptgraphic container, suitable for storing anything from encrypted files to database records and format-preserved strings.
+Themis provides three important cryptographic services:
+* [Secure Message](https://github.com/cossacklabs/themis/wiki/3.3.1-Secure-Message): a simple encrypted messaging solution  for widest scope of applications
+* [Secure Session](https://github.com/cossacklabs/themis/wiki/3.3.2-Secure-Session): session-oriented, forward secrecy messaging solution with better security guarantees, but more demanding infrastructure
+* [Secure Cell](https://github.com/cossacklabs/themis/wiki/3.3.3-Secure-Cell): a multi-mode cryptographic container, suitable for storing anything from encrypted files to database records and format-preserved strings.
 
 Themis was designed to provide complicated cryptosystems in easy-to-use infrastructure, suitable for modern rapid development. It is open source, Apache 2 Licensed.
 
