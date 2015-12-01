@@ -31,6 +31,9 @@
  * @brief Routine for rundom bits generation
  * @{
  */
+#ifdef __cplusplus
+extern "C"{
+#endif
 
 /**
  * @brief Generates random bits
@@ -42,6 +45,10 @@
  * This function generates random bits and puts them in memory pointed by buffer.
  */
 soter_status_t soter_rand(uint8_t* buffer, size_t length);
+
+#ifdef __cplusplus
+}
+#endif
 
 /**@}@}*/
 
