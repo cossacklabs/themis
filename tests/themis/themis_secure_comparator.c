@@ -17,6 +17,7 @@
 #ifdef SECURE_COMPARATOR_ENABLED
 
 #include <themis/secure_comparator.h>
+#include <themis/secure_comparator_t.h>
 #include <stdio.h>
 #include <string.h>
 #include "themis_test.h"
@@ -235,10 +236,144 @@ static void secure_comparator_api_test(void)
 	alice = NULL;
 }
 
+static void corrupt_alice_step1(secure_comparator_t *alice, void *output)
+{
+	/* Let's assume alice is malicious and uses zeroes instead of random numbers */
+
+	ge_p3 g2a;
+	ge_p3 g3a;
+
+	memset(alice->rand2, 0, sizeof(alice->rand2));
+	memset(alice->rand3, 0, sizeof(alice->rand3));
+
+	ge_scalarmult_base(&g2a, alice->rand2);
+	ge_scalarmult_base(&g3a, alice->rand3);
+
+	ge_p3_tobytes((unsigned char *)output, &g2a);
+	ge_p3_tobytes(((unsigned char *)output) + ED25519_GE_LENGTH, &g3a);
+}
+
+static void corrupt_bob_step2(secure_comparator_t *bob, const void *input, size_t input_length, void *output, size_t *output_length)
+{
+	/* Let's assume bob is malicious and uses zeroes instead of random numbers */
+
+	ge_p3 g2a;
+	ge_p3 g3a;
+
+	ge_p3 g2b;
+	ge_p3 g3b;
+
+	ge_frombytes_vartime(&g2a, (const unsigned char *)input);
+	ge_frombytes_vartime(&g3a, ((const unsigned char *)input) + ED25519_GE_LENGTH);
+
+	if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != secure_comparator_proceed_compare(bob, input, input_length, output, output_length))
+	{
+		testsuite_fail_if(true, "secure_comparator_proceed_compare failed");
+		return;
+	}
+
+	memset(bob->rand2, 0, sizeof(bob->rand2));
+	memset(bob->rand3, 0, sizeof(bob->rand3));
+
+	ge_scalarmult_base(&g2b, bob->rand2);
+	ge_scalarmult_base(&g3b, bob->rand3);
+
+	ge_scalarmult_blinded(&(bob->g2), bob->rand2, &g2a);
+	ge_scalarmult_blinded(&(bob->g3), bob->rand3, &g3a);
+
+	memset(bob->rand, 0, sizeof(bob->rand));
+
+	ge_scalarmult_blinded(&(bob->P), bob->rand, &(bob->g3));
+	ge_double_scalarmult_vartime((ge_p2 *)&(bob->Q), bob->secret, &(bob->g2), bob->rand);
+	ge_p2_to_p3(&(bob->Q), (const ge_p2 *)&(bob->Q));
+
+	ge_p3_tobytes((unsigned char *)output, &g2b);
+	ge_p3_tobytes(((unsigned char *)output) + ED25519_GE_LENGTH, &g3b);
+	ge_p3_tobytes(((unsigned char *)output) + ED25519_GE_LENGTH + ED25519_GE_LENGTH, &(bob->Q));
+}
+
+static void secure_comparator_security_test(void)
+{
+	const char alice_secret[] = "alice secret";
+	const char bob_secret[] = "bob secret";
+
+	size_t output_length = sizeof(shared_mem);
+
+	secure_comparator_t alice, bob;
+
+	if (THEMIS_SUCCESS != secure_comparator_init(&alice))
+	{
+		testsuite_fail_if(true, "secure_comparator_init failed");
+		return;
+	}
+
+	if (THEMIS_SUCCESS != secure_comparator_init(&bob))
+	{
+		testsuite_fail_if(true, "secure_comparator_init failed");
+		return;
+	}
+
+	if (THEMIS_SUCCESS != secure_comparator_append_secret(&alice, alice_secret, sizeof(alice_secret)))
+	{
+		testsuite_fail_if(true, "secure_comparator_append_secret failed");
+		return;
+	}
+
+	if (THEMIS_SUCCESS != secure_comparator_append_secret(&bob, bob_secret, sizeof(bob_secret)))
+	{
+		testsuite_fail_if(true, "secure_comparator_append_secret failed");
+		return;
+	}
+
+	current_length = sizeof(shared_mem);
+
+	if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != secure_comparator_begin_compare(&alice, shared_mem, &current_length))
+	{
+		testsuite_fail_if(true, "secure_comparator_begin_compare failed");
+		return;
+	}
+
+	corrupt_alice_step1(&alice, shared_mem);
+
+	corrupt_bob_step2(&bob, shared_mem, current_length, shared_mem, &output_length);
+
+	current_length = output_length;
+	output_length = sizeof(shared_mem);
+
+	if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != secure_comparator_proceed_compare(&alice, shared_mem, current_length, shared_mem, &output_length))
+	{
+		testsuite_fail_if(true, "secure_comparator_proceed_compare failed");
+		return;
+	}
+
+	current_length = output_length;
+	output_length = sizeof(shared_mem);
+
+	if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != secure_comparator_proceed_compare(&bob, shared_mem, current_length, shared_mem, &output_length))
+	{
+		testsuite_fail_if(true, "secure_comparator_proceed_compare failed");
+		return;
+	}
+
+	current_length = output_length;
+	output_length = sizeof(shared_mem);
+
+	if (THEMIS_SUCCESS != secure_comparator_proceed_compare(&alice, shared_mem, current_length, shared_mem, &output_length))
+	{
+		testsuite_fail_if(true, "secure_comparator_proceed_compare failed");
+		return;
+	}
+
+	testsuite_fail_unless((THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(&alice)) && (THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(&bob)), "compare result no match");
+}
+
 void run_secure_comparator_test(void)
 {
 	testsuite_enter_suite("secure comparator: api test");
 	testsuite_run_test(secure_comparator_api_test);
+
+	testsuite_enter_suite("secure comparator: security test");
+	testsuite_run_test(secure_comparator_security_test);
 }
 
 #endif
