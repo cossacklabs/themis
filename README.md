@@ -10,7 +10,9 @@ Themis provides three important cryptographic services:
 * [Secure Session](https://github.com/cossacklabs/themis/wiki/3.3.2-Secure-Session): session-oriented, forward secrecy messaging solution with better security guarantees, but more demanding infrastructure
 * [Secure Cell](https://github.com/cossacklabs/themis/wiki/3.3.3-Secure-Cell): a multi-mode cryptographic container, suitable for storing anything from encrypted files to database records and format-preserved strings.
 
-Themis was designed to provide complicated cryptosystems in easy-to-use infrastructure, suitable for modern rapid development. Themis is based on best modern practices in implementing complicated security systems based on strongest available cryptographic algorithms in their safest forms. Themis is open source, Apache 2 Licensed.
+Themis was designed to provide complicated cryptosystems in easy-to-use infrastructure, suitable for modern rapid development. Themis is based on best modern practices in implementing complicated security systems based on strongest available cryptographic algorithms in their safest forms. It is available for modern mobile and server languages (see below).
+
+Themis is open source, Apache 2 Licensed.
 
 # Quickstart Crash Course
 
