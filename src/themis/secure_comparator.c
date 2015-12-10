@@ -25,7 +25,21 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx, const void *input, size_t input_length, void *output, size_t *output_length);
 static themis_status_t secure_comparator_alice_step5(secure_comparator_t *comp_ctx, const void *input, size_t input_length, void *output, size_t *output_length);
 
-static const uint8_t ec_g_comp[ED25519_GE_LENGTH] = {0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+static bool ge_is_zero(const ge_p3 *ge)
+{
+	int i;
+
+	for (i = 0; i < (sizeof(fe) / sizeof(crypto_int32)); i++)
+	{
+		if (ge->X[i])
+			return false;
+
+		if (ge->Y[i] != ge->Z[i])
+			return false;
+	}
+
+	return true;
+}
 
 themis_status_t secure_comparator_init(secure_comparator_t *comp_ctx)
 {
@@ -165,11 +179,6 @@ static themis_status_t secure_comparator_bob_step2(secure_comparator_t *comp_ctx
 		return THEMIS_INVALID_PARAMETER;
 	}
 
-	if (!memcmp(input, ec_g_comp, ED25519_GE_LENGTH) || !memcmp(((const unsigned char *)input) + ED25519_GE_LENGTH, ec_g_comp, ED25519_GE_LENGTH))
-	{
-		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
-	}
-
 	if (ge_frombytes_vartime(&g2a, (const unsigned char *)input))
 	{
 		return THEMIS_INVALID_PARAMETER;
@@ -210,6 +219,11 @@ static themis_status_t secure_comparator_bob_step2(secure_comparator_t *comp_ctx
 	ge_scalarmult_blinded(&(comp_ctx->g2), comp_ctx->rand2, &g2a);
 	ge_scalarmult_blinded(&(comp_ctx->g3), comp_ctx->rand3, &g3a);
 
+	if (ge_is_zero(&(comp_ctx->g2)) || ge_is_zero(&(comp_ctx->g3)))
+	{
+		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
+	}
+
 	generate_random_32(comp_ctx->rand);
 
 	ge_scalarmult_blinded(&(comp_ctx->P), comp_ctx->rand, &(comp_ctx->g3));
@@ -238,11 +252,6 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 		return THEMIS_INVALID_PARAMETER;
 	}
 
-	if (!memcmp(input, ec_g_comp, ED25519_GE_LENGTH) || !memcmp(((const unsigned char *)input) + ED25519_GE_LENGTH, ec_g_comp, ED25519_GE_LENGTH))
-	{
-		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
-	}
-
 	if (ge_frombytes_vartime(&g2b, (const unsigned char *)input))
 	{
 		return THEMIS_INVALID_PARAMETER;
@@ -267,6 +276,11 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 
 	ge_scalarmult_blinded(&(comp_ctx->g2), comp_ctx->rand2, &g2b);
 	ge_scalarmult_blinded(&(comp_ctx->g3), comp_ctx->rand3, &g3b);
+
+	if (ge_is_zero(&(comp_ctx->g2)) || ge_is_zero(&(comp_ctx->g3)))
+	{
+		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
+	}
 
 	generate_random_32(comp_ctx->rand);
 
