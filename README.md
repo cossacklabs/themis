@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/cossacklabs/themis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cossacklabs/themis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Circle CI](https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield)](https://circleci.com/gh/cossacklabs/themis)
 
-Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure messaging and secure data storage. 
+Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure messaging and secure data storage. Current release is [0.9.2](https://github.com/cossacklabs/themis/releases/tag/0.9.2), dated 6th of November.
 
 Themis provides three important cryptographic services:
 * [Secure Message](https://github.com/cossacklabs/themis/wiki/3.3.1-Secure-Message): a simple encrypted messaging solution  for widest scope of applications
