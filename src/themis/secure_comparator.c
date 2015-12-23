@@ -27,27 +27,16 @@ static themis_status_t secure_comparator_alice_step5(secure_comparator_t *comp_c
 
 static bool ge_is_zero(const ge_p3 *ge)
 {
-	int i;
-	bool res = true;
+	uint8_t y[ED25519_GE_LENGTH];
+	uint8_t z[ED25519_GE_LENGTH];
 
-	for (i = 0; i < (sizeof(fe) / sizeof(crypto_int32)); i++)
-	{
-		if (ge->X[i])
-		{
-			res = false;
-		}
+	fe_tobytes(y, ge->Y);
+	fe_tobytes(z, ge->Z);
 
-		if (ge->Y[i] != ge->Z[i])
-		{
-			res = false;
-		}
-	}
-
-	return res;
+	return (!fe_isnonzero(ge->X)) && (!crypto_verify_32(y, z));
 }
 
-/* TODO: Check for errors */
-static void ed_sign(uint8_t pos, const uint8_t *scalar, uint8_t *signature)
+static themis_status_t ed_sign(uint8_t pos, const uint8_t *scalar, uint8_t *signature)
 {
 	uint8_t r[ED25519_GE_LENGTH];
 	ge_p3 R;
@@ -55,23 +44,46 @@ static void ed_sign(uint8_t pos, const uint8_t *scalar, uint8_t *signature)
 
 	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
+	themis_status_t res;
 
 	generate_random_32(r);
 	ge_scalarmult_base(&R, r);
 	ge_p3_tobytes(k, &R);
 
-	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
-	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
-	soter_hash_final(&hash_ctx, k, &hash_length);
+	res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
+	if (THEMIS_SUCCESS != res)
+	{
+		return res;
+	}
 
-	sc_reduce(k);
+	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
 
-	memcpy(signature, k, ED25519_GE_LENGTH);
-	sc_muladd(signature + ED25519_GE_LENGTH, k, scalar, r);
+	res = soter_hash_update(&hash_ctx, &pos, sizeof(pos));
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
+
+	res = soter_hash_final(&hash_ctx, k, &hash_length);
+
+	if (THEMIS_SUCCESS == res)
+	{
+		sc_reduce(k);
+
+		memcpy(signature, k, ED25519_GE_LENGTH);
+		sc_muladd(signature + ED25519_GE_LENGTH, k, scalar, r);
+	}
+
+	return res;
 }
 
-static bool ed_verify(uint8_t pos, const ge_p3 *point, const uint8_t *signature)
+static themis_status_t ed_verify(uint8_t pos, const ge_p3 *point, const uint8_t *signature)
 {
 	ge_p3 A;
 	ge_p2 R;
@@ -80,9 +92,11 @@ static bool ed_verify(uint8_t pos, const ge_p3 *point, const uint8_t *signature)
 	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
 
+	themis_status_t res;
+
 	if (signature[63] & 224)
 	{
-		return false;
+		return THEMIS_INVALID_SIGNATURE;
 	}
 
 	memcpy(&A, point, sizeof(ge_p3));
@@ -92,17 +106,45 @@ static bool ed_verify(uint8_t pos, const ge_p3 *point, const uint8_t *signature)
 	ge_double_scalarmult_vartime(&R, signature, &A, signature + ED25519_GE_LENGTH);
 	ge_tobytes(k, &R);
 
-	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
-	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
-	soter_hash_final(&hash_ctx, k, &hash_length);
+	res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
+	if (THEMIS_SUCCESS != res)
+	{
+		return res;
+	}
+
+	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
+
+	res = soter_hash_update(&hash_ctx, &pos, sizeof(pos));
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
+
+	res = soter_hash_final(&hash_ctx, k, &hash_length);
+	if (THEMIS_SUCCESS != res)
+	{
+		return res;
+	}
 
 	sc_reduce(k);
 
-	return !memcmp(k, signature, ED25519_GE_LENGTH);
+	if (memcmp(k, signature, ED25519_GE_LENGTH))
+	{
+		return THEMIS_INVALID_SIGNATURE;
+	}
+	else
+	{
+		return THEMIS_SUCCESS;
+	}
 }
 
-static void ed_dbl_base_sign(uint8_t pos, const uint8_t *scalar1, const uint8_t *scalar2, const ge_p3 *base1, const ge_p3 *base2, uint8_t *signature)
+static themis_status_t ed_dbl_base_sign(uint8_t pos, const uint8_t *scalar1, const uint8_t *scalar2, const ge_p3 *base1, const ge_p3 *base2, uint8_t *signature)
 {
 	uint8_t r1[ED25519_GE_LENGTH];
 	uint8_t r2[ED25519_GE_LENGTH];
@@ -113,29 +155,56 @@ static void ed_dbl_base_sign(uint8_t pos, const uint8_t *scalar1, const uint8_t 
 	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
 
+	themis_status_t res;
+
 	generate_random_32(r1);
 	generate_random_32(r2);
 	ge_scalarmult_blinded(&R1, r1, base2);
 	ge_double_scalarmult_vartime(&R2, r2, base1, r1);
 
-	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
+	res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
+	if (THEMIS_SUCCESS != res)
+	{
+		return res;
+	}
 
 	ge_p3_tobytes(k, &R1);
-	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
 
 	ge_tobytes(k, &R2);
-	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
 
-	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
-	soter_hash_final(&hash_ctx, k, &hash_length);
+	res = soter_hash_update(&hash_ctx, &pos, sizeof(pos));
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
 
-	sc_reduce(k);
-	memcpy(signature, k, ED25519_GE_LENGTH);
-	sc_muladd(signature + ED25519_GE_LENGTH, k, scalar1, r1);
-	sc_muladd(signature + (2 * ED25519_GE_LENGTH), k, scalar2, r2);
+	res = soter_hash_final(&hash_ctx, k, &hash_length);
+
+	if (THEMIS_SUCCESS == res)
+	{
+		sc_reduce(k);
+		memcpy(signature, k, ED25519_GE_LENGTH);
+		sc_muladd(signature + ED25519_GE_LENGTH, k, scalar1, r1);
+		sc_muladd(signature + (2 * ED25519_GE_LENGTH), k, scalar2, r2);
+	}
+
+	return res;
 }
 
-static bool ed_dbl_base_verify(uint8_t pos, const ge_p3 *base1, const ge_p3 *base2, const ge_p3 *point1, const ge_p3 *point2, const uint8_t *signature)
+static themis_status_t ed_dbl_base_verify(uint8_t pos, const ge_p3 *base1, const ge_p3 *base2, const ge_p3 *point1, const ge_p3 *point2, const uint8_t *signature)
 {
 	ge_p3 R1;
 	ge_p3 R2;
@@ -145,9 +214,11 @@ static bool ed_dbl_base_verify(uint8_t pos, const ge_p3 *base1, const ge_p3 *bas
 	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
 
+	themis_status_t res;
+
 	if ((signature[63] & 224) || (signature[63 + ED25519_GE_LENGTH] & 224))
 	{
-		return false;
+		return THEMIS_INVALID_SIGNATURE;
 	}
 
 	ge_scalarmult_blinded(&R1, signature + ED25519_GE_LENGTH, base2);
@@ -155,8 +226,18 @@ static bool ed_dbl_base_verify(uint8_t pos, const ge_p3 *base1, const ge_p3 *bas
 	ge_p3_sub(&R1, &R1, &R2);
 	ge_p3_tobytes(k, &R1);
 
-	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
+	if (THEMIS_SUCCESS != res)
+	{
+		return res;
+	}
+
+	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
 
 	ge_double_scalarmult_vartime((ge_p2 *)&R1, signature + (2 *ED25519_GE_LENGTH), base1, signature + ED25519_GE_LENGTH);
 	ge_p2_to_p3(&R1, (const ge_p2 *)&R1);
@@ -164,17 +245,39 @@ static bool ed_dbl_base_verify(uint8_t pos, const ge_p3 *base1, const ge_p3 *bas
 	ge_p3_sub(&R1, &R1, &R2);
 	ge_p3_tobytes(k, &R1);
 
-	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
-	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
-	soter_hash_final(&hash_ctx, k, &hash_length);
+	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
+
+	res = soter_hash_update(&hash_ctx, &pos, sizeof(pos));
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
+
+	res = soter_hash_final(&hash_ctx, k, &hash_length);
+	if (THEMIS_SUCCESS != res)
+	{
+		return res;
+	}
 
 	sc_reduce(k);
 
-	/* TODO: const time? */
-	return !memcmp(k, signature, ED25519_GE_LENGTH);
+	if (memcmp(k, signature, ED25519_GE_LENGTH))
+	{
+		return THEMIS_INVALID_SIGNATURE;
+	}
+	else
+	{
+		return THEMIS_SUCCESS;
+	}
 }
 
-static void ed_point_sign(uint8_t pos, const uint8_t *scalar, const ge_p3 *point, uint8_t *signature)
+static themis_status_t ed_point_sign(uint8_t pos, const uint8_t *scalar, const ge_p3 *point, uint8_t *signature)
 {
 	uint8_t r[ED25519_GE_LENGTH];
 	ge_p3 R;
@@ -183,25 +286,59 @@ static void ed_point_sign(uint8_t pos, const uint8_t *scalar, const ge_p3 *point
 	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
 
+	themis_status_t res;
+
 	generate_random_32(r);
 	ge_scalarmult_base(&R, r);
 	ge_p3_tobytes(k, &R);
 
-	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
+	if (THEMIS_SUCCESS != res)
+	{
+		return res;
+	}
+
+	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
 
 	ge_scalarmult_blinded(&R, r, point);
 	ge_p3_tobytes(k, &R);
-	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
-	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
-	soter_hash_final(&hash_ctx, k, &hash_length);
 
-	sc_reduce(k);
-	memcpy(signature, k, ED25519_GE_LENGTH);
-	sc_muladd(signature + ED25519_GE_LENGTH, k, scalar, r);
+	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
+
+	res = soter_hash_update(&hash_ctx, &pos, sizeof(pos));
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
+
+	res = soter_hash_final(&hash_ctx, k, &hash_length);
+	if (THEMIS_SUCCESS != res)
+	{
+		return res;
+	}
+
+	if (THEMIS_SUCCESS == res)
+	{
+		sc_reduce(k);
+		memcpy(signature, k, ED25519_GE_LENGTH);
+		sc_muladd(signature + ED25519_GE_LENGTH, k, scalar, r);
+	}
+
+	return res;
 }
 
-static bool ed_point_verify(uint8_t pos, const ge_p3 *base2, const ge_p3 *point1, const ge_p3 *point2, const uint8_t *signature)
+static themis_status_t ed_point_verify(uint8_t pos, const ge_p3 *base2, const ge_p3 *point1, const ge_p3 *point2, const uint8_t *signature)
 {
 	ge_p3 p_neg;
 	ge_p3 R1;
@@ -212,9 +349,11 @@ static bool ed_point_verify(uint8_t pos, const ge_p3 *base2, const ge_p3 *point1
 	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
 
+	themis_status_t res;
+
 	if (signature[63] & 224)
 	{
-		return false;
+		return THEMIS_INVALID_SIGNATURE;
 	}
 
 	memcpy(&p_neg, base2, sizeof(ge_p3));
@@ -224,22 +363,54 @@ static bool ed_point_verify(uint8_t pos, const ge_p3 *base2, const ge_p3 *point1
 	ge_double_scalarmult_vartime((ge_p2 *)&R1, signature, &p_neg, signature + ED25519_GE_LENGTH);
 	ge_tobytes(k, (const ge_p2 *)&R1);
 
-	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
+	if (THEMIS_SUCCESS != res)
+	{
+		return res;
+	}
+
+	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
 
 	ge_scalarmult_blinded(&R1, signature + ED25519_GE_LENGTH, point1);
 	ge_scalarmult_blinded(&R2, signature, point2);
 	ge_p3_sub(&R1, &R1, &R2);
 	ge_p3_tobytes(k, &R1);
 
-	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
-	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
-	soter_hash_final(&hash_ctx, k, &hash_length);
+	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
+
+	res = soter_hash_update(&hash_ctx, &pos, sizeof(pos));
+	if (THEMIS_SUCCESS != res)
+	{
+		soter_hash_final(&hash_ctx, k, &hash_length);
+		return res;
+	}
+
+	res = soter_hash_final(&hash_ctx, k, &hash_length);
+	if (THEMIS_SUCCESS != res)
+	{
+		return res;
+	}
 
 	sc_reduce(k);
 
-	/* TODO: const time? */
-	return !memcmp(k, signature, ED25519_GE_LENGTH);
+	if (memcmp(k, signature, ED25519_GE_LENGTH))
+	{
+		return THEMIS_INVALID_SIGNATURE;
+	}
+	else
+	{
+		return THEMIS_SUCCESS;
+	}
 }
 
 themis_status_t secure_comparator_init(secure_comparator_t *comp_ctx)
@@ -322,7 +493,7 @@ themis_status_t secure_comparator_append_secret(secure_comparator_t *comp_ctx, c
 
 static themis_status_t secure_comparator_alice_step1(secure_comparator_t *comp_ctx, void *output, size_t *output_length)
 {
-	soter_status_t soter_status;
+	themis_status_t themis_status;
 	size_t secret_length = sizeof(comp_ctx->secret);
 
 	ge_p3 g2a;
@@ -337,10 +508,10 @@ static themis_status_t secure_comparator_alice_step1(secure_comparator_t *comp_c
 
 	*output_length = 6 * ED25519_GE_LENGTH;
 
-	soter_status = soter_hash_final(&(comp_ctx->hash_ctx), comp_ctx->secret, &secret_length);
-	if (SOTER_SUCCESS != soter_status)
+	themis_status = (themis_status_t)soter_hash_final(&(comp_ctx->hash_ctx), comp_ctx->secret, &secret_length);
+	if (THEMIS_SUCCESS != themis_status)
 	{
-		return (themis_status_t)soter_status;
+		return themis_status;
 	}
 
 	if (sizeof(comp_ctx->secret) != secret_length)
@@ -357,10 +528,18 @@ static themis_status_t secure_comparator_alice_step1(secure_comparator_t *comp_c
 	ge_scalarmult_base(&g3a, comp_ctx->rand3);
 
 	ge_p3_tobytes((unsigned char *)output, &g2a);
-	ed_sign(1, comp_ctx->rand2, ((unsigned char *)output) + ED25519_GE_LENGTH);
+	themis_status = ed_sign(1, comp_ctx->rand2, ((unsigned char *)output) + ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
+	}
 
 	ge_p3_tobytes(((unsigned char *)output) + (3 * ED25519_GE_LENGTH), &g3a);
-	ed_sign(2, comp_ctx->rand3, ((unsigned char *)output) + (4 * ED25519_GE_LENGTH));
+	themis_status = ed_sign(2, comp_ctx->rand3, ((unsigned char *)output) + (4 * ED25519_GE_LENGTH));
+	if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
+	}
 
 	comp_ctx->state_handler = secure_comparator_alice_step3;
 
@@ -374,7 +553,7 @@ static themis_status_t secure_comparator_bob_step2(secure_comparator_t *comp_ctx
 	ge_p3 g2b;
 	ge_p3 g3b;
 
-	soter_status_t soter_status;
+	themis_status_t themis_status;
 	size_t secret_length = sizeof(comp_ctx->secret);
 
 	if (input_length < (6 * ED25519_GE_LENGTH))
@@ -398,21 +577,32 @@ static themis_status_t secure_comparator_bob_step2(secure_comparator_t *comp_ctx
 		return THEMIS_BUFFER_TOO_SMALL;
 	}
 
-	if (!ed_verify(1, &g2a, (const unsigned char *)input + ED25519_GE_LENGTH))
+	themis_status = ed_verify(1, &g2a, (const unsigned char *)input + ED25519_GE_LENGTH);
+	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
-		return THEMIS_INVALID_PARAMETER;
+		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
 	}
-	if (!ed_verify(2, &(comp_ctx->g3p), (const unsigned char *)input + (4 * ED25519_GE_LENGTH)))
+	else if (THEMIS_SUCCESS != themis_status)
 	{
-		return THEMIS_INVALID_PARAMETER;
+		return themis_status;
+	}
+
+	themis_status = ed_verify(2, &(comp_ctx->g3p), (const unsigned char *)input + (4 * ED25519_GE_LENGTH));
+	if (THEMIS_INVALID_SIGNATURE == themis_status)
+	{
+		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
+	}
+	else if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
 	}
 
 	*output_length = 11 * ED25519_GE_LENGTH;
 
-	soter_status = soter_hash_final(&(comp_ctx->hash_ctx), comp_ctx->secret, &secret_length);
-	if (SOTER_SUCCESS != soter_status)
+	themis_status = (themis_status_t)soter_hash_final(&(comp_ctx->hash_ctx), comp_ctx->secret, &secret_length);
+	if (THEMIS_SUCCESS != themis_status)
 	{
-		return (themis_status_t)soter_status;
+		return themis_status;
 	}
 
 	if (sizeof(comp_ctx->secret) != secret_length)
@@ -443,14 +633,26 @@ static themis_status_t secure_comparator_bob_step2(secure_comparator_t *comp_ctx
 	ge_p2_to_p3(&(comp_ctx->Q), (const ge_p2 *)&(comp_ctx->Q));
 
 	ge_p3_tobytes((unsigned char *)output, &g2b);
-	ed_sign(3, comp_ctx->rand2, ((unsigned char *)output) + ED25519_GE_LENGTH);
+	themis_status = ed_sign(3, comp_ctx->rand2, ((unsigned char *)output) + ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
+	}
 
 	ge_p3_tobytes(((unsigned char *)output) + (3 * ED25519_GE_LENGTH), &g3b);
-	ed_sign(4, comp_ctx->rand3, ((unsigned char *)output) + (4 * ED25519_GE_LENGTH));
+	themis_status = ed_sign(4, comp_ctx->rand3, ((unsigned char *)output) + (4 * ED25519_GE_LENGTH));
+	if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
+	}
 
 	ge_p3_tobytes(((unsigned char *)output) + (6 * ED25519_GE_LENGTH), &(comp_ctx->P));
 	ge_p3_tobytes(((unsigned char *)output) + (7 * ED25519_GE_LENGTH), &(comp_ctx->Q));
-	ed_dbl_base_sign(5, comp_ctx->rand, comp_ctx->secret, &(comp_ctx->g2), &(comp_ctx->g3), ((unsigned char *)output) + (8 * ED25519_GE_LENGTH));
+	themis_status = ed_dbl_base_sign(5, comp_ctx->rand, comp_ctx->secret, &(comp_ctx->g2), &(comp_ctx->g3), ((unsigned char *)output) + (8 * ED25519_GE_LENGTH));
+	if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
+	}
 
 	comp_ctx->state_handler = secure_comparator_bob_step4;
 
@@ -459,6 +661,8 @@ static themis_status_t secure_comparator_bob_step2(secure_comparator_t *comp_ctx
 
 static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_ctx, const void *input, size_t input_length, void *output, size_t *output_length)
 {
+	themis_status_t themis_status;
+
 	ge_p3 g2b;
 	ge_p3 Qb;
 
@@ -493,13 +697,24 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 		return THEMIS_BUFFER_TOO_SMALL;
 	}
 
-	if (!ed_verify(3, &g2b, (const unsigned char *)input + ED25519_GE_LENGTH))
+	themis_status = ed_verify(3, &g2b, (const unsigned char *)input + ED25519_GE_LENGTH);
+	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
-		return THEMIS_INVALID_PARAMETER;
+		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
 	}
-	if (!ed_verify(4, &(comp_ctx->g3p), (const unsigned char *)input + (4 * ED25519_GE_LENGTH)))
+	else if (THEMIS_SUCCESS != themis_status)
 	{
-		return THEMIS_INVALID_PARAMETER;
+		return themis_status;
+	}
+
+	themis_status = ed_verify(4, &(comp_ctx->g3p), (const unsigned char *)input + (4 * ED25519_GE_LENGTH));
+	if (THEMIS_INVALID_SIGNATURE == themis_status)
+	{
+		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
+	}
+	else if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
 	}
 
 	*output_length = 8 * ED25519_GE_LENGTH;
@@ -512,9 +727,14 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
 	}
 
-	if (!ed_dbl_base_verify(5, &(comp_ctx->g2), &(comp_ctx->g3), &(comp_ctx->Pp), &Qb, ((unsigned char *)output) + (8 * ED25519_GE_LENGTH)))
+	themis_status = ed_dbl_base_verify(5, &(comp_ctx->g2), &(comp_ctx->g3), &(comp_ctx->Pp), &Qb, ((unsigned char *)output) + (8 * ED25519_GE_LENGTH));
+	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
-		return THEMIS_INVALID_PARAMETER;
+		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
+	}
+	else if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
 	}
 
 	generate_random_32(comp_ctx->rand);
@@ -534,9 +754,18 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 	/* send to bob */
 	ge_p3_tobytes((unsigned char *)output, &(comp_ctx->P));
 	ge_p3_tobytes(((unsigned char *)output) + ED25519_GE_LENGTH, &(comp_ctx->Q));
-	ed_dbl_base_sign(6, comp_ctx->rand, comp_ctx->secret, &(comp_ctx->g2), &(comp_ctx->g3), ((unsigned char *)output) + (2 * ED25519_GE_LENGTH));
+	themis_status = ed_dbl_base_sign(6, comp_ctx->rand, comp_ctx->secret, &(comp_ctx->g2), &(comp_ctx->g3), ((unsigned char *)output) + (2 * ED25519_GE_LENGTH));
+	if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
+	}
+
 	ge_p3_tobytes(((unsigned char *)output) + (5 * ED25519_GE_LENGTH), &R);
-	ed_point_sign(7, comp_ctx->rand3, &(comp_ctx->Qa_Qb), ((unsigned char *)output) + (6 * ED25519_GE_LENGTH));
+	themis_status = ed_point_sign(7, comp_ctx->rand3, &(comp_ctx->Qa_Qb), ((unsigned char *)output) + (6 * ED25519_GE_LENGTH));
+	if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
+	}
 
 	comp_ctx->state_handler = secure_comparator_alice_step5;
 
@@ -545,6 +774,8 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 
 static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx, const void *input, size_t input_length, void *output, size_t *output_length)
 {
+	themis_status_t themis_status;
+
 	ge_p3 Pa;
 	ge_p3 Qa;
 	ge_p3 Ra;
@@ -589,15 +820,25 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 
 	*output_length = 3 * ED25519_GE_LENGTH;
 
-	if (!ed_dbl_base_verify(6, &(comp_ctx->g2), &(comp_ctx->g3), &Pa, &Qa, ((unsigned char *)output) + (2 * ED25519_GE_LENGTH)))
+	themis_status = ed_dbl_base_verify(6, &(comp_ctx->g2), &(comp_ctx->g3), &Pa, &Qa, ((unsigned char *)output) + (2 * ED25519_GE_LENGTH));
+	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
-		return THEMIS_INVALID_PARAMETER;
+		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
+	}
+	else if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
 	}
 
 	ge_p3_sub(&Qa, &Qa, &(comp_ctx->Q));
-	if (!ed_point_verify(7, &(comp_ctx->g3p), &Qa, &Ra, ((unsigned char *)output) + (6 * ED25519_GE_LENGTH)))
+	themis_status = ed_point_verify(7, &(comp_ctx->g3p), &Qa, &Ra, ((unsigned char *)output) + (6 * ED25519_GE_LENGTH));
+	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
-		return THEMIS_INVALID_PARAMETER;
+		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
+	}
+	else if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
 	}
 
 	ge_scalarmult_blinded(&R, comp_ctx->rand3, &Qa);
@@ -611,7 +852,11 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 	}
 
 	ge_p3_tobytes((unsigned char *)output, &R);
-	ed_point_sign(8, comp_ctx->rand3, &Qa, ((unsigned char *)output) + ED25519_GE_LENGTH);
+	themis_status = ed_point_sign(8, comp_ctx->rand3, &Qa, ((unsigned char *)output) + ED25519_GE_LENGTH);
+	if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
+	}
 
 	memset(comp_ctx->secret, 0, sizeof(comp_ctx->secret));
 	comp_ctx->state_handler = NULL;
@@ -621,6 +866,7 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 
 static themis_status_t secure_comparator_alice_step5(secure_comparator_t *comp_ctx, const void *input, size_t input_length, void *output, size_t *output_length)
 {
+	themis_status_t themis_status;
 	ge_p3 Rb;
 
 	ge_p3 Rab;
@@ -650,9 +896,14 @@ static themis_status_t secure_comparator_alice_step5(secure_comparator_t *comp_c
 
 	*output_length = 0;
 
-	if (!ed_point_verify(8, &(comp_ctx->g3p), &(comp_ctx->Qa_Qb), &Rb, ((unsigned char *)output) + ED25519_GE_LENGTH))
+	themis_status = ed_point_verify(8, &(comp_ctx->g3p), &(comp_ctx->Qa_Qb), &Rb, ((unsigned char *)output) + ED25519_GE_LENGTH);
+	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
-		return THEMIS_INVALID_PARAMETER;
+		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
+	}
+	else if (THEMIS_SUCCESS != themis_status)
+	{
+		return themis_status;
 	}
 
 	ge_scalarmult_blinded(&Rab, comp_ctx->rand3, &Rb);

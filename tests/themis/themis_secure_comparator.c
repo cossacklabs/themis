@@ -236,7 +236,6 @@ static void secure_comparator_api_test(void)
 	alice = NULL;
 }
 
-#if 0
 static void corrupt_alice_step1(secure_comparator_t *alice, void *output)
 {
 	/* Let's assume alice is malicious and uses zeroes instead of random numbers */
@@ -367,15 +366,14 @@ static void secure_comparator_security_test(void)
 
 	testsuite_fail_unless((THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(&alice)) && (THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(&bob)), "compare result no match");
 }
-#endif
 
 void run_secure_comparator_test(void)
 {
 	testsuite_enter_suite("secure comparator: api test");
 	testsuite_run_test(secure_comparator_api_test);
 
-	/* testsuite_enter_suite("secure comparator: security test");
-	testsuite_run_test(secure_comparator_security_test); */
+	testsuite_enter_suite("secure comparator: security test");
+	testsuite_run_test(secure_comparator_security_test);
 }
 
 #endif
