@@ -58,18 +58,16 @@ static void ed_sign(uint8_t pos, const uint8_t *scalar, uint8_t *signature)
 
 	generate_random_32(r);
 	ge_scalarmult_base(&R, r);
-	ge_p3_tobytes(signature, &R);
+	ge_p3_tobytes(k, &R);
 
 	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, signature, ED25519_GE_LENGTH);
-	soter_hash_final(&hash_ctx, signature, &hash_length);
-
-	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, signature, ED25519_GE_LENGTH);
+	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
 	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
 	soter_hash_final(&hash_ctx, k, &hash_length);
 
 	sc_reduce(k);
+
+	memcpy(signature, k, ED25519_GE_LENGTH);
 	sc_muladd(signature + ED25519_GE_LENGTH, k, scalar, r);
 }
 
@@ -78,7 +76,6 @@ static bool ed_verify(uint8_t pos, const ge_p3 *point, const uint8_t *signature)
 	ge_p3 A;
 	ge_p2 R;
 	uint8_t k[64];
-	uint8_t r[ED25519_GE_LENGTH];
 
 	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
@@ -92,20 +89,16 @@ static bool ed_verify(uint8_t pos, const ge_p3 *point, const uint8_t *signature)
 	fe_neg(A.X, A.X);
 	fe_neg(A.T, A.T);
 
+	ge_double_scalarmult_vartime(&R, signature, &A, signature + ED25519_GE_LENGTH);
+	ge_tobytes(k, &R);
+
 	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, signature, ED25519_GE_LENGTH);
+	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
 	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
 	soter_hash_final(&hash_ctx, k, &hash_length);
 
 	sc_reduce(k);
-	ge_double_scalarmult_vartime(&R, k, &A, signature + ED25519_GE_LENGTH);
-	ge_tobytes(r, &R);
 
-	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, r, ED25519_GE_LENGTH);
-	soter_hash_final(&hash_ctx, k, &hash_length);
-
-	/* TODO: const time? */
 	return !memcmp(k, signature, ED25519_GE_LENGTH);
 }
 
@@ -133,27 +126,21 @@ static void ed_dbl_base_sign(uint8_t pos, const uint8_t *scalar1, const uint8_t 
 	ge_tobytes(k, &R2);
 	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
 
-	soter_hash_final(&hash_ctx, signature, &hash_length);
-
-	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, signature, ED25519_GE_LENGTH);
 	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
 	soter_hash_final(&hash_ctx, k, &hash_length);
 
 	sc_reduce(k);
+	memcpy(signature, k, ED25519_GE_LENGTH);
 	sc_muladd(signature + ED25519_GE_LENGTH, k, scalar1, r1);
 	sc_muladd(signature + (2 * ED25519_GE_LENGTH), k, scalar2, r2);
 }
 
 static bool ed_dbl_base_verify(uint8_t pos, const ge_p3 *base1, const ge_p3 *base2, const ge_p3 *point1, const ge_p3 *point2, const uint8_t *signature)
 {
-	ge_p3 p1_neg;
 	ge_p3 R1;
 	ge_p3 R2;
 
 	uint8_t k[64];
-	uint8_t h[64];
-	uint8_t r[ED25519_GE_LENGTH];
 
 	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
@@ -163,28 +150,25 @@ static bool ed_dbl_base_verify(uint8_t pos, const ge_p3 *base1, const ge_p3 *bas
 		return false;
 	}
 
+	ge_scalarmult_blinded(&R1, signature + ED25519_GE_LENGTH, base2);
+	ge_scalarmult_blinded(&R2, signature, point1);
+	ge_p3_sub(&R1, &R1, &R2);
+	ge_p3_tobytes(k, &R1);
+
 	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, signature, ED25519_GE_LENGTH);
+	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+
+	ge_double_scalarmult_vartime((ge_p2 *)&R1, signature + (2 *ED25519_GE_LENGTH), base1, signature + ED25519_GE_LENGTH);
+	ge_p2_to_p3(&R1, (const ge_p2 *)&R1);
+	ge_scalarmult_blinded(&R2, signature, point2);
+	ge_p3_sub(&R1, &R1, &R2);
+	ge_p3_tobytes(k, &R1);
+
+	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
 	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
 	soter_hash_final(&hash_ctx, k, &hash_length);
 
 	sc_reduce(k);
-	ge_scalarmult_blinded(&R1, signature + ED25519_GE_LENGTH, base2);
-	ge_scalarmult_blinded(&R2, k, point1);
-	ge_p3_sub(&R1, &R1, &R2);
-	ge_p3_tobytes(r, &R1);
-
-	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, r, ED25519_GE_LENGTH);
-
-	ge_double_scalarmult_vartime((ge_p2 *)&R1, signature + (2 *ED25519_GE_LENGTH), base1, signature + ED25519_GE_LENGTH);
-	ge_p2_to_p3(&R1, (const ge_p2 *)&R1);
-	ge_scalarmult_blinded(&R2, k, point2);
-	ge_p3_sub(&R1, &R1, &R2);
-	ge_p3_tobytes(r, &R1);
-
-	soter_hash_update(&hash_ctx, r, ED25519_GE_LENGTH);
-	soter_hash_final(&hash_ctx, k, &hash_length);
 
 	/* TODO: const time? */
 	return !memcmp(k, signature, ED25519_GE_LENGTH);
@@ -209,14 +193,11 @@ static void ed_point_sign(uint8_t pos, const uint8_t *scalar, const ge_p3 *point
 	ge_scalarmult_blinded(&R, r, point);
 	ge_p3_tobytes(k, &R);
 	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
-	soter_hash_final(&hash_ctx, signature, &hash_length);
-
-	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, signature, ED25519_GE_LENGTH);
 	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
 	soter_hash_final(&hash_ctx, k, &hash_length);
 
 	sc_reduce(k);
+	memcpy(signature, k, ED25519_GE_LENGTH);
 	sc_muladd(signature + ED25519_GE_LENGTH, k, scalar, r);
 }
 
@@ -227,7 +208,6 @@ static bool ed_point_verify(uint8_t pos, const ge_p3 *base2, const ge_p3 *point1
 	ge_p3 R2;
 
 	uint8_t k[64];
-	uint8_t r[ED25519_GE_LENGTH];
 
 	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
@@ -237,30 +217,26 @@ static bool ed_point_verify(uint8_t pos, const ge_p3 *base2, const ge_p3 *point1
 		return false;
 	}
 
-	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, signature, ED25519_GE_LENGTH);
-	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
-	soter_hash_final(&hash_ctx, k, &hash_length);
-
-	sc_reduce(k);
-
 	memcpy(&p_neg, base2, sizeof(ge_p3));
 	fe_neg(p_neg.X, p_neg.X);
 	fe_neg(p_neg.T, p_neg.T);
 
-	ge_double_scalarmult_vartime((ge_p2 *)&R1, k, &p_neg, signature + ED25519_GE_LENGTH);
-	ge_tobytes(r, (const ge_p2 *)&R1);
+	ge_double_scalarmult_vartime((ge_p2 *)&R1, signature, &p_neg, signature + ED25519_GE_LENGTH);
+	ge_tobytes(k, (const ge_p2 *)&R1);
 
 	soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	soter_hash_update(&hash_ctx, r, ED25519_GE_LENGTH);
+	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
 
 	ge_scalarmult_blinded(&R1, signature + ED25519_GE_LENGTH, point1);
-	ge_scalarmult_blinded(&R2, k, point2);
+	ge_scalarmult_blinded(&R2, signature, point2);
 	ge_p3_sub(&R1, &R1, &R2);
-	ge_p3_tobytes(r, &R1);
+	ge_p3_tobytes(k, &R1);
 
-	soter_hash_update(&hash_ctx, r, ED25519_GE_LENGTH);
+	soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	soter_hash_update(&hash_ctx, &pos, sizeof(pos));
 	soter_hash_final(&hash_ctx, k, &hash_length);
+
+	sc_reduce(k);
 
 	/* TODO: const time? */
 	return !memcmp(k, signature, ED25519_GE_LENGTH);
