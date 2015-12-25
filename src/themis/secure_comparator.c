@@ -844,6 +844,11 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 	ge_scalarmult_blinded(&R, comp_ctx->rand3, &Qa);
 
 	ge_scalarmult_blinded(&Rab, comp_ctx->rand3, &Ra);
+	if (ge_is_zero(&Rab))
+	{
+		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
+	}
+
 	ge_p3_sub(&Pa_Pb, &Pa, &(comp_ctx->P));
 
 	if (THEMIS_SCOMPARE_NOT_READY == comp_ctx->result)
@@ -907,6 +912,11 @@ static themis_status_t secure_comparator_alice_step5(secure_comparator_t *comp_c
 	}
 
 	ge_scalarmult_blinded(&Rab, comp_ctx->rand3, &Rb);
+	if (ge_is_zero(&Rab))
+	{
+		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
+	}
+
 	ge_p3_sub(&Pa_Pb, &(comp_ctx->P), &(comp_ctx->Pp));
 
 	if (THEMIS_SCOMPARE_NOT_READY == comp_ctx->result)
