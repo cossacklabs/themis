@@ -33,4 +33,6 @@ extern void ge_p3_sub(ge_p3 *r, const ge_p3 *p, const ge_p3 *q);
 extern void ge_scalarmult_blinded(ge_p3 *r, const unsigned char *a, const ge_p3 *A);
 extern int ge_cmp(const ge_p3 *a, const ge_p3 *b);
 
+int crypto_verify_32(const unsigned char *x,const unsigned char *y);
+
 #endif /* GE_UTILS_H */

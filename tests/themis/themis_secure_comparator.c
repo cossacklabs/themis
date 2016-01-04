@@ -37,7 +37,7 @@ static secure_comparator_t *alice = NULL;
 static secure_comparator_t *bob = NULL;
 
 /* Peers will communicate using shared memory */
-static uint8_t shared_mem[256];
+static uint8_t shared_mem[512];
 static size_t current_length = 0;
 
 static int alice_function(void)
