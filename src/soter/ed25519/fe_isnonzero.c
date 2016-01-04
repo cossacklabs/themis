@@ -9,7 +9,7 @@ Preconditions:
    |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
 */
 
-static int crypto_verify_32(const unsigned char *x,const unsigned char *y)
+int crypto_verify_32(const unsigned char *x,const unsigned char *y)
 {
   unsigned int differentbits = 0;
 #define F(i) differentbits |= x[i] ^ y[i];
@@ -48,10 +48,10 @@ static int crypto_verify_32(const unsigned char *x,const unsigned char *y)
   return (1 & ((differentbits - 1) >> 8)) - 1;
 }
 
-static const unsigned char zero[32];
-
 int fe_isnonzero(const fe f)
 {
+  static const unsigned char zero[32] = {0};
+
   unsigned char s[32];
   fe_tobytes(s,f);
   return crypto_verify_32(s,zero);
