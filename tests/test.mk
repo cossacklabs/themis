@@ -40,4 +40,4 @@ themispp_test: $(THEMISPP_TEST_OBJ)
 	$(CXX) -o $(TEST_BIN_PATH)/themispp_test $(THEMISPP_TEST_OBJ) -L$(BIN_PATH) -lthemis -lsoter -lstdc++ $(LDFLAGS)
 
 
-test: soter_test themis_test themispp_test
+test: soter_test themis_test
