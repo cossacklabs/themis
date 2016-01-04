@@ -727,7 +727,7 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
 	}
 
-	themis_status = ed_dbl_base_verify(5, &(comp_ctx->g2), &(comp_ctx->g3), &(comp_ctx->Pp), &Qb, ((unsigned char *)output) + (8 * ED25519_GE_LENGTH));
+	themis_status = ed_dbl_base_verify(5, &(comp_ctx->g2), &(comp_ctx->g3), &(comp_ctx->Pp), &Qb, ((unsigned char *)input) + (8 * ED25519_GE_LENGTH));
 	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
 		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
@@ -820,7 +820,7 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 
 	*output_length = 3 * ED25519_GE_LENGTH;
 
-	themis_status = ed_dbl_base_verify(6, &(comp_ctx->g2), &(comp_ctx->g3), &Pa, &Qa, ((unsigned char *)output) + (2 * ED25519_GE_LENGTH));
+	themis_status = ed_dbl_base_verify(6, &(comp_ctx->g2), &(comp_ctx->g3), &Pa, &Qa, ((unsigned char *)input) + (2 * ED25519_GE_LENGTH));
 	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
 		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
@@ -831,7 +831,7 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 	}
 
 	ge_p3_sub(&Qa, &Qa, &(comp_ctx->Q));
-	themis_status = ed_point_verify(7, &(comp_ctx->g3p), &Qa, &Ra, ((unsigned char *)output) + (6 * ED25519_GE_LENGTH));
+	themis_status = ed_point_verify(7, &(comp_ctx->g3p), &Qa, &Ra, ((unsigned char *)input) + (6 * ED25519_GE_LENGTH));
 	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
 		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
@@ -901,7 +901,7 @@ static themis_status_t secure_comparator_alice_step5(secure_comparator_t *comp_c
 
 	*output_length = 0;
 
-	themis_status = ed_point_verify(8, &(comp_ctx->g3p), &(comp_ctx->Qa_Qb), &Rb, ((unsigned char *)output) + ED25519_GE_LENGTH);
+	themis_status = ed_point_verify(8, &(comp_ctx->g3p), &(comp_ctx->Qa_Qb), &Rb, ((unsigned char *)input) + ED25519_GE_LENGTH);
 	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
 		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
