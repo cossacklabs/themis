@@ -21,11 +21,12 @@ test:
   override:
     - build/tests/soter_test
     - build/tests/themis_test
+    - build/tests/themispp_test
     - sudo /sbin/ldconfig
     - build/tests/pythemis_test.sh
     - sudo build/tests/rubythemis_test.sh
     - build/tests/phpthemis_test.sh
-    # - tests/check_ios_test.sh `tests/start_ios_test.sh`
+    - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
     - emulator -avd circleci-android22 -no-audio -no-window:
         background: true
