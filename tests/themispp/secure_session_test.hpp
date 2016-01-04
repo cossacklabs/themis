@@ -46,41 +46,29 @@ namespace themispp{
     void secure_session_test(){
       std::string mes("the test message");
       callback client_callbacks;
-      themispp::secure_session_t client("client", std::vector<uint8_t>(client_priv, client_priv+sizeof(client_priv)), &client_callbacks);
+      std::string client_id("client");
+      std::string server_id("server");
+      
+      themispp::secure_session_t client(std::vector<uint8_t>(client_id.c_str(), client_id.c_str()+client_id.length()), std::vector<uint8_t>(client_priv, client_priv+sizeof(client_priv)), &client_callbacks);
 
       callback server_callbacks;
-      themispp::secure_session_t server("server", std::vector<uint8_t>(server_priv, server_priv+sizeof(server_priv)), &server_callbacks);
+      themispp::secure_session_t server(std::vector<uint8_t>(server_id.c_str(), server_id.c_str()+server_id.length()), std::vector<uint8_t>(server_priv, server_priv+sizeof(server_priv)), &server_callbacks);
 
-      std::cout<<1<<std::endl;
       std::vector<uint8_t> control_msg1=client.init();
-      std::cout<<2<<std::endl;
       std::vector<uint8_t> control_msg2=server.unwrap(control_msg1);
-      std::cout<<3<<std::endl;
       std::vector<uint8_t> control_msg3=client.unwrap(control_msg2);
-      std::cout<<4<<std::endl;
       std::vector<uint8_t> control_msg4=server.unwrap(control_msg3);
-      std::cout<<5<<std::endl;
       std::vector<uint8_t> control_msg5=client.unwrap(control_msg4);
-      std::cout<<6<<std::endl;
       sput_fail_unless(server.is_established(), "server ready", __LINE__);
-      std::cout<<7<<std::endl;
       sput_fail_unless(client.is_established(), "client ready", __LINE__);
-      std::cout<<8<<std::endl;
 
-      std::vector<uint8_t> msg1=client.wrap(std::vector<uint8_t>(mes.c_str(), mes.c_str()+mes.length()));
-      std::cout<<9<<std::endl;
+      std::vector<uint8_t> msg1=client.wrap(std::vector<uint8_t>(mes.c_str(), mes.c_str()+mes.length()+1));
       std::vector<uint8_t> msg2=server.unwrap(msg1);
-      std::cout<<10<<std::endl;
       sput_fail_unless(strcmp(mes.c_str(), (const char*)(&msg2[0]))==0, "server get message", __LINE__);
-      std::cout<<11<<std::endl;
 
-      std::vector<uint8_t> msg3=server.wrap(std::vector<uint8_t>(mes.c_str(), mes.c_str()+mes.length()));
-      std::cout<<12<<std::endl;
+      std::vector<uint8_t> msg3=server.wrap(std::vector<uint8_t>(mes.c_str(), mes.c_str()+mes.length()+1));
       std::vector<uint8_t> msg4=client.unwrap(msg3);
-      std::cout<<13<<std::endl;
       sput_fail_unless(strcmp(mes.c_str(), (const char*)(&msg4[0]))==0, "client get message", __LINE__);
-      std::cout<<14<<std::endl;
-
     }
     
     int run_secure_session_test(){

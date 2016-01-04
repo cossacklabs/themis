@@ -23,7 +23,7 @@ int main(){
   sput_start_testing();
   themispp::secure_cell_test::run_secure_cell_test();
   themispp::secure_message_test::run_secure_message_test();
-  //themispp::secure_session_test::run_secure_session_test();
+  themispp::secure_session_test::run_secure_session_test();
   sput_finish_testing();
   return sput_get_return_value();
 }

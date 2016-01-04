@@ -9,18 +9,21 @@ dependencies:
 
   override:
     - make SECURE_COMPARATOR=enable
-    - make SECURE_COMPARATOR=enable test
-    - make SECURE_COMPARATOR=enable test_all
     - sudo make SECURE_COMPARATOR=enable install
+    - sudo make SECURE_COMPARATOR=enable themispp_install
     - sudo make SECURE_COMPARATOR=enable pythemis_install
     - sudo make SECURE_COMPARATOR=enable rubythemis_install
     - sudo make SECURE_COMPARATOR=enable phpthemis_install
+    - make SECURE_COMPARATOR=enable test
+    - make SECURE_COMPARATOR=enable themispp_test
+    - make SECURE_COMPARATOR=enable test_all
 
 ## Customize test commands
 test:
   override:
     - build/tests/soter_test
     - build/tests/themis_test
+    - build/tests/themispp_test
     - sudo /sbin/ldconfig
     - build/tests/pythemis_test.sh
     - sudo build/tests/rubythemis_test.sh
