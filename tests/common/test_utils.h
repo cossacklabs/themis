@@ -22,6 +22,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 typedef int test_utils_status_t;
 
 test_utils_status_t string_to_bytes(const char *str, uint8_t *bytes, size_t size);
@@ -39,5 +43,9 @@ int testsuite_get_return_value(void);
 #define testsuite_fail_if(_COND_, _NAME_) testsuite_fail_if_on_line(_COND_, _NAME_, __LINE__)
 #define testsuite_fail_unless(_COND_, _NAME_) testsuite_fail_unless_on_line(_COND_, _NAME_, __LINE__)
 #define testsuite_run_test(_FUNC_) testsuite_run_test_in_file(_FUNC_, #_FUNC_, __FILE__)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* TEST_UTILS_H */

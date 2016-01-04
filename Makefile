@@ -205,6 +205,10 @@ $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
 	mkdir -p $(@D)
 	$(CC) $(CFLAGS) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR)) -I$(TEST_SRC_PATH) -c $< -o $@
 
+$(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.cpp
+	mkdir -p $(@D)
+	$(CXX) $(CFLAGS) -I$(TEST_SRC_PATH) -c $< -o $@
+
 include tests/test.mk
 
 err: ; $(ERROR)
@@ -271,3 +275,10 @@ endif
 ifdef PYTHON3_VERSION
 	cd src/wrappers/themis/python/ && python3 setup.py install
 endif
+
+themispp_install: install
+	mkdir -p $(PREFIX)/include/themispp
+	install $(SRC_PATH)/wrappers/themis/themispp/*.hpp $(PREFIX)/include/themispp
+
+themispp_uninstall: 
+	rm -rf $(PREFIX)/include/themispp

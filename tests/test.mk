@@ -22,6 +22,8 @@ NIST_STS_DIR = tests/soter/nist-sts
 include tests/soter/soter.mk
 include tests/tools/tools.mk
 include tests/themis/themis.mk
+include tests/themispp/themispp.mk
+
 
 nist_rng_test_suite:
 	mkdir -p $(NIST_STS_DIR)/obj
@@ -33,5 +35,9 @@ soter_test: nist_rng_test_suite soter_static $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ
 	
 themis_test: themis_static $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ)
 	$(CC) -o $(TEST_BIN_PATH)/themis_test $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ) -L$(BIN_PATH) -lthemis -lsoter $(LDFLAGS)
+
+themispp_test: $(THEMISPP_TEST_OBJ)
+	$(CXX) -o $(TEST_BIN_PATH)/themispp_test $(THEMISPP_TEST_OBJ) -L$(BIN_PATH) -lthemis -lsoter -lstdc++ $(LDFLAGS)
+
 
 test: soter_test themis_test
