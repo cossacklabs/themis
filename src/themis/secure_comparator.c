@@ -743,11 +743,6 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 	ge_double_scalarmult_vartime((ge_p2 *)&(comp_ctx->Q), comp_ctx->secret, &(comp_ctx->g2), comp_ctx->rand);
 	ge_p2_to_p3(&(comp_ctx->Q), (const ge_p2 *)&(comp_ctx->Q));
 
-	if (!ge_cmp(&Qb, &(comp_ctx->Q)))
-	{
-		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
-	}
-
 	ge_p3_sub(&(comp_ctx->Qa_Qb), &(comp_ctx->Q), &Qb);
 	ge_scalarmult_blinded(&R, comp_ctx->rand3, &(comp_ctx->Qa_Qb));
 
@@ -800,15 +795,6 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 	if (ge_frombytes_vartime(&Ra, ((const unsigned char *)input) + (5 * ED25519_GE_LENGTH)))
 	{
 		return THEMIS_INVALID_PARAMETER;
-	}
-
-	if (!ge_cmp(&Qa, &(comp_ctx->Q)))
-	{
-		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
-	}
-	if (!ge_cmp(&Pa, &(comp_ctx->P)))
-	{
-		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
 	}
 
 	/* Output will contain 1 group element and 2 ZK-proofs */
@@ -885,11 +871,6 @@ static themis_status_t secure_comparator_alice_step5(secure_comparator_t *comp_c
 	if (ge_frombytes_vartime(&Rb, (const unsigned char *)input))
 	{
 		return THEMIS_INVALID_PARAMETER;
-	}
-
-	if (!ge_cmp(&(comp_ctx->Pp), &(comp_ctx->P)))
-	{
-		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
 	}
 
 	/* No output */
