@@ -1,0 +1,35 @@
+var addon = require('./build/Release/jsthemis.node');
+var assert = require('assert');
+
+
+describe("jsthemis", function(){
+    describe("secure message", function(){
+	keypair = new addon.KeyPair();
+	peer_keypair = new addon.KeyPair();
+	intruder_keypair = new addon.KeyPair();
+	encrypter = new addon.SecureMessage(keypair.private(), peer_keypair.public());
+	decrypter = new addon.SecureMessage(peer_keypair.private(), keypair.public());
+	intruder_decrypter = new addon.SecureMessage(intruder_keypair.private(), keypair.public());
+	message = new Buffer("Test Message");
+	it("encrypt/decrypt", function(){
+	    
+	    encrypted_message = encrypter.encrypt(message);
+	    assert.equal(message.toString(), decrypter.decrypt(encrypted_message).toString());
+	    try {
+		intruder_decrypter.decrypt(encrypted_message);
+		assert.equal(-1,0);
+	    } catch (exception_var) {}
+	});
+	it("sign/verify", function(){
+	    signed_message=encrypter.sign(message);
+	    assert.equal(message.toString(), decrypter.verify(signed_message).toString());
+	    assert.equal(message.toString(), intruder_decrypter.verify(signed_message).toString());
+	    signed_message[10]++;
+	    try {
+		decrypter.verify(signed_message);
+		assert.equal(-1,0);		
+	    } catch (exception_var) {}
+	})
+    })
+})
+
