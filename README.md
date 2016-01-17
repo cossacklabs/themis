@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/cossacklabs/themis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cossacklabs/themis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Circle CI](https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield)](https://circleci.com/gh/cossacklabs/themis)
 
-Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure messaging and secure data storage. Current release is [0.9.2](https://github.com/cossacklabs/themis/releases/tag/0.9.2), dated 6th of November.
+Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure messaging and secure data storage. Current stable release is [0.9.2](https://github.com/cossacklabs/themis/releases/tag/0.9.2), dated 6th of November.
 
 Themis provides three important cryptographic services:
 * [Secure Message](https://github.com/cossacklabs/themis/wiki/3.3.1-Secure-Message): a simple encrypted messaging solution  for widest scope of applications. ECC + ECDSA / RSA + PSS + PKCS#8.
@@ -33,6 +33,7 @@ Themis has wrapper libraries for 5 languages:
 - Ruby [documentation](https://github.com/cossacklabs/themis/wiki/2.5-Ruby-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby)
 - Python [documentation](https://github.com/cossacklabs/themis/wiki/2.3-Python-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/python)
 - PHP [documentation](https://github.com/cossacklabs/themis/wiki/2.4-PHP-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/php)
+- C++ [documentation](https://github.com/cossacklabs/themis/wiki/2.4-PHP-Howto), examples coming soon.
 
 # Availability
 
@@ -41,7 +42,7 @@ Themis supports the following architectures: x86/x64, armv*, various androids
 It is checked to compile on:
 
 * Debian 7.8, CentOS 6.6, CentOS Linux 7.1.1503, Ubuntu 14.04 LTS 
-* MS Windows 7, 8
+* MS Windows 7, 8, 10
 * OSX 10.10
 * Android 4.4.2
 * Android 4.4.4 / CyanogenMod 11
