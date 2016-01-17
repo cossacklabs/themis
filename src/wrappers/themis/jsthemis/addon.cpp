@@ -17,10 +17,12 @@
 #include <node.h>
 #include "secure_message.hpp"
 #include "secure_keygen.hpp"
+#include "secure_session.hpp"
 
 void InitAll(v8::Handle<v8::Object> exports) {
   jsthemis::SecureMessage::Init(exports);
   jsthemis::KeyPair::Init(exports);
+  jsthemis::SecureSession::Init(exports);
 }
 
 NODE_MODULE(jsthemis, InitAll)

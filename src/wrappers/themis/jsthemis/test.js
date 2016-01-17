@@ -33,3 +33,47 @@ describe("jsthemis", function(){
     })
 })
 
+describe("jsthemis", function(){
+    describe("secure message", function(){
+	it("wrap/unwrap", function(){
+	message = new Buffer("This is test message");
+	server_id=new Buffer("server");
+	server_keypair = new addon.KeyPair();
+	client_id = new Buffer("client");
+	client_keypair = new addon.KeyPair();
+	
+	server_session = new addon.SecureSession(server_id, server_keypair.private(), function(id){
+	    if(id.toString()=="server")
+		return server_keypair.public();
+	    else if(id.toString=="client".toString())
+		return client_keypair.public();
+	    return client_keypair.public();
+	});
+
+	client_session = new addon.SecureSession(client_id, client_keypair.private(), function(id){
+	    if(id.toString()=="server")
+		return server_keypair.public();
+	    else if(id.toString=="client")
+		return client_keypair.public();
+	});
+
+	data = client_session.connectRequest();
+	data = server_session.unwrap(data);
+	data = client_session.unwrap(data);
+	data = server_session.unwrap(data);
+	assert.equal(client_session.isEstablished(), false);
+	data = client_session.unwrap(data);
+	assert.equal(data,undefined);
+	assert.equal(server_session.isEstablished(), true);
+	assert.equal(client_session.isEstablished(), true);
+
+	data=client_session.wrap(message);
+	rm=server_session.unwrap(data);
+	assert.equal(message.toString(), rm.toString());
+
+	data=server_session.wrap(message);
+	rm=client_session.unwrap(data);
+	assert.equal(message.toString(), rm.toString());
+	})
+    })
+})
