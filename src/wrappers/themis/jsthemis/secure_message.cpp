@@ -32,14 +32,14 @@ namespace jsthemis {
 
   void SecureMessage::Init(v8::Handle<v8::Object> exports) {
     // Prepare constructor template
-    v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(New);
+    v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(SecureMessage::New);
     tpl->SetClassName(v8::String::NewSymbol("SecureMessage"));
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     // Prototype
-    tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("encrypt"), v8::FunctionTemplate::New(encrypt)->GetFunction());
-    tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("decrypt"), v8::FunctionTemplate::New(decrypt)->GetFunction());
-    tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("sign"), v8::FunctionTemplate::New(sign)->GetFunction());
-    tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("verify"), v8::FunctionTemplate::New(verify)->GetFunction());
+    tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("encrypt"), v8::FunctionTemplate::New(SecureMessage::encrypt)->GetFunction());
+    tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("decrypt"), v8::FunctionTemplate::New(SecureMessage::decrypt)->GetFunction());
+    tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("sign"), v8::FunctionTemplate::New(SecureMessage::sign)->GetFunction());
+    tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("verify"), v8::FunctionTemplate::New(SecureMessage::verify)->GetFunction());
     constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
     exports->Set(v8::String::NewSymbol("SecureMessage"), constructor);
   }

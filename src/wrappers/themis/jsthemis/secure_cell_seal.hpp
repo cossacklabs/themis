@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef JSTHEMIS_SECURE_CELL_HPP_
-#define JSTHEMIS_SECURE_CELL_HPP_
+#ifndef JSTHEMIS_SECURE_CELL_SEAL_HPP_
+#define JSTHEMIS_SECURE_CELL_SEAL_HPP_
 
 #include <node.h>
 #include <vector>
@@ -40,4 +40,4 @@ namespace jsthemis{
   };
 
 }
-#endif /* JSTHEMIS_SECURE_CELL_HPP_ */
+#endif /* JSTHEMIS_SECURE_CELL_SEAL_HPP_ */

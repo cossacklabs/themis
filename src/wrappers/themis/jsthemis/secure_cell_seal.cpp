@@ -59,38 +59,52 @@ namespace jsthemis {
   v8::Handle<v8::Value> SecureCellSeal::encrypt(const v8::Arguments& args) {
     v8::HandleScope scope;
     SecureCellSeal* obj = node::ObjectWrap::Unwrap<SecureCellSeal>(args.This());
-    size_t encrypted_length=0;
-    if(themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &encrypted_length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("secure message encrypt (length determination) error")));
+    size_t length=0;
+    const uint8_t* context=NULL;
+    size_t context_length=0;
+    if(args.Length()==2){
+      context = (const uint8_t*)(node::Buffer::Data(args[1]));
+      context_length = node::Buffer::Length(args[1]);
+    }
+    if(themis_secure_cell_encrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
+      ThrowException(v8::Exception::Error(v8::String::New("secure cell seal encrypt (length determination) error")));
       return scope.Close(v8::Undefined());
     }
-    uint8_t* encrypted_data=new uint8_t[encrypted_length];
-    if(themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), encrypted_data, &encrypted_length)!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("secure message encrypt error")));
-      delete encrypted_data;
+    uint8_t* data=new uint8_t[length];
+    if(themis_secure_cell_encrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length)!=THEMIS_SUCCESS){
+      ThrowException(v8::Exception::Error(v8::String::New("secure cell seal encrypt error")));
+      delete data;
       return scope.Close(v8::Undefined());
     }
-    node::Buffer *encrypted_buffer = node::Buffer::New((const char*)(encrypted_data), encrypted_length);
-    delete encrypted_data;
-    return scope.Close(encrypted_buffer->handle_);
+    node::Buffer *buffer = node::Buffer::New((const char*)(data), length);
+    delete data;
+    return scope.Close(buffer->handle_);
   }
 
-  v8::Handle<v8::Value> SecureCellSeal::decrypt(const v8::Arguments& args){
+  v8::Handle<v8::Value> SecureCellSeal::decrypt(const v8::Arguments& args) {
     v8::HandleScope scope;
     SecureCellSeal* obj = node::ObjectWrap::Unwrap<SecureCellSeal>(args.This());
-    size_t decrypted_length=0;
-    if(themis_secure_message_unwrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &decrypted_length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("secure message decrypt (length determination) error")));
+    size_t length=0;
+    const uint8_t* context=NULL;
+    size_t context_length=0;
+    if(args.Length()==2){
+      context = (const uint8_t*)(node::Buffer::Data(args[1]));
+      context_length = node::Buffer::Length(args[1]);
+    }
+    if(themis_secure_cell_decrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
+      ThrowException(v8::Exception::Error(v8::String::New("secure cell seal encrypt (length determination) error")));
       return scope.Close(v8::Undefined());
     }
-    uint8_t* decrypted_data=new uint8_t[decrypted_length];
-    if(themis_secure_message_unwrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), decrypted_data, &decrypted_length)!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("secure message decrypt error")));
-      delete decrypted_data;
+    uint8_t* data=new uint8_t[length];
+    if(themis_secure_cell_decrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length)!=THEMIS_SUCCESS){
+      ThrowException(v8::Exception::Error(v8::String::New("secure cell seal encrypt error")));
+      delete data;
       return scope.Close(v8::Undefined());
     }
-    node::Buffer *decrypted_buffer = node::Buffer::New((const char*)(decrypted_data), decrypted_length);
-    delete decrypted_data;
-    return scope.Close(decrypted_buffer->handle_);
+    node::Buffer *buffer = node::Buffer::New((const char*)(data), length);
+    delete data;
+    return scope.Close(buffer->handle_);
   }
+
+  
 } //end jsthemis
