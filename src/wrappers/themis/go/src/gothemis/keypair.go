@@ -37,10 +37,10 @@ static bool gen_keys(int key_type, void *private, size_t priv_len, void *public,
 	switch (key_type)
 	{
 	case KEYTYPE_EC:
-		res = themis_gen_ec_key_pair((uint8_t *)private, &priv_len, (uint8_t *)public, &pub_len);
+		res = themis_gen_ec_key_pair(private, &priv_len, public, &pub_len);
 		break;
 	case KEYTYPE_RSA:
-		res = themis_gen_rsa_key_pair((uint8_t *)private, &priv_len, (uint8_t *)public, &pub_len);
+		res = themis_gen_rsa_key_pair(private, &priv_len, public, &pub_len);
 		break;
 	default:
 		return;
