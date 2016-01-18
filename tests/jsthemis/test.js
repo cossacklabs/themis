@@ -1,4 +1,4 @@
-var addon = require('./build/Release/jsthemis.node');
+var addon = require('jsthemis');
 var assert = require('assert');
 
 

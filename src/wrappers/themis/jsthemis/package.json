@@ -1,0 +1,17 @@
+{
+  "name": "jsthemis",
+  "version": "0.0.3",
+  "description": "Node.js wrapper for themis",
+  "main": "build/Release/jsthemis.node",
+  "scripts": {
+    "preinstall" : "node-gyp configure && node-gyp build",
+    "preuninstall" : "rm -rf build/*"
+  },
+  "author": {
+        "name" :  "Cossack Labs", 
+	"email" : "dev@cossacklabs.com"
+      , "url" :   "http://cossacklabs.com/"
+    },
+  "license": " Apache-2.0",
+  "gypfile": true
+}
