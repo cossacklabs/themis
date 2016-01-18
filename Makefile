@@ -179,6 +179,7 @@ ifdef NODE_VERSION
 	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
 	echo "npm install ../../build/jsthemis-0.0.3.tgz" >> ./$(BIN_PATH)/tests/node.sh
 	echo "mocha" >> ./$(BIN_PATH)/tests/node.sh
+	chmod a+x ./$(BIN_PATH)/tests/node.sh
 endif
 endif
 	chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
