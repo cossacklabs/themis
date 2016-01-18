@@ -3,23 +3,23 @@
 [![Join the chat at https://gitter.im/cossacklabs/themis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cossacklabs/themis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Circle CI](https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield)](https://circleci.com/gh/cossacklabs/themis)
 
-Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure messaging and secure data storage. Current release is [0.9.2](https://github.com/cossacklabs/themis/releases/tag/0.9.2), dated 6th of November.
+Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure messaging and secure data storage. Current stable release is [0.9.2](https://github.com/cossacklabs/themis/releases/tag/0.9.2), dated 6th of November.
 
 Themis provides three important cryptographic services:
-* [Secure Message](https://github.com/cossacklabs/themis/wiki/3.3.1-Secure-Message): a simple encrypted messaging solution  for widest scope of applications
-* [Secure Session](https://github.com/cossacklabs/themis/wiki/3.3.2-Secure-Session): session-oriented, forward secrecy messaging solution with better security guarantees, but more demanding infrastructure
-* [Secure Cell](https://github.com/cossacklabs/themis/wiki/3.3.3-Secure-Cell): a multi-mode cryptographic container, suitable for storing anything from encrypted files to database records and format-preserved strings.
+* [Secure Message](https://github.com/cossacklabs/themis/wiki/3.3.1-Secure-Message): a simple encrypted messaging solution  for widest scope of applications. ECC + ECDSA / RSA + PSS + PKCS#8.
+* [Secure Session](https://github.com/cossacklabs/themis/wiki/3.3.2-Secure-Session): session-oriented, forward secrecy messaging solution with better security guarantees, but more demanding infrastructure. ECDH key agreement, ECC & AES encryption.
+* [Secure Cell](https://github.com/cossacklabs/themis/wiki/3.3.3-Secure-Cell): a multi-mode cryptographic container, suitable for storing anything from encrypted files to database records and format-preserved strings. Secure Cell is built around AES in GCM (Token and Seal modes) and CTR (Context imprint mode).
 
 Themis was designed to provide complicated cryptosystems in easy-to-use infrastructure, suitable for modern rapid development. Themis is based on best modern practices in implementing complicated security systems based on strongest available cryptographic algorithms in their safest forms. It is available for modern mobile and server languages (see below).
 
 Themis is open source, Apache 2 Licensed.
 
-# Quickstart Crash Course
+# Quickstart
 
 1. Fetch the repository: git clone https://github.com/cossacklabs/themis.git
-2. Have OpenSSL/LibreSSL + OpenSSL/LibreSSL Dev pack (libssl-dev) installed at typical paths: `/usr/lib`, `/usr/include`. 
-3. Have typical gcc environment installed
-4. Fire 'make install' and you're good most of the cases
+2. Have OpenSSL/LibreSSL + OpenSSL/LibreSSL Dev package (libssl-dev) installed at typical paths: `/usr/lib`, `/usr/include`. 
+3. Have typical GCC/clang environment installed
+4. Type 'make install' and you're done (most of the cases)
 5. Dive into [our wiki](https://github.com/cossacklabs/themis/wiki) for the docs of language of your choice, take a look at docs/examples for examples. 
 
 It is really advisable to [go the long way and read the docs](https://github.com/cossacklabs/themis/wiki/3.1-Building-and-installing), but god blesses the brave.
@@ -33,6 +33,7 @@ Themis has wrapper libraries for 5 languages:
 - Ruby [documentation](https://github.com/cossacklabs/themis/wiki/2.5-Ruby-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby)
 - Python [documentation](https://github.com/cossacklabs/themis/wiki/2.3-Python-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/python)
 - PHP [documentation](https://github.com/cossacklabs/themis/wiki/2.4-PHP-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/php)
+- C++ [documentation](https://github.com/cossacklabs/themis/wiki/2.4-PHP-Howto), examples coming soon.
 
 # Availability
 
@@ -41,7 +42,7 @@ Themis supports the following architectures: x86/x64, armv*, various androids
 It is checked to compile on:
 
 * Debian 7.8, CentOS 6.6, CentOS Linux 7.1.1503, Ubuntu 14.04 LTS 
-* MS Windows 7, 8
+* MS Windows 7, 8, 10
 * OSX 10.10
 * Android 4.4.2
 * Android 4.4.4 / CyanogenMod 11
