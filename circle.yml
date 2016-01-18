@@ -5,7 +5,7 @@ machine:
 ## Customize dependencies
 dependencies:
   pre:
-    - sudo apt-get update && sudo apt-get install libssl-dev python3 python3-setuptools ruby
+    - sudo apt-get update && sudo apt-get install libssl-dev python3 python3-setuptools ruby nodejs npm
 
   override:
     - make SECURE_COMPARATOR=enable
