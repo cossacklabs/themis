@@ -8,7 +8,7 @@ package gothemis
 #include <themis/error.h>
 #include <themis/secure_message.h>
 
-static bool get_output_size(const void *priv, size_t priv_len, const void *public, size_t pub_len, const void *message, size_t message_len, bool is_wrap, size_t *out_len)
+static bool get_message_size(const void *priv, size_t priv_len, const void *public, size_t pub_len, const void *message, size_t message_len, bool is_wrap, size_t *out_len)
 {
 	themis_status_t res;
 
@@ -71,7 +71,7 @@ func messageProcess(private *PrivateKey, peerPublic *PublicKey, message []byte, 
 	}
 	
 	var output_length C.size_t
-	if ! bool(C.get_output_size(priv,
+	if ! bool(C.get_message_size(priv,
 			privLen,
 			pub,
 			pubLen,

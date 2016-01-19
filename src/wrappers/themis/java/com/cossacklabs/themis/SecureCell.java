@@ -142,7 +142,7 @@ public class SecureCell {
 		
 		if (MODE_TOKEN_PROTECT == mode) {
 			if (null == protectedData.getAdditionalData()) {
-				throw new InvalidArgumentException("protectedData");
+				throw new InvalidArgumentException("additionalData");
 			}
 		}
 		

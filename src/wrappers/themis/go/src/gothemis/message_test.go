@@ -24,6 +24,10 @@ func testWrap(keytype int, t *testing.T) {
 	}
 	
 	message := make([]byte, int(message_length.Int64()))
+	_, err = rand.Read(message)
+	if nil != err {
+		t.Error(err)
+	}
 	
 	sma := &SecureMessage{kpa.private, kpb.public}
 	wrapped, err := sma.Wrap(message)
