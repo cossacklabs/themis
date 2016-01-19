@@ -1,7 +1,7 @@
 {
   "name": "jsthemis",
-  "version": "0.0.3",
-  "description": "Node.js wrapper for themis",
+  "version": "0.0.4",
+  "description":  "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern developers, with high level OOP wrappers for Ruby, Python, PHP, Java / Android and iOS / OSX. It is designed with ease of use in mind, high security and cross-platform availability.",
   "main": "build/Release/jsthemis.node",
   "scripts": {
     "preinstall" : "node-gyp configure && node-gyp build",
