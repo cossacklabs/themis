@@ -92,6 +92,8 @@ ifneq ("$(wildcard src/wrappers/themis/php/Makefile)","")
 PHP_THEMIS_INSTALL = 1
 endif
 
+NODE_VERSION := $(shell node --version 2>/dev/null)
+
 SHARED_EXT = so
 
 UNAME=$(shell uname)
@@ -173,6 +175,12 @@ ifdef PYTHON3_VERSION
 ifdef SECURE_COMPARATOR_ENABLED
 	echo "python3 ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 endif
+#ifdef NODE_VERSION
+#	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
+#	echo "npm install ../../build/jsthemis-0.0.3.tgz" >> ./$(BIN_PATH)/tests/node.sh
+#	echo "mocha" >> ./$(BIN_PATH)/tests/node.sh
+#	chmod a+x ./$(BIN_PATH)/tests/node.sh
+#endif
 endif
 	chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
 endif
@@ -282,3 +290,6 @@ themispp_install: install
 
 themispp_uninstall: 
 	rm -rf $(PREFIX)/include/themispp
+
+#jsthemis_install:
+#	cd src/wrappers/themis/jsthemis && mv `npm pack` ../../../../build/
