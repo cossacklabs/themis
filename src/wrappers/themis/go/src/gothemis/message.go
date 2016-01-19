@@ -1,0 +1,137 @@
+package gothemis
+
+/*
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <themis/error.h>
+#include <themis/secure_message.h>
+
+static bool get_output_size(const void *priv, size_t priv_len, const void *public, size_t pub_len, const void *message, size_t message_len, bool is_wrap, size_t *out_len)
+{
+	themis_status_t res;
+
+	if (is_wrap)
+	{
+		res = themis_secure_message_wrap(priv, priv_len, public, pub_len, message, message_len, NULL, out_len);
+	}
+	else
+	{
+		res = themis_secure_message_unwrap(priv, priv_len, public, pub_len, message, message_len, NULL, out_len);
+	}
+	
+	return THEMIS_BUFFER_TOO_SMALL == res;
+}
+
+static bool process(const void *priv, size_t priv_len, const void *public, size_t pub_len, const void *message, size_t message_len, bool is_wrap, void *out, size_t out_len)
+{
+	themis_status_t res;
+
+	if (is_wrap)
+	{
+		res = themis_secure_message_wrap(priv, priv_len, public, pub_len, message, message_len, out, &out_len);
+	}
+	else
+	{
+		res = themis_secure_message_unwrap(priv, priv_len, public, pub_len, message, message_len, out, &out_len);
+	}
+	
+	return THEMIS_SUCCESS == res;
+}
+
+*/
+import "C"
+import (
+	"errors"
+	"unsafe"
+)
+
+type SecureMessage struct {
+	private *PrivateKey
+	peerPublic *PublicKey
+}
+
+func messageProcess(private *PrivateKey, peerPublic *PublicKey, message []byte, is_wrap bool) ([]byte, error) {
+	if nil == message {
+		return nil, errors.New("No message was provided")
+	}
+	
+	var priv, pub unsafe.Pointer
+	var privLen, pubLen C.size_t
+	
+	if nil != private {
+		priv = unsafe.Pointer(&private.value[0])
+		privLen = C.size_t(len(private.value))
+	}
+	
+	if nil != peerPublic {
+		pub = unsafe.Pointer(&peerPublic.value[0])
+		pubLen = C.size_t(len(peerPublic.value))
+	}
+	
+	var output_length C.size_t
+	if ! bool(C.get_output_size(priv,
+			privLen,
+			pub,
+			pubLen,
+			unsafe.Pointer(&message[0]),
+			C.size_t(len(message)),
+			C.bool(is_wrap),
+			&output_length)) {
+				return nil, errors.New("Failed to get ouput size");
+			}
+			
+	output := make([]byte, int(output_length), int(output_length));
+	if ! bool(C.process(priv,
+			privLen,
+			pub,
+			pubLen,
+			unsafe.Pointer(&message[0]),
+			C.size_t(len(message)),
+			C.bool(is_wrap),
+			unsafe.Pointer(&output[0]),
+			output_length)) {
+				return nil, errors.New("Failed to wrap message");
+			}
+			
+	return output, nil		
+}
+
+func (sm *SecureMessage) Wrap(message []byte) ([]byte, error) {
+	if nil == sm.private {
+		return nil, errors.New("Private key was not provided")
+	}
+	
+	if nil == sm.peerPublic {
+		return nil, errors.New("Peer public key was not provided")
+	}
+	return messageProcess(sm.private, sm.peerPublic, message, true)
+}
+
+func (sm *SecureMessage) Unwrap(message []byte) ([]byte, error) {
+	if nil == sm.private {
+		return nil, errors.New("Private key was not provided")
+	}
+	
+	if nil == sm.peerPublic {
+		return nil, errors.New("Peer public key was not provided")
+	}
+	return messageProcess(sm.private, sm.peerPublic, message, false)
+}
+
+func (sm *SecureMessage) Sign(message []byte) ([]byte, error) {
+	if nil == sm.private {
+		return nil, errors.New("Private key was not provided")
+	}
+	
+	return messageProcess(sm.private, nil, message, true)
+}
+
+func (sm *SecureMessage) Verify(message []byte) ([]byte, error) {
+	if nil == sm.peerPublic {
+		return nil, errors.New("Peer public key was not provided")
+	}
+	
+	return messageProcess(nil, sm.peerPublic, message, false)
+}
