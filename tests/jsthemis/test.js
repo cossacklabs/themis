@@ -21,7 +21,7 @@ describe("jsthemis", function(){
 	    signed_message=encrypter.sign(message);
 	    assert.equal(message.toString(), decrypter.verify(signed_message).toString());
 	    assert.equal(message.toString(), intruder_decrypter.verify(signed_message).toString());
-	    signed_message[10]++;
+	    signed_message[2]++;
 	    assert.throws(function(){decrypter.verify(signed_message);});
 	})
     })
