@@ -68,6 +68,7 @@ int main(int argc, char* argv[])
     callback callbacks;
     themispp::secure_session_t session(std::vector<uint8_t>(client_id.c_str(), client_id.c_str()+client_id.length()), std::vector<uint8_t>(client_priv, client_priv+sizeof(client_priv)), &callbacks);
     std::vector<uint8_t> data=session.init();
+    std::cout<<data.size()<<std::endl;
     while(!session.is_established()){
       boost::asio::write(s, boost::asio::buffer(&data[0], data.size()));
       char reply[max_length];
