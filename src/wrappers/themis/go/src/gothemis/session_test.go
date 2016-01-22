@@ -27,22 +27,37 @@ func (clb *testCallbacks) StateChanged(ss *SecureSession, state int) {
 	
 }
 
-/*func genRandData() ([]byte, err) {
-	message_length, err := rand.Int(rand.Reader, big.NewInt(2048))
+func genRandData() ([]byte, error) {
+	data_length, err := rand.Int(rand.Reader, big.NewInt(2048))
 	if nil != err {
-		t.Error(err)
-		return
+		return nil, err
 	}
 	
-	message := make([]byte, int(message_length.Int64()))
-	_, err = rand.Read(message)
+	data := make([]byte, int(data_length.Int64()))
+	_, err = rand.Read(data)
 	if nil != err {
-		t.Error(err)
-		return
+		return nil, err
 	}
+	
+	return data, nil
 }
 
-func clientService(client *SecureSession, ch chan []byte, t *testing.T) {
+func fin() ([]byte) {
+	f := [4]byte{0xDE, 0xAD, 0xC0, 0xDE}
+	return f[:]
+}
+
+func isFin(b []byte) (bool) {
+	return 0 == bytes.Compare(b, fin())
+}
+
+func clientService(client *SecureSession, ch chan []byte, finCh chan int, t *testing.T) {
+	defer func() {
+		if t.Failed() {
+			finCh <- 0
+		}
+	}()
+	
 	conReq, err := client.ConnectRequest()
 	if nil != err {
 		t.Error(err)
@@ -64,9 +79,54 @@ func clientService(client *SecureSession, ch chan []byte, t *testing.T) {
 			continue
 		}
 		
+		var finish bool
+		if nil == buf {
+			buf, _ = genRandData()
+		} else {
+			buf = fin()
+			finish = true
+		}
 		
+		buf, err = client.Wrap(buf)
+		if nil != err {
+			t.Error(err)
+			return
+		}
+		ch <- buf
+		
+		if finish {
+			break
+		}
 	}
-}*/
+}
+
+func serverService(server *SecureSession, ch chan []byte, finCh chan int, t *testing.T) {
+	defer func() {finCh <- 0}()
+	
+	for {
+		buf := <-ch
+
+		buf, sendPeer, err := server.Unwrap(buf)
+		if nil != err {
+			t.Error(err)
+			return
+		}
+		
+		if !sendPeer {
+			if (isFin(buf)) {
+				break
+			}
+			
+			buf, err = server.Wrap(buf)
+			if nil != err {
+				t.Error(err)
+				return
+			}
+		}
+		
+		ch <- buf
+	}
+}
 
 func testSession(keytype int, t *testing.T) {
 	kpa, err := NewKeypair(keytype)
@@ -101,90 +161,12 @@ func testSession(keytype int, t *testing.T) {
 		return
 	}
 	
-	conReq, err := client.ConnectRequest()
-	if nil != err {
-		t.Error(err)
-		return
-	}
+	ch := make(chan []byte)
+	finCh := make(chan int)
+	go serverService(server, ch, finCh, t)
+	go clientService(client, ch, finCh, t)
 	
-	buf, sendPeer, err := server.Unwrap(conReq)
-	if nil != err {
-		t.Error(err)
-		return
-	}
-	if !sendPeer {
-		t.Error("Should indicate to send output to peer")
-		return
-	}
-	
-	buf, sendPeer, err = client.Unwrap(buf)
-	if nil != err {
-		t.Error(err)
-		return
-	}
-	if !sendPeer {
-		t.Error("Should indicate to send output to peer")
-		return
-	}
-	
-	buf, sendPeer, err = server.Unwrap(buf)
-	if nil != err {
-		t.Error(err)
-		return
-	}
-	if !sendPeer {
-		t.Error("Should indicate to send output to peer")
-		return
-	}
-	
-	buf, sendPeer, err = client.Unwrap(buf)
-	if nil != err {
-		t.Error(err)
-		return
-	}
-	if sendPeer {
-		t.Error("Should not indicate to send output to peer")
-		return
-	}
-	
-	message_length, err := rand.Int(rand.Reader, big.NewInt(2048))
-	if nil != err {
-		t.Error(err)
-		return
-	}
-	
-	message := make([]byte, int(message_length.Int64()))
-	_, err = rand.Read(message)
-	if nil != err {
-		t.Error(err)
-		return
-	}
-	
-	wrapped, err := client.Wrap(message)
-	if nil != err {
-		t.Error(err)
-		return
-	}
-	
-	if 0 == bytes.Compare(message, wrapped) {
-		t.Error("Wrapped message and original message match")
-		return
-	}
-	
-	unwrapped, sendPeer, err := server.Unwrap(wrapped)
-	if nil != err {
-		t.Error(err)
-		return
-	}
-	if sendPeer {
-		t.Error("Should not indicate to send output to peer")
-		return
-	}
-	
-	if 0 != bytes.Compare(message, unwrapped) {
-		t.Error("Unwrapped message and original message do not match")
-		return
-	}
+	<-finCh
 }
 
 func TestSession(t *testing.T) {
