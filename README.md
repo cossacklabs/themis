@@ -26,7 +26,7 @@ It is really advisable to [go the long way and read the docs](https://github.com
 
 # Languages
 
-Themis has wrapper libraries for 5 languages: 
+Themis is available for the following languages: 
 
 - Objective C / iOS [documentation](https://github.com/cossacklabs/themis/wiki/2.2-Objective-C) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)
 - Java / Android [documentation](https://github.com/cossacklabs/themis/wiki/2.1-Android)
@@ -35,6 +35,7 @@ Themis has wrapper libraries for 5 languages:
 - PHP [documentation](https://github.com/cossacklabs/themis/wiki/2.4-PHP-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/php)
 - C++ [documentation](https://github.com/cossacklabs/themis/wiki/2.6-CPP-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B)
 - Javascript (NodeJS) [documentation](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/js)
+- Soon: GoLang, Swift
 
 # Availability
 
