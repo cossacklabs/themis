@@ -33,7 +33,8 @@ Themis has wrapper libraries for 5 languages:
 - Ruby [documentation](https://github.com/cossacklabs/themis/wiki/2.5-Ruby-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby)
 - Python [documentation](https://github.com/cossacklabs/themis/wiki/2.3-Python-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/python)
 - PHP [documentation](https://github.com/cossacklabs/themis/wiki/2.4-PHP-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/php)
-- C++ [documentation](https://github.com/cossacklabs/themis/wiki/2.4-PHP-Howto), examples coming soon.
+- C++ [documentation](https://github.com/cossacklabs/themis/wiki/2.6-CPP-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B)
+- Javascript (NodeJS) [documentation](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/js)
 
 # Availability
 
