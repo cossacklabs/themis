@@ -51,8 +51,6 @@ It is checked to compile on:
 * Android 5
 * iOS 7-9, x32/x64
 
-Themis is available as original C library and has Python, Objective-C, Ruby, PHP and Android wrappers.
-
 We plan to expand this minuscule availability scope with broader set of platforms. If you'd like to help Themis arrive (or get better) on your favourite platform / language — get in touch.
 
 # Tutorials
