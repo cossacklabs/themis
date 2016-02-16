@@ -5,6 +5,12 @@
 
 Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure messaging and secure data storage. Current stable release is [0.9.2](https://github.com/cossacklabs/themis/releases/tag/0.9.2), dated 6th of November.
 
+Themis works in most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)), and is available for [Objective C / iOS](https://github.com/cossacklabs/themis/wiki/2.2-Objective-C), [Java / Android](https://github.com/cossacklabs/themis/wiki/2.1-Android),  [Ruby](https://github.com/cossacklabs/themis/wiki/2.5-Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/2.3-Python-Howto), 
+[PHP](https://github.com/cossacklabs/themis/wiki/2.4-PHP-Howto), 
+[C++](https://github.com/cossacklabs/themis/wiki/2.6-CPP-Howto), 
+[Javascript (NodeJS)](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto). 
+
+
 Themis provides three important cryptographic services:
 * [Secure Message](https://github.com/cossacklabs/themis/wiki/3.3.1-Secure-Message): a simple encrypted messaging solution  for widest scope of applications. ECC + ECDSA / RSA + PSS + PKCS#8.
 * [Secure Session](https://github.com/cossacklabs/themis/wiki/3.3.2-Secure-Session): session-oriented, forward secrecy messaging solution with better security guarantees, but more demanding infrastructure. ECDH key agreement, ECC & AES encryption.
