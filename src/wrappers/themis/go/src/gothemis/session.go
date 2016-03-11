@@ -1,6 +1,7 @@
 package gothemis
 
 /*
+#cgo LDFLAGS: -lthemis -lsoter
 #include "session.h"
 */
 import "C"

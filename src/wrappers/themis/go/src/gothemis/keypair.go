@@ -1,6 +1,7 @@
 package gothemis
 
 /*
+#cgo LDFLAGS: -lthemis -lsoter
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>

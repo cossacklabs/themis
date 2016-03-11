@@ -1,6 +1,8 @@
 package gothemis
 
 /*
+#cgo CFLAGS: -DSECURE_COMPARATOR_ENABLED
+#cgo LDFLAGS: -lthemis -lsoter
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>

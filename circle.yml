@@ -1,11 +1,13 @@
 machine:
   environment:
     ANDROID_NDK_ROOT: $ANDROID_NDK
+    GOROOT: /usr/local/go
+    GOPATH: $HOME/themis/src/wrappers/themis/go
 
 ## Customize dependencies
 dependencies:
   pre:
-    - sudo apt-get update && sudo apt-get install libssl-dev python3 python3-setuptools ruby # npm && curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash - && sudo apt-get install -y nodejs && sudo npm install -g node-gyp && sudo npm install -g mocha
+    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python3 python3-setuptools ruby golang # npm && curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash - && sudo apt-get install -y nodejs && sudo npm install -g node-gyp && sudo npm install -g mocha
 
   override:
     - make SECURE_COMPARATOR=enable
@@ -29,6 +31,7 @@ test:
     - build/tests/pythemis_test.sh
     - sudo build/tests/rubythemis_test.sh
     - build/tests/phpthemis_test.sh
+    - go test -v gothemis 
 #    - sudo build/tests/node.sh
     # - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
