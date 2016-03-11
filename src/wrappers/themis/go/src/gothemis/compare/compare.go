@@ -1,4 +1,4 @@
-package gothemis
+package compare
 
 /*
 #cgo CFLAGS: -DSECURE_COMPARATOR_ENABLED

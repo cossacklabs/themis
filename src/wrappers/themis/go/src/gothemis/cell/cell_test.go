@@ -1,4 +1,4 @@
-package gothemis
+package cell
 
 import (
     "testing"

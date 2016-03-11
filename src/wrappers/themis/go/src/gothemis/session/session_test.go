@@ -1,23 +1,24 @@
-package gothemis
+package session
 
 import (
     "testing"
     "crypto/rand"
     "math/big"
     "bytes"
+    "gothemis/keys"
 )
 
 type testCallbacks struct {
-	a *Keypair
-	b *Keypair
+	a *keys.Keypair
+	b *keys.Keypair
 }
 
-func (clb *testCallbacks) GetPublicKeyForId(ss *SecureSession, id []byte) (*PublicKey) {
+func (clb *testCallbacks) GetPublicKeyForId(ss *SecureSession, id []byte) (*keys.PublicKey) {
 	switch {
 		case 1 == id[0]:
-			return clb.a.public
+			return clb.a.Public
 		case 2 == id[0]:
-			return clb.b.public	
+			return clb.b.Public	
 	}
 	
 	return nil
@@ -129,13 +130,13 @@ func serverService(server *SecureSession, ch chan []byte, finCh chan int, t *tes
 }
 
 func testSession(keytype int, t *testing.T) {
-	kpa, err := NewKeypair(keytype)
+	kpa, err := keys.New(keytype)
 	if nil != err {
 		t.Error(err)
 		return
 	}
 	
-	kpb, err := NewKeypair(keytype)
+	kpb, err := keys.New(keytype)
 	if nil != err {
 		t.Error(err)
 		return
@@ -149,13 +150,13 @@ func testSession(keytype int, t *testing.T) {
 	idb := make([]byte, 1)
 	idb[0] = 2
 	
-	client, err := NewSession(ida, kpa.private, clb)
+	client, err := New(ida, kpa.Private, clb)
 	if nil != err {
 		t.Error(err)
 		return
 	}
 	
-	server, err := NewSession(idb, kpb.private, clb)
+	server, err := New(idb, kpb.Private, clb)
 	if nil != err {
 		t.Error(err)
 		return
@@ -170,6 +171,6 @@ func testSession(keytype int, t *testing.T) {
 }
 
 func TestSession(t *testing.T) {
-	testSession(KEYTYPE_EC, t)
+	testSession(keys.KEYTYPE_EC, t)
 }
 

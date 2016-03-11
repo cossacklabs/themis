@@ -1,4 +1,4 @@
-package gothemis
+package message
 
 /*
 #cgo LDFLAGS: -lthemis -lsoter
@@ -46,14 +46,15 @@ import "C"
 import (
 	"errors"
 	"unsafe"
+	"gothemis/keys"
 )
 
 type SecureMessage struct {
-	private *PrivateKey
-	peerPublic *PublicKey
+	private *keys.PrivateKey
+	peerPublic *keys.PublicKey
 }
 
-func messageProcess(private *PrivateKey, peerPublic *PublicKey, message []byte, is_wrap bool) ([]byte, error) {
+func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, message []byte, is_wrap bool) ([]byte, error) {
 	if nil == message {
 		return nil, errors.New("No message was provided")
 	}
@@ -62,13 +63,13 @@ func messageProcess(private *PrivateKey, peerPublic *PublicKey, message []byte, 
 	var privLen, pubLen C.size_t
 	
 	if nil != private {
-		priv = unsafe.Pointer(&private.value[0])
-		privLen = C.size_t(len(private.value))
+		priv = unsafe.Pointer(&private.Value[0])
+		privLen = C.size_t(len(private.Value))
 	}
 	
 	if nil != peerPublic {
-		pub = unsafe.Pointer(&peerPublic.value[0])
-		pubLen = C.size_t(len(peerPublic.value))
+		pub = unsafe.Pointer(&peerPublic.Value[0])
+		pubLen = C.size_t(len(peerPublic.Value))
 	}
 	
 	var output_length C.size_t

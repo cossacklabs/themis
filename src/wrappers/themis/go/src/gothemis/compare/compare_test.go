@@ -1,8 +1,25 @@
-package gothemis
+package compare
 
 import (
     "testing"
+    "crypto/rand"
+    "math/big"
 )
+
+func genRandData() ([]byte, error) {
+	data_length, err := rand.Int(rand.Reader, big.NewInt(256))
+	if nil != err {
+		return nil, err
+	}
+	
+	data := make([]byte, int(data_length.Int64()))
+	_, err = rand.Read(data)
+	if nil != err {
+		return nil, err
+	}
+	
+	return data, nil
+}
 
 func scService(sc *SecureCompare, ch chan []byte, finCh chan int, t *testing.T) {
 	res, err := sc.Result()

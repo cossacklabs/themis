@@ -1,16 +1,16 @@
-package gothemis
+package keys
 
 import (
     "testing"
 )
 
 func TestNewKeypair(t *testing.T) {
-	_, err := NewKeypair(KEYTYPE_EC)
+	_, err := New(KEYTYPE_EC)
 	if nil != err {
 		t.Error(err)
 	}
 	
-	_, err = NewKeypair(KEYTYPE_RSA)
+	_, err = New(KEYTYPE_RSA)
 	if nil != err {
 		t.Error(err)
 	}

@@ -1,4 +1,4 @@
-package gothemis
+package session
 
 /*
 #cgo LDFLAGS: -lthemis -lsoter
@@ -9,6 +9,7 @@ import (
 	"unsafe"
 	"errors"
 	"runtime"
+	"gothemis/keys"
 )
 
 const (
@@ -18,7 +19,7 @@ const (
 )
 
 type SessionCallbacks interface {
-	GetPublicKeyForId(ss *SecureSession, id []byte) (*PublicKey)
+	GetPublicKeyForId(ss *SecureSession, id []byte) (*keys.PublicKey)
 	StateChanged(ss *SecureSession, state int)
 }
 
@@ -28,11 +29,11 @@ type SecureSession struct {
 	state int
 }
 
-func finalizeSession(ss *SecureSession) {
+func finalize(ss *SecureSession) {
 	ss.Close()
 }
 
-func NewSession(id []byte, signKey *PrivateKey, callbacks SessionCallbacks) (*SecureSession, error) {
+func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*SecureSession, error) {
 	ctx := make([]byte, C.get_session_ctx_size())
 	ss := &SecureSession{ctx: ctx, clb: callbacks}
 	
@@ -40,12 +41,12 @@ func NewSession(id []byte, signKey *PrivateKey, callbacks SessionCallbacks) (*Se
 			(*C.struct_session_with_callbacks_type)(unsafe.Pointer(&ctx[0])),
 			unsafe.Pointer(&id[0]),
 			C.size_t(len(id)),
-			unsafe.Pointer(&signKey.value[0]),
-			C.size_t(len(signKey.value)))) {
+			unsafe.Pointer(&signKey.Value[0]),
+			C.size_t(len(signKey.Value)))) {
 				return nil, errors.New("Failed to create secure session object");
 			}
 			
-	runtime.SetFinalizer(ss, finalizeSession)
+	runtime.SetFinalizer(ss, finalize)
 	
 	return ss, nil
 }
@@ -72,12 +73,12 @@ func onPublicKeyForId(ssCtx unsafe.Pointer, idPtr unsafe.Pointer, idLen C.size_t
 		return -2 // THEMIS_INVALID_PARAMETER
 	}
 	
-	if len(pub.value) > int(keyLen) {
+	if len(pub.Value) > int(keyLen) {
 		return -4 // THEMIS_BUFFER_TOO_SMALL
 	}
 	
 	key := (*[1 << 30]byte)(keyPtr)[:keyLen:keyLen]
-	copy(key, pub.value)
+	copy(key, pub.Value)
 	return 0
 }
 

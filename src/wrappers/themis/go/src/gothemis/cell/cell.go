@@ -1,4 +1,4 @@
-package gothemis
+package cell
 
 /*
 #cgo LDFLAGS: -lthemis -lsoter
