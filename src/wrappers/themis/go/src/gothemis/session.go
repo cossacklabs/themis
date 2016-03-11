@@ -8,6 +8,7 @@ import "C"
 import (
 	"unsafe"
 	"errors"
+	"runtime"
 )
 
 const (
@@ -27,6 +28,10 @@ type SecureSession struct {
 	state int
 }
 
+func finalizeSession(ss *SecureSession) {
+	ss.Close()
+}
+
 func NewSession(id []byte, signKey *PrivateKey, callbacks SessionCallbacks) (*SecureSession, error) {
 	ctx := make([]byte, C.get_session_ctx_size())
 	ss := &SecureSession{ctx: ctx, clb: callbacks}
@@ -39,8 +44,22 @@ func NewSession(id []byte, signKey *PrivateKey, callbacks SessionCallbacks) (*Se
 			C.size_t(len(signKey.value)))) {
 				return nil, errors.New("Failed to create secure session object");
 			}
+			
+	runtime.SetFinalizer(ss, finalizeSession)
 	
 	return ss, nil
+}
+
+func (ss *SecureSession) Close() error {
+	if nil != ss.ctx {
+		if bool(C.session_destroy((*C.struct_session_with_callbacks_type)(unsafe.Pointer(&ss.ctx[0])))) {
+			ss.ctx = nil
+		} else {
+			return errors.New("Failed to destroy secure session object")
+		}
+	}
+	
+	return nil
 }
 
 //export onPublicKeyForId
