@@ -2,7 +2,6 @@ package gothemis
 
 import (
     "testing"
-    _"fmt"
 )
 
 func scService(sc *SecureCompare, ch chan []byte, finCh chan int, t *testing.T) {
