@@ -1,19 +1,20 @@
-package gothemis
+package message
 
 import (
     "testing"
     "crypto/rand"
     "math/big"
     "bytes"
+    "gothemis/keys"
 )
 
 func testWrap(keytype int, t *testing.T) {
-	kpa, err := NewKeypair(keytype)
+	kpa, err := keys.New(keytype)
 	if nil != err {
 		t.Error(err)
 	}
 	
-	kpb, err := NewKeypair(keytype)
+	kpb, err := keys.New(keytype)
 	if nil != err {
 		t.Error(err)
 	}
@@ -24,8 +25,12 @@ func testWrap(keytype int, t *testing.T) {
 	}
 	
 	message := make([]byte, int(message_length.Int64()))
+	_, err = rand.Read(message)
+	if nil != err {
+		t.Error(err)
+	}
 	
-	sma := &SecureMessage{kpa.private, kpb.public}
+	sma := &SecureMessage{kpa.Private, kpb.Public}
 	wrapped, err := sma.Wrap(message)
 	if nil != err {
 		t.Error(err)
@@ -35,7 +40,7 @@ func testWrap(keytype int, t *testing.T) {
 		t.Error("Original message and wrapped message match")
 	} 
 	
-	smb := &SecureMessage{kpb.private, kpa.public}
+	smb := &SecureMessage{kpb.Private, kpa.Public}
 	unwrapped, err := smb.Unwrap(wrapped)
 	if nil != err {
 		t.Error(err)
@@ -47,7 +52,7 @@ func testWrap(keytype int, t *testing.T) {
 }
 
 func testSign(keytype int, t *testing.T) {
-	kp, err := NewKeypair(keytype)
+	kp, err := keys.New(keytype)
 	if nil != err {
 		t.Error(err)
 	}
@@ -59,7 +64,7 @@ func testSign(keytype int, t *testing.T) {
 	
 	message := make([]byte, int(message_length.Int64()))
 	
-	sma := &SecureMessage{kp.private, nil}
+	sma := &SecureMessage{kp.Private, nil}
 	signed, err := sma.Sign(message)
 	if nil != err {
 		t.Error(err)
@@ -69,7 +74,7 @@ func testSign(keytype int, t *testing.T) {
 		t.Error("Original message and signed message match")
 	} 
 	
-	smb := &SecureMessage{nil, kp.public}
+	smb := &SecureMessage{nil, kp.Public}
 	verified, err := smb.Verify(signed)
 	if nil != err {
 		t.Error(err)
@@ -81,11 +86,11 @@ func testSign(keytype int, t *testing.T) {
 }
 
 func TestMessageWrap(t *testing.T) {
-	testWrap(KEYTYPE_EC, t)
-	testWrap(KEYTYPE_RSA, t)
+	testWrap(keys.KEYTYPE_EC, t)
+	testWrap(keys.KEYTYPE_RSA, t)
 }
 
 func TestMessageSign(t *testing.T) {
-	testSign(KEYTYPE_EC, t)
-	testSign(KEYTYPE_RSA, t)
+	testSign(keys.KEYTYPE_EC, t)
+	testSign(keys.KEYTYPE_RSA, t)
 }

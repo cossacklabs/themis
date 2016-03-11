@@ -1,6 +1,7 @@
-package gothemis
+package keys
 
 /*
+#cgo LDFLAGS: -lthemis -lsoter
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
@@ -63,19 +64,19 @@ const (
 )
 
 type PrivateKey struct {
-	value []byte
+	Value []byte
 }
 
 type PublicKey struct {
-	value []byte
+	Value []byte
 }
 
 type Keypair struct {
-	private *PrivateKey
-	public *PublicKey
+	Private *PrivateKey
+	Public *PublicKey
 }
 
-func NewKeypair(keytype int) (*Keypair, error) {
+func New(keytype int) (*Keypair, error) {
 	if (keytype != KEYTYPE_EC) && (keytype != KEYTYPE_RSA) {
 		return nil, errors.New("Incorrect key type")
 	}
@@ -93,7 +94,7 @@ func NewKeypair(keytype int) (*Keypair, error) {
 	}
 	
 	return &Keypair {
-		private: &PrivateKey {value: priv},
-		public: &PublicKey {value: pub},
+		Private: &PrivateKey {Value: priv},
+		Public: &PublicKey {Value: pub},
 	}, nil
 }
