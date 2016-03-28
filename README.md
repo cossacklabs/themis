@@ -8,8 +8,8 @@ Themis is open-source high-level cryptographic services library for mobile and s
 Themis works in most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)), and is available for [Objective C / iOS](https://github.com/cossacklabs/themis/wiki/2.2-Objective-C), [Java / Android](https://github.com/cossacklabs/themis/wiki/2.1-Android),  [Ruby](https://github.com/cossacklabs/themis/wiki/2.5-Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/2.3-Python-Howto), 
 [PHP](https://github.com/cossacklabs/themis/wiki/2.4-PHP-Howto), 
 [C++](https://github.com/cossacklabs/themis/wiki/2.6-CPP-Howto), 
-[Javascript (NodeJS)](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto). 
-
+[Javascript (NodeJS)](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto),
+[Google Chrome](https://github.com/cossacklabs/webthemis). 
 
 Themis provides three important cryptographic services:
 * [Secure Message](https://github.com/cossacklabs/themis/wiki/3.3.1-Secure-Message): a simple encrypted messaging solution  for widest scope of applications. ECC + ECDSA / RSA + PSS + PKCS#8.
