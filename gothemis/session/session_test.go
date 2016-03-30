@@ -5,7 +5,7 @@ import (
     "crypto/rand"
     "math/big"
     "bytes"
-    "gothemis/keys"
+    "github.com/cossacklabs/themis/gothemis/keys"
 )
 
 type testCallbacks struct {

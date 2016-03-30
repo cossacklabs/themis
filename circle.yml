@@ -2,7 +2,8 @@ machine:
   environment:
     ANDROID_NDK_ROOT: $ANDROID_NDK
     GOROOT: /usr/local/go
-    GOPATH: $HOME/themis/src/wrappers/themis/go
+    GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
+    GOPATH: $HOME/gopath
 
 ## Customize dependencies
 dependencies:
@@ -20,6 +21,8 @@ dependencies:
     - make SECURE_COMPARATOR=enable test
     - make SECURE_COMPARATOR=enable themispp_test
     - make SECURE_COMPARATOR=enable test_all
+    - mkdir -p $GOPATH/src/$GOTHEMIS_IMPORT
+    - rsync -auv gothemis/ $GOPATH/src/$GOTHEMIS_IMPORT/
 
 ## Customize test commands
 test:
@@ -31,7 +34,7 @@ test:
     - build/tests/pythemis_test.sh
     - sudo build/tests/rubythemis_test.sh
     - build/tests/phpthemis_test.sh
-    - go test -v gothemis/...
+    - go test -v $GOTHEMIS_IMPORT/...
 #    - sudo build/tests/node.sh
     # - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
