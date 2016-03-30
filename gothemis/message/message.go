@@ -46,7 +46,7 @@ import "C"
 import (
 	"errors"
 	"unsafe"
-	"gothemis/keys"
+	"github.com/cossacklabs/themis/gothemis/keys"
 )
 
 type SecureMessage struct {

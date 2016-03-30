@@ -9,7 +9,7 @@ import (
 	"unsafe"
 	"errors"
 	"runtime"
-	"gothemis/keys"
+	"github.com/cossacklabs/themis/gothemis/keys"
 )
 
 const (
