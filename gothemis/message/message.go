@@ -54,6 +54,10 @@ type SecureMessage struct {
 	peerPublic *keys.PublicKey
 }
 
+func New(private *keys.PrivateKey, peerPublic *keys.PublicKey) *SecureMessage {
+	return &SecureMessage{private, peerPublic}
+}
+
 func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, message []byte, is_wrap bool) ([]byte, error) {
 	if nil == message {
 		return nil, errors.New("No message was provided")

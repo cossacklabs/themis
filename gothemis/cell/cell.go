@@ -141,6 +141,10 @@ type SecureCell struct {
 	mode int
 }
 
+func New(key []byte, mode int) *SecureCell {
+	return &SecureCell{key, mode}
+}
+
 func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, error) {
 	if (sc.mode < CELL_MODE_SEAL) || (sc.mode > CELL_MODE_CONTEXT_IMPRINT) {
 		return nil, nil, errors.New("Invalid mode specified")

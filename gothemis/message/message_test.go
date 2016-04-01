@@ -1,4 +1,4 @@
-package message
+package message_test
 
 import (
     "testing"
@@ -6,6 +6,7 @@ import (
     "math/big"
     "bytes"
     "github.com/cossacklabs/themis/gothemis/keys"
+    sm"github.com/cossacklabs/themis/gothemis/message"
 )
 
 func testWrap(keytype int, t *testing.T) {
@@ -30,7 +31,7 @@ func testWrap(keytype int, t *testing.T) {
 		t.Error(err)
 	}
 	
-	sma := &SecureMessage{kpa.Private, kpb.Public}
+	sma := sm.New(kpa.Private, kpb.Public)
 	wrapped, err := sma.Wrap(message)
 	if nil != err {
 		t.Error(err)
@@ -40,7 +41,7 @@ func testWrap(keytype int, t *testing.T) {
 		t.Error("Original message and wrapped message match")
 	} 
 	
-	smb := &SecureMessage{kpb.Private, kpa.Public}
+	smb := sm.New(kpb.Private, kpa.Public)
 	unwrapped, err := smb.Unwrap(wrapped)
 	if nil != err {
 		t.Error(err)
@@ -64,7 +65,7 @@ func testSign(keytype int, t *testing.T) {
 	
 	message := make([]byte, int(message_length.Int64()))
 	
-	sma := &SecureMessage{kp.Private, nil}
+	sma := sm.New(kp.Private, nil)
 	signed, err := sma.Sign(message)
 	if nil != err {
 		t.Error(err)
@@ -74,7 +75,7 @@ func testSign(keytype int, t *testing.T) {
 		t.Error("Original message and signed message match")
 	} 
 	
-	smb := &SecureMessage{nil, kp.Public}
+	smb := sm.New(nil, kp.Public)
 	verified, err := smb.Verify(signed)
 	if nil != err {
 		t.Error(err)
