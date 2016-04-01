@@ -1,10 +1,11 @@
-package cell
+package cell_test
 
 import (
     "testing"
     "crypto/rand"
     "math/big"
     "bytes"
+    "github.com/cossacklabs/themis/gothemis/cell"
 )
 
 func testProtect(mode int, context []byte, t *testing.T) {
@@ -25,7 +26,7 @@ func testProtect(mode int, context []byte, t *testing.T) {
 		t.Error(err)
 	}
 	
-	sc := &SecureCell{key, mode}
+	sc := cell.New(key, mode)
 	encData, addData, err := sc.Protect(data, context)
 	if nil != err {
 		t.Error(err)
@@ -49,12 +50,12 @@ func TestProtect(t *testing.T) {
 		t.Error(err)
 	}
 	
-	testProtect(CELL_MODE_SEAL, nil, t)
-	testProtect(CELL_MODE_SEAL, context, t)
+	testProtect(cell.CELL_MODE_SEAL, nil, t)
+	testProtect(cell.CELL_MODE_SEAL, context, t)
 	
-	testProtect(CELL_MODE_TOKEN_PROTECT, nil, t)
-	testProtect(CELL_MODE_TOKEN_PROTECT, context, t)
+	testProtect(cell.CELL_MODE_TOKEN_PROTECT, nil, t)
+	testProtect(cell.CELL_MODE_TOKEN_PROTECT, context, t)
 	
-	testProtect(CELL_MODE_CONTEXT_IMPRINT, context, t)
+	testProtect(cell.CELL_MODE_CONTEXT_IMPRINT, context, t)
 }
 
