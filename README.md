@@ -34,7 +34,7 @@ It is really advisable to [go the long way and read the docs](https://github.com
 
 Themis is available for the following languages: 
 
-- Objective C / iOS [documentation](https://github.com/cossacklabs/themis/wiki/2.2-Objective-C) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)
+- Objective C / iOS [documentation](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)
 - Java / Android [documentation](https://github.com/cossacklabs/themis/wiki/Android-Howto)
 - Ruby [documentation](https://github.com/cossacklabs/themis/wiki/Ruby-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby)
 - Python [documentation](https://github.com/cossacklabs/themis/wiki/Python-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/python)
