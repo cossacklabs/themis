@@ -24,6 +24,10 @@
 #define THEMIS_SCOMPARE_NO_MATCH THEMIS_FAIL
 #define THEMIS_SCOMPARE_NOT_READY 0
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 typedef struct secure_comparator_type secure_comparator_t;
 
 secure_comparator_t* secure_comparator_create(void);
@@ -36,5 +40,8 @@ themis_status_t secure_comparator_proceed_compare(secure_comparator_t *comp_ctx,
 
 themis_status_t secure_comparator_get_result(const secure_comparator_t *comp_ctx);
 
+#ifdef __cplusplus
+}
+#endif
 #endif
 #endif /* THEMIS_SECURE_COMPARATOR_H */

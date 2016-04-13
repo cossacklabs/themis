@@ -147,8 +147,9 @@ namespace themispp{
       if(themis_secure_cell_encrypt_token_protect(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, &_token[0], &token_length, &_res[0], &encrypted_length)!=THEMIS_SUCCESS)
 	throw themispp::exception_t("themis_secure_cell_encrypt_token_protect error");
       return _res;
-    }    
-    
+    }
+    using secure_cell_optional_context_t::encrypt;
+
     const data_t& decrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end, data_t::const_iterator context_begin, data_t::const_iterator context_end){
       size_t decrypted_length=0;
       if(themis_secure_cell_decrypt_token_protect(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, &_token[0], _token.size(), NULL, &decrypted_length)!=THEMIS_BUFFER_TOO_SMALL)
@@ -158,6 +159,8 @@ namespace themispp{
 	throw themispp::exception_t("themis_secure_cell_decrypt_token_protect error");
       return _res;
     }
+
+    using secure_cell_optional_context_t::decrypt;
 
     const data_t& get_token(){return _token;}
     void set_token(const data_t& token){_token=token;}
@@ -179,6 +182,7 @@ namespace themispp{
 	throw themispp::exception_t("themis_secure_cell_encrypt_context_imprint error");
       return _res;
     }
+    using secure_cell_t::encrypt;
 
     const data_t& decrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end, data_t::const_iterator context_begin, data_t::const_iterator context_end){
       size_t decrypted_length=0;
@@ -189,6 +193,7 @@ namespace themispp{
 	throw themispp::exception_t("themis_secure_cell_encrypt_context_imprint error");
       return _res;
     }
+    using secure_cell_t::decrypt;
   };
 }//themispp ns
 
