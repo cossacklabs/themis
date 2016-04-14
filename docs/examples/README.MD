@@ -65,3 +65,7 @@ You might also enjoy tutorials with real-world projects:
 
 - [Securing websocket chat tutorial](https://cossacklabs.com/building-secure-chat) | [code](https://github.com/cossacklabs/mobile-websocket-example)
 - [Themis usability testing hackathon](https://cossacklabs.com/02-usability-testing.html) | [code](https://github.com/cossacklabs/themis-ux-testing) 
+
+### Tests
+
+Actually, [real tests](https://github.com/cossacklabs/themis/tree/master/tests) used to build Themis are good examples themselves.
