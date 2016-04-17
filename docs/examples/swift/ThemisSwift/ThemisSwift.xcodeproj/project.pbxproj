@@ -7,24 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7399811B1CC42C880095138F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7399811A1CC42C880095138F /* AppDelegate.swift */; };
-		7399811D1CC42C880095138F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7399811C1CC42C880095138F /* ViewController.swift */; };
-		739981201CC42C880095138F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7399811E1CC42C880095138F /* Main.storyboard */; };
-		739981221CC42C880095138F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 739981211CC42C880095138F /* Assets.xcassets */; };
-		739981251CC42C880095138F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 739981231CC42C880095138F /* LaunchScreen.storyboard */; };
+		7399813E1CC449010095138F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7399812E1CC449010095138F /* AppDelegate.swift */; };
+		7399813F1CC449010095138F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7399812F1CC449010095138F /* ViewController.swift */; };
+		739981401CC449010095138F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 739981311CC449010095138F /* Assets.xcassets */; };
+		739981411CC449010095138F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 739981321CC449010095138F /* LaunchScreen.storyboard */; };
+		739981421CC449010095138F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 739981341CC449010095138F /* Main.storyboard */; };
+		739981431CC449010095138F /* client.priv in Resources */ = {isa = PBXBuildFile; fileRef = 739981371CC449010095138F /* client.priv */; };
+		739981441CC449010095138F /* client.pub in Resources */ = {isa = PBXBuildFile; fileRef = 739981381CC449010095138F /* client.pub */; };
+		739981451CC449010095138F /* server.priv in Resources */ = {isa = PBXBuildFile; fileRef = 739981391CC449010095138F /* server.priv */; };
+		739981461CC449010095138F /* server.pub in Resources */ = {isa = PBXBuildFile; fileRef = 7399813A1CC449010095138F /* server.pub */; };
 		C299D943932ADE6D1FAAA457 /* libPods-ThemisSwift.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FAA682BA8D3151F54806C218 /* libPods-ThemisSwift.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		4BBE8146A6CD22883280BDD2 /* Pods-ThemisSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisSwift.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift.debug.xcconfig"; sourceTree = "<group>"; };
 		739981171CC42C880095138F /* ThemisSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThemisSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		7399811A1CC42C880095138F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		7399811C1CC42C880095138F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		7399811F1CC42C880095138F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		739981211CC42C880095138F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		739981241CC42C880095138F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		739981261CC42C880095138F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7399812C1CC434240095138F /* ThemisSwift-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ThemisSwift-Bridging-Header.h"; sourceTree = "<group>"; };
+		7399812E1CC449010095138F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		7399812F1CC449010095138F /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		739981311CC449010095138F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		739981331CC449010095138F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		739981351CC449010095138F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		739981371CC449010095138F /* client.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.priv; sourceTree = "<group>"; };
+		739981381CC449010095138F /* client.pub */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.pub; sourceTree = "<group>"; };
+		739981391CC449010095138F /* server.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = server.priv; sourceTree = "<group>"; };
+		7399813A1CC449010095138F /* server.pub */ = {isa = PBXFileReference; lastKnownFileType = file; path = server.pub; sourceTree = "<group>"; };
+		739981491CC44ABA0095138F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7399814A1CC44ABA0095138F /* ThemisSwift-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ThemisSwift-Bridging-Header.h"; sourceTree = "<group>"; };
 		F50CB593FC93D3A8F935C464 /* Pods-ThemisSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisSwift.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift.release.xcconfig"; sourceTree = "<group>"; };
 		FAA682BA8D3151F54806C218 /* libPods-ThemisSwift.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ThemisSwift.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -62,15 +70,51 @@
 		739981191CC42C880095138F /* ThemisSwift */ = {
 			isa = PBXGroup;
 			children = (
-				7399811A1CC42C880095138F /* AppDelegate.swift */,
-				7399811C1CC42C880095138F /* ViewController.swift */,
-				7399811E1CC42C880095138F /* Main.storyboard */,
-				739981211CC42C880095138F /* Assets.xcassets */,
-				739981231CC42C880095138F /* LaunchScreen.storyboard */,
-				7399812C1CC434240095138F /* ThemisSwift-Bridging-Header.h */,
-				739981261CC42C880095138F /* Info.plist */,
+				739981481CC44AAE0095138F /* Supporting Files */,
+				7399812D1CC449010095138F /* Classes */,
+				739981301CC449010095138F /* Resources */,
 			);
 			path = ThemisSwift;
+			sourceTree = "<group>";
+		};
+		7399812D1CC449010095138F /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				7399812E1CC449010095138F /* AppDelegate.swift */,
+				7399812F1CC449010095138F /* ViewController.swift */,
+			);
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		739981301CC449010095138F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				739981311CC449010095138F /* Assets.xcassets */,
+				739981321CC449010095138F /* LaunchScreen.storyboard */,
+				739981341CC449010095138F /* Main.storyboard */,
+				739981361CC449010095138F /* keys */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		739981361CC449010095138F /* keys */ = {
+			isa = PBXGroup;
+			children = (
+				739981371CC449010095138F /* client.priv */,
+				739981381CC449010095138F /* client.pub */,
+				739981391CC449010095138F /* server.priv */,
+				7399813A1CC449010095138F /* server.pub */,
+			);
+			path = keys;
+			sourceTree = "<group>";
+		};
+		739981481CC44AAE0095138F /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				739981491CC44ABA0095138F /* Info.plist */,
+				7399814A1CC44ABA0095138F /* ThemisSwift-Bridging-Header.h */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		B081E8AEC201D9D86B18CCC3 /* Pods */ = {
@@ -151,9 +195,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				739981251CC42C880095138F /* LaunchScreen.storyboard in Resources */,
-				739981221CC42C880095138F /* Assets.xcassets in Resources */,
-				739981201CC42C880095138F /* Main.storyboard in Resources */,
+				739981421CC449010095138F /* Main.storyboard in Resources */,
+				739981451CC449010095138F /* server.priv in Resources */,
+				739981431CC449010095138F /* client.priv in Resources */,
+				739981401CC449010095138F /* Assets.xcassets in Resources */,
+				739981411CC449010095138F /* LaunchScreen.storyboard in Resources */,
+				739981461CC449010095138F /* server.pub in Resources */,
+				739981441CC449010095138F /* client.pub in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,28 +260,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7399811D1CC42C880095138F /* ViewController.swift in Sources */,
-				7399811B1CC42C880095138F /* AppDelegate.swift in Sources */,
+				7399813F1CC449010095138F /* ViewController.swift in Sources */,
+				7399813E1CC449010095138F /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		7399811E1CC42C880095138F /* Main.storyboard */ = {
+		739981321CC449010095138F /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				7399811F1CC42C880095138F /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		739981231CC42C880095138F /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				739981241CC42C880095138F /* Base */,
+				739981331CC449010095138F /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		739981341CC449010095138F /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				739981351CC449010095138F /* Base */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -276,7 +324,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -315,7 +363,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -327,7 +375,8 @@
 			baseConfigurationReference = 4BBE8146A6CD22883280BDD2 /* Pods-ThemisSwift.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = ThemisSwift/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/ThemisSwift/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.ThemisSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -340,7 +389,8 @@
 			baseConfigurationReference = F50CB593FC93D3A8F935C464 /* Pods-ThemisSwift.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = ThemisSwift/Info.plist;
+				INFOPLIST_FILE = "$(SRCROOT)/ThemisSwift/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.ThemisSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
