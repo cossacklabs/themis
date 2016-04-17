@@ -14,7 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
 
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(application: UIApplication, didFinishLaunchingWithOptions
+        launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         // Please, look in debug console to see results
         
@@ -27,9 +28,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         runExampleGeneratingKeys()
         readingKeysFromFile()
         
+        // Secure Message:
+        runExampleSecureMessageEncryptionDecryption()
+        runExampleSecureMessageSignVerify()
+        
         return true
     }
-
     
     
     func generateMasterKey() -> NSData {
@@ -37,6 +41,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let masterKeyData: NSData = NSData(base64EncodedString: masterKeyString, options: .IgnoreUnknownCharacters)!
         return masterKeyData
     }
+    
     
     // MARK:- Secure Cell
     // MARK:- cell seal mode
@@ -55,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             // context is optional parameter and may be ignored
             encryptedMessage = try cellSeal.wrapData(message.dataUsingEncoding(NSUTF8StringEncoding),
                                                      context: context.dataUsingEncoding(NSUTF8StringEncoding))
-            print("encryptedMessage = \(encryptedMessage)")
+            print("decryptedMessagez = \(encryptedMessage)")
             
         } catch let error as NSError {
             print("Error occured while enrypting \(error)", #function)
@@ -67,7 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let decryptedMessage: NSData = try cellSeal.unwrapData(encryptedMessage,
                                                        context: context.dataUsingEncoding(NSUTF8StringEncoding))
             let resultString: String = String(data: decryptedMessage, encoding: NSUTF8StringEncoding)!
-            print("encryptedMessage = \(resultString)")
+            print("decryptedMessage = \(resultString)")
             
         } catch let error as NSError {
             print("Error occured while decrypting \(error)", #function)
@@ -104,7 +109,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let decryptedMessage: NSData = try cellToken.unwrapData(encryptedMessage,
                                                             context: context.dataUsingEncoding(NSUTF8StringEncoding))
             let resultString: String = String(data: decryptedMessage, encoding: NSUTF8StringEncoding)!
-            print("encryptedMessage = \(resultString)")
+            print("decryptedMessage = \(resultString)")
             
         } catch let error as NSError {
             print("Error occured while decrypting \(error)", #function)
@@ -142,7 +147,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let decryptedMessage: NSData = try contextImprint.unwrapData(encryptedMessage,
                                                             context: context.dataUsingEncoding(NSUTF8StringEncoding))
             let resultString: String = String(data: decryptedMessage, encoding: NSUTF8StringEncoding)!
-            print("encryptedMessage = \(resultString)")
+            print("decryptedMessage = \(resultString)")
             
         } catch let error as NSError {
             print("Error occured while decrypting \(error)", #function)
@@ -204,5 +209,132 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     
+    // MARK:- Secure Message
+    
+    // MARK:- encryption/decryption
+    func runExampleSecureMessageEncryptionDecryption() {
+        print("----------------------------------", #function)
+        
+        // ---------- encryption ----------------
+        
+        // base64 encoded keys:
+        // client private key
+        // server public key
+        
+        let serverPublicKeyString: String = "VUVDMgAAAC2ELbj5Aue5xjiJWW3P2KNrBX+HkaeJAb+Z4MrK0cWZlAfpBUql"
+        let clientPrivateKeyString: String = "UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg"
+        
+        guard let serverPublicKey: NSData = NSData(base64EncodedString: serverPublicKeyString,
+                                                   options: .IgnoreUnknownCharacters),
+            let clientPrivateKey: NSData = NSData(base64EncodedString: clientPrivateKeyString,
+                                                  options: .IgnoreUnknownCharacters) else {
+            print("Error occured during base64 encoding", #function)
+            return
+        }
+        
+        let encrypter: TSMessage = TSMessage.init(inEncryptModeWithPrivateKey: clientPrivateKey,
+                                                  peerPublicKey: serverPublicKey)
+        
+        let message: String = "- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java."
+        
+        var encryptedMessage: NSData = NSData()
+        do {
+            encryptedMessage = try encrypter.wrapData(message.dataUsingEncoding(NSUTF8StringEncoding))
+            print("encryptedMessage = \(encryptedMessage)")
+            
+        } catch let error as NSError {
+            print("Error occured while enrypting \(error)", #function)
+            return
+        }
+        
+        
+        // ---------- decryption ----------------
+        let serverPrivateKeyString: String = "UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR"
+        let clientPublicKeyString: String = "VUVDMgAAAC1SsL32Axjosnf2XXUwm/4WxPlZauQ+v+0eOOjpwMN/EO+Huh5d"
+        
+        guard let serverPrivateKey: NSData = NSData(base64EncodedString: serverPrivateKeyString,
+                                                    options: .IgnoreUnknownCharacters),
+            let clientPublicKey: NSData = NSData(base64EncodedString: clientPublicKeyString,
+                                                 options: .IgnoreUnknownCharacters) else {
+            print("Error occured during base64 encoding", #function)
+            return
+        }
+        
+        let decrypter: TSMessage = TSMessage.init(inEncryptModeWithPrivateKey: serverPrivateKey,
+                                                  peerPublicKey: clientPublicKey)
+        
+        do {
+            let decryptedMessage: NSData = try decrypter.unwrapData(encryptedMessage)
+            let resultString: String = String(data: decryptedMessage, encoding: NSUTF8StringEncoding)!
+            print("decryptedMessage->\n\(resultString)")
+            
+        } catch let error as NSError {
+            print("Error occured while decrypting \(error)", #function)
+            return
+        }
+    }
+    
+    // MARK:- sign/vefiry
+    func runExampleSecureMessageSignVerify() {
+        print("----------------------------------", #function)
+        
+        // ---------- signing ----------------
+        
+        // base64 encoded keys:
+        // client private key
+        // server public key
+        
+        let serverPublicKeyString: String = "VUVDMgAAAC2ELbj5Aue5xjiJWW3P2KNrBX+HkaeJAb+Z4MrK0cWZlAfpBUql"
+        let clientPrivateKeyString: String = "UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg"
+        
+        guard let serverPublicKey: NSData = NSData(base64EncodedString: serverPublicKeyString,
+                                                   options: .IgnoreUnknownCharacters),
+            let clientPrivateKey: NSData = NSData(base64EncodedString: clientPrivateKeyString,
+                                                  options: .IgnoreUnknownCharacters) else {
+                                                    print("Error occured during base64 encoding", #function)
+                                                    return
+        }
+        
+        let encrypter: TSMessage = TSMessage.init(inSignVerifyModeWithPrivateKey: clientPrivateKey,
+                                                  peerPublicKey: serverPublicKey)
+        
+        let message: String = "I had a problem so I though to use Java. Now I have a ProblemFactory."
+        
+        var encryptedMessage: NSData = NSData()
+        do {
+            encryptedMessage = try encrypter.wrapData(message.dataUsingEncoding(NSUTF8StringEncoding))
+            print("encryptedMessage = \(encryptedMessage)")
+            
+        } catch let error as NSError {
+            print("Error occured while enrypting \(error)", #function)
+            return
+        }
+        
+        
+        // ---------- verification ----------------
+        let serverPrivateKeyString: String = "UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR"
+        let clientPublicKeyString: String = "VUVDMgAAAC1SsL32Axjosnf2XXUwm/4WxPlZauQ+v+0eOOjpwMN/EO+Huh5d"
+        
+        guard let serverPrivateKey: NSData = NSData(base64EncodedString: serverPrivateKeyString,
+                                                    options: .IgnoreUnknownCharacters),
+            let clientPublicKey: NSData = NSData(base64EncodedString: clientPublicKeyString,
+                                                 options: .IgnoreUnknownCharacters) else {
+                                                    print("Error occured during base64 encoding", #function)
+                                                    return
+        }
+        
+        let decrypter: TSMessage = TSMessage.init(inSignVerifyModeWithPrivateKey: serverPrivateKey,
+                                                  peerPublicKey: clientPublicKey)
+        
+        do {
+            let decryptedMessage: NSData = try decrypter.unwrapData(encryptedMessage)
+            let resultString: String = String(data: decryptedMessage, encoding: NSUTF8StringEncoding)!
+            print("decryptedMessage->\n\(resultString)")
+            
+        } catch let error as NSError {
+            print("Error occured while decrypting \(error)", #function)
+            return
+        }
+    }
+    
 }
-
