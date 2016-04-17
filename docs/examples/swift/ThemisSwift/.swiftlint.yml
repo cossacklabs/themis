@@ -1,0 +1,10 @@
+disabled_rules: # rule identifiers to exclude from running
+  - control_statement
+  - trailing_whitespace
+  - todo
+  - valid_docs
+
+# parameterized rules are first parameterized as a warning level, then error level.  
+line_length: 120
+type_body_length: 300
+function_body_length: 40
