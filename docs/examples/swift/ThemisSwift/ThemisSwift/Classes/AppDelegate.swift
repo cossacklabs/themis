@@ -49,7 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("----------------------------------", #function)
         let masterKeyData: NSData = self.generateMasterKey()
         guard let cellSeal: TSCellSeal = TSCellSeal(key: masterKeyData) else {
-            print("Error occured while initializing object cellSeal", #function)
+            print("Error occurred while initializing object cellSeal", #function)
             return
         }
         let message: String = "All your base are belong to us!"
@@ -63,7 +63,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("decryptedMessagez = \(encryptedMessage)")
             
         } catch let error as NSError {
-            print("Error occured while enrypting \(error)", #function)
+            print("Error occurred while encrypting \(error)", #function)
             return
         }
         
@@ -75,7 +75,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("decryptedMessage = \(resultString)")
             
         } catch let error as NSError {
-            print("Error occured while decrypting \(error)", #function)
+            print("Error occurred while decrypting \(error)", #function)
             return
         }
     }
@@ -85,7 +85,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("----------------------------------", #function)
         let masterKeyData: NSData = self.generateMasterKey()
         guard let cellToken: TSCellToken = TSCellToken(key: masterKeyData) else {
-            print("Error occured while initializing object cellToken", #function)
+            print("Error occurred while initializing object cellToken", #function)
             return
         }
         let message: String = "Roses are grey. Violets are grey."
@@ -100,7 +100,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("encryptedMessage.token = \(encryptedMessage.token)")
             
         } catch let error as NSError {
-            print("Error occured while enrypting \(error)", #function)
+            print("Error occurred while encrypting \(error)", #function)
             return
         }
         
@@ -112,7 +112,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("decryptedMessage = \(resultString)")
             
         } catch let error as NSError {
-            print("Error occured while decrypting \(error)", #function)
+            print("Error occurred while decrypting \(error)", #function)
             return
         }
     }
@@ -123,7 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("----------------------------------", #function)
         let masterKeyData: NSData = self.generateMasterKey()
         guard let contextImprint: TSCellContextImprint = TSCellContextImprint(key: masterKeyData) else {
-            print("Error occured while initializing object contextImprint", #function)
+            print("Error occurred while initializing object contextImprint", #function)
             return
         }
         let message: String = "Roses are red. My name is Dave. This poem have no sense"
@@ -137,7 +137,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("encryptedMessage = \(encryptedMessage)")
             
         } catch let error as NSError {
-            print("Error occured while enrypting \(error)", #function)
+            print("Error occurred while encrypting \(error)", #function)
             return
         }
         
@@ -150,7 +150,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("decryptedMessage = \(resultString)")
             
         } catch let error as NSError {
-            print("Error occured while decrypting \(error)", #function)
+            print("Error occurred while decrypting \(error)", #function)
             return
         }
     }
@@ -164,7 +164,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Generating RSA keys
         guard let keyGeneratorRSA: TSKeyGen = TSKeyGen(algorithm: .RSA) else {
-            print("Error occured while initializing object keyGeneratorRSA", #function)
+            print("Error occurred while initializing object keyGeneratorRSA", #function)
             return
         }
         let privateKeyRSA: NSData = keyGeneratorRSA.privateKey
@@ -174,7 +174,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Generating EC keys
         guard let keyGeneratorEC: TSKeyGen = TSKeyGen(algorithm: .EC) else {
-            print("Error occured while initializing object keyGeneratorEC", #function)
+            print("Error occurred while initializing object keyGeneratorEC", #function)
             return
         }
         let privateKeyEC: NSData = keyGeneratorEC.privateKey
@@ -228,7 +228,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                    options: .IgnoreUnknownCharacters),
             let clientPrivateKey: NSData = NSData(base64EncodedString: clientPrivateKeyString,
                                                   options: .IgnoreUnknownCharacters) else {
-            print("Error occured during base64 encoding", #function)
+            print("Error occurred during base64 encoding", #function)
             return
         }
         
@@ -243,7 +243,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("encryptedMessage = \(encryptedMessage)")
             
         } catch let error as NSError {
-            print("Error occured while enrypting \(error)", #function)
+            print("Error occurred while encrypting \(error)", #function)
             return
         }
         
@@ -256,7 +256,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                     options: .IgnoreUnknownCharacters),
             let clientPublicKey: NSData = NSData(base64EncodedString: clientPublicKeyString,
                                                  options: .IgnoreUnknownCharacters) else {
-            print("Error occured during base64 encoding", #function)
+            print("Error occurred during base64 encoding", #function)
             return
         }
         
@@ -269,7 +269,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("decryptedMessage->\n\(resultString)")
             
         } catch let error as NSError {
-            print("Error occured while decrypting \(error)", #function)
+            print("Error occurred while decrypting \(error)", #function)
             return
         }
     }
@@ -291,7 +291,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                    options: .IgnoreUnknownCharacters),
             let clientPrivateKey: NSData = NSData(base64EncodedString: clientPrivateKeyString,
                                                   options: .IgnoreUnknownCharacters) else {
-                                                    print("Error occured during base64 encoding", #function)
+                                                    print("Error occurred during base64 encoding", #function)
                                                     return
         }
         
@@ -306,7 +306,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("encryptedMessage = \(encryptedMessage)")
             
         } catch let error as NSError {
-            print("Error occured while enrypting \(error)", #function)
+            print("Error occurred while encrypting \(error)", #function)
             return
         }
         
@@ -319,7 +319,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                     options: .IgnoreUnknownCharacters),
             let clientPublicKey: NSData = NSData(base64EncodedString: clientPublicKeyString,
                                                  options: .IgnoreUnknownCharacters) else {
-                                                    print("Error occured during base64 encoding", #function)
+                                                    print("Error occurred during base64 encoding", #function)
                                                     return
         }
         
@@ -332,7 +332,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("decryptedMessage->\n\(resultString)")
             
         } catch let error as NSError {
-            print("Error occured while decrypting \(error)", #function)
+            print("Error occurred while decrypting \(error)", #function)
             return
         }
     }
