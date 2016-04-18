@@ -7,6 +7,7 @@
 	#import <objcthemis/skeygen.h>
 	#import <objcthemis/smessage.h>
 	#import <objcthemis/scomparator.h>
+    #import <objcthemis/ssession.h>
 
 #endif /* _OBJCTHEMIS_ */
 
