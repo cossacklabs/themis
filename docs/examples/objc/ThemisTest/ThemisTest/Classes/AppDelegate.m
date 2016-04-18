@@ -69,7 +69,7 @@
     TSCellSeal * cellSeal = [[TSCellSeal alloc] initWithKey:masterKeyData];
 
     if (!cellSeal) {
-        NSLog(@"%s Error occured while initializing object cellSeal", sel_getName(_cmd));
+        NSLog(@"%s Error occurred while initializing object cellSeal", sel_getName(_cmd));
         return;
     }
 
@@ -84,7 +84,7 @@
                                              error:&themisError];
 
     if (themisError) {
-        NSLog(@"%s Error occured while enrypting %@", sel_getName(_cmd), themisError);
+        NSLog(@"%s Error occurred while enrypting %@", sel_getName(_cmd), themisError);
         return;
     }
     NSLog(@"encryptedMessage = %@", encryptedMessage);
@@ -93,7 +93,7 @@
                                              context:[context dataUsingEncoding:NSUTF8StringEncoding]
                                                error:&themisError];
     if (themisError) {
-        NSLog(@"%s Error occured while decrypting %@", sel_getName(_cmd), themisError);
+        NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
         return;
     }
     NSString * resultString = [[NSString alloc] initWithData:decryptedMessage
@@ -109,7 +109,7 @@
     TSCellToken * cellToken = [[TSCellToken alloc] initWithKey:masterKeyData];
 
     if (!cellToken) {
-        NSLog(@"%s Error occured while initializing object cellToken", sel_getName(_cmd));
+        NSLog(@"%s Error occurred while initializing object cellToken", sel_getName(_cmd));
         return;
     }
 
@@ -122,7 +122,7 @@
                                                               context:[context dataUsingEncoding:NSUTF8StringEncoding]
                                                                 error:&themisError];
     if (themisError) {
-        NSLog(@"%s Error occured while enrypting %@", sel_getName(_cmd), themisError);
+        NSLog(@"%s Error occurred while enrypting %@", sel_getName(_cmd), themisError);
         return;
     }
     NSLog(@"%s\ncipher = %@:\ntoken = %@", sel_getName(_cmd), encryptedMessage.cipherText,encryptedMessage.token);
@@ -130,7 +130,7 @@
     NSData * decryptedMessage = [cellToken unwrapData:encryptedMessage
                                               context:[context dataUsingEncoding:NSUTF8StringEncoding] error:&themisError];
     if (themisError) {
-        NSLog(@"%s Error occured while decrypting %@", sel_getName(_cmd), themisError);
+        NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
         return;
     }
     NSString * resultString = [[NSString alloc] initWithData:decryptedMessage
@@ -146,7 +146,7 @@
     TSCellContextImprint * contextImprint = [[TSCellContextImprint alloc] initWithKey:masterKeyData];
 
     if (!contextImprint) {
-        NSLog(@"%s Error occured while initializing object contextImprint", sel_getName(_cmd));
+        NSLog(@"%s Error occurred while initializing object contextImprint", sel_getName(_cmd));
         return;
     }
 
@@ -159,7 +159,7 @@
                                                  context:[context dataUsingEncoding:NSUTF8StringEncoding]
                                                    error:&themisError];
     if (themisError) {
-        NSLog(@"%s Error occured while enrypting %@", sel_getName(_cmd), themisError);
+        NSLog(@"%s Error occurred while enrypting %@", sel_getName(_cmd), themisError);
         return;
     }
     NSLog(@"%@", encryptedMessage);
@@ -169,7 +169,7 @@
                                                    context:[context dataUsingEncoding:NSUTF8StringEncoding]
                                                      error:&themisError];
     if (themisError) {
-        NSLog(@"%s Error occured while decrypting %@", sel_getName(_cmd), themisError);
+        NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
         return;
     }
     NSString * resultString = [[NSString alloc] initWithData:decryptedMessage
@@ -188,7 +188,7 @@
     TSKeyGen * keygenRSA = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmRSA];
 
     if (!keygenRSA) {
-        NSLog(@"%s Error occured while initializing object keygenRSA", sel_getName(_cmd));
+        NSLog(@"%s Error occurred while initializing object keygenRSA", sel_getName(_cmd));
         return;
     }
 
@@ -203,7 +203,7 @@
     TSKeyGen * keygenEC = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmEC];
 
     if (!keygenEC) {
-        NSLog(@"%s Error occured while initializing object keygenEC", sel_getName(_cmd));
+        NSLog(@"%s Error occurred while initializing object keygenEC", sel_getName(_cmd));
         return;
     }
 
@@ -240,7 +240,7 @@
     NSData * encryptedMessage = [encrypter wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
                                               error:&themisError];
     if (themisError) {
-        NSLog(@"%s Error occured while encrypting %@", sel_getName(_cmd), themisError);
+        NSLog(@"%s Error occurred while encrypting %@", sel_getName(_cmd), themisError);
         return;
     }
     NSLog(@"%@", encryptedMessage);
@@ -264,7 +264,7 @@
 
     NSData * decryptedMessage = [decrypter unwrapData:encryptedMessage error:&themisError];
     if (themisError) {
-        NSLog(@"%s Error occured while decrypting %@", sel_getName(_cmd), themisError);
+        NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
         return;
     }
 
@@ -297,7 +297,7 @@
     NSData * encryptedMessage = [encrypter wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
                                               error:&themisError];
     if (themisError) {
-        NSLog(@"%s Error occured while encrypting %@", sel_getName(_cmd), themisError);
+        NSLog(@"%s Error occurred while encrypting %@", sel_getName(_cmd), themisError);
         return;
     }
     NSLog(@"%@", encryptedMessage);
@@ -321,7 +321,7 @@
 
     NSData * decryptedMessage = [decrypter unwrapData:encryptedMessage error:&themisError];
     if (themisError) {
-        NSLog(@"%s Error occured while decrypting %@", sel_getName(_cmd), themisError);
+        NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
         return;
     }
 
