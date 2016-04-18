@@ -43,7 +43,7 @@ Themis is available for the following languages:
 - Javascript (NodeJS) [documentation](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/js)
 - Go [documentation](https://github.com/cossacklabs/themis/wiki/Go-Howto)
 - С++ PNaCl for Google Chrome in separate [WebThemis project](https://github.com/cossacklabs/webthemis)
-- Soon: Swift
+- Swift [documentation](https://github.com/cossacklabs/themis/wiki/Swift-Howto)
 
 # Availability
 
