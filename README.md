@@ -5,7 +5,7 @@
 
 Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure messaging and secure data storage. Current stable release is [0.9.2](https://github.com/cossacklabs/themis/releases/tag/0.9.2), dated 6th of November.
 
-Themis works in most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)), and is available for [Objective C / iOS](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto), [Swift](https://github.com/cossacklabs/themis/wiki/Swift-Howto), [Java / Android](https://github.com/cossacklabs/themis/wiki/Android-Howto),  [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto), 
+Themis works in most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)), and is available for [Swift (iOS, OX)](https://github.com/cossacklabs/themis/wiki/Swift-Howto), [Objective-C (iOS, OX)](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto), [Swift](https://github.com/cossacklabs/themis/wiki/Swift-Howto), [Java / Android](https://github.com/cossacklabs/themis/wiki/Android-Howto),  [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto), 
 [PHP](https://github.com/cossacklabs/themis/wiki/PHP-Howto), 
 [C++](https://github.com/cossacklabs/themis/wiki/CPP-Howto), 
 [Javascript (NodeJS)](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto),
@@ -34,7 +34,8 @@ It is really advisable to [go the long way and read the docs](https://github.com
 
 Themis is available for the following languages: 
 
-- Objective C / iOS [documentation](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)
+- Swift (iOS, OSX) [documentation](https://github.com/cossacklabs/themis/wiki/Swift-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift)
+- Objective-C (iOS, OSX) [documentation](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)
 - Java / Android [documentation](https://github.com/cossacklabs/themis/wiki/Android-Howto)
 - Ruby [documentation](https://github.com/cossacklabs/themis/wiki/Ruby-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby)
 - Python [documentation](https://github.com/cossacklabs/themis/wiki/Python-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/python)
@@ -43,7 +44,6 @@ Themis is available for the following languages:
 - Javascript (NodeJS) [documentation](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/js)
 - Go [documentation](https://github.com/cossacklabs/themis/wiki/Go-Howto)
 - С++ PNaCl for Google Chrome in separate [WebThemis project](https://github.com/cossacklabs/webthemis)
-- Swift [documentation](https://github.com/cossacklabs/themis/wiki/Swift-Howto)
 
 # Availability
 
@@ -53,11 +53,11 @@ It is checked to compile on:
 
 * Debian 7.8, CentOS 6.6, CentOS Linux 7.1.1503, Ubuntu 14.04 LTS 
 * MS Windows 7, 8, 10
-* OSX 10.10
+* OSX 10.10—10.11
 * Android 4.4.2
 * Android 4.4.4 / CyanogenMod 11
 * Android 5
-* iOS 7-9, x32/x64
+* iOS7—iOS9+, x32/x64
 
 We plan to expand this minuscule availability scope with broader set of platforms. If you'd like to help Themis arrive (or get better) on your favourite platform / language — get in touch.
 
