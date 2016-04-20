@@ -54,6 +54,10 @@ static NSString * kClientPublicKey = @"<generated client public key>";
 
 
 - (void)runSecureMessageCITest {
+    // uncomment to generate keys first
+    //[self generateClientKeys];
+    //return;
+    
     [self checkKeysNotEmpty];
     
     NSData * serverPublicKey = [[NSData alloc] initWithBase64EncodedString:kServerPublicKey options:NSDataBase64DecodingIgnoreUnknownCharacters];

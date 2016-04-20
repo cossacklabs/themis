@@ -6,8 +6,7 @@
 //  Copyright © 2015 Cossacklabs. All rights reserved.
 //
 
-#import <objcthemis/skeygen.h>
-#import <objcthemis/ssession.h>
+#import <objcthemis/objcthemis.h>
 #import "SSessionClient.h"
 
 
@@ -133,6 +132,10 @@ static NSString * kClientPublicKey = @"<generated client public key>";
 
 
 - (void)runSecureSessionCITest {
+    // uncomment to generate keys first
+    //[self generateClientKeys];
+    //return;
+    
     [self checkKeysNotEmpty];
     
     NSData * clientId = [kClientId dataUsingEncoding:NSUTF8StringEncoding];
