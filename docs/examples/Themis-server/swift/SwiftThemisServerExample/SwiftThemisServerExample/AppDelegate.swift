@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SMessageClient().runSecureMessageCITest()
         
         print(" ------------ running SSession Client example ")
-        SSessionClient().runSecureMessageCITest()
+        SSessionClient().runSecureSessionCITest()
         
         return true
     }

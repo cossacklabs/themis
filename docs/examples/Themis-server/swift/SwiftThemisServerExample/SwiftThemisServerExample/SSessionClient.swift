@@ -164,7 +164,7 @@ final class SSessionClient {
     }
     
     
-    func runSecureMessageCITest() {
+    func runSecureSessionCITest() {
         // uncomment to generate keys firste
         // generateClientKeys()
         // return;
