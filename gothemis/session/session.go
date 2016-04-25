@@ -24,7 +24,7 @@ type SessionCallbacks interface {
 }
 
 type SecureSession struct {
-	ctx []byte
+	ctx *C.struct_session_with_callbacks_type
 	clb SessionCallbacks
 	state int
 }
@@ -34,17 +34,16 @@ func finalize(ss *SecureSession) {
 }
 
 func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*SecureSession, error) {
-	ctx := make([]byte, C.get_session_ctx_size())
-	ss := &SecureSession{ctx: ctx, clb: callbacks}
+	ss := &SecureSession{clb: callbacks}
 	
-	if ! bool(C.session_init(unsafe.Pointer(ss),
-			(*C.struct_session_with_callbacks_type)(unsafe.Pointer(&ctx[0])),
-			unsafe.Pointer(&id[0]),
+	ss.ctx = C.session_init(unsafe.Pointer(&id[0]),
 			C.size_t(len(id)),
 			unsafe.Pointer(&signKey.Value[0]),
-			C.size_t(len(signKey.Value)))) {
-				return nil, errors.New("Failed to create secure session object");
-			}
+			C.size_t(len(signKey.Value)));
+			
+	if (ss.ctx == nil) {
+		return nil, errors.New("Failed to create secure session object")
+	}
 			
 	runtime.SetFinalizer(ss, finalize)
 	
@@ -53,7 +52,7 @@ func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*Secu
 
 func (ss *SecureSession) Close() error {
 	if nil != ss.ctx {
-		if bool(C.session_destroy((*C.struct_session_with_callbacks_type)(unsafe.Pointer(&ss.ctx[0])))) {
+		if bool(C.session_destroy(ss.ctx)) {
 			ss.ctx = nil
 		} else {
 			return errors.New("Failed to destroy secure session object")
@@ -65,8 +64,9 @@ func (ss *SecureSession) Close() error {
 
 //export onPublicKeyForId
 func onPublicKeyForId(ssCtx unsafe.Pointer, idPtr unsafe.Pointer, idLen C.size_t, keyPtr unsafe.Pointer, keyLen C.size_t) (int) {
+	var ss *SecureSession
 	id := C.GoBytes(idPtr, C.int(idLen))
-	ss := (*SecureSession)(ssCtx)
+	ss = (*SecureSession)(unsafe.Pointer(uintptr(ssCtx) - unsafe.Offsetof(ss.ctx)))
 	
 	pub := ss.clb.GetPublicKeyForId(ss, id)
 	if nil == pub {
@@ -84,7 +84,8 @@ func onPublicKeyForId(ssCtx unsafe.Pointer, idPtr unsafe.Pointer, idLen C.size_t
 
 //export onStateChanged
 func onStateChanged(ssCtx unsafe.Pointer, event int) {
-	ss := (*SecureSession)(ssCtx)
+	var ss *SecureSession
+	ss = (*SecureSession)(unsafe.Pointer(uintptr(ssCtx) - unsafe.Offsetof(ss.ctx)))
 	
 	ss.clb.StateChanged(ss, event)
 }
@@ -92,13 +93,13 @@ func onStateChanged(ssCtx unsafe.Pointer, event int) {
 func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 	var reqLen C.size_t
 	
-	if ! bool(C.session_connect_size((*C.struct_session_with_callbacks_type)(unsafe.Pointer(&ss.ctx[0])),
+	if ! bool(C.session_connect_size(ss.ctx,
 			&reqLen)) {
 				return nil, errors.New("Failed to get request size");
 			}
 	
 	req := make([]byte, reqLen)
-	if ! bool(C.session_connect((*C.struct_session_with_callbacks_type)(unsafe.Pointer(&ss.ctx[0])),
+	if ! bool(C.session_connect(&ss.ctx,
 			unsafe.Pointer(&req[0]),
 			reqLen)) {
 				return nil, errors.New("Failed to generate request");
@@ -110,7 +111,7 @@ func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 	var outLen C.size_t
 	
-	if ! bool(C.session_wrap_size((*C.struct_session_with_callbacks_type)(unsafe.Pointer(&ss.ctx[0])),
+	if ! bool(C.session_wrap_size(&ss.ctx,
 			unsafe.Pointer(&data[0]),
 			C.size_t(len(data)),
 			&outLen)) {
@@ -118,7 +119,7 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 			}
 	
 	out := make([]byte, outLen)
-	if ! bool(C.session_wrap((*C.struct_session_with_callbacks_type)(unsafe.Pointer(&ss.ctx[0])),
+	if ! bool(C.session_wrap(&ss.ctx,
 			unsafe.Pointer(&data[0]),
 			C.size_t(len(data)),
 			unsafe.Pointer(&out[0]),
@@ -132,11 +133,11 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	var outLen C.size_t
 	
-	res := C.session_unwrap_size((*C.struct_session_with_callbacks_type)(unsafe.Pointer(&ss.ctx[0])),
+	res := C.session_unwrap_size(&ss.ctx,
 		unsafe.Pointer(&data[0]),
 		C.size_t(len(data)),
 		&outLen)
-	
+
 	switch {
 		case (0 == res) && (0 == outLen):
 			return nil, false, nil
@@ -146,7 +147,7 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	
 	out := make([]byte, outLen)
 	
-	res = C.session_unwrap((*C.struct_session_with_callbacks_type)(unsafe.Pointer(&ss.ctx[0])),
+	res = C.session_unwrap(&ss.ctx,
 		unsafe.Pointer(&data[0]),
 		C.size_t(len(data)),
 		unsafe.Pointer(&out[0]),
