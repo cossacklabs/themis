@@ -68,6 +68,13 @@ As long as it is feasible, we'll accumulate list of all tutorials we publish on 
 * [Releasing Themis into public: usability testing](https://www.cossacklabs.com/02-usability-testing.html), which goes a bit into how to use Secure Message for iOS and Python. Go directly into [corresponding github repository](https://github.com/cossacklabs/themis-ux-testing) to play with code. 
 * [Building encrypted chat service with Themis and mobile websocket example](https://www.cossacklabs.com/building-secure-chat), which outlines stages necessary to build encrypted chat service around Ruby websocket server, with clients in iOS and Android. [Github repository](https://github.com/cossacklabs/mobile-websocket-example) with code for the post.
 
+# Sample projects
+
+During development, we frequently do Proof-of-Concept projects to test different assumptions. They serve as interesting demos of what Themis is capable of:
+
+* 0fc anonymous web chat, pythemis (Python) + webthemis (C++ + HTML/JS): [github repo](https://github.com/cossacklabs/0fc) [blog post](https://cossacklabs.com/building-endtoend-webchat.html)
+* sesto: secure storage, pythemis (Python) + webthemis (C++ + HTML/JS): [github repo](https://github.com/cossacklabs/sesto) [blog post](https://cossacklabs.com/presenting-sesto.html)
+
 # Documentation
 
 [Project's github wiki](https://www.github.com/cossacklabs/themis/wiki) contains ever-evolving official documentation, which contains everything from how to use it to ways to contribute to it, with a brief explanation of cryptosystems and architecture behind main Themis library in between. 
