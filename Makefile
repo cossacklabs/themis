@@ -22,8 +22,34 @@ TEST_SRC_PATH = tests
 TEST_OBJ_PATH = build/tests/obj
 TEST_BIN_PATH = build/tests
 
-CFLAGS += -I$(SRC_PATH) -I/usr/local/include -fPIC 
+CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC 
 LDFLAGS += -L/usr/local/lib
+
+NO_COLOR=\033[0m
+OK_COLOR=\033[32;01m
+ERROR_COLOR=\033[31;01m
+WARN_COLOR=\033[33;01m
+ 
+OK_STRING=$(OK_COLOR)[OK]$(NO_COLOR)
+ERROR_STRING=$(ERROR_COLOR)[ERRORS]$(NO_COLOR)
+WARN_STRING=$(WARN_COLOR)[WARNINGS]$(NO_COLOR)
+
+AWK_CMD = awk '{ printf "%-30s %-10s\n",$$1, $$2; }'
+PRINT_OK = printf "$@ $(OK_STRING)\n" | $(AWK_CMD)
+PRINT_OK_ = printf "$(OK_STRING)\n" | $(AWK_CMD)
+PRINT_ERROR = printf "$@ $(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n" && false
+PRINT_ERROR_ = printf "$(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n" && false
+PRINT_WARNING = printf "$@ $(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
+PRINT_WARNING_ = printf "$(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
+BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
+BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
+
+
+define themisecho
+      @tput setaf 6
+      @echo $1
+      @tput sgr0
+endef
 
 ifeq ($(ENGINE),)
 	ENGINE=libressl
@@ -144,36 +170,45 @@ all: err themis_static themis_shared
 
 test_all: err test
 ifdef PHP_VERSION
-	echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" > ./$(BIN_PATH)/tests/phpthemis_test.sh
-	echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
+	@echo -n "make tests for phpthemis "
+	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" > ./$(BIN_PATH)/tests/phpthemis_test.sh
+	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
+	@chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
+	@$(PRINT_OK_)
 endif
 ifdef RUBY_GEM_VERSION
-	echo "ruby ./tests/rubythemis/scell_test.rb" > ./$(BIN_PATH)/tests/rubythemis_test.sh
-	echo "ruby ./tests/rubythemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-	echo "ruby ./tests/rubythemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
+	@echo -n "make tests for rubythemis "
+	@echo "ruby ./tests/rubythemis/scell_test.rb" > ./$(BIN_PATH)/tests/rubythemis_test.sh
+	@echo "ruby ./tests/rubythemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
+	@echo "ruby ./tests/rubythemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
 ifdef SECURE_COMPARATOR_ENABLED
-	echo "ruby ./tests/rubythemis/scomparator_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
+	@echo "ruby ./tests/rubythemis/scomparator_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
 endif
-	chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
+	@chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
+	@$(PRINT_OK_)
 endif
 ifdef PYTHON_VERSION
-	echo "python ./tests/pythemis/scell_test.py" > ./$(BIN_PATH)/tests/pythemis_test.sh
-	echo "python ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	echo "python ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo -n "make tests for pythemis "
+	@echo "python ./tests/pythemis/scell_test.py" > ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "python ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "python ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 ifdef SECURE_COMPARATOR_ENABLED
-	echo "python ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "python ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 endif
 ifdef PYTHON3_VERSION
-	echo "echo Python3 $(PYTHON3_VERSION) tests" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	echo "echo ----- pythemis secure cell tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	echo "python3 ./tests/pythemis/scell_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	echo "echo ----- pythemis secure message tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	echo "python3 ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	echo "echo ----- pythemis secure session tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	echo "python3 ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "echo Python3 $(PYTHON3_VERSION) tests" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "echo ----- pythemis secure cell tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "python3 ./tests/pythemis/scell_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "echo ----- pythemis secure message tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "python3 ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "echo ----- pythemis secure session tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "python3 ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 ifdef SECURE_COMPARATOR_ENABLED
-	echo "python3 ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "python3 ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+endif
+endif
+	@chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
+	@$(PRINT_OK_)
 endif
 #ifdef NODE_VERSION
 #	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
@@ -181,115 +216,173 @@ endif
 #	echo "mocha" >> ./$(BIN_PATH)/tests/node.sh
 #	chmod a+x ./$(BIN_PATH)/tests/node.sh
 #endif
-endif
-	chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
-endif
+
+
+
+soter_static: CMD = $(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
 
 soter_static: $(SOTER_OBJ)
-	$(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
+	@echo -n "link "
+	@$(BUILD_CMD)
+
+soter_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT) $(SOTER_OBJ) $(LDFLAGS)
 
 soter_shared: $(SOTER_OBJ)
-	$(CC) -shared -o $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT) $(SOTER_OBJ) $(LDFLAGS)
+	@echo -n "link "
 ifeq ($(shell uname),Darwin)
-	install_name_tool -id "$(PREFIX)/lib/lib$(SOTER_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)
-	install_name_tool -change "$(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)" "$(PREFIX)/lib/lib(SOTER_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)
+	@install_name_tool -id "$(PREFIX)/lib/lib$(SOTER_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)
+	@install_name_tool -change "$(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)" "$(PREFIX)/lib/lib(SOTER_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)
 endif
+	@$(BUILD_CMD)
+
+themis_static: CMD = $(AR) rcs $(BIN_PATH)/lib$(THEMIS_BIN).a $(THEMIS_OBJ)
 
 themis_static: soter_static $(THEMIS_OBJ)
-	$(AR) rcs $(BIN_PATH)/lib$(THEMIS_BIN).a $(THEMIS_OBJ)
+	@echo -n "link "
+	@$(BUILD_CMD)
+
+themis_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT) $(THEMIS_OBJ) -L$(BIN_PATH) -l$(SOTER_BIN)
 
 themis_shared: soter_shared $(THEMIS_OBJ)
-	$(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT) $(THEMIS_OBJ) -L$(BIN_PATH) -l$(SOTER_BIN)
+	@echo -n "link "
 ifeq ($(shell uname),Darwin)
-	install_name_tool -id "$(PREFIX)/lib/lib$(THEMIS_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
-	install_name_tool -change "$(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)" "$(PREFIX)/lib/lib$(THEMIS_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
+	@install_name_tool -id "$(PREFIX)/lib/lib$(THEMIS_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
+	@install_name_tool -change "$(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)" "$(PREFIX)/lib/lib$(THEMIS_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
 endif
+	@$(BUILD_CMD)
+
+
+$(OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -c $< -o $@
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
-	mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c $< -o $@
+	@mkdir -p $(@D)
+	@echo -n "compile "
+	@$(BUILD_CMD)
+
+$(TEST_OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR)) -I$(TEST_SRC_PATH) -c $< -o $@
 
 $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
-	mkdir -p $(@D)
-	$(CC) $(CFLAGS) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR)) -I$(TEST_SRC_PATH) -c $< -o $@
+	@mkdir -p $(@D)
+	@echo -n "compile "
+	@$(BUILD_CMD)
 
-$(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.cpp
-	mkdir -p $(@D)
-	$(CXX) $(CFLAGS) -I$(TEST_SRC_PATH) -c $< -o $@
+$(TEST_OBJ_PATH)/%.opp: CMD = $(CXX) $(CFLAGS) -I$(TEST_SRC_PATH) -c $< -o $@
+
+$(TEST_OBJ_PATH)/%.opp: $(TEST_SRC_PATH)/%.cpp
+	@mkdir -p $(@D)
+	@echo -n "compile "
+	@$(BUILD_CMD)
 
 include tests/test.mk
 
 err: ; $(ERROR)
 
-clean: nist_rng_test_suite
-	rm -rf $(BIN_PATH)
+clean: CMD = rm -rf $(BIN_PATH)
 
-install: err all
-	mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter $(PREFIX)/lib
-	install $(SRC_PATH)/soter/*.h $(PREFIX)/include/soter
-	install $(SRC_PATH)/themis/*.h $(PREFIX)/include/themis
-	install $(BIN_PATH)/*.a $(PREFIX)/lib
-	install $(BIN_PATH)/*.$(SHARED_EXT) $(PREFIX)/lib
+clean: nist_rng_test_suite
+	@$(BUILD_CMD)
+
+make_install_dirs: CMD = mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter $(PREFIX)/lib
+
+make_install_dirs:
+	@echo -n "making dirs for install "
+	@$(BUILD_CMD_)
+
+install_soter_headers: CMD = install $(SRC_PATH)/soter/*.h $(PREFIX)/include/soter
+
+install_soter_headers: err all make_install_dirs
+	@echo -n "install soter headers "
+	@$(BUILD_CMD_)
+
+install_themis_headers: CMD = install $(SRC_PATH)/themis/*.h $(PREFIX)/include/themis
+
+install_themis_headers: err all make_install_dirs
+	@echo -n "install themis headers "
+	@$(BUILD_CMD_)
+
+install_static_libs: CMD = install $(BIN_PATH)/*.a $(PREFIX)/lib
+
+install_static_libs: err all make_install_dirs
+	@echo -n "install static libraries "
+	@$(BUILD_CMD_)
+
+install_shared_libs: CMD = install $(BIN_PATH)/*.$(SHARED_EXT) $(PREFIX)/lib
+
+install_shared_libs: err all make_install_dirs
+	@echo -n "install shared libraries "
+	@$(BUILD_CMD_)
+
+install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
+
+phpthemis_uninstall: CMD = if [ -e src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
 
 phpthemis_uninstall:
-ifdef PHP_THEMIS_ISTALL
-	if [ -a src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
+ifdef PHP_THEMIS_INSTALL
+	@echo -n "phpthemis uninstall "
+	@$(BUILD_CMD_)
 endif
+
+rubythemis_uninstall: CMD = gem uninstall themis
 
 rubythemis_uninstall:
 ifdef RUBY_GEM_VERSION
-	gem uninstall themis
+	@echo -n "rubythemis uninstall "
+	@$(BUILD_CMD_)
 endif
 
-pythemis_uninstall: 
-ifdef PIP_THEMIS_INSTALL
-	pip -q uninstall -y pythemis
-endif
+uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.so && rm -f $(PREFIX)/lib/libthemis.so && rm -f $(PREFIX)/lib/libsoter.dylib && rm -f $(PREFIX)/lib/libthemis.dylib
 
+uninstall: phpthemis_uninstall rubythemis_uninstall themispp_uninstall
+	@echo -n "themis uninstall "
+	@$(BUILD_CMD_)
 
-uninstall: phpthemis_uninstall rubythemis_uninstall pythemis_uninstall
-	rm -rf $(PREFIX)/include/themis
-	rm -rf $(PREFIX)/include/soter
-	rm -f $(PREFIX)/lib/libsoter.a
-	rm -f $(PREFIX)/lib/libthemis.a
-	rm -f $(PREFIX)/lib/libsoter.so
-	rm -f $(PREFIX)/lib/libthemis.so
-	rm -f $(PREFIX)/lib/libsoter.dylib
-	rm -f $(PREFIX)/lib/libthemis.dylib
+phpthemis_install: CMD = cd src/wrappers/themis/php && phpize && ./configure && make install
 
 phpthemis_install: install
 ifdef PHP_VERSION
-	cd src/wrappers/themis/php && phpize && ./configure && make install
+	@echo -n "phpthemis install "
+	@$(BUILD_CMD_)
 else
 	@echo "Error: php not found"
 	@exit 1
 endif
 
+rubythemis_install: CMD = cd src/wrappers/themis/ruby && gem build rubythemis.gemspec && gem install ./*.gem
+
 rubythemis_install: install
 ifdef RUBY_GEM_VERSION
-	cd src/wrappers/themis/ruby && gem build rubythemis.gemspec && gem install ./*.gem
+	@echo -n "rubythemis install "
+	@$(BUILD_CMD_)
 else
 	@echo "Error: ruby gem not found"
 	@exit 1
 endif
 
+pythemis_install: CMD = cd src/wrappers/themis/python/ && python2 setup.py install --record files.txt
+
 pythemis_install: install
 ifdef PYTHON_VERSION
-	cd src/wrappers/themis/python/ && python setup.py install
+	@echo -n "pythemis install "
+	@$(BUILD_CMD_)
 else
 	@echo "Error: python not found"
 	@exit 1
 endif
 ifdef PYTHON3_VERSION
-	cd src/wrappers/themis/python/ && python3 setup.py install
+	@cd src/wrappers/themis/python/ && python3 setup.py install --record files3.txt
 endif
 
+themispp_install: CMD = install $(SRC_PATH)/wrappers/themis/themispp/*.hpp $(PREFIX)/include/themispp
+
 themispp_install: install
-	mkdir -p $(PREFIX)/include/themispp
-	install $(SRC_PATH)/wrappers/themis/themispp/*.hpp $(PREFIX)/include/themispp
+	@mkdir -p $(PREFIX)/include/themispp
+	@$(BUILD_CMD)
+
+themispp_uninstall: CMD = rm -rf $(PREFIX)/include/themispp
 
 themispp_uninstall: 
-	rm -rf $(PREFIX)/include/themispp
+	@echo -n "themispp uninstall "
+	@$(BUILD_CMD_)
 
 #jsthemis_install:
 #	cd src/wrappers/themis/jsthemis && mv `npm pack` ../../../../build/
