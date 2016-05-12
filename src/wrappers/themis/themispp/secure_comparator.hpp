@@ -17,8 +17,6 @@
 #ifndef THEMISPP_SECURE_COMPARATOR_HPP_
 #define THEMISPP_SECURE_COMPARATOR_HPP_
 
-#define SECURE_COMPARATOR_ENABLED
-
 #include <cstring>
 #include <vector>
 #include <themis/themis.h>
