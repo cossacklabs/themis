@@ -27,7 +27,7 @@ class smessage(object):
     def __init__(self, private_key_, peer_public_key_):
         if len(private_key_) == 0 or len(peer_public_key_) == 0:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_message creation error")
+                                   "Secure Message failed creating")
         self.private_key = private_key_
         self.peer_public_key = peer_public_key_
 
@@ -38,9 +38,7 @@ class smessage(object):
             self.peer_public_key, len(self.peer_public_key),
             message, len(message), None, byref(encrypted_message_length))
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
-            raise themis_exception(res, "themis_secure_message_wrap "
-                                        "(wrapped message length determination)"
-                                        " error")
+            raise themis_exception(res, "Secure Message failed encrypting")
         encrypted_message = create_string_buffer(encrypted_message_length.value)
         res = themis.themis_secure_message_wrap(
             self.private_key, len(self.private_key),
@@ -48,7 +46,7 @@ class smessage(object):
             message, len(message), encrypted_message,
             byref(encrypted_message_length))
         if res != THEMIS_CODES.SUCCESS:
-            raise themis_exception(res, "themis_secure_message_wrap error")
+            raise themis_exception(res, "Secure Message failed encrypting")
 
         return string_at(encrypted_message, encrypted_message_length.value)
 
@@ -60,8 +58,7 @@ class smessage(object):
             message, len(message), None, byref(plain_message_length))
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise themis_exception(res,
-                                   "themis_secure_message_unwrap "
-                                   "(plain message length determination) error")
+                                   "Secure Message failed decrypting")
         plain_message = create_string_buffer(plain_message_length.value)
         res = themis.themis_secure_message_unwrap(
             self.private_key, len(self.private_key),
@@ -69,7 +66,7 @@ class smessage(object):
             message, len(message), plain_message, byref(plain_message_length))
         if res != THEMIS_CODES.SUCCESS:
             raise themis_exception(
-                res, "themis_secure_message_unwrap decrypting error")
+                res, "Secure Message failed decrypting")
         return string_at(plain_message, plain_message_length.value)
 
 def ssign(private_key, message):
@@ -79,15 +76,14 @@ def ssign(private_key, message):
             None, byref(encrypted_message_length))
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise themis_exception(
-                res, "themis_secure_message_wrap "
-                     "(wrapped message length determination) error")
+                res, "Secure Message failed singing")
         encrypted_message = create_string_buffer(encrypted_message_length.value)
         res = themis.themis_secure_message_wrap(
             private_key, len(private_key), None, 0, message, len(message),
             encrypted_message, byref(encrypted_message_length))
         if res != THEMIS_CODES.SUCCESS:
             raise themis_exception(
-                res, "themis_secure_message_wrap singing error")
+                res, "Secure Message failed singing")
         return string_at(encrypted_message, encrypted_message_length.value)
 
 def sverify(public_key, message):
@@ -97,14 +93,13 @@ def sverify(public_key, message):
             None, byref(plain_message_length))
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise themis_exception(
-                res, "themis_secure_message_unwrap "
-                     "(plain message length determination) error")
+                res,  "Secure Message failed verifying")
         plain_message = create_string_buffer(plain_message_length.value)
         res = themis.themis_secure_message_unwrap(
             None, 0, public_key, len(public_key), message, len(message),
             plain_message, byref(plain_message_length))
         if res != THEMIS_CODES.SUCCESS:
             raise themis_exception(
-                res, "themis_secure_message_unwrap verification error")
+                res, "Secure Message failed verifying")
 
         return string_at(plain_message, plain_message_length.value)

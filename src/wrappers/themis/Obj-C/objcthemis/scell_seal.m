@@ -46,7 +46,7 @@
         contextData, contextLength, [message bytes], [message length], NULL, &wrappedMessageLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"themis_secure_cell_encrypt_seal (length determination) fail");
+        *error = SCERROR(result, @"Secure Cell (Seal) encrypted message length determination failed");
         return nil;
     }
 
@@ -55,7 +55,7 @@
         contextData, contextLength, [message bytes], [message length], wrappedMessage, &wrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"themis_secure_cell_encrypt_seal fail");
+        *error = SCERROR(result, @"Secure Cell (Seal) encryption failed");
         free(wrappedMessage);
         return nil;
     }
@@ -77,7 +77,7 @@
         contextData, contextLength, [message bytes], [message length], NULL, &unwrappedMessageLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"themis_secure_cell_decrypt_seal (length determination) fail");
+        *error = SCERROR(result, @"Secure Cell (Seal) decrypted message length determination failed");
         return nil;
     }
 
@@ -86,7 +86,7 @@
         contextData, contextLength, [message bytes], [message length], unwrappedMessage, &unwrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"themis_secure_cell_decrypt_seal fail");
+        *error = SCERROR(result, @"Secure Cell (Seal) decryption failed");
         free(unwrappedMessage);
         return nil;
     }

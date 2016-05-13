@@ -68,13 +68,13 @@ namespace jsthemis {
       context_length = node::Buffer::Length(args[1]);
     }
     if(themis_secure_cell_encrypt_token_protect(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &token_length, NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("secure cell token protect encrypt (length determination) error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Token Protect) failed encrypting")));
       return scope.Close(v8::Undefined());
     }
     uint8_t* data=new uint8_t[length];
     uint8_t* token=new uint8_t[token_length];
     if(themis_secure_cell_encrypt_token_protect(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), token, &token_length, data, &length)!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("secure cell token protect encrypt error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Token Protect) failed encrypting")));
       delete data;
       delete token;
       return scope.Close(v8::Undefined());
@@ -100,13 +100,13 @@ namespace jsthemis {
       context_length = node::Buffer::Length(args[2]);
     }
     if(themis_secure_cell_decrypt_token_protect(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), (const uint8_t*)(node::Buffer::Data(args[1])), node::Buffer::Length(args[1]), NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("secure cell token protect decrypt (length determination) error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Token Protect) failed decrypting")));
       return scope.Close(v8::Undefined());
     }
     uint8_t* data=new uint8_t[length];
     themis_status_t res=themis_secure_cell_decrypt_token_protect(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), (const uint8_t*)(node::Buffer::Data(args[1])), node::Buffer::Length(args[1]), data, &length);
     if(res!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("secure cell token protect decrypt error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Token Protect) failed decrypting")));
       delete data;
       return scope.Close(v8::Undefined());
     }

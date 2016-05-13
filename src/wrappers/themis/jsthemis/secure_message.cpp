@@ -65,12 +65,12 @@ namespace jsthemis {
     SecureMessage* obj = node::ObjectWrap::Unwrap<SecureMessage>(args.This());
     size_t encrypted_length=0;
     if(themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &encrypted_length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("secure message encrypt (length determination) error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Message failed encrypting")));
       return scope.Close(v8::Undefined());
     }
     uint8_t* encrypted_data=new uint8_t[encrypted_length];
     if(themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), encrypted_data, &encrypted_length)!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("secure message encrypt error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Message failed encrypting")));
       delete encrypted_data;
       return scope.Close(v8::Undefined());
     }
@@ -84,12 +84,12 @@ namespace jsthemis {
     SecureMessage* obj = node::ObjectWrap::Unwrap<SecureMessage>(args.This());
     size_t decrypted_length=0;
     if(themis_secure_message_unwrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &decrypted_length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("secure message decrypt (length determination) error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Message failed decrypting")));
       return scope.Close(v8::Undefined());
     }
     uint8_t* decrypted_data=new uint8_t[decrypted_length];
     if(themis_secure_message_unwrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), decrypted_data, &decrypted_length)!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("secure message decrypt error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Message failed decrypting")));
       delete decrypted_data;
       return scope.Close(v8::Undefined());
     }
@@ -103,12 +103,12 @@ namespace jsthemis {
     SecureMessage* obj = node::ObjectWrap::Unwrap<SecureMessage>(args.This());
     size_t encrypted_length=0;
     if(themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), NULL, 0, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &encrypted_length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("secure message sign (length determination) error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Message failed singing")));
       return scope.Close(v8::Undefined());
     }
     uint8_t* encrypted_data=new uint8_t[encrypted_length];
     if(themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), NULL, 0, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), encrypted_data, &encrypted_length)!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("secure message sign error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Message failed singing")));
       delete encrypted_data;
       return scope.Close(v8::Undefined());
     }
@@ -122,12 +122,12 @@ namespace jsthemis {
     SecureMessage* obj = node::ObjectWrap::Unwrap<SecureMessage>(args.This());
     size_t decrypted_length=0;
     if(themis_secure_message_unwrap(NULL, 0, &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &decrypted_length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("secure message verify (length determination) error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Message failed verifying")));
       return scope.Close(v8::Undefined());
     }
     uint8_t* decrypted_data=new uint8_t[decrypted_length];
     if(themis_secure_message_unwrap(NULL, 0, &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), decrypted_data, &decrypted_length)!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("secure message verify error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Message failed verifying")));
       delete decrypted_data;
       return scope.Close(v8::Undefined());
     }

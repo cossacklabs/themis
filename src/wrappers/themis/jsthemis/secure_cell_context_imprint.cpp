@@ -63,12 +63,12 @@ namespace jsthemis {
     const uint8_t* context=(const uint8_t*)(node::Buffer::Data(args[1]));
     size_t context_length=node::Buffer::Length(args[1]);
     if(themis_secure_cell_encrypt_context_imprint(&(obj->key_)[0], obj->key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), context, context_length, NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("secure cell context imprint encrypt (length determination) error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Context Imprint) failed  encrypting")));
       return scope.Close(v8::Undefined());
     }
     uint8_t* data=new uint8_t[length];
     if(themis_secure_cell_encrypt_context_imprint(&(obj->key_)[0], obj->key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), context, context_length, data, &length)!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("secure cell context imprint encrypt error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Context Imprint) failed  encrypting")));
       delete data;
       return scope.Close(v8::Undefined());
     }
@@ -84,12 +84,12 @@ namespace jsthemis {
     const uint8_t* context=(const uint8_t*)(node::Buffer::Data(args[1]));
     size_t context_length=node::Buffer::Length(args[1]);
     if(themis_secure_cell_decrypt_context_imprint(&(obj->key_)[0], obj->key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), context, context_length, NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("secure cell context imprint decrypt (length determination) error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Context Imprint) failed  decrypting")));
       return scope.Close(v8::Undefined());
     }
     uint8_t* data=new uint8_t[length];
     if(themis_secure_cell_decrypt_context_imprint(&(obj->key_)[0], obj->key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), context, context_length, data, &length)!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("secure cell context imprint decrypt error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Context Imprint) failed  decrypting")));
       delete data;
       return scope.Close(v8::Undefined());
     }

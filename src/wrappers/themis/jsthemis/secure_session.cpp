@@ -87,12 +87,12 @@ namespace jsthemis {
     SecureSession* obj = node::ObjectWrap::Unwrap<SecureSession>(args.This());
     size_t length=0;
     if(secure_session_generate_connect_request(obj->session_, NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("secure session generate connect request (length determination) error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Session failed generating connect request")));
       return scope.Close(v8::Undefined());
     }
     uint8_t* data=new uint8_t[length];
     if(secure_session_generate_connect_request(obj->session_, data, &length)!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("secure session generate connect request error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Session failed generating connect request")));
       delete data;
       return scope.Close(v8::Undefined());
     }
@@ -106,12 +106,12 @@ namespace jsthemis {
     SecureSession* obj = node::ObjectWrap::Unwrap<SecureSession>(args.This());
     size_t length=0;
     if(secure_session_wrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("secure session wrap (length determination) error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Session failed encrypting")));
       return scope.Close(v8::Undefined());
     }
     uint8_t* data=new uint8_t[length];
     if(secure_session_wrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length)!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("secure session wrap error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Session failed encrypting")));
       delete data;
       return scope.Close(v8::Undefined());
     }
@@ -127,13 +127,13 @@ namespace jsthemis {
     themis_status_t res=secure_session_unwrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length);
     if(res!=THEMIS_BUFFER_TOO_SMALL){
       if(res!=THEMIS_SUCCESS)
-	ThrowException(v8::Exception::Error(v8::String::New("secure session unwrap (length determination) error")));
+	ThrowException(v8::Exception::Error(v8::String::New("Secure Session failed decrypting")));
       return scope.Close(v8::Undefined());
     }
     uint8_t* data=new uint8_t[length];
     res=secure_session_unwrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length);
     if(res!=THEMIS_SUCCESS && res!=THEMIS_SSESSION_SEND_OUTPUT_TO_PEER){
-      ThrowException(v8::Exception::Error(v8::String::New("secure session unwrap error")));
+      ThrowException(v8::Exception::Error(v8::String::New("Secure Session failed decrypting")));
       delete data;
       return scope.Close(v8::Undefined());
     }

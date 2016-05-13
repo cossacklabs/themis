@@ -44,14 +44,14 @@ namespace themispp{
       switch(alg_t_p){
       case EC:
 	if(themis_gen_ec_key_pair(&private_key[0], &private_key_length, &public_key[0], &public_key_length)!=THEMIS_SUCCESS)
-	  throw themispp::exception_t("EC key pair generation failure");
+	  throw themispp::exception_t("Themis failed generating EC KeyPair");
 	break;
       case RSA:
 	if(themis_gen_rsa_key_pair(&private_key[0], &private_key_length, &public_key[0], &public_key_length)!=THEMIS_SUCCESS)
-	  throw themispp::exception_t("RSA key pair generation failure");
+	  throw themispp::exception_t("Themis failed generating RSA KeyPair");
 	break;
       default:
-	throw themispp::exception_t("key pair generation failure (unsupported algorithm)");
+	throw themispp::exception_t("Themis failed generating KeyPair, unsupported algorithm");
       }
       private_key.resize(private_key_length);
       public_key.resize(private_key_length);

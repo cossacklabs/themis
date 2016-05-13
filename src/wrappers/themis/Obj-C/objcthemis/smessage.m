@@ -70,19 +70,19 @@
 
         case TSMessageModeSignVerify:
             if (!(self.privateKey) || [self.privateKey length] == 0) {
-                *error = SCERROR(TSErrorTypeFail, @"themis_secure_message_wrap (signing without private key) failed");
+                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping");
                 return nil;
             }
             result = (TSErrorType) themis_secure_message_wrap([self.privateKey bytes], [self.privateKey length], NULL, 0,
                 [message bytes], [message length], NULL, &wrappedMessageLength);
             break;
         default:
-            *error = SCERROR(TSErrorTypeFail, @"themis_secure_message_wrap (undefined secure session mode) failed");
+            *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
             return nil;
     }
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"themis_secure_message_wrap (length determination) failed");
+        *error = SCERROR(result, @"Secure Message failed wraping");
         return nil;
     }
 
@@ -99,12 +99,12 @@
                 [message bytes], [message length], wrappedMessage, &wrappedMessageLength);
             break;
         default:
-            *error = SCERROR(TSErrorTypeFail, @"themis_secure_message_wrap (undefined secure session mode) failed");
+            *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
             return NULL;
     }
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"themis_secure_message_wrap failed");
+        *error = SCERROR(result, @"Secure Message failed wrapping");
         free(wrappedMessage);
         return NULL;
     }
@@ -123,7 +123,7 @@
         NULL, &unwrappedMessageLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"themis_secure_message_unwrap (length determination) failed");
+        *error = SCERROR(result, @"Secure Message failed unwraping");
         return nil;
     }
 
@@ -133,7 +133,7 @@
         unwrappedMessage, &unwrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"themis_secure_message_unwrap failed");
+        *error = SCERROR(result, @"Secure Message failed unwraping");
         free(unwrappedMessage);
         return nil;
     }

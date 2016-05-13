@@ -33,13 +33,13 @@ class themis_gen_key_pair(object):
                     self.private_key, byref(self.private_key_length),
                     self.public_key, byref(self.public_key_length)) != 0:
                 raise themis_exception(THEMIS_CODES.FAIL,
-                                       "themis_gen_ec_key_pair error")
+                                       "Themis failed generating EC KeyPair")
         elif alg == "RSA":
             if themis.themis_gen_rsa_key_pair(
                     self.private_key, byref(self.private_key_length),
                     self.public_key, byref(self.public_key_length)) != 0:
                 raise themis_exception(THEMIS_CODES.FAIL,
-                                       "themis_gen_rsa_key_pair error")
+                                       "Themis failed generating RSA KeyPair")
 
     def export_private_key(self):
         return string_at(self.private_key, self.private_key_length.value)

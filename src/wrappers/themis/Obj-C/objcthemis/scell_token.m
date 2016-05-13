@@ -54,7 +54,7 @@
             NULL, &wrappedMessageLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"themis_scell_token_wrap (length determination) failed");
+        *error = SCERROR(result, @"Secure Cell (Token Protect) encrypted message length determination failed");
         return nil;
     }
 
@@ -66,7 +66,7 @@
             [encryptedMessage.cipherText mutableBytes], &wrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"themis_scell_token_wrap failed");
+        *error = SCERROR(result, @"Secure Cell (Token Protect) encryption failed");
         return nil;
     }
     return encryptedMessage;
@@ -83,7 +83,7 @@
             NULL, &unwrappedMessageLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"themis_scell_token_unwrap (length determination) failed");
+        *error = SCERROR(result, @"Secure Cell (Token Protect) decrypted message length determination failed");
         return nil;
     }
 
@@ -93,7 +93,7 @@
             [unwrapped_message mutableBytes], &unwrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"themis_scell_token_unwrap failed");
+        *error = SCERROR(result, @"Secure Cell (Token Protect) decryption failed");
         return nil;
     }
     return unwrapped_message;

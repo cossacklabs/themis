@@ -56,20 +56,20 @@ namespace jsthemis {
       }else if(args.Length()==0){
 	size_t private_key_length, public_key_length;
 	if(themis_gen_ec_key_pair(NULL, &private_key_length, NULL, &public_key_length)!=THEMIS_BUFFER_TOO_SMALL){
-	  ThrowException(v8::Exception::Error(v8::String::New("KeyPair generation (length determination) error")));
+	  ThrowException(v8::Exception::Error(v8::String::New("Themis failed Key Pair generating")));
 	  return scope.Close(v8::Undefined());
 	}
 	std::vector<uint8_t> prk(private_key_length);
 	std::vector<uint8_t> puk(public_key_length);
 	if(themis_gen_ec_key_pair(&prk[0], &private_key_length, &puk[0], &public_key_length)!=THEMIS_SUCCESS){
-	  ThrowException(v8::Exception::Error(v8::String::New("KeyPair generation error")));
+	  ThrowException(v8::Exception::Error(v8::String::New("Themis failed Key Pair generating")));
 	  return scope.Close(v8::Undefined());
 	}
 	KeyPair* obj = new KeyPair(prk, puk);
 	obj->Wrap(args.This());
 	return args.This();
       } else {
-	ThrowException(v8::Exception::Error(v8::String::New("KeyPair object initialisation error")));
+	ThrowException(v8::Exception::Error(v8::String::New("Themis failed KeyPair object initialisation")));
 	return scope.Close(v8::Undefined());
       }
     } else {

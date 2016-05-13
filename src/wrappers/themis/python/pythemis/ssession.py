@@ -146,7 +146,7 @@ class ssession(object):
                 ctypes.byref(self.transport_))
         if self.session_ctx is None:
             raise exception.themis_exception(THEMIS_CODES.FAIL,
-                                             "secure_session_create fail")
+                                             "Secure Session failed creating")
 
     def __del__(self):
         themis.secure_session_destroy(self.session_ctx)
@@ -155,7 +155,7 @@ class ssession(object):
         res = themis.secure_session_connect(self.session_ctx)
         if res != THEMIS_CODES.SUCCESS:
             raise exception.themis_exception(
-                res, "secure_session_connect failed")
+                res, "Secure Session failed connecting")
 
     def send(self, message):
         send_message = ctypes.create_string_buffer(message)
@@ -163,7 +163,7 @@ class ssession(object):
                                          ctypes.byref(send_message),
                                          len(message))
         if res == THEMIS_CODES.NETWORK_ERROR:
-            raise exception.themis_exception(res, "secure_session_send failed")
+            raise exception.themis_exception(res, "Secure Session failed sending")
         return res
 
     def receive(self):
@@ -173,7 +173,7 @@ class ssession(object):
                                             message_length)
         if res == THEMIS_CODES.NETWORK_ERROR:
             raise exception.themis_exception(
-                res, "secure_session_receive failed")
+                res, "Secure Session failed receiving")
         elif res < 0:
             return ""
         return ctypes.string_at(message, res)
@@ -187,14 +187,13 @@ class ssession(object):
             self.session_ctx, None, ctypes.byref(req_size))
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise exception.themis_exception(
-                res, "secure_session_generate_connect_request "
-                     "(buffer_length determination) failed")
+                res, "Secure Session failed generating connect request")
         req_buffer = ctypes.create_string_buffer(req_size.value)
         res = themis.secure_session_generate_connect_request(
             self.session_ctx, ctypes.byref(req_buffer), ctypes.byref(req_size))
         if res != THEMIS_CODES.SUCCESS:
             raise exception.themis_exception(
-                res, "secure_session_generate_connect_request failed")
+                res, "Secure Session failed generating connect request")
         return ctypes.string_at(req_buffer, req_size)
 
     def wrap(self, message):
@@ -205,14 +204,14 @@ class ssession(object):
             ctypes.byref(wrapped_message_length))
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise exception.themis_exception(
-                res, "secure_session_wrap (buffer_length determination) failed")
+                res, "Secure Session failed encrypting")
         wrapped_message = ctypes.create_string_buffer(
             wrapped_message_length.value)
         res = themis.secure_session_wrap(
             self.session_ctx, ctypes.byref(send_message), len(message),
             ctypes.byref(wrapped_message), ctypes.byref(wrapped_message_length))
         if res != THEMIS_CODES.SUCCESS:
-            raise exception.themis_exception(res,"secure_session_wrap failed")
+            raise exception.themis_exception(res,"Secure Session failed encrypting")
         return ctypes.string_at(wrapped_message, wrapped_message_length)
 
     def unwrap(self, message):
@@ -225,8 +224,7 @@ class ssession(object):
             return sstring(b"")
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise exception.themis_exception(
-                res, "secure_session_unwrap (buffer_length determination) "
-                     "failed")
+                res, "Secure Session failed decrypting")
         unwrapped_message = ctypes.create_string_buffer(
             unwrapped_message_length.value)
         res = themis.secure_session_unwrap(
@@ -239,7 +237,7 @@ class ssession(object):
             rez.set_control()
         elif res != THEMIS_CODES.SUCCESS:
             raise exception.themis_exception(
-                res, "secure_session_unwrap failed")
+                res, "Secure Session failed decrypting")
         return rez
 
 

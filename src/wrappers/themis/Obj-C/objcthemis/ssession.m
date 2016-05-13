@@ -41,7 +41,7 @@
 - (void)connect:(NSError **)error {
     TSErrorType result = (TSErrorType) secure_session_connect(self.session);
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"secure_session_connect fail");
+        *error = SCERROR(result, @"Secure Session failed connection");
     }
 }
 
@@ -51,7 +51,7 @@
     TSErrorType result = (TSErrorType) secure_session_generate_connect_request(self.session, NULL, &connectRequestLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"secure_session_generate_connect_request (length determination) fail");
+        *error = SCERROR(result, @"Secure Session failed making connection request");
         return nil;
     }
 
@@ -59,7 +59,7 @@
     result = (TSErrorType) secure_session_generate_connect_request(self.session, [requestData mutableBytes], &connectRequestLength);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"secure_session_generate_connect_request fail");
+        *error = SCERROR(result, @"Secure Session failed making connection request");
         return nil;
     }
     return requestData;
@@ -73,7 +73,7 @@
         NULL, &wrappedMessageLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"secure_session_wrap (length determination) fail");
+        *error = SCERROR(result, @"Secure Session failed encryption");
         return nil;
     }
 
@@ -82,7 +82,7 @@
         [wrappedMessage mutableBytes], &wrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"secure_session_wrap fail");
+        *error = SCERROR(result, @"Secure Session failed encryption");
         return nil;
     }
     return wrappedMessage;
@@ -98,7 +98,7 @@
         if (result == TSErrorTypeSuccess) {
             return nil;
         }
-        *error = SCERROR(result, @"secure_session_unwrap (length determination) fail");
+        *error = SCERROR(result, @"Secure Session failed decryption");
         return nil;
     }
 
@@ -111,7 +111,7 @@
             return unwrappedMessage;
         }
         else {
-            *error = SCERROR(result, @"secure_session_unwrap fail");
+            *error = SCERROR(result, @"Secure Session failed decryption");
             return nil;
         }
     }
@@ -123,7 +123,7 @@
 - (void)wrapAndSend:(NSData *)message error:(NSError **)error {
     TSErrorType result = (TSErrorType) secure_session_send(self.session, [message bytes], [message length]);
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"secure_session_send fail");
+        *error = SCERROR(result, @"Secure Session failed sending");
     }
 }
 
@@ -134,7 +134,7 @@
         [receivedData length]);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"secure_session_receive fail");
+        *error = SCERROR(result, @"Secure Session failed receiving");
         return nil;
     }
     return receivedData;
