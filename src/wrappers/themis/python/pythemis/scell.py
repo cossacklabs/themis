@@ -29,7 +29,7 @@ class scell_seal(object):
     def __init__(self, key_):
         if len(key_) == 0:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell creation error")
+                                   "Secure Cell (Seal) failed creating")
         self.key = key_
 
     def encrypt(self, message, context=None):
@@ -43,16 +43,14 @@ class scell_seal(object):
                 message, len(message), None,
                 byref(encrypted_message_length)) != -4:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell_encrypt_seal "
-                                   "(encrypted message length determination) "
-                                   "error")
+                                   "Secure Cell (Seal) failed ecrypting")
         encrypted_message = create_string_buffer(encrypted_message_length.value)
         if themis.themis_secure_cell_encrypt_seal(
                 self.key, len(self.key), context, context_length,
                 message, len(message), encrypted_message,
                 byref(encrypted_message_length)) != 0:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell_encrypt_seal error")
+                                   "Secure Cell (Seal) failed ecrypting")
 
         return string_at(encrypted_message, encrypted_message_length.value)
 
@@ -67,16 +65,14 @@ class scell_seal(object):
                 message, len(message), None,
                 byref(decrypted_message_length)) != -4:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell_decrypt_seal "
-                                   "(decrypted message length determination) "
-                                   "error")
+                                   "Secure Cell (Seal) failed derypting")
         decrypted_message = create_string_buffer(decrypted_message_length.value)
         if themis.themis_secure_cell_decrypt_seal(
                 self.key, len(self.key), context, context_length,
                 message, len(message), decrypted_message,
                 byref(decrypted_message_length)) != 0:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell_decrypt_seal error")
+                                   "Secure Cell (Seal) failed derypting")
 
         return string_at(decrypted_message, decrypted_message_length.value)
 
@@ -85,7 +81,7 @@ class scell_token_protect(object):
     def __init__(self, key_):
         if len(key_) == 0:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell creation error")
+                                   "Secure Cell (Token Protect) failed creating")
         self.key = key_
 
     def encrypt(self, message, context_=None):
@@ -100,9 +96,7 @@ class scell_token_protect(object):
                 message, len(message), None, byref(context_length), None,
                 byref(encrypted_message_length)) != -4:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell_encrypt_token_protect "
-                                   "(encrypted message and context "
-                                   "length determination) error")
+                                   "Secure Cell (Token Protect) failed encrypting")
         encrypted_message = create_string_buffer(encrypted_message_length.value)
         context = create_string_buffer(context_length.value)
         if themis.themis_secure_cell_encrypt_token_protect(
@@ -110,8 +104,7 @@ class scell_token_protect(object):
                 message, len(message), context, byref(context_length),
                 encrypted_message, byref(encrypted_message_length)) != 0:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell_encrypt_token_protect "
-                                   "error")
+                                   "Secure Cell (Token Protect) failed encrypting")
         return (string_at(encrypted_message, encrypted_message_length.value),
                 string_at(context, context_length))
 
@@ -127,17 +120,14 @@ class scell_token_protect(object):
             byref(decrypted_message_length))
         if res != -4:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell_decrypt_token_protect "
-                                   "(decrypted message length determination) "
-                                   "error ")
+                                   "Secure Cell (Token Protect) failed decrypting")
         decrypted_message = create_string_buffer(decrypted_message_length.value)
         if themis.themis_secure_cell_decrypt_token_protect(
                 self.key, len(self.key), context_, context_length_,
                 message, len(message), context, len(context), decrypted_message,
                 byref(decrypted_message_length)) != 0:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell_decrypt_token_protect "
-                                   "error")
+                                   "Secure Cell (Token Protect) failed decrypting")
 
         return string_at(decrypted_message, decrypted_message_length.value)
 
@@ -146,7 +136,7 @@ class scell_context_imprint(object):
     def __init__(self, key_):
         if len(key_) == 0:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell creation error")
+                                   "Secure Cell (Context Imprint) failed creating")
         self.key = key_
 
     def encrypt(self, message, context):
@@ -156,17 +146,14 @@ class scell_context_imprint(object):
                 context, len(context), None,
                 byref(encrypted_message_length)) != -4:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell_encrypt_context_imprint "
-                                   "(encrypted message length determination) "
-                                   "error")
+                                   "Secure Cell (Context Imprint) failed encrypting")
         encrypted_message = create_string_buffer(encrypted_message_length.value)
         if themis.themis_secure_cell_encrypt_context_imprint(
                 self.key, len(self.key), message, len(message),
                 context, len(context), encrypted_message,
                 byref(encrypted_message_length)) != 0:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell_encrypt_context_imprint "
-                                   "error")
+                                   "Secure Cell (Context Imprint) failed encrypting")
 
         return string_at(encrypted_message, encrypted_message_length.value)
 
@@ -177,16 +164,13 @@ class scell_context_imprint(object):
                 context, len(context), None,
                 byref(decrypted_message_length)) != -4:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell_decrypt_context_imprint "
-                                   "(decrypted message length determination) "
-                                   "error")
+                                   "Secure Cell (Context Imprint) failed decrypting")
         decrypted_message = create_string_buffer(decrypted_message_length.value)
         if themis.themis_secure_cell_decrypt_context_imprint(
                 self.key, len(self.key), message, len(message),
                 context, len(context), decrypted_message,
                 byref(decrypted_message_length)) != 0:
             raise themis_exception(THEMIS_CODES.FAIL,
-                                   "themis_secure_cell_decrypt_context_imprint "
-                                   "error")
+                                   "Secure Cell (Context Imprint) failed decrypting")
 
         return string_at(decrypted_message, decrypted_message_length.value)

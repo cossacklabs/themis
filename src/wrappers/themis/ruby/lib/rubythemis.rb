@@ -112,11 +112,11 @@ module Themis
 		private_key_length=FFI::MemoryPointer.new(:uint)
 		public_key_length= FFI::MemoryPointer.new(:uint)
 		res=themis_gen_ec_key_pair(nil, private_key_length, nil, public_key_length)
-		raise ThemisError, "themis_gen_ec_key_pair (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL 
+		raise ThemisError, "Themis failed generating EC KeyPair: #{res}" unless res == BUFFER_TOO_SMALL 
 		private_key = FFI::MemoryPointer.new(:char, private_key_length.read_uint)
 		public_key = FFI::MemoryPointer.new(:char, public_key_length.read_uint)
 		res=themis_gen_ec_key_pair(private_key, private_key_length, public_key, public_key_length)
-		raise ThemisError, "themis_gen_ec_key_pair error: #{res}" unless res == SUCCESS
+		raise ThemisError, "Themis failed generating EC KeyPair: #{res}" unless res == SUCCESS
 		return private_key.get_bytes(0, private_key_length.read_uint), public_key.get_bytes(0, public_key_length.read_uint)
 	end
 
@@ -124,11 +124,11 @@ module Themis
 		private_key_length=FFI::MemoryPointer.new(:uint)
 		public_key_length= FFI::MemoryPointer.new(:uint)
 		res=themis_gen_rsa_key_pair(nil, private_key_length, nil, public_key_length)
-		raise ThemisError, "themis_gen_ec_key_pair (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL 
+		raise ThemisError, "Themis failed generating RSA KeyPair: #{res}" unless res == BUFFER_TOO_SMALL 
 		private_key = FFI::MemoryPointer.new(:char, private_key_length.read_uint)
 		public_key = FFI::MemoryPointer.new(:char, public_key_length.read_uint)
 		res=themis_gen_rsa_key_pair(private_key, private_key_length, public_key, public_key_length)
-		raise ThemisError, "themis_gen_ec_key_pair error: #{res}" unless res == SUCCESS
+		raise ThemisError, "Themis failed generating RSA KeyPair: #{res}" unless res == SUCCESS
 		return private_key.get_bytes(0, private_key_length.read_uint), public_key.get_bytes(0, public_key_length.read_uint)
 	end
     end
@@ -157,7 +157,7 @@ module Themis
 		@callbacks[:user_data] = FFI::MemoryPointer.new(:uint64)
 		@callbacks[:user_data].write_uint64(@transport_obj_id)
 		@session=secure_session_create(id_buf, id_length, private_key_buf, private_key_length, @callbacks);
-	        raise ThemisError, "secure_session_create error" unless @session
+	        raise ThemisError, "Secure Session failed creating" unless @session
 	end
 	
 	def is_established()
@@ -167,10 +167,10 @@ module Themis
 	def connect_request()
 		connect_request_length = FFI::MemoryPointer.new(:uint)
 		res=secure_session_generate_connect_request(@session, nil, connect_request_length)
-		raise ThemisError, "secure_session_generate_connect_request (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		raise ThemisError, "Secure Session failed making connection request: #{res}" unless res == BUFFER_TOO_SMALL
 		connect_request = FFI::MemoryPointer.new(:char, connect_request_length.read_uint)
 		res=secure_session_generate_connect_request(@session, connect_request, connect_request_length)
-		raise ThemisError, "secure_session_generate_connect_request error: #{res}" unless res == SUCCESS
+		raise ThemisError, "Secure Session failed making connection request: #{res}" unless res == SUCCESS
 		return connect_request.get_bytes(0, connect_request_length.read_uint);
 	end
 
@@ -178,13 +178,13 @@ module Themis
 		message_, message_length_=string_to_pointer_size(message)
 		unwrapped_message_length = FFI::MemoryPointer.new(:uint)
 		res=secure_session_unwrap(@session,  message_, message_length_, nil, unwrapped_message_length)
-		raise ThemisError, "secure_session_unwrap (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL || res == SUCCESS
+		raise ThemisError, "Secure Session failed decrypting: #{res}" unless res == BUFFER_TOO_SMALL || res == SUCCESS
 		if res == SUCCESS
 		    return SUCCESS, ""
 		end
 		unwrapped_message = FFI::MemoryPointer.new(:char, unwrapped_message_length.read_uint)
 		res=secure_session_unwrap(@session, message_, message_length_, unwrapped_message, unwrapped_message_length)
-		raise ThemisError, "secure_session_unwrap error: #{res}" unless res == SUCCESS || res == SEND_AS_IS 
+		raise ThemisError, "Secure Session failed decrypting: #{res}" unless res == SUCCESS || res == SEND_AS_IS 
 		return res, unwrapped_message.get_bytes(0, unwrapped_message_length.read_uint);
 	end
 
@@ -192,16 +192,16 @@ module Themis
 		message_, message_length_=string_to_pointer_size(message)
 		wrapped_message_length = FFI::MemoryPointer.new(:uint)
 		res=secure_session_wrap(@session,  message_, message_length_, nil, wrapped_message_length)
-		raise ThemisError, "secure_session_wrap (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		raise ThemisError, "Secure Session failed encrypting: #{res}" unless res == BUFFER_TOO_SMALL
 		wrapped_message = FFI::MemoryPointer.new(:char, wrapped_message_length.read_uint)
 		res=secure_session_wrap(@session, message_, message_length_, wrapped_message, wrapped_message_length)
-		raise ThemisError, "secure_session_wrap error: #{res}" unless res == SUCCESS || res == SEND_AS_IS 
+		raise ThemisError, "Secure Session failed encrypting: #{res}" unless res == SUCCESS || res == SEND_AS_IS 
 		return wrapped_message.get_bytes(0, wrapped_message_length.read_uint);
 	end
 
 	def finalize
 		res=secure_session_destroy(@session)
-	        raise ThemisError, "secure_session_destroy error" unless res == SUCCESS
+	        raise ThemisError, "Secure Session failed destroying" unless res == SUCCESS
 		
 	end
     end
@@ -218,10 +218,10 @@ module Themis
 	    message_, message_length_=string_to_pointer_size(message)
 	    wrapped_message_length = FFI::MemoryPointer.new(:uint)
 	    res=themis_secure_message_wrap(@private_key, @private_key_length, @peer_public_key, @peer_public_key_length, message_, message_length_, nil, wrapped_message_length)
-	    raise ThemisError, "themis_secure_message_wrap (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+	    raise ThemisError, "Secure Message failed encrypting: #{res}" unless res == BUFFER_TOO_SMALL
 	    wrapped_message = FFI::MemoryPointer.new(:char, wrapped_message_length.read_uint)
 	    res=themis_secure_message_wrap(@private_key, @private_key_length, @peer_public_key, @peer_public_key_length, message_, message_length_, wrapped_message, wrapped_message_length)
-	    raise ThemisError, "themis_secure_message_wrap error: #{res}" unless res == SUCCESS
+	    raise ThemisError, "Secure Message failed encrypting: #{res}" unless res == SUCCESS
 	    return wrapped_message.get_bytes(0, wrapped_message_length.read_uint);
 	end
 
@@ -229,10 +229,10 @@ module Themis
 	    message_, message_length_=string_to_pointer_size(message)
 	    unwrapped_message_length = FFI::MemoryPointer.new(:uint)
 	    res=themis_secure_message_unwrap(@private_key, @private_key_length, @peer_public_key, @peer_public_key_length, message_, message_length_, nil, unwrapped_message_length)
-	    raise ThemisError, "themis_secure_message_unwrap (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+	    raise ThemisError, "Secure Message failed decrypting: #{res}" unless res == BUFFER_TOO_SMALL
 	    unwrapped_message = FFI::MemoryPointer.new(:char, unwrapped_message_length.read_uint)
 	    res=themis_secure_message_unwrap(@private_key, @private_key_length, @peer_public_key, @peer_public_key_length, message_, message_length_, unwrapped_message, unwrapped_message_length)
-	    raise ThemisError, "themis_secure_message_unwrap error: #{res}" unless res == SUCCESS
+	    raise ThemisError, "Secure Message failed decrypting: #{res}" unless res == SUCCESS
 	    return unwrapped_message.get_bytes(0, unwrapped_message_length.read_uint);
 	end
     end
@@ -242,10 +242,10 @@ module Themis
 	    message_, message_length_=string_to_pointer_size(message)
 	    wrapped_message_length = FFI::MemoryPointer.new(:uint)
 	    res=themis_secure_message_wrap(private_key_, private_key_length_, nil, 0, message_, message_length_, nil, wrapped_message_length)
-	    raise ThemisError, "themis_secure_message_wrap (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+	    raise ThemisError, "Secure Message failed singing: #{res}" unless res == BUFFER_TOO_SMALL
 	    wrapped_message = FFI::MemoryPointer.new(:char, wrapped_message_length.read_uint)
 	    res=themis_secure_message_wrap(private_key_, private_key_length_, nil, 0, message_, message_length_, wrapped_message, wrapped_message_length)
-	    raise ThemisError, "themis_secure_message_wrap error: #{res}" unless res == SUCCESS
+	    raise ThemisError, "Secure Message failed singing: #{res}" unless res == SUCCESS
 	    return wrapped_message.get_bytes(0, wrapped_message_length.read_uint);
     end
 
@@ -256,10 +256,10 @@ module Themis
 	    message_, message_length_=string_to_pointer_size(message)
 	    unwrapped_message_length = FFI::MemoryPointer.new(:uint)
 	    res=themis_secure_message_unwrap(nil, 0, public_key_, public_key_length_, message_, message_length_, nil, unwrapped_message_length)
-	    raise ThemisError, "themis_secure_message_unwrap (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+	    raise ThemisError, "Secure Message failed verifying: #{res}" unless res == BUFFER_TOO_SMALL
 	    unwrapped_message = FFI::MemoryPointer.new(:char, unwrapped_message_length.read_uint)
 	    res=themis_secure_message_unwrap(nil, 0, public_key_, public_key_length_, message_, message_length_, unwrapped_message, unwrapped_message_length)
-	    raise ThemisError, "themis_secure_message_unwrap error: #{res}" unless res == SUCCESS
+	    raise ThemisError, "Secure Message failed verifying: #{res}" unless res == SUCCESS
 	    return unwrapped_message.get_bytes(0, unwrapped_message_length.read_uint);
     end
 
@@ -284,28 +284,28 @@ module Themis
 	    case @mode
 	    when SEAL_MODE
 		res=themis_secure_cell_encrypt_seal(@key, @key_length, context_, context_length_, message_, message_length_, nil, encrypted_message_length)
-		raise ThemisError, "themis_secure_cell_encrypt_seal (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		raise ThemisError, "Secure Cell (Seal) failed encrypting: #{res}" unless res == BUFFER_TOO_SMALL
 		encrypted_message = FFI::MemoryPointer.new(:char, encrypted_message_length.read_uint)
 		res=themis_secure_cell_encrypt_seal(@key, @key_length, context_, context_length_, message_, message_length_, encrypted_message, encrypted_message_length)
-		raise ThemisError, "themis_secure_cell_encrypt_seal error: #{res}" unless res == SUCCESS
+		raise ThemisError, "Secure Cell (Seal) failed encrypting: #{res}" unless res == SUCCESS
 		return encrypted_message.get_bytes(0, encrypted_message_length.read_uint)
 	    when TOKEN_PROTECT_MODE
 		res=themis_secure_cell_encrypt_token_protect(@key, @key_length, context_, context_length_, message_, message_length_, nil, enccontext_length, nil, encrypted_message_length)
-		raise ThemisError, "themis_secure_cell_encrypt_token_protect (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		raise ThemisError, "Secure Cell (Token protect) failed encrypting: #{res}" unless res == BUFFER_TOO_SMALL
 		encrypted_message = FFI::MemoryPointer.new(:char, encrypted_message_length.read_uint)
 		enccontext = FFI::MemoryPointer.new(:char, enccontext_length.read_uint)
 		res=themis_secure_cell_encrypt_token_protect(@key, @key_length, context_, context_length_, message_, message_length_, enccontext, enccontext_length, encrypted_message, encrypted_message_length)
-		raise ThemisError, "themis_secure_cell_encrypt_token_protect error: #{res}" unless res == SUCCESS
+		raise ThemisError, "Secure Cell (Token Protect) failed encrypting: #{res}" unless res == SUCCESS
 		return enccontext.get_bytes(0, enccontext_length.read_uint), encrypted_message.get_bytes(0, encrypted_message_length.read_uint)
 	    when CONTEXT_IMPRINT_MODE
 		res=themis_secure_cell_encrypt_context_imprint(@key, @key_length, message_, message_length_, context_, context_length_, nil, encrypted_message_length)
-		raise ThemisError, "themis_secure_cell_encrypt_context_imprint (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		raise ThemisError, "Secure Cell (Context Imprint) failed encrypting: #{res}" unless res == BUFFER_TOO_SMALL
 		encrypted_message = FFI::MemoryPointer.new(:char, encrypted_message_length.read_uint)
 		res=themis_secure_cell_encrypt_context_imprint(@key, @key_length, message_, message_length_, context_, context_length_, encrypted_message, encrypted_message_length)
-		raise ThemisError, "themis_secure_cell_encrypt_context_imprint error: #{res}" unless res == SUCCESS
+		raise ThemisError, "Secure Cell (Context Imprint) failed encrypting: #{res}" unless res == SUCCESS
 		return encrypted_message.get_bytes(0, encrypted_message_length.read_uint)
 	    else
-		raise ThemisError, "themis_secure_cell not supported mode"
+		raise ThemisError, "Secure Cell failed encrypting, undefined mode"
 	    end
 	end
 
@@ -316,31 +316,31 @@ module Themis
 	    when SEAL_MODE
 		message_, message_length_ = string_to_pointer_size(message)
 		res=themis_secure_cell_decrypt_seal(@key, @key_length, context_, context_length_, message_, message_length_, nil, decrypted_message_length)
-		raise ThemisError, "themis_secure_cell_decrypt_seal (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		raise ThemisError, "Secure Cell (Seal) failed decrypting: #{res}" unless res == BUFFER_TOO_SMALL
 		decrypted_message = FFI::MemoryPointer.new(:char, decrypted_message_length.read_uint)
 		res=themis_secure_cell_decrypt_seal(@key, @key_length, context_, context_length_, message_, message_length_, decrypted_message, decrypted_message_length)
-		raise ThemisError, "themis_secure_cell_decrypt_seal error: #{res}" unless res == SUCCESS
+		raise ThemisError, "Secure Cell (Seal) failed decrypting: #{res}" unless res == SUCCESS
 		return decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
 	    when TOKEN_PROTECT_MODE
 		enccontext, message_ = message
 		message__, message_length__ = string_to_pointer_size(message_)
 		enccontext_, enccontext_length = string_to_pointer_size(enccontext)
 		res=themis_secure_cell_decrypt_token_protect(@key, @key_length, context_, context_length_, message__, message_length__, enccontext_, enccontext_length, nil, decrypted_message_length)
-		raise ThemisError, "themis_secure_cell_encrypt_token_protect (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		raise ThemisError, "Secure Cell (Token Protect) failed decrypting: #{res}" unless res == BUFFER_TOO_SMALL
 		decrypted_message = FFI::MemoryPointer.new(:char, decrypted_message_length.read_uint)
 		res=themis_secure_cell_decrypt_token_protect(@key, @key_length, context_, context_length_, message__, message_length__, enccontext_, enccontext_length, decrypted_message, decrypted_message_length)
-		raise ThemisError, "themis_secure_cell_encrypt_token_protect error: #{res}" unless res == SUCCESS
+		raise ThemisError, "Secure Cell (Token Protect) failed decrypting: #{res}" unless res == SUCCESS
 		return  decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
 	    when CONTEXT_IMPRINT_MODE
 		message_, message_length_ = string_to_pointer_size(message)
 		res=themis_secure_cell_decrypt_context_imprint(@key, @key_length, message_, message_length_, context_, context_length_, nil, decrypted_message_length)
-		raise ThemisError, "themis_secure_cell_decrypt_context_imprint (length determination) error: #{res}" unless res == BUFFER_TOO_SMALL
+		raise ThemisError, "Secure Cell (Context Imprint) failed decrypting: #{res}" unless res == BUFFER_TOO_SMALL
 		decrypted_message = FFI::MemoryPointer.new(:char, decrypted_message_length.read_uint)
 		res=themis_secure_cell_decrypt_context_imprint(@key, @key_length, message_, message_length_, context_, context_length_, decrypted_message, decrypted_message_length)
-		raise ThemisError, "themis_secure_cell_decrypt_context_imprint error: #{res}" unless res == SUCCESS
+		raise ThemisError, "Secure Cell (Context Imprint) failed decrypting: #{res}" unless res == SUCCESS
 		return decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
 	    else
-		raise ThemisError, "themis_secure_cell not supported mode"
+		raise ThemisError, "Secure Cell failed encrypting, undefined mode"
 	    end
 	end
     end
@@ -356,23 +356,23 @@ module Themis
       def initialize(shared_secret)
 	shared_secret_buf, shared_secret_length = string_to_pointer_size(shared_secret)
 	@comparator=secure_comparator_create()
-	raise ThemisError, "secure_comparator_create error" unless @comparator
+	raise ThemisError, "Secure Comparator failed creating" unless @comparator
         res=secure_comparator_append_secret(@comparator, shared_secret_buf, shared_secret_length)
-	raise ThemisError, "secure_comparator_append_secret error" unless res==SUCCESS            
+	raise ThemisError, "Secure Comparator failed appending secret" unless res==SUCCESS            
       end
 
       def finalize()
         res=secure_comparator_destroy(@comparator)
-	raise ThemisError, "secure_comparator_destroy error" unless res==SUCCESS                      
+	raise ThemisError, "Secure Comparator failed destroying" unless res==SUCCESS                      
       end
 
       def begin_compare()
         res_length=FFI::MemoryPointer.new(:uint)
         res=secure_comparator_begin_compare(@comparator, nil, res_length)
-        raise ThemisError, "secure_comparator_begin_compare (length determination) error" unless res==BUFFER_TOO_SMALL
+        raise ThemisError, "Secure Comparator failed making initialisation message" unless res==BUFFER_TOO_SMALL
         res_buffer=FFI::MemoryPointer.new(:char, res_length.read_uint)
         res=secure_comparator_begin_compare(@comparator, res_buffer, res_length)
-        raise ThemisError, "secure_comparator_begin_compare error" unless res==SUCCESS || res==SEND_AS_IS
+        raise ThemisError, "Secure Comparator failed making initialisation message" unless res==SUCCESS || res==SEND_AS_IS
         return res_buffer.get_bytes(0,res_length.read_uint)
       end
 
@@ -380,13 +380,13 @@ module Themis
         message, message_length = string_to_pointer_size(control_message)
         res_length=FFI::MemoryPointer.new(:uint)
         res=secure_comparator_proceed_compare(@comparator, message, message_length, nil, res_length)
-        raise ThemisError, "secure_comparator_proceed_compare (length determination) error" unless res==SUCCESS || res == BUFFER_TOO_SMALL
+        raise ThemisError, "Secure Comparator failed proeeding message" unless res==SUCCESS || res == BUFFER_TOO_SMALL
         if res == SUCCESS
           return ""
         end
         res_buffer=FFI::MemoryPointer.new(:char, res_length.read_uint)
         res=secure_comparator_proceed_compare(@comparator, message, message_length, res_buffer, res_length)
-        raise ThemisError, "secure_comparator_proceed_compare error" unless res==SUCCESS || res==SEND_AS_IS
+        raise ThemisError, "Secure Comparator failed proeeding message" unless res==SUCCESS || res==SEND_AS_IS
         return res_buffer.get_bytes(0,res_length.read_uint)          
       end
 
