@@ -55,7 +55,7 @@
     TSErrorType result = (TSErrorType) secure_comparator_begin_compare(self.comparator, NULL, &comparationRequestLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"secure_comparator_begin_compare (length determination) fail");
+        *error = SCERROR(result, @"Secure Comparator failed making initialisation message");
         return nil;
     }
 
@@ -63,7 +63,7 @@
     result = (TSErrorType) secure_comparator_begin_compare(self.comparator, [requestData mutableBytes], &comparationRequestLength);
 
     if (result != TSErrorTypeSuccess && result !=TSErrorTypeSendAsIs) {
-        *error = SCERROR(result, @"secure_comparator_begin_compare fail");
+        *error = SCERROR(result, @"Secure Comparator failed making initialisation message");
         return nil;
     }
     return requestData;
@@ -77,7 +77,7 @@
         if (result == TSErrorTypeSuccess) {
             return nil;
         }
-        *error = SCERROR(result, @"secure_comparator_proceed_compare (length determination) fail");
+        *error = SCERROR(result, @"Secure Comparator failed proceeding message");
         return nil;
     }
 
@@ -89,7 +89,7 @@
             return unwrappedMessage;
         }
         else {
-            *error = SCERROR(result, @"secure_comparator_proceed_compare fail");
+            *error = SCERROR(result, @"Secure Comparator failed proceeding message");
             return nil;
         }
     }

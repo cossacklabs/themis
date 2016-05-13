@@ -82,7 +82,7 @@ int on_get_public_key_for_id_callback(const void * id, size_t id_length, void * 
         [key mutableBytes], [key length], (__bridge void *) self);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(TSErrorTypeFail, @"secure session get_pub_key_calback error");
+        *error = SCERROR(TSErrorTypeFail, @"Secure Session failed getting of public key");
         return nil;
     }
     return key;

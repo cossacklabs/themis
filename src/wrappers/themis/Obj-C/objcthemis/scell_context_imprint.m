@@ -34,7 +34,7 @@
             [message bytes], [message length], [context bytes], [context length], NULL, &wrappedMessageLength);
 
     if (encryptionResult != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(encryptionResult, @"themis_secure_cell_encrypt_user_split (length determination) fail");
+        *error = SCERROR(encryptionResult, @"Secure Cell (Context Imprint) encrypted message length determination failed");
         return nil;
     }
 
@@ -45,7 +45,7 @@
 
     if (encryptionResult != TSErrorTypeSuccess) {
         free(wrappedMessage);
-        *error = SCERROR(encryptionResult, @"themis_secure_cell_encrypt_user_split fail");
+        *error = SCERROR(encryptionResult, @"Secure Cell (Context Imprint) encryption failed ");
         return nil;
     }
 
@@ -62,7 +62,7 @@
         [message bytes], [message length], [context bytes], [context length], NULL, &unwrappedMessageLength);
 
     if (decryptionResult != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(decryptionResult, @"themis_secure_cell_encrypt_user_split (length determination) fail");
+        *error = SCERROR(decryptionResult, @"Secure Cell (Context Imprint) decrypted message length determination failed");
         return nil;
     }
 
@@ -72,7 +72,7 @@
         [message bytes], [message length], [context bytes], [context length], unwrappedMessage, &unwrappedMessageLength);
 
     if (decryptionResult != TSErrorTypeSuccess) {
-        *error = SCERROR(decryptionResult, @"themis_scell_context_imprint_unwrap failed");
+        *error = SCERROR(decryptionResult, @"Secure Cell (Context Imprint) decryption failed");
         return nil;
     }
 
