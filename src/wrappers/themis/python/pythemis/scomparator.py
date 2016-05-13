@@ -36,7 +36,7 @@ class SCOMPARATOR_CODES(IntEnum):
 class scomparator(object):
     def __init__(self, shared_secret):
         self.session_ctx = ctypes.POINTER(ctypes.c_int)
-        self.comparator_ctx = themis.secure_comparator_create()
+        self.comparator_ctx = scomparator_create()
         if self.comparator_ctx is None:
             raise exception.themis_exception(THEMIS_CODES.FAIL,
                                              "Secure Comparator failed creating")
