@@ -19,6 +19,9 @@
 
 #include <common/sput.h>
 #include <string.h>
+
+#ifdef SECURE_COMPARATOR_ENABLED
+
 #include <themispp/secure_comparator.hpp>
 
 #define STR_2_VEC(x) std::vector<uint8_t>(x.c_str(), x.c_str()+x.length())
@@ -67,4 +70,6 @@ namespace themispp{
     }
   }
 }
+
+#endif
 #endif

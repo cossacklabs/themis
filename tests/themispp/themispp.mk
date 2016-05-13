@@ -15,4 +15,4 @@
 #
 
 THEMISPP_TEST_SRC = $(wildcard tests/themispp/*.cpp)
-THEMISPP_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.cpp,$(TEST_OBJ_PATH)/%.o, $(THEMISPP_TEST_SRC))
+THEMISPP_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.cpp,$(TEST_OBJ_PATH)/%.opp, $(THEMISPP_TEST_SRC))
