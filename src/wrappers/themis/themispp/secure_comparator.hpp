@@ -17,8 +17,6 @@
 #ifndef THEMISPP_SECURE_COMPARATOR_HPP_
 #define THEMISPP_SECURE_COMPARATOR_HPP_
 
-#define SECURE_COMPARATOR_ENABLED
-
 #include <cstring>
 #include <vector>
 #include <themis/themis.h>
@@ -36,9 +34,9 @@ namespace themispp{
       res_.reserve(512);
       comparator_=secure_comparator_create();
       if(!comparator_)
-	throw themispp::exception_t("secure_comparator_create failed");
+	throw themispp::exception_t("Secure Comparator failed creating");
       if(THEMIS_SUCCESS!=secure_comparator_append_secret(comparator_, &shared_secret[0], shared_secret.size()))
-	throw themispp::exception_t("secure_comparator_append_secret failed");	
+	throw themispp::exception_t("Secure Comparator failed appending secret");	
     }
 
     virtual ~secure_comparator_t(){
@@ -48,21 +46,21 @@ namespace themispp{
     const data_t& init(){
       size_t data_length=0;
       if(THEMIS_BUFFER_TOO_SMALL!=secure_comparator_begin_compare(comparator_, NULL, &data_length))
-	throw themispp::exception_t("secure_comparator_begin_compare (length determination) failed");
+	throw themispp::exception_t("Secure Comparator failed making initialisation message");
       res_.resize(data_length);
       if(THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER!=secure_comparator_begin_compare(comparator_, &res_[0], &data_length))
-	throw themispp::exception_t("secure_comparator_begin_compare failed");
+	throw themispp::exception_t("Secure Comparator failed making initialisation message");
       return res_;
     }
 
     const data_t& proceed(const std::vector<uint8_t>& data){
       size_t res_data_length=0;
       if(THEMIS_BUFFER_TOO_SMALL!=secure_comparator_proceed_compare(comparator_, &data[0], data.size(), NULL, &res_data_length))
-	throw themispp::exception_t("secure_comparator_proceed_compare (length determination) failed");
+	throw themispp::exception_t("Secure Comparator failed proceeding message");
       res_.resize(res_data_length);
       themis_status_t res=secure_comparator_proceed_compare(comparator_, &data[0], data.size(), &res_[0], &res_data_length);
       if(THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER!=res && THEMIS_SUCCESS!=res)
-	throw themispp::exception_t("secure_comparator_begin_compare failed");
+	throw themispp::exception_t("Secure Comparator failed proceeding message");
       return res_;
     }
     

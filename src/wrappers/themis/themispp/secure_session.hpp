@@ -29,8 +29,8 @@ namespace themispp{
   public:
     typedef std::vector<uint8_t> data_t;
     virtual const data_t get_pub_key_by_id(const data_t& id)=0;
-    virtual void send(const data_t& data){throw themispp::exception_t("send callbck not set");}
-    virtual const data_t& receive(){throw themispp::exception_t("receive callbck not set");}
+    virtual void send(const data_t& data){throw themispp::exception_t("Secure Session failed sending, send callback not set");}
+    virtual const data_t& receive(){throw themispp::exception_t("Secure Session failed receiving, receive callback not set");}
   };
 
   ssize_t send_callback(const uint8_t* data, size_t data_length, void *user_data){
@@ -72,7 +72,7 @@ namespace themispp{
       _callback.user_data=callbacks;
       _session=secure_session_create(&id[0], id.size(), &priv_key[0], priv_key.size(), &_callback);
       if(!_session)
-	throw themispp::exception_t("secure_session_create failed");
+	throw themispp::exception_t("Secure Session failde creating");
     }
 
     virtual ~secure_session_t(){
@@ -84,32 +84,32 @@ namespace themispp{
       themis_status_t r=secure_session_unwrap(_session, &data[0],data.size(), NULL, &unwrapped_data_length);
       if(r==THEMIS_SUCCESS){_res.resize(0); return _res;}
       if(r!=THEMIS_BUFFER_TOO_SMALL)
-	throw themispp::exception_t("secure_session_unwrap (length determination) failed");
+	throw themispp::exception_t("Secure Session failed decrypting");
       _res.resize(unwrapped_data_length);
       r=secure_session_unwrap(_session, &data[0],data.size(), &_res[0], &unwrapped_data_length);
       if(r==THEMIS_SSESSION_SEND_OUTPUT_TO_PEER){return _res;}
       if(r!=THEMIS_SUCCESS)
-	throw themispp::exception_t("secure_session_unwrap failed");
+	throw themispp::exception_t("Secure Session failed decrypting");
       return _res;
     }
 
     const data_t& wrap(const std::vector<uint8_t>& data){
       size_t wrapped_message_length=0;
       if(secure_session_wrap(_session, &data[0], data.size(), NULL, &wrapped_message_length)!=THEMIS_BUFFER_TOO_SMALL)
-	throw themispp::exception_t("secure_session_wrap (length determination) failed");
+	throw themispp::exception_t("Secure Session failed encrypting");
       _res.resize(wrapped_message_length);
       if(secure_session_wrap(_session, &data[0], data.size(), &_res[0], &wrapped_message_length)!=THEMIS_SUCCESS)
-	throw themispp::exception_t("secure_session_wrap failed");
+	throw themispp::exception_t("Secure Session failed encrypting");
       return _res;
     }
     
     const data_t& init(){
       size_t init_data_length=0;
       if(secure_session_generate_connect_request(_session, NULL, &init_data_length)!=THEMIS_BUFFER_TOO_SMALL)
-	throw themispp::exception_t("secure_session_generate_connect_request (length determination) failed");
+	throw themispp::exception_t("Secure Session failed making connection request");
       _res.resize(init_data_length);
       if(secure_session_generate_connect_request(_session, &_res.front(), &init_data_length)!=THEMIS_SUCCESS)
-	throw themispp::exception_t("secure_session_generate_connect_request failed");
+	throw themispp::exception_t("Secure Session failed making connection request");
       return _res;
     }
     
@@ -117,14 +117,14 @@ namespace themispp{
 
     void connect(){
       if(secure_session_connect(_session)!=THEMIS_SUCCESS)
-	throw themispp::exception_t("secure_session_connect failed");
+	throw themispp::exception_t("Secure Session failed connecting");
     }
 
     const data_t& receive(){
       _res.resize(THEMISPP_SECURE_SESSION_MAX_MESSAGE_SIZE);
       ssize_t recv_size=secure_session_receive(_session, &_res[0], _res.size());
       if(recv_size<=0)
-	throw themispp::exception_t("secure_session_receive failed");
+	throw themispp::exception_t("Secure Session failed receiving");
       _res.resize(recv_size);
       return _res;
     }
@@ -132,7 +132,7 @@ namespace themispp{
     void send(const data_t& data){
       ssize_t send_size=secure_session_send(_session, &data[0], data.size());
       if(send_size<=0)
-	throw themispp::exception_t("secure_session_send failed");
+	throw themispp::exception_t("Secure Session failed sending");
     }
   private:
     ::secure_session_t* _session;
