@@ -2,14 +2,14 @@
 
 ## Using demo app: 
 
-**encrypt**: python application.py -e "shared key" input.json output.json
-**decrypt**: python application.py -d "shared key" input.json output.json
-**help**: python application.py -h
+- **encrypt**: python application.py -e "shared key" input.json output.json
+- **decrypt**: python application.py -d "shared key" input.json output.json
+- **help**: python application.py -h
 
 ## Files
 
-`application.py` - application itself
-`utils.py` - necessary classes
+- `application.py` - application itself
+- `utils.py` - all classes, fit for further reuse
 
 ## Getting started: Iterating JSON with ReverseJSONValue
 
