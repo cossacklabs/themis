@@ -3,7 +3,6 @@
 [![GitHub release](https://img.shields.io/github/release/cossacklabs/themis.svg?maxAge=2592000)](https://github.com/cossacklabs/themis/releases/latest)
 [![Circle CI](https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield)](https://circleci.com/gh/cossacklabs/themis)
 [![CocoaPods](https://img.shields.io/cocoapods/l/themis.svg?maxAge=2592000)](https://github.com/cossacklabs/themis/blob/master/LICENSE)
-
 ![Platforms](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20OS%20X%20%7C%20Linux%20%7C%20Windows-green.svg)
 
 [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg?maxAge=2592000)](https://cocoapods.org/pods/themis)
