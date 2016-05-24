@@ -9,6 +9,7 @@ _Infrastructure_:
 * Lots of various demo projects
 * Updated **[Themis Server](https://themis.cossacklabs.com)**
 * Better **make** system verbosity (now you can actually see what succeeded and what didn't)
+* Infrastructure to **build Java** on all platforms
 
 _Code_:
 * **iOS wrapper** now has umbrella header.
