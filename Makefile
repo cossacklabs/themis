@@ -163,6 +163,7 @@ CFLAGS += -Werror -Wno-switch
 ifndef ERROR
 include src/soter/soter.mk
 include src/themis/themis.mk
+include jni/themis_jni.mk
 endif
 
 
@@ -249,6 +250,12 @@ ifeq ($(shell uname),Darwin)
 	@install_name_tool -id "$(PREFIX)/lib/lib$(THEMIS_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
 	@install_name_tool -change "$(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)" "$(PREFIX)/lib/lib$(THEMIS_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
 endif
+	@$(BUILD_CMD)
+
+themis_jni: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_JNI_BIN).$(SHARED_EXT) $(THEMIS_JNI_OBJ) -L$(BIN_PATH) -l$(THEMIS_BIN) -l$(SOTER_BIN)
+
+themis_jni: themis_static $(THEMIS_JNI_OBJ)
+	@echo -n "link "
 	@$(BUILD_CMD)
 
 
