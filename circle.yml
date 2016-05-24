@@ -4,6 +4,9 @@ machine:
     GOROOT: $HOME/go
     GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
     GOPATH: $HOME/gopath
+    JAVA_HOME: /usr/lib/jvm/default-java
+  java:
+    version: openjdk8
 
 ## Customize dependencies
 dependencies:
@@ -13,6 +16,7 @@ dependencies:
 
   override:
     - make SECURE_COMPARATOR=enable
+    - make SECURE_COMPARATOR=enable themis_jni
     - sudo make SECURE_COMPARATOR=enable install
     - sudo make SECURE_COMPARATOR=enable themispp_install
     - sudo make SECURE_COMPARATOR=enable pythemis_install
