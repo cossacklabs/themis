@@ -1,5 +1,16 @@
 # Themis Change Log
 
+
+## [0.9.3], May. 24th 2016
+
+_Infrastructure_: 
+
+* **Swift** [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) and **Swift** [HowTo](https://github.com/cossacklabs/themis/wiki/Swift-Howto) added
+
+_Code_:
+* **iOS wrapper** now has umbrella header
+
+
 ## [0.9.2], Nov. 4th 2015
 
 _Infrastructure_: 
