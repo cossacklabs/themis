@@ -5,8 +5,6 @@ machine:
     GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
     GOPATH: $HOME/gopath
     JAVA_HOME: /usr/lib/jvm/default-java
-  java:
-    version: openjdk8
 
 ## Customize dependencies
 dependencies:
