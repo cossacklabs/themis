@@ -4,7 +4,9 @@
 
 - **[/c/ssession-test](https://github.com/cossacklabs/themis/tree/master/docs/examples/c/ssession_test)** : Secure Session example in C we wrote somewhere early in development to illustrate the core attitude.
 
-- **[/objc/](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)** : Objective C example project
+- **[/swift/](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift)** : Swift example project, code pieces illustrating how to use SecureMessage and SecureCell
+
+- **[/objc/](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)** : Objective-C example project, code pieces illustrating how to use SecureMessage and SecureCell
 
 - **[/php/](https://github.com/cossacklabs/themis/tree/master/docs/examples/php)** : PHP sample code 
   - [/php/scell_test.php](https://github.com/cossacklabs/themis/blob/master/docs/examples/php/scell_test.php) : PHP Secure Cell example
