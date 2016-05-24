@@ -14,7 +14,7 @@
 [![Blog](https://img.shields.io/badge/blog-cossaccklabs.com-7a7c98.svg)](https://cossacklabs.com/)
 [![Join the chat at https://gitter.im/cossacklabs/themis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cossacklabs/themis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## Usable strong cryptography for normal human beings
+## Usable strong cryptography for  human beings
 
 Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure messaging and secure data storage. Current stable release is [0.9.3](https://github.com/cossacklabs/themis/releases/tag/0.9.3), dated 6th of November.
 
