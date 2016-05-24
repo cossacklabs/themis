@@ -1,17 +1,17 @@
 ![](https://github.com/cossacklabs/themis/wiki/images/logo.png)
 
-[![GitHub release](https://img.shields.io/github/release/cossacklabs/themis.svg?maxAge=2592000)](https://github.com/cossacklabs/themis/releases/latest)
+[![GitHub release](https://img.shields.io/github/release/cossacklabs/themis.svg)](https://github.com/cossacklabs/themis/releases/latest)
 [![Circle CI](https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield)](https://circleci.com/gh/cossacklabs/themis)
-[![CocoaPods](https://img.shields.io/cocoapods/l/themis.svg?maxAge=2592000)](https://github.com/cossacklabs/themis/blob/master/LICENSE)
+[![CocoaPods](https://img.shields.io/cocoapods/l/themis.svg)](https://github.com/cossacklabs/themis/blob/master/LICENSE)
 ![Platforms](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20OS%20X%20%7C%20Linux%20%7C%20Windows-green.svg)
 
-[![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg?maxAge=2592000)](https://cocoapods.org/pods/themis)
-[![PyPI](https://img.shields.io/pypi/v/pythemis.svg?maxAge=2592000)](https://pypi.python.org/pypi?%3Aaction=search&term=pythemis&submit=search)
-[![npm](https://img.shields.io/npm/v/jsthemis.svg?maxAge=2592000)](https://www.npmjs.com/package/jsthemis)
-[![Gem](https://img.shields.io/gem/v/rubythemis.svg?maxAge=2592000)](https://rubygems.org/gems/rubythemis)
+[![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis)
+[![PyPI](https://img.shields.io/pypi/v/pythemis.svg)](https://pypi.python.org/pypi?%3Aaction=search&term=pythemis&submit=search)
+[![npm](https://img.shields.io/npm/v/jsthemis.svg)](https://www.npmjs.com/package/jsthemis)
+[![Gem](https://img.shields.io/gem/v/rubythemis.svg)](https://rubygems.org/gems/rubythemis)
 
-[![Twitter CossackLabs](https://img.shields.io/badge/twitter-cossaccklabs-fbb03b.svg)](http://twitter.com/cossacklabs)
-[![Blog](https://img.shields.io/badge/blog-cossaccklabs.com-7a7c98.svg)](https://cossacklabs.com/)
+[![Twitter CossackLabs](https://img.shields.io/badge/twitter-cossacklabs-fbb03b.svg)](http://twitter.com/cossacklabs)
+[![Blog](https://img.shields.io/badge/blog-cossacklabs.com-7a7c98.svg)](https://cossacklabs.com/)
 [![Join the chat at https://gitter.im/cossacklabs/themis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cossacklabs/themis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Strong, usable cryptography for busy people
