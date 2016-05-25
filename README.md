@@ -49,7 +49,7 @@ Themis is available for the following languages:
 
 - Swift (iOS, OSX) [documentation](https://github.com/cossacklabs/themis/wiki/Swift-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift)
 - Objective-C (iOS, OSX) [documentation](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)
-- Java / Android [documentation](https://github.com/cossacklabs/themis/wiki/Android-Howto)
+- Java / Android [documentation](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto)
 - Ruby [documentation](https://github.com/cossacklabs/themis/wiki/Ruby-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby)
 - Python [documentation](https://github.com/cossacklabs/themis/wiki/Python-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/python)
 - PHP [documentation](https://github.com/cossacklabs/themis/wiki/PHP-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/php)
