@@ -3,7 +3,7 @@
 [![GitHub release](https://img.shields.io/github/release/cossacklabs/themis.svg)](https://github.com/cossacklabs/themis/releases/latest)
 [![Circle CI](https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield)](https://circleci.com/gh/cossacklabs/themis)
 [![CocoaPods](https://img.shields.io/cocoapods/l/themis.svg)](https://github.com/cossacklabs/themis/blob/master/LICENSE)
-![Platforms](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20OS%20X%20%7C%20Linux%20%7C%20Windows-green.svg)
+![Platforms](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20OS%20X%20%7C%20Linux%20%7C%20Windows%7C%20Java-green.svg)
 
 [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis)
 [![PyPI](https://img.shields.io/pypi/v/pythemis.svg)](https://pypi.python.org/pypi?%3Aaction=search&term=pythemis&submit=search)
@@ -18,7 +18,7 @@
 
 Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure messaging and secure data storage.Current stable release is [0.9.3](https://github.com/cossacklabs/themis/releases/tag/0.9.3), dated 24th of May.
 
-Themis works in most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)), and is available for [Swift (iOS, OX)](https://github.com/cossacklabs/themis/wiki/Swift-Howto), [Objective-C (iOS, OX)](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto), [Android](https://github.com/cossacklabs/themis/wiki/Android-Howto),  [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto), 
+Themis works in most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)), and is available for [Swift (iOS, OX)](https://github.com/cossacklabs/themis/wiki/Swift-Howto), [Objective-C (iOS, OX)](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto), [Java+Android](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto),  [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto), 
 [PHP](https://github.com/cossacklabs/themis/wiki/PHP-Howto), 
 [C++](https://github.com/cossacklabs/themis/wiki/CPP-Howto), 
 [Javascript (NodeJS)](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto),
