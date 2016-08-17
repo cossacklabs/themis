@@ -15,7 +15,7 @@
 */
 
 #include "ge_utils.h"
-#include <soter/soter.h>
+#include "soter/soter.h"
 
 void clip_random_32(unsigned char *r)
 {
