@@ -35,14 +35,21 @@ soter_status_t soter_ec_gen_key(EVP_PKEY_CTX *pkey_ctx)
   if (EVP_PKEY_EC != EVP_PKEY_id(pkey)){
     return SOTER_INVALID_PARAMETER;
   }
-  ec = EVP_PKEY_get0_EC_KEY(pkey);
-  if (NULL == ec){
-    return SOTER_INVALID_PARAMETER;
+  /* ec = EVP_PKEY_get0_EC_KEY(pkey); */
+  /* if (NULL == ec){ */
+  /*   return SOTER_INVALID_PARAMETER; */
+  /* } */
+  ec = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
+  if(!ec){
+    return SOTER_ENGINE_FAIL;
   }
   if (!EC_KEY_generate_key(ec)){
     return SOTER_ENGINE_FAIL;
   }
-  return SOTER_FAIL;
+  if(!EVP_PKEY_set1_EC_KEY(pkey, ec)){
+    return SOTER_ENGINE_FAIL;
+  }
+  return SOTER_SUCCESS;
 }
 
 soter_status_t soter_ec_import_key(EVP_PKEY *pkey, const void* key, const size_t key_length)
