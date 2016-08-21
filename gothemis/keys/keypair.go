@@ -25,7 +25,7 @@ static bool get_key_size(int key_type, size_t *priv_len, size_t *pub_len)
 		res = themis_gen_rsa_key_pair(NULL, priv_len, NULL, pub_len);
 		break;
 	default:
-		return;
+		return false;
 	}
 	
 	return THEMIS_BUFFER_TOO_SMALL == res;
@@ -44,7 +44,7 @@ static bool gen_keys(int key_type, void *private, size_t priv_len, void *public,
 		res = themis_gen_rsa_key_pair(private, &priv_len, public, &pub_len);
 		break;
 	default:
-		return;
+		return false;
 	}
 	
 	return THEMIS_SUCCESS == res;
