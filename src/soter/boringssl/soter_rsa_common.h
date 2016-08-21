@@ -19,7 +19,7 @@
 
 #include <soter/soter.h>
 #include <soter/soter_rsa_key.h>
-#include "soter_openssl.h"
+#include "soter_engine.h"
 
 unsigned rsa_key_length(const int size);
 soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx, const unsigned key_length);

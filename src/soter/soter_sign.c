@@ -17,16 +17,12 @@
 #include <soter/error.h>
 #include <soter/soter.h>
 
-#ifdef LIBRESSL
-#include <soter/openssl/soter_openssl.h>
-#endif
-
-#ifdef OPENSSL
-#include <soter/openssl/soter_openssl.h>
-#endif
-
-#ifdef BORINGSSL
-#include <soter/boringssl/soter_openssl.h>
+#ifdef CRYPTO_ENGINE_PATH
+#define CEP <soter/CRYPTO_ENGINE_PATH/soter_engine.h>
+#include CEP
+#undef CEP
+#else
+#include <soter/openssl/soter_engine.h>
 #endif
 
 #include <soter/soter_sign_rsa.h>

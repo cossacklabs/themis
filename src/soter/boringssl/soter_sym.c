@@ -17,7 +17,7 @@
 #include <string.h>
 #include "soter/error.h"
 #include "soter/soter.h"
-#include "soter_openssl.h"
+#include "soter_engine.h"
 #include <openssl/err.h>
 #include <openssl/cipher.h>
 
