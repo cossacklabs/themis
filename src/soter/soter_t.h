@@ -22,6 +22,8 @@
 #include <soter/openssl/soter_openssl.h>
 #elif OPENSSL
 #include <soter/openssl/soter_openssl.h>
+#elif BORINGSSL
+#include <soter/boringssl/soter_openssl.h>
 #endif
 
 soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t algo);

@@ -68,6 +68,9 @@ ifeq ($(ENGINE),openssl)
 else ifeq ($(ENGINE),libressl)
 	CRYPTO_ENGINE_DEF = LIBRESSL	
 	CRYPTO_ENGINE_PATH=openssl
+else ifeq ($(ENGINE), boringssl)
+	CRYPTO_ENGINE_DEF = BORINGSSL
+	CRYPTO_ENGINE_PATH=boringssl
 else
 	ERROR = $(error error: engine $(ENGINE) unsupported...)
 endif

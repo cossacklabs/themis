@@ -25,6 +25,10 @@
 #include <soter/openssl/soter_openssl.h>
 #endif
 
+#ifdef BORINGSSL
+#include <soter/boringssl/soter_openssl.h>
+#endif
+
 #include <soter/soter_sign_rsa.h>
 #include <soter/soter_sign_ecdsa.h>
 
