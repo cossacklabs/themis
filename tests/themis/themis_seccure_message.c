@@ -99,9 +99,9 @@ static int themis_secure_signed_message_generic_test(int alg, const char* messag
     return -5;
   }
   unwrapped_message=malloc(unwrapped_message_length);
-  if(!wrapped_message){
+  if(!unwrapped_message){
     free(wrapped_message);
-    testsuite_fail_if(!wrapped_message, "malloc fail");
+    testsuite_fail_if(!unwrapped_message, "malloc fail");
     return -3;
   }
   res=themis_secure_message_unwrap(NULL, 0, public_key, public_key_length, wrapped_message, wrapped_message_length, unwrapped_message, &unwrapped_message_length);
