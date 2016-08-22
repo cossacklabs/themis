@@ -93,8 +93,9 @@ static int secure_cell_token_protect(){
     return -2;
   }
   context=malloc(context_length);
-  if(encrypted_message==NULL){
+  if(context==NULL){
     testsuite_fail_if(true, "context malloc fail");
+    free(encrypted_message);
     return -2;
   }
   
