@@ -43,7 +43,7 @@
 
 
 static themis_status_t themis_gen_key_pair(int alg, uint8_t* private_key, size_t* private_key_length, uint8_t* public_key, size_t* public_key_length){
-  themis_status_t res;
+  themis_status_t res=THEMIS_FAIL;
   if(alg==RSA_ALG){
     res=themis_gen_rsa_key_pair(private_key, private_key_length, public_key, public_key_length);
   }
