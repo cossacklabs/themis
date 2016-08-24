@@ -7,20 +7,24 @@ Pod::Spec.new do |s|
     s.license = { :type => 'Apache 2.0'}
     s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "0.9.3" }
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
-    s.dependency 'OpenSSL-Universal', '1.0.1.p'
+    
+    s.dependency 'OpenSSL-Universal', '1.0.1.19'
 
-    s.ios.platform = :ios, '7.0'
     s.ios.deployment_target = '7.0'
-
-    s.osx.platform = :osx, '10.9'
     s.osx.deployment_target = '10.9'
     
-    s.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL', 'USE_HEADERMAP' => 'NO'} 
-
+    s.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL', 'USE_HEADERMAP' => 'NO', 
+        'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
+        'LIBRARY_SEARCH_PATHS' => '"${PODS_ROOT}/OpenSSL-Universal/lib-ios"' }
+        
+    # open ssl
+    s.libraries = 'ssl', 'crypto'
     
     s.subspec 'core' do |ss|
         ss.source_files = "src/themis/*.{h,c}", "src/soter/**/*.{c,h}"
         ss.header_mappings_dir = "src"
+        ss.header_dir = 'src'
+        ss.preserve_paths = "src/themis/*.h", "src/soter/**/*.h"
         ss.public_header_files = "src/themis/*.h", "src/soter/**/*.h"
     end
     
