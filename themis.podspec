@@ -5,27 +5,21 @@ Pod::Spec.new do |s|
     s.description = "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern development practices, with high level OOP wrappers for Ruby, Python, PHP, Java / Android and iOS / OSX. It is designed with ease of use in mind, high security and cross-platform availability."
     s.homepage = "http://cossacklabs.com"
     s.license = { :type => 'Apache 2.0'}
-    s.source = { :git => "https://github.com/cossacklabs/themis.git", :branch => "pods_1_0" }
+    s.source = { :git => "https://github.com/cossacklabs/themis.git" }
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
     
-    s.dependency 'OpenSSL-Universal', '1.0.1.19'
+    s.ios.vendored_frameworks  = 'src/wrappers/themis/Obj-C/openssl_frameworks/ios/openssl.framework'
+    s.osx.vendored_frameworks  = 'src/wrappers/themis/Obj-C/openssl_frameworks/macos/openssl.framework'
 
-    # instead of OpenSSl-Universal dependency that causes 'target has transitive dependencies' error
-    # from https://github.com/krzyzanowskim/OpenSSL/tree/master/Frameworks
-    # commit => 6983a14  
-    #s.ios.vendored_frameworks  = 'src/wrappers/themis/Obj-C/openssl_frameworks/ios/openssl.framework'
-    #s.osx.vendored_frameworks  = 'src/wrappers/themis/Obj-C/openssl_frameworks/macos/openssl.framework'
-
-    s.ios.deployment_target = '7.0'
+    s.ios.deployment_target = '8.0'
     s.osx.deployment_target = '10.9'
-    
+    s.requires_arc = false
+
     s.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL', 'USE_HEADERMAP' => 'NO', 
         'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
-        'LIBRARY_SEARCH_PATHS' => '"${PODS_ROOT}/OpenSSL-Universal/lib-ios"' }
-        
-    # open ssl
-    s.libraries = 'ssl', 'crypto'
-    
+        'CLANG_ENABLE_MODULES' => 'NO' }
+
+
     s.subspec 'core' do |ss|
         ss.source_files = "src/themis/*.{h,c}", "src/soter/**/*.{c,h}"
         ss.header_mappings_dir = "src"
