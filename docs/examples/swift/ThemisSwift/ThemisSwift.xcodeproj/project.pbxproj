@@ -141,12 +141,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 739981291CC42C880095138F /* Build configuration list for PBXNativeTarget "ThemisSwift" */;
 			buildPhases = (
-				639E2197E7C5E165A9FDB72A /* Check Pods Manifest.lock */,
+				639E2197E7C5E165A9FDB72A /* [CP] Check Pods Manifest.lock */,
 				739981131CC42C880095138F /* Sources */,
 				739981141CC42C880095138F /* Frameworks */,
 				739981151CC42C880095138F /* Resources */,
-				BF1CE387B5ACF2A2CC59FB5F /* Embed Pods Frameworks */,
-				DC3FF580972B0C60E16EC322 /* Copy Pods Resources */,
+				BF1CE387B5ACF2A2CC59FB5F /* [CP] Embed Pods Frameworks */,
+				DC3FF580972B0C60E16EC322 /* [CP] Copy Pods Resources */,
 				73688AFE1CC4504F00D3C430 /* ShellScript */,
 			);
 			buildRules = (
@@ -209,14 +209,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		639E2197E7C5E165A9FDB72A /* Check Pods Manifest.lock */ = {
+		639E2197E7C5E165A9FDB72A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -237,14 +237,14 @@
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n# uncomment for autocorrection\n# swiftlint autocorrect\n    swiftlint lint --quiet\nelse\n    echo \"SwiftLint does not exist, download from https://github.com/realm/SwiftLint\"\nfi";
 		};
-		BF1CE387B5ACF2A2CC59FB5F /* Embed Pods Frameworks */ = {
+		BF1CE387B5ACF2A2CC59FB5F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -252,14 +252,14 @@
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		DC3FF580972B0C60E16EC322 /* Copy Pods Resources */ = {
+		DC3FF580972B0C60E16EC322 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -338,7 +338,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -377,7 +377,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
@@ -390,7 +390,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "$(SRCROOT)/ThemisSwift/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.ThemisSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -404,7 +404,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "$(SRCROOT)/ThemisSwift/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.ThemisSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";

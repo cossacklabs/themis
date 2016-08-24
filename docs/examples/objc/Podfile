@@ -16,7 +16,7 @@
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, '7.0'
+platform :ios, '8.0'
 xcodeproj 'ThemisTest/ThemisTest.xcodeproj'
 inhibit_all_warnings!
 
