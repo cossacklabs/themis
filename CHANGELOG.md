@@ -1,6 +1,11 @@
 # Themis ChangeLog
 
 
+## [0.9.3.1], August 24th 2016
+
+Updating podspec to be compatible with CocoaPods 1.0
+
+
 ## [0.9.3], May 24th 2016
 
 _Infrastructure_: 
