@@ -25,8 +25,8 @@ dependencies:
     - make SECURE_COMPARATOR=enable test
     - make SECURE_COMPARATOR=enable themispp_test
     - make SECURE_COMPARATOR=enable test_all
-    - mkdir -p $GOPATH/src/$GOTHEMIS_IMPORT
-    - rsync -auv gothemis/ $GOPATH/src/$GOTHEMIS_IMPORT/
+    - mkdir -p $HOME/gopath/src/$GOTHEMIS_IMPORT
+    - rsync -auv gothemis/ $HOME/gopath/src/$GOTHEMIS_IMPORT/
 
 ## Customize test commands
 test:
