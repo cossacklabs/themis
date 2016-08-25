@@ -9,7 +9,7 @@ machine:
 dependencies:
   pre:
     - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev python3 python3-setuptools ruby # npm && curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash - && sudo apt-get install -y nodejs && sudo npm install -g node-gyp && sudo npm install -g mocha
-#    - cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz
+    - cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz
 
   override:
     - make SECURE_COMPARATOR=enable
@@ -40,7 +40,7 @@ test:
     - build/tests/pythemis_test.sh
     - sudo build/tests/rubythemis_test.sh
     - build/tests/phpthemis_test.sh
-    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && $GOROOT/bin/go test -v $GOTHEMIS_IMPORT/...
+    - GOROOT=$HOME/go GOPATH=$HOME/gopath $GOROOT/bin/go test -v $GOTHEMIS_IMPORT/...
 #    - sudo build/tests/node.sh
     # - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
