@@ -16,11 +16,15 @@
 
 #CC = clang
 SRC_PATH = src
-BIN_PATH = build
-OBJ_PATH = build/obj
+ifneq ($(BUILD_PATH),)
+	BIN_PATH = $(BUILD_PATH)
+else
+	BIN_PATH = build
+endif
+OBJ_PATH = $(BIN_PATH)/obj
 TEST_SRC_PATH = tests
-TEST_OBJ_PATH = build/tests/obj
-TEST_BIN_PATH = build/tests
+TEST_BIN_PATH = $(BIN_PATH)/tests
+TEST_OBJ_PATH = $(TEST_BIN_PATH)/obj
 
 CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC 
 LDFLAGS += -L/usr/local/lib
@@ -29,7 +33,7 @@ NO_COLOR=\033[0m
 OK_COLOR=\033[32;01m
 ERROR_COLOR=\033[31;01m
 WARN_COLOR=\033[33;01m
- 
+
 OK_STRING=$(OK_COLOR)[OK]$(NO_COLOR)
 ERROR_STRING=$(ERROR_COLOR)[ERRORS]$(NO_COLOR)
 WARN_STRING=$(WARN_COLOR)[WARNINGS]$(NO_COLOR)
