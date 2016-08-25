@@ -43,7 +43,7 @@
 
 
 static themis_status_t themis_gen_key_pair(int alg, uint8_t* private_key, size_t* private_key_length, uint8_t* public_key, size_t* public_key_length){
-  themis_status_t res;
+  themis_status_t res=THEMIS_FAIL;
   if(alg==RSA_ALG){
     res=themis_gen_rsa_key_pair(private_key, private_key_length, public_key, public_key_length);
   }
@@ -99,9 +99,9 @@ static int themis_secure_signed_message_generic_test(int alg, const char* messag
     return -5;
   }
   unwrapped_message=malloc(unwrapped_message_length);
-  if(!wrapped_message){
+  if(!unwrapped_message){
     free(wrapped_message);
-    testsuite_fail_if(!wrapped_message, "malloc fail");
+    testsuite_fail_if(!unwrapped_message, "malloc fail");
     return -3;
   }
   res=themis_secure_message_unwrap(NULL, 0, public_key, public_key_length, wrapped_message, wrapped_message_length, unwrapped_message, &unwrapped_message_length);

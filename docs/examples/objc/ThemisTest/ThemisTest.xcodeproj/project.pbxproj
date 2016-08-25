@@ -188,12 +188,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 731624B51ADB174200972A7A /* Build configuration list for PBXNativeTarget "ThemisTest" */;
 			buildPhases = (
-				752A804A4446800FFB3ADCD7 /* Check Pods Manifest.lock */,
+				752A804A4446800FFB3ADCD7 /* [CP] Check Pods Manifest.lock */,
 				7316248E1ADB174200972A7A /* Sources */,
 				7316248F1ADB174200972A7A /* Frameworks */,
 				731624901ADB174200972A7A /* Resources */,
-				9A078C251A561873552D1DC1 /* Copy Pods Resources */,
-				D4BA3E32BDAA4C42E16EDE5D /* Embed Pods Frameworks */,
+				9A078C251A561873552D1DC1 /* [CP] Copy Pods Resources */,
+				D4BA3E32BDAA4C42E16EDE5D /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -284,14 +284,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		752A804A4446800FFB3ADCD7 /* Check Pods Manifest.lock */ = {
+		752A804A4446800FFB3ADCD7 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -299,14 +299,14 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		9A078C251A561873552D1DC1 /* Copy Pods Resources */ = {
+		9A078C251A561873552D1DC1 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -314,14 +314,14 @@
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D4BA3E32BDAA4C42E16EDE5D /* Embed Pods Frameworks */ = {
+		D4BA3E32BDAA4C42E16EDE5D /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;

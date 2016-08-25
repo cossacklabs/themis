@@ -16,7 +16,7 @@
 
 #### Themis provides strong, usable cryptography for busy people
 
-Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure data exchange and  storage. Current stable release is [0.9.3](https://github.com/cossacklabs/themis/releases/tag/0.9.3), dated 24th of May.
+Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure data exchange and  storage. Current stable release is [0.9.3.1](https://github.com/cossacklabs/themis/releases/tag/0.9.3.1), dated 24th of August.
 
 Themis works in most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)), and is available for [Swift (iOS, OX)](https://github.com/cossacklabs/themis/wiki/Swift-Howto), [Objective-C (iOS, OX)](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto), [Java+Android](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto),  [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto), 
 [PHP](https://github.com/cossacklabs/themis/wiki/PHP-Howto), 
