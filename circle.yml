@@ -9,8 +9,7 @@ machine:
 dependencies:
   pre:
     - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev python3 python3-setuptools ruby # npm && curl -sL https://deb.nodesource.com/setup_5.x | sudo -E bash - && sudo apt-get install -y nodejs && sudo npm install -g node-gyp && sudo npm install -g mocha
-    - cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz && $GOROOT/bin/go get -u bufio
-    - cd $HOME && git clone https://boringssl.googlesource.com/boringssl && cd boringssl && git checkout chromium-stable && mkdir build && cd build && cmake .. && make && cp decrepit/libdecrepit.a crypto/
+    - cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz
 
   override:
     - make SECURE_COMPARATOR=enable
@@ -21,6 +20,7 @@ dependencies:
     - sudo make SECURE_COMPARATOR=enable rubythemis_install
     - sudo make SECURE_COMPARATOR=enable phpthemis_install
 #    - sudo make SECURE_COMPARATOR=enable jsthemis_install
+    - cd $HOME && git clone https://boringssl.googlesource.com/boringssl && cd boringssl && git checkout chromium-stable && mkdir build && cd build && cmake .. && make && cp decrepit/libdecrepit.a crypto/
     - make ENGINE=boringssl ENGINE_INCLUDE_PATH=$HOME/boringssl/include ENGINE_LIB_PATH=$HOME/boringssl/build/crypto BUILD_PATH=build_with_boringssl test
     - make SECURE_COMPARATOR=enable test
     - make SECURE_COMPARATOR=enable themispp_test
