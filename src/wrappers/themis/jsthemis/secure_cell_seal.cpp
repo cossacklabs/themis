@@ -73,11 +73,11 @@ namespace jsthemis {
     uint8_t* data=new uint8_t[length];
     if(themis_secure_cell_encrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length)!=THEMIS_SUCCESS){
       ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (seal) failed encrypting")));
-      delete data;
+      delete[] data;
       return scope.Close(v8::Undefined());
     }
     node::Buffer *buffer = node::Buffer::New((const char*)(data), length);
-    delete data;
+    delete[] data;
     return scope.Close(buffer->handle_);
   }
 
@@ -98,11 +98,11 @@ namespace jsthemis {
     uint8_t* data=new uint8_t[length];
     if(themis_secure_cell_decrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length)!=THEMIS_SUCCESS){
       ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (seal) failed decrypting")));
-      delete data;
+      delete[] data;
       return scope.Close(v8::Undefined());
     }
     node::Buffer *buffer = node::Buffer::New((const char*)(data), length);
-    delete data;
+    delete[] data;
     return scope.Close(buffer->handle_);
   }
 

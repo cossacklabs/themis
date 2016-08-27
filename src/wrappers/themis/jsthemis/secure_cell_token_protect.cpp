@@ -75,8 +75,8 @@ namespace jsthemis {
     uint8_t* token=new uint8_t[token_length];
     if(themis_secure_cell_encrypt_token_protect(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), token, &token_length, data, &length)!=THEMIS_SUCCESS){
       ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Token Protect) failed encrypting")));
-      delete data;
-      delete token;
+      delete[] data;
+      delete[] token;
       return scope.Close(v8::Undefined());
     }
     node::Buffer *buffer = node::Buffer::New((const char*)(data), length);
@@ -107,7 +107,7 @@ namespace jsthemis {
     themis_status_t res=themis_secure_cell_decrypt_token_protect(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), (const uint8_t*)(node::Buffer::Data(args[1])), node::Buffer::Length(args[1]), data, &length);
     if(res!=THEMIS_SUCCESS){
       ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Token Protect) failed decrypting")));
-      delete data;
+      delete[] data;
       return scope.Close(v8::Undefined());
     }
     node::Buffer *buffer = node::Buffer::New((const char*)(data), length);

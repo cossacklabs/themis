@@ -1,3 +1,0 @@
-imports bool;
-
-falseexit void check (bool x) { modifies nothing; }

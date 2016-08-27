@@ -93,11 +93,11 @@ namespace jsthemis {
     uint8_t* data=new uint8_t[length];
     if(secure_session_generate_connect_request(obj->session_, data, &length)!=THEMIS_SUCCESS){
       ThrowException(v8::Exception::Error(v8::String::New("Secure Session failed generating connect request")));
-      delete data;
+      delete[] data;
       return scope.Close(v8::Undefined());
     }
     node::Buffer *buffer = node::Buffer::New((const char*)(data), length);
-    delete data;
+    delete[] data;
     return scope.Close(buffer->handle_);
   }
 
@@ -112,11 +112,11 @@ namespace jsthemis {
     uint8_t* data=new uint8_t[length];
     if(secure_session_wrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length)!=THEMIS_SUCCESS){
       ThrowException(v8::Exception::Error(v8::String::New("Secure Session failed encrypting")));
-      delete data;
+      delete[] data;
       return scope.Close(v8::Undefined());
     }
     node::Buffer *buffer = node::Buffer::New((const char*)(data), length);
-    delete data;
+    delete[] data;
     return scope.Close(buffer->handle_);
   }
   
@@ -134,11 +134,11 @@ namespace jsthemis {
     res=secure_session_unwrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length);
     if(res!=THEMIS_SUCCESS && res!=THEMIS_SSESSION_SEND_OUTPUT_TO_PEER){
       ThrowException(v8::Exception::Error(v8::String::New("Secure Session failed decrypting")));
-      delete data;
+      delete[] data;
       return scope.Close(v8::Undefined());
     }
     node::Buffer *buffer = node::Buffer::New((const char*)(data), length);
-    delete data;
+    delete[] data;
     return scope.Close(buffer->handle_);
   }
   
