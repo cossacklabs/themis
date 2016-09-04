@@ -16,18 +16,35 @@
 
 #include <soter/error.h>
 #include <soter/soter.h>
+#include <soter/error.h>
 #include <soter/soter_rsa_key.h>
 #include "soter_engine.h"
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
+#include <openssl/bn.h>
 
 #ifndef SOTER_RSA_KEY_LENGTH
 #define SOTER_RSA_KEY_LENGTH 2048
 #endif
 
-soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx)
+unsigned rsa_key_length(const int size){
+    switch (size){
+    case RSA_KEY_LENGTH_1024:
+    return 1024;
+    case RSA_KEY_LENGTH_2048:
+    return 2048;
+    case RSA_KEY_LENGTH_4096:
+    return 4096;
+    case RSA_KEY_LENGTH_8192:
+    return 8192;
+    default:
+    return 0;
+    }
+    return 0;
+}
+
+soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx, const unsigned key_length)
 {
-  /* it is copy-paste from /src/soter/openssl/soter_asym_cipher.c */
   BIGNUM *pub_exp;
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(pkey_ctx);
   if (!pkey){
@@ -53,21 +70,14 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx)
     return SOTER_FAIL;
   }
   
-  if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_PUBEXP, 0, pub_exp)){
-    BN_free(pub_exp);
-    return SOTER_FAIL;
-  }
-  
+  SOTER_IF_FAIL(1 <= EVP_PKEY_CTX_set_rsa_keygen_pubexp(pkey_ctx, pub_exp), (BN_free(pub_exp), EVP_PKEY_CTX_free(pkey_ctx)));
   /* Override default key size for RSA key. Currently OpenSSL has default key size of 1024. LibreSSL has 2048. We will put 2048 explicitly */
-  if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_BITS, SOTER_RSA_KEY_LENGTH, NULL)){
-    return SOTER_FAIL;
-  }
-  
+  SOTER_IF_FAIL((1 <= EVP_PKEY_CTX_set_rsa_keygen_bits(pkey_ctx, rsa_key_length(key_length))), (BN_free(pub_exp), EVP_PKEY_CTX_free(pkey_ctx)));
+
   if(!EVP_PKEY_keygen(pkey_ctx, &pkey)){
     return SOTER_FAIL;
   }
   return SOTER_SUCCESS;
-  /* end of copy-paste from /src/soter/openssl/soter_asym_cipher.c*/
 }
 
 soter_status_t soter_rsa_import_key(EVP_PKEY *pkey, const void* key, const size_t key_length)

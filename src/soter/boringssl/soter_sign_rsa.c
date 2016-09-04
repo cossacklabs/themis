@@ -41,7 +41,7 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* 
     return SOTER_FAIL;
   }
   if((!private_key)&&(!public_key)){
-    if(soter_rsa_gen_key(ctx->pkey_ctx)!=SOTER_SUCCESS){
+    if(soter_rsa_gen_key(ctx->pkey_ctx, RSA_KEY_LENGTH_2048)!=SOTER_SUCCESS){
       EVP_PKEY_free(pkey);
       return SOTER_FAIL;
     }

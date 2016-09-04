@@ -58,30 +58,17 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_al
 		EVP_PKEY_free(pkey);
 		return SOTER_FAIL;
 	}
-	if (1 != EVP_PKEY_paramgen_init(asym_ka_ctx->pkey_ctx))
-	{
-		EVP_PKEY_free(pkey);
+	EC_KEY* ec = EC_KEY_new_by_curve_name(nid);
+	if( !ec ){
+		EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
 		return SOTER_FAIL;
 	}
-
-	if (1 != EVP_PKEY_CTX_set_ec_paramgen_curve_nid(asym_ka_ctx->pkey_ctx, nid))
-	{
-		EVP_PKEY_free(pkey);
+	
+	if(1!=EVP_PKEY_set1_EC_KEY(pkey, ec)){
+		EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
+		EC_KEY_free(ec);
 		return SOTER_FAIL;
 	}
-
-	if (1 != EVP_PKEY_paramgen(asym_ka_ctx->pkey_ctx, &pkey))
-	{
-		EVP_PKEY_free(pkey);
-		return SOTER_FAIL;
-	}
-
-	/*if (1 != EVP_PKEY_CTX_ctrl(asym_ka_ctx->pkey_ctx, EVP_PKEY_EC, -1, EVP_PKEY_CTRL_EC_PARAMGEN_CURVE_NID, nid, NULL))
-	{
-		EVP_PKEY_free(pkey);
-		return SOTER_FAIL;
-	}*/
-
 	return SOTER_SUCCESS;
 }
 
@@ -93,7 +80,6 @@ soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
 	}
 	if (asym_ka_ctx->pkey_ctx)
 	{
-
 		EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
 	}
 	return SOTER_SUCCESS;
@@ -163,7 +149,7 @@ soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx)
 		return SOTER_INVALID_PARAMETER;
 	}
 
-	ec = EVP_PKEY_get0(pkey);
+	ec = EVP_PKEY_get0_EC_KEY(pkey);
 	if (NULL == ec)
 	{
 		return SOTER_INVALID_PARAMETER;

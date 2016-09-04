@@ -14,41 +14,17 @@
 * limitations under the License.
 */
 
-#ifndef SOTER_OPENSSL_H
-#define SOTER_OPENSSL_H
+#ifndef SOTER_RSA_COMMON_H
+#define SOTER_RSA_COMMON_H
 
 #include <soter/soter.h>
-#include <openssl/evp.h>
+#include <soter/soter_rsa_key.h>
+#include "soter_engine.h"
 
-struct soter_hash_ctx_type
-{
-  EVP_MD_CTX evp_md_ctx;
-};
+unsigned rsa_key_length(const int size);
+soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx, const unsigned key_length);
+soter_status_t soter_rsa_import_key(EVP_PKEY *pkey, const void* key, const size_t key_length);
+soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate);
 
-struct soter_sym_ctx_type
-{
-  uint32_t alg;
-  EVP_CIPHER_CTX evp_sym_ctx;
-};
+#endif
 
-struct soter_asym_cipher_type
-{
-	EVP_PKEY_CTX *pkey_ctx;
-};
-
-struct soter_rsa_key_pair_gen_type{
-	EVP_PKEY_CTX *pkey_ctx;
-};
-
-struct soter_asym_ka_type
-{
-	EVP_PKEY_CTX *pkey_ctx;
-};
-
-struct soter_sign_ctx_type{
-  EVP_PKEY_CTX *pkey_ctx;
-  EVP_MD_CTX *md_ctx;
-  soter_sign_alg_t alg;
-};
-
-#endif /* SOTER_OPENSSL_H */

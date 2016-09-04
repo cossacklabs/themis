@@ -14,16 +14,24 @@
 * limitations under the License.
 */
 
-#ifndef SOTER_EC_COMMON_H
-#define SOTER_EC_COMMON_H
+#include "soter/error.h"
+#include "soter/soter.h"
+#include <openssl/rand.h>
 
-#include <soter/soter.h>
-#include <soter/soter_ec_key.h>
-#include "soter_engine.h"
+soter_status_t soter_rand(uint8_t* buffer, size_t length)
+{
+	if ((!buffer) || (!length))
+	{
+		return SOTER_INVALID_PARAMETER;
+	}
 
-soter_status_t soter_ec_gen_key(EVP_PKEY_CTX *pkey_ctx);
-soter_status_t soter_ec_import_key(EVP_PKEY *pkey, const void* key, const size_t key_length);
-soter_status_t soter_ec_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate);
-
-#endif
-
+	if (RAND_bytes(buffer, (int)length))
+	{
+		return SOTER_SUCCESS;
+	}
+	else
+	{
+		/* For some reason OpenSSL generator failed */
+		return SOTER_FAIL;
+	}
+}

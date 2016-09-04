@@ -141,8 +141,7 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
 		/* We can only do assymetric encryption with RSA algorithm */
 		return SOTER_INVALID_PARAMETER;
 	}
-
-	rsa = EVP_PKEY_get0(pkey);
+	rsa = EVP_PKEY_get0_RSA(pkey);
 	if (NULL == rsa)
 	{
 		return SOTER_FAIL;
@@ -162,13 +161,10 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
 	{
 		return SOTER_FAIL;
 	}
-
-	/* TODO: This function automatically sets SHA1 as MGF digest for OAEP padding. Should we change it to SHA256? */
-	if (1 > EVP_PKEY_CTX_ctrl(asym_cipher->pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_PADDING, RSA_PKCS1_OAEP_PADDING, NULL))
+	if (1 > EVP_PKEY_CTX_set_rsa_padding(asym_cipher->pkey_ctx, RSA_PKCS1_OAEP_PADDING))
 	{
 		return SOTER_FAIL;
 	}
-
 	/* We will check the size of the output buffer first */
 	if (EVP_PKEY_encrypt(asym_cipher->pkey_ctx, NULL, &output_length, (const unsigned char *)plain_data, plain_data_length))
 	{
@@ -225,7 +221,7 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
 		return SOTER_INVALID_PARAMETER;
 	}
 
-	rsa = EVP_PKEY_get0(pkey);
+	rsa = EVP_PKEY_get0_RSA(pkey);
 	if (NULL == rsa)
 	{
 		return SOTER_FAIL;
@@ -246,12 +242,10 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
 		return SOTER_FAIL;
 	}
 
-	/* TODO: This function automatically sets SHA1 as MGF digest for OAEP padding. Should we change it to SHA256? */
-	if (1 > EVP_PKEY_CTX_ctrl(asym_cipher->pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_PADDING, RSA_PKCS1_OAEP_PADDING, NULL))
+	if (1 > EVP_PKEY_CTX_set_rsa_padding(asym_cipher->pkey_ctx, RSA_PKCS1_OAEP_PADDING))
 	{
 		return SOTER_FAIL;
 	}
-
 	/* We will check the size of the output buffer first */
 	if (EVP_PKEY_decrypt(asym_cipher->pkey_ctx, NULL, &output_length, (const unsigned char *)cipher_data, cipher_data_length))
 	{

@@ -14,16 +14,18 @@
 * limitations under the License.
 */
 
-#ifndef SOTER_EC_COMMON_H
-#define SOTER_EC_COMMON_H
-
 #include <soter/soter.h>
-#include <soter/soter_ec_key.h>
-#include "soter_engine.h"
 
-soter_status_t soter_ec_gen_key(EVP_PKEY_CTX *pkey_ctx);
-soter_status_t soter_ec_import_key(EVP_PKEY *pkey, const void* key, const size_t key_length);
-soter_status_t soter_ec_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate);
+#include <openssl/crypto.h>
 
-#endif
+#include <stdio.h>
+#include <string.h>
 
+#define SOTER_VERSION_TEXT_LENGTH sizeof(SOTER_VERSION_TEXT)
+
+char soter_version_text[256]=SOTER_VERSION_TEXT;
+
+const char* soter_version(){
+    memcpy(soter_version_text+SOTER_VERSION_TEXT_LENGTH-1, SSLeay_version(SSLEAY_VERSION), strlen(SSLeay_version(SSLEAY_VERSION))+1);
+    return soter_version_text;
+}

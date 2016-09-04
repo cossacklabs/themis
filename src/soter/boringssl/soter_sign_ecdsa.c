@@ -16,14 +16,15 @@
 
 #include <soter/error.h>
 #include <soter/soter.h>
-#include <soter/soter_rsa_key.h>
+#include <soter/soter_ec_key.h>
 #include "soter_engine.h"
-#include "soter_rsa_common.h"
+#include "soter_ecdsa_common.h"
 #include <openssl/evp.h>
-#include <openssl/rsa.h>
+#include <openssl/ecdsa.h>
+#include <openssl/err.h>
 
 
-soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
+soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
 {
   /* pkey_ctx init */
   EVP_PKEY *pkey;
@@ -31,7 +32,7 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* 
   if (!pkey){
     return SOTER_NO_MEMORY;
   }
-  if (!EVP_PKEY_set_type(pkey, EVP_PKEY_RSA)){
+  if (!EVP_PKEY_set_type(pkey, EVP_PKEY_EC)){
     EVP_PKEY_free(pkey);
     return SOTER_FAIL;
   }
@@ -41,19 +42,19 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* 
     return SOTER_FAIL;
   }
   if((!private_key)&&(!public_key)){
-    if(soter_rsa_gen_key(ctx->pkey_ctx)!=SOTER_SUCCESS){
+    if(soter_ec_gen_key(ctx->pkey_ctx)!=SOTER_SUCCESS){
       EVP_PKEY_free(pkey);
       return SOTER_FAIL;
     }
   }else{
     if(private_key!=NULL){
-      if(soter_rsa_import_key(pkey, private_key, private_key_length)!=SOTER_SUCCESS){
+      if(soter_ec_import_key(pkey, private_key, private_key_length)!=SOTER_SUCCESS){
 	EVP_PKEY_free(pkey);
 	return SOTER_FAIL;
       }
     }
     if(public_key!=NULL){
-      if(soter_rsa_import_key(pkey, public_key, public_key_length)!=SOTER_SUCCESS){
+      if(soter_ec_import_key(pkey, public_key, public_key_length)!=SOTER_SUCCESS){
 	EVP_PKEY_free(pkey);
 	return SOTER_FAIL;
       }
@@ -66,46 +67,39 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* 
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
     return SOTER_NO_MEMORY;
   }
-  if(!EVP_DigestSignInit(ctx->md_ctx, &(ctx->pkey_ctx), EVP_sha256(), NULL, pkey)){
+  if(EVP_DigestSignInit(ctx->md_ctx, &(ctx->pkey_ctx), EVP_sha256(), NULL, pkey)!=1){
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    return SOTER_FAIL;
-  }
-  if(!EVP_PKEY_CTX_set_rsa_padding(ctx->pkey_ctx, RSA_PKCS1_PSS_PADDING)){
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    return SOTER_FAIL;
-  }
-  if(!EVP_PKEY_CTX_set_rsa_pss_saltlen(ctx->pkey_ctx, -2)){
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    return SOTER_FAIL;
-  }  
-  return SOTER_SUCCESS;
-}
-
-soter_status_t soter_sign_export_key_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate)
-{
-    return soter_rsa_export_key(ctx,key,key_length, isprivate);
-}
-
-soter_status_t soter_sign_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* data, const size_t data_length)
-{
-  if(!EVP_DigestSignUpdate(ctx->md_ctx, data, data_length)){
     return SOTER_FAIL;
   }
   return SOTER_SUCCESS;
 }
 
-soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signature, size_t *signature_length)
+soter_status_t soter_sign_export_key_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate)
+{
+    return soter_ec_export_key(ctx,key,key_length, isprivate);
+}
+
+soter_status_t soter_sign_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const void* data, const size_t data_length)
+{
+  if(EVP_DigestSignUpdate(ctx->md_ctx, data, data_length)!=1){
+    return SOTER_FAIL;
+  }
+  return SOTER_SUCCESS;
+}
+
+soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* signature, size_t *signature_length)
 {
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
-  if (!pkey){
+  if (!pkey && EVP_PKEY_type(pkey->type)!=EVP_PKEY_EC){
     return SOTER_INVALID_PARAMETER;
-  }
-  if((*signature_length)<EVP_PKEY_size(pkey)){
+  } /* TODO: need review */
+  if(!signature || (*signature_length)<EVP_PKEY_size(pkey)){
     (*signature_length)=EVP_PKEY_size(pkey);
     return SOTER_BUFFER_TOO_SMALL;
   }
-  if(!EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length)){
-    return SOTER_FAIL;
+
+  if(EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length)!=1){
+    return SOTER_INVALID_SIGNATURE;
   }
   return SOTER_SUCCESS;
 }
