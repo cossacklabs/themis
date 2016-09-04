@@ -1,8 +1,0 @@
-int glob;
-
-int f (void) int glob; { }
-
-int g (void) int glob; { modifies glob; }
-
-int h (void) int glob; { modifies glob; }
-

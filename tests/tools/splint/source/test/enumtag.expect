@@ -1,8 +1,0 @@
-
-enumtag.c:35:6: Enum tag enum e_tag defined more than once
-   enumtag.c:12:6: Previous definition of enum e_tag
-enumtag.c:35:6: Enum enum e_tag declared with members { E_M } but previously
-                   declared with members { E_X, E_Y, E_Z }
-   enumtag.c:12:6: Declaration of enum e_tag
-
-Finished checking --- 2 code warnings, as expected

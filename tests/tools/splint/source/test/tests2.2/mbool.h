@@ -1,1 +1,0 @@
-# define bool int

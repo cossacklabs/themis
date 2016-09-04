@@ -1,8 +1,0 @@
-
-chararraylit.c: (in function f)
-chararraylit.c:8:16: String literal with 4 characters is assigned to char [3]
-                        (no room for null terminator): "abc"
-chararraylit.c:13:3: Suspect modification of observer p: *p = 'c'
-   chararraylit.c:9:13: Storage *p becomes observer
-
-Finished checking --- 2 code warnings, as expected

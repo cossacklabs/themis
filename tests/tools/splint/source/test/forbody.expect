@@ -1,6 +1,0 @@
-
-forbody.c: (in iter genericTable_elements)
-forbody.c:3:50: Unrecognized identifier in macro definition: m_ind
-forbody.c:3:115: Assignment of char to int: m_el = 'a'
-
-Finished checking --- 2 code warnings, as expected

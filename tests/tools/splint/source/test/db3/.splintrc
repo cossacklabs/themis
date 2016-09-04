@@ -1,6 +1,0 @@
--allimponly
-+allmacros
-+czech +distinctexternalnames -externalnamelength 14 
-+distinctinternalnames +internalnamelookalike 
--uncheckedmacroprefix ^~* 
--enumprefix ^^~*

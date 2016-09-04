@@ -1,6 +1,0 @@
-
-typeof.c: (in function main)
-typeof.c:10:4: Variable ip used before definition
-typeof.c:11:4: Array element y[3] used before definition
-
-Finished checking --- 2 code warnings, as expected

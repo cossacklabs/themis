@@ -1,7 +1,0 @@
-
-void.c: (in function f)
-void.c:5:3: Return value (type int) ignored: f()
-void.c:3:5: Function exported but not used outside void: f
-   void.c:7:1: Definition of f
-
-Finished checking --- 2 code warnings, as expected

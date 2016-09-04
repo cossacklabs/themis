@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 	run_soter_asym_ka_tests();
 	run_soter_sym_test();
 	run_soter_sign_test();
-//	run_soter_rand_tests();
+	run_soter_rand_tests();
 
     testsuite_finish_testing();
 
