@@ -1,5 +1,8 @@
 #include "session.h"
 
+extern int onPublicKeyForId(void* user_data, const void* id, size_t id_len, void* key, size_t key_len);
+extern void onStateChanged(void* user_data, int event);
+
 size_t get_session_ctx_size(void)
 {
 	return sizeof(struct session_with_callbacks_type);
