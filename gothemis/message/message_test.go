@@ -5,8 +5,8 @@ import (
     "crypto/rand"
     "math/big"
     "bytes"
-    "github.com/mnaza/themis/gothemis/keys"
-    sm"github.com/mnaza/themis/gothemis/message"
+    "github.com/cossacklabs/themis/gothemis/keys"
+    sm"github.com/cossacklabs/themis/gothemis/message"
 )
 
 func testWrap(keytype int, t *testing.T) {

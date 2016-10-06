@@ -7,7 +7,7 @@ package session
 import "C"
 import (
 	"errors"
-	"github.com/mnaza/themis/gothemis/keys"
+	"github.com/cossacklabs/themis/gothemis/keys"
 	"runtime"
 	"unsafe"
 )

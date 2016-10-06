@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"crypto/rand"
 	"errors"
-	"github.com/mnaza/themis/gothemis/keys"
+	"github.com/cossacklabs/themis/gothemis/keys"
 	"math/big"
 	"testing"
 )
