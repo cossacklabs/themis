@@ -5,7 +5,7 @@ import (
     "crypto/rand"
     "math/big"
     "bytes"
-    "github.com/cossacklabs/themis/gothemis/cell"
+    "github.com/mnaza/themis/gothemis/cell"
 )
 
 func testProtect(mode int, context []byte, t *testing.T) {
