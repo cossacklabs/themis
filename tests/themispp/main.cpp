@@ -26,9 +26,7 @@ int main(){
   themispp::secure_cell_test::run_secure_cell_test();
   themispp::secure_message_test::run_secure_message_test();
   themispp::secure_session_test::run_secure_session_test();
-#ifdef SECURE_COMPARATOR_ENABLED
   themispp::secure_session_test::run_secure_comparator_test();
-#endif
   sput_finish_testing();
   return sput_get_return_value();
 }

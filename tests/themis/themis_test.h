@@ -23,9 +23,6 @@
 void run_secure_message_test(void);
 void run_secure_session_test(void);
 void run_secure_cell_test(void);
-
-#ifdef SECURE_COMPARATOR_ENABLED
 void run_secure_comparator_test(void);
-#endif
 
 #endif /* _THEMIS_TEST_H_ */

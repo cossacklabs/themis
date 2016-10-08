@@ -14,8 +14,6 @@
 * limitations under the License.
 */
 
-#ifdef SECURE_COMPARATOR_ENABLED
-
 #import <objcthemis/scomparator.h>
 #import <objcthemis/error.h>
 
@@ -101,4 +99,3 @@
 }
 
 @end
-#endif

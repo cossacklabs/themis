@@ -157,13 +157,6 @@ ifdef DEBUG
 	CFLAGS += -DDEBUG -g
 endif
 
-ifdef SECURE_COMPARATOR
-ifeq ($(SECURE_COMPARATOR),enable)
-CFLAGS += -DSECURE_COMPARATOR_ENABLED
-SECURE_COMPARATOR_ENABLED = enable
-endif
-endif
-
 # Should pay attention to warnings (some may be critical for crypto-enabled code (ex. signed-unsigned mismatch)
 CFLAGS += -Werror -Wno-switch
 
@@ -189,9 +182,7 @@ ifdef RUBY_GEM_VERSION
 	@echo "ruby ./tests/rubythemis/scell_test.rb" > ./$(BIN_PATH)/tests/rubythemis_test.sh
 	@echo "ruby ./tests/rubythemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
 	@echo "ruby ./tests/rubythemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-ifdef SECURE_COMPARATOR_ENABLED
 	@echo "ruby ./tests/rubythemis/scomparator_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-endif
 	@chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
 	@$(PRINT_OK_)
 endif
@@ -200,9 +191,7 @@ ifdef PYTHON_VERSION
 	@echo "python ./tests/pythemis/scell_test.py" > ./$(BIN_PATH)/tests/pythemis_test.sh
 	@echo "python ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 	@echo "python ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-ifdef SECURE_COMPARATOR_ENABLED
 	@echo "python ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-endif
 ifdef PYTHON3_VERSION
 	@echo "echo Python3 $(PYTHON3_VERSION) tests" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 	@echo "echo ----- pythemis secure cell tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
@@ -211,9 +200,7 @@ ifdef PYTHON3_VERSION
 	@echo "python3 ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 	@echo "echo ----- pythemis secure session tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 	@echo "python3 ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-ifdef SECURE_COMPARATOR_ENABLED
 	@echo "python3 ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-endif
 endif
 	@chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
 	@$(PRINT_OK_)
