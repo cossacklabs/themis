@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <node.h>
 #include <node_buffer.h>
 #include <themis/themis.h>
 #include <vector>
@@ -23,7 +22,7 @@
 
 namespace jsthemis {
 
-  v8::Persistent<v8::Function> KeyPair::constructor;
+  Nan::Persistent<v8::Function> KeyPair::constructor;
 
   KeyPair::KeyPair(const std::vector<uint8_t>& private_key, const std::vector<uint8_t>& public_key) :
     private_key_(private_key),
@@ -33,66 +32,58 @@ namespace jsthemis {
 
   void KeyPair::Init(v8::Handle<v8::Object> exports) {
     // Prepare constructor template
-    v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(New);
-    tpl->SetClassName(v8::String::NewSymbol("KeyPair"));
+    v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(KeyPair::New);
+    tpl->SetClassName(Nan::New("KeyPair").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     // Prototype
-    tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("private"), v8::FunctionTemplate::New(private_key)->GetFunction());
-    tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("public"), v8::FunctionTemplate::New(public_key)->GetFunction());
-    constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
-    exports->Set(v8::String::NewSymbol("KeyPair"), constructor);
+    Nan::SetPrototypeMethod(tpl, "private", private_key);
+    Nan::SetPrototypeMethod(tpl, "public", public_key);
+    constructor.Reset(tpl->GetFunction());
+    exports->Set(Nan::New("KeyPair").ToLocalChecked(), tpl->GetFunction());
   }
 
-  v8::Handle<v8::Value> KeyPair::New(const v8::Arguments& args) {
-    v8::HandleScope scope;
-
+  void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     if (args.IsConstructCall()) {
       if(args.Length()==2){
 	std::vector<uint8_t> private_key((uint8_t*)(node::Buffer::Data(args[0])), (uint8_t*)(node::Buffer::Data(args[0])+node::Buffer::Length(args[0])));
 	std::vector<uint8_t> public_key((uint8_t*)(node::Buffer::Data(args[1])), (uint8_t*)(node::Buffer::Data(args[1])+node::Buffer::Length(args[1])));
 	KeyPair* obj = new KeyPair(private_key, public_key);
 	obj->Wrap(args.This());
-	return args.This();
+        args.GetReturnValue().Set(args.This());
       }else if(args.Length()==0){
 	size_t private_key_length, public_key_length;
 	if(themis_gen_ec_key_pair(NULL, &private_key_length, NULL, &public_key_length)!=THEMIS_BUFFER_TOO_SMALL){
-	  ThrowException(v8::Exception::Error(v8::String::New("Themis failed Key Pair generating")));
-	  return scope.Close(v8::Undefined());
+          Nan::ThrowError("Themis failed Key Pair generating");
+	  args.GetReturnValue().SetUndefined();
 	}
 	std::vector<uint8_t> prk(private_key_length);
 	std::vector<uint8_t> puk(public_key_length);
 	if(themis_gen_ec_key_pair(&prk[0], &private_key_length, &puk[0], &public_key_length)!=THEMIS_SUCCESS){
-	  ThrowException(v8::Exception::Error(v8::String::New("Themis failed Key Pair generating")));
-	  return scope.Close(v8::Undefined());
+          Nan::ThrowError("Themis failed Key Pair generating");
+	  args.GetReturnValue().SetUndefined();
 	}
 	KeyPair* obj = new KeyPair(prk, puk);
 	obj->Wrap(args.This());
-	return args.This();
+        args.GetReturnValue().Set(args.This());
       } else {
-	ThrowException(v8::Exception::Error(v8::String::New("Themis failed KeyPair object initialisation")));
-	return scope.Close(v8::Undefined());
+        Nan::ThrowError("Themis failed KeyPair object initialisation");
+	args.GetReturnValue().SetUndefined();
       }
     } else {
       const int argc = 2;
       v8::Local<v8::Value> argv[argc] = { args[0], args[1] };
-      return scope.Close(constructor->NewInstance(argc, argv));
+      v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
+      args.GetReturnValue().Set(cons->NewInstance(argc, argv));
     }
   }
 
-  v8::Handle<v8::Value> KeyPair::private_key(const v8::Arguments& args) {
-    v8::HandleScope scope;
-    KeyPair* obj = node::ObjectWrap::Unwrap<KeyPair>(args.This());
-    node::Buffer *buffer = node::Buffer::New((const char*)(&(obj->private_key_)[0]), obj->private_key_.size());
-    //    RETURN_BUFFER(encrypted_buffer, obj->private_key_.size());
-    return scope.Close(buffer->handle_);
+  void KeyPair::private_key(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+    KeyPair* obj = Nan::ObjectWrap::Unwrap<KeyPair>(args.This());
+    args.GetReturnValue().Set(Nan::CopyBuffer((char*)(&(obj->private_key_)[0]), obj->private_key_.size()).ToLocalChecked());
   }
 
-  v8::Handle<v8::Value> KeyPair::public_key(const v8::Arguments& args){
-    v8::HandleScope scope;
-    KeyPair* obj = node::ObjectWrap::Unwrap<KeyPair>(args.This());
-    node::Buffer *buffer = node::Buffer::New((const char*)(&(obj->public_key_)[0]), obj->public_key_.size());
-    //    RETURN_BUFFER(encrypted_buffer, obj->public_key_.size());
-    return scope.Close(buffer->handle_);
-  }
-  
+  void KeyPair::public_key(const Nan::FunctionCallbackInfo<v8::Value>& args){
+    KeyPair* obj = Nan::ObjectWrap::Unwrap<KeyPair>(args.This());
+    args.GetReturnValue().Set(Nan::CopyBuffer((char*)(&(obj->public_key_)[0]), obj->public_key_.size()).ToLocalChecked());
+  }  
 } //end jsthemis

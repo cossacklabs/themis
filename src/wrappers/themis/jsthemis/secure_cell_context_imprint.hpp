@@ -17,12 +17,12 @@
 #ifndef JSTHEMIS_SECURE_CELL_CONTEXT_IMPRINT_HPP_
 #define JSTHEMIS_SECURE_CELL_CONTEXT_IMPRINT_HPP_
 
-#include <node.h>
+#include <nan.h>
 #include <vector>
 
 namespace jsthemis{
 
-  class SecureCellContextImprint : public node::ObjectWrap {
+  class SecureCellContextImprint : public Nan::ObjectWrap {
   public:
     static void Init(v8::Handle<v8::Object> exports);
 
@@ -30,11 +30,11 @@ namespace jsthemis{
     explicit SecureCellContextImprint(const std::vector<uint8_t>& key);
     ~SecureCellContextImprint();
 
-    static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> encrypt(const v8::Arguments& args);
-    static v8::Handle<v8::Value> decrypt(const v8::Arguments& args);
+    static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args);
 
-    static v8::Persistent<v8::Function> constructor;
+    static Nan::Persistent<v8::Function> constructor;
 
     std::vector<uint8_t> key_;
   };

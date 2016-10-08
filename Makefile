@@ -16,15 +16,11 @@
 
 #CC = clang
 SRC_PATH = src
-ifneq ($(BUILD_PATH),)
-	BIN_PATH = $(BUILD_PATH)
-else
-	BIN_PATH = build
-endif
-OBJ_PATH = $(BIN_PATH)/obj
+BIN_PATH = build
+OBJ_PATH = build/obj
 TEST_SRC_PATH = tests
-TEST_BIN_PATH = $(BIN_PATH)/tests
-TEST_OBJ_PATH = $(TEST_BIN_PATH)/obj
+TEST_OBJ_PATH = build/tests/obj
+TEST_BIN_PATH = build/tests
 
 CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC 
 LDFLAGS += -L/usr/local/lib
@@ -33,7 +29,7 @@ NO_COLOR=\033[0m
 OK_COLOR=\033[32;01m
 ERROR_COLOR=\033[31;01m
 WARN_COLOR=\033[33;01m
-
+ 
 OK_STRING=$(OK_COLOR)[OK]$(NO_COLOR)
 ERROR_STRING=$(ERROR_COLOR)[ERRORS]$(NO_COLOR)
 WARN_STRING=$(WARN_COLOR)[WARNINGS]$(NO_COLOR)
@@ -72,9 +68,6 @@ ifeq ($(ENGINE),openssl)
 else ifeq ($(ENGINE),libressl)
 	CRYPTO_ENGINE_DEF = LIBRESSL	
 	CRYPTO_ENGINE_PATH=openssl
-else ifeq ($(ENGINE), boringssl)
-	CRYPTO_ENGINE_DEF = BORINGSSL
-	CRYPTO_ENGINE_PATH=boringssl
 else
 	ERROR = $(error error: engine $(ENGINE) unsupported...)
 endif
@@ -218,12 +211,17 @@ endif
 	@chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
 	@$(PRINT_OK_)
 endif
-#ifdef NODE_VERSION
-#	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
-#	echo "npm install ../../build/jsthemis-0.0.3.tgz" >> ./$(BIN_PATH)/tests/node.sh
-#	echo "mocha" >> ./$(BIN_PATH)/tests/node.sh
-#	chmod a+x ./$(BIN_PATH)/tests/node.sh
-#endif
+ifdef NODE_VERSION
+	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
+	echo "wget https://nodejs.org/dist/v4.6.0/node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
+	echo "tar -xvf node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
+	echo "cd ../../src/wrappers/themis/jsthemis && PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm pack && mv jsthemis-0.9.3.tgz ../../../../build && cd -" >> ./$(BIN_PATH)/tests/node.sh
+	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install mocha" >> ./$(BIN_PATH)/tests/node.sh
+	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install nan" >> ./$(BIN_PATH)/tests/node.sh
+	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install ../../build/jsthemis-0.9.3.tgz" >> ./$(BIN_PATH)/tests/node.sh
+	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) ./node_modules/mocha/bin/mocha" >> ./$(BIN_PATH)/tests/node.sh
+	chmod a+x ./$(BIN_PATH)/tests/node.sh
+endif
 
 
 
@@ -397,6 +395,3 @@ themispp_uninstall: CMD = rm -rf $(PREFIX)/include/themispp
 themispp_uninstall: 
 	@echo -n "themispp uninstall "
 	@$(BUILD_CMD_)
-
-#jsthemis_install:
-#	cd src/wrappers/themis/jsthemis && mv `npm pack` ../../../../build/
