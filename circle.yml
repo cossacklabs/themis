@@ -40,7 +40,7 @@ test:
     - sudo build/tests/rubythemis_test.sh
     - build/tests/phpthemis_test.sh
     - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && $GOROOT/bin/go test -v $GOTHEMIS_IMPORT/...
-    - sudo build/tests/node.sh
+    - build/tests/node.sh
     # - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
     - emulator -avd circleci-android22 -no-audio -no-window:
