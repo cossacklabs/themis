@@ -60,7 +60,6 @@ describe("jsthemis", function(){
 	    assert.equal(data,undefined);
 	    assert.equal(server_session.isEstablished(), true);
 	    assert.equal(client_session.isEstablished(), true);
-
 	    data=client_session.wrap(message);
 	    rm=server_session.unwrap(data);
 	    assert.equal(message.toString(), rm.toString());
@@ -128,7 +127,7 @@ describe("jsthemis", function(){
 	    assert.equal(message.toString(), dec_data.toString());
 	    assert.throws(function(){intruder_decrypter.decrypt(enc_data.data, enc_data.token)});
 	    enc_data.data[2]++;
-	    assert.throws(context_imprint_decrypter.decrypt(enc_data.data, enc_data.token, context));
+	    assert.throws(function(){decrypter.decrypt(enc_data.data, enc_data.token, context)});
 	})
     })
 })

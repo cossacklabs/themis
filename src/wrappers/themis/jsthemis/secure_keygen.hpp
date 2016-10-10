@@ -17,12 +17,12 @@
 #ifndef JSTHEMIS_KEY_PAIR_HPP_
 #define JSTHEMIS_KEY_PAIR_HPP_
 
-#include <node.h>
+#include <nan.h>
 #include <vector>
 
 namespace jsthemis{
 
-  class KeyPair : public node::ObjectWrap {
+  class KeyPair : public Nan::ObjectWrap {
   public:
     static void Init(v8::Handle<v8::Object> exports);
 
@@ -31,11 +31,11 @@ namespace jsthemis{
     explicit KeyPair();
     ~KeyPair();
 
-    static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> private_key(const v8::Arguments& args);
-    static v8::Handle<v8::Value> public_key(const v8::Arguments& args);
+    static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void private_key(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void public_key(const Nan::FunctionCallbackInfo<v8::Value>& args);
 
-    static v8::Persistent<v8::Function> constructor;
+    static Nan::Persistent<v8::Function> constructor;
 
     std::vector<uint8_t> private_key_;
     std::vector<uint8_t> public_key_;
