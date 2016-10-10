@@ -125,8 +125,6 @@ ifneq ("$(wildcard src/wrappers/themis/php/Makefile)","")
 PHP_THEMIS_INSTALL = 1
 endif
 
-NODE_VERSION := $(shell node --version 2>/dev/null)
-
 SHARED_EXT = so
 
 UNAME=$(shell uname)
@@ -218,14 +216,15 @@ endif
 	@chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
 	@$(PRINT_OK_)
 endif
-#ifdef NODE_VERSION
-#	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
-#	echo "npm install ../../build/jsthemis-0.0.3.tgz" >> ./$(BIN_PATH)/tests/node.sh
-#	echo "mocha" >> ./$(BIN_PATH)/tests/node.sh
-#	chmod a+x ./$(BIN_PATH)/tests/node.sh
-#endif
-
-
+	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
+	echo "wget https://nodejs.org/dist/v4.6.0/node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
+	echo "tar -xvf node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
+	echo "cd ../../src/wrappers/themis/jsthemis && PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm pack && mv jsthemis-0.9.3.tgz ../../../../build && cd -" >> ./$(BIN_PATH)/tests/node.sh
+	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install mocha" >> ./$(BIN_PATH)/tests/node.sh
+	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install nan" >> ./$(BIN_PATH)/tests/node.sh
+	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install ../../build/jsthemis-0.9.3.tgz" >> ./$(BIN_PATH)/tests/node.sh
+	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) ./node_modules/mocha/bin/mocha" >> ./$(BIN_PATH)/tests/node.sh
+	chmod a+x ./$(BIN_PATH)/tests/node.sh
 
 soter_static: CMD = $(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
 
@@ -398,5 +397,3 @@ themispp_uninstall:
 	@echo -n "themispp uninstall "
 	@$(BUILD_CMD_)
 
-#jsthemis_install:
-#	cd src/wrappers/themis/jsthemis && mv `npm pack` ../../../../build/
