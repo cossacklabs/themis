@@ -131,3 +131,78 @@ describe("jsthemis", function(){
 	})
     })
 })
+
+describe("jsthemis", function(){
+    describe("secure comparator", function(){
+	it("match", function(){
+	    server_secret = new Buffer("Secret");
+	    client_secret = new Buffer("Secret");
+	    server_comparator = new addon.SecureComparator(server_secret);
+	    client_comparator = new addon.SecureComparator(client_secret);
+	    assert.equal(client_comparator.isCompareComplete(), false);
+	    assert.equal(server_comparator.isCompareComplete(), false);
+	    assert.throws(function(){client_comparator.isMatch()})
+	    assert.throws(function(){server_comparator.isMatch()})
+	    data = client_comparator.beginCompare();
+	    assert.equal(client_comparator.isCompareComplete(), false);
+	    assert.equal(server_comparator.isCompareComplete(), false);
+	    assert.throws(function(){client_comparator.isMatch()})
+	    assert.throws(function(){server_comparator.isMatch()})
+	    data = server_comparator.proceedCompare(data);
+	    assert.equal(client_comparator.isCompareComplete(), false);
+	    assert.equal(server_comparator.isCompareComplete(), false);
+	    assert.throws(function(){client_comparator.isMatch()})
+	    assert.throws(function(){server_comparator.isMatch()})
+	    data = client_comparator.proceedCompare(data);
+	    assert.equal(client_comparator.isCompareComplete(), false);
+	    assert.equal(server_comparator.isCompareComplete(), false);
+	    assert.throws(function(){client_comparator.isMatch()})
+	    assert.throws(function(){server_comparator.isMatch()})
+	    data = server_comparator.proceedCompare(data);
+	    assert.equal(client_comparator.isCompareComplete(), false);
+	    assert.equal(server_comparator.isCompareComplete(), true);
+	    assert.throws(function(){client_comparator.isMatch()})
+	    assert.equal(server_comparator.isMatch(), true);
+	    data = client_comparator.proceedCompare(data);
+	    assert.equal(client_comparator.isCompareComplete(), true);
+	    assert.equal(server_comparator.isCompareComplete(), true);
+	    assert.equal(client_comparator.isMatch(), true);
+	    assert.equal(server_comparator.isMatch(), true);
+	});
+	it("not match", function(){
+	    server_secret = new Buffer("Secret1");
+	    client_secret = new Buffer("Secret2");
+	    server_comparator = new addon.SecureComparator(server_secret);
+	    client_comparator = new addon.SecureComparator(client_secret);
+	    assert.equal(client_comparator.isCompareComplete(), false);
+	    assert.equal(server_comparator.isCompareComplete(), false);
+	    assert.throws(function(){client_comparator.isMatch()})
+	    assert.throws(function(){server_comparator.isMatch()})
+	    data = client_comparator.beginCompare();
+	    assert.equal(client_comparator.isCompareComplete(), false);
+	    assert.equal(server_comparator.isCompareComplete(), false);
+	    assert.throws(function(){client_comparator.isMatch()})
+	    assert.throws(function(){server_comparator.isMatch()})
+	    data = server_comparator.proceedCompare(data);
+	    assert.equal(client_comparator.isCompareComplete(), false);
+	    assert.equal(server_comparator.isCompareComplete(), false);
+	    assert.throws(function(){client_comparator.isMatch()})
+	    assert.throws(function(){server_comparator.isMatch()})
+	    data = client_comparator.proceedCompare(data);
+	    assert.equal(client_comparator.isCompareComplete(), false);
+	    assert.equal(server_comparator.isCompareComplete(), false);
+	    assert.throws(function(){client_comparator.isMatch()})
+	    assert.throws(function(){server_comparator.isMatch()})
+	    data = server_comparator.proceedCompare(data);
+	    assert.equal(client_comparator.isCompareComplete(), false);
+	    assert.equal(server_comparator.isCompareComplete(), true);
+	    assert.throws(function(){client_comparator.isMatch()})
+	    assert.equal(server_comparator.isMatch(), false);
+	    data = client_comparator.proceedCompare(data);
+	    assert.equal(client_comparator.isCompareComplete(), true);
+	    assert.equal(server_comparator.isCompareComplete(), true);
+	    assert.equal(client_comparator.isMatch(), false);
+	    assert.equal(server_comparator.isMatch(), false);
+	})
+    })
+})
