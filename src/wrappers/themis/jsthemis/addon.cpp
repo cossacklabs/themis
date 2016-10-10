@@ -21,6 +21,7 @@
 #include "secure_cell_seal.hpp"
 #include "secure_cell_context_imprint.hpp"
 #include "secure_cell_token_protect.hpp"
+#include "secure_comparator.hpp"
 
 void InitAll(v8::Handle<v8::Object> exports) {
   jsthemis::SecureMessage::Init(exports);
@@ -29,6 +30,7 @@ void InitAll(v8::Handle<v8::Object> exports) {
   jsthemis::SecureCellSeal::Init(exports);
   jsthemis::SecureCellContextImprint::Init(exports);
   jsthemis::SecureCellTokenProtect::Init(exports);
+  jsthemis::SecureComparator::Init(exports);
 }
 
 NODE_MODULE(jsthemis, InitAll)
