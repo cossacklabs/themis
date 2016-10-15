@@ -1,45 +1,45 @@
 package main
 
 import (
-	"github.com/cossacklabs/themis/gothemis/compare";
-	"net";
-	"fmt";
+	"fmt"
+	"github.com/cossacklabs/themis/gothemis/compare"
+	"net"
 	"os"
 )
 
 func connectionHandler(c net.Conn, secret string) {
 	sc, err := compare.New()
 	if err != nil {
-		fmt.Println("error creating secure comparator object");
+		fmt.Println("error creating secure comparator object")
 		return
 	}
 	err = sc.Append([]byte(secret))
 	if err != nil {
-		fmt.Println("error appending secret to secure comparator");
+		fmt.Println("error appending secret to secure comparator")
 		return
 	}
 	for {
 		res, err := sc.Result()
 		if err != nil {
-			fmt.Println("error geting result from secure comparator");
+			fmt.Println("error geting result from secure comparator")
 			return
 		}
 
-		if compare.COMPARE_NOT_READY == res{
+		if compare.COMPARE_NOT_READY == res {
 			buf := make([]byte, 10240)
 			readed_bytes, err := c.Read(buf)
 			if err != nil {
-				fmt.Println("error reading bytes from socket");
+				fmt.Println("error reading bytes from socket")
 				return
 			}
-			buf,  err = sc.Proceed(buf[:readed_bytes])
+			buf, err = sc.Proceed(buf[:readed_bytes])
 			if nil != err {
-				fmt.Println("error proceeding message");
+				fmt.Println("error proceeding message")
 				return
 			}
 			_, err = c.Write(buf)
 			if err != nil {
-				fmt.Println("error writing bytes from socket");
+				fmt.Println("error writing bytes from socket")
 				return
 			}
 		} else {
@@ -54,8 +54,8 @@ func connectionHandler(c net.Conn, secret string) {
 }
 
 func main() {
-	if 2 != len(os.Args){
-		fmt.Printf("usage: %s <password>", os.Args[0]);
+	if 2 != len(os.Args) {
+		fmt.Printf("usage: %s <password>", os.Args[0])
 		return
 	}
 	l, err := net.Listen("tcp", ":8080")
@@ -69,7 +69,7 @@ func main() {
 			fmt.Println("accepting error")
 			return
 		}
-		
+
 		go connectionHandler(conn, os.Args[1])
 	}
 }
