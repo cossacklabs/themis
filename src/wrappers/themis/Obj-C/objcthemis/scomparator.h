@@ -19,8 +19,6 @@
 * @brief secure comparator interface
 */
 
-#ifdef SECURE_COMPARATOR_ENABLED
-
 #import <themis/themis.h>
 
 /**
@@ -77,4 +75,3 @@ typedef NS_ENUM(NSInteger, TSComparatorStateType){
 @end
 /** @} */
 /** @} */
-#endif
