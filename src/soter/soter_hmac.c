@@ -116,6 +116,7 @@ soter_status_t soter_hmac_cleanup(soter_hmac_ctx_t *hmac_ctx)
 	}
 
 	memset(hmac_ctx->o_key_pad, 0, sizeof(hmac_ctx->o_key_pad));
+	soter_hash_cleanup(&(hmac_ctx->hash_ctx));
 	return SOTER_SUCCESS;
 }
 

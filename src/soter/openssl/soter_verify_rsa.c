@@ -58,7 +58,7 @@ soter_status_t soter_verify_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
     return SOTER_NO_MEMORY;
   }
-  if(!EVP_DigestVerifyInit(ctx->md_ctx, &(ctx->pkey_ctx), EVP_sha256(), NULL, pkey)){
+  if(!EVP_DigestVerifyInit(ctx->md_ctx, NULL/*&(ctx->pkey_ctx)*/, EVP_sha256(), NULL, pkey)){
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
     return SOTER_FAIL;
   }

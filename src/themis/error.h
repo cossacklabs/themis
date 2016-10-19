@@ -91,6 +91,8 @@ typedef int themis_status_t;
 
 #define THEMIS_STATUS_CHECK_FREE(x,y,z) SOTER_STATUS_CHECK_FREE(x,y,z)
 
+#define THEMIS_CHECK__(cond, on_fail_call) do{if(!(cond)){on_fail_call;}}while(0)
+
 /** @} 
  * @}
  */

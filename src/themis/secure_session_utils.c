@@ -78,14 +78,13 @@ soter_sign_alg_t get_peer_key_sign_type(const void *sign_key, size_t sign_key_le
 
 themis_status_t compute_signature(const void *sign_key, size_t sign_key_length, const soter_kdf_context_buf_t *sign_data, size_t sign_data_count, void *signature, size_t *signature_length)
 {
-	soter_sign_ctx_t sign_ctx;
+	soter_sign_ctx_t* sign_ctx=NULL;
 	soter_status_t soter_status;
 	size_t i;
 
-	soter_status = soter_sign_init(&sign_ctx, get_key_sign_type(sign_key, sign_key_length), sign_key, sign_key_length, NULL, 0);
-	if (THEMIS_SUCCESS != soter_status)
-	{
-		return soter_status;
+	sign_ctx = soter_sign_create(get_key_sign_type(sign_key, sign_key_length), sign_key, sign_key_length, NULL, 0);
+	if (!sign_ctx){
+		return THEMIS_FAIL;
 	}
 
 	/* This is to compute real signature, not just get output data size */
@@ -93,7 +92,7 @@ themis_status_t compute_signature(const void *sign_key, size_t sign_key_length, 
 	{
 		for (i = 0; i < sign_data_count; i++)
 		{
-			soter_status = soter_sign_update(&sign_ctx, sign_data[i].data, sign_data[i].length);
+			soter_status = soter_sign_update(sign_ctx, sign_data[i].data, sign_data[i].length);
 			if (THEMIS_SUCCESS != soter_status)
 			{
 				goto err;
@@ -101,30 +100,29 @@ themis_status_t compute_signature(const void *sign_key, size_t sign_key_length, 
 		}
 	}
 
-	soter_status = soter_sign_final(&sign_ctx, signature, signature_length);
+	soter_status = soter_sign_final(sign_ctx, signature, signature_length);
 
 err:
 
-	/* TODO: cleanup sign ctx */
-
+	soter_sign_destroy(sign_ctx);
 	return soter_status;
 }
 
 themis_status_t verify_signature(const void *verify_key, size_t verify_key_length, const soter_kdf_context_buf_t *sign_data, size_t sign_data_count, const void *signature, size_t signature_length)
 {
-	soter_sign_ctx_t sign_ctx;
+	soter_sign_ctx_t* sign_ctx=NULL;
 	soter_status_t soter_status;
 	size_t i;
 
-	soter_status = soter_verify_init(&sign_ctx, get_peer_key_sign_type(verify_key, verify_key_length), NULL, 0, verify_key, verify_key_length);
-	if (THEMIS_SUCCESS != soter_status)
+	sign_ctx = soter_verify_create(get_peer_key_sign_type(verify_key, verify_key_length), NULL, 0, verify_key, verify_key_length);
+	if (!sign_ctx)
 	{
 		return soter_status;
 	}
 
 	for (i = 0; i < sign_data_count; i++)
 	{
-		soter_status = soter_verify_update(&sign_ctx, sign_data[i].data, sign_data[i].length);
+		soter_status = soter_verify_update(sign_ctx, sign_data[i].data, sign_data[i].length);
 		if (THEMIS_SUCCESS != soter_status)
 		{
 			goto err;
@@ -132,12 +130,13 @@ themis_status_t verify_signature(const void *verify_key, size_t verify_key_lengt
 	}
 
 	/* TODO: fix verify functions prototypes */
-	soter_status = soter_verify_final(&sign_ctx, (void *)signature, signature_length);
+	soter_status = soter_verify_final(sign_ctx, (void *)signature, signature_length);
 
 err:
 
 	/* TODO: cleanup sign ctx */
 
+	soter_sign_destroy(sign_ctx);
 	return soter_status;
 }
 

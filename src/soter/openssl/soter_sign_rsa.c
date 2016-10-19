@@ -66,7 +66,7 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* 
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
     return SOTER_NO_MEMORY;
   }
-  if(!EVP_DigestSignInit(ctx->md_ctx, &(ctx->pkey_ctx), EVP_sha256(), NULL, pkey)){
+  if(!EVP_DigestSignInit(ctx->md_ctx, NULL/*&(ctx->pkey_ctx)*/, EVP_sha256(), NULL, pkey)){
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
     return SOTER_FAIL;
   }
@@ -107,5 +107,17 @@ soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signa
   if(!EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length)){
     return SOTER_FAIL;
   }
+
+  if(ctx->md_ctx){
+    EVP_MD_CTX_destroy(ctx->md_ctx);
+    ctx->md_ctx=NULL;
+  }
+  if(ctx->pkey_ctx){
+    EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
+    EVP_PKEY_CTX_free(ctx->pkey_ctx);
+    ctx->pkey_ctx=NULL;
+    if(pkey)EVP_PKEY_free(pkey);
+  }
+
   return SOTER_SUCCESS;
 }

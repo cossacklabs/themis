@@ -24,6 +24,16 @@
 
 soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
 {
+  if(ctx->md_ctx){
+    EVP_MD_CTX_destroy(ctx->md_ctx);
+    ctx->md_ctx=NULL;
+  }
+  if(ctx->pkey_ctx){
+    EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
+    EVP_PKEY_CTX_free(ctx->pkey_ctx);
+    ctx->pkey_ctx=NULL;
+    EVP_PKEY_free(pkey);
+  }
   /* pkey_ctx init */
   EVP_PKEY *pkey;
   pkey = EVP_PKEY_new();
@@ -56,12 +66,16 @@ soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const v
   }
 
   /*md_ctx init*/
-  ctx->md_ctx = EVP_MD_CTX_create();
-  if(!(ctx->md_ctx)){
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    return SOTER_NO_MEMORY;
-  }
-  if(!EVP_DigestVerifyInit(ctx->md_ctx, &(ctx->pkey_ctx), EVP_sha256(), NULL, pkey)){
+//  if(!ctx->md_ctx){
+    ctx->md_ctx = EVP_MD_CTX_create();
+    if(!(ctx->md_ctx)){
+	EVP_PKEY_CTX_free(ctx->pkey_ctx);
+        return SOTER_NO_MEMORY;
+    }
+//  }else{
+//    EVP_MD_CTX_cleanup(ctx->md_ctx);
+//  }
+  if(!EVP_DigestVerifyInit(ctx->md_ctx, NULL/*&(ctx->pkey_ctx)*/, EVP_sha256(), NULL, pkey)){
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
     return SOTER_FAIL;
   }
@@ -86,8 +100,9 @@ soter_status_t soter_verify_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const 
   if (!pkey){
     return SOTER_INVALID_PARAMETER;
   }
-
-  switch (EVP_DigestVerifyFinal(ctx->md_ctx, (unsigned char*)signature, signature_length)) {
+    
+  int res = EVP_DigestVerifyFinal(ctx->md_ctx, (unsigned char*)signature, signature_length);
+  switch (res) {
   case 0:
 	  return SOTER_INVALID_SIGNATURE;
   case 1:

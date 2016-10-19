@@ -54,8 +54,8 @@ static void test_basic_encryption_flow(void)
 	res = soter_rsa_key_pair_gen_export_key(key_pair_ctx, key_data, &key_data_length, false);
 	if(res!=SOTER_SUCCESS){
 		testsuite_fail_if(res!=SOTER_SUCCESS, "export generated public key");
-		soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher);
 		soter_rsa_key_pair_gen_destroy(key_pair_ctx);
+		soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher);
 		return;
 	}
 
@@ -253,6 +253,7 @@ void test_api(int key_length)
 		return;
 	}
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_cipher_destroy(NULL), "soter_asym_cipher_destroy: invalid context");
+	soter_rsa_key_pair_gen_destroy(key_pair_ctx);
 }
 
 void test_api_all()

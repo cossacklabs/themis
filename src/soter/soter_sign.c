@@ -153,7 +153,7 @@ soter_status_t soter_verify_final(soter_sign_ctx_t* ctx, const void* signature, 
 
 
 soter_sign_ctx_t* soter_sign_create(soter_sign_alg_t alg, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length){
-  soter_sign_ctx_t* ctx=malloc(sizeof(soter_sign_ctx_t));
+  soter_sign_ctx_t* ctx=calloc(sizeof(soter_sign_ctx_t),1);
   if(!ctx){
     return NULL;
   }
@@ -165,7 +165,7 @@ soter_sign_ctx_t* soter_sign_create(soter_sign_alg_t alg, const void* private_ke
 }
 
 soter_sign_ctx_t* soter_verify_create(soter_sign_alg_t alg, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length){
-  soter_sign_ctx_t* ctx=malloc(sizeof(soter_sign_ctx_t));
+  soter_sign_ctx_t* ctx=calloc(sizeof(soter_sign_ctx_t),1);
   if(!ctx){
     return NULL;
   }
@@ -180,9 +180,15 @@ soter_status_t soter_sign_destroy(soter_sign_ctx_t* ctx){
   if(!ctx){
     return SOTER_INVALID_PARAMETER;
   }    
+  if(ctx->md_ctx){
+    EVP_MD_CTX_destroy(ctx->md_ctx);
+    ctx->md_ctx=NULL;
+  }
   if(ctx->pkey_ctx){
+    EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
     ctx->pkey_ctx=NULL;
+    if(pkey)EVP_PKEY_free(pkey);
   }
   free(ctx);
   return SOTER_SUCCESS;

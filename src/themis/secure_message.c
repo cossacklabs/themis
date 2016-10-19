@@ -54,6 +54,7 @@ themis_status_t themis_gen_rsa_key_pair(uint8_t* private_key,
   soter_rsa_key_pair_gen_t* key_pair_ctx=soter_rsa_key_pair_gen_create(THEMIS_RSA_KEY_LENGTH);
   themis_status_t res=soter_rsa_key_pair_gen_export_key(key_pair_ctx, private_key, private_key_length, true);
   themis_status_t res1=soter_rsa_key_pair_gen_export_key(key_pair_ctx, public_key, public_key_length, false);
+  soter_rsa_key_pair_gen_destroy(key_pair_ctx);
   return (res<res1)?res:res1;
 }
 
@@ -89,7 +90,7 @@ themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
     THEMIS_CHECK_PARAM(public_key_length!=0);
     themis_secure_message_encrypter_t* ctx=NULL;
     ctx = themis_secure_message_encrypter_init(private_key, private_key_length, public_key, public_key_length);
-    THEMIS_CHECK(ctx!=NULL);
+    THEMIS_CHECK__(ctx!=NULL, return THEMIS_INVALID_PARAMETER);
     themis_status_t res=themis_secure_message_encrypter_proceed(ctx, message, message_length, wrapped_message, wrapped_message_length);
     themis_secure_message_encrypter_destroy(ctx);
     return res;    
@@ -125,10 +126,10 @@ themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
     THEMIS_CHECK_PARAM(private_key_length!=0);
     themis_secure_message_decrypter_t* ctx=NULL;
     ctx = themis_secure_message_decrypter_init(private_key, private_key_length, public_key, public_key_length);
-    THEMIS_CHECK(ctx!=NULL);
+    THEMIS_CHECK__(ctx, return THEMIS_INVALID_PARAMETER);
     themis_status_t res=themis_secure_message_decrypter_proceed(ctx, wrapped_message, wrapped_message_length, message, message_length);
     themis_secure_message_decrypter_destroy(ctx);
-    return res;    
+    return res;
 
   }
   return THEMIS_INVALID_PARAMETER;
