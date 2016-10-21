@@ -69,6 +69,7 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_al
 		EC_KEY_free(ec);
 		return SOTER_FAIL;
 	}
+	EC_KEY_free(ec);
 	return SOTER_SUCCESS;
 }
 
@@ -80,6 +81,8 @@ soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
 	}
 	if (asym_ka_ctx->pkey_ctx)
 	{
+		EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
+		if(pkey)EVP_PKEY_free(pkey);
 		EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
 	}
 	return SOTER_SUCCESS;

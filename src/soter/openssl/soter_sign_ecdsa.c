@@ -26,17 +26,7 @@
 
 soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
 {
-  if(ctx->md_ctx){
-    EVP_MD_CTX_destroy(ctx->md_ctx);
-    ctx->md_ctx=NULL;
-  }
-  if(ctx->pkey_ctx){
-    EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    ctx->pkey_ctx=NULL;
-    if(pkey)EVP_PKEY_free(pkey);
-  }
-  /* pkey_ctx init */
+  /* pkey_ctx init */  
   EVP_PKEY *pkey;
   pkey = EVP_PKEY_new();
   if (!pkey){
@@ -52,64 +42,45 @@ soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const voi
     return SOTER_FAIL;
   }
   if (!EVP_PKEY_paramgen_init(ctx->pkey_ctx)){
-    EVP_PKEY_free(pkey);
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    ctx->pkey_ctx=NULL;
+    soter_sign_cleanup_ecdsa_none_pkcs8(ctx);
     return SOTER_FAIL;
   }
   if (!EVP_PKEY_CTX_set_ec_paramgen_curve_nid(ctx->pkey_ctx, NID_X9_62_prime256v1)){
-    EVP_PKEY_free(pkey);
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    ctx->pkey_ctx=NULL;
+    soter_sign_cleanup_ecdsa_none_pkcs8(ctx);
     return SOTER_FAIL;
   }
   if (!EVP_PKEY_paramgen(ctx->pkey_ctx, &pkey)){
-    EVP_PKEY_free(pkey);
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    ctx->pkey_ctx=NULL;
+    soter_sign_cleanup_ecdsa_none_pkcs8(ctx);
     return SOTER_FAIL;
   }
   if((!private_key)&&(!public_key)){
     if(soter_ec_gen_key(ctx->pkey_ctx)!=SOTER_SUCCESS){
-      EVP_PKEY_free(pkey);
-      EVP_PKEY_CTX_free(ctx->pkey_ctx);
-      ctx->pkey_ctx=NULL;
+      soter_sign_cleanup_ecdsa_none_pkcs8(ctx);
       return SOTER_FAIL;
     }
   }else{
     if(private_key!=NULL){
       if(soter_ec_import_key(pkey, private_key, private_key_length)!=SOTER_SUCCESS){
-	EVP_PKEY_free(pkey);
-        EVP_PKEY_CTX_free(ctx->pkey_ctx);
-        ctx->pkey_ctx=NULL;
+        soter_sign_cleanup_ecdsa_none_pkcs8(ctx);
 	return SOTER_FAIL;
       }
     }
     if(public_key!=NULL){
       if(soter_ec_import_key(pkey, public_key, public_key_length)!=SOTER_SUCCESS){
-	EVP_PKEY_free(pkey);
-        EVP_PKEY_CTX_free(ctx->pkey_ctx);
-	ctx->pkey_ctx=NULL;
+        soter_sign_cleanup_ecdsa_none_pkcs8(ctx);
 	return SOTER_FAIL;
       }
     }
   }
 
   /*md_ctx init*/
-//  if(!(ctx->md_ctx)){
     ctx->md_ctx = EVP_MD_CTX_create();
     if(!(ctx->md_ctx)){
-	EVP_PKEY_free(pkey);
-	EVP_PKEY_CTX_free(ctx->pkey_ctx);
-	ctx->pkey_ctx=NULL;
+        soter_sign_cleanup_ecdsa_none_pkcs8(ctx);
 	return SOTER_NO_MEMORY;
     }
-//  }else{
-//    EVP_MD_CTX_cleanup(ctx->md_ctx);
-//  }
-  if(EVP_DigestSignInit(ctx->md_ctx, NULL/*&(ctx->pkey_ctx)*/, EVP_sha256(), NULL, pkey)!=1){
-    EVP_PKEY_free(pkey);
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
+  if(EVP_DigestSignInit(ctx->md_ctx, NULL, EVP_sha256(), NULL, pkey)!=1){
+    soter_sign_cleanup_ecdsa_none_pkcs8(ctx);
     return SOTER_FAIL;
   }
   return SOTER_SUCCESS;
@@ -143,4 +114,22 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* si
 	res = SOTER_INVALID_SIGNATURE;
   }
   return res;
+}
+
+soter_status_t soter_sign_cleanup_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx)
+{
+  if(!ctx){
+    return SOTER_INVALID_PARAMETER;
+  }
+  if(ctx->pkey_ctx){
+    EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
+    if(pkey)EVP_PKEY_free(pkey);
+    EVP_PKEY_CTX_free(ctx->pkey_ctx);
+    ctx->pkey_ctx=NULL;
+  }
+  if(ctx->md_ctx){
+    EVP_MD_CTX_destroy(ctx->md_ctx);
+    ctx->md_ctx=NULL;
+  }
+  return SOTER_SUCCESS;
 }
