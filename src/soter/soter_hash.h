@@ -93,6 +93,7 @@ soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo);
  * @return @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
 soter_status_t soter_hash_destroy(soter_hash_ctx_t *hash_ctx);
+soter_status_t soter_hash_cleanup(soter_hash_ctx_t *hash_ctx);
 
 /**
  * @brief update hash context with data

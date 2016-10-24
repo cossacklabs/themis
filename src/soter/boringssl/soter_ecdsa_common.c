@@ -49,6 +49,7 @@ soter_status_t soter_ec_gen_key(EVP_PKEY_CTX *pkey_ctx)
   if(!EVP_PKEY_set1_EC_KEY(pkey, ec)){
     return SOTER_ENGINE_FAIL;
   }
+  EC_KEY_free(ec);
   return SOTER_SUCCESS;
 }
 

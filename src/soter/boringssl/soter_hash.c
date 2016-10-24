@@ -120,6 +120,15 @@ soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo)
 	}
 }
 
+soter_status_t soter_hash_cleanup(soter_hash_ctx_t* hash_ctx){
+    if (!hash_ctx)
+    {
+	return SOTER_INVALID_PARAMETER;
+    }
+    EVP_MD_CTX_cleanup(&(hash_ctx->evp_md_ctx));
+    return SOTER_SUCCESS;
+}
+
 soter_status_t soter_hash_destroy(soter_hash_ctx_t *hash_ctx)
 {
 	if (!hash_ctx)

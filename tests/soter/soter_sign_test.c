@@ -98,7 +98,6 @@ static int sign_test(soter_sign_alg_t alg)
     soter_sign_destroy(sctx);
     return -5;
   }
-
   res=soter_sign_destroy(sctx);
   if(res!=SOTER_SUCCESS){
     testsuite_fail_if(res!=SOTER_SUCCESS,"soter_sign_destroy fail");
@@ -127,11 +126,12 @@ static int sign_test(soter_sign_alg_t alg)
     return -11;
   }
 
-  res=soter_sign_destroy(vctx);
+  res=soter_verify_destroy(vctx);
   if(res!=SOTER_SUCCESS){
     testsuite_fail_if(res!=SOTER_SUCCESS,"soter_sign_destroy fail");
     return -12;
   }
+  free(signature);
   return 0;
 }
 

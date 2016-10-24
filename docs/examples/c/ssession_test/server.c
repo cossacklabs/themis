@@ -16,15 +16,14 @@
 
 #include "common.h"
 
-#include <common/error.h>
-#include <themis/secure_session.h>
+#include <themis/themis.h>
 
 #define SERVER_ID "server"
 #define CLIENT_ID "client"
 
 struct server_type
 {
-	secure_session_t ctx;
+	secure_session_t* ctx;
 	int listen_socket;
 	int client_socket;
 };
@@ -37,7 +36,7 @@ static uint8_t client_pub[] = {0x55, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2d, 0
 /* Server credentials */
 static uint8_t server_priv[] = {0x52, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2d, 0x49, 0x87, 0x04, 0x6b, 0x00, 0xf2, 0x06, 0x07, 0x7d, 0xc7, 0x1c, 0x59, 0xa1, 0x8f, 0x39, 0xfc, 0x94, 0x81, 0x3f, 0x9e, 0xc5, 0xba, 0x70, 0x6f, 0x93, 0x08, 0x8d, 0xe3, 0x85, 0x82, 0x5b, 0xf8, 0x3f, 0xc6, 0x9f, 0x0b, 0xdf};
 
-static void on_send(const uint8_t *data, size_t data_length, void *user_data)
+static ssize_t on_send(const uint8_t *data, size_t data_length, void *user_data)
 {
 	server_t *s = (server_t *)user_data;
 
@@ -72,7 +71,7 @@ static int on_get_pub_key(const void *id, size_t id_length, void *key_buffer, si
 }
 
 /* This is server session ctx */
-static server_t server = {{0}, -1, -1};
+static server_t server = {NULL, -1, -1};
 
 static secure_session_user_callbacks_t clb =
 {
@@ -111,8 +110,8 @@ void* run_server(void *arg)
 		return NULL;
 	}
 
-	status = secure_session_init(&(server.ctx), SERVER_ID, strlen(SERVER_ID), server_priv, sizeof(server_priv), &clb);
-	if (HERMES_SUCCESS != status)
+	server.ctx = secure_session_create(SERVER_ID, strlen(SERVER_ID), server_priv, sizeof(server_priv), &clb);
+	if (!server.ctx)
 	{
 		return NULL;
 	}
@@ -127,7 +126,7 @@ void* run_server(void *arg)
 	while (1)
 	{
 		uint8_t buffer[BUF_SIZE];
-		ssize_t bytes_received = secure_session_receive(&(server.ctx), buffer, sizeof(buffer));
+		ssize_t bytes_received = secure_session_receive(server.ctx, buffer, sizeof(buffer));
 		ssize_t bytes_sent;
 
 		if (bytes_received < 0)
@@ -148,7 +147,7 @@ void* run_server(void *arg)
 			}
 
 			/* For other messages, just echo them back */
-			bytes_sent = secure_session_send(&(server.ctx), buffer, bytes_received);
+			bytes_sent = secure_session_send(server.ctx, buffer, bytes_received);
 			if (bytes_sent < 0)
 			{
 				/* Some error, log and continue */

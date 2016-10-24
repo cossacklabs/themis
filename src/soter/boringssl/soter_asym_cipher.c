@@ -110,6 +110,8 @@ soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher)
 
 	if (asym_cipher->pkey_ctx)
 	{
+		EVP_PKEY *pkey=EVP_PKEY_CTX_get0_pkey(asym_cipher->pkey_ctx);
+		if(pkey)EVP_PKEY_free(pkey);
 		EVP_PKEY_CTX_free(asym_cipher->pkey_ctx);
 	}
 
