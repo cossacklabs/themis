@@ -35,8 +35,8 @@ final class SMessageClient {
         let base64Body: String = "\("message=")\(base64URLEncodedMessage)"
         let body: NSData = base64Body.dataUsingEncoding(NSUTF8StringEncoding)!
         
-        let uploadTask: NSURLSessionDataTask = session.uploadTaskWithRequest(request, fromData: body,
-                completionHandler: {(data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
+        let uploadTask: NSURLSessionDataTask = session.uploadTaskWithRequest(request, fromData: body)
+            { (data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
                     
             guard let data = data else {
                 print("Oops, response = \(response)\n error = \(error)")
@@ -52,7 +52,7 @@ final class SMessageClient {
                     
             completion(data: data, error: nil)
             return
-        })
+        }
         
         uploadTask.resume()
     }
@@ -91,7 +91,7 @@ final class SMessageClient {
         }
         
         let stringURL: String = "\("https://themis.cossacklabs.com/api/")\(kUserId)/"
-        postRequestTo(stringURL, message: encryptedMessage, completion: {(data: NSData?, error: NSError?) -> Void in
+        postRequestTo(stringURL, message: encryptedMessage) {(data: NSData?, error: NSError?) -> Void in
             guard let data = data else {
                 print("response error \(error)")
                 return
@@ -106,7 +106,7 @@ final class SMessageClient {
                 print("Error occurred while decrypting \(error)", #function)
                 return
             }
-        })
+        }
     }
 
     private func generateClientKeys() {
