@@ -13,7 +13,7 @@ buildscript {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 22
+    compileSdkVersion 25
     buildToolsVersion "22.0.1"
     
     defaultConfig {
@@ -23,23 +23,11 @@ android {
     sourceSets {
     	main {
     		java.srcDirs = ['src/wrappers/themis/java']
-    		
-    		if (System.env.SECURE_COMPARATOR != "enable") {
-    			java.excludes = ['com/cossacklabs/themis/SecureCompare.java', 'com/cossacklabs/themis/SecureCompareException.java']
-    		}
-    		
     		manifest.srcFile 'src/wrappers/themis/android/AndroidManifest.xml'
-    		
     		jniLibs.srcDirs = ['libs']
     	}
-    	
     	androidTest.setRoot('tests/themis/wrappers/android')
         androidTest.java.srcDirs = ['tests/themis/wrappers/android']
-        
-        if (System.env.SECURE_COMPARATOR != "enable") {
-    		androidTest.java.excludes = ['com/cossacklabs/themis/test/SecureCompareTest.java']
-    	}
-        
         androidTest.manifest.srcFile 'tests/themis/wrappers/android/AndroidManifest.xml'
 
 	}
