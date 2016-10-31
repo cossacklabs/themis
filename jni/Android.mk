@@ -16,6 +16,10 @@
 
 LOCAL_PATH := $(call my-dir)
 
+ifeq ($(BORINGSSL_PATH),)
+    $(error "boringSSL path must be set")
+endif
+
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := libsoter
@@ -96,11 +100,11 @@ include $(CLEAR_VARS)
 
 #LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libcrypto
-LOCAL_SRC_FILES := libcrypto.a
-LOCAL_EXPORT_C_INCLUDES := /home/andrey/tmp/boringssl/include
+LOCAL_SRC_FILES := $(BORINGSSL_PATH)/build-$(TARGET_ARCH_ABI)/crypto/libcrypto.a
+LOCAL_EXPORT_C_INCLUDES := $(BORINGSSL_PATH)/include
 include $(PREBUILT_STATIC_LIBRARY)
 
 LOCAL_MODULE := libdecrepit
-LOCAL_SRC_FILES := libdecrepit.a
+LOCAL_SRC_FILES := $(BORINGSSL_PATH)/build-$(TARGET_ARCH_ABI)/decrepit/libdecrepit.a
 include $(PREBUILT_STATIC_LIBRARY)
 
