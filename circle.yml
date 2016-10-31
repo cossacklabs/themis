@@ -51,5 +51,5 @@ test:
     # wait for it to have booted
     - circle-android wait-for-boot
     # run Android tests
-    - ./gradlew connectedAndroidTest
+    - ./gradlew -Pboringssl_path=$HOME/boringssl connectedAndroidTest
 
