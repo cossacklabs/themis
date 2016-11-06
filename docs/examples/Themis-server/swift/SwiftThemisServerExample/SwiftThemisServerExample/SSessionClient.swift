@@ -70,8 +70,8 @@ final class SSessionClient {
         let base64Body: String = "\("message=")\(base64URLEncodedMessage)"
         let body: NSData = base64Body.dataUsingEncoding(NSUTF8StringEncoding)!
         
-        let uploadTask: NSURLSessionDataTask = session.uploadTaskWithRequest(request, fromData: body,
-                    completionHandler: {(data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
+        let uploadTask: NSURLSessionDataTask = session.uploadTaskWithRequest(request, fromData: body)
+            { (data: NSData?, response: NSURLResponse?, error: NSError?) -> Void in
             
             guard let data = data else {
                 print("Oops, response = \(response)\n error = \(error)")
@@ -87,14 +87,14 @@ final class SSessionClient {
             
             completion(data: data, error: nil)
             return
-        })
+        }
         
         uploadTask.resume()
     }
     
     
     private func startSessionTo(stringURL: String, message: NSData, completion: (error: NSError?) -> Void) {
-        postRequestTo(stringURL, message: message, completion: {(data: NSData?, error: NSError?) -> Void in
+        postRequestTo(stringURL, message: message) { (data: NSData?, error: NSError?) -> Void in
             guard let data = data else {
                 print("Error occurred while starting session \(error)")
                 return
@@ -123,7 +123,7 @@ final class SSessionClient {
                 }
                 return
             }
-        })
+        }
     }
     
     
@@ -141,7 +141,7 @@ final class SSessionClient {
             return
         }
         
-        postRequestTo(stringURL, message: encryptedMessage, completion: {(data: NSData?, error: NSError?) -> Void in
+        postRequestTo(stringURL, message: encryptedMessage) { (data: NSData?, error: NSError?) -> Void in
             guard let data = data else {
                 print("Error occurred while sending message \(error)")
                 return
@@ -160,7 +160,7 @@ final class SSessionClient {
                 completion(data: nil, error: error)
                 return
             }
-        })
+        }
     }
     
     
@@ -199,22 +199,22 @@ final class SSessionClient {
         
         
         let stringURL: String = "\("https://themis.cossacklabs.com/api/")\(kClientId)/"
-        self.startSessionTo(stringURL, message: connectionMessage, completion: {(error: NSError?) -> Void in
+        self.startSessionTo(stringURL, message: connectionMessage) { (error: NSError?) -> Void in
             if error != nil {
                 print("Error occurred while session initialization \(error)", #function)
                 return
             }
             
-            self.sendMessageTo(stringURL, message: "This is test message from Swift",
-                completion: {(data: String?, messageError: NSError?) -> Void in
+            self.sendMessageTo(stringURL, message: "This is test message from Swift")
+                { (data: String?, messageError: NSError?) -> Void in
                 
                 guard let data = data else {
                     print("Error occurred while sending message \(messageError)", #function)
                     return
                 }
                 print("Response success:\n\(data)")
-            })
-        })
+            }
+        }
     }
     
     
