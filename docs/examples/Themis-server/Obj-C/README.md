@@ -6,3 +6,6 @@
 5. Start server in SMessage OR SSession mode (press corresponded button).
 6. Start app on SMessage OR Session mode (comment undeeded line in AppDelegate).
 7. Enjoy
+
+Read How Themis Server Simulator works:
+https://github.com/cossacklabs/themis/wiki/Using-Themis-Server

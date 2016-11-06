@@ -16,8 +16,8 @@
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, '7.0'
-xcodeproj 'SwiftThemisServerExample/SwiftThemisServerExample.xcodeproj'
+platform :ios, '8.0'
+project 'SwiftThemisServerExample/SwiftThemisServerExample.xcodeproj'
 inhibit_all_warnings!
 
 target :"SwiftThemisServerExample" do
