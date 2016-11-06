@@ -1,0 +1,31 @@
+PODS:
+  - OpenSSL-Universal (1.0.1.20)
+  - themis (0.9.4):
+    - OpenSSL-Universal (= 1.0.1.20)
+    - themis/core (= 0.9.4)
+    - themis/objcwrapper (= 0.9.4)
+  - themis/core (0.9.4):
+    - OpenSSL-Universal (= 1.0.1.20)
+  - themis/objcwrapper (0.9.4):
+    - OpenSSL-Universal (= 1.0.1.20)
+    - themis/core
+
+DEPENDENCIES:
+  - themis (from `https://github.com/cossacklabs/themis.git`)
+
+EXTERNAL SOURCES:
+  themis:
+    :git: https://github.com/cossacklabs/themis.git
+
+CHECKOUT OPTIONS:
+  themis:
+    :commit: 53fd21f95c2ff1d9cffa8fa45288203cfe9f983f
+    :git: https://github.com/cossacklabs/themis.git
+
+SPEC CHECKSUMS:
+  OpenSSL-Universal: 71f2c4b2ae758e2218090f905e95ca0ac5c01be7
+  themis: 60ccb2c4f9172fa805f97d962dc18ae87f19edda
+
+PODFILE CHECKSUM: 8b1b9f7b9537a3ce7d049180c7ab31b34d9dff7b
+
+COCOAPODS: 1.1.1
