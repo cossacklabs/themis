@@ -58,8 +58,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var encryptedMessage: Data = Data()
         do {
             // context is optional parameter and may be ignored
-            encryptedMessage = try cellSeal.wrap(message.data(using: String.Encoding.utf8),
-                                                     context: context.data(using: String.Encoding.utf8))
+            encryptedMessage = try cellSeal.wrap(message.data(using: .utf8),
+                                                     context: context.data(using: .utf8))
             print("decryptedMessagez = \(encryptedMessage)")
             
         } catch let error as NSError {
@@ -70,8 +70,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         do {
             let decryptedMessage: Data = try cellSeal.unwrapData(encryptedMessage,
-                                                       context: context.data(using: String.Encoding.utf8))
-            let resultString: String = String(data: decryptedMessage, encoding: String.Encoding.utf8)!
+                                                       context: context.data(using: .utf8))
+            let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
             print("decryptedMessage = \(resultString)")
             
         } catch let error as NSError {
@@ -94,8 +94,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var encryptedMessage: TSCellTokenEncryptedData = TSCellTokenEncryptedData()
         do {
             // context is optional parameter and may be ignored
-            encryptedMessage = try cellToken.wrap(message.data(using: String.Encoding.utf8),
-                                                      context: context.data(using: String.Encoding.utf8))
+            encryptedMessage = try cellToken.wrap(message.data(using: .utf8),
+                                                      context: context.data(using: .utf8))
             print("encryptedMessage.cipher = \(encryptedMessage.cipherText)")
             print("encryptedMessage.token = \(encryptedMessage.token)")
             
@@ -107,8 +107,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
         do {
             let decryptedMessage: Data = try cellToken.unwrapData(encryptedMessage,
-                                                            context: context.data(using: String.Encoding.utf8))
-            let resultString: String = String(data: decryptedMessage, encoding: String.Encoding.utf8)!
+                                                            context: context.data(using: .utf8))
+            let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
             print("decryptedMessage = \(resultString)")
             
         } catch let error as NSError {
@@ -132,8 +132,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var encryptedMessage: Data = Data()
         do {
             // context is NOT optional parameter here
-            encryptedMessage = try contextImprint.wrap(message.data(using: String.Encoding.utf8),
-                                                           context: context.data(using: String.Encoding.utf8))
+            encryptedMessage = try contextImprint.wrap(message.data(using: .utf8),
+                                                           context: context.data(using: .utf8))
             print("encryptedMessage = \(encryptedMessage)")
             
         } catch let error as NSError {
@@ -145,8 +145,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         do {
             // context is NOT optional parameter here
             let decryptedMessage: Data = try contextImprint.unwrapData(encryptedMessage,
-                                                            context: context.data(using: String.Encoding.utf8))
-            let resultString: String = String(data: decryptedMessage, encoding: String.Encoding.utf8)!
+                                                            context: context.data(using: .utf8))
+            let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
             print("decryptedMessage = \(resultString)")
             
         } catch let error as NSError {
@@ -239,7 +239,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         var encryptedMessage: Data = Data()
         do {
-            encryptedMessage = try encrypter.wrap(message.data(using: String.Encoding.utf8))
+            encryptedMessage = try encrypter.wrap(message.data(using: .utf8))
             print("encryptedMessage = \(encryptedMessage)")
             
         } catch let error as NSError {
@@ -265,7 +265,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         do {
             let decryptedMessage: Data = try decrypter.unwrapData(encryptedMessage)
-            let resultString: String = String(data: decryptedMessage, encoding: String.Encoding.utf8)!
+            let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
             print("decryptedMessage->\n\(resultString)")
             
         } catch let error as NSError {
@@ -302,7 +302,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         var encryptedMessage: Data = Data()
         do {
-            encryptedMessage = try encrypter.wrap(message.data(using: String.Encoding.utf8))
+            encryptedMessage = try encrypter.wrap(message.data(using: .utf8))
             print("encryptedMessage = \(encryptedMessage)")
             
         } catch let error as NSError {
@@ -328,7 +328,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         do {
             let decryptedMessage: Data = try decrypter.unwrapData(encryptedMessage)
-            let resultString: String = String(data: decryptedMessage, encoding: String.Encoding.utf8)!
+            let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
             print("decryptedMessage->\n\(resultString)")
             
         } catch let error as NSError {
