@@ -70,7 +70,7 @@
 
     unsigned char * unwrappedMessage = malloc(unwrappedMessageLength);
     if (!unwrappedMessage) {
-        *error = SCERROR(encryptionResult, @"Secure Cell (Context Imprint) decryption failed, not enough memory");
+        *error = SCERROR(decryptionResult, @"Secure Cell (Context Imprint) decryption failed, not enough memory");
         return nil;
     }
 
