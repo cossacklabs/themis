@@ -105,6 +105,7 @@
             break;
         default:
             *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+            free(wrappedMessage);
             return NULL;
     }
 
