@@ -30,21 +30,21 @@
 - (instancetype)initWithMessageToCompare:(NSData *)message {
     self = [super init];
     if (self) {
-      self.comparator = secure_comparator_create();
-      if(self.comparator){
-	if(secure_comparator_append_secret(self.comparator, [message bytes], [message length]) == TSErrorTypeSuccess){
-	  return self;
-	};
-	secure_comparator_destroy(self.comparator);
-      }
+        self.comparator = secure_comparator_create();
+        if (self.comparator) {
+            if (secure_comparator_append_secret(self.comparator, [message bytes], [message length]) == TSErrorTypeSuccess) {
+                return self;
+            }
+            secure_comparator_destroy(self.comparator);
+        }
     }
     return nil;
 }
 
--(void)dealloc {
-  if(self.comparator){
-    secure_comparator_destroy(self.comparator);
-  }
+- (void)dealloc {
+    if(self.comparator) {
+        secure_comparator_destroy(self.comparator);
+    }
 }
 
 
