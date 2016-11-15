@@ -133,7 +133,7 @@ func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 	var outLen C.size_t
 
 	if nil == data || 0 == len(data) {
-		return errors.New("Data was not provided")
+		return nil, errors.New("Data was not provided")
 	}
 
 	if !bool(C.compare_proceed_size(sc.ctx, unsafe.Pointer(&data[0]), C.size_t(len(data)), &outLen)) {

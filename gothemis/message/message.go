@@ -70,12 +70,12 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 	privLen = 0
 	pubLen = 0
 
-	if nil != private && 0 > len(private.Value) {
+	if nil != private && 0 < len(private.Value) {
 		priv = unsafe.Pointer(&private.Value[0])
 		privLen = C.size_t(len(private.Value))
 	}
 
-	if nil != peerPublic && 0 > len(peerPublic.Value) {
+	if nil != peerPublic && 0 < len(peerPublic.Value) {
 		pub = unsafe.Pointer(&peerPublic.Value[0])
 		pubLen = C.size_t(len(peerPublic.Value))
 	}
