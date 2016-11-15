@@ -44,7 +44,7 @@ func testProtect(mode int, context []byte, t *testing.T) {
 		t.Error("Scell encrypt empty data")
 	}
 
-	encData, addData, err = sc.Protect([]bytes{}, context)
+	encData, addData, err = sc.Protect([]byte{}, context)
 	if nil == err {
 		t.Error("Scell encrypt empty data")
 	}
@@ -63,11 +63,11 @@ func testProtect(mode int, context []byte, t *testing.T) {
 		t.Error("Scell decrypt empty data")
 	}
 
-	decData, err := sc.Unprotect([]bytes{}, addData, context)
+	decData, err = sc.Unprotect([]byte{}, addData, context)
 	if nil == err {
 		t.Error("Scell decrypt empty data")
 	}
-	decData, err := sc.Unprotect(encData, addData, context)
+	decData, err = sc.Unprotect(encData, addData, context)
 
 	if 0 != bytes.Compare(data, decData) {
 		t.Error("Original data and decrypted do not match")
