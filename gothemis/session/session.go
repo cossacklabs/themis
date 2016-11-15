@@ -115,6 +115,10 @@ func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 	var outLen C.size_t
 
+	if nil == data || 0 == len(data) {
+		return nil, errors.New("Data was not provided")
+	}
+
 	if !bool(C.session_wrap_size(&ss.ctx,
 		unsafe.Pointer(&data[0]),
 		C.size_t(len(data)),
@@ -136,6 +140,10 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 
 func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	var outLen C.size_t
+
+	if nil == data || 0 == len(data) {
+		return nil, errors.New("Data was not provided")
+	}
 
 	res := C.session_unwrap_size(&ss.ctx,
 		unsafe.Pointer(&data[0]),

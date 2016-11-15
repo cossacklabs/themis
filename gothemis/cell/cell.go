@@ -149,12 +149,12 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 	if (sc.mode < CELL_MODE_SEAL) || (sc.mode > CELL_MODE_CONTEXT_IMPRINT) {
 		return nil, nil, errors.New("Invalid mode specified")
 	}
-	
-	if nil == sc.key || 0==len(sc.key){
+
+	if nil == sc.key || 0 == len(sc.key) {
 		return nil, nil, errors.New("Master key was not provided")
 	}
-	
-	if nil == data || 0==len(data){
+
+	if nil == data || 0 == len(data) {
 		return nil, nil, errors.New("Data was not provided")
 	}
 
@@ -166,11 +166,11 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 
 	var ctx unsafe.Pointer
 	var ctxLen C.size_t
-	
+
 	ctx = nil
 	ctxLen = 0
 
-	if nil != context && 0 < len(context){
+	if nil != context && 0 < len(context) {
 		ctx = unsafe.Pointer(&context[0])
 		ctxLen = C.size_t(len(context))
 	}
@@ -186,7 +186,11 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		C.int(sc.mode),
 		&encLen,
 		&addLen)) {
+<<<<<<< Updated upstream
 		return nil, nil, errors.New("Failed to get output size")
+=======
+		return nil, nil, errors.New("Failed to get ouput size")
+>>>>>>> Stashed changes
 	}
 
 	var addData []byte
@@ -219,41 +223,41 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 	if (sc.mode < CELL_MODE_SEAL) || (sc.mode > CELL_MODE_CONTEXT_IMPRINT) {
 		return nil, errors.New("Invalid mode specified")
 	}
-	
-	if nil == sc.key || 0 == len(sc.key){
+
+	if nil == sc.key || 0 == len(sc.key) {
 		return nil, errors.New("Master key was not provided")
 	}
-	
-	if nil == protectedData || 0==len(protectedData){
+
+	if nil == protectedData || 0 == len(protectedData) {
 		return nil, errors.New("Data was not provided")
 	}
 
 	if CELL_MODE_CONTEXT_IMPRINT == sc.mode {
-		if nil == context || 0 == len(context){
+		if nil == context || 0 == len(context) {
 			return nil, errors.New("Context is mandatory for context imprint mode")
 		}
 	}
 
 	if CELL_MODE_TOKEN_PROTECT == sc.mode {
-		if nil == additionalData || 0 == len(additionalData){
+		if nil == additionalData || 0 == len(additionalData) {
 			return nil, errors.New("Additional data is mandatory for token protect mode")
 		}
 	}
 
 	var add, ctx unsafe.Pointer
 	var addLen, ctxLen C.size_t
-	
+
 	ctx = nil
 	ctxLen = 0
 	add = nil
 	addLen = 0
 
-	if nil != additionalData && 0< len(additionalData){
+	if nil != additionalData && 0 < len(additionalData) {
 		add = unsafe.Pointer(&additionalData[0])
 		addLen = C.size_t(len(additionalData))
 	}
-	
-	if nil != context && 0 < len(context){
+
+	if nil != context && 0 < len(context) {
 		ctx = unsafe.Pointer(&context[0])
 		ctxLen = C.size_t(len(context))
 	}
@@ -269,7 +273,11 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		ctxLen,
 		C.int(sc.mode),
 		&decLen)) {
+<<<<<<< Updated upstream
 		return nil, errors.New("Failed to get output size")
+=======
+		return nil, errors.New("Failed to get ouput size")
+>>>>>>> Stashed changes
 	}
 
 	decData := make([]byte, decLen, decLen)

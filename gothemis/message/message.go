@@ -59,19 +59,23 @@ func New(private *keys.PrivateKey, peerPublic *keys.PublicKey) *SecureMessage {
 }
 
 func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, message []byte, is_wrap bool) ([]byte, error) {
-	if nil == message || 0 == len(message){
+	if nil == message || 0 == len(message) {
 		return nil, errors.New("No message was provided")
 	}
 
 	var priv, pub unsafe.Pointer
 	var privLen, pubLen C.size_t
+	priv = nil
+	pub = nil
+	privLen = 0
+	pubLen = 0
 
-	if nil != private {
+	if nil != private && 0 > len(private) {
 		priv = unsafe.Pointer(&private.Value[0])
 		privLen = C.size_t(len(private.Value))
 	}
 
-	if nil != peerPublic {
+	if nil != peerPublic && 0 > len(peerPublic) {
 		pub = unsafe.Pointer(&peerPublic.Value[0])
 		pubLen = C.size_t(len(peerPublic.Value))
 	}
@@ -110,29 +114,29 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 }
 
 func (sm *SecureMessage) Wrap(message []byte) ([]byte, error) {
-	if nil == sm.private {
+	if nil == sm.private || 0 == len(sm.private) {
 		return nil, errors.New("Private key was not provided")
 	}
 
-	if nil == sm.peerPublic {
+	if nil == sm.peerPublic || 0 == len(sm.peerPublic) {
 		return nil, errors.New("Peer public key was not provided")
 	}
 	return messageProcess(sm.private, sm.peerPublic, message, true)
 }
 
 func (sm *SecureMessage) Unwrap(message []byte) ([]byte, error) {
-	if nil == sm.private {
+	if nil == sm.private || 0 == len(sm.private) {
 		return nil, errors.New("Private key was not provided")
 	}
 
-	if nil == sm.peerPublic {
+	if nil == sm.peerPublic || 0 == len(sm.peerPublic) {
 		return nil, errors.New("Peer public key was not provided")
 	}
 	return messageProcess(sm.private, sm.peerPublic, message, false)
 }
 
 func (sm *SecureMessage) Sign(message []byte) ([]byte, error) {
-	if nil == sm.private {
+	if nil == sm.private || 0 == len(sm.private) {
 		return nil, errors.New("Private key was not provided")
 	}
 
@@ -140,7 +144,7 @@ func (sm *SecureMessage) Sign(message []byte) ([]byte, error) {
 }
 
 func (sm *SecureMessage) Verify(message []byte) ([]byte, error) {
-	if nil == sm.peerPublic {
+	if nil == sm.peerPublic || 0 == len(sm.peerPublic) {
 		return nil, errors.New("Peer public key was not provided")
 	}
 
