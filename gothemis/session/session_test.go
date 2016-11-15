@@ -160,13 +160,15 @@ func testSession(keytype int, t *testing.T) {
 	idb := make([]byte, 1)
 	idb[0] = 2
 
+	empty_key := keys.PrivateKey{[]byte{}}
+
 	client, err := New(ida, nil, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty private key")
 		return
 	}
 
-	client, err = New(ida, []byte{}, clb)
+	client, err = New(ida, empty_key, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty private key")
 		return
