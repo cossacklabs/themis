@@ -59,7 +59,7 @@ func New(private *keys.PrivateKey, peerPublic *keys.PublicKey) *SecureMessage {
 }
 
 func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, message []byte, is_wrap bool) ([]byte, error) {
-	if nil == message {
+	if nil == message || 0 == len(message){
 		return nil, errors.New("No message was provided")
 	}
 
