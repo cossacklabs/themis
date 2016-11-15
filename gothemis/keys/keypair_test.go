@@ -1,7 +1,7 @@
 package keys
 
 import (
-    "testing"
+	"testing"
 )
 
 func TestNewKeypair(t *testing.T) {
@@ -9,10 +9,9 @@ func TestNewKeypair(t *testing.T) {
 	if nil != err {
 		t.Error(err)
 	}
-	
+
 	_, err = New(KEYTYPE_RSA)
 	if nil != err {
 		t.Error(err)
 	}
 }
-

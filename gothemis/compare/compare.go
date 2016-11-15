@@ -47,27 +47,27 @@ static int compare_proceed(void *ctx, const void *in, size_t in_len, void *out, 
 static int compare_result(void *ctx)
 {
 	themis_status_t res = secure_comparator_get_result(ctx);
-	
+
 	if (THEMIS_SCOMPARE_MATCH == res)
 	{
 		return 1;
 	}
-	
+
 	return (int)res;
 }
 
 */
 import "C"
 import (
-	"unsafe"
 	"errors"
 	"runtime"
+	"unsafe"
 )
 
 const (
 	COMPARE_NOT_READY = 0
-	COMPARE_NO_MATCH = -1
-	COMPARE_MATCH = 1
+	COMPARE_NO_MATCH  = -1
+	COMPARE_MATCH     = 1
 )
 
 type SecureCompare struct {
@@ -83,10 +83,10 @@ func New() (*SecureCompare, error) {
 	if nil == ctx {
 		return nil, errors.New("Failed to create comparator object")
 	}
-	
+
 	sc := &SecureCompare{ctx}
 	runtime.SetFinalizer(sc, finalize)
-	
+
 	return sc, nil
 }
 
@@ -98,64 +98,65 @@ func (sc *SecureCompare) Close() error {
 			return errors.New("Failed to destroy comparator object")
 		}
 	}
-	
+
 	return nil
 }
 
 func (sc *SecureCompare) Append(secret []byte) error {
-	if ! bool(C.compare_append(sc.ctx, unsafe.Pointer(&secret[0]), C.size_t(len(secret)))) {
+	if !bool(C.compare_append(sc.ctx, unsafe.Pointer(&secret[0]), C.size_t(len(secret)))) {
 		return errors.New("Failed to append secret")
 	}
-	
+
 	return nil
 }
 
 func (sc *SecureCompare) Begin() ([]byte, error) {
 	var outLen C.size_t
-	
-	if ! bool(C.compare_begin_size(sc.ctx, &outLen)) {
+
+	if !bool(C.compare_begin_size(sc.ctx, &outLen)) {
 		return nil, errors.New("Failed to get output size")
 	}
-	
+
 	out := make([]byte, outLen)
-	
-	if ! bool(C.compare_begin(sc.ctx, unsafe.Pointer(&out[0]), outLen)) {
+
+	if !bool(C.compare_begin(sc.ctx, unsafe.Pointer(&out[0]), outLen)) {
 		return nil, errors.New("Failed to get compare data")
 	}
-	
+
 	return out, nil
 }
 
 func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 	var outLen C.size_t
-	
-	if ! bool(C.compare_proceed_size(sc.ctx, unsafe.Pointer(&data[0]), C.size_t(len(data)), &outLen)) {
+
+	if !bool(C.compare_proceed_size(sc.ctx, unsafe.Pointer(&data[0]), C.size_t(len(data)), &outLen)) {
 		return nil, errors.New("Failed to get output size")
 	}
-	
+
 	if 0 == outLen {
 		outLen++
 	}
-	
+
 	out := make([]byte, outLen)
-	
+
 	res := C.compare_proceed(sc.ctx, unsafe.Pointer(&data[0]), C.size_t(len(data)), unsafe.Pointer(&out[0]), outLen)
 	switch {
-		case 0 == res:
-			return nil, nil
-		case 1 == res:
-			return out, nil
+	case 0 == res:
+		return nil, nil
+	case 1 == res:
+		return out, nil
 	}
-	
+
 	return nil, errors.New("Failed to get output")
 }
 
 func (sc *SecureCompare) Result() (int, error) {
 	res := C.compare_result(sc.ctx)
-	
+
 	switch res {
-		case COMPARE_NOT_READY, COMPARE_NO_MATCH, COMPARE_MATCH: return int(res), nil
+	case COMPARE_NOT_READY, COMPARE_NO_MATCH, COMPARE_MATCH:
+		return int(res), nil
 	}
-	
+
 	return COMPARE_NOT_READY, errors.New("Failed to get compare result")
 }
