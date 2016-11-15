@@ -186,11 +186,7 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		C.int(sc.mode),
 		&encLen,
 		&addLen)) {
-<<<<<<< Updated upstream
-		return nil, nil, errors.New("Failed to get output size")
-=======
 		return nil, nil, errors.New("Failed to get ouput size")
->>>>>>> Stashed changes
 	}
 
 	var addData []byte
@@ -273,11 +269,7 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		ctxLen,
 		C.int(sc.mode),
 		&decLen)) {
-<<<<<<< Updated upstream
-		return nil, errors.New("Failed to get output size")
-=======
 		return nil, errors.New("Failed to get ouput size")
->>>>>>> Stashed changes
 	}
 
 	decData := make([]byte, decLen, decLen)

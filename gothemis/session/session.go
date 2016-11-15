@@ -142,7 +142,7 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	var outLen C.size_t
 
 	if nil == data || 0 == len(data) {
-		return nil, errors.New("Data was not provided")
+		return nil, false, errors.New("Data was not provided")
 	}
 
 	res := C.session_unwrap_size(&ss.ctx,
