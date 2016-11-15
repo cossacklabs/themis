@@ -168,7 +168,7 @@ func testSession(keytype int, t *testing.T) {
 		return
 	}
 
-	client, err = New(ida, empty_key, clb)
+	client, err = New(ida, &empty_key, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty private key")
 		return
