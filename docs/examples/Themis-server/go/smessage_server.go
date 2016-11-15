@@ -3,16 +3,16 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"os"
-	"strings"
+	"encoding/base64"
 	"errors"
 	"fmt"
-	"encoding/base64"
 	"github.com/cossacklabs/themis/gothemis/keys"
 	"github.com/cossacklabs/themis/gothemis/message"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
+	"strings"
 )
 
 func send_message(message []byte, endpoint string) ([]byte, error) {
@@ -38,7 +38,7 @@ func send_message(message []byte, endpoint string) ([]byte, error) {
 	return data, nil
 }
 
-func main(){
+func main() {
 	input_buffer := bufio.NewReader(os.Stdin)
 	fmt.Println("Type your settings from https://themis.cossacklabs.com/interactive-simulator/setup/")
 

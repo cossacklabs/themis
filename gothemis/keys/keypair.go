@@ -27,7 +27,7 @@ static bool get_key_size(int key_type, size_t *priv_len, size_t *pub_len)
 	default:
 		return false;
 	}
-	
+
 	return THEMIS_BUFFER_TOO_SMALL == res;
 }
 
@@ -46,7 +46,7 @@ static bool gen_keys(int key_type, void *private, size_t priv_len, void *public,
 	default:
 		return false;
 	}
-	
+
 	return THEMIS_SUCCESS == res;
 }
 
@@ -59,7 +59,7 @@ import (
 )
 
 const (
-	KEYTYPE_EC = 0
+	KEYTYPE_EC  = 0
 	KEYTYPE_RSA = 1
 )
 
@@ -73,28 +73,28 @@ type PublicKey struct {
 
 type Keypair struct {
 	Private *PrivateKey
-	Public *PublicKey
+	Public  *PublicKey
 }
 
 func New(keytype int) (*Keypair, error) {
 	if (keytype != KEYTYPE_EC) && (keytype != KEYTYPE_RSA) {
 		return nil, errors.New("Incorrect key type")
 	}
-	
+
 	var privLen, pubLen C.size_t
-	if ! bool(C.get_key_size(C.int(keytype), &privLen, &pubLen)) {
-		return nil, errors.New("Failed to get needed key sizes");
+	if !bool(C.get_key_size(C.int(keytype), &privLen, &pubLen)) {
+		return nil, errors.New("Failed to get needed key sizes")
 	}
-	
+
 	priv := make([]byte, int(privLen), int(privLen))
 	pub := make([]byte, int(pubLen), int(pubLen))
-	
-	if ! bool(C.gen_keys(C.int(keytype), unsafe.Pointer(&priv[0]), privLen, unsafe.Pointer(&pub[0]), pubLen)) {
-		return nil, errors.New("Failed to generate keypair");
+
+	if !bool(C.gen_keys(C.int(keytype), unsafe.Pointer(&priv[0]), privLen, unsafe.Pointer(&pub[0]), pubLen)) {
+		return nil, errors.New("Failed to generate keypair")
 	}
-	
-	return &Keypair {
-		Private: &PrivateKey {Value: priv},
-		Public: &PublicKey {Value: pub},
+
+	return &Keypair{
+		Private: &PrivateKey{Value: priv},
+		Public:  &PublicKey{Value: pub},
 	}, nil
 }
