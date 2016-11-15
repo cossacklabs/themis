@@ -36,6 +36,14 @@ func finalize(ss *SecureSession) {
 func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*SecureSession, error) {
 	ss := &SecureSession{clb: callbacks}
 
+	if nil == id || 0 == len(id){
+		return nil, errors.New("Failed to creating secure session object with empty id")
+	}
+
+	if nil == signKey || 0 == len(signKey.Value){
+		return nil, errors.New("Failed to creating secure session object with empty sign key")
+	}
+
 	ss.ctx = C.session_init(unsafe.Pointer(&id[0]),
 		C.size_t(len(id)),
 		unsafe.Pointer(&signKey.Value[0]),
