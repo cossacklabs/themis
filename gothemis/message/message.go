@@ -85,7 +85,7 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		C.size_t(len(message)),
 		C.bool(is_wrap),
 		&output_length)) {
-		return nil, errors.New("Failed to get ouput size")
+		return nil, errors.New("Failed to get output size")
 	}
 
 	output := make([]byte, int(output_length), int(output_length))
