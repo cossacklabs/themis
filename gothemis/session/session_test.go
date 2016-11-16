@@ -186,7 +186,6 @@ func testSession(keytype int, t *testing.T) {
 		return
 	}
 
-
 	client, err = New(ida, kpa.Private, clb)
 	if nil != err {
 		t.Error(err)
