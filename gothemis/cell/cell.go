@@ -150,24 +150,24 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		return nil, nil, errors.New("Invalid mode specified")
 	}
 
-	if nil == sc.key {
+	if nil == sc.key || 0 == len(sc.key) {
 		return nil, nil, errors.New("Master key was not provided")
 	}
 
-	if nil == data {
+	if nil == data || 0 == len(data) {
 		return nil, nil, errors.New("Data was not provided")
 	}
 
 	if CELL_MODE_CONTEXT_IMPRINT == sc.mode {
-		if nil == context {
+		if nil == context || 0 == len(context) {
 			return nil, nil, errors.New("Context is mandatory for context imprint mode")
 		}
 	}
 
-	var ctx unsafe.Pointer
-	var ctxLen C.size_t
+	var ctx unsafe.Pointer = nil
+	var ctxLen C.size_t = 0
 
-	if nil != context {
+	if nil != context && 0 < len(context) {
 		ctx = unsafe.Pointer(&context[0])
 		ctxLen = C.size_t(len(context))
 	}
@@ -217,35 +217,35 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		return nil, errors.New("Invalid mode specified")
 	}
 
-	if nil == sc.key {
+	if nil == sc.key || 0 == len(sc.key) {
 		return nil, errors.New("Master key was not provided")
 	}
 
-	if nil == protectedData {
+	if nil == protectedData || 0 == len(protectedData) {
 		return nil, errors.New("Data was not provided")
 	}
 
 	if CELL_MODE_CONTEXT_IMPRINT == sc.mode {
-		if nil == context {
+		if nil == context || 0 == len(context) {
 			return nil, errors.New("Context is mandatory for context imprint mode")
 		}
 	}
 
 	if CELL_MODE_TOKEN_PROTECT == sc.mode {
-		if nil == additionalData {
+		if nil == additionalData || 0 == len(additionalData) {
 			return nil, errors.New("Additional data is mandatory for token protect mode")
 		}
 	}
 
-	var add, ctx unsafe.Pointer
-	var addLen, ctxLen C.size_t
+	var add, ctx unsafe.Pointer = nil, nil
+	var addLen, ctxLen C.size_t = 0, 0
 
-	if nil != additionalData {
+	if nil != additionalData && 0 < len(additionalData) {
 		add = unsafe.Pointer(&additionalData[0])
 		addLen = C.size_t(len(additionalData))
 	}
 
-	if nil != context {
+	if nil != context && 0 < len(context) {
 		ctx = unsafe.Pointer(&context[0])
 		ctxLen = C.size_t(len(context))
 	}

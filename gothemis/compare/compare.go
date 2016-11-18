@@ -103,6 +103,9 @@ func (sc *SecureCompare) Close() error {
 }
 
 func (sc *SecureCompare) Append(secret []byte) error {
+	if nil == secret || 0 == len(secret) {
+		return errors.New("Secret was not provided")
+	}
 	if !bool(C.compare_append(sc.ctx, unsafe.Pointer(&secret[0]), C.size_t(len(secret)))) {
 		return errors.New("Failed to append secret")
 	}
@@ -128,6 +131,10 @@ func (sc *SecureCompare) Begin() ([]byte, error) {
 
 func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 	var outLen C.size_t
+
+	if nil == data || 0 == len(data) {
+		return nil, errors.New("Data was not provided")
+	}
 
 	if !bool(C.compare_proceed_size(sc.ctx, unsafe.Pointer(&data[0]), C.size_t(len(data)), &outLen)) {
 		return nil, errors.New("Failed to get output size")

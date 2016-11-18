@@ -36,6 +36,14 @@ func finalize(ss *SecureSession) {
 func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*SecureSession, error) {
 	ss := &SecureSession{clb: callbacks}
 
+	if nil == id || 0 == len(id) {
+		return nil, errors.New("Failed to creating secure session object with empty id")
+	}
+
+	if nil == signKey || 0 == len(signKey.Value) {
+		return nil, errors.New("Failed to creating secure session object with empty sign key")
+	}
+
 	ss.ctx = C.session_init(unsafe.Pointer(&id[0]),
 		C.size_t(len(id)),
 		unsafe.Pointer(&signKey.Value[0]),
@@ -115,6 +123,10 @@ func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 	var outLen C.size_t
 
+	if nil == data || 0 == len(data) {
+		return nil, errors.New("Data was not provided")
+	}
+
 	if !bool(C.session_wrap_size(&ss.ctx,
 		unsafe.Pointer(&data[0]),
 		C.size_t(len(data)),
@@ -136,6 +148,10 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 
 func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	var outLen C.size_t
+
+	if nil == data || 0 == len(data) {
+		return nil, false, errors.New("Data was not provided")
+	}
 
 	res := C.session_unwrap_size(&ss.ctx,
 		unsafe.Pointer(&data[0]),
