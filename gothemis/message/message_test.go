@@ -34,12 +34,12 @@ func testWrap(keytype int, t *testing.T) {
 	sma := sm.New(kpa.Private, kpb.Public)
 	wrapped, err := sma.Wrap(nil)
 	if nil == err {
-		t.Error("Secure messgae empty data encryption")
+		t.Error("Secure message empty data encryption")
 	}
 
 	wrapped, err = sma.Wrap([]byte{})
 	if nil == err {
-		t.Error("Secure messgae empty data encryption")
+		t.Error("Secure message empty data encryption")
 	}
 
 	wrapped, err = sma.Wrap(message)
@@ -54,12 +54,12 @@ func testWrap(keytype int, t *testing.T) {
 	smb := sm.New(kpb.Private, kpa.Public)
 	unwrapped, err := smb.Unwrap(nil)
 	if nil == err {
-		t.Error("Secure Message empty data decription")
+		t.Error("Secure Message empty data decryption")
 	}
 
 	unwrapped, err = smb.Unwrap([]byte{})
 	if nil == err {
-		t.Error("Secure Message empty data decription")
+		t.Error("Secure Message empty data decryption")
 	}
 
 	unwrapped, err = smb.Unwrap(wrapped)

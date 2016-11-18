@@ -164,11 +164,8 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		}
 	}
 
-	var ctx unsafe.Pointer
-	var ctxLen C.size_t
-
-	ctx = nil
-	ctxLen = 0
+	var ctx unsafe.Pointer = nil
+	var ctxLen C.size_t = 0
 
 	if nil != context && 0 < len(context) {
 		ctx = unsafe.Pointer(&context[0])
@@ -186,7 +183,7 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		C.int(sc.mode),
 		&encLen,
 		&addLen)) {
-		return nil, nil, errors.New("Failed to get ouput size")
+		return nil, nil, errors.New("Failed to get output size")
 	}
 
 	var addData []byte
@@ -240,13 +237,8 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		}
 	}
 
-	var add, ctx unsafe.Pointer
-	var addLen, ctxLen C.size_t
-
-	ctx = nil
-	ctxLen = 0
-	add = nil
-	addLen = 0
+	var add, ctx unsafe.Pointer = nil, nil
+	var addLen, ctxLen C.size_t = 0, 0
 
 	if nil != additionalData && 0 < len(additionalData) {
 		add = unsafe.Pointer(&additionalData[0])
@@ -269,7 +261,7 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		ctxLen,
 		C.int(sc.mode),
 		&decLen)) {
-		return nil, errors.New("Failed to get ouput size")
+		return nil, errors.New("Failed to get output size")
 	}
 
 	decData := make([]byte, decLen, decLen)
