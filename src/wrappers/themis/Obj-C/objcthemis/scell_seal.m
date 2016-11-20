@@ -39,8 +39,8 @@
 - (NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
     size_t wrappedMessageLength = 0;
 
-    const void * contextData = (context != nil) ? [context bytes] : NULL;
-    size_t contextLength = (context != nil) ? [context length] : 0;
+    const void * contextData = [context bytes];
+    size_t contextLength = [context length];
 
     TSErrorType result = (TSErrorType) themis_secure_cell_encrypt_seal([self.key bytes], [self.key length],
         contextData, contextLength, [message bytes], [message length], NULL, &wrappedMessageLength);
@@ -71,8 +71,8 @@
 - (NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
     size_t unwrappedMessageLength = 0;
 
-    const void * contextData = (context != nil) ? [context bytes] : nil;
-    size_t contextLength = (context != Nil) ? [context length] : 0;
+    const void * contextData = [context bytes];
+    size_t contextLength = [context length];
 
     TSErrorType result = (TSErrorType) themis_secure_cell_decrypt_seal([self.key bytes], [self.key length],
         contextData, contextLength, [message bytes], [message length], NULL, &unwrappedMessageLength);
