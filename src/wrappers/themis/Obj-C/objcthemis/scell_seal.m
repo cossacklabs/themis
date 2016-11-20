@@ -51,6 +51,10 @@
     }
 
     unsigned char * wrappedMessage = malloc(wrappedMessageLength);
+    if (!wrappedMessage) {
+        *error = SCERROR(result, @"Secure Cell (Seal) encryption failed, not enough memory");
+        return nil;
+    }
     result = (TSErrorType) themis_secure_cell_encrypt_seal([self.key bytes], [self.key length],
         contextData, contextLength, [message bytes], [message length], wrappedMessage, &wrappedMessageLength);
 
@@ -60,10 +64,7 @@
         return nil;
     }
 
-    NSData * wrappedData = [[NSData alloc] initWithBytes:wrappedMessage length:wrappedMessageLength];
-    free(wrappedMessage);
-    return wrappedData;
-
+    return [NSData dataWithBytesNoCopy:wrappedMessage length:wrappedMessageLength];
 }
 
 
@@ -82,6 +83,11 @@
     }
 
     unsigned char * unwrappedMessage = malloc(unwrappedMessageLength);
+    if (!unwrappedMessage) {
+        *error = SCERROR(result, @"Secure Cell (Seal) decryption failed, not enough memory");
+        return nil;
+    }
+
     result = (TSErrorType) themis_secure_cell_decrypt_seal([self.key bytes], [self.key length],
         contextData, contextLength, [message bytes], [message length], unwrappedMessage, &unwrappedMessageLength);
 
@@ -91,9 +97,7 @@
         return nil;
     }
 
-    NSData * unwrappedData = [[NSData alloc] initWithBytes:unwrappedMessage length:unwrappedMessageLength];
-    free(unwrappedMessage);
-    return unwrappedData;
+    return [NSData dataWithBytesNoCopy:unwrappedMessage length:unwrappedMessageLength];
 }
 
 @end
