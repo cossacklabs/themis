@@ -96,8 +96,9 @@ During development, we frequently do Proof-of-Concept projects to test different
 
 | Demo | Description | Repo | Blog post |
 | :----- | :----- | :------ | :--- |
-| 0fc | anonymous web chat, pythemis (Python) + webthemis (C++ + HTML/JS)| [repo](https://github.com/cossacklabs/0fc) | [blog post](https://cossacklabs.com/building-endtoend-webchat.html) |
-| sesto | secure storage, pythemis (Python) + webthemis (C++ + HTML/JS) | [repo](https://github.com/cossacklabs/sesto) |[blog post](https://cossacklabs.com/presenting-sesto.html)
+| 0fc | Anonymous web chat<br/>* pythemis (Python)<br/>* webthemis (C++ + HTML/JS)| [repo](https://github.com/cossacklabs/0fc) | [blog post](https://cossacklabs.com/building-endtoend-webchat.html) |
+| sesto | Secure storage<br/>* pythemis (Python)<br/>* webthemis (C++ + HTML/JS) | [repo](https://github.com/cossacklabs/sesto) |[blog post](https://cossacklabs.com/presenting-sesto.html) 
+| swift alps demo | Secure communication (iOS app with Python server based on Secure Session)<br/>* Swift wrapper<br/>* pythemis (Python) | [repo](https://github.com/cossacklabs/theswiftalpsdemo) |[slides](https://speakerdeck.com/vixentael/the-swift-alps-security-workshop) |
 
 # Themis Server
 
