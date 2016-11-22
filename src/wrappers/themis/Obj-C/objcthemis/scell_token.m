@@ -96,7 +96,7 @@
         *error = SCERROR(result, @"Secure Cell (Token Protect) decryption failed");
         return nil;
     }
-    return unwrapped_message;
+    return [unwrapped_message copy];
 }
 
 @end
