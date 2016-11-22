@@ -24,11 +24,12 @@ Themis works in most operating systems (see [Availability](https://github.com/co
 [Javascript (NodeJS)](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto), [Go](https://github.com/cossacklabs/themis/wiki/Go-HowTo),
 [Google Chrome](https://github.com/cossacklabs/webthemis). 
 
-Themis provides three important cryptographic services:
+Themis provides four important cryptographic services:
 
 * **[Secure Message](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem)**: a simple encrypted messaging solution for widest scope of applications. Just exchange the keys between parties and you're good to go! Two pairs of underlying crytosystems: ECC + ECDSA / RSA + PSS + PKCS#7. 
 * **[Secure Session](https://github.com/cossacklabs/themis/wiki/Secure-Session-cryptosystem)**: session-oriented, forward secrecy datagram exchange solution with better security guarantees, but more demanding infrastructure. Secure Session works perfect as socket encryption, session security or (with some additional infrastructure) as high-level messaging primitive. ECDH key agreement, ECC & AES encryption.
 * **[Secure Cell](https://github.com/cossacklabs/themis/wiki/Secure-Cell-cryptosystem)**: a multi-mode cryptographic container, suitable for storing anything from encrypted files to database records and format-preserved strings. Secure Cell is built around AES in GCM (Token and Seal modes) and CTR (Context imprint mode).
+* **[Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem)**: a interactive zero-knowledge protocol to compare secrets. Some ways to use it are: login/password authentication, OTP reinforcement, PIN comparison, request authentication.
 
 Themis was designed to provide complicated cryptosystems in easy-to-use infrastructure, designed with modern rapid development in mind:
 * **EASY**: Themis does not require users to obsess over parameters, cipher combination and yet achieve high levels of security
@@ -61,6 +62,12 @@ Themis is available for the following languages:
 - Javascript (NodeJS) [documentation](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto) and [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/js)
 - Go [documentation](https://github.com/cossacklabs/themis/wiki/Go-Howto)
 - С++ PNaCl for Google Chrome in separate [WebThemis project](https://github.com/cossacklabs/webthemis)
+
+# Plugins
+
+Themis-based plugins are built built to enable Themis features across various platforms and products: 
+
+- [RD_Themis](https://github.com/cossacklabs/rd_themis) for Redis database
 
 # Availability
 
