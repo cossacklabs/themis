@@ -1,5 +1,22 @@
 # Themis ChangeLog
 
+## [0.9.4], November 22nd 2016
+
+This is tiny intermediary release to lock ongoing changes in stable form for all languages:
+
+* **BoringSSL** support on **Android** and **Linux**
+* Fixed some leaks and code styling problems (thanks to @bryongloden)
+* Memory management updates for stability in languages, which rely on sloppy GC
+* Fix Themis build errors under certain conditions
+* **Secure Comparator** examples for many languages
+* **Swift3** support + numerous enhancements from @valeriyvan, thanks a lot! 
+* **GoThemis**: fixed rare behavior in Secure Session wrapper 
+* GoThemis examples
+* **JsThemis** syntax corrections and style fixes
+* JsThemis Nan usage to enhance compatibility
+* More and better **Themis Server examples**
+* Enhanced **error messages** (now with proper spelling!)
+* Corrections for **[RD_Themis](https://github.com/cossacklabs/rd_themis)**
 
 ## [0.9.3.1], August 24th 2016
 
