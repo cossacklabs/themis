@@ -17,10 +17,11 @@
 <br>
 
 #### Crypto library for storage and messaging for Swift, ObjC, Android, С++, JS, Python, Ruby, PHP, Go.
+<br>
 
 Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure data exchange and  storage. Current stable release is [0.9.4](https://github.com/cossacklabs/themis/releases/tag/0.9.4), dated 22nd of November.
 
-Themis works in most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)), and is available for [Swift (iOS, OX)](https://github.com/cossacklabs/themis/wiki/Swift-Howto), [Objective-C (iOS, OX)](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto), [Java+Android](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto),  [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto), 
+Themis works in most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)), and is available for [Swift (iOS, macOS)](https://github.com/cossacklabs/themis/wiki/Swift-Howto), [Objective-C (iOS, macOS)](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto), [Java+Android](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto),  [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto), 
 [PHP](https://github.com/cossacklabs/themis/wiki/PHP-Howto), 
 [C++](https://github.com/cossacklabs/themis/wiki/CPP-Howto), 
 [Javascript (NodeJS)](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto), [Go](https://github.com/cossacklabs/themis/wiki/Go-HowTo),
