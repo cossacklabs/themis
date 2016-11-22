@@ -64,7 +64,7 @@
         *error = SCERROR(result, @"Secure Comparator failed making initialisation message");
         return nil;
     }
-    return requestData;
+    return [requestData copy];
 }
 
 - (NSData *)proceedCompare:(NSData *)message error:(NSError **)error {
@@ -91,7 +91,7 @@
             return nil;
         }
     }
-    return unwrappedMessage;
+    return [unwrappedMessage copy];
 }
 
 - (TSComparatorStateType)status {
