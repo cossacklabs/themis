@@ -62,7 +62,7 @@
         *error = SCERROR(result, @"Secure Session failed making connection request");
         return nil;
     }
-    return requestData;
+    return [requestData copy];
 }
 
 
@@ -85,7 +85,7 @@
         *error = SCERROR(result, @"Secure Session failed encryption");
         return nil;
     }
-    return wrappedMessage;
+    return [wrappedMessage copy];
 }
 
 
@@ -116,7 +116,7 @@
         }
     }
 
-    return unwrappedMessage;
+    return [unwrappedMessage copy];
 }
 
 
@@ -137,7 +137,7 @@
         *error = SCERROR(result, @"Secure Session failed receiving");
         return nil;
     }
-    return receivedData;
+    return [receivedData copy];
 }
 
 

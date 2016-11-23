@@ -85,7 +85,7 @@ int on_get_public_key_for_id_callback(const void * id, size_t id_length, void * 
         *error = SCERROR(TSErrorTypeFail, @"Secure Session failed getting of public key");
         return nil;
     }
-    return key;
+    return [key copy];
 }
 
 
