@@ -72,6 +72,13 @@ Themis is available for the following languages/platforms:
 | 🕸 С++ PNaCl for Google Chrome||[WebThemis project](https://github.com/cossacklabs/webthemis)|
 
 
+# Plugins
+
+Themis-based plugins are built built to enable Themis features across various platforms and products: 
+
+- [RD_Themis](https://github.com/cossacklabs/rd_themis) for Redis database
+
+
 # Availability
 
 Themis supports the following architectures: x86/x64, armv*, various androids
