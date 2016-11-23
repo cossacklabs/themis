@@ -34,7 +34,7 @@ Themis provides four important cryptographic services:
 * **[Secure Message](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem)**: a simple encrypted messaging solution for widest scope of applications. Just exchange the keys between parties and you're good to go! Two pairs of underlying crytosystems: ECC + ECDSA / RSA + PSS + PKCS#7. 
 * **[Secure Session](https://github.com/cossacklabs/themis/wiki/Secure-Session-cryptosystem)**: session-oriented, forward secrecy datagram exchange solution with better security guarantees, but more demanding infrastructure. Secure Session works perfect as socket encryption, session security or (with some additional infrastructure) as high-level messaging primitive. ECDH key agreement, ECC & AES encryption.
 * **[Secure Cell](https://github.com/cossacklabs/themis/wiki/Secure-Cell-cryptosystem)**: a multi-mode cryptographic container, suitable for storing anything from encrypted files to database records and format-preserved strings. Secure Cell is built around AES in GCM (Token and Seal modes) and CTR (Context imprint mode).
-* **[Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem)**: a Zero-Knowledge based cryptographic protocol for secrets comparison.
+* **[Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem)**: a Zero-Knowledge based cryptographic protocol for authentication and comparing secrets.
 
 Themis was designed to provide complicated cryptosystems in easy-to-use infrastructure, designed with modern rapid development in mind:
 
