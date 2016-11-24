@@ -316,7 +316,7 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	signature_length = (const uint8_t *)data + soter_container_data_size(proto_message) + sizeof(soter_container_hdr_t) - signature;
 	if (session_ctx->user_callbacks->get_public_key_for_id(soter_container_const_data(peer_id), soter_container_data_size(peer_id), sign_key, sizeof(sign_key), session_ctx->user_callbacks->user_data))
 	{
-		return THEMIS_INVALID_PARAMETER;
+		return THEMIS_SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR;
 	}
 
 	peer_sign_key = (const soter_container_hdr_t *)sign_key;
@@ -504,10 +504,9 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 
 	signature = (const uint8_t *)peer_ecdh_key + peer_ecdh_key_length;
 	signature_length = (const uint8_t *)data + soter_container_data_size(proto_message) + sizeof(soter_container_hdr_t) - signature;
-
 	if (session_ctx->user_callbacks->get_public_key_for_id(soter_container_const_data(peer_id), soter_container_data_size(peer_id), sign_key, sizeof(sign_key), session_ctx->user_callbacks->user_data))
 	{
-		return THEMIS_INVALID_PARAMETER;
+		return THEMIS_SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR;
 	}
 
 	peer_sign_key = (const soter_container_hdr_t *)sign_key;
