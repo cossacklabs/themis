@@ -157,10 +157,11 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 		unsafe.Pointer(&data[0]),
 		C.size_t(len(data)),
 		&outLen)
-
 	switch {
 	case (0 == res) && (0 == outLen):
 		return nil, false, nil
+	case (-10 == res): // THEMIS_SSESSION_GET_PUB_FOR_ID_ERROR
+		return nil, false, errors.NewCallbackError("Failed to get unwraped size (get_public_key_by_id callback error)")
 	case (-4 != res): // THEMIS_BUFFER_TOO_SMALL
 		return nil, false, errors.New("Failed to get unwrapped size")
 	}
@@ -180,6 +181,8 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 		return out, true, nil
 	case (0 == res) && (0 < outLen):
 		return out, false, nil
+	case (-10 == res): // THEMIS_SSESSION_GET_PUB_FOR_ID_ERROR
+		return nil, false, errors.NewCallbackError("Failed to unwrap data (get_public_key_by_id callback error)")
 	}
 
 	return nil, false, errors.New("Failed to unwrap data")
