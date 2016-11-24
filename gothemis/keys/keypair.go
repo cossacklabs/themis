@@ -54,7 +54,7 @@ static bool gen_keys(int key_type, void *private, size_t priv_len, void *public,
 import "C"
 
 import (
-	"errors"
+	"github.com/cossacklabs/themis/gothemis/errors"
 	"unsafe"
 )
 
