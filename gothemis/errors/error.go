@@ -1,13 +1,13 @@
 package errors
 
-type themisError struct {
+type ThemisError struct {
 	msg string
 }
 
-func (e *themisError) Error() string {
+func (e *ThemisError) Error() string {
 	return e.msg
 }
 
-func New(msg string) *themisError {
-	return &themisError{msg}
+func New(msg string) *ThemisError {
+	return &ThemisError{msg}
 }
