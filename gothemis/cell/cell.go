@@ -126,7 +126,7 @@ static bool decrypt(const void *key, size_t key_len, const void *prot, size_t pr
 */
 import "C"
 import (
-	"errors"
+	"github.com/cossacklabs/themis/gothemis/errors"
 	"unsafe"
 )
 

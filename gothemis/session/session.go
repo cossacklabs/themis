@@ -6,7 +6,7 @@ package session
 */
 import "C"
 import (
-	"errors"
+	"github.com/cossacklabs/themis/gothemis/errors"
 	"github.com/cossacklabs/themis/gothemis/keys"
 	"runtime"
 	"unsafe"
