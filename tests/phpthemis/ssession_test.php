@@ -21,10 +21,10 @@
 
     function get_pub_key_by_id($id){
         global $client_pub, $server_pub;
-	$key_array = [
+	$key_array = array(
 	    "client" => $client_pub,
             "server" => $server_pub,
-	];
+	);
 	return $key_array[$id];
     }
 
