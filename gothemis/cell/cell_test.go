@@ -1,9 +1,8 @@
-package cell_test
+package cell
 
 import (
 	"bytes"
 	"crypto/rand"
-	"github.com/cossacklabs/themis/gothemis/cell"
 	"math/big"
 	"testing"
 )
@@ -26,19 +25,19 @@ func testProtect(mode int, context []byte, t *testing.T) {
 		t.Error(err)
 	}
 
-	sc := cell.New(nil, mode)
+	sc := New(nil, mode)
 	encData, addData, err := sc.Protect(data, context)
 	if nil == err {
 		t.Error("Scell encription with empty password ")
 	}
 
-	sc = cell.New([]byte{}, mode)
+	sc = New([]byte{}, mode)
 	encData, addData, err = sc.Protect(data, context)
 	if nil == err {
 		t.Error("Scell encription with empty password ")
 	}
 
-	sc = cell.New(key, mode)
+	sc = New(key, mode)
 	encData, addData, err = sc.Protect(nil, context)
 	if nil == err {
 		t.Error("Scell encrypt empty data")
@@ -81,11 +80,11 @@ func TestProtect(t *testing.T) {
 		t.Error(err)
 	}
 
-	testProtect(cell.CELL_MODE_SEAL, nil, t)
-	testProtect(cell.CELL_MODE_SEAL, context, t)
+	testProtect(CELL_MODE_SEAL, nil, t)
+	testProtect(CELL_MODE_SEAL, context, t)
 
-	testProtect(cell.CELL_MODE_TOKEN_PROTECT, nil, t)
-	testProtect(cell.CELL_MODE_TOKEN_PROTECT, context, t)
+	testProtect(CELL_MODE_TOKEN_PROTECT, nil, t)
+	testProtect(CELL_MODE_TOKEN_PROTECT, context, t)
 
-	testProtect(cell.CELL_MODE_CONTEXT_IMPRINT, context, t)
+	testProtect(CELL_MODE_CONTEXT_IMPRINT, context, t)
 }
