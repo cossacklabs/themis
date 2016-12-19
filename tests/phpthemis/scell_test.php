@@ -1,3 +1,4 @@
+<?php
 #
 # Copyright (c) 2015 Cossack Labs Limited
 #
@@ -13,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-<?php
     class ScellTest extends PHPUnit_Framework_TestCase{
 	/**
          * @dataProvider SealWithContextProvider
