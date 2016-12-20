@@ -27,7 +27,7 @@ Themis works in most operating systems (see [Availability](https://github.com/co
 [Javascript (NodeJS)](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto), [Go](https://github.com/cossacklabs/themis/wiki/Go-HowTo),
 [Google Chrome](https://github.com/cossacklabs/webthemis). 
 
-We're also porting Themis features to different environments where people might need them: [Redis module](https://www.github.com/cossacklabs/rd_themis).
+We're also porting Themis features to different environments where people might need them: [Redis module](https://www.github.com/cossacklabs/rd_themis), [PostgreSQL module](https://www.github.com/cossacklabs/pg_themis)
 
 Themis provides four important cryptographic services:
 
