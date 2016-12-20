@@ -77,7 +77,7 @@ Themis is available for the following languages/platforms:
 Themis-based plugins are built built to enable Themis features across various platforms and products: 
 
 - [RD_Themis](https://github.com/cossacklabs/rd_themis) for Redis database
-- [PG_Themis](https://github.com/cossacklabs/pg_themis) for Redis database
+- [PG_Themis](https://github.com/cossacklabs/pg_themis) for PostgreSQL database
 
 
 # Availability
