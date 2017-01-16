@@ -152,7 +152,7 @@ endif
 
 ifdef COVERAGE
 	CFLAGS += -g -O0 --coverage
-	COVERLDFLAGS = -lgcov
+	COVERLDFLAGS = --coverage
 else
 	COVERLDFLAGS = 
 endif
