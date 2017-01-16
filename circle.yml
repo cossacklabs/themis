@@ -11,21 +11,21 @@ dependencies:
     - gem install coveralls-lcov
 
   override:
-    - CFLAGS="-g -O0 --coverage" LDFLAGS="-lgcov" make SECURE_COMPARATOR=enable
-    - make SECURE_COMPARATOR=enable JAVA_HOME=/usr/lib/jvm/default-java themis_jni
-    - sudo make SECURE_COMPARATOR=enable install
-    - sudo make SECURE_COMPARATOR=enable themispp_install
-    - sudo make SECURE_COMPARATOR=enable pythemis_install
-    - sudo make SECURE_COMPARATOR=enable rubythemis_install
-    - sudo make SECURE_COMPARATOR=enable phpthemis_install
+    - make COVERAGE=y
+    - make JAVA_HOME=/usr/lib/jvm/default-java themis_jni
+    - sudo make install
+    - sudo make themispp_install
+    - sudo make pythemis_install
+    - sudo make rubythemis_install
+    - sudo make phpthemis_install
     - cd $HOME && git clone https://boringssl.googlesource.com/boringssl && cd boringssl && git checkout chromium-stable && mkdir build && cd build && cmake .. && make && cp decrepit/libdecrepit.a crypto/
     - cd $HOME/boringssl && mkdir build-armeabi-v7a && cd build-armeabi-v7a && cmake -DANDROID_ABI=armeabi-v7a -DCMAKE_TOOLCHAIN_FILE=../third_party/android-cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=16 -GNinja .. && ninja 
     - cd $HOME/boringssl && mkdir build-arm64-v8a && cd build-arm64-v8a && cmake -DANDROID_ABI=arm64-v8a -DCMAKE_TOOLCHAIN_FILE=../third_party/android-cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=16 -GNinja .. && ninja 
     - cd $HOME/boringssl && mkdir build-x86 && cd build-x86 && cmake -DANDROID_ABI=x86 -DCMAKE_TOOLCHAIN_FILE=../third_party/android-cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=16 -GNinja .. && ninja 
     - make ENGINE=boringssl ENGINE_INCLUDE_PATH=$HOME/boringssl/include ENGINE_LIB_PATH=$HOME/boringssl/build/crypto BUILD_PATH=build_with_boringssl test
-    - CFLAGS="-g -O0 --coverage" LDFLAGS="-lgcov" make SECURE_COMPARATOR=enable test
-    - make SECURE_COMPARATOR=enable themispp_test
-    - make SECURE_COMPARATOR=enable test_all
+    - make COVERAGE=y test
+    - make themispp_test
+    - make test_all
     - mkdir -p $HOME/gopath/src/$GOTHEMIS_IMPORT
     - rsync -auv gothemis/ $HOME/gopath/src/$GOTHEMIS_IMPORT/
     - lcov --directory . --zerocounters
