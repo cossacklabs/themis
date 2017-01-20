@@ -6,7 +6,7 @@ machine:
 ## Customize dependencies
 dependencies:
   pre:
-    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php5 cmake libssl-dev python3 python3-setuptools ruby ninja-build lcov
+    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php5 cmake libssl-dev python3 python3-setuptools ruby ninja-build lcov build-essential
     - cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz
     - gem install coveralls-lcov
 
