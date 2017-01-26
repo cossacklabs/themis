@@ -34,7 +34,7 @@ themis_status_t verify_signature(const void *verify_key, size_t verify_key_lengt
 themis_status_t compute_mac(const void *key, size_t key_length, const soter_kdf_context_buf_t *data, size_t data_count, void *mac, size_t *mac_length);
 themis_status_t verify_mac(const void *key, size_t key_length, const soter_kdf_context_buf_t *data_buf_t, size_t data_count, const void *mac, size_t mac_length);
 themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, size_t iv_length, const void *in, size_t in_length, void *out, size_t out_length);
-themis_status_t decrypt_gcm(const void *key, size_t key_length, const void *iv, size_t iv_length, const void *in, size_t in_length, void *out, size_t out_length);
+//themis_status_t decrypt_gcm(const void *key, size_t key_length, const void *iv, size_t iv_length, const void *in, size_t in_length, void *out, size_t out_length);
 themis_status_t secure_session_derive_message_keys(secure_session_t *session_ctx);
 
 /* Message size + session id + iv + length + sequence number + timestamp + MAC */
