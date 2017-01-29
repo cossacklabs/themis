@@ -20,6 +20,7 @@
 
 int main(int argc, char* argv[])
 {
+  int* a=malloc(sizeof(int));
   printf("%s\n", themis_version());
   testsuite_start_testing();
 
