@@ -27,7 +27,6 @@
 soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, const soter_kdf_context_buf_t *context, size_t context_count, void *output, size_t output_length)
 {
 	soter_hmac_ctx_t hmac_ctx;
-	soter_status_t soter_status;
 
 	soter_status_t res = SOTER_SUCCESS;
 	uint8_t out[MAX_HMAC_SIZE] = {0, 0, 0, 1};
@@ -59,33 +58,26 @@ soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, 
 		key_length = sizeof(implicit_key);
 	}
 
-	soter_status = soter_hmac_init(&hmac_ctx, SOTER_HASH_SHA256, key, key_length);
-	if (SOTER_SUCCESS != soter_status)
-	{
-		return soter_status;
+	res = soter_hmac_init(&hmac_ctx, SOTER_HASH_SHA256, key, key_length);
+	if (SOTER_SUCCESS != res){
+		return res;
 	}
 
 	/* i (counter) */
-	soter_status = soter_hmac_update(&hmac_ctx, out, 4);
-	if (SOTER_SUCCESS != soter_status)
-	{
-		res = soter_status;
+	res = soter_hmac_update(&hmac_ctx, out, 4);
+	if (SOTER_SUCCESS != res){
 		goto err;
 	}
 
 	/* label */
-	soter_status = soter_hmac_update(&hmac_ctx, label, strlen(label));
-	if (SOTER_SUCCESS != soter_status)
-	{
-		res = soter_status;
+	res = soter_hmac_update(&hmac_ctx, label, strlen(label));
+	if (SOTER_SUCCESS != res){
 		goto err;
 	}
 
 	/* 0x00 delimiter */
-	soter_status = soter_hmac_update(&hmac_ctx, out, 1);
-	if (SOTER_SUCCESS != soter_status)
-	{
-		res = soter_status;
+	res = soter_hmac_update(&hmac_ctx, out, 1);
+	if (SOTER_SUCCESS != res){
 		goto err;
 	}
 
@@ -94,19 +86,15 @@ soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, 
 	{
 		if (context[i].data)
 		{
-			soter_status = soter_hmac_update(&hmac_ctx, context[i].data, context[i].length);
-			if (SOTER_SUCCESS != soter_status)
-			{
-				res = soter_status;
+			res = soter_hmac_update(&hmac_ctx, context[i].data, context[i].length);
+			if (SOTER_SUCCESS != res){
 				goto err;
 			}
 		}
 	}
 
-	soter_status = soter_hmac_final(&hmac_ctx, out, &out_length);
-	if (SOTER_SUCCESS != soter_status)
-	{
-		res = soter_status;
+	res = soter_hmac_final(&hmac_ctx, out, &out_length);
+	if (SOTER_SUCCESS != res){
 		goto err;
 	}
 

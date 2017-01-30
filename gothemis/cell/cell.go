@@ -20,10 +20,10 @@ static bool get_protect_size(const void *key, size_t key_len, const void *data, 
 	switch (mode)
 	{
 	case MODE_SEAL:
-		res = themis_secure_cell_encrypt_full(key, key_len, context, context_len, data, data_len, NULL, enc_len);
+		res = themis_secure_cell_encrypt_seal(key, key_len, context, context_len, data, data_len, NULL, enc_len);
 		break;
 	case MODE_TOKEN_PROTECT:
-		res = themis_secure_cell_encrypt_auto_split(key, key_len, context, context_len, data, data_len, NULL, add_len, NULL, enc_len);
+		res = themis_secure_cell_encrypt_token_protect(key, key_len, context, context_len, data, data_len, NULL, add_len, NULL, enc_len);
 		break;
 	case MODE_CONTEXT_IMPRINT:
 		if (!context)
@@ -31,7 +31,7 @@ static bool get_protect_size(const void *key, size_t key_len, const void *data, 
 			break;
 		}
 
-		res = themis_secure_cell_encrypt_user_split(key, key_len, data, data_len, context, context_len, NULL, enc_len);
+		res = themis_secure_cell_encrypt_context_imprint(key, key_len, data, data_len, context, context_len, NULL, enc_len);
 		break;
 	}
 
@@ -45,10 +45,10 @@ static bool encrypt(const void *key, size_t key_len, const void *data, size_t da
 	switch (mode)
 	{
 	case MODE_SEAL:
-		res = themis_secure_cell_encrypt_full(key, key_len, context, context_len, data, data_len, enc, &enc_len);
+		res = themis_secure_cell_encrypt_seal(key, key_len, context, context_len, data, data_len, enc, &enc_len);
 		break;
 	case MODE_TOKEN_PROTECT:
-		res = themis_secure_cell_encrypt_auto_split(key, key_len, context, context_len, data, data_len, add, &add_len, enc, &enc_len);
+		res = themis_secure_cell_encrypt_token_protect(key, key_len, context, context_len, data, data_len, add, &add_len, enc, &enc_len);
 		break;
 	case MODE_CONTEXT_IMPRINT:
 		if (!context)
@@ -56,7 +56,7 @@ static bool encrypt(const void *key, size_t key_len, const void *data, size_t da
 			break;
 		}
 
-		res = themis_secure_cell_encrypt_user_split(key, key_len, data, data_len, context, context_len, enc, &enc_len);
+		res = themis_secure_cell_encrypt_context_imprint(key, key_len, data, data_len, context, context_len, enc, &enc_len);
 		break;
 	}
 
@@ -70,7 +70,7 @@ static bool get_unprotect_size(const void *key, size_t key_len, const void *prot
 	switch (mode)
 	{
 	case MODE_SEAL:
-		res = themis_secure_cell_decrypt_full(key, key_len, context, context_len, prot, prot_len, NULL, dec_len);
+		res = themis_secure_cell_decrypt_seal(key, key_len, context, context_len, prot, prot_len, NULL, dec_len);
 		break;
 	case MODE_TOKEN_PROTECT:
 		if (!add)
@@ -78,7 +78,7 @@ static bool get_unprotect_size(const void *key, size_t key_len, const void *prot
 			break;
 		}
 
-		res = themis_secure_cell_decrypt_auto_split(key, key_len, context, context_len, prot, prot_len, add, add_len, NULL, dec_len);
+		res = themis_secure_cell_decrypt_token_protect(key, key_len, context, context_len, prot, prot_len, add, add_len, NULL, dec_len);
 		break;
 	case MODE_CONTEXT_IMPRINT:
 		if (!context)
@@ -86,7 +86,7 @@ static bool get_unprotect_size(const void *key, size_t key_len, const void *prot
 			break;
 		}
 
-		res = themis_secure_cell_encrypt_user_split(key, key_len, prot, prot_len, context, context_len, NULL, dec_len);
+		res = themis_secure_cell_encrypt_context_imprint(key, key_len, prot, prot_len, context, context_len, NULL, dec_len);
 		break;
 	}
 
@@ -100,7 +100,7 @@ static bool decrypt(const void *key, size_t key_len, const void *prot, size_t pr
 	switch (mode)
 	{
 	case MODE_SEAL:
-		res = themis_secure_cell_decrypt_full(key, key_len, context, context_len, prot, prot_len, dec, &dec_len);
+		res = themis_secure_cell_decrypt_seal(key, key_len, context, context_len, prot, prot_len, dec, &dec_len);
 		break;
 	case MODE_TOKEN_PROTECT:
 		if (!add)
@@ -108,7 +108,7 @@ static bool decrypt(const void *key, size_t key_len, const void *prot, size_t pr
 			break;
 		}
 
-		res = themis_secure_cell_decrypt_auto_split(key, key_len, context, context_len, prot, prot_len, add, add_len, dec, &dec_len);
+		res = themis_secure_cell_decrypt_token_protect(key, key_len, context, context_len, prot, prot_len, add, add_len, dec, &dec_len);
 		break;
 	case MODE_CONTEXT_IMPRINT:
 		if (!context)
@@ -116,7 +116,7 @@ static bool decrypt(const void *key, size_t key_len, const void *prot, size_t pr
 			break;
 		}
 
-		res = themis_secure_cell_encrypt_user_split(key, key_len, prot, prot_len, context, context_len, dec, &dec_len);
+		res = themis_secure_cell_encrypt_context_imprint(key, key_len, prot, prot_len, context, context_len, dec, &dec_len);
 		break;
 	}
 

@@ -278,7 +278,7 @@ err:
 	return THEMIS_SUCCESS;*/
 }
 
-themis_status_t decrypt_gcm(const void *key, size_t key_length, const void *iv, size_t iv_length, const void *in, size_t in_length, void *out, size_t out_length)
+/*themis_status_t decrypt_gcm(const void *key, size_t key_length, const void *iv, size_t iv_length, const void *in, size_t in_length, void *out, size_t out_length)
 {
 	const uint8_t *input = in;
 	uint8_t *output = out;
@@ -304,7 +304,7 @@ themis_status_t decrypt_gcm(const void *key, size_t key_length, const void *iv, 
 	}
 
 	return THEMIS_SUCCESS;
-}
+}*/
 
 themis_status_t secure_session_derive_message_keys(secure_session_t *session_ctx)
 {
