@@ -35,11 +35,13 @@ CREATE_SCELL_DATA_AUTH_TABLE_SQL = (
     "CREATE TABLE IF NOT EXISTS scell_data_auth ("
     "id serial PRIMARY KEY, num bytea, data bytea);")
 
+
 def init_table(connection):
     with connection.cursor() as cursor:
         cursor.execute(CREATE_SCELL_DATA_TABLE_SQL)
         cursor.execute(CREATE_SCELL_DATA_AUTH_TABLE_SQL)
         connection.commit()
+
 
 def add_record(connection, field1, field2):
     encryptor = scell.SCellTokenProtect(password)
@@ -49,7 +51,7 @@ def add_record(connection, field1, field2):
     # encrypt field2
     encrypted_field2, field2_auth_data = encryptor.encrypt(
         field2.encode('utf8'))
-    
+
     with connection.cursor() as cursor:
         # store main cryptomessage
         cursor.execute(
@@ -67,8 +69,9 @@ def add_record(connection, field1, field2):
         connection.commit()
     return new_id_value
 
+
 def get_record(connection, id):
-    #retrieve record from db by id
+    # retrieve record from db by id
     dec = scell.SCellTokenProtect(password)
     with connection.cursor() as cursor:
         cursor.execute(
@@ -94,6 +97,7 @@ def get_record(connection, id):
                            bytes(row[AUTH_DATA])).decode('utf-8')
     return num, data
 
+
 if __name__ == '__main__':
     dsn = ("dbname=scell_token_protect_test user=postgres password=postgres "
            "host=172.17.0.2")
@@ -102,6 +106,3 @@ if __name__ == '__main__':
         row_id = add_record(connection, "First record", "Second record")
         record = get_record(connection, row_id)
         print("real_data: ", record)
-
-
-
