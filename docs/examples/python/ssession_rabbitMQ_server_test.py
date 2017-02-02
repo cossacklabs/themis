@@ -16,6 +16,9 @@
 
 """
 echo server for rabbitMQ
+NOTE: due to the fact that ssession has state and it is simple example, server
+can handle only one session and then need restart or you can extend example and
+handle many sessions per some identifier
 """
 
 import pika
