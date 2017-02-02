@@ -37,3 +37,9 @@ xcuserdata
 DerivedData/
 .idea/
 build
+
+# python rules
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
