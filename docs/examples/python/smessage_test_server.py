@@ -34,7 +34,7 @@ while True:
         message = accepted.recv(1024)
         print(message)
         # "finish" - last message
-        if message == "finish":
+        if message == b"finish":
             break
         # send message
         accepted.sendall(message)
