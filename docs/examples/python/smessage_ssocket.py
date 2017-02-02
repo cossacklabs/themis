@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2015 Cossack Labs Limited
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -14,44 +14,46 @@
 # limitations under the License.
 #
 
-#hadmade secure socket 
-from pythemis import smessage;
-import socket;
+import socket
+from pythemis import smessage
 
-class ssocket(object):
-    def __init__(self, priv_key, peer_public_key=None, socket_=None):
-        if socket_==None:
-            self.socket=socket.socket();
+
+class SSocket(object):
+    def __init__(self, private_key, peer_public_key=None, socket_=None):
+        if socket_:
+            self.socket = socket_
         else:
-            self.socket=socket_;
-        self.priv_key=priv_key;
-        if peer_public_key==None:
-            self.message=None;
+            self.socket = socket.socket()
+        self.priv_key = private_key
+        if peer_public_key:
+            self.smessage = smessage.SMessage(private_key, peer_public_key)
         else:
-            self.smessage=smessage.smessage(priv_key, peer_public_key);
-        
-    def connect(self, conn_param):
-        return self.socket.connect(conn_param);
-    
+            self.message = None
+
+    def connect(self, connection_params):
+        return self.socket.connect(connection_params)
+
     def sendall(self, message):
-        self.socket.sendall(self.smessage.wrap(message)); #encrypt and send message
+        # encrypt and send message
+        self.socket.sendall(self.smessage.wrap(message))
 
     def recv(self, buffer_length):
-        aa=self.socket.recv(buffer_length);
-        return self.smessage.unwrap(aa); #decrypt received message
+        data = self.socket.recv(buffer_length)
+        # decrypt received message
+        return self.smessage.unwrap(data)
 
     def close(self):
-        return self.socket.close();
+        return self.socket.close()
 
     def bind(self, param):
-        return self.socket.bind(param);
+        return self.socket.bind(param)
 
     def listen(self, param):
-        return self.socket.listen(param);
+        return self.socket.listen(param)
 
     def accept(self):
-        self.accepted, self.addr = self.socket.accept();
-        return ssocket(self.priv_key, None, self.accepted), self.addr;
-        
-    def set_peer_pub_key(self,peer_public_key):
-        self.smessage=smessage.smessage(self.priv_key, peer_public_key);
+        self.accepted, self.addr = self.socket.accept()
+        return SSocket(self.priv_key, None, self.accepted), self.addr
+
+    def set_peer_pub_key(self, peer_public_key):
+        self.smessage = smessage.SMessage(self.priv_key, peer_public_key)

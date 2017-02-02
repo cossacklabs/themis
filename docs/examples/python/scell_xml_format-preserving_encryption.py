@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2015 Cossack Labs Limited
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -13,43 +13,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""
+encrypt all leafs data in xml tree.
+as format preserving the path to leaf is additional cotext for enryption parameters deriving
+"""
 
-#encrypt all leafs data in xml tree.
-#as format preserving the path to leaf is additional cotext for enryption parameters deriving
+import xml.etree.ElementTree as ET
+import base64
+from pythemis import scell
 
-import xml.etree.ElementTree as ET;
-import base64;
-from pythemis import scell;
-
-password="password";
+password = b"password"
 
 
-def enc_children(node, context):
-    if len(node)!=0:
+def encrypt_children(node, context):
+    if len(node):
         for i in range(0, len(node)):
-            enc_children(node[i], context+"/"+node.tag);
+            encrypt_children(node[i], context + "/" + node.tag)
     else:
-        if node.text!=None:
-            node.text=base64.b64encode(enc.encrypt(node.text, context+"/"+node.tag)); #encrypt leaf data and replace it in file by base64 encoding
+        if node.text:
+            # encrypt leaf data and replace it in file by base64 encoding
+            node.text = base64.b64encode(
+                encryptor.encrypt(node.text.encode('utf-8'),
+                                  context + "/" + node.tag)).decode('ascii')
 
-def dec_children(node, context):
-    if len(node)!=0:
+
+def decrypt_children(node, context):
+    if len(node):
         for i in range(0, len(node)):
-            dec_children(node[i], context+"/"+node.tag);
+            decrypt_children(node[i], context + "/" + node.tag)
     else:
-        if node.text!=None:
-            node.text=enc.decrypt(base64.b64decode(node.text), context+"/"+node.tag); #decrypt base64 encoded leaf data and replace it by plain value
+        if node.text:
+            # decrypt base64 encoded leaf data and replace it by plain value
+            node.text = encryptor.decrypt(
+                base64.b64decode(node.text),
+                context + "/" + node.tag).decode('utf-8')
 
-#encoding file data.xml and save result to encoded_data.xml
-tree = ET.parse('data.xml');
-root = tree.getroot();
-enc=scell.scell_seal(password);
-enc_children(root, "");
-tree.write("encoded_data.xml");
 
-#decoding file encoded_data.xml and save result to decoded_data.xml
-tree2 = ET.parse('encoded_data.xml');
-root2 = tree2.getroot();
-dec_children(root2, "");
-tree2.write("decoded_data.xml");
+# encoding file 'example_data/test.xml' and save result to encoded_data.xml
+tree = ET.parse('example_data/test.xml')
+root = tree.getroot()
+encryptor = scell.SCellSeal(password)
+encrypt_children(root, "")
+tree.write("encoded_data.xml")
 
+# decoding file encoded_data.xml and save result to decoded_data.xml
+tree2 = ET.parse('encoded_data.xml')
+root2 = tree2.getroot()
+decrypt_children(root2, "")
+tree2.write("decoded_data.xml")

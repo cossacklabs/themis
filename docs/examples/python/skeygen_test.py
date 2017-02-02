@@ -14,19 +14,24 @@
 # limitations under the License.
 #
 
-#key generation example
 import sys
-from pythemis import skeygen
+import os
+from pythemis.skeygen import KEY_PAIR_TYPE, GenerateKeyPair
 
-alg="EC";
+if len(sys.argv) != 3:
+    print("Usage: python {} <private_key_path> <public_key_path>".format(
+        os.path.basename(__file__)))
+    exit(1)
 
-obj = skeygen.themis_gen_key_pair(alg);
-private_key = obj.export_private_key();
-public_key = obj.export_public_key();
+keypair = GenerateKeyPair(KEY_PAIR_TYPE.EC)
+private_key = keypair.export_private_key()
+public_key = keypair.export_public_key()
 
-private_key_file = open(sys.argv[1],"wb");
-private_key_file.write(private_key);
-private_key_file.close();
-public_key_file = open(sys.argv[2],"wb");
-public_key_file.write(public_key);
-public_key_file.close();
+with open(sys.argv[1], "wb") as private_key_file:
+    print("Save private key to {}".format(sys.argv[1]))
+    private_key_file.write(private_key)
+
+with open(sys.argv[2], "wb") as public_key_file:
+    print("Save public key to {}".format(sys.argv[2]))
+    public_key_file.write(public_key)
+
