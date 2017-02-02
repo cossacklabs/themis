@@ -17,11 +17,11 @@
 
 import unittest
 
-from .ssession import SSession, MemoryTransport, SimpleMemoryTransport
+from .ssession import SSession, SimpleMemoryTransport
 from .smessage import SMessage, ssign, sverify
 from .skeygen import GenerateKeyPair, KEY_PAIR_TYPE
 from .scell import SCellSeal, SCellContextImprint, SCellTokenProtect
-from .scomparator import SComparator, SCOMPARATOR_CODES
+from .scomparator import SComparator
 from .exception import ThemisError
 
 
