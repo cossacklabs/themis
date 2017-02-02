@@ -17,6 +17,7 @@
 #
 
 import ctypes
+import warnings
 from ctypes.util import find_library
 from enum import IntEnum
 
@@ -31,25 +32,26 @@ themis.secure_comparator_get_result.restype = ctypes.c_int64
 scomparator_create = themis.secure_comparator_create
 scomparator_create.restype = ctypes.POINTER(ctypes.c_int)
 
+
 class SCOMPARATOR_CODES(IntEnum):
     MATCH = 0xf0f0f0f0
     NOT_MATCH = THEMIS_CODES.FAIL
     NOT_READY = 0
 
 
-class scomparator(object):
+class SComparator(object):
     def __init__(self, shared_secret):
         self.session_ctx = ctypes.POINTER(ctypes.c_int)
         self.comparator_ctx = scomparator_create()
         if self.comparator_ctx is None:
-            raise exception.themis_exception(THEMIS_CODES.FAIL,
+            raise exception.ThemisError(THEMIS_CODES.FAIL,
                                              "Secure Comparator failed creating")
         res = themis.secure_comparator_append_secret(
             self.comparator_ctx,
             ctypes.byref(ctypes.create_string_buffer(shared_secret)),
             len(shared_secret))
         if res != THEMIS_CODES.SUCCESS:
-            raise exception.themis_exception(
+            raise exception.ThemisError(
                 THEMIS_CODES.FAIL, "Secure Comparator failed appending secret")
 
         self.comparation_complete = False
@@ -62,14 +64,14 @@ class scomparator(object):
         res = themis.secure_comparator_begin_compare(self.comparator_ctx, None,
                                                      ctypes.byref(req_size))
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
-            raise exception.themis_exception(res,
+            raise exception.ThemisError(res,
                                              "Secure Comparator failed making initialization message")
         req_buffer = ctypes.create_string_buffer(req_size.value)
         res = themis.secure_comparator_begin_compare(self.comparator_ctx,
                                                      ctypes.byref(req_buffer),
                                                      ctypes.byref(req_size))
         if res != THEMIS_CODES.SUCCESS and res != THEMIS_CODES.SEND_AS_IS:
-            raise exception.themis_exception(res,
+            raise exception.ThemisError(res,
                                              "Secure Comparator failed making initialization message")
         return ctypes.string_at(req_buffer, req_size)
 
@@ -84,7 +86,7 @@ class scomparator(object):
             return ""
 
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
-            raise exception.themis_exception(
+            raise exception.ThemisError(
                 res, "Secure Comparator failed proceeding message")
         req_buffer = ctypes.create_string_buffer(req_size.value)
         res = themis.secure_comparator_proceed_compare(
@@ -93,8 +95,22 @@ class scomparator(object):
         if res == THEMIS_CODES.SEND_AS_IS or res == THEMIS_CODES.SUCCESS:
             return ctypes.string_at(req_buffer, req_size)
 
-        raise exception.themis_exception(
+        raise exception.ThemisError(
             res, "Secure Comparator failed proceeding message")
+
+    def is_compared(self):
+        return not (themis.secure_comparator_get_result(self.comparator_ctx) ==
+                    SCOMPARATOR_CODES.NOT_READY)
+
+    def is_equal(self):
+        return (themis.secure_comparator_get_result(self.comparator_ctx) ==
+                SCOMPARATOR_CODES.MATCH)
 
     def result(self):
         return themis.secure_comparator_get_result(self.comparator_ctx)
+
+
+class scomparator(SComparator):
+    def __init__(self, *args, **kwargs):
+        warnings.warn("scomparator is deprecated in favor of SComparator.")
+        super(scomparator, self).__init__(*args, **kwargs)

@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+import warnings
 from enum import IntEnum
 
 
@@ -25,7 +25,7 @@ class THEMIS_CODES(IntEnum):
     SEND_AS_IS = 1
 
 
-class themis_exception(Exception):
+class ThemisError(Exception):
     def __init__(self, error_code, message):
         self.error_code = error_code
         self.message = message
@@ -33,3 +33,10 @@ class themis_exception(Exception):
     def __str__(self):
         return repr("Themis error: {} -- {}".format(str(self.error_code),
                                                     self.message))
+
+
+class themis_exception(ThemisError):
+    def __init__(self, *args, **kwargs):
+        warnings.warn(
+            "themis_exception is deprecated in favor of ThemisError.")
+        super(themis_exception, self).__init__(*args, **kwargs)
