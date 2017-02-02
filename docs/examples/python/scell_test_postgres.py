@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2015 Cossack Labs Limited
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -14,57 +14,94 @@
 # limitations under the License.
 #
 
-#store encrypted data in postgreSQL tables
-#we assume that table "scell_data" must contain data, length of which must be not more then plain data
-#for store additional encryption data we will use separate table "scell_data_auth"
-#stored object is represented by two independent string value
-import psycopg2;
-from pythemis import scell;
+"""
+store encrypted data in postgreSQL tables
+we assume that table "scell_data" must contain data, length of which must be
+not more then plain data
+for store additional encryption data we will use separate table "scell_data_auth"
+stored object is represented by two independent string value
+"""
 
-password="password";
+import sys
+import psycopg2
+import psycopg2.extras
+from pythemis import scell
 
-def init_table(conn):        #table initialisation
-    cur = conn.cursor();
-    cur.execute("select exists(select * from information_schema.tables where table_name=%s)", ('scell_data',));
-    if cur.fetchone()[0]==False:
-        cur.execute("CREATE TABLE scell_data (id serial PRIMARY KEY, num bytea, data bytea);");
-    cur.execute("select exists(select * from information_schema.tables where table_name=%s)", ('scell_data_auth',));
-    if cur.fetchone()[0]==False:
-        cur.execute("CREATE TABLE scell_data_auth (id serial PRIMARY KEY, num bytea, data bytea);");
-    conn.commit();
-    cur.close();
+password = b"password"
 
-def add_record(conn, field1, field2):        #store record
-    enc=scell.scell_token_protect(password);
-    enc_field1, field1_auth_data = enc.encrypt(str(field1)); #encrypt field1
-    enc_field2, field2_auth_data = enc.encrypt(str(field2)); #encrypt field2
+CREATE_SCELL_DATA_TABLE_SQL = ("CREATE TABLE IF NOT EXISTS scell_data ("
+                               "id serial PRIMARY KEY, num bytea, data bytea);")
+CREATE_SCELL_DATA_AUTH_TABLE_SQL = (
+    "CREATE TABLE IF NOT EXISTS scell_data_auth ("
+    "id serial PRIMARY KEY, num bytea, data bytea);")
+
+def init_table(connection):
+    with connection.cursor() as cursor:
+        cursor.execute(CREATE_SCELL_DATA_TABLE_SQL)
+        cursor.execute(CREATE_SCELL_DATA_AUTH_TABLE_SQL)
+        connection.commit()
+
+def add_record(connection, field1, field2):
+    encryptor = scell.SCellTokenProtect(password)
+    # encrypt field1
+    encrypted_field1, field1_auth_data = encryptor.encrypt(
+        field1.encode('utf-8'))
+    # encrypt field2
+    encrypted_field2, field2_auth_data = encryptor.encrypt(
+        field2.encode('utf8'))
     
-    cur = conn.cursor();
-    cur.execute("INSERT INTO scell_data (num, data) VALUES (%s, %s) RETURNING ID",(psycopg2.Binary(enc_field1), psycopg2.Binary(enc_field2))); #store main cryptomessage
-    new_id_value=cur.fetchone()[0];
-    cur.execute("INSERT INTO scell_data_auth (id, num, data) VALUES (%s, %s, %s)",(new_id_value, psycopg2.Binary(field1_auth_data), psycopg2.Binary(field2_auth_data))); #store additional auth values
-    conn.commit();
-    cur.close();
-    return new_id_value;
+    with connection.cursor() as cursor:
+        # store main cryptomessage
+        cursor.execute(
+            "INSERT INTO scell_data (num, data) VALUES (%s, %s) RETURNING ID",
+            (psycopg2.Binary(encrypted_field1),
+             psycopg2.Binary(encrypted_field2)))
+        new_id_value = cursor.fetchone()[0]
 
-def get_record(conn, id):                #retrieve record from db by id
-    dec=scell.scell_token_protect(password);
-    cur = conn.cursor();
-    cur.execute("SELECT * FROM scell_data INNER JOIN scell_data_auth ON scell_data.id = %s AND scell_data.id=scell_data_auth.id;", (id,))
-    x = cur.fetchone();
-    print "stored data:", repr(str(x[1])), repr(str(x[4])), repr(str(x[2])), repr(str(x[5]));
-    num=dec.decrypt(str(x[1]),str(x[4]));
-    data=dec.decrypt(str(x[2]),str(x[5]));
-    cur.close();
-    return (num,data);
+        # store additional auth values
+        cursor.execute(
+            "INSERT INTO scell_data_auth (id, num, data) VALUES (%s, %s, %s)",
+            (new_id_value,
+             psycopg2.Binary(field1_auth_data),
+             psycopg2.Binary(field2_auth_data)))
+        connection.commit()
+    return new_id_value
 
+def get_record(connection, id):
+    #retrieve record from db by id
+    dec = scell.SCellTokenProtect(password)
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT * FROM scell_data "
+            "INNER JOIN scell_data_auth ON "
+            "scell_data.id = %s AND scell_data.id=scell_data_auth.id;",
+            [id]
+        )
+        row = cursor.fetchone()
+        _, DATA_NUM, DATA_DATA, AUTH_ID, AUTH_NUM, AUTH_DATA = range(6)
+        if (sys.version_info > (3, 0)):
+            print("stored data:",
+                  row[DATA_NUM].tobytes(), row[AUTH_NUM].tobytes(),
+                  row[DATA_DATA].tobytes(), row[AUTH_DATA].tobytes())
+        else:
+            print("stored data:",
+                  bytes(row[DATA_NUM]), bytes(row[AUTH_NUM]),
+                  bytes(row[DATA_DATA]), bytes(row[AUTH_DATA]))
+        num = dec.decrypt(bytes(row[DATA_NUM]),
+                          bytes(row[AUTH_NUM])).decode('utf-8')
 
-conn = psycopg2.connect("dbname=scell_token_protect_test user=postgres");
-init_table(conn);
-id=add_record(conn, "First record", "Second record");
-rec=get_record(conn, id);
-print "real_data: ", rec;
-conn.close();
+        data = dec.decrypt(bytes(row[DATA_DATA]),
+                           bytes(row[AUTH_DATA])).decode('utf-8')
+    return num, data
+
+if __name__ == '__main__':
+    dsn = ("dbname=scell_token_protect_test user=postgres password=postgres "
+           "host=172.17.0.2")
+    with psycopg2.connect(dsn) as connection:
+        init_table(connection)
+        row_id = add_record(connection, "First record", "Second record")
+        record = get_record(connection, row_id)
+        print("real_data: ", record)
 
 
 
