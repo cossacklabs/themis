@@ -26,6 +26,8 @@ from .exception import THEMIS_CODES
 
 themis = ctypes.cdll.LoadLibrary(find_library("themis"))
 
+themis.secure_comparator_get_result.restype = ctypes.c_int64
+
 scomparator_create = themis.secure_comparator_create
 scomparator_create.restype = ctypes.POINTER(ctypes.c_int)
 
