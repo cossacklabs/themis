@@ -37,6 +37,5 @@ class ThemisError(Exception):
 
 class themis_exception(ThemisError):
     def __init__(self, *args, **kwargs):
-        warnings.warn(
-            "themis_exception is deprecated in favor of ThemisError.")
+        warnings.warn("themis_exception is deprecated in favor of ThemisError.")
         super(themis_exception, self).__init__(*args, **kwargs)

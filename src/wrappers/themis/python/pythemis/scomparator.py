@@ -16,14 +16,13 @@
 # limitations under the License.
 #
 
-import ctypes
 import warnings
+import ctypes
 from ctypes.util import find_library
 from enum import IntEnum
 
 from . import exception as exception
 from .exception import THEMIS_CODES
-
 
 themis = ctypes.cdll.LoadLibrary(find_library("themis"))
 
@@ -45,7 +44,7 @@ class SComparator(object):
         self.comparator_ctx = scomparator_create()
         if self.comparator_ctx is None:
             raise exception.ThemisError(THEMIS_CODES.FAIL,
-                                             "Secure Comparator failed creating")
+                                        "Secure Comparator failed creating")
         res = themis.secure_comparator_append_secret(
             self.comparator_ctx,
             ctypes.byref(ctypes.create_string_buffer(shared_secret)),
@@ -64,15 +63,15 @@ class SComparator(object):
         res = themis.secure_comparator_begin_compare(self.comparator_ctx, None,
                                                      ctypes.byref(req_size))
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
-            raise exception.ThemisError(res,
-                                             "Secure Comparator failed making initialization message")
+            raise exception.ThemisError(
+                res, "Secure Comparator failed making initialization message")
         req_buffer = ctypes.create_string_buffer(req_size.value)
-        res = themis.secure_comparator_begin_compare(self.comparator_ctx,
-                                                     ctypes.byref(req_buffer),
-                                                     ctypes.byref(req_size))
+        res = themis.secure_comparator_begin_compare(
+            self.comparator_ctx, ctypes.byref(req_buffer),
+            ctypes.byref(req_size))
         if res != THEMIS_CODES.SUCCESS and res != THEMIS_CODES.SEND_AS_IS:
-            raise exception.ThemisError(res,
-                                             "Secure Comparator failed making initialization message")
+            raise exception.ThemisError(
+                res, "Secure Comparator failed making initialization message")
         return ctypes.string_at(req_buffer, req_size)
 
     def proceed_compare(self, control_message):

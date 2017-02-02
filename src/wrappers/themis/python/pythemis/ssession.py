@@ -16,18 +16,15 @@
 # limitations under the License.
 #
 import warnings
-from collections import deque
-
 import ctypes
 from ctypes.util import find_library
-
+from collections import deque
 from abc import abstractmethod
 
 from . import exception as exception
 from .exception import THEMIS_CODES, ThemisError
 
 themis = ctypes.cdll.LoadLibrary(find_library('themis'))
-
 
 ON_GET_PUBLIC_KEY = ctypes.CFUNCTYPE(
     ctypes.c_int, ctypes.POINTER(ctypes.c_byte),
@@ -59,6 +56,7 @@ class TransportStruct(ctypes.Structure):
         # some user_data, that will be passed to any of callbacks
         ("user_data", ctypes.POINTER(ctypes.py_object))]
 
+
 ssession_create = themis.secure_session_create
 ssession_create.restype = ctypes.POINTER(ctypes.c_int)
 ssession_create.argtypes = [ctypes.c_void_p, ctypes.c_size_t,
@@ -78,7 +76,6 @@ def on_receive(data, data_length, user_data):
     try:
         received_data = user_data[0].receive(data_length)
     except Exception as e:
-        print(e)
         return -2222
     ctypes.memmove(data, received_data, len(received_data))
     return len(received_data)
@@ -137,9 +134,9 @@ class SSession(object):
                 0)
         else:
             self.lp_conn = lp_conn_type(ctypes.py_object(transport))
-            self.transport_ = TransportStruct(on_send_, on_receive_,
-                                              on_change_status_, on_get_pub_key_,
-                                              self.lp_conn)
+            self.transport_ = TransportStruct(
+                on_send_, on_receive_, on_change_status_, on_get_pub_key_,
+                self.lp_conn)
             self.session_ctx = ssession_create(
                 ctypes.byref(ctypes.create_string_buffer(user_id)),
                 len(user_id),
@@ -148,7 +145,7 @@ class SSession(object):
                 ctypes.byref(self.transport_))
         if self.session_ctx is None:
             raise exception.ThemisError(THEMIS_CODES.FAIL,
-                                             "Secure Session failed creating")
+                                        "Secure Session failed creating")
 
     def __del__(self):
         themis.secure_session_destroy(self.session_ctx)
@@ -156,16 +153,15 @@ class SSession(object):
     def connect(self):
         res = themis.secure_session_connect(self.session_ctx)
         if res != THEMIS_CODES.SUCCESS:
-            raise exception.ThemisError(
-                res, "Secure Session failed connecting")
+            raise exception.ThemisError(res, "Secure Session failed connecting")
 
     def send(self, message):
         send_message = ctypes.create_string_buffer(message)
-        res = themis.secure_session_send(self.session_ctx,
-                                         ctypes.byref(send_message),
-                                         len(message))
+        res = themis.secure_session_send(
+            self.session_ctx, ctypes.byref(send_message), len(message))
         if res == THEMIS_CODES.NETWORK_ERROR:
             raise exception.ThemisError(res, "Secure Session failed sending")
+
         return res
 
     def receive(self):
@@ -174,13 +170,12 @@ class SSession(object):
         res = themis.secure_session_receive(self.session_ctx, message,
                                             message_length)
         if res == THEMIS_CODES.NETWORK_ERROR:
-            raise exception.ThemisError(
-                res, "Secure Session failed receiving")
+            raise exception.ThemisError(res, "Secure Session failed receiving")
         elif res < 0:
             return ""
         return ctypes.string_at(message, res)
 
-    def is_established(self): 
+    def is_established(self):
         return themis.secure_session_is_established(self.session_ctx) == 1
 
     def connect_request(self):
@@ -190,12 +185,14 @@ class SSession(object):
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise exception.ThemisError(
                 res, "Secure Session failed generating connect request")
+
         req_buffer = ctypes.create_string_buffer(req_size.value)
         res = themis.secure_session_generate_connect_request(
             self.session_ctx, ctypes.byref(req_buffer), ctypes.byref(req_size))
         if res != THEMIS_CODES.SUCCESS:
             raise exception.ThemisError(
                 res, "Secure Session failed generating connect request")
+
         return ctypes.string_at(req_buffer, req_size)
 
     def wrap(self, message):
@@ -205,15 +202,16 @@ class SSession(object):
             self.session_ctx, ctypes.byref(send_message), len(message), 0,
             ctypes.byref(wrapped_message_length))
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
-            raise exception.ThemisError(
-                res, "Secure Session failed encrypting")
+            raise exception.ThemisError(res, "Secure Session failed encrypting")
+
         wrapped_message = ctypes.create_string_buffer(
             wrapped_message_length.value)
         res = themis.secure_session_wrap(
             self.session_ctx, ctypes.byref(send_message), len(message),
             ctypes.byref(wrapped_message), ctypes.byref(wrapped_message_length))
         if res != THEMIS_CODES.SUCCESS:
-            raise exception.ThemisError(res,"Secure Session failed encrypting")
+            raise exception.ThemisError(res, "Secure Session failed encrypting")
+
         return ctypes.string_at(wrapped_message, wrapped_message_length)
 
     def unwrap(self, message):
@@ -222,11 +220,12 @@ class SSession(object):
         res = themis.secure_session_unwrap(
             self.session_ctx, wrapped_message, len(message), 0,
             ctypes.byref(unwrapped_message_length))
+
         if res == THEMIS_CODES.SUCCESS:
             return SString(b"")
+
         if res != THEMIS_CODES.BUFFER_TOO_SMALL:
-            raise exception.ThemisError(
-                res, "Secure Session failed decrypting")
+            raise exception.ThemisError(res, "Secure Session failed decrypting")
         unwrapped_message = ctypes.create_string_buffer(
             unwrapped_message_length.value)
         res = themis.secure_session_unwrap(
@@ -238,8 +237,8 @@ class SSession(object):
         if res == THEMIS_CODES.SEND_AS_IS:
             rez.set_control()
         elif res != THEMIS_CODES.SUCCESS:
-            raise exception.ThemisError(
-                res, "Secure Session failed decrypting")
+            raise exception.ThemisError(res, "Secure Session failed decrypting")
+
         return rez
 
 
@@ -285,5 +284,6 @@ class ssession(SSession):
 
 class mem_transport(MemoryTransport):
     def __init__(self):
-        warnings.warn("mem_transport is deprecated in favor of MemoryTransport.")
+        warnings.warn(
+            "mem_transport is deprecated in favor of MemoryTransport.")
         super(mem_transport, self).__init__()
