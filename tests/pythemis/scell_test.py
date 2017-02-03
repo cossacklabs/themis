@@ -16,133 +16,117 @@
 
 import unittest
 
-from pythemis import scell
-from pythemis.exception import themis_exception
+from pythemis.scell import SCellTokenProtect, SCellSeal, SCellContextImprint
+from pythemis.exception import ThemisError
 
 
-class TestSCell(unittest.TestCase):
+class BaseSCellTestMixin(unittest.TestCase):
     def setUp(self):
-        self.key = b"This is test key"
-        self.message = b"This is test message"
-        self.context = b"This is test context"
+        self.context = b'some context'
+        self.incorrect_context = b'another context'
+        self.key = b'some key'
+        self.incorrect_key = b'another key'
+        self.data = b'some data'
+        # zero length
+        self.incorrect_data = b''
+        super(BaseSCellTestMixin, self).setUp()
 
-    def testSeal(self):
-        with self.assertRaises(themis_exception):
-            scell.scell_seal("")
 
-        with self.assertRaises(TypeError):
-            scell.scell_seal(None)
+class SCellSealTest(BaseSCellTestMixin):
+    def test_init(self):
+        with self.assertRaises(ThemisError):
+            SCellSeal(None)
 
-        with self.assertRaises(TypeError):
-            scell.scell_seal(112233)
+    def test_encrypt_decrypt(self):
+        scell1 = SCellSeal(self.key)
+        scell2 = SCellSeal(self.key)
+        scell3 = SCellSeal(self.incorrect_key)
+        self.assertEqual(self.data, scell2.decrypt(scell1.encrypt(self.data)))
+        with self.assertRaises(ThemisError):
+            scell3.decrypt(scell1.encrypt(self.data))
 
-        enc = scell.scell_seal(self.key)
-        with self.assertRaises(themis_exception):
-            enc.encrypt("")
+        with self.assertRaises(ThemisError):
+            scell1.encrypt(self.incorrect_data)
 
-        with self.assertRaises(TypeError):
-            enc.encrypt(None)
+    def test_encrypt_decrypt_context(self):
+        scell1 = SCellSeal(self.key)
+        scell2 = SCellSeal(self.key)
+        self.assertEqual(
+            self.data,
+            scell2.decrypt(scell1.encrypt(self.data, self.context),
+                           self.context))
 
-        encrypted_message = enc.encrypt(self.message)
-        with self.assertRaises(themis_exception):
-            enc.decrypt(b"".join([encrypted_message, b"11"]))
+        encrypted = scell1.encrypt(self.data, self.context)
+        with self.assertRaises(ThemisError):
+            scell2.decrypt(encrypted, self.incorrect_context)
 
-        decrypted_message = enc.decrypt(encrypted_message)
-        self.assertEqual(self.message, decrypted_message)
+        with self.assertRaises(ThemisError):
+            scell1.encrypt(self.incorrect_data, self.context)
 
-    def testSealWithContext(self):
-        with self.assertRaises(themis_exception):
-            scell.scell_seal("")
-        with self.assertRaises(TypeError):
-            scell.scell_seal(None)
-        with self.assertRaises(TypeError):
-            scell.scell_seal(112233)
-        enc = scell.scell_seal(self.key)
-        with self.assertRaises(themis_exception):
-            enc.encrypt("", self.context)
-        with self.assertRaises(TypeError):
-            enc.encrypt(None, self.context)
-        encrypted_message = enc.encrypt(self.message, self.context)
-        with self.assertRaises(themis_exception):
-            enc.decrypt(b"".join([encrypted_message, b"11"]), self.context)
-        with self.assertRaises(themis_exception):
-            enc.decrypt(encrypted_message)
-        with self.assertRaises(themis_exception):
-            enc.decrypt(encrypted_message, None)
-        with self.assertRaises(themis_exception):
-            enc.decrypt(encrypted_message, b"".join([self.context, b"11"]))
-        decrypted_message = enc.decrypt(encrypted_message, self.context)
-        self.assertEqual(self.message, decrypted_message)
+        with self.assertRaises(ThemisError):
+            SCellSeal(self.incorrect_key).decrypt(encrypted, self.context)
 
-    def testTokenProtect(self):
-        with self.assertRaises(themis_exception):
-            scell.scell_token_protect("")
-        with self.assertRaises(TypeError):
-            scell.scell_token_protect(None)
-        with self.assertRaises(TypeError):
-            scell.scell_token_protect(112233)
-        enc = scell.scell_token_protect(self.key)
-        with self.assertRaises(themis_exception):
-            enc.encrypt("")
-        with self.assertRaises(TypeError):
-            enc.encrypt(None)
-        encrypted_message, token = enc.encrypt(self.message)
-        with self.assertRaises(themis_exception):
-            enc.decrypt(b"".join([encrypted_message, b"11"]), token)
-        with self.assertRaises(TypeError):
-            enc.decrypt(encrypted_message, None)
-        decrypted_message = enc.decrypt(encrypted_message, token)
-        self.assertEqual(self.message, decrypted_message)
 
-    def testTokenProtectWithContext(self):
-        with self.assertRaises(themis_exception):
-            scell.scell_token_protect("")
-        with self.assertRaises(TypeError):
-            scell.scell_token_protect(None)
-        with self.assertRaises(TypeError):
-            scell.scell_token_protect(112233)
-        enc = scell.scell_token_protect(self.key)
-        with self.assertRaises(themis_exception):
-            enc.encrypt("", self.context)
-        with self.assertRaises(TypeError):
-            enc.encrypt(None, self.context)
-        encrypted_message, token = enc.encrypt(self.message, self.context)
-        with self.assertRaises(themis_exception):
-            enc.decrypt(b"".join([encrypted_message, b"11"]), token,
-                        self.context)
-        with self.assertRaises(themis_exception):
-            enc.decrypt(encrypted_message, token)
-        with self.assertRaises(TypeError):
-            enc.decrypt(encrypted_message, None, self.context)
-        with self.assertRaises(themis_exception):
-            enc.decrypt(encrypted_message, token,
-                        b"".join([self.context, b"11"]))
-        decrypted_message = enc.decrypt(encrypted_message, token, self.context)
-        self.assertEqual(self.message, decrypted_message)
+class SCellContextImprintTest(BaseSCellTestMixin):
+    def test_init(self):
+        with self.assertRaises(ThemisError):
+            SCellContextImprint(None)
 
-    def testContextImprint(self):
-        with self.assertRaises(themis_exception):
-            scell.scell_context_imprint("")
-        with self.assertRaises(TypeError):
-            scell.scell_context_imprint(None)
-        with self.assertRaises(TypeError):
-            scell.scell_context_imprint(112233)
-        enc = scell.scell_context_imprint(self.key)
-        with self.assertRaises(TypeError):
-            enc.encrypt(self.message)
-        with self.assertRaises(TypeError):
-            enc.encrypt(None, self.context)
-        encrypted_message = enc.encrypt(self.message, self.context)
-        decrypted_message = enc.decrypt(b"".join([encrypted_message, b"11"]),
-                                        self.context)
-        self.assertNotEqual(self.message, decrypted_message)
-        decrypted_message = enc.decrypt(encrypted_message,
-                                        b"".join([self.context, b"11"]))
-        self.assertNotEqual(self.message, decrypted_message)
-        with self.assertRaises(TypeError):
-            enc.decrypt(encrypted_message)
-        decrypted_message = enc.decrypt(encrypted_message, self.context)
-        self.assertEqual(self.message, decrypted_message)
+    def test_encrypt_decrypt(self):
+        scell1 = SCellContextImprint(self.key)
+        scell2 = SCellContextImprint(self.key)
+        self.assertEqual(
+            self.data,
+            scell2.decrypt(scell1.encrypt(self.data, self.context),
+                           self.context))
+
+        encrypted = scell1.encrypt(self.data, self.context)
+        decrypted = scell2.decrypt(encrypted, self.incorrect_context)
+        self.assertNotEqual(self.data, decrypted)
+
+        scell3 = SCellContextImprint(self.incorrect_key)
+        self.assertNotEqual(self.data, scell3.decrypt(encrypted, self.context))
+
+        with self.assertRaises(ThemisError):
+            scell1.encrypt(self.incorrect_data, self.context)
+
+
+class SCellTokenProtectTest(BaseSCellTestMixin):
+    def test_init(self):
+        with self.assertRaises(ThemisError):
+            SCellTokenProtect(None)
+
+    def test_encrypt_decrypt(self):
+        scell1 = SCellTokenProtect(self.key)
+        scell2 = SCellTokenProtect(self.key)
+        scell3 = SCellTokenProtect(self.incorrect_key)
+        encrypted, token = scell1.encrypt(self.data)
+        self.assertEqual(self.data, scell2.decrypt(encrypted, token))
+
+        with self.assertRaises(ThemisError):
+            scell3.decrypt(encrypted, token)
+
+        with self.assertRaises(ThemisError):
+            scell1.encrypt(self.incorrect_data)
+
+    def test_encrypt_decrypt_context(self):
+        scell1 = SCellTokenProtect(self.key)
+        scell2 = SCellTokenProtect(self.key)
+        scell3 = SCellTokenProtect(self.incorrect_key)
+        encrypted, token = scell1.encrypt(self.data, self.context)
+        self.assertEqual(self.data,
+                         scell2.decrypt(encrypted, token, self.context))
+
+        encrypted, token = scell1.encrypt(self.data, self.context)
+        with self.assertRaises(ThemisError):
+            scell2.decrypt(encrypted, token, self.incorrect_context)
+
+        with self.assertRaises(ThemisError):
+            scell3.decrypt(encrypted, token, self.context)
+
+        with self.assertRaises(ThemisError):
+            scell1.encrypt(self.incorrect_data, self.context)
+
 
 if __name__ == '__main__':
     unittest.main()

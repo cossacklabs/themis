@@ -19,33 +19,29 @@ import unittest
 from pythemis import scomparator
 
 
-class TestSComparator(unittest.TestCase):
+class SComparatorTest(unittest.TestCase):
     def setUp(self):
         self.message = b"This is test message"
         self.message1 = b"This is test message2"
 
     def testComparation(self):
-        alice = scomparator.scomparator(self.message)
-        bob = scomparator.scomparator(self.message)
+        alice = scomparator.SComparator(self.message)
+        bob = scomparator.SComparator(self.message)
         data = alice.begin_compare()
-        while (alice.result() == scomparator.SCOMPARATOR_CODES.NOT_READY and
-                bob.result() == scomparator.SCOMPARATOR_CODES.NOT_READY):
+        while not (alice.is_compared() and bob.is_compared()):
             data = alice.proceed_compare(bob.proceed_compare(data))
-        self.assertNotEqual(alice.result(),
-                            scomparator.SCOMPARATOR_CODES.NOT_MATCH)
-        self.assertNotEqual(bob.result(),
-                            scomparator.SCOMPARATOR_CODES.NOT_MATCH)
+        self.assertTrue(alice.is_equal())
+        self.assertTrue(bob.is_equal())
 
     def testComparation2(self):
-        alice = scomparator.scomparator(self.message)
-        bob = scomparator.scomparator(self.message1)
+        alice = scomparator.SComparator(self.message)
+        bob = scomparator.SComparator(self.message1)
         data = alice.begin_compare()
-        while (alice.result() == scomparator.SCOMPARATOR_CODES.NOT_READY and
-                bob.result() == scomparator.SCOMPARATOR_CODES.NOT_READY):
+        while not (alice.is_compared() and bob.is_compared()):
             data = alice.proceed_compare(bob.proceed_compare(data))
-        self.assertEqual(alice.result(),
-                         scomparator.SCOMPARATOR_CODES.NOT_MATCH)
-        self.assertEqual(bob.result(), scomparator.SCOMPARATOR_CODES.NOT_MATCH)
+        self.assertFalse(alice.is_equal())
+        self.assertFalse(bob.is_equal())
+
 
 if __name__ == '__main__':
     unittest.main()
