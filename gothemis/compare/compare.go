@@ -66,8 +66,8 @@ import (
 
 const (
 	COMPARE_NOT_READY = 0
-	COMPARE_NO_MATCH  = -1
-	COMPARE_MATCH     = 1
+	COMPARE_NO_MATCH  = 22
+	COMPARE_MATCH     = 21
 )
 
 type SecureCompare struct {

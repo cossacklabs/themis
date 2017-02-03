@@ -22,6 +22,7 @@
 #include "php_themis.h"
 #include "zend_exceptions.h"
 #include <themis/themis.h>
+#include <themis/error.h>
 
 ssize_t send_callback(const uint8_t *data, size_t data_length, void *user_data){
   return -1;
