@@ -349,9 +349,9 @@ module Themis
       include ThemisCommon
       include ThemisImport
       
-      MATCH=-252645136
+      MATCH=0
       NOT_MATCH = -1
-      NOT_READY = 0
+      NOT_READY = -26
 
       def initialize(shared_secret)
 	shared_secret_buf, shared_secret_length = string_to_pointer_size(shared_secret)
