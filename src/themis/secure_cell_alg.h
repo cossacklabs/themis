@@ -72,5 +72,4 @@
 #define THEMIS_SYM_IV_LENGTH 16
 #endif
 
-
 #endif /* _SECURE_CELL_ALG_H_ */

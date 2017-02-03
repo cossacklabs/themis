@@ -19,9 +19,9 @@
 
 #include <themis/themis.h>
 
-#define THEMIS_SCOMPARE_MATCH THEMIS_SUCCESS
-#define THEMIS_SCOMPARE_NO_MATCH THEMIS_FAIL
-#define THEMIS_SCOMPARE_NOT_READY -26
+#define THEMIS_SCOMPARE_MATCH 		21
+#define THEMIS_SCOMPARE_NO_MATCH 	22
+#define THEMIS_SCOMPARE_NOT_READY 	0
 
 #ifdef __cplusplus
 extern "C"{

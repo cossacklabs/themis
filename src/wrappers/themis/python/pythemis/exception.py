@@ -18,9 +18,9 @@ from enum import IntEnum
 
 
 class THEMIS_CODES(IntEnum):
-    NETWORK_ERROR = -2222
-    BUFFER_TOO_SMALL = -4
-    FAIL = -1
+    NETWORK_ERROR = 2222
+    BUFFER_TOO_SMALL = 14
+    FAIL = 11
     SUCCESS = 0
     SEND_AS_IS = 1
 
