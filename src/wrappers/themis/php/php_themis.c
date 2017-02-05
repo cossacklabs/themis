@@ -173,7 +173,8 @@ PHP_METHOD(themis_secure_session, unwrap){
     zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in unwrap: not enough memory.", 0 TSRMLS_CC);
     RETURN_NULL();
   }
-  if(secure_session_unwrap(obj->session, message, message_length, unwrapped_message, &unwrapped_message_length)!=THEMIS_SUCCESS){
+  res=secure_session_unwrap(obj->session, message, message_length, unwrapped_message, &unwrapped_message_length);
+  if(res!=THEMIS_SUCCESS && res!=THEMIS_SSESSION_SEND_OUTPUT_TO_PEER){
     efree(unwrapped_message);
     zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in unwrap: unwrapping failed.", 0 TSRMLS_CC);
     RETURN_NULL();
