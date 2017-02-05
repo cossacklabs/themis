@@ -53,7 +53,7 @@ static int compare_result(void *ctx)
 */
 import "C"
 import (
-	"github.com/mnaza/themis/gothemis/errors"
+	"github.com/cossacklabs/themis/gothemis/errors"
 	"runtime"
 	"unsafe"
 )
