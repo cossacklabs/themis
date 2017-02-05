@@ -3,6 +3,11 @@ package session
 /*
 #cgo LDFLAGS: -lthemis -lsoter
 #include "session.h"
+extern const int GOTHEMIS_INVALID_PARAMETER;
+extern const int GOTHEMIS_BUFFER_TOO_SMALL;
+extern const int GOTHEMIS_SUCCESS;
+extern const int GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR;
+extern const int GOTHEMIS_SSESSION_SEND_OUTPUT_TO_PEER;
 */
 import "C"
 import (
@@ -78,16 +83,16 @@ func onPublicKeyForId(ssCtx unsafe.Pointer, idPtr unsafe.Pointer, idLen C.size_t
 
 	pub := ss.clb.GetPublicKeyForId(ss, id)
 	if nil == pub {
-		return -2 // THEMIS_INVALID_PARAMETER
+		return int(C.GOTHEMIS_INVALID_PARAMETER)
 	}
 
 	if len(pub.Value) > int(keyLen) {
-		return -4 // THEMIS_BUFFER_TOO_SMALL
+		return int(C.GOTHEMIS_BUFFER_TOO_SMALL)
 	}
 
 	key := (*[1 << 30]byte)(keyPtr)[:keyLen:keyLen]
 	copy(key, pub.Value)
-	return 0
+	return int(C.GOTHEMIS_SUCCESS)
 }
 
 //export onStateChanged
@@ -158,11 +163,11 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 		C.size_t(len(data)),
 		&outLen)
 	switch {
-	case (0 == res) && (0 == outLen):
+	case (C.GOTHEMIS_SUCCESS == res) && (0 == outLen):
 		return nil, false, nil
-	case (-10 == res): // THEMIS_SSESSION_GET_PUB_FOR_ID_ERROR
+	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res):
 		return nil, false, errors.NewCallbackError("Failed to get unwraped size (get_public_key_by_id callback error)")
-	case (-4 != res): // THEMIS_BUFFER_TOO_SMALL
+	case (C.GOTHEMIS_BUFFER_TOO_SMALL != res): 
 		return nil, false, errors.New("Failed to get unwrapped size")
 	}
 
@@ -175,13 +180,13 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 		outLen)
 
 	switch {
-	case (0 == res) && (0 == outLen):
+	case (C.GOTHEMIS_SUCCESS == res) && (0 == outLen):
 		return nil, false, nil
-	case (1 == res) && (0 < outLen): // THEMIS_SSESSION_SEND_OUTPUT_TO_PEER
+	case (C.GOTHEMIS_SSESSION_SEND_OUTPUT_TO_PEER == res) && (0 < outLen): 
 		return out, true, nil
-	case (0 == res) && (0 < outLen):
+	case (C.GOTHEMIS_SUCCESS == res) && (0 < outLen):
 		return out, false, nil
-	case (-10 == res): // THEMIS_SSESSION_GET_PUB_FOR_ID_ERROR
+	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res): 
 		return nil, false, errors.NewCallbackError("Failed to unwrap data (get_public_key_by_id callback error)")
 	}
 

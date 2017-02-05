@@ -47,12 +47,6 @@ static int compare_proceed(void *ctx, const void *in, size_t in_len, void *out, 
 static int compare_result(void *ctx)
 {
 	themis_status_t res = secure_comparator_get_result(ctx);
-
-	if (THEMIS_SCOMPARE_MATCH == res)
-	{
-		return 1;
-	}
-
 	return (int)res;
 }
 
@@ -159,7 +153,6 @@ func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 
 func (sc *SecureCompare) Result() (int, error) {
 	res := C.compare_result(sc.ctx)
-
 	switch res {
 	case COMPARE_NOT_READY, COMPARE_NO_MATCH, COMPARE_MATCH:
 		return int(res), nil
