@@ -3,7 +3,7 @@ package message
 import (
 	"bytes"
 	"crypto/rand"
-	"github.com/cossacklabs/themis/gothemis/keys"
+	"github.com/mnaza/themis/gothemis/keys"
 	"math/big"
 	"testing"
 )

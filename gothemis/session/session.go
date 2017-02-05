@@ -11,8 +11,8 @@ extern const int GOTHEMIS_SSESSION_SEND_OUTPUT_TO_PEER;
 */
 import "C"
 import (
-	"github.com/cossacklabs/themis/gothemis/errors"
-	"github.com/cossacklabs/themis/gothemis/keys"
+	"github.com/mnaza/themis/gothemis/errors"
+	"github.com/mnaza/themis/gothemis/keys"
 	"runtime"
 	"unsafe"
 )

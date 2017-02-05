@@ -44,8 +44,8 @@ static bool process(const void *priv, size_t priv_len, const void *public, size_
 */
 import "C"
 import (
-	"github.com/cossacklabs/themis/gothemis/errors"
-	"github.com/cossacklabs/themis/gothemis/keys"
+	"github.com/mnaza/themis/gothemis/errors"
+	"github.com/mnaza/themis/gothemis/keys"
 	"unsafe"
 )
 
