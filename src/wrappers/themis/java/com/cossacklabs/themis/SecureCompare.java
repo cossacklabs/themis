@@ -69,11 +69,11 @@ public class SecureCompare {
 	
 	static CompareResult parseResult(int result) throws SecureCompareException {
 		switch (result) {
-		case -26:
-			return CompareResult.NOT_READY;
-		case -1:
-			return CompareResult.NO_MATCH;
 		case 0:
+			return CompareResult.NOT_READY;
+		case 22:
+			return CompareResult.NO_MATCH;
+		case 21:
 			return CompareResult.MATCH;
 		}
 		
