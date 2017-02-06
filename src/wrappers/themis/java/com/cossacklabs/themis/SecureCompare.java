@@ -102,7 +102,7 @@ public class SecureCompare {
 		return parseResult(jniGetResult());
 	}
 
-	native int SCOMPARE_MATCH();
-	native int SCOMPARE_NO_MATCH();
-	native int SCOMPARE_NOT_READY();
+	static native int SCOMPARE_MATCH();
+	static native int SCOMPARE_NO_MATCH();
+	static native int SCOMPARE_NOT_READY();
 }
