@@ -1,5 +1,5 @@
 language: objective-c
 xcode_workspace: docs/examples/objc/ThemisTest.xcworkspace
-xcode_scheme: ThemisTestTest
+xcode_scheme: ThemisTest
 osx_image: xcode8
 podfile: docs/examples/objc/Podfile
