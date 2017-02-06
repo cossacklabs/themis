@@ -220,7 +220,7 @@ JNIEXPORT void JNICALL Java_com_cossacklabs_themis_SecureCompare_destroy(JNIEnv 
 }
 
 JNIEXPORT jint JNICALL Java_com_cossacklabs_themis_SecureCompare_SCOMPARE_MATCH(JNIEnv *env, jobject thiz){
-	return THEMIS_SCOMAPRE_MATCH;
+	return THEMIS_SCOMPARE_MATCH;
 }
 
 JNIEXPORT jint JNICALL Java_com_cossacklabs_themis_SecureCompare_SCOMPARE_NO_MATCH(JNIEnv *env, jobject thiz){
