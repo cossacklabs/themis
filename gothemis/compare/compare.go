@@ -50,6 +50,10 @@ static int compare_result(void *ctx)
 	return (int)res;
 }
 
+const int GOTHEMIS_SCOMPARE_MATCH = THEMIS_SCOMPARE_MATCH;
+const int GOTHEMIS_SCOMPARE_NO_MATCH = THEMIS_SCOMPARE_NO_MATCH;
+const int GOTHEMIS_SCOMPARE_NOT_READY = THEMIS_SCOMPARE_NOT_READY;
+
 */
 import "C"
 import (
@@ -58,10 +62,10 @@ import (
 	"unsafe"
 )
 
-const (
-	COMPARE_NOT_READY = 0
-	COMPARE_NO_MATCH  = 22
-	COMPARE_MATCH     = 21
+var (
+	COMPARE_MATCH = int(C.GOTHEMIS_SCOMPARE_MATCH)
+	COMPARE_NO_MATCH = int(C.GOTHEMIS_SCOMPARE_NO_MATCH)
+	COMPARE_NOT_READY = int(C.GOTHEMIS_SCOMPARE_NOT_READY)
 )
 
 type SecureCompare struct {
@@ -152,7 +156,7 @@ func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 }
 
 func (sc *SecureCompare) Result() (int, error) {
-	res := C.compare_result(sc.ctx)
+	res := int(C.compare_result(sc.ctx))
 	switch res {
 	case COMPARE_NOT_READY, COMPARE_NO_MATCH, COMPARE_MATCH:
 		return int(res), nil

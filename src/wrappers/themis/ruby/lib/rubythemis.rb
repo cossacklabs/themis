@@ -349,7 +349,7 @@ module Themis
       include ThemisCommon
       include ThemisImport
       
-      MATCH=21
+      MATCH = 21
       NOT_MATCH = 22
       NOT_READY = 0
 
