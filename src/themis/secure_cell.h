@@ -202,20 +202,3 @@ themis_status_t themis_secure_cell_decrypt_context_imprint(const uint8_t* master
 }
 #endif
 #endif /* _SECURE_CELL_H_ */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

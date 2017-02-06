@@ -71,9 +71,9 @@ public class SecureCompare {
 		switch (result) {
 		case 0:
 			return CompareResult.NOT_READY;
-		case -1:
+		case 22:
 			return CompareResult.NO_MATCH;
-		case 0xf0f0f0f0:
+		case 21:
 			return CompareResult.MATCH;
 		}
 		

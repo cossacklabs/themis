@@ -34,8 +34,8 @@
 /** @brief Status codes */
 typedef NS_ENUM(NSInteger, TSErrorType) {
     TSErrorTypeSuccess = 0, /**< Success */
-    TSErrorTypeBufferTooSmall = -4, /**< Buffer is too small */
-    TSErrorTypeFail = -1, /**< Fail */
+    TSErrorTypeBufferTooSmall = 14, /**< Buffer is too small */
+    TSErrorTypeFail = 11, /**< Fail */
     TSErrorTypeSendAsIs = 1   /**< Send as is */
 };
 

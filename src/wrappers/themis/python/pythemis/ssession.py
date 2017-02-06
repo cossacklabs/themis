@@ -68,7 +68,7 @@ def on_send(data, data_length, user_data):
     try:
         user_data[0].send(ctypes.string_at(data, data_length))
     except Exception:
-        return -2222
+        return THEMIS_CODE.NETWORK_ERROR
     return data_length
 
 
@@ -76,7 +76,7 @@ def on_receive(data, data_length, user_data):
     try:
         received_data = user_data[0].receive(data_length)
     except Exception as e:
-        return -2222
+        return THEMIS_CODE.NETWORK_ERROR
     ctypes.memmove(data, received_data, len(received_data))
     return len(received_data)
 

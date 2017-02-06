@@ -33,8 +33,8 @@ scomparator_create.restype = ctypes.POINTER(ctypes.c_int)
 
 
 class SCOMPARATOR_CODES(IntEnum):
-    MATCH = 0xf0f0f0f0
-    NOT_MATCH = THEMIS_CODES.FAIL
+    MATCH = 21
+    NOT_MATCH = 22
     NOT_READY = 0
 
 

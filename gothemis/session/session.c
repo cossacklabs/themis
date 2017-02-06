@@ -1,5 +1,11 @@
 #include "session.h"
 
+const int GOTHEMIS_INVALID_PARAMETER = THEMIS_INVALID_PARAMETER;
+const int GOTHEMIS_BUFFER_TOO_SMALL = THEMIS_BUFFER_TOO_SMALL;
+const int GOTHEMIS_SUCCESS = THEMIS_SUCCESS;
+const int GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR = THEMIS_SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR;
+const int GOTHEMIS_SSESSION_SEND_OUTPUT_TO_PEER = THEMIS_SSESSION_SEND_OUTPUT_TO_PEER;
+
 extern int onPublicKeyForId(void* user_data, const void* id, size_t id_len, void* key, size_t key_len);
 extern void onStateChanged(void* user_data, int event);
 
