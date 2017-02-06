@@ -72,7 +72,7 @@ public class SecureCompare {
 		    return CompareResult.NOT_READY;
 		}else if (result == scompareNoMatch()){
 		    return CompareResult.NO_MATCH;
-		}else if (result == ScompareMatch()){
+		}else if (result == scompareMatch()){
 		    return CompareResult.MATCH;
 		}
 		throw new SecureCompareException();
