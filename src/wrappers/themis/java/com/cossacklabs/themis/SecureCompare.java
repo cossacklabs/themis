@@ -101,4 +101,8 @@ public class SecureCompare {
 	public CompareResult getResult() throws SecureCompareException {
 		return parseResult(jniGetResult());
 	}
+
+	native int SCOMPARE_MATCH();
+	native int SCOMPARE_NO_MATCH();
+	native int SCOMPARE_NOT_READY();
 }
