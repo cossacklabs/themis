@@ -68,15 +68,13 @@ public class SecureCompare {
 	native byte[] jniBegin();
 	
 	static CompareResult parseResult(int result) throws SecureCompareException {
-		switch (result) {
-		case SCOMPARE_NOT_READY():
-			return CompareResult.NOT_READY;
-		case SCOMPARE_NO_MATCH():
-			return CompareResult.NO_MATCH;
-		case SCOMPARE_MATCH():
-			return CompareResult.MATCH;
+		if (result == SCOMPARE_NOT_READY()) {
+		    return CompareResult.NOT_READY;
+		}else if (result == SCOMPARE_NO_MATCH()){
+		    return CompareResult.NO_MATCH;
+		}else if (result == SCOMPARE_MATCH()){
+		    return CompareResult.MATCH;
 		}
-		
 		throw new SecureCompareException();
 	}
 	
