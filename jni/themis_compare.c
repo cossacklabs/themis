@@ -219,15 +219,15 @@ JNIEXPORT void JNICALL Java_com_cossacklabs_themis_SecureCompare_destroy(JNIEnv 
 	}
 }
 
-JNIEXPORT jint JNICALL Java_com_cossacklabs_themis_SecureCompare_SCOMPARE_MATCH(JNIEnv *env, jobject thiz){
+JNIEXPORT jint JNICALL Java_com_cossacklabs_themis_SecureCompare_scompareMatch(JNIEnv *env, jobject thiz){
 	return THEMIS_SCOMPARE_MATCH;
 }
 
-JNIEXPORT jint JNICALL Java_com_cossacklabs_themis_SecureCompare_SCOMPARE_NO_MATCH(JNIEnv *env, jobject thiz){
+JNIEXPORT jint JNICALL Java_com_cossacklabs_themis_SecureCompare_scompareNoMatch(JNIEnv *env, jobject thiz){
 	return THEMIS_SCOMPARE_NO_MATCH;
 }
 
-JNIEXPORT jint JNICALL Java_com_cossacklabs_themis_SecureCompare_SCOMPARE_NOT_READY(JNIEnv *env, jobject thiz){
+JNIEXPORT jint JNICALL Java_com_cossacklabs_themis_SecureCompare_scompareNotReady(JNIEnv *env, jobject thiz){
 	return THEMIS_SCOMPARE_NOT_READY;
 }
 
