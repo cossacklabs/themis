@@ -218,3 +218,16 @@ JNIEXPORT void JNICALL Java_com_cossacklabs_themis_SecureCompare_destroy(JNIEnv 
 		(*env)->SetLongField(env, thiz, compare_ctx_field_id, 0);
 	}
 }
+
+JNIEXPORT jint JNICALL Java_com_cossacklabs_themis_SecureCompare_scompareMatch(JNIEnv *env, jobject thiz){
+	return THEMIS_SCOMPARE_MATCH;
+}
+
+JNIEXPORT jint JNICALL Java_com_cossacklabs_themis_SecureCompare_scompareNoMatch(JNIEnv *env, jobject thiz){
+	return THEMIS_SCOMPARE_NO_MATCH;
+}
+
+JNIEXPORT jint JNICALL Java_com_cossacklabs_themis_SecureCompare_scompareNotReady(JNIEnv *env, jobject thiz){
+	return THEMIS_SCOMPARE_NOT_READY;
+}
+

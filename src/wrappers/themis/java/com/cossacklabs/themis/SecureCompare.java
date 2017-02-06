@@ -67,16 +67,14 @@ public class SecureCompare {
 	
 	native byte[] jniBegin();
 	
-	static CompareResult parseResult(int result) throws SecureCompareException {
-		switch (result) {
-		case 0:
-			return CompareResult.NOT_READY;
-		case 22:
-			return CompareResult.NO_MATCH;
-		case 21:
-			return CompareResult.MATCH;
+	CompareResult parseResult(int result) throws SecureCompareException {
+		if (result == scompareNotReady()) {
+		    return CompareResult.NOT_READY;
+		}else if (result == scompareNoMatch()){
+		    return CompareResult.NO_MATCH;
+		}else if (result == scompareMatch()){
+		    return CompareResult.MATCH;
 		}
-		
 		throw new SecureCompareException();
 	}
 	
@@ -101,4 +99,8 @@ public class SecureCompare {
 	public CompareResult getResult() throws SecureCompareException {
 		return parseResult(jniGetResult());
 	}
+
+	native int scompareMatch();
+	native int scompareNoMatch();
+	native int scompareNotReady();
 }
