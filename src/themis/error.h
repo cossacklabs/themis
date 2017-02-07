@@ -28,7 +28,7 @@
 #include <soter/error.h>
 
 /** @brief return type */
-typedef int themis_status_t;
+typedef int32_t themis_status_t;
 
 /**
  * @addtogroup THEMIS
