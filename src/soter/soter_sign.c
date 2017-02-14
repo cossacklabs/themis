@@ -35,7 +35,7 @@
 #define SOTER_SIGN_ALG(alg, padding, kdf)				\
   case SOTER_SIGN_##alg##_##padding##_##kdf :				\
   return soter_sign_init_##alg##_##padding##_##kdf(ctx,private_key,private_key_length, public_key, public_key_length);
-soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
+soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
 {
   if(!ctx){
     return SOTER_INVALID_PARAMETER;
@@ -55,12 +55,13 @@ soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, co
 #define SOTER_SIGN_ALG(alg, padding, kdf)				\
   case SOTER_SIGN_##alg##_##padding##_##kdf :				\
   return soter_verify_init_##alg##_##padding##_##kdf(ctx,private_key,private_key_length, public_key, public_key_length);
-soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
+soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
 {
-  if(!ctx){
+  if(!ctx || !private_key || !public_key || private_key_length<sizeof(soter_container_hdr_t) || public_key_length<sizeof(soter_container_hdr_t)){
     return SOTER_INVALID_PARAMETER;
   }
-  ctx->alg=algId;
+  ctx->alg=0;
+  memcpy((&(ctx->alg)+1, private_key+1, SOTER_CONTAINER_TAG_LENGTH);
   switch(algId){
     SOTER_SIGN_ALGS
   default:

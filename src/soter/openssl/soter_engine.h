@@ -40,6 +40,11 @@ struct soter_rsa_key_pair_gen_type{
 	EVP_PKEY_CTX *pkey_ctx;
 };
 
+struct soter_ec_key_pair_gen_type{
+	EVP_PKEY_CTX *pkey_ctx;
+};
+
+
 struct soter_asym_ka_type
 {
 	EVP_PKEY_CTX *pkey_ctx;
@@ -48,7 +53,7 @@ struct soter_asym_ka_type
 struct soter_sign_ctx_type{
   EVP_PKEY_CTX *pkey_ctx;
   EVP_MD_CTX *md_ctx;
-  soter_sign_alg_t alg;
+  uint32_t alg;
 };
 
 #endif /* SOTER_ENGINE_H */
