@@ -41,13 +41,13 @@ class GenerateKeyPair(object):
         if alg == KEY_PAIR_TYPE.EC:
             if themis.themis_gen_ec_key_pair(
                     self.private_key, byref(self.private_key_length),
-                    self.public_key, byref(self.public_key_length)) != 0:
+                    self.public_key, byref(self.public_key_length)) != THEMIS_CODES.SUCCESS:
                 raise ThemisError(THEMIS_CODES.FAIL,
                                   "Themis failed generating EC KeyPair")
         elif alg == KEY_PAIR_TYPE.RSA:
             if themis.themis_gen_rsa_key_pair(
                     self.private_key, byref(self.private_key_length),
-                    self.public_key, byref(self.public_key_length)) != 0:
+                    self.public_key, byref(self.public_key_length)) != THEMIS_CODES.SUCCESS:
                 raise ThemisError(THEMIS_CODES.FAIL,
                                   "Themis failed generating RSA KeyPair")
 

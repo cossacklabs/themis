@@ -41,33 +41,6 @@ typedef struct soter_asym_ka_type soter_asym_ka_t;
 soter_asym_ka_t* soter_asym_ka_create(const int8_t* key, const size_t key_length);
 
 /**
- * @brief asymmetric keys pair generation for key agreement context
- * @param [in] asym_ka_ctx pointer to key agreement context previously created by soter_asym_ka_create
- * @return SOTER_SUCESS on success or SOTER_FAIL on failure
- */
-//soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx);
-
-/**
- * @brief export key from key agreement context
- * @param [in] asym_ka_ctx pointer to key agreement context previously created by soter_asym_ka_create
- * @param [out] key buffer to store exported key
- * @param [in,out] key_length length of key. May be set to NULL for key length determination
- * @param [in] isprivate if set private key will be exported. If not set public key will be exported
- * @return  SOTER_SUCESS on success or SOTER_FAIL on failure
- * @note If key==NULL or key_length less then need to store key, @ref SOTER_BUFFER_TOO_SMALL will return and key_length will contain length of buffer thet need to store key.
- */
-//soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx, void* key, size_t* key_length, bool isprivate);
-
-/**
- * @brief import key to key agreement context
- * @param [in] asym_ka_ctx pointer to key agreement context previously created by soter_asym_ka_create
- * @param [in] key buffer with stored key
- * @param [in] key_length length of key
- * @return  SOTER_SUCESS on success or SOTER_FAIL on failure
- */
-//soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void* key, size_t key_length);
-
-/**
  * @brief derive shared secret from key agreement context
  * @param [in] asym_ka_ctx pointer to key agreement context previously created by soter_asym_ka_create
  * @param [in] peer_key buffer with peer public key
