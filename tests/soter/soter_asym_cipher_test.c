@@ -32,8 +32,11 @@ static void test_basic_encryption_flow(void)
 	size_t encrypted_data_length_import_ctx = sizeof(encrypted_data_import_ctx);
 	size_t decrypted_data_length_import_ctx = sizeof(decrypted_data_import_ctx);
 
-	uint8_t key_data[8192];
-	size_t key_data_length = sizeof(key_data);
+	uint8_t private_key_data[8192];
+	size_t private_key_data_length = sizeof(private_key_data);
+
+        uint8_t public_key_data[8192];
+	size_t public_key_data_length = sizeof(public_key_data);
 
 	soter_asym_cipher_t *ctx;
 	soter_asym_cipher_t *decrypt_ctx;
@@ -45,25 +48,16 @@ static void test_basic_encryption_flow(void)
 		return;
 	}
 
-	soter_rsa_key_pair_gen_t* key_pair_ctx=soter_rsa_key_pair_gen_create(RSA_KEY_LENGTH_1024);
-	if(!key_pair_ctx){
-		testsuite_fail_if(!key_pair_ctx, "generate key test data");
-		return;
-	}
-	
-	res = soter_rsa_key_pair_gen_export_key(key_pair_ctx, key_data, &key_data_length, false);
+	res = soter_key_pair_gen(RSA_KEY_LENGTH_1024, private_key_data, &private_key_data_length, public_key_data, public_key_data_length);
 	if(res!=SOTER_SUCCESS){
 		testsuite_fail_if(res!=SOTER_SUCCESS, "export generated public key");
-		soter_rsa_key_pair_gen_destroy(key_pair_ctx);
-		soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher);
 		return;
 	}
 
-	ctx = soter_asym_cipher_create(key_data, key_data_length, SOTER_ASYM_CIPHER_OAEP);
+	ctx = soter_asym_cipher_create(public_key_data, public_key_data_length);
 	if (NULL == ctx)
 	{
 		testsuite_fail_if(NULL == ctx, "asym_cipher_ctx != NULL");
-		soter_rsa_key_pair_gen_destroy(key_pair_ctx);
 		return;
 	}
 
@@ -78,22 +72,12 @@ static void test_basic_encryption_flow(void)
 
 	/* Encrypted ciphertext for 2048 RSA key should be 256 bytes */
 	testsuite_fail_unless(128 == encrypted_data_length, "RSA OAEP encryption");
-	key_data_length = sizeof(key_data);
-	res = soter_rsa_key_pair_gen_export_key(key_pair_ctx, key_data, &key_data_length, true);
-	printf("%i\n", res);
-	if(res!=SOTER_SUCCESS){
-		testsuite_fail_if(res!=SOTER_SUCCESS, "export generated private key");
-		soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher);
-		soter_rsa_key_pair_gen_destroy(key_pair_ctx);
-		return;
-	}
-
-	decrypt_ctx = soter_asym_cipher_create(key_data, key_data_length, SOTER_ASYM_CIPHER_OAEP);
+        
+	decrypt_ctx = soter_asym_cipher_create(private_key_data, private_key_data_length);
 	if (NULL == decrypt_ctx)
 	{
 		testsuite_fail_if(NULL == decrypt_ctx, "asym_cipher_ctx != NULL");
 		soter_asym_cipher_destroy(ctx);
-		soter_rsa_key_pair_gen_destroy(key_pair_ctx);
 		return;
 	}
 
@@ -103,13 +87,10 @@ static void test_basic_encryption_flow(void)
 		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_cipher_decrypt fail");
 		soter_asym_cipher_destroy(ctx);
 		soter_asym_cipher_destroy(decrypt_ctx);
-		soter_rsa_key_pair_gen_destroy(key_pair_ctx);
 		return;
 	}
 
 	testsuite_fail_unless((sizeof(test_data) == decrypted_data_length) && !(memcmp(test_data, decrypted_data, sizeof(test_data))), "RSA OAEP decryption");
-
-	key_data_length = sizeof(key_data);
 
 	res = soter_asym_cipher_destroy(ctx);
 	if (SOTER_SUCCESS != res)
@@ -122,12 +103,6 @@ static void test_basic_encryption_flow(void)
 	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_cipher_destroy fail");
-		return;
-	}
-	res = soter_rsa_key_pair_gen_destroy(key_pair_ctx);
-	if (SOTER_SUCCESS != res)
-	{
-		testsuite_fail_unless(SOTER_SUCCESS == res, "soter_rsa_key_pair_gen_destroy fail");
 		return;
 	}
 }

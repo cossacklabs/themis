@@ -20,6 +20,8 @@
 #include "soter_engine.h"
 #include <openssl/err.h>
 
+
+#include "soter_engine_consts.h"
 #define SOTER_SYM_MAX_KEY_LENGTH 128
 #define SOTER_SYM_MAX_IV_LENGTH 16
 #define SOTER_AES_GCM_AUTH_TAG_LENGTH 16

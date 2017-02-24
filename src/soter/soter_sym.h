@@ -38,69 +38,6 @@
  * SOTER_SYM_AES_CTR|SOTER_SYM_PBKDF2|SOTER_SYM_128_KEY_LENGTH //AES in CTR mode with 128 bits key length with pbkdf2
  * @endcode
  * @{
- *
- * @defgroup SOTER_SYM_ALGORYTHMS_IDS symmetric encription/decryption  algorithms ids
- * @brief supported symmetric encryption/decription algorithms definitions
- * @{
- */
-
-/** AES in ECB mode with pkcs7 padding */
-#define SOTER_SYM_AES_ECB_PKCS7     0x10010000
-/** AES in CTR mode */
-#define SOTER_SYM_AES_CTR           0x20000000
-/** AES in XTS mode */
-#define SOTER_SYM_AES_XTS           0x30000000
-/** AES in GCM mode (with authenticated encryption) */
-#define SOTER_SYM_AES_GCM           0x40010000
-
-/** @} */
-
-/** 
- * @defgroup SOTER_KDF_ALGS kdf algorithms
- * @brief supported kdf algorithms
- * @{
-*/
-/** do not use kdf */
-#define SOTER_SYM_NOKDF             0x00000000
-/** pbkdf2 algorythm */
-#define SOTER_SYM_PBKDF2            0x01000000
-/** @} */
-
-/** 
- * @defgroup SOTER_KEY_LENGTH supported lengths of keys
- * @brief supported lengths of keys
- * @{
-*/
-/** 256 bits */
-#define SOTER_SYM_256_KEY_LENGTH    0x00000100
-/** 192 bits */
-#define SOTER_SYM_192_KEY_LENGTH    0x000000c0
-/** 512 bits */
-#define SOTER_SYM_128_KEY_LENGTH    0x00000080
-
-/** @} */
-
-/** 
- * @defgroup SOTER_SYM_MASK masks definition for symmetryc algorithm id
- * @brief masks definition for symmetryc algorithm id
- * @{
- */
-/** key length mask */
-#define SOTER_SYM_KEY_LENGTH_MASK   0x00000fff
-/** padding algorithm */
-#define SOTER_SYM_PADDING_MASK      0x000f0000
-/** encryption algorithm */
-#define SOTER_SYM_ALG_MASK          0xf0000000
-/** kdf algorithm */
-#define SOTER_SYM_KDF_MASK          0x0f000000
-
-/** @} */
-/** @} */
-
-/**
- * @defgroup SOTER_SYM_ROUTINES symmetric encryption/decryption routines
- * @brief symmetric encryption/decryption routines
- * @{
  */
 
 /** @brief symmetric context typedef */
