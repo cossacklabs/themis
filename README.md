@@ -20,7 +20,9 @@
 #### Crypto library for storage and messaging for Swift, ObjC, Android, С++, JS, Python, Ruby, PHP, Go.
 <br>
 
-Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure data exchange and  storage. Current stable release is [0.9.4](https://github.com/cossacklabs/themis/releases/tag/0.9.4), dated 22nd of November.
+Themis is open-source high-level cryptographic services library for mobile and server platforms, providing secure data exchange and  storage. Current stable release is [0.9.4](https://github.com/cossacklabs/themis/releases/tag/0.9.4), dated 22nd of November. 
+
+**Want to hop straight to the documentation?** [Here you go](https://www.github.com/cossacklabs/themis/wiki). 
 
 Themis provides four important cryptographic services:
 
