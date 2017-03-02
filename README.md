@@ -35,13 +35,15 @@ Themis works in most operating systems (see [Availability](https://github.com/co
 [Javascript (NodeJS)](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto), [Go](https://github.com/cossacklabs/themis/wiki/Go-HowTo),
 [Google Chrome](https://github.com/cossacklabs/webthemis). 
 
-We're also porting Themis features to different environments where people might need them: [Redis module](https://www.github.com/cossacklabs/rd_themis), [PostgreSQL module](https://www.github.com/cossacklabs/pg_themis)
+We're also porting Themis features to different environments where people might need them: [Redis module](https://www.github.com/cossacklabs/rd_themis), [PostgreSQL module](https://www.github.com/cossacklabs/pg_themis)ю
 
 Themis was designed to provide complicated cryptosystems in easy-to-use infrastructure, designed with modern rapid development in mind:
 
 * **EASY**: Themis does not require users to obsess over parameters, cipher combination and yet achieve high levels of security
 * **DO YOUR THING**: Themis allows developers to focus on doing what is necessary: developing their applications. 
 * **BEST PRACTICE**: Themis is based on best modern practices in implementing complicated security systems.
+
+Themis relies on [best available](https://github.com/cossacklabs/themis/wiki/Cryptographic-donors) open-source implementations of cryptographic primitives (ciphers). 
 
 Themis is open source, Apache 2 Licensed. 
 
