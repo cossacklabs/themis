@@ -23,7 +23,7 @@ static size_t hash_block_size(soter_hash_algo_t algo)
 {
 	switch (algo)
 	{
-	case SOTER_HASH_SHA1:
+//	case SOTER_HASH_SHA1:
 	case SOTER_HASH_SHA256:
 		return 64;
 	case SOTER_HASH_SHA512:

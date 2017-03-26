@@ -24,8 +24,6 @@ static const EVP_MD* soter_algo_to_evp_md(soter_hash_algo_t algo)
 {
 	switch (algo)
 	{
-	case SOTER_HASH_SHA1:
-		return EVP_sha1();
 	case SOTER_HASH_SHA256:
 	  return EVP_sha256();
 	case SOTER_HASH_SHA512:

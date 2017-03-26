@@ -21,7 +21,6 @@
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
-/* We use only SHA1 for now */
 #define OAEP_HASH_SIZE 20
 
 
