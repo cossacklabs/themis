@@ -57,7 +57,7 @@ Themis is open source, Apache 2 Licensed.
 4. Type 'make install' and you're done (in most of the cases).
 5. Visit [our wiki](https://github.com/cossacklabs/themis/wiki) for the documentation specific to your language of choice and take a look at docs/examples for examples. 
 
-It is a really good idea to [go the long way and read the docs](https://github.com/cossacklabs/themis/wiki/3.1-Building-and-installing), but Fortune helps the brave.
+It is a really good idea to [go the long way and read the docs](https://github.com/cossacklabs/themis/wiki/Building-and-installing), but Fortune helps the brave.
 
 # Languages
 
