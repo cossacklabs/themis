@@ -14,10 +14,12 @@
 * limitations under the License.
 */
 
+#include <assert.h>
+
 #include <soter/error.h>
 #include "soter_engine.h"
 #include "soter_engine_consts.h"
-#include <soter/soter_ec_key.h>
+#include "soter_ec_key.h"
 #include <soter/soter_container.h>
 #include <openssl/ec.h>
 
@@ -102,7 +104,7 @@ soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
 soter_asym_ka_t* soter_asym_ka_create(const int8_t* key, const size_t key_length)
 {
   soter_asym_ka_t *ctx = malloc(sizeof(soter_asym_ka_t));
-  assert(!ctx);
+  assert(ctx);
   if(SOTER_SUCCESS != soter_asym_ka_init(ctx, key, key_length)) {
     free(ctx);
     return NULL;
@@ -130,7 +132,7 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx, const void* pe
     return SOTER_INVALID_PARAMETER;
   }
   EVP_PKEY *peer_pkey = EVP_PKEY_new();
-  assert(peer_key);
+  assert(peer_pkey);
   if (SOTER_SUCCESS != soter_ec_pub_key_to_engine_specific((const soter_container_hdr_t *)peer_key, peer_key_length, ((soter_engine_specific_ec_key_t **)&peer_pkey))){
     EVP_PKEY_free(peer_pkey);
     return SOTER_INVALID_PARAMETER;

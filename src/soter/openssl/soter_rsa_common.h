@@ -18,7 +18,7 @@
 #define SOTER_RSA_COMMON_H
 
 #include <soter/soter.h>
-#include <soter/soter_rsa_key.h>
+#include "soter_rsa_key.h"
 #include "soter_engine.h"
 
 soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx);

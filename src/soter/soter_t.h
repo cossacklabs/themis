@@ -20,10 +20,13 @@
 
 #ifdef CRYPTO_ENGINE_PATH
 #define CEP <soter/CRYPTO_ENGINE_PATH/soter_engine.h>
+#define CEP2 <soter/CRYPTO_ENGINE_PATH/soter_engine_consts.h>
 #include CEP
+#include CEP2
 #undef CEP
 #else
 #include <soter/openssl/soter_engine.h>
+#include <soter/openssl/soter_engine_consts.h>
 #endif
 
 soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t algo);

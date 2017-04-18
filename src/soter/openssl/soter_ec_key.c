@@ -15,7 +15,7 @@
 */
 
 #include <soter/error.h>
-#include <soter/soter_ec_key.h>
+#include "soter_ec_key.h"
 
 #include <openssl/evp.h>
 #include <openssl/ec.h>

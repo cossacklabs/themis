@@ -20,7 +20,7 @@
 #define MAX_TEST_DATA 2048
 #define MAX_TEST_KEY MAX_TEST_DATA
 
-static int sign_test(soter_sign_alg_t alg)
+static int sign_test(int alg)
 {
   char test_data[]="test message";
   size_t test_data_length=strlen(test_data);
@@ -30,12 +30,6 @@ static int sign_test(soter_sign_alg_t alg)
   uint8_t* signature=NULL;
   size_t signature_length=0;
 
-  ctx=soter_sign_create(alg,NULL,0,NULL,0);
-  if(!ctx){
-    testsuite_fail_if(!ctx, "soter_sign_ctx_t == NULL");
-    return -1;
-  }
-
   uint8_t private_key[8192];
   size_t private_key_length=sizeof(private_key);
 
@@ -43,29 +37,15 @@ static int sign_test(soter_sign_alg_t alg)
   size_t public_key_length=sizeof(public_key);
 
   soter_status_t res;
-  res=soter_sign_export_key(ctx, private_key, &private_key_length, true);
+  res = soter_key_pair_gen(SOTER_ASYM_SIGN_DEFAULT_ALG, private_key, &private_key_length, public_key, &public_key_length);
   if(res!=SOTER_SUCCESS){
-    testsuite_fail_if(res!=SOTER_SUCCESS,"soter_sign_export_key (private key) fail");
-    soter_sign_destroy(ctx);
-    return -6;
+    testsuite_fail_if(res!=SOTER_SUCCESS, " generation key pair");
+    return;
   }
 
-  res=soter_sign_export_key(ctx, public_key, &public_key_length, false);
-  if(res!=SOTER_SUCCESS){
-    testsuite_fail_if(res!=SOTER_SUCCESS,"soter_sign_export_key (public key) fail");
-    soter_sign_destroy(ctx);
-    return -7;
-  }
-
-  res=soter_sign_destroy(ctx);
-  if(res!=SOTER_SUCCESS){
-    testsuite_fail_if(res!=SOTER_SUCCESS,"soter_sign_destroy fail");
-    return -8;
-  }
-  
   soter_sign_ctx_t* sctx=NULL;
 
-  sctx=soter_sign_create(alg,private_key,private_key_length,NULL,0);
+  sctx=soter_sign_create(private_key,private_key_length,NULL,0);
   if(!sctx){
     testsuite_fail_if(!sctx, "soter_sign_ctx_t == NULL 2");
     return -1;
@@ -106,7 +86,7 @@ static int sign_test(soter_sign_alg_t alg)
   
   soter_verify_ctx_t* vctx=NULL;
 
-  vctx=soter_verify_create(alg, NULL, 0, public_key, public_key_length);
+  vctx=soter_verify_create(NULL, 0, public_key, public_key_length);
   if(!vctx){
     testsuite_fail_if(!vctx, "soter_verify_ctx_t == NULL");
     return -9;
@@ -137,69 +117,44 @@ static int sign_test(soter_sign_alg_t alg)
 
 static void soter_sign_test()
 {
-  testsuite_fail_if(sign_test(SOTER_SIGN_rsa_pss_pkcs8),"soter sign SOTER_SIGN_rsa_pss_pkcs8");
-  testsuite_fail_if(sign_test(SOTER_SIGN_ecdsa_none_pkcs8),"soter sign SOTER_SIGN_ecdsa_none_pkcs8");
+  testsuite_fail_if(sign_test(SOTER_ASYM_SIGN_DEFAULT_ALG),"soter sign SOTER_SIGN_DEFAULT_ALG");
 }
 
-static void soter_sign_api_test()
+static void soter_sign_api_test(int alg)
 {
-	uint8_t priv[MAX_TEST_KEY];
-	size_t priv_length = sizeof(priv);
+  fprintf(stderr, "%x\n", alg);
+  uint8_t priv[MAX_TEST_KEY];
+  size_t priv_length = sizeof(priv);
+  
+  uint8_t pub[MAX_TEST_KEY];
+  size_t pub_length = sizeof(pub);
+  
+  uint8_t message[MAX_TEST_DATA];
+  size_t message_length = rand_int(MAX_TEST_DATA);
+  
+  uint8_t signature[MAX_TEST_DATA];
+  size_t signature_length = sizeof(signature);
 
-	uint8_t pub[MAX_TEST_KEY];
-	size_t pub_length = sizeof(pub);
+  if(soter_rand(message, message_length)){
+    testsuite_fail_if(true, "soter_rand failed");
+    return;
+  }
 
-	uint8_t message[MAX_TEST_DATA];
-	size_t message_length = rand_int(MAX_TEST_DATA);
+  soter_status_t res;
+  res = soter_key_pair_gen(alg, priv, &priv_length, pub, &pub_length);
+  if(res!=SOTER_SUCCESS){
+    testsuite_fail_if(res!=SOTER_SUCCESS, " generation key pair");
+    return;
+  }
+        
+  soter_sign_ctx_t *sign_ctx = soter_sign_create(priv, priv_length - 1, NULL, 0);
+  testsuite_fail_if(sign_ctx, "soter_sign_create: invalid private key length");
 
-	uint8_t signature[MAX_TEST_DATA];
-	size_t signature_length = sizeof(signature);
-
-	soter_status_t res;
-
-	if (soter_rand(message, message_length))
-	{
-		testsuite_fail_if(true, "soter_rand failed");
-		return;
-	}
-
-	soter_sign_ctx_t *sign_ctx = soter_sign_create(SOTER_SIGN_ecdsa_none_pkcs8, NULL, 0, NULL, 0);
-	if (!sign_ctx)
-	{
-		testsuite_fail_if(true, "soter_sign_create failed");
-		return;
-	}
-
-	res = soter_sign_export_key(sign_ctx, priv, &priv_length, true);
-	if (SOTER_SUCCESS != res)
-	{
-		testsuite_fail_if(true, "soter_sign_export_key failed");
-		soter_sign_destroy(sign_ctx);
-		return;
-	}
-
-	res = soter_sign_export_key(sign_ctx, pub, &pub_length, false);
-	if (SOTER_SUCCESS != res)
-	{
-		testsuite_fail_if(true, "soter_sign_export_key failed");
-		soter_sign_destroy(sign_ctx);
-		return;
-	}
-
-	soter_sign_destroy(sign_ctx);
-
-	sign_ctx = soter_sign_create((soter_sign_alg_t)-1, priv, priv_length, NULL, 0);
-	testsuite_fail_if(sign_ctx, "soter_sign_create: invalid algorithm");
-
-	sign_ctx = soter_sign_create(SOTER_SIGN_ecdsa_none_pkcs8, priv, priv_length - 1, NULL, 0);
-	testsuite_fail_if(sign_ctx, "soter_sign_create: invalid private key length");
-
-	sign_ctx = soter_sign_create(SOTER_SIGN_ecdsa_none_pkcs8, priv, priv_length, NULL, 0);
-	if (!sign_ctx)
-	{
-		testsuite_fail_if(true, "soter_sign_create failed");
-		return;
-	}
+  sign_ctx = soter_sign_create(priv, priv_length, NULL, 0);
+  if (!sign_ctx){
+    testsuite_fail_if(true, "soter_sign_create failed");
+    return;
+  }
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_update(NULL, message, message_length), "soter_sign_update: invalid context");
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_update(sign_ctx, NULL, message_length), "soter_sign_update: invalid message");
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_update(sign_ctx, message, 0), "soter_sign_update: invalid message length");
@@ -231,13 +186,10 @@ static void soter_sign_api_test()
 		return;
 	}
 
-	sign_ctx = soter_verify_create((soter_sign_alg_t)-1, NULL, 0, pub, pub_length);
-	testsuite_fail_if(sign_ctx, "soter_verify_create: invalid algorithm");
-
-	sign_ctx = soter_verify_create(SOTER_SIGN_ecdsa_none_pkcs8, NULL, 0, pub, pub_length - 1);
+	sign_ctx = soter_verify_create(NULL, 0, pub, pub_length - 1);
 	testsuite_fail_if(sign_ctx, "soter_verify_create: invalid public key length");
 
-	sign_ctx = soter_verify_create(SOTER_SIGN_ecdsa_none_pkcs8, NULL, 0, pub, pub_length);
+	sign_ctx = soter_verify_create(NULL, 0, pub, pub_length);
 	if (!sign_ctx)
 	{
 		testsuite_fail_if(true, "soter_verify_create failed");
@@ -273,7 +225,7 @@ static void soter_sign_api_test()
 		return;
 	}
 
-	sign_ctx = soter_verify_create(SOTER_SIGN_ecdsa_none_pkcs8, NULL, 0, pub, pub_length);
+	sign_ctx = soter_verify_create(NULL, 0, pub, pub_length);
 	if (!sign_ctx)
 	{
 		testsuite_fail_if(true, "soter_verify_create failed");
@@ -297,10 +249,24 @@ static void soter_sign_api_test()
 	soter_verify_destroy(sign_ctx);
 }
 
+void soter_sign_all_api_test(){
+  soter_sign_api_test(SOTER_ASYM_SIGN_DEFAULT_ALG);
+#if  defined (OPENSSL) || defined (LIBRESSL)
+  soter_sign_api_test(SOTER_ASYM_RSA|SOTER_ASYM_RSA_LENGTH_1024);
+  soter_sign_api_test(SOTER_ASYM_RSA|SOTER_ASYM_RSA_LENGTH_2048);
+  soter_sign_api_test(SOTER_ASYM_RSA|SOTER_ASYM_RSA_LENGTH_4096);
+
+  soter_sign_api_test(SOTER_ASYM_EC|SOTER_ASYM_EC_LENGTH_256);
+  soter_sign_api_test(SOTER_ASYM_EC|SOTER_ASYM_EC_LENGTH_384);
+  soter_sign_api_test(SOTER_ASYM_EC|SOTER_ASYM_EC_LENGTH_521);
+#endif
+
+}
+
 void run_soter_sign_test(){
   testsuite_enter_suite("soter sign: basic flow");
   testsuite_run_test(soter_sign_test);
 
   testsuite_enter_suite("soter sign: api");
-  testsuite_run_test(soter_sign_api_test);
+  testsuite_run_test(soter_sign_all_api_test);
 }
