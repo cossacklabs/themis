@@ -64,7 +64,7 @@
  */
 enum soter_hash_algo_type
 {
-	SOTER_HASH_SHA1,    /**< sha1   */
+//	SOTER_HASH_SHA1,    /**< sha1   */
 	SOTER_HASH_SHA256,  /**< sha256 */
 	SOTER_HASH_SHA512,  /**< sha512 */
 };
