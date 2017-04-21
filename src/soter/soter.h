@@ -37,6 +37,7 @@
 #include <stdlib.h>
 
 #include <soter/error.h>
+#include <soter/soter_container.h>
 #include <soter/soter_rand.h>
 #include <soter/soter_hash.h>
 #include <soter/soter_hmac.h>

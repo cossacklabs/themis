@@ -32,13 +32,7 @@ bool soter_key_is_private(const uint8_t* key, const size_t key_length){
 
 int32_t soter_key_get_alg_id(const uint8_t* key, const size_t key_length){
   assert(key && key_length>sizeof(soter_container_hdr_t));
-  if(0 == memcmp(key+1, "EC", 2)){
-    return SOTER_ASYM_EC;
-  }
-  if (0 == memcmp(key+1, "RA", 2)){
-    return SOTER_ASYM_RSA;
-  }
-  return 0;
+  return (*(int32_t*)(key))&0x00ffffff;
 }
 
 int32_t soter_key_get_length_id(const uint8_t* key, const size_t key_length){

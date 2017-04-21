@@ -17,12 +17,11 @@
 #include <themis/secure_session.h>
 #include <themis/secure_session_t.h>
 #include <themis/error.h>
-#include <soter/soter_rsa_key.h>
-#include <soter/soter_ec_key.h>
 
 #include <string.h>
 
 #include <themis/secure_session_utils.h>
+#include <soter/soter.h>
 #include <soter/soter_t.h>
 
 #define SESSION_ID_GENERATION_LABEL "Themis secure session unique identifier"
@@ -76,14 +75,15 @@ themis_status_t secure_session_init(secure_session_t *session_ctx, const void *i
 
 	session_ctx->user_callbacks = user_callbacks;
 
-	soter_status = soter_asym_ka_init(&(session_ctx->ecdh_ctx), SOTER_ASYM_KA_EC_P256);
-	if (THEMIS_SUCCESS != soter_status)
-	{
-		res = soter_status;
-		goto err;
-	}
+        uint8_t ephemeral_pk[10*1024];
+        uint8_t ephemeral_sk[10*1024];
+        size_t ephemeral_pk_len=10*1024, ephemeral_sk_len=10*1024;
 
-	soter_status = soter_asym_ka_gen_key(&(session_ctx->ecdh_ctx));
+        if(THEMIS_SUCCESS!=(soter_status=themis_gen_key_pair(SOTER_ASYM_KA_DEFAULT_ALG))){
+          res = soter_status;
+          goto err;
+        }
+	soter_status = soter_asym_ka_init(&(session_ctx->ecdh_ctx), ephemeral_pk, ephemeral_pk_len);
 	if (THEMIS_SUCCESS != soter_status)
 	{
 		res = soter_status;
@@ -304,13 +304,11 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	}
 
 	peer_ecdh_key = (const soter_container_hdr_t *)(soter_container_const_data(peer_id) + soter_container_data_size(peer_id));
+	peer_ecdh_key_length = soter_container_data_size(peer_ecdh_key) + sizeof(soter_container_hdr_t);
 
-	if (memcmp(peer_ecdh_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)))
-	{
+	if (soter_key_is_private(peer_ecdh_key, peer_ecdh_key_length) /*todo check*/){
 		return THEMIS_INVALID_PARAMETER;
 	}
-
-	peer_ecdh_key_length = soter_container_data_size(peer_ecdh_key) + sizeof(soter_container_hdr_t);
 
 	signature = (const uint8_t *)peer_ecdh_key + peer_ecdh_key_length;
 	signature_length = (const uint8_t *)data + soter_container_data_size(proto_message) + sizeof(soter_container_hdr_t) - signature;
@@ -320,13 +318,11 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	}
 
 	peer_sign_key = (const soter_container_hdr_t *)sign_key;
-
-	if (memcmp(peer_sign_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)))
-	{
-		return THEMIS_INVALID_PARAMETER;
-	}
-
 	sign_key_length = ntohl(peer_sign_key->size);
+
+	if (soter_key_is_private(peer_sign_key, sign_key_length) /*todo check*/){
+          return THEMIS_INVALID_PARAMETER;
+	}
 
 	if (sizeof(soter_container_hdr_t) >= sign_key_length)
 	{
@@ -494,13 +490,11 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	}
 
 	peer_ecdh_key = (const soter_container_hdr_t *)(soter_container_const_data(peer_id) + soter_container_data_size(peer_id));
-
-	if (memcmp(peer_ecdh_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)))
-	{
-		return THEMIS_INVALID_PARAMETER;
-	}
-
 	peer_ecdh_key_length = ntohl(peer_ecdh_key->size);
+
+        if (soter_key_is_private(peer_ecdh_key, peer_ecdh_key_length) /*todo check*/){
+          return THEMIS_INVALID_PARAMETER;
+	}
 
 	signature = (const uint8_t *)peer_ecdh_key + peer_ecdh_key_length;
 	signature_length = (const uint8_t *)data + soter_container_data_size(proto_message) + sizeof(soter_container_hdr_t) - signature;
@@ -510,13 +504,11 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	}
 
 	peer_sign_key = (const soter_container_hdr_t *)sign_key;
-
-	if (memcmp(peer_sign_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)))
-	{
-		return THEMIS_INVALID_PARAMETER;
-	}
-
 	sign_key_length = ntohl(peer_sign_key->size);
+
+	if (soter_key_is_private(peer_sign_key, sign_key_length) /*todo check*/){
+          return THEMIS_INVALID_PARAMETER;
+	}
 
 	if (sizeof(soter_container_hdr_t) >= sign_key_length)
 	{

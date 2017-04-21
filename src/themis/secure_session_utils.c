@@ -26,7 +26,7 @@
 
 #define MAX_HMAC_SIZE 64 /* For HMAC-SHA512 */
 
-soter_sign_alg_t get_key_sign_type(const void *sign_key, size_t sign_key_length)
+/*soter_sign_alg_t get_key_sign_type(const void *sign_key, size_t sign_key_length)
 {
 	const soter_container_hdr_t *key = sign_key;
 
@@ -75,14 +75,14 @@ soter_sign_alg_t get_peer_key_sign_type(const void *sign_key, size_t sign_key_le
 
 	return (soter_sign_alg_t)0xffffffff;
 }
-
+*/
 themis_status_t compute_signature(const void *sign_key, size_t sign_key_length, const soter_kdf_context_buf_t *sign_data, size_t sign_data_count, void *signature, size_t *signature_length)
 {
 	soter_sign_ctx_t* sign_ctx=NULL;
 	soter_status_t soter_status;
 	size_t i;
 
-	sign_ctx = soter_sign_create(get_key_sign_type(sign_key, sign_key_length), sign_key, sign_key_length, NULL, 0);
+	sign_ctx = soter_sign_create(sign_key, sign_key_length, NULL, 0);
 	if (!sign_ctx){
 		return THEMIS_FAIL;
 	}
@@ -114,7 +114,7 @@ themis_status_t verify_signature(const void *verify_key, size_t verify_key_lengt
 	soter_status_t soter_status;
 	size_t i;
 
-	sign_ctx = soter_verify_create(get_peer_key_sign_type(verify_key, verify_key_length), NULL, 0, verify_key, verify_key_length);
+	sign_ctx = soter_verify_create(NULL, 0, verify_key, verify_key_length);
 	if (!sign_ctx)
 	{
 		return soter_status;
@@ -207,12 +207,12 @@ themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, 
 
 	size_t bytes_encrypted = out_length;
 
-	if (out_length < (in_length + CIPHER_AUTH_TAG_SIZE))
+	if (out_length < (in_length + SOTER_SYM_AEAD_DEFAULT_ALG_AUTH_TAG_SIZE))
 	{
 		return THEMIS_BUFFER_TOO_SMALL;
 	}
 
-	ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AES_GCM|SOTER_SYM_256_KEY_LENGTH, key, key_length, NULL, 0, iv, iv_length);
+	ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AEAD_DEFAULT_ALG, key, key_length, NULL, 0, iv, iv_length);
 	if (NULL == ctx)
 	{
 		return THEMIS_FAIL;
@@ -239,7 +239,7 @@ themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, 
 		goto err;
 	}
 
-	if (CIPHER_AUTH_TAG_SIZE != out_length)
+	if (SOTER_SYM_AEAD_DEFAULT_ALG_AUTH_TAG_SIZE != out_length)
 	{
 		res = THEMIS_FAIL;
 		goto err;

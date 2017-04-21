@@ -23,23 +23,18 @@
 #define THEMIS_SECURE_MESSAGE                      0x26040000
 
 #define THEMIS_SECURE_MESSAGE_SIGNED               (THEMIS_SECURE_MESSAGE ^ 0x00002600)
-#define THEMIS_SECURE_MESSAGE_RSA_SIGNED           (THEMIS_SECURE_MESSAGE_SIGNED ^ 0x00000010)
-#define THEMIS_SECURE_MESSAGE_EC_SIGNED            (THEMIS_SECURE_MESSAGE_SIGNED ^ 0x00000020)
 
 #define IS_THEMIS_SECURE_MESSAGE_SIGNED(tag)       ((tag&0xffffff00)==THEMIS_SECURE_MESSAGE_SIGNED?true:false)      
 
 #define THEMIS_SECURE_MESSAGE_ENCRYPTED             (THEMIS_SECURE_MESSAGE ^ 0x00002700)
-#define THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED         (THEMIS_SECURE_MESSAGE_ENCRYPTED ^ 0x00000010)
-//#define THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED_AES_ECB (THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED ^ 0x00000011)
-//#define THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED_AES_CTR (THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED ^ 0x00000012)
-//#define THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED_AES_GCM (THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED ^ 0x00000013)
-//#define THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED_AES_XTS (THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED ^ 0x00000014)
-#define THEMIS_SECURE_MESSAGE_EC_ENCRYPTED  (THEMIS_SECURE_MESSAGE_ENCRYPTED ^ 0x00000020)
+#define THEMIS_SECURE_MESSAGE_CHIPHER_ENCRYPTED             (THEMIS_SECURE_MESSAGE_ENCRYPTED ^ 0x00000001)
+#define THEMIS_SECURE_MESSAGE_KA_ENCRYPTED             (THEMIS_SECURE_MESSAGE_ENCRYPTED ^ 0x00000002)
 
 #define IS_THEMIS_SECURE_MESSAGE_ENCRYPTED(tag)    ((tag&0xffffff00)==THEMIS_SECURE_MESSAGE_ENCRYPTED?true:false)      
 
 struct themis_secure_message_hdr_type{
   uint32_t message_type;
+  uint32_t alg;
   uint32_t message_length;
 };
 typedef struct themis_secure_message_hdr_type themis_secure_message_hdr_t;
@@ -60,6 +55,7 @@ typedef struct themis_secure_encrypted_message_hdr_type{
 
 struct themis_secure_message_sign_worker_type{
   soter_sign_ctx_t* sign_ctx;
+  uint32_t alg;
 };
 
 typedef struct themis_secure_message_sign_worker_type themis_secure_message_signer_t;
@@ -70,6 +66,7 @@ themis_status_t themis_secure_message_signer_destroy(themis_secure_message_signe
 
 struct themis_secure_message_verify_worker_type{
   soter_verify_ctx_t* verify_ctx;
+  uint32_t alg;
 };
 typedef struct themis_secure_message_verify_worker_type themis_secure_message_verifier_t;
 
@@ -91,16 +88,4 @@ themis_secure_message_decrypter_t* themis_secure_message_decrypter_init(const ui
 themis_status_t themis_secure_message_decrypter_proceed(themis_secure_message_decrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length);
 themis_status_t themis_secure_message_decrypter_destroy(themis_secure_message_decrypter_t* ctx);
 
-
-
 #endif /* _THEMIS_SECURE_MESSAGE_WRAPPER_H_ */
-
-
-
-
-
-
-
-
-
-
