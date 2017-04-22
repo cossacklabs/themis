@@ -75,6 +75,9 @@ else ifeq ($(ENGINE),libressl)
 else ifeq ($(ENGINE), boringssl)
 	CRYPTO_ENGINE_DEF = BORINGSSL
 	CRYPTO_ENGINE_PATH=boringssl
+else ifeq ($(ENGINE), libsodium)
+	CRYPTO_ENGINE_DEF = LIBSODIUM
+	CRYPTO_ENGINE_PATH=libsodium
 else
 	ERROR = $(error error: engine $(ENGINE) unsupported...)
 endif
