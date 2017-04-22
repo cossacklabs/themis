@@ -19,8 +19,6 @@
 
 #include <themis/error.h>
 #include <soter/soter.h>
-#include <soter/soter_rsa_key.h>
-#include <soter/soter_ec_key.h>
 #include <soter/soter_asym_sign.h>
 #include <soter/soter_asym_ka.h>
 #include <themis/secure_message_wrapper.h>

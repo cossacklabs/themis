@@ -19,63 +19,11 @@
 #include <themis/secure_session_t.h>
 
 #include <soter/soter_t.h>
-#include <soter/soter_rsa_key.h>
-#include <soter/soter_ec_key.h>
 
 #include <themis/error.h>
 
 #define MAX_HMAC_SIZE 64 /* For HMAC-SHA512 */
 
-/*soter_sign_alg_t get_key_sign_type(const void *sign_key, size_t sign_key_length)
-{
-	const soter_container_hdr_t *key = sign_key;
-
-	if (sign_key_length >= sizeof(soter_container_hdr_t))
-	{
-		if (sign_key_length < ntohl(key->size))
-		{
-			return (soter_sign_alg_t)0xffffffff;
-		}
-
-		if (!memcmp(key->tag, EC_PRIV_KEY_PREF, strlen(EC_PRIV_KEY_PREF)))
-		{
-			return SOTER_SIGN_ecdsa_none_pkcs8;
-		}
-
-		if (!memcmp(key->tag, RSA_PRIV_KEY_PREF, strlen(RSA_PRIV_KEY_PREF)))
-		{
-			return SOTER_SIGN_rsa_pss_pkcs8;
-		}
-	}
-
-	return (soter_sign_alg_t)0xffffffff;
-}
-
-soter_sign_alg_t get_peer_key_sign_type(const void *sign_key, size_t sign_key_length)
-{
-	const soter_container_hdr_t *key = sign_key;
-
-	if (sign_key_length >= sizeof(soter_container_hdr_t))
-	{
-		if (sign_key_length < ntohl(key->size))
-		{
-			return (soter_sign_alg_t)0xffffffff;
-		}
-
-		if (!memcmp(key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)))
-		{
-			return SOTER_SIGN_ecdsa_none_pkcs8;
-		}
-
-		if (!memcmp(key->tag, RSA_PUB_KEY_PREF, strlen(RSA_PUB_KEY_PREF)))
-		{
-			return SOTER_SIGN_rsa_pss_pkcs8;
-		}
-	}
-
-	return (soter_sign_alg_t)0xffffffff;
-}
-*/
 themis_status_t compute_signature(const void *sign_key, size_t sign_key_length, const soter_kdf_context_buf_t *sign_data, size_t sign_data_count, void *signature, size_t *signature_length)
 {
 	soter_sign_ctx_t* sign_ctx=NULL;

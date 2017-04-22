@@ -41,7 +41,7 @@ extern "C"{
  */
 
 /**
- * @brief generate RSA key pair
+ * @brief generate key pair
  * @param [out] private_key buffer for private key to store. May be set to NULL for private key length determination
  * @param [in, out] private_key_length length of private_key
  * @param [out] public_key buffer for public key to store. May be set to NULL for public key length determination
