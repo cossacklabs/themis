@@ -82,7 +82,7 @@ themis_secure_message_encrypter_t* themis_secure_message_encrypter_init(const ui
 themis_status_t themis_secure_message_encrypter_proceed(themis_secure_message_encrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length);
 themis_status_t themis_secure_message_encrypter_destroy(themis_secure_message_encrypter_t* ctx);
 
-typedef struct themis_secure_message_encrypt_worker_type themis_secure_message_decrypter_t; 
+typedef struct themis_secure_message_decrypt_worker_type themis_secure_message_decrypter_t; 
 
 themis_secure_message_decrypter_t* themis_secure_message_decrypter_init(const uint8_t* private_key, const size_t private_key_length, const uint8_t* peer_public_key, const size_t peer_public_key_length);
 themis_status_t themis_secure_message_decrypter_proceed(themis_secure_message_decrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length);

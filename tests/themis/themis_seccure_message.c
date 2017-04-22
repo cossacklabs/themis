@@ -42,18 +42,7 @@
   }}
 
 
-static themis_status_t themis_gen_key_pair(int alg, uint8_t* private_key, size_t* private_key_length, uint8_t* public_key, size_t* public_key_length){
-  themis_status_t res=THEMIS_FAIL;
-  if(alg==RSA_ALG){
-    res=themis_gen_rsa_key_pair(private_key, private_key_length, public_key, public_key_length);
-  }
-  else if(alg==EC_ALG){
-    res=themis_gen_ec_key_pair(private_key, private_key_length, public_key, public_key_length);
-  }
-  return res;
-}
-
-static int themis_secure_signed_message_generic_test(int alg, const char* message, const size_t message_length){
+static int themis_secure_signed_message_generic_test(const char* message, const size_t message_length){
   uint8_t private_key[10240];
   size_t private_key_length=10240;
   uint8_t public_key[10240];
@@ -61,7 +50,7 @@ static int themis_secure_signed_message_generic_test(int alg, const char* messag
 
   themis_status_t res;
 
-  res=themis_gen_key_pair(alg, private_key, &private_key_length, public_key, &public_key_length);
+  res=themis_gen_key_pair(private_key, &private_key_length, public_key, &public_key_length);
   
   if(res!=THEMIS_SUCCESS){
     testsuite_fail_if(res!=THEMIS_SUCCESS, "themis_gen_key_pair fail");
@@ -123,7 +112,7 @@ static int themis_secure_signed_message_generic_test(int alg, const char* messag
   return 0;
 }
 
-static int themis_secure_encrypted_message_generic_test(int alg, const char* message, const size_t message_length){
+static int themis_secure_encrypted_message_generic_test(const char* message, const size_t message_length){
   uint8_t private_key[10240];
   size_t private_key_length=10240;
   uint8_t public_key[10240];
@@ -135,8 +124,8 @@ static int themis_secure_encrypted_message_generic_test(int alg, const char* mes
   size_t peer_public_key_length=10240;
 
 
-  test_check(themis_gen_key_pair(alg, private_key, &private_key_length, public_key, &public_key_length), THEMIS_SUCCESS, "gen key pair fail");
-  test_check(themis_gen_key_pair(alg, peer_private_key, &peer_private_key_length, peer_public_key, &peer_public_key_length), THEMIS_SUCCESS, "gen peer key pair fail");
+  test_check(themis_gen_key_pair(private_key, &private_key_length, public_key, &public_key_length), THEMIS_SUCCESS, "gen key pair fail");
+  test_check(themis_gen_key_pair(peer_private_key, &peer_private_key_length, peer_public_key, &peer_public_key_length), THEMIS_SUCCESS, "gen peer key pair fail");
 
   uint8_t* wrapped_message=NULL;
   size_t wrapped_message_length=0;
@@ -186,10 +175,8 @@ static void themis_secure_message_test(){
 
   size_t message_length=strlen(message);
   
-  testsuite_fail_if(themis_secure_signed_message_generic_test(RSA_ALG, message, message_length), "themis secure signed message (RSA)");
-  testsuite_fail_if(themis_secure_signed_message_generic_test(EC_ALG, message,message_length), "themis secure signed message (EC)");
-  testsuite_fail_if(themis_secure_encrypted_message_generic_test(RSA_ALG, message, message_length), "themis secure encrypted message (RSA)");
-  testsuite_fail_if(themis_secure_encrypted_message_generic_test(EC_ALG, message,message_length), "themis secure encrypted message (EC)");
+  testsuite_fail_if(themis_secure_signed_message_generic_test(message, message_length), "themis secure signed message");
+  testsuite_fail_if(themis_secure_encrypted_message_generic_test(message, message_length), "themis secure encrypted message");
 }
 
 static void secure_message_api_test(void)
@@ -217,22 +204,22 @@ static void secure_message_api_test(void)
 
 	themis_status_t res;
 
-	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(NULL, &priv_length, pub, &pub_length), "themis_gen_ec_key_pair: get output size (NULL out buffer for private key)");
+	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_key_pair(NULL, &priv_length, pub, &pub_length), "themis_gen_ec_key_pair: get output size (NULL out buffer for private key)");
 	priv_length--;
-	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(priv, &priv_length, pub, &pub_length), "themis_gen_ec_key_pair: get output size (small out buffer for private key)");
+	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_key_pair(priv, &priv_length, pub, &pub_length), "themis_gen_ec_key_pair: get output size (small out buffer for private key)");
 
-	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(peer_priv, &priv_length, NULL, &pub_length), "themis_gen_ec_key_pair: get output size (NULL out buffer for public key)");
+	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_key_pair(peer_priv, &priv_length, NULL, &pub_length), "themis_gen_ec_key_pair: get output size (NULL out buffer for public key)");
 	pub_length--;
-	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(peer_priv, &priv_length, pub, &pub_length), "themis_gen_ec_key_pair: get output size (small out buffer for public key)");
+	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_key_pair(peer_priv, &priv_length, pub, &pub_length), "themis_gen_ec_key_pair: get output size (small out buffer for public key)");
 
-	res = themis_gen_ec_key_pair(priv, &priv_length, pub, &pub_length);
+	res = themis_gen_key_pair(priv, &priv_length, pub, &pub_length);
 	if (THEMIS_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "themis_gen_ec_key_pair fail");
 		return;
 	}
 
-	res = themis_gen_ec_key_pair(peer_priv, &peer_priv_length, peer_pub, &peer_pub_length);
+	res = themis_gen_key_pair(peer_priv, &peer_priv_length, peer_pub, &peer_pub_length);
 	if (THEMIS_SUCCESS != res)
 	{
 		testsuite_fail_if(true, "themis_gen_ec_key_pair fail");
@@ -255,12 +242,10 @@ static void secure_message_api_test(void)
 	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_wrap(priv, priv_length, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: get output size (small out buffer)");
 
 	res = themis_secure_message_wrap(priv, priv_length, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length);
-	if (THEMIS_SUCCESS != res)
-	{
+	if (THEMIS_SUCCESS != res){
 		testsuite_fail_if(true, "themis_secure_message_wrap fail");
 		return;
 	}
-
 	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(NULL, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid private key");
 	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length - 1, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid private key length");
 	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length - 1, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: invalid peer public key length");
@@ -269,10 +254,8 @@ static void secure_message_api_test(void)
 	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, NULL, &decryptext_length), "themis_secure_message_unwrap: get output size (NULL out buffer)");
 	decryptext_length--;
 	testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: get output size (small out buffer)");
-
 	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, NULL, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: treating encrypted message as signed (NULL peer public key)");
 	testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, 0, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: treating encrypted message as signed (zero peer public key length)");
-
 	res = themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length);
 	if (THEMIS_SUCCESS != res)
 	{

@@ -17,6 +17,8 @@
 #ifndef _SECURE_CELL_ALG_H_
 #define _SECURE_CELL_ALG_H_
 
+#include <soter/soter_t.h>
+
 /*default values*/
 #ifndef THEMIS_AUTH_SYM_ALG
 #define THEMIS_AUTH_SYM_KEY_LENGTH SOTER_SYM_AEAD_DEFAULT_ALG_KEY_LENGTH

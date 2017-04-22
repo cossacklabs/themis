@@ -79,7 +79,7 @@ themis_status_t secure_session_init(secure_session_t *session_ctx, const void *i
         uint8_t ephemeral_sk[10*1024];
         size_t ephemeral_pk_len=10*1024, ephemeral_sk_len=10*1024;
 
-        if(THEMIS_SUCCESS!=(soter_status=themis_gen_key_pair(SOTER_ASYM_KA_DEFAULT_ALG))){
+        if(THEMIS_SUCCESS!=(soter_status=soter_key_pair_gen(SOTER_ASYM_KA_DEFAULT_ALG, ephemeral_sk, ephemeral_sk_len, ephemeral_pk, ephemeral_pk_len))){
           res = soter_status;
           goto err;
         }

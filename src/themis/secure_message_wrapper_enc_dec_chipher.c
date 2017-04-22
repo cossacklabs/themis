@@ -24,6 +24,8 @@
 #include <soter/soter_asym_sign.h>
 #include <soter/soter_asym_ka.h>
 #include <themis/secure_message_wrapper.h>
+#include <themis/secure_message_wrapper_enc_dec_chipher.h>
+
 
 #define THEMIS_SYMM_PASSWD_LENGTH 70
 #define THEMIS_SYMM_SALT_LENGTH 16
@@ -37,7 +39,6 @@ struct themis_secure_message_chipher_encrypt_worker_type{
   soter_asym_cipher_t* asym_cipher;
 };
 
-typedef struct themis_secure_message_chipher_encrypt_worker_type themis_secure_message_chipher_encrypter_t;
 themis_status_t themis_secure_message_chipher_encrypter_destroy(themis_secure_message_chipher_encrypter_t* ctx);
 
 
@@ -105,7 +106,6 @@ themis_status_t themis_secure_message_chipher_encrypter_destroy(themis_secure_me
   return THEMIS_SUCCESS;
 }
 
-typedef struct themis_secure_message_chipher_encrypt_worker_type themis_secure_message_chipher_decrypter_t;
 themis_status_t themis_secure_message_chipher_decrypter_destroy(themis_secure_message_chipher_decrypter_t* ctx);
 
 themis_secure_message_chipher_decrypter_t* themis_secure_message_chipher_decrypter_init(const uint8_t* private_key, const size_t private_key_length){

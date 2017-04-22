@@ -19,15 +19,11 @@
 #include <themis/secure_message_wrapper.h>
 #include <soter/soter_t.h>
 
-#ifndef THEMIS_RSA_KEY_LENGTH
-#define THEMIS_RSA_KEY_LENGTH RSA_KEY_LENGTH_2048
-#endif
-themis_status_t themis_gen_key_pair(int32_t alg,
-				    uint8_t* private_key,
+themis_status_t themis_gen_key_pair(uint8_t* private_key,
 				    size_t* private_key_length,
 				    uint8_t* public_key,
 				    size_t* public_key_length){
-  return soter_key_pair_gen(alg, private_key, private_key_length, public_key, public_key_length); 
+  return soter_key_pair_gen(THEMIS_SECURE_MESSAGE_DEFAULT_ALG, private_key, private_key_length, public_key, public_key_length); 
 }
 
 themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
