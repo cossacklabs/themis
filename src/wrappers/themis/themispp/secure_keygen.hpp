@@ -26,10 +26,6 @@
 
 namespace themispp{
 
-  enum asym_algs {EC, RSA};
-
-
-  template <asym_algs alg_t_p, size_t max_key_length_t_p = MAX_KEY_LENGTH>
   class secure_key_pair_generator_t{
   public:
     secure_key_pair_generator_t():
@@ -41,18 +37,8 @@ namespace themispp{
     void gen(){
       size_t private_key_length=max_key_length_t_p;
       size_t public_key_length=max_key_length_t_p;
-      switch(alg_t_p){
-      case EC:
-	if(themis_gen_ec_key_pair(&private_key[0], &private_key_length, &public_key[0], &public_key_length)!=THEMIS_SUCCESS)
-	  throw themispp::exception_t("Themis failed generating EC KeyPair");
-	break;
-      case RSA:
-	if(themis_gen_rsa_key_pair(&private_key[0], &private_key_length, &public_key[0], &public_key_length)!=THEMIS_SUCCESS)
-	  throw themispp::exception_t("Themis failed generating RSA KeyPair");
-	break;
-      default:
-	throw themispp::exception_t("Themis failed generating KeyPair, unsupported algorithm");
-      }
+      if(themis_gen_key_pair(&private_key[0], &private_key_length, &public_key[0], &public_key_length)!=THEMIS_SUCCESS)
+         throw themispp::exception_t("Themis failed generating KeyPair");
       private_key.resize(private_key_length);
       public_key.resize(private_key_length);
     }
