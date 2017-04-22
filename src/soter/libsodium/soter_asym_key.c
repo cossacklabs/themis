@@ -19,8 +19,8 @@
 #include <soter/soter_asym_key.h>
 #include <soter/soter_container.h>
 #include "soter_engine_consts.h"
-#include "soter_x255519_key.h"
-#include "soter_ed255519_key.h"
+#include "soter_x25519_key.h"
+#include "soter_ed25519_key.h"
 
 bool soter_key_is_private(const uint8_t* key, const size_t key_length){
   assert(key && key_length>sizeof(soter_container_hdr_t));
@@ -31,10 +31,10 @@ bool soter_key_is_private(const uint8_t* key, const size_t key_length){
 int32_t soter_key_get_alg_id(const uint8_t* key, const size_t key_length){
   assert(key && key_length>sizeof(soter_container_hdr_t));
   if(0 == memcmp(key+1, "X2", 2)){
-    return SOTER_ASYM_EC;
+    return SOTER_ASYM_X25519;
   }
   if (0 == memcmp(key+1, "ED", 2)){
-    return SOTER_ASYM_RSA;
+    return SOTER_ASYM_ED25519;
   }
   return 0;
 }
@@ -46,7 +46,7 @@ int32_t soter_key_get_length_id(const uint8_t* key, const size_t key_length){
 
 soter_status_t soter_key_pair_gen(int32_t alg_id, uint8_t* private_key, size_t* private_key_length, uint8_t* public_key, size_t* public_key_length){
   soter_status_t res = SOTER_SUCCESS;
-  switch(alg_id&(SOTER_ASYM_ALGS|SOTER_ASYM_KEY_LENGTH)){
+  switch(alg_id&0){
     SOTER_ED25519_KEY_GEN
     SOTER_X25519_KEY_GEN
   default:

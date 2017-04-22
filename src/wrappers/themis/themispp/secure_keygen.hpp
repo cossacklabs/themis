@@ -36,7 +36,7 @@ namespace themispp{
     
     void gen(){
       size_t private_key_length=MAX_KEY_LENGTH;
-      size_t public_key_length=MAX_KAY_LENGTH;
+      size_t public_key_length=MAX_KEY_LENGTH;
       if(themis_gen_key_pair(&private_key[0], &private_key_length, &public_key[0], &public_key_length)!=THEMIS_SUCCESS)
          throw themispp::exception_t("Themis failed generating KeyPair");
       private_key.resize(private_key_length);

@@ -22,6 +22,8 @@
 
 #include <arpa/inet.h>
 
+#include <sodium.h>
+
 /** private key header part */
 #define X25519_PRIV_KEY_TAG "RX20"
 /** public key header part */

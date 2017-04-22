@@ -19,6 +19,8 @@
 
 #include <soter/soter.h>
 #include <sodium.h>
+#include "soter_x25519_key.h"
+#include "soter_ed25519_key.h"
 
 struct soter_hash_ctx_type
 {
@@ -43,7 +45,7 @@ struct soter_asym_ka_type{
 };
 
 struct soter_sign_ctx_type{
-  soter_sign_alg_t alg;
+  soter_ed25519_priv_key_t pk;
 };
 
 #endif /* SOTER_ENGINE_H */
