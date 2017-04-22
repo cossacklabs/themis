@@ -29,7 +29,7 @@ themis_secure_message_signer_t* themis_secure_message_signer_init(const uint8_t*
     return NULL;
   }
   ctx->sign_ctx=NULL;
-  ctx->sign_ctx=soter_sign_create(NULL,0,key, key_length);
+  ctx->sign_ctx=soter_sign_create(key, key_length, NULL, 0);
   if(!(ctx->sign_ctx)){
     free(ctx);
     return NULL;
@@ -84,7 +84,7 @@ themis_secure_message_verifier_t* themis_secure_message_verifier_init(const uint
   if(!ctx){
     return NULL;
   }
-  ctx->verify_ctx=soter_verify_create(key, key_length, NULL,0);
+  ctx->verify_ctx=soter_verify_create(NULL, 0, key, key_length);
   if(!ctx->verify_ctx){
     free(ctx);
     return NULL;

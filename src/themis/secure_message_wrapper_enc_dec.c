@@ -23,6 +23,8 @@
 #include <themis/secure_message_wrapper_enc_dec_ka.h>
 #include <themis/secure_message_wrapper_enc_dec_chipher.h>
 
+#include <assert.h>
+
 struct themis_secure_message_encrypt_worker_type{
   union CTX{
     themis_secure_message_chipher_encrypter_t* chipher_encrypter;

@@ -24,6 +24,8 @@
 #include <soter/soter.h>
 #include <soter/soter_t.h>
 
+#include <assert.h>
+
 #define SESSION_ID_GENERATION_LABEL "Themis secure session unique identifier"
 #define SESSION_MASTER_KEY_GENERATION_LABEL "Themis secure session master key"
 
@@ -38,7 +40,7 @@ themis_status_t secure_session_cleanup(secure_session_t *session_ctx)
 	{
 		return THEMIS_INVALID_PARAMETER;
 	}
-
+        free(session_ctx->ephemeral_pk);
 	secure_session_peer_cleanup(&(session_ctx->peer));
 	secure_session_peer_cleanup(&(session_ctx->we));
 
@@ -75,21 +77,28 @@ themis_status_t secure_session_init(secure_session_t *session_ctx, const void *i
 
 	session_ctx->user_callbacks = user_callbacks;
 
-        uint8_t ephemeral_pk[10*1024];
-        uint8_t ephemeral_sk[10*1024];
-        size_t ephemeral_pk_len=10*1024, ephemeral_sk_len=10*1024;
-
-        if(THEMIS_SUCCESS!=(soter_status=soter_key_pair_gen(SOTER_ASYM_KA_DEFAULT_ALG, ephemeral_sk, ephemeral_sk_len, ephemeral_pk, ephemeral_pk_len))){
+        size_t ephemeral_sk_length=0;
+        if(THEMIS_BUFFER_TOO_SMALL!=(soter_status=soter_key_pair_gen(SOTER_ASYM_KA_DEFAULT_ALG, NULL, &ephemeral_sk_length, NULL, &(session_ctx->ephemeral_pk_length)))){
+            res=soter_status;
+            goto err;
+        }
+        uint8_t* ephemeral_sk=malloc(ephemeral_sk_length);
+        assert(ephemeral_sk);
+        session_ctx->ephemeral_pk=malloc(session_ctx->ephemeral_pk_length);
+        assert(session_ctx->ephemeral_pk);
+        if(THEMIS_SUCCESS!=(soter_status=soter_key_pair_gen(SOTER_ASYM_KA_DEFAULT_ALG, ephemeral_sk, &ephemeral_sk_length, session_ctx->ephemeral_pk, &(session_ctx->ephemeral_pk_length)))){
+          free(ephemeral_sk);
           res = soter_status;
           goto err;
         }
-	soter_status = soter_asym_ka_init(&(session_ctx->ecdh_ctx), ephemeral_pk, ephemeral_pk_len);
+	soter_status = soter_asym_ka_init(&(session_ctx->ecdh_ctx), ephemeral_sk, ephemeral_sk_length);
 	if (THEMIS_SUCCESS != soter_status)
 	{
-		res = soter_status;
-		goto err;
+          free(ephemeral_sk);
+          res = soter_status;
+          goto err;
 	}
-
+        free(ephemeral_sk);
 	/* Initially we are in the "server accept" mode */
 	session_ctx->state_handler = secure_session_accept;
 
@@ -131,7 +140,6 @@ themis_status_t secure_session_generate_connect_request(secure_session_t *sessio
 
 	soter_container_hdr_t *container;
 
-	size_t ecdh_key_length = 0;
 	size_t signature_length = 0;
 
 	soter_status_t soter_status;
@@ -139,17 +147,12 @@ themis_status_t secure_session_generate_connect_request(secure_session_t *sessio
 
 	soter_kdf_context_buf_t sign_data;
 
-	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), NULL, &ecdh_key_length, false);
-	if (THEMIS_BUFFER_TOO_SMALL != soter_status)
-	{
-	    return soter_status;
-	}
 	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, NULL, 0, NULL, &signature_length);
 	if (THEMIS_BUFFER_TOO_SMALL != res)
 	{
 		return res;
 	}
-	length_to_send = 2 * sizeof(soter_container_hdr_t) + session_ctx->we.id_length + ecdh_key_length + signature_length;
+	length_to_send = 2 * sizeof(soter_container_hdr_t) + session_ctx->we.id_length + session_ctx->ephemeral_pk_length + signature_length;
 	if ((NULL == output) || (*output_length < length_to_send))
 	{
 		*output_length = length_to_send;
@@ -167,18 +170,14 @@ themis_status_t secure_session_generate_connect_request(secure_session_t *sessio
 	/* Moving back to beginning of allocated buffer */
 	container = (soter_container_hdr_t *)data_to_send;
 
-	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length, &ecdh_key_length, false);
-	if (THEMIS_SUCCESS != soter_status)
-	{
-		return soter_status;
-	}
+        memcpy(data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length, session_ctx->ephemeral_pk, session_ctx->ephemeral_pk_length);
 	sign_data.data = data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length;
-	sign_data.length = ecdh_key_length;
+	sign_data.length = session_ctx->ephemeral_pk_length;
 
 	/* Actual signature may be 1 or 2 bytes less than reported above because leading zeroes are stripped */
 	length_to_send -= signature_length;
 
-	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, &sign_data, 1, data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length + ecdh_key_length, &signature_length);
+	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, &sign_data, 1, data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length + session_ctx->ephemeral_pk_length, &signature_length);
 	if (THEMIS_SUCCESS != res)
 	{
 		return res;
@@ -267,7 +266,7 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	uint8_t *data_to_send = output;
 	size_t length_to_send;
 
-	size_t ecdh_key_length = 0;
+        //	size_t ecdh_key_length = 0;
 	soter_container_hdr_t *container;
 
 	if (data_length < sizeof(soter_container_hdr_t))
@@ -345,13 +344,7 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 		return res;
 	}
 
-	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), NULL, &ecdh_key_length, false);
-	if (THEMIS_BUFFER_TOO_SMALL != soter_status)
-	{
-		return soter_status;
-	}
-
-	length_to_send = 2 * sizeof(soter_container_hdr_t) + session_ctx->we.id_length + ecdh_key_length + signature_length;
+	length_to_send = 2 * sizeof(soter_container_hdr_t) + session_ctx->we.id_length + session_ctx->ephemeral_pk_length + signature_length;
 	if ((NULL == output) || (*output_length < length_to_send))
 	{
 		*output_length = length_to_send;
@@ -375,15 +368,10 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	/* Moving back to beginning of allocated buffer */
 	container = (soter_container_hdr_t *)data_to_send;
 
-	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length, &ecdh_key_length, false);
-	if (THEMIS_SUCCESS != soter_status)
-	{
-		res = soter_status;
-		goto err;
-	}
+        memcpy(data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length, session_ctx->ephemeral_pk, session_ctx->ephemeral_pk_length);
 
 	sign_data[0].data = data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length;
-	sign_data[0].length = ecdh_key_length;
+	sign_data[0].length = session_ctx->ephemeral_pk_length;
 
 	sign_data[1].data = session_ctx->peer.ecdh_key;
 	sign_data[1].length = session_ctx->peer.ecdh_key_length;
@@ -397,7 +385,7 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	/* Actual signature may be 1 or 2 bytes less than reported above because leading zeroes are stripped */
 	length_to_send -= signature_length;
 
-	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, sign_data, 4, data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length + ecdh_key_length, &signature_length);
+	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, sign_data, 4, data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length + session_ctx->ephemeral_pk_length, &signature_length);
 	if (THEMIS_SUCCESS != res)
 	{
 		goto err;
@@ -445,8 +433,8 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	uint8_t sign_key[1024]; /* Should be enough for RSA 8192 which is 512 bytes */
 	size_t sign_key_length;
 
-	uint8_t ecdh_key[1024];
-	size_t ecdh_key_length = sizeof(ecdh_key);
+        //	uint8_t ecdh_key[1024];
+        //	size_t ecdh_key_length = sizeof(ecdh_key);
 
 	const soter_container_hdr_t *peer_sign_key;
 	soter_kdf_context_buf_t sign_data[4];
@@ -515,17 +503,11 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 		return THEMIS_INVALID_PARAMETER;
 	}
 
-	soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), ecdh_key, &ecdh_key_length, false);
-	if (THEMIS_SUCCESS != soter_status)
-	{
-		return soter_status;
-	}
-
 	sign_data[0].data = (const uint8_t *)peer_ecdh_key;
 	sign_data[0].length = peer_ecdh_key_length;
 
-	sign_data[1].data = ecdh_key;
-	sign_data[1].length = ecdh_key_length;
+	sign_data[1].data = session_ctx->ephemeral_pk;
+	sign_data[1].length = session_ctx->ephemeral_pk_length;
 
 	sign_data[2].data = soter_container_const_data(peer_id);
 	sign_data[2].length = soter_container_data_size(peer_id);
@@ -545,8 +527,8 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 		goto err;
 	}
 
-	sign_data[0].data = ecdh_key;
-	sign_data[0].length = ecdh_key_length;
+	sign_data[0].data = session_ctx->ephemeral_pk;
+	sign_data[0].length = session_ctx->ephemeral_pk_length;
 
 	sign_data[1].data = (const uint8_t *)peer_ecdh_key;
 	sign_data[1].length = peer_ecdh_key_length;
@@ -581,8 +563,8 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	}
 
 	/* restore sign data for signature computation */
-	sign_data[0].data = ecdh_key;
-	sign_data[0].length = ecdh_key_length;
+	sign_data[0].data = session_ctx->ephemeral_pk;
+	sign_data[0].length = session_ctx->ephemeral_pk_length;
 
 	res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, NULL, 0, NULL, &signature_length);
 	if (THEMIS_BUFFER_TOO_SMALL != res)
@@ -664,8 +646,8 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 
 	soter_kdf_context_buf_t sign_data[4];
 
-	uint8_t ecdh_key[1024];
-	size_t ecdh_key_length = sizeof(ecdh_key);
+        uint8_t rmac[1024];
+        size_t rmac_length = sizeof(rmac);
 
 	uint8_t shared_secret[1024];
 	size_t shared_secret_length = sizeof(shared_secret);
@@ -702,17 +684,11 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 	signature = soter_container_const_data(proto_message);
 	mac = signature + signature_length;
 
-	res = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), ecdh_key, &ecdh_key_length, false);
-	if (THEMIS_SUCCESS != res)
-	{
-		return res;
-	}
-
 	sign_data[0].data = session_ctx->peer.ecdh_key;
 	sign_data[0].length = session_ctx->peer.ecdh_key_length;
 
-	sign_data[1].data = ecdh_key;
-	sign_data[1].length = ecdh_key_length;
+	sign_data[1].data = session_ctx->ephemeral_pk;
+	sign_data[1].length = session_ctx->ephemeral_pk_length;
 
 	sign_data[2].data = session_ctx->peer.id;
 	sign_data[2].length = session_ctx->peer.id_length;
@@ -747,8 +723,8 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 		return res;
 	}
 
-	sign_data[0].data = ecdh_key;
-	sign_data[0].length = ecdh_key_length;
+	sign_data[0].data = session_ctx->ephemeral_pk;
+	sign_data[0].length = session_ctx->ephemeral_pk_length;
 
 	sign_data[1].data = (const uint8_t *)(&(session_ctx->session_id));
 	sign_data[1].length = sizeof(session_ctx->session_id);
@@ -763,22 +739,22 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 	sign_data[0].length = session_ctx->peer.ecdh_key_length;
 
 	/* we will reuse ecdh_key buffer for mac response computation */
-	ecdh_key_length = sizeof(ecdh_key) - sizeof(soter_container_hdr_t);
-	response_message = (soter_container_hdr_t *)ecdh_key;
+	rmac_length = sizeof(rmac) - sizeof(soter_container_hdr_t);
+	response_message = (soter_container_hdr_t *)rmac;
 
-	res = compute_mac(session_ctx->session_master_key, sizeof(session_ctx->session_master_key), sign_data, 2, soter_container_data(response_message), &ecdh_key_length);
+	res = compute_mac(session_ctx->session_master_key, sizeof(session_ctx->session_master_key), sign_data, 2, soter_container_data(response_message), &rmac_length);
 	if (THEMIS_SUCCESS != res)
 	{
 		return res;
 	}
 
-	if ((NULL == output) || (*output_length < (ecdh_key_length + sizeof(soter_container_hdr_t))))
+	if ((NULL == output) || (*output_length < (rmac_length + sizeof(soter_container_hdr_t))))
 	{
-		*output_length = ecdh_key_length + sizeof(soter_container_hdr_t);
+		*output_length = rmac_length + sizeof(soter_container_hdr_t);
 		return THEMIS_BUFFER_TOO_SMALL;
 	}
 
-	*output_length = ecdh_key_length + sizeof(soter_container_hdr_t);
+	*output_length = rmac_length + sizeof(soter_container_hdr_t);
 
 	res = secure_session_derive_message_keys(session_ctx);
 	if (THEMIS_SUCCESS != res)
@@ -787,10 +763,10 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 	}
 
 	memcpy(response_message->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH);
-	soter_container_set_data_size(response_message, ecdh_key_length);
+	soter_container_set_data_size(response_message, rmac_length);
 	soter_update_container_checksum(response_message);
 
-	memcpy(output, ecdh_key, soter_container_data_size(response_message) + sizeof(soter_container_hdr_t));
+	memcpy(output, rmac, soter_container_data_size(response_message) + sizeof(soter_container_hdr_t));
 
 	/* "Server mode": negotiation completed */
 	session_ctx->state_handler = NULL;
@@ -807,9 +783,6 @@ static themis_status_t secure_session_finish_client(secure_session_t *session_ct
 {
 	const soter_container_hdr_t *proto_message = data;
 	themis_status_t res;
-
-	uint8_t ecdh_key[1024];
-	size_t ecdh_key_length = sizeof(ecdh_key);
 
 	soter_kdf_context_buf_t sign_data[2];
 
@@ -833,14 +806,8 @@ static themis_status_t secure_session_finish_client(secure_session_t *session_ct
 		return THEMIS_INVALID_PARAMETER;
 	}
 
-	res = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), ecdh_key, &ecdh_key_length, false);
-	if (THEMIS_SUCCESS != res)
-	{
-		return res;
-	}
-
-	sign_data[0].data = ecdh_key;
-	sign_data[0].length = ecdh_key_length;
+	sign_data[0].data = session_ctx->ephemeral_pk;
+	sign_data[0].length = session_ctx->ephemeral_pk_length;
 
 	sign_data[1].data = (const uint8_t *)(&(session_ctx->session_id));
 	sign_data[1].length = sizeof(session_ctx->session_id);

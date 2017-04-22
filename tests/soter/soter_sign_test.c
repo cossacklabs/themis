@@ -17,7 +17,7 @@
 #include <string.h>
 #include "soter_test.h"
 
-#define MAX_TEST_DATA 2048
+#define MAX_TEST_DATA 20480
 #define MAX_TEST_KEY MAX_TEST_DATA
 
 static int sign_test(int alg)
@@ -122,7 +122,6 @@ static void soter_sign_test()
 
 static void soter_sign_api_test(int alg)
 {
-  fprintf(stderr, "%x\n", alg);
   uint8_t priv[MAX_TEST_KEY];
   size_t priv_length = sizeof(priv);
   
@@ -260,7 +259,6 @@ void soter_sign_all_api_test(){
   soter_sign_api_test(SOTER_ASYM_EC|SOTER_ASYM_EC_LENGTH_384);
   soter_sign_api_test(SOTER_ASYM_EC|SOTER_ASYM_EC_LENGTH_521);
 #endif
-
 }
 
 void run_soter_sign_test(){

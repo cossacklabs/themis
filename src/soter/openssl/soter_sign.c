@@ -69,14 +69,17 @@ soter_status_t soter_verify(const void* private_key, const size_t private_key_le
 
 soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
 {
-  if(!ctx){
+  if(!ctx || !private_key ||  private_key_length<sizeof(soter_container_hdr_t) || !soter_key_is_private(private_key, private_key_length)){
     return SOTER_INVALID_PARAMETER;
   }
   ctx->alg=soter_key_get_alg_id(private_key, private_key_length);
-  switch(ctx->alg){
-  case SOTER_ASYM_RSA :			     
+  if(!(ctx->alg)){
+    return SOTER_INVALID_PARAMETER;
+  }
+  switch((ctx->alg)&SOTER_ASYM_ALG_MASK){
+  case SOTER_ASYM_RSA:
     return soter_sign_init_rsa_pss_pkcs8(ctx,private_key,private_key_length, public_key, public_key_length);
-  case SOTER_ASYM_EC :			     
+  case SOTER_ASYM_EC:			     
     return soter_sign_init_ecdsa_none_pkcs8(ctx,private_key,private_key_length, public_key, public_key_length);
   default:
     return SOTER_INVALID_PARAMETER;
@@ -86,11 +89,14 @@ soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, const void* private_key, c
 
 soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
 {
-  if(!ctx || !public_key ||  public_key_length<sizeof(soter_container_hdr_t)){
+  if(!ctx || !public_key ||  public_key_length<sizeof(soter_container_hdr_t) || soter_key_is_private(public_key, public_key_length)){
     return SOTER_INVALID_PARAMETER;
   }
   ctx->alg=soter_key_get_alg_id(public_key, public_key_length);
-  switch(ctx->alg){
+  if(!(ctx->alg)){
+    return SOTER_INVALID_PARAMETER;
+  }
+  switch((ctx->alg)&SOTER_ASYM_ALG_MASK){
   case SOTER_ASYM_RSA :			     
     return soter_verify_init_rsa_pss_pkcs8(ctx,private_key,private_key_length, public_key, public_key_length);
   case SOTER_ASYM_EC :			     
@@ -105,7 +111,7 @@ soter_status_t soter_sign_update(soter_sign_ctx_t* ctx, const void* data, const 
   if(!ctx||!data||!data_length){
     return SOTER_INVALID_PARAMETER;
   }
-  switch(ctx->alg){
+  switch(ctx->alg&SOTER_ASYM_ALG_MASK){
   case SOTER_ASYM_RSA :			     
     return soter_sign_update_rsa_pss_pkcs8(ctx,data, data_length);
   case SOTER_ASYM_EC :			     
@@ -120,7 +126,7 @@ soter_status_t soter_verify_update(soter_sign_ctx_t* ctx, const void* data, cons
   if(!ctx||!data||!data_length){
     return SOTER_INVALID_PARAMETER;
   }
-  switch(ctx->alg){
+  switch(ctx->alg&SOTER_ASYM_ALG_MASK){
   case SOTER_ASYM_RSA :			     
     return soter_verify_update_rsa_pss_pkcs8(ctx,data, data_length);
   case SOTER_ASYM_EC :			     
@@ -135,7 +141,7 @@ soter_status_t soter_sign_final(soter_sign_ctx_t* ctx, void* signature, size_t* 
   if(!ctx){
     return SOTER_INVALID_PARAMETER;
   }
-  switch(ctx->alg){
+  switch(ctx->alg&SOTER_ASYM_ALG_MASK){
   case SOTER_ASYM_RSA :			     
     return soter_sign_final_rsa_pss_pkcs8(ctx, signature, signature_length);
   case SOTER_ASYM_EC :			     
@@ -150,7 +156,7 @@ soter_status_t soter_verify_final(soter_sign_ctx_t* ctx, const void* signature, 
   if(!ctx||!signature||!signature_length){
     return SOTER_INVALID_PARAMETER;
   }
-  switch(ctx->alg){
+  switch(ctx->alg&SOTER_ASYM_ALG_MASK){
   case SOTER_ASYM_RSA :			     
     return soter_verify_final_rsa_pss_pkcs8(ctx, signature, signature_length);
   case SOTER_ASYM_EC :			     
@@ -165,7 +171,7 @@ soter_status_t soter_sign_cleanup(soter_sign_ctx_t* ctx){
   if(!ctx){
     return SOTER_INVALID_PARAMETER;
   }
-  switch(ctx->alg){
+  switch(ctx->alg&SOTER_ASYM_ALG_MASK){
   case SOTER_ASYM_RSA :			     
     return soter_sign_cleanup_rsa_pss_pkcs8(ctx);
   case SOTER_ASYM_EC :			     
@@ -180,7 +186,7 @@ soter_status_t soter_verify_cleanup(soter_sign_ctx_t* ctx){
   if(!ctx){
     return SOTER_INVALID_PARAMETER;
   }
-  switch(ctx->alg){
+  switch(ctx->alg&SOTER_ASYM_ALG_MASK){
   case SOTER_ASYM_RSA :			     
     return soter_verify_cleanup_rsa_pss_pkcs8(ctx);
   case SOTER_ASYM_EC :			     

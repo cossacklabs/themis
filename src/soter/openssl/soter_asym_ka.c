@@ -25,14 +25,14 @@
 
 static int soter_alg_to_curve_nid(const int32_t alg_id, const int32_t length_id)
 {
-  switch (alg_id){
+  switch (alg_id&0x00ffff00){
   case SOTER_ASYM_EC:
           switch(length_id){
-          case '1':
+          case 2:
             return NID_X9_62_prime256v1;
-          case '2':
+          case 3:
             return NID_secp384r1; 
-          case '3':
+          case 5:
             return NID_secp521r1;
           default:
             return 0;

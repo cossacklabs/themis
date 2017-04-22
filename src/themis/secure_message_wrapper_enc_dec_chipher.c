@@ -26,6 +26,8 @@
 #include <themis/secure_message_wrapper.h>
 #include <themis/secure_message_wrapper_enc_dec_chipher.h>
 
+#include <assert.h>
+
 
 #define THEMIS_SYMM_PASSWD_LENGTH 70
 #define THEMIS_SYMM_SALT_LENGTH 16
