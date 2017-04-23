@@ -70,9 +70,12 @@ themis_status_t themis_secure_message_encrypter_destroy(themis_secure_message_en
     return THEMIS_INVALID_PARAMETER;
   }
   if(ctx->is_ka_type){
-    return themis_secure_message_ka_encrypter_destroy(ctx->ctx.ka_encrypter);
+    themis_secure_message_ka_encrypter_destroy(ctx->ctx.ka_encrypter);
+  }else{
+    themis_secure_message_chipher_encrypter_destroy(ctx->ctx.chipher_encrypter);
   }
-  return themis_secure_message_chipher_encrypter_destroy(ctx->ctx.chipher_encrypter);
+  free(ctx);
+  return THEMIS_SUCCESS;
 }
 
 

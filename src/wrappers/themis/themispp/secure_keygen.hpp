@@ -40,7 +40,7 @@ namespace themispp{
       if(themis_gen_key_pair(&private_key[0], &private_key_length, &public_key[0], &public_key_length)!=THEMIS_SUCCESS)
          throw themispp::exception_t("Themis failed generating KeyPair");
       private_key.resize(private_key_length);
-      public_key.resize(private_key_length);
+      public_key.resize(public_key_length);
     }
       
     const std::vector<uint8_t>& get_priv(){return private_key;}
