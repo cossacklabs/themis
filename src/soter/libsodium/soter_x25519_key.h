@@ -45,5 +45,4 @@ struct soter_x25519_priv_key_type{
 };
 
 typedef struct soter_x25519_priv_key_type soter_x25519_priv_key_t;
-
 #endif /* SOTER_X255519_KEY_H */

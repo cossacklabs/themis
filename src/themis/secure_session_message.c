@@ -103,7 +103,7 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 	time_t curr_time;
 	themis_status_t res;
 
-	soter_sym_ctx_t *sym_ctx;
+	soter_sym_aead_ctx_t *sym_ctx;
 
 	if ((NULL == session_ctx) || (NULL == wrapped_message) || (NULL == message_length))
 	{

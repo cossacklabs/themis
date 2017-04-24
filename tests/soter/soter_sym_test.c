@@ -250,7 +250,7 @@ static void test_known_values(void)
 
 static void test_known_values_gcm(void)
 {
-  soter_sym_ctx_t *ctx;
+  soter_sym_aead_ctx_t *ctx;
   int i;
   
   uint8_t key[MAX_KEY_LENGTH];
@@ -324,7 +324,7 @@ static void test_known_values_gcm(void)
 	if (SOTER_SUCCESS != res)
 	  {
 	    testsuite_fail_if(res, "soter_sym_update aad");
-	    soter_sym_encrypt_destroy(ctx);
+	    soter_sym_aead_encrypt_destroy(ctx);
 	    continue;
 	  }
       }
@@ -414,7 +414,7 @@ static void test_auth_tag(void)
 	  uint8_t tag[MAX_AUTH_TAG_LENGTH];
 	  size_t tag_length = sizeof(tag);
 
-	  soter_sym_ctx_t *ctx;
+	  soter_sym_aead_ctx_t *ctx;
 	  soter_status_t res;
 
 	  res = soter_rand(key, sizeof(key));

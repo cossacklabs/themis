@@ -47,6 +47,7 @@ typedef int soter_status_t;
 #define SOTER_INVALID_SIGNATURE 	16
 #define SOTER_NOT_SUPPORTED 		17
 #define SOTER_ENGINE_FAIL 		18
+#define SOTER_NOT_SUPPORTEDL 		19
 
 /** @} */
 

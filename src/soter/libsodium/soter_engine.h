@@ -27,17 +27,21 @@ struct soter_hash_ctx_type
   crypto_generichash_state md_ctx;
 };
 
-struct soter_sym_ctx_type
-{
+struct soter_sym_ctx_type{
   uint32_t alg;
+  uint8_t key[crypto_aead_chacha20poly1305_KEYBYTES];
+  uint8_t nonce[crypto_stream_chacha20_NONCEBYTES];
+  uint64_t count;
+};
+
+struct soter_sym_aead_ctx_type{
+  uint32_t alg;
+  soter_sym_ctx_t ctx;
+  crypto_onetimeauth_poly1305_state state;
 };
 
 struct soter_asym_cipher_type{
   uint32_t alg;
-  uint8_t key[crypto_aead_chacha20poly1305_KEYBYTES];
-  crypto_onetimeauth_poly1305_state state;
-  uint8_t nonce[crypto_stream_chacha20_NONCEBYTES];
-  uint64_t count;
 };
 
 struct soter_asym_ka_type{

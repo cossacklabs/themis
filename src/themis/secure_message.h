@@ -42,6 +42,22 @@ extern "C"{
 
 /**
  * @brief generate key pair
+ * @param [in] 32-bit algorithm identifier
+ * @param [out] private_key buffer for private key to store. May be set to NULL for private key length determination
+ * @param [in, out] private_key_length length of private_key
+ * @param [out] public_key buffer for public key to store. May be set to NULL for public key length determination
+ * @param [in, out] public_key_length length of public key
+ * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
+ * @note If private_key==NULL or public_key==NULL or private_key_length is not enought for private key storage or public_key_length is not enought for public key storage then THEMIS_BUFFER_TOO_SMALL will return and private_key_length and public_key_length will store lengths of buffers needed for private key and public key store respectively
+ */  
+themis_status_t themis_gen_key_pair_by_alg_id(uint32_t alg_id,
+					      uint8_t* private_key,
+					      size_t* private_key_length,
+					      uint8_t* public_key,
+					      size_t* public_key_length);
+
+/**
+ * @brief generate key pair
  * @param [out] private_key buffer for private key to store. May be set to NULL for private key length determination
  * @param [in, out] private_key_length length of private_key
  * @param [out] public_key buffer for public key to store. May be set to NULL for public key length determination

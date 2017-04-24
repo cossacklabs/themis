@@ -30,34 +30,52 @@
 //  return SOTER_SUCCESS;
 //}
 
-soter_sym_ctx_t* soter_sym_aead_ctx_init(const uint32_t alg,
-				    const void* key,
-				    const size_t key_length,
-				    const void* salt,
-				    const size_t salt_length,
-				    bool encrypt){
-  if(!key || !key_length
-  soter_sym_ctx_t* ctx=NULL;
-  ctx=malloc(sizeof(soter_sym_ctx_t));
-  assert(ctx);
+soter_status_t soter_sym_ctx_init(soter_sym_ctx_t* ctx,
+                                  const uint32_t alg,
+                                  const void* key,
+                                  const size_t key_length,
+                                  const void* salt,
+                                  const size_t salt_length,
+                                  bool encrypt){
+  if(!ctx || !key || key_length!=crypto_stream_chacha20_KEYBYTES || !salt || salt_length!=crypto_stream_chacha20_NONCEBYTES){
+    return SOTER_INVALID_PARAMETER;
+  }
   ctx->alg=alg;
   memcpy(ctx->key, key, key_length);
   memcpy(ctx->nonce, salt, salt_length);
   ctx->count=0;
+  return SOTER_SUCCESS;
+}
+
+
+soter_status_t soter_sym_aead_ctx_init(soter_sym_aead_ctx_t* ctx,
+                                       const uint32_t alg,
+                                       const void* key,
+                                       const size_t key_length,
+                                       const void* salt,
+                                       const size_t salt_length,
+                                       bool encrypt){
+  if(!key || key_length!=crypto_stream_chacha20_KEYBYTES || !salt || salt_length!=crypto_stream_chacha20_NONCEBYTES){
+    return SOTER_INVALID_PARAMETER;
+  }
+  soter_status_t res;
+  if(SOTER_SUCCESS!=(res=soter_sym_ctx_init(&(ctx->ctx), alg, key, key_length, salt, salt_length, encrypt))){
+    return res;   
+  }
   unsigned char block0[64U];
   unsigned char slen[8U];
-  crypto_stream_chacha20(block0, sizeof block0, salt, key);
+  crypto_stream_chacha20(block0, sizeof(block0), salt, key);
   crypto_onetimeauth_poly1305_init(&(ctx->state), block0);
-  sodium_memzero(block0, sizeof block0);
-  return ctx;
+  sodium_memzero(block0, sizeof(block0));
+  return SOTER_SUCCESS;
 }
 
 soter_status_t soter_sym_ctx_update(soter_sym_ctx_t *ctx,
-				    const void* in_data,
-				    const size_t in_data_length,
-				    void* out_data,
-				    size_t* out_data_length,
-				    bool encrypt){
+                                    const void* in_data,
+                                    const size_t in_data_length,
+                                    void* out_data,
+                                    size_t* out_data_length,
+                                    bool encrypt){
   if(!ctx || !in_data || !in_data_length){
     return SOTER_INVALID_PARAMETER;
   }
@@ -68,15 +86,47 @@ soter_status_t soter_sym_ctx_update(soter_sym_ctx_t *ctx,
   if(0!=crypto_stream_chacha20_xor_ic(out_data, in_data, in_data_length, ctx->nonce, ctx->count, ctx->key)){
     return SOTER_FAIL;
   }
-  crypto_onetimeauth_poly1305_update(&(ctx->state), ount_data, in_data_length);
   *out_data_length=in_data_length;
-  crypto_onetimeauth_poly1305_update(&state, out_data_length, sizeof(size_t));
-  ++((uint64_t)(ctx->nonce));
-  ++((uint64_t)(ctx->count));
+  ++(*((uint64_t*)(ctx->nonce)));
+  ++(ctx->count);
   return SOTER_SUCCESS;
 }
 
-soter_status_t soter_sym_aead_ctx_final(soter_sym_ctx_t *ctx,
+soter_status_t soter_sym_aead_ctx_update(soter_sym_aead_ctx_t *ctx,
+                                         const void* in_data,
+                                         const size_t in_data_length,
+                                         void* out_data,
+                                         size_t* out_data_length,
+                                         bool encrypt){
+  soter_status_t res;
+  void *tmp=NULL;
+  if(out_data){
+    tmp=out_data;
+  }else{
+    tmp=malloc(in_data_length);
+    assert(tmp);
+    *out_data_length=in_data_length;
+  }
+  if(SOTER_SUCCESS!=(res=soter_sym_ctx_update(&(ctx->ctx), in_data, in_data_length, tmp, out_data_length, encrypt))){
+    if(!out_data){
+      free(tmp);
+    }
+    return res;
+  }
+  if(0!=crypto_onetimeauth_poly1305_update(&(ctx->state), tmp, in_data_length) || 0!=crypto_onetimeauth_poly1305_update(&(ctx->state), (void*)(*out_data_length), sizeof(uint32_t))){
+    if(!out_data){
+      free(tmp);
+    }
+    return SOTER_FAIL;
+  }
+  if(!out_data){
+    free(tmp);
+  }
+  *out_data_length=in_data_length;
+  return SOTER_SUCCESS;
+}
+
+soter_status_t soter_sym_aead_ctx_final(soter_sym_aead_ctx_t *ctx,
 				   void* out_data,
 				   size_t* out_data_length,
 				   bool encrypt){
@@ -86,13 +136,13 @@ soter_status_t soter_sym_aead_ctx_final(soter_sym_ctx_t *ctx,
 	return SOTER_BUFFER_TOO_SMALL;
     }
     crypto_onetimeauth_poly1305_final(&(ctx->state), out_data);
-    sodium_memzero(&state, sizeof state);
+    sodium_memzero(&(ctx->state), sizeof(ctx->state));
   } else {
     if(!out_data || (*out_data_length)<crypto_aead_chacha20poly1305_ABYTES){
 	return SOTER_FAIL;
     }
     unsigned char computed_mac[crypto_aead_chacha20poly1305_ABYTES];
-    crypto_onetimeauth_poly1305_final(&state, computed_mac);
+    crypto_onetimeauth_poly1305_final(&(ctx->state), computed_mac);
     if(0!=crypto_verify_16(computed_mac, out_data)){
 	return SOTER_FAIL;
     }
@@ -110,15 +160,15 @@ soter_sym_ctx_t* soter_sym_encrypt_create(const uint32_t alg, const void* key, c
 }
 
 soter_status_t soter_sym_encrypt_update(soter_sym_ctx_t *ctx, const void* plain_data,  const size_t plain_data_length, void* cipher_data, size_t* cipher_data_length){
-  return SOTER_NOT_SUPPORT;
+  return SOTER_NOT_SUPPORTED;
 }
 
 soter_status_t soter_sym_encrypt_final(soter_sym_ctx_t *ctx, void* cipher_data, size_t* cipher_data_length){
-  return SOTER_NOT_SUPPORT;
+  return SOTER_NOT_SUPPORTED;
 }
 
 soter_status_t soter_sym_encrypt_destroy(soter_sym_ctx_t *ctx){
-  return SOTER_NOT_SUPPORT;
+  return SOTER_NOT_SUPPORTED;
 }
 
 soter_sym_ctx_t* soter_sym_decrypt_create(const uint32_t alg, const void* key, const size_t key_length, const void* salt, const size_t salt_length, const void* iv, const size_t iv_length){
@@ -126,33 +176,34 @@ soter_sym_ctx_t* soter_sym_decrypt_create(const uint32_t alg, const void* key, c
 }
 
 soter_status_t soter_sym_decrypt_update(soter_sym_ctx_t *ctx, const void* cipher_data,  const size_t cipher_data_length, void* plain_data, size_t* plain_data_length){
-  return SOTER_NOT_SUPPORT;
+  return SOTER_NOT_SUPPORTED;
 }
 
 soter_status_t soter_sym_decrypt_final(soter_sym_ctx_t *ctx, void* plain_data, size_t* plain_data_length){
-  return SOTER_NOT_SUPPORT;
+  return SOTER_NOT_SUPPORTED;
 }
 
 soter_status_t soter_sym_decrypt_destroy(soter_sym_ctx_t *ctx){
-  return SOTER_NOT_SUPPORT;
+  return SOTER_NOT_SUPPORTED;
 }
 
-soter_sym_ctx_t* soter_sym_aead_encrypt_create(const uint32_t alg, const void* key, const size_t key_length, const void* salt, const size_t salt_length, const void* iv, const size_t iv_length){
-  return soter_sym_aead_ctx_init(alg, key,key_length, salt, salt_length, true);
+soter_sym_aead_ctx_t* soter_sym_aead_encrypt_create(const uint32_t alg, const void* key, const size_t key_length, const void* salt, const size_t salt_length, const void* iv, const size_t iv_length){
+  soter_sym_aead_ctx_t* ctx = malloc(sizeof(soter_sym_aead_ctx_t));
+  assert(ctx);
+  if(THEMIS_SUCCESS!=soter_sym_aead_ctx_init(ctx, alg, key, key_length, salt, salt_length, true)){
+    free(ctx);
+    return NULL;
+  }
+  return ctx;
 }
 
 soter_status_t soter_sym_aead_encrypt_update(soter_sym_ctx_t *ctx, const void* plain_data,  const size_t plain_data_length, void* cipher_data, size_t* cipher_data_length){
-  if(cipher_data==NULL || (*cipher_data_length)<plain_data_length){
-    (*cipher_data_length)=plain_data_length;
-    return SOTER_BUFFER_TOO_SMALL;
-  }
-  (*cipher_data_length)=plain_data_length;
-  return soter_sym_ctx_update(ctx, plain_data, plain_data_length, cipher_data, cipher_data_length, true);
+  return soter_sym_aead_ctx_update(ctx, plain_data, plain_data_length, cipher_data, cipher_data_length, true);
 }
 
 soter_status_t soter_sym_aead_encrypt_aad(soter_sym_ctx_t *ctx, const void* plain_data,  const size_t plain_data_length){
   size_t tmp=0;
-  return soter_sym_ctx_update(ctx, plain_data, plain_data_length, NULL, &tmp, true);
+  return soter_sym_aead_ctx_update(ctx, plain_data, plain_data_length, NULL, &tmp, true);
 }
 
 soter_status_t soter_sym_aead_encrypt_final(soter_sym_ctx_t *ctx, void* auth_tag, size_t* auth_tag_length){

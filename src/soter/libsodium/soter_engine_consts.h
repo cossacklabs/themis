@@ -33,7 +33,8 @@
  * @brief supported symmetric encryption/decription algorithms definitions
  * @{
  */
-#define SOTER_SYM_XSALSA20_POLY1305 0x10000000
+#define SOTER_AEAD_SYM_XSALSA20_POLY1305 0x10000000
+
 /** @} */
 
 #endif /* SODIUM_SOTER_ENGINE_CONSTS_H_ */

@@ -47,8 +47,10 @@ int32_t soter_key_get_length_id(const uint8_t* key, const size_t key_length){
 soter_status_t soter_key_pair_gen(int32_t alg_id, uint8_t* private_key, size_t* private_key_length, uint8_t* public_key, size_t* public_key_length){
   soter_status_t res = SOTER_SUCCESS;
   switch(alg_id){
-    SOTER_ED25519_KEY_GEN
-    SOTER_X25519_KEY_GEN
+  case SOTER_ASYM_X25519:
+    break;
+  case SOTER_ASYM_ED25519:
+    break;
   default:
     res = SOTER_INVALID_PARAMETER;
   }

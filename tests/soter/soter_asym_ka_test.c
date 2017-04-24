@@ -53,8 +53,8 @@ static void test_basic_ka_flow(void)
   uint8_t peer2_shared_secret[SHARED_SECRET_BUFFER_SIZE];
   size_t peer2_shared_secret_length = sizeof(peer2_shared_secret);
   
-  soter_asym_ka_t *peer1 = soter_asym_ka_create(peer1_private_key_data, peer1_public_key_data_length);
-  soter_asym_ka_t *peer2 = soter_asym_ka_create(peer2_private_key_data, peer2_public_key_data_length);
+  soter_asym_ka_t *peer1 = soter_asym_ka_create(peer1_private_key_data, peer1_private_key_data_length);
+  soter_asym_ka_t *peer2 = soter_asym_ka_create(peer2_private_key_data, peer2_private_key_data_length);
   if((!peer1) || (!peer2)){
     goto err;
   }

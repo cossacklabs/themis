@@ -150,7 +150,7 @@ themis_status_t verify_mac(const void *key, size_t key_length, const soter_kdf_c
 
 themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, size_t iv_length, const void *in, size_t in_length, void *out, size_t out_length)
 {
-	soter_sym_ctx_t *ctx;
+	soter_sym_aead_ctx_t *ctx;
 	soter_status_t res;
 
 	size_t bytes_encrypted = out_length;
@@ -197,7 +197,7 @@ err:
 
 	if (NULL != ctx)
 	{
-		soter_sym_encrypt_destroy(ctx);
+		soter_sym_aead_encrypt_destroy(ctx);
 	}
 
 	return res;
