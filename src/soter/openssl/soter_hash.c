@@ -17,10 +17,37 @@
 #include "soter/error.h"
 #include "soter/soter.h"
 #include "soter_engine.h"
+#include "soter_engine_consts.h"
 #include <openssl/evp.h>
 
+size_t hash_block_size(int32_t algo)
+{
+    switch (algo)
+    {
+//	case SOTER_HASH_SHA1:
+    case SOTER_HASH_SHA256:
+	return 64;
+    case SOTER_HASH_SHA512:
+	return 128;
+    default:
+	return 0;
+    }
+}
 
-static const EVP_MD* soter_algo_to_evp_md(soter_hash_algo_t algo)
+size_t soter_hash_length(int32_t algo){
+    switch (algo)
+    {
+    case SOTER_HASH_SHA256:
+	return 32;
+    case SOTER_HASH_SHA512:
+	return 64;
+    default:
+	return 0;
+    }
+}
+
+
+static const EVP_MD* soter_algo_to_evp_md(int32_t algo)
 {
 	switch (algo)
 	{
@@ -33,7 +60,7 @@ static const EVP_MD* soter_algo_to_evp_md(soter_hash_algo_t algo)
 	}
 }
 
-soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t algo)
+soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, int32_t algo)
 {
 	const EVP_MD *md = soter_algo_to_evp_md(algo);
 
@@ -98,7 +125,7 @@ soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value,
 	}
 }
 
-soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo)
+soter_hash_ctx_t* soter_hash_create(int32_t algo)
 {
 	soter_status_t status;
 	soter_hash_ctx_t *ctx = malloc(sizeof(soter_hash_ctx_t));

@@ -30,7 +30,7 @@
 #define ED25519_PRIV_SIZE crypto_sign_SECRETKEYBYTES
 #define ED25519_PUB_SIZE crypto_sign_PUBLICKEYBYTES
 
-struct soter_ED25519_pub_key_type{
+struct soter_ed25519_pub_key_type{
 	soter_container_hdr_t hdr;
 	uint8_t key[ED25519_PUB_SIZE];
 	};

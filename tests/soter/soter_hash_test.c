@@ -68,7 +68,7 @@ static void test_known_values(void)
 			continue;
 		}
 
-		ctx = soter_hash_create(SOTER_HASH_SHA256);
+		ctx = soter_hash_create(SOTER_HASH_DEFAULT_ALG);
 		if (!ctx)
 		{
 			testsuite_fail_if(NULL == ctx, "hash_ctx != NULL");
@@ -93,7 +93,9 @@ static void test_known_values(void)
 
 		soter_hash_destroy(ctx);
 
+#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL) 
 		testsuite_fail_if((hash_len != sizeof(result)) || (memcmp(hash, result, hash_len)), "hash == know value");
+#endif
 	}
 }
 
@@ -107,10 +109,9 @@ static void test_api(void)
 	test_utils_status_t util_res;
 
 	memset(&ctx, 0, sizeof(soter_hash_ctx_t));
-
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_init(NULL, SOTER_HASH_SHA256), "soter_hash_init: invalid context");
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_init(&ctx, (soter_hash_algo_t)0xffffffff), "soter_hash_init: invalid algorithm type");
-	testsuite_fail_unless(NULL == soter_hash_create((soter_hash_algo_t)0xffffffff), "soter_hash_create: invalid algorithm type");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_init(NULL, SOTER_HASH_DEFAULT_ALG), "soter_hash_init: invalid context");        
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_init(&ctx, 0xffffffff), "soter_hash_init: invalid algorithm type");
+	testsuite_fail_unless(NULL == soter_hash_create(0xffffffff), "soter_hash_create: invalid algorithm type");
 
 	input_len = strlen(vectors[4].input) / 2;
 	if (input_len > MAX_TEST_INPUT)
@@ -126,7 +127,7 @@ static void test_api(void)
 		return;
 	}
 
-	res = soter_hash_init(&ctx, SOTER_HASH_SHA256);
+	res = soter_hash_init(&ctx, SOTER_HASH_DEFAULT_ALG);
 	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(SOTER_SUCCESS != res, "soter_hash_init failed");
@@ -161,8 +162,10 @@ static void test_api(void)
 	}
 
 	res = soter_hash_final(&ctx, hash, &hash_len);
-	testsuite_fail_unless((SOTER_SUCCESS == res) && (32 == hash_len) && !memcmp(hash, result, hash_len), "soter_hash_final: normal value");
-
+	testsuite_fail_unless(SOTER_SUCCESS == res, "soter_hash_final: normal value");
+#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL)
+        testsuite_fail_unless((32 == hash_len) && !memcmp(hash, result, hash_len), "soter_hash_final: normal value");
+#endif  
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_destroy(NULL), "soter_hash_destroy: invalid context");
 }
 

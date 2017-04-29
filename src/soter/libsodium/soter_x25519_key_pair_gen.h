@@ -19,9 +19,10 @@
 
 #include "soter_x25519_key.h"
 
-typedef struct soter_x255519_key_pair_gen_type soter_x255519_key_pair_gen_t;
+typedef struct soter_x25519_key_pair_gen_type soter_x25519_key_pair_gen_t;
 
-soter_x255519_key_pair_gen_t* soter_x255519_key_pair_gen_create();
-soter_status_t soter_x255519_key_pair_gen_destroy(soter_x255519_key_pair_gen_t* ctx);
-soter_status_t soter_x255519_key_pair_gen_export_key(soter_x255519_key_pair_gen_t* ctx, void* key, size_t* key_length, bool isprivate);
+soter_x25519_key_pair_gen_t* soter_x25519_key_pair_gen_create();
+soter_status_t soter_x25519_key_pair_gen_destroy(soter_x25519_key_pair_gen_t* ctx);
+soter_status_t soter_x25519_key_pair_gen_export_key(soter_x25519_key_pair_gen_t* ctx, void* key, size_t* key_length, bool isprivate);
+
 #endif /* SOTER_X25519_KEY_PAIR_GEN_H */

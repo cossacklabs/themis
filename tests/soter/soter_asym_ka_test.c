@@ -56,6 +56,7 @@ static void test_basic_ka_flow(void)
   soter_asym_ka_t *peer1 = soter_asym_ka_create(peer1_private_key_data, peer1_private_key_data_length);
   soter_asym_ka_t *peer2 = soter_asym_ka_create(peer2_private_key_data, peer2_private_key_data_length);
   if((!peer1) || (!peer2)){
+    testsuite_fail_unless(false, "soter_asym_ka_object creation fail");
     goto err;
   }
 

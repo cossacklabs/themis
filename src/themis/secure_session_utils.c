@@ -29,12 +29,10 @@ themis_status_t compute_signature(const void *sign_key, size_t sign_key_length, 
 	soter_sign_ctx_t* sign_ctx=NULL;
 	soter_status_t soter_status;
 	size_t i;
-
-	sign_ctx = soter_sign_create(sign_key, sign_key_length, NULL, 0);
+	sign_ctx = soter_sign_create(sign_key, sign_key_length);
 	if (!sign_ctx){
 		return THEMIS_FAIL;
 	}
-
 	/* This is to compute real signature, not just get output data size */
 	if (sign_data && signature)
 	{
@@ -47,11 +45,8 @@ themis_status_t compute_signature(const void *sign_key, size_t sign_key_length, 
 			}
 		}
 	}
-
 	soter_status = soter_sign_final(sign_ctx, signature, signature_length);
-
 err:
-
 	soter_sign_destroy(sign_ctx);
 	return soter_status;
 }
@@ -62,7 +57,7 @@ themis_status_t verify_signature(const void *verify_key, size_t verify_key_lengt
 	soter_status_t soter_status;
 	size_t i;
 
-	sign_ctx = soter_verify_create(NULL, 0, verify_key, verify_key_length);
+	sign_ctx = soter_verify_create(verify_key, verify_key_length);
 	if (!sign_ctx)
 	{
 		return soter_status;
@@ -94,7 +89,7 @@ themis_status_t compute_mac(const void *key, size_t key_length, const soter_kdf_
 	soter_status_t soter_status;
 	size_t i;
 
-	soter_status = soter_hmac_init(&mac_ctx, SOTER_HASH_SHA256, key, key_length);
+	soter_status = soter_hmac_init(&mac_ctx, SOTER_HASH_DEFAULT_ALG, key, key_length);
 	if (THEMIS_SUCCESS != soter_status)
 	{
 		return soter_status;

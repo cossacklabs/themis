@@ -17,6 +17,7 @@
 #include <assert.h>
 
 #include <soter/error.h>
+#include <soter/soter_container.h>
 #include "soter_engine.h"
 #include "soter_ed25519_key_pair_gen.h"
 
@@ -31,25 +32,24 @@ struct soter_ed25519_key_pair_gen_type{
 
 soter_status_t soter_ed25519_key_pair_gen_init(soter_ed25519_key_pair_gen_t* ctx){
     if(!ctx){
-	return SOTER_INVALID_PARAM;
+	return SOTER_INVALID_PARAMETER;
     }
-    if(0!=crypto_sign_keypair(ctx->priv.key, ctx->pub.key)){
-	soter_ed25519_key_pair_destroy(ctx);
+    if(0!=crypto_sign_keypair(ctx->pub.key, ctx->priv.key)){
 	return SOTER_FAIL;
     }
-    memcpy(ctx->priv.hdr.tag, ed25519_PRIV_KEY_TAG, SOTER_CONTAINER_TAG_LENGTH);
-    ctx->priv.hdr.size=sizeof(soter_ed25519_priv_key_t);
-    soter_update_container_checksum(&(ctx->priv));
-    memcpy(ctx->pub.hdr.tag, ed25519_PUB_KEY_TAG, SOTER_CONTAINER_TAG_LENGTH);
-    ctx->pub.hdr.size=sizeof(soter_ed25519_pub_key_t);
-    soter_update_container_checksum(&(ctx->pub));
+    memcpy(ctx->priv.hdr.tag, ED25519_PRIV_KEY_TAG, SOTER_CONTAINER_TAG_LENGTH);
+    ctx->priv.hdr.size=htonl(sizeof(soter_ed25519_priv_key_t));
+    soter_update_container_checksum((soter_container_hdr_t*)&(ctx->priv));
+    memcpy(ctx->pub.hdr.tag, ED25519_PUB_KEY_TAG, SOTER_CONTAINER_TAG_LENGTH);
+    ctx->pub.hdr.size=htonl(sizeof(soter_ed25519_pub_key_t));
+    soter_update_container_checksum((soter_container_hdr_t*)&(ctx->pub));
     return SOTER_SUCCESS;
 }
 
 soter_ed25519_key_pair_gen_t* soter_ed25519_key_pair_gen_create(){
     soter_ed25519_key_pair_gen_t *ctx = malloc(sizeof(soter_ed25519_key_pair_gen_t));
     assert(ctx);
-    if(SOTER_SUCCESS != soter_ed25519_key_pair_gen_init(ctx, key_length)){
+    if(SOTER_SUCCESS != soter_ed25519_key_pair_gen_init(ctx)){
       soter_ed25519_key_pair_gen_destroy(ctx);
       return NULL;
     }
@@ -78,17 +78,19 @@ soter_status_t soter_ed25519_key_pair_gen_export_key(soter_ed25519_key_pair_gen_
     }
     if (isprivate)
     {
-	if(!key || key_length<(sizeof(soter_ed25519_priv_key_t)-sizeof(soter_container_hdr_t))){
-	    *key_length=(sizeof(soter_ed25519_priv_key_t)-sizeof(soter_container_hdr_t)));
-	    return SOTER_BUFFER_TOO_SMALL;
-	}
-	memcpy(ctx->priv.key, key, (sizeof(soter_ed25519_priv_key_t)-sizeof(soter_container_hdr_t)));
-	return SOTER_SUCCESS;
+      if(!key || (*key_length)<(sizeof(soter_ed25519_priv_key_t)-sizeof(soter_container_hdr_t))){
+        *key_length=(sizeof(soter_ed25519_priv_key_t)-sizeof(soter_container_hdr_t));
+        return SOTER_BUFFER_TOO_SMALL;
+      }
+      memcpy(key, &(ctx->priv), sizeof(soter_ed25519_priv_key_t));
+      *key_length=sizeof(soter_ed25519_priv_key_t);
+      return SOTER_SUCCESS;
     }
-    if(!key || key_length<(sizeof(soter_ed25519_pub_key_t)-sizeof(soter_container_hdr_t))){
-        *key_length=(sizeof(soter_ed25519_pub_key_t)-sizeof(soter_container_hdr_t)));
+    if(!key || (*key_length)<(sizeof(soter_ed25519_pub_key_t)-sizeof(soter_container_hdr_t))){
+        *key_length=(sizeof(soter_ed25519_pub_key_t)-sizeof(soter_container_hdr_t));
         return SOTER_BUFFER_TOO_SMALL;
     }
-    memcpy(ctx->pub.key, key, (sizeof(soter_ed25519_pub_key_t)-sizeof(soter_container_hdr_t)));
+    memcpy(key, &(ctx->pub), sizeof(soter_ed25519_pub_key_t));
+    *key_length=sizeof(soter_ed25519_pub_key_t);
     return SOTER_SUCCESS;
 }

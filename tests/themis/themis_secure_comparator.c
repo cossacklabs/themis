@@ -14,6 +14,8 @@
 * limitations under the License.
 */
 
+#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL)
+
 #include <themis/secure_comparator.h>
 #include <themis/secure_comparator_t.h>
 #include <stdio.h>
@@ -245,3 +247,5 @@ void run_secure_comparator_test(void)
 	testsuite_enter_suite("secure comparator: security test");
 	testsuite_run_test(secure_comparator_security_test);
 }
+
+#endif

@@ -49,7 +49,11 @@ struct soter_asym_ka_type{
 };
 
 struct soter_sign_ctx_type{
-  soter_ed25519_priv_key_t pk;
+  union{
+    soter_ed25519_priv_key_t sk;
+    soter_ed25519_pub_key_t pk;
+  }key;
+  crypto_sign_state state;
 };
 
 #endif /* SOTER_ENGINE_H */

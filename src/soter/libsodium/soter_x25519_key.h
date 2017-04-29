@@ -35,7 +35,7 @@
 struct soter_x25519_pub_key_type{
 	soter_container_hdr_t hdr;
 	uint8_t key[X25519_PUB_SIZE];
-	};
+};
 
 typedef struct soter_x25519_pub_key_type soter_x25519_pub_key_t;
 
@@ -45,4 +45,5 @@ struct soter_x25519_priv_key_type{
 };
 
 typedef struct soter_x25519_priv_key_type soter_x25519_priv_key_t;
+
 #endif /* SOTER_X255519_KEY_H */

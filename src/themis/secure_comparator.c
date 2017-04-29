@@ -14,6 +14,8 @@
 * limitations under the License.
 */
 
+#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL)
+
 #include "secure_comparator_t.h"
 #include <string.h>
 
@@ -951,3 +953,5 @@ themis_status_t secure_comparator_get_result(const secure_comparator_t *comp_ctx
 
 	return comp_ctx->result;
 }
+
+#endif

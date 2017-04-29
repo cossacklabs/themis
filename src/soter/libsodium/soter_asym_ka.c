@@ -24,7 +24,7 @@
 #include <string.h>
 
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* ctx, const int8_t* key, const size_t key_length){
-  if(!ctx || !key || key_length<sizeof(soter_container_hdr_t) || key_length!=(((soter_container_hdr_t*)key)->size) || SOTER_SUCCESS!=soter_verify_container_checksum((soter_container_hdr_t*)key)){
+  if(!ctx || !key || key_length<sizeof(soter_container_hdr_t) || key_length!=ntohl(((soter_container_hdr_t*)key)->size) || SOTER_SUCCESS!=soter_verify_container_checksum((soter_container_hdr_t*)key)){
     return SOTER_INVALID_PARAMETER;
   }
   memcpy((void*)(&(ctx->pk)), key, key_length);
@@ -63,7 +63,7 @@ soter_status_t soter_asym_ka_destroy(soter_asym_ka_t* asym_ka_ctx)
 }
 
 soter_status_t soter_asym_ka_derive(soter_asym_ka_t* ctx, const void* peer_key, size_t peer_key_length, void *shared_secret, size_t* shared_secret_length){
-  if (!ctx || !peer_key || peer_key_length<<sizeof(soter_container_hdr_t) || peer_key_length!=(((soter_container_hdr_t*)peer_key)->size) || SOTER_SUCCESS!=soter_verify_container_checksum((soter_container_hdr_t*)peer_key)){
+  if (!ctx || !peer_key || !shared_secret_length || peer_key_length<sizeof(soter_container_hdr_t) || peer_key_length!=ntohl(((soter_container_hdr_t*)peer_key)->size) || SOTER_SUCCESS!=soter_verify_container_checksum((soter_container_hdr_t*)peer_key)){
     return SOTER_INVALID_PARAMETER;
   }
   if(!shared_secret || crypto_generichash_BYTES > *shared_secret_length){

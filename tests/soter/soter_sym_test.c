@@ -18,6 +18,14 @@
 #include <stdio.h>
 #include "soter_test.h"
 
+#define MAX_KEY_LENGTH 32
+#define MAX_DATA_LENGTH 1024
+#define MAX_IV_LENGTH 32
+#define MAX_AAD_LENGTH 1024
+#define MAX_AUTH_TAG_LENGTH 16
+
+#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL)
+
 struct test_vector_type
 {
   uint32_t alg;
@@ -113,10 +121,6 @@ static test_vector_aead_t vectors_aead[] =  {
     "76fc6ece0f4e1768cddf8853bb2d551b"
   }
 };
-
-#define MAX_KEY_LENGTH 32
-#define MAX_DATA_LENGTH 1024
-#define MAX_IV_LENGTH 32
 
 static void test_known_values(void)
 {
@@ -245,8 +249,6 @@ static void test_known_values(void)
     }
 }
 
-#define MAX_AAD_LENGTH 1024
-#define MAX_AUTH_TAG_LENGTH 16
 
 static void test_known_values_gcm(void)
 {
@@ -401,6 +403,8 @@ static void test_known_values_gcm(void)
     }
 }
 
+#endif
+
 static void test_auth_tag(void)
 {
 	  uint8_t key[MAX_KEY_LENGTH];
@@ -445,7 +449,7 @@ static void test_auth_tag(void)
 		  return;
 	  }
 
-	  ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AES_GCM | SOTER_SYM_256_KEY_LENGTH, key, sizeof(key), NULL, 0, iv, sizeof(iv));
+	  ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AEAD_DEFAULT_ALG, key, sizeof(key), NULL, 0, iv, sizeof(iv));
 	  if (NULL == ctx)
 	  {
 		  testsuite_fail_if(NULL == ctx, "soter_sym_aead_encrypt_create");
@@ -478,7 +482,7 @@ static void test_auth_tag(void)
 
 	  soter_sym_aead_encrypt_destroy(ctx);
 
-	  ctx = soter_sym_aead_decrypt_create(SOTER_SYM_AES_GCM | SOTER_SYM_256_KEY_LENGTH, key, sizeof(key), NULL, 0, iv, sizeof(iv));
+	  ctx = soter_sym_aead_decrypt_create(SOTER_SYM_AEAD_DEFAULT_ALG, key, sizeof(key), NULL, 0, iv, sizeof(iv));
 	  if (NULL == ctx)
 	  {
 		  testsuite_fail_if(NULL == ctx, "soter_sym_aead_decrypt_create");
@@ -513,16 +517,15 @@ static void test_auth_tag(void)
 		  testsuite_fail_if(true, "decrypted date does not match plaintext");
 		  return;
 	  }
-
 	  testsuite_fail_unless(SOTER_FAIL == res, "detect data tamper");
 }
 
 void run_soter_sym_test()
 {
   testsuite_enter_suite("soter sym");
-  //  testsuite_run_test(soter_sym_test);
+#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL)
   testsuite_run_test(test_known_values);
   testsuite_run_test(test_known_values_gcm);
+#endif
   testsuite_run_test(test_auth_tag);
-  //  soter_sym_test();
 }

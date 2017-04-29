@@ -17,23 +17,11 @@
 #include <soter/soter_t.h>
 #include <soter/error.h>
 
+#include <soter/soter_hash.h>
+
 #include <string.h>
 
-static size_t hash_block_size(soter_hash_algo_t algo)
-{
-	switch (algo)
-	{
-//	case SOTER_HASH_SHA1:
-	case SOTER_HASH_SHA256:
-		return 64;
-	case SOTER_HASH_SHA512:
-		return 128;
-	default:
-		return 0;
-	}
-}
-
-soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, soter_hash_algo_t algo, const uint8_t* key, size_t key_length)
+soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, int32_t algo, const uint8_t* key, size_t key_length)
 {
 	size_t block_size = hash_block_size(algo);
 	uint8_t i_key_pad[HASH_MAX_BLOCK_SIZE];
@@ -184,7 +172,7 @@ soter_status_t soter_hmac_final(soter_hmac_ctx_t *hmac_ctx, uint8_t* hmac_value,
 	return soter_hash_final(&(hmac_ctx->hash_ctx), hmac_value, hmac_length);
 }
 
-soter_hmac_ctx_t* soter_hmac_create(soter_hash_algo_t algo, const uint8_t* key, size_t key_length)
+soter_hmac_ctx_t* soter_hmac_create(int32_t algo, const uint8_t* key, size_t key_length)
 {
 	soter_status_t status;
 	soter_hmac_ctx_t *ctx = malloc(sizeof(soter_hmac_ctx_t));
