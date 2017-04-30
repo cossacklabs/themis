@@ -34,10 +34,10 @@
 #include "soter_sign_ecdsa.h"
 #include "soter_engine_consts.h"
 
-soter_status_t soter_sign(const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length, const uint8_t* data, const size_t data_length, uint8_t* signature, size_t* signature_length){
+soter_status_t soter_sign(const void* private_key, const size_t private_key_length, const uint8_t* data, const size_t data_length, uint8_t* signature, size_t* signature_length){
   soter_sign_ctx_t ctx;
   soter_status_t res = SOTER_SUCCESS;
-  res = soter_sign_init(&ctx, private_key, private_key_length, public_key, public_key_length) ;
+  res = soter_sign_init(&ctx, private_key, private_key_length) ;
   if(SOTER_SUCCESS == res){
     res = soter_sign_update(&ctx, data, data_length);
     if(SOTER_SUCCESS == res){
@@ -48,10 +48,10 @@ soter_status_t soter_sign(const void* private_key, const size_t private_key_leng
   return res;
 }
 
-soter_status_t soter_verify(const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length, const int8_t* data, const size_t data_length, const int8_t* signature, const size_t signature_length){
+soter_status_t soter_verify(const void* public_key, const size_t public_key_length, const int8_t* data, const size_t data_length, const int8_t* signature, const size_t signature_length){
   soter_verify_ctx_t ctx;
   soter_status_t res = SOTER_SUCCESS;
-  res = soter_verify_init(&ctx, private_key, private_key_length, public_key, public_key_length) ;
+  res = soter_verify_init(&ctx, public_key, public_key_length) ;
   if(SOTER_SUCCESS == res){
     res = soter_verify_update(&ctx, data, data_length);
     if(SOTER_SUCCESS == res){
@@ -67,7 +67,7 @@ soter_status_t soter_verify(const void* private_key, const size_t private_key_le
     SOTER_SIGN_ALG(rsa,pss,pkcs8)	\
     SOTER_SIGN_ALG(ecdsa,none,pkcs8)
 
-soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
+soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length)
 {
   if(!ctx || !private_key ||  private_key_length<sizeof(soter_container_hdr_t) || !soter_key_is_private(private_key, private_key_length)){
     return SOTER_INVALID_PARAMETER;
@@ -78,16 +78,16 @@ soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, const void* private_key, c
   }
   switch((ctx->alg)&SOTER_ASYM_ALG_MASK){
   case SOTER_ASYM_RSA:
-    return soter_sign_init_rsa_pss_pkcs8(ctx,private_key,private_key_length, public_key, public_key_length);
+    return soter_sign_init_rsa_pss_pkcs8(ctx,private_key,private_key_length, NULL, 0);
   case SOTER_ASYM_EC:			     
-    return soter_sign_init_ecdsa_none_pkcs8(ctx,private_key,private_key_length, public_key, public_key_length);
+    return soter_sign_init_ecdsa_none_pkcs8(ctx,private_key,private_key_length, NULL, 0);
   default:
     return SOTER_INVALID_PARAMETER;
   };
   return SOTER_INVALID_PARAMETER;
 }
 
-soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
+soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, const void* public_key, const size_t public_key_length)
 {
   if(!ctx || !public_key ||  public_key_length<sizeof(soter_container_hdr_t) || soter_key_is_private(public_key, public_key_length)){
     return SOTER_INVALID_PARAMETER;
@@ -98,9 +98,9 @@ soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, const void* private_key,
   }
   switch((ctx->alg)&SOTER_ASYM_ALG_MASK){
   case SOTER_ASYM_RSA :			     
-    return soter_verify_init_rsa_pss_pkcs8(ctx,private_key,private_key_length, public_key, public_key_length);
+    return soter_verify_init_rsa_pss_pkcs8(ctx, NULL, 0, public_key, public_key_length);
   case SOTER_ASYM_EC :			     
-    return soter_verify_init_ecdsa_none_pkcs8(ctx,private_key,private_key_length, public_key, public_key_length);    
+    return soter_verify_init_ecdsa_none_pkcs8(ctx, NULL, 0, public_key, public_key_length);    
   default:
     return SOTER_INVALID_PARAMETER;
   };
@@ -198,10 +198,10 @@ soter_status_t soter_verify_cleanup(soter_sign_ctx_t* ctx){
 }
 
 
-soter_sign_ctx_t* soter_sign_create(const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length){
+soter_sign_ctx_t* soter_sign_create(const void* private_key, const size_t private_key_length){
   soter_sign_ctx_t* ctx=calloc(sizeof(soter_sign_ctx_t),1);
   assert(ctx);
-  if(soter_sign_init(ctx, private_key, private_key_length, public_key, public_key_length)!=SOTER_SUCCESS){
+  if(soter_sign_init(ctx, private_key, private_key_length)!=SOTER_SUCCESS){
     soter_sign_cleanup(ctx);
     free(ctx);
     return NULL;
@@ -209,10 +209,10 @@ soter_sign_ctx_t* soter_sign_create(const void* private_key, const size_t privat
   return ctx;
 }
 
-soter_sign_ctx_t* soter_verify_create(const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length){
+soter_sign_ctx_t* soter_verify_create(const void* public_key, const size_t public_key_length){
   soter_sign_ctx_t* ctx=calloc(sizeof(soter_sign_ctx_t),1);
   assert(ctx);
-  if(soter_verify_init(ctx, private_key, private_key_length, public_key, public_key_length)!=SOTER_SUCCESS){
+  if(soter_verify_init(ctx, public_key, public_key_length)!=SOTER_SUCCESS){
     soter_verify_cleanup(ctx);
     free(ctx);
     return NULL;
