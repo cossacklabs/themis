@@ -24,8 +24,12 @@
 
 #include <themis/themis.h>
 
-#ifndef THEMIS_SECURE_MESSAGE_DEFAULT_ALG
-#define THEMIS_SECURE_MESSAGE_DEFAULT_ALG SOTER_ASYM_KA_DEFAULT_ALG
+#ifndef THEMIS_SECURE_SIGNED_MESSAGE_DEFAULT_ALG
+#define THEMIS_SECURE_SIGNED_MESSAGE_DEFAULT_ALG SOTER_ASYM_SIGN_DEFAULT_ALG
+#endif
+
+#ifndef THEMIS_SECURE_ENCRYPTED_MESSAGE_DEFAULT_ALG
+#define THEMIS_SECURE_ENCRYPTED_MESSAGE_DEFAULT_ALG SOTER_ASYM_KA_DEFAULT_ALG
 #endif
 
 #ifdef __cplusplus
@@ -50,26 +54,12 @@ extern "C"{
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
  * @note If private_key==NULL or public_key==NULL or private_key_length is not enought for private key storage or public_key_length is not enought for public key storage then THEMIS_BUFFER_TOO_SMALL will return and private_key_length and public_key_length will store lengths of buffers needed for private key and public key store respectively
  */  
-themis_status_t themis_gen_key_pair_by_alg_id(uint32_t alg_id,
-					      uint8_t* private_key,
-					      size_t* private_key_length,
-					      uint8_t* public_key,
-					      size_t* public_key_length);
-
-/**
- * @brief generate key pair
- * @param [out] private_key buffer for private key to store. May be set to NULL for private key length determination
- * @param [in, out] private_key_length length of private_key
- * @param [out] public_key buffer for public key to store. May be set to NULL for public key length determination
- * @param [in, out] public_key_length length of public key
- * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
- * @note If private_key==NULL or public_key==NULL or private_key_length is not enought for private key storage or public_key_length is not enought for public key storage then THEMIS_BUFFER_TOO_SMALL will return and private_key_length and public_key_length will store lengths of buffers needed for private key and public key store respectively
- */  
-themis_status_t themis_gen_key_pair(uint8_t* private_key,
-				    size_t* private_key_length,
-				    uint8_t* public_key,
-				    size_t* public_key_length);
-
+themis_status_t themis_gen_key_pair(uint32_t alg_id,
+                                    uint8_t* private_key,
+                                    size_t* private_key_length,
+                                    uint8_t* public_key,
+                                    size_t* public_key_length);
+  
 /** 
  * @brief wrap message to secure message
  * @param [in] private_key private key

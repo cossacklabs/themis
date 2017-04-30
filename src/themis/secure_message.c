@@ -19,19 +19,12 @@
 #include <themis/secure_message_wrapper.h>
 #include <soter/soter_t.h>
 
-themis_status_t themis_gen_key_pair_by_alg_id(uint32_t alg_id,
-					      uint8_t* private_key,
-					      size_t* private_key_length,
-					      uint8_t* public_key,
-					      size_t* public_key_length){
+themis_status_t themis_gen_key_pair(uint32_t alg_id,
+                                    uint8_t* private_key,
+                                    size_t* private_key_length,
+                                    uint8_t* public_key,
+                                    size_t* public_key_length){
   return soter_key_pair_gen(alg_id, private_key, private_key_length, public_key, public_key_length); 
-}
-
-themis_status_t themis_gen_key_pair(uint8_t* private_key,
-				    size_t* private_key_length,
-				    uint8_t* public_key,
-				    size_t* public_key_length){
-  return soter_key_pair_gen(THEMIS_SECURE_MESSAGE_DEFAULT_ALG, private_key, private_key_length, public_key, public_key_length); 
 }
 
 themis_status_t themis_secure_message_wrap(const uint8_t* private_key,

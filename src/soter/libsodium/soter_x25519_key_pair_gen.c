@@ -78,16 +78,16 @@ soter_status_t soter_x25519_key_pair_gen_export_key(soter_x25519_key_pair_gen_t*
     }
     if (isprivate)
     {
-      if(!key || (*key_length)<(sizeof(soter_x25519_priv_key_t)-sizeof(soter_container_hdr_t))){
-        *key_length=(sizeof(soter_x25519_priv_key_t)-sizeof(soter_container_hdr_t));
+      if(!key || (*key_length)<(sizeof(soter_x25519_priv_key_t))){
+        *key_length=sizeof(soter_x25519_priv_key_t);
         return SOTER_BUFFER_TOO_SMALL;
       }
       memcpy(key, &(ctx->priv), sizeof(soter_x25519_priv_key_t));
       *key_length=sizeof(soter_x25519_priv_key_t);
       return SOTER_SUCCESS;
     }
-    if(!key || (*key_length)<(sizeof(soter_x25519_pub_key_t)-sizeof(soter_container_hdr_t))){
-        *key_length=(sizeof(soter_x25519_pub_key_t)-sizeof(soter_container_hdr_t));
+    if(!key || (*key_length)<(sizeof(soter_x25519_pub_key_t))){
+        *key_length=sizeof(soter_x25519_pub_key_t);
         return SOTER_BUFFER_TOO_SMALL;
     }
     memcpy(key, &(ctx->pub), sizeof(soter_x25519_pub_key_t));

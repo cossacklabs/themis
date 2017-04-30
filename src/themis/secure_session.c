@@ -113,7 +113,7 @@ err:
 
 secure_session_t* secure_session_create(const void *id, size_t id_length, const void *sign_key, size_t sign_key_length, const secure_session_user_callbacks_t *user_callbacks)
 {
-	secure_session_t *ctx = calloc(sizeof(secure_session_t),1);
+  secure_session_t *ctx = calloc(1, sizeof(secure_session_t));
 
 	if (!ctx)
 	{
