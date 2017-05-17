@@ -38,7 +38,7 @@ static themis_status_t ed_sign(uint8_t pos, const uint8_t *scalar, uint8_t *sign
 {
 	uint8_t r[ED25519_GE_LENGTH];
 	ge_p3 R;
-	uint8_t k[64];
+	uint8_t k[64]; //temp buffer for group elements and hash
 
 	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
