@@ -32,14 +32,7 @@ typedef struct soter_crypter_type soter_crypter_t;
 
 soter_crypter_t* soter_crypter_create(soter_keys_db_t* db);
 soter_status_t soter_crypter_destroy(soter_crypter_t** ks);
-soter_status_t soter_crypter_db_get_key(soter_crypter_t* ks, const uint8_t* id, const size_t id_length, uint8_t** key, size_t* key_length);
-
-
-soter_asym_ka_t* soter_crypter_asym_ka_create(soter_crypter_t* crypter, const uint8_t* key, const size_t key_length);
-soter_status_t soter_crypter_asym_ka_destroy(soter_crypter_t* crypter, soter_asym_ka_t* ka);
-soter_status_t soter_crypter_asym_ka_derive(soter_crypter_t* crypter, soter_asym_ka_t* ka, const uint8_t* peer_key, const size_t peer_key_length, uint8_t* shared_secret, size_t* shared_secret_length);
-
-
+soter_status_t soter_crypter_main(soter_crypter_t* ks);
 
 
 #endif //KEY_STORE_H
