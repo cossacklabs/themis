@@ -93,4 +93,9 @@ typedef enum {
   VERIFY_FINAL
 } soter_crypter_op_code_t;
 
+void* map_shm(uint32_t type, size_t length);
+void* unmap_shm(void* shm, size_t length);
+soter_status_t set_sem();
+soter_status_t wait_sem();
+
 #endif /* SOTER_ENGINE_H */

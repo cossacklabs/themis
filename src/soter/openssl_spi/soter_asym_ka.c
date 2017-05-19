@@ -23,26 +23,6 @@
 #include <soter/soter_container.h>
 #include <openssl/ec.h>
 
-static int soter_alg_to_curve_nid(const int32_t alg_id, const int32_t length_id)
-{
-  switch (alg_id&0x00ffff00){
-  case SOTER_ASYM_EC:
-          switch(length_id){
-          case 2:
-            return NID_X9_62_prime256v1;
-          case 3:
-            return NID_secp384r1; 
-          case 5:
-            return NID_secp521r1;
-          default:
-            return 0;
-          }
-  default:
-    return 0;
-  }
-  return 0;
-}
-
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, const int8_t* key, const size_t key_length){
   EVP_PKEY *pkey;
   if(!asym_ka_ctx || !key || key_length<sizeof(soter_container_hdr_t)){
