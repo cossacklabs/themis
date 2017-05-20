@@ -23,6 +23,9 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx, const void *input, size_t input_length, void *output, size_t *output_length);
 static themis_status_t secure_comparator_alice_step5(secure_comparator_t *comp_ctx, const void *input, size_t input_length, void *output, size_t *output_length);
 
+#define HASH_LENGTH 64  //for sha512
+#define TEMP_BUFFER_LENGTH ((ED25519_GE_LENGTH>HASH_LENGTH)?ED25519_GE_LENGTH:HASH_LENGTH)
+
 static bool ge_is_zero(const ge_p3 *ge)
 {
 	uint8_t y[ED25519_GE_LENGTH];
@@ -38,10 +41,10 @@ static themis_status_t ed_sign(uint8_t pos, const uint8_t *scalar, uint8_t *sign
 {
 	uint8_t r[ED25519_GE_LENGTH];
 	ge_p3 R;
-	uint8_t k[64]; //temp buffer for group elements and hash
+	uint8_t k[TEMP_BUFFER_LENGTH]; //temp buffer
 
 	soter_hash_ctx_t hash_ctx;
-	size_t hash_length = 64;
+	size_t hash_length = HASH_LENGTH;
 	themis_status_t res;
 
 	generate_random_32(r);
@@ -85,10 +88,10 @@ static themis_status_t ed_verify(uint8_t pos, const ge_p3 *point, const uint8_t 
 {
 	ge_p3 A;
 	ge_p2 R;
-	uint8_t k[64];
+	uint8_t k[TEMP_BUFFER_LENGTH];
 
 	soter_hash_ctx_t hash_ctx;
-	size_t hash_length = 64;
+	size_t hash_length = HASH_LENGTH;
 
 	themis_status_t res;
 
@@ -148,10 +151,10 @@ static themis_status_t ed_dbl_base_sign(uint8_t pos, const uint8_t *scalar1, con
 	uint8_t r2[ED25519_GE_LENGTH];
 	ge_p3 R1;
 	ge_p2 R2;
-	uint8_t k[64];
+	uint8_t k[TEMP_BUFFER_LENGTH];
 
 	soter_hash_ctx_t hash_ctx;
-	size_t hash_length = 64;
+	size_t hash_length = HASH_LENGTH;
 
 	themis_status_t res;
 
@@ -207,10 +210,10 @@ static themis_status_t ed_dbl_base_verify(uint8_t pos, const ge_p3 *base1, const
 	ge_p3 R1;
 	ge_p3 R2;
 
-	uint8_t k[64];
+	uint8_t k[TEMP_BUFFER_LENGTH];
 
 	soter_hash_ctx_t hash_ctx;
-	size_t hash_length = 64;
+	size_t hash_length = HASH_LENGTH;
 
 	themis_status_t res;
 
@@ -279,10 +282,10 @@ static themis_status_t ed_point_sign(uint8_t pos, const uint8_t *scalar, const g
 {
 	uint8_t r[ED25519_GE_LENGTH];
 	ge_p3 R;
-	uint8_t k[64];
+	uint8_t k[TEMP_BUFFER_LENGTH];
 
 	soter_hash_ctx_t hash_ctx;
-	size_t hash_length = 64;
+	size_t hash_length = HASH_LENGTH;
 
 	themis_status_t res;
 
@@ -342,10 +345,10 @@ static themis_status_t ed_point_verify(uint8_t pos, const ge_p3 *base2, const ge
 	ge_p3 R1;
 	ge_p3 R2;
 
-	uint8_t k[64];
+	uint8_t k[TEMP_BUFFER_LENGTH];
 
 	soter_hash_ctx_t hash_ctx;
-	size_t hash_length = 64;
+	size_t hash_length = HASH_LENGTH;
 
 	themis_status_t res;
 
