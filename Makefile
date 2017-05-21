@@ -276,12 +276,12 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 	@$(BUILD_CMD)
 
 #$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
-#$(AUD_PATH)/%.c: CMD = ./pp $< $@
+$(AUD_PATH)/%: CMD = ./pp  $< $@
 
-#$(AUD_PATH)/%: $(SRC_PATH)/%
-#	@mkdir -p $(@D)
-#	@echo -n "compile "
-#	@$(BUILD_CMD)
+$(AUD_PATH)/%: $(SRC_PATH)/%
+	@mkdir -p $(@D)
+	@echo -n "compile "
+	@$(BUILD_CMD)
 
 $(TEST_OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR)) -I$(TEST_SRC_PATH) -c $< -o $@
 
@@ -356,7 +356,7 @@ dist:
 	tar -zcvf $(THEMIS_VERSION).tar.gz $(THEMIS_VERSION) 
 	rm -rf $(THEMIS_VERSION)
 
-#for-audit: $(SOTER_AUD) $(THEMIS_AUD)
+for-audit: $(SOTER_AUD) $(THEMIS_AUD)
 
 
 phpthemis_uninstall: CMD = if [ -e src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
