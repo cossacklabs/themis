@@ -113,6 +113,12 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
 
+GIT_VERSION := $(shell if [ -d ".git" ]; then git version; fi 2>/dev/null)
+ifdef GIT_VERSION
+	THEMIS_VERSION = themis-$(shell git describe --tags $(shell git rev-list --tags --max-count=1))-$(shell git log --pretty=format:'%h' -n 1)
+else
+	THEMIS_VERSION = themis-$(shell date -I)
+endif
 PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
@@ -173,6 +179,7 @@ endif
 
 
 all: err themis_static themis_shared
+	echo $(THEMIS_VERSION)
 
 test_all: err test
 ifdef PHP_VERSION
@@ -321,6 +328,24 @@ install_shared_libs: err all make_install_dirs
 	@$(BUILD_CMD_)
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
+
+dist:
+	mkdir -p $(THEMIS_VERSION)
+	rsync -avz src $(THEMIS_VERSION)
+	rsync -avz docs $(THEMIS_VERSION)
+	rsync -avz gothemis $(THEMIS_VERSION)
+	rsync -avz gradle $(THEMIS_VERSION)
+	rsync -avz jni $(THEMIS_VERSION)
+	rsync -avz --exclude 'tests/soter/nist-sts/assess' tests $(THEMIS_VERSION)
+	rsync -avz CHANGELOG.md $(THEMIS_VERSION)
+	rsync -avz LICENSE $(THEMIS_VERSION)
+	rsync -avz Makefile $(THEMIS_VERSION)
+	rsync -avz README.md $(THEMIS_VERSION)
+	rsync -avz build.gradle $(THEMIS_VERSION)
+	rsync -avz gradlew $(THEMIS_VERSION)
+	rsync -avz themis.podspec $(THEMIS_VERSION)
+	tar -zcvf $(THEMIS_VERSION).tar.gz $(THEMIS_VERSION) 
+	rm -rf $(THEMIS_VERSION)
 
 phpthemis_uninstall: CMD = if [ -e src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
 
