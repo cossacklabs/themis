@@ -276,7 +276,7 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 	@$(BUILD_CMD)
 
 #$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
-$(AUD_PATH)/%: CMD = ./scripts/pp  $< $@
+$(AUD_PATH)/%: CMD = ./scripts/pp.sh  $< $@
 
 $(AUD_PATH)/%: $(SRC_PATH)/%
 	@mkdir -p $(@D)
