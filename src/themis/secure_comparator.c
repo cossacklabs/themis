@@ -14,6 +14,40 @@
 * limitations under the License.
 */
 
+
+/* 
+ * Secure Comparator involves a whole raft of ideas that are not trivial for developers without 
+ * deep knowledge of cryptography, in particular:
+ * 
+ *  - Socialist Millionaire's Problem (SMP) - https://en.wikipedia.org/wiki/Socialist_millionaires;
+ * 	- SMP solution - https://www.win.tue.nl/~berry/papers/dam.pdf
+ *  - OTR - https://otr.cypherpunks.ca/Protocol-v3-4.1.1.html;
+ *  - ED25519 signature - https://ed25519.cr.yp.to/.
+ * 
+ * It's recommended to read the paper that describe Secure Comparator formally - https://eprint.iacr.org/2015/1180.pdf.
+ *  
+ * There are some dangerous situations when one of the communicating peers is not fair and presents 
+ * forged secret or some of intermediate parameters. These may cause security flaws. See original paper 
+ * with SMP solution and our GitHub issues https://github.com/cossacklabs/themis/issues/85 and 
+ * https://github.com/cossacklabs/themis/issues/83.
+ * 
+ * To prevent these situations, additional security proofs and verifications should be done on each step of the protocol. 
+ * These proofs are implemented in functions below:
+ *
+ * ed_sign / ed_verify                   -> Proof of knowledge of EC discrete logarithm (section 5.3.1 in paper);
+ * ed_dbl_base_sign / ed_dbl_base_verify -> Proof of knowledge of EC discrete coordinates (section 5.3.2 in paper);
+ * ed_point_sign / ed_point_verify       -> Proof of knowledge of EC discrete logarithms (section 5.3.3 in paper).
+ * 
+ * All sign/verify operations are numerated (first parameter in each function) to strictly follow original ED25519 algorithm.
+ * 
+ * 
+ * Variables and values in functions that implement proofs correspond to initial implementation of ED25519 signature
+ * of D.J. Bernstein team.
+ * 
+ * All variables in comments correspond to variables in Secure Comparator paper but may slightly differ from variables in code.
+ * 
+ */
+
 #include "secure_comparator_t.h"
 #include <string.h>
 
@@ -500,7 +534,7 @@ static themis_status_t secure_comparator_alice_step1(secure_comparator_t *comp_c
 	ge_p3 g2a;
 	ge_p3 g3a;
 
-	/* Output will contain 2 group elements and 2 * 2 ZK-proofs */
+	/* Output will contain 2 group elements and 2 * 2 ZK-proofs, so 2 + 2 * 2 = 6 */
 	if ((!output) || (*output_length < (6 * ED25519_GE_LENGTH)))
 	{
 		*output_length = 6 * ED25519_GE_LENGTH;
@@ -528,20 +562,30 @@ static themis_status_t secure_comparator_alice_step1(secure_comparator_t *comp_c
 	ge_scalarmult_base(&g2a, comp_ctx->rand2);
 	ge_scalarmult_base(&g3a, comp_ctx->rand3);
 
+	/* Copy G2a (1 group element) as byte array to output */
 	ge_p3_tobytes((unsigned char *)output, &g2a);
+	
+	/* Signature of G2a (2 group elements) is copied to output */
 	themis_status = ed_sign(1, comp_ctx->rand2, ((unsigned char *)output) + ED25519_GE_LENGTH);
 	if (THEMIS_SUCCESS != themis_status)
 	{
 		return themis_status;
 	}
-
+	/* Copy G3a (1 group element) as byte array to output */
 	ge_p3_tobytes(((unsigned char *)output) + (3 * ED25519_GE_LENGTH), &g3a);
+	
+	/* Signature of G3a (2 group elements) is copied to output */
 	themis_status = ed_sign(2, comp_ctx->rand3, ((unsigned char *)output) + (4 * ED25519_GE_LENGTH));
 	if (THEMIS_SUCCESS != themis_status)
 	{
 		return themis_status;
 	}
 
+	/* Finally Alice sends to Bob on 1 step:
+	 * G2a || G2a signature || G3a || G3a signature
+	 * Alice proceeds 1 step, Bob responds on 2 step and if it's succeeded, 
+	 * protocol continues with Alice's 3 step. 
+	 */
 	comp_ctx->state_handler = secure_comparator_alice_step3;
 
 	return THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER;
@@ -557,11 +601,15 @@ static themis_status_t secure_comparator_bob_step2(secure_comparator_t *comp_ctx
 	themis_status_t themis_status;
 	size_t secret_length = sizeof(comp_ctx->secret);
 
+	/* Input validation from Alice's 1 step (amount of group elements in brackets):
+	 * G2a (1) || G2a signature (2) || G3a (1) || G3a signature (2)
+	 * */
 	if (input_length < (6 * ED25519_GE_LENGTH))
 	{
 		return THEMIS_INVALID_PARAMETER;
 	}
-
+	
+	/* Extracting G2a, G3a signatures for verification */
 	if (ge_frombytes_vartime(&g2a, (const unsigned char *)input))
 	{
 		return THEMIS_INVALID_PARAMETER;
@@ -571,13 +619,14 @@ static themis_status_t secure_comparator_bob_step2(secure_comparator_t *comp_ctx
 		return THEMIS_INVALID_PARAMETER;
 	}
 
-	/* Output will contain 4 group elements and 2 * 2 + 3 ZK-proofs */
+	/* Output will contain 4 group elements and 2 * 2 + 3 ZK-proofs, so 4 + 2 * 2 + 3 = 11 */
 	if ((!output) || (*output_length < (11 * ED25519_GE_LENGTH)))
 	{
 		*output_length = 11 * ED25519_GE_LENGTH;
 		return THEMIS_BUFFER_TOO_SMALL;
 	}
 
+	/* Verification of G2a signature */
 	themis_status = ed_verify(1, &g2a, (const unsigned char *)input + ED25519_GE_LENGTH);
 	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
@@ -588,6 +637,7 @@ static themis_status_t secure_comparator_bob_step2(secure_comparator_t *comp_ctx
 		return themis_status;
 	}
 
+	/* Verification of G2b signature */
 	themis_status = ed_verify(2, &(comp_ctx->g3p), (const unsigned char *)input + (4 * ED25519_GE_LENGTH));
 	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
@@ -633,28 +683,44 @@ static themis_status_t secure_comparator_bob_step2(secure_comparator_t *comp_ctx
 	ge_double_scalarmult_vartime((ge_p2 *)&(comp_ctx->Q), comp_ctx->secret, &(comp_ctx->g2), comp_ctx->rand);
 	ge_p2_to_p3(&(comp_ctx->Q), (const ge_p2 *)&(comp_ctx->Q));
 
+	/* Copy G2b (1 group element) as byte array to output */
 	ge_p3_tobytes((unsigned char *)output, &g2b);
+	
+	/* Signature of G2b (2 group elements) is copied to output */
 	themis_status = ed_sign(3, comp_ctx->rand2, ((unsigned char *)output) + ED25519_GE_LENGTH);
 	if (THEMIS_SUCCESS != themis_status)
 	{
 		return themis_status;
 	}
-
+	
+	/* Copy G3b (1 group element) as byte array to output */
 	ge_p3_tobytes(((unsigned char *)output) + (3 * ED25519_GE_LENGTH), &g3b);
+	
+	/* Signature of G3b (2 group elements) is copied to output */
 	themis_status = ed_sign(4, comp_ctx->rand3, ((unsigned char *)output) + (4 * ED25519_GE_LENGTH));
 	if (THEMIS_SUCCESS != themis_status)
 	{
 		return themis_status;
 	}
 
+	/* Copy Pb (1 group element) as byte array to output */
 	ge_p3_tobytes(((unsigned char *)output) + (6 * ED25519_GE_LENGTH), &(comp_ctx->P));
+	
+	/* Copy Qb (1 group element) as byte array to output */
 	ge_p3_tobytes(((unsigned char *)output) + (7 * ED25519_GE_LENGTH), &(comp_ctx->Q));
+	
+	/* Signature of Qb (3 group elements) is copied to output */
 	themis_status = ed_dbl_base_sign(5, comp_ctx->rand, comp_ctx->secret, &(comp_ctx->g2), &(comp_ctx->g3), ((unsigned char *)output) + (8 * ED25519_GE_LENGTH));
 	if (THEMIS_SUCCESS != themis_status)
 	{
 		return themis_status;
 	}
 
+	/* Finally Bob sends to Alice on 2 step:
+	 * G2b || G2b signature || G3b || G3b signature || Pb || Qb || Qb signature
+	 * Bob proceeds 2 step, Alice responds on 3 step and if it's succeeded, 
+	 * protocol continues with Bob's 4 step. 
+	 */
 	comp_ctx->state_handler = secure_comparator_bob_step4;
 
 	return THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER;
@@ -669,11 +735,15 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 
 	ge_p3 R;
 
+	/* Input validation from Bob's 2 step (amount of group elements in brackets):
+	 * G2b (1) || G2b signature (2) || G3b (1) || G3b signature (2) || Pb (1) || Qb (1) || Qb signature (3)
+	 * */
 	if (input_length < (11 * ED25519_GE_LENGTH))
 	{
 		return THEMIS_INVALID_PARAMETER;
 	}
-
+	
+	/* Extract G2b, G3b, Pb, Qb */
 	if (ge_frombytes_vartime(&g2b, (const unsigned char *)input))
 	{
 		return THEMIS_INVALID_PARAMETER;
@@ -691,13 +761,14 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 		return THEMIS_INVALID_PARAMETER;
 	}
 
-	/* Output will contain 3 group elements and 5 ZK-proofs */
+	/* Output will contain 3 group elements and 5 ZK-proofs, so 3 + 5 = 8 */
 	if ((!output) || (*output_length < (8 * ED25519_GE_LENGTH)))
 	{
 		*output_length = 8 * ED25519_GE_LENGTH;
 		return THEMIS_BUFFER_TOO_SMALL;
 	}
-
+	
+	/* Verification of G2b signature */
 	themis_status = ed_verify(3, &g2b, (const unsigned char *)input + ED25519_GE_LENGTH);
 	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
@@ -708,6 +779,7 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 		return themis_status;
 	}
 
+	/* Verification of G3b signature */
 	themis_status = ed_verify(4, &(comp_ctx->g3p), (const unsigned char *)input + (4 * ED25519_GE_LENGTH));
 	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
@@ -728,6 +800,7 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
 	}
 
+	/* Verification of Qb signature*/
 	themis_status = ed_dbl_base_verify(5, &(comp_ctx->g2), &(comp_ctx->g3), &(comp_ctx->Pp), &Qb, ((unsigned char *)input) + (8 * ED25519_GE_LENGTH));
 	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
@@ -747,22 +820,34 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 	ge_p3_sub(&(comp_ctx->Qa_Qb), &(comp_ctx->Q), &Qb);
 	ge_scalarmult_blinded(&R, comp_ctx->rand3, &(comp_ctx->Qa_Qb));
 
-	/* send to bob */
+	/* Copy Pa (1 group element) to output */
 	ge_p3_tobytes((unsigned char *)output, &(comp_ctx->P));
+	
+	/* Copy Qa (1 group element) to output */
 	ge_p3_tobytes(((unsigned char *)output) + ED25519_GE_LENGTH, &(comp_ctx->Q));
+	
+	/* Signature of Qa (3 group elements) is copied to output */
 	themis_status = ed_dbl_base_sign(6, comp_ctx->rand, comp_ctx->secret, &(comp_ctx->g2), &(comp_ctx->g3), ((unsigned char *)output) + (2 * ED25519_GE_LENGTH));
 	if (THEMIS_SUCCESS != themis_status)
 	{
 		return themis_status;
 	}
 
+	/* Copy Ra (1 group element) to output */
 	ge_p3_tobytes(((unsigned char *)output) + (5 * ED25519_GE_LENGTH), &R);
+	
+	/* Signature of Ra (2 group elements) is copied to output */
 	themis_status = ed_point_sign(7, comp_ctx->rand3, &(comp_ctx->Qa_Qb), ((unsigned char *)output) + (6 * ED25519_GE_LENGTH));
 	if (THEMIS_SUCCESS != themis_status)
 	{
 		return themis_status;
 	}
 
+	/* Finally Alice sends to Bob on 3 step:
+	 * Pa || Qa || Qa signature || Ra || Ra signature
+	 * Alice proceeds 3 step, Bob responds on 4 step and if it's succeeded, 
+	 * protocol continues with Alice's 5 step. 
+	 */
 	comp_ctx->state_handler = secure_comparator_alice_step5;
 
 	return THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER;
@@ -780,11 +865,15 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 	ge_p3 Rab;
 	ge_p3 Pa_Pb;
 
+	/* Input validation from Alice's 3 step (amount of group elements in brackets):
+	 * Pa (1) || Qa (1) || Qa signature (3) || Ra (1) || Ra signature (2)
+	 * */
 	if (input_length < (8 * ED25519_GE_LENGTH))
 	{
 		return THEMIS_INVALID_PARAMETER;
 	}
 
+	/* Extract Pa, Qa, Ra from input */
 	if (ge_frombytes_vartime(&Pa, (const unsigned char *)input))
 	{
 		return THEMIS_INVALID_PARAMETER;
@@ -798,7 +887,7 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 		return THEMIS_INVALID_PARAMETER;
 	}
 
-	/* Output will contain 1 group element and 2 ZK-proofs */
+	/* Output will contain 1 group element and 2 ZK-proofs, 1 + 2 = 3 */
 	if ((!output) || (*output_length < (3 * ED25519_GE_LENGTH)))
 	{
 		*output_length = 3 * ED25519_GE_LENGTH;
@@ -807,6 +896,7 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 
 	*output_length = 3 * ED25519_GE_LENGTH;
 
+	/* Verification of Qa signature */
 	themis_status = ed_dbl_base_verify(6, &(comp_ctx->g2), &(comp_ctx->g3), &Pa, &Qa, ((unsigned char *)input) + (2 * ED25519_GE_LENGTH));
 	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
@@ -818,6 +908,8 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 	}
 
 	ge_p3_sub(&Qa, &Qa, &(comp_ctx->Q));
+	
+	/* Verification of Ra signature */
 	themis_status = ed_point_verify(7, &(comp_ctx->g3p), &Qa, &Ra, ((unsigned char *)input) + (6 * ED25519_GE_LENGTH));
 	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
@@ -838,12 +930,16 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 
 	ge_p3_sub(&Pa_Pb, &Pa, &(comp_ctx->P));
 
+	/* Bob finishes */
 	if (THEMIS_SCOMPARE_NOT_READY == comp_ctx->result)
 	{
 		comp_ctx->result = ge_cmp(&Rab, &Pa_Pb) ? THEMIS_SCOMPARE_NO_MATCH : THEMIS_SCOMPARE_MATCH;
 	}
-
+	
+	/* Copy Rb (1 group element) to output */
 	ge_p3_tobytes((unsigned char *)output, &R);
+	
+	/* Signature of Rb (2 group elements) */
 	themis_status = ed_point_sign(8, comp_ctx->rand3, &Qa, ((unsigned char *)output) + ED25519_GE_LENGTH);
 	if (THEMIS_SUCCESS != themis_status)
 	{
@@ -851,6 +947,11 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t *comp_ctx
 	}
 
 	memset(comp_ctx->secret, 0, sizeof(comp_ctx->secret));
+	
+	/* Finally Bob sends to Alice on 4 step:
+	 * Rb || Rb signature
+	 * Bob proceeds 4 step, finishs and gets result, Alice proceeds 5 step, finishes and gets result. 
+	 */
 	comp_ctx->state_handler = NULL;
 
 	return THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER;
@@ -864,11 +965,15 @@ static themis_status_t secure_comparator_alice_step5(secure_comparator_t *comp_c
 	ge_p3 Rab;
 	ge_p3 Pa_Pb;
 
+	/* Input validation from Bob's 4 step (amount of group elements in brackets):
+	 * Rb (1) || Rb signature (2)
+	 * */
 	if (input_length < (3 * ED25519_GE_LENGTH))
 	{
 		return THEMIS_INVALID_PARAMETER;
 	}
 
+	/* Extract Rb from input*/ 
 	if (ge_frombytes_vartime(&Rb, (const unsigned char *)input))
 	{
 		return THEMIS_INVALID_PARAMETER;
@@ -882,7 +987,7 @@ static themis_status_t secure_comparator_alice_step5(secure_comparator_t *comp_c
 	}
 
 	*output_length = 0;
-
+	/* Verification of Rb signature  */
 	themis_status = ed_point_verify(8, &(comp_ctx->g3p), &(comp_ctx->Qa_Qb), &Rb, ((unsigned char *)input) + ED25519_GE_LENGTH);
 	if (THEMIS_INVALID_SIGNATURE == themis_status)
 	{
@@ -899,6 +1004,7 @@ static themis_status_t secure_comparator_alice_step5(secure_comparator_t *comp_c
 		comp_ctx->result = THEMIS_SCOMPARE_NO_MATCH;
 	}
 
+	/* Alice finishes */
 	ge_p3_sub(&Pa_Pb, &(comp_ctx->P), &(comp_ctx->Pp));
 
 	if (THEMIS_SCOMPARE_NOT_READY == comp_ctx->result)
@@ -954,3 +1060,4 @@ themis_status_t secure_comparator_get_result(const secure_comparator_t *comp_ctx
 
 	return comp_ctx->result;
 }
+
