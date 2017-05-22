@@ -116,7 +116,7 @@ endif
 
 GIT_VERSION := $(shell if [ -d ".git" ]; then git version; fi 2>/dev/null)
 ifdef GIT_VERSION
-	THEMIS_VERSION = themis-$(shell git describe --tags $(shell git rev-list --tags --max-count=1))-$(shell git log --pretty=format:'%h' -n 1)
+	THEMIS_VERSION = themis-$(shell git describe --tags HEAD | cut -b 1-)
 else
 	THEMIS_VERSION = themis-$(shell date -I)
 endif
@@ -276,7 +276,7 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 	@$(BUILD_CMD)
 
 #$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
-$(AUD_PATH)/%: CMD = ./pp  $< $@
+$(AUD_PATH)/%: CMD = ./scripts/pp  $< $@
 
 $(AUD_PATH)/%: $(SRC_PATH)/%
 	@mkdir -p $(@D)
@@ -337,6 +337,9 @@ install_shared_libs: err all make_install_dirs
 	@$(BUILD_CMD_)
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
+
+get_themis_version:
+	@echo $(THEMIS_VERSION)
 
 dist:
 	mkdir -p $(THEMIS_VERSION)
@@ -428,4 +431,3 @@ themispp_uninstall: CMD = rm -rf $(PREFIX)/include/themispp
 themispp_uninstall: 
 	@echo -n "themispp uninstall "
 	@$(BUILD_CMD_)
-
