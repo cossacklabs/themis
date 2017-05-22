@@ -33,7 +33,7 @@
  * 
  * To prevent these situations, additional security proofs and verifications should be done on each step of the protocol. 
  * These proofs are implemented in functions below:
- *  git s
+ *
  * ed_sign / ed_verify                   -> Proof of knowledge of EC discrete logarithm (section 5.3.1 in paper);
  * ed_dbl_base_sign / ed_dbl_base_verify -> Proof of knowledge of EC discrete coordinates (section 5.3.2 in paper);
  * ed_point_sign / ed_point_verify       -> Proof of knowledge of EC discrete logarithms (section 5.3.3 in paper).
