@@ -31,7 +31,8 @@ typedef themis_status_t (*secure_compare_handler)(secure_comparator_t *comp_ctx,
  * secret             -> value to compare of each peer (x - for Alice, y - for Bob)
  * rand, rand2, rand3 -> random values of each peer(r, a2, a3 - for Alice; s, b2, b3 - for Bob)
  * g2, g3, P, Q       -> intermediate parameters of each peer while protocol execution (G2a, G3a, Pa, Qa - for Alice; G2b, G3b, Pb, Qb - for Bob)
- * Pp, Qa_Qb, g3p     -> temporable parameters
+ * Pp, g3p            -> intermediate parameters received from your peer
+ * Qa_Qb              -> local temporary intermediate parameter
  *   
  */
 struct secure_comparator_type
