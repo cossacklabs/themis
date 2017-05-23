@@ -41,7 +41,6 @@
 #include <soter/soter_hash.h>
 #include <soter/soter_hmac.h>
 #include <soter/soter_sym.h>
-#include <soter/soter_rsa_key_pair_gen.h>
 #include <soter/soter_asym_cipher.h>
 #include <soter/soter_asym_ka.h>
 #include <soter/soter_asym_sign.h>

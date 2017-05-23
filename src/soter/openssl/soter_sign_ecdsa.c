@@ -27,7 +27,7 @@
 
 soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
 {
-  /* pkey_ctx init */  
+  /* pkey_ctx init */
   EVP_PKEY *pkey;
   pkey = EVP_PKEY_new();
   if (!pkey){
