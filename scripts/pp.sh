@@ -116,6 +116,6 @@ echo "#define SOTER_ERROR_OUT(message)
 #define THEMIS_CHECK__(cond, on_fail_call) do{if(!(cond)){on_fail_call;}}while(0)
 " > /tmp/code.c
 grep -Pv '^\s*#\s*include\b' $file_name >> /tmp/code.c
-gcc -I src -E /tmp/code.c | grep -v ^# > /tmp/preprocessed.c
+gcc -I src -E -CC /tmp/code.c | grep -v ^# > /tmp/preprocessed.c
 cat /tmp/include.c > $2
 cat /tmp/preprocessed.c >> $2
