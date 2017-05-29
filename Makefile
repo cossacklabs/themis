@@ -22,6 +22,7 @@ else
 	BIN_PATH = build
 endif
 OBJ_PATH = $(BIN_PATH)/obj
+AUD_PATH = $(BIN_PATH)/for_audit
 TEST_SRC_PATH = tests
 TEST_BIN_PATH = $(BIN_PATH)/tests
 TEST_OBJ_PATH = $(TEST_BIN_PATH)/obj
@@ -116,6 +117,12 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
 
+GIT_VERSION := $(shell if [ -d ".git" ]; then git version; fi 2>/dev/null)
+ifdef GIT_VERSION
+	THEMIS_VERSION = themis-$(shell git describe --tags HEAD | cut -b 1-)
+else
+	THEMIS_VERSION = themis-$(shell date -I)
+endif
 PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
@@ -176,6 +183,7 @@ endif
 
 
 all: err themis_static themis_shared
+	echo $(THEMIS_VERSION)
 
 test_all: err test
 ifdef PHP_VERSION
@@ -270,6 +278,14 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
+#$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
+$(AUD_PATH)/%: CMD = ./scripts/pp.sh  $< $@
+
+$(AUD_PATH)/%: $(SRC_PATH)/%
+	@mkdir -p $(@D)
+	@echo -n "compile "
+	@$(BUILD_CMD)
+
 $(TEST_OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR)) -I$(TEST_SRC_PATH) -c $< -o $@
 
 $(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
@@ -330,6 +346,30 @@ install_shared_libs: err all make_install_dirs
 	@$(BUILD_CMD_)
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
+
+get_themis_version:
+	@echo $(THEMIS_VERSION)
+
+dist:
+	mkdir -p $(THEMIS_VERSION)
+	rsync -avz src $(THEMIS_VERSION)
+	rsync -avz docs $(THEMIS_VERSION)
+	rsync -avz gothemis $(THEMIS_VERSION)
+	rsync -avz gradle $(THEMIS_VERSION)
+	rsync -avz jni $(THEMIS_VERSION)
+	rsync -avz --exclude 'tests/soter/nist-sts/assess' tests $(THEMIS_VERSION)
+	rsync -avz CHANGELOG.md $(THEMIS_VERSION)
+	rsync -avz LICENSE $(THEMIS_VERSION)
+	rsync -avz Makefile $(THEMIS_VERSION)
+	rsync -avz README.md $(THEMIS_VERSION)
+	rsync -avz build.gradle $(THEMIS_VERSION)
+	rsync -avz gradlew $(THEMIS_VERSION)
+	rsync -avz themis.podspec $(THEMIS_VERSION)
+	tar -zcvf $(THEMIS_VERSION).tar.gz $(THEMIS_VERSION) 
+	rm -rf $(THEMIS_VERSION)
+
+for-audit: $(SOTER_AUD) $(THEMIS_AUD)
+
 
 phpthemis_uninstall: CMD = if [ -e src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
 
@@ -400,4 +440,3 @@ themispp_uninstall: CMD = rm -rf $(PREFIX)/include/themispp
 themispp_uninstall: 
 	@echo -n "themispp uninstall "
 	@$(BUILD_CMD_)
-
