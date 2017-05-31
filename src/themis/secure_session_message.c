@@ -27,6 +27,8 @@
 #include <arpa/inet.h>
 #include "portable_endian.h"
 
+#include <assert.h>
+
 #define THEMIS_SESSION_WRAP_TAG "TSWM"
 
 /* How much sequence number may differ from expected for message to be considered valid */
@@ -208,19 +210,24 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 			((uint8_t *)message)[i] = iv[CIPHER_MAX_BLOCK_SIZE + sizeof(message_header) + i] ^ 0xff;
 		}
 	}*/
-
-	res = soter_sym_aead_decrypt_update(sym_ctx, iv + SOTER_SYM_AEAD_DEFAULT_ALG_MAX_BLOCK_SIZE + sizeof(message_header), *message_length, message, message_length);
+        uint8_t* unwrapped_message = malloc(*message_length);
+        assert(unwrapped_message);
+	res = soter_sym_aead_decrypt_update(sym_ctx, iv + SOTER_SYM_AEAD_DEFAULT_ALG_MAX_BLOCK_SIZE + sizeof(message_header), *message_length, unwrapped_message, message_length);
 	if (THEMIS_SUCCESS != res)
 	{
-		goto err;
+          free(unwrapped_message);
+          goto err;
 	}
 
 	res = soter_sym_aead_decrypt_final(sym_ctx, iv + SOTER_SYM_AEAD_DEFAULT_ALG_MAX_BLOCK_SIZE + sizeof(message_header) + *message_length, SOTER_SYM_AEAD_DEFAULT_ALG_AUTH_TAG_SIZE);
 	if (THEMIS_SUCCESS != res)
 	{
-		goto err;
+          free(unwrapped_message);
+          goto err;
 	}
 
+        memcpy(message, unwrapped_message, *message_length);
+        free(unwrapped_message);
 	session_ctx->in_seq = seq;
 
 err:

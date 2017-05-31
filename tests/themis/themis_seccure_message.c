@@ -230,7 +230,6 @@ static void secure_message_api_test(void)
     return;
   }
 
-  fprintf(stderr, "%p, %u\n", plaintext, plaintext_length);
   
   testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_wrap(NULL, priv_length, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid private key");
   testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_wrap(priv, priv_length - 1, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid private key length");
@@ -263,7 +262,6 @@ static void secure_message_api_test(void)
     return;
   }
 
-  fprintf(stderr, "%p, %u\n", plaintext, plaintext_length);
  
   testsuite_fail_unless((decryptext_length == plaintext_length), "generic secure message: normal flow");
   testsuite_fail_unless((!memcmp(plaintext, decryptext, plaintext_length)), "generic secure message: normal flow 2");

@@ -322,11 +322,8 @@ static int client_function_no_transport(void)
                     return TEST_STOP_ERROR;
                   }
 
-                length_to_send = strlen("Test_message aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")+1;
-                memcpy(data_to_send, "Test_message aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", length_to_send);
 		bytes_sent = sizeof(data_to_send);
 		res = secure_session_wrap((client.session), data_to_send, length_to_send, enc_data_to_send, (size_t*)(&bytes_sent));
-                fprintf(stderr, "client send %u %u %u\n", res, bytes_sent, length_to_send);
 		if (THEMIS_SUCCESS != res)
 		{
 			testsuite_fail_if(res, "secure_session_wrap failed");
@@ -351,7 +348,6 @@ static int client_function_no_transport(void)
 
 		bytes_sent = 0;
 		res = secure_session_unwrap((client.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_sent));
-                fprintf(stderr, "client %u %u\n", res, bytes_sent);
 		if (THEMIS_SUCCESS == res)
 		{
 			if (secure_session_is_established((client.session)))
@@ -442,7 +438,6 @@ static void server_function_no_transport(void)
 	{
 		bytes_received = on_receive_data(recv_buf, sizeof(recv_buf), NULL);
 		res = secure_session_unwrap((server.session), recv_buf, bytes_received, recv_buf, (size_t*)(&bytes_unwrapped));
-                fprintf(stderr, "%u %u %u\n", res, bytes_received, bytes_unwrapped);
 	}
 	else
 	{
