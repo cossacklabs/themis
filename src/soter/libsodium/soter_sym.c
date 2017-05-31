@@ -88,8 +88,8 @@ soter_status_t soter_sym_ctx_update(soter_sym_ctx_t *ctx,
     return SOTER_FAIL;
   }
   *out_data_length=in_data_length;
-  ++(*((uint64_t*)(ctx->nonce)));
-  ++(ctx->count);
+//  ++(*((uint64_t*)(ctx->nonce)));
+//  ++(ctx->count);
   return SOTER_SUCCESS;
 }
 

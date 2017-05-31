@@ -37,12 +37,13 @@
  * @brief supported symmetric encryption/decription algorithms definitions
  * @{
  */
+
 #define SOTER_SYM_AEAD_SYM_CHACHA20_POLY1305 0x10000000
 #define SOTER_SYM_AEAD_DEFAULT_ALG SOTER_SYM_AEAD_SYM_CHACHA20_POLY1305
 #define SOTER_SYM_AEAD_DEFAULT_ALG_KEY_LENGTH (crypto_aead_chacha20poly1305_KEYBYTES*8)
-#define SOTER_SYM_AEAD_DEFAULT_ALG_IV_SIZE crypto_secretbox_NONCEBYTES
+#define SOTER_SYM_AEAD_DEFAULT_ALG_IV_SIZE crypto_secretbox_NONCEBYTES //chacha20 has no iv - this is salt length
 #define SOTER_SYM_AEAD_DEFAULT_ALG_AUTH_TAG_SIZE crypto_aead_chacha20poly1305_ABYTES
-#define SOTER_SYM_AEAD_DEFAULT_ALG_MAX_BLOCK_SIZE 16
+#define SOTER_SYM_AEAD_DEFAULT_ALG_MAX_BLOCK_SIZE crypto_secretbox_NONCEBYTES
 
 #define SOTER_SYM_DEFAULT_ALG 0
 #define SOTER_SYM_DEFAULT_ALG_KEY_LENGTH 0

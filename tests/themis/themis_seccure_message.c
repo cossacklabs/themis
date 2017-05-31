@@ -185,7 +185,7 @@ static void secure_message_api_test(void)
   uint8_t plaintext[MAX_MESSAGE_SIZE];
   size_t plaintext_length = 2048; //rand_int(MAX_MESSAGE_SIZE);
   
-  uint8_t ciphertext[MAX_MESSAGE_SIZE+52]; //chipther text allwais bigger then plain text (24 bytes of header + 12 bytes of iv + 16 bytes of auth_tag)
+  uint8_t ciphertext[2*MAX_MESSAGE_SIZE]; //chipther text allwais bigger then plain text
   size_t ciphertext_length = sizeof(ciphertext);
 
   uint8_t decryptext[MAX_MESSAGE_SIZE];
@@ -229,6 +229,8 @@ static void secure_message_api_test(void)
     testsuite_fail_if(true, "soter_rand fail");
     return;
   }
+
+  fprintf(stderr, "%p, %u\n", plaintext, plaintext_length);
   
   testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_wrap(NULL, priv_length, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid private key");
   testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_wrap(priv, priv_length - 1, peer_pub, peer_pub_length, plaintext, plaintext_length, ciphertext, &ciphertext_length), "themis_secure_message_wrap: invalid private key length");
@@ -254,12 +256,15 @@ static void secure_message_api_test(void)
   testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: get output size (small out buffer)");
   testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, NULL, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: treating encrypted message as signed (NULL peer public key)");
   testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, 0, ciphertext, ciphertext_length, decryptext, &decryptext_length), "themis_secure_message_unwrap: treating encrypted message as signed (zero peer public key length)");
+  memset(decryptext, 0, decryptext_length);
   res = themis_secure_message_unwrap(peer_priv, peer_priv_length, pub, pub_length, ciphertext, ciphertext_length, decryptext, &decryptext_length);
   if (THEMIS_SUCCESS != res){
     testsuite_fail_if(true, "themis_secure_message_unwrap fail");
     return;
   }
 
+  fprintf(stderr, "%p, %u\n", plaintext, plaintext_length);
+ 
   testsuite_fail_unless((decryptext_length == plaintext_length), "generic secure message: normal flow");
   testsuite_fail_unless((!memcmp(plaintext, decryptext, plaintext_length)), "generic secure message: normal flow 2");
 }
