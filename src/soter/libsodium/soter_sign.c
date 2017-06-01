@@ -132,6 +132,7 @@ soter_sign_ctx_t* soter_sign_create(const void* private_key, const size_t privat
   soter_sign_ctx_t* ctx=calloc(sizeof(soter_sign_ctx_t), 1);
   assert(ctx);
   if(SOTER_SUCCESS!=soter_sign_init(ctx, private_key, private_key_length)){
+    free(ctx);
     return NULL;
   }
   return ctx;
@@ -144,6 +145,7 @@ soter_sign_ctx_t* soter_verify_create(const void* public_key, const size_t publi
   soter_sign_ctx_t* ctx=calloc(sizeof(soter_sign_ctx_t), 1);
   assert(ctx);
   if(SOTER_SUCCESS!=soter_verify_init(ctx, public_key, public_key_length)){
+    free(ctx);
     return NULL;
   }
   return ctx;

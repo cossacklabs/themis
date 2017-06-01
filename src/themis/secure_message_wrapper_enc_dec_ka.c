@@ -41,6 +41,7 @@ themis_secure_message_ka_t* themis_secure_message_ka_encrypter_init(const uint8_
   ctx->shared_secret_length=sizeof(ctx->shared_secret);
   soter_asym_ka_t* km=soter_asym_ka_create(private_key, private_key_length);
   if(!km){
+    themis_secure_message_ka_encrypter_destroy(ctx);
     return NULL;
   }
   if(THEMIS_SUCCESS!=soter_asym_ka_derive(km, peer_public_key, peer_public_key_length, ctx->shared_secret, &ctx->shared_secret_length)){

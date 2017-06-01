@@ -69,15 +69,18 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, const int8_t* ke
   if (1 != EVP_PKEY_paramgen_init(asym_ka_ctx->pkey_ctx))
     {
       EVP_PKEY_free(pkey);
+      EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
       return SOTER_FAIL;
     }
   if (1 != EVP_PKEY_CTX_set_ec_paramgen_curve_nid(asym_ka_ctx->pkey_ctx, nid)){
     EVP_PKEY_free(pkey);
+    EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
     return SOTER_FAIL;
   }
 
   if (1 != EVP_PKEY_paramgen(asym_ka_ctx->pkey_ctx, &pkey)){
     EVP_PKEY_free(pkey);
+    EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
     return SOTER_FAIL;
   }
   if (soter_key_is_private(key, key_length)){
@@ -93,10 +96,10 @@ soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
   }
   if (asym_ka_ctx->pkey_ctx){
     EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
-    EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
     if(pkey){
       EVP_PKEY_free(pkey);
     }
+    EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
   }
   return SOTER_SUCCESS;
 }
@@ -106,7 +109,7 @@ soter_asym_ka_t* soter_asym_ka_create(const int8_t* key, const size_t key_length
   soter_asym_ka_t *ctx = malloc(sizeof(soter_asym_ka_t));
   assert(ctx);
   if(SOTER_SUCCESS != soter_asym_ka_init(ctx, key, key_length)) {
-    free(ctx);
+    soter_asym_ka_destroy(ctx);
     return NULL;
   }
   return ctx;
