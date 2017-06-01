@@ -1038,7 +1038,7 @@ bool secure_session_is_established(const secure_session_t *session_ctx)
 }
 
 themis_status_t secure_session_get_remote_id(const secure_session_t* session_ctx, uint8_t* id, size_t* id_length){
-    if(!session_ctx){
+    if(!session_ctx || !id_length){
 	return THEMIS_INVALID_PARAMETER;
     }
     if(!id || (*id_length)<(session_ctx->peer.id_length)){
