@@ -64,7 +64,7 @@ test:
 #    - build_with_boringssl/tests/themis_test
 
 #libsodium
-    - LD_LIBRARY_PATH=$HOME/libsodium/src/libsodium/.libs build_with_libsoduim/tests/soter_test
+    - LD_LIBRARY_PATH=$HOME/libsodium/src/libsodium/.libs build_with_libsodium/tests/soter_test
     - LD_LIBRARY_PATH=$HOME/libsodium/src/libsodium/.libs build_with_libsodium/tests/themis_test
 
 #    - build/tests/themispp_test
