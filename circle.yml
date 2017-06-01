@@ -26,7 +26,7 @@ dependencies:
 #    - cd $HOME/boringssl && mkdir build-x86 && cd build-x86 && cmake -DANDROID_ABI=x86 -DCMAKE_TOOLCHAIN_FILE=../third_party/android-cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=16 -GNinja .. && ninja 
 #    - make ENGINE=boringssl ENGINE_INCLUDE_PATH=$HOME/boringssl/include ENGINE_LIB_PATH=$HOME/boringssl/build/crypto BUILD_PATH=build_with_boringssl test
 #libsoduim
-    - cd $HOME && git clone https://github.com/jedisct1/libsodium --branch stable && cd libsodium && mkdir build && cd build && cmake .. && make && cp decrepit/libdecrepit.a crypto/
+    - cd $HOME && git clone https://github.com/jedisct1/libsodium --branch stable && cd libsodium && ./configure && make
     - make ENGINE=libsodium ENGINE_INCLUDE_PATH=$HOME/libsodium/src/libsodium/include/ ENGINE_LIB_PATH=$HOME/libsodium/src/libsodium/.libs/ BUILD_PATH=build_with_libsodium test
 #code_coverage
 #    - make BUILD_PATH=cover_build COVERAGE=y test
