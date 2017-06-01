@@ -13,8 +13,8 @@ dependencies:
 
   override:
     - make
-    - make JAVA_HOME=/usr/lib/jvm/default-java themis_jni
-    - sudo make install
+#    - make JAVA_HOME=/usr/lib/jvm/default-java themis_jni
+#    - sudo make install
 #    - sudo make themispp_install
 #    - sudo make pythemis_install
 #    - sudo make rubythemis_install
@@ -51,8 +51,8 @@ test:
 #    - coveralls-lcov -v --repo-token $COVERALLS_TOKEN coverage.info
 #    - build_with_boringssl/tests/soter_test
 #    - build_with_boringssl/tests/themis_test
-    - LD_LIBRARY_PATH=$HOME/libsodium/src/libsodium/.libs:build_with_libsoduim build_with_libsoduim/tests/soter_test
-    - LD_LIBRARY_PATH=$HOME/libsodium/src/libsodium/.libs:build_with_libsoduim build_with_libsodium/tests/themis_test
+    - LD_LIBRARY_PATH=$HOME/libsodium/src/libsodium/.libs build_with_libsoduim/tests/soter_test
+    - LD_LIBRARY_PATH=$HOME/libsodium/src/libsodium/.libs build_with_libsodium/tests/themis_test
 #    - build/tests/themispp_test
 #    - sudo /sbin/ldconfig
 #    - build/tests/pythemis_test.sh
