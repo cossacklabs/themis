@@ -1,0 +1,13 @@
+#!/usr/bin/gnuplot
+reset
+set title 'ssession'
+set ylabel 'encription-decription time'
+set xlabel 'bytes in message'
+set grid
+set datafile separator ";"
+set terminal png
+#set key at screen 0.5,screen 0.1
+set key center center
+set key font ",8"
+plot "ssession.csv" using 1:2 with linespoints ls 1 title "openssl",\
+     "ssession.csv" using 1:3 with linespoints ls 2 title "libsodium"
