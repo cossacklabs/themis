@@ -143,6 +143,31 @@ typedef int soter_status_t;
   }							\
   }
 
+
+#define SOTER_CHECK_IN_PARAM(c)                         \
+  do{                                                   \
+    if(!(c)){                                           \
+      return SOTER_INVALID_PARAMETER;                   \
+    }                                                   \
+  }while(0)
+
+#define SOTER_CHECK_IN_BUF_PARAM(buf, buf_len, needed_buf_len)  \
+  SOTER_CHECK_IN_PARAM(buf);                                    \
+  SOTER_CHECK_IN_PARAM(buf_len)                                 \
+  SOTER_CHECK_IN_PARAM(buf_len>=needed_buf_len)
+
+#define SOTER_CHECK_IN_BUF_PARAM_NON_EMPTY(buf, buf_len)  \
+  SOTER_CHECK_IN_PARAM(buf);                              \
+  SOTER_CHECK_IN_PARAM(buf_len)                                 
+
+#define SOTER_CHECK_OUT_BUF_PARAM(buf, buf_len, needed_buf_len)         \
+  do{                                                                   \
+    if(!(buf) || (*buf_len)<(needed_buf_len)){                          \
+      *(buf_len)=(needed_buf_len);                                      \
+      return SOTER_BUFFER_TOO_SMALL;                                    \
+    }                                                                   \
+  }while(0)
+
 /** @} 
  * @}
  */

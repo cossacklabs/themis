@@ -30,14 +30,19 @@ struct soter_hash_ctx_type
 struct soter_sym_ctx_type{
   uint32_t alg;
   union{
-    br_block_ctr_class ctr;
+    br_aes_big_ctr_keys aes_ctr_256;
   } impl;
+  union{
+    uint8_t aes_ctr_256[SOTER_SYM_AES_CTR_256_IV_SIZE];
+  }nonce;
 };
 
 struct soter_sym_aead_ctx_type{
-  uint32_t alg;
   soter_sym_ctx_t cypher;
-  br_ghash gcm;
+  bool state;
+  union{
+    uint8_t aes_gcm_256[SOTER_SYM_AEAD_SYM_AES_GCM_256_AUTH_TAG_SIZE];
+  }tag;
 };
 
 struct soter_asym_cipher_type{
