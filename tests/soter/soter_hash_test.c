@@ -93,7 +93,7 @@ static void test_known_values(void)
 
 		soter_hash_destroy(ctx);
 
-#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL) 
+#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL) || defined(BEARSSL) 
 		testsuite_fail_if((hash_len != sizeof(result)) || (memcmp(hash, result, hash_len)), "hash == know value");
 #endif
 	}

@@ -23,7 +23,7 @@
 
 soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, int32_t algo, const uint8_t* key, size_t key_length)
 {
-	size_t block_size = hash_block_size(algo);
+	size_t block_size = soter_hash_block_size(algo);
 	uint8_t i_key_pad[HASH_MAX_BLOCK_SIZE];
 	soter_status_t res;
 	size_t i;

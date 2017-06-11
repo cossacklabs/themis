@@ -134,26 +134,27 @@ typedef int soter_status_t;
   }							\
   }
 
-#define SOTER_STATUS_CHECK_FREE(x,y,z){		\
-  int res=x;					\
-  if(res!=y){					\
-     SOTER_ERROR_OUT(#x);				\
-     free(z);						\
-     return res;					\
-  }							\
+#define SOTER_STATUS_CHECK_FREE(x,y,z) {                  \
+    int res=x;                                            \
+    if(res!=y){                                           \
+      SOTER_ERROR_OUT(#x);                                \
+      free(z);                                            \
+      return res;                                         \
+    }                                                     \
   }
 
 
 #define SOTER_CHECK_IN_PARAM(c)                         \
   do{                                                   \
-    if(!(c)){                                           \
+    if(!(c)){                  \
+      fprintf(stderr, "error %s - %s:%i\n", #c, __FILE__, __LINE__);    \
       return SOTER_INVALID_PARAMETER;                   \
     }                                                   \
   }while(0)
 
 #define SOTER_CHECK_IN_BUF_PARAM(buf, buf_len, needed_buf_len)  \
   SOTER_CHECK_IN_PARAM(buf);                                    \
-  SOTER_CHECK_IN_PARAM(buf_len)                                 \
+  SOTER_CHECK_IN_PARAM(buf_len);                                \
   SOTER_CHECK_IN_PARAM(buf_len>=needed_buf_len)
 
 #define SOTER_CHECK_IN_BUF_PARAM_NON_EMPTY(buf, buf_len)  \

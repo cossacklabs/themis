@@ -17,6 +17,8 @@
 #include "soter_test.h"
 #include <string.h>
 
+#include <soter/soter.h>
+
 #define TEST_DATA_SIZE 70
 
 static void test_basic_encryption_flow(void)
@@ -47,7 +49,8 @@ static void test_basic_encryption_flow(void)
 		testsuite_fail_unless(SOTER_SUCCESS == res, "generate test data");
 		return;
 	}
-	res = soter_key_pair_gen(SOTER_ASYM_CIPHER_DEFAULT_ALG, private_key_data, &private_key_data_length, public_key_data, &public_key_data_length);
+	
+        res = soter_key_pair_gen(SOTER_ASYM_CIPHER_DEFAULT_ALG, private_key_data, &private_key_data_length, public_key_data, &public_key_data_length);
 	if(res!=SOTER_SUCCESS){
 		testsuite_fail_if(res!=SOTER_SUCCESS, "export generated public key");
 		return;

@@ -38,7 +38,7 @@ typedef struct soter_asym_ka_type soter_asym_ka_t;
  * @param [in] alg algorithm to use. See @ref soter_asym_ka_alg_type
  * @return pointer to created key agreement context on success or NULL on failure
  */
-soter_asym_ka_t* soter_asym_ka_create(const int8_t* key, const size_t key_length);
+soter_asym_ka_t* soter_asym_ka_create(const uint8_t* key, const size_t key_length);
 
 /**
  * @brief derive shared secret from key agreement context

@@ -27,6 +27,7 @@
 #include <arpa/inet.h>
 #include "portable_endian.h"
 
+#include <time.h>
 #include <assert.h>
 
 #define THEMIS_SESSION_WRAP_TAG "TSWM"

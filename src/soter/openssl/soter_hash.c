@@ -20,7 +20,7 @@
 #include "soter_engine_consts.h"
 #include <openssl/evp.h>
 
-size_t hash_block_size(int32_t algo)
+size_t soter_hash_block_size(int32_t algo)
 {
     switch (algo)
     {

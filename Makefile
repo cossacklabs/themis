@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-#CC = clang
+CC = clang
 SRC_PATH = src
 ifneq ($(BUILD_PATH),)
 	BIN_PATH = $(BUILD_PATH)
@@ -79,6 +79,9 @@ else ifeq ($(ENGINE), boringssl)
 else ifeq ($(ENGINE), libsodium)
 	CRYPTO_ENGINE_DEF = LIBSODIUM
 	CRYPTO_ENGINE_PATH=libsodium
+else ifeq ($(ENGINE), bearssl)
+	CRYPTO_ENGINE_DEF = BEARSSL
+	CRYPTO_ENGINE_PATH=bearssl
 else
 	ERROR = $(error error: engine $(ENGINE) unsupported...)
 endif

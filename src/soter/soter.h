@@ -43,6 +43,7 @@
 #include <soter/soter_hmac.h>
 #include <soter/soter_sym.h>
 #include <soter/soter_asym_cipher.h>
+#include <soter/soter_asym_key.h>
 #include <soter/soter_asym_ka.h>
 #include <soter/soter_asym_sign.h>
 #include <soter/soter_kdf.h>

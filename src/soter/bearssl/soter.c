@@ -16,8 +16,6 @@
 
 #include <soter/soter.h>
 
-#include <sodium.h>
-
 #include <stdio.h>
 #include <string.h>
 
@@ -25,7 +23,13 @@
 
 char soter_version_text[256]=SOTER_VERSION_TEXT;
 
+/*
+    bearssl has not specified API function for version retrieve
+*/
+
+#define BEARSSL_VERSION "bearssl"
+
 const char* soter_version(){
-  memcpy(soter_version_text+SOTER_VERSION_TEXT_LENGTH-1, sodium_version_string(), strlen(sodium_version_string())+1);
+  memcpy(soter_version_text+SOTER_VERSION_TEXT_LENGTH-1, BEARSSL_VERSION, strlen(BEARSSL_VERSION)+1);
     return soter_version_text;
 }

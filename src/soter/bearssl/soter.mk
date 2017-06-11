@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Cossack Labs Limited
+# Copyright (c) 2017 Cossack Labs Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,13 +16,10 @@
 
 SOTER_SRC += $(wildcard $(CRYPTO_ENGINE)/*.c)
 
-# Put path to your OpenSSL/LibreSSL here
-OPENSSL_DIR = libs/librebin
-
 ifneq ($(CRYPTO_ENGINE_INCLUDE_PATH),)
 	CFLAGS += -I$(CRYPTO_ENGINE_INCLUDE_PATH)
 endif
 ifneq ($(CRYPTO_ENGINE_LIB_PATH),)
 	LDFLAGS += -L$(CRYPTO_ENGINE_LIB_PATH)
 endif
-LDFLAGS += -lsodium
+LDFLAGS += -lbearssl

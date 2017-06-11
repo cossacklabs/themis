@@ -19,7 +19,6 @@
 #include <soter/error.h>
 #include <soter/soter.h>
 #include "soter_engine.h"
-#include <sodium.h>
 
 soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const void* plain_data, size_t plain_data_length, void* cipher_data, size_t* cipher_data_length){
     return SOTER_NOT_SUPPORTED;

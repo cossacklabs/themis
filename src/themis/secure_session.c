@@ -305,7 +305,7 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	peer_ecdh_key = (const soter_container_hdr_t *)(soter_container_const_data(peer_id) + soter_container_data_size(peer_id));
 	peer_ecdh_key_length = soter_container_data_size(peer_ecdh_key) + sizeof(soter_container_hdr_t);
 
-	if (soter_key_is_private(peer_ecdh_key, peer_ecdh_key_length) /*todo check*/){
+	if (soter_key_is_private((const uint8_t*)peer_ecdh_key, peer_ecdh_key_length) /*todo check*/){
 		return THEMIS_INVALID_PARAMETER;
 	}
 
@@ -319,7 +319,7 @@ static themis_status_t secure_session_accept(secure_session_t *session_ctx, cons
 	peer_sign_key = (const soter_container_hdr_t *)sign_key;
 	sign_key_length = ntohl(peer_sign_key->size);
 
-	if (soter_key_is_private(peer_sign_key, sign_key_length) /*todo check*/){
+	if (soter_key_is_private((const uint8_t*)peer_sign_key, sign_key_length) /*todo check*/){
           return THEMIS_INVALID_PARAMETER;
 	}
 
@@ -480,7 +480,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	peer_ecdh_key = (const soter_container_hdr_t *)(soter_container_const_data(peer_id) + soter_container_data_size(peer_id));
 	peer_ecdh_key_length = ntohl(peer_ecdh_key->size);
 
-        if (soter_key_is_private(peer_ecdh_key, peer_ecdh_key_length) /*todo check*/){
+        if (soter_key_is_private((const uint8_t*)peer_ecdh_key, peer_ecdh_key_length) /*todo check*/){
           return THEMIS_INVALID_PARAMETER;
 	}
 
@@ -494,7 +494,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t *session_c
 	peer_sign_key = (const soter_container_hdr_t *)sign_key;
 	sign_key_length = ntohl(peer_sign_key->size);
 
-	if (soter_key_is_private(peer_sign_key, sign_key_length) /*todo check*/){
+	if (soter_key_is_private((const uint8_t*)peer_sign_key, sign_key_length) /*todo check*/){
           return THEMIS_INVALID_PARAMETER;
 	}
 

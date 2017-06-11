@@ -17,14 +17,18 @@
 #ifndef SOTER_ENGINE_H
 #define SOTER_ENGINE_H
 
+#include "soter_engine_consts.h"
+
 #include <soter/soter.h>
-#include <sodium.h>
-#include "soter_x25519_key.h"
-#include "soter_ed25519_key.h"
+#include <bearssl.h>
+#include "soter_ec_p256_m31_key.h"
 
 struct soter_hash_ctx_type
 {
-  crypto_generichash_state md_ctx;
+  uint32_t alg;
+  union{
+    br_sha256_context sha256;
+  } impl;
 };
 
 struct soter_sym_ctx_type{
@@ -38,10 +42,11 @@ struct soter_sym_ctx_type{
 };
 
 struct soter_sym_aead_ctx_type{
+  uint32_t alg;
   soter_sym_ctx_t cypher;
   bool state;
   union{
-    uint8_t aes_gcm_256[SOTER_SYM_AEAD_SYM_AES_GCM_256_AUTH_TAG_SIZE];
+    uint8_t aes_gcm_256[SOTER_SYM_AEAD_AES_GCM_256_AUTH_TAG_SIZE];
   }tag;
 };
 
@@ -50,15 +55,16 @@ struct soter_asym_cipher_type{
 };
 
 struct soter_asym_ka_type{
-    soter_x25519_priv_key_t pk;
+  union{
+    soter_ec_p256_m31_priv_key_t ec_p256_m31;
+  }pk;
 };
 
 struct soter_sign_ctx_type{
   union{
-    soter_ed25519_priv_key_t sk;
-    soter_ed25519_pub_key_t pk;
+    soter_ec_p256_m31_priv_key_t ec_p256_m31_sk;
+    soter_ec_p256_m31_pub_key_t ec_p256_m31_pk;
   }key;
-  crypto_sign_state state;
 };
 
 #endif /* SOTER_ENGINE_H */

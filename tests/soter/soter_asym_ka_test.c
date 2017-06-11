@@ -18,7 +18,7 @@
 #include <string.h>
 
 #define KEY_BUFFER_SIZE 2048
-#define SHARED_SECRET_BUFFER_SIZE 128
+#define SHARED_SECRET_BUFFER_SIZE 1024
 
 static void test_basic_ka_flow(void)
 {

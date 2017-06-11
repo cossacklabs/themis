@@ -28,7 +28,7 @@ soter_status_t soter_rand(uint8_t* buffer, size_t length)
 	clock_t seed=clock();
 
 	br_hmac_drbg_context rng;
-	br_hmac_drbg_init(&rng, &br_sha256_vtable, (void*)(&clock_t), sizeof(clock_t));
+	br_hmac_drbg_init(&rng, &br_sha256_vtable, (void*)(&seed), sizeof(clock_t));
 	
 	br_hmac_drbg_vtable.generate(&(rng.vtable), buffer, length);
 	return SOTER_SUCCESS;
