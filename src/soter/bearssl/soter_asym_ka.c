@@ -82,10 +82,10 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* ctx, const void* peer_key, 
       return res;
     }
     memcpy(shared_secret, pk.key, SOTER_EC_P256_M31_PUB_SIZE);
+    *shared_secret_length=SOTER_EC_P256_M31_PUB_SIZE;
     if(!br_ec_p256_m31.mul(shared_secret, *shared_secret_length, ctx->pk.ec_p256_m31.key, sizeof(ctx->pk.ec_p256_m31.key), 23)){
       return SOTER_FAIL;
     }
-    *shared_secret_length=SOTER_EC_P256_M31_PUB_SIZE;
     return SOTER_SUCCESS;
   }
     break;
