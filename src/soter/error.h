@@ -147,7 +147,6 @@ typedef int soter_status_t;
 #define SOTER_CHECK_IN_PARAM(c)                         \
   do{                                                   \
     if(!(c)){                  \
-      fprintf(stderr, "error %s - %s:%i\n", #c, __FILE__, __LINE__);    \
       return SOTER_INVALID_PARAMETER;                   \
     }                                                   \
   }while(0)
