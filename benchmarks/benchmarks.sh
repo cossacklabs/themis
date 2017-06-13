@@ -24,14 +24,17 @@ function benchmark {
 	echo -ne $i \\r
 	A=`{ time ./$1-openssl $i; } 2>&1 1>/dev/null`
 	B=`{ time ./$1-libsodium $i; } 2>&1 1>/dev/null`
+	C=`{ time ./$1-bearssl $i; } 2>&1 1>/dev/null`
 	for j in {2..10}
 	do
 	    AA=`{ time ./$1-openssl $i; } 2>&1 1>/dev/null`
 	    A=`echo \($A + $AA\)/2 | bc -l`
 	    BB=`{ time ./$1-libsodium $i; } 2>&1 1>/dev/null `
 	    B=`echo \($B + $BB\)/2 | bc -l`
+	    CC=`{ time ./$1-bearssl $i; } 2>&1 1>/dev/null `
+	    C=`echo \($C + $CC\)/2 | bc -l`
 	done
-	echo $i $A $B | awk '{OFS=";"};{print $1,$2,$3}' >>$1.csv
+	echo $i $A $B $C | awk '{OFS=";"};{print $1,$2,$3,$4}' >>$1.csv
     done
 }
 

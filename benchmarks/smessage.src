@@ -26,4 +26,5 @@ set terminal png
 set key center center
 set key font ",8"
 plot "smessage.csv" using 1:2 with linespoints ls 1 title "openssl",\
-     "smessage.csv" using 1:3 with linespoints ls 2 title "libsodium"
+     "smessage.csv" using 1:3 with linespoints ls 2 title "libsodium",\
+     "smessage.csv" using 1:4 with linespoints ls 3 title "bearssl"
