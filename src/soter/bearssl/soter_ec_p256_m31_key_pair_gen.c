@@ -36,13 +36,13 @@ soter_status_t soter_ec_p256_m31_key_pair_gen_init(soter_ec_p256_m31_key_pair_ge
   if(SOTER_SUCCESS!=soter_rand(ctx->priv.key, sizeof(ctx->priv.key))){
     return SOTER_FAIL;
   }
-  ctx->priv.impl.curve=23;
+  ctx->priv.impl.curve=BR_EC_secp256r1;
   ctx->priv.impl.x=ctx->priv.key;
   ctx->priv.impl.xlen=sizeof(ctx->priv.key);
-  ctx->pub.impl.curve=23;
+  ctx->pub.impl.curve=BR_EC_secp256r1;
   ctx->pub.impl.q=ctx->pub.key;
   ctx->pub.impl.qlen=sizeof(ctx->pub.key);
-  br_ec_p256_m31.mulgen(ctx->pub.key, ctx->priv.impl.x, ctx->priv.impl.xlen, 23);
+  br_ec_p256_m31.mulgen(ctx->pub.key, ctx->priv.impl.x, ctx->priv.impl.xlen, BR_EC_secp256r1);
 
   memcpy(ctx->priv.hdr.tag, SOTER_EC_P256_M31_PRIV_KEY_TAG, SOTER_CONTAINER_TAG_LENGTH);
   ctx->priv.hdr.size=htonl(sizeof(soter_ec_p256_m31_priv_key_t));

@@ -48,6 +48,9 @@ struct soter_sym_aead_ctx_type{
   union{
     uint8_t aes_gcm_256[SOTER_SYM_AEAD_AES_GCM_256_AUTH_TAG_SIZE];
   }tag;
+  union{
+    uint8_t aes_gcm_256[SOTER_SYM_AEAD_AES_GCM_256_AUTH_TAG_SIZE];
+  }h;
 };
 
 struct soter_asym_cipher_type{
@@ -61,10 +64,17 @@ struct soter_asym_ka_type{
 };
 
 struct soter_sign_ctx_type{
+  uint32_t alg;
   union{
-    soter_ec_p256_m31_priv_key_t ec_p256_m31_sk;
-    soter_ec_p256_m31_pub_key_t ec_p256_m31_pk;
+    union{
+      soter_ec_p256_m31_priv_key_t ec_p256_m31;
+    }sk;
+    union{
+      soter_ec_p256_m31_pub_key_t ec_p256_m31;
+    }pk;
   }key;
+  soter_hash_ctx_t hash;
 };
 
 #endif /* SOTER_ENGINE_H */
+

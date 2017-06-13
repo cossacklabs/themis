@@ -28,65 +28,95 @@
 
 #include <string.h>
 
+soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length){
+  SOTER_CHECK_IN_PARAM(ctx);
+  SOTER_CHECK_IN_PARAM(private_key);
+  SOTER_CHECK_IN_PARAM(private_key_length>sizeof(soter_container_hdr_t));
+  SOTER_CHECK_IN_PARAM(private_key_length==ntohl(((soter_container_hdr_t*)private_key)->size));
+  SOTER_CHECK_IN_PARAM(SOTER_SUCCESS==soter_verify_container_checksum((soter_container_hdr_t*)private_key));
+  soter_status_t res=SOTER_FAIL;
+  res = soter_hash_init(&(ctx->hash), SOTER_HASH_SHA_256);
+  if(SOTER_SUCCESS!=res){
+    return res;
+  }
+  ctx->alg=soter_key_get_alg_id(private_key, private_key_length);
+  switch(ctx->alg){
+  case SOTER_ASYM_EC_P256_M31:
+    res=soter_ec_p256_m31_byte_array_to_priv_key(private_key, private_key_length, &(ctx->key.sk.ec_p256_m31));
+    break;
+  default:
+    return SOTER_INVALID_PARAMETER;
+  }
+  return res;
+}
+
+soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, const void* public_key, const size_t public_key_length){
+  SOTER_CHECK_IN_PARAM(ctx);
+  SOTER_CHECK_IN_PARAM(public_key);
+  SOTER_CHECK_IN_PARAM(public_key_length>sizeof(soter_container_hdr_t));
+  SOTER_CHECK_IN_PARAM(public_key_length==ntohl(((soter_container_hdr_t*)public_key)->size));
+  SOTER_CHECK_IN_PARAM(SOTER_SUCCESS==soter_verify_container_checksum((soter_container_hdr_t*)public_key));
+  soter_status_t res=SOTER_FAIL;
+  res = soter_hash_init(&(ctx->hash), SOTER_HASH_SHA_256);
+  if(SOTER_SUCCESS!=res){
+    return res;
+  }
+  ctx->alg=soter_key_get_alg_id(public_key, public_key_length);
+  switch(ctx->alg){
+  case SOTER_ASYM_EC_P256_M31:
+    res=soter_ec_p256_m31_byte_array_to_pub_key(public_key, public_key_length, &(ctx->key.pk.ec_p256_m31));
+    break;
+  default:
+    return SOTER_INVALID_PARAMETER;
+  }
+  return res;
+}
+
+soter_status_t soter_sign_cleanup(soter_sign_ctx_t* ctx){
+  SOTER_CHECK_IN_PARAM(ctx);
+  memset(ctx, 0, sizeof(soter_sign_ctx_t));
+  return SOTER_SUCCESS;
+}
+
+soter_status_t soter_verify_cleanup(soter_sign_ctx_t* ctx){
+  SOTER_CHECK_IN_PARAM(ctx);
+  memset(ctx, 0, sizeof(soter_sign_ctx_t));
+  return SOTER_SUCCESS;
+}
+
 soter_status_t soter_sign(const void* private_key, const size_t private_key_length, const uint8_t* data, const size_t data_length, uint8_t* signature, size_t* signature_length){
   soter_sign_ctx_t ctx;
   soter_status_t res = SOTER_SUCCESS;
-  /* res = soter_sign_init(&ctx, private_key, private_key_length) ; */
-  /* if(SOTER_SUCCESS == res){ */
-  /*   res = soter_sign_update(&ctx, data, data_length); */
-  /*   if(SOTER_SUCCESS == res){ */
-  /*     res = soter_sign_final(&ctx, signature, signature_length); */
-  /*   } */
-  /* } */
-  /* soter_sign_cleanup(&ctx); */
+  res = soter_sign_init(&ctx, private_key, private_key_length) ;
+  if(SOTER_SUCCESS == res){
+    res = soter_sign_update(&ctx, data, data_length);
+    if(SOTER_SUCCESS == res){
+      res = soter_sign_final(&ctx, signature, signature_length);
+    }
+  }
+  soter_sign_cleanup(&ctx);
   return res;
 }
 
 soter_status_t soter_verify(const void* public_key, const size_t public_key_length, const int8_t* data, const size_t data_length, const int8_t* signature, const size_t signature_length){
   soter_verify_ctx_t ctx;
   soter_status_t res = SOTER_SUCCESS;
-  /* res = soter_verify_init(&ctx, public_key, public_key_length) ; */
-  /* if(SOTER_SUCCESS == res){ */
-  /*   res = soter_verify_update(&ctx, data, data_length); */
-  /*   if(SOTER_SUCCESS == res){ */
-  /*     res = soter_verify_final(&ctx, signature, signature_length); */
-  /*   } */
-  /* } */
-  /* soter_verify_cleanup(&ctx); */
+  res = soter_verify_init(&ctx, public_key, public_key_length) ;
+  if(SOTER_SUCCESS == res){
+    res = soter_verify_update(&ctx, data, data_length);
+    if(SOTER_SUCCESS == res){
+      res = soter_verify_final(&ctx, signature, signature_length);
+    }
+  }
+  soter_verify_cleanup(&ctx);
   return res;
 }
 
 
-soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length){
-  /* if(!ctx || !private_key || private_key_length<sizeof(soter_container_hdr_t) || private_key_length!=ntohl(((soter_container_hdr_t*)private_key)->size) || soter_verify_container_checksum((soter_container_hdr_t*)private_key)){ //add algorithm testing */
-  /*   return SOTER_INVALID_PARAMETER; */
-  /* } */
-  /* if(0!=crypto_sign_init(&(ctx->state))){ */
-  /*   return SOTER_FAIL; */
-  /* } */
-  /* memcpy(&(ctx->key.sk), private_key, private_key_length); */
-  return SOTER_SUCCESS;
-}
-
-soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, const void* public_key, const size_t public_key_length){
-  /* if(!ctx || !public_key || public_key_length<sizeof(soter_container_hdr_t) || public_key_length!=ntohl(((soter_container_hdr_t*)public_key)->size) || soter_verify_container_checksum((soter_container_hdr_t*)public_key)){ //add algorithm testing */
-  /*   return SOTER_INVALID_PARAMETER; */
-  /* } */
-  /* if(0!=crypto_sign_init(&(ctx->state))){ */
-  /*   return SOTER_FAIL; */
-  /* } */
-  /* memcpy(&(ctx->key.pk), public_key, public_key_length); */
-  return SOTER_SUCCESS;
-}
-
 soter_status_t soter_sign_update(soter_sign_ctx_t* ctx, const void* data, const size_t data_length){
-  if(!ctx || !data || !data_length){
-    return SOTER_INVALID_PARAMETER;
-  }
-  /* if(0!=crypto_sign_update(&(ctx->state), data, data_length)){ */
-  /*   return SOTER_FAIL; */
-  /* } */
-  return SOTER_SUCCESS;
+  SOTER_CHECK_IN_PARAM(ctx);
+  SOTER_CHECK_IN_BUF_PARAM_NON_EMPTY(data, data_length);
+  return soter_hash_update(&(ctx->hash), data, data_length);
 }
 
 soter_status_t soter_verify_update(soter_sign_ctx_t* ctx, const void* data, const size_t data_length){
@@ -94,34 +124,46 @@ soter_status_t soter_verify_update(soter_sign_ctx_t* ctx, const void* data, cons
 }
 
 soter_status_t soter_sign_final(soter_sign_ctx_t* ctx, void* signature, size_t* signature_length){
-  if(!ctx || !signature_length){
+  SOTER_CHECK_IN_PARAM(ctx);
+  switch(ctx->alg){
+  case SOTER_ASYM_EC_P256_M31:{
+    SOTER_CHECK_OUT_BUF_PARAM(signature, signature_length, SOTER_ASYM_EC_P256_M31_SIGNATURE_LENGTH);
+    uint8_t hash[SOTER_HASH_SHA_256_LENGTH];
+    size_t hash_length=sizeof(hash);
+    if(SOTER_SUCCESS!=soter_hash_final(&(ctx->hash), hash, &hash_length)){
+      return SOTER_FAIL;
+    }
+    size_t sig_length = br_ecdsa_i31_sign_raw(&br_ec_prime_i31, &br_sha256_vtable, hash, &(ctx->key.sk.ec_p256_m31.impl),signature);
+    if(!sig_length){
+      return SOTER_FAIL;
+    }
+    *signature_length=sig_length;
+  }
+    break;
+  default:
     return SOTER_INVALID_PARAMETER;
   }
-  /* if(!signature || (*signature_length)<crypto_sign_BYTES){ */
-  /*   (*signature_length)=crypto_sign_BYTES; */
-  /*   return SOTER_BUFFER_TOO_SMALL; */
-  /* } */
-  /* if(0!=crypto_sign_final_create(&(ctx->state), signature, (long long unsigned int*)signature_length, ctx->key.sk.key)){ */
-  /*   return SOTER_FAIL; */
-  /* } */
   return SOTER_SUCCESS;
 }
 
 soter_status_t soter_verify_final(soter_sign_ctx_t* ctx, const void* signature, const size_t signature_length){
-  if(!ctx || !signature){
+  SOTER_CHECK_IN_PARAM(ctx);
+  switch(ctx->alg){
+  case SOTER_ASYM_EC_P256_M31:{
+    SOTER_CHECK_IN_BUF_PARAM(signature, signature_length, SOTER_ASYM_EC_P256_M31_SIGNATURE_LENGTH);
+    uint8_t hash[SOTER_HASH_SHA_256_LENGTH];
+    size_t hash_length=sizeof(hash);
+    if(SOTER_SUCCESS!=soter_hash_final(&(ctx->hash), hash, &hash_length)){
+      return SOTER_FAIL;
+    }
+    if(1 != br_ecdsa_i31_vrfy_raw(&br_ec_prime_i31, hash, hash_length, &(ctx->key.pk.ec_p256_m31.impl), signature, signature_length)){
+      return SOTER_INVALID_SIGNATURE;
+    }
+  }
+    break;
+  default:
     return SOTER_INVALID_PARAMETER;
   }
-  /* if(signature_length<crypto_sign_BYTES || 0!=crypto_sign_final_verify(&(ctx->state), (void*)signature, ctx->key.pk.key)){ */
-  /*   return SOTER_INVALID_SIGNATURE; */
-  /* } */
-  return SOTER_SUCCESS;
-}
-
-soter_status_t soter_sign_cleanup(soter_sign_ctx_t* ctx){
-  return SOTER_SUCCESS;
-}
-
-soter_status_t soter_verify_cleanup(soter_sign_ctx_t* ctx){
   return SOTER_SUCCESS;
 }
 

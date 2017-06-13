@@ -27,9 +27,9 @@
 static inline size_t soter_sym_get_key_length(alg){
   switch(alg){
   case  SOTER_SYM_AEAD_AES_GCM_256:
-    return SOTER_SYM_AEAD_DEFAULT_ALG_KEY_LENGTH;
+    return SOTER_SYM_AEAD_DEFAULT_ALG_KEY_LENGTH/8;
   case  SOTER_SYM_AES_CTR_256:
-    return SOTER_SYM_DEFAULT_ALG_KEY_LENGTH;
+    return SOTER_SYM_AES_CTR_256_KEY_LENGTH/8;
   default:
     return 0;
   }
@@ -88,8 +88,9 @@ soter_status_t soter_sym_aead_ctx_init(soter_sym_aead_ctx_t* ctx,
       return res;
     }
     memset(ctx->tag.aes_gcm_256, 0, sizeof(ctx->tag.aes_gcm_256));
+    memset(ctx->h.aes_gcm_256, 0, sizeof(ctx->h.aes_gcm_256));
     size_t tag_length=SOTER_SYM_AEAD_AES_GCM_256_AUTH_TAG_SIZE;
-    br_aes_big_ctr_run(&(ctx->cypher.impl.aes_ctr_256), ctx->cypher.nonce.aes_ctr_256, 0, ctx->tag.aes_gcm_256, SOTER_SYM_AEAD_AES_GCM_256_AUTH_TAG_SIZE);
+    br_aes_big_ctr_run(&(ctx->cypher.impl.aes_ctr_256), ctx->cypher.nonce.aes_ctr_256, 0, ctx->h.aes_gcm_256, sizeof(ctx->h.aes_gcm_256));
     ctx->state=true;
     break;
   default:
@@ -139,7 +140,7 @@ soter_status_t soter_sym_aead_ctx_encrypt_update(soter_sym_aead_ctx_t *ctx,
   switch(ctx->alg){
   case SOTER_SYM_AEAD_AES_GCM_256:{
     // uint8_t h[16]={0};
-    br_ghash_ctmul(ctx->tag.aes_gcm_256, out_data, out_data, *out_data_length);
+    br_ghash_ctmul(ctx->tag.aes_gcm_256, ctx->h.aes_gcm_256, out_data, *out_data_length);
     break;
   }
   default:
@@ -179,7 +180,7 @@ soter_status_t soter_sym_aead_ctx_decrypt_update(soter_sym_aead_ctx_t *ctx,
   switch(ctx->alg){
   case SOTER_SYM_AEAD_AES_GCM_256:{
     //    uint8_t h[16]={0};
-    br_ghash_ctmul(ctx->tag.aes_gcm_256, in_data, in_data,  in_data_length);
+    br_ghash_ctmul(ctx->tag.aes_gcm_256, ctx->h.aes_gcm_256, in_data,  in_data_length);
     break;
   }
   default:

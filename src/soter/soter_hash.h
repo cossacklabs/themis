@@ -73,6 +73,7 @@ size_t soter_hash_length(int32_t algo);
  * @return pointer to hash context on sussecc and  NULL on failure
  */
 soter_hash_ctx_t* soter_hash_create(int32_t algo);
+soter_status_t soter_hash_init(soter_hash_ctx_t* ctx, int32_t algo);
 
 /**
  * @brief destroy hash context

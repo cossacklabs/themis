@@ -75,7 +75,7 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* ctx, const void* peer_key, 
   soter_status_t res=SOTER_FAIL;
   switch(soter_key_get_alg_id((uint8_t*)&(ctx->pk), sizeof(ctx->pk))){
   case SOTER_ASYM_EC_P256_M31:{
-    SOTER_CHECK_OUT_BUF_PARAM(shared_secret, shared_secret_length, SOTER_EC_P256_M31_PUB_SIZE);
+    SOTER_CHECK_OUT_BUF_PARAM(shared_secret, shared_secret_length, SOTER_ASYM_EC_P256_M31_DH_SHARED_SECRET_LENGTH);
     soter_ec_p256_m31_pub_key_t pk;
     res=soter_ec_p256_m31_byte_array_to_pub_key(peer_key, peer_key_length, &pk);
     if(SOTER_SUCCESS!=res){
@@ -83,7 +83,7 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* ctx, const void* peer_key, 
     }
     memcpy(shared_secret, pk.key, SOTER_EC_P256_M31_PUB_SIZE);
     *shared_secret_length=SOTER_EC_P256_M31_PUB_SIZE;
-    if(!br_ec_p256_m31.mul(shared_secret, *shared_secret_length, ctx->pk.ec_p256_m31.key, sizeof(ctx->pk.ec_p256_m31.key), 23)){
+    if(!br_ec_p256_m31.mul(shared_secret, *shared_secret_length, ctx->pk.ec_p256_m31.key, sizeof(ctx->pk.ec_p256_m31.key), BR_EC_secp256r1)){
       return SOTER_FAIL;
     }
     return SOTER_SUCCESS;
@@ -92,22 +92,5 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* ctx, const void* peer_key, 
   default:
     return SOTER_INVALID_PARAMETER;
   }
-  
-  //  if (!ctx || !peer_key || !shared_secret_length || peer_key_length<sizeof(soter_container_hdr_t) || peer_key_length!=ntohl(((soter_container_hdr_t*)peer_key)->size) || SOTER_SUCCESS!=soter_verify_container_checksum((soter_container_hdr_t*)peer_key)){
-  //    return SOTER_INVALID_PARAMETER;
-  //}
-  //if(!shared_secret || crypto_generichash_BYTES > *shared_secret_length){
-  //  *shared_secret_length = crypto_generichash_BYTES;
-  //  return SOTER_BUFFER_TOO_SMALL;
-  //}
-  //unsigned char scalarmult_q[crypto_scalarmult_BYTES];
-  //if(0!=crypto_scalarmult(scalarmult_q, ctx->pk.key, ((soter_x25519_pub_key_t*)peer_key)->key)) {
-  //  return SOTER_FAIL;
-  //}
-  //*shared_secret_length = crypto_generichash_BYTES;
-  //crypto_generichash_state h;
-  //crypto_generichash_init(&h, NULL, 0U, *shared_secret_length);
-  //crypto_generichash_update(&h, scalarmult_q, sizeof(scalarmult_q));
-  //crypto_generichash_final(&h, shared_secret, *shared_secret_length);
   return SOTER_SUCCESS;
 }
