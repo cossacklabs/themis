@@ -43,7 +43,7 @@ static int soter_alg_to_curve_nid(const int32_t alg_id, const int32_t length_id)
   return 0;
 }
 
-soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, const int8_t* key, const size_t key_length){
+soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, const uint8_t* key, const size_t key_length){
   EVP_PKEY *pkey;
   if(!asym_ka_ctx || !key || key_length<sizeof(soter_container_hdr_t)){
     return SOTER_INVALID_PARAMETER;

@@ -186,7 +186,7 @@ endif
 
 
 all: err themis_static themis_shared
-	echo $(THEMIS_VERSION)
+	@echo $(THEMIS_VERSION)
 
 test_all: err test
 ifdef PHP_VERSION
