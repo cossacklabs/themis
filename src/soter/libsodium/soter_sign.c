@@ -28,6 +28,36 @@
 
 #include <string.h>
 
+soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length){
+  if(!ctx || !private_key || private_key_length<sizeof(soter_container_hdr_t) || private_key_length!=ntohl(((soter_container_hdr_t*)private_key)->size) || soter_verify_container_checksum((soter_container_hdr_t*)private_key)){ //add algorithm testing
+    return SOTER_INVALID_PARAMETER;
+  }
+  if(0!=crypto_sign_init(&(ctx->state))){
+    return SOTER_FAIL;
+  }
+  memcpy(&(ctx->key.sk), private_key, private_key_length);
+  return SOTER_SUCCESS;
+}
+
+soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, const void* public_key, const size_t public_key_length){
+  if(!ctx || !public_key || public_key_length<sizeof(soter_container_hdr_t) || public_key_length!=ntohl(((soter_container_hdr_t*)public_key)->size) || soter_verify_container_checksum((soter_container_hdr_t*)public_key)){ //add algorithm testing
+    return SOTER_INVALID_PARAMETER;
+  }
+  if(0!=crypto_sign_init(&(ctx->state))){
+    return SOTER_FAIL;
+  }
+  memcpy(&(ctx->key.pk), public_key, public_key_length);
+  return SOTER_SUCCESS;
+}
+
+soter_status_t soter_sign_cleanup(soter_sign_ctx_t* ctx){
+  return SOTER_SUCCESS;
+}
+
+soter_status_t soter_verify_cleanup(soter_sign_ctx_t* ctx){
+  return SOTER_SUCCESS;
+}
+
 soter_status_t soter_sign(const void* private_key, const size_t private_key_length, const uint8_t* data, const size_t data_length, uint8_t* signature, size_t* signature_length){
   soter_sign_ctx_t ctx;
   soter_status_t res = SOTER_SUCCESS;
@@ -54,29 +84,6 @@ soter_status_t soter_verify(const void* public_key, const size_t public_key_leng
   }
   soter_verify_cleanup(&ctx);
   return res;
-}
-
-
-soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length){
-  if(!ctx || !private_key || private_key_length<sizeof(soter_container_hdr_t) || private_key_length!=ntohl(((soter_container_hdr_t*)private_key)->size) || soter_verify_container_checksum((soter_container_hdr_t*)private_key)){ //add algorithm testing
-    return SOTER_INVALID_PARAMETER;
-  }
-  if(0!=crypto_sign_init(&(ctx->state))){
-    return SOTER_FAIL;
-  }
-  memcpy(&(ctx->key.sk), private_key, private_key_length);
-  return SOTER_SUCCESS;
-}
-
-soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, const void* public_key, const size_t public_key_length){
-  if(!ctx || !public_key || public_key_length<sizeof(soter_container_hdr_t) || public_key_length!=ntohl(((soter_container_hdr_t*)public_key)->size) || soter_verify_container_checksum((soter_container_hdr_t*)public_key)){ //add algorithm testing
-    return SOTER_INVALID_PARAMETER;
-  }
-  if(0!=crypto_sign_init(&(ctx->state))){
-    return SOTER_FAIL;
-  }
-  memcpy(&(ctx->key.pk), public_key, public_key_length);
-  return SOTER_SUCCESS;
 }
 
 soter_status_t soter_sign_update(soter_sign_ctx_t* ctx, const void* data, const size_t data_length){
@@ -114,14 +121,6 @@ soter_status_t soter_verify_final(soter_sign_ctx_t* ctx, const void* signature, 
   if(signature_length<crypto_sign_BYTES || 0!=crypto_sign_final_verify(&(ctx->state), (void*)signature, ctx->key.pk.key)){
     return SOTER_INVALID_SIGNATURE;
   }
-  return SOTER_SUCCESS;
-}
-
-soter_status_t soter_sign_cleanup(soter_sign_ctx_t* ctx){
-  return SOTER_SUCCESS;
-}
-
-soter_status_t soter_verify_cleanup(soter_sign_ctx_t* ctx){
   return SOTER_SUCCESS;
 }
 

@@ -22,6 +22,8 @@
 #include "soter_x25519_key_pair_gen.h"
 #include "soter_ed25519_key_pair_gen.h"
 
+#include <string.h>
+
 bool soter_key_is_private(const uint8_t* key, const size_t key_length){
   assert(key && key_length>sizeof(soter_container_hdr_t));
   assert(key[0]=='R' || key[0]=='U');
