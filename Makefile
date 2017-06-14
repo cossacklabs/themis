@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-CC = clang
+#CC = clang
 SRC_PATH = src
 ifneq ($(BUILD_PATH),)
 	BIN_PATH = $(BUILD_PATH)

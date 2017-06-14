@@ -106,7 +106,7 @@ soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
                                   
 soter_asym_ka_t* soter_asym_ka_create(const uint8_t* key, const size_t key_length)
 {
-  soter_asym_ka_t *ctx = malloc(sizeof(soter_asym_ka_t));
+  soter_asym_ka_t *ctx = calloc(1, sizeof(soter_asym_ka_t));
   assert(ctx);
   if(SOTER_SUCCESS != soter_asym_ka_init(ctx, key, key_length)) {
     soter_asym_ka_destroy(ctx);

@@ -54,7 +54,7 @@ soter_status_t soter_ec_p256_m31_key_pair_gen_init(soter_ec_p256_m31_key_pair_ge
 }
 
 soter_ec_p256_m31_key_pair_gen_t* soter_ec_p256_m31_key_pair_gen_create(){
-  soter_ec_p256_m31_key_pair_gen_t *ctx = malloc(sizeof(soter_ec_p256_m31_key_pair_gen_t));
+  soter_ec_p256_m31_key_pair_gen_t *ctx = calloc(1, sizeof(soter_ec_p256_m31_key_pair_gen_t));
   assert(ctx);
   if(SOTER_SUCCESS != soter_ec_p256_m31_key_pair_gen_init(ctx)){
     soter_ec_p256_m31_key_pair_gen_destroy(ctx);
