@@ -19,6 +19,7 @@ dependencies:
 #    - sudo make pythemis_install
 #    - sudo make rubythemis_install
 #    - sudo make phpthemis_install
+
 #main (openssl)
     - make test
 
@@ -30,8 +31,13 @@ dependencies:
 #    - make ENGINE=boringssl ENGINE_INCLUDE_PATH=$HOME/boringssl/include ENGINE_LIB_PATH=$HOME/boringssl/build/crypto BUILD_PATH=build_with_boringssl test
 
 #libsoduim
-    - cd $HOME && git clone https://github.com/jedisct1/libsodium --branch stable && cd libsodium && ./configure && make
+    - cd $HOME && git clone https://github.com/jedisct1/libsodium --branch stable && cd libsodium && ./configure --enable-shared=no && make
     - make ENGINE=libsodium ENGINE_INCLUDE_PATH=$HOME/libsodium/src/libsodium/include/ ENGINE_LIB_PATH=$HOME/libsodium/src/libsodium/.libs/ BUILD_PATH=build_with_libsodium test
+
+#bearssl
+    - cd $HOME && git clone https://www.bearssl.org/git/BearSSL bearssl && cd bearssl && make lib
+    - make ENGINE=bearssl ENGINE_INCLUDE_PATH=$HOME/bearssl/inc/ ENGINE_LIB_PATH=$HOME/bearssl/build/ BUILD_PATH=build_with_libsodium test
+
 
 #code coverage
 #    - make BUILD_PATH=cover_build COVERAGE=y test
@@ -48,8 +54,8 @@ test:
 #main (openssl)
     - build/tests/soter_test
     - build/tests/themis_test
-    - valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
-    - valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
+#    - valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
+#    - valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
 
 #code coverage
 #    - cover_build/tests/soter_test
@@ -64,8 +70,12 @@ test:
 #    - build_with_boringssl/tests/themis_test
 
 #libsodium
-    - LD_LIBRARY_PATH=$HOME/libsodium/src/libsodium/.libs build_with_libsodium/tests/soter_test
-    - LD_LIBRARY_PATH=$HOME/libsodium/src/libsodium/.libs build_with_libsodium/tests/themis_test
+    - build_with_libsodium/tests/soter_test
+    - build_with_libsodium/tests/themis_test
+
+#bearssl
+    - build_with_bearssl/tests/soter_test
+    - build_with_bearssl/tests/themis_test
 
 #    - build/tests/themispp_test
 #    - sudo /sbin/ldconfig
