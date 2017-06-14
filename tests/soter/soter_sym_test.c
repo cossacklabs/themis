@@ -207,7 +207,7 @@ static void test_known_values(void)
 	{
 	  testsuite_fail_if(SOTER_SUCCESS != res, "soter_sym_destroy");
 	}
-1
+
       testsuite_fail_if(memcmp(computed, ciphertext, computed_length)!=0, "known encryption");
 
       /* Decryption */
