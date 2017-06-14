@@ -36,7 +36,7 @@ dependencies:
 
 #bearssl
     - cd $HOME && git clone https://www.bearssl.org/git/BearSSL bearssl && cd bearssl && make lib
-    - make ENGINE=bearssl ENGINE_INCLUDE_PATH=$HOME/bearssl/inc/ ENGINE_LIB_PATH=$HOME/bearssl/build/ BUILD_PATH=build_with_libsodium test
+    - make ENGINE=bearssl ENGINE_INCLUDE_PATH=$HOME/bearssl/inc/ ENGINE_LIB_PATH=$HOME/bearssl/build/ BUILD_PATH=build_with_bearssl test
 
 
 #code coverage
