@@ -27,7 +27,7 @@ TEST_SRC_PATH = tests
 TEST_BIN_PATH = $(BIN_PATH)/tests
 TEST_OBJ_PATH = $(TEST_BIN_PATH)/obj
 
-CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC 
+CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC
 LDFLAGS += -L/usr/local/lib
 
 NO_COLOR=\033[0m
@@ -71,7 +71,7 @@ ifeq ($(ENGINE),openssl)
 	CRYPTO_ENGINE_DEF = OPENSSL
 	CRYPTO_ENGINE_PATH=openssl
 else ifeq ($(ENGINE),libressl)
-	CRYPTO_ENGINE_DEF = LIBRESSL	
+	CRYPTO_ENGINE_DEF = LIBRESSL
 	CRYPTO_ENGINE_PATH=openssl
 else ifeq ($(ENGINE), boringssl)
 	CRYPTO_ENGINE_DEF = BORINGSSL
@@ -150,7 +150,7 @@ BASE=$(shell xcrun --sdk $(SDK) --show-sdk-platform-path)
 SDK_BASE=$(shell xcrun --sdk $(SDK) --show-sdk-path)
 FRAMEWORKS=$(SDK_BASE)/System/Library/Frameworks/
 SDK_INCLUDES=$(SDK_BASE)/usr/include
-CFLAFS += -isysroot $(SDK_BASE) 
+CFLAFS += -isysroot $(SDK_BASE)
 endif
 ifneq ($(ARCH),)
 CFLAFS += -arch $(ARCH)
@@ -161,7 +161,7 @@ ifdef COVERAGE
 	CFLAGS += -g -O0 --coverage
 	COVERLDFLAGS = --coverage
 else
-	COVERLDFLAGS = 
+	COVERLDFLAGS =
 endif
 
 ifdef DEBUG
@@ -341,6 +341,8 @@ install: install_soter_headers install_themis_headers install_static_libs instal
 get_themis_version:
 	@echo $(THEMIS_VERSION)
 
+THEMIS_DIST_FILENAME = $(THEMIS_VERSION).tar.gz
+
 dist:
 	mkdir -p $(THEMIS_VERSION)
 	rsync -avz src $(THEMIS_VERSION)
@@ -356,7 +358,7 @@ dist:
 	rsync -avz build.gradle $(THEMIS_VERSION)
 	rsync -avz gradlew $(THEMIS_VERSION)
 	rsync -avz themis.podspec $(THEMIS_VERSION)
-	tar -zcvf $(THEMIS_VERSION).tar.gz $(THEMIS_VERSION) 
+	tar -zcvf $(THEMIS_DIST_FILENAME) $(THEMIS_VERSION)
 	rm -rf $(THEMIS_VERSION)
 
 for-audit: $(SOTER_AUD) $(THEMIS_AUD)
@@ -428,13 +430,14 @@ themispp_install: install
 
 themispp_uninstall: CMD = rm -rf $(PREFIX)/include/themispp
 
-themispp_uninstall: 
+themispp_uninstall:
 	@echo -n "themispp uninstall "
 	@$(BUILD_CMD_)
-	
+
+
 COSSACKLABS_URL = https://www.cossacklabs.com
 # tag version from VCS
-THEMIS_VERSION = `git describe --tags HEAD | cut -b 1-`
+THEMIS_VERSION := $(shell git describe --tags HEAD | cut -b 1-)
 THEMIS_LICENSE_NAME = "Apache License Version 2.0"
 MAINTAINER = "CossackLabs LTD <dev@cossacklabs.com>"
 DEBIAN_THEMIS_DEPENDENCIES = libssl-dev
@@ -456,7 +459,10 @@ themis_collect_headers:
 
 collect_headers: themis_collect_headers soter_collect_headers
 
-deb: themis_static themis_shared soter_static soter_shared collect_headers
+unpack_dist:
+	@tar -xf $(THEMIS_DIST_FILENAME)
+
+deb: test themis_static themis_shared soter_static soter_shared collect_headers
 	@find . -name \*.so -exec strip -o {} {} \;
 	@mkdir -p $(BIN_PATH)/deb
 
@@ -494,7 +500,9 @@ deb: themis_static themis_shared soter_static soter_shared collect_headers
 		 $(BIN_PATH)/libsoter.a=$(PREFIX)/lib/libsoter.a \
 		 $(BIN_PATH)/libsoter.so=$(PREFIX)/lib/libsoter.so 1>/dev/null
 
+	# it's just for printing .deb files
 	@find $(BIN_PATH) -name \*.deb
+
 
 rpm: themis_static themis_shared soter_static soter_shared collect_headers
 	@find . -name \*.so -exec strip -o {} {} \;
