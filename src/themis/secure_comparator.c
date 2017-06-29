@@ -24,7 +24,7 @@
  *  - OTR - https://otr.cypherpunks.ca/Protocol-v3-4.1.1.html;
  *  - ED25519 signature - https://ed25519.cr.yp.to/.
  * 
- * It's recommended to read the paper that describe Secure Comparator formally - https://eprint.iacr.org/2015/1180.pdf.
+ * It's recommended to read the paper that describes Secure Comparator formally - https://eprint.iacr.org/2015/1180.pdf.
  *  
  * There are some dangerous situations when one of the communicating peers is not fair and presents 
  * forged secret or some of intermediate parameters. These may cause security flaws. See original paper 
