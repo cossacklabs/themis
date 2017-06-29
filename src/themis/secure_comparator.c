@@ -20,7 +20,7 @@
  * deep knowledge of cryptography, in particular:
  * 
  *  - Socialist Millionaire's Problem (SMP) - https://en.wikipedia.org/wiki/Socialist_millionaires;
- * 	- SMP solution - https://www.win.tue.nl/~berry/papers/dam.pdf
+ *  - SMP solution - https://www.win.tue.nl/~berry/papers/dam.pdf
  *  - OTR - https://otr.cypherpunks.ca/Protocol-v3-4.1.1.html;
  *  - ED25519 signature - https://ed25519.cr.yp.to/.
  * 
@@ -717,7 +717,7 @@ static themis_status_t secure_comparator_bob_step2(secure_comparator_t *comp_ctx
 	}
 
 	/* Finally Bob sends to Alice on 2 step:
-	 * G2b || G2b signature || G3b || G3b signature || Pb || Qb || Qb signature
+	 * G2b || G2b signature || G3b || G3b signature || Pb || Qb || Pb + Qb signature
 	 * Bob proceeds 2 step, Alice responds on 3 step and if it's succeeded, 
 	 * protocol continues with Bob's 4 step. 
 	 */
@@ -736,7 +736,7 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 	ge_p3 R;
 
 	/* Input validation from Bob's 2 step (amount of group elements in brackets):
-	 * G2b (1) || G2b signature (2) || G3b (1) || G3b signature (2) || Pb (1) || Qb (1) || Qb signature (3)
+	 * G2b (1) || G2b signature (2) || G3b (1) || G3b signature (2) || Pb (1) || Qb (1) || Pb + Qb signature (3)
 	 * */
 	if (input_length < (11 * ED25519_GE_LENGTH))
 	{
@@ -844,7 +844,7 @@ static themis_status_t secure_comparator_alice_step3(secure_comparator_t *comp_c
 	}
 
 	/* Finally Alice sends to Bob on 3 step:
-	 * Pa || Qa || Qa signature || Ra || Ra signature
+	 * Pa || Qa || Pa + Qa signature || Ra || Ra signature
 	 * Alice proceeds 3 step, Bob responds on 4 step and if it's succeeded, 
 	 * protocol continues with Alice's 5 step. 
 	 */
