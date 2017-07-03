@@ -19,6 +19,8 @@
 #include <string.h>
 #include "themis_test.h"
 
+#include <assert.h>
+
 /* Fuzz parameters */
 #define MAX_MESSAGE_SIZE 2048
 #define MESSAGES_TO_SEND 3
@@ -148,9 +150,23 @@ static int client_function(void)
 			return TEST_STOP_ERROR;
 		}
 	}
-
 	if (secure_session_is_established(client.session))
 	{
+		size_t remote_id_length=0;
+		if(THEMIS_BUFFER_TOO_SMALL!=secure_session_get_remote_id(client.session, NULL, &remote_id_length)){
+			testsuite_fail_if(true, "remote id getting failed (length_determination)");
+			return TEST_STOP_ERROR;
+		}
+		uint8_t *remote_id=malloc(remote_id_length);
+		assert(remote_id);
+		if(THEMIS_SUCCESS!=secure_session_get_remote_id(client.session, remote_id, &remote_id_length)){
+			testsuite_fail_if(true, "remote id getting failed");
+			free(remote_id);
+			return TEST_STOP_ERROR;
+		}
+		testsuite_fail_unless(remote_id_length==strlen(server.id) && 0==memcmp(remote_id, server.id, strlen(server.id)), "secure_session remote id getting");
+		free(remote_id);
+
 		static int messages_to_send = MESSAGES_TO_SEND;
 
 		/* Connection is already established. */
@@ -260,6 +276,21 @@ static int client_function_no_transport(void)
 
 	if (secure_session_is_established((client.session)))
 	{
+		size_t remote_id_length=0;
+		if(THEMIS_BUFFER_TOO_SMALL!=secure_session_get_remote_id(client.session, NULL, &remote_id_length)){
+			testsuite_fail_if(true, "remote id getting failed (length_determination)");
+			return TEST_STOP_ERROR;
+		}
+		uint8_t *remote_id=malloc(remote_id_length);
+		assert(remote_id);
+		if(THEMIS_SUCCESS!=secure_session_get_remote_id(client.session, remote_id, &remote_id_length)){
+			testsuite_fail_if(true, "remote id getting failed");
+			free(remote_id);
+			return TEST_STOP_ERROR;
+		}
+		testsuite_fail_unless(remote_id_length==strlen(server.id) && 0==memcmp(remote_id, server.id, strlen(server.id)), "secure_session remote id getting");
+		free(remote_id);
+
 		static int messages_to_send = MESSAGES_TO_SEND;
 
 		/* Connection is already established. */
@@ -386,6 +417,22 @@ static void server_function(void)
 		return;
 	}
 
+	size_t remote_id_length=0;
+	if(THEMIS_BUFFER_TOO_SMALL!=secure_session_get_remote_id(server.session, NULL, &remote_id_length)){
+		testsuite_fail_if(true, "remote id getting failed (length_determination)");
+		return;
+	}
+	uint8_t *remote_id=malloc(remote_id_length);
+	assert(remote_id);
+	if(THEMIS_SUCCESS!=secure_session_get_remote_id(server.session, remote_id, &remote_id_length)){
+		testsuite_fail_if(true, "remote id getting failed");
+		free(remote_id);
+		return;
+	}
+	testsuite_fail_unless(remote_id_length==strlen(client.id) && 0==memcmp(remote_id, client.id, strlen(client.id)), "secure_session remote id getting");
+	free(remote_id);
+
+
 	if (0 == bytes_received)
 	{
 		/* This was a key agreement packet. Nothing to do */
@@ -426,6 +473,21 @@ static void server_function_no_transport(void)
 		/* Nothing to receive. Do nothing */
 		return;
 	}
+
+	size_t remote_id_length=0;
+	if(THEMIS_BUFFER_TOO_SMALL!=secure_session_get_remote_id(server.session, NULL, &remote_id_length)){
+		testsuite_fail_if(true, "remote id getting failed (length_determination)");
+		return;
+	}
+	uint8_t *remote_id=malloc(remote_id_length);
+	assert(remote_id);
+	if(THEMIS_SUCCESS!=secure_session_get_remote_id(server.session, remote_id, &remote_id_length)){
+		testsuite_fail_if(true, "remote id getting failed");
+		free(remote_id);
+		return;
+	}
+	testsuite_fail_unless(remote_id_length==strlen(client.id) && 0==memcmp(remote_id, client.id, strlen(client.id)), "secure_session remote id getting");
+	free(remote_id);
 
 	if ((THEMIS_SSESSION_SEND_OUTPUT_TO_PEER == res) && (bytes_unwrapped > 0))
 	{
