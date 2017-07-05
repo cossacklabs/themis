@@ -338,7 +338,7 @@ install_shared_libs: err all make_install_dirs
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
 
-get_themis_version:
+get_version:
 	@echo $(THEMIS_VERSION)
 
 THEMIS_DIST_FILENAME = $(THEMIS_VERSION).tar.gz
