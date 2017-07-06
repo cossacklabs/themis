@@ -24,7 +24,7 @@ Let's assume you want to play with SecureSession.
 //return;
 ...
 ```
-3. Uncomment key generation and run example. You should see output in console, like this:
+5. Uncomment key generation and run example. You should see output in console, like this:
 
 ```objc
  ------------ running SSession Client example 
@@ -32,9 +32,9 @@ client private key "UkVDMgAAAC0lV2hOAKFJZyAOLFkzavGzxP8v0Byrs9r5N4u1rm4qYSTLqf+2
 client public key "VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHRJ2lt/w4e4tdzablr/WS";
 ```
 
-5. Copy keys to text file :)
-6. Comment key generation lines (`[self generateClientKeys]`) function, we don't need them anymore.
-7. Find client keys constants in code and paste generated keys, like this:
+6. Copy keys to text file :)
+7. Comment key generation lines (`[self generateClientKeys]`) function, we don't need them anymore.
+8. Find client keys constants in code and paste generated keys, like this:
 
 ```objc 
 static NSString * kClientPrivateKey = @"UkVDMgAAAC0lV2hOAKFJZyAOLFkzavGzxP8v0Byrs9r5N4u1rm4qYSTLqf+2"
@@ -46,7 +46,7 @@ static NSString * kClientPublicKey = @"VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHR
 The idea is to let server know client public key, and let client know server id and public key.
 
  
-8. Open https://themis.cossacklabs.com/interactive-simulator/setup/
+9. Open https://themis.cossacklabs.com/interactive-simulator/setup/
 
 - Copy User ID from server interface to `kClientId` in code.
 - Copy Server ID from server interface to `kServerId` in code.
@@ -70,12 +70,12 @@ static NSString * kClientPublicKey = @"VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHR
 
 ### Start all the things!
 
-9. Start server in SecureSession mode (press corresponded button).
-10. Run app on SecureSession mode.
+10. Start server in SecureSession mode (press corresponded button).
+11. Run app on SecureSession mode.
    - don't forget to uncomment SecureSession mode in AppDelegate
    - don't forget to comment out key generation
    
-11. Enjoy
+12. Enjoy
 
 
 ## Secure Message mode
