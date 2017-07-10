@@ -180,7 +180,7 @@ endif
 
 
 all: err themis_static themis_shared
-	echo $(THEMIS_VERSION)
+	@echo $(THEMIS_VERSION)
 
 test_all: err test
 ifdef PHP_VERSION
@@ -458,11 +458,11 @@ LICENSE_NAME = "Apache License Version 2.0"
 DEBIAN_VERSION := $(shell cat /etc/debian_version)
 # 9.0 == stretch
 ifeq ($(DEBIAN_VERSION),9.0)
-        DEBIAN_DEPENDENCIES := libssl1.0-dev
+        DEBIAN_DEPENDENCIES := libssl1.0.2
 else
         DEBIAN_DEPENDENCIES := openssl
 endif
-RPM_DEPENDENCIES = openssl-devel
+RPM_DEPENDENCIES = openssl
 
 DEBIAN_ARCHITECTURE = `dpkg --print-architecture`
 SHORT_DESCRIPTION = Data security library for network communication and data storage
@@ -473,10 +473,21 @@ RPM_SUMMARY = Data security library for network communication and data storage. 
 	 PHP, Java / Android and iOS / OSX. It is designed with ease of use in mind, \
 	 high security and cross-platform availability.
 
+HEADER_FILES_MAP = $(BIN_PATH)/include/soter/=$(PREFIX)/include/soter \
+		 $(BIN_PATH)/include/themis/=$(PREFIX)/include/themis
+
+STATIC_BINARY_LIBRARY_MAP = $(BIN_PATH)/libthemis.a=$(PREFIX)/lib/libthemis.a \
+		 $(BIN_PATH)/libsoter.a=$(PREFIX)/lib/libsoter.a
+
+SHARED_BINARY_LIBRARY_MAP = $(BIN_PATH)/libthemis.a=$(PREFIX)/lib/libthemis.so \
+		 $(BIN_PATH)/libsoter.a=$(PREFIX)/lib/libsoter.so
+
+BINARY_LIBRARY_MAP = $(STATIC_BINARY_LIBRARY_MAP) $(SHARED_BINARY_LIBRARY_MAP)
+
 deb: test themis_static themis_shared soter_static soter_shared collect_headers
 	@find . -name \*.so -exec strip -o {} {} \;
 	@mkdir -p $(BIN_PATH)/deb
-
+#libthemis-dev
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name libthemis-dev \
@@ -490,9 +501,10 @@ deb: test themis_static themis_shared soter_static soter_shared collect_headers
 		 --depends $(DEBIAN_DEPENDENCIES) \
 		 --deb-priority optional \
 		 --category security \
-		 $(BIN_PATH)/include/soter/=$(PREFIX)/include/soter \
-		 $(BIN_PATH)/include/themis/=$(PREFIX)/include/themis 1>/dev/null
+		 $(BINARY_LIBRARY_MAP) \
+		 $(HEADER_FILES_MAP) 1>/dev/null
 
+#libthemis
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name libthemis \
@@ -506,12 +518,7 @@ deb: test themis_static themis_shared soter_static soter_shared collect_headers
 		 --version $(THEMIS_VERSION) \
 		 --deb-priority optional \
 		 --category security \
-		 $(BIN_PATH)/libthemis.a=$(PREFIX)/lib/libthemis.a \
-		 $(BIN_PATH)/libthemis.so=$(PREFIX)/lib/libthemis.so \
-		 $(BIN_PATH)/libsoter.a=$(PREFIX)/lib/libsoter.a \
-		 $(BIN_PATH)/include/soter/=$(PREFIX)/include/soter \
-		 $(BIN_PATH)/include/themis/=$(PREFIX)/include/themis \
-		 $(BIN_PATH)/libsoter.so=$(PREFIX)/lib/libsoter.so 1>/dev/null
+		 $(BINARY_LIBRARY_MAP) 1>/dev/null
 
 # it's just for printing .deb files
 	@find $(BIN_PATH) -name \*.deb
@@ -520,7 +527,7 @@ deb: test themis_static themis_shared soter_static soter_shared collect_headers
 rpm: themis_static themis_shared soter_static soter_shared collect_headers
 	@find . -name \*.so -exec strip -o {} {} \;
 	@mkdir -p $(BIN_PATH)/rpm
-
+#libthemis-devel
 	@fpm --input-type dir \
          --output-type rpm \
          --name libthemis-devel \
@@ -532,9 +539,9 @@ rpm: themis_static themis_shared soter_static soter_shared collect_headers
          --maintainer $(MAINTAINER) \
          --package $(BIN_PATH)/rpm/ \
          --version $(THEMIS_VERSION) \
-		 $(BIN_PATH)/include/soter/=$(PREFIX)/include/soter \
-		 $(BIN_PATH)/include/themis/=$(PREFIX)/include/themis 1>/dev/null
-
+         $(BINARY_LIBRARY_MAP) \
+		 $(HEADER_FILES_MAP) 1>/dev/null
+#libthemis
 	@fpm --input-type dir \
          --output-type rpm \
          --name libthemis \
@@ -546,11 +553,6 @@ rpm: themis_static themis_shared soter_static soter_shared collect_headers
          --depends $(RPM_DEPENDENCIES) \
          --package $(BIN_PATH)/rpm/ \
          --version $(THEMIS_VERSION) \
-         $(BIN_PATH)/libthemis.a=$(PREFIX)/lib/libthemis.a \
-         $(BIN_PATH)/libthemis.so=$(PREFIX)/lib/libthemis.so \
-         $(BIN_PATH)/libsoter.a=$(PREFIX)/lib/libsoter.a \
-         $(BIN_PATH)/libsoter.so=$(PREFIX)/lib/libsoter.so \
-         $(BIN_PATH)/include/soter/=$(PREFIX)/include/soter \
-		 $(BIN_PATH)/include/themis/=$(PREFIX)/include/themis 1>/dev/null
+         $(BINARY_LIBRARY_MAP) 1>/dev/null
 # it's just for printing .rpm files
 	@find $(BIN_PATH) -name \*.rpm
