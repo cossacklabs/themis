@@ -456,11 +456,14 @@ THEMIS_VERSION := $(shell git describe --tags HEAD | cut -b 1-)
 LICENSE_NAME = "Apache License Version 2.0"
 
 DEBIAN_VERSION := $(shell cat /etc/debian_version)
+DEBIAN_STRETCH_VERSION := libssl1.0.2
 # 9.0 == stretch
 ifeq ($(DEBIAN_VERSION),9.0)
-        DEBIAN_DEPENDENCIES := libssl1.0.2
+	DEBIAN_DEPENDENCIES := $(DEBIAN_STRETCH_VERSION)
+else ifeq($(DEBIAN_VERSION),stretch/sid)
+	DEBIAN_DEPENDENCIES := $(DEBIAN_STRETCH_VERSION)
 else
-        DEBIAN_DEPENDENCIES := openssl
+	DEBIAN_DEPENDENCIES := openssl
 endif
 RPM_DEPENDENCIES = openssl
 
