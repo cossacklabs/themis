@@ -180,7 +180,7 @@ endif
 
 
 all: err themis_static themis_shared
-	echo $(THEMIS_VERSION)
+	@echo $(THEMIS_VERSION)
 
 test_all: err test
 ifdef PHP_VERSION
@@ -435,20 +435,6 @@ themispp_uninstall:
 	@$(BUILD_CMD_)
 
 
-COSSACKLABS_URL = https://www.cossacklabs.com
-# tag version from VCS
-THEMIS_VERSION := $(shell git describe --tags HEAD | cut -b 1-)
-THEMIS_LICENSE_NAME = "Apache License Version 2.0"
-MAINTAINER = "CossackLabs LTD <dev@cossacklabs.com>"
-DEBIAN_THEMIS_DEPENDENCIES = libssl-dev
-DEBIAN_ARCHITECTURE = `dpkg --print-architecture`
-DEBIAN_DESCRIPTION = Data security library for network communication and data storage. \
-	 Themis is a data security library, providing users with high-quality security \
-	 services for secure messaging of any kinds and flexible data storage. Themis \
-	 is aimed at modern developers, with high level OOP wrappers for Ruby, Python, \
-	 PHP, Java / Android and iOS / OSX. It is designed with ease of use in mind, \
-	 high security and cross-platform availability.
-
 soter_collect_headers:
 	@mkdir -p $(BIN_PATH)/include/soter
 	@cd src/soter && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/soter/ \; && cd - 1 > /dev/null
@@ -462,75 +448,150 @@ collect_headers: themis_collect_headers soter_collect_headers
 unpack_dist:
 	@tar -xf $(THEMIS_DIST_FILENAME)
 
-deb: test themis_static themis_shared soter_static soter_shared collect_headers
+
+COSSACKLABS_URL = https://www.cossacklabs.com
+MAINTAINER = "Cossack Labs Limited <dev@cossacklabs.com>"
+# tag version from VCS
+THEMIS_VERSION := $(shell git describe --tags HEAD | cut -b 1-)
+LICENSE_NAME = "Apache License Version 2.0"
+LIBRARY_SO_VERSION := $(shell echo $(THEMIS_VERSION) | sed 's/^\([0-9.]*\)\(.*\)*$$/\1/')
+
+DEBIAN_VERSION := $(shell cat /etc/debian_version 2> /dev/null)
+DEBIAN_STRETCH_VERSION := libssl1.0.2
+DEBIAN_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
+# 9.0 == stretch
+# if found 9. (9.1, 9.2, ...) then it's debian 9.x
+ifeq ($(findstring 9.,$(DEBIAN_VERSION)),9.)
+        DEBIAN_DEPENDENCIES := $(DEBIAN_STRETCH_VERSION)
+else ifeq ($(DEBIAN_VERSION),stretch/sid)
+        DEBIAN_DEPENDENCIES := $(DEBIAN_STRETCH_VERSION)
+else
+        DEBIAN_DEPENDENCIES := openssl
+endif
+RPM_DEPENDENCIES = openssl
+
+ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
+#0.9.4-153-g9915004+jessie_amd64.deb.
+	NAME_SUFFIX = $(THEMIS_VERSION)+$(shell lsb_release -cs)_$(DEBIAN_ARCHITECTURE).deb
+else ifeq ($(shell lsb_release -is 2> /dev/null),Ubuntu)
+	NAME_SUFFIX = $(THEMIS_VERSION)+$(shell lsb_release -cs)_$(DEBIAN_ARCHITECTURE).deb
+else
+	OS_NAME = $(shell cat /etc/os-release | grep -e "^ID=\".*\"" | cut -d'"' -f2)
+	OS_VERSION = $(shell cat /etc/os-release | grep -i version_id|cut -d'"' -f2)
+	ARCHITECTURE = $(shell arch)
+	NAME_SUFFIX = $(THEMIS_VERSION)+$(OS_NAME)$(OS_VERSION)_$(ARCHITECTURE).rpm
+endif
+
+
+SHORT_DESCRIPTION = Data security library for network communication and data storage
+RPM_SUMMARY = Data security library for network communication and data storage. \
+	 Themis is a data security library, providing users with high-quality security \
+	 services for secure messaging of any kinds and flexible data storage. Themis \
+	 is aimed at modern developers, with high level OOP wrappers for Ruby, Python, \
+	 PHP, Java / Android and iOS / OSX. It is designed with ease of use in mind, \
+	 high security and cross-platform availability.
+
+HEADER_FILES_MAP = $(BIN_PATH)/include/soter/=$(PREFIX)/include/soter \
+		 $(BIN_PATH)/include/themis/=$(PREFIX)/include/themis
+
+STATIC_BINARY_LIBRARY_MAP = $(BIN_PATH)/libthemis.a=$(PREFIX)/lib/libthemis.a.$(LIBRARY_SO_VERSION) \
+		 $(BIN_PATH)/libsoter.a=$(PREFIX)/lib/libsoter.a.$(LIBRARY_SO_VERSION)
+
+SHARED_BINARY_LIBRARY_MAP = $(BIN_PATH)/libthemis.so=$(PREFIX)/lib/libthemis.so.$(LIBRARY_SO_VERSION) \
+		 $(BIN_PATH)/libsoter.so=$(PREFIX)/lib/libsoter.so.$(LIBRARY_SO_VERSION)
+
+
+BINARY_LIBRARY_MAP = $(STATIC_BINARY_LIBRARY_MAP) $(SHARED_BINARY_LIBRARY_MAP)
+
+POST_INSTALL_SCRIPT := $(BIN_PATH)/post_install.sh
+POST_UNINSTALL_SCRIPT := $(BIN_PATH)/post_uninstall.sh
+
+install_shell_scripts:
+	@printf "ln -s $(PREFIX)/lib/libthemis.so.$(LIBRARY_SO_VERSION) $(PREFIX)/lib/libthemis.so \n \
+		ln -s $(PREFIX)/lib/libsoter.so.$(LIBRARY_SO_VERSION) $(PREFIX)/lib/libsoter.so" > $(POST_INSTALL_SCRIPT)
+
+	@printf "unlink  $(PREFIX)/lib/libthemis.so 2>/dev/null \n \
+		unlink $(PREFIX)/lib/libsoter.so 2>/dev/null" > $(POST_UNINSTALL_SCRIPT)
+
+deb: test themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts
 	@find . -name \*.so -exec strip -o {} {} \;
 	@mkdir -p $(BIN_PATH)/deb
-
+#libthemis-dev
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name libthemis-dev \
-		 --license $(THEMIS_LICENSE_NAME) \
+		 --license $(LICENSE_NAME) \
 		 --url '$(COSSACKLABS_URL)' \
-		 --description '$(DEBIAN_DESCRIPTION)' \
+		 --description '$(SHORT_DESCRIPTION)' \
 		 --maintainer $(MAINTAINER) \
-		 --package $(BIN_PATH)/deb/ \
+		 --package $(BIN_PATH)/deb/libthemis-dev_$(NAME_SUFFIX) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
 		 --version $(THEMIS_VERSION) \
-		 --deb-build-depends $(DEBIAN_THEMIS_DEPENDENCIES) \
+		 --depends $(DEBIAN_DEPENDENCIES) \
 		 --deb-priority optional \
+		 --after-install $(POST_INSTALL_SCRIPT) \
+		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --category security \
-		 $(BIN_PATH)/include/soter/=$(PREFIX)/include/soter \
-		 $(BIN_PATH)/include/themis/=$(PREFIX)/include/themis 1>/dev/null
+		 $(BINARY_LIBRARY_MAP) \
+		 $(HEADER_FILES_MAP) 1>/dev/null
 
+#libthemis
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name libthemis \
-		 --license $(THEMIS_LICENSE_NAME) \
+		 --license $(LICENSE_NAME) \
 		 --url '$(COSSACKLABS_URL)' \
-		 --description '$(DEBIAN_DESCRIPTION)' \
+		 --description '$(SHORT_DESCRIPTION)' \
 		 --maintainer $(MAINTAINER) \
-		 --package $(BIN_PATH)/deb/ \
+		 --package $(BIN_PATH)/deb/libthemis_$(NAME_SUFFIX) \
+		 --depends $(DEBIAN_DEPENDENCIES) \
+		 --after-install $(POST_INSTALL_SCRIPT) \
+		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
 		 --version $(THEMIS_VERSION) \
-		 --deb-build-depends $(DEBIAN_THEMIS_DEPENDENCIES) \
 		 --deb-priority optional \
 		 --category security \
-		 $(BIN_PATH)/libthemis.a=$(PREFIX)/lib/libthemis.a \
-		 $(BIN_PATH)/libthemis.so=$(PREFIX)/lib/libthemis.so \
-		 $(BIN_PATH)/libsoter.a=$(PREFIX)/lib/libsoter.a \
-		 $(BIN_PATH)/libsoter.so=$(PREFIX)/lib/libsoter.so 1>/dev/null
+		 $(BINARY_LIBRARY_MAP) 1>/dev/null
 
-	# it's just for printing .deb files
+# it's just for printing .deb files
 	@find $(BIN_PATH) -name \*.deb
 
 
-rpm: themis_static themis_shared soter_static soter_shared collect_headers
+rpm: test themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts
 	@find . -name \*.so -exec strip -o {} {} \;
 	@mkdir -p $(BIN_PATH)/rpm
-
+#libthemis-devel
 	@fpm --input-type dir \
          --output-type rpm \
-         --name libthemis-dev \
-         --license $(THEMIS_LICENSE_NAME) \
+         --name libthemis-devel \
+         --license $(LICENSE_NAME) \
          --url '$(COSSACKLABS_URL)' \
-         --description '$(DEBIAN_DESCRIPTION)' \
+         --description '$(SHORT_DESCRIPTION)' \
+         --rpm-summary '$(RPM_SUMMARY)' \
+         --depends $(RPM_DEPENDENCIES) \
          --maintainer $(MAINTAINER) \
-         --package $(BIN_PATH)/rpm/ \
+         --after-install $(POST_INSTALL_SCRIPT) \
+         --after-remove $(POST_UNINSTALL_SCRIPT) \
+         --package $(BIN_PATH)/rpm/libthemis-devel_$(NAME_SUFFIX) \
          --version $(THEMIS_VERSION) \
-		 $(BIN_PATH)/include/soter/=$(PREFIX)/include/soter \
-		 $(BIN_PATH)/include/themis/=$(PREFIX)/include/themis 1>/dev/null
-
+         --category security \
+         $(BINARY_LIBRARY_MAP) \
+		 $(HEADER_FILES_MAP) 1>/dev/null
+#libthemis
 	@fpm --input-type dir \
          --output-type rpm \
          --name libthemis \
-         --license $(THEMIS_LICENSE_NAME) \
+         --license $(LICENSE_NAME) \
          --url '$(COSSACKLABS_URL)' \
-         --description '$(DEBIAN_DESCRIPTION)' \
+         --description '$(SHORT_DESCRIPTION)' \
+         --rpm-summary '$(RPM_SUMMARY)' \
          --maintainer $(MAINTAINER) \
-         --package $(BIN_PATH)/rpm/ \
+         --after-install $(POST_INSTALL_SCRIPT) \
+         --after-remove $(POST_UNINSTALL_SCRIPT) \
+         --depends $(RPM_DEPENDENCIES) \
+         --package $(BIN_PATH)/rpm/libthemis_$(NAME_SUFFIX) \
          --version $(THEMIS_VERSION) \
-         $(BIN_PATH)/libthemis.a=$(PREFIX)/lib/libthemis.a \
-         $(BIN_PATH)/libthemis.so=$(PREFIX)/lib/libthemis.so \
-         $(BIN_PATH)/libsoter.a=$(PREFIX)/lib/libsoter.a \
-         $(BIN_PATH)/libsoter.so=$(PREFIX)/lib/libsoter.so 1>/dev/null
+         --category security \
+         $(BINARY_LIBRARY_MAP) 1>/dev/null
+# it's just for printing .rpm files
 	@find $(BIN_PATH) -name \*.rpm
