@@ -572,7 +572,7 @@ rpm: test themis_static themis_shared soter_static soter_shared collect_headers 
          --maintainer $(MAINTAINER) \
          --after-install $(POST_INSTALL_SCRIPT) \
          --after-remove $(POST_UNINSTALL_SCRIPT) \
-         --package $(BIN_PATH)/rpm/libthemis-devel_$(NAME_SUFFIX) \
+         --package $(BIN_PATH)/rpm/libthemis-devel-$(NAME_SUFFIX) \
          --version $(THEMIS_VERSION) \
          --category security \
          $(BINARY_LIBRARY_MAP) \
@@ -589,7 +589,7 @@ rpm: test themis_static themis_shared soter_static soter_shared collect_headers 
          --after-install $(POST_INSTALL_SCRIPT) \
          --after-remove $(POST_UNINSTALL_SCRIPT) \
          --depends $(RPM_DEPENDENCIES) \
-         --package $(BIN_PATH)/rpm/libthemis_$(NAME_SUFFIX) \
+         --package $(BIN_PATH)/rpm/libthemis-$(NAME_SUFFIX) \
          --version $(THEMIS_VERSION) \
          --category security \
          $(BINARY_LIBRARY_MAP) 1>/dev/null
