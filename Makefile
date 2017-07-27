@@ -473,8 +473,10 @@ RPM_DEPENDENCIES = openssl
 ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
 #0.9.4-153-g9915004+jessie_amd64.deb.
 	NAME_SUFFIX = $(THEMIS_VERSION)+$(shell lsb_release -cs)_$(DEBIAN_ARCHITECTURE).deb
+	OS_CODENAME = $(shell lsb_release -cs)
 else ifeq ($(shell lsb_release -is 2> /dev/null),Ubuntu)
 	NAME_SUFFIX = $(THEMIS_VERSION)+$(shell lsb_release -cs)_$(DEBIAN_ARCHITECTURE).deb
+	OS_CODENAME = $(shell lsb_release -cs)
 else
 	OS_NAME = $(shell cat /etc/os-release | grep -e "^ID=\".*\"" | cut -d'"' -f2)
 	OS_VERSION = $(shell cat /etc/os-release | grep -i version_id|cut -d'"' -f2)
@@ -526,7 +528,7 @@ deb: test themis_static themis_shared soter_static soter_shared collect_headers 
 		 --maintainer $(MAINTAINER) \
 		 --package $(BIN_PATH)/deb/libthemis-dev_$(NAME_SUFFIX) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
-		 --version $(THEMIS_VERSION) \
+		 --version $(THEMIS_VERSION)+$(OS_CODENAME) \
 		 --depends $(DEBIAN_DEPENDENCIES) \
 		 --deb-priority optional \
 		 --after-install $(POST_INSTALL_SCRIPT) \
@@ -548,7 +550,7 @@ deb: test themis_static themis_shared soter_static soter_shared collect_headers 
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
-		 --version $(THEMIS_VERSION) \
+		 --version $(THEMIS_VERSION)+$(OS_CODENAME) \
 		 --deb-priority optional \
 		 --category security \
 		 $(BINARY_LIBRARY_MAP) 1>/dev/null
