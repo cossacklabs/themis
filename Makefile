@@ -115,11 +115,23 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 endif
 
 GIT_VERSION := $(shell if [ -d ".git" ]; then git version; fi 2>/dev/null)
+# check that repo has any tag
+GIT_TAG_STATUS := $(shell git describe --tags HEAD 2>/dev/null)
+GIT_TAG_STATUS := $(.SHELLSTATUS)
+
 ifdef GIT_VERSION
-	THEMIS_VERSION = themis-$(shell git describe --tags HEAD | cut -b 1-)
+# if has tag then use it
+        ifeq ($(GIT_TAG_STATUS),0)
+                VERSION = $(shell git describe --tags HEAD | cut -b 1-)
+        else
+# otherwise use last commit hash
+                VERSION = $(shell git describe --always HEAD)
+        endif
 else
-	THEMIS_VERSION = themis-$(shell date -I)
+# if it's not git repo then use date as version
+        VERSION = $(shell date -I | sed s/-/_/g)
 endif
+
 PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
@@ -180,7 +192,7 @@ endif
 
 
 all: err themis_static themis_shared
-	@echo $(THEMIS_VERSION)
+	@echo $(VERSION)
 
 test_all: err test
 ifdef PHP_VERSION
@@ -339,27 +351,27 @@ install_shared_libs: err all make_install_dirs
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
 
 get_version:
-	@echo $(THEMIS_VERSION)
+	@echo $(VERSION)
 
-THEMIS_DIST_FILENAME = $(THEMIS_VERSION).tar.gz
+THEMIS_DIST_FILENAME = $(VERSION).tar.gz
 
 dist:
-	mkdir -p $(THEMIS_VERSION)
-	rsync -avz src $(THEMIS_VERSION)
-	rsync -avz docs $(THEMIS_VERSION)
-	rsync -avz gothemis $(THEMIS_VERSION)
-	rsync -avz gradle $(THEMIS_VERSION)
-	rsync -avz jni $(THEMIS_VERSION)
-	rsync -avz --exclude 'tests/soter/nist-sts/assess' tests $(THEMIS_VERSION)
-	rsync -avz CHANGELOG.md $(THEMIS_VERSION)
-	rsync -avz LICENSE $(THEMIS_VERSION)
-	rsync -avz Makefile $(THEMIS_VERSION)
-	rsync -avz README.md $(THEMIS_VERSION)
-	rsync -avz build.gradle $(THEMIS_VERSION)
-	rsync -avz gradlew $(THEMIS_VERSION)
-	rsync -avz themis.podspec $(THEMIS_VERSION)
-	tar -zcvf $(THEMIS_DIST_FILENAME) $(THEMIS_VERSION)
-	rm -rf $(THEMIS_VERSION)
+	mkdir -p $(VERSION)
+	rsync -avz src $(VERSION)
+	rsync -avz docs $(VERSION)
+	rsync -avz gothemis $(VERSION)
+	rsync -avz gradle $(VERSION)
+	rsync -avz jni $(VERSION)
+	rsync -avz --exclude 'tests/soter/nist-sts/assess' tests $(VERSION)
+	rsync -avz CHANGELOG.md $(VERSION)
+	rsync -avz LICENSE $(VERSION)
+	rsync -avz Makefile $(VERSION)
+	rsync -avz README.md $(VERSION)
+	rsync -avz build.gradle $(VERSION)
+	rsync -avz gradlew $(VERSION)
+	rsync -avz themis.podspec $(VERSION)
+	tar -zcvf $(THEMIS_DIST_FILENAME) $(VERSION)
+	rm -rf $(VERSION)
 
 for-audit: $(SOTER_AUD) $(THEMIS_AUD)
 
@@ -434,7 +446,6 @@ themispp_uninstall:
 	@echo -n "themispp uninstall "
 	@$(BUILD_CMD_)
 
-
 soter_collect_headers:
 	@mkdir -p $(BIN_PATH)/include/soter
 	@cd src/soter && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/soter/ \; && cd - 1 > /dev/null
@@ -452,18 +463,15 @@ unpack_dist:
 COSSACKLABS_URL = https://www.cossacklabs.com
 MAINTAINER = "Cossack Labs Limited <dev@cossacklabs.com>"
 # tag version from VCS
-THEMIS_VERSION := $(shell git describe --tags HEAD | cut -b 1-)
+VERSION := $(shell git describe --tags HEAD | cut -b 1-)
 LICENSE_NAME = "Apache License Version 2.0"
-LIBRARY_SO_VERSION := $(shell echo $(THEMIS_VERSION) | sed 's/^\([0-9.]*\)\(.*\)*$$/\1/')
+LIBRARY_SO_VERSION := $(shell echo $(VERSION) | sed 's/^\([0-9.]*\)\(.*\)*$$/\1/')
 
-DEBIAN_VERSION := $(shell cat /etc/debian_version 2> /dev/null)
+DEBIAN_CODENAME := $(shell lsb_release -cs 2> /dev/null)
 DEBIAN_STRETCH_VERSION := libssl1.0.2
 DEBIAN_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
-# 9.0 == stretch
-# if found 9. (9.1, 9.2, ...) then it's debian 9.x
-ifeq ($(findstring 9.,$(DEBIAN_VERSION)),9.)
-        DEBIAN_DEPENDENCIES := $(DEBIAN_STRETCH_VERSION)
-else ifeq ($(DEBIAN_VERSION),stretch/sid)
+
+ifeq ($(DEBIAN_CODENAME),stretch)
         DEBIAN_DEPENDENCIES := $(DEBIAN_STRETCH_VERSION)
 else
         DEBIAN_DEPENDENCIES := openssl
@@ -471,17 +479,16 @@ endif
 RPM_DEPENDENCIES = openssl
 
 ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
-#0.9.4-153-g9915004+jessie_amd64.deb.
-	NAME_SUFFIX = $(THEMIS_VERSION)+$(shell lsb_release -cs)_$(DEBIAN_ARCHITECTURE).deb
+	NAME_SUFFIX = $(VERSION)+$(DEBIAN_CODENAME)_$(DEBIAN_ARCHITECTURE).deb
 	OS_CODENAME = $(shell lsb_release -cs)
 else ifeq ($(shell lsb_release -is 2> /dev/null),Ubuntu)
-	NAME_SUFFIX = $(THEMIS_VERSION)+$(shell lsb_release -cs)_$(DEBIAN_ARCHITECTURE).deb
+	NAME_SUFFIX = $(VERSION)+$(DEBIAN_CODENAME)_$(DEBIAN_ARCHITECTURE).deb
 	OS_CODENAME = $(shell lsb_release -cs)
 else
 	OS_NAME = $(shell cat /etc/os-release | grep -e "^ID=\".*\"" | cut -d'"' -f2)
 	OS_VERSION = $(shell cat /etc/os-release | grep -i version_id|cut -d'"' -f2)
 	ARCHITECTURE = $(shell arch)
-	NAME_SUFFIX = $(shell echo -n "$(THEMIS_VERSION)"|sed s/-/_/g).$(OS_NAME)$(OS_VERSION).$(ARCHITECTURE).rpm
+	NAME_SUFFIX = $(shell echo -n "$(VERSION)"|sed s/-/_/g).$(OS_NAME)$(OS_VERSION).$(ARCHITECTURE).rpm
 endif
 
 
@@ -528,7 +535,7 @@ deb: test themis_static themis_shared soter_static soter_shared collect_headers 
 		 --maintainer $(MAINTAINER) \
 		 --package $(BIN_PATH)/deb/libthemis-dev_$(NAME_SUFFIX) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
-		 --version $(THEMIS_VERSION)+$(OS_CODENAME) \
+		 --version $(VERSION)+$(OS_CODENAME) \
 		 --depends $(DEBIAN_DEPENDENCIES) \
 		 --deb-priority optional \
 		 --after-install $(POST_INSTALL_SCRIPT) \
@@ -550,7 +557,7 @@ deb: test themis_static themis_shared soter_static soter_shared collect_headers 
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
-		 --version $(THEMIS_VERSION)+$(OS_CODENAME) \
+		 --version $(VERSION)+$(OS_CODENAME) \
 		 --deb-priority optional \
 		 --category security \
 		 $(BINARY_LIBRARY_MAP) 1>/dev/null
@@ -575,7 +582,7 @@ rpm: test themis_static themis_shared soter_static soter_shared collect_headers 
          --after-install $(POST_INSTALL_SCRIPT) \
          --after-remove $(POST_UNINSTALL_SCRIPT) \
          --package $(BIN_PATH)/rpm/libthemis-devel-$(NAME_SUFFIX) \
-         --version $(THEMIS_VERSION) \
+         --version $(VERSION) \
          --category security \
          $(BINARY_LIBRARY_MAP) \
 		 $(HEADER_FILES_MAP) 1>/dev/null
@@ -592,7 +599,7 @@ rpm: test themis_static themis_shared soter_static soter_shared collect_headers 
          --after-remove $(POST_UNINSTALL_SCRIPT) \
          --depends $(RPM_DEPENDENCIES) \
          --package $(BIN_PATH)/rpm/libthemis-$(NAME_SUFFIX) \
-         --version $(THEMIS_VERSION) \
+         --version $(VERSION) \
          --category security \
          $(BINARY_LIBRARY_MAP) 1>/dev/null
 # it's just for printing .rpm files
