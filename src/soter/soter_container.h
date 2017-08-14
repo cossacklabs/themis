@@ -20,6 +20,8 @@
 #include <stdint.h>
 #include <soter/error.h>
 
+#include <arpa/inet.h>
+
 #define SOTER_CONTAINER_TAG_LENGTH 4
 
 struct soter_container_hdr_type

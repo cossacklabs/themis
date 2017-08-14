@@ -49,7 +49,7 @@ namespace themispp {
     const data_t& encrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end){
       size_t encrypted_data_length=0;
       if(themis_secure_message_wrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, NULL, &encrypted_data_length)!=THEMIS_BUFFER_TOO_SMALL)
-	throw themispp::exception_t("Secure Message failed encrypting");
+	throw themispp::exception_t("Secure Message failed encrypting (length determination)");
       res_.resize(encrypted_data_length);
       if(themis_secure_message_wrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, &res_[0], &encrypted_data_length)!=THEMIS_SUCCESS)
 	throw themispp::exception_t("Secure Message failed encrypting");
@@ -63,7 +63,7 @@ namespace themispp {
     const data_t& decrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end){
       size_t decrypted_data_length=0;
       if(themis_secure_message_unwrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, NULL, &decrypted_data_length)!=THEMIS_BUFFER_TOO_SMALL)
-	throw themispp::exception_t("Secure Message failed decrypting");
+	throw themispp::exception_t("Secure Message failed decrypting (length determination)");
       res_.resize(decrypted_data_length);
       if(themis_secure_message_unwrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, &res_[0], &decrypted_data_length)!=THEMIS_SUCCESS)
 	throw themispp::exception_t("Secure Message failed decrypting");

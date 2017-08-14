@@ -16,7 +16,7 @@
 
 #include <soter/error.h>
 #include "soter_engine.h"
-#include <soter/soter_rsa_key_pair_gen.h>
+#include "soter_rsa_key_pair_gen.h"
 
 #include <openssl/evp.h>
 #include <openssl/rsa.h>

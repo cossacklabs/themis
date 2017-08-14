@@ -23,7 +23,7 @@ if sys.version_info < (3, 4):
 
 setup(
     name='pythemis',
-    version='0.9.4',
+    version='0.9.4-2',
 
     description='',
     long_description=open("README.rst").read(),

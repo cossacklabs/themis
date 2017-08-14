@@ -14,9 +14,11 @@
 * limitations under the License.
 */
 
+#include <assert.h>
+
 #include <soter/error.h>
 #include <soter/soter.h>
-#include <soter/soter_rsa_key.h>
+#include "soter_rsa_key.h"
 #include "soter_engine.h"
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
@@ -31,93 +33,71 @@
 
 soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx, const void* key, size_t key_length)
 {
-	const soter_container_hdr_t *hdr = key;
-	EVP_PKEY *pkey;
+  const soter_container_hdr_t *hdr = key;
+  EVP_PKEY *pkey;
 
-	if (!asym_cipher_ctx)
-	{
-		return SOTER_INVALID_PARAMETER;
-	}
+  if (!asym_cipher_ctx){
+    return SOTER_INVALID_PARAMETER;
+  }
+  pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher_ctx->pkey_ctx);
+  if (!pkey){
+    return SOTER_INVALID_PARAMETER;
+  }
+  if (EVP_PKEY_RSA != EVP_PKEY_id(pkey)){
+    /* We can only do assymetric encryption with RSA algorithm */
+    return SOTER_INVALID_PARAMETER;
+  }
+  if ((!key) || (key_length < sizeof(soter_container_hdr_t))){
+    return SOTER_INVALID_PARAMETER;
+  }
 
-	pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher_ctx->pkey_ctx);
-
-	if (!pkey)
-	{
-		return SOTER_INVALID_PARAMETER;
-	}
-
-	if (EVP_PKEY_RSA != EVP_PKEY_id(pkey))
-	{
-		/* We can only do assymetric encryption with RSA algorithm */
-		return SOTER_INVALID_PARAMETER;
-	}
-
-	if ((!key) || (key_length < sizeof(soter_container_hdr_t)))
-	{
-		return SOTER_INVALID_PARAMETER;
-	}
-
-	switch (hdr->tag[0])
-	{
-	case 'R':
-		return soter_rsa_priv_key_to_engine_specific(hdr, key_length, ((soter_engine_specific_rsa_key_t **)&pkey));
-	case 'U':
-		return soter_rsa_pub_key_to_engine_specific(hdr, key_length, ((soter_engine_specific_rsa_key_t **)&pkey));
-	default:
-		return SOTER_INVALID_PARAMETER;
-	}
+  switch (hdr->tag[0]) {
+  case 'R':
+    return soter_rsa_priv_key_to_engine_specific(hdr, key_length, ((soter_engine_specific_rsa_key_t **)&pkey));
+  case 'U':
+    return soter_rsa_pub_key_to_engine_specific(hdr, key_length, ((soter_engine_specific_rsa_key_t **)&pkey));
+  default:
+    return SOTER_INVALID_PARAMETER;
+  }
 }
 
-/* Padding is ignored. We use OAEP by default. Parameter is to support more paddings in the future */
-soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher, const void* key, const size_t key_length, soter_asym_cipher_padding_t pad)
+soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher, const void* key, const size_t key_length)
 {
-	EVP_PKEY *pkey;
-
-	if ((!asym_cipher) || (SOTER_ASYM_CIPHER_OAEP != pad))
-	{
-		return SOTER_INVALID_PARAMETER;
-	}
-
-	pkey = EVP_PKEY_new();
-	if (!pkey)
-	{
-		return SOTER_NO_MEMORY;
-	}
-
-	/* Only RSA supports asymmetric encryption */
-	if (!EVP_PKEY_set_type(pkey, EVP_PKEY_RSA))
-	{
-		EVP_PKEY_free(pkey);
-		return SOTER_FAIL;
-	}
-
-	asym_cipher->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
-	if (!(asym_cipher->pkey_ctx))
-	{
-		EVP_PKEY_free(pkey);
-		return SOTER_FAIL;
-	}
-	SOTER_IF_FAIL(soter_asym_cipher_import_key(asym_cipher, key, key_length)==SOTER_SUCCESS, (EVP_PKEY_free(pkey), EVP_PKEY_CTX_free(asym_cipher->pkey_ctx)));
-	return SOTER_SUCCESS;
+  EVP_PKEY *pkey;
+  if (!asym_cipher){
+    return SOTER_INVALID_PARAMETER;
+  }
+  pkey = EVP_PKEY_new();
+  assert(pkey);
+  /* Only RSA supports asymmetric encryption */
+  if (!EVP_PKEY_set_type(pkey, EVP_PKEY_RSA)){
+    EVP_PKEY_free(pkey);
+    return SOTER_FAIL;
+  }
+  asym_cipher->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
+  assert(asym_cipher->pkey_ctx);
+  if(SOTER_SUCCESS != soter_asym_cipher_import_key(asym_cipher, key, key_length)){
+    EVP_PKEY_free(pkey);
+    EVP_PKEY_CTX_free(asym_cipher->pkey_ctx);
+    return SOTER_FAIL;
+  }
+  return SOTER_SUCCESS;
 }
 
 soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher)
 {
-	if (!asym_cipher)
-	{
-		return SOTER_INVALID_PARAMETER;
-	}
+  if (!asym_cipher){
+    return SOTER_INVALID_PARAMETER;
+  }
 
-	if (asym_cipher->pkey_ctx)
-	{
-		EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher->pkey_ctx);
-		EVP_PKEY_CTX_free(asym_cipher->pkey_ctx);
-		if(pkey){
-		    EVP_PKEY_free(pkey);
-		}
-	}
-
-	return SOTER_SUCCESS;
+  if (asym_cipher->pkey_ctx)  {
+    EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher->pkey_ctx);
+    EVP_PKEY_CTX_free(asym_cipher->pkey_ctx);
+    if(pkey){
+      EVP_PKEY_free(pkey);
+    }
+  }
+  return SOTER_SUCCESS;
 }
 
 
@@ -287,44 +267,30 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
 	}
 }
 
-soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_length, soter_asym_cipher_padding_t pad)
-{
-	soter_status_t status;
-	soter_asym_cipher_t *ctx = malloc(sizeof(soter_asym_cipher_t));
-	if (!ctx)
-	{
-		return NULL;
-	}
-
-	status = soter_asym_cipher_init(ctx, key, key_length, pad);
-	if (SOTER_SUCCESS == status)
-	{
-		return ctx;
-	}
-	else
-	{
-		free(ctx);
-		return NULL;
-	}
+soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_length){
+  soter_status_t status;
+  soter_asym_cipher_t *ctx = malloc(sizeof(soter_asym_cipher_t));
+  if (!ctx){
+    return NULL;
+  }
+  
+  status = soter_asym_cipher_init(ctx, key, key_length);
+  if (SOTER_SUCCESS == status){
+    return ctx;
+  }
+  free(ctx);
+  return NULL;
 }
 
-soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher)
-{
-	soter_status_t status;
-
-	if (!asym_cipher)
-	{
-		return SOTER_INVALID_PARAMETER;
-	}
-
-	status = soter_asym_cipher_cleanup(asym_cipher);
-	if (SOTER_SUCCESS == status)
-	{
-		free(asym_cipher);
-		return SOTER_SUCCESS;
-	}
-	else
-	{
-		return status;
-	}
+soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher){
+  soter_status_t status;
+  if (!asym_cipher){
+    return SOTER_INVALID_PARAMETER;
+  }
+  status = soter_asym_cipher_cleanup(asym_cipher);
+  if (SOTER_SUCCESS == status){
+    free(asym_cipher);
+    return SOTER_SUCCESS;
+  }
+  return status;
 }

@@ -59,33 +59,21 @@
  */
 
 /**
- * @enum soter_hash_algo_type
- * @brief Supported hash algorithms
- */
-enum soter_hash_algo_type
-{
-//	SOTER_HASH_SHA1,    /**< sha1   */
-	SOTER_HASH_SHA256,  /**< sha256 */
-	SOTER_HASH_SHA512,  /**< sha512 */
-};
-
-/** 
- * @brief hash algorithm typedef
- */
-typedef enum soter_hash_algo_type soter_hash_algo_t;
-
-/**
  * @typedef soter_hash_ctx_t
  * @brief hash context typedef
  */
 typedef struct soter_hash_ctx_type soter_hash_ctx_t;
+
+size_t soter_hash_block_size(int32_t algo);
+size_t soter_hash_length(int32_t algo);
 
 /**
  * @brief creating of hash context
  * @param [in] algo hash algorithm to be used; see @ref soter_hash_algo_type
  * @return pointer to hash context on sussecc and  NULL on failure
  */
-soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo);
+soter_hash_ctx_t* soter_hash_create(int32_t algo);
+soter_status_t soter_hash_init(soter_hash_ctx_t* ctx, int32_t algo);
 
 /**
  * @brief destroy hash context

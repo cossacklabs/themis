@@ -76,6 +76,12 @@ else ifeq ($(ENGINE),libressl)
 else ifeq ($(ENGINE), boringssl)
 	CRYPTO_ENGINE_DEF = BORINGSSL
 	CRYPTO_ENGINE_PATH=boringssl
+else ifeq ($(ENGINE), libsodium)
+	CRYPTO_ENGINE_DEF = LIBSODIUM
+	CRYPTO_ENGINE_PATH=libsodium
+else ifeq ($(ENGINE), bearssl)
+	CRYPTO_ENGINE_DEF = BEARSSL
+	CRYPTO_ENGINE_PATH=bearssl
 else
 	ERROR = $(error error: engine $(ENGINE) unsupported...)
 endif
@@ -306,7 +312,7 @@ clean: CMD = rm -rf $(BIN_PATH)
 clean: nist_rng_test_suite
 	@$(BUILD_CMD)
 
-make_install_dirs: CMD = mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter $(PREFIX)/lib
+make_install_dirs: CMD = mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter/$(CRYPTO_ENGINE_PATH) $(PREFIX)/lib
 
 make_install_dirs:
 	@echo -n "making dirs for install "
@@ -314,8 +320,14 @@ make_install_dirs:
 
 install_soter_headers: CMD = install $(SRC_PATH)/soter/*.h $(PREFIX)/include/soter
 
-install_soter_headers: err all make_install_dirs
+install_soter_headers: err all make_install_dirs install_soter_engine_headers
 	@echo -n "install soter headers "
+	@$(BUILD_CMD_)
+
+install_soter_engine_headers: CMD = install $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)/*.h $(PREFIX)/include/soter/$(CRYPTO_ENGINE_PATH)
+
+install_soter_engine_headers: err all make_install_dirs
+	@echo -n "install soter engine headers "
 	@$(BUILD_CMD_)
 
 install_themis_headers: CMD = install $(SRC_PATH)/themis/*.h $(PREFIX)/include/themis

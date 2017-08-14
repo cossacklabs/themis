@@ -20,22 +20,25 @@
 
 #ifdef CRYPTO_ENGINE_PATH
 #define CEP <soter/CRYPTO_ENGINE_PATH/soter_engine.h>
+#define CEP2 <soter/CRYPTO_ENGINE_PATH/soter_engine_consts.h>
 #include CEP
+#include CEP2
 #undef CEP
 #else
 #include <soter/openssl/soter_engine.h>
+#include <soter/openssl/soter_engine_consts.h>
 #endif
 
-soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t algo);
+soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, int32_t algo);
 
-soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher, const void* key, const size_t key_length, soter_asym_cipher_padding_t pad);
+soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* astym_cipher, const void* key, const size_t key_length);
 soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher);
 
-soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_alg_t alg);
+soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, const void* key, const size_t key_length);
 soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx);
 
-soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length);
-soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length);
+soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length);
+soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length);
 
 /* Largest possible block size for supported hash functions (SHA-512) */
 #define HASH_MAX_BLOCK_SIZE 128
@@ -44,11 +47,11 @@ struct soter_hmac_ctx_type
 {
 	uint8_t o_key_pad[HASH_MAX_BLOCK_SIZE];
 	size_t block_size;
-	soter_hash_algo_t algo;
+	int32_t algo;
 	soter_hash_ctx_t hash_ctx;
 };
 
-soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, soter_hash_algo_t algo, const uint8_t* key, size_t key_length);
+soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, int32_t algo, const uint8_t* key, size_t key_length);
 soter_status_t soter_hmac_cleanup(soter_hmac_ctx_t *hmac_ctx);
 
 #endif /* SOTER_T_H */

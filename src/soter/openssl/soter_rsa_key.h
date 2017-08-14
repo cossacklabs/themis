@@ -32,8 +32,8 @@
 
 #define RSA_KEY_LENGTH_1024 1
 #define RSA_KEY_LENGTH_2048 2
-#define RSA_KEY_LENGTH_4096 3
-#define RSA_KEY_LENGTH_8192 4
+#define RSA_KEY_LENGTH_4096 4
+#define RSA_KEY_LENGTH_8192 8
 
 #define RSA_KEY_SUF(_KEY_SIZE_) RSA_##_KEY_SIZE_
 
@@ -58,7 +58,8 @@
 	struct soter_rsa_priv_key_##_KEY_SIZE_##_type \
 	{ \
 		soter_container_hdr_t hdr; \
-		uint8_t priv_exp[RSA_BYTE_SIZE(_KEY_SIZE_)];		uint8_t p[RSA_BYTE_SIZE(_KEY_SIZE_) / 2]; \
+		uint8_t priv_exp[RSA_BYTE_SIZE(_KEY_SIZE_)];	\
+		uint8_t p[RSA_BYTE_SIZE(_KEY_SIZE_) / 2]; \
 		uint8_t q[RSA_BYTE_SIZE(_KEY_SIZE_) / 2]; \
 		uint8_t dp[RSA_BYTE_SIZE(_KEY_SIZE_) / 2]; \
 		uint8_t dq[RSA_BYTE_SIZE(_KEY_SIZE_) / 2]; \

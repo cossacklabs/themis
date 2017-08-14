@@ -1,0 +1,36 @@
+Metadata-Version: 1.1
+Name: pythemis
+Version: 0.9.4.post2
+Summary: UNKNOWN
+Home-page: http://cossacklabs.com
+Author: CossackLabs
+Author-email: dev@cossacklabs.com
+License: Apache 2.0
+Description: themis
+        =====
+        Themis is a data security library, providing users with high-quality 
+        security services for secure messaging of any kinds and flexible data 
+        storage. Themis is aimed at modern developers, with high level OOP 
+        wrappers for Ruby, Python, PHP, Java / Android and iOS / OSX. It is d
+        esigned with ease of use in mind, high security and cross-platform 
+        availability.
+Platform: UNKNOWN
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Natural Language :: English
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: POSIX
+Classifier: Operating System :: POSIX :: BSD
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.2
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy

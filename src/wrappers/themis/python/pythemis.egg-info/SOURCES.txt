@@ -1,0 +1,17 @@
+AUTHORS
+LICENSE
+MANIFEST.in
+README.rst
+setup.cfg
+setup.py
+pythemis/__init__.py
+pythemis/exception.py
+pythemis/scell.py
+pythemis/scomparator.py
+pythemis/skeygen.py
+pythemis/smessage.py
+pythemis/ssession.py
+pythemis.egg-info/PKG-INFO
+pythemis.egg-info/SOURCES.txt
+pythemis.egg-info/dependency_links.txt
+pythemis.egg-info/top_level.txt

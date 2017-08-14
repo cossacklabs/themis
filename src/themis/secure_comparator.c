@@ -14,6 +14,7 @@
 * limitations under the License.
 */
 
+#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL)
 
 /* 
  * Secure Comparator involves a whole raft of ideas that are not trivial for developers without 
@@ -1061,3 +1062,4 @@ themis_status_t secure_comparator_get_result(const secure_comparator_t *comp_ctx
 	return comp_ctx->result;
 }
 
+#endif

@@ -14,10 +14,10 @@
 * limitations under the License.
 */
 
-#include <soter/soter_sign_rsa.h>
+#include "soter_sign_rsa.h"
 #include <soter/error.h>
 #include <soter/soter.h>
-#include <soter/soter_rsa_key.h>
+#include "soter_rsa_key.h"
 #include "soter_engine.h"
 #include "soter_rsa_common.h"
 #include <openssl/evp.h>
@@ -102,7 +102,7 @@ soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signa
   if (!pkey){
     return SOTER_INVALID_PARAMETER;
   }
-  if((*signature_length)<EVP_PKEY_size(pkey)){
+  if(!signature || (*signature_length)<EVP_PKEY_size(pkey)){
     (*signature_length)=EVP_PKEY_size(pkey);
     return SOTER_BUFFER_TOO_SMALL;
   }

@@ -58,7 +58,7 @@ soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, 
 		key_length = sizeof(implicit_key);
 	}
 
-	res = soter_hmac_init(&hmac_ctx, SOTER_HASH_SHA256, key, key_length);
+	res = soter_hmac_init(&hmac_ctx, SOTER_HASH_DEFAULT_ALG, key, key_length);
 	if (SOTER_SUCCESS != res){
 		return res;
 	}

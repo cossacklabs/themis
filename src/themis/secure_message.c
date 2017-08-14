@@ -19,50 +19,12 @@
 #include <themis/secure_message_wrapper.h>
 #include <soter/soter_t.h>
 
-#ifndef THEMIS_RSA_KEY_LENGTH
-#define THEMIS_RSA_KEY_LENGTH RSA_KEY_LENGTH_2048
-#endif
-themis_status_t themis_gen_key_pair(soter_sign_alg_t alg,
-				    uint8_t* private_key,
-				    size_t* private_key_length,
-				    uint8_t* public_key,
-				    size_t* public_key_length)
-{
-  soter_sign_ctx_t* ctx=soter_sign_create(alg,NULL,0,NULL,0);
-  THEMIS_CHECK(ctx!=NULL);
-  soter_status_t res=soter_sign_export_key(ctx, private_key, private_key_length, true);
-  if(res!=THEMIS_SUCCESS && res != THEMIS_BUFFER_TOO_SMALL){
-    soter_sign_destroy(ctx);
-    return res;
-  }
-  soter_status_t res2=soter_sign_export_key(ctx, public_key, public_key_length, false);
-  if(res2!=THEMIS_SUCCESS && res2!=THEMIS_BUFFER_TOO_SMALL){
-    soter_sign_destroy(ctx);
-    return res;
-  }
-  soter_sign_destroy(ctx);
-  if(res==THEMIS_BUFFER_TOO_SMALL || res2==THEMIS_BUFFER_TOO_SMALL){
-    return THEMIS_BUFFER_TOO_SMALL;
-  }
-  return THEMIS_SUCCESS;
-}
-
-themis_status_t themis_gen_rsa_key_pair(uint8_t* private_key,
-				    size_t* private_key_length,
-				    uint8_t* public_key,
-				    size_t* public_key_length){
-  soter_rsa_key_pair_gen_t* key_pair_ctx=soter_rsa_key_pair_gen_create(THEMIS_RSA_KEY_LENGTH);
-  themis_status_t res=soter_rsa_key_pair_gen_export_key(key_pair_ctx, private_key, private_key_length, true);
-  themis_status_t res1=soter_rsa_key_pair_gen_export_key(key_pair_ctx, public_key, public_key_length, false);
-  soter_rsa_key_pair_gen_destroy(key_pair_ctx);
-  return (res<res1)?res:res1;
-}
-
-themis_status_t themis_gen_ec_key_pair(uint8_t* private_key,
-				    size_t* private_key_length,
-				    uint8_t* public_key,
-				    size_t* public_key_length){
-  return themis_gen_key_pair(SOTER_SIGN_ecdsa_none_pkcs8, private_key, private_key_length, public_key, public_key_length);
+themis_status_t themis_gen_key_pair(uint32_t alg_id,
+                                    uint8_t* private_key,
+                                    size_t* private_key_length,
+                                    uint8_t* public_key,
+                                    size_t* public_key_length){
+  return soter_key_pair_gen(alg_id, private_key, private_key_length, public_key, public_key_length); 
 }
 
 themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
