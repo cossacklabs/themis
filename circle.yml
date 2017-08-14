@@ -2,8 +2,6 @@ machine:
   environment:
     ANDROID_NDK_ROOT: $ANDROID_NDK
     GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
-    GOPATH: $HOME/gopath
-    GOROOT: $HOME/go
 
 ## Customize dependencies
 dependencies:
@@ -12,7 +10,7 @@ dependencies:
     - sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
     - cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz
     - gem install coveralls-lcov
-    - $GOROOT/bin/go get github.com/mattn/goveralls
+    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && go get github.com/mattn/goveralls
 
   override:
     - make
@@ -31,8 +29,8 @@ dependencies:
     - make test
     - make themispp_test
     - make test_all
-    - mkdir -p $GOPATH/src/$GOTHEMIS_IMPORT
-    - rsync -auv gothemis/ $GOPATH/src/$GOTHEMIS_IMPORT/
+    - mkdir -p $HOME/gopath/src/$GOTHEMIS_IMPORT
+    - rsync -auv gothemis/ $HOME/gopath/src/$GOTHEMIS_IMPORT/
     - lcov --directory . --zerocounters
 ## Customize test commands
 test:
@@ -54,7 +52,7 @@ test:
     - build/tests/pythemis_test.sh
     - sudo build/tests/rubythemis_test.sh
     - build/tests/phpthemis_test.sh
-    - $GOROOT/bin/go test -v $GOTHEMIS_IMPORT/...
+    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && $HOME/go/bin/go test -v $GOTHEMIS_IMPORT/...
     - build/tests/node.sh
     # - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
@@ -65,5 +63,4 @@ test:
     # run Android tests
     - ./gradlew --info -Pboringssl_path=$HOME/boringssl connectedAndroidTest
   post:
-    - cd $GOPATH/src/$GOTHEMIS_IMPORT && $GOPATH/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN
-
+    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN
