@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
     s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
     
-    s.dependency 'OpenSSL-Universal', '1.0.2.10'
+    s.dependency 'OpenSSL-Universal', '1.0.2k'
 
     s.ios.deployment_target = '7.0'
     s.osx.deployment_target = '10.9'
