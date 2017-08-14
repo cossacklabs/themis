@@ -1,22 +1,32 @@
 PODS:
-  - OpenSSL-Universal (1.0.1.20)
-  - themis (0.9.4):
-    - OpenSSL-Universal (= 1.0.1.20)
-    - themis/core (= 0.9.4)
-    - themis/objcwrapper (= 0.9.4)
-  - themis/core (0.9.4):
-    - OpenSSL-Universal (= 1.0.1.20)
-  - themis/objcwrapper (0.9.4):
-    - OpenSSL-Universal (= 1.0.1.20)
+  - OpenSSL-Universal (1.0.2.10)
+  - themis (0.9.5):
+    - OpenSSL-Universal (= 1.0.2.10)
+    - themis/core (= 0.9.5)
+    - themis/objcwrapper (= 0.9.5)
+  - themis/core (0.9.5):
+    - OpenSSL-Universal (= 1.0.2.10)
+  - themis/objcwrapper (0.9.5):
+    - OpenSSL-Universal (= 1.0.2.10)
     - themis/core
 
 DEPENDENCIES:
-  - themis (= 0.9.4)
+  - themis (from `https://github.com/cossacklabs/themis.git`, branch `release_0.9.5`)
+
+EXTERNAL SOURCES:
+  themis:
+    :branch: release_0.9.5
+    :git: https://github.com/cossacklabs/themis.git
+
+CHECKOUT OPTIONS:
+  themis:
+    :commit: c494b894f0a579903ef440f4974487636e715bf8
+    :git: https://github.com/cossacklabs/themis.git
 
 SPEC CHECKSUMS:
-  OpenSSL-Universal: 71f2c4b2ae758e2218090f905e95ca0ac5c01be7
-  themis: 5dc6c65d9b7b4a4cd01465972d9b8478e6d19e0a
+  OpenSSL-Universal: 6dc366764e8bf6ca93c60bd767d9103146a3b3b6
+  themis: a30b07346d6e80cb9b001a707a242c3e10ecf888
 
-PODFILE CHECKSUM: 6cd680cada2b31d2dfaed467b24fa1a47698cb2c
+PODFILE CHECKSUM: 246c848ea713af2066699432c5ccf2b9c1e29ba4
 
-COCOAPODS: 1.1.1
+COCOAPODS: 1.2.1
