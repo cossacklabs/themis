@@ -23,8 +23,8 @@ inhibit_all_warnings!
 target :"WorkingWithThemisServer" do
 
   # if you feel adventurous, link example to head
-  #pod 'themis', :git => "https://github.com/cossacklabs/themis.git"
+  pod 'themis', :git => "https://github.com/cossacklabs/themis.git", :branch => 'release_0.9.5'
 
-  pod 'themis', '0.9.4'
+  #pod 'themis', '0.9.5'
 
 end
