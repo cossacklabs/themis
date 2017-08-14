@@ -10,7 +10,7 @@ dependencies:
     - sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
     - cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz
     - gem install coveralls-lcov
-    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && go get github.com/mattn/goveralls
+    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && $HOME/go/bin/go get github.com/mattn/goveralls
 
   override:
     - make
