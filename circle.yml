@@ -5,7 +5,6 @@ machine:
     GOROOT: $HOME/go
     GOPATH: $HOME/gopath
     PATH: $GOROOT/bin:$PATH
-    
 
 ## Customize dependencies
 dependencies:
