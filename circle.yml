@@ -14,7 +14,7 @@ dependencies:
     - sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
     - cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz
     - gem install coveralls-lcov
-    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && $HOME/go/bin/go get github.com/mattn/goveralls
+    - go get github.com/mattn/goveralls
 
   override:
     - make
@@ -56,7 +56,7 @@ test:
     - build/tests/pythemis_test.sh
     - sudo build/tests/rubythemis_test.sh
     - build/tests/phpthemis_test.sh
-    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && $HOME/go/bin/go test -v $GOTHEMIS_IMPORT/...
+    - go test -v $GOTHEMIS_IMPORT/...
     - build/tests/node.sh
     # - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
@@ -67,4 +67,5 @@ test:
     # run Android tests
     - ./gradlew --info -Pboringssl_path=$HOME/boringssl connectedAndroidTest
   post:
-    - export GOROOT=$HOME/go && export GOPATH=$HOME/gopath && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN
+    # run only if CIRCLE_PR_NUMBER variable is not set (it's not pull request and GO_COVERALLS_TOKEN will be set via circleCI for non-PR build) and GO_COVERALLS_TOKEN is set
+    - '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$GO_COVERALLS_TOKEN" ] && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$GO_COVERALLS_TOKEN'
