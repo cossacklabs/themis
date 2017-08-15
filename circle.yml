@@ -2,6 +2,10 @@ machine:
   environment:
     ANDROID_NDK_ROOT: $ANDROID_NDK
     GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
+    GOROOT: $HOME/go
+    GOPATH: $HOME/gopath
+    PATH: $GOROOT/bin:$PATH
+    
 
 ## Customize dependencies
 dependencies:
