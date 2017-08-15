@@ -47,7 +47,7 @@ test:
     - lcov --directory . --capture --output-file coverage.info
     - lcov --remove coverage.info 'tests/*' 'src/soter/openssl/*' '/usr/*' --output-file coverage.info
     - lcov --list coverage.info
-#    - coveralls-lcov -v --repo-token $COVERALLS_TOKEN coverage.info
+    - coveralls-lcov -v --repo-token $COVERALLS_TOKEN coverage.info
     - build_with_boringssl/tests/soter_test
     - build_with_boringssl/tests/themis_test
     - build/tests/themispp_test
