@@ -38,9 +38,9 @@ dependencies:
 ## Customize test commands
 test:
   override:
-    # run only if CIRCLE_PR_NUMBER variable is not set (it's not pull request and GO_COVERALLS_TOKEN will be set via circleCI for non-PR build) and GO_COVERALLS_TOKEN is set
+    # run only if CIRCLE_PR_NUMBER variable is not set (it's not pull request and COVERALLS_TOKEN will be set via circleCI for non-PR build) and COVERALLS_TOKEN is set
     # we should calculate coverage for gothemis and send report before sending coverage of main C part
-    - '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$GO_COVERALLS_TOKEN" ] && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$GO_COVERALLS_TOKEN'
+    - '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN'
     - build/tests/soter_test
     - build/tests/themis_test
     - valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
