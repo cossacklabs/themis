@@ -5,6 +5,8 @@ machine:
     GOROOT: $HOME/go
     GOPATH: $HOME/gopath
     PATH: $GOROOT/bin:$PATH
+    # to avoid OOM killer (https://circleci.com/docs/1.0/oom/#out-of-memory-errors-in-android-builds)
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
 
 ## Customize dependencies
 dependencies:
