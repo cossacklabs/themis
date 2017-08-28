@@ -12,7 +12,7 @@
   <a href="https://github.com/cossacklabs/themis/releases/latest"><img src="https://img.shields.io/github/release/cossacklabs/themis.svg" alt="GitHub release"></a>
   <a href="https://circleci.com/gh/cossacklabs/themis"><img src="https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield" alt="Circle CI"></a>
   <a href="https://github.com/cossacklabs/themis/releases/latest"><img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Linux%20%7C%20Windows%20%7C%20Java-green.svg" alt="Platforms"></a>
-  <a href='https://coveralls.io/github/mnaza/themis?branch=master'><img src='https://coveralls.io/repos/github/mnaza/themis/badge.svg?branch=master' alt='Coverage Status' /></a>
+  <a href='https://coveralls.io/github/cossacklabs/themis'><img src='https://coveralls.io/repos/github/cossacklabs/themis/badge.svg?branch=master' alt='Coverage Status' /></a>
   <a href='https://goreportcard.com/report/github.com/cossacklabs/themis'><img class="badge" tag="github.com/cossacklabs/themis" src="https://goreportcard.com/badge/github.com/cossacklabs/themis"></a>
 </p>
 <br>
