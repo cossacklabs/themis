@@ -1,9 +1,0 @@
-
-arraydims.c:3:3: Initializer block for daytab[1] has 14 elements, but declared
-    as int [13]: 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 52
-arraydims.c:8:5: Initializer block for daytab2[0][1] has 14 elements, but
-    declared as int [13]: 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31, 52
-
-Finished checking --- 2 code warnings, as expected
-
-Finished checking --- no warnings

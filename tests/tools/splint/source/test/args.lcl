@@ -1,7 +1,0 @@
-int severalargs(int x, char *t) { }
-int severalargs2(int x, char *t) { }
-int any(...) { } 
-int many1(int x, char y, ...) { } 
-int many2(int x, char y, ...) { } 
-int many3(int x, char y, ...) { } 
-int voidargs(void) { }

@@ -1,9 +1,0 @@
-
-nullassign.c:1:10: Global a initialized to null value: int * a = 0 = 0
-nullassign.c:5:24: Global c initialized to null value: int * c = 0 = 0
-
-Finished checking --- 2 code warnings, as expected
-
-nullassign.c:5:24: Global c initialized to null value: int * c = 0 = 0
-
-Finished checking --- 1 code warning, as expected

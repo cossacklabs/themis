@@ -1,5 +1,0 @@
-
-longconstants.c:3:14: Variable llong initialized to type unsigned long int,
-                         expects long int: 3594UL
-
-Finished LCLint checking --- 1 code error found, as expected

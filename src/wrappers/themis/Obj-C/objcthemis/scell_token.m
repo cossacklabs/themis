@@ -45,8 +45,8 @@
     size_t wrappedMessageLength = 0;
     size_t tokenLength = 0;
 
-    const void * contextData = (context != nil) ? [context bytes] : NULL;
-    size_t contextLength = (context != nil) ? [context length] : 0;
+    const void * contextData = [context bytes];
+    size_t contextLength = [context length];
 
     TSCellTokenEncryptedData * encryptedMessage = [[TSCellTokenEncryptedData alloc] init];
     TSErrorType result = (TSErrorType) themis_secure_cell_encrypt_token_protect([self.key bytes], [self.key length],
@@ -75,8 +75,8 @@
 
 - (NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(NSData *)context error:(NSError **)error {
     size_t unwrappedMessageLength = 0;
-    const void * contextData = (context != nil) ? [context bytes] : NULL;
-    size_t contextLength = (context != nil) ? [context length] : 0;
+    const void * contextData = [context bytes];
+    size_t contextLength = [context length];
 
     TSErrorType result = (TSErrorType) themis_secure_cell_decrypt_token_protect([self.key bytes], [self.key length], contextData, contextLength,
             [message.cipherText bytes], [message.cipherText length], [message.token bytes], [message.token length],
@@ -96,7 +96,7 @@
         *error = SCERROR(result, @"Secure Cell (Token Protect) decryption failed");
         return nil;
     }
-    return unwrapped_message;
+    return [unwrapped_message copy];
 }
 
 @end

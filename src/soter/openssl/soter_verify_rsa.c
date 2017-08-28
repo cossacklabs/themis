@@ -14,10 +14,11 @@
 * limitations under the License.
 */
 
+#include <soter/soter_sign_rsa.h>
 #include <soter/error.h>
 #include <soter/soter.h>
 #include <soter/soter_rsa_key.h>
-#include "soter_openssl.h"
+#include "soter_engine.h"
 #include "soter_rsa_common.h"
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
@@ -41,13 +42,13 @@ soter_status_t soter_verify_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void
   }
   if(private_key && private_key_length!=0){
     if(soter_rsa_import_key(pkey, private_key, private_key_length)!=SOTER_SUCCESS){
-	EVP_PKEY_free(pkey);
+        soter_verify_cleanup_rsa_pss_pkcs8(ctx);
 	return SOTER_FAIL;
     }
   }
   if(public_key && public_key_length!=0){
     if(soter_rsa_import_key(pkey, public_key, public_key_length)!=SOTER_SUCCESS){
-	EVP_PKEY_free(pkey);
+        soter_verify_cleanup_rsa_pss_pkcs8(ctx);
 	return SOTER_FAIL;
     }
   }
@@ -55,19 +56,20 @@ soter_status_t soter_verify_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void
   /*md_ctx init*/
   ctx->md_ctx = EVP_MD_CTX_create();
   if(!(ctx->md_ctx)){
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
+    soter_verify_cleanup_rsa_pss_pkcs8(ctx);
     return SOTER_NO_MEMORY;
   }
-  if(!EVP_DigestVerifyInit(ctx->md_ctx, &(ctx->pkey_ctx), EVP_sha256(), NULL, pkey)){
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
+  EVP_PKEY_CTX *md_pkey_ctx=NULL;
+  if(!EVP_DigestVerifyInit(ctx->md_ctx, &md_pkey_ctx, EVP_sha256(), NULL, pkey)){
+    soter_verify_cleanup_rsa_pss_pkcs8(ctx);
     return SOTER_FAIL;
   }
-  if(!EVP_PKEY_CTX_set_rsa_padding(ctx->pkey_ctx, RSA_PKCS1_PSS_PADDING)){
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
+  if(!EVP_PKEY_CTX_set_rsa_padding(md_pkey_ctx, RSA_PKCS1_PSS_PADDING)){
+    soter_verify_cleanup_rsa_pss_pkcs8(ctx);
     return SOTER_FAIL;
   }
-  if(!EVP_PKEY_CTX_set_rsa_pss_saltlen(ctx->pkey_ctx, -2)){
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
+  if(!EVP_PKEY_CTX_set_rsa_pss_saltlen(md_pkey_ctx, -2)){
+    soter_verify_cleanup_rsa_pss_pkcs8(ctx);
     return SOTER_FAIL;
   }  
   return SOTER_SUCCESS;
@@ -95,6 +97,24 @@ soter_status_t soter_verify_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const voi
   }
   if(!EVP_DigestVerifyFinal(ctx->md_ctx, (unsigned char*)signature, signature_length)){
     return SOTER_FAIL;
+  }
+  return SOTER_SUCCESS;
+}
+
+soter_status_t soter_verify_cleanup_rsa_pss_pkcs8(soter_sign_ctx_t* ctx)
+{
+  if(!ctx){
+    return SOTER_INVALID_PARAMETER;
+  }
+  if(ctx->pkey_ctx){
+    EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
+    if(pkey)EVP_PKEY_free(pkey);
+    EVP_PKEY_CTX_free(ctx->pkey_ctx);
+    ctx->pkey_ctx=NULL;
+  }
+  if(ctx->md_ctx){
+    EVP_MD_CTX_destroy(ctx->md_ctx);
+    ctx->md_ctx=NULL;
   }
   return SOTER_SUCCESS;
 }

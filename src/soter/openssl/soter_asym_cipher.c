@@ -17,7 +17,7 @@
 #include <soter/error.h>
 #include <soter/soter.h>
 #include <soter/soter_rsa_key.h>
-#include "soter_openssl.h"
+#include "soter_engine.h"
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
@@ -110,7 +110,11 @@ soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher)
 
 	if (asym_cipher->pkey_ctx)
 	{
+		EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher->pkey_ctx);
 		EVP_PKEY_CTX_free(asym_cipher->pkey_ctx);
+		if(pkey){
+		    EVP_PKEY_free(pkey);
+		}
 	}
 
 	return SOTER_SUCCESS;

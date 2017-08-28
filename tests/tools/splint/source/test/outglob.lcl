@@ -1,7 +1,0 @@
-int x1, x2, x3;
-
-int f (void) undef int x1; undef int x2; undef int x3;
-{ modifies x1, x2, x3; }
-	
-int g (void) int x1, x2; undef int x3;
-{ modifies x3; }

@@ -14,32 +14,40 @@
 # limitations under the License.
 #
 
-#ssession wrappers for non event handled transport (like olain socket)
-from pythemis import ssession;
+"""
+ssession wrappers for non event handled transport (like plain socket)
+NOTE: due to the fact that ssession has state and it is simple example, server
+can handle only one session and then need restart or you can extend example and
+handle many sessions per some identifier
+"""
 
-class ssession_server(object):
+from pythemis import ssession
+
+
+class SSessionServer(object):
     def __init__(self, user_id, sign_key, transport):
-        self.session=ssession.ssession(user_id, sign_key, transport);
-        while self.session.is_established()!=True:         #1. establish session
-            self.session.receive();                           #2. establish session
+        self.session = ssession.SSession(user_id, sign_key, transport)
+        # 1. establish session
+        while not self.session.is_established():
+            self.session.receive()
 
     def receive(self):
-        return self.session.receive();                        #receive message
+        return self.session.receive()
 
     def send(self, message):
-        self.session.send(message);                        #send message
+        self.session.send(message)
 
 
-
-class ssession_client(object):
+class SSessionClient(object):
     def __init__(self, user_id, sign_key, transport):
-        self.session=ssession.ssession(user_id, sign_key, transport);
-        self.session.connect();                                #1. establish session
-        while self.session.is_established()!=True:        #2  establish session
-            self.session.receive();                        #3. establish session
+        self.session = ssession.SSession(user_id, sign_key, transport)
+        # 1. establish session
+        self.session.connect()
+        while not self.session.is_established():
+            self.session.receive()
 
     def receive(self):
-        return self.session.receive();                        #receive message
+        return self.session.receive()
 
     def send(self, message):
-        self.session.send(message);                        #send message
+        self.session.send(message)

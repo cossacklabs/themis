@@ -15,7 +15,7 @@
 */
 
 #include <soter/error.h>
-#include "soter_openssl.h"
+#include "soter_engine.h"
 #include <soter/soter_ec_key.h>
 #include <openssl/ec.h>
 
@@ -93,8 +93,11 @@ soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
 	}
 	if (asym_ka_ctx->pkey_ctx)
 	{
-
+		EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
 		EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
+		if(pkey){
+		    EVP_PKEY_free(pkey);
+		}
 	}
 	return SOTER_SUCCESS;
 }

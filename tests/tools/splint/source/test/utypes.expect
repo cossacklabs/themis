@@ -1,9 +1,0 @@
-
-utypes.c:16: Include file <sys/types.h> matches the name of a POSIX library,
-    but the POSIX library is not being used.  Consider using +posixlib or
-    +posixstrictlib to select the POSIX library, or -warnposix to suppress this
-    message.
-utypes.c: (in function f)
-utypes.c:26:8: Variable src_bytes declared but not used
-
-Finished checking --- 2 code warnings, as expected

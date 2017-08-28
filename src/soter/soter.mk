@@ -15,14 +15,17 @@
 #
 
 SOTER_SRC = $(wildcard $(SRC_PATH)/soter/*.c)
-
-ifdef SECURE_COMPARATOR_ENABLED
+SOTER_AUD_SRC = $(wildcard $(SRC_PATH)/soter/*.c)
+SOTER_AUD_SRC += $(wildcard $(SRC_PATH)/soter/*.h)
 # ed25519 we specify here, because it should be portable and does not depend on $(CRYPTO_ENGINE)
 SOTER_SRC += $(wildcard $(SRC_PATH)/soter/ed25519/*.c)
-endif
+SOTER_AUD_SRC += $(wildcard $(SRC_PATH)/soter/ed25519/*.c)
+SOTER_AUD_SRC += $(wildcard $(SRC_PATH)/soter/ed25519/*.h)
 
 include $(CRYPTO_ENGINE)/soter.mk
 
 SOTER_OBJ = $(patsubst $(SRC_PATH)/%.c,$(OBJ_PATH)/%.o, $(SOTER_SRC))
+
+SOTER_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(SOTER_AUD_SRC))
 
 SOTER_BIN = soter

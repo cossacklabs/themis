@@ -1,7 +1,7 @@
 #
 # Copyright (c) 2015 Cossack Labs Limited
 #
-# Licensed under the Apache License, Version 2.0 (the "License");
+# Licensed under the Apache License, Version 2.0 (the "License")
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
@@ -13,25 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+"""
+echo client with handmade ssession wrappers (see ssession_wrappers.py)
+for none event handled transport, like plain socket
+"""
 
-#echo client with handmade ssession wrappers (see ssession_wrappers.py) 
-#for none event handled transport, like plain socket
-from pythemis import scomparator;
-import socket;
+import socket
+from pythemis import scomparator
 
-comparator=scomparator.scomparator(b"aashared secret");
-socket=socket.socket();
-socket.connect(("127.0.0.1", 26260));
-data=comparator.begin_compare()
+comparator = scomparator.SComparator(b"shared secret")
+socket = socket.socket()
+socket.connect(("127.0.0.1", 26260))
+try:
+    data = comparator.begin_compare()
 
-while comparator.result() == scomparator.SCOMPARATOR_CODES.NOT_READY:
-    socket.sendall(data);
-    data=comparator.proceed_compare(socket.recv(1024));
+    while not comparator.is_compared():
+        socket.sendall(data)
+        data = comparator.proceed_compare(socket.recv(1024))
 
-if comparator.result() == scomparator.SCOMPARATOR_CODES.NOT_MATCH:
-    print("not match");
-else:
-    print("match");
-    
-
-socket.close();
+    if comparator.is_equal():
+        print("match")
+    else:
+        print("not match")
+finally:
+    socket.close()

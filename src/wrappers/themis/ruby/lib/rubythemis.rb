@@ -81,9 +81,9 @@ module Themis
     extend ThemisCommon
     extend ThemisImport
 
-    BUFFER_TOO_SMALL = -4
+    BUFFER_TOO_SMALL = 14
     SUCCESS = 0
-    FAIL = -1
+    FAIL = 11
     SEND_AS_IS = 1
 
 
@@ -349,8 +349,8 @@ module Themis
       include ThemisCommon
       include ThemisImport
       
-      MATCH=-252645136
-      NOT_MATCH = -1
+      MATCH = 21
+      NOT_MATCH = 22
       NOT_READY = 0
 
       def initialize(shared_secret)

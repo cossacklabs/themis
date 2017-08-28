@@ -18,10 +18,12 @@
 #define SOTER_T_H
 #include <soter/soter.h>
 
-#ifdef LIBRESSL
-#include <soter/openssl/soter_openssl.h>
-#elif OPENSSL
-#include <soter/openssl/soter_openssl.h>
+#ifdef CRYPTO_ENGINE_PATH
+#define CEP <soter/CRYPTO_ENGINE_PATH/soter_engine.h>
+#include CEP
+#undef CEP
+#else
+#include <soter/openssl/soter_engine.h>
 #endif
 
 soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t algo);

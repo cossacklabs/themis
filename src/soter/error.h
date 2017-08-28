@@ -18,7 +18,6 @@
  * @file soter/error.h
  * @brief Soter return type, return codes and check macros
  *
- * 
  */
 #ifndef SOTER_ERROR_H
 #define SOTER_ERROR_H
@@ -37,14 +36,17 @@ typedef int soter_status_t;
  * @{
  */
 
-#define SOTER_SUCCESS 0
-#define SOTER_FAIL   -1
-#define SOTER_INVALID_PARAMETER -2
-#define SOTER_NO_MEMORY -3
-#define SOTER_BUFFER_TOO_SMALL -4
-#define SOTER_DATA_CORRUPT -5
-#define SOTER_INVALID_SIGNATURE -6
-#define SOTER_NOT_SUPPORTED -7
+#define SOTER_SUCCESS 0//success code
+
+//error codes
+#define SOTER_FAIL 			11
+#define SOTER_INVALID_PARAMETER 	12
+#define SOTER_NO_MEMORY 		13
+#define SOTER_BUFFER_TOO_SMALL 		14
+#define SOTER_DATA_CORRUPT 		15
+#define SOTER_INVALID_SIGNATURE 	16
+#define SOTER_NOT_SUPPORTED 		17
+#define SOTER_ENGINE_FAIL 		18
 
 /** @} */
 
@@ -57,8 +59,8 @@ typedef int soter_status_t;
 #define SOTER_ERROR_OUT(message) fprintf(stderr, "%s:%u - error: %s\n",__FILE__,__LINE__,message) 
 #define SOTER_DEBUG_OUT(message) fprintf(stdout, "%s:%u - debug: %s\n",__FILE__,__LINE__,message)
 #else
-#define SOTER_ERROR_OUT(message)  
-#define SOTER_DEBUG_OUT(message) 
+#define SOTER_ERROR_OUT(message)
+#define SOTER_DEBUG_OUT(message)
 #endif
 
 

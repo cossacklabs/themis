@@ -39,6 +39,10 @@
     }
 
     unsigned char * wrappedMessage = malloc(wrappedMessageLength);
+    if (!wrappedMessage) {
+        *error = SCERROR(encryptionResult, @"Secure Cell (Context Imprint) encryption failed, not enough memory");
+        return nil;
+    }
 
     encryptionResult = (TSErrorType) themis_secure_cell_encrypt_context_imprint([self.key bytes], [self.key length],
             [message bytes], [message length], [context bytes], [context length], wrappedMessage, &wrappedMessageLength);
@@ -49,9 +53,7 @@
         return nil;
     }
 
-    NSData * wrappedData = [[NSData alloc] initWithBytes:wrappedMessage length:wrappedMessageLength];
-    free(wrappedMessage);
-    return wrappedData;
+    return [NSData dataWithBytesNoCopy:wrappedMessage length:wrappedMessageLength];
 }
 
 
@@ -67,17 +69,21 @@
     }
 
     unsigned char * unwrappedMessage = malloc(unwrappedMessageLength);
+    if (!unwrappedMessage) {
+        *error = SCERROR(decryptionResult, @"Secure Cell (Context Imprint) decryption failed, not enough memory");
+        return nil;
+    }
 
     decryptionResult = themis_secure_cell_decrypt_context_imprint([self.key bytes], [self.key length],
         [message bytes], [message length], [context bytes], [context length], unwrappedMessage, &unwrappedMessageLength);
 
     if (decryptionResult != TSErrorTypeSuccess) {
+        free(unwrappedMessage);
         *error = SCERROR(decryptionResult, @"Secure Cell (Context Imprint) decryption failed");
         return nil;
     }
 
-    NSData * unwrappedData = [[NSData alloc] initWithBytes:unwrappedMessage length:unwrappedMessageLength];
-    return unwrappedData;
+    return [NSData dataWithBytesNoCopy:unwrappedMessage length:unwrappedMessageLength];
 }
 
 @end

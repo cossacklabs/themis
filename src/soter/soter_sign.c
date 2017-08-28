@@ -17,12 +17,12 @@
 #include <soter/error.h>
 #include <soter/soter.h>
 
-#ifdef LIBRESSL
-#include <soter/openssl/soter_openssl.h>
-#endif
-
-#ifdef OPENSSL
-#include <soter/openssl/soter_openssl.h>
+#ifdef CRYPTO_ENGINE_PATH
+#define CEP <soter/CRYPTO_ENGINE_PATH/soter_engine.h>
+#include CEP
+#undef CEP
+#else
+#include <soter/openssl/soter_engine.h>
 #endif
 
 #include <soter/soter_sign_rsa.h>
@@ -151,13 +151,46 @@ soter_status_t soter_verify_final(soter_sign_ctx_t* ctx, const void* signature, 
 }
 #undef SOTER_SIGN_ALG
 
+#define SOTER_SIGN_ALG(alg, padding, kdf)	\
+  case SOTER_SIGN_##alg##_##padding##_##kdf:				\
+  return soter_sign_cleanup_##alg##_##padding##_##kdf(ctx);
+soter_status_t soter_sign_cleanup(soter_sign_ctx_t* ctx){
+  if(!ctx){
+    return SOTER_INVALID_PARAMETER;
+  }
+  switch(ctx->alg){
+    SOTER_SIGN_ALGS
+  default:
+    return SOTER_INVALID_PARAMETER;
+  };
+  return SOTER_INVALID_PARAMETER;
+}
+#undef SOTER_SIGN_ALG
+
+#define SOTER_SIGN_ALG(alg, padding, kdf)	\
+  case SOTER_SIGN_##alg##_##padding##_##kdf:				\
+  return soter_verify_cleanup_##alg##_##padding##_##kdf(ctx);
+soter_status_t soter_verify_cleanup(soter_sign_ctx_t* ctx){
+  if(!ctx){
+    return SOTER_INVALID_PARAMETER;
+  }
+  switch(ctx->alg){
+    SOTER_SIGN_ALGS
+  default:
+    return SOTER_INVALID_PARAMETER;
+  };
+  return SOTER_INVALID_PARAMETER;
+}
+#undef SOTER_SIGN_ALG
+
 
 soter_sign_ctx_t* soter_sign_create(soter_sign_alg_t alg, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length){
-  soter_sign_ctx_t* ctx=malloc(sizeof(soter_sign_ctx_t));
+  soter_sign_ctx_t* ctx=calloc(sizeof(soter_sign_ctx_t),1);
   if(!ctx){
     return NULL;
   }
   if(soter_sign_init(ctx, alg, private_key, private_key_length, public_key, public_key_length)!=SOTER_SUCCESS){
+    soter_sign_cleanup(ctx);
     free(ctx);
     return NULL;
   }
@@ -165,11 +198,12 @@ soter_sign_ctx_t* soter_sign_create(soter_sign_alg_t alg, const void* private_ke
 }
 
 soter_sign_ctx_t* soter_verify_create(soter_sign_alg_t alg, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length){
-  soter_sign_ctx_t* ctx=malloc(sizeof(soter_sign_ctx_t));
+  soter_sign_ctx_t* ctx=calloc(sizeof(soter_sign_ctx_t),1);
   if(!ctx){
     return NULL;
   }
   if(soter_verify_init(ctx, alg, private_key, private_key_length, public_key, public_key_length)!=SOTER_SUCCESS){
+    soter_verify_cleanup(ctx);
     free(ctx);
     return NULL;
   }
@@ -179,17 +213,19 @@ soter_sign_ctx_t* soter_verify_create(soter_sign_alg_t alg, const void* private_
 soter_status_t soter_sign_destroy(soter_sign_ctx_t* ctx){
   if(!ctx){
     return SOTER_INVALID_PARAMETER;
-  }    
-  if(ctx->pkey_ctx){
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    ctx->pkey_ctx=NULL;
   }
+  soter_sign_cleanup(ctx);
   free(ctx);
   return SOTER_SUCCESS;
 }
 
 soter_status_t soter_verify_destroy(soter_sign_ctx_t* ctx){
-  return soter_sign_destroy(ctx);
+  if(!ctx){
+    return SOTER_INVALID_PARAMETER;
+  }    
+  soter_verify_cleanup(ctx);
+  free(ctx);
+  return SOTER_SUCCESS;
 }
 
 soter_sign_alg_t soter_sign_get_alg_id(soter_sign_ctx_t* ctx)

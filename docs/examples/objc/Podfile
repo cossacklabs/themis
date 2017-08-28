@@ -17,12 +17,14 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
 platform :ios, '8.0'
-xcodeproj 'ThemisTest/ThemisTest.xcodeproj'
+project 'ThemisTest/ThemisTest.xcodeproj'
 inhibit_all_warnings!
 
 target :"ThemisTest" do
 
-  # example should work with head
-  pod 'themis', :git => "https://github.com/cossacklabs/themis.git"
+  # if you feel adventurous, link example to head
+  pod 'themis', :git => "https://github.com/cossacklabs/themis.git", :branch => 'release_0.9.5'
+
+  #pod 'themis', '0.9.5'
 
 end

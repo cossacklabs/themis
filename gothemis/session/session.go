@@ -3,10 +3,15 @@ package session
 /*
 #cgo LDFLAGS: -lthemis -lsoter
 #include "session.h"
+extern const int GOTHEMIS_INVALID_PARAMETER;
+extern const int GOTHEMIS_BUFFER_TOO_SMALL;
+extern const int GOTHEMIS_SUCCESS;
+extern const int GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR;
+extern const int GOTHEMIS_SSESSION_SEND_OUTPUT_TO_PEER;
 */
 import "C"
 import (
-	"errors"
+	"github.com/cossacklabs/themis/gothemis/errors"
 	"github.com/cossacklabs/themis/gothemis/keys"
 	"runtime"
 	"unsafe"
@@ -35,6 +40,14 @@ func finalize(ss *SecureSession) {
 
 func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*SecureSession, error) {
 	ss := &SecureSession{clb: callbacks}
+
+	if nil == id || 0 == len(id) {
+		return nil, errors.New("Failed to creating secure session object with empty id")
+	}
+
+	if nil == signKey || 0 == len(signKey.Value) {
+		return nil, errors.New("Failed to creating secure session object with empty sign key")
+	}
 
 	ss.ctx = C.session_init(unsafe.Pointer(&id[0]),
 		C.size_t(len(id)),
@@ -70,16 +83,16 @@ func onPublicKeyForId(ssCtx unsafe.Pointer, idPtr unsafe.Pointer, idLen C.size_t
 
 	pub := ss.clb.GetPublicKeyForId(ss, id)
 	if nil == pub {
-		return -2 // THEMIS_INVALID_PARAMETER
+		return int(C.GOTHEMIS_INVALID_PARAMETER)
 	}
 
 	if len(pub.Value) > int(keyLen) {
-		return -4 // THEMIS_BUFFER_TOO_SMALL
+		return int(C.GOTHEMIS_BUFFER_TOO_SMALL)
 	}
 
 	key := (*[1 << 30]byte)(keyPtr)[:keyLen:keyLen]
 	copy(key, pub.Value)
-	return 0
+	return int(C.GOTHEMIS_SUCCESS)
 }
 
 //export onStateChanged
@@ -115,6 +128,10 @@ func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 	var outLen C.size_t
 
+	if nil == data || 0 == len(data) {
+		return nil, errors.New("Data was not provided")
+	}
+
 	if !bool(C.session_wrap_size(&ss.ctx,
 		unsafe.Pointer(&data[0]),
 		C.size_t(len(data)),
@@ -137,15 +154,20 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	var outLen C.size_t
 
+	if nil == data || 0 == len(data) {
+		return nil, false, errors.New("Data was not provided")
+	}
+
 	res := C.session_unwrap_size(&ss.ctx,
 		unsafe.Pointer(&data[0]),
 		C.size_t(len(data)),
 		&outLen)
-
 	switch {
-	case (0 == res) && (0 == outLen):
+	case (C.GOTHEMIS_SUCCESS == res) && (0 == outLen):
 		return nil, false, nil
-	case (-4 != res): // THEMIS_BUFFER_TOO_SMALL
+	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res):
+		return nil, false, errors.NewCallbackError("Failed to get unwraped size (get_public_key_by_id callback error)")
+	case (C.GOTHEMIS_BUFFER_TOO_SMALL != res): 
 		return nil, false, errors.New("Failed to get unwrapped size")
 	}
 
@@ -158,12 +180,14 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 		outLen)
 
 	switch {
-	case (0 == res) && (0 == outLen):
+	case (C.GOTHEMIS_SUCCESS == res) && (0 == outLen):
 		return nil, false, nil
-	case (1 == res) && (0 < outLen): // THEMIS_SSESSION_SEND_OUTPUT_TO_PEER
+	case (C.GOTHEMIS_SSESSION_SEND_OUTPUT_TO_PEER == res) && (0 < outLen): 
 		return out, true, nil
-	case (0 == res) && (0 < outLen):
+	case (C.GOTHEMIS_SUCCESS == res) && (0 < outLen):
 		return out, false, nil
+	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res): 
+		return nil, false, errors.NewCallbackError("Failed to unwrap data (get_public_key_by_id callback error)")
 	}
 
 	return nil, false, errors.New("Failed to unwrap data")

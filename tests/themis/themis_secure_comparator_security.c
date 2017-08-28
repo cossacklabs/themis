@@ -5,8 +5,6 @@
  *      Author: ignat
  */
 
-#ifdef SECURE_COMPARATOR_ENABLED
-
 #include <themis/secure_comparator.h>
 #include <themis/secure_comparator_t.h>
 #include <stdio.h>
@@ -337,6 +335,3 @@ void secure_comparator_security_test(void)
 
 	testsuite_fail_unless((THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(&alice)) && (THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(&bob)), "compare result no match");
 }
-
-#endif
-

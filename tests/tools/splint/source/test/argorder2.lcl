@@ -1,5 +1,0 @@
-int i;
-
-int f (int x, int y) int i; { modifies i; }
-int g (void) int i; { modifies i; }
-int h (void) int i; { }

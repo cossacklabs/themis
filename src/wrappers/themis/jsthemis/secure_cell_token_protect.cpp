@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <node.h>
 #include <node_buffer.h>
 #include <themis/themis.h>
 #include <vector>
@@ -22,7 +21,7 @@
 
 namespace jsthemis {
 
-  v8::Persistent<v8::Function> SecureCellTokenProtect::constructor;
+  Nan::Persistent<v8::Function> SecureCellTokenProtect::constructor;
 
   SecureCellTokenProtect::SecureCellTokenProtect(const std::vector<uint8_t>& key) :
     key_(key){}
@@ -31,34 +30,32 @@ namespace jsthemis {
 
   void SecureCellTokenProtect::Init(v8::Handle<v8::Object> exports) {
     // Prepare constructor template
-    v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(SecureCellTokenProtect::New);
-    tpl->SetClassName(v8::String::NewSymbol("SecureCellTokenProtect"));
+    v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SecureCellTokenProtect::New);
+    tpl->SetClassName(Nan::New("SecureCellTokenProtect").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     // Prototype
-    tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("encrypt"), v8::FunctionTemplate::New(SecureCellTokenProtect::encrypt)->GetFunction());
-    tpl->PrototypeTemplate()->Set(v8::String::NewSymbol("decrypt"), v8::FunctionTemplate::New(SecureCellTokenProtect::decrypt)->GetFunction());
-    constructor = v8::Persistent<v8::Function>::New(tpl->GetFunction());
-    exports->Set(v8::String::NewSymbol("SecureCellTokenProtect"), constructor);
+    Nan::SetPrototypeMethod(tpl, "encrypt", encrypt);
+    Nan::SetPrototypeMethod(tpl, "decrypt", decrypt);
+    constructor.Reset(tpl->GetFunction());
+    exports->Set(Nan::New("SecureCellTokenProtect").ToLocalChecked(), tpl->GetFunction());
   }
 
-  v8::Handle<v8::Value> SecureCellTokenProtect::New(const v8::Arguments& args) {
-    v8::HandleScope scope;
-
+  void SecureCellTokenProtect::New(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     if (args.IsConstructCall()) {
       std::vector<uint8_t> key((uint8_t*)(node::Buffer::Data(args[0])), (uint8_t*)(node::Buffer::Data(args[0])+node::Buffer::Length(args[0])));
       SecureCellTokenProtect* obj = new SecureCellTokenProtect(key);
       obj->Wrap(args.This());
-      return args.This();
+      args.GetReturnValue().Set(args.This());
     } else {
       const int argc = 1;
       v8::Local<v8::Value> argv[argc] = { args[0]};
-      return scope.Close(constructor->NewInstance(argc, argv));
+      v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
+      args.GetReturnValue().Set(cons->NewInstance(argc, argv));
     }
   }
 
-  v8::Handle<v8::Value> SecureCellTokenProtect::encrypt(const v8::Arguments& args) {
-    v8::HandleScope scope;
-    SecureCellTokenProtect* obj = node::ObjectWrap::Unwrap<SecureCellTokenProtect>(args.This());
+  void SecureCellTokenProtect::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+    SecureCellTokenProtect* obj = Nan::ObjectWrap::Unwrap<SecureCellTokenProtect>(args.This());
     size_t length=0;
     size_t token_length=0;
     const uint8_t* context=NULL;
@@ -68,30 +65,27 @@ namespace jsthemis {
       context_length = node::Buffer::Length(args[1]);
     }
     if(themis_secure_cell_encrypt_token_protect(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &token_length, NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Token Protect) failed encrypting")));
-      return scope.Close(v8::Undefined());
+      Nan::ThrowError("Secure Cell (Token Protect) failed encrypting");
+      args.GetReturnValue().SetUndefined();
+      return;
     }
-    uint8_t* data=new uint8_t[length];
-    uint8_t* token=new uint8_t[token_length];
+    uint8_t* data=(uint8_t*)(malloc(length));
+    uint8_t* token=(uint8_t*)(malloc(token_length));
     if(themis_secure_cell_encrypt_token_protect(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), token, &token_length, data, &length)!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Token Protect) failed encrypting")));
-      delete data;
-      delete token;
-      return scope.Close(v8::Undefined());
+      Nan::ThrowError("Secure Cell (Token Protect) failed encrypting");
+      free(data);
+      free(token);
+      args.GetReturnValue().SetUndefined();
+      return;
     }
-    node::Buffer *buffer = node::Buffer::New((const char*)(data), length);
-    node::Buffer *token_buffer = node::Buffer::New((const char*)(token), token_length);
-    delete data;
-    delete token;
-    v8::Local<v8::Object> retobj = v8::Object::New();
-    retobj->Set(v8::String::NewSymbol("data"), buffer->handle_);
-    retobj->Set(v8::String::NewSymbol("token"), token_buffer->handle_);
-    return scope.Close(retobj);
+    v8::Local<v8::Object> retobj = Nan::New<v8::Object>();
+    Nan::Set(retobj, Nan::New("data").ToLocalChecked(), Nan::NewBuffer((char*)(data), length).ToLocalChecked());
+    Nan::Set(retobj, Nan::New("token").ToLocalChecked(), Nan::NewBuffer((char*)(token), token_length).ToLocalChecked());
+    args.GetReturnValue().Set(retobj);
   }
 
-  v8::Handle<v8::Value> SecureCellTokenProtect::decrypt(const v8::Arguments& args) {
-    v8::HandleScope scope;
-    SecureCellTokenProtect* obj = node::ObjectWrap::Unwrap<SecureCellTokenProtect>(args.This());
+  void SecureCellTokenProtect::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+    SecureCellTokenProtect* obj = Nan::ObjectWrap::Unwrap<SecureCellTokenProtect>(args.This());
     size_t length=0;
     const uint8_t* context=NULL;
     size_t context_length=0;
@@ -100,20 +94,18 @@ namespace jsthemis {
       context_length = node::Buffer::Length(args[2]);
     }
     if(themis_secure_cell_decrypt_token_protect(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), (const uint8_t*)(node::Buffer::Data(args[1])), node::Buffer::Length(args[1]), NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Token Protect) failed decrypting")));
-      return scope.Close(v8::Undefined());
+      Nan::ThrowError("Secure Cell (Token Protect) failed decrypting");
+      args.GetReturnValue().SetUndefined();
+      return;
     }
-    uint8_t* data=new uint8_t[length];
+    uint8_t* data=(uint8_t*)(malloc(length));
     themis_status_t res=themis_secure_cell_decrypt_token_protect(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), (const uint8_t*)(node::Buffer::Data(args[1])), node::Buffer::Length(args[1]), data, &length);
     if(res!=THEMIS_SUCCESS){
-      ThrowException(v8::Exception::Error(v8::String::New("Secure Cell (Token Protect) failed decrypting")));
-      delete data;
-      return scope.Close(v8::Undefined());
+      Nan::ThrowError("Secure Cell (Token Protect) failed decrypting");
+      free(data);
+      args.GetReturnValue().SetUndefined();
+      return;
     }
-    node::Buffer *buffer = node::Buffer::New((const char*)(data), length);
-    delete data;
-    return scope.Close(buffer->handle_);
+    args.GetReturnValue().Set(Nan::NewBuffer((char*)(data), length).ToLocalChecked());
   }
-
-  
 } //end jsthemis

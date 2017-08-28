@@ -17,12 +17,12 @@
 #ifndef JSTHEMIS_SECURE_MESSAGE_HPP_
 #define JSTHEMIS_SECURE_MESSAGE_HPP_
 
-#include <node.h>
+#include <nan.h>
 #include <vector>
 
 namespace jsthemis{
 
-  class SecureMessage : public node::ObjectWrap {
+  class SecureMessage : public Nan::ObjectWrap {
   public:
     static void Init(v8::Handle<v8::Object> exports);
 
@@ -30,13 +30,13 @@ namespace jsthemis{
     explicit SecureMessage(const std::vector<uint8_t>& private_key, const std::vector<uint8_t>& peer_public_key);
     ~SecureMessage();
 
-    static v8::Handle<v8::Value> New(const v8::Arguments& args);
-    static v8::Handle<v8::Value> encrypt(const v8::Arguments& args);
-    static v8::Handle<v8::Value> decrypt(const v8::Arguments& args);
-    static v8::Handle<v8::Value> sign(const v8::Arguments& args);
-    static v8::Handle<v8::Value> verify(const v8::Arguments& args);
+    static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void sign(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void verify(const Nan::FunctionCallbackInfo<v8::Value>& args);
 
-    static v8::Persistent<v8::Function> constructor;
+    static Nan::Persistent<v8::Function> constructor;
 
     std::vector<uint8_t> private_key_;
     std::vector<uint8_t> peer_public_key_;

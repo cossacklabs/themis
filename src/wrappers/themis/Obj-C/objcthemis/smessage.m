@@ -87,6 +87,11 @@
     }
 
     unsigned char * wrappedMessage = malloc(wrappedMessageLength);
+    if (!wrappedMessage) {
+        *error = SCERROR(TSErrorTypeFail, @"Secure Message failed, not enough memory");
+        return nil;
+    }
+
     switch (self.mode) {
         case TSMessageModeEncryptDecrypt:
             result = (TSErrorType) themis_secure_message_wrap([self.privateKey bytes], [self.privateKey length],
@@ -100,6 +105,7 @@
             break;
         default:
             *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+            free(wrappedMessage);
             return NULL;
     }
 
@@ -109,9 +115,7 @@
         return NULL;
     }
 
-    NSData * wrappedData = [[NSData alloc] initWithBytes:wrappedMessage length:wrappedMessageLength];
-    free(wrappedMessage);
-    return wrappedData;
+    return [NSData dataWithBytesNoCopy:wrappedMessage length:wrappedMessageLength];
 }
 
 
@@ -128,6 +132,11 @@
     }
 
     unsigned char * unwrappedMessage = malloc(unwrappedMessageLength);
+    if (!unwrappedMessage) {
+        *error = SCERROR(TSErrorTypeFail, @"Secure Message failed, not enough memory");
+        return nil;
+    }
+
     result = (TSErrorType) themis_secure_message_unwrap([self.privateKey bytes], [self.privateKey length],
         [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
         unwrappedMessage, &unwrappedMessageLength);
@@ -138,9 +147,7 @@
         return nil;
     }
 
-    NSData * unwrappedData = [[NSData alloc] initWithBytes:unwrappedMessage length:unwrappedMessageLength];
-    free(unwrappedMessage);
-    return unwrappedData;
+    return [NSData dataWithBytesNoCopy:unwrappedMessage length:unwrappedMessageLength];
 }
 
 

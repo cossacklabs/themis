@@ -1,8 +1,0 @@
-
-compoundstmt.c: (in function main)
-compoundstmt.c:9:3: Assignment of void value to int: j = ({ int __tmp;
-                       __tmp = (5); fvoid(); })
-compoundstmt.c:5:15: Parameter argc not used
-compoundstmt.c:5:28: Parameter argv not used
-
-Finished checking --- 3 code warnings, as expected

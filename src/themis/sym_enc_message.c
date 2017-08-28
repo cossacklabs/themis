@@ -55,11 +55,11 @@ themis_status_t themis_auth_sym_plain_encrypt(uint32_t alg,
   soter_sym_ctx_t *ctx = soter_sym_aead_encrypt_create(alg, key, key_length, NULL,0,iv, iv_length);
   THEMIS_CHECK(ctx!=NULL);
   if(aad!=NULL || aad_length!=0){
-    THEMIS_CHECK_FREE(soter_sym_aead_encrypt_aad(ctx, aad, aad_length)==THEMIS_SUCCESS, ctx);
+    THEMIS_CHECK__(soter_sym_aead_encrypt_aad(ctx, aad, aad_length)==THEMIS_SUCCESS, soter_sym_aead_encrypt_destroy(ctx); return THEMIS_FAIL);
   }      
-  THEMIS_CHECK_FREE(soter_sym_aead_encrypt_update(ctx, message, message_length, encrypted_message, encrypted_message_length)==THEMIS_SUCCESS, ctx);
-  THEMIS_CHECK_FREE(soter_sym_aead_encrypt_final(ctx, auth_tag, auth_tag_length)==THEMIS_SUCCESS, ctx);
-  THEMIS_CHECK_FREE(soter_sym_aead_encrypt_destroy(ctx)==THEMIS_SUCCESS, ctx);
+  THEMIS_CHECK__(soter_sym_aead_encrypt_update(ctx, message, message_length, encrypted_message, encrypted_message_length)==THEMIS_SUCCESS, soter_sym_aead_encrypt_destroy(ctx); return THEMIS_FAIL);
+  THEMIS_CHECK__(soter_sym_aead_encrypt_final(ctx, auth_tag, auth_tag_length)==THEMIS_SUCCESS, soter_sym_aead_encrypt_destroy(ctx); return THEMIS_FAIL);
+  soter_sym_aead_encrypt_destroy(ctx);
   return THEMIS_SUCCESS;
 }
 
@@ -79,11 +79,11 @@ themis_status_t themis_auth_sym_plain_decrypt(uint32_t alg,
   soter_sym_ctx_t *ctx = soter_sym_aead_decrypt_create(alg, key, key_length, NULL, 0, iv, iv_length);
   THEMIS_CHECK(ctx!=NULL)
   if(aad!=NULL || aad_length!=0){
-    THEMIS_CHECK_FREE(soter_sym_aead_decrypt_aad(ctx, aad, aad_length)==THEMIS_SUCCESS, ctx);
+    THEMIS_CHECK__(soter_sym_aead_decrypt_aad(ctx, aad, aad_length)==THEMIS_SUCCESS, soter_sym_aead_decrypt_destroy(ctx); return THEMIS_FAIL);
   }      
-  THEMIS_CHECK_FREE(soter_sym_aead_decrypt_update(ctx, encrypted_message, encrypted_message_length, message, message_length)==THEMIS_SUCCESS, ctx);
-  THEMIS_CHECK_FREE(soter_sym_aead_decrypt_final(ctx, auth_tag, auth_tag_length)==THEMIS_SUCCESS, ctx);
-  THEMIS_CHECK_FREE(soter_sym_aead_decrypt_destroy(ctx)==THEMIS_SUCCESS, ctx);
+  THEMIS_CHECK__(soter_sym_aead_decrypt_update(ctx, encrypted_message, encrypted_message_length, message, message_length)==THEMIS_SUCCESS, soter_sym_aead_decrypt_destroy(ctx); return THEMIS_FAIL);
+  THEMIS_CHECK__(soter_sym_aead_decrypt_final(ctx, auth_tag, auth_tag_length)==THEMIS_SUCCESS, soter_sym_aead_decrypt_destroy(ctx); return THEMIS_FAIL);
+  soter_sym_aead_decrypt_destroy(ctx);
   return THEMIS_SUCCESS;
 }
 
@@ -97,13 +97,15 @@ themis_status_t themis_sym_plain_encrypt(uint32_t alg,
 					 uint8_t* encrypted_message,
 					 size_t* encrypted_message_length){
   soter_sym_ctx_t *ctx = soter_sym_encrypt_create(alg, key, key_length, NULL,0,iv, iv_length);
-  THEMIS_CHECK(ctx!=NULL);
+  THEMIS_CHECK__(ctx, return THEMIS_NO_MEMORY);
   size_t add_length=(*encrypted_message_length);
-  THEMIS_STATUS_CHECK_FREE(soter_sym_encrypt_update(ctx, message, message_length, encrypted_message, encrypted_message_length),THEMIS_SUCCESS, ctx);
+  themis_status_t res = soter_sym_encrypt_update(ctx, message, message_length, encrypted_message, encrypted_message_length);
+  THEMIS_CHECK__(THEMIS_SUCCESS==res, soter_sym_encrypt_destroy(ctx); return res);
   add_length-=(*encrypted_message_length);
-  THEMIS_CHECK_FREE(soter_sym_encrypt_final(ctx, encrypted_message+(*encrypted_message_length), &add_length)==THEMIS_SUCCESS, ctx);
+  res = soter_sym_encrypt_final(ctx, encrypted_message+(*encrypted_message_length), &add_length);
+  THEMIS_CHECK__(res==THEMIS_SUCCESS, soter_sym_encrypt_destroy(ctx); (*encrypted_message_length)+=add_length; return res);
   (*encrypted_message_length)+=add_length;
-  THEMIS_CHECK_FREE(soter_sym_encrypt_destroy(ctx)==THEMIS_SUCCESS, ctx);
+  soter_sym_encrypt_destroy(ctx);
   return THEMIS_SUCCESS;
 }
 
@@ -119,11 +121,13 @@ themis_status_t themis_sym_plain_decrypt(uint32_t alg,
   soter_sym_ctx_t *ctx = soter_sym_decrypt_create(alg, key, key_length, NULL, 0, iv, iv_length);
   THEMIS_CHECK(ctx!=NULL);
   size_t add_length=(*message_length);
-  THEMIS_STATUS_CHECK_FREE(soter_sym_decrypt_update(ctx, encrypted_message, encrypted_message_length, message, message_length),THEMIS_SUCCESS, ctx);
+  themis_status_t res = soter_sym_decrypt_update(ctx, encrypted_message, encrypted_message_length, message, message_length);
+  THEMIS_CHECK__(THEMIS_SUCCESS==res, soter_sym_decrypt_destroy(ctx); return res);
   add_length-=(*message_length);
-  THEMIS_CHECK_FREE(soter_sym_decrypt_final(ctx, message+(*message_length), &add_length)==THEMIS_SUCCESS, ctx);
+  res = soter_sym_decrypt_final(ctx, message+(*message_length), &add_length);
+  THEMIS_CHECK__(res==THEMIS_SUCCESS, soter_sym_decrypt_destroy(ctx); (*message_length)+=add_length; return res);
   (*message_length)+=add_length;
-  THEMIS_CHECK_FREE(soter_sym_decrypt_destroy(ctx)==THEMIS_SUCCESS, ctx);
+  soter_sym_decrypt_destroy(ctx);
   return THEMIS_SUCCESS;
 }
 
@@ -227,84 +231,6 @@ typedef struct themis_sym_message_hdr_type{
   uint32_t iv_length;
   uint32_t message_length;
 } themis_sym_message_hdr_t;
-
-themis_status_t themis_sym_encrypt_message_(const uint8_t* key,
-					   const size_t key_length,
-					   const uint8_t* message,
-					   const size_t message_length,
-					    //const uint8_t* in_context,
-					    //const size_t in_context_length,
-					   uint8_t* out_context,
-					   size_t* out_context_length,
-					   uint8_t* encrypted_message,
-					   size_t* encrypted_message_length){
-  if(encrypted_message==NULL || (*encrypted_message_length)<message_length || out_context==NULL  || (*out_context_length)<(sizeof(themis_sym_message_hdr_t)+THEMIS_SYM_IV_LENGTH)){
-    (*out_context_length)=(sizeof(themis_sym_message_hdr_t)+THEMIS_SYM_IV_LENGTH);
-    (*encrypted_message_length)=message_length;
-    return THEMIS_BUFFER_TOO_SMALL;
-  }
-  (*encrypted_message_length)=message_length;
-  (*out_context_length)=(sizeof(themis_sym_message_hdr_t)+THEMIS_SYM_IV_LENGTH);
-  themis_sym_message_hdr_t* hdr=(themis_sym_message_hdr_t*)out_context;
-  uint8_t* iv=out_context+sizeof(themis_sym_message_hdr_t);
-  THEMIS_CHECK(soter_rand(iv, THEMIS_SYM_IV_LENGTH)==THEMIS_SUCCESS);
-  hdr->alg=THEMIS_SYM_ALG;
-  hdr->iv_length=THEMIS_AUTH_SYM_IV_LENGTH;
-  hdr->message_length=(uint32_t)message_length;
-  THEMIS_CHECK(themis_sym_plain_encrypt(THEMIS_AUTH_SYM_ALG, key, key_length, iv, THEMIS_SYM_IV_LENGTH, message, message_length, encrypted_message, (size_t*)(&(hdr->message_length)))==THEMIS_SUCCESS);  
-  return THEMIS_SUCCESS;
-}
-
-themis_status_t themis_sym_encrypt_message(const uint8_t* key,
-					   const size_t key_length,
-					   const uint8_t* message,
-					   const size_t message_length,
-					   const uint8_t* in_context,
-					   const size_t in_context_length,
-					   uint8_t* out_context,
-					   size_t* out_context_length,
-					   uint8_t* encrypted_message,
-					   size_t* encrypted_message_length){
-  uint8_t key_[THEMIS_SYM_KEY_LENGTH/8];
-  THEMIS_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&message_length), sizeof(message_length), in_context, in_context_length, key_, sizeof(key_))==THEMIS_SUCCESS);
-  return themis_sym_encrypt_message_(key_, sizeof(key_), message,message_length,/*in_context,in_context_length,*/out_context,out_context_length,encrypted_message,encrypted_message_length);
-}
-
-themis_status_t themis_sym_decrypt_message_(const uint8_t* key,
-					    const size_t key_length,
-					    const uint8_t* context,
-					    const size_t context_length,
-					    const uint8_t* encrypted_message,
-					    const size_t encrypted_message_length,
-					    uint8_t* message,
-					    size_t* message_length){
-  THEMIS_CHECK_PARAM(context_length>sizeof(themis_sym_message_hdr_t));
-  themis_sym_message_hdr_t* hdr=(themis_sym_message_hdr_t*)context;
-  THEMIS_CHECK_PARAM(encrypted_message_length>=hdr->message_length);
-  THEMIS_CHECK_PARAM(context_length >= (sizeof(themis_sym_message_hdr_t)+hdr->iv_length));
-  if((*message_length)<hdr->message_length){
-    (*message_length)=hdr->message_length;
-    return THEMIS_BUFFER_TOO_SMALL;
-  }
-  const uint8_t* iv=context+sizeof(themis_sym_message_hdr_t);
-  THEMIS_CHECK(themis_sym_plain_decrypt(hdr->alg, key, key_length, iv, hdr->iv_length, encrypted_message, hdr->message_length, message, message_length)==THEMIS_SUCCESS);
-  return THEMIS_SUCCESS;
-}
-
-themis_status_t themis_sym_decrypt_message(const uint8_t* key,
-					   const size_t key_length,
-					   const uint8_t* in_context,
-					   const size_t in_context_length,
-					   const uint8_t* context,
-					   const size_t context_length,
-					   const uint8_t* encrypted_message,
-					   const size_t encrypted_message_length,
-					   uint8_t* message,
-					   size_t* message_length){
-  uint8_t key_[THEMIS_SYM_KEY_LENGTH/8];
-  THEMIS_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&message_length), sizeof(message_length), in_context, in_context_length, key_, sizeof(key_))==THEMIS_SUCCESS);
-  return themis_sym_decrypt_message_(key_, sizeof(key_),context,context_length,encrypted_message,encrypted_message_length,message,message_length);
-}
 
 themis_status_t themis_sym_encrypt_message_u_(const uint8_t* key,
 					     const size_t key_length,

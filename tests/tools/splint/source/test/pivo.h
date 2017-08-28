@@ -1,1 +1,0 @@
-typedef /*@abstract@*/ int pivo;

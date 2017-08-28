@@ -16,7 +16,7 @@
 
 #include "soter/error.h"
 #include "soter/soter.h"
-#include "soter_openssl.h"
+#include "soter_engine.h"
 #include <openssl/evp.h>
 
 
@@ -24,8 +24,6 @@ static const EVP_MD* soter_algo_to_evp_md(soter_hash_algo_t algo)
 {
 	switch (algo)
 	{
-	case SOTER_HASH_SHA1:
-		return EVP_sha1();
 	case SOTER_HASH_SHA256:
 	  return EVP_sha256();
 	case SOTER_HASH_SHA512:
@@ -43,7 +41,7 @@ soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t alg
 	{
 		return SOTER_INVALID_PARAMETER;
 	}
-
+	
 	if (EVP_DigestInit(&(hash_ctx->evp_md_ctx), md))
 	{
 		return SOTER_SUCCESS;
@@ -85,6 +83,7 @@ soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value,
 	if (!hash_value || (md_length > *hash_length))
 	{
 		*hash_length = md_length;
+
 		return SOTER_BUFFER_TOO_SMALL;
 	}
 
@@ -118,6 +117,15 @@ soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo)
 		free(ctx);
 		return NULL;
 	}
+}
+
+soter_status_t soter_hash_cleanup(soter_hash_ctx_t* hash_ctx){
+	if (!hash_ctx)
+	{
+		return SOTER_INVALID_PARAMETER;
+	}
+	EVP_MD_CTX_cleanup(&(hash_ctx->evp_md_ctx));
+	return SOTER_SUCCESS;
 }
 
 soter_status_t soter_hash_destroy(soter_hash_ctx_t *hash_ctx)

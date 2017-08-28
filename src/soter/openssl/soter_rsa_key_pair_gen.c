@@ -15,7 +15,7 @@
 */
 
 #include <soter/error.h>
-#include "soter_openssl.h"
+#include "soter_engine.h"
 #include <soter/soter_rsa_key_pair_gen.h>
 
 #include <openssl/evp.h>
@@ -73,7 +73,11 @@ soter_status_t soter_rsa_key_pair_gen_cleanup(soter_rsa_key_pair_gen_t* ctx){
     SOTER_CHECK_PARAM(ctx);
     if (ctx->pkey_ctx)
     {
+        EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
 	EVP_PKEY_CTX_free(ctx->pkey_ctx);
+	if(pkey){
+	    EVP_PKEY_free(pkey);
+	}
     }
     return SOTER_SUCCESS;
 }

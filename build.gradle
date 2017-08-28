@@ -23,30 +23,21 @@ android {
     sourceSets {
     	main {
     		java.srcDirs = ['src/wrappers/themis/java']
-    		
-    		if (System.env.SECURE_COMPARATOR != "enable") {
-    			java.excludes = ['com/cossacklabs/themis/SecureCompare.java', 'com/cossacklabs/themis/SecureCompareException.java']
-    		}
-    		
     		manifest.srcFile 'src/wrappers/themis/android/AndroidManifest.xml'
-    		
     		jniLibs.srcDirs = ['libs']
     	}
-    	
     	androidTest.setRoot('tests/themis/wrappers/android')
         androidTest.java.srcDirs = ['tests/themis/wrappers/android']
-        
-        if (System.env.SECURE_COMPARATOR != "enable") {
-    		androidTest.java.excludes = ['com/cossacklabs/themis/test/SecureCompareTest.java']
-    	}
-        
         androidTest.manifest.srcFile 'tests/themis/wrappers/android/AndroidManifest.xml'
 
 	}
 
     task ndkBuild(type: Exec) {
-		workingDir 'jni'
-        commandLine getNdkBuildCmd()
+	workingDir 'jni'
+        commandLine getNdkBuildCmd() 
+	if (project.hasProperty('boringssl_path')){
+	    args = ["BORINGSSL_PATH=$boringssl_path"]
+	}
     }
 
     tasks.withType(JavaCompile) {

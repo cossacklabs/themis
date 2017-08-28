@@ -17,7 +17,6 @@
 #ifndef THEMIS_SECURE_COMPARATOR_T_H
 #define THEMIS_SECURE_COMPARATOR_T_H
 
-#ifdef SECURE_COMPARATOR_ENABLED
 #include "secure_comparator.h"
 #include <soter/ed25519/ge_utils.h>
 #include <soter/ed25519/sc.h>
@@ -25,6 +24,17 @@
 
 typedef themis_status_t (*secure_compare_handler)(secure_comparator_t *comp_ctx, const void *input, size_t input_length, void *output, size_t *output_length);
 
+/*
+ * Common structure for both peers (Alice and Bob 
+ * as denoted in paper (https://eprint.iacr.org/2015/1180.pdf))
+ * 
+ * secret             -> value to compare of each peer (x - for Alice, y - for Bob)
+ * rand, rand2, rand3 -> random values of each peer(r, a2, a3 - for Alice; s, b2, b3 - for Bob)
+ * g2, g3, P, Q       -> intermediate parameters of each peer while protocol execution (G2a, G3a, Pa, Qa - for Alice; G2b, G3b, Pb, Qb - for Bob)
+ * Pp, g3p            -> intermediate parameters received from your peer
+ * Qa_Qb              -> local temporary intermediate parameter
+ *   
+ */
 struct secure_comparator_type
 {
 	unsigned char secret[ED25519_GE_LENGTH];
@@ -53,5 +63,4 @@ struct secure_comparator_type
 themis_status_t secure_comparator_init(secure_comparator_t *comp_ctx);
 themis_status_t secure_comparator_cleanup(secure_comparator_t *comp_ctx);
 
-#endif
 #endif /* THEMIS_SECURE_COMPARATOR_T_H */

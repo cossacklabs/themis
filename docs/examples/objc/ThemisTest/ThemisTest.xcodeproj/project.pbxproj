@@ -18,7 +18,7 @@
 		73156E171ADBDF0F00E3E520 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 73156E161ADBDF0F00E3E520 /* Images.xcassets */; };
 		731624981ADB174200972A7A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 731624971ADB174200972A7A /* main.m */; };
 		731624B21ADB174200972A7A /* ThemisTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 731624B11ADB174200972A7A /* ThemisTestTests.m */; };
-		750CC86FCEF6BEEA1BF8E421 /* libPods-ThemisTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CB1E0091D5E4396D03A8C58 /* libPods-ThemisTest.a */; };
+		B9125680B2DA27B972AD63F3 /* libPods-ThemisTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A04F657B1C1E749D95960504 /* libPods-ThemisTest.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,12 +32,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0D8BAACA600FB9F7E596D1CF /* Pods-ThemisTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest.release.xcconfig"; sourceTree = "<group>"; };
+		07942F6CC1B61880754D29CA /* Pods-ThemisTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest.release.xcconfig"; sourceTree = "<group>"; };
 		192EA2F8AFB4D5A59D33DCE6 /* server.priv */ = {isa = PBXFileReference; lastKnownFileType = file.priv; path = server.priv; sourceTree = "<group>"; };
 		192EA533E67AA52864927032 /* server.pub */ = {isa = PBXFileReference; lastKnownFileType = file.pub; path = server.pub; sourceTree = "<group>"; };
 		192EA61539E5DA001A808B56 /* client.pub */ = {isa = PBXFileReference; lastKnownFileType = file.pub; path = client.pub; sourceTree = "<group>"; };
 		192EAEE7A8A8277025A0F60C /* client.priv */ = {isa = PBXFileReference; lastKnownFileType = file.priv; path = client.priv; sourceTree = "<group>"; };
-		21894E1C534D589E41F1D62F /* Pods-ThemisTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest.debug.xcconfig"; sourceTree = "<group>"; };
+		23DCB6C3E82E2874E66341C0 /* Pods-ThemisTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest.debug.xcconfig"; sourceTree = "<group>"; };
 		73156E031ADBDE7900E3E520 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		73156E051ADBDE7900E3E520 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
 		73156E0D1ADBDF0800E3E520 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -52,7 +52,7 @@
 		731624B01ADB174200972A7A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		731624B11ADB174200972A7A /* ThemisTestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThemisTestTests.m; sourceTree = "<group>"; };
 		738D1E7F1ADBBEBB00661F4A /* libobjcthemis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libobjcthemis.a; path = ../themis/objcthemis/ios/lib/libobjcthemis.a; sourceTree = "<group>"; };
-		7CB1E0091D5E4396D03A8C58 /* libPods-ThemisTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ThemisTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A04F657B1C1E749D95960504 /* libPods-ThemisTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ThemisTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				750CC86FCEF6BEEA1BF8E421 /* libPods-ThemisTest.a in Frameworks */,
+				B9125680B2DA27B972AD63F3 /* libPods-ThemisTest.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -74,15 +74,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		146D20CA7AD20E9D9A26C916 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				21894E1C534D589E41F1D62F /* Pods-ThemisTest.debug.xcconfig */,
-				0D8BAACA600FB9F7E596D1CF /* Pods-ThemisTest.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		192EABCD57748732F88EA8D1 /* keys */ = {
 			isa = PBXGroup;
 			children = (
@@ -109,7 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				738D1E7F1ADBBEBB00661F4A /* libobjcthemis.a */,
-				7CB1E0091D5E4396D03A8C58 /* libPods-ThemisTest.a */,
+				A04F657B1C1E749D95960504 /* libPods-ThemisTest.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -131,8 +122,8 @@
 				731624941ADB174200972A7A /* ThemisTest */,
 				731624AE1ADB174200972A7A /* ThemisTestTests */,
 				731624931ADB174200972A7A /* Products */,
-				146D20CA7AD20E9D9A26C916 /* Pods */,
 				1F5F881BD0CD342D1E9B9E25 /* Frameworks */,
+				EE7A4887DE2D36ADF28090BA /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -181,6 +172,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		EE7A4887DE2D36ADF28090BA /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				23DCB6C3E82E2874E66341C0 /* Pods-ThemisTest.debug.xcconfig */,
+				07942F6CC1B61880754D29CA /* Pods-ThemisTest.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -188,12 +188,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 731624B51ADB174200972A7A /* Build configuration list for PBXNativeTarget "ThemisTest" */;
 			buildPhases = (
-				752A804A4446800FFB3ADCD7 /* [CP] Check Pods Manifest.lock */,
+				5A03A2C6332EB739A9520077 /* [CP] Check Pods Manifest.lock */,
 				7316248E1ADB174200972A7A /* Sources */,
 				7316248F1ADB174200972A7A /* Frameworks */,
 				731624901ADB174200972A7A /* Resources */,
-				9A078C251A561873552D1DC1 /* [CP] Copy Pods Resources */,
-				D4BA3E32BDAA4C42E16EDE5D /* [CP] Embed Pods Frameworks */,
+				3F28ADD85402995771984882 /* [CP] Embed Pods Frameworks */,
+				2CF5DFDFCB1A00767DB55753 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -228,7 +228,7 @@
 		7316248A1ADB174200972A7A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0710;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = "Cossack Labs";
 				TargetAttributes = {
 					731624911ADB174200972A7A = {
@@ -284,22 +284,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		752A804A4446800FFB3ADCD7 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		9A078C251A561873552D1DC1 /* [CP] Copy Pods Resources */ = {
+		2CF5DFDFCB1A00767DB55753 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -314,7 +299,7 @@
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D4BA3E32BDAA4C42E16EDE5D /* [CP] Embed Pods Frameworks */ = {
+		3F28ADD85402995771984882 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -327,6 +312,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5A03A2C6332EB739A9520077 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -395,8 +395,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -439,8 +441,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -465,7 +469,7 @@
 		};
 		731624B61ADB174200972A7A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 21894E1C534D589E41F1D62F /* Pods-ThemisTest.debug.xcconfig */;
+			baseConfigurationReference = 23DCB6C3E82E2874E66341C0 /* Pods-ThemisTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -480,7 +484,7 @@
 		};
 		731624B71ADB174200972A7A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0D8BAACA600FB9F7E596D1CF /* Pods-ThemisTest.release.xcconfig */;
+			baseConfigurationReference = 07942F6CC1B61880754D29CA /* Pods-ThemisTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";

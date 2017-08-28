@@ -98,6 +98,7 @@ themis_status_t themis_secure_message_signer_proceed(themis_secure_message_signe
   memcpy(wrapped_message+sizeof(themis_secure_signed_message_hdr_t),message,message_length);
   memcpy(wrapped_message+sizeof(themis_secure_signed_message_hdr_t)+message_length,signature,signature_length);
   (*wrapped_message_length)=message_length+signature_length+sizeof(themis_secure_signed_message_hdr_t);
+  free(signature);
   return THEMIS_SUCCESS;
 }
 
@@ -274,9 +275,10 @@ themis_secure_message_ec_t* themis_secure_message_ec_encrypter_init(const uint8_
   THEMIS_CHECK_(ctx!=NULL);
   ctx->shared_secret_length=sizeof(ctx->shared_secret);
   soter_asym_ka_t* km=soter_asym_ka_create(SOTER_ASYM_KA_EC_P256);
-  THEMIS_IF_FAIL_(km!=NULL, themis_secure_message_ec_encrypter_destroy(ctx));
-  THEMIS_IF_FAIL_(soter_asym_ka_import_key(km, private_key, private_key_length)==THEMIS_SUCCESS, (themis_secure_message_ec_encrypter_destroy(ctx), soter_asym_ka_destroy(km)));
-  THEMIS_IF_FAIL_(soter_asym_ka_derive(km, peer_public_key, peer_public_key_length, ctx->shared_secret, &ctx->shared_secret_length)==THEMIS_SUCCESS, (themis_secure_message_ec_encrypter_destroy(ctx), soter_asym_ka_destroy(km)));
+  THEMIS_CHECK__(km, themis_secure_message_ec_encrypter_destroy(ctx); return NULL);
+  THEMIS_CHECK__(soter_asym_ka_import_key(km, private_key, private_key_length)==THEMIS_SUCCESS, themis_secure_message_ec_encrypter_destroy(ctx); soter_asym_ka_destroy(km);return NULL);
+  THEMIS_CHECK__(soter_asym_ka_derive(km, peer_public_key, peer_public_key_length, ctx->shared_secret, &ctx->shared_secret_length)==THEMIS_SUCCESS, themis_secure_message_ec_encrypter_destroy(ctx); soter_asym_ka_destroy(km); return NULL);
+  soter_asym_ka_destroy(km);
   return ctx;
 }
 themis_status_t themis_secure_message_ec_encrypter_proceed(themis_secure_message_ec_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length){
@@ -343,12 +345,12 @@ themis_secure_message_encrypter_t* themis_secure_message_encrypter_init(const ui
   switch(alg){
   case SOTER_SIGN_ecdsa_none_pkcs8:
     ctx->ctx.ec_encrypter=themis_secure_message_ec_encrypter_init(private_key, private_key_length, peer_public_key, peer_public_key_length);
-    THEMIS_CHECK_(ctx);
+    THEMIS_IF_FAIL_(ctx->ctx.ec_encrypter, free(ctx));
     ctx->alg=alg;
     return ctx;    
   case SOTER_SIGN_rsa_pss_pkcs8:
     ctx->ctx.rsa_encrypter=themis_secure_message_rsa_encrypter_init(peer_public_key, peer_public_key_length);
-    THEMIS_CHECK_(ctx);
+    THEMIS_IF_FAIL_(ctx->ctx.rsa_encrypter, free(ctx));
     ctx->alg=alg;
     return ctx;
   default:
@@ -370,15 +372,20 @@ themis_status_t themis_secure_message_encrypter_proceed(themis_secure_message_en
 }
 themis_status_t themis_secure_message_encrypter_destroy(themis_secure_message_encrypter_t* ctx){
   THEMIS_CHECK(ctx!=NULL);
+  themis_status_t res = THEMIS_SUCCESS;
   switch(ctx->alg){
   case SOTER_SIGN_ecdsa_none_pkcs8:
-    return themis_secure_message_ec_encrypter_destroy(ctx->ctx.ec_encrypter);
+    res = themis_secure_message_ec_encrypter_destroy(ctx->ctx.ec_encrypter);
+    break;
   case SOTER_SIGN_rsa_pss_pkcs8:
-    return themis_secure_message_rsa_encrypter_destroy(ctx->ctx.rsa_encrypter);
+    res =  themis_secure_message_rsa_encrypter_destroy(ctx->ctx.rsa_encrypter);
+    break;
   default:
     return THEMIS_FAIL;
   }
-  return THEMIS_FAIL;  
+  if(THEMIS_SUCCESS == res)
+    free(ctx);
+  return res;
 }
 
 
@@ -392,12 +399,12 @@ themis_secure_message_decrypter_t* themis_secure_message_decrypter_init(const ui
   switch(alg){
   case SOTER_SIGN_ecdsa_none_pkcs8:
     ctx->ctx.ec_encrypter=themis_secure_message_ec_decrypter_init(private_key, private_key_length, peer_public_key, peer_public_key_length);
-    THEMIS_CHECK_(ctx);
+    THEMIS_CHECK__(ctx->ctx.ec_encrypter, free(ctx); return NULL);
     ctx->alg=alg;
     return ctx;
   case SOTER_SIGN_rsa_pss_pkcs8:
     ctx->ctx.rsa_encrypter=themis_secure_message_rsa_decrypter_init(private_key, private_key_length);
-    THEMIS_CHECK_(ctx);
+    THEMIS_CHECK__(ctx->ctx.rsa_encrypter, free(ctx); return NULL);
     ctx->alg=alg;
     return ctx;
   default:
@@ -421,15 +428,21 @@ themis_status_t themis_secure_message_decrypter_proceed(themis_secure_message_de
 
 themis_status_t themis_secure_message_decrypter_destroy(themis_secure_message_decrypter_t* ctx){
   THEMIS_CHECK(ctx!=NULL);
+  themis_status_t res = THEMIS_SUCCESS;
   switch(ctx->alg){
   case SOTER_SIGN_ecdsa_none_pkcs8:
-    return themis_secure_message_ec_decrypter_destroy(ctx->ctx.ec_encrypter);
+    res = themis_secure_message_ec_decrypter_destroy(ctx->ctx.ec_encrypter);
+    break;
   case SOTER_SIGN_rsa_pss_pkcs8:
-    return themis_secure_message_rsa_decrypter_destroy(ctx->ctx.rsa_encrypter);
+    res = themis_secure_message_rsa_decrypter_destroy(ctx->ctx.rsa_encrypter);
+    break;
   default:
     return THEMIS_FAIL;
   }
-  return THEMIS_INVALID_PARAMETER;;  
+  if(THEMIS_SUCCESS == res){
+	free(ctx);
+    }
+  return res;
 }
 
 
