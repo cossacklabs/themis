@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		G/+Vz8uItHySxpFNxbYm0xCgLD8=
+		9j0TLFL6LDylqRm5AmDJGmPwHR8=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -488,22 +488,22 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			KSsItHi4ekcialUlXGjlnC4LVAk=
+			XTH0i+j+JCMhMB5iOX56DYeA0hk=
 			</data>
 			<key>hash2</key>
 			<data>
-			fQjcUaPCoGgsRDP+Ci/4x+GSpfco4U/ZOFD28HLE6j8=
+			iUoBcH4K7Dpo/t83xdMIRI+pi4fpZ9ImFhO4S08ij3g=
 			</data>
 		</dict>
 		<key>Headers/opensslv.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			lEgfwytE0d+aYIMe2n5JFy2LzAM=
+			r7DM5Z3Zb8Cz135U0kb6gfTvEYU=
 			</data>
 			<key>hash2</key>
 			<data>
-			83g/Bz8mjohVDxXLUlF7gdgMUfEQl5Jy73rTCsr9u6Q=
+			NgnHwbq9zXe6+qnClagkN4IHAIko1VZCjp6hOS02z9w=
 			</data>
 		</dict>
 		<key>Headers/ossl_typ.h</key>
@@ -521,11 +521,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			q884x2+fkIptKGuf7HFiW0fKGXU=
+			j4wHZeZu00/j7TDXqj69PBXbfHk=
 			</data>
 			<key>hash2</key>
 			<data>
-			oItMp7yYCYDUgfG1Qcw/4FoLj9FCpivclwK7LtMBLSc=
+			cp14ckjKp9PPmT/fOqaFRI13DyAy2vs+EF3r4WOIvKw=
 			</data>
 		</dict>
 		<key>Headers/pem2.h</key>
@@ -543,11 +543,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			OUXwRkQGLKKyXgXozCvosnrP4yY=
+			S4B7Nj6xObSQ1Rh4SSqYe58Put8=
 			</data>
 			<key>hash2</key>
 			<data>
-			ll9E6Hcx4KtcLFkD0+R2cv0TqEh7AuqqddSTdb56jnk=
+			olNaF1JmyAtG1Xu5MPk379Pi8+gaZbUGTKLQAw2YeWo=
 			</data>
 		</dict>
 		<key>Headers/pkcs7.h</key>
@@ -686,11 +686,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			FNaZ35lR1iDF9q+LSEVfT94nHCc=
+			UJuMC0/WiRN/AuzbMz1+Tldl2bw=
 			</data>
 			<key>hash2</key>
 			<data>
-			p1s/QOGoyFp/OrFyUj/KleAz6cBvyB+P5nQKQWVyyS4=
+			MTvTyiCpU0pGBr++h7loMz/ELOPCe43ZgH12rn3o/Ow=
 			</data>
 		</dict>
 		<key>Headers/ssl2.h</key>
@@ -818,22 +818,22 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			ZlmlOsaySweGK2nGTCoSTp1FCiE=
+			gwUFTRM/F1hub8tCqyRBGVDbN6k=
 			</data>
 			<key>hash2</key>
 			<data>
-			NblWun4or7ROVdjTgOlXW3Loo6JhVHYdr2lcBqqMMUg=
+			y3icTwM8vhjerPRU7iWpFzb/KfAt0L3kjlziiDX3OV8=
 			</data>
 		</dict>
 		<key>Headers/x509_vfy.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			o2mEdcA0KZhOLHXQmK3aIHPNkNc=
+			rDsslqqGRyT3S8sQ2vHKDaib1/0=
 			</data>
 			<key>hash2</key>
 			<data>
-			2NcZHNTMjlIYgPMwFFETZ7MOAYT0gtRjLtloQnl2iZQ=
+			whrolxBVsJ21RLdcmXMQiCzWNZ2820WB1vv/R3XmLXM=
 			</data>
 		</dict>
 		<key>Headers/x509v3.h</key>
@@ -862,11 +862,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			G/+Vz8uItHySxpFNxbYm0xCgLD8=
+			9j0TLFL6LDylqRm5AmDJGmPwHR8=
 			</data>
 			<key>hash2</key>
 			<data>
-			7EDeCcWA1E4W6J5RnehU8MW4IbOQJoWWCqaE2DOsYNo=
+			4fFr5rlBrudzAnIxQH+5aXoKlCAMNQWUulWFT+dB7lY=
 			</data>
 		</dict>
 	</dict>
@@ -887,6 +887,11 @@
 			<true/>
 			<key>weight</key>
 			<real>1100</real>
+		</dict>
+		<key>^Resources/Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
 		</dict>
 		<key>^version.plist$</key>
 		<true/>
@@ -946,6 +951,11 @@
 			<true/>
 			<key>weight</key>
 			<real>1100</real>
+		</dict>
+		<key>^Resources/Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
 		</dict>
 		<key>^[^/]+$</key>
 		<dict>
