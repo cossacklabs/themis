@@ -19,12 +19,14 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 project 'ThemisSwift/ThemisSwift.xcodeproj'
 inhibit_all_warnings!
+use_frameworks!
 
 
 target :"ThemisSwift" do
 
-  # if you feel adventurous, link example to head
-  pod 'themis', :git => "https://github.com/cossacklabs/themis.git", :branch => 'release_0.9.5'
+  pod 'themis', :git => "https://github.com/cossacklabs/themis.git", :branch => 'podspec_dynamic_frameworks_GRKOpenSSLFramework'
+  
+  #pod 'themis', :podspec => 'https://gist.githubusercontent.#com/vixentael/c75fea8d98d9294c154e3c75230ccf2f/raw/5efcbd6385042a26f3d591c74f0c4b1bbb755c39/themis_dyn_frameworks.podspec'
 
   #pod 'themis', '0.9.5'
 
