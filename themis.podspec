@@ -9,19 +9,19 @@ Pod::Spec.new do |s|
     s.source = { :git => "https://github.com/cossacklabs/themis.git", :branch => "podspec_dynamic_frameworks_GRKOpenSSLFramework" }
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
     
-    s.dependency 'GRKOpenSSLFramework', '1.0.1.20.1'
+    s.dependency 'GRKOpenSSLFramework', '1.0.1.20.2'
 
     s.ios.deployment_target = '8.0'
     s.osx.deployment_target = '10.9'
 
+    s.ios.frameworks = 'UIKit', 'Foundation'
+
 
     s.ios.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL', 'USE_HEADERMAP' => 'NO', 
-        'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
-        'CLANG_ENABLE_MODULES' => 'NO', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
+        'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
         
     s.osx.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL', 'USE_HEADERMAP' => 'NO', 
-        'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
-        'CLANG_ENABLE_MODULES' => 'NO', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }  
+        'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
     
     s.subspec 'core' do |ss|
         ss.source_files = "src/themis/*.{h,c}", "src/soter/*.{c,h}", "src/soter/ed25519/*.{c,h}", "src/soter/openssl/*.{c,h}"
@@ -30,7 +30,7 @@ Pod::Spec.new do |s|
         ss.preserve_paths = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/openssl/*.h"
         ss.public_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/openssl/*.h"
     end
-    
+
     s.subspec 'objcwrapper' do |ss|
         ss.header_mappings_dir = 'src/wrappers/themis/Obj-C/objcthemis'
         ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{m,h}"

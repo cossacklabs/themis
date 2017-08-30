@@ -1,31 +1,31 @@
 PODS:
-  - GRKOpenSSLFramework (1.0.1.20.1)
+  - GRKOpenSSLFramework (1.0.1.20.2)
   - themis (0.9.5):
-    - GRKOpenSSLFramework (= 1.0.1.20.1)
+    - GRKOpenSSLFramework (= 1.0.1.20.2)
     - themis/core (= 0.9.5)
     - themis/objcwrapper (= 0.9.5)
   - themis/core (0.9.5):
-    - GRKOpenSSLFramework (= 1.0.1.20.1)
+    - GRKOpenSSLFramework (= 1.0.1.20.2)
   - themis/objcwrapper (0.9.5):
-    - GRKOpenSSLFramework (= 1.0.1.20.1)
+    - GRKOpenSSLFramework (= 1.0.1.20.2)
     - themis/core
 
 DEPENDENCIES:
-  - themis (from `https://gist.githubusercontent.com/vixentael/c75fea8d98d9294c154e3c75230ccf2f/raw/5efcbd6385042a26f3d591c74f0c4b1bbb755c39/themis_dyn_frameworks.podspec`)
+  - themis (from `https://gist.githubusercontent.com/vixentael/30300a22ee00b5d1f5eb752d79aff51b/raw/fe1fc89a7fa6f05fd861524dbea50d552b933393/themis_dyn_frm.podspec`)
 
 EXTERNAL SOURCES:
   themis:
-    :podspec: https://gist.githubusercontent.com/vixentael/c75fea8d98d9294c154e3c75230ccf2f/raw/5efcbd6385042a26f3d591c74f0c4b1bbb755c39/themis_dyn_frameworks.podspec
+    :podspec: https://gist.githubusercontent.com/vixentael/30300a22ee00b5d1f5eb752d79aff51b/raw/fe1fc89a7fa6f05fd861524dbea50d552b933393/themis_dyn_frm.podspec
 
 CHECKOUT OPTIONS:
   themis:
-    :commit: aaff9927369fc58e61d1e27b373679d0c6dd943d
+    :commit: 8e06e11c208e2088b3be63679bb81832c812bb78
     :git: https://github.com/cossacklabs/themis.git
 
 SPEC CHECKSUMS:
-  GRKOpenSSLFramework: 65b5f6d5a35f69284f4cdc2c294808a311eeed2f
-  themis: b20efd554d82a765cf19d113e82c9c972793511e
+  GRKOpenSSLFramework: 9d5c98373a9bbb4e37101ffb9e5bb20069dde183
+  themis: b721d04c192bfd2cd128010067d84e6b9cf301d3
 
-PODFILE CHECKSUM: 84798418f381f715e0b01e10028a51734bc0c7c1
+PODFILE CHECKSUM: 6ea86cb4083706e05e12f538e4ca686cc925dad0
 
 COCOAPODS: 1.3.1

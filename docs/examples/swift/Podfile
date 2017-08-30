@@ -24,9 +24,9 @@ use_frameworks!
 
 target :"ThemisSwift" do
 
-  pod 'themis', :git => "https://github.com/cossacklabs/themis.git", :branch => 'podspec_dynamic_frameworks_GRKOpenSSLFramework'
+  #pod 'themis', :git => "https://github.com/cossacklabs/themis.git", :branch => 'podspec_dynamic_frameworks_GRKOpenSSLFramework'
   
-  #pod 'themis', :podspec => 'https://gist.githubusercontent.#com/vixentael/c75fea8d98d9294c154e3c75230ccf2f/raw/5efcbd6385042a26f3d591c74f0c4b1bbb755c39/themis_dyn_frameworks.podspec'
+  pod 'themis', :podspec => 'https://gist.githubusercontent.com/vixentael/30300a22ee00b5d1f5eb752d79aff51b/raw/fe1fc89a7fa6f05fd861524dbea50d552b933393/themis_dyn_frm.podspec'
 
   #pod 'themis', '0.9.5'
 
