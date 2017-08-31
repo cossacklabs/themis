@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
     s.source = { :git => "https://github.com/cossacklabs/themis.git", :branch => "podspec_dynamic_frameworks_GRKOpenSSLFramework" }
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
     
-    s.dependency 'GRKOpenSSLFramework', '1.0.1.20.2'
+    s.dependency 'GRKOpenSSLFramework', '1.0.1.20.3'
 
     s.ios.deployment_target = '8.0'
     s.osx.deployment_target = '10.9'
