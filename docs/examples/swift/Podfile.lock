@@ -1,32 +1,31 @@
 PODS:
-  - OpenSSL-Universal (1.0.2.10)
+  - GRKOpenSSLFramework (1.0.1.20.3)
   - themis (0.9.5):
-    - OpenSSL-Universal (= 1.0.2.10)
+    - GRKOpenSSLFramework (= 1.0.1.20.3)
     - themis/core (= 0.9.5)
     - themis/objcwrapper (= 0.9.5)
   - themis/core (0.9.5):
-    - OpenSSL-Universal (= 1.0.2.10)
+    - GRKOpenSSLFramework (= 1.0.1.20.3)
   - themis/objcwrapper (0.9.5):
-    - OpenSSL-Universal (= 1.0.2.10)
+    - GRKOpenSSLFramework (= 1.0.1.20.3)
     - themis/core
 
 DEPENDENCIES:
-  - themis (from `https://github.com/cossacklabs/themis.git`, branch `release_0.9.5`)
+  - themis (from `https://gist.githubusercontent.com/vixentael/30300a22ee00b5d1f5eb752d79aff51b/raw/c9976adc1735a2b2c08396164dfbee91509a868d/themis_dyn_frm.podspec`)
 
 EXTERNAL SOURCES:
   themis:
-    :branch: release_0.9.5
-    :git: https://github.com/cossacklabs/themis.git
+    :podspec: https://gist.githubusercontent.com/vixentael/30300a22ee00b5d1f5eb752d79aff51b/raw/c9976adc1735a2b2c08396164dfbee91509a868d/themis_dyn_frm.podspec
 
 CHECKOUT OPTIONS:
   themis:
-    :commit: 0ba0ff39581b2e35d2b86bb944cb8b0e407009bb
+    :commit: 641ec7ca105a924e5a10a94d4e7d66ef764c9b9b
     :git: https://github.com/cossacklabs/themis.git
 
 SPEC CHECKSUMS:
-  OpenSSL-Universal: 6dc366764e8bf6ca93c60bd767d9103146a3b3b6
-  themis: a30b07346d6e80cb9b001a707a242c3e10ecf888
+  GRKOpenSSLFramework: 3a689464f4f9362d9e53a26cb245c0e5d7686df3
+  themis: 8daf21b5af21273f2857f60c45f8c4966ac15cc2
 
-PODFILE CHECKSUM: 00a3734472941ceb59fd266cf3e9e890fccf7c33
+PODFILE CHECKSUM: f53f6a9dad3b0360b34ff4bff835f737dbd24ae3
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.3.1
