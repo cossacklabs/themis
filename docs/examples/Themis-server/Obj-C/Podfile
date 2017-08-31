@@ -19,6 +19,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 project 'WorkingWithThemisServer/WorkingWithThemisServer.xcodeproj'
 inhibit_all_warnings!
+use_frameworks!
 
 target :"WorkingWithThemisServer" do
 

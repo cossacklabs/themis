@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0ADAB004B7481C34987A4ECF /* Pods_SwiftThemisServerExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C09A864387D9E441B2F27D /* Pods_SwiftThemisServerExample.framework */; };
 		736DDB661CC5990900CD0C31 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736DDB651CC5990900CD0C31 /* AppDelegate.swift */; };
 		736DDB681CC5990900CD0C31 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736DDB671CC5990900CD0C31 /* ViewController.swift */; };
 		736DDB6B1CC5990900CD0C31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 736DDB691CC5990900CD0C31 /* Main.storyboard */; };
@@ -14,11 +15,10 @@
 		736DDB701CC5990900CD0C31 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 736DDB6E1CC5990900CD0C31 /* LaunchScreen.storyboard */; };
 		736DDB781CC5A24A00CD0C31 /* SMessageClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736DDB771CC5A24A00CD0C31 /* SMessageClient.swift */; };
 		736DDB7A1CC5A25200CD0C31 /* SSessionClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736DDB791CC5A25200CD0C31 /* SSessionClient.swift */; };
-		A4A7102EE1158D74320B4E52 /* libPods-SwiftThemisServerExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E6801848E907EE00C295BC7 /* libPods-SwiftThemisServerExample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0E6801848E907EE00C295BC7 /* libPods-SwiftThemisServerExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SwiftThemisServerExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		22C09A864387D9E441B2F27D /* Pods_SwiftThemisServerExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftThemisServerExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3F5E6E6E08912450A3BA7180 /* Pods-SwiftThemisServerExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftThemisServerExample.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SwiftThemisServerExample/Pods-SwiftThemisServerExample.debug.xcconfig"; sourceTree = "<group>"; };
 		736DDB621CC5990900CD0C31 /* SwiftThemisServerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftThemisServerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		736DDB651CC5990900CD0C31 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -38,7 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4A7102EE1158D74320B4E52 /* libPods-SwiftThemisServerExample.a in Frameworks */,
+				0ADAB004B7481C34987A4ECF /* Pods_SwiftThemisServerExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,7 +91,7 @@
 		C29280C4C997D7B15B1E9450 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				0E6801848E907EE00C295BC7 /* libPods-SwiftThemisServerExample.a */,
+				22C09A864387D9E441B2F27D /* Pods_SwiftThemisServerExample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -173,13 +173,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-SwiftThemisServerExample-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		99CF6533428E9C2248974A11 /* [CP] Copy Pods Resources */ = {
@@ -203,9 +206,14 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/../Pods/Target Support Files/Pods-SwiftThemisServerExample/Pods-SwiftThemisServerExample-frameworks.sh",
+				"${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework",
+				"${BUILT_PRODUCTS_DIR}/themis/themis.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/themis.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
