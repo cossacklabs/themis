@@ -22,7 +22,9 @@ inhibit_all_warnings!
 
 target :"ThemisTest" do
 
-  # example should work with head
-  pod 'themis', :git => "https://github.com/cossacklabs/themis.git"
+  # if you feel adventurous, link example to head
+  #pod 'themis', :git => "https://github.com/cossacklabs/themis.git"
+
+  pod 'themis', '0.9.4'
 
 end

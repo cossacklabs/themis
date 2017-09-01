@@ -11,21 +11,12 @@ PODS:
     - themis/core
 
 DEPENDENCIES:
-  - themis (from `https://github.com/cossacklabs/themis.git`)
-
-EXTERNAL SOURCES:
-  themis:
-    :git: https://github.com/cossacklabs/themis.git
-
-CHECKOUT OPTIONS:
-  themis:
-    :commit: 53fd21f95c2ff1d9cffa8fa45288203cfe9f983f
-    :git: https://github.com/cossacklabs/themis.git
+  - themis (= 0.9.4)
 
 SPEC CHECKSUMS:
   OpenSSL-Universal: 71f2c4b2ae758e2218090f905e95ca0ac5c01be7
-  themis: 60ccb2c4f9172fa805f97d962dc18ae87f19edda
+  themis: 5dc6c65d9b7b4a4cd01465972d9b8478e6d19e0a
 
-PODFILE CHECKSUM: ea85c7dd44484b17e185a70177802ebd486a4ea6
+PODFILE CHECKSUM: 4a20bd493bfd4d8cffaf94cbfd2d275eff57094d
 
 COCOAPODS: 1.1.1

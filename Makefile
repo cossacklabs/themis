@@ -27,7 +27,7 @@ TEST_SRC_PATH = tests
 TEST_BIN_PATH = $(BIN_PATH)/tests
 TEST_OBJ_PATH = $(TEST_BIN_PATH)/obj
 
-CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC 
+CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC
 LDFLAGS += -L/usr/local/lib
 
 NO_COLOR=\033[0m
@@ -71,7 +71,7 @@ ifeq ($(ENGINE),openssl)
 	CRYPTO_ENGINE_DEF = OPENSSL
 	CRYPTO_ENGINE_PATH=openssl
 else ifeq ($(ENGINE),libressl)
-	CRYPTO_ENGINE_DEF = LIBRESSL	
+	CRYPTO_ENGINE_DEF = LIBRESSL
 	CRYPTO_ENGINE_PATH=openssl
 else ifeq ($(ENGINE), boringssl)
 	CRYPTO_ENGINE_DEF = BORINGSSL
@@ -115,11 +115,23 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 endif
 
 GIT_VERSION := $(shell if [ -d ".git" ]; then git version; fi 2>/dev/null)
+# check that repo has any tag
+GIT_TAG_STATUS := $(shell git describe --tags HEAD 2>/dev/null)
+GIT_TAG_STATUS := $(.SHELLSTATUS)
+
 ifdef GIT_VERSION
-	THEMIS_VERSION = themis-$(shell git describe --tags HEAD | cut -b 1-)
+# if has tag then use it
+        ifeq ($(GIT_TAG_STATUS),0)
+                VERSION = $(shell git describe --tags HEAD | cut -b 1-)
+        else
+# otherwise use last commit hash
+                VERSION = $(shell git describe --always HEAD)
+        endif
 else
-	THEMIS_VERSION = themis-$(shell date -I)
+# if it's not git repo then use date as version
+        VERSION = $(shell date -I | sed s/-/_/g)
 endif
+
 PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
@@ -150,7 +162,7 @@ BASE=$(shell xcrun --sdk $(SDK) --show-sdk-platform-path)
 SDK_BASE=$(shell xcrun --sdk $(SDK) --show-sdk-path)
 FRAMEWORKS=$(SDK_BASE)/System/Library/Frameworks/
 SDK_INCLUDES=$(SDK_BASE)/usr/include
-CFLAFS += -isysroot $(SDK_BASE) 
+CFLAFS += -isysroot $(SDK_BASE)
 endif
 ifneq ($(ARCH),)
 CFLAFS += -arch $(ARCH)
@@ -161,7 +173,7 @@ ifdef COVERAGE
 	CFLAGS += -g -O0 --coverage
 	COVERLDFLAGS = --coverage
 else
-	COVERLDFLAGS = 
+	COVERLDFLAGS =
 endif
 
 ifdef DEBUG
@@ -180,7 +192,7 @@ endif
 
 
 all: err themis_static themis_shared
-	echo $(THEMIS_VERSION)
+	@echo $(VERSION)
 
 test_all: err test
 ifdef PHP_VERSION
@@ -338,26 +350,28 @@ install_shared_libs: err all make_install_dirs
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
 
-get_themis_version:
-	@echo $(THEMIS_VERSION)
+get_version:
+	@echo $(VERSION)
+
+THEMIS_DIST_FILENAME = $(VERSION).tar.gz
 
 dist:
-	mkdir -p $(THEMIS_VERSION)
-	rsync -avz src $(THEMIS_VERSION)
-	rsync -avz docs $(THEMIS_VERSION)
-	rsync -avz gothemis $(THEMIS_VERSION)
-	rsync -avz gradle $(THEMIS_VERSION)
-	rsync -avz jni $(THEMIS_VERSION)
-	rsync -avz --exclude 'tests/soter/nist-sts/assess' tests $(THEMIS_VERSION)
-	rsync -avz CHANGELOG.md $(THEMIS_VERSION)
-	rsync -avz LICENSE $(THEMIS_VERSION)
-	rsync -avz Makefile $(THEMIS_VERSION)
-	rsync -avz README.md $(THEMIS_VERSION)
-	rsync -avz build.gradle $(THEMIS_VERSION)
-	rsync -avz gradlew $(THEMIS_VERSION)
-	rsync -avz themis.podspec $(THEMIS_VERSION)
-	tar -zcvf $(THEMIS_VERSION).tar.gz $(THEMIS_VERSION) 
-	rm -rf $(THEMIS_VERSION)
+	mkdir -p $(VERSION)
+	rsync -avz src $(VERSION)
+	rsync -avz docs $(VERSION)
+	rsync -avz gothemis $(VERSION)
+	rsync -avz gradle $(VERSION)
+	rsync -avz jni $(VERSION)
+	rsync -avz --exclude 'tests/soter/nist-sts/assess' tests $(VERSION)
+	rsync -avz CHANGELOG.md $(VERSION)
+	rsync -avz LICENSE $(VERSION)
+	rsync -avz Makefile $(VERSION)
+	rsync -avz README.md $(VERSION)
+	rsync -avz build.gradle $(VERSION)
+	rsync -avz gradlew $(VERSION)
+	rsync -avz themis.podspec $(VERSION)
+	tar -zcvf $(THEMIS_DIST_FILENAME) $(VERSION)
+	rm -rf $(VERSION)
 
 for-audit: $(SOTER_AUD) $(THEMIS_AUD)
 
@@ -428,6 +442,165 @@ themispp_install: install
 
 themispp_uninstall: CMD = rm -rf $(PREFIX)/include/themispp
 
-themispp_uninstall: 
+themispp_uninstall:
 	@echo -n "themispp uninstall "
 	@$(BUILD_CMD_)
+
+soter_collect_headers:
+	@mkdir -p $(BIN_PATH)/include/soter
+	@cd src/soter && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/soter/ \; && cd - 1 > /dev/null
+
+themis_collect_headers:
+	@mkdir -p $(BIN_PATH)/include/themis
+	@cd src/themis && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/themis/ \; && cd - 1 > /dev/null
+
+collect_headers: themis_collect_headers soter_collect_headers
+
+unpack_dist:
+	@tar -xf $(THEMIS_DIST_FILENAME)
+
+
+COSSACKLABS_URL = https://www.cossacklabs.com
+MAINTAINER = "Cossack Labs Limited <dev@cossacklabs.com>"
+# tag version from VCS
+VERSION := $(shell git describe --tags HEAD | cut -b 1-)
+LICENSE_NAME = "Apache License Version 2.0"
+LIBRARY_SO_VERSION := $(shell echo $(VERSION) | sed 's/^\([0-9.]*\)\(.*\)*$$/\1/')
+
+DEBIAN_CODENAME := $(shell lsb_release -cs 2> /dev/null)
+DEBIAN_STRETCH_VERSION := libssl1.0.2
+DEBIAN_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
+
+ifeq ($(DEBIAN_CODENAME),stretch)
+        DEBIAN_DEPENDENCIES := $(DEBIAN_STRETCH_VERSION)
+else
+        DEBIAN_DEPENDENCIES := openssl
+endif
+RPM_DEPENDENCIES = openssl
+
+ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
+	NAME_SUFFIX = $(VERSION)+$(DEBIAN_CODENAME)_$(DEBIAN_ARCHITECTURE).deb
+	OS_CODENAME = $(shell lsb_release -cs)
+else ifeq ($(shell lsb_release -is 2> /dev/null),Ubuntu)
+	NAME_SUFFIX = $(VERSION)+$(DEBIAN_CODENAME)_$(DEBIAN_ARCHITECTURE).deb
+	OS_CODENAME = $(shell lsb_release -cs)
+else
+	OS_NAME = $(shell cat /etc/os-release | grep -e "^ID=\".*\"" | cut -d'"' -f2)
+	OS_VERSION = $(shell cat /etc/os-release | grep -i version_id|cut -d'"' -f2)
+	ARCHITECTURE = $(shell arch)
+	NAME_SUFFIX = $(shell echo -n "$(VERSION)"|sed s/-/_/g).$(OS_NAME)$(OS_VERSION).$(ARCHITECTURE).rpm
+endif
+
+
+SHORT_DESCRIPTION = Data security library for network communication and data storage
+RPM_SUMMARY = Data security library for network communication and data storage. \
+	 Themis is a data security library, providing users with high-quality security \
+	 services for secure messaging of any kinds and flexible data storage. Themis \
+	 is aimed at modern developers, with high level OOP wrappers for Ruby, Python, \
+	 PHP, Java / Android and iOS / OSX. It is designed with ease of use in mind, \
+	 high security and cross-platform availability.
+
+HEADER_FILES_MAP = $(BIN_PATH)/include/soter/=$(PREFIX)/include/soter \
+		 $(BIN_PATH)/include/themis/=$(PREFIX)/include/themis
+
+STATIC_BINARY_LIBRARY_MAP = $(BIN_PATH)/libthemis.a=$(PREFIX)/lib/libthemis.a.$(LIBRARY_SO_VERSION) \
+		 $(BIN_PATH)/libsoter.a=$(PREFIX)/lib/libsoter.a.$(LIBRARY_SO_VERSION)
+
+SHARED_BINARY_LIBRARY_MAP = $(BIN_PATH)/libthemis.so=$(PREFIX)/lib/libthemis.so.$(LIBRARY_SO_VERSION) \
+		 $(BIN_PATH)/libsoter.so=$(PREFIX)/lib/libsoter.so.$(LIBRARY_SO_VERSION)
+
+
+BINARY_LIBRARY_MAP = $(STATIC_BINARY_LIBRARY_MAP) $(SHARED_BINARY_LIBRARY_MAP)
+
+POST_INSTALL_SCRIPT := $(BIN_PATH)/post_install.sh
+POST_UNINSTALL_SCRIPT := $(BIN_PATH)/post_uninstall.sh
+
+install_shell_scripts:
+	@printf "ln -s $(PREFIX)/lib/libthemis.so.$(LIBRARY_SO_VERSION) $(PREFIX)/lib/libthemis.so \n \
+		ln -s $(PREFIX)/lib/libsoter.so.$(LIBRARY_SO_VERSION) $(PREFIX)/lib/libsoter.so" > $(POST_INSTALL_SCRIPT)
+
+	@printf "unlink  $(PREFIX)/lib/libthemis.so 2>/dev/null \n \
+		unlink $(PREFIX)/lib/libsoter.so 2>/dev/null" > $(POST_UNINSTALL_SCRIPT)
+
+deb: test themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts
+	@find . -name \*.so -exec strip -o {} {} \;
+	@mkdir -p $(BIN_PATH)/deb
+#libthemis-dev
+	@fpm --input-type dir \
+		 --output-type deb \
+		 --name libthemis-dev \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --maintainer $(MAINTAINER) \
+		 --package $(BIN_PATH)/deb/libthemis-dev_$(NAME_SUFFIX) \
+		 --architecture $(DEBIAN_ARCHITECTURE) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 --depends $(DEBIAN_DEPENDENCIES) \
+		 --deb-priority optional \
+		 --after-install $(POST_INSTALL_SCRIPT) \
+		 --after-remove $(POST_UNINSTALL_SCRIPT) \
+		 --category security \
+		 $(BINARY_LIBRARY_MAP) \
+		 $(HEADER_FILES_MAP) 1>/dev/null
+
+#libthemis
+	@fpm --input-type dir \
+		 --output-type deb \
+		 --name libthemis \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --maintainer $(MAINTAINER) \
+		 --package $(BIN_PATH)/deb/libthemis_$(NAME_SUFFIX) \
+		 --depends $(DEBIAN_DEPENDENCIES) \
+		 --after-install $(POST_INSTALL_SCRIPT) \
+		 --after-remove $(POST_UNINSTALL_SCRIPT) \
+		 --architecture $(DEBIAN_ARCHITECTURE) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 --deb-priority optional \
+		 --category security \
+		 $(BINARY_LIBRARY_MAP) 1>/dev/null
+
+# it's just for printing .deb files
+	@find $(BIN_PATH) -name \*.deb
+
+
+rpm: test themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts
+	@find . -name \*.so -exec strip -o {} {} \;
+	@mkdir -p $(BIN_PATH)/rpm
+#libthemis-devel
+	@fpm --input-type dir \
+         --output-type rpm \
+         --name libthemis-devel \
+         --license $(LICENSE_NAME) \
+         --url '$(COSSACKLABS_URL)' \
+         --description '$(SHORT_DESCRIPTION)' \
+         --rpm-summary '$(RPM_SUMMARY)' \
+         --depends $(RPM_DEPENDENCIES) \
+         --maintainer $(MAINTAINER) \
+         --after-install $(POST_INSTALL_SCRIPT) \
+         --after-remove $(POST_UNINSTALL_SCRIPT) \
+         --package $(BIN_PATH)/rpm/libthemis-devel-$(NAME_SUFFIX) \
+         --version $(VERSION) \
+         --category security \
+         $(BINARY_LIBRARY_MAP) \
+		 $(HEADER_FILES_MAP) 1>/dev/null
+#libthemis
+	@fpm --input-type dir \
+         --output-type rpm \
+         --name libthemis \
+         --license $(LICENSE_NAME) \
+         --url '$(COSSACKLABS_URL)' \
+         --description '$(SHORT_DESCRIPTION)' \
+         --rpm-summary '$(RPM_SUMMARY)' \
+         --maintainer $(MAINTAINER) \
+         --after-install $(POST_INSTALL_SCRIPT) \
+         --after-remove $(POST_UNINSTALL_SCRIPT) \
+         --depends $(RPM_DEPENDENCIES) \
+         --package $(BIN_PATH)/rpm/libthemis-$(NAME_SUFFIX) \
+         --version $(VERSION) \
+         --category security \
+         $(BINARY_LIBRARY_MAP) 1>/dev/null
+# it's just for printing .rpm files
+	@find $(BIN_PATH) -name \*.rpm
