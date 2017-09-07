@@ -157,8 +157,18 @@ PREFIX = /usr/local
 
 	# add openssl headers for MacOS
 	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
-		CFLAGS += -I$(PREFIX)/opt/openssl/include
-		LDFLAGS += -L$(PREFIX)/opt/openssl/lib
+	
+		# if brew is installed, if openssl is installed
+        PACKAGELIST := $(shell brew list | grep 'openssl')
+		ifeq ($(PACKAGELIST),openssl)
+
+		 	# path to openssl (usually "/usr/local/opt/openssl")
+			OPENSSL_PATH := $(shell brew --prefix openssl)
+			ifneq ($(OPENSSL_PATH),)
+				CFLAGS += -I$(OPENSSL_PATH)/include
+				LDFLAGS += -L$(OPENSSL_PATH)/lib
+			endif
+		endif
 	endif
 
 ifneq ($(SDK),)
