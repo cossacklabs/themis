@@ -50,6 +50,12 @@ BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR); elif [ 
 BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
 
 
+UNAME=$(shell uname)
+
+ifeq ($(UNAME),Darwin)
+	IS_MACOS := true
+endif
+
 define themisecho
       @tput setaf 6
       @echo $1
@@ -63,6 +69,12 @@ endif
 #default engine
 ifeq ($(PREFIX),)
 PREFIX = /usr
+
+# MacOS
+ifdef IS_MACOS
+	PREFIX = /usr/local
+endif
+
 endif
 
 #engine selection block
@@ -81,6 +93,25 @@ else
 endif
 endif
 #end of engine selection block
+
+
+# search for OpenSSL headers for MacOS
+ifdef IS_MACOS
+	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
+
+		# if brew is installed, if openssl is installed
+		PACKAGELIST = $(shell brew list | grep 'openssl')
+		ifeq ($(PACKAGELIST),openssl)
+
+		 	# path to openssl (usually "/usr/local/opt/openssl")
+			OPENSSL_PATH := $(shell brew --prefix openssl)
+			ifneq ($(OPENSSL_PATH),)
+				CRYPTO_ENGINE_INCLUDE_PATH = $(OPENSSL_PATH)/include
+				CRYPTO_ENGINE_LIB_PATH = $(OPENSSL_PATH)/lib
+			endif
+		endif
+	endif
+endif
 
 CRYPTO_ENGINE = $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)
 CFLAGS += -D$(CRYPTO_ENGINE_DEF) -DCRYPTO_ENGINE_PATH=$(CRYPTO_ENGINE_PATH)
@@ -146,31 +177,12 @@ endif
 
 SHARED_EXT = so
 
-UNAME=$(shell uname)
 IS_LINUX = $(shell $(CC) -dumpmachine 2>&1 | $(EGREP) -c "linux")
 IS_MINGW = $(shell $(CC) -dumpmachine 2>&1 | $(EGREP) -c "mingw")
 IS_CLANG_COMPILER = $(shell $(CC) --version 2>&1 | $(EGREP) -i -c "clang version")
 
 ifeq ($(shell uname),Darwin)
 SHARED_EXT = dylib
-PREFIX = /usr/local
-
-# add openssl headers for MacOS
-ifeq ($(CRYPTO_ENGINE_PATH),openssl)
-
-	# if brew is installed, if openssl is installed
-	PACKAGELIST := $(shell brew list | grep 'openssl')
-	ifeq ($(PACKAGELIST),openssl)
-
-	 	# path to openssl (usually "/usr/local/opt/openssl")
-		OPENSSL_PATH := $(shell brew --prefix openssl)
-		ifneq ($(OPENSSL_PATH),)
-			CFLAGS += -I$(OPENSSL_PATH)/include
-			LDFLAGS += -L$(OPENSSL_PATH)/lib
-		endif
-	endif
-endif
-
 ifneq ($(SDK),)
 SDK_PLATFORM_VERSION=$(shell xcrun --sdk $(SDK) --show-sdk-platform-version)
 XCODE_BASE=$(shell xcode-select --print-path)
@@ -269,7 +281,7 @@ soter_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT) $
 soter_shared: $(SOTER_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
-ifeq ($(shell uname),Darwin)
+ifdef IS_MACOS
 	@install_name_tool -id "$(PREFIX)/lib/lib$(SOTER_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)
 	@install_name_tool -change "$(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)" "$(PREFIX)/lib/lib(SOTER_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)
 endif
@@ -285,7 +297,7 @@ themis_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
 themis_shared: soter_shared $(THEMIS_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
-ifeq ($(shell uname),Darwin)
+ifdef IS_MACOS
 	@install_name_tool -id "$(PREFIX)/lib/lib$(THEMIS_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
 	@install_name_tool -change "$(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)" "$(PREFIX)/lib/lib$(THEMIS_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
 endif
