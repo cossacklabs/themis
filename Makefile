@@ -82,6 +82,14 @@ endif
 endif
 #end of engine selection block
 
+# add openssl headers for MacOS
+ifeq ($(shell uname),Darwin)
+	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
+		CFLAGS += -I/usr/local/opt/openssl/include
+		LDFLAGS += -L/usr/local/opt/openssl/lib
+	endif
+endif
+
 CRYPTO_ENGINE = $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)
 CFLAGS += -D$(CRYPTO_ENGINE_DEF) -DCRYPTO_ENGINE_PATH=$(CRYPTO_ENGINE_PATH)
 
@@ -251,11 +259,11 @@ soter_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT) $
 
 soter_shared: $(SOTER_OBJ)
 	@echo -n "link "
+	@$(BUILD_CMD)
 ifeq ($(shell uname),Darwin)
 	@install_name_tool -id "$(PREFIX)/lib/lib$(SOTER_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)
 	@install_name_tool -change "$(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)" "$(PREFIX)/lib/lib(SOTER_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)
 endif
-	@$(BUILD_CMD)
 
 themis_static: CMD = $(AR) rcs $(BIN_PATH)/lib$(THEMIS_BIN).a $(THEMIS_OBJ)
 
@@ -267,11 +275,11 @@ themis_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
 
 themis_shared: soter_shared $(THEMIS_OBJ)
 	@echo -n "link "
+	@$(BUILD_CMD)
 ifeq ($(shell uname),Darwin)
 	@install_name_tool -id "$(PREFIX)/lib/lib$(THEMIS_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
 	@install_name_tool -change "$(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)" "$(PREFIX)/lib/lib$(THEMIS_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
 endif
-	@$(BUILD_CMD)
 
 themis_jni: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_JNI_BIN).$(SHARED_EXT) $(THEMIS_JNI_OBJ) -L$(BIN_PATH) -l$(THEMIS_BIN) -l$(SOTER_BIN)
 
