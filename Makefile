@@ -159,7 +159,7 @@ PREFIX = /usr/local
 	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
 	
 		# if brew is installed, if openssl is installed
-        PACKAGELIST := $(shell brew list | grep 'openssl')
+		PACKAGELIST := $(shell brew list | grep 'openssl')
 		ifeq ($(PACKAGELIST),openssl)
 
 		 	# path to openssl (usually "/usr/local/opt/openssl")
