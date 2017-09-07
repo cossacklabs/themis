@@ -82,14 +82,6 @@ endif
 endif
 #end of engine selection block
 
-# add openssl headers for MacOS
-ifeq ($(shell uname),Darwin)
-	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
-		CFLAGS += -I/usr/local/opt/openssl/include
-		LDFLAGS += -L/usr/local/opt/openssl/lib
-	endif
-endif
-
 CRYPTO_ENGINE = $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)
 CFLAGS += -D$(CRYPTO_ENGINE_DEF) -DCRYPTO_ENGINE_PATH=$(CRYPTO_ENGINE_PATH)
 
@@ -162,6 +154,13 @@ IS_CLANG_COMPILER = $(shell $(CC) --version 2>&1 | $(EGREP) -i -c "clang version
 ifeq ($(shell uname),Darwin)
 SHARED_EXT = dylib
 PREFIX = /usr/local
+
+	# add openssl headers for MacOS
+	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
+		CFLAGS += -I$(PREFIX)/opt/openssl/include
+		LDFLAGS += -L$(PREFIX)/opt/openssl/lib
+	endif
+
 ifneq ($(SDK),)
 SDK_PLATFORM_VERSION=$(shell xcrun --sdk $(SDK) --show-sdk-platform-version)
 XCODE_BASE=$(shell xcode-select --print-path)
