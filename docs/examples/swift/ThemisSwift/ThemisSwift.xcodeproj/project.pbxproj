@@ -16,12 +16,12 @@
 		739981441CC449010095138F /* client.pub in Resources */ = {isa = PBXBuildFile; fileRef = 739981381CC449010095138F /* client.pub */; };
 		739981451CC449010095138F /* server.priv in Resources */ = {isa = PBXBuildFile; fileRef = 739981391CC449010095138F /* server.priv */; };
 		739981461CC449010095138F /* server.pub in Resources */ = {isa = PBXBuildFile; fileRef = 7399813A1CC449010095138F /* server.pub */; };
-		D09375636402940842EDB08C /* Pods_ThemisSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FE6910B40E0D66BC4D277AB /* Pods_ThemisSwift.framework */; };
+		C61F3320315E6BDA22E99126 /* Pods_ThemisSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6BAEA9A131C137426B2FFEE3 /* Pods_ThemisSwift.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5FE6910B40E0D66BC4D277AB /* Pods_ThemisSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ThemisSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		67E9656BA2F25D220338EC28 /* Pods-ThemisSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisSwift.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift.release.xcconfig"; sourceTree = "<group>"; };
+		4FEC4E6225E0A84B4D0DAECF /* Pods-ThemisSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisSwift.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift.release.xcconfig"; sourceTree = "<group>"; };
+		6BAEA9A131C137426B2FFEE3 /* Pods_ThemisSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ThemisSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		739981171CC42C880095138F /* ThemisSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThemisSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7399812E1CC449010095138F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7399812F1CC449010095138F /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -34,7 +34,7 @@
 		7399813A1CC449010095138F /* server.pub */ = {isa = PBXFileReference; lastKnownFileType = file; path = server.pub; sourceTree = "<group>"; };
 		739981491CC44ABA0095138F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7399814A1CC44ABA0095138F /* ThemisSwift-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ThemisSwift-Bridging-Header.h"; sourceTree = "<group>"; };
-		BBDAF519D33B2A0600F49280 /* Pods-ThemisSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisSwift.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift.debug.xcconfig"; sourceTree = "<group>"; };
+		8336E0F9A39E536E3B0A45BB /* Pods-ThemisSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisSwift.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,18 +42,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D09375636402940842EDB08C /* Pods_ThemisSwift.framework in Frameworks */,
+				C61F3320315E6BDA22E99126 /* Pods_ThemisSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		7122E03410ADAD79A738A68E /* Pods */ = {
+		192D65A4BDAAF46AB29B5C55 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				BBDAF519D33B2A0600F49280 /* Pods-ThemisSwift.debug.xcconfig */,
-				67E9656BA2F25D220338EC28 /* Pods-ThemisSwift.release.xcconfig */,
+				8336E0F9A39E536E3B0A45BB /* Pods-ThemisSwift.debug.xcconfig */,
+				4FEC4E6225E0A84B4D0DAECF /* Pods-ThemisSwift.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -63,8 +63,8 @@
 			children = (
 				739981191CC42C880095138F /* ThemisSwift */,
 				739981181CC42C880095138F /* Products */,
-				7122E03410ADAD79A738A68E /* Pods */,
-				B8140699F07E9AA78D9DB43D /* Frameworks */,
+				192D65A4BDAAF46AB29B5C55 /* Pods */,
+				8E8B60EA33E0B5FB983BC55C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -126,10 +126,10 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		B8140699F07E9AA78D9DB43D /* Frameworks */ = {
+		8E8B60EA33E0B5FB983BC55C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5FE6910B40E0D66BC4D277AB /* Pods_ThemisSwift.framework */,
+				6BAEA9A131C137426B2FFEE3 /* Pods_ThemisSwift.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -141,13 +141,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 739981291CC42C880095138F /* Build configuration list for PBXNativeTarget "ThemisSwift" */;
 			buildPhases = (
-				B0FE1435AF7F6FECBD125E76 /* [CP] Check Pods Manifest.lock */,
+				818E9A94CB8F6C5CF16FA16E /* [CP] Check Pods Manifest.lock */,
 				739981131CC42C880095138F /* Sources */,
 				739981141CC42C880095138F /* Frameworks */,
 				739981151CC42C880095138F /* Resources */,
 				73688AFE1CC4504F00D3C430 /* ShellScript */,
-				86218BA72E57D9E4D7F0487C /* [CP] Embed Pods Frameworks */,
-				002413C300DC9E437B4F7ACC /* [CP] Copy Pods Resources */,
+				94B672304A6B43C51B905705 /* [CP] Embed Pods Frameworks */,
+				70A8EF99E8D5EDDB902C9FAD /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -170,7 +170,9 @@
 				TargetAttributes = {
 					739981161CC42C880095138F = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = UNSGN7EX32;
 						LastSwiftMigration = 0810;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -210,7 +212,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		002413C300DC9E437B4F7ACC /* [CP] Copy Pods Resources */ = {
+		70A8EF99E8D5EDDB902C9FAD /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -238,7 +240,25 @@
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n# uncomment for autocorrection\n# swiftlint autocorrect\n    swiftlint lint --quiet\nelse\n    echo \"SwiftLint does not exist, download from https://github.com/realm/SwiftLint\"\nfi";
 		};
-		86218BA72E57D9E4D7F0487C /* [CP] Embed Pods Frameworks */ = {
+		818E9A94CB8F6C5CF16FA16E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ThemisSwift-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		94B672304A6B43C51B905705 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,24 +276,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B0FE1435AF7F6FECBD125E76 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ThemisSwift-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -400,9 +402,11 @@
 		};
 		7399812A1CC42C880095138F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BBDAF519D33B2A0600F49280 /* Pods-ThemisSwift.debug.xcconfig */;
+			baseConfigurationReference = 8336E0F9A39E536E3B0A45BB /* Pods-ThemisSwift.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/ThemisSwift/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -415,9 +419,11 @@
 		};
 		7399812B1CC42C880095138F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 67E9656BA2F25D220338EC28 /* Pods-ThemisSwift.release.xcconfig */;
+			baseConfigurationReference = 4FEC4E6225E0A84B4D0DAECF /* Pods-ThemisSwift.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/ThemisSwift/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
