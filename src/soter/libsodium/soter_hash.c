@@ -20,7 +20,7 @@
 #include "soter_engine_consts.h"
 #include <sodium.h>
 
-size_t hash_block_size(int32_t algo)
+size_t soter_hash_block_size(int32_t algo)
 {
     switch (algo){
     case SOTER_HASH_BLAKE2:
@@ -31,7 +31,7 @@ size_t hash_block_size(int32_t algo)
 
 
 soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, int32_t algo){
-	if (!hash_ctx || 0==hash_block_size(algo)){
+	if (!hash_ctx || 0==soter_hash_block_size(algo)){
 		return SOTER_INVALID_PARAMETER;
 	}
 	if(0 == crypto_generichash_init(&(hash_ctx->md_ctx), NULL, 0, crypto_generichash_BYTES)){

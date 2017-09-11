@@ -15,6 +15,7 @@
  */
 
 #include <assert.h>
+#include <string.h>
 
 #include <soter/soter_asym_key.h>
 #include <soter/soter_container.h>

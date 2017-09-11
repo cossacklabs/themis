@@ -40,7 +40,7 @@ static int sign_test(int alg)
   res = soter_key_pair_gen(SOTER_ASYM_SIGN_DEFAULT_ALG, private_key, &private_key_length, public_key, &public_key_length);
   if(res!=SOTER_SUCCESS){
     testsuite_fail_if(res!=SOTER_SUCCESS, " generation key pair");
-    return;
+    return -1;
   }
 
   soter_sign_ctx_t* sctx=NULL;

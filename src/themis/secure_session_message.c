@@ -28,6 +28,7 @@
 #include "portable_endian.h"
 
 #include <assert.h>
+#include <time.h>
 
 #define THEMIS_SESSION_WRAP_TAG "TSWM"
 

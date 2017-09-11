@@ -15,6 +15,7 @@
 */
 
 #include "soter_test.h"
+#include <soter/soter.h>
 #include <string.h>
 
 #define TEST_DATA_SIZE 70

@@ -83,7 +83,7 @@ soter_status_t soter_sign_destroy(soter_sign_ctx_t* ctx);
 /** @brief verify context typedef */
 typedef struct soter_sign_ctx_type soter_verify_ctx_t;
 
-soter_status_t soter_verify(const void* public_key, const size_t public_key_length, const int8_t* data, const size_t data_length, const int8_t* signature, const size_t signature_length);
+soter_status_t soter_verify(const void* public_key, const size_t public_key_length, const uint8_t* data, const size_t data_length, const uint8_t* signature, const size_t signature_length);
 
 /** @brief create verify context
  * @param [in] alg algorithm for verifying. See @ref soter_sign_alg_type
