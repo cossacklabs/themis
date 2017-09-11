@@ -69,7 +69,7 @@ typedef struct soter_hmac_ctx_type soter_hmac_ctx_t;
  * @param [in] algo hash algorithm to be used; see @ref soter_hash_algo_type
  * @return pointer to HMAC context on sussecc and  NULL on failure
  */
-soter_hmac_ctx_t* soter_hmac_create(soter_hash_algo_t algo, const uint8_t* key, size_t key_length);
+soter_hmac_ctx_t* soter_hmac_create(int32_t algo, const uint8_t* key, size_t key_length);
 
 /**
  * @brief destroy HMAC context

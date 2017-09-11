@@ -29,9 +29,9 @@
 #include <soter/openssl/soter_engine_consts.h>
 #endif
 
-soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t algo);
+soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, int32_t algo);
 
-soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher, const void* key, const size_t key_length);
+soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* astym_cipher, const void* key, const size_t key_length);
 soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher);
 
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, const void* key, const size_t key_length);
@@ -47,11 +47,11 @@ struct soter_hmac_ctx_type
 {
 	uint8_t o_key_pad[HASH_MAX_BLOCK_SIZE];
 	size_t block_size;
-	soter_hash_algo_t algo;
+	int32_t algo;
 	soter_hash_ctx_t hash_ctx;
 };
 
-soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, soter_hash_algo_t algo, const uint8_t* key, size_t key_length);
+soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, int32_t algo, const uint8_t* key, size_t key_length);
 soter_status_t soter_hmac_cleanup(soter_hmac_ctx_t *hmac_ctx);
 
 #endif /* SOTER_T_H */

@@ -120,9 +120,14 @@ During the development stage we frequently do Proof-of-Concept projects to test 
 
 If you'd like to experiment with Themis in a more interactive environment, check out [Themis Server](https://themis.cossacklabs.com), interactive debugging environment for Themis. 
 
+# Contributing to us
+
+If you’d like to contribute your code or other kind of input to Themis, you’re welcome. Head over to our [Contribution guidelines](https://github.com/cossacklabs/themis/wiki/Contribute) as your starting point.
+
+
 # Documentation
 
-[Project's GitHub Wiki](https://www.github.com/cossacklabs/themis/wiki) contains the ever-evolving official documentation, which contains everything from use-cases to contribution guidelines, with a brief explanation of cryptosystems and architecture behind the main Themis library sandwiched in. 
+[Project's GitHub Wiki](https://www.github.com/cossacklabs/themis/wiki) contains the ever-evolving official documentation, which contains everything from deployment guidelines to use-cases, with a brief explanation of cryptosystems and architecture behind the main Themis library sandwiched in. 
 
 
 # Communication

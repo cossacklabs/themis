@@ -22,6 +22,8 @@
 
 #include <arpa/inet.h>
 
+#include <sodium.h>
+
 /** private key header part */
 #define X25519_PRIV_KEY_TAG "RX20"
 /** public key header part */
@@ -33,7 +35,7 @@
 struct soter_x25519_pub_key_type{
 	soter_container_hdr_t hdr;
 	uint8_t key[X25519_PUB_SIZE];
-	};
+};
 
 typedef struct soter_x25519_pub_key_type soter_x25519_pub_key_t;
 

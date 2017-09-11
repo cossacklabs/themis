@@ -52,7 +52,7 @@ themis_status_t themis_auth_sym_plain_encrypt(uint32_t alg,
 					      size_t* encrypted_message_length,
 					      uint8_t* auth_tag,
 					      size_t* auth_tag_length){
-  soter_sym_ctx_t *ctx = soter_sym_aead_encrypt_create(alg, key, key_length, NULL,0,iv, iv_length);
+  soter_sym_aead_ctx_t *ctx = soter_sym_aead_encrypt_create(alg, key, key_length, NULL, 0, iv, iv_length);
   THEMIS_CHECK(ctx!=NULL);
   if(aad!=NULL || aad_length!=0){
     THEMIS_CHECK__(soter_sym_aead_encrypt_aad(ctx, aad, aad_length)==THEMIS_SUCCESS, soter_sym_aead_encrypt_destroy(ctx); return THEMIS_FAIL);
@@ -76,7 +76,7 @@ themis_status_t themis_auth_sym_plain_decrypt(uint32_t alg,
 					      size_t* message_length,
 					      const uint8_t* auth_tag,
 					      const size_t auth_tag_length){
-  soter_sym_ctx_t *ctx = soter_sym_aead_decrypt_create(alg, key, key_length, NULL, 0, iv, iv_length);
+  soter_sym_aead_ctx_t *ctx = soter_sym_aead_decrypt_create(alg, key, key_length, NULL, 0, iv, iv_length);
   THEMIS_CHECK(ctx!=NULL)
   if(aad!=NULL || aad_length!=0){
     THEMIS_CHECK__(soter_sym_aead_decrypt_aad(ctx, aad, aad_length)==THEMIS_SUCCESS, soter_sym_aead_decrypt_destroy(ctx); return THEMIS_FAIL);

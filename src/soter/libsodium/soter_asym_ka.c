@@ -19,21 +19,20 @@
 #include <soter/error.h>
 #include "soter_engine.h"
 #include "soter_engine_consts.h"
-#include "soter_ec_key.h"
 #include <soter/soter_container.h>
 #include <sodium.h>
+#include <string.h>
 
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* ctx, const int8_t* key, const size_t key_length){
-  if(!asym_ka_ctx || !key || key_length<sizeof(soter_container_hdr_t)){
+  if(!ctx || !key || key_length<sizeof(soter_container_hdr_t) || key_length!=ntohl(((soter_container_hdr_t*)key)->size) || SOTER_SUCCESS!=soter_verify_container_checksum((soter_container_hdr_t*)key)){
     return SOTER_INVALID_PARAMETER;
   }
-  //add check
-  memcpy(ctx->pk, key, key_length);
+  memcpy((void*)(&(ctx->pk)), key, key_length);
   return SOTER_SUCCESS;
 }
 
 soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* ctx){
-  if (!asym_ka_ctx){
+  if (!ctx){
     return SOTER_INVALID_PARAMETER;
   }
   memset(ctx, 0, sizeof(soter_asym_ka_t));
@@ -63,16 +62,16 @@ soter_status_t soter_asym_ka_destroy(soter_asym_ka_t* asym_ka_ctx)
   return SOTER_SUCCESS;
 }
 
-soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx, const void* peer_key, size_t peer_key_length, void *shared_secret, size_t* shared_secret_length){
-  if (!asym_ka_ctx){
+soter_status_t soter_asym_ka_derive(soter_asym_ka_t* ctx, const void* peer_key, size_t peer_key_length, void *shared_secret, size_t* shared_secret_length){
+  if (!ctx || !peer_key || !shared_secret_length || peer_key_length<sizeof(soter_container_hdr_t) || peer_key_length!=ntohl(((soter_container_hdr_t*)peer_key)->size) || SOTER_SUCCESS!=soter_verify_container_checksum((soter_container_hdr_t*)peer_key)){
     return SOTER_INVALID_PARAMETER;
   }
   if(!shared_secret || crypto_generichash_BYTES > *shared_secret_length){
     *shared_secret_length = crypto_generichash_BYTES;
     return SOTER_BUFFER_TOO_SMALL;
   }
-  unsigned char scalarmult_q_by_client[crypto_scalarmult_BYTES];
-  if(0!=crypto_scalarmult(scalarmult_q, ctx->pk.key, peer_key->key)) {
+  unsigned char scalarmult_q[crypto_scalarmult_BYTES];
+  if(0!=crypto_scalarmult(scalarmult_q, ctx->pk.key, ((soter_x25519_pub_key_t*)peer_key)->key)) {
     return SOTER_FAIL;
   }
   *shared_secret_length = crypto_generichash_BYTES;

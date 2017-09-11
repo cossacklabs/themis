@@ -18,22 +18,21 @@
 
 #include <soter/error.h>
 #include <soter/soter.h>
-#include "soter_rsa_key.h"
 #include "soter_engine.h"
 #include <sodium.h>
 
 soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const void* plain_data, size_t plain_data_length, void* cipher_data, size_t* cipher_data_length){
-    return SOTER_NOT_SUPPORT;
+    return SOTER_NOT_SUPPORTED;
 }
 
 soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const void* cipher_data, size_t cipher_data_length, void* plain_data, size_t* plain_data_length){
-    return SOTER_NOT_SUPPORT;
+    return SOTER_NOT_SUPPORTED;
 }
 
 soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_length){
-    return SOTER_NOT_SUPPORT;
+    return NULL;
 }
 
 soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher){
-    return SOTER_NOT_SUPPORT;
+    return SOTER_NOT_SUPPORTED;
 }

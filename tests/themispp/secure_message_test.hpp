@@ -31,7 +31,7 @@ namespace themispp{
 
       int secure_message_test(){
 	try{
-	  themispp::secure_key_pair_generator_t<themispp::EC> g;
+	  themispp::secure_key_pair_generator_t g;
 	  std::vector<uint8_t> private_key(g.get_priv());
 	  std::vector<uint8_t> public_key(g.get_pub());
 	  g.gen();

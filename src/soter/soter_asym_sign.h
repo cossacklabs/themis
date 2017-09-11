@@ -33,7 +33,7 @@
 /** @brief sign context typedef */
 typedef struct soter_sign_ctx_type soter_sign_ctx_t;
 
-soter_status_t soter_sign(const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length, const uint8_t* data, const size_t data_length, uint8_t* signed_data, size_t* signed_data_length);
+soter_status_t soter_sign(const void* private_key, const size_t private_key_length, const uint8_t* data, const size_t data_length, uint8_t* signed_data, size_t* signed_data_length);
 
 /** @brief create sign context
  * @param [in] alg algorithm for signing. See @ref soter_sign_alg_type
@@ -44,7 +44,7 @@ soter_status_t soter_sign(const void* private_key, const size_t private_key_leng
  * @return SOTER_SUCCESS on success or SOTER_FAIL on failure
  * @note If private_key==NULL and public_key==NULL with creating of sign context will be generated new key pair.
  */ 
-soter_sign_ctx_t* soter_sign_create(const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length);
+soter_sign_ctx_t* soter_sign_create(const void* private_key, const size_t private_key_length);
 
 /** @brief update sign context
  * @param [in] ctx pointer to sign context previously created by soter_sign_create
@@ -83,7 +83,7 @@ soter_status_t soter_sign_destroy(soter_sign_ctx_t* ctx);
 /** @brief verify context typedef */
 typedef struct soter_sign_ctx_type soter_verify_ctx_t;
 
-soter_status_t soter_verify(const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length, const int8_t* data, const size_t data_length, const int8_t* signature, const size_t signature_length);
+soter_status_t soter_verify(const void* public_key, const size_t public_key_length, const int8_t* data, const size_t data_length, const int8_t* signature, const size_t signature_length);
 
 /** @brief create verify context
  * @param [in] alg algorithm for verifying. See @ref soter_sign_alg_type
@@ -93,7 +93,7 @@ soter_status_t soter_verify(const void* private_key, const size_t private_key_le
  * @param [in] public_key_length length of public_key
  * @return SOTER_SUCCESS on success or SOTER_FAIL on failure
  */
-soter_verify_ctx_t* soter_verify_create(const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length);
+soter_verify_ctx_t* soter_verify_create(const void* public_key, const size_t public_key_length);
 
 /** @brief update verify context
  * @param [in] ctx pointer to verify context previously created by soter_verify_create

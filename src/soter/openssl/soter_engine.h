@@ -31,6 +31,12 @@ struct soter_sym_ctx_type
   EVP_CIPHER_CTX evp_sym_ctx;
 };
 
+struct soter_sym_aead_ctx_type
+{
+  uint32_t alg;
+  EVP_CIPHER_CTX evp_sym_ctx;
+};
+
 struct soter_asym_cipher_type
 {
 	EVP_PKEY_CTX *pkey_ctx;

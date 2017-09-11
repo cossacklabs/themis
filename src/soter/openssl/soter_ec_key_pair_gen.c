@@ -27,11 +27,11 @@
 
 static unsigned ec_curve_nid(const int size){
     switch (size){
-    case 1://256:
+    case 2://256:
 	return NID_X9_62_prime256v1;
-    case 2://384:
+    case 3://384:
 	return NID_secp384r1;
-    case 3://521:
+    case 5://521:
 	return NID_secp521r1;
     default:
 	return 0;

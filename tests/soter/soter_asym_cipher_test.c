@@ -47,7 +47,6 @@ static void test_basic_encryption_flow(void)
 		testsuite_fail_unless(SOTER_SUCCESS == res, "generate test data");
 		return;
 	}
-        fprintf(stderr, "%i\n", SOTER_ASYM_CIPHER_DEFAULT_ALG);
 	res = soter_key_pair_gen(SOTER_ASYM_CIPHER_DEFAULT_ALG, private_key_data, &private_key_data_length, public_key_data, &public_key_data_length);
 	if(res!=SOTER_SUCCESS){
 		testsuite_fail_if(res!=SOTER_SUCCESS, "export generated public key");
@@ -218,8 +217,8 @@ void test_api(int alg)
 
 void test_api_all()
 {
+#if  defined (OPENSSL) || defined (LIBRESSL) || defined (BORINGSSL)
   test_api(SOTER_ASYM_CIPHER_DEFAULT_ALG);  
-#if  defined (OPENSSL) || defined (LIBRESSL)
   test_api(SOTER_ASYM_RSA|SOTER_ASYM_RSA_LENGTH_1024);
   test_api(SOTER_ASYM_RSA|SOTER_ASYM_RSA_LENGTH_2048);
   test_api(SOTER_ASYM_RSA|SOTER_ASYM_RSA_LENGTH_4096);
@@ -227,9 +226,11 @@ void test_api_all()
 }
 void run_soter_asym_cipher_tests(void)
 {
+#if  defined (OPENSSL) || defined (LIBRESSL) || defined (BORINGSSL)
 	testsuite_enter_suite("soter asym cipher: basic flow");
 	testsuite_run_test(test_basic_encryption_flow);
 
 	testsuite_enter_suite("soter asym cipher: api");
 	testsuite_run_test(test_api_all);
+#endif
 }

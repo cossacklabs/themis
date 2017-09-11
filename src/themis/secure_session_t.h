@@ -23,6 +23,10 @@
 struct secure_session_type
 {
     soter_asym_ka_t ecdh_ctx;
+
+    uint8_t* ephemeral_pk;
+    size_t ephemeral_pk_length;
+
     const secure_session_user_callbacks_t *user_callbacks;
 
     secure_session_handler state_handler;

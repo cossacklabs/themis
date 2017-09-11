@@ -26,6 +26,6 @@
 char soter_version_text[256]=SOTER_VERSION_TEXT;
 
 const char* soter_version(){
-    memcpy(soter_version_text+SOTER_VERSION_TEXT_LENGTH-1, sodium_ersion_string(), strlen(sodium_version_string)+1);
+  memcpy(soter_version_text+SOTER_VERSION_TEXT_LENGTH-1, sodium_version_string(), strlen(sodium_version_string())+1);
     return soter_version_text;
 }

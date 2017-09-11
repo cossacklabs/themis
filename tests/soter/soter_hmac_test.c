@@ -17,6 +17,9 @@
 #include "soter_test.h"
 #include <string.h>
 
+#define MAX_TEST_DATA 2048
+#define MAX_TEST_KEY 256
+
 typedef struct test_vector_type test_vector_t;
 
 struct test_vector_type
@@ -38,8 +41,7 @@ static test_vector_t vectors[] =
 	{"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "5468697320697320612074657374207573696e672061206c6172676572207468616e20626c6f636b2d73697a65206b657920616e642061206c6172676572207468616e20626c6f636b2d73697a6520646174612e20546865206b6579206e6565647320746f20626520686173686564206265666f7265206265696e6720757365642062792074686520484d414320616c676f726974686d2e", "9b09ffa71b942fcb27635fbcd5b0e944bfdc63644f0713938a7f51535c3a35e2", "e37b6a775dc87dbaa4dfa9f96e5e3ffddebd71f8867289865df5a32d20cdc944b6022cac3c4982b10d5eeb55c3e4de15134676fb6de0446065c97440fa8c6a58"}
 };
 
-#define MAX_TEST_DATA 2048
-#define MAX_TEST_KEY 256
+#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL)
 
 static void test_known_values(void)
 {
@@ -87,7 +89,7 @@ static void test_known_values(void)
 			continue;
 		}
 
-		ctx = soter_hmac_create(SOTER_HASH_SHA256, key, key_len);
+		ctx = soter_hmac_create(SOTER_HASH_DEFAULT_ALG, key, key_len);
 		if (!ctx)
 		{
 			testsuite_fail_if(NULL == ctx, "hash_ctx != NULL");
@@ -151,6 +153,7 @@ static void test_known_values(void)
 		testsuite_fail_if(memcmp(hmac, result, hmac_len), "hmac == know value");
 	}
 }
+#endif
 
 static void test_api(void)
 {
@@ -192,15 +195,15 @@ static void test_api(void)
 		return;
 	}
 
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(NULL, SOTER_HASH_SHA256, key, key_len), "soter_hmac_init: invalid context");
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(&ctx, (soter_hash_algo_t)0xffffffff, key, key_len), "soter_hmac_init: invalid algorithm type");
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(&ctx, SOTER_HASH_SHA256, NULL, key_len), "soter_hmac_init: invalid key");
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(&ctx, SOTER_HASH_SHA256, key, 0), "soter_hmac_init: invalid key length");
-	testsuite_fail_unless(NULL == soter_hmac_create((soter_hash_algo_t)0xffffffff, key, key_len), "soter_hmac_create: invalid algorithm type");
-	testsuite_fail_unless(NULL == soter_hmac_create(SOTER_HASH_SHA256, NULL, key_len), "soter_hmac_create: invalid key");
-	testsuite_fail_unless(NULL == soter_hmac_create(SOTER_HASH_SHA256, key, 0), "soter_hmac_create: invalid key length");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(NULL, SOTER_HASH_DEFAULT_ALG, key, key_len), "soter_hmac_init: invalid context");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(&ctx, 0xffffffff, key, key_len), "soter_hmac_init: invalid algorithm type");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(&ctx, SOTER_HASH_DEFAULT_ALG, NULL, key_len), "soter_hmac_init: invalid key");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(&ctx, SOTER_HASH_DEFAULT_ALG, key, 0), "soter_hmac_init: invalid key length");
+	testsuite_fail_unless(NULL == soter_hmac_create(0xffffffff, key, key_len), "soter_hmac_create: invalid algorithm type");
+	testsuite_fail_unless(NULL == soter_hmac_create(SOTER_HASH_DEFAULT_ALG, NULL, key_len), "soter_hmac_create: invalid key");
+	testsuite_fail_unless(NULL == soter_hmac_create(SOTER_HASH_DEFAULT_ALG, key, 0), "soter_hmac_create: invalid key length");
 
-	res = soter_hmac_init(&ctx, SOTER_HASH_SHA256, key, key_len);
+	res = soter_hmac_init(&ctx, SOTER_HASH_DEFAULT_ALG, key, key_len);
 	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(SOTER_SUCCESS != res, "soter_hmac_init failed");
@@ -235,8 +238,9 @@ static void test_api(void)
 	}
 
 	res = soter_hmac_final(&ctx, hmac, &hmac_len);
+#if defined(OPENSSL) || defined(BORINGSSL) || defined(LIBRESSL)
 	testsuite_fail_unless((SOTER_SUCCESS == res) && (32 == hmac_len) && !memcmp(hmac, result, hmac_len), "soter_hmac_final: normal value");
-
+#endif
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_cleanup(NULL), "soter_hmac_cleanup: invalid context");
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_destroy(NULL), "soter_hash_destroy: invalid context");
 }
@@ -244,8 +248,9 @@ static void test_api(void)
 void run_soter_hmac_tests(void)
 {
 	testsuite_enter_suite("soter hmac: known values");
+#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL)
 	testsuite_run_test(test_known_values);
-
+#endif
 	testsuite_enter_suite("soter hmac: api");
 	testsuite_run_test(test_api);
 }

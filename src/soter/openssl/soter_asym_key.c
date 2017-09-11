@@ -31,19 +31,17 @@ bool soter_key_is_private(const uint8_t* key, const size_t key_length){
 }
 
 int32_t soter_key_get_alg_id(const uint8_t* key, const size_t key_length){
-  assert(key && key_length>sizeof(soter_container_hdr_t));
-  if(0 == memcmp(key+1, "EC", 2)){
-    return SOTER_ASYM_EC;
+  if(!key || key_length<sizeof(soter_container_hdr_t)){
+    return 0;
   }
-  if (0 == memcmp(key+1, "RA", 2)){
-    return SOTER_ASYM_RSA;
-  }
-  return 0;
+  return (*(int32_t*)(key))&0xffffff00;
 }
 
 int32_t soter_key_get_length_id(const uint8_t* key, const size_t key_length){
-  assert(key && key_length>sizeof(soter_container_hdr_t));
-  return (int32_t)(key[3]);
+  if(!key || key_length<sizeof(soter_container_hdr_t)){
+    return 0;
+  }
+  return (int32_t)(key[3])-0x30;
 }
 
 #define SOTER_RSA_KEY_GEN                       \
@@ -87,7 +85,7 @@ int32_t soter_key_get_length_id(const uint8_t* key, const size_t key_length){
       (*public_key_length) = sizeof(soter_ec_pub_key_##len##_t);        \
       return SOTER_BUFFER_TOO_SMALL;                                    \
     }                                                                   \
-    soter_ec_key_pair_gen_t* pair = soter_ec_key_pair_gen_create(SOTER_ASYM_EC_LENGTH_##len); \
+    soter_ec_key_pair_gen_t* pair = soter_ec_key_pair_gen_create((SOTER_ASYM_EC_LENGTH_##len>>24)-0x30); \
     if(!pair){                                                          \
       return SOTER_FAIL;                                                \
     }                                                                   \
@@ -105,7 +103,7 @@ int32_t soter_key_get_length_id(const uint8_t* key, const size_t key_length){
 
 soter_status_t soter_key_pair_gen(int32_t alg_id, uint8_t* private_key, size_t* private_key_length, uint8_t* public_key, size_t* public_key_length){
   soter_status_t res = SOTER_SUCCESS;
-  switch(alg_id&(SOTER_ASYM_ALGS|SOTER_ASYM_KEY_LENGTH)){
+  switch(alg_id){
     SOTER_RSA_KEY_GEN
     SOTER_EC_KEY_GEN
   default:

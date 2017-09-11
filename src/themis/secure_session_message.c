@@ -20,11 +20,14 @@
 #include <themis/error.h>
 
 #include <soter/soter_container.h>
+#include <soter/soter_t.h>
 
 #include <string.h>
 
 #include <arpa/inet.h>
 #include "portable_endian.h"
+
+#include <assert.h>
 
 #define THEMIS_SESSION_WRAP_TAG "TSWM"
 
@@ -38,7 +41,7 @@ themis_status_t secure_session_wrap(secure_session_t *session_ctx, const void *m
 {
 	uint32_t *session_id = (uint32_t *)wrapped_message;
 	uint8_t *iv = (uint8_t *)(session_id + 1);
-	uint32_t *length = (uint32_t *)(iv + CIPHER_MAX_BLOCK_SIZE);
+	uint32_t *length = (uint32_t *)(iv + SOTER_SYM_AEAD_DEFAULT_ALG_MAX_BLOCK_SIZE);
 	uint32_t *seq = length + 1;
 	uint8_t *ts = (uint8_t *)(seq + 1);
 
@@ -70,13 +73,13 @@ themis_status_t secure_session_wrap(secure_session_t *session_ctx, const void *m
 	*seq = htonl(session_ctx->out_seq);
 	*length = htonl(message_length + sizeof(uint32_t) + sizeof(uint64_t));
 
-	res = soter_rand(iv, CIPHER_MAX_BLOCK_SIZE);
+	res = soter_rand(iv, SOTER_SYM_AEAD_DEFAULT_ALG_MAX_BLOCK_SIZE);
 	if (THEMIS_SUCCESS != res)
 	{
 		return res;
 	}
 
-	res = encrypt_gcm(session_ctx->out_cipher_key, sizeof(session_ctx->out_cipher_key), iv, CIPHER_MAX_BLOCK_SIZE, length, message_length + sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint32_t), length, message_length + sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint32_t) + CIPHER_AUTH_TAG_SIZE);
+	res = encrypt_gcm(session_ctx->out_cipher_key, sizeof(session_ctx->out_cipher_key), iv, SOTER_SYM_AEAD_DEFAULT_ALG_MAX_BLOCK_SIZE, length, message_length + sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint32_t), length, message_length + sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint32_t) + SOTER_SYM_AEAD_DEFAULT_ALG_AUTH_TAG_SIZE);
 	if (THEMIS_SUCCESS != res)
 	{
 		return res;
@@ -102,7 +105,7 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 	time_t curr_time;
 	themis_status_t res;
 
-	soter_sym_ctx_t *sym_ctx;
+	soter_sym_aead_ctx_t *sym_ctx;
 
 	if ((NULL == session_ctx) || (NULL == wrapped_message) || (NULL == message_length))
 	{
@@ -142,7 +145,7 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 		return THEMIS_INVALID_PARAMETER;
 	}
 
-	sym_ctx = soter_sym_aead_decrypt_create(SOTER_SYM_AES_GCM|SOTER_SYM_256_KEY_LENGTH, session_ctx->in_cipher_key, sizeof(session_ctx->in_cipher_key), NULL, 0,iv, CIPHER_MAX_BLOCK_SIZE);
+	sym_ctx = soter_sym_aead_decrypt_create(SOTER_SYM_AEAD_DEFAULT_ALG, session_ctx->in_cipher_key, sizeof(session_ctx->in_cipher_key), NULL, 0,iv, SOTER_SYM_AEAD_DEFAULT_ALG_MAX_BLOCK_SIZE);
 	if (NULL == sym_ctx)
 	{
 		return THEMIS_FAIL;
@@ -162,7 +165,7 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 		ts = be64toh(*((time_t *)(message_header + sizeof(uint32_t) + sizeof(uint32_t))));
 	}*/
 
-	res = soter_sym_aead_decrypt_update(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE, sizeof(message_header), message_header, &message_header_size);
+	res = soter_sym_aead_decrypt_update(sym_ctx, iv + SOTER_SYM_AEAD_DEFAULT_ALG_MAX_BLOCK_SIZE, sizeof(message_header), message_header, &message_header_size);
 	if (THEMIS_SUCCESS != res)
 	{
 		goto err;
@@ -207,19 +210,24 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 			((uint8_t *)message)[i] = iv[CIPHER_MAX_BLOCK_SIZE + sizeof(message_header) + i] ^ 0xff;
 		}
 	}*/
-
-	res = soter_sym_aead_decrypt_update(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header), *message_length, message, message_length);
+        uint8_t* unwrapped_message = malloc(*message_length);
+        assert(unwrapped_message);
+	res = soter_sym_aead_decrypt_update(sym_ctx, iv + SOTER_SYM_AEAD_DEFAULT_ALG_MAX_BLOCK_SIZE + sizeof(message_header), *message_length, unwrapped_message, message_length);
 	if (THEMIS_SUCCESS != res)
 	{
-		goto err;
+          free(unwrapped_message);
+          goto err;
 	}
 
-	res = soter_sym_aead_decrypt_final(sym_ctx, iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header) + *message_length, CIPHER_AUTH_TAG_SIZE);
+	res = soter_sym_aead_decrypt_final(sym_ctx, iv + SOTER_SYM_AEAD_DEFAULT_ALG_MAX_BLOCK_SIZE + sizeof(message_header) + *message_length, SOTER_SYM_AEAD_DEFAULT_ALG_AUTH_TAG_SIZE);
 	if (THEMIS_SUCCESS != res)
 	{
-		goto err;
+          free(unwrapped_message);
+          goto err;
 	}
 
+        memcpy(message, unwrapped_message, *message_length);
+        free(unwrapped_message);
 	session_ctx->in_seq = seq;
 
 err:

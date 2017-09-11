@@ -18,6 +18,14 @@
 #include <stdio.h>
 #include "soter_test.h"
 
+#define MAX_KEY_LENGTH 32
+#define MAX_DATA_LENGTH 1024
+#define MAX_IV_LENGTH 32
+#define MAX_AAD_LENGTH 1024
+#define MAX_AUTH_TAG_LENGTH 16
+
+#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL)
+
 struct test_vector_type
 {
   uint32_t alg;
@@ -113,10 +121,6 @@ static test_vector_aead_t vectors_aead[] =  {
     "76fc6ece0f4e1768cddf8853bb2d551b"
   }
 };
-
-#define MAX_KEY_LENGTH 32
-#define MAX_DATA_LENGTH 1024
-#define MAX_IV_LENGTH 32
 
 static void test_known_values(void)
 {
@@ -245,12 +249,10 @@ static void test_known_values(void)
     }
 }
 
-#define MAX_AAD_LENGTH 1024
-#define MAX_AUTH_TAG_LENGTH 16
 
 static void test_known_values_gcm(void)
 {
-  soter_sym_ctx_t *ctx;
+  soter_sym_aead_ctx_t *ctx;
   int i;
   
   uint8_t key[MAX_KEY_LENGTH];
@@ -324,7 +326,7 @@ static void test_known_values_gcm(void)
 	if (SOTER_SUCCESS != res)
 	  {
 	    testsuite_fail_if(res, "soter_sym_update aad");
-	    soter_sym_encrypt_destroy(ctx);
+	    soter_sym_aead_encrypt_destroy(ctx);
 	    continue;
 	  }
       }
@@ -401,6 +403,8 @@ static void test_known_values_gcm(void)
     }
 }
 
+#endif
+
 static void test_auth_tag(void)
 {
 	  uint8_t key[MAX_KEY_LENGTH];
@@ -414,7 +418,7 @@ static void test_auth_tag(void)
 	  uint8_t tag[MAX_AUTH_TAG_LENGTH];
 	  size_t tag_length = sizeof(tag);
 
-	  soter_sym_ctx_t *ctx;
+	  soter_sym_aead_ctx_t *ctx;
 	  soter_status_t res;
 
 	  res = soter_rand(key, sizeof(key));
@@ -445,7 +449,7 @@ static void test_auth_tag(void)
 		  return;
 	  }
 
-	  ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AES_GCM | SOTER_SYM_256_KEY_LENGTH, key, sizeof(key), NULL, 0, iv, sizeof(iv));
+	  ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AEAD_DEFAULT_ALG, key, sizeof(key), NULL, 0, iv, sizeof(iv));
 	  if (NULL == ctx)
 	  {
 		  testsuite_fail_if(NULL == ctx, "soter_sym_aead_encrypt_create");
@@ -478,7 +482,7 @@ static void test_auth_tag(void)
 
 	  soter_sym_aead_encrypt_destroy(ctx);
 
-	  ctx = soter_sym_aead_decrypt_create(SOTER_SYM_AES_GCM | SOTER_SYM_256_KEY_LENGTH, key, sizeof(key), NULL, 0, iv, sizeof(iv));
+	  ctx = soter_sym_aead_decrypt_create(SOTER_SYM_AEAD_DEFAULT_ALG, key, sizeof(key), NULL, 0, iv, sizeof(iv));
 	  if (NULL == ctx)
 	  {
 		  testsuite_fail_if(NULL == ctx, "soter_sym_aead_decrypt_create");
@@ -513,16 +517,128 @@ static void test_auth_tag(void)
 		  testsuite_fail_if(true, "decrypted date does not match plaintext");
 		  return;
 	  }
-
 	  testsuite_fail_unless(SOTER_FAIL == res, "detect data tamper");
+}
+
+static void test_basic_flow(void)
+{
+	  uint8_t key[MAX_KEY_LENGTH];
+	  uint8_t iv[MAX_IV_LENGTH];
+	  uint8_t plaintext[MAX_DATA_LENGTH];
+	  uint8_t aad[MAX_KEY_LENGTH];
+	  uint8_t ciphertext[MAX_DATA_LENGTH];
+	  uint8_t decrypted[MAX_DATA_LENGTH];
+	  size_t bytes_processed = sizeof(ciphertext);
+
+	  uint8_t tag[MAX_AUTH_TAG_LENGTH];
+	  size_t tag_length = sizeof(tag);
+
+	  soter_sym_aead_ctx_t *ctx;
+	  soter_status_t res;
+
+	  res = soter_rand(key, sizeof(key));
+	  if (SOTER_SUCCESS != res)
+	  {
+		  testsuite_fail_if(res, "key gen");
+		  return;
+	  }
+
+	  res = soter_rand(iv, sizeof(iv));
+	  if (SOTER_SUCCESS != res)
+	  {
+		  testsuite_fail_if(res, "iv gen");
+		  return;
+	  }
+
+	  res = soter_rand(plaintext, sizeof(plaintext));
+	  if (SOTER_SUCCESS != res)
+	  {
+		  testsuite_fail_if(res, "plaintext gen");
+		  return;
+	  }
+
+	  res = soter_rand(aad, sizeof(aad));
+	  if (SOTER_SUCCESS != res)
+	  {
+		  testsuite_fail_if(res, "aad gen");
+		  return;
+	  }
+
+	  ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AEAD_DEFAULT_ALG, key, sizeof(key), NULL, 0, iv, sizeof(iv));
+	  if (NULL == ctx)
+	  {
+		  testsuite_fail_if(NULL == ctx, "soter_sym_aead_encrypt_create");
+		  return;
+	  }
+
+	  res = soter_sym_aead_encrypt_aad(ctx, aad, sizeof(aad));
+	  if (SOTER_SUCCESS != res)
+	  {
+		  testsuite_fail_if(res, "soter_sym_aead_encrypt_aad");
+		  soter_sym_aead_encrypt_destroy(ctx);
+		  return;
+	  }
+
+	  res = soter_sym_aead_encrypt_update(ctx, plaintext, sizeof(plaintext), ciphertext, &bytes_processed);
+	  if (SOTER_SUCCESS != res)
+	  {
+		  testsuite_fail_if(res, "soter_sym_aead_encrypt_update");
+		  soter_sym_aead_encrypt_destroy(ctx);
+		  return;
+	  }
+
+	  res = soter_sym_aead_encrypt_final(ctx, tag, &tag_length);
+	  if (SOTER_SUCCESS != res)
+	  {
+		  testsuite_fail_if(res, "soter_sym_aead_encrypt_final");
+		  soter_sym_aead_encrypt_destroy(ctx);
+		  return;
+	  }
+
+	  soter_sym_aead_encrypt_destroy(ctx);
+
+	  ctx = soter_sym_aead_decrypt_create(SOTER_SYM_AEAD_DEFAULT_ALG, key, sizeof(key), NULL, 0, iv, sizeof(iv));
+	  if (NULL == ctx)
+	  {
+		  testsuite_fail_if(NULL == ctx, "soter_sym_aead_decrypt_create");
+		  return;
+	  }
+
+	  res = soter_sym_aead_decrypt_aad(ctx, aad, sizeof(aad));
+	  if (SOTER_SUCCESS != res)
+	  {
+		  testsuite_fail_if(res, "soter_sym_aead_decrypt_aad");
+		  soter_sym_aead_decrypt_destroy(ctx);
+		  return;
+	  }
+
+	  res = soter_sym_aead_decrypt_update(ctx, ciphertext, sizeof(ciphertext), decrypted, &bytes_processed);
+	  if (SOTER_SUCCESS != res)
+	  {
+		  testsuite_fail_if(res, "soter_sym_aead_decrypt_update");
+		  soter_sym_aead_decrypt_destroy(ctx);
+		  return;
+	  }
+
+	  res = soter_sym_aead_decrypt_final(ctx, tag, tag_length);
+
+	  soter_sym_aead_decrypt_destroy(ctx);
+
+	  if (memcmp(plaintext, decrypted, sizeof(plaintext)))
+	  {
+		  testsuite_fail_if(true, "decrypted date does not match plaintext");
+		  return;
+	  }
+	  testsuite_fail_unless(SOTER_SUCCESS == res, "basic flow");
 }
 
 void run_soter_sym_test()
 {
   testsuite_enter_suite("soter sym");
-  //  testsuite_run_test(soter_sym_test);
+#if defined(OPENSSL) || defined(LIBRESSL) || defined(BORINGSSL)
   testsuite_run_test(test_known_values);
   testsuite_run_test(test_known_values_gcm);
+#endif
+  testsuite_run_test(test_basic_flow);
   testsuite_run_test(test_auth_tag);
-  //  soter_sym_test();
 }
