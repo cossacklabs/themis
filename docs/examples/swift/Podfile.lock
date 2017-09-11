@@ -1,32 +1,32 @@
 PODS:
-  - GRKOpenSSLFramework (1.0.1.20.3)
+  - GRKOpenSSLFramework (1.0.1.20.4)
   - themis (0.9.5):
-    - GRKOpenSSLFramework (= 1.0.1.20.3)
+    - GRKOpenSSLFramework (= 1.0.1.20.4)
     - themis/core (= 0.9.5)
     - themis/objcwrapper (= 0.9.5)
   - themis/core (0.9.5):
-    - GRKOpenSSLFramework (= 1.0.1.20.3)
+    - GRKOpenSSLFramework (= 1.0.1.20.4)
   - themis/objcwrapper (0.9.5):
-    - GRKOpenSSLFramework (= 1.0.1.20.3)
+    - GRKOpenSSLFramework (= 1.0.1.20.4)
     - themis/core
 
 DEPENDENCIES:
-  - themis (from `https://github.com/cossacklabs/themis.git`, branch `release_0.9.5`)
+  - themis (from `https://github.com/cossacklabs/themis.git`, branch `enable_bitcode`)
 
 EXTERNAL SOURCES:
   themis:
-    :branch: release_0.9.5
+    :branch: enable_bitcode
     :git: https://github.com/cossacklabs/themis.git
 
 CHECKOUT OPTIONS:
   themis:
-    :commit: e5311a65c4e0fc1c29e447e71ac91b4061dbcda7
+    :commit: 3c1986b0f65137c2b085db6800847ad7b42698b4
     :git: https://github.com/cossacklabs/themis.git
 
 SPEC CHECKSUMS:
-  GRKOpenSSLFramework: 3a689464f4f9362d9e53a26cb245c0e5d7686df3
-  themis: 08bef079d7c7308680c11101b3a4726fc85abc2a
+  GRKOpenSSLFramework: b6172cc34db9b999002483878772a4bf2a1687ba
+  themis: b129c00312852dfb97851c4594a8cdd7e8a5c852
 
-PODFILE CHECKSUM: e82a4324ae26b47398a6115e18dcddce8a21789e
+PODFILE CHECKSUM: 077b7befea5965b2db780017487d6371e913b53f
 
 COCOAPODS: 1.3.1
