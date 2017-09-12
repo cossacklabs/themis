@@ -16,3 +16,4 @@ test:
     - LD_LIBRARY_PATH=$HOME/libsodium/src/libsodium/.libs build_with_libsodium/tests/soter_test
     - LD_LIBRARY_PATH=$HOME/libsodium/src/libsodium/.libs build_with_libsodium/tests/themis_test
 
+
