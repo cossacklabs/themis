@@ -17,10 +17,10 @@
 </p>
 <br>
 
-#### Crypto library for storage and messaging for Swift, ObjC, Android, С++, JS, Python, Ruby, PHP, Go.
+#### Crypto library for storage and messaging for Swift, Obj-C, Android/Java, С++, JS, Python, Ruby, PHP, Go.
 <br>
 
-Themis is an open-source high-level cryptographic services library for mobile and server platforms, which provides secure data exchange and storage. Current stable release is [0.9.4](https://github.com/cossacklabs/themis/releases/tag/0.9.4), dated 22nd of November 2016. 
+Themis is an open-source high-level cryptographic services library for mobile and server platforms, which provides secure data exchange and storage. Current stable release is [0.9.5](https://github.com/cossacklabs/themis/releases/tag/0.9.5), dated 13th of September 2017. 
 
 Themis provides four important cryptographic services:
 
@@ -65,8 +65,8 @@ Themis is available for the following languages/platforms:
 
 | Platform | Documentation | Examples | Version |
 | :----- | :----- | :------ | :--- |
-| 🔶 Swift (iOS, OSX) | [Swift Howto](https://github.com/cossacklabs/themis/wiki/Swift-Howto) | [docs/examples/swift](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) | [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
-| 📱 Objective-C (iOS, OSX) | [Objective-C Howto](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) | [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)| [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
+| 🔶 Swift (iOS, MacOS) | [Swift Howto](https://github.com/cossacklabs/themis/wiki/Swift-Howto) | [docs/examples/swift](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) | [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
+| 📱 Objective-C (iOS, MacOS) | [Objective-C Howto](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) | [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)| [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
 | ☕️ Java / Android | [Java & Android Howto](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) | [jni example](https://github.com/cossacklabs/themis/tree/master/jni) ||
 | ♦️ Ruby | [Ruby Howto](https://github.com/cossacklabs/themis/wiki/Ruby-Howto) | [docs/examples/ruby](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby) | [![Gem](https://img.shields.io/gem/v/rubythemis.svg)](https://rubygems.org/gems/rubythemis) |
 | 🐍 Python | [Python Howto](https://github.com/cossacklabs/themis/wiki/Python-Howto) | [docs/examples/python](https://github.com/cossacklabs/themis/tree/master/docs/examples/python) | [![PyPI](https://img.shields.io/pypi/v/pythemis.svg)](https://pypi.python.org/pypi?%3Aaction=search&term=pythemis&submit=search) |
@@ -95,7 +95,7 @@ It is checked to compile on the latest stable versions of:
 * Windows XP+
 * OSX 10.9+
 * Android 4-5+ / CyanogenMod 11+
-* iOS8—iOS10+, x32/x64
+* iOS8—iOS11+, x32/x64
 
 We plan to expand this list with broader set of platforms. If you'd like to help improve or bring Themis to your favourite platform / language — [get in touch](info@cossacklabs.com).
 

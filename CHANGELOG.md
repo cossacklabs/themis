@@ -1,5 +1,29 @@
 # Themis ChangeLog
 
+
+## [0.9.5], September 13th 2017
+
+Mostly usability fixes for wrappers.
+
+_Infrastructure:_
+
+- You can now download pre-built Themis packages from **our package server**.
+- Enhanced building process for **MacOS** (working now!) (https://github.com/cossacklabs/themis/issues/215).
+- Enhanced building process for **Debian 9.x** (working even better now!).
+- Updated documentation and examples to make it easier to understand.
+- Now we use Bitrise as a separate CI for iOS wrapper.
+- Test and code coverage are automagically measured now!
+
+_Code:_
+
+- **Core:** disabled SHA1 support.
+- **Secure Comparator:** magically improved code readability (https://github.com/cossacklabs/themis/issues/196, https://github.com/cossacklabs/themis/issues/195).
+- **iOS wrapper:** added support of dynamic frameworks and bitcode (https://github.com/cossacklabs/themis/issues/222, https://github.com/cossacklabs/themis/issues/219, https://github.com/cossacklabs/themis/issues/205).
+- **Go wrapper:** refactored custom error (`themisError`) type.
+- **PHP wrapper:** updated tests.
+- **PyThemis:** considerably improved example projects.
+
+
 ## [0.9.4], November 22nd 2016
 
 This is tiny intermediary release to lock ongoing changes in stable form for all languages:

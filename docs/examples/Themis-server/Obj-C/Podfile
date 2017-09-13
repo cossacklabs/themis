@@ -19,12 +19,13 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 project 'WorkingWithThemisServer/WorkingWithThemisServer.xcodeproj'
 inhibit_all_warnings!
+use_frameworks!
 
 target :"WorkingWithThemisServer" do
 
   # if you feel adventurous, link example to head
-  #pod 'themis', :git => "https://github.com/cossacklabs/themis.git"
+  pod 'themis', :git => "https://github.com/cossacklabs/themis.git", :branch => 'release_0.9.5'
 
-  pod 'themis', '0.9.4'
+  #pod 'themis', '0.9.5'
 
 end
