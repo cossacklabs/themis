@@ -95,7 +95,7 @@ sudo apt-get update
 ```
 **5. Install the package**
 ```console
-sudo apt-get install libthemis
+sudo apt-get install libthemis-dev
 ```
 
 ### CentOS / RHEL / OEL
@@ -103,18 +103,24 @@ sudo apt-get install libthemis
 > Note, we only build RPM packages for x86_64.
 
 **1. Import the public key used by Cossack Labs to sign packages:**
+
 ```
 rpm --import https://pkgs.cossacklabs.com/gpg
 ```
->Note: If you wish to validate key fingerprint, it is: `29CF C579 AD90 8838 3E37 A8FA CE53 BCCA C8FF FACB`.
+
+> Note: If you wish to validate key fingerprint, it is: `29CF C579 AD90 8838 3E37 A8FA CE53 BCCA C8FF FACB`.
 
 **2. Create a Yum repository file for Cossack Labs package repository:**
+
 ```console
 wget -qO - https://pkgs.cossacklabs.com/stable/centos/cossacklabs.repo | \
   sudo tee /etc/yum.repos.d/cossacklabs.repo
 ```
 **3. Install the package:**
-sudo yum install libthemis
+
+```console
+sudo yum install libthemis-dev
+```
 
 ## Install Themis from GitHub
 
