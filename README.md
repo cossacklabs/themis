@@ -95,7 +95,7 @@ sudo apt-get update
 ```
 **5. Install the package**
 ```console
-sudo apt-get install libthemis-dev
+sudo apt-get install libthemis
 ```
 
 ### CentOS / RHEL / OEL
@@ -119,7 +119,7 @@ wget -qO - https://pkgs.cossacklabs.com/stable/centos/cossacklabs.repo | \
 **3. Install the package:**
 
 ```console
-sudo yum install libthemis-dev
+sudo yum install libthemis
 ```
 
 ## Install Themis from GitHub

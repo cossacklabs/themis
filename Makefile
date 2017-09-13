@@ -505,7 +505,9 @@ ifeq ($(DEBIAN_CODENAME),stretch)
 else
         DEBIAN_DEPENDENCIES := openssl
 endif
+DEBIAN_DEV_DEPENDENCIES = "libthemis (= $(VERSION)+$(DEBIAN_CODENAME))"
 RPM_DEPENDENCIES = openssl
+RPM_DEV_DEPENDENCIES = "libthemis = $(VERSION)"
 
 ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
 	NAME_SUFFIX = $(VERSION)+$(DEBIAN_CODENAME)_$(DEBIAN_ARCHITECTURE).deb
@@ -565,12 +567,11 @@ deb: test themis_static themis_shared soter_static soter_shared collect_headers 
 		 --package $(BIN_PATH)/deb/libthemis-dev_$(NAME_SUFFIX) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
-		 --depends $(DEBIAN_DEPENDENCIES) \
+		 --depends $(DEBIAN_DEV_DEPENDENCIES) \
 		 --deb-priority optional \
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --category security \
-		 $(BINARY_LIBRARY_MAP) \
 		 $(HEADER_FILES_MAP) 1>/dev/null
 
 #libthemis
@@ -606,14 +607,13 @@ rpm: test themis_static themis_shared soter_static soter_shared collect_headers 
          --url '$(COSSACKLABS_URL)' \
          --description '$(SHORT_DESCRIPTION)' \
          --rpm-summary '$(RPM_SUMMARY)' \
-         --depends $(RPM_DEPENDENCIES) \
+         --depends $(RPM_DEV_DEPENDENCIES) \
          --maintainer $(MAINTAINER) \
          --after-install $(POST_INSTALL_SCRIPT) \
          --after-remove $(POST_UNINSTALL_SCRIPT) \
          --package $(BIN_PATH)/rpm/libthemis-devel-$(NAME_SUFFIX) \
          --version $(VERSION) \
          --category security \
-         $(BINARY_LIBRARY_MAP) \
 		 $(HEADER_FILES_MAP) 1>/dev/null
 #libthemis
 	@fpm --input-type dir \
