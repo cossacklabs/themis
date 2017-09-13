@@ -5,8 +5,7 @@ Pod::Spec.new do |s|
     s.description = "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern development practices, with high level OOP wrappers for iOS / macOS, NodeJS, Go, Ruby, Python, PHP and Java / Android. It is designed with ease of use in mind, high security and cross-platform availability."
     s.homepage = "http://cossacklabs.com"
     s.license = { :type => 'Apache 2.0'}    
-    #s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
-    s.source = { :git => "https://github.com/cossacklabs/themis.git", :branch => "release_0.9.5" }
+    s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
     
     s.dependency 'GRKOpenSSLFramework', '1.0.1.20.4'
