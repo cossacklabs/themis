@@ -569,8 +569,6 @@ deb: test themis_static themis_shared soter_static soter_shared collect_headers 
 		 --version $(VERSION)+$(OS_CODENAME) \
 		 --depends $(DEBIAN_DEV_DEPENDENCIES) \
 		 --deb-priority optional \
-		 --after-install $(POST_INSTALL_SCRIPT) \
-		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --category security \
 		 $(HEADER_FILES_MAP) 1>/dev/null
 
@@ -609,8 +607,6 @@ rpm: test themis_static themis_shared soter_static soter_shared collect_headers 
          --rpm-summary '$(RPM_SUMMARY)' \
          --depends $(RPM_DEV_DEPENDENCIES) \
          --maintainer $(MAINTAINER) \
-         --after-install $(POST_INSTALL_SCRIPT) \
-         --after-remove $(POST_UNINSTALL_SCRIPT) \
          --package $(BIN_PATH)/rpm/libthemis-devel-$(NAME_SUFFIX) \
          --version $(VERSION) \
          --category security \
