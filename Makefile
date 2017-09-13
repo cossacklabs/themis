@@ -507,7 +507,7 @@ else
 endif
 DEBIAN_DEV_DEPENDENCIES = "libthemis (= $(VERSION)+$(DEBIAN_CODENAME))"
 RPM_DEPENDENCIES = openssl
-RPM_DEV_DEPENDENCIES = "libthemis = "$(shell echo -n "$(VERSION)"|sed s/-/_/g)-1.$(ARCHITECTURE)
+RPM_DEV_DEPENDENCIES = libthemis
 
 ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
 	NAME_SUFFIX = $(VERSION)+$(DEBIAN_CODENAME)_$(DEBIAN_ARCHITECTURE).deb
