@@ -51,13 +51,80 @@ Themis is open source, Apache 2 Licensed.
 
 # Quickstart
 
+## Install Themis from Cossack Labs repository
+
+### Debian / Ubuntu
+
+> Note: Depending on your permissions, adding `sudo` might be necessary!
+
+**1. Import the public key used by Cossack Labs to sign packages:**
+```console
+wget -qO - https://pkgs.cossacklabs.com/gpg | sudo apt-key add -
+```
+> Note: If you wish to validate key fingerprint, it is: `29CF C579 AD90 8838 3E37 A8FA CE53 BCCA C8FF FACB`.
+
+**2. You may need to install the apt-transport-https package before proceeding:**
+```console
+sudo apt-get install apt-transport-https
+```
+**3. Add Cossack Labs repository to your `sources.list`.**
+You should add a line that specifies your OS name and the release name:
+```console
+deb https://pkgs.cossacklabs.com/stable/$OS $RELEASE main
+```
+* `$OS` should be `debian` or `ubuntu`.
+* `$RELEASE` should be one of Debian or Ubuntu release names. You can determine this by running `lsb_release -cs`, if you have `lsb_release` installed.
+* We currently build packages for the following OS and RELEASE combinations:
+*Debian "Wheezy" (Debian 7)*
+*Debian "Jessie" (Debian 8)*
+*Debian "Stretch" (Debian 9)*
+*Ubuntu Precise Pangolin (Ubuntu 12.04)*
+*Ubuntu Trusty Tahr (Ubuntu 14.04)*
+*Ubuntu Xenial Xerus (Ubuntu 16.04)*
+*Ubuntu Yakkety Yak (Ubuntu 16.10)*
+*Ubuntu Zesty Zapus (Ubuntu 17.04)*
+
+* For example, if you are running *Debian 9 "Stretch"*, run:
+```console
+echo "deb https://pkgs.cossacklabs.com/stable/debian stretch main" | \
+  sudo tee /etc/apt/sources.list.d/cossacklabs.list
+```
+**4. Reload local package database:**
+```console
+sudo apt-get update
+```
+**5. Install the package**
+```console
+sudo apt-get install libthemis
+```
+
+### CentOS / RHEL / OEL
+
+> Note, we only build RPM packages for x86_64.
+
+**1. Import the public key used by Cossack Labs to sign packages:**
+```
+rpm --import https://pkgs.cossacklabs.com/gpg
+```
+>Note: If you wish to validate key fingerprint, it is: `29CF C579 AD90 8838 3E37 A8FA CE53 BCCA C8FF FACB`.
+
+**2. Create a Yum repository file for Cossack Labs package repository:**
+```console
+wget -qO - https://pkgs.cossacklabs.com/stable/centos/cossacklabs.repo | \
+  sudo tee /etc/yum.repos.d/cossacklabs.repo
+```
+**3. Install the package:**
+sudo yum install libthemis
+
+## Install Themis from GitHub
+
 1. Fetch the repository: git clone https://github.com/cossacklabs/themis.git.
 2. Make sure OpenSSL/LibreSSL + OpenSSL/LibreSSL Dev package (libssl-dev) are installed at typical paths: `/usr/lib`, `/usr/include`. 
 3. Make sure the typical GCC/clang environment is installed.
 4. Type 'make install' and you're done (in most of the cases).
 5. Visit [our wiki](https://github.com/cossacklabs/themis/wiki) for the documentation specific to your language of choice and take a look at docs/examples for examples. 
 
-It is a really good idea to [go the long way and read the docs](https://github.com/cossacklabs/themis/wiki/Building-and-installing), but Fortune helps the brave.
+It is a really good idea to [go and read the docs after installing Themis](https://github.com/cossacklabs/themis/wiki/Building-and-installing), but we realise that Fortune favours the brave. Remember that you're always welcome in the [documentation Wiki](https://github.com/cossacklabs/themis/wiki).
 
 # Languages
 
