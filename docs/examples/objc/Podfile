@@ -23,8 +23,6 @@ use_frameworks!
 
 target :"ThemisTest" do
 
-  pod 'themis', :git => "https://github.com/cossacklabs/themis.git", :branch => 'release_0.9.5'
-
-  #pod 'themis', '0.9.5'
+  pod 'themis', '0.9.5'
 
 end
