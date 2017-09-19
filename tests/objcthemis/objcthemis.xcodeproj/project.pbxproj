@@ -8,14 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		4FACFCADA7C021E49246C525 /* libPods-objthemis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B071ECDCFBB7652EBEBBA3D2 /* libPods-objthemis.a */; };
-		843EE7541B5E1A36003F0138 /* objthemis.m in Sources */ = {isa = PBXBuildFile; fileRef = 843EE7531B5E1A36003F0138 /* objthemis.m */; };
+		7308F54F1F717C4500AE0411 /* SecureMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7308F54D1F717BF300AE0411 /* SecureMessageTests.m */; };
+		7308F5531F717D2D00AE0411 /* SecureCellTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7308F5521F717D2D00AE0411 /* SecureCellTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		358E402508571E88A945094B /* Pods-objthemis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.debug.xcconfig"; sourceTree = "<group>"; };
+		7308F54D1F717BF300AE0411 /* SecureMessageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureMessageTests.m; sourceTree = "<group>"; };
+		7308F5521F717D2D00AE0411 /* SecureCellTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureCellTests.m; sourceTree = "<group>"; };
 		843EE74E1B5E1A36003F0138 /* objthemis.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objthemis.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		843EE7521B5E1A36003F0138 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		843EE7531B5E1A36003F0138 /* objthemis.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = objthemis.m; sourceTree = "<group>"; };
 		B071ECDCFBB7652EBEBBA3D2 /* libPods-objthemis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objthemis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BAECA0B3ABC6157DFECDD87B /* Pods-objthemis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.release.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -53,7 +55,8 @@
 		843EE7501B5E1A36003F0138 /* objthemis */ = {
 			isa = PBXGroup;
 			children = (
-				843EE7531B5E1A36003F0138 /* objthemis.m */,
+				7308F5521F717D2D00AE0411 /* SecureCellTests.m */,
+				7308F54D1F717BF300AE0411 /* SecureMessageTests.m */,
 				843EE7511B5E1A36003F0138 /* Supporting Files */,
 			);
 			path = objthemis;
@@ -113,7 +116,7 @@
 		843EE7441B5E19E2003F0138 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0640;
+				LastUpgradeCheck = 0900;
 				TargetAttributes = {
 					843EE74D1B5E1A36003F0138 = {
 						CreatedOnToolsVersion = 6.4;
@@ -206,7 +209,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				843EE7541B5E1A36003F0138 /* objthemis.m in Sources */,
+				7308F54F1F717C4500AE0411 /* SecureMessageTests.m in Sources */,
+				7308F5531F717D2D00AE0411 /* SecureCellTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,6 +274,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "obj.Cossacklabs.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 			};
@@ -313,6 +318,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "obj.Cossacklabs.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
