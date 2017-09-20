@@ -89,7 +89,7 @@
                                                    context:nil
                                                      error:&themisError];
     XCTAssertNil(themisError, @"encryption with data and without context should be successful");
-    XCTAssertNotNil(encryptedMessageNoContext, @"encryption without data-to-encrypt should return data");
+    XCTAssertNotNil(encryptedMessageNoContext, @"encryption with data and without context should return data");
 
     NSData *decryptedMessageNoContext = [cellSeal unwrapData:encryptedMessageNoContext
                                                      context:[context dataUsingEncoding:NSUTF8StringEncoding]

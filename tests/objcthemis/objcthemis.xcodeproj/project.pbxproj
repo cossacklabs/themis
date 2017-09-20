@@ -10,12 +10,18 @@
 		4FACFCADA7C021E49246C525 /* libPods-objthemis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B071ECDCFBB7652EBEBBA3D2 /* libPods-objthemis.a */; };
 		7308F54F1F717C4500AE0411 /* SecureMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7308F54D1F717BF300AE0411 /* SecureMessageTests.m */; };
 		7308F5531F717D2D00AE0411 /* SecureCellTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7308F5521F717D2D00AE0411 /* SecureCellTests.m */; };
+		7376D8671F7182B70003AF72 /* SecureMessageTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7376D8661F7182B70003AF72 /* SecureMessageTestsSwift.swift */; };
+		73D358221F71F06B004E000A /* SecureCellTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D358211F71F06B004E000A /* SecureCellTestsSwift.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		358E402508571E88A945094B /* Pods-objthemis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.debug.xcconfig"; sourceTree = "<group>"; };
 		7308F54D1F717BF300AE0411 /* SecureMessageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureMessageTests.m; sourceTree = "<group>"; };
 		7308F5521F717D2D00AE0411 /* SecureCellTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureCellTests.m; sourceTree = "<group>"; };
+		7376D8651F7182B70003AF72 /* objthemis-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "objthemis-Bridging-Header.h"; sourceTree = "<group>"; };
+		7376D8661F7182B70003AF72 /* SecureMessageTestsSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureMessageTestsSwift.swift; sourceTree = "<group>"; };
+		73D358201F71E6F9004E000A /* StaticKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StaticKeys.h; sourceTree = "<group>"; };
+		73D358211F71F06B004E000A /* SecureCellTestsSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureCellTestsSwift.swift; sourceTree = "<group>"; };
 		843EE74E1B5E1A36003F0138 /* objthemis.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objthemis.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		843EE7521B5E1A36003F0138 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B071ECDCFBB7652EBEBBA3D2 /* libPods-objthemis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objthemis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -56,8 +62,12 @@
 			isa = PBXGroup;
 			children = (
 				7308F5521F717D2D00AE0411 /* SecureCellTests.m */,
+				73D358201F71E6F9004E000A /* StaticKeys.h */,
+				73D358211F71F06B004E000A /* SecureCellTestsSwift.swift */,
+				7376D8661F7182B70003AF72 /* SecureMessageTestsSwift.swift */,
 				7308F54D1F717BF300AE0411 /* SecureMessageTests.m */,
 				843EE7511B5E1A36003F0138 /* Supporting Files */,
+				7376D8651F7182B70003AF72 /* objthemis-Bridging-Header.h */,
 			);
 			path = objthemis;
 			sourceTree = "<group>";
@@ -120,6 +130,7 @@
 				TargetAttributes = {
 					843EE74D1B5E1A36003F0138 = {
 						CreatedOnToolsVersion = 6.4;
+						LastSwiftMigration = 0900;
 					};
 				};
 			};
@@ -209,6 +220,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73D358221F71F06B004E000A /* SecureCellTestsSwift.swift in Sources */,
+				7376D8671F7182B70003AF72 /* SecureMessageTestsSwift.swift in Sources */,
 				7308F54F1F717C4500AE0411 /* SecureMessageTests.m in Sources */,
 				7308F5531F717D2D00AE0411 /* SecureCellTests.m in Sources */,
 			);
@@ -277,6 +290,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "obj.Cossacklabs.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "objthemis/objthemis-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -321,6 +337,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "obj.Cossacklabs.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "objthemis/objthemis-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
