@@ -1,0 +1,3 @@
+test:
+    override:
+        - xctool --workspace objcthemis.xcworkspace --scheme objthemis --sdk iphonesimulator test

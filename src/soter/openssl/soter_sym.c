@@ -281,14 +281,14 @@ soter_status_t soter_sym_aead_decrypt_aad(soter_sym_ctx_t *ctx, const void* plai
   return soter_sym_ctx_update(ctx, plain_data, plain_data_length, NULL, &tmp, false);
 }
 
-soter_status_t soter_sym_aead_decrypt_final(soter_sym_ctx_t *ctx, const void* auth_tag, const size_t auth_tag_length)
-{
+soter_status_t soter_sym_aead_decrypt_final(soter_sym_ctx_t *ctx, const void* auth_tag, const size_t auth_tag_length){
   SOTER_CHECK_PARAM(auth_tag!=NULL);
   SOTER_CHECK_PARAM(auth_tag_length>=SOTER_AES_GCM_AUTH_TAG_LENGTH);
   SOTER_CHECK(ctx!=NULL);
   SOTER_IF_FAIL(EVP_CIPHER_CTX_ctrl(&(ctx->evp_sym_ctx), EVP_CTRL_GCM_SET_TAG, SOTER_AES_GCM_AUTH_TAG_LENGTH, (void*)auth_tag), soter_sym_aead_decrypt_destroy(ctx));
   return  soter_sym_aead_ctx_final(ctx, false);
 }
+
 soter_status_t soter_sym_aead_decrypt_destroy(soter_sym_ctx_t *ctx){
   return soter_sym_ctx_destroy(ctx);
 }
