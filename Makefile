@@ -421,7 +421,7 @@ ifdef RUBY_GEM_VERSION
 	@$(BUILD_CMD_)
 endif
 
-uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libthemis.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libsoter.dylib && rm -f $(PREFIX)/lib/libthemis.dylib
+uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libthemis.$(SHARED_EXT)
 
 uninstall: phpthemis_uninstall rubythemis_uninstall themispp_uninstall
 	@echo -n "themis uninstall "
