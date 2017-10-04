@@ -6,9 +6,6 @@
       "libraries": ["-L/usr/local/lib/", "-L/usr/lib/", "-lsoter", "-lthemis"],
       "include_dirs": [
          "<!(node -e \"require('nan')\")"
-      ],
-      "defines": [
-	"SECURE_COMPARATOR_ENABLED"
       ]
     }
   ]

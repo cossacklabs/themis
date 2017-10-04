@@ -219,6 +219,12 @@ include src/themis/themis.mk
 include jni/themis_jni.mk
 endif
 
+JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
+  | grep version \
+  | head -1 \
+  | awk -F: '{ print $$2 }' \
+  | sed 's/[",]//g' \
+  | tr -d '[[:space:]]')
 
 all: err themis_static themis_shared
 	@echo $(VERSION)
@@ -263,10 +269,10 @@ endif
 	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
 	echo "wget https://nodejs.org/dist/v4.6.0/node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
 	echo "tar -xvf node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "cd ../../src/wrappers/themis/jsthemis && PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm pack && mv jsthemis-0.9.5.tgz ../../../../build && cd -" >> ./$(BIN_PATH)/tests/node.sh
+	echo "cd ../../src/wrappers/themis/jsthemis && PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd -" >> ./$(BIN_PATH)/tests/node.sh
 	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install mocha" >> ./$(BIN_PATH)/tests/node.sh
 	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install nan" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install ../../build/jsthemis-0.9.5.tgz" >> ./$(BIN_PATH)/tests/node.sh
+	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install ../../build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz" >> ./$(BIN_PATH)/tests/node.sh
 	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) ./node_modules/mocha/bin/mocha" >> ./$(BIN_PATH)/tests/node.sh
 	chmod a+x ./$(BIN_PATH)/tests/node.sh
 
