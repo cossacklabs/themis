@@ -42,7 +42,7 @@ soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t alg
 		return SOTER_INVALID_PARAMETER;
 	}
 	
-	if (EVP_DigestInit(&(hash_ctx->evp_md_ctx), md))
+	if (EVP_DigestInit(hash_ctx->evp_md_ctx, md))
 	{
 		return SOTER_SUCCESS;
 	}
@@ -59,7 +59,7 @@ soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, s
 		return SOTER_INVALID_PARAMETER;
 	}
 
-	if (EVP_DigestUpdate(&(hash_ctx->evp_md_ctx), data, length))
+	if (EVP_DigestUpdate(hash_ctx->evp_md_ctx, data, length))
 	{
 		return SOTER_SUCCESS;
 	}
@@ -78,7 +78,7 @@ soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value,
 		return SOTER_INVALID_PARAMETER;
 	}
 
-	md_length = (size_t)EVP_MD_CTX_size(&(hash_ctx->evp_md_ctx));
+	md_length = (size_t)EVP_MD_CTX_size(hash_ctx->evp_md_ctx);
 
 	if (!hash_value || (md_length > *hash_length))
 	{
@@ -87,7 +87,7 @@ soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value,
 		return SOTER_BUFFER_TOO_SMALL;
 	}
 
-	if (EVP_DigestFinal(&(hash_ctx->evp_md_ctx), hash_value, (unsigned int *)&md_length))
+	if (EVP_DigestFinal(hash_ctx->evp_md_ctx, hash_value, (unsigned int *)&md_length))
 	{
 		*hash_length = md_length;
 		return SOTER_SUCCESS;
@@ -124,7 +124,7 @@ soter_status_t soter_hash_cleanup(soter_hash_ctx_t* hash_ctx){
 	{
 		return SOTER_INVALID_PARAMETER;
 	}
-	EVP_MD_CTX_cleanup(&(hash_ctx->evp_md_ctx));
+	EVP_MD_CTX_cleanup(hash_ctx->evp_md_ctx);
 	return SOTER_SUCCESS;
 }
 
