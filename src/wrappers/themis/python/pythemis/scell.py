@@ -37,7 +37,7 @@ class SCellSeal(object):
         if themis.themis_secure_cell_encrypt_seal(
                 self.key, len(self.key), context, context_length,
                 message, len(message), None,
-                byref(encrypted_message_length)) != -4:
+                byref(encrypted_message_length)) != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Seal) failed ecrypting")
         encrypted_message = create_string_buffer(encrypted_message_length.value)
@@ -56,7 +56,7 @@ class SCellSeal(object):
         if themis.themis_secure_cell_decrypt_seal(
                 self.key, len(self.key), context, context_length,
                 message, len(message), None,
-                byref(decrypted_message_length)) != -4:
+                byref(decrypted_message_length)) != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Seal) failed derypting")
         decrypted_message = create_string_buffer(decrypted_message_length.value)
@@ -84,7 +84,7 @@ class SCellTokenProtect(object):
         if themis.themis_secure_cell_encrypt_token_protect(
                 self.key, len(self.key), context, context_length_,
                 message, len(message), None, byref(context_length), None,
-                byref(encrypted_message_length)) != -4:
+                byref(encrypted_message_length)) != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Token Protect) failed encrypting")
         encrypted_message = create_string_buffer(encrypted_message_length.value)
@@ -131,7 +131,7 @@ class SCellContextImprint(object):
         if themis.themis_secure_cell_encrypt_context_imprint(
                 self.key, len(self.key), message, len(message),
                 context, len(context), None,
-                byref(encrypted_message_length)) != -4:
+                byref(encrypted_message_length)) != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Context Imprint) failed encrypting")
         encrypted_message = create_string_buffer(encrypted_message_length.value)
@@ -149,7 +149,7 @@ class SCellContextImprint(object):
         if themis.themis_secure_cell_decrypt_context_imprint(
                 self.key, len(self.key), message, len(message),
                 context, len(context), None,
-                byref(decrypted_message_length)) != -4:
+                byref(decrypted_message_length)) != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Context Imprint) failed decrypting")
         decrypted_message = create_string_buffer(decrypted_message_length.value)
