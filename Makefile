@@ -253,19 +253,10 @@ endif
 ifdef PYTHON_VERSION
 	@echo -n "make tests for pythemis "
 	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python ./tests/pythemis/scell_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "python -m unittest discover -s tests/pythemis" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 ifdef PYTHON3_VERSION
 	@echo "echo Python3 $(PYTHON3_VERSION) tests" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "echo ----- pythemis secure cell tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python3 ./tests/pythemis/scell_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "echo ----- pythemis secure message tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python3 ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "echo ----- pythemis secure session tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python3 ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python3 ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+	@echo "python3 -m unittest discover -s tests/pythemis" >> ./$(BIN_PATH)/tests/pythemis_test.sh
 endif
 	@chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
 	@$(PRINT_OK_)
