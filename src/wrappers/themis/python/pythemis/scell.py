@@ -105,7 +105,7 @@ class SCellTokenProtect(object):
             self.key, len(self.key), context, context_length,
             message, len(message), token, len(token), None,
             byref(decrypted_message_length))
-        if res != -4:
+        if res != THEMIS_CODES.BUFFER_TOO_SMALL:
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Token Protect) failed decrypting")
         decrypted_message = create_string_buffer(decrypted_message_length.value)
