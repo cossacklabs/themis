@@ -18,7 +18,7 @@
 #define SOTER_ENGINE_H
 
 #include <soter/soter.h>
-//#include <openssl/evp.h>
+#include <openssl/evp.h>
 
 struct soter_hash_ctx_type
 {

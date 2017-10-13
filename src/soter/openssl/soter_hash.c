@@ -124,7 +124,11 @@ soter_status_t soter_hash_cleanup(soter_hash_ctx_t* hash_ctx){
 	{
 		return SOTER_INVALID_PARAMETER;
 	}
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	EVP_MD_CTX_cleanup(hash_ctx->evp_md_ctx);
+#else
+	EVP_MD_CTX_reset(hash_ctx->evp_md_ctx);
+#endif
 	return SOTER_SUCCESS;
 }
 

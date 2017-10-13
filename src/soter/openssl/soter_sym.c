@@ -101,7 +101,8 @@ soter_sym_ctx_t* soter_sym_ctx_init(const uint32_t alg,
   ctx->alg=alg;
   uint8_t key_[SOTER_SYM_MAX_KEY_LENGTH];
   size_t key_length_=(alg&SOTER_SYM_KEY_LENGTH_MASK)/8;
-  EVP_CIPHER_CTX_init(ctx->evp_sym_ctx);
+  //EVP_CIPHER_CTX_init(ctx->evp_sym_ctx);
+  ctx->evp_sym_ctx = EVP_CIPHER_CTX_new();
   //  if(iv!=NULL && (iv_length<SOTER_SYM_BLOCK_LENGTH(alg))){ // как проверить длину iv??
   //  return NULL;
   //}
@@ -130,7 +131,7 @@ soter_sym_ctx_t* soter_sym_aead_ctx_init(const uint32_t alg,
   ctx->alg=alg;
   uint8_t key_[SOTER_SYM_MAX_KEY_LENGTH];
   size_t key_length_=(alg&SOTER_SYM_KEY_LENGTH_MASK)/8;
-  EVP_CIPHER_CTX_init(ctx->evp_sym_ctx);
+  ctx->evp_sym_ctx = EVP_CIPHER_CTX_new();
   SOTER_IF_FAIL_(soter_withkdf(alg,key, key_length, salt, salt_length, key_, &key_length_)==SOTER_SUCCESS, soter_sym_encrypt_destroy(ctx));
   if(encrypt){
     SOTER_IF_FAIL_(EVP_EncryptInit_ex(ctx->evp_sym_ctx, algid_to_evp_aead(alg), NULL, key_, iv), soter_sym_encrypt_destroy(ctx));
@@ -161,8 +162,8 @@ soter_status_t soter_sym_ctx_final(soter_sym_ctx_t *ctx,
 				   size_t* out_data_length,
 				   bool encrypt){
   if((ctx->alg&SOTER_SYM_PADDING_MASK)!=0){
-    if((*out_data_length)<EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)){
-      (*out_data_length)=EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx);
+    if((*out_data_length)<(size_t)EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)){
+      (*out_data_length)=(size_t)EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx);
       return SOTER_BUFFER_TOO_SMALL;
     }
   }
@@ -196,8 +197,8 @@ soter_sym_ctx_t* soter_sym_encrypt_create(const uint32_t alg, const void* key, c
 }
 
 soter_status_t soter_sym_encrypt_update(soter_sym_ctx_t *ctx, const void* plain_data,  const size_t plain_data_length, void* cipher_data, size_t* cipher_data_length){
-  if(cipher_data==NULL || (*cipher_data_length)<(plain_data_length+EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1)){
-    (*cipher_data_length)=plain_data_length+EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1;
+  if(cipher_data==NULL || (*cipher_data_length)<(plain_data_length+(size_t)EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1)){
+    (*cipher_data_length)=plain_data_length+(size_t)EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1;
     return SOTER_BUFFER_TOO_SMALL;
   }
   return soter_sym_ctx_update(ctx, plain_data,  plain_data_length, cipher_data, cipher_data_length, true);
@@ -216,8 +217,8 @@ soter_sym_ctx_t* soter_sym_decrypt_create(const uint32_t alg, const void* key, c
 }
 
 soter_status_t soter_sym_decrypt_update(soter_sym_ctx_t *ctx, const void* cipher_data,  const size_t cipher_data_length, void* plain_data, size_t* plain_data_length){
-  if(plain_data==NULL || (*plain_data_length)<(cipher_data_length+EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1)){
-    (*plain_data_length)=cipher_data_length+EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1;
+  if(plain_data==NULL || (*plain_data_length)<(cipher_data_length+(size_t)EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1)){
+    (*plain_data_length)=cipher_data_length+(size_t)EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1;
     return SOTER_BUFFER_TOO_SMALL;
   }
   return soter_sym_ctx_update(ctx, cipher_data,  cipher_data_length, plain_data, plain_data_length, false);
@@ -236,11 +237,11 @@ soter_sym_ctx_t* soter_sym_aead_encrypt_create(const uint32_t alg, const void* k
 }
 
 soter_status_t soter_sym_aead_encrypt_update(soter_sym_ctx_t *ctx, const void* plain_data,  const size_t plain_data_length, void* cipher_data, size_t* cipher_data_length){
-  if(cipher_data==NULL || (*cipher_data_length)<(plain_data_length+EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1)){
-    (*cipher_data_length)=plain_data_length+EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1;
+  if(cipher_data==NULL || (*cipher_data_length)<(plain_data_length+(size_t)EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1)){
+    (*cipher_data_length)=plain_data_length+(size_t)EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1;
     return SOTER_BUFFER_TOO_SMALL;
   }
-  (*cipher_data_length)=plain_data_length+EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1;
+  (*cipher_data_length)=plain_data_length+(size_t)EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1;
   return soter_sym_ctx_update(ctx, plain_data, plain_data_length, cipher_data, cipher_data_length, true);
 }
 
@@ -270,8 +271,8 @@ soter_sym_ctx_t* soter_sym_aead_decrypt_create(const uint32_t alg, const void* k
 }
 
 soter_status_t soter_sym_aead_decrypt_update(soter_sym_ctx_t *ctx, const void* cipher_data,  const size_t cipher_data_length, void* plain_data, size_t* plain_data_length){
-  if(plain_data==NULL || (*plain_data_length)<(cipher_data_length+EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1)){
-    (*plain_data_length)=cipher_data_length+EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1;
+  if(plain_data==NULL || (*plain_data_length)<(cipher_data_length+(size_t)EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1)){
+    (*plain_data_length)=cipher_data_length+(size_t)EVP_CIPHER_CTX_block_size(ctx->evp_sym_ctx)-1;
     return SOTER_BUFFER_TOO_SMALL;
   }
   return soter_sym_ctx_update(ctx, cipher_data,  cipher_data_length, plain_data, plain_data_length, false);
