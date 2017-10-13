@@ -32,13 +32,13 @@ nist_rng_test_suite:
 	@cd $(NIST_STS_DIR)/experiments && ./create-dir-script
 	@$(BUILD_CMD)
 
-soter_test: CMD = $(CC) -o $(TEST_BIN_PATH)/soter_test $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) -L$(BIN_PATH) -lsoter $(LDFLAGS) $(COVERLDFLAGS)
+soter_test: CMD = $(CC) -o $(TEST_BIN_PATH)/soter_test $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) $(CFLAGS) -L$(BIN_PATH) -lsoter $(LDFLAGS) $(COVERLDFLAGS)
 
 soter_test: nist_rng_test_suite soter_static $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-themis_test: CMD = $(CC) -o $(TEST_BIN_PATH)/themis_test $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ) -L$(BIN_PATH) -lthemis -lsoter $(LDFLAGS) $(COVERLDFLAGS)
+themis_test: CMD = $(CC) -o $(TEST_BIN_PATH)/themis_test $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ) $(CFLAGS) -L$(BIN_PATH) -lthemis -lsoter $(LDFLAGS) $(COVERLDFLAGS)
 
 themis_test: themis_static $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ)
 	@echo -n "link "

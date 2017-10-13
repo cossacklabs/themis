@@ -16,7 +16,7 @@
 
 #include "test_utils.h"
 #include <string.h>
-#include <common/sput.h>
+#include "../common/sput.h"
 #include <soter/soter.h>
 #include <stdio.h>
 
