@@ -15,7 +15,7 @@
 */
 
 #import <objcthemis/smessage.h>
-#import <objcthemis/error.h>
+#import <objcthemis/serror.h>
 
 
 @interface TSMessage ()

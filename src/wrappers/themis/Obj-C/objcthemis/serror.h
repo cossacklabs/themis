@@ -14,11 +14,11 @@
 * limitations under the License.
 */
 
-#ifndef OBJCTHEMIS_ERROR_H
-#define OBJCTHEMIS_ERROR_H
+#ifndef OBJCTHEMIS_S_ERROR_H
+#define OBJCTHEMIS_S_ERROR_H
 
 /**
- * @file objthemis/error.h
+ * @file objthemis/serror.h
  * @brief Status codes defenitions for Obj-C wrapper for themis
  */
 
@@ -55,4 +55,4 @@ typedef NS_ENUM(NSInteger, TSErrorType) {
 /** @} */
 /** @} */
 
-#endif
+#endif //OBJCTHEMIS_S_ERROR_H

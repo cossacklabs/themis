@@ -15,7 +15,7 @@
 */
 
 #import <objcthemis/scell_token.h>
-#import <objcthemis/error.h>
+#import <objcthemis/serror.h>
 
 
 @implementation TSCellTokenEncryptedData
