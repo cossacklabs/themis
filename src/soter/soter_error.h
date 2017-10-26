@@ -15,7 +15,7 @@
 */
 
 /**
- * @file soter/error.h
+ * @file soter/soter_error.h
  * @brief Soter return type, return codes and check macros
  *
  */

@@ -14,7 +14,6 @@
 * limitations under the License.
 */
 
-#include <soter/error.h>
 #include <soter/soter.h>
 
 #ifdef CRYPTO_ENGINE_PATH

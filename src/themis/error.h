@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <soter/error.h>
+#include <soter/soter_error.h>
 
 /** @brief return type */
 typedef int32_t themis_status_t;
