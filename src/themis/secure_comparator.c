@@ -49,6 +49,8 @@
  */
 
 #include "secure_comparator_t.h"
+ 
+#include <soter/soter_mem_cmp.h>
 #include <string.h>
 
 static themis_status_t secure_comparator_alice_step1(secure_comparator_t *comp_ctx, void *output, size_t *output_length);
@@ -169,7 +171,7 @@ static themis_status_t ed_verify(uint8_t pos, const ge_p3 *point, const uint8_t 
 
 	sc_reduce(k);
 
-	if (memcmp(k, signature, ED25519_GE_LENGTH))
+	if (cst_time_memcmp(k, signature, ED25519_GE_LENGTH))
 	{
 		return THEMIS_INVALID_SIGNATURE;
 	}
@@ -302,7 +304,7 @@ static themis_status_t ed_dbl_base_verify(uint8_t pos, const ge_p3 *base1, const
 
 	sc_reduce(k);
 
-	if (memcmp(k, signature, ED25519_GE_LENGTH))
+	if (cst_time_memcmp(k, signature, ED25519_GE_LENGTH))
 	{
 		return THEMIS_INVALID_SIGNATURE;
 	}
@@ -438,7 +440,7 @@ static themis_status_t ed_point_verify(uint8_t pos, const ge_p3 *base2, const ge
 
 	sc_reduce(k);
 
-	if (memcmp(k, signature, ED25519_GE_LENGTH))
+	if (cst_time_memcmp(k, signature, ED25519_GE_LENGTH))
 	{
 		return THEMIS_INVALID_SIGNATURE;
 	}

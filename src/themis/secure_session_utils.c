@@ -21,6 +21,7 @@
 #include <soter/soter_t.h>
 #include <soter/soter_rsa_key.h>
 #include <soter/soter_ec_key.h>
+#include <soter/soter_mem_cmp.h>
 
 #include <themis/error.h>
 
@@ -37,12 +38,12 @@ soter_sign_alg_t get_key_sign_type(const void *sign_key, size_t sign_key_length)
 			return (soter_sign_alg_t)0xffffffff;
 		}
 
-		if (!memcmp(key->tag, EC_PRIV_KEY_PREF, strlen(EC_PRIV_KEY_PREF)))
+		if (!cst_time_memcmp(key->tag, EC_PRIV_KEY_PREF, strlen(EC_PRIV_KEY_PREF)))
 		{
 			return SOTER_SIGN_ecdsa_none_pkcs8;
 		}
 
-		if (!memcmp(key->tag, RSA_PRIV_KEY_PREF, strlen(RSA_PRIV_KEY_PREF)))
+		if (!cst_time_memcmp(key->tag, RSA_PRIV_KEY_PREF, strlen(RSA_PRIV_KEY_PREF)))
 		{
 			return SOTER_SIGN_rsa_pss_pkcs8;
 		}
@@ -190,7 +191,7 @@ themis_status_t verify_mac(const void *key, size_t key_length, const soter_kdf_c
 		return THEMIS_INVALID_PARAMETER;
 	}
 
-	if (memcmp(mac, computed_mac, mac_length))
+	if (cst_time_memcmp(mac, computed_mac, mac_length))
 	{
 		return THEMIS_INVALID_SIGNATURE;
 	}
