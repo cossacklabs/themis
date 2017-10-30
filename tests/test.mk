@@ -50,4 +50,37 @@ themispp_test: $(THEMISPP_TEST_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-test: soter_test themis_test
+test: soter_test themis_test themispp_test
+
+check: test
+	$(TEST_BIN_PATH)/soter_test
+	@echo "------------------------------------------------------------"
+	$(TEST_BIN_PATH)/themis_test
+	@echo "------------------------------------------------------------"
+	$(TEST_BIN_PATH)/themispp_test
+	@echo "------------------------------------------------------------"
+
+# require all dependencies
+check_all: check test_all
+ifdef PHP_VERSION
+	@echo "------------------------------------------------------------"
+	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/PHP-Howto"
+	@echo "------------------------------------------------------------"
+	$(TEST_BIN_PATH)/phpthemis_test.sh
+	@echo "------------------------------------------------------------"
+endif
+ifdef PYTHON_VERSION
+	@echo "------------------------------------------------------------"
+	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/Python-Howto"
+	@echo "------------------------------------------------------------"
+	$(TEST_BIN_PATH)/pythemis_test.sh
+	@echo "------------------------------------------------------------"
+endif	
+ifdef RUBY_GEM_VERSION
+	@echo "------------------------------------------------------------"
+	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/Ruby-Howto"
+	@echo "------------------------------------------------------------"
+	$(TEST_BIN_PATH)/rubythemis_test.sh
+	@echo "------------------------------------------------------------"
+endif
+	$(TEST_BIN_PATH)/node.sh
