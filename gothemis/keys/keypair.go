@@ -6,7 +6,7 @@ package keys
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/secure_message.h>
 
 #define KEYTYPE_EC 0

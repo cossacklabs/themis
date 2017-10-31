@@ -15,7 +15,7 @@
 */
 
 #include <jni.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/secure_cell.h>
 
 /* These definitions should correspond to the ones in SecureCell.java */

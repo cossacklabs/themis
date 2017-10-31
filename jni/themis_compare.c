@@ -15,7 +15,7 @@
 */
 
 #include <jni.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/secure_comparator.h>
 
 #define COMPARE_CTX_FIELD_NAME "nativeCtx"
