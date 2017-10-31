@@ -17,7 +17,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
-#include <themis/error.h>
+#include <themis/themis_error.h>
 
 #include "php.h"
 #include "php_themis.h"

@@ -15,8 +15,7 @@
 */
 
 #import <objcthemis/scell_context_imprint.h>
-#import <objcthemis/error.h>
-#import "error.h"
+#import <objcthemis/serror.h>
 
 
 @implementation TSCellContextImprint

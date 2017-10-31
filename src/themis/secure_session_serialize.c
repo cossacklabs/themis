@@ -16,7 +16,7 @@
 
 #include <themis/secure_session_utils.h>
 #include <themis/secure_session_t.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 
 #include <soter/soter_container.h>
 

@@ -15,7 +15,7 @@
 */
 
 #import <objcthemis/skeygen.h>
-#import <objcthemis/error.h>
+#import <objcthemis/serror.h>
 
 
 @interface TSKeyGen ()

@@ -15,7 +15,6 @@
 */
 
 #include <soter/soter_sign_rsa.h>
-#include <soter/error.h>
 #include <soter/soter.h>
 #include <soter/soter_rsa_key.h>
 #include "soter_engine.h"

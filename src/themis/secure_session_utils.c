@@ -22,7 +22,7 @@
 #include <soter/soter_rsa_key.h>
 #include <soter/soter_ec_key.h>
 
-#include <themis/error.h>
+#include <themis/themis_error.h>
 
 #define MAX_HMAC_SIZE 64 /* For HMAC-SHA512 */
 

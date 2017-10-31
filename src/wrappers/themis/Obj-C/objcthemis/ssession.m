@@ -15,7 +15,7 @@
 */
 
 #import <objcthemis/ssession.h>
-#import <objcthemis/error.h>
+#import <objcthemis/serror.h>
 
 
 @interface TSSession ()

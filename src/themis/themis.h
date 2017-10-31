@@ -32,7 +32,7 @@
 
 #define THEMIS_VERSION_TEXT "themis 0.9: "
 
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/secure_message.h>
 #include <themis/secure_cell.h>
 #include <themis/secure_session.h>
