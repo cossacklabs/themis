@@ -213,6 +213,10 @@ ifdef DEBUG
 	CFLAGS += -DDEBUG -g
 endif
 
+ifneq ($(GEM_INSTALL_OPTIONS),)
+	_GEM_INSTALL_OPTIONS = $(GEM_INSTALL_OPTIONS)
+endif
+
 # Should pay attention to warnings (some may be critical for crypto-enabled code (ex. signed-unsigned mismatch)
 CFLAGS += -Werror -Wno-switch
 
@@ -400,7 +404,7 @@ else
 	@exit 1
 endif
 
-rubythemis_install: CMD = cd src/wrappers/themis/ruby && gem build rubythemis.gemspec && gem install ./*.gem
+rubythemis_install: CMD = cd src/wrappers/themis/ruby && gem build rubythemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
 
 rubythemis_install: install
 ifdef RUBY_GEM_VERSION
