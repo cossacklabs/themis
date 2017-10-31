@@ -49,7 +49,6 @@ test:
     # it's important to set version of ruby precisely.
     - rvm use system && make test_ruby
     - make test_go
-    - go test -v $GOTHEMIS_IMPORT/...
     - valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
     - valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
     - cover_build/tests/soter_test
