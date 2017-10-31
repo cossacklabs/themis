@@ -111,7 +111,7 @@ test_basic: prepare_tests_basic
 	@echo "------------------------------------------------------------"
 
 # require all dependencies
-test: test_basic prepare_tests_all
+test_php:
 ifdef PHP_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running phpthemis tests."
@@ -120,6 +120,8 @@ ifdef PHP_VERSION
 	$(TEST_BIN_PATH)/phpthemis_test.sh
 	@echo "------------------------------------------------------------"
 endif
+
+test_python:
 ifdef PYTHON_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running pythemis tests."
@@ -128,6 +130,8 @@ ifdef PYTHON_VERSION
 	$(TEST_BIN_PATH)/pythemis_test.sh
 	@echo "------------------------------------------------------------"
 endif
+
+test_ruby:
 ifdef RUBY_GEM_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running rubythemis tests."
@@ -136,6 +140,8 @@ ifdef RUBY_GEM_VERSION
 	$(TEST_BIN_PATH)/rubythemis_test.sh
 	@echo "------------------------------------------------------------"
 endif
+
+test_js:
 ifdef NPM_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running jsthemis tests."
@@ -143,6 +149,8 @@ ifdef NPM_VERSION
 	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/node.sh
 endif
+
+test_go:
 ifdef GO_VERSION	
 	@echo "------------------------------------------------------------"
 	@echo "Running gothemis tests."
@@ -150,3 +158,5 @@ ifdef GO_VERSION
 	@echo "------------------------------------------------------------"
 	@go test -v $(GOTHEMIS_IMPORT)/...
 endif
+
+test: test_basic prepare_tests_all test_php test_python test_ruby test_js test_go

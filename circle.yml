@@ -1,13 +1,12 @@
 machine:
   environment:
     ANDROID_NDK_ROOT: $ANDROID_NDK
+    GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
     GOROOT: $HOME/go
     GOPATH: $HOME/gopath
     PATH: $GOROOT/bin:$PATH
     # to avoid OOM killer (https://circleci.com/docs/1.0/oom/#out-of-memory-errors-in-android-builds)
     GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
-  ruby:
-    version: ruby-1.9.3-p448
 
 ## Customize dependencies
 dependencies:
@@ -42,8 +41,15 @@ test:
     # run only if CIRCLE_PR_NUMBER variable is not set (it's not pull request and COVERALLS_TOKEN will be set via circleCI for non-PR build) and COVERALLS_TOKEN is set
     # we should calculate coverage for gothemis and send report before sending coverage of main C part
     - '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
-    - sudo /sbin/ldconfig
-    - rvm use system && make test
+    - sudo /sbin/ldconfig    
+    - make test_basic
+    - make test_php
+    - make test_python
+    - make test_js
+    # it's important to set version of ruby precisely.
+    - rvm use system && make test_ruby
+    - make test_go
+    - go test -v $GOTHEMIS_IMPORT/...
     - valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
     - valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
     - cover_build/tests/soter_test
