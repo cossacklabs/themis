@@ -526,7 +526,7 @@ symlink_realname_to_soname:
 strip: 
 	@find . -name \*.$(SHARED_EXT)\.* -exec strip -o {} {} \;
 
-deb: prepare_tests_basic soter_static themis_static soter_shared themis_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
+deb: test_basic soter_static themis_static soter_shared themis_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/deb
 	
 #libPACKAGE-dev
@@ -569,7 +569,7 @@ deb: prepare_tests_basic soter_static themis_static soter_shared themis_shared c
 	@find $(BIN_PATH) -name \*.deb
 
 
-rpm: prepare_tests_basic themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
+rpm: test_basic themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/rpm
 #libPACKAGE-devel
 	@fpm --input-type dir \
