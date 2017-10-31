@@ -24,7 +24,7 @@ dependencies:
     - sudo make install
     - sudo make themispp_install
     - sudo make pythemis_install
-    - sudo GEM_INSTALL_OPTIONS=--user-install make rubythemis_install
+    - sudo make rubythemis_install
     - sudo make phpthemis_install
     - cd $HOME && git clone https://boringssl.googlesource.com/boringssl && cd boringssl && git checkout chromium-stable && mkdir build && cd build && cmake .. && make && cp decrepit/libdecrepit.a crypto/
     - cd $HOME/boringssl && mkdir build-armeabi-v7a && cd build-armeabi-v7a && cmake -DANDROID_ABI=armeabi-v7a -DCMAKE_TOOLCHAIN_FILE=../third_party/android-cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=16 -GNinja .. && ninja -j 20
@@ -43,7 +43,7 @@ test:
     # we should calculate coverage for gothemis and send report before sending coverage of main C part
     - '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
     - sudo /sbin/ldconfig
-    - make test
+    - rvm use system && make test
     - valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
     - valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
     - cover_build/tests/soter_test
