@@ -6,6 +6,8 @@ machine:
     PATH: $GOROOT/bin:$PATH
     # to avoid OOM killer (https://circleci.com/docs/1.0/oom/#out-of-memory-errors-in-android-builds)
     GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+  ruby:
+    version: ruby-1.9.3-p448
 
 ## Customize dependencies
 dependencies:
@@ -41,7 +43,6 @@ test:
     # we should calculate coverage for gothemis and send report before sending coverage of main C part
     - '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
     - sudo /sbin/ldconfig
-    - rvm use system #switch to system ruby
     - make test
     - valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
     - valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
