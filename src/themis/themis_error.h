@@ -15,7 +15,7 @@
 */
 
 /**
- * @file themis/error.h
+ * @file themis/themis_error.h
  * @brief return type, return codes and check macros
  */
 

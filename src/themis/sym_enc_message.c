@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/sym_enc_message.h>
 #include <soter/soter.h>
 #include <string.h>

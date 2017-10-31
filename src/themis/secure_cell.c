@@ -15,7 +15,7 @@
 */
 
 #include <themis/secure_cell.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include "sym_enc_message.h"
 
 themis_status_t themis_secure_cell_encrypt_seal(const uint8_t* master_key,
