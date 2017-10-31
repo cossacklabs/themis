@@ -19,6 +19,8 @@ COMMON_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.c,$(TEST_OBJ_PATH)/%.o, $(COMMON
 
 NIST_STS_DIR = tests/soter/nist-sts
 
+GOTHEMIS_IMPORT = github.com/cossacklabs/themis/gothemis
+
 include tests/soter/soter.mk
 include tests/tools/tools.mk
 include tests/themis/themis.mk
@@ -83,6 +85,8 @@ endif
 	@chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
 	@$(PRINT_OK_)
 endif
+ifdef NPM_VERSION
+	@echo -n "make tests for jsthemis "
 	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
 	echo "wget https://nodejs.org/dist/v4.6.0/node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
 	echo "tar -xvf node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
@@ -91,7 +95,11 @@ endif
 	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install nan" >> ./$(BIN_PATH)/tests/node.sh
 	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install ../../build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz" >> ./$(BIN_PATH)/tests/node.sh
 	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) ./node_modules/mocha/bin/mocha" >> ./$(BIN_PATH)/tests/node.sh
+	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) rm -rf ./node_modules" >> ./$(BIN_PATH)/tests/node.sh
 	chmod a+x ./$(BIN_PATH)/tests/node.sh
+	@$(PRINT_OK_)
+endif
+
 
 
 test_basic: prepare_tests_basic
@@ -106,6 +114,7 @@ test_basic: prepare_tests_basic
 test: test_basic prepare_tests_all
 ifdef PHP_VERSION
 	@echo "------------------------------------------------------------"
+	@echo "Running phpthemis tests."
 	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/PHP-Howto"
 	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/phpthemis_test.sh
@@ -113,16 +122,31 @@ ifdef PHP_VERSION
 endif
 ifdef PYTHON_VERSION
 	@echo "------------------------------------------------------------"
+	@echo "Running pythemis tests."
 	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/Python-Howto"
 	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/pythemis_test.sh
 	@echo "------------------------------------------------------------"
-endif	
+endif
 ifdef RUBY_GEM_VERSION
 	@echo "------------------------------------------------------------"
+	@echo "Running rubythemis tests."
 	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/Ruby-Howto"
 	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/rubythemis_test.sh
 	@echo "------------------------------------------------------------"
 endif
+ifdef NPM_VERSION
+	@echo "------------------------------------------------------------"
+	@echo "Running jsthemis tests."
+	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/NodeJS-Howto"
+	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/node.sh
+endif
+ifdef GO_VERSION	
+	@echo "------------------------------------------------------------"
+	@echo "Running gothemis tests."
+	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/Go-HowTo"
+	@echo "------------------------------------------------------------"
+	@go test -v $(GOTHEMIS_IMPORT)/...
+endif

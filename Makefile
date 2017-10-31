@@ -166,6 +166,8 @@ endif
 
 PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
+GO_VERSION := $(shell go version 2>&1)
+NPM_VERSION := $(shell npm --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
 PYTHON_VERSION := $(shell python --version 2>&1)
 PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
