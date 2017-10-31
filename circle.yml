@@ -22,6 +22,7 @@ dependencies:
     - sudo make install
     - sudo make themispp_install
     - sudo make pythemis_install
+    - rvm use system #switch to system ruby
     - sudo GEM_INSTALL_OPTIONS=--user-install make rubythemis_install
     - sudo make phpthemis_install
     - cd $HOME && git clone https://boringssl.googlesource.com/boringssl && cd boringssl && git checkout chromium-stable && mkdir build && cd build && cmake .. && make && cp decrepit/libdecrepit.a crypto/
