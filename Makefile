@@ -230,47 +230,6 @@ JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
 all: err themis_static themis_shared
 	@echo $(VERSION)
 
-test_all: err test
-ifdef PHP_VERSION
-	@echo -n "make tests for phpthemis "
-	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/ssession_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@$(PRINT_OK_)
-endif
-ifdef RUBY_GEM_VERSION
-	@echo -n "make tests for rubythemis "
-	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@echo "ruby ./tests/rubythemis/scell_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@echo "ruby ./tests/rubythemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@echo "ruby ./tests/rubythemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@echo "ruby ./tests/rubythemis/scomparator_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@$(PRINT_OK_)
-endif
-ifdef PYTHON_VERSION
-	@echo -n "make tests for pythemis "
-	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python -m unittest discover -s tests/pythemis" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-ifdef PYTHON3_VERSION
-	@echo "echo Python3 $(PYTHON3_VERSION) tests" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python3 -m unittest discover -s tests/pythemis" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-endif
-	@chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
-	@$(PRINT_OK_)
-endif
-	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
-	echo "wget https://nodejs.org/dist/v4.6.0/node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "tar -xvf node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "cd ../../src/wrappers/themis/jsthemis && PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd -" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install mocha" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install nan" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install ../../build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) ./node_modules/mocha/bin/mocha" >> ./$(BIN_PATH)/tests/node.sh
-	chmod a+x ./$(BIN_PATH)/tests/node.sh
-
 soter_static: CMD = $(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
 
 soter_static: $(SOTER_OBJ)
@@ -567,7 +526,7 @@ symlink_realname_to_soname:
 strip: 
 	@find . -name \*.$(SHARED_EXT)\.* -exec strip -o {} {} \;
 
-deb: test soter_static themis_static soter_shared themis_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
+deb: prepare_tests_basic soter_static themis_static soter_shared themis_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/deb
 	
 #libPACKAGE-dev
@@ -610,7 +569,7 @@ deb: test soter_static themis_static soter_shared themis_shared collect_headers 
 	@find $(BIN_PATH) -name \*.deb
 
 
-rpm: test themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
+rpm: prepare_tests_basic themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/rpm
 #libPACKAGE-devel
 	@fpm --input-type dir \
