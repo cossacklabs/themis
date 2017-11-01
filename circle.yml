@@ -42,7 +42,7 @@ test:
     # we should calculate coverage for gothemis and send report before sending coverage of main C part
     - '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
     - sudo /sbin/ldconfig    
-    - make test_basic
+    - make test
     - make test_php
     - make test_python
     - make test_js

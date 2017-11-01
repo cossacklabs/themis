@@ -102,7 +102,7 @@ endif
 
 
 
-test_basic: prepare_tests_basic
+test: prepare_tests_basic
 	@echo "------------------------------------------------------------"
 	@echo "Running themis-core basic tests."
 	$(TEST_BIN_PATH)/soter_test
@@ -167,4 +167,4 @@ ifdef GO_VERSION
 	@go test -v $(GOTHEMIS_IMPORT)/...
 endif
 
-test: test_basic prepare_tests_all test_spp test_php test_python test_ruby test_js test_go
+test_all: test prepare_tests_all test_spp test_php test_python test_ruby test_js test_go
