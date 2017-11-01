@@ -52,9 +52,9 @@ themispp_test: $(THEMISPP_TEST_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-prepare_tests_basic: soter_test themis_test themispp_test
+prepare_tests_basic: soter_test themis_test
 
-prepare_tests_all: err prepare_tests_basic
+prepare_tests_all: err prepare_tests_basic themispp_test
 ifdef PHP_VERSION
 	@echo -n "make tests for phpthemis "
 	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/phpthemis_test.sh
@@ -103,14 +103,22 @@ endif
 
 
 test_basic: prepare_tests_basic
+	@echo "------------------------------------------------------------"
+	@echo "Running themis-core basic tests."
 	$(TEST_BIN_PATH)/soter_test
 	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/themis_test
 	@echo "------------------------------------------------------------"
+
+# require all dependencies to be installed
+test_spp:
+	@echo "------------------------------------------------------------"
+	@echo "Running themissp tests."
+	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/CPP-Howto"
+	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/themispp_test
 	@echo "------------------------------------------------------------"
 
-# require all dependencies
 test_php:
 ifdef PHP_VERSION
 	@echo "------------------------------------------------------------"
@@ -159,4 +167,4 @@ ifdef GO_VERSION
 	@go test -v $(GOTHEMIS_IMPORT)/...
 endif
 
-test: test_basic prepare_tests_all test_php test_python test_ruby test_js test_go
+test: test_basic prepare_tests_all test_spp test_php test_python test_ruby test_js test_go
