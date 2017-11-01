@@ -111,7 +111,7 @@ test: prepare_tests_basic
 	@echo "------------------------------------------------------------"
 
 # require all dependencies to be installed
-test_spp:
+test_cpp:
 	@echo "------------------------------------------------------------"
 	@echo "Running themissp tests."
 	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/CPP-Howto"
@@ -167,4 +167,4 @@ ifdef GO_VERSION
 	@go test -v $(GOTHEMIS_IMPORT)/...
 endif
 
-test_all: test prepare_tests_all test_spp test_php test_python test_ruby test_js test_go
+test_all: test prepare_tests_all test_cpp test_php test_python test_ruby test_js test_go
