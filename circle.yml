@@ -29,11 +29,9 @@ dependencies:
     - cd $HOME/boringssl && mkdir build-armeabi-v7a && cd build-armeabi-v7a && cmake -DANDROID_ABI=armeabi-v7a -DCMAKE_TOOLCHAIN_FILE=../third_party/android-cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=16 -GNinja .. && ninja -j 20
     - cd $HOME/boringssl && mkdir build-arm64-v8a && cd build-arm64-v8a && cmake -DANDROID_ABI=arm64-v8a -DCMAKE_TOOLCHAIN_FILE=../third_party/android-cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=16 -GNinja .. && ninja -j 20
     - cd $HOME/boringssl && mkdir build-x86 && cd build-x86 && cmake -DANDROID_ABI=x86 -DCMAKE_TOOLCHAIN_FILE=../third_party/android-cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=16 -GNinja .. && ninja -j 20
-    - make ENGINE=boringssl ENGINE_INCLUDE_PATH=$HOME/boringssl/include ENGINE_LIB_PATH=$HOME/boringssl/build/crypto BUILD_PATH=build_with_boringssl test
-    - make BUILD_PATH=cover_build COVERAGE=y test
-    - make test
-    - make themispp_test
-    - make test_all
+    - make ENGINE=boringssl ENGINE_INCLUDE_PATH=$HOME/boringssl/include ENGINE_LIB_PATH=$HOME/boringssl/build/crypto BUILD_PATH=build_with_boringssl prepare_tests_basic
+    - make BUILD_PATH=cover_build COVERAGE=y prepare_tests_basic
+    - make prepare_tests_all
     - mkdir -p $HOME/gopath/src/$GOTHEMIS_IMPORT
     - rsync -auv gothemis/ $HOME/gopath/src/$GOTHEMIS_IMPORT/
     - lcov --directory . --zerocounters
@@ -43,8 +41,14 @@ test:
     # run only if CIRCLE_PR_NUMBER variable is not set (it's not pull request and COVERALLS_TOKEN will be set via circleCI for non-PR build) and COVERALLS_TOKEN is set
     # we should calculate coverage for gothemis and send report before sending coverage of main C part
     - '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/gopath/src/$GOTHEMIS_IMPORT && $HOME/gopath/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
-    - build/tests/soter_test
-    - build/tests/themis_test
+    - sudo /sbin/ldconfig    
+    - make test_basic
+    - make test_php
+    - make test_python
+    - make test_js
+    # it's important to set version of ruby precisely.
+    - rvm use system && make test_ruby
+    - make test_go
     - valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
     - valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {exit sum}'
     - cover_build/tests/soter_test
@@ -55,13 +59,6 @@ test:
     - coveralls-lcov -v --repo-token $COVERALLS_TOKEN coverage.info || true
     - build_with_boringssl/tests/soter_test
     - build_with_boringssl/tests/themis_test
-    - build/tests/themispp_test
-    - sudo /sbin/ldconfig
-    - build/tests/pythemis_test.sh
-    - sudo build/tests/rubythemis_test.sh
-    - build/tests/phpthemis_test.sh
-    - go test -v $GOTHEMIS_IMPORT/...
-    - build/tests/node.sh
     # - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
     - emulator -avd circleci-android22 -no-audio -no-window:
