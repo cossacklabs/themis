@@ -34,6 +34,10 @@ nist_rng_test_suite:
 	@cd $(NIST_STS_DIR)/experiments && ./create-dir-script
 	@$(BUILD_CMD)
 
+nist_rng_test_suite_clean: 
+	@echo "cleaning nist suit"
+	@make clean -C $(NIST_STS_DIR)
+
 soter_test: CMD = $(CC) -o $(TEST_BIN_PATH)/soter_test $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) -L$(BIN_PATH) -lsoter $(LDFLAGS) $(COVERLDFLAGS)
 
 soter_test: nist_rng_test_suite soter_static $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ)
