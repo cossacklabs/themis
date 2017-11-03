@@ -310,7 +310,7 @@ err: ; $(ERROR)
 
 clean: CMD = rm -rf $(BIN_PATH)
 
-clean: nist_rng_test_suite
+clean: nist_rng_test_suite_clean
 	@$(BUILD_CMD)
 
 make_install_dirs: CMD = mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter $(PREFIX)/lib
