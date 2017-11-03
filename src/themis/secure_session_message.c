@@ -22,6 +22,7 @@
 #include <soter/soter_container.h>
 
 #include <string.h>
+#include <time.h>
 
 #include <arpa/inet.h>
 #include "portable_endian.h"
