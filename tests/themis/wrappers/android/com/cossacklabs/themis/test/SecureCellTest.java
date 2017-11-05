@@ -45,9 +45,9 @@ public class SecureCellTest extends AndroidTestCase {
 	@Override
 	public void runTest() {
 		try {
-//			testSeal();
-//			testTokenProtect();
-//			testContextImprint();
+			testSeal();
+			testTokenProtect();
+			testContextImprint();
 		} catch (Exception e) {
 			String failMessage = e.getClass().getCanonicalName();
 			
@@ -65,6 +65,8 @@ public class SecureCellTest extends AndroidTestCase {
 		byte[] data = generateTestData();
 		
 		SecureCell cell = new SecureCell(key);
+		assertNotNull(cell);
+
 		SecureCellData protectedData = cell.protect(context, data);
 		
 		assertNotNull(protectedData);
@@ -85,7 +87,9 @@ public class SecureCellTest extends AndroidTestCase {
 		byte[] data = generateTestData();
 		
 		SecureCell cell = new SecureCell(key, SecureCell.MODE_TOKEN_PROTECT);
-		SecureCellData protectedData = cell.protect(context, data);
+		assertNotNull(cell);
+
+		SecureCellData protectedData = cell.protect(key, context, data);
 		
 		assertNotNull(protectedData);
 		assertNotNull(protectedData.getProtectedData());
@@ -105,6 +109,8 @@ public class SecureCellTest extends AndroidTestCase {
 		byte[] data = generateTestData();
 		
 		SecureCell cell = new SecureCell(key, SecureCell.MODE_CONTEXT_IMPRINT);
+		assertNotNull(cell);
+
 		SecureCellData protectedData = cell.protect(context, data);
 		
 		assertNotNull(protectedData);

@@ -18,6 +18,7 @@ android {
     
     defaultConfig {
     	minSdkVersion 16
+        targetSdkVersion 16
     }
     
     sourceSets {
