@@ -127,6 +127,10 @@ sudo yum install libthemis
 
 ## Install Themis from GitHub
 
+> Note:
+>
+> ⚠️ OpenSSL 1.1.0f support is coming soon (check [#208](https://github.com/cossacklabs/themis/issues/208) issue to track the progress).
+
 1. Fetch the repository: git clone https://github.com/cossacklabs/themis.git.
 2. Make sure OpenSSL/LibreSSL + OpenSSL/LibreSSL Dev package (libssl-dev) are installed at typical paths: `/usr/lib`, `/usr/include`. 
 3. Make sure the typical GCC/clang environment is installed.
