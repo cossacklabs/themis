@@ -121,6 +121,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(JN
 	if (additional_data_length)
 	{
 		additional_data_buf = (*env)->GetByteArrayElements(env, additional_data, NULL);
+		if (!additional_data_buf) 
 		{
 			goto err;
 		}
