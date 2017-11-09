@@ -23,6 +23,8 @@
 #include <soter/soter_ec_key.h>
 #include <soter/soter_asym_sign.h>
 #include <soter/soter_asym_ka.h>
+#include <soter/soter_mem_cmp.h>
+
 #include <themis/secure_message_wrapper.h>
 
 
@@ -39,10 +41,10 @@ soter_sign_alg_t get_alg_id(const uint8_t* key, size_t key_length)
   if (key_length < sizeof(soter_container_hdr_t) && key_length < ((const soter_container_hdr_t*)key)->size){
     return (soter_sign_alg_t)(-1);
   }
-  if (memcmp(((const soter_container_hdr_t*)key)->tag,EC_PRIV_KEY_PREF,3)==0 || memcmp(((const soter_container_hdr_t*)key)->tag,EC_PUB_KEY_PREF,3)==0){
+  if (cst_time_memcmp(((const soter_container_hdr_t*)key)->tag,EC_PRIV_KEY_PREF,3)==0 || memcmp(((const soter_container_hdr_t*)key)->tag,EC_PUB_KEY_PREF,3)==0){
       return SOTER_SIGN_ecdsa_none_pkcs8;
   }
-  if (memcmp(((const soter_container_hdr_t*)key)->tag,RSA_PRIV_KEY_PREF,3)==0 || memcmp(((const soter_container_hdr_t*)key)->tag,RSA_PUB_KEY_PREF,3)==0){
+  if (cst_time_memcmp(((const soter_container_hdr_t*)key)->tag,RSA_PRIV_KEY_PREF,3)==0 || memcmp(((const soter_container_hdr_t*)key)->tag,RSA_PUB_KEY_PREF,3)==0){
       return SOTER_SIGN_rsa_pss_pkcs8;
   }
   return SOTER_SIGN_undefined;

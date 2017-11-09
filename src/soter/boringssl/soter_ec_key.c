@@ -16,6 +16,7 @@
 
 #include <soter/soter_error.h>
 #include <soter/soter_ec_key.h>
+#include <soter/soter_mem_cmp.h>
 
 #include <openssl/evp.h>
 #include <openssl/bn.h>
@@ -373,7 +374,7 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t 
 	}
 
 	/* Validate tag */
-	if (memcmp(key->tag, EC_PRIV_KEY_PREF, strlen(EC_PRIV_KEY_PREF)))
+	if (cst_time_memcmp(key->tag, EC_PRIV_KEY_PREF, strlen(EC_PRIV_KEY_PREF)))
 	{
 		return SOTER_INVALID_PARAMETER;
 	}
