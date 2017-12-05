@@ -29,6 +29,7 @@
 * @addtogroup OBJC
 * @{
 */
+NS_ASSUME_NONNULL_BEGIN
 
 /** @brief encrypted message by secure cell in token protect mode */
 @interface TSCellTokenEncryptedData : NSObject
@@ -55,13 +56,14 @@
 * Also, user has the ability to bind the data to its context as before.
 * @image html scell-token_protect.png "Secure Cell Token protect mode"
 */
+
 @interface TSCellToken : TSCell
 
 /**
 * @brief Initialize Secure cell object in context token mode
 * @param [in] key master key
 */
-- (instancetype)initWithKey:(NSData *)key;
+- (nullable instancetype)initWithKey:(NSData *)key;
 
 /**
 * @brief Wrap message
@@ -69,7 +71,7 @@
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
-- (TSCellTokenEncryptedData *)wrapData:(NSData *)message error:(NSError **)error;
+- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message error:(NSError **)error;
 
 /**
 * @brief Unwrap message
@@ -77,7 +79,7 @@
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (NSData *)unwrapData:(TSCellTokenEncryptedData *)message error:(NSError **)error;
+- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message error:(NSError **)error;
 
 /**
 * @brief Wrap message with context
@@ -86,7 +88,7 @@
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
-- (TSCellTokenEncryptedData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error;
+- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError **)error;
 
 /**
 * @brief Unwrap message with context
@@ -95,9 +97,11 @@
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(NSData *)context error:(NSError **)error;
+- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(nullable NSData *)context error:(NSError **)error;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 /** @} */
 /** @} */

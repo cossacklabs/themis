@@ -20,23 +20,23 @@
 
 @implementation TSCellSeal
 
-- (instancetype)initWithKey:(NSData *)key {
+- (nullable instancetype)initWithKey:(NSData *)key {
     self = [super initWithKey:key];
     return self;
 }
 
 
-- (NSData *)wrapData:(NSData *)message error:(NSError **)error {
+- (nullable NSData *)wrapData:(NSData *)message error:(NSError **)error {
     return [self wrapData:message context:nil error:error];
 }
 
 
-- (NSData *)unwrapData:(NSData *)message error:(NSError **)error {
+- (nullable NSData *)unwrapData:(NSData *)message error:(NSError **)error {
     return [self unwrapData:message context:nil error:error];
 }
 
 
-- (NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
+- (nullable NSData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError **)error {
     size_t wrappedMessageLength = 0;
 
     const void * contextData = [context bytes];
@@ -67,8 +67,7 @@
     return [NSData dataWithBytesNoCopy:wrappedMessage length:wrappedMessageLength];
 }
 
-
-- (NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
+- (nullable NSData *)unwrapData:(NSData *)message context:(nullable NSData *)context error:(NSError **)error {
     size_t unwrappedMessageLength = 0;
 
     const void * contextData = [context bytes];

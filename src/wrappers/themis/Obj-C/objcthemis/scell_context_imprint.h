@@ -42,13 +42,16 @@
 * @note To ensure highest security level possible user has to supply different context for each encryption invocation
 * of the object for the same secret.
 */
+
+NS_ASSUME_NONNULL_BEGIN
+
 @interface TSCellContextImprint : TSCell
 
 /**
 * @brief Initialize Secure cell object in context imprint mode
 * @param [in] key master key
 */
-- (instancetype)initWithKey:(NSData *)key;
+- (nullable instancetype)initWithKey:(NSData *)key;
 
 /**
 * @brief Wrap message with context
@@ -57,7 +60,7 @@
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
-- (NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error;
+- (nullable NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error;
 
 /**
 * @brief Unwrap message with context
@@ -66,9 +69,11 @@
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error;
+- (nullable NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 /** @} */
 /** @} */
