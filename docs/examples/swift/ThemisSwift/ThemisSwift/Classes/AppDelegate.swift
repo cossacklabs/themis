@@ -58,8 +58,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var encryptedMessage: Data = Data()
         do {
             // context is optional parameter and may be ignored
-            encryptedMessage = try cellSeal.wrap(message.data(using: .utf8),
-                                                     context: context.data(using: .utf8))
+            encryptedMessage = try cellSeal.wrap(message.data(using: .utf8)!,
+                                                 context: context.data(using: .utf8)!)
             print("decryptedMessagez = \(encryptedMessage)")
             
         } catch let error as NSError {
@@ -70,7 +70,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         do {
             let decryptedMessage: Data = try cellSeal.unwrapData(encryptedMessage,
-                                                       context: context.data(using: .utf8))
+                                                       context: context.data(using: .utf8)!)
             let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
             print("decryptedMessage = \(resultString)")
             
@@ -94,8 +94,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var encryptedMessage: TSCellTokenEncryptedData = TSCellTokenEncryptedData()
         do {
             // context is optional parameter and may be ignored
-            encryptedMessage = try cellToken.wrap(message.data(using: .utf8),
-                                                      context: context.data(using: .utf8))
+            encryptedMessage = try cellToken.wrap(message.data(using: .utf8)!,
+                                                  context: context.data(using: .utf8)!)
             print("encryptedMessage.cipher = \(encryptedMessage.cipherText)")
             print("encryptedMessage.token = \(encryptedMessage.token)")
             
@@ -107,7 +107,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
         do {
             let decryptedMessage: Data = try cellToken.unwrapData(encryptedMessage,
-                                                            context: context.data(using: .utf8))
+                                                                  context: context.data(using: .utf8)!)
             let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
             print("decryptedMessage = \(resultString)")
             
@@ -132,8 +132,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var encryptedMessage: Data = Data()
         do {
             // context is NOT optional parameter here
-            encryptedMessage = try contextImprint.wrap(message.data(using: .utf8),
-                                                           context: context.data(using: .utf8))
+            encryptedMessage = try contextImprint.wrap(message.data(using: .utf8)!,
+                                                       context: context.data(using: .utf8)!)
             print("encryptedMessage = \(encryptedMessage)")
             
         } catch let error as NSError {
@@ -145,7 +145,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         do {
             // context is NOT optional parameter here
             let decryptedMessage: Data = try contextImprint.unwrapData(encryptedMessage,
-                                                            context: context.data(using: .utf8))
+                                                                       context: context.data(using: .utf8)!)
             let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
             print("decryptedMessage = \(resultString)")
             
@@ -233,7 +233,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         let encrypter: TSMessage = TSMessage.init(inEncryptModeWithPrivateKey: clientPrivateKey,
-                                                  peerPublicKey: serverPublicKey)
+                                                  peerPublicKey: serverPublicKey)!
         
         let message: String = "- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java."
         
@@ -261,7 +261,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         let decrypter: TSMessage = TSMessage.init(inEncryptModeWithPrivateKey: serverPrivateKey,
-                                                  peerPublicKey: clientPublicKey)
+                                                  peerPublicKey: clientPublicKey)!
         
         do {
             let decryptedMessage: Data = try decrypter.unwrapData(encryptedMessage)
@@ -296,7 +296,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         let encrypter: TSMessage = TSMessage.init(inSignVerifyModeWithPrivateKey: clientPrivateKey,
-                                                  peerPublicKey: serverPublicKey)
+                                                  peerPublicKey: serverPublicKey)!
         
         let message: String = "I had a problem so I though to use Java. Now I have a ProblemFactory."
         
@@ -324,7 +324,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         let decrypter: TSMessage = TSMessage.init(inSignVerifyModeWithPrivateKey: serverPrivateKey,
-                                                  peerPublicKey: clientPublicKey)
+                                                  peerPublicKey: clientPublicKey)!
         
         do {
             let decryptedMessage: Data = try decrypter.unwrapData(encryptedMessage)
