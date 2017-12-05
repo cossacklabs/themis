@@ -13,6 +13,7 @@ import "C"
 import (
 	"github.com/cossacklabs/themis/gothemis/errors"
 	"github.com/cossacklabs/themis/gothemis/keys"
+	"reflect"
 	"runtime"
 	"unsafe"
 )
@@ -89,8 +90,8 @@ func onPublicKeyForId(ssCtx unsafe.Pointer, idPtr unsafe.Pointer, idLen C.size_t
 	if len(pub.Value) > int(keyLen) {
 		return int(C.GOTHEMIS_BUFFER_TOO_SMALL)
 	}
-
-	key := (*[1 << 30]byte)(keyPtr)[:keyLen:keyLen]
+	sliceHeader := reflect.SliceHeader{uintptr(keyPtr), int(keyLen), int(keyLen)}
+	key := *(*[]byte)(unsafe.Pointer(&sliceHeader))
 	copy(key, pub.Value)
 	return int(C.GOTHEMIS_SUCCESS)
 }
@@ -167,7 +168,7 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 		return nil, false, nil
 	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res):
 		return nil, false, errors.NewCallbackError("Failed to get unwraped size (get_public_key_by_id callback error)")
-	case (C.GOTHEMIS_BUFFER_TOO_SMALL != res): 
+	case (C.GOTHEMIS_BUFFER_TOO_SMALL != res):
 		return nil, false, errors.New("Failed to get unwrapped size")
 	}
 
@@ -182,11 +183,11 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	switch {
 	case (C.GOTHEMIS_SUCCESS == res) && (0 == outLen):
 		return nil, false, nil
-	case (C.GOTHEMIS_SSESSION_SEND_OUTPUT_TO_PEER == res) && (0 < outLen): 
+	case (C.GOTHEMIS_SSESSION_SEND_OUTPUT_TO_PEER == res) && (0 < outLen):
 		return out, true, nil
 	case (C.GOTHEMIS_SUCCESS == res) && (0 < outLen):
 		return out, false, nil
-	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res): 
+	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res):
 		return nil, false, errors.NewCallbackError("Failed to unwrap data (get_public_key_by_id callback error)")
 	}
 
