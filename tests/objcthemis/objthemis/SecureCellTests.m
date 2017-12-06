@@ -34,7 +34,7 @@
 #pragma MARK - Seal Mode -
 
 - (void)testSecureCellSealModeInit {
-    TSCellSeal *cellSeal = [[TSCellSeal alloc] initWithKey:nil];
+    TSCellSeal *cellSeal = [[TSCellSeal alloc] initWithKey:[NSData new]];
     XCTAssertNil(cellSeal, "secure cell encrypter (seal mode) should not be created without key");
 
     cellSeal = [[TSCellSeal alloc] initWithKey:self.masterKeyData];
@@ -54,6 +54,13 @@
     XCTAssertNotNil(themisError, @"encryption without data-to-encrypt should populate error");
     XCTAssertNil(encryptedMessage, @"encryption without data-to-encrypt should return nil data");
 
+    encryptedMessage = [cellSeal wrapData:[NSData new]
+                                  context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                    error:&themisError];
+    XCTAssertNotNil(themisError, @"encryption with empty data-to-encrypt should populate error");
+    XCTAssertNil(encryptedMessage, @"encryption with empty data-to-encrypt should return nil data");
+
+    
     themisError = nil;
     encryptedMessage = [cellSeal wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
                                   context:[context dataUsingEncoding:NSUTF8StringEncoding]
@@ -149,7 +156,7 @@
 #pragma MARK - Token Protect -
 
 - (void)testSecureCellTokenProtectModeInit {
-    TSCellToken *cellToken = [[TSCellToken alloc] initWithKey:nil];
+    TSCellToken *cellToken = [[TSCellToken alloc] initWithKey:[NSData new]];
     XCTAssertNil(cellToken, "secure cell encrypter (token protect mode) should not be created without key");
 
     cellToken = [[TSCellToken alloc] initWithKey:self.masterKeyData];
@@ -314,12 +321,19 @@
     NSError *themisError;
 
     NSData *encryptedMessageNoContext = [contextImprint
-            wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-             context:nil
-               error:&themisError];
+                                         wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                         context:nil
+                                         error:&themisError];
     XCTAssertNotNil(themisError, @"encryption without data-to-encrypt, without context should populate error");
     XCTAssertNil(encryptedMessageNoContext, @"encryption without data-to-encrypt, without context should return nil");
 
+    encryptedMessageNoContext = [contextImprint
+                                     wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                     context:[NSData new]
+                                     error:&themisError];
+    XCTAssertNotNil(themisError, @"encryption without data-to-encrypt, with empty context should populate error");
+    XCTAssertNil(encryptedMessageNoContext, @"encryption without data-to-encrypt, with empty context should return nil");
+    
     themisError = nil;
     encryptedMessageNoContext = [contextImprint wrapData:nil
                                                  context:nil
@@ -369,6 +383,14 @@
                  error:&themisError];
     XCTAssertNil(themisError, @"decrypt data with wrong context should ignore context");
     XCTAssertNotNil(decryptedMessageWrongContext, @"decrypt data with wrong context should ignore context");
+    
+    themisError = nil;
+    NSData *decryptedMessageEmptyContext = [contextImprint
+                                            unwrapData:encryptedMessage
+                                            context:[NSData new]
+                                            error:&themisError];
+    XCTAssertNotNil(themisError, @"decrypt data with empty context should populate error");
+    XCTAssertNil(decryptedMessageEmptyContext, @"decrypt data with empty context should return nil");
 }
 
 @end
