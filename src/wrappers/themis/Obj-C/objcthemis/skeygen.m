@@ -32,12 +32,12 @@
 
 @implementation TSKeyGen
 
-- (instancetype)initWithAlgorithm:(TSKeyGenAsymmetricAlgorithm)algorithm {
+- (nullable instancetype)initWithAlgorithm:(TSKeyGenAsymmetricAlgorithm)algorithm {
     self = [super init];
     if (self) {
         self.algorithm = algorithm;
-        if ([self generateKeys]!=TSErrorTypeSuccess) {
-            return NULL;
+        if ([self generateKeys] != TSErrorTypeSuccess) {
+            return nil;
         }
     }
     return self;

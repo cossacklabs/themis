@@ -53,6 +53,6 @@
  *  @return version string
  *
  */
-const char* soter_version();
+const char* soter_version(void);
 /**@}*/
 #endif /* SOTER_H */

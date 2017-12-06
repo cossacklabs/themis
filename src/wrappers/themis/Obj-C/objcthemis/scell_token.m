@@ -25,23 +25,23 @@
 
 @implementation TSCellToken
 
-- (id)initWithKey:(NSData *)key {
+- (nullable instancetype)initWithKey:(NSData *)key {
     self = [super initWithKey:key];
     return self;
 }
 
 
-- (TSCellTokenEncryptedData *)wrapData:(NSData *)message error:(NSError **)error {
+- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message error:(NSError **)error {
     return [self wrapData:message context:nil error:error];
 }
 
 
-- (NSData *)unwrapData:(TSCellTokenEncryptedData *)message error:(NSError **)error {
+- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message error:(NSError **)error {
     return [self unwrapData:message context:nil error:error];
 }
 
 
-- (TSCellTokenEncryptedData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
+- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError **)error {
     size_t wrappedMessageLength = 0;
     size_t tokenLength = 0;
 
@@ -73,7 +73,7 @@
 }
 
 
-- (NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(NSData *)context error:(NSError **)error {
+- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(nullable NSData *)context error:(NSError **)error {
     size_t unwrappedMessageLength = 0;
     const void * contextData = [context bytes];
     size_t contextLength = [context length];

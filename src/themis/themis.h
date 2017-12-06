@@ -38,7 +38,7 @@
 #include <themis/secure_session.h>
 #include <themis/secure_comparator.h>
 
-const char* themis_version();
+const char* themis_version(void);
 
 /** @} */
 #endif /* THEMIS_H */

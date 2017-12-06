@@ -29,6 +29,7 @@
 * @{
 */
 
+NS_ASSUME_NONNULL_BEGIN
 
 /** @brief Secure message modes */
 typedef NS_ENUM(NSInteger, TSMessageMode) {
@@ -88,22 +89,22 @@ typedef NS_ENUM(NSInteger, TSMessageMode) {
 * @param [in] privateKey Private key
 * @param [in] peer_public_key Peer public key
 */
-- (instancetype)initInEncryptModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey;
+- (nullable instancetype)initInEncryptModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey;
 
 /**
 * @brief Initialize Secure message object in sign/verify mode
 * @param [in] privateKey Private key
 * @param [in] peer_public_key Peer public key
 */
-- (instancetype)initInSignVerifyModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey;
+- (nullable instancetype)initInSignVerifyModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey;
 
 /**
 * @brief Wrap message
 * @param [in] message message to wrap
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
-*/
-- (NSData *)wrapData:(NSData *)message error:(NSError **)error;
+ */
+- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError **)error;
 
 /**
 * @brief Unwrap message
@@ -111,10 +112,11 @@ typedef NS_ENUM(NSInteger, TSMessageMode) {
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (NSData *)unwrapData:(NSData *)message error:(NSError **)error;
-
+- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError **)error;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 /** @} */
 /** @} */

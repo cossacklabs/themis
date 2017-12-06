@@ -29,6 +29,8 @@
 * @{
 */
 
+NS_ASSUME_NONNULL_BEGIN
+
 /** @brief Secure session interface
 *
 * Secure session is a lightweight mechanism to secure any network communications (both private and public networks
@@ -53,7 +55,9 @@
 * @param [in] privateKey User private key
 * @param [in] callbacks Reference to TSSessionTransportInterface object
 */
-- (instancetype)initWithUserId:(NSData *)id privateKey:(NSData *)privateKey callbacks:(TSSessionTransportInterface *)callbacks;
+- (nullable instancetype)initWithUserId:(NSData *)userId
+                                privateKey:(NSData *)privateKey
+                              callbacks:(TSSessionTransportInterface *)callbacks;
 
 
 /**
@@ -61,7 +65,7 @@
 * @return Connection initialization message on success or nil on failure
 */
 // TODO: rename method to reflect it's goal
-- (NSData *)connectRequest:(NSError **)error;
+- (nullable NSData *)connectRequest:(NSError **)error;
 
 
 /**
@@ -77,7 +81,7 @@
 * @param [in] error pointer to Error on failure
 * @return Wrapped message in NSData object on success or nil on failure.
 */
-- (NSData *)wrapData:(NSData *)message error:(NSError **)error;
+- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError **)error;
 
 
 /** @brief Unwrap message
@@ -85,15 +89,16 @@
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message in NSData object on success or nil on failure.
 */
-- (NSData *)unwrapData:(NSData *)message error:(NSError **)error;
+- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError **)error;
 
 
 /** @brief Wrap message and sent it to peer by \b send method from callbacks object.
 * @param [in] message message to wrap
 * @param [in] error pointer to Error on failure
-* @see TSSessionTransportInterface. */
+* @see TSSessionTransportInterface.
+*/
 // TODO: rename method to reflect it's goal
- - (void)wrapAndSend:(NSData *)message error:(NSError **)error;
+- (void)wrapAndSend:(nullable NSData *)message error:(NSError **)error;
 
 
 /** @brief Unwrap received from peer by \b receive method from callbacks object message.
@@ -103,7 +108,7 @@
 * @return Plain message in NSData object on success or nil on failure.
 */
 // TODO: rename method to reflect it's goal
-- (NSData *)unwrapAndReceive:(NSUInteger)length error:(NSError **)error;
+- (nullable NSData *)unwrapAndReceive:(NSUInteger)length error:(NSError **)error;
 
 
 /** @brief indicate session established state.
@@ -112,5 +117,8 @@
 - (BOOL)isSessionEstablished;
 
 @end
+
+NS_ASSUME_NONNULL_END
+
 /** @} */
 /** @} */
