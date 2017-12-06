@@ -63,6 +63,7 @@ typedef int soter_status_t;
 #define SOTER_DEBUG_OUT(message)
 #endif
 
+#define UNUSED(x) (void)(x)
 
 /**@}*/
 

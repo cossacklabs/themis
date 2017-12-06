@@ -94,8 +94,8 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* si
   if (!pkey && EVP_PKEY_type(pkey->type)!=EVP_PKEY_EC){
     return SOTER_INVALID_PARAMETER;
   } /* TODO: need review */
-  if(!signature || (*signature_length)<EVP_PKEY_size(pkey)){
-    (*signature_length)=EVP_PKEY_size(pkey);
+  if(!signature || (*signature_length)<(size_t)EVP_PKEY_size(pkey)){
+    (*signature_length)=(size_t)EVP_PKEY_size(pkey);
     return SOTER_BUFFER_TOO_SMALL;
   }
 

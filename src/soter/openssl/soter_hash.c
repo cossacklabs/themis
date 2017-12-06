@@ -41,13 +41,16 @@ soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t alg
 	{
 		return SOTER_INVALID_PARAMETER;
 	}
-	hash_ctx->evp_md_ctx = EVP_MD_CTX_create();
-	if (EVP_DigestInit(hash_ctx->evp_md_ctx, md))
+
+	EVP_MD_CTX_init(hash_ctx->evp_md_ctx);
+
+	if (EVP_DigestInit_ex(hash_ctx->evp_md_ctx, md, NULL))
 	{
 		return SOTER_SUCCESS;
 	}
 	else
 	{
+        soter_hash_cleanup(hash_ctx);
 		return SOTER_FAIL;
 	}
 }
@@ -87,7 +90,7 @@ soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value,
 		return SOTER_BUFFER_TOO_SMALL;
 	}
 
-	if (EVP_DigestFinal(hash_ctx->evp_md_ctx, hash_value, (unsigned int *)&md_length))
+	if (EVP_DigestFinal_ex(hash_ctx->evp_md_ctx, hash_value, (unsigned int *)&md_length))
 	{
 		*hash_length = md_length;
 		return SOTER_SUCCESS;
@@ -106,7 +109,11 @@ soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo)
 	{
 		return NULL;
 	}
-
+    ctx->evp_md_ctx = EVP_MD_CTX_create();
+    if (!ctx->evp_md_ctx){
+        free(ctx);
+        return NULL;
+    }
 	status = soter_hash_init(ctx, algo);
 	if (SOTER_SUCCESS == status)
 	{
@@ -114,7 +121,7 @@ soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo)
 	}
 	else
 	{
-		free(ctx);
+		soter_hash_destroy(ctx);
 		return NULL;
 	}
 }
@@ -138,7 +145,8 @@ soter_status_t soter_hash_destroy(soter_hash_ctx_t *hash_ctx)
 	{
 		return SOTER_INVALID_PARAMETER;
 	}
-
+    EVP_MD_CTX_destroy(hash_ctx->evp_md_ctx);
+    hash_ctx->evp_md_ctx = NULL;
 	free(hash_ctx);
 	return SOTER_SUCCESS;
 }

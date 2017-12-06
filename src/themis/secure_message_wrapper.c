@@ -36,7 +36,7 @@
 
 soter_sign_alg_t get_alg_id(const uint8_t* key, size_t key_length)
 {
-  if (key_length < sizeof(soter_container_hdr_t) && key_length < ((const soter_container_hdr_t*)key)->size){
+  if (key_length < sizeof(soter_container_hdr_t) && key_length < (size_t)((const soter_container_hdr_t*)key)->size){
     return (soter_sign_alg_t)(-1);
   }
   if (memcmp(((const soter_container_hdr_t*)key)->tag,EC_PRIV_KEY_PREF,3)==0 || memcmp(((const soter_container_hdr_t*)key)->tag,EC_PUB_KEY_PREF,3)==0){

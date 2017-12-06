@@ -20,6 +20,8 @@
 
 int main(int argc, char* argv[])
 {
+  UNUSED(argc);
+  UNUSED(argv);
   printf("%s\n", themis_version());
   testsuite_start_testing();
 

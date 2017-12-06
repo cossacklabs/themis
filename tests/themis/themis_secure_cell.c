@@ -292,7 +292,6 @@ static void secure_cell_api_test_context_imprint(void)
 	size_t key_length = rand_int(MAX_KEY_SIZE);
 	size_t context_length = rand_int(MAX_CONTEXT_SIZE);
 	size_t message_length = rand_int(MAX_MESSAGE_SIZE);
-	int i=0;
 
 	uint8_t encrypted[MAX_MESSAGE_SIZE];
 	size_t encrypted_length = message_length;

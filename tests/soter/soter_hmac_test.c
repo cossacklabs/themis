@@ -155,14 +155,11 @@ static void test_known_values(void)
 static void test_api(void)
 {
 	soter_status_t res;
-	soter_hmac_ctx_t ctx;
 	uint8_t data[MAX_TEST_DATA];
 	uint8_t key[MAX_TEST_KEY];
 	uint8_t hmac[64], result[64];
 	size_t data_len, key_len, hmac_len = sizeof(hmac);
 	test_utils_status_t util_res;
-
-	memset(&ctx, 0, sizeof(soter_hmac_ctx_t));
 
 	data_len = strlen(vectors[4].data) / 2;
 	if (data_len > MAX_TEST_DATA)
@@ -192,15 +189,21 @@ static void test_api(void)
 		return;
 	}
 
+	soter_hmac_ctx_t* ctx = soter_hmac_create(SOTER_HASH_SHA256, key, key_len);
+	if(!ctx){
+		testsuite_fail_if(!ctx, "soter_hmac_create: can't create");
+		return;
+	}
+
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(NULL, SOTER_HASH_SHA256, key, key_len), "soter_hmac_init: invalid context");
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(&ctx, (soter_hash_algo_t)0xffffffff, key, key_len), "soter_hmac_init: invalid algorithm type");
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(&ctx, SOTER_HASH_SHA256, NULL, key_len), "soter_hmac_init: invalid key");
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(&ctx, SOTER_HASH_SHA256, key, 0), "soter_hmac_init: invalid key length");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(ctx, (soter_hash_algo_t)0xffffffff, key, key_len), "soter_hmac_init: invalid algorithm type");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(ctx, SOTER_HASH_SHA256, NULL, key_len), "soter_hmac_init: invalid key");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_init(ctx, SOTER_HASH_SHA256, key, 0), "soter_hmac_init: invalid key length");
 	testsuite_fail_unless(NULL == soter_hmac_create((soter_hash_algo_t)0xffffffff, key, key_len), "soter_hmac_create: invalid algorithm type");
 	testsuite_fail_unless(NULL == soter_hmac_create(SOTER_HASH_SHA256, NULL, key_len), "soter_hmac_create: invalid key");
 	testsuite_fail_unless(NULL == soter_hmac_create(SOTER_HASH_SHA256, key, 0), "soter_hmac_create: invalid key length");
 
-	res = soter_hmac_init(&ctx, SOTER_HASH_SHA256, key, key_len);
+	res = soter_hmac_init(ctx, SOTER_HASH_SHA256, key, key_len);
 	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(SOTER_SUCCESS != res, "soter_hmac_init failed");
@@ -208,9 +211,9 @@ static void test_api(void)
 	}
 
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_update(NULL, data, data_len), "soter_hmac_update: invalid context");
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_update(&ctx, NULL, data_len), "soter_hmac_update: invalid data");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_update(ctx, NULL, data_len), "soter_hmac_update: invalid data");
 
-	res = soter_hmac_update(&ctx, data, data_len);
+	res = soter_hmac_update(ctx, data, data_len);
 	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(SOTER_SUCCESS != res, "soter_hmac_update failed");
@@ -218,13 +221,13 @@ static void test_api(void)
 	}
 
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_final(NULL, hmac, &hmac_len), "soter_hmac_final: invalid context");
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_final(&ctx, hmac, NULL), "soter_hmac_final: invalid size pointer");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_final(ctx, hmac, NULL), "soter_hmac_final: invalid size pointer");
 
-	res = soter_hmac_final(&ctx, NULL, &hmac_len);
+	res = soter_hmac_final(ctx, NULL, &hmac_len);
 	testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (32 == hmac_len), "soter_hmac_final: get output size (NULL out buffer)");
 
 	hmac_len--;
-	res = soter_hmac_final(&ctx, hmac, &hmac_len);
+	res = soter_hmac_final(ctx, hmac, &hmac_len);
 	testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (32 == hmac_len), "soter_hmac_final: get output size (small out buffer)");
 
 	util_res = string_to_bytes(vectors[4].hmac_sha256, result, sizeof(result));
@@ -234,11 +237,12 @@ static void test_api(void)
 		return;
 	}
 
-	res = soter_hmac_final(&ctx, hmac, &hmac_len);
+	res = soter_hmac_final(ctx, hmac, &hmac_len);
 	testsuite_fail_unless((SOTER_SUCCESS == res) && (32 == hmac_len) && !memcmp(hmac, result, hmac_len), "soter_hmac_final: normal value");
 
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_cleanup(NULL), "soter_hmac_cleanup: invalid context");
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_destroy(NULL), "soter_hash_destroy: invalid context");
+	testsuite_fail_unless(SOTER_SUCCESS == soter_hmac_destroy(ctx), "soter_hmac_destroy: can't destroy");
 }
 
 void run_soter_hmac_tests(void)

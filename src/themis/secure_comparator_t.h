@@ -57,7 +57,7 @@ struct secure_comparator_type
 	ge_p3 Qa_Qb;
 	ge_p3 g3p;
 
-	soter_hash_ctx_t hash_ctx;
+	soter_hash_ctx_t* hash_ctx;
 };
 
 themis_status_t secure_comparator_init(secure_comparator_t *comp_ctx);

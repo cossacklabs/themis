@@ -46,23 +46,31 @@ soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, soter_hash_algo_t alg
 		return SOTER_INVALID_PARAMETER;
 	}
 
+	res = soter_hash_init(hmac_ctx->hash_ctx, algo);
+	if (SOTER_SUCCESS != res){
+		return SOTER_FAIL;
+	}
+
 	if (key_length > block_size)
 	{
-		res = soter_hash_init(&(hmac_ctx->hash_ctx), algo);
+		res = soter_hash_init(hmac_ctx->hash_ctx, algo);
 		if (SOTER_SUCCESS != res)
 		{
+            soter_hash_destroy(hmac_ctx->hash_ctx);
 			return res;
 		}
 
-		res = soter_hash_update(&(hmac_ctx->hash_ctx), key, key_length);
+		res = soter_hash_update(hmac_ctx->hash_ctx, key, key_length);
 		if (SOTER_SUCCESS != res)
 		{
+            soter_hash_destroy(hmac_ctx->hash_ctx);
 			return res;
 		}
 
-		res = soter_hash_final(&(hmac_ctx->hash_ctx), hmac_ctx->o_key_pad, &o_key_pad_length);
+		res = soter_hash_final(hmac_ctx->hash_ctx, hmac_ctx->o_key_pad, &o_key_pad_length);
 		if (SOTER_SUCCESS != res)
 		{
+            soter_hash_destroy(hmac_ctx->hash_ctx);
 			return res;
 		}
 	}
@@ -82,16 +90,21 @@ soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, soter_hash_algo_t alg
 		i_key_pad[i] = 0x36 ^ hmac_ctx->o_key_pad[i];
 	}
 
-	res = soter_hash_init(&(hmac_ctx->hash_ctx), algo);
-	if (SOTER_SUCCESS != res)
-	{
-		soter_hmac_cleanup(hmac_ctx);
+	res = soter_hash_destroy(hmac_ctx->hash_ctx);
+	if (SOTER_SUCCESS != res){
 		return res;
+	};
+
+    hmac_ctx->hash_ctx = soter_hash_create(algo);
+	if (!hmac_ctx->hash_ctx)
+	{
+		return SOTER_FAIL;
 	}
 
-	res = soter_hash_update(&(hmac_ctx->hash_ctx), i_key_pad, block_size);
+	res = soter_hash_update(hmac_ctx->hash_ctx, i_key_pad, block_size);
 	if (SOTER_SUCCESS != res)
 	{
+		soter_hash_destroy(hmac_ctx->hash_ctx);
 		soter_hmac_cleanup(hmac_ctx);
 		return res;
 	}
@@ -116,7 +129,7 @@ soter_status_t soter_hmac_cleanup(soter_hmac_ctx_t *hmac_ctx)
 	}
 
 	memset(hmac_ctx->o_key_pad, 0, sizeof(hmac_ctx->o_key_pad));
-	soter_hash_cleanup(&(hmac_ctx->hash_ctx));
+	soter_hash_cleanup(hmac_ctx->hash_ctx);
 	return SOTER_SUCCESS;
 }
 
@@ -127,7 +140,7 @@ soter_status_t soter_hmac_update(soter_hmac_ctx_t *hmac_ctx, const void *data, s
 		return SOTER_INVALID_PARAMETER;
 	}
 
-	return soter_hash_update(&(hmac_ctx->hash_ctx), data, length);
+	return soter_hash_update(hmac_ctx->hash_ctx, data, length);
 }
 
 soter_status_t soter_hmac_final(soter_hmac_ctx_t *hmac_ctx, uint8_t* hmac_value, size_t* hmac_length)
@@ -141,7 +154,7 @@ soter_status_t soter_hmac_final(soter_hmac_ctx_t *hmac_ctx, uint8_t* hmac_value,
 		return SOTER_INVALID_PARAMETER;
 	}
 
-	res = soter_hash_final(&(hmac_ctx->hash_ctx), NULL, &output_length);
+	res = soter_hash_final(hmac_ctx->hash_ctx, NULL, &output_length);
 	if (SOTER_BUFFER_TOO_SMALL != res)
 	{
 		return res;
@@ -155,33 +168,35 @@ soter_status_t soter_hmac_final(soter_hmac_ctx_t *hmac_ctx, uint8_t* hmac_value,
 
 	output_length = sizeof(i_hash);
 
-	res = soter_hash_final(&(hmac_ctx->hash_ctx), i_hash, &output_length);
+	res = soter_hash_final(hmac_ctx->hash_ctx, i_hash, &output_length);
 	if (SOTER_SUCCESS != res)
 	{
 		return res;
 	}
 
-	res = soter_hash_init(&(hmac_ctx->hash_ctx), hmac_ctx->algo);
+	res = soter_hash_init(hmac_ctx->hash_ctx, hmac_ctx->algo);
 	if (SOTER_SUCCESS != res)
 	{
 		return res;
 	}
 
-	res = soter_hash_update(&(hmac_ctx->hash_ctx), hmac_ctx->o_key_pad, hmac_ctx->block_size);
+	res = soter_hash_update(hmac_ctx->hash_ctx, hmac_ctx->o_key_pad, hmac_ctx->block_size);
 	if (SOTER_SUCCESS != res)
 	{
+        soter_hash_cleanup(hmac_ctx->hash_ctx);
 		return res;
 	}
 
 	memset(hmac_ctx->o_key_pad, 0, sizeof(hmac_ctx->o_key_pad));
 
-	res = soter_hash_update(&(hmac_ctx->hash_ctx), i_hash, output_length);
+	res = soter_hash_update(hmac_ctx->hash_ctx, i_hash, output_length);
 	if (SOTER_SUCCESS != res)
 	{
+        soter_hash_cleanup(hmac_ctx->hash_ctx);
 		return res;
 	}
 
-	return soter_hash_final(&(hmac_ctx->hash_ctx), hmac_value, hmac_length);
+	return soter_hash_final(hmac_ctx->hash_ctx, hmac_value, hmac_length);
 }
 
 soter_hmac_ctx_t* soter_hmac_create(soter_hash_algo_t algo, const uint8_t* key, size_t key_length)
@@ -192,7 +207,11 @@ soter_hmac_ctx_t* soter_hmac_create(soter_hash_algo_t algo, const uint8_t* key, 
 	{
 		return NULL;
 	}
-
+	ctx->hash_ctx = soter_hash_create(algo);
+	if(!ctx->hash_ctx){
+		free(ctx);
+		return NULL;
+	}
 	status = soter_hmac_init(ctx, algo, key, key_length);
 	if (SOTER_SUCCESS == status)
 	{
@@ -200,19 +219,19 @@ soter_hmac_ctx_t* soter_hmac_create(soter_hash_algo_t algo, const uint8_t* key, 
 	}
 	else
 	{
-		free(ctx);
+		soter_hmac_destroy(ctx);
 		return NULL;
 	}
 }
 
 soter_status_t soter_hmac_destroy(soter_hmac_ctx_t *hmac_ctx)
 {
-	soter_status_t res = soter_hmac_cleanup(hmac_ctx);
-
-	if (SOTER_SUCCESS == res)
-	{
-		free(hmac_ctx);
-	}
-
+    if(!hmac_ctx){
+        return SOTER_INVALID_PARAMETER;
+    }
+	soter_hmac_cleanup(hmac_ctx);
+	soter_status_t res = soter_hash_destroy(hmac_ctx->hash_ctx);
+    hmac_ctx->hash_ctx = NULL;
+    free(hmac_ctx);
 	return res;
 }

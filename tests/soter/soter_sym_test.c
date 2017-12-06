@@ -138,7 +138,7 @@ static void test_known_values(void)
   
   soter_status_t res;
   
-  for (i = 0; i < (sizeof(vectors) / sizeof(test_vector_t)); i++)
+  for (i = 0; i < (int)(sizeof(vectors) / sizeof(test_vector_t)); i++)
     {
       res = string_to_bytes(vectors[i].key, key, sizeof(key));
       if (SOTER_SUCCESS != res)
@@ -264,17 +264,14 @@ static void test_known_values_gcm(void)
   uint8_t computed2[MAX_DATA_LENGTH];
   size_t computed_length2;
 
-  uint8_t pad[MAX_IV_LENGTH];
-  size_t pad_length = sizeof(pad);
-
   uint8_t aad[MAX_AAD_LENGTH];
-  size_t aad_length=sizeof(aad);
+
 
   uint8_t auth_tag[MAX_AUTH_TAG_LENGTH];
   size_t auth_tag_length=sizeof(auth_tag);
   soter_status_t res;
   
-  for (i = 0; i < (sizeof(vectors_aead) / sizeof(test_vector_aead_t)); i++)
+  for (i = 0; i < (int)(sizeof(vectors_aead) / sizeof(test_vector_aead_t)); i++)
     {
       res = string_to_bytes(vectors_aead[i].key, key, sizeof(key));
       if (SOTER_SUCCESS != res)

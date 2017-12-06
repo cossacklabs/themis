@@ -107,7 +107,7 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* si
     return SOTER_INVALID_PARAMETER;
   } /* TODO: need review */
   soter_status_t res = SOTER_SUCCESS;
-  if(!signature || (*signature_length)<EVP_PKEY_size(pkey)){
+  if(!signature || (*signature_length)<(size_t)EVP_PKEY_size(pkey)){
     (*signature_length)=(size_t)EVP_PKEY_size(pkey);
     res = SOTER_BUFFER_TOO_SMALL;
   } else {
@@ -124,7 +124,9 @@ soter_status_t soter_sign_cleanup_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx)
   }
   if(ctx->pkey_ctx){
     EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
-    if(pkey)EVP_PKEY_free(pkey);
+    if(pkey){
+        EVP_PKEY_free(pkey);
+    }
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
     ctx->pkey_ctx=NULL;
   }

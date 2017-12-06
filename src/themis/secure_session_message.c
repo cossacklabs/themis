@@ -57,7 +57,7 @@ themis_status_t secure_session_wrap(secure_session_t *session_ctx, const void *m
 	}
 
 	curr_time = time(NULL);
-	if (-1 == curr_time)
+	if (-1 == (time_t)curr_time)
 	{
 		return THEMIS_FAIL;
 	}
@@ -190,7 +190,7 @@ themis_status_t secure_session_unwrap(secure_session_t *session_ctx, const void 
 		goto err;
 	}
 
-	if ((ts < (curr_time - TS_MAX_DIFF)) || (ts > (curr_time + TS_MAX_DIFF)))
+	if ((ts < (uint64_t)(curr_time - TS_MAX_DIFF)) || (ts > (uint64_t)(curr_time + TS_MAX_DIFF)))
 	{
 		res = THEMIS_INVALID_PARAMETER;
 		goto err;

@@ -92,7 +92,7 @@ soter_status_t soter_verify_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const voi
   if (!pkey){
     return SOTER_INVALID_PARAMETER;
   }
-  if(signature_length!=EVP_PKEY_size(pkey)){
+  if(signature_length!=(size_t)EVP_PKEY_size(pkey)){
     return SOTER_FAIL;
   }
   if(!EVP_DigestVerifyFinal(ctx->md_ctx, (unsigned char*)signature, signature_length)){

@@ -33,8 +33,6 @@ static themis_status_t ed_sign(uint8_t pos, const uint8_t *scalar, uint8_t *sign
 	uint8_t r[ED25519_GE_LENGTH];
 	ge_p3 R;
 	uint8_t k[64];
-
-	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
 	themis_status_t res;
 
@@ -42,28 +40,28 @@ static themis_status_t ed_sign(uint8_t pos, const uint8_t *scalar, uint8_t *sign
 	ge_scalarmult_base(&R, r);
 	ge_p3_tobytes(k, &R);
 
-	res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
+	soter_hash_ctx_t* hash_ctx = soter_hash_create(SOTER_HASH_SHA512);
+	if (!hash_ctx)
+	{
+		return THEMIS_FAIL;
+	}
+
+	res = soter_hash_update(hash_ctx, k, ED25519_GE_LENGTH);
 	if (THEMIS_SUCCESS != res)
 	{
+		soter_hash_destroy(hash_ctx);
 		return res;
 	}
 
-	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	res = soter_hash_update(hash_ctx, &pos, sizeof(pos));
 	if (THEMIS_SUCCESS != res)
 	{
-		soter_hash_final(&hash_ctx, k, &hash_length);
+		soter_hash_destroy(hash_ctx);
 		return res;
 	}
 
-	res = soter_hash_update(&hash_ctx, &pos, sizeof(pos));
-	if (THEMIS_SUCCESS != res)
-	{
-		soter_hash_final(&hash_ctx, k, &hash_length);
-		return res;
-	}
-
-	res = soter_hash_final(&hash_ctx, k, &hash_length);
-
+	res = soter_hash_final(hash_ctx, k, &hash_length);
+	soter_hash_destroy(hash_ctx);
 	if (THEMIS_SUCCESS == res)
 	{
 		sc_reduce(k);
@@ -83,7 +81,6 @@ static themis_status_t ed_dbl_base_sign(uint8_t pos, const uint8_t *scalar1, con
 	ge_p2 R2;
 	uint8_t k[64];
 
-	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
 
 	themis_status_t res;
@@ -93,36 +90,37 @@ static themis_status_t ed_dbl_base_sign(uint8_t pos, const uint8_t *scalar1, con
 	ge_scalarmult_blinded(&R1, r1, base2);
 	ge_double_scalarmult_vartime(&R2, r2, base1, r1);
 
-	res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	if (THEMIS_SUCCESS != res)
+	soter_hash_ctx_t* hash_ctx = soter_hash_create(SOTER_HASH_SHA512);
+	if (!hash_ctx)
 	{
-		return res;
+		return THEMIS_FAIL;
 	}
 
 	ge_p3_tobytes(k, &R1);
-	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	res = soter_hash_update(hash_ctx, k, ED25519_GE_LENGTH);
 	if (THEMIS_SUCCESS != res)
 	{
-		soter_hash_final(&hash_ctx, k, &hash_length);
+		soter_hash_destroy(hash_ctx);
 		return res;
 	}
 
 	ge_tobytes(k, &R2);
-	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	res = soter_hash_update(hash_ctx, k, ED25519_GE_LENGTH);
 	if (THEMIS_SUCCESS != res)
 	{
-		soter_hash_final(&hash_ctx, k, &hash_length);
+		soter_hash_destroy(hash_ctx);
 		return res;
 	}
 
-	res = soter_hash_update(&hash_ctx, &pos, sizeof(pos));
+	res = soter_hash_update(hash_ctx, &pos, sizeof(pos));
 	if (THEMIS_SUCCESS != res)
 	{
-		soter_hash_final(&hash_ctx, k, &hash_length);
+		soter_hash_destroy(hash_ctx);
 		return res;
 	}
 
-	res = soter_hash_final(&hash_ctx, k, &hash_length);
+	res = soter_hash_final(hash_ctx, k, &hash_length);
+	soter_hash_destroy(hash_ctx);
 
 	if (THEMIS_SUCCESS == res)
 	{
@@ -141,7 +139,6 @@ static themis_status_t ed_point_sign(uint8_t pos, const uint8_t *scalar, const g
 	ge_p3 R;
 	uint8_t k[64];
 
-	soter_hash_ctx_t hash_ctx;
 	size_t hash_length = 64;
 
 	themis_status_t res;
@@ -150,37 +147,38 @@ static themis_status_t ed_point_sign(uint8_t pos, const uint8_t *scalar, const g
 	ge_scalarmult_base(&R, r);
 	ge_p3_tobytes(k, &R);
 
-	res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-	if (THEMIS_SUCCESS != res)
+	soter_hash_ctx_t* hash_ctx = soter_hash_create(SOTER_HASH_SHA512);
+	if (!hash_ctx)
 	{
-		return res;
+		return THEMIS_FAIL;
 	}
 
-	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	res = soter_hash_update(hash_ctx, k, ED25519_GE_LENGTH);
 	if (THEMIS_SUCCESS != res)
 	{
-		soter_hash_final(&hash_ctx, k, &hash_length);
+		soter_hash_destroy(hash_ctx);
 		return res;
 	}
 
 	ge_scalarmult_blinded(&R, r, point);
 	ge_p3_tobytes(k, &R);
 
-	res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
+	res = soter_hash_update(hash_ctx, k, ED25519_GE_LENGTH);
 	if (THEMIS_SUCCESS != res)
 	{
-		soter_hash_final(&hash_ctx, k, &hash_length);
+		soter_hash_destroy(hash_ctx);
 		return res;
 	}
 
-	res = soter_hash_update(&hash_ctx, &pos, sizeof(pos));
+	res = soter_hash_update(hash_ctx, &pos, sizeof(pos));
 	if (THEMIS_SUCCESS != res)
 	{
-		soter_hash_final(&hash_ctx, k, &hash_length);
+		soter_hash_destroy(hash_ctx);
 		return res;
 	}
 
-	res = soter_hash_final(&hash_ctx, k, &hash_length);
+	res = soter_hash_final(hash_ctx, k, &hash_length);
+	soter_hash_destroy(hash_ctx);
 	if (THEMIS_SUCCESS != res)
 	{
 		return res;
@@ -268,27 +266,25 @@ void secure_comparator_security_test(void)
 
 	size_t output_length = sizeof(shared_mem);
 
-	secure_comparator_t alice, bob;
+	secure_comparator_t* alice = secure_comparator_create();
+    if(!alice){
+        testsuite_fail_if(true, "secure_comparator_create failed");
+        return;
+    }
+    secure_comparator_t* bob = secure_comparator_create();
+    if(!bob){
+        testsuite_fail_if(true, "secure_comparator_create failed");
+        return;
+    }
 
-	if (THEMIS_SUCCESS != secure_comparator_init(&alice))
-	{
-		testsuite_fail_if(true, "secure_comparator_init failed");
-		return;
-	}
 
-	if (THEMIS_SUCCESS != secure_comparator_init(&bob))
-	{
-		testsuite_fail_if(true, "secure_comparator_init failed");
-		return;
-	}
-
-	if (THEMIS_SUCCESS != secure_comparator_append_secret(&alice, alice_secret, sizeof(alice_secret)))
+	if (THEMIS_SUCCESS != secure_comparator_append_secret(alice, alice_secret, sizeof(alice_secret)))
 	{
 		testsuite_fail_if(true, "secure_comparator_append_secret failed");
 		return;
 	}
 
-	if (THEMIS_SUCCESS != secure_comparator_append_secret(&bob, bob_secret, sizeof(bob_secret)))
+	if (THEMIS_SUCCESS != secure_comparator_append_secret(bob, bob_secret, sizeof(bob_secret)))
 	{
 		testsuite_fail_if(true, "secure_comparator_append_secret failed");
 		return;
@@ -296,20 +292,20 @@ void secure_comparator_security_test(void)
 
 	current_length = sizeof(shared_mem);
 
-	if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != secure_comparator_begin_compare(&alice, shared_mem, &current_length))
+	if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != secure_comparator_begin_compare(alice, shared_mem, &current_length))
 	{
 		testsuite_fail_if(true, "secure_comparator_begin_compare failed");
 		return;
 	}
 
-	corrupt_alice_step1(&alice, shared_mem);
+	corrupt_alice_step1(alice, shared_mem);
 
-	corrupt_bob_step2(&bob, shared_mem, current_length, shared_mem, &output_length);
+	corrupt_bob_step2(bob, shared_mem, current_length, shared_mem, &output_length);
 
 	current_length = output_length;
 	output_length = sizeof(shared_mem);
 
-	if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != secure_comparator_proceed_compare(&alice, shared_mem, current_length, shared_mem, &output_length))
+	if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != secure_comparator_proceed_compare(alice, shared_mem, current_length, shared_mem, &output_length))
 	{
 		testsuite_fail_if(true, "secure_comparator_proceed_compare failed");
 		return;
@@ -318,7 +314,7 @@ void secure_comparator_security_test(void)
 	current_length = output_length;
 	output_length = sizeof(shared_mem);
 
-	if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != secure_comparator_proceed_compare(&bob, shared_mem, current_length, shared_mem, &output_length))
+	if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != secure_comparator_proceed_compare(bob, shared_mem, current_length, shared_mem, &output_length))
 	{
 		testsuite_fail_if(true, "secure_comparator_proceed_compare failed");
 		return;
@@ -327,11 +323,13 @@ void secure_comparator_security_test(void)
 	current_length = output_length;
 	output_length = sizeof(shared_mem);
 
-	if (THEMIS_SUCCESS != secure_comparator_proceed_compare(&alice, shared_mem, current_length, shared_mem, &output_length))
+	if (THEMIS_SUCCESS != secure_comparator_proceed_compare(alice, shared_mem, current_length, shared_mem, &output_length))
 	{
 		testsuite_fail_if(true, "secure_comparator_proceed_compare failed");
 		return;
 	}
 
-	testsuite_fail_unless((THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(&alice)) && (THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(&bob)), "compare result no match");
+	testsuite_fail_unless((THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(alice)) && (THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(bob)), "compare result no match");
+	secure_comparator_destroy(alice);
+	secure_comparator_destroy(bob);
 }

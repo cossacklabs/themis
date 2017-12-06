@@ -813,6 +813,7 @@ static themis_status_t secure_session_finish_server(secure_session_t *session_ct
 
 static themis_status_t secure_session_finish_client(secure_session_t *session_ctx, const void *data, size_t data_length, void *output, size_t *output_length)
 {
+	UNUSED(output);
 	const soter_container_hdr_t *proto_message = data;
 	themis_status_t res;
 
@@ -826,7 +827,7 @@ static themis_status_t secure_session_finish_client(secure_session_t *session_ct
 		return THEMIS_INVALID_PARAMETER;
 	}
 
-	if (memcmp(proto_message->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH))
+	if (memcmp(proto_message->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH) != 0)
 	{
 		return THEMIS_INVALID_PARAMETER;
 	}

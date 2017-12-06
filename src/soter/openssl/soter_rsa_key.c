@@ -432,31 +432,29 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t 
 	}
 
 	BIGNUM* rsa_n = BN_new();
+	if(!rsa_n){
+		return SOTER_NO_MEMORY;
+	}
 	BIGNUM* rsa_e = BN_new();
-
-	rsa_e = BN_new();
 	if (!rsa_e)
 	{
 		RSA_free(rsa);
+		BN_free(rsa_n);
 		return SOTER_NO_MEMORY;
 	}
 
 	if (!BN_set_word(rsa_e, ntohl(*pub_exp)))
 	{
+		BN_free(rsa_n);
+		BN_free(rsa_e);
 		RSA_free(rsa);
 		return SOTER_FAIL;
 	}
 
-
-	rsa_n = BN_new();
-	if (!rsa_n)
-	{
-		RSA_free(rsa);
-		return SOTER_NO_MEMORY;
-	}
-
 	if (!BN_bin2bn((const unsigned char *)(key + 1), rsa_mod_size, rsa_n))
 	{
+		BN_free(rsa_n);
+		BN_free(rsa_e);
 		RSA_free(rsa);
 		return SOTER_FAIL;
 	}
@@ -470,6 +468,8 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t 
 
 	if (!EVP_PKEY_assign_RSA(pkey, rsa))
 	{
+		BN_free(rsa_n);
+		BN_free(rsa_e);
 		RSA_free(rsa);
 		return SOTER_FAIL;
 	}

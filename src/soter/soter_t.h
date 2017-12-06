@@ -45,7 +45,7 @@ struct soter_hmac_ctx_type
 	uint8_t o_key_pad[HASH_MAX_BLOCK_SIZE];
 	size_t block_size;
 	soter_hash_algo_t algo;
-	soter_hash_ctx_t hash_ctx;
+	soter_hash_ctx_t* hash_ctx;
 };
 
 soter_status_t soter_hmac_init(soter_hmac_ctx_t *hmac_ctx, soter_hash_algo_t algo, const uint8_t* key, size_t key_length);

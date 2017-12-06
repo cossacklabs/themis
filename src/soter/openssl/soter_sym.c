@@ -93,6 +93,7 @@ soter_sym_ctx_t* soter_sym_ctx_init(const uint32_t alg,
 				    const void* iv,
 				    const size_t iv_length,
 				    bool encrypt){
+  UNUSED(iv_length);
   SOTER_CHECK_PARAM_(key!=NULL);
   SOTER_CHECK_PARAM_(key_length!=0);
   soter_sym_ctx_t* ctx=NULL;
@@ -123,6 +124,7 @@ soter_sym_ctx_t* soter_sym_aead_ctx_init(const uint32_t alg,
 				    const void* iv,
 				    const size_t iv_length,
 				    bool encrypt){
+  UNUSED(iv_length);
   SOTER_CHECK_PARAM_(key!=NULL);
   SOTER_CHECK_PARAM_(key_length!=0);
   soter_sym_ctx_t* ctx=NULL;
@@ -187,7 +189,7 @@ soter_status_t soter_sym_aead_ctx_final(soter_sym_ctx_t *ctx,bool encrypt){
 }
 
 soter_status_t soter_sym_ctx_destroy(soter_sym_ctx_t *ctx){
-  EVP_CIPHER_CTX_cleanup(ctx->evp_sym_ctx);
+  EVP_CIPHER_CTX_free(ctx->evp_sym_ctx);
   free(ctx);
   return SOTER_SUCCESS;    
 }
