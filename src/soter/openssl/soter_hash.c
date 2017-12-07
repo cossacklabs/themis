@@ -42,6 +42,11 @@ soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t alg
 		return SOTER_INVALID_PARAMETER;
 	}
 
+	hash_ctx->evp_md_ctx = EVP_MD_CTX_create();
+	if (!hash_ctx->evp_md_ctx){
+		return SOTER_FAIL;
+	}
+
 	if (EVP_DigestInit_ex(hash_ctx->evp_md_ctx, md, NULL))
 	{
 		return SOTER_SUCCESS;
@@ -107,11 +112,8 @@ soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo)
 	{
 		return NULL;
 	}
-    ctx->evp_md_ctx = EVP_MD_CTX_create();
-    if (!ctx->evp_md_ctx){
-        free(ctx);
-        return NULL;
-    }
+    ctx->evp_md_ctx = NULL;
+
 	status = soter_hash_init(ctx, algo);
 	if (SOTER_SUCCESS == status)
 	{
@@ -129,11 +131,9 @@ soter_status_t soter_hash_cleanup(soter_hash_ctx_t* hash_ctx){
 	{
 		return SOTER_INVALID_PARAMETER;
 	}
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-	EVP_MD_CTX_cleanup(hash_ctx->evp_md_ctx);
-#else
-	EVP_MD_CTX_reset(hash_ctx->evp_md_ctx);
-#endif
+
+    EVP_MD_CTX_destroy(hash_ctx->evp_md_ctx);
+    hash_ctx->evp_md_ctx = NULL;
 	return SOTER_SUCCESS;
 }
 
@@ -143,8 +143,7 @@ soter_status_t soter_hash_destroy(soter_hash_ctx_t *hash_ctx)
 	{
 		return SOTER_INVALID_PARAMETER;
 	}
-    EVP_MD_CTX_destroy(hash_ctx->evp_md_ctx);
-    hash_ctx->evp_md_ctx = NULL;
+    soter_hash_cleanup(hash_ctx);
 	free(hash_ctx);
 	return SOTER_SUCCESS;
 }

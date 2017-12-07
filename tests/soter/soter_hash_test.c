@@ -98,10 +98,9 @@ static void test_known_values(void)
 	}
 }
 
-static void test_api(void)
+static void test_api_(soter_hash_ctx_t* ctx)
 {
 	soter_status_t res;
-	soter_hash_ctx_t* ctx = soter_hash_create(SOTER_HASH_SHA256);
 	uint8_t input[MAX_TEST_INPUT];
 	uint8_t hash[32], result[32]; /* TODO: define this and also consider whole SHA-2, not only SHA-256 */
 	size_t input_len, hash_len = sizeof(hash);
@@ -163,7 +162,28 @@ static void test_api(void)
 	testsuite_fail_unless((SOTER_SUCCESS == res) && (32 == hash_len) && !memcmp(hash, result, hash_len), "soter_hash_final: normal value");
 
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_destroy(NULL), "soter_hash_destroy: invalid context");
-	testsuite_fail_unless(SOTER_SUCCESS == soter_hash_destroy(ctx), "soter_hash_destroy: can't destroy");
+    testsuite_fail_unless(SOTER_SUCCESS == soter_hash_cleanup(ctx), "soter_hash_cleanup: can't cleanup");
+}
+
+static void test_api(void){
+    soter_hash_ctx_t* ctx = soter_hash_create(SOTER_HASH_SHA256);
+    if (!ctx){
+        testsuite_fail_if(true, "soter_hash_create failed");
+        return;
+    }
+    soter_status_t res = soter_hash_cleanup(ctx);
+    if (SOTER_SUCCESS != res)
+    {
+        testsuite_fail_if(SOTER_SUCCESS != res, "soter_hash_cleanup failed");
+        return;
+    }
+    test_api_(ctx);
+    testsuite_fail_unless(SOTER_SUCCESS == soter_hash_destroy(ctx), "soter_hash_destroy: can't destroy");
+}
+
+static void test_api_stack_struct(void){
+    soter_hash_ctx_t ctx;
+    test_api_(&ctx);
 }
 
 void run_soter_hash_tests(void)
@@ -173,4 +193,7 @@ void run_soter_hash_tests(void)
 
 	testsuite_enter_suite("soter hash: api");
 	testsuite_run_test(test_api);
+
+    testsuite_enter_suite("soter hash: stack struct");
+    testsuite_run_test(test_api_stack_struct);
 }

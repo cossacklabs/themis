@@ -40,13 +40,14 @@ static test_vector_t vectors[] =
 
 #define MAX_TEST_DATA 2048
 #define MAX_TEST_KEY 256
+#define HMAC_SIZE 64
 
 static void test_known_values(void)
 {
 	soter_hmac_ctx_t *ctx;
 	uint8_t data[MAX_TEST_DATA];
 	uint8_t key[MAX_TEST_KEY];
-	uint8_t hmac[64], result[64];
+	uint8_t hmac[HMAC_SIZE], result[HMAC_SIZE];
 	size_t i, data_len, key_len, hmac_len = sizeof(hmac);
 	test_utils_status_t res;
 
@@ -152,12 +153,10 @@ static void test_known_values(void)
 	}
 }
 
-static void test_api(void)
+static void test_api_(soter_hmac_ctx_t* ctx, uint8_t* data, uint8_t* key)
 {
 	soter_status_t res;
-	uint8_t data[MAX_TEST_DATA];
-	uint8_t key[MAX_TEST_KEY];
-	uint8_t hmac[64], result[64];
+	uint8_t hmac[HMAC_SIZE], result[HMAC_SIZE];
 	size_t data_len, key_len, hmac_len = sizeof(hmac);
 	test_utils_status_t util_res;
 
@@ -168,7 +167,7 @@ static void test_api(void)
 		return;
 	}
 
-	util_res = string_to_bytes(vectors[4].data, data, sizeof(data));
+	util_res = string_to_bytes(vectors[4].data, data, MAX_TEST_DATA);
 	if (util_res)
 	{
 		testsuite_fail_if(util_res, "data read fail");
@@ -179,19 +178,6 @@ static void test_api(void)
 	if (key_len > MAX_TEST_KEY)
 	{
 		testsuite_fail_if(key_len > MAX_TEST_KEY, "key_len > MAX_TEST_KEY");
-		return;
-	}
-
-	util_res = string_to_bytes(vectors[4].key, key, sizeof(key));
-	if (util_res)
-	{
-		testsuite_fail_if(util_res, "key read fail");
-		return;
-	}
-
-	soter_hmac_ctx_t* ctx = soter_hmac_create(SOTER_HASH_SHA256, key, key_len);
-	if(!ctx){
-		testsuite_fail_if(!ctx, "soter_hmac_create: can't create");
 		return;
 	}
 
@@ -242,7 +228,47 @@ static void test_api(void)
 
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_cleanup(NULL), "soter_hmac_cleanup: invalid context");
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hmac_destroy(NULL), "soter_hash_destroy: invalid context");
+	testsuite_fail_unless(SOTER_SUCCESS == soter_hmac_cleanup(ctx), "soter_hmac_cleanup: can't cleanup");
+}
+
+static void test_api(void){
+	uint8_t data[MAX_TEST_DATA];
+	uint8_t key[MAX_TEST_KEY];
+
+	test_utils_status_t util_res = string_to_bytes(vectors[4].key, key, sizeof(key));
+	if (util_res)
+	{
+		testsuite_fail_if(util_res, "key read fail");
+		return;
+	}
+
+	soter_hmac_ctx_t* ctx = soter_hmac_create(SOTER_HASH_SHA256, key, HMAC_SIZE);
+	if(!ctx){
+		testsuite_fail_if(!ctx, "soter_hmac_create: can't create");
+		return;
+	}
+	soter_status_t res = soter_hmac_cleanup(ctx);
+	if(SOTER_SUCCESS != res){
+		testsuite_fail_if(true, "soter_hmac_cleanup: error");
+		return;
+	}
+	test_api_(ctx, &data[0], &key[0]);
 	testsuite_fail_unless(SOTER_SUCCESS == soter_hmac_destroy(ctx), "soter_hmac_destroy: can't destroy");
+}
+
+static void test_api_stack_struct(void){
+	uint8_t data[MAX_TEST_DATA];
+	uint8_t key[MAX_TEST_KEY];
+
+	test_utils_status_t util_res = string_to_bytes(vectors[4].key, key, sizeof(key));
+	if (util_res)
+	{
+		testsuite_fail_if(util_res, "key read fail");
+		return;
+	}
+
+	soter_hmac_ctx_t ctx;
+	test_api_(&ctx, &data[0], &key[0]);
 }
 
 void run_soter_hmac_tests(void)
@@ -252,4 +278,7 @@ void run_soter_hmac_tests(void)
 
 	testsuite_enter_suite("soter hmac: api");
 	testsuite_run_test(test_api);
+
+	testsuite_enter_suite("soter hmac: api with stack initialization");
+	testsuite_run_test(test_api_stack_struct);
 }
