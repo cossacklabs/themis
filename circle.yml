@@ -9,19 +9,19 @@ machine:
     # to avoid OOM killer (https://circleci.com/docs/1.0/oom/#out-of-memory-errors-in-android-builds)
     GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
     # add define that turn off one nist test (tests/soter/soter_rand_test.c:190) that always fail on ci machine but ok on real machine
-    CLFAGS: "-DCIRICLE_TEST"
+    CFLAGS: "-DCIRICLE_TEST"
 
 ## Customize dependencies
 dependencies:
   pre:
-    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php5 cmake libssl-dev python3 python3-setuptools ruby ninja-build lcov build-essential
+    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php5 cmake libssl-dev python3 python3-setuptools ruby ninja-build lcov build-essential libc6-dbg
     - sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
     - cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz
     - gem install coveralls-lcov
     - go get github.com/mattn/goveralls
     # download last valgrind because current version of valgrind on ubuntu (3.10.0) gives false positive errors
     # link from http://valgrind.org/downloads/current.html
-    - wget ftp://sourceware.org/pub/valgrind/valgrind-3.13.0.tar.bz2 && tar -xjf valgrind-3.13.0.tar.bz2 && cd valgrind && ./configure --prefix=$VALGRIND_BUILD_PATH && make && sudo make install
+    - sudo apt-get -y install libc6-dbg && wget ftp://sourceware.org/pub/valgrind/valgrind-3.13.0.tar.bz2 && tar -xjf valgrind-3.13.0.tar.bz2 && cd valgrind-3.13.0 && ./configure --prefix=$VALGRIND_BUILD_PATH && make && sudo make install
 
   override:
     - make
