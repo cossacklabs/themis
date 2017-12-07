@@ -13,15 +13,20 @@ machine:
 
 ## Customize dependencies
 dependencies:
+  cache_directories:
+    - "$VALGRIND_BUILD_PATH"
+    - "$GOROOT"
+
   pre:
-    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php5 cmake libssl-dev python3 python3-setuptools ruby ninja-build lcov build-essential libc6-dbg
+    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php5 cmake libssl-dev python3 python3-setuptools ruby ninja-build lcov build-essential
     - sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
-    - cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz
+    - if [ ! -d $GOROOT ]; then cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz; fi
     - gem install coveralls-lcov
     - go get github.com/mattn/goveralls
     # download last valgrind because current version of valgrind on ubuntu (3.10.0) gives false positive errors
     # link from http://valgrind.org/downloads/current.html
-    - sudo apt-get -y install libc6-dbg && wget ftp://sourceware.org/pub/valgrind/valgrind-3.13.0.tar.bz2 && tar -xjf valgrind-3.13.0.tar.bz2 && cd valgrind-3.13.0 && ./configure --prefix=$VALGRIND_BUILD_PATH && make && sudo make install
+    # don't fetch if was cached
+    - if [ ! -d $VALGRIND_BUILD_PATH ]; then wget ftp://sourceware.org/pub/valgrind/valgrind-3.13.0.tar.bz2 && tar -xjf valgrind-3.13.0.tar.bz2 && cd valgrind-3.13.0 && ./configure --prefix=$VALGRIND_BUILD_PATH && make && sudo make install; fi
 
   override:
     - make
