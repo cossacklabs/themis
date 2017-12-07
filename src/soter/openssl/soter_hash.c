@@ -42,8 +42,6 @@ soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t alg
 		return SOTER_INVALID_PARAMETER;
 	}
 
-	EVP_MD_CTX_init(hash_ctx->evp_md_ctx);
-
 	if (EVP_DigestInit_ex(hash_ctx->evp_md_ctx, md, NULL))
 	{
 		return SOTER_SUCCESS;
