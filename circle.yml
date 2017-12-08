@@ -70,8 +70,8 @@ test:
     - lcov --remove coverage.info 'tests/*' 'src/soter/openssl/*' '/usr/*' --output-file coverage.info
     - lcov --list coverage.info
     - coveralls-lcov -v --repo-token $COVERALLS_TOKEN coverage.info || true
-    - build_with_boringssl/tests/soter_test
-    - build_with_boringssl/tests/themis_test
+    - ${VALGRIND_BUILD_PATH}/bin/valgrind build_with_boringssl/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
+    - ${VALGRIND_BUILD_PATH}/bin/valgrind build_with_boringssl/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
     # - tests/check_ios_test.sh `tests/start_ios_test.sh`
     # start Android emulator
     - emulator -avd circleci-android22 -no-audio -no-window:
