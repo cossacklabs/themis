@@ -21,14 +21,15 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
-    // See https://themis.cossacklabs.com/interactive-simulator/setup/
-
+    // See README.md
+    // Themis Interactive simulator supports one mode at the same time, please uncomment one.
+    
     NSLog(@" ------------ running SMessage Client example ");
     [[SMessageClient new] runSecureMessageCITest];
     
     
-    NSLog(@" ------------ running SSession Client example ");
-    [[SSessionClient new] runSecureSessionCITest];
+//    NSLog(@" ------------ running SSession Client example ");
+//    [[SSessionClient new] runSecureSessionCITest];
     
     
     NSLog(@" ------------ ");

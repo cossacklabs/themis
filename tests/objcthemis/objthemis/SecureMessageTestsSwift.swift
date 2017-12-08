@@ -43,8 +43,8 @@ class SecureMessageTestsSwift: XCTestCase {
     }
     
     func wrapUnwrap(withPrivateKey privateKey: String, publicKey: String) {
-        let publicKeyData = Data(base64Encoded: publicKey, options: .ignoreUnknownCharacters)
-        let privateKeyData = Data(base64Encoded: privateKey, options: .ignoreUnknownCharacters)
+        let publicKeyData = Data(base64Encoded: publicKey, options: .ignoreUnknownCharacters)!
+        let privateKeyData = Data(base64Encoded: privateKey, options: .ignoreUnknownCharacters)!
         
         let encrypter = TSMessage.init(inEncryptModeWithPrivateKey: privateKeyData,
                                        peerPublicKey: publicKeyData)
@@ -61,8 +61,8 @@ class SecureMessageTestsSwift: XCTestCase {
     }
     
     func signVerify(withPrivateKey privateKey: String, publicKey: String) {
-        let publicKeyData = Data(base64Encoded: publicKey, options: .ignoreUnknownCharacters)
-        let privateKeyData = Data(base64Encoded: privateKey, options: .ignoreUnknownCharacters)
+        let publicKeyData = Data(base64Encoded: publicKey, options: .ignoreUnknownCharacters)!
+        let privateKeyData = Data(base64Encoded: privateKey, options: .ignoreUnknownCharacters)!
         
         let encrypter = TSMessage.init(inSignVerifyModeWithPrivateKey: privateKeyData,
                                        peerPublicKey: publicKeyData)

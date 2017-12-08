@@ -43,13 +43,15 @@
 * row numbers or primary key values).
 * @image html scell-seal.png "Secure Cell Seal mode"
 */
+NS_ASSUME_NONNULL_BEGIN
+
 @interface TSCellSeal : TSCell
 
 /**
 * @brief Initialize Secure cell object in seal mode
 * @param [in] key master key
 */
-- (instancetype)initWithKey:(NSData *)key;
+- (nullable instancetype)initWithKey:(NSData *)key;
 
 /**
 * @brief Wrap message
@@ -57,7 +59,7 @@
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
-- (NSData *)wrapData:(NSData *)message error:(NSError **)error;
+- (nullable NSData *)wrapData:(NSData *)message error:(NSError * __autoreleasing *)error;
 
 /**
 * @brief Unwrap message
@@ -65,7 +67,7 @@
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (NSData *)unwrapData:(NSData *)message error:(NSError **)error;
+- (nullable NSData *)unwrapData:(NSData *)message error:(NSError * __autoreleasing *)error;
 
 /**
 * @brief Wrap message with context
@@ -74,7 +76,7 @@
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
-- (NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error;
+- (nullable NSData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError * __autoreleasing *)error;
 
 /**
 * @brief Unwrap message
@@ -82,9 +84,11 @@
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error;
+- (nullable NSData *)unwrapData:(NSData *)message context:(nullable NSData *)context error:(NSError * __autoreleasing *)error;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 /** @} */
 /** @} */

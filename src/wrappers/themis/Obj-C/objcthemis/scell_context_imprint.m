@@ -15,19 +15,18 @@
 */
 
 #import <objcthemis/scell_context_imprint.h>
-#import <objcthemis/error.h>
-#import "error.h"
+#import <objcthemis/serror.h>
 
 
 @implementation TSCellContextImprint
 
-- (instancetype)initWithKey:(NSData *)key {
+- (nullable instancetype)initWithKey:(NSData *)key {
     self = [super initWithKey:key];
     return self;
 }
 
 
-- (NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
+- (nullable NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
     size_t wrappedMessageLength = 0;
 
     TSErrorType encryptionResult = (TSErrorType) themis_secure_cell_encrypt_context_imprint([self.key bytes], [self.key length],
@@ -57,7 +56,7 @@
 }
 
 
-- (NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
+- (nullable NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
     size_t unwrappedMessageLength = 0;
 
     int decryptionResult = themis_secure_cell_decrypt_context_imprint([self.key bytes], [self.key length],

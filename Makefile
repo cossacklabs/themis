@@ -166,6 +166,8 @@ endif
 
 PHP_VERSION := $(shell php --version 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
+GO_VERSION := $(shell go version 2>&1)
+NPM_VERSION := $(shell npm --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
 PYTHON_VERSION := $(shell python --version 2>&1)
 PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
@@ -211,6 +213,10 @@ ifdef DEBUG
 	CFLAGS += -DDEBUG -g
 endif
 
+ifneq ($(GEM_INSTALL_OPTIONS),)
+	_GEM_INSTALL_OPTIONS = $(GEM_INSTALL_OPTIONS)
+endif
+
 # Should pay attention to warnings (some may be critical for crypto-enabled code (ex. signed-unsigned mismatch)
 CFLAGS += -Werror -Wno-switch
 
@@ -229,53 +235,6 @@ JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
 
 all: err themis_static themis_shared
 	@echo $(VERSION)
-
-test_all: err test
-ifdef PHP_VERSION
-	@echo -n "make tests for phpthemis "
-	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" > ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/ssession_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@$(PRINT_OK_)
-endif
-ifdef RUBY_GEM_VERSION
-	@echo -n "make tests for rubythemis "
-	@echo "ruby ./tests/rubythemis/scell_test.rb" > ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@echo "ruby ./tests/rubythemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@echo "ruby ./tests/rubythemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@echo "ruby ./tests/rubythemis/scomparator_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@$(PRINT_OK_)
-endif
-ifdef PYTHON_VERSION
-	@echo -n "make tests for pythemis "
-	@echo "python ./tests/pythemis/scell_test.py" > ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-ifdef PYTHON3_VERSION
-	@echo "echo Python3 $(PYTHON3_VERSION) tests" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "echo ----- pythemis secure cell tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python3 ./tests/pythemis/scell_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "echo ----- pythemis secure message tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python3 ./tests/pythemis/smessage_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "echo ----- pythemis secure session tests----" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python3 ./tests/pythemis/ssession_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python3 ./tests/pythemis/scomparator_test.py" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-endif
-	@chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
-	@$(PRINT_OK_)
-endif
-	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
-	echo "wget https://nodejs.org/dist/v4.6.0/node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "tar -xvf node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "cd ../../src/wrappers/themis/jsthemis && PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd -" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install mocha" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install nan" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install ../../build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) ./node_modules/mocha/bin/mocha" >> ./$(BIN_PATH)/tests/node.sh
-	chmod a+x ./$(BIN_PATH)/tests/node.sh
 
 soter_static: CMD = $(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
 
@@ -351,7 +310,7 @@ err: ; $(ERROR)
 
 clean: CMD = rm -rf $(BIN_PATH)
 
-clean: nist_rng_test_suite
+clean: nist_rng_test_suite_clean
 	@$(BUILD_CMD)
 
 make_install_dirs: CMD = mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter $(PREFIX)/lib
@@ -385,6 +344,8 @@ install_shared_libs: err all make_install_dirs
 	@$(BUILD_CMD_)
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
+
+install_all: install themispp_install pythemis_install rubythemis_install phpthemis_install
 
 get_version:
 	@echo $(VERSION)
@@ -445,7 +406,7 @@ else
 	@exit 1
 endif
 
-rubythemis_install: CMD = cd src/wrappers/themis/ruby && gem build rubythemis.gemspec && gem install ./*.gem
+rubythemis_install: CMD = cd src/wrappers/themis/ruby && gem build rubythemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
 
 rubythemis_install: install
 ifdef RUBY_GEM_VERSION

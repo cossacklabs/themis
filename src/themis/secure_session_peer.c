@@ -15,7 +15,7 @@
 */
 
 #include <themis/secure_session_peer.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 
 #include <string.h>
 

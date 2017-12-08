@@ -23,12 +23,12 @@ if sys.version_info < (3, 4):
 
 setup(
     name='pythemis',
-    version='0.9.5',
+    version='0.9.5.1',
 
     description='',
     long_description=open("README.rst").read(),
     license='Apache 2.0',
-    url='http://cossacklabs.com',
+    url='https://cossacklabs.com',
 
     author='CossackLabs',
     author_email='dev@cossacklabs.com',

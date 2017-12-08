@@ -15,7 +15,7 @@
 */
 
 #import <objcthemis/ssession_transport_interface.h>
-#import <objcthemis/error.h>
+#import <objcthemis/serror.h>
 
 
 ssize_t on_send_callback(const uint8_t * data, size_t data_length, void * user_data) {
@@ -48,7 +48,7 @@ int on_get_public_key_for_id_callback(const void * id, size_t id_length, void * 
 
 @implementation TSSessionTransportInterface
 
-- (instancetype)init {
+- (nullable instancetype)init {
     self = [super init];
     if (self) {
         _callbacks.send_data = &on_send_callback;
@@ -62,20 +62,20 @@ int on_get_public_key_for_id_callback(const void * id, size_t id_length, void * 
 
 
 // TODO: implement
-- (void)sendData:(NSData *)data error:(NSError **)error {
+- (void)sendData:(nullable NSData *)data error:(NSError **)error {
     *error = SCERROR(TSErrorTypeFail, @"secure session send callback");
     return;
 }
 
 
 // TODO: implement
-- (NSData *)receiveDataWithError:(NSError **)error {
+- (nullable NSData *)receiveDataWithError:(NSError **)error {
     *error = SCERROR(TSErrorTypeFail, @"secure session receive callback");
     return nil;
 }
 
 
-- (NSData *)publicKeyFor:(NSData *)binaryId error:(NSError **)error {
+- (nullable NSData *)publicKeyFor:(nullable NSData *)binaryId error:(NSError **)error {
     // TODO: approve
     NSMutableData * key = [[NSMutableData alloc] initWithLength:1024];
     TSErrorType result = (TSErrorType) on_get_public_key_for_id_callback([binaryId bytes], [binaryId length],

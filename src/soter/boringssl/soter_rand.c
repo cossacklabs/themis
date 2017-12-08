@@ -14,7 +14,6 @@
 * limitations under the License.
 */
 
-#include "soter/error.h"
 #include "soter/soter.h"
 #include <openssl/rand.h>
 

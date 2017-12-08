@@ -15,7 +15,7 @@
 */
 
 #import <objcthemis/scomparator.h>
-#import <objcthemis/error.h>
+#import <objcthemis/serror.h>
 
 
 @interface TSComparator ()
@@ -27,7 +27,7 @@
 
 @implementation TSComparator
 
-- (instancetype)initWithMessageToCompare:(NSData *)message {
+- (nullable instancetype)initWithMessageToCompare:(NSData *)message {
     self = [super init];
     if (self) {
         self.comparator = secure_comparator_create();
@@ -41,6 +41,7 @@
     return nil;
 }
 
+// TODO: check for memory leak?
 - (void)dealloc {
     if(self.comparator) {
         secure_comparator_destroy(self.comparator);
@@ -48,7 +49,7 @@
 }
 
 
-- (NSData *)beginCompare:(NSError **)error {
+- (nullable NSData *)beginCompare:(NSError **)error {
     size_t comparationRequestLength = 0;
     TSErrorType result = (TSErrorType) secure_comparator_begin_compare(self.comparator, NULL, &comparationRequestLength);
 
@@ -67,7 +68,7 @@
     return [requestData copy];
 }
 
-- (NSData *)proceedCompare:(NSData *)message error:(NSError **)error {
+- (nullable NSData *)proceedCompare:(nullable NSData *)message error:(NSError **)error {
     size_t unwrappedMessageLength = 0;
     TSErrorType result = (TSErrorType) secure_comparator_proceed_compare(self.comparator, [message bytes], [message length], NULL, &unwrappedMessageLength);
 

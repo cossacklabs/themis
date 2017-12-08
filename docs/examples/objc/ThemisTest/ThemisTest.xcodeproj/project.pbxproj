@@ -18,7 +18,7 @@
 		73156E171ADBDF0F00E3E520 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 73156E161ADBDF0F00E3E520 /* Images.xcassets */; };
 		731624981ADB174200972A7A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 731624971ADB174200972A7A /* main.m */; };
 		731624B21ADB174200972A7A /* ThemisTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 731624B11ADB174200972A7A /* ThemisTestTests.m */; };
-		F57D548ECE7EF2009A035D61 /* Pods_ThemisTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CA54A7FF2D613170DA939409 /* Pods_ThemisTest.framework */; };
+		C3B573A47DB5770EC699ACE6 /* Pods_ThemisTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 984FB9BBE9E8469F4C170A5D /* Pods_ThemisTest.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +32,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		14788669BEEDA2CDE84CCF8B /* Pods-ThemisTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest.release.xcconfig"; sourceTree = "<group>"; };
 		192EA2F8AFB4D5A59D33DCE6 /* server.priv */ = {isa = PBXFileReference; lastKnownFileType = file.priv; path = server.priv; sourceTree = "<group>"; };
 		192EA533E67AA52864927032 /* server.pub */ = {isa = PBXFileReference; lastKnownFileType = file.pub; path = server.pub; sourceTree = "<group>"; };
 		192EA61539E5DA001A808B56 /* client.pub */ = {isa = PBXFileReference; lastKnownFileType = file.pub; path = client.pub; sourceTree = "<group>"; };
@@ -50,9 +51,8 @@
 		731624B01ADB174200972A7A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		731624B11ADB174200972A7A /* ThemisTestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThemisTestTests.m; sourceTree = "<group>"; };
 		738D1E7F1ADBBEBB00661F4A /* libobjcthemis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libobjcthemis.a; path = ../themis/objcthemis/ios/lib/libobjcthemis.a; sourceTree = "<group>"; };
-		90DC1D4711ED26B024231C43 /* Pods-ThemisTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest.release.xcconfig"; sourceTree = "<group>"; };
-		C345966B527F65EC7913A375 /* Pods-ThemisTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest.debug.xcconfig"; sourceTree = "<group>"; };
-		CA54A7FF2D613170DA939409 /* Pods_ThemisTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ThemisTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		984FB9BBE9E8469F4C170A5D /* Pods_ThemisTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ThemisTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9EA524866247A525A22721EF /* Pods-ThemisTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F57D548ECE7EF2009A035D61 /* Pods_ThemisTest.framework in Frameworks */,
+				C3B573A47DB5770EC699ACE6 /* Pods_ThemisTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,9 +100,18 @@
 			isa = PBXGroup;
 			children = (
 				738D1E7F1ADBBEBB00661F4A /* libobjcthemis.a */,
-				CA54A7FF2D613170DA939409 /* Pods_ThemisTest.framework */,
+				984FB9BBE9E8469F4C170A5D /* Pods_ThemisTest.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2A313DDDC775FF791DDFE44E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9EA524866247A525A22721EF /* Pods-ThemisTest.debug.xcconfig */,
+				14788669BEEDA2CDE84CCF8B /* Pods-ThemisTest.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		73156E0C1ADBDF0800E3E520 /* Classes */ = {
@@ -123,7 +132,7 @@
 				731624AE1ADB174200972A7A /* ThemisTestTests */,
 				731624931ADB174200972A7A /* Products */,
 				1F5F881BD0CD342D1E9B9E25 /* Frameworks */,
-				C38077A6501E1FBA12ABBC29 /* Pods */,
+				2A313DDDC775FF791DDFE44E /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -172,15 +181,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		C38077A6501E1FBA12ABBC29 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				C345966B527F65EC7913A375 /* Pods-ThemisTest.debug.xcconfig */,
-				90DC1D4711ED26B024231C43 /* Pods-ThemisTest.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -188,12 +188,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 731624B51ADB174200972A7A /* Build configuration list for PBXNativeTarget "ThemisTest" */;
 			buildPhases = (
-				2F3E88A419FC332D009A8E6E /* [CP] Check Pods Manifest.lock */,
+				A5DE1020AC316220BCA5F37D /* [CP] Check Pods Manifest.lock */,
 				7316248E1ADB174200972A7A /* Sources */,
 				7316248F1ADB174200972A7A /* Frameworks */,
 				731624901ADB174200972A7A /* Resources */,
-				BCA0FA068FADDEFDBFE8AA19 /* [CP] Embed Pods Frameworks */,
-				9831A7A42E862A940ADD198D /* [CP] Copy Pods Resources */,
+				3891348EDC0EECEFC7843109 /* [CP] Embed Pods Frameworks */,
+				9280F98ACF5B356846741CC0 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -228,7 +228,7 @@
 		7316248A1ADB174200972A7A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0810;
+				LastUpgradeCheck = 0910;
 				ORGANIZATIONNAME = "Cossack Labs";
 				TargetAttributes = {
 					731624911ADB174200972A7A = {
@@ -286,40 +286,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		2F3E88A419FC332D009A8E6E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ThemisTest-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9831A7A42E862A940ADD198D /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		BCA0FA068FADDEFDBFE8AA19 /* [CP] Embed Pods Frameworks */ = {
+		3891348EDC0EECEFC7843109 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -337,6 +304,39 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9280F98ACF5B356846741CC0 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A5DE1020AC316220BCA5F37D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ThemisTest-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -400,14 +400,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -446,14 +452,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -479,7 +491,7 @@
 		};
 		731624B61ADB174200972A7A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C345966B527F65EC7913A375 /* Pods-ThemisTest.debug.xcconfig */;
+			baseConfigurationReference = 9EA524866247A525A22721EF /* Pods-ThemisTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -495,7 +507,7 @@
 		};
 		731624B71ADB174200972A7A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 90DC1D4711ED26B024231C43 /* Pods-ThemisTest.release.xcconfig */;
+			baseConfigurationReference = 14788669BEEDA2CDE84CCF8B /* Pods-ThemisTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";

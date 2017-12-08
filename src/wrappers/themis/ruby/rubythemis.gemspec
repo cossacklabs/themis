@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.email       = 'dev@cossacklabs.com'
   s.files       = ["lib/rubythemis.rb"]
   s.homepage    = 'http://cossacklabs.com/'
-  s.license     = 'Apache 2.0'
+  s.license     = 'Apache-2.0'
   s.add_runtime_dependency 'ffi', '~> 1.9', '>= 1.9.8'
   s.requirements << 'libthemis, v0.9.5'
 end

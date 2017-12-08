@@ -21,6 +21,7 @@
 #import <Foundation/Foundation.h>
 #import <themis/themis.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 /** @brief Secure session transport callbacks interface */
 @interface TSSessionTransportInterface : NSObject {
@@ -32,14 +33,14 @@
 * @param [in] data binary data
 * @param [in] error pointer to Error on failure
 */
-- (void)sendData:(NSData *)data error:(NSError **)error;
+- (void)sendData:(nullable NSData *)data error:(NSError **)error;
 
 
 /** @brief Receive data from peer and return it in NSData object
 * @param [in] error pointer to Error on failure
 * @return data object or nil on failure
 */
-- (NSData *)receiveDataWithError:(NSError **)error;
+- (nullable NSData *)receiveDataWithError:(NSError **)error;
 
 
 /** @brief Return public key associated with binaryId as NSData object or nil on failure
@@ -47,11 +48,12 @@
 * @param [in] error pointer to Error on failure
 * @return binary public key associated with binaryId or nil on failure
 */
-- (NSData *)publicKeyFor:(NSData *)binaryId error:(NSError **)error;
+- (nullable NSData *)publicKeyFor:(nullable NSData *)binaryId error:(NSError **)error;
 
 
 /** @brief Get callbacks */
 - (secure_session_user_callbacks_t *)callbacks;
 
+NS_ASSUME_NONNULL_END
 
 @end

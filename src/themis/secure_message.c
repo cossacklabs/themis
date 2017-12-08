@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/secure_message.h>
 #include <themis/secure_message_wrapper.h>
 #include <soter/soter_t.h>
