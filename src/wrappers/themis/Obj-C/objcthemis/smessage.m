@@ -62,7 +62,7 @@
 }
 
 
-- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError **)error {
+- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError * __autoreleasing *)error {
     size_t wrappedMessageLength = 0;
     TSErrorType result = TSErrorTypeFail;
 
@@ -75,25 +75,33 @@
 
         case TSMessageModeSignVerify:
             if (!(self.privateKey) || [self.privateKey length] == 0) {
-                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping");
+				if (error) {
+                	*error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping");
+				}
                 return nil;
             }
             result = (TSErrorType) themis_secure_message_wrap([self.privateKey bytes], [self.privateKey length], NULL, 0,
                 [message bytes], [message length], NULL, &wrappedMessageLength);
             break;
         default:
-            *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+			if (error) {
+            	*error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+			}
             return nil;
     }
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"Secure Message failed wraping");
+		if (error) {
+        	*error = SCERROR(result, @"Secure Message failed wraping");
+		}
         return nil;
     }
 
     unsigned char * wrappedMessage = malloc(wrappedMessageLength);
     if (!wrappedMessage) {
-        *error = SCERROR(TSErrorTypeFail, @"Secure Message failed, not enough memory");
+		if (error) {
+        	*error = SCERROR(TSErrorTypeFail, @"Secure Message failed, not enough memory");
+		}
         return nil;
     }
 
@@ -109,13 +117,17 @@
                 [message bytes], [message length], wrappedMessage, &wrappedMessageLength);
             break;
         default:
-            *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+			if (error) {
+            	*error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+			}
             free(wrappedMessage);
             return NULL;
     }
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"Secure Message failed wrapping");
+		if (error) {
+        	*error = SCERROR(result, @"Secure Message failed wrapping");
+		}
         free(wrappedMessage);
         return NULL;
     }
@@ -124,7 +136,7 @@
 }
 
 
-- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError **)error {
+- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError * __autoreleasing *)error {
     size_t unwrappedMessageLength = 0;
 
     TSErrorType result = (TSErrorType) themis_secure_message_unwrap([self.privateKey bytes], [self.privateKey length],
@@ -132,13 +144,17 @@
         NULL, &unwrappedMessageLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"Secure Message failed unwraping");
+		if (error) {
+        	*error = SCERROR(result, @"Secure Message failed unwraping");
+		}
         return nil;
     }
 
     unsigned char * unwrappedMessage = malloc(unwrappedMessageLength);
     if (!unwrappedMessage) {
-        *error = SCERROR(TSErrorTypeFail, @"Secure Message failed, not enough memory");
+		if (error) {
+        	*error = SCERROR(TSErrorTypeFail, @"Secure Message failed, not enough memory");
+		}
         return nil;
     }
 
@@ -147,7 +163,9 @@
         unwrappedMessage, &unwrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"Secure Message failed unwraping");
+		if (error) {
+        	*error = SCERROR(result, @"Secure Message failed unwraping");
+		}
         free(unwrappedMessage);
         return nil;
     }
