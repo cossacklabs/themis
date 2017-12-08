@@ -71,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
-- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message error:(NSError **)error;
+- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message error:(NSError * __autoreleasing *)error;
 
 /**
 * @brief Unwrap message
@@ -79,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message error:(NSError **)error;
+- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message error:(NSError * __autoreleasing *)error;
 
 /**
 * @brief Wrap message with context
@@ -88,7 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
-- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError **)error;
+- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError * __autoreleasing *)error;
 
 /**
 * @brief Unwrap message with context
@@ -97,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(nullable NSData *)context error:(NSError **)error;
+- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(nullable NSData *)context error:(NSError * __autoreleasing *)error;
 
 @end
 
