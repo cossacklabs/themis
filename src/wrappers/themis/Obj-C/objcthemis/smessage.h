@@ -104,7 +104,7 @@ typedef NS_ENUM(NSInteger, TSMessageMode) {
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
  */
-- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError **)error;
+- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError * __autoreleasing *)error;
 
 /**
 * @brief Unwrap message
@@ -112,7 +112,7 @@ typedef NS_ENUM(NSInteger, TSMessageMode) {
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError **)error;
+- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError * __autoreleasing *)error;
 
 @end
 

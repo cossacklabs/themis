@@ -55,7 +55,7 @@ typedef NS_ENUM(NSInteger, TSComparatorStateType){
 * @return Comparation initialization message on success or nil on failure
 */
 // TODO: rename method to reflect it's goal
-- (nullable NSData *)beginCompare:(NSError **)error;
+- (nullable NSData *)beginCompare:(NSError * __autoreleasing *)error;
 
 
 /** @brief Proceed comparation message 
@@ -63,7 +63,7 @@ typedef NS_ENUM(NSInteger, TSComparatorStateType){
 * @param [in] error pointer to Error on failure
 * @return Next comparation message in NSData object on success or nil on failure.
 */
-- (nullable NSData *)proceedCompare:(nullable NSData *)message error:(NSError **)error;
+- (nullable NSData *)proceedCompare:(nullable NSData *)message error:(NSError * __autoreleasing *)error;
 
 /** @brief indicate comparation state.
 * @return comparation state.
