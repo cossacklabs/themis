@@ -77,7 +77,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)connect:(NSError * __autoreleasing *)error;
 
 
-/** @brief Wrap message
+/** 
+* @brief Wrap message
 * @param [in] message message to wrap
 * @param [in] error pointer to Error on failure
 * @return Wrapped message in NSData object on success or nil on failure.
