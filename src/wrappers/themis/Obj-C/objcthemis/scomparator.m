@@ -54,7 +54,7 @@
     TSErrorType result = (TSErrorType) secure_comparator_begin_compare(self.comparator, NULL, &comparationRequestLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-		if (error)
+        if (error) {
         	*error = SCERROR(result, @"Secure Comparator failed making initialisation message");
 		}
         return nil;
