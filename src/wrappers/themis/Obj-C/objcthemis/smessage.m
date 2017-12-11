@@ -15,7 +15,7 @@
 */
 
 #import <objcthemis/smessage.h>
-#import <objcthemis/error.h>
+#import <objcthemis/serror.h>
 
 
 @interface TSMessage ()
@@ -34,10 +34,12 @@
 
 @implementation TSMessage
 
-- (instancetype)initInEncryptModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey {
+- (nullable instancetype)initInEncryptModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey {
     self = [super init];
     if (self) {
-        if (!privateKey || [privateKey length] == 0 || !peerPublicKey || [peerPublicKey length] == 0) {return nil;}
+        if (!privateKey || [privateKey length] == 0 || !peerPublicKey || [peerPublicKey length] == 0) {
+            return nil;
+        }
         self.privateKey = [privateKey copy];
         self.publicKey = [peerPublicKey copy];
         self.mode = TSMessageModeEncryptDecrypt;
@@ -46,9 +48,12 @@
 }
 
 
-- (instancetype)initInSignVerifyModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey {
+- (nullable instancetype)initInSignVerifyModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey {
     self = [super init];
     if (self) {
+        if (!privateKey || [privateKey length] == 0 || !peerPublicKey || [peerPublicKey length] == 0) {
+            return nil;
+        }
         self.privateKey = [privateKey copy];
         self.publicKey = [peerPublicKey copy];
         self.mode = TSMessageModeSignVerify;
@@ -57,7 +62,7 @@
 }
 
 
-- (NSData *)wrapData:(NSData *)message error:(NSError **)error {
+- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError **)error {
     size_t wrappedMessageLength = 0;
     TSErrorType result = TSErrorTypeFail;
 
@@ -119,7 +124,7 @@
 }
 
 
-- (NSData *)unwrapData:(NSData *)message error:(NSError **)error {
+- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError **)error {
     size_t unwrappedMessageLength = 0;
 
     TSErrorType result = (TSErrorType) themis_secure_message_unwrap([self.privateKey bytes], [self.privateKey length],

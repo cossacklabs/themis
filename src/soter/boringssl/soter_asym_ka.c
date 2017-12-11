@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-#include <soter/error.h>
+#include <soter/soter_error.h>
 #include "soter_engine.h"
 #include <soter/soter_ec_key.h>
 #include <openssl/ec.h>

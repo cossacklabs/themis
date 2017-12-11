@@ -17,7 +17,7 @@
 #ifndef TEST_UTILS_H
 #define TEST_UTILS_H
 
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>

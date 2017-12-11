@@ -16,7 +16,7 @@
 
 #include <soter/soter_kdf.h>
 #include <soter/soter_t.h>
-#include <soter/error.h>
+#include <soter/soter_error.h>
 
 #include <string.h>
 

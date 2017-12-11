@@ -12,7 +12,7 @@
   <a href="https://github.com/cossacklabs/themis/releases/latest"><img src="https://img.shields.io/github/release/cossacklabs/themis.svg" alt="GitHub release"></a>
   <a href="https://circleci.com/gh/cossacklabs/themis"><img src="https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield" alt="Circle CI"></a>
   <a href="https://github.com/cossacklabs/themis/tree/master/tests"><img src="https://www.bitrise.io/app/b32b4ea8bffedad7/status.svg?token=sFMwuzxY2zy26LsqMkjuqg&branch=master" alt="Bitrise"></a>
-  <a href="https://github.com/cossacklabs/themis/releases/latest"><img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Linux%20%7C%20Windows%20%7C%20Java-green.svg" alt="Platforms"></a>
+  <a href="https://github.com/cossacklabs/themis/releases/latest"><img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20OSX%20%7C%20Linux%20%7C%20Windows%20%7C%20Java-green.svg" alt="Platforms"></a>
   <a href='https://coveralls.io/github/cossacklabs/themis'><img src='https://coveralls.io/repos/github/cossacklabs/themis/badge.svg?branch=master' alt='Coverage Status' /></a>
   <a href='https://goreportcard.com/report/github.com/cossacklabs/themis'><img class="badge" tag="github.com/cossacklabs/themis" src="https://goreportcard.com/badge/github.com/cossacklabs/themis"></a>
 </p>
@@ -77,17 +77,19 @@ deb https://pkgs.cossacklabs.com/stable/$OS $RELEASE main
 ```
 * `$OS` should be `debian` or `ubuntu`.
 * `$RELEASE` should be one of Debian or Ubuntu release names. You can determine this by running `lsb_release -cs`, if you have `lsb_release` installed.
-* We currently build packages for the following OS and RELEASE combinations:
-*Debian "Wheezy" (Debian 7)*
-*Debian "Jessie" (Debian 8)*
-*Debian "Stretch" (Debian 9)*
-*Ubuntu Precise Pangolin (Ubuntu 12.04)*
-*Ubuntu Trusty Tahr (Ubuntu 14.04)*
-*Ubuntu Xenial Xerus (Ubuntu 16.04)*
-*Ubuntu Yakkety Yak (Ubuntu 16.10)*
-*Ubuntu Zesty Zapus (Ubuntu 17.04)*
 
-* For example, if you are running *Debian 9 "Stretch"*, run:
+We currently build packages for the following OS and RELEASE combinations:
+
+- *Debian "Wheezy" (Debian 7)*
+- *Debian "Jessie" (Debian 8)*
+- *Debian "Stretch" (Debian 9)*
+- *Ubuntu Trusty Tahr (Ubuntu 14.04)*
+- *Ubuntu Xenial Xerus (Ubuntu 16.04)*
+- *Ubuntu Yakkety Yak (Ubuntu 16.10)*
+- *Ubuntu Zesty Zapus (Ubuntu 17.04)*
+
+For example, if you are running *Debian 9 "Stretch"*, run:
+
 ```console
 echo "deb https://pkgs.cossacklabs.com/stable/debian stretch main" | \
   sudo tee /etc/apt/sources.list.d/cossacklabs.list
@@ -107,10 +109,9 @@ sudo apt-get install libthemis
 
 **1. Import the public key used by Cossack Labs to sign packages:**
 
+```console
+sudo rpm --import https://pkgs.cossacklabs.com/gpg
 ```
-rpm --import https://pkgs.cossacklabs.com/gpg
-```
-
 > Note: If you wish to validate key fingerprint, it is: `29CF C579 AD90 8838 3E37 A8FA CE53 BCCA C8FF FACB`.
 
 **2. Create a Yum repository file for Cossack Labs package repository:**
@@ -125,7 +126,13 @@ wget -qO - https://pkgs.cossacklabs.com/stable/centos/cossacklabs.repo | \
 sudo yum install libthemis
 ```
 
+That's all! Themis is ready to use. The easiest way is to follow one of the tutorials and examples provided below.
+
 ## Install Themis from GitHub
+
+> Note:
+>
+> ⚠️ OpenSSL 1.1.0f support is coming soon (check [#208](https://github.com/cossacklabs/themis/issues/208) issue to track the progress).
 
 1. Fetch the repository: git clone https://github.com/cossacklabs/themis.git.
 2. Make sure OpenSSL/LibreSSL + OpenSSL/LibreSSL Dev package (libssl-dev) are installed at typical paths: `/usr/lib`, `/usr/include`. 
@@ -170,7 +177,7 @@ It is checked to compile on the latest stable versions of:
 * Debian 7.8+, CentOS 7, Ubuntu 14, Arch Linux 2014+
 * Windows XP+
 * OSX 10.9+
-* Android 4-5+ / CyanogenMod 11+
+* Android 4-8+ / CyanogenMod 11+
 * iOS8—iOS11+, x32/x64
 
 We plan to expand this list with broader set of platforms. If you'd like to help improve or bring Themis to your favourite platform / language — [get in touch](info@cossacklabs.com).
@@ -198,17 +205,18 @@ If you'd like to experiment with Themis in a more interactive environment, check
 
 # Contributing to us
 
-If you’d like to contribute your code or other kind of input to Themis, you’re welcome. Head over to our [Contribution guidelines](https://github.com/cossacklabs/themis/wiki/Contribute) as your starting point.
+If you're looking for something to contribute to and gain eternal respect, just pick the things in the [list of issues](https://github.com/cossacklabs/themis/issues). Head over to our [Contribution guidelines](https://github.com/cossacklabs/themis/wiki/Contribute) as your starting point.
 
 
 # Documentation
 
 [Project's GitHub Wiki](https://www.github.com/cossacklabs/themis/wiki) contains the ever-evolving official documentation, which contains everything from deployment guidelines to use-cases, with a brief explanation of cryptosystems and architecture behind the main Themis library sandwiched in. 
 
+# Contacts
 
-# Communication
+If you want to ask a technical question, feel free to raise an [issue](https://github.com/cossacklabs/themis/issues) or write to [dev@cossacklabs.com](mailto:dev@cossacklabs.com).
 
-[![Twitter CossackLabs](https://img.shields.io/badge/twitter-cossacklabs-fbb03b.svg)](http://twitter.com/cossacklabs)
-[![Blog](https://img.shields.io/badge/blog-cossacklabs.com-7a7c98.svg)](https://cossacklabs.com/)
-[![Join the chat at https://gitter.im/cossacklabs/themis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cossacklabs/themis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+To talk to the business wing of Cossack Labs Limited, drop us an email to [info@cossacklabs.com](mailto:info@cossacklabs.com).
+   
+[![Blog](https://img.shields.io/badge/blog-cossacklabs.com-7a7c98.svg)](https://cossacklabs.com/) [![Twitter CossackLabs](https://img.shields.io/badge/twitter-cossacklabs-fbb03b.svg)](http://twitter.com/cossacklabs) [![Medium CossackLabs](https://img.shields.io/badge/medium-%40cossacklabs-orange.svg)](https://medium.com/@cossacklabs/) [![Join the chat at https://gitter.im/cossacklabs/themis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cossacklabs/themis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 

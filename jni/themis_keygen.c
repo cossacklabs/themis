@@ -15,7 +15,7 @@
 */
 
 #include <jni.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/secure_message.h>
 
 /* Should be same as in AsymmetricKey.java */
@@ -82,10 +82,10 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_gene
 	switch (key_type)
 	{
 	case KEYTYPE_EC:
-		res = themis_gen_ec_key_pair(priv_buf, &private_length, pub_buf, &public_length);
+		res = themis_gen_ec_key_pair((uint8_t *)priv_buf, &private_length, (uint8_t *)pub_buf, &public_length);
 		break;
 	case KEYTYPE_RSA:
-		res = themis_gen_rsa_key_pair(priv_buf, &private_length, pub_buf, &public_length);
+		res = themis_gen_rsa_key_pair((uint8_t *)priv_buf, &private_length, (uint8_t *)pub_buf, &public_length);
 		break;
 	default:
 		(*env)->ReleaseByteArrayElements(env, public, pub_buf, 0);

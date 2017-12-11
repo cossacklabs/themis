@@ -6,7 +6,7 @@ package cell
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/secure_cell.h>
 
 #define MODE_SEAL 0

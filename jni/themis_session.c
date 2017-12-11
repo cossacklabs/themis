@@ -16,7 +16,7 @@
 
 #include <jni.h>
 #include <string.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/secure_session.h>
 #include <themis/secure_session_t.h>
 /*extern JavaVM *g_vm;*/

@@ -14,7 +14,6 @@
 * limitations under the License.
 */
 
-#include "soter/error.h"
 #include "soter/soter.h"
 #include "soter_engine.h"
 #include <openssl/evp.h>
@@ -133,7 +132,7 @@ soter_status_t soter_hash_destroy(soter_hash_ctx_t *hash_ctx)
 	{
 		return SOTER_INVALID_PARAMETER;
 	}
-
+	EVP_MD_CTX_cleanup(&(hash_ctx->evp_md_ctx));
 	free(hash_ctx);
 	return SOTER_SUCCESS;
 }

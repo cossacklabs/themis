@@ -29,10 +29,12 @@
 
 @implementation TSCell
 
-- (instancetype)initWithKey:(NSData *)key {
+- (nullable instancetype)initWithKey:(NSData *)key {
     self = [super init];
     if (self) {
-        if (!key || [key length] == 0) {return nil;}
+        if (!key || [key length] == 0) {
+            return nil;
+        }
         self.key = [[NSData alloc] initWithData:key];
     }
     return self;

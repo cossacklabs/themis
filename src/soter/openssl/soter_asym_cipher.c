@@ -14,7 +14,6 @@
 * limitations under the License.
 */
 
-#include <soter/error.h>
 #include <soter/soter.h>
 #include <soter/soter_rsa_key.h>
 #include "soter_engine.h"
@@ -288,11 +287,12 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
 soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_length, soter_asym_cipher_padding_t pad)
 {
 	soter_status_t status;
-	soter_asym_cipher_t *ctx = calloc(1, sizeof(soter_asym_cipher_t));
+	soter_asym_cipher_t *ctx = malloc(sizeof(soter_asym_cipher_t));
 	if (!ctx)
 	{
 		return NULL;
 	}
+	ctx->pkey_ctx = NULL;
 
 	status = soter_asym_cipher_init(ctx, key, key_length, pad);
 	if (SOTER_SUCCESS == status)

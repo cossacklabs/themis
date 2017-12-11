@@ -6,7 +6,7 @@ package message
 #include <string.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/secure_message.h>
 
 static bool get_message_size(const void *priv, size_t priv_len, const void *public, size_t pub_len, const void *message, size_t message_len, bool is_wrap, size_t *out_len)

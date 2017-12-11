@@ -41,6 +41,9 @@
 * cover more constrained environments though. Interfaces below are prioritized by our preference,
 * which takes only security and ease of use into account.
 */
+
+NS_ASSUME_NONNULL_BEGIN
+
 @interface TSCell : NSObject
 
 /** @brief store master key
@@ -50,9 +53,11 @@
 /** @brief Initialize Secure Cell object
 * @param [in] key master key
 */
-- (instancetype)initWithKey:(NSData *)key;
+- (nullable instancetype)initWithKey:(NSData *)key;
 
 @end
+
+NS_ASSUME_NONNULL_END
 
 /** @} */
 /** @} */  

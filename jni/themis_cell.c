@@ -15,7 +15,7 @@
 */
 
 #include <jni.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/secure_cell.h>
 
 /* These definitions should correspond to the ones in SecureCell.java */
@@ -74,10 +74,10 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(JN
 	switch (mode)
 	{
 	case MODE_SEAL:
-		res = themis_secure_cell_encrypt_seal(key_buf, key_length, context_buf, context_length, data_buf, data_length, NULL, &encrypted_data_length);
+		res = themis_secure_cell_encrypt_seal((uint8_t *)key_buf, key_length, (uint8_t *)context_buf, context_length, (uint8_t *)data_buf, data_length, NULL, &encrypted_data_length);
 		break;
 	case MODE_TOKEN_PROTECT:
-		res = themis_secure_cell_encrypt_token_protect(key_buf, key_length, context_buf, context_length, data_buf, data_length, NULL, &additional_data_length, NULL, &encrypted_data_length);
+		res = themis_secure_cell_encrypt_token_protect((uint8_t *)key_buf, key_length, (uint8_t *)context_buf, context_length, (uint8_t *)data_buf, data_length, NULL, &additional_data_length, NULL, &encrypted_data_length);
 		break;
 	case MODE_CONTEXT_IMPRINT:
 		if (!context)
@@ -86,7 +86,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(JN
 			goto err;
 		}
 
-		res = themis_secure_cell_encrypt_context_imprint(key_buf, key_length, data_buf, data_length, context_buf, context_length, NULL, &encrypted_data_length);
+		res = themis_secure_cell_encrypt_context_imprint((uint8_t *)key_buf, key_length, (uint8_t *)data_buf, data_length, (uint8_t *)context_buf, context_length, NULL, &encrypted_data_length);
 		break;
 	default:
 		goto err;
@@ -121,6 +121,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(JN
 	if (additional_data_length)
 	{
 		additional_data_buf = (*env)->GetByteArrayElements(env, additional_data, NULL);
+		if (!additional_data_buf) 
 		{
 			goto err;
 		}
@@ -129,10 +130,10 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(JN
 	switch (mode)
 	{
 	case MODE_SEAL:
-		res = themis_secure_cell_encrypt_seal(key_buf, key_length, context_buf, context_length, data_buf, data_length, encrypted_data_buf, &encrypted_data_length);
+		res = themis_secure_cell_encrypt_seal((uint8_t *)key_buf, key_length, (uint8_t *)context_buf, context_length, (uint8_t *)data_buf, data_length, (uint8_t *)encrypted_data_buf, &encrypted_data_length);
 		break;
 	case MODE_TOKEN_PROTECT:
-		res = themis_secure_cell_encrypt_token_protect(key_buf, key_length, context_buf, context_length, data_buf, data_length, additional_data_buf, &additional_data_length, encrypted_data_buf, &encrypted_data_length);
+		res = themis_secure_cell_encrypt_token_protect((uint8_t *)key_buf, key_length, (uint8_t *)context_buf, context_length, (uint8_t *)data_buf, data_length, (uint8_t *)additional_data_buf, &additional_data_length, (uint8_t *)encrypted_data_buf, &encrypted_data_length);
 		break;
 	case MODE_CONTEXT_IMPRINT:
 		if (!context)
@@ -141,7 +142,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(JN
 			goto err;
 		}
 
-		res = themis_secure_cell_encrypt_context_imprint(key_buf, key_length, data_buf, data_length, context_buf, context_length, encrypted_data_buf, &encrypted_data_length);
+		res = themis_secure_cell_encrypt_context_imprint((uint8_t *)key_buf, key_length, (uint8_t *)data_buf, data_length, (uint8_t *)context_buf, context_length, (uint8_t *)encrypted_data_buf, &encrypted_data_length);
 		break;
 	default:
 		goto err;
@@ -269,7 +270,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(JNIE
 	switch (mode)
 	{
 	case MODE_SEAL:
-		res = themis_secure_cell_decrypt_seal(key_buf, key_length, context_buf, context_length, encrypted_data_buf, encrypted_data_length, NULL, &data_length);
+		res = themis_secure_cell_decrypt_seal((uint8_t *)key_buf, key_length, (uint8_t *)context_buf, context_length, (uint8_t *)encrypted_data_buf, encrypted_data_length, NULL, &data_length);
 		break;
 	case MODE_TOKEN_PROTECT:
 		if (!additional_data_buf)
@@ -278,7 +279,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(JNIE
 			goto err;
 		}
 
-		res = themis_secure_cell_decrypt_token_protect(key_buf, key_length, context_buf, context_length, encrypted_data_buf, encrypted_data_length, additional_data_buf, additional_data_length, NULL, &data_length);
+		res = themis_secure_cell_decrypt_token_protect((uint8_t *)key_buf, key_length, (uint8_t *)context_buf, context_length, (uint8_t *)encrypted_data_buf, encrypted_data_length, (uint8_t *)additional_data_buf, additional_data_length, NULL, &data_length);
 		break;
 	case MODE_CONTEXT_IMPRINT:
 		if (!context)
@@ -287,7 +288,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(JNIE
 			goto err;
 		}
 
-		res = themis_secure_cell_encrypt_context_imprint(key_buf, key_length, encrypted_data_buf, encrypted_data_length, context_buf, context_length, NULL, &data_length);
+		res = themis_secure_cell_encrypt_context_imprint((uint8_t *)key_buf, key_length, (uint8_t *)encrypted_data_buf, encrypted_data_length, (uint8_t *)context_buf, context_length, NULL, &data_length);
 		break;
 	default:
 		goto err;
@@ -313,7 +314,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(JNIE
 	switch (mode)
 	{
 	case MODE_SEAL:
-		res = themis_secure_cell_decrypt_seal(key_buf, key_length, context_buf, context_length, encrypted_data_buf, encrypted_data_length, data_buf, &data_length);
+		res = themis_secure_cell_decrypt_seal((uint8_t *)key_buf, key_length, (uint8_t *)context_buf, context_length, (uint8_t *)encrypted_data_buf, encrypted_data_length, (uint8_t *)data_buf, &data_length);
 		break;
 	case MODE_TOKEN_PROTECT:
 		if (!additional_data_buf)
@@ -322,7 +323,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(JNIE
 			goto err;
 		}
 
-		res = themis_secure_cell_decrypt_token_protect(key_buf, key_length, context_buf, context_length, encrypted_data_buf, encrypted_data_length, additional_data_buf, additional_data_length, data_buf, &data_length);
+		res = themis_secure_cell_decrypt_token_protect((uint8_t *)key_buf, key_length, (uint8_t *)context_buf, context_length, (uint8_t *)encrypted_data_buf, encrypted_data_length, (uint8_t *)additional_data_buf, additional_data_length, (uint8_t *)data_buf, &data_length);
 		break;
 	case MODE_CONTEXT_IMPRINT:
 		if (!context)
@@ -331,7 +332,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(JNIE
 			goto err;
 		}
 
-		res = themis_secure_cell_encrypt_context_imprint(key_buf, key_length, encrypted_data_buf, encrypted_data_length, context_buf, context_length, data_buf, &data_length);
+		res = themis_secure_cell_encrypt_context_imprint((uint8_t *)key_buf, key_length, (uint8_t *)encrypted_data_buf, encrypted_data_length, (uint8_t *)context_buf, context_length, (uint8_t *)data_buf, &data_length);
 		break;
 	default:
 		goto err;

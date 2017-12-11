@@ -15,7 +15,6 @@
 */
 
 #include "soter_test.h"
-#include "../common/test_utils.h"
 #include <string.h>
 
 typedef struct test_vector_type test_vector_t;

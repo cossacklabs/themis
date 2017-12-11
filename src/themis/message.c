@@ -15,7 +15,7 @@
 */
 
 #include <string.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/message.h>
 
 themis_message_t* themis_message_init(const uint8_t* message, const size_t message_length){

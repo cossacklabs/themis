@@ -15,7 +15,7 @@
 */
 
 #include <jni.h>
-#include <themis/error.h>
+#include <themis/themis_error.h>
 #include <themis/secure_message.h>
 
 JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(JNIEnv *env, jobject thiz, jbyteArray private, jbyteArray public, jbyteArray message, jboolean is_wrap)
@@ -69,11 +69,11 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
 
 	if (is_wrap)
 	{
-		res = themis_secure_message_wrap(priv_buf, private_length, pub_buf, public_length, message_buf, message_length, NULL, &output_length);
+		res = themis_secure_message_wrap((uint8_t *)priv_buf, private_length, (uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, NULL, &output_length);
 	}
 	else
 	{
-		res = themis_secure_message_unwrap(priv_buf, private_length, pub_buf, public_length, message_buf, message_length, NULL, &output_length);
+		res = themis_secure_message_unwrap((uint8_t *)priv_buf, private_length, (uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, NULL, &output_length);
 	}
 
 	if (THEMIS_BUFFER_TOO_SMALL != res)
@@ -95,11 +95,11 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
 
 	if (is_wrap)
 	{
-		res = themis_secure_message_wrap(priv_buf, private_length, pub_buf, public_length, message_buf, message_length, output_buf, &output_length);
+		res = themis_secure_message_wrap((uint8_t *)priv_buf, private_length, (uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, (uint8_t *)output_buf, &output_length);
 	}
 	else
 	{
-		res = themis_secure_message_unwrap(priv_buf, private_length, pub_buf, public_length, message_buf, message_length, output_buf, &output_length);
+		res = themis_secure_message_unwrap((uint8_t *)priv_buf, private_length, (uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, (uint8_t *)output_buf, &output_length);
 	}
 
 err:

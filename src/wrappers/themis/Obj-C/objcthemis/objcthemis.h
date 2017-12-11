@@ -8,6 +8,7 @@
 	#import <objcthemis/smessage.h>
 	#import <objcthemis/scomparator.h>
     #import <objcthemis/ssession.h>
+    #import <objcthemis/serror.h>
 
 #endif /* _OBJCTHEMIS_ */
 
