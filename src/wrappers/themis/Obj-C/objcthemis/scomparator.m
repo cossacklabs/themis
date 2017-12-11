@@ -49,12 +49,14 @@
 }
 
 
-- (nullable NSData *)beginCompare:(NSError **)error {
+- (nullable NSData *)beginCompare:(NSError * __autoreleasing *)error {
     size_t comparationRequestLength = 0;
     TSErrorType result = (TSErrorType) secure_comparator_begin_compare(self.comparator, NULL, &comparationRequestLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"Secure Comparator failed making initialisation message");
+		if (error)
+        	*error = SCERROR(result, @"Secure Comparator failed making initialisation message");
+		}
         return nil;
     }
 
@@ -62,13 +64,15 @@
     result = (TSErrorType) secure_comparator_begin_compare(self.comparator, [requestData mutableBytes], &comparationRequestLength);
 
     if (result != TSErrorTypeSuccess && result !=TSErrorTypeSendAsIs) {
-        *error = SCERROR(result, @"Secure Comparator failed making initialisation message");
+		if (error) {
+        	*error = SCERROR(result, @"Secure Comparator failed making initialisation message");
+		}
         return nil;
     }
     return [requestData copy];
 }
 
-- (nullable NSData *)proceedCompare:(nullable NSData *)message error:(NSError **)error {
+- (nullable NSData *)proceedCompare:(nullable NSData *)message error:(NSError * __autoreleasing *)error {
     size_t unwrappedMessageLength = 0;
     TSErrorType result = (TSErrorType) secure_comparator_proceed_compare(self.comparator, [message bytes], [message length], NULL, &unwrappedMessageLength);
 
@@ -76,7 +80,9 @@
         if (result == TSErrorTypeSuccess) {
             return nil;
         }
-        *error = SCERROR(result, @"Secure Comparator failed proceeding message");
+		if (error) {
+        	*error = SCERROR(result, @"Secure Comparator failed proceeding message");
+		}
         return nil;
     }
 
@@ -88,7 +94,9 @@
             return unwrappedMessage;
         }
         else {
-            *error = SCERROR(result, @"Secure Comparator failed proceeding message");
+			if (error) {
+            	*error = SCERROR(result, @"Secure Comparator failed proceeding message");
+			}
             return nil;
         }
     }

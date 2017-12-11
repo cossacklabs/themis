@@ -62,27 +62,33 @@ int on_get_public_key_for_id_callback(const void * id, size_t id_length, void * 
 
 
 // TODO: implement
-- (void)sendData:(nullable NSData *)data error:(NSError **)error {
-    *error = SCERROR(TSErrorTypeFail, @"secure session send callback");
+- (void)sendData:(nullable NSData *)data error:(NSError * __autoreleasing *)error {
+	if (error) {
+    	*error = SCERROR(TSErrorTypeFail, @"secure session send callback");
+	}
     return;
 }
 
 
 // TODO: implement
 - (nullable NSData *)receiveDataWithError:(NSError **)error {
-    *error = SCERROR(TSErrorTypeFail, @"secure session receive callback");
+	if (error) {
+    	*error = SCERROR(TSErrorTypeFail, @"secure session receive callback");
+	}
     return nil;
 }
 
 
-- (nullable NSData *)publicKeyFor:(nullable NSData *)binaryId error:(NSError **)error {
+- (nullable NSData *)publicKeyFor:(nullable NSData *)binaryId error:(NSError * __autoreleasing *)error {
     // TODO: approve
     NSMutableData * key = [[NSMutableData alloc] initWithLength:1024];
     TSErrorType result = (TSErrorType) on_get_public_key_for_id_callback([binaryId bytes], [binaryId length],
         [key mutableBytes], [key length], (__bridge void *) self);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(TSErrorTypeFail, @"Secure Session failed getting of public key");
+		if (error) {
+        	*error = SCERROR(TSErrorTypeFail, @"Secure Session failed getting of public key");
+		}
         return nil;
     }
     return [key copy];

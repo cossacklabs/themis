@@ -31,17 +31,17 @@
 }
 
 
-- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message error:(NSError **)error {
+- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message error:(NSError * __autoreleasing *)error {
     return [self wrapData:message context:nil error:error];
 }
 
 
-- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message error:(NSError **)error {
+- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message error:(NSError * __autoreleasing *)error {
     return [self unwrapData:message context:nil error:error];
 }
 
 
-- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError **)error {
+- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError * __autoreleasing *)error {
     size_t wrappedMessageLength = 0;
     size_t tokenLength = 0;
 
@@ -54,7 +54,9 @@
             NULL, &wrappedMessageLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"Secure Cell (Token Protect) encrypted message length determination failed");
+		if (error) {
+        	*error = SCERROR(result, @"Secure Cell (Token Protect) encrypted message length determination failed");
+		}
         return nil;
     }
 
@@ -66,14 +68,16 @@
             [encryptedMessage.cipherText mutableBytes], &wrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"Secure Cell (Token Protect) encryption failed");
+		if (error) {
+        	*error = SCERROR(result, @"Secure Cell (Token Protect) encryption failed");
+		}
         return nil;
     }
     return encryptedMessage;
 }
 
 
-- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(nullable NSData *)context error:(NSError **)error {
+- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(nullable NSData *)context error:(NSError * __autoreleasing *)error {
     size_t unwrappedMessageLength = 0;
     const void * contextData = [context bytes];
     size_t contextLength = [context length];
@@ -83,7 +87,9 @@
             NULL, &unwrappedMessageLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
-        *error = SCERROR(result, @"Secure Cell (Token Protect) decrypted message length determination failed");
+		if (error) {
+        	*error = SCERROR(result, @"Secure Cell (Token Protect) decrypted message length determination failed");
+		}
         return nil;
     }
 
@@ -93,7 +99,9 @@
             [unwrapped_message mutableBytes], &unwrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
-        *error = SCERROR(result, @"Secure Cell (Token Protect) decryption failed");
+		if (error) {
+        	*error = SCERROR(result, @"Secure Cell (Token Protect) decryption failed");
+		}
         return nil;
     }
     return [unwrapped_message copy];
