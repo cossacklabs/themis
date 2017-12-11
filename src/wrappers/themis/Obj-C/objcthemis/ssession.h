@@ -72,12 +72,12 @@ NS_ASSUME_NONNULL_BEGIN
 * @brief Create connection initialization message and send it to peer by \b send method from callbacks object.
 * @see TSSessionTransportInterface.
 * @return YES if success, NO if fail.
-/
+*/
 // TODO: rename method to reflect it's goal
 - (BOOL)connect:(NSError * __autoreleasing *)error;
 
 
-/** 
+/**
 * @brief Wrap message
 * @param [in] message message to wrap
 * @param [in] error pointer to Error on failure
