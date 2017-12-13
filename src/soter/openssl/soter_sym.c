@@ -103,6 +103,10 @@ soter_sym_ctx_t* soter_sym_ctx_init(const uint32_t alg,
   size_t key_length_=(alg&SOTER_SYM_KEY_LENGTH_MASK)/8;
   //EVP_CIPHER_CTX_init(ctx->evp_sym_ctx);
   ctx->evp_sym_ctx = EVP_CIPHER_CTX_new();
+  if(!ctx->evp_sym_ctx){
+    free(ctx);
+    return NULL;
+  }
   //  if(iv!=NULL && (iv_length<SOTER_SYM_BLOCK_LENGTH(alg))){ // как проверить длину iv??
   //  return NULL;
   //}
@@ -133,6 +137,10 @@ soter_sym_ctx_t* soter_sym_aead_ctx_init(const uint32_t alg,
   uint8_t key_[SOTER_SYM_MAX_KEY_LENGTH];
   size_t key_length_=(alg&SOTER_SYM_KEY_LENGTH_MASK)/8;
   ctx->evp_sym_ctx = EVP_CIPHER_CTX_new();
+  if(!ctx->evp_sym_ctx){
+    free(ctx);
+    return NULL;
+  }
   SOTER_IF_FAIL_(soter_withkdf(alg,key, key_length, salt, salt_length, key_, &key_length_)==SOTER_SUCCESS, soter_sym_encrypt_destroy(ctx));
   if(encrypt){
     SOTER_IF_FAIL_(EVP_EncryptInit_ex(ctx->evp_sym_ctx, algid_to_evp_aead(alg), NULL, key_, iv), soter_sym_encrypt_destroy(ctx));

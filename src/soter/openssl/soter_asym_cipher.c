@@ -97,7 +97,7 @@ soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher, const vo
 		return SOTER_FAIL;
 	}
 	SOTER_IF_FAIL(soter_asym_cipher_import_key(asym_cipher, key, key_length)==SOTER_SUCCESS, (EVP_PKEY_free(pkey), EVP_PKEY_CTX_free(asym_cipher->pkey_ctx)));
-    EVP_PKEY_free(pkey);
+	EVP_PKEY_free(pkey);
 	return SOTER_SUCCESS;
 }
 
@@ -110,8 +110,8 @@ soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher)
 
 	if (asym_cipher->pkey_ctx)
 	{
-        EVP_PKEY_CTX_free(asym_cipher->pkey_ctx);
-        asym_cipher->pkey_ctx = NULL;
+		EVP_PKEY_CTX_free(asym_cipher->pkey_ctx);
+		asym_cipher->pkey_ctx = NULL;
 	}
 
 	return SOTER_SUCCESS;
@@ -150,8 +150,8 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
 	}
 
 	rsa_mod_size = RSA_size(rsa);
-	int temp = (rsa_mod_size - 2 - (2 * OAEP_HASH_SIZE));
-	if (temp < 0 || plain_data_length > (size_t)temp)
+	int oaep_max_payload_length = (rsa_mod_size - 2 - (2 * OAEP_HASH_SIZE));
+	if (oaep_max_payload_length < 0 || plain_data_length > (size_t)oaep_max_payload_length)
 	{
 		/* The plaindata is too large for this key size */
 		return SOTER_INVALID_PARAMETER;
