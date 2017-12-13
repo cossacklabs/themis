@@ -34,8 +34,11 @@ func genRandData() ([]byte, error) {
 	if nil != err {
 		return nil, err
 	}
-
-	data := make([]byte, int(data_length.Int64()))
+	length := data_length.Int64()
+	if length == 0 {
+		length = 1
+	}
+	data := make([]byte, length)
 	_, err = rand.Read(data)
 	if nil != err {
 		return nil, err
