@@ -12,8 +12,12 @@ func testProtect(mode int, context []byte, t *testing.T) {
 	if nil != err {
 		t.Error(err)
 	}
+	size := data_len.Int64()
+	if size == 0 {
+		size = 1
+	}
 
-	data := make([]byte, int(data_len.Int64()))
+	data := make([]byte, size)
 	_, err = rand.Read(data)
 	if nil != err {
 		t.Error(err)
