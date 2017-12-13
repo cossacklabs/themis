@@ -23,8 +23,12 @@ func testWrap(keytype int, t *testing.T) {
 	if nil != err {
 		t.Error(err)
 	}
+	length := message_length.Int64()
+	if length == 0 {
+		length = 1
+	}
 
-	message := make([]byte, int(message_length.Int64()))
+	message := make([]byte, length)
 	_, err = rand.Read(message)
 	if nil != err {
 		t.Error(err)
@@ -81,8 +85,12 @@ func testSign(keytype int, t *testing.T) {
 	if nil != err {
 		t.Error(err)
 	}
+	length := message_length.Int64()
+	if length == 0 {
+		length = 1
+	}
 
-	message := make([]byte, int(message_length.Int64()))
+	message := make([]byte, length)
 
 	sma := New(kp.Private, nil)
 	signed, err := sma.Sign(message)
