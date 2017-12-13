@@ -1,7 +1,7 @@
 # Themis ChangeLog
 
 
-## [0.9.6](https://github.com/cossacklabs/themis/releases/tag/0.9.6), December 15th 2017
+## [0.9.6](https://github.com/cossacklabs/themis/releases/tag/0.9.6), December 14th 2017
 
 **TL;DR:** OpenSSL 1.1 support.
 
