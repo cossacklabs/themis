@@ -17,7 +17,6 @@
 #include "soter_test.h"
 #include <stdio.h>
 #include <unistd.h>
-#include <limits.h>
 #include <string.h>
 
 #ifdef NIST_STS_EXE_PATH
@@ -129,7 +128,8 @@ static bool get_result_from_report(void)
 /* NIST test suite should be launched from its root directory */
 static void test_rand_with_nist(void)
 {
-	char curr_work_dir[PATH_MAX];
+	int path_max = (int)pathconf("/", _PC_PATH_MAX);;
+	char curr_work_dir[path_max];
 
 	/* Store current work dir */
 	if (NULL == getcwd(curr_work_dir, sizeof(curr_work_dir)))
@@ -186,7 +186,9 @@ void run_soter_rand_tests(void)
 {
 	testsuite_enter_suite("soter rand: api");
 	testsuite_run_test(test_api);
-
-//	testsuite_enter_suite("soter rand: NIST STS (make take some time...)");
-//	testsuite_run_test(test_rand_with_nist);
+// always fail under ci
+#ifndef CIRICLE_TEST
+	testsuite_enter_suite("soter rand: NIST STS (make take some time...)");
+	testsuite_run_test(test_rand_with_nist);
+#endif
 }

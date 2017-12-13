@@ -97,19 +97,16 @@ static void test_known_values(void)
 	}
 }
 
-static void test_api(void)
+static void test_api_(soter_hash_ctx_t* ctx)
 {
 	soter_status_t res;
-	soter_hash_ctx_t ctx;
 	uint8_t input[MAX_TEST_INPUT];
 	uint8_t hash[32], result[32]; /* TODO: define this and also consider whole SHA-2, not only SHA-256 */
 	size_t input_len, hash_len = sizeof(hash);
 	test_utils_status_t util_res;
 
-	memset(&ctx, 0, sizeof(soter_hash_ctx_t));
-
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_init(NULL, SOTER_HASH_SHA256), "soter_hash_init: invalid context");
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_init(&ctx, (soter_hash_algo_t)0xffffffff), "soter_hash_init: invalid algorithm type");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_init(ctx, (soter_hash_algo_t)0xffffffff), "soter_hash_init: invalid algorithm type");
 	testsuite_fail_unless(NULL == soter_hash_create((soter_hash_algo_t)0xffffffff), "soter_hash_create: invalid algorithm type");
 
 	input_len = strlen(vectors[4].input) / 2;
@@ -126,7 +123,7 @@ static void test_api(void)
 		return;
 	}
 
-	res = soter_hash_init(&ctx, SOTER_HASH_SHA256);
+	res = soter_hash_init(ctx, SOTER_HASH_SHA256);
 	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(SOTER_SUCCESS != res, "soter_hash_init failed");
@@ -134,9 +131,9 @@ static void test_api(void)
 	}
 
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_update(NULL, input, input_len), "soter_hash_update: invalid context");
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_update(&ctx, NULL, input_len), "soter_hash_update: invalid data");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_update(ctx, NULL, input_len), "soter_hash_update: invalid data");
 
-	res = soter_hash_update(&ctx, input, input_len);
+	res = soter_hash_update(ctx, input, input_len);
 	if (SOTER_SUCCESS != res)
 	{
 		testsuite_fail_if(SOTER_SUCCESS != res, "soter_hash_update failed");
@@ -144,13 +141,13 @@ static void test_api(void)
 	}
 
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_final(NULL, hash, &hash_len), "soter_hash_final: invalid context");
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_final(&ctx, hash, NULL), "soter_hash_final: invalid size pointer");
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_final(ctx, hash, NULL), "soter_hash_final: invalid size pointer");
 
-	res = soter_hash_final(&ctx, NULL, &hash_len);
+	res = soter_hash_final(ctx, NULL, &hash_len);
 	testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (32 == hash_len), "soter_hash_final: get output size (NULL out buffer)");
 
 	hash_len--;
-	res = soter_hash_final(&ctx, hash, &hash_len);
+	res = soter_hash_final(ctx, hash, &hash_len);
 	testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (32 == hash_len), "soter_hash_final: get output size (small out buffer)");
 
 	util_res = string_to_bytes(vectors[4].result, result, sizeof(result));
@@ -160,10 +157,32 @@ static void test_api(void)
 		return;
 	}
 
-	res = soter_hash_final(&ctx, hash, &hash_len);
+	res = soter_hash_final(ctx, hash, &hash_len);
 	testsuite_fail_unless((SOTER_SUCCESS == res) && (32 == hash_len) && !memcmp(hash, result, hash_len), "soter_hash_final: normal value");
 
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_destroy(NULL), "soter_hash_destroy: invalid context");
+    testsuite_fail_unless(SOTER_SUCCESS == soter_hash_cleanup(ctx), "soter_hash_cleanup: can't cleanup");
+}
+
+static void test_api(void){
+    soter_hash_ctx_t* ctx = soter_hash_create(SOTER_HASH_SHA256);
+    if (!ctx){
+        testsuite_fail_if(true, "soter_hash_create failed");
+        return;
+    }
+    soter_status_t res = soter_hash_cleanup(ctx);
+    if (SOTER_SUCCESS != res)
+    {
+        testsuite_fail_if(SOTER_SUCCESS != res, "soter_hash_cleanup failed");
+        return;
+    }
+    test_api_(ctx);
+    testsuite_fail_unless(SOTER_SUCCESS == soter_hash_destroy(ctx), "soter_hash_destroy: can't destroy");
+}
+
+static void test_api_stack_struct(void){
+    soter_hash_ctx_t ctx;
+    test_api_(&ctx);
 }
 
 void run_soter_hash_tests(void)
@@ -173,4 +192,7 @@ void run_soter_hash_tests(void)
 
 	testsuite_enter_suite("soter hash: api");
 	testsuite_run_test(test_api);
+
+    testsuite_enter_suite("soter hash: stack struct");
+    testsuite_run_test(test_api_stack_struct);
 }

@@ -22,13 +22,13 @@
 
 struct soter_hash_ctx_type
 {
-  EVP_MD_CTX evp_md_ctx;
+  EVP_MD_CTX* evp_md_ctx;
 };
 
 struct soter_sym_ctx_type
 {
   uint32_t alg;
-  EVP_CIPHER_CTX evp_sym_ctx;
+  EVP_CIPHER_CTX* evp_sym_ctx;
 };
 
 struct soter_asym_cipher_type

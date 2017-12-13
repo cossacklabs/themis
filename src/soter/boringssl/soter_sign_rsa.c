@@ -101,8 +101,8 @@ soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signa
   if (!pkey){
     return SOTER_INVALID_PARAMETER;
   }
-  if((*signature_length)<EVP_PKEY_size(pkey)){
-    (*signature_length)=EVP_PKEY_size(pkey);
+  if((*signature_length)<(size_t)EVP_PKEY_size(pkey)){
+    (*signature_length)=(size_t)EVP_PKEY_size(pkey);
     return SOTER_BUFFER_TOO_SMALL;
   }
   if(!EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length)){

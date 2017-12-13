@@ -19,6 +19,8 @@
 
 int main(int argc, char *argv[])
 {
+	UNUSED(argc);
+	UNUSED(argv);
     testsuite_start_testing();
 
 	run_soter_hash_tests();

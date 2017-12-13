@@ -202,8 +202,7 @@ soter_sign_ctx_t* soter_verify_create(soter_sign_alg_t alg, const void* private_
     return NULL;
   }
   if(soter_verify_init(ctx, alg, private_key, private_key_length, public_key, public_key_length)!=SOTER_SUCCESS){
-    soter_verify_cleanup(ctx);
-    free(ctx);
+    soter_verify_destroy(ctx);
     return NULL;
   }
   return ctx;

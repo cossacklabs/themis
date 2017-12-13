@@ -97,6 +97,7 @@ soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher, const vo
 		return SOTER_FAIL;
 	}
 	SOTER_IF_FAIL(soter_asym_cipher_import_key(asym_cipher, key, key_length)==SOTER_SUCCESS, (EVP_PKEY_free(pkey), EVP_PKEY_CTX_free(asym_cipher->pkey_ctx)));
+	EVP_PKEY_free(pkey);
 	return SOTER_SUCCESS;
 }
 
@@ -109,11 +110,8 @@ soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher)
 
 	if (asym_cipher->pkey_ctx)
 	{
-		EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(asym_cipher->pkey_ctx);
 		EVP_PKEY_CTX_free(asym_cipher->pkey_ctx);
-		if(pkey){
-		    EVP_PKEY_free(pkey);
-		}
+		asym_cipher->pkey_ctx = NULL;
 	}
 
 	return SOTER_SUCCESS;
@@ -152,8 +150,8 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
 	}
 
 	rsa_mod_size = RSA_size(rsa);
-
-	if (plain_data_length > (rsa_mod_size - 2 - (2 * OAEP_HASH_SIZE)))
+	int oaep_max_payload_length = (rsa_mod_size - 2 - (2 * OAEP_HASH_SIZE));
+	if (oaep_max_payload_length < 0 || plain_data_length > (size_t)oaep_max_payload_length)
 	{
 		/* The plaindata is too large for this key size */
 		return SOTER_INVALID_PARAMETER;
@@ -236,7 +234,7 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
 
 	rsa_mod_size = RSA_size(rsa);
 
-	if (cipher_data_length < rsa_mod_size)
+	if (rsa_mod_size < 0 || cipher_data_length < (size_t)rsa_mod_size)
 	{
 		/* The cipherdata is too small for this key size */
 		return SOTER_INVALID_PARAMETER;
@@ -294,6 +292,7 @@ soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_
 	{
 		return NULL;
 	}
+	ctx->pkey_ctx = NULL;
 
 	status = soter_asym_cipher_init(ctx, key, key_length, pad);
 	if (SOTER_SUCCESS == status)
@@ -302,7 +301,7 @@ soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_
 	}
 	else
 	{
-		free(ctx);
+		soter_asym_cipher_destroy(ctx);
 		return NULL;
 	}
 }
@@ -317,9 +316,9 @@ soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher)
 	}
 
 	status = soter_asym_cipher_cleanup(asym_cipher);
+	free(asym_cipher);
 	if (SOTER_SUCCESS == status)
 	{
-		free(asym_cipher);
 		return SOTER_SUCCESS;
 	}
 	else

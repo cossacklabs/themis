@@ -117,7 +117,7 @@ themis_status_t verify_signature(const void *verify_key, size_t verify_key_lengt
 	sign_ctx = soter_verify_create(get_peer_key_sign_type(verify_key, verify_key_length), NULL, 0, verify_key, verify_key_length);
 	if (!sign_ctx)
 	{
-		return soter_status;
+		return SOTER_FAIL;
 	}
 
 	for (i = 0; i < sign_data_count; i++)
@@ -142,22 +142,19 @@ err:
 
 themis_status_t compute_mac(const void *key, size_t key_length, const soter_kdf_context_buf_t *data, size_t data_count, void *mac, size_t *mac_length)
 {
-	soter_hmac_ctx_t mac_ctx;
+	soter_hmac_ctx_t* mac_ctx = soter_hmac_create(SOTER_HASH_SHA256, key, key_length);
+	if(!mac_ctx){
+		return THEMIS_FAIL;
+	}
 	soter_status_t soter_status;
 	size_t i;
-
-	soter_status = soter_hmac_init(&mac_ctx, SOTER_HASH_SHA256, key, key_length);
-	if (THEMIS_SUCCESS != soter_status)
-	{
-		return soter_status;
-	}
 
 	/* This is to compute real mac, not just get output data size */
 	if (data && mac)
 	{
 		for (i = 0; i < data_count; i++)
 		{
-			soter_status = soter_hmac_update(&mac_ctx, data[i].data, data[i].length);
+			soter_status = soter_hmac_update(mac_ctx, data[i].data, data[i].length);
 			if (THEMIS_SUCCESS != soter_status)
 			{
 				goto err;
@@ -165,11 +162,11 @@ themis_status_t compute_mac(const void *key, size_t key_length, const soter_kdf_
 		}
 	}
 
-	soter_status = soter_hmac_final(&mac_ctx, mac, mac_length);
+	soter_status = soter_hmac_final(mac_ctx, mac, mac_length);
 
 err:
 
-	soter_hmac_cleanup(&mac_ctx);
+	soter_hmac_destroy(mac_ctx);
 
 	return soter_status;
 }

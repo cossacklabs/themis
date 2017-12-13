@@ -26,8 +26,6 @@
 /* RFC 6189 p 4.5.1 */
 soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, const soter_kdf_context_buf_t *context, size_t context_count, void *output, size_t output_length)
 {
-	soter_hmac_ctx_t hmac_ctx;
-
 	soter_status_t res = SOTER_SUCCESS;
 	uint8_t out[MAX_HMAC_SIZE] = {0, 0, 0, 1};
 	size_t out_length = sizeof(out);
@@ -57,26 +55,25 @@ soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, 
 		key = implicit_key;
 		key_length = sizeof(implicit_key);
 	}
-
-	res = soter_hmac_init(&hmac_ctx, SOTER_HASH_SHA256, key, key_length);
-	if (SOTER_SUCCESS != res){
-		return res;
+	soter_hmac_ctx_t* hmac_ctx = soter_hmac_create(SOTER_HASH_SHA256, key, key_length);
+	if(!hmac_ctx){
+		return SOTER_FAIL;
 	}
 
 	/* i (counter) */
-	res = soter_hmac_update(&hmac_ctx, out, 4);
+	res = soter_hmac_update(hmac_ctx, out, 4);
 	if (SOTER_SUCCESS != res){
 		goto err;
 	}
 
 	/* label */
-	res = soter_hmac_update(&hmac_ctx, label, strlen(label));
+	res = soter_hmac_update(hmac_ctx, label, strlen(label));
 	if (SOTER_SUCCESS != res){
 		goto err;
 	}
 
 	/* 0x00 delimiter */
-	res = soter_hmac_update(&hmac_ctx, out, 1);
+	res = soter_hmac_update(hmac_ctx, out, 1);
 	if (SOTER_SUCCESS != res){
 		goto err;
 	}
@@ -86,14 +83,14 @@ soter_status_t soter_kdf(const void *key, size_t key_length, const char *label, 
 	{
 		if (context[i].data)
 		{
-			res = soter_hmac_update(&hmac_ctx, context[i].data, context[i].length);
+			res = soter_hmac_update(hmac_ctx, context[i].data, context[i].length);
 			if (SOTER_SUCCESS != res){
 				goto err;
 			}
 		}
 	}
 
-	res = soter_hmac_final(&hmac_ctx, out, &out_length);
+	res = soter_hmac_final(hmac_ctx, out, &out_length);
 	if (SOTER_SUCCESS != res){
 		goto err;
 	}
@@ -110,7 +107,7 @@ err:
 
 	memset(out, 0, sizeof(out));
 
-	soter_hmac_cleanup(&hmac_ctx);
+	soter_hmac_destroy(hmac_ctx);
 
 	return res;
 }

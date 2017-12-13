@@ -465,15 +465,9 @@ LICENSE_NAME = "Apache License Version 2.0"
 LIBRARY_SO_VERSION := $(shell echo $(VERSION) | sed 's/^\([0-9.]*\)\(.*\)*$$/\1/')
 
 DEBIAN_CODENAME := $(shell lsb_release -cs 2> /dev/null)
-DEBIAN_STRETCH_VERSION := libssl1.0.2
 DEBIAN_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
+DEBIAN_DEPENDENCIES := --depends openssl
 
-ifeq ($(DEBIAN_CODENAME),stretch)
-        DEBIAN_DEPENDENCIES := --depends $(DEBIAN_STRETCH_VERSION)
-else
-
-        DEBIAN_DEPENDENCIES := --depends openssl
-endif
 RPM_DEPENDENCIES = --depends openssl
 RPM_RELEASE_NUM = 1
 

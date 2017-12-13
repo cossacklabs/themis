@@ -18,7 +18,7 @@
 #define SOTER_TEST_H
 
 #include <soter/soter_error.h>
-#include <common/test_utils.h>
+#include "../common/test_utils.h"
 #include <soter/soter_t.h>
 
 void run_soter_hash_tests(void);
