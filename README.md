@@ -21,12 +21,12 @@
 #### Crypto library for storage and messaging for Swift, Obj-C, Android/Java, С++, JS, Python, Ruby, PHP, Go.
 <br>
 
-Themis is an open-source high-level cryptographic services library for mobile and server platforms, which provides secure data exchange and storage. Current stable release is [0.9.6](https://github.com/cossacklabs/themis/releases/tag/0.9.6), dated 14th of December 2017. 
+Themis is an open-source high-level cryptographic services library for mobile and server platforms, which provides secure data exchange and storage. The current stable release is [0.9.6](https://github.com/cossacklabs/themis/releases/tag/0.9.6), dated 14th of December 2017. 
 
 Themis provides four important cryptographic services:
 
 * **[Secure Message](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem)**: a simple encrypted messaging solution for the widest scope of applications. Exchange the keys between the parties and you're good to go. Two pairs of the underlying crytosystems: ECC + ECDSA / RSA + PSS + PKCS#7. 
-* **[Secure Session](https://github.com/cossacklabs/themis/wiki/Secure-Session-cryptosystem)**: session-oriented, forward secrecy datagram exchange solution with better security guarantees, but more demanding infrastructure. Secure Session can perfectly function as socket encryption, session security or (with some additional infrastructure) as a high-level messaging primitive. ECDH key agreement, ECC & AES encryption.
+* **[Secure Session](https://github.com/cossacklabs/themis/wiki/Secure-Session-cryptosystem)**: session-oriented, forward secrecy datagram exchange solution with better security guarantees, but more demanding infrastructure. Secure Session can perfectly function as socket encryption, session security, or (with some additional infrastructure) as a high-level messaging primitive. ECDH key agreement, ECC & AES encryption.
 * **[Secure Cell](https://github.com/cossacklabs/themis/wiki/Secure-Cell-cryptosystem)**: a multi-mode cryptographic container suitable for storing anything from encrypted files to database records and format-preserved strings. Secure Cell is built around AES in GCM (Token and Seal modes) and CTR (Context imprint mode).
 * **[Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem)**: a Zero-Knowledge based cryptographic protocol for authentication and comparing secrets.
 
@@ -34,7 +34,7 @@ Themis provides four important cryptographic services:
 
 We created Themis to build other products on top of it - i.e. [Acra](https://github.com/cossacklabs/acra) and [Hermes](https://www.cossacklabs.com/hermes/).
 
-Themis works in most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)) and is available for [Swift (iOS, macOS)](https://github.com/cossacklabs/themis/wiki/Swift-Howto), [Objective-C (iOS, macOS)](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto), [Java+Android](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto),  [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto), 
+Themis works on most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)) and is available for [Swift (iOS, macOS)](https://github.com/cossacklabs/themis/wiki/Swift-Howto), [Objective-C (iOS, macOS)](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto), [Java+Android](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto),  [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto), 
 [PHP](https://github.com/cossacklabs/themis/wiki/PHP-Howto), 
 [C++](https://github.com/cossacklabs/themis/wiki/CPP-Howto), 
 [Javascript (NodeJS)](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto), [Go](https://github.com/cossacklabs/themis/wiki/Go-HowTo),
@@ -42,7 +42,7 @@ Themis works in most operating systems (see [Availability](https://github.com/co
 
 We're also porting Themis features to different environments where people might need them: [Redis module](https://www.github.com/cossacklabs/rd_themis), [PostgreSQL module](https://www.github.com/cossacklabs/pg_themis)
 
-Themis was designed to provide complicated cryptosystems in an easy-to-use infrastructure, designed with modern rapid development in mind:
+Themis was designed to provide complicated cryptosystems in an easy-to-use infrastructure, with modern rapid development in mind:
 
 * **EASY**: Themis does not require users to obsess over parameters, cipher combination, and yet it provides high levels of security.
 * **DO YOUR THING**: Themis allows developers to focus on doing the necessary: developing their applications. 
@@ -103,7 +103,7 @@ sudo apt-get install libthemis
 
 ### CentOS / RHEL / OEL
 
-> Note, we only build RPM packages for x86_64.
+> Note: We only build RPM packages for x86_64.
 
 **1. Import the public key used by Cossack Labs to sign packages:**
 
@@ -156,7 +156,7 @@ Themis is available for the following languages/platforms:
 
 # Plugins
 
-Themis-based plugins are built to enable Themis features across various platforms and products: 
+Themis-based plugins are built to enable Themis' features across various platforms and products: 
 
 - [RD_Themis](https://github.com/cossacklabs/rd_themis) for Redis database
 - [PG_Themis](https://github.com/cossacklabs/pg_themis) for PostgreSQL database
@@ -164,7 +164,7 @@ Themis-based plugins are built to enable Themis features across various platform
 
 # Availability
 
-Themis supports the following architectures: x86/x64, armv*, various Androids architectures.
+Themis supports the following architectures: x86/x64, armv*, various Android architectures.
 
 It is checked to compile on the latest stable versions of:
 
