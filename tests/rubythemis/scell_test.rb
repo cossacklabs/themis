@@ -21,42 +21,63 @@ require 'rubythemis'
 require 'test/unit'
 
 class TestScell < Test::Unit::TestCase
-    def setup
-	@key = "This is test key";
-	@context = "This is test context"
-	@message = "This is test message"
-    end
+  def setup
+    @key = 'This is test key'
+    @context = 'This is test context'
+    @message = 'This is test message'
+  end
 
-    def test_seal
-	assert_raise( NoMethodError ) {seal=Themis::Scell.new(nil, Themis::Scell::SEAL_MODE)}
-	seal=Themis::Scell.new(@key, Themis::Scell::SEAL_MODE)
-	assert_raise(Themis::ThemisError){encrypted_message=seal.encrypt("", @context)}
-	encrypted_message=seal.encrypt(@message, @context)
-	assert_raise(Themis::ThemisError){decrypted_message= seal.decrypt(encrypted_message+"1", @context)}
-	assert_raise(Themis::ThemisError){decrypted_message= seal.decrypt(encrypted_message, @context+"1")}
-	decrypted_message= seal.decrypt(encrypted_message, @context)
-	assert_equal(@message, decrypted_message)
-	encrypted_message=seal.encrypt(@message)
-	decrypted_message= seal.decrypt(encrypted_message)
-	assert_equal(@message, decrypted_message)
+  def test_seal
+    assert_raise(NoMethodError) do
+      seal = Themis::Scell.new(nil, Themis::Scell::SEAL_MODE)
     end
+    seal = Themis::Scell.new(@key, Themis::Scell::SEAL_MODE)
 
-    def test_token_protect
-	token_protect=Themis::Scell.new(@key, Themis::Scell::TOKEN_PROTECT_MODE)
-	encrypted_message, token=token_protect.encrypt(@message, @context)
-	assert_raise(Themis::ThemisError){decrypted_message= token_protect.decrypt([encrypted_message, token+"1"], @context)}
-	decrypted_message= token_protect.decrypt([encrypted_message, token], @context)
-	assert_equal(@message, decrypted_message)
-	encrypted_message, token=token_protect.encrypt(@message)
-	decrypted_message= token_protect.decrypt([encrypted_message, token])
-	assert_equal(@message, decrypted_message)
+    assert_raise(Themis::ThemisError) do
+      encrypted_message = seal.encrypt('', @context)
     end
+    encrypted_message = seal.encrypt(@message, @context)
 
-    def test_context_imprint
-	context_imprint=Themis::Scell.new(@key, Themis::Scell::CONTEXT_IMPRINT_MODE)
-	encrypted_message=context_imprint.encrypt(@message, @context)
-	decrypted_message=context_imprint.decrypt(encrypted_message, @context)
-	assert_equal(@message, decrypted_message)
-	assert_raise(Themis::ThemisError){encrypted_message=context_imprint.encrypt(@message)}
+    assert_raise(Themis::ThemisError) do
+      decrypted_message = seal.decrypt(encrypted_message + '1', @context)
     end
+    assert_raise(Themis::ThemisError) do
+      decrypted_message = seal.decrypt(encrypted_message, @context + '1')
+    end
+    decrypted_message = seal.decrypt(encrypted_message, @context)
+
+    assert_equal(@message, decrypted_message)
+    encrypted_message = seal.encrypt(@message)
+    decrypted_message = seal.decrypt(encrypted_message)
+    assert_equal(@message, decrypted_message)
+  end
+
+  def test_token_protect
+    token_protect = Themis::Scell.new(@key, Themis::Scell::TOKEN_PROTECT_MODE)
+    encrypted_message, token = token_protect.encrypt(@message, @context)
+
+    assert_raise(Themis::ThemisError) do
+      decrypted_message = token_protect.decrypt(
+        [encrypted_message, token + '1'], @context)
+    end
+    decrypted_message = token_protect.decrypt(
+      [encrypted_message, token], @context)
+
+    assert_equal(@message, decrypted_message)
+    encrypted_message, token = token_protect.encrypt(@message)
+    decrypted_message = token_protect.decrypt([encrypted_message, token])
+    assert_equal(@message, decrypted_message)
+  end
+
+  def test_context_imprint
+    context_imprint = Themis::Scell.new(
+      @key, Themis::Scell::CONTEXT_IMPRINT_MODE)
+
+    encrypted_message = context_imprint.encrypt(@message, @context)
+    decrypted_message = context_imprint.decrypt(encrypted_message, @context)
+    assert_equal(@message, decrypted_message)
+    assert_raise(Themis::ThemisError) do
+      encrypted_message = context_imprint.encrypt(@message)
+    end
+  end
 end

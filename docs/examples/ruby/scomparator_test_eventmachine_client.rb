@@ -20,35 +20,32 @@ require 'rubygems'
 require 'eventmachine'
 require 'rubythemis'
 
-module Comparation_Client 
-
+module ComparationClient
   def post_init
-	@comparator = Themis::Scomparator.new("Test shared secret")
-	send_data @comparator.begin_compare()
+    @comparator = Themis::Scomparator.new('Test shared secret')
+    send_data @comparator.begin_compare
   end
-  
+
   def receive_data(data)
     mes = @comparator.proceed_compare(data)
-    if @comparator.result() == Themis::Scomparator::NOT_READY
-	send_data mes
+    case @comparator.result
+    when Themis::Scomparator::NOT_READY
+      send_data mes
+    when Themis::Scomparator::MATCH
+      puts 'match'
     else
-      if @comparator.result() == Themis::Scomparator::MATCH
-	puts "match"
-      else
-	puts "not match"
-      end
+      puts 'does not match'
     end
   end
-  
+
   def unbind
     if @data =~ /[\n][\r]*[\n]/m
-      $`.each {|line| puts ">>> #{line}" }
+      $`.each { |line| puts ">>> #{line}" }
     end
-    
-    EventMachine::stop_event_loop
+    EventMachine.stop_event_loop
   end
 end
 
-EventMachine::run do
-  EventMachine::connect '127.0.0.1', 26260, Comparation_Client
+EventMachine.run do
+  EventMachine.connect '127.0.0.1', 26260, ComparationClient
 end

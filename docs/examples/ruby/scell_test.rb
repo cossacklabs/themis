@@ -19,36 +19,34 @@
 require 'rubygems'
 require 'rubythemis'
 
-key = "password";
-context = "context"
-message = "test message"
+key = 'password'
+context = 'context'
+message = 'test message'
 
 scell_full = Themis::Scell.new(key, Themis::Scell::SEAL_MODE)
-mm=scell_full.encrypt(message, context)
+mm = scell_full.encrypt(message, context)
 p mm
 p scell_full.decrypt(mm, context)
 
-mm=scell_full.encrypt(message)
+mm = scell_full.encrypt(message)
 p mm
 p scell_full.decrypt(mm)
 
 scell_auto_split = Themis::Scell.new(key, Themis::Scell::TOKEN_PROTECT_MODE)
 
-mm, ss=scell_auto_split.encrypt(message, context)
-p mm , ss
-p scell_auto_split.decrypt([mm,ss], context)
+mm, ss = scell_auto_split.encrypt(message, context)
+p mm, ss
+p scell_auto_split.decrypt([mm, ss], context)
 
-mm=scell_auto_split.encrypt(message)
+mm = scell_auto_split.encrypt(message)
 p mm
 p scell_auto_split.decrypt(mm)
 
-
 scell_user_split = Themis::Scell.new(key, Themis::Scell::CONTEXT_IMPRINT_MODE)
-mm=scell_user_split.encrypt(message, context)
+mm = scell_user_split.encrypt(message, context)
 p mm
 p scell_user_split.decrypt(mm, context)
 
-#mm=scell_user_split.encrypt(message)
-#p mm
-#p scell_user_split.decrypt(mm)
-
+# mm = scell_user_split.encrypt(message)
+# p mm
+# p scell_user_split.decrypt(mm)
