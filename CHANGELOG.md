@@ -7,36 +7,36 @@
 
 _Docs:_
 
-- Significant update of wiki [Contributing section](https://github.com/cossacklabs/themis/wiki/Contribute).
+- Significant update of the [Contributing section](https://github.com/cossacklabs/themis/wiki/Contribute) in Wiki.
 
 _Infrastructure:_
 
-- Drop _Ubuntu Precise_ support.
-- Fix `.rpm` package versioning ([#240](https://github.com/cossacklabs/themis/pull/240)).
-- Add handy command to prepare and run all tests `make test` ([#243](https://github.com/cossacklabs/themis/issues/243)).
-- Small changes and updates in Makefile to make it even better, and fix installing dependencies ([#236](https://github.com/cossacklabs/themis/pull/236), [#239](https://github.com/cossacklabs/themis/pull/239), [#250](https://github.com/cossacklabs/themis/pull/250)).
+- Removed support for _Ubuntu Precise_.
+- Fixed `.rpm` package versioning ([#240](https://github.com/cossacklabs/themis/pull/240)).
+- Added a handy command for preparing and running of all the tests `make test` ([#243](https://github.com/cossacklabs/themis/issues/243)).
+- Added small changes and updates into [Makefile](https://github.com/cossacklabs/themis/blob/master/Makefile) to make it even better and fixed the installing dependencies ([#236](https://github.com/cossacklabs/themis/pull/236), [#239](https://github.com/cossacklabs/themis/pull/239), [#250](https://github.com/cossacklabs/themis/pull/250)).
 
 
 _Code:_
 
 - **Core:** 
-  - add OpenSSL 1.1 support ([#208](https://github.com/cossacklabs/themis/issues/208)).
+  - added OpenSSL 1.1 support ([#208](https://github.com/cossacklabs/themis/issues/208)).
 - **Android wrapper**: 
-  - fix Secure Cell in token protect mode ([#251](https://github.com/cossacklabs/themis/pull/251));
-  - fix casting warnings in JNI code ([#246](https://github.com/cossacklabs/themis/pull/246)).
+  - fixed Secure Cell in token protect mode ([#251](https://github.com/cossacklabs/themis/pull/251));
+  - fixув casting warnings in JNI code ([#246](https://github.com/cossacklabs/themis/pull/246)).
 - **iOS wrapper:** 
-  - update wrapper to be compatible with Swift4 ([#230](https://github.com/cossacklabs/themis/issues/230));
-  - add nullability support ([#255](https://github.com/cossacklabs/themis/pull/255));
-  - make NSError autoreleasing ([#257](https://github.com/cossacklabs/themis/pull/257), [#259](https://github.com/cossacklabs/themis/pull/259)) from [@valeriyvan](https://github.com/valeriyvan);
-  - fix warnings due to renaming `error.h` files ([#247](https://github.com/cossacklabs/themis/pull/247));
-  - update and refactor tests ([#231](https://github.com/cossacklabs/themis/pull/231), [#232](https://github.com/cossacklabs/themis/pull/232)).
+  - updated wrapper to be compatible with Swift4 ([#230](https://github.com/cossacklabs/themis/issues/230));
+  - added nullability support ([#255](https://github.com/cossacklabs/themis/pull/255));
+  - made the NSError autoreleasing ([#257](https://github.com/cossacklabs/themis/pull/257), [#259](https://github.com/cossacklabs/themis/pull/259)) from [@valeriyvan](https://github.com/valeriyvan);
+  - fixed warnings that appeared due to renaming `error.h` files ([#247](https://github.com/cossacklabs/themis/pull/247));
+  - updated and refactored tests ([#231](https://github.com/cossacklabs/themis/pull/231), [#232](https://github.com/cossacklabs/themis/pull/232)).
 - **GoThemis:** 
-   - add compatibility with old Go (1.2) ([#253](https://github.com/cossacklabs/themis/issues/253)); 
-   - fix tests ([#261](https://github.com/cossacklabs/themis/pull/261)).
+   - added compatibility with old Go (1.2) ([#253](https://github.com/cossacklabs/themis/issues/253)); 
+   - fixed tests ([#261](https://github.com/cossacklabs/themis/pull/261)).
 - **JSThemis:** 
-  - fix installation path on macOS ([#237](https://github.com/cossacklabs/themis/issues/237), [#238](https://github.com/cossacklabs/themis/pull/238/)).
+  - fixed installation path for macOS ([#237](https://github.com/cossacklabs/themis/issues/237), [#238](https://github.com/cossacklabs/themis/pull/238/)).
 - **PyThemis:** 
-  - fix compatibility with 0.9.5 version ([#241](https://github.com/cossacklabs/themis/pull/241)), pushed as separate package [0.9.5.1](https://pypi.python.org/pypi/pythemis/0.9.5.1).
+  - fixed compatibility with version 0.9.5 ([#241](https://github.com/cossacklabs/themis/pull/241)), pushed as a separate package [0.9.5.1](https://pypi.python.org/pypi/pythemis/0.9.5.1).
 
 
 ## [0.9.5](https://github.com/cossacklabs/themis/releases/tag/0.9.5), September 13th 2017
