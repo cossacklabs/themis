@@ -23,7 +23,7 @@ _Code:_
   - added OpenSSL 1.1 support ([#208](https://github.com/cossacklabs/themis/issues/208)).
 - **Android wrapper**: 
   - fixed Secure Cell in token protect mode ([#251](https://github.com/cossacklabs/themis/pull/251));
-  - fixув casting warnings in JNI code ([#246](https://github.com/cossacklabs/themis/pull/246)).
+  - fixed casting warnings in JNI code ([#246](https://github.com/cossacklabs/themis/pull/246)).
 - **iOS wrapper:** 
   - updated wrapper to be compatible with Swift4 ([#230](https://github.com/cossacklabs/themis/issues/230));
   - added nullability support ([#255](https://github.com/cossacklabs/themis/pull/255));
