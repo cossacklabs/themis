@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /** @brief Return public key associated with binaryId as NSData object or nil on failure
-* @param [in] binaryId
+* @param [in] binaryId usually server id
 * @param [in] error pointer to Error on failure
 * @return binary public key associated with binaryId or nil on failure
 */

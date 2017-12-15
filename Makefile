@@ -222,7 +222,7 @@ endif
 CFLAGS += -Werror -Wno-switch
 
 # strict checks for docs
-#CFLAGS += -Wdocumentation -ferror-limit=200
+#CFLAGS += -Wdocumentation -Wno-error=documentation
 
 ifndef ERROR
 include src/soter/soter.mk

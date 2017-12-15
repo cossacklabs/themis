@@ -50,7 +50,7 @@ typedef NS_ENUM(NSInteger, TSKeyGenAsymmetricAlgorithm) {
 
 /**
 * @brief initialise key pair generator, generates privateKey and publicKey
-* @param [in] alg algorithm. @see TSKeyGenAsymmetricAlgorithm
+* @param [in] algorithm, RSA or EC. @see TSKeyGenAsymmetricAlgorithm
 */
 - (nullable instancetype)initWithAlgorithm:(TSKeyGenAsymmetricAlgorithm)algorithm;
 

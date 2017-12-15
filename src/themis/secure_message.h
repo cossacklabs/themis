@@ -67,7 +67,7 @@ themis_status_t themis_gen_ec_key_pair(uint8_t* private_key,
 /** 
  * @brief wrap message to secure message
  * @param [in] private_key private key
- * @param [in] pribate_key_length length of private_key
+ * @param [in] private_key_length length of private_key
  * @param [in] public_key peer public key
  * @param [in] public_key_length length of public_key
  * @param [in] message message to wrap
@@ -89,7 +89,7 @@ themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
 /** 
  * @brief unwrap secure message to plain message
  * @param [in] private_key private key
- * @param [in] pribate_key_length length of private_key
+ * @param [in] private_key_length length of private_key
  * @param [in] public_key peer public key
  * @param [in] public_key_length length of public_key
  * @param [in] wrapped_message wrapped message to unwrap

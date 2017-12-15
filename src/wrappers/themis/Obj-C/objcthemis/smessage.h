@@ -87,14 +87,14 @@ typedef NS_ENUM(NSInteger, TSMessageMode) {
 /**
 * @brief Initialize Secure message object in encrypt/decrypt mode
 * @param [in] privateKey Private key
-* @param [in] peer_public_key Peer public key
+* @param [in] peerPublicKey Peer public key
 */
 - (nullable instancetype)initInEncryptModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey;
 
 /**
 * @brief Initialize Secure message object in sign/verify mode
 * @param [in] privateKey Private key
-* @param [in] peer_public_key Peer public key
+* @param [in] peerPublicKey Peer public key
 */
 - (nullable instancetype)initInSignVerifyModeWithPrivateKey:(NSData *)privateKey peerPublicKey:(NSData *)peerPublicKey;
 
