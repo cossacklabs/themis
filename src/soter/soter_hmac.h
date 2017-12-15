@@ -74,7 +74,7 @@ soter_hmac_ctx_t* soter_hmac_create(soter_hash_algo_t algo, const uint8_t* key, 
 /**
  * @brief destroy HMAC context
  * @param [in] hmac_ctx pointer to HMAC context previosly created by @ref soter_hmac_create
- * @return @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
+ * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
 soter_status_t soter_hmac_destroy(soter_hmac_ctx_t *hmac_ctx);
 
@@ -83,7 +83,7 @@ soter_status_t soter_hmac_destroy(soter_hmac_ctx_t *hmac_ctx);
  * @param [in] hmac_ctx pointer to HMAC context previosly created by @ref soter_hmac_create
  * @param [in] data pointer to buffer with data to HMAC update
  * @param [in] length of data buffer
- * @return @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
+ * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
 soter_status_t soter_hmac_update(soter_hmac_ctx_t *hmac_ctx, const void *data, size_t length);
 
@@ -92,7 +92,7 @@ soter_status_t soter_hmac_update(soter_hmac_ctx_t *hmac_ctx, const void *data, s
  * @param [in] hmac_ctx pointer to hash context previosly created by @ref soter_hmac_create
  * @param [out] hmac_value pointer to buffer for HMAC value retrieve, may be set to NULL for HMAC value length determination
  * @param [in, out] hmac_length length of hmac_value buffer
- * @return @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure. 
+ * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure. 
  * @note If hmac_value==NULL or hmac_length less then need to store HMAC value, @ref SOTER_BUFFER_TOO_SMALL will return and hmac_length will contain length of buffer thet need to store HMAC value.
  */
 soter_status_t soter_hmac_final(soter_hmac_ctx_t *hmac_ctx, uint8_t* hmac_value, size_t* hmac_length);

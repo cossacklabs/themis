@@ -66,7 +66,7 @@ themis_status_t themis_secure_cell_encrypt_seal(const uint8_t* master_key,
  * @param [in] master_key_length length of master_key
  * @param [in] user_context user defined context. May be set to NULL
  * @param [in] user_context_length length of user_context
- * @param [in] encrypted message to decrypt
+ * @param [in] encrypted_message message to decrypt
  * @param [in] encrypted_message_length length of encrypted_message
  * @param [out] plain_message buffer for plain message store. May be set to NULL for plain message length determination
  * @param [in, out] plain_message_length length of plain_message
@@ -99,7 +99,7 @@ themis_status_t themis_secure_cell_decrypt_seal(const uint8_t* master_key,
  * @param [in] message message to encrypt
  * @param [in] message_length length of message
  * @param [out] token additional authentication info. May be set to NULL for additional authentication info length determination
- * @param [in, out] length of additional authentication info
+ * @param [in, out] token_length length of additional authentication info
  * @param [out] encrypted_message buffer for encrypted message store. May be set to NULL for encrypted message length determination
  * @param [in, out] encrypted_message_length length of encrypted_message
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
@@ -122,10 +122,10 @@ themis_status_t themis_secure_cell_encrypt_token_protect(const uint8_t* master_k
  * @param [in] master_key_length length of master_key
  * @param [in] user_context user defined context. May be set to NULL
  * @param [in] user_context_length length of user_context
- * @param [in] encrypted message to decrypt
+ * @param [in] encrypted_message message to decrypt
  * @param [in] encrypted_message_length length of encrypted_message
  * @param [in] token additional authentication info
- * @param [in] context_length length of additional authentication info
+ * @param [in] token_length length of additional authentication info
  * @param [out] plain_message buffer for plain message store. May be set to NULL for plain message length determination
  * @param [in, out] plain_message_length length of plain_message
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
@@ -176,7 +176,7 @@ themis_status_t themis_secure_cell_encrypt_context_imprint(const uint8_t* master
  * @brief decrypt
  * @param [in] master_key master key
  * @param [in] master_key_length length of master_key
- * @param [in] encrypted message to decrypt
+ * @param [in] encrypted_message message to decrypt
  * @param [in] encrypted_message_length length of encrypted_message
  * @param [in] context user defined context. May be set to NULL
  * @param [in] context_length length of user_context

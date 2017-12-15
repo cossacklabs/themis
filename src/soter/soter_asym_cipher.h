@@ -61,8 +61,8 @@ soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_
  * @param [in] plain_data data to encrypt
  * @param [in] plain_data_length length of plain_data
  * @param [out] cipher_data buffer for cipher data store. May be set to NULL for cipher data length determination
- * @param [in, out] length of cipher_data
- * @return  SOTER_SUCESS on success or SOTER_FAIL on failure
+ * @param [in, out] cipher_data_length length of cipher_data
+ * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
  * @note If cipher_data==NULL or cipher_data_length less then need to store cipher data, @ref SOTER_BUFFER_TOO_SMALL will return and cipher_data_length will contain length of buffer thet need to store cipher data.
  */
 soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher_ctx, const void* plain_data, size_t plain_data_length, void* cipher_data, size_t* cipher_data_length);
@@ -73,8 +73,8 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher_ctx, c
  * @param [in] cipher_data data to decrypt
  * @param [in] cipher_data_length length of cipher_data
  * @param [out] plain_data buffer for plain data store. May be set to NULL for plain data length determination
- * @param [in, out] length of plain_data
- * @return  SOTER_SUCESS on success or SOTER_FAIL on failure
+ * @param [in, out] plain_data_length length of plain_data
+ * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
  * @note If plain_data==NULL or plain_data_length less then need to store plain data, @ref SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer thet need to store plain data.
  */
 soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher_ctx, const void* cipher_data, size_t cipher_data_length, void* plain_data, size_t* plain_data_length);
@@ -84,14 +84,14 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher_ctx, c
  * @param [in] asym_cipher_ctx pointer to asymmetric encription/decription context previously created by soter_asym_cipher_create
  * @param [in] key buffer with stored key
  * @param [in] key_length length of key
- * @return  SOTER_SUCESS on success or SOTER_FAIL on failure
+ * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
  */
 //soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx, const void* key, size_t key_length);
 
 /**
  * @brief destroy asymmetric encription/decription context
  * @param [in] asym_cipher_ctx pointer to asymmetric encription/decription context previously created by soter_asym_cipher_create
- * @return  SOTER_SUCESS on success or SOTER_FAIL on failure
+ * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
  */
 soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher_ctx);
 

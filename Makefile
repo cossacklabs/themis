@@ -221,6 +221,9 @@ endif
 # Should pay attention to warnings (some may be critical for crypto-enabled code (ex. signed-unsigned mismatch)
 CFLAGS += -Werror -Wno-switch
 
+# strict checks for docs
+#CFLAGS += -Wdocumentation -Wno-error=documentation
+
 ifndef ERROR
 include src/soter/soter.mk
 include src/themis/themis.mk
