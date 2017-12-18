@@ -20,30 +20,27 @@ require 'rubygems'
 require 'eventmachine'
 require 'rubythemis'
 
+module ComparationServer
+  def post_init
+    @comparator = Themis::Scomparator.new('Test shared secret' + '1')
+  end
 
-
-module Comparation_Server
-
-    def post_init
-	@comparator=Themis::Scomparator.new("Test_ shared secret")
-    end
-
-    def receive_data(data)
-      mes = @comparator.proceed_compare(data)
-      send_data mes
-      if @comparator.result() != Themis::Scomparator::NOT_READY
-        if @comparator.result() == Themis::Scomparator::MATCH
-	  puts "match"
-        else
-	  puts "not match"
-	end
+  def receive_data(data)
+    mes = @comparator.proceed_compare(data)
+    send_data mes
+    if @comparator.result != Themis::Scomparator::NOT_READY
+      if @comparator.result == Themis::Scomparator::MATCH
+        puts 'match'
+      else
+        puts 'does not match'
       end
     end
+  end
 end
 
-EventMachine::run do
+EventMachine.run do
   host = '0.0.0.0'
   port = 26260
-  EventMachine::start_server host, port, Comparation_Server
+  EventMachine.start_server host, port, ComparationServer
   puts "Started server on #{host}:#{port}..."
 end
