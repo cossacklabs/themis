@@ -100,7 +100,7 @@ ifdef IS_MACOS
 	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
 
 		# if brew is installed, if openssl is installed
-		PACKAGELIST = $(shell brew list | grep 'openssl')
+		PACKAGELIST = $(shell brew list | grep -om1 '^openssl')
 		ifeq ($(PACKAGELIST),openssl)
 
 		 	# path to openssl (usually "/usr/local/opt/openssl")
@@ -533,12 +533,12 @@ symlink_realname_to_soname:
 	done
 
 
-strip: 
+strip:
 	@find . -name \*.$(SHARED_EXT)\.* -exec strip -o {} {} \;
 
 deb: test soter_static themis_static soter_shared themis_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/deb
-	
+
 #libPACKAGE-dev
 	@fpm --input-type dir \
 		 --output-type deb \
@@ -556,7 +556,7 @@ deb: test soter_static themis_static soter_shared themis_shared collect_headers 
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --category $(PACKAGE_CATEGORY) \
 		 $(HEADER_FILES_MAP)
-		 
+
 #libPACKAGE
 	@fpm --input-type dir \
 		 --output-type deb \
