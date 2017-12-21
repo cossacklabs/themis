@@ -11,7 +11,12 @@ Describe here the issue that you are experiencing.
 
 **OS:** OS name and version
 
-**Themis version / branch:** 0.0.0
+**Themis version:** 0.0.0
+
+**Installation way:**
+ - [ ] downloaded tag from github
+ - [ ] via package manager
+ - [ ] built from source
 
 **Crypto provider:** OpenSSL / BoringSSL / LibreSSL (v0.0.0)
 
