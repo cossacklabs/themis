@@ -63,17 +63,17 @@ static NSString * kClientPublicKey = @"VUVDMgAAAC0IpZHJAp6MORixTEmgX8VrUghTyoGb/
 
 
 - (void)runSecureMessageCITest {
-    
+
 // ---------------------- KEY GENERATION ---------------------------------------
-    
+
     // uncomment to re-generate keys
 //    [self generateClientKeys];
 //    return;
-    
+
 // ---------------------- END KEY GENERATION -----------------------------------
-    
+
     [self checkKeysNotEmpty];
-    
+
     NSData * serverPublicKey = [[NSData alloc] initWithBase64EncodedString:kServerPublicKey options:NSDataBase64DecodingIgnoreUnknownCharacters];
     NSData * clientPrivateKey = [[NSData alloc] initWithBase64EncodedString:kClientPrivateKey options:NSDataBase64DecodingIgnoreUnknownCharacters];
     TSMessage * encrypter = [[TSMessage alloc] initInEncryptModeWithPrivateKey:clientPrivateKey
@@ -117,7 +117,7 @@ static NSString * kClientPublicKey = @"VUVDMgAAAC0IpZHJAp6MORixTEmgX8VrUghTyoGb/
     TSKeyGen * keygenEC = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmEC];
 
     if (!keygenEC) {
-        NSLog(@"%s Error occured while initializing object keygenEC", sel_getName(_cmd));
+        NSLog(@"%s Error occurred while initializing object keygenEC", sel_getName(_cmd));
         return;
     }
 
@@ -131,11 +131,11 @@ static NSString * kClientPublicKey = @"VUVDMgAAAC0IpZHJAp6MORixTEmgX8VrUghTyoGb/
 
 - (void)checkKeysNotEmpty {
     NSAssert(![kUserId isEqualToString:@"<user id>"], @"Get user id from https://themis.cossacklabs.com/interactive-simulator/setup/");
-    
+
     NSAssert(![kServerPublicKey isEqualToString:@"<server public key>"], @"Get server key from https://themis.cossacklabs.com/interactive-simulator/setup/");
-    
+
     NSAssert(![kClientPrivateKey isEqualToString:@"<generated client private key>"], @"Generate client keys by running `[self generateClientKeys]` or obtain from server https://themis.cossacklabs.com/interactive-simulator/setup/");
-    
+
     NSAssert(![kClientPublicKey isEqualToString:@"<generated client public key>"], @"Generate client keys by running `[self generateClientKeys]` or obtain from server https://themis.cossacklabs.com/interactive-simulator/setup/");
 }
 

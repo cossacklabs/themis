@@ -620,14 +620,14 @@ module Themis
         @comparator, message, message_length, nil, res_length)
       return '' if res == SUCCESS
       if res != BUFFER_TOO_SMALL
-        raise ThemisError, 'Secure Comparator failed proeeding message'
+        raise ThemisError, 'Secure Comparator failed proceeding message'
       end
 
       res_buffer = FFI::MemoryPointer.new(:char, res_length.read_uint)
       res = secure_comparator_proceed_compare(
         @comparator, message, message_length, res_buffer, res_length)
       if res != SUCCESS && res != SEND_AS_IS
-        raise ThemisError, 'Secure Comparator failed proeeding message'
+        raise ThemisError, 'Secure Comparator failed proceeding message'
       end
 
       res_buffer.get_bytes(0, res_length.read_uint)
