@@ -153,7 +153,7 @@ func main() {
 		wrapped, err := client_session.Wrap(line)
 		data, err := send_message(wrapped, endpoint)
 		if err != nil {
-			fmt.Println("Error occured:", err)
+			fmt.Println("Error occurred:", err)
 			return
 		}
 		unwrapped, _, err := client_session.Unwrap(data)

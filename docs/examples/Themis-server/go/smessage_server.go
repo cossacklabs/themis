@@ -80,7 +80,7 @@ func main() {
 		}
 		data, err := send_message(wrapped, endpoint)
 		if err != nil {
-			fmt.Println("Error occured:", err)
+			fmt.Println("Error occurred:", err)
 			return
 		}
 		unwrapped, err := secure_message.Unwrap(data)
