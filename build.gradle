@@ -54,10 +54,10 @@ android {
 }
 
 def getNdkDir() {
-    if (System.env.ANDROID_NDK_ROOT != null)
-        return System.env.ANDROID_NDK_ROOT
+    if (System.env.ANDROID_NDK != null)
+        return System.env.ANDROID_NDK
         
-    throw new GradleException("NDK location not found. Define location with an ANDROID_NDK_ROOT environment variable.")
+    throw new GradleException("NDK location not found. Define location with an ANDROID_NDK environment variable.")
 }
 
 def getNdkBuildCmd() {
