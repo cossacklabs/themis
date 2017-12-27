@@ -2,11 +2,12 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 buildscript {
     repositories {
-        mavenCentral()
+        google()
+        jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.3'
+        classpath 'com.android.tools.build:gradle:3.0.1'
     }
 }
 
