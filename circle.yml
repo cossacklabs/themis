@@ -9,7 +9,7 @@ machine:
     PATH: $GOROOT/bin:$PATH
     VALGRIND_BUILD_PATH: $HOME/valgrind
     # to avoid OOM killer (https://circleci.com/docs/1.0/oom/#out-of-memory-errors-in-android-builds)
-    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1024m -XX:+HeapDumpOnOutOfMemoryError"'
     # add define that turn off one nist test (tests/soter/soter_rand_test.c:190) that always fail on ci machine but ok on real machine
     CFLAGS: "-DCIRICLE_TEST"
     BORINGSSL_PATH: "$HOME/boringssl"
