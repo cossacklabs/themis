@@ -14,6 +14,11 @@
 # limitations under the License.
 #
 
-APP_PLATFORM := android-16
+APP_PLATFORM := android-21
 APP_MODULES := libthemis_jni
-APP_ABI := armeabi-v7a arm64-v8a x86
+# we needs this to prevent ndk-build complaining about missing
+# prebuilt boringssl static libraries
+APP_ALLOW_MISSING_DEPS := true
+# currently boringssl does not build well with clang for all archs
+# so we use GCC for Themis as well for maximum compatibility
+NDK_TOOLCHAIN_VERSION := 4.9
