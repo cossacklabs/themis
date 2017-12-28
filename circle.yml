@@ -55,7 +55,7 @@ dependencies:
 
 compile:
   override:
-    - ./gradlew --no-parallel --max-workers=2 build
+    - ./gradlew --no-daemon --no-parallel --max-workers=2 build
  
 ## Customize test commands
 test:
@@ -89,4 +89,4 @@ test:
     # wait for it to have booted
     - circle-android wait-for-boot
     # run Android tests
-    - ./gradlew --no-parallel --max-workers=2 connectedAndroidTest
+    - ./gradlew --no-daemon --no-parallel --max-workers=2 connectedAndroidTest
