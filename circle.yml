@@ -84,4 +84,4 @@ test:
     # wait for it to have booted
     - circle-android wait-for-boot
     # run Android tests
-    - ./gradlew connectedAndroidTest
+    - ./gradlew --no-parallel --max-workers=2 connectedAndroidTest
