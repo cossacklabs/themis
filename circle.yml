@@ -52,6 +52,11 @@ dependencies:
     - mkdir -p $HOME/gopath/src/$GOTHEMIS_IMPORT
     - rsync -auv gothemis/ $HOME/gopath/src/$GOTHEMIS_IMPORT/
     - lcov --directory . --zerocounters
+
+compile:
+  override:
+    - ./gradlew --no-parallel --max-workers=2 build
+ 
 ## Customize test commands
 test:
   override:
