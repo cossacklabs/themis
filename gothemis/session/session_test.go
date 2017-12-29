@@ -14,14 +14,15 @@ type testCallbacks struct {
 	b *keys.Keypair
 }
 
+var clientId = []byte("client a")
+var serverId = []byte("client b")
+
 func (clb *testCallbacks) GetPublicKeyForId(ss *SecureSession, id []byte) *keys.PublicKey {
-	switch {
-	case 1 == id[0]:
+	if bytes.Equal(clientId, id){
 		return clb.a.Public
-	case 2 == id[0]:
+	} else if bytes.Equal(serverId, id){
 		return clb.b.Public
 	}
-
 	return nil
 }
 
@@ -79,6 +80,16 @@ func clientService(client *SecureSession, ch chan []byte, finCh chan int, t *tes
 			return
 		}
 
+		remoteId, err := client.GetRemoteId()
+		if err != nil{
+			t.Error(err)
+			return
+		}
+		if !bytes.Equal(remoteId, serverId){
+			t.Error("incorrect remote id")
+			return
+		}
+
 		if sendPeer {
 			ch <- buf
 			continue
@@ -122,6 +133,15 @@ func serverService(server *SecureSession, ch chan []byte, finCh chan int, t *tes
 			t.Error(err)
 			return
 		}
+		remoteId, err := server.GetRemoteId()
+		if err != nil{
+			t.Error(err)
+			return
+		}
+		if !bytes.Equal(remoteId, clientId){
+			t.Error("incorrect remote id")
+			return
+		}
 
 		if !sendPeer {
 			if server.GetState() != STATE_ESTABLISHED {
@@ -157,21 +177,15 @@ func testSession(keytype int, t *testing.T) {
 
 	clb := &testCallbacks{kpa, kpb}
 
-	ida := make([]byte, 1)
-	ida[0] = 1
-
-	idb := make([]byte, 1)
-	idb[0] = 2
-
 	empty_key := keys.PrivateKey{[]byte{}}
 
-	client, err := New(ida, nil, clb)
+	client, err := New(clientId, nil, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty private key")
 		return
 	}
 
-	client, err = New(ida, &empty_key, clb)
+	client, err = New(clientId, &empty_key, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty private key")
 		return
@@ -189,13 +203,13 @@ func testSession(keytype int, t *testing.T) {
 		return
 	}
 
-	client, err = New(ida, kpa.Private, clb)
+	client, err = New(clientId, kpa.Private, clb)
 	if nil != err {
 		t.Error(err)
 		return
 	}
 
-	server, err := New(idb, kpb.Private, clb)
+	server, err := New(serverId, kpb.Private, clb)
 	if nil != err {
 		t.Error(err)
 		return
