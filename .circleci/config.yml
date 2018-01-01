@@ -10,7 +10,7 @@ jobs:
       # otherwise we hit the 4GB memory limit for the build container
       - run: echo 'set_property(GLOBAL APPEND PROPERTY JOB_POOLS circleci_job_pool=4)' >> third_party/boringssl/src/CMakeLists.txt
       - run: sed -i 's/"-GNinja"/"-DCMAKE_JOB_POOL_COMPILE=circleci_job_pool", "-GNinja"/g' third_party/boringssl/build.gradle
-      - run: ./gradlew --no-daemon --no-parallel --max-workers=2 build
+      - run: ./gradlew --no-daemon --no-parallel --max-workers=2 assembleDebug
       # install emulator image and create a device
       - run: $ANDROID_HOME/tools/bin/sdkmanager 'emulator' 'system-images;android-22;default;armeabi-v7a'
       - run: $ANDROID_HOME/tools/bin/avdmanager create avd --name nexus --device "Nexus 5" --package 'system-images;android-22;default;armeabi-v7a'
