@@ -1,0 +1,13 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: cossacklabs/android-build
+    steps:
+      - checkout
+      - run: git submodule update --init
+      # limit CMake/Ninja build concurrency when building BoringSSL
+      # otherwise we hit the 4GB memory limit for the build container
+      - run: echo 'set_property(GLOBAL APPEND PROPERTY JOB_POOLS circleci_job_pool=4)' >> third_party/boringssl/src/CMakeLists.txt
+      - run: sed -i 's/"-GNinja"/"-DCMAKE_JOB_POOL_COMPILE=circleci_job_pool", "-GNinja"/g' third_party/boringssl/build.gradle
+      - run: ./gradlew --no-daemon --no-parallel --max-workers=2 build
