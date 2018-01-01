@@ -11,6 +11,15 @@ jobs:
       - run: echo 'set_property(GLOBAL APPEND PROPERTY JOB_POOLS circleci_job_pool=4)' >> third_party/boringssl/src/CMakeLists.txt
       - run: sed -i 's/"-GNinja"/"-DCMAKE_JOB_POOL_COMPILE=circleci_job_pool", "-GNinja"/g' third_party/boringssl/build.gradle
       - run: ./gradlew --no-daemon --no-parallel --max-workers=2 build
+      # install emulator image and create a device
+      - run: $ANDROID_HOME/tools/bin/sdkmanager 'emulator' 'system-images;android-22;default;armeabi-v7a'
+      - run: $ANDROID_HOME/tools/bin/avdmanager create avd --name nexus --device "Nexus 5" --package 'system-images;android-22;default;armeabi-v7a'
+      - run:
+          command: $ANDROID_HOME/emulator/emulator -avd nexus -noaudio -no-window -gpu off -verbose -qemu
+          background: true
+      # wait for emulator to fully boot before running tests
+      - run: timeout 10m /bin/bash -c 'while true; do $ANDROID_HOME/platform-tools/adb wait-for-device logcat -b events -d | grep -i boot_progress_enable_screen && break; date; sleep 3; done'
+      - run: ./gradlew --no-daemon --no-parallel --max-workers=2 connectedAndroidTest
 
 workflows:
   version: 2
