@@ -1,0 +1,2 @@
+include ':boringssl'
+project(':boringssl').projectDir = new File('third_party/boringssl')

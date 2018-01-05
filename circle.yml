@@ -1,4 +1,6 @@
 machine:
+  java:
+    version: openjdk8
   environment:
     ANDROID_NDK_ROOT: $ANDROID_NDK
     GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
@@ -7,7 +9,7 @@ machine:
     PATH: $GOROOT/bin:$PATH
     VALGRIND_BUILD_PATH: $HOME/valgrind
     # to avoid OOM killer (https://circleci.com/docs/1.0/oom/#out-of-memory-errors-in-android-builds)
-    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1024m -XX:+HeapDumpOnOutOfMemoryError"'
     # add define that turn off one nist test (tests/soter/soter_rand_test.c:190) that always fail on ci machine but ok on real machine
     CFLAGS: "-DCIRICLE_TEST"
     BORINGSSL_PATH: "$HOME/boringssl"
@@ -29,8 +31,13 @@ dependencies:
     # link from http://valgrind.org/downloads/current.html
     # don't fetch if was cached
     - if [ ! -d $VALGRIND_BUILD_PATH ]; then wget ftp://sourceware.org/pub/valgrind/valgrind-3.13.0.tar.bz2 && tar -xjf valgrind-3.13.0.tar.bz2 && cd valgrind-3.13.0 && ./configure --prefix=$VALGRIND_BUILD_PATH && make && sudo make install; fi
+    # install Android SDK packages
+    - echo y | android update sdk --no-ui --all --filter 'tool'
+    - yes | $ANDROID_HOME/tools/bin/sdkmanager 'tools' 'platform-tools' 'build-tools;27.0.3' 'platforms;android-27' 'ndk-bundle' 'system-images;android-22;default;armeabi-v7a'
+    - $ANDROID_HOME/tools/bin/avdmanager create avd --name nexus --device "Nexus 5" --package 'system-images;android-22;default;armeabi-v7a'
 
   override:
+    - git submodule update --init
     - make
     - make JAVA_HOME=/usr/lib/jvm/default-java themis_jni
     - sudo make install
@@ -39,15 +46,21 @@ dependencies:
     - sudo make rubythemis_install
     - sudo make phpthemis_install
     - if [ ! -d $BORINGSSL_PATH ]; then cd $HOME && git clone https://boringssl.googlesource.com/boringssl && cd boringssl && git checkout chromium-stable && mkdir build && cd build && cmake .. && make && cp decrepit/libdecrepit.a crypto/; fi
-    - if [ ! -d $BORINGSSL_PATH/build-armeabi-v7a ]; then cd $BORINGSSL_PATH && mkdir build-armeabi-v7a && cd build-armeabi-v7a && cmake -DANDROID_ABI=armeabi-v7a -DCMAKE_TOOLCHAIN_FILE=../third_party/android-cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=16 -GNinja .. && ninja -j 20; fi
-    - if [ ! -d $BORINGSSL_PATH/build-arm64-v8a ]; then cd $BORINGSSL_PATH && mkdir build-arm64-v8a && cd build-arm64-v8a && cmake -DANDROID_ABI=arm64-v8a -DCMAKE_TOOLCHAIN_FILE=../third_party/android-cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=16 -GNinja .. && ninja -j 20; fi
-    - if [ ! -d $BORINGSSL_PATH/build-x86 ]; then cd $BORINGSSL_PATH && mkdir build-x86 && cd build-x86 && cmake -DANDROID_ABI=x86 -DCMAKE_TOOLCHAIN_FILE=../third_party/android-cmake/android.toolchain.cmake -DANDROID_NATIVE_API_LEVEL=16 -GNinja .. && ninja -j 20; fi
     - make ENGINE=boringssl ENGINE_INCLUDE_PATH=$HOME/boringssl/include ENGINE_LIB_PATH=$HOME/boringssl/build/crypto BUILD_PATH=build_with_boringssl prepare_tests_basic
     - make BUILD_PATH=cover_build COVERAGE=y prepare_tests_basic
     - make prepare_tests_all
     - mkdir -p $HOME/gopath/src/$GOTHEMIS_IMPORT
     - rsync -auv gothemis/ $HOME/gopath/src/$GOTHEMIS_IMPORT/
     - lcov --directory . --zerocounters
+
+compile:
+  override:
+    # limit CMake/Ninja build concurrency when building BoringSSL
+    # otherwise we hit the 4GB memory limit for the build container
+    - echo 'set_property(GLOBAL APPEND PROPERTY JOB_POOLS circleci_job_pool=4)' >> third_party/boringssl/src/CMakeLists.txt
+    - sed -i 's/"-GNinja"/"-DCMAKE_JOB_POOL_COMPILE=circleci_job_pool", "-GNinja"/g' third_party/boringssl/build.gradle
+    - ./gradlew --no-daemon --no-parallel --max-workers=2 build
+ 
 ## Customize test commands
 test:
   override:
@@ -73,10 +86,11 @@ test:
     - ${VALGRIND_BUILD_PATH}/bin/valgrind build_with_boringssl/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
     - ${VALGRIND_BUILD_PATH}/bin/valgrind build_with_boringssl/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
     # - tests/check_ios_test.sh `tests/start_ios_test.sh`
-    # start Android emulator
-    - emulator -avd circleci-android22 -no-audio -no-window:
+    # start Android emulator (we use explicit path, because the update above
+    # installs new emulator version, which overrides Circle CIs one )
+    - $ANDROID_HOME/emulator/emulator -avd nexus -noaudio -no-window -gpu off -verbose -qemu:
         background: true
     # wait for it to have booted
     - circle-android wait-for-boot
     # run Android tests
-    - ./gradlew --info -Pboringssl_path=$HOME/boringssl connectedAndroidTest
+    - ./gradlew --no-daemon --no-parallel --max-workers=2 connectedAndroidTest
