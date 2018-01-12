@@ -925,7 +925,7 @@ ssize_t secure_session_send(secure_session_t *session_ctx, const void *message, 
 	}
 
 	bytes_sent = session_ctx->user_callbacks->send_data(out, out_size, session_ctx->user_callbacks->user_data);
-	if (bytes_sent != out_size)
+	if (bytes_sent < 0 || (size_t)bytes_sent != out_size)
 	{
 		message_length = (ssize_t)THEMIS_SSESSION_TRANSPORT_ERROR;
 	}
