@@ -38,6 +38,13 @@ extern "C"{
  * @{
  */
 
+
+// before 0.9.7 Secure Cell context_size was defined by sizeof(size_t), therefore it was different for x86 and x64
+// since 0.9.7 Secure Cell context size is equal sizeof(uint32_t) for both platforms,
+// causing compatibility issues on x64
+// this define makes SecureCell
+#define THEMIS_097_SECURE_CELL_X64_COMPATIBILITY_FIX
+
 /**
  * @brief encrypt
  * @param [in] master_key master key

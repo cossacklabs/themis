@@ -27,7 +27,7 @@
 #include <stdint.h>
 
 /** @brief return type */
-typedef int soter_status_t;
+typedef int32_t soter_status_t;
 
 /**
  * @addtogroup SOTER
@@ -127,7 +127,7 @@ typedef int soter_status_t;
     }
 
 #define SOTER_STATUS_CHECK(x,y){		\
-  int res=x;					\
+  soter_status_t res=x;					\
   if(res!=y){					\
      SOTER_ERROR_OUT(#x);				\
      return res;					\
@@ -135,7 +135,7 @@ typedef int soter_status_t;
   }
 
 #define SOTER_STATUS_CHECK_FREE(x,y,z){		\
-  int res=x;					\
+  soter_status_t res=x;					\
   if(res!=y){					\
      SOTER_ERROR_OUT(#x);				\
      free(z);						\
