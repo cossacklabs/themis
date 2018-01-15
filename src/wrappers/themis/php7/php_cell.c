@@ -84,19 +84,20 @@ ZEND_FUNCTION(phpthemis_scell_seal_decrypt){
 }
 
 ZEND_FUNCTION(phpthemis_scell_token_protect_encrypt){
-    zend_string* key;
-    //size_t key_length;
+    //zend_string* key;
+    char* key;
+    size_t key_length;
     char* message;
     size_t message_length;
     char* context=NULL;
     size_t context_length=0;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "Ss|s", &key, &message, &message_length, &context, &context_length) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|s", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_encrypt: invalid parameters.", 0 TSRMLS_CC);
         RETURN_NULL();
     }
     size_t encrypted_message_length=0;
     size_t additional_auth_data_length=0;
-    if(themis_secure_cell_encrypt_token_protect((uint8_t*)ZSTR_VAL(key), ZSTR_LEN(key), (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &additional_auth_data_length, NULL, &encrypted_message_length)!=THEMIS_BUFFER_TOO_SMALL){
+    if(themis_secure_cell_encrypt_token_protect((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &additional_auth_data_length, NULL, &encrypted_message_length)!=THEMIS_BUFFER_TOO_SMALL){
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_encrypt: encrypted message length determination failed.", 0 TSRMLS_CC);
         RETURN_NULL();
     }
@@ -110,7 +111,7 @@ ZEND_FUNCTION(phpthemis_scell_token_protect_encrypt){
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_encrypt: not enough memory.", 0 TSRMLS_CC);
         RETURN_NULL();
     }
-    if(themis_secure_cell_encrypt_token_protect((uint8_t*)ZSTR_VAL(key), ZSTR_LEN(key), (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, &additional_auth_data_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=THEMIS_SUCCESS){
+    if(themis_secure_cell_encrypt_token_protect((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)additional_auth_data, &additional_auth_data_length, (uint8_t*)encrypted_message, &encrypted_message_length)!=THEMIS_SUCCESS){
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_encrypt: encryption failed.", 0 TSRMLS_CC);
         RETURN_NULL();
     }
