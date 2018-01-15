@@ -31,5 +31,5 @@ if test "$PHP_PHPTHEMIS" = "yes"; then
   fi
   PHP_ADD_LIBRARY_WITH_PATH(themis, $THEMIS_DIR/lib, PHPTHEMIS_SHARED_LIBADD)
   PHP_SUBST(PHPTHEMIS_SHARED_LIBADD)
-  PHP_NEW_EXTENSION(phpthemis, php_themis.c php_cell.c php_key_generator.c php_message.c, $ext_shared)
+  PHP_NEW_EXTENSION(phpthemis, php_themis.c php_cell.c php_key_generator.c php_message.c php_session.c, $ext_shared)
 fi

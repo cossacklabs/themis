@@ -27,22 +27,16 @@ $cmd = $argv[1];
 $key = $argv[2];
 if ($cmd == 'enc') {
     $message = $argv[3];
-    #file_put_contents($dump_file_name.'.raw', base64_encode($message));
     $token = null;
 } else {
-    # $message_token = explode("\n", file_get_contents($dump_file_name));
     list($message, $token) = explode(",", $argv[3]);
 }
 $context = count($argv) > 4 ? $argv[4] : null;
-
 if ($cmd == 'enc') {
     $enc_data = phpthemis_scell_token_protect_encrypt($key, $message, $context);
-    #file_put_contents($dump_file_name, implode("\n", [$enc_data['encrypted_message'], $enc_data['token']]));
-    #echo(base64_encode($enc_data['token'])."\n");
     echo implode(',', [base64_encode($enc_data['encrypted_message']), base64_encode($enc_data['token'])]);
 } elseif ($cmd == 'dec') {
     echo phpthemis_scell_token_protect_decrypt($key, base64_decode($message), base64_decode($token), $context) . "\n";
-    # echo phpthemis_scell_token_protect_decrypt($key, $message, $token, $context) . "\n";
 } else {
     die("Wrong command, use \"enc\" or \"dec\"\n");
 }

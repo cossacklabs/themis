@@ -24,6 +24,7 @@
 #include "php_cell.h"
 #include "php_key_generator.h"
 #include "php_message.h"
+#include "php_session.h"
 
 static zend_function_entry php_themis_functions[] = {
   ZEND_FE(phpthemis_secure_message_wrap, NULL)
@@ -39,8 +40,25 @@ static zend_function_entry php_themis_functions[] = {
   ZEND_FE_END
 };
 
+static zend_function_entry themis_secure_session_functions[] = {
+        ZEND_ME(themis_secure_session, __construct, NULL, ZEND_ACC_PUBLIC|ZEND_ACC_CTOR)
+        ZEND_ME(themis_secure_session, unwrap, NULL, ZEND_ACC_PUBLIC)
+        ZEND_ME(themis_secure_session, wrap, NULL, ZEND_ACC_PUBLIC)
+        ZEND_ME(themis_secure_session, connect_request, NULL, ZEND_ACC_PUBLIC)
+        ZEND_ME(themis_secure_session, is_established, NULL, ZEND_ACC_PUBLIC)
+        ZEND_FE_END
+};
+
+zend_class_entry *themis_secure_session_ce;
 PHP_MINIT_FUNCTION(phpthemis)
 {
+    zend_class_entry tmp_ce;
+    INIT_CLASS_ENTRY(tmp_ce, "themis_secure_session", themis_secure_session_functions);
+    themis_secure_session_ce = zend_register_internal_class(&tmp_ce TSRMLS_CC);
+    themis_secure_session_ce->create_object = themis_secure_session_create_handler;
+    memcpy(&themis_secure_session_object_handlers,
+           zend_get_std_object_handlers(), sizeof(zend_object_handlers));
+    themis_secure_session_object_handlers.clone_obj = NULL;
     return SUCCESS;
 }
 
