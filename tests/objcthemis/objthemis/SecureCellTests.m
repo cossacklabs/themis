@@ -184,11 +184,13 @@
     XCTAssertNil(encryptedMessage, @"encryption without data-to-encrypt, without context should return nil data");
 
     themisError = nil;
-    encryptedMessage = [cellToken wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
+    NSData * messageData = [message dataUsingEncoding:NSUTF8StringEncoding];
+    encryptedMessage = [cellToken wrapData:messageData
                                    context:[context dataUsingEncoding:NSUTF8StringEncoding]
                                      error:&themisError];
     XCTAssertNil(themisError, @"encryption with data and context should be successful");
     XCTAssertNotNil(encryptedMessage, @"encryption with data and context should be successful");
+    XCTAssertEqual([messageData length], [encryptedMessage.cipherText length], @"encrypted data length should be the same as message length");
 
     themisError = nil;
     NSData *decryptedMessage = [cellToken unwrapData:encryptedMessage
@@ -215,7 +217,7 @@
     NSString *message = @"Roses are grey. Violets are grey.";
     NSString *context = @"I'm a dog";
     NSError *themisError;
-
+    NSData *messageData = [message dataUsingEncoding:NSUTF8StringEncoding];
 
     TSCellTokenEncryptedData *encryptedMessageNoContext = [cellToken
             wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
@@ -223,6 +225,7 @@
                error:&themisError];
     XCTAssertNil(themisError, @"encryption without data-to-encrypt, without context should be successful");
     XCTAssertNotNil(encryptedMessageNoContext, @"encryption without data-to-encrypt, without context should be successful");
+    XCTAssertEqual([messageData length], [encryptedMessageNoContext.cipherText length], @"encrypted data length should be the same as message length");
 
     themisError = nil;
     NSData *decryptedMessageNoContext = [cellToken unwrapData:encryptedMessageNoContext
