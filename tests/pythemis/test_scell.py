@@ -101,6 +101,7 @@ class SCellTokenProtectTest(BaseSCellTestMixin):
         scell2 = SCellTokenProtect(self.key)
         scell3 = SCellTokenProtect(self.incorrect_key)
         encrypted, token = scell1.encrypt(self.data)
+        self.assertEqual(len(self.data), len(encrypted))
         self.assertEqual(self.data, scell2.decrypt(encrypted, token))
 
         with self.assertRaises(ThemisError):
@@ -114,6 +115,7 @@ class SCellTokenProtectTest(BaseSCellTestMixin):
         scell2 = SCellTokenProtect(self.key)
         scell3 = SCellTokenProtect(self.incorrect_key)
         encrypted, token = scell1.encrypt(self.data, self.context)
+        self.assertEqual(len(self.data), len(encrypted))
         self.assertEqual(self.data,
                          scell2.decrypt(encrypted, token, self.context))
 
