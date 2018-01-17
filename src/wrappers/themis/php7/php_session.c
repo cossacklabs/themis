@@ -80,9 +80,9 @@ static inline themis_secure_session_object * get_session_object(zend_object *obj
 PHP_METHOD(themis_secure_session, __construct){
     secure_session_t *session = NULL;
     char* id;
-    int id_length;
+    size_t id_length;
     char* private_key;
-    int private_key_length;
+    size_t private_key_length;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &id, &id_length, &private_key, &private_key_length) == FAILURE) {
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in __construct: invalid parameters.", 0 TSRMLS_CC);
@@ -105,7 +105,7 @@ PHP_METHOD(themis_secure_session, __construct){
 
 PHP_METHOD(themis_secure_session, wrap){
     char* message;
-    int message_length;
+    size_t message_length;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &message, &message_length) == FAILURE) {
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in wrap: invalid parameters.", 0 TSRMLS_CC);
         RETURN_NULL();
@@ -137,7 +137,7 @@ PHP_METHOD(themis_secure_session, wrap){
 
 PHP_METHOD(themis_secure_session, unwrap){
     char* message;
-    int message_length;
+    size_t message_length;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &message, &message_length) == FAILURE) {
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in uwrap: invalid parameters.", 0 TSRMLS_CC);
         RETURN_NULL();

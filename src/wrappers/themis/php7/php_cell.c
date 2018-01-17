@@ -26,15 +26,15 @@
 
 
 ZEND_FUNCTION(phpthemis_scell_seal_encrypt){
-    char* key;
-    int key_length;
-    char* message;
-    int message_length;
+    char* key = NULL;
+    size_t key_length = 0;
+    char* message = NULL;
+    size_t message_length = 0;
     char* context=NULL;
-    int context_length=0;
+    size_t context_length=0;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|s", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_encrypt: invalid parameters.", 0 TSRMLS_CC);
-        RETURN_NULL();
+        return;
     }
     size_t encrypted_message_length=0;
     if(themis_secure_cell_encrypt_seal((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, NULL, &encrypted_message_length)!=THEMIS_BUFFER_TOO_SMALL){
@@ -56,11 +56,11 @@ ZEND_FUNCTION(phpthemis_scell_seal_encrypt){
 
 ZEND_FUNCTION(phpthemis_scell_seal_decrypt){
     char* key;
-    int key_length;
+    size_t key_length;
     char* message;
-    int message_length;
+    size_t message_length;
     char* context=NULL;
-    int context_length=0;
+    size_t context_length=0;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss|s", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_decrypt: invalid parameters.", 0 TSRMLS_CC);
         RETURN_NULL();
@@ -123,13 +123,13 @@ ZEND_FUNCTION(phpthemis_scell_token_protect_encrypt){
 
 ZEND_FUNCTION(phpthemis_scell_token_protect_decrypt){
     char* key;
-    int key_length;
+    size_t key_length;
     char* message;
-    int message_length;
+    size_t message_length;
     char* additional_auth_data;
-    int additional_auth_data_length;
+    size_t additional_auth_data_length;
     char* context=NULL;
-    int context_length=0;
+    size_t context_length=0;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss|s", &key, &key_length, &message, &message_length, &additional_auth_data, &additional_auth_data_length, &context, &context_length) == FAILURE) {
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_token_protect_decrypt: invalid parameters.", 0 TSRMLS_CC);
         RETURN_NULL();
@@ -154,11 +154,11 @@ ZEND_FUNCTION(phpthemis_scell_token_protect_decrypt){
 
 ZEND_FUNCTION(phpthemis_scell_context_imprint_encrypt){
     char* key;
-    int key_length;
+    size_t key_length;
     char* message;
-    int message_length;
+    size_t message_length;
     char* context;
-    int context_length;
+    size_t context_length;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_context_imprint_encrypt: invalid parameters.", 0 TSRMLS_CC);
         RETURN_NULL();
@@ -183,11 +183,11 @@ ZEND_FUNCTION(phpthemis_scell_context_imprint_encrypt){
 
 ZEND_FUNCTION(phpthemis_scell_context_imprint_decrypt){
     char* key;
-    int key_length;
+    size_t key_length;
     char* message;
-    int message_length;
+    size_t message_length;
     char* context=NULL;
-    int context_length=0;
+    size_t context_length=0;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &key, &key_length, &message, &message_length, &context, &context_length) == FAILURE) {
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_context_imprint_decrypt: invalid parameters.", 0 TSRMLS_CC);
         RETURN_NULL();
