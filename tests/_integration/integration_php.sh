@@ -24,17 +24,17 @@ php -f ./tests/_integration/scell_seal_string_echo.php "dec" "passwd" `ruby ./te
 
 ruby ./tests/_integration/scell_seal_string_echo.rb "dec" "passwd" `php -f ./tests/_integration/scell_seal_string_echo.php "enc" "passwd" "php->ruby seal with context" "somecontext"` "somecontext"
 
-#echo ".. testing secure cell, context imprint mode, php <--> ruby"
+echo ".. testing secure cell, context imprint mode, php <--> ruby"
 ruby ./tests/_integration/scell_context_string_echo.rb "dec" "passwd" `php -f ./tests/_integration/scell_context_string_echo.php "enc" "passwd" "php->ruby with context" "somecontext"` "somecontext"
 php -f ./tests/_integration/scell_context_string_echo.php "dec" "passwd" `ruby ./tests/_integration/scell_context_string_echo.rb "enc" "passwd" "ruby->php with context" "somecontext"` "somecontext"
 
-echo ".. testing secure cell, token protect mode, php <--> ruby - SKIPPED!"
-#ruby ./tests/_integration/scell_token_string_echo.rb "dec" "passwd" `php -f ./tests/_integration/scell_token_string_echo.php "enc" "passwd" "php->ruby token test"`
-#
-#ruby ./tests/_integration/scell_token_string_echo.rb "dec" "passwd" `php -f ./tests/_integration/scell_token_string_echo.php "enc" "passwd" "php->ruby token test with content"` "somecontext"
-#
-#php -f ./tests/_integration/scell_token_string_echo.php "dec" "passwd" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passwd" "ruby->php with context" "somecontext"` "somecontext"
-#php -f ./tests/_integration/scell_token_string_echo.php "dec" "passwd" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passwd" "ruby->php with context" "somecontext"` "somecontext"
+echo ".. testing secure cell, token protect mode, php <--> ruby"
+ruby ./tests/_integration/scell_token_string_echo.rb "dec" "passwd" `php -f ./tests/_integration/scell_token_string_echo.php "enc" "passwd" "php->ruby token test"`
+
+ruby ./tests/_integration/scell_token_string_echo.rb "dec" "passwd" `php -f ./tests/_integration/scell_token_string_echo.php "enc" "passwd" "php->ruby token test with content" "somecontext"` "somecontext"
+
+php -f ./tests/_integration/scell_token_string_echo.php "dec" "passwd" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passwd" "ruby->php with context" "somecontext"` "somecontext"
+php -f ./tests/_integration/scell_token_string_echo.php "dec" "passwd" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passwd" "ruby->php with context" "somecontext"` "somecontext"
 
 echo ".. testing secure cell, token protect mode, php <--> go"
 go run ./tests/_integration/scell_token_string_echo.go "dec" "passwd" `php -f ./tests/_integration/scell_token_string_echo.php "enc" "passwd" "php->go token"`
