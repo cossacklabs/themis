@@ -118,11 +118,12 @@ class SecureCellTestsSwift: XCTestCase {
         let cellToken: TSCellToken = TSCellToken(key: masterKeyData)!
         let message: String = "Roses are grey. Violets are grey."
         let context: String = "I'm a dog"
-        
-        let encryptedMessage = try? cellToken.wrap(message.data(using: .utf8)!,
+        let messageData: Data = message.data(using: .utf8)!
+    
+        let encryptedMessage = try? cellToken.wrap(messageData,
                                               context: context.data(using: .utf8)!)
         XCTAssertNotNil(encryptedMessage, "encryption with data and context should be successful")
-        
+        XCTAssertEqual(encryptedMessage?.cipherText.length, messageData.count)
         
         var decryptedMessage = try? cellToken.unwrapData(encryptedMessage!,
                                                         context: nil)
@@ -140,11 +141,12 @@ class SecureCellTestsSwift: XCTestCase {
         let cellToken: TSCellToken = TSCellToken(key: masterKeyData)!
         let message: String = "Roses are grey. Violets are grey."
         let context: String = "I'm a dog"
+        let messageData: Data = message.data(using: .utf8)!
         
-        let encryptedMessageNoContext = try? cellToken.wrap(message.data(using: .utf8)!,
+        let encryptedMessageNoContext = try? cellToken.wrap(messageData,
                                                context: nil)
         XCTAssertNotNil(encryptedMessageNoContext, "encryption without data-to-encrypt, without context should be successful")
-        
+        XCTAssertEqual(encryptedMessageNoContext?.cipherText.length, messageData.count)
         
         var decryptedMessageNoContext = try? cellToken.unwrapData(encryptedMessageNoContext!,
                                                          context: context.data(using: .utf8))
