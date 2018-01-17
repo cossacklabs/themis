@@ -55,16 +55,18 @@ class TestScell < Test::Unit::TestCase
   def test_token_protect
     token_protect = Themis::Scell.new(@key, Themis::Scell::TOKEN_PROTECT_MODE)
     encrypted_message, token = token_protect.encrypt(@message, @context)
+    assert_equal(@message.length, encrypted_message.length)
 
     assert_raise(Themis::ThemisError) do
       decrypted_message = token_protect.decrypt(
-        [encrypted_message, token + '1'], @context)
+        [encrypted_message + '1', token], @context)
     end
     decrypted_message = token_protect.decrypt(
       [encrypted_message, token], @context)
 
     assert_equal(@message, decrypted_message)
     encrypted_message, token = token_protect.encrypt(@message)
+    assert_equal(@message.length, encrypted_message.length)
     decrypted_message = token_protect.decrypt([encrypted_message, token])
     assert_equal(@message, decrypted_message)
   end

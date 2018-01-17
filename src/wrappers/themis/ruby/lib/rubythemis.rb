@@ -472,8 +472,8 @@ module Themis
           raise(ThemisError,
                 "Secure Cell (Token Protect) failed encrypting: #{res}")
         end
-        [enccontext.get_bytes(0, enccontext_length.read_uint),
-         encrypted_message.get_bytes(0, encrypted_message_length.read_uint)]
+        [encrypted_message.get_bytes(0, encrypted_message_length.read_uint),
+         enccontext.get_bytes(0, enccontext_length.read_uint),]
       when CONTEXT_IMPRINT_MODE
         res = themis_secure_cell_encrypt_context_imprint(
           @key, @key_length, message_, message_length_, context_,
@@ -520,7 +520,7 @@ module Themis
         end
         decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
       when TOKEN_PROTECT_MODE
-        enccontext, message_ = message
+        message_, enccontext = message
         message__, message_length__ = string_to_pointer_size(message_)
         enccontext_, enccontext_length = string_to_pointer_size(enccontext)
         res = themis_secure_cell_decrypt_token_protect(
