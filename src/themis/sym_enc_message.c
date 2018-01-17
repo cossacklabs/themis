@@ -183,7 +183,7 @@ themis_status_t themis_auth_sym_encrypt_message(const uint8_t* key,
   THEMIS_CHECK_PARAM(message!=NULL && message_length!=0);
 
   // TODO: TYPE WARNING Should update `sizeof(uint32_t)` to `sizeof(message_length)` after changing encrypted_message_length type to uint32_t
-  THEMIS_STATUS_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&message_length), sizeof((uint32_t)(encrypted_message_length)), in_context, in_context_length, key_, sizeof(key_)),THEMIS_SUCCESS);
+  THEMIS_STATUS_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&message_length), sizeof(uint32_t), in_context, in_context_length, key_, sizeof(key_)),THEMIS_SUCCESS);
   return themis_auth_sym_encrypt_message_(key_, sizeof(key_), message, message_length, in_context, in_context_length, out_context, out_context_length, encrypted_message, encrypted_message_length);
 }
 themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
