@@ -16,11 +16,11 @@
 #include "php_message.h"
 ZEND_FUNCTION(phpthemis_secure_message_wrap){
     char* private_key;
-    int private_key_length;
+    size_t private_key_length;
     char* public_key;
-    int public_key_length;
+    size_t public_key_length;
     char* message;
-    int message_length;
+    size_t message_length;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &private_key, &private_key_length, &public_key, &public_key_length, &message, &message_length) == FAILURE) {
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_message in wrap: invalid parameters.", 0 TSRMLS_CC);
         RETURN_NULL();
@@ -49,11 +49,11 @@ ZEND_FUNCTION(phpthemis_secure_message_wrap){
 
 ZEND_FUNCTION(phpthemis_secure_message_unwrap){
     char* private_key;
-    int private_key_length;
+    size_t private_key_length;
     char* public_key;
-    int public_key_length;
+    size_t public_key_length;
     char* message;
-    int message_length;
+    size_t message_length;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "sss", &private_key, &private_key_length, &public_key, &public_key_length, &message, &message_length) == FAILURE) {
         zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_message in unwrap: invalid parameters.", 0 TSRMLS_CC);
         RETURN_NULL();
