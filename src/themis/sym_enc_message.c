@@ -224,14 +224,13 @@ themis_status_t themis_auth_sym_decrypt_message(const uint8_t* key,
   THEMIS_STATUS_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&encrypted_message_length), sizeof(uint32_t), in_context, in_context_length, key_, sizeof(key_)),THEMIS_SUCCESS);
   themis_status_t decryption_result = themis_auth_sym_decrypt_message_(key_, sizeof(key_), in_context, in_context_length, context, context_length, encrypted_message, encrypted_message_length, message, message_length);
 
-#ifdef THEMIS_097_SECURE_CELL_X64_COMPATIBILITY_FIX
+#ifdef SCELL_COMPAT
 
-  if (decryption_result != THEMIS_SUCCESS && decryption_result != THEMIS_BUFFER_TOO_SMALL) {
-
-    // we are on x64, should sizeof(uin64_t) for backwards compatibility with themis 0.9.6 x64
-    if (sizeof(size_t) == sizeof(uint64_t)) {
-      THEMIS_STATUS_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&encrypted_message_length), sizeof(uint64_t), in_context, in_context_length, key_, sizeof(key_)),THEMIS_SUCCESS);
-      decryption_result = themis_auth_sym_decrypt_message_(key_, sizeof(key_), in_context, in_context_length, context, context_length, encrypted_message, encrypted_message_length, message, message_length);
+  // we are on x64, should sizeof(uin64_t) for backwards compatibility with themis 0.9.6 x64
+  if (sizeof(size_t) == sizeof(uint64_t)) {
+    if (decryption_result != THEMIS_SUCCESS && decryption_result != THEMIS_BUFFER_TOO_SMALL) {
+        THEMIS_STATUS_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&encrypted_message_length), sizeof(uint64_t), in_context, in_context_length, key_, sizeof(key_)),THEMIS_SUCCESS);
+        decryption_result = themis_auth_sym_decrypt_message_(key_, sizeof(key_), in_context, in_context_length, context, context_length, encrypted_message, encrypted_message_length, message, message_length);
     }
   }
 
@@ -314,17 +313,15 @@ themis_status_t themis_sym_decrypt_message_u(const uint8_t* key,
   THEMIS_STATUS_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&encrypted_message_length), sizeof(uint32_t), NULL, 0, key_, sizeof(key_)),THEMIS_SUCCESS);
   themis_status_t decryption_result = themis_sym_decrypt_message_u_(key_,sizeof(key_),context,context_length,encrypted_message,encrypted_message_length,message,message_length);
 
-#ifdef THEMIS_097_SECURE_CELL_X64_COMPATIBILITY_FIX
+#ifdef SCELL_COMPAT
 
-  if (decryption_result != THEMIS_SUCCESS && decryption_result != THEMIS_BUFFER_TOO_SMALL) {
-
-    // we are on x64, should sizeof(uin64_t) for backwards compatibility with themis 0.9.6 x64
-    if (sizeof(size_t) == sizeof(uint64_t)) {
-      THEMIS_STATUS_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&encrypted_message_length), sizeof(uint64_t), NULL, 0, key_, sizeof(key_)),THEMIS_SUCCESS);
-      decryption_result = themis_sym_decrypt_message_u_(key_,sizeof(key_),context,context_length,encrypted_message,encrypted_message_length,message,message_length);
+  // we are on x64, should sizeof(uin64_t) for backwards compatibility with themis 0.9.6 x64
+  if (sizeof(size_t) == sizeof(uint64_t)) {
+    if (decryption_result != THEMIS_SUCCESS && decryption_result != THEMIS_BUFFER_TOO_SMALL) {
+        THEMIS_STATUS_CHECK(themis_sym_kdf(key,key_length, THEMIS_SYM_KDF_KEY_LABEL, (uint8_t*)(&encrypted_message_length), sizeof(uint64_t), NULL, 0, key_, sizeof(key_)),THEMIS_SUCCESS);
+        decryption_result = themis_sym_decrypt_message_u_(key_,sizeof(key_),context,context_length,encrypted_message,encrypted_message_length,message,message_length);
     }
   }
-
 #endif
 
   return decryption_result;
