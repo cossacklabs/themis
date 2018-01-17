@@ -224,6 +224,12 @@ CFLAGS += -Werror -Wno-switch
 # strict checks for docs
 #CFLAGS += -Wdocumentation -Wno-error=documentation
 
+# fixing compatibility between x64 0.9.6 and x64 0.9.7
+# https://github.com/cossacklabs/themis/pull/279
+ifeq ($(NO_SCELL_COMPAT),)
+	CFLAGS += -DSCELL_COMPAT
+endif
+
 ifndef ERROR
 include src/soter/soter.mk
 include src/themis/themis.mk

@@ -38,6 +38,7 @@ extern "C"{
  * @{
  */
 
+
 /**
  * @brief encrypt
  * @param [in] master_key master key
