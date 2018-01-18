@@ -100,7 +100,7 @@
 		$this->setExpectedException('Exception');
 	    }
 	    $encrypted_message =  phpthemis_scell_token_protect_encrypt($key, $message, $context);
-	    $this->assertEquals(strlen($encrypted_message), strlen($message));
+	    $this->assertEquals(strlen($encrypted_message["encrypted_message"]), strlen($message));
 	    $decrypted_message =  phpthemis_scell_token_protect_decrypt($key, $encrypted_message['encrypted_message'],  $encrypted_message['token'], $context);
 	    $this->assertEquals($decrypted_message, $message);
 	}
@@ -166,7 +166,7 @@
 		$this->setExpectedException('Exception');
 	    }
 	    $encrypted_message =  phpthemis_scell_token_protect_encrypt($key, $message);
-	    $this->assertEquals(strlen($encrypted_message), strlen($message));
+	    $this->assertEquals(strlen($encrypted_message["encrypted_message"]), strlen($message));
 	    $decrypted_message =  phpthemis_scell_token_protect_decrypt($key, $encrypted_message['encrypted_message'],  $encrypted_message['token']);
 	    $this->assertEquals($decrypted_message, $message);
 	}
