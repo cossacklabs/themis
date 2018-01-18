@@ -53,10 +53,10 @@ class ScellTest extends TestCase {
      */
     public function testSealWithContextNoDecrypt($key, $message, $context, $iscorrect) {
         if (!$iscorrect) {
-            $this->expectException('Exception');
+            $this->expectException(Exception::class);
         }
         $encrypted_message = phpthemis_scell_seal_encrypt($key, $message, $context);
-        $decrypted_message = phpthemis_scell_seal_decrypt($key + "a", $encrypted_message, $context);
+        $decrypted_message = phpthemis_scell_seal_decrypt($key."a", $encrypted_message, $context);
         $this->assertEquals($decrypted_message, $message);
     }
 
@@ -79,7 +79,7 @@ class ScellTest extends TestCase {
      */
     public function testSealWithoutContext($key, $message, $iscorrect) {
         if (!$iscorrect) {
-            $this->expectException('Exception');
+            $this->expectException(Exception::class);
         }
         $encrypted_message = phpthemis_scell_seal_encrypt($key, $message);
         $decrypted_message = phpthemis_scell_seal_decrypt($key, $encrypted_message);
@@ -103,7 +103,7 @@ class ScellTest extends TestCase {
      */
     public function testTokenProtectWithContext($key, $message, $context, $iscorrect) {
         if (!$iscorrect) {
-            $this->expectException('Exception');
+            $this->expectException(Exception::class);
         }
         $encrypted_message = phpthemis_scell_token_protect_encrypt($key, $message, $context);
         $decrypted_message = phpthemis_scell_token_protect_decrypt($key, $encrypted_message['encrypted_message'], $encrypted_message['token'], $context);
@@ -132,7 +132,7 @@ class ScellTest extends TestCase {
             $this->expectException('Exception');
         }
         $encrypted_message = phpthemis_scell_token_protect_encrypt($key, $message, $context);
-        $decrypted_message = phpthemis_scell_token_protect_decrypt($key + "a", $encrypted_message['encrypted_message'], $encrypted_message['token'], $context);
+        $decrypted_message = phpthemis_scell_token_protect_decrypt($key."a", $encrypted_message['encrypted_message'], $encrypted_message['token'], $context);
         $this->assertEquals($decrypted_message, $message);
     }
 
@@ -149,10 +149,10 @@ class ScellTest extends TestCase {
      */
     public function testTokenProtectWithContextNoToken($key, $message, $context, $iscorrect) {
         if (!$iscorrect) {
-            $this->expectException('Exception');
+            $this->expectException(Exception::class);
         }
         $encrypted_message = phpthemis_scell_token_protect_encrypt($key, $message, $context);
-        $decrypted_message = phpthemis_scell_token_protect_decrypt($key, $encrypted_message['encrypted_message'], $encrypted_message['token'] + "a", $context);
+        $decrypted_message = phpthemis_scell_token_protect_decrypt($key, $encrypted_message['encrypted_message']."a", $encrypted_message['token'], $context);
         $this->assertEquals($decrypted_message, $message);
     }
 
