@@ -23,6 +23,18 @@ ssize_t receive_callback(uint8_t *data, size_t data_length, void *user_data){
     return -1;
 }
 
+typedef struct themis_secure_session_object_t {
+    secure_session_t *session;
+    zend_object std;
+} themis_secure_session_object;
+
+static inline themis_secure_session_object * get_session_object(zend_object *obj) {
+    return (themis_secure_session_object*)((char *)obj - XtOffsetOf(themis_secure_session_object, std));
+}
+
+#define Z_SESSION_P(zv) get_session_object(Z_OBJ_P(zv));
+
+
 int get_public_key_by_id_callback(const void *id, size_t id_length, void *key_buffer, size_t key_buffer_length, void *user_data){
     // unused
     (void)(user_data);
@@ -38,19 +50,15 @@ int get_public_key_by_id_callback(const void *id, size_t id_length, void *key_bu
     return THEMIS_SUCCESS;
 }
 
-typedef struct themis_secure_session_object_t {
-    secure_session_t *session;
-    zend_object std;
-} themis_secure_session_object;
-
 void themis_secure_session_free_storage(void *object TSRMLS_DC)
 {
-    themis_secure_session_object *obj = (themis_secure_session_object *)object;
-    secure_session_destroy(obj->session);
+    themis_secure_session_object *obj = get_session_object(object);
+    secure_session_t* session = obj->session;
+    secure_session_destroy(session);
 
     zend_hash_destroy(obj->std.properties);
     FREE_HASHTABLE(obj->std.properties);
-    efree(obj);
+    efree(object);
 }
 
 zend_object_handlers themis_secure_session_object_handlers;
@@ -70,12 +78,6 @@ zend_object* themis_secure_session_create_handler(zend_class_entry *type TSRMLS_
     obj->std.handlers = &themis_secure_session_object_handlers;
     return &obj->std;
 }
-
-static inline themis_secure_session_object * get_session_object(zend_object *obj) {
-    return (themis_secure_session_object*)((char *)obj - XtOffsetOf(themis_secure_session_object, std));
-}
-
-#define Z_SESSION_P(zv) get_session_object(Z_OBJ_P(zv));
 
 PHP_METHOD(themis_secure_session, __construct){
     secure_session_t *session = NULL;
