@@ -49,8 +49,8 @@
     }
     
     XCTAssertNil(error, @"result of comparison should be successful");
-    XCTAssertEqual([alice status], TSComparatorNotMatch, @"comparison should match");
-    XCTAssertEqual([bob status], TSComparatorNotMatch, @"comparison should match");
+    XCTAssertEqual([alice status], TSComparatorNotMatch, @"comparison should not match");
+    XCTAssertEqual([bob status], TSComparatorNotMatch, @"comparison should not match");
 }
 
 
