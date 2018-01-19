@@ -96,7 +96,10 @@ soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher, const vo
 		EVP_PKEY_free(pkey);
 		return SOTER_FAIL;
 	}
-	SOTER_IF_FAIL(soter_asym_cipher_import_key(asym_cipher, key, key_length)==SOTER_SUCCESS, (EVP_PKEY_free(pkey), EVP_PKEY_CTX_free(asym_cipher->pkey_ctx)));
+	SOTER_IF_FAIL(soter_asym_cipher_import_key(asym_cipher, key, key_length)==SOTER_SUCCESS,
+                  (EVP_PKEY_free(pkey),
+                   EVP_PKEY_CTX_free(asym_cipher->pkey_ctx),
+                   asym_cipher->pkey_ctx=NULL));
 	EVP_PKEY_free(pkey);
 	return SOTER_SUCCESS;
 }

@@ -25,7 +25,6 @@
 
 #define RSA_ALG 1
 #define EC_ALG  2
-
 #define test_check(function_call, success_res, msg) {			\
   themis_status_t res=function_call;					\
   if(res!=success_res){							\
@@ -71,6 +70,12 @@ static int themis_secure_signed_message_generic_test(int alg, const char* messag
   uint8_t* wrapped_message=NULL;
   size_t wrapped_message_length=0;
 
+  res=themis_secure_message_wrap(private_key ,private_key_length+1, NULL, 0, (uint8_t*)message, message_length, NULL, &wrapped_message_length);
+  if(res!=THEMIS_FAIL){
+      testsuite_fail_if(res!=THEMIS_BUFFER_TOO_SMALL, "themis_secure_message_wrap (incorrect private key) fail");
+      return -2;
+  }
+
   res=themis_secure_message_wrap(private_key ,private_key_length, NULL, 0, (uint8_t*)message, message_length, NULL, &wrapped_message_length);
   if(res!=THEMIS_BUFFER_TOO_SMALL){
     testsuite_fail_if(res!=THEMIS_BUFFER_TOO_SMALL, "themis_secure_message_wrap (wrapped_message_length determination) fail");
@@ -91,7 +96,14 @@ static int themis_secure_signed_message_generic_test(int alg, const char* messag
 
   uint8_t* unwrapped_message=NULL;
   size_t unwrapped_message_length=0;
-  
+
+  res=themis_secure_message_unwrap(NULL , 0, public_key, public_key_length+1, wrapped_message, wrapped_message_length, NULL, &unwrapped_message_length);
+  if(res!=THEMIS_FAIL){
+      free(wrapped_message);
+      testsuite_fail_if(res!=THEMIS_BUFFER_TOO_SMALL, "themis_secure_message_unwrap (incorrect public key) fail");
+      return -5;
+  }
+
   res=themis_secure_message_unwrap(NULL , 0, public_key, public_key_length, wrapped_message, wrapped_message_length, NULL, &unwrapped_message_length);
   if(res!=THEMIS_BUFFER_TOO_SMALL){
     free(wrapped_message);
@@ -141,6 +153,16 @@ static int themis_secure_encrypted_message_generic_test(int alg, const char* mes
   uint8_t* wrapped_message=NULL;
   size_t wrapped_message_length=0;
 
+  // themis detect something wrong at different stage with different algorithms. that why different status
+  if(alg == EC_ALG){
+      test_check(themis_secure_message_wrap(private_key ,private_key_length+1, peer_public_key, peer_public_key_length, (uint8_t*)message, message_length, NULL, &wrapped_message_length), THEMIS_INVALID_PARAMETER, "themis secure message wrap (incorrect private key) failed");
+      test_check(themis_secure_message_wrap(private_key ,private_key_length, peer_public_key, peer_public_key_length+1, (uint8_t*)message, message_length, NULL, &wrapped_message_length), THEMIS_INVALID_PARAMETER, "themis secure message wrap (incorrect public key) failed");
+  } else {
+      test_check(themis_secure_message_wrap(private_key ,private_key_length+1, peer_public_key, peer_public_key_length, (uint8_t*)message, message_length, NULL, &wrapped_message_length), THEMIS_BUFFER_TOO_SMALL, "themis secure message wrap (incorrect private key) failed");
+      test_check(themis_secure_message_wrap(private_key ,private_key_length, peer_public_key, peer_public_key_length+1, (uint8_t*)message, message_length, NULL, &wrapped_message_length), THEMIS_INVALID_PARAMETER, "themis secure message wrap (incorrect public key) failed");
+  }
+
+
   test_check(themis_secure_message_wrap(private_key ,private_key_length, peer_public_key, peer_public_key_length, (uint8_t*)message, message_length, NULL, &wrapped_message_length), THEMIS_BUFFER_TOO_SMALL, "themis secure message wrap (wrapped message length determination) failed");
   wrapped_message=malloc(wrapped_message_length);
   if(!wrapped_message){
@@ -152,6 +174,14 @@ static int themis_secure_encrypted_message_generic_test(int alg, const char* mes
   uint8_t* unwrapped_message=NULL;
   size_t unwrapped_message_length=0;
 
+  // themis detect something wrong at different stage with different algorithms. that why different status
+  if(alg == EC_ALG){
+      test_check_free(themis_secure_message_unwrap(peer_private_key ,private_key_length+1, public_key, public_key_length, (uint8_t*)wrapped_message, wrapped_message_length, NULL, &unwrapped_message_length), THEMIS_INVALID_PARAMETER, "themis secure message unwrap (incorrect private key) failed", free(wrapped_message));
+      test_check_free(themis_secure_message_unwrap(peer_private_key ,private_key_length, public_key, public_key_length+1, (uint8_t*)wrapped_message, wrapped_message_length, NULL, &unwrapped_message_length), THEMIS_INVALID_PARAMETER, "themis secure message unwrap (incorrect public key) failed", free(wrapped_message));
+  } else {
+      test_check_free(themis_secure_message_unwrap(peer_private_key ,private_key_length+1, public_key, public_key_length, (uint8_t*)wrapped_message, wrapped_message_length, NULL, &unwrapped_message_length), THEMIS_INVALID_PARAMETER, "themis secure message unwrap (incorrect private key) failed", free(wrapped_message));
+      test_check_free(themis_secure_message_unwrap(peer_private_key ,private_key_length, public_key, public_key_length+1, (uint8_t*)wrapped_message, wrapped_message_length, NULL, &unwrapped_message_length), THEMIS_BUFFER_TOO_SMALL, "themis secure message unwrap (incorrect public key) failed", free(wrapped_message));
+  }
   test_check_free(themis_secure_message_unwrap(peer_private_key ,private_key_length, public_key, public_key_length, (uint8_t*)wrapped_message, wrapped_message_length, NULL, &unwrapped_message_length), THEMIS_BUFFER_TOO_SMALL, "themis secure message unwrap (unwrapped message length determination) failed", free(wrapped_message));
   unwrapped_message=malloc(unwrapped_message_length);
   if(!unwrapped_message){
