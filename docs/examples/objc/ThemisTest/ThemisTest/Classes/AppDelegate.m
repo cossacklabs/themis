@@ -17,6 +17,9 @@
 #import "AppDelegate.h"
 #import <objcthemis/objcthemis.h>
 
+#define SECURE_COMPARATOR_ENABLED
+#import <objcthemis/scomparator.h>
+
 
 @interface AppDelegate ()
 
@@ -46,6 +49,10 @@
     [self runExampleSecureCellSealMode];
     [self runExampleSecureCellTokenProtectMode];
     [self runExampleSecureCellImprint];
+    
+    
+    // Secure Comparator
+    [self runExampleSecureComparator];
 
     return YES;
 }
@@ -346,6 +353,36 @@
     NSLog(@"serverPublicKeyFromFile %@", serverPublicKeyFromFile);
     NSLog(@"clientPrivateKeyOldFromFile %@", clientPrivateKeyOldFromFile);
     NSLog(@"clientPublicKeyOldFromFile %@", clientPublicKeyOldFromFile);
+}
+
+
+- (void)runExampleSecureComparator {
+    NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
+    
+    NSString * sharedSecret = @"shared secret";
+    NSData * sharedSecretData = [sharedSecret dataUsingEncoding:NSUTF8StringEncoding];
+    
+    TSComparator * client = [[TSComparator alloc] initWithMessageToCompare:sharedSecretData];
+    TSComparator * server = [[TSComparator alloc] initWithMessageToCompare:sharedSecretData];
+    NSError * error = nil;
+    
+    // send this message to server
+    NSData * data = [client beginCompare:&error];
+    while ([client status] == TSComparatorNotReady || [server status] == TSComparatorNotReady) {
+        // receive from server
+        data = [server proceedCompare:data error:&error];
+        
+        // proceed and send again
+        data = [client proceedCompare:data error:&error];
+    }
+    
+    if ([client status] == TSComparatorMatch) {
+        // secrets match
+        NSLog(@"SecureComparator secrets match");
+    } else {
+        // secrets don't match
+        NSLog(@"SecureComparator secrets do not match");
+    }
 }
 
 
