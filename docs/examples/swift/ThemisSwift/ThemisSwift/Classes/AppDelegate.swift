@@ -32,6 +32,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         runExampleSecureMessageEncryptionDecryption()
         runExampleSecureMessageSignVerify()
         
+        // Secure Comparator:
+        runExampleSecureComparator()
+        
         return true
     }
     
@@ -337,4 +340,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    // MARK:- Secure Comparator
+    func runExampleSecureComparator() {
+        print("----------------------------------", #function)
+        
+        let sharedMessage = "shared secret"
+        let client: TSComparator = TSComparator.init(messageToCompare: sharedMessage.data(using: .utf8)!)!
+        let server: TSComparator = TSComparator.init(messageToCompare: sharedMessage.data(using: .utf8)!)!
+        
+        // send this message to server
+        var data = try? client.beginCompare()
+        
+        while (client.status() == TSComparatorStateType.comparatorNotReady ||
+            server.status() == TSComparatorStateType.comparatorNotReady ) {
+                
+            // receive from server
+            data = try? server.proceedCompare(data)
+            
+            // proceed and send again
+            data = try? client.proceedCompare(data)
+        }
+        
+        if (client.status() == TSComparatorStateType.comparatorMatch) {
+            // secrets match
+            print("SecureComparator secrets match")
+        } else {
+            // secrets don't match
+            print("SecureComparator secrets do not match")
+        }
+    }
 }
