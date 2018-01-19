@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR
 PHPVERSION=`php -r "echo PHP_MAJOR_VERSION;"`
 if [ $PHPVERSION = 7 ]; then
     bash ./init_env-php7.sh

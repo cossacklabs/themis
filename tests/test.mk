@@ -62,9 +62,10 @@ prepare_tests_all: err prepare_tests_basic themispp_test
 ifdef PHP_VERSION
 	@echo -n "make tests for phpthemis "
 	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/ssession_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
+	# @echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
+	# @echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
+	# @echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/ssession_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
+	@echo "cd tests/phpthemis; sh run_tests.sh" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@$(PRINT_OK_)
 endif
