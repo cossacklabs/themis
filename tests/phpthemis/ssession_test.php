@@ -42,40 +42,39 @@ class SsessionTest extends TestCase {
      */
     public function testSecureSession($message, $reply_message) {
         global $client_priv, $server_priv;
-            $this->assertTrue(true);
-//        $client_session = new themis_secure_session("client", $client_priv);
-//        $this->assertTrue(isset($client_session));
-//        $server_session = new themis_secure_session("server", $server_priv);
-//        $this->assertTrue(isset($server_session));
+        $client_session = new themis_secure_session("client", $client_priv);
+        $this->assertTrue(isset($client_session));
+        $server_session = new themis_secure_session("server", $server_priv);
+        $this->assertTrue(isset($server_session));
 
-//        $msg_to_send = $client_session->connect_request();
-//        $this->assertTrue(isset($msg_to_send));
-//        $this->assertTrue((!$client_session->is_established()) && (!$server_session->is_established()));
-//
-//        $msg_to_send = $server_session->unwrap($msg_to_send);
-//        $this->assertTrue(isset($msg_to_send));
-//        $this->assertTrue((!$client_session->is_established()) && (!$server_session->is_established()));
-//
-//        $msg_to_send = $client_session->unwrap($msg_to_send);
-//        $this->assertTrue(isset($msg_to_send));
-//        $this->assertTrue((!$client_session->is_established()) && (!$server_session->is_established()));
-//
-//        $msg_to_send = $server_session->unwrap($msg_to_send);
-//        $this->assertTrue(isset($msg_to_send));
-//        $this->assertTrue((!$client_session->is_established()) && ($server_session->is_established()));
-//
-//        $msg_to_send = $client_session->unwrap($msg_to_send);
-//        $this->assertTrue(($client_session->is_established()) && ($server_session->is_established()));
-//
-//        $msg_to_send = $client_session->wrap($message);
-//        $this->assertTrue(isset($msg_to_send));
-//        $geted_message = $server_session->unwrap($msg_to_send);
-//        $this->assertEquals($geted_message, $message);
-//
-//        $msg_to_send = $server_session->wrap($reply_message);
-//        $this->assertTrue(isset($msg_to_send));
-//        $geted_message = $client_session->unwrap($msg_to_send);
-//        $this->assertEquals($geted_message, $reply_message);
+        $msg_to_send = $client_session->connect_request();
+        $this->assertTrue(isset($msg_to_send));
+        $this->assertTrue((!$client_session->is_established()) && (!$server_session->is_established()));
+
+        $msg_to_send = $server_session->unwrap($msg_to_send);
+        $this->assertTrue(isset($msg_to_send));
+        $this->assertTrue((!$client_session->is_established()) && (!$server_session->is_established()));
+
+        $msg_to_send = $client_session->unwrap($msg_to_send);
+        $this->assertTrue(isset($msg_to_send));
+        $this->assertTrue((!$client_session->is_established()) && (!$server_session->is_established()));
+
+        $msg_to_send = $server_session->unwrap($msg_to_send);
+        $this->assertTrue(isset($msg_to_send));
+        $this->assertTrue((!$client_session->is_established()) && ($server_session->is_established()));
+
+        $msg_to_send = $client_session->unwrap($msg_to_send);
+        $this->assertTrue(($client_session->is_established()) && ($server_session->is_established()));
+
+        $msg_to_send = $client_session->wrap($message);
+        $this->assertTrue(isset($msg_to_send));
+        $geted_message = $server_session->unwrap($msg_to_send);
+        $this->assertEquals($geted_message, $message);
+
+        $msg_to_send = $server_session->wrap($reply_message);
+        $this->assertTrue(isset($msg_to_send));
+        $geted_message = $client_session->unwrap($msg_to_send);
+        $this->assertEquals($geted_message, $reply_message);
     }
 
 
