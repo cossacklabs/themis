@@ -170,7 +170,7 @@ It is checked to compile on the latest stable versions of:
 
 * Debian 7.8+, CentOS 7, Ubuntu 14, Arch Linux 2014+
 * Windows XP+
-* OSX 10.9+
+* macOS 10.9+
 * Android 4-8+ / CyanogenMod 11+
 * iOS8—iOS11+, x32/x64
 
