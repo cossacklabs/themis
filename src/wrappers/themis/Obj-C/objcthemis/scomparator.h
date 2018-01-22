@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 /** @brief Secure comparator states */
 typedef NS_ENUM(NSInteger, TSComparatorStateType){
   TSComparatorNotReady = 0,
-  TSCompatarorNotMatch = 22,
+  TSComparatorNotMatch = 22,
   TSComparatorMatch = 21
 };
 /** @brief Secure comparator interface
@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, TSComparatorStateType){
 
 /**
 * @brief Initialise Secure comparator object
-* @param [in] message message to compare
+* @param [in] message we want to compare
 */
 - (nullable instancetype)initWithMessageToCompare:(NSData *)message;
 
@@ -54,7 +54,6 @@ typedef NS_ENUM(NSInteger, TSComparatorStateType){
 * @param [in] error pointer to Error on failure
 * @return Comparation initialization message on success or nil on failure
 */
-// TODO: rename method to reflect it's goal
 - (nullable NSData *)beginCompare:(NSError * __autoreleasing *)error;
 
 
