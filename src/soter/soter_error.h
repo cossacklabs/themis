@@ -63,7 +63,9 @@ typedef int32_t soter_status_t;
 #define SOTER_DEBUG_OUT(message)
 #endif
 
-#define UNUSED(x) (void)(x)
+#ifndef UNUSED
+	#define UNUSED(x) (void)(x)
+#endif
 
 /**@}*/
 
