@@ -11,13 +11,13 @@ python ./tests/_integration/scell_token_string_echo.py "dec" "passw2" `python ./
 
 
 # PYTHON <-> RUBY
-echo ".. testing secure cell, python <--> ruby"
-python ./tests/_integration/scell_seal_string_echo.py "dec" "passwd" `ruby ./tests/_integration/scell_seal_string_echo.rb "enc" "passwd" "ruby->python seal"`
+echo ".. testing secure cell, seal mode,  python <--> ruby"
 
+python ./tests/_integration/scell_seal_string_echo.py "dec" "passwd" `ruby ./tests/_integration/scell_seal_string_echo.rb "enc" "passwd" "ruby->python seal"`
 ruby ./tests/_integration/scell_seal_string_echo.rb "dec" "passwd" `python ./tests/_integration/scell_seal_string_echo.py "enc" "passwd" "python->ruby seal"`
+
 ## with context
 python ./tests/_integration/scell_seal_string_echo.py "dec" "passwd" `ruby ./tests/_integration/scell_seal_string_echo.rb "enc" "passwd" "ruby->python seal with context" "somecontext"` "somecontext"
-
 ruby ./tests/_integration/scell_seal_string_echo.rb "dec" "passwd" `python ./tests/_integration/scell_seal_string_echo.py "enc" "passwd" "python->ruby seal with context" "somecontext"` "somecontext"
 
 echo ".. testing secure cell, context imprint mode, python <--> ruby"
@@ -26,7 +26,6 @@ python ./tests/_integration/scell_context_string_echo.py "dec" "passwd" `ruby ./
 
 echo ".. testing secure cell, token protect mode, python <--> ruby"
 ruby ./tests/_integration/scell_token_string_echo.rb "dec" "passwd" `python ./tests/_integration/scell_token_string_echo.py "enc" "passwd" "python->ruby token test"`
-
 ruby ./tests/_integration/scell_token_string_echo.rb "dec" "passwd" `python ./tests/_integration/scell_token_string_echo.py "enc" "passwd" "python->ruby token test with content" "somecontext"` "somecontext"
 
 python ./tests/_integration/scell_token_string_echo.py "dec" "passwd" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passwd" "ruby->python with context" "somecontext"` "somecontext"

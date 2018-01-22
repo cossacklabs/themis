@@ -27,16 +27,16 @@ if len(sys.argv) not in (4, 5):
 command = sys.argv[COMMAND]
 key = sys.argv[KEY]
 message = sys.argv[MESSAGE]
-context = sys.argv[CONTEXT] if len(sys.argv) == 5 else ''
+context = sys.argv[CONTEXT].encode('utf-8') if len(sys.argv) == 5 else None
 
 cell = scell.SCellSeal(key.encode('utf-8'))
 if command == 'enc':
-    encrypted_message = cell.encrypt(message.encode('utf-8'), context.encode('utf-8'))
+    encrypted_message = cell.encrypt(message.encode('utf-8'), context)
     encoded_message = b64encode(encrypted_message).decode('ascii')
     print(encoded_message)
 elif command == 'dec':
-    decoded_message = b64decode(message.encode('utf-8'))
-    decrypted_message = cell.decrypt(decoded_message, context.encode('utf-8'))
+    decoded_message = b64decode(message.encode('ascii'))
+    decrypted_message = cell.decrypt(decoded_message, context)
     print(decrypted_message.decode('utf-8'))
 else:
     print('Wrong command, use "enc" or "dec"')
