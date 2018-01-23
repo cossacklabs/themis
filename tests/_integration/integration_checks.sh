@@ -9,6 +9,8 @@ ruby ./tests/_integration/scell_context_string_echo.rb "dec" "passw2" `ruby ./te
 ruby ./tests/_integration/scell_token_string_echo.rb "dec" "passw1" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passw1" "ruby token test"`
 ruby ./tests/_integration/scell_token_string_echo.rb "dec" "passw2" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passw2" "ruby token with context" "somecontext"` "somecontext"
 
+ruby ./tests/_integration/smessage_encryption.rb "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `ruby ./tests/_integration/smessage_encryption.rb "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "ruby secure message"`
+
 echo ".. testing secure cell, go <--> go"
 go run ./tests/_integration/scell_seal_string_echo.go "dec" "passg" `go run ./tests/_integration/scell_seal_string_echo.go "enc" "passg" "go seal test"`
 go run ./tests/_integration/scell_seal_string_echo.go "dec" "passg" `go run ./tests/_integration/scell_seal_string_echo.go "enc" "passg" "go seal with context" "somecontext"` "somecontext"
@@ -17,6 +19,9 @@ go run ./tests/_integration/scell_context_string_echo.go "dec" "passg" `go run .
 
 go run ./tests/_integration/scell_token_string_echo.go "dec" "passg" `go run ./tests/_integration/scell_token_string_echo.go "enc" "passg" "go token test"`
 go run ./tests/_integration/scell_token_string_echo.go "dec" "passg" `go run ./tests/_integration/scell_token_string_echo.go "enc" "passg" "go token with context" "somecontext"` "somecontext"
+
+
+go run ./tests/_integration/smessage_encryption.go "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `go run ./tests/_integration/smessage_encryption.go "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "go secure message"`
 
 
 echo ".. testing SECURE CELL, SEAL MODE, go <--> ruby"
@@ -39,3 +44,6 @@ ruby ./tests/_integration/scell_token_string_echo.rb "dec" "passw2" `go run ./te
 go run ./tests/_integration/scell_token_string_echo.go "dec" "passw3" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passw3" "ruby-go test"`
 go run ./tests/_integration/scell_token_string_echo.go "dec" "passw4" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passw4" "ruby-go with context" "somecontext"` "somecontext"
 
+echo ".. testing SECURE MESSAGE, go <--> ruby"
+ruby ./tests/_integration/smessage_encryption.rb "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `go run ./tests/_integration/smessage_encryption.go "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "go -> python secure message"`
+go run ./tests/_integration/smessage_encryption.go "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `ruby ./tests/_integration/smessage_encryption.rb "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "ruby secure message"`
