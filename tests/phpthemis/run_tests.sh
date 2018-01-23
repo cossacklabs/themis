@@ -16,9 +16,9 @@ else
 fi
 
 echo -e "\n >>>> secure cell tests <<<<\\n"
-./vendor/phpunit/phpunit/phpunit scell_test.php
+php -c php.ini ./vendor/phpunit/phpunit/phpunit scell_test.php
 echo -e "\n >>>> secure message tests <<<<\n"
-./vendor/phpunit/phpunit/phpunit smessage_test.php
-echo -e "\n >>>> secure token tests <<<<\n"
+php -c php.ini ./vendor/phpunit/phpunit/phpunit smessage_test.php
+php -c php.ini echo -e "\n >>>> secure token tests <<<<\n"
 # todo:
 ./vendor/phpunit/phpunit/phpunit ssession_test.php
