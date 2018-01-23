@@ -13,6 +13,8 @@ machine:
     # add define that turn off one nist test (tests/soter/soter_rand_test.c:190) that always fail on ci machine but ok on real machine
     CFLAGS: "-DCIRICLE_TEST"
     BORINGSSL_PATH: "$HOME/boringssl"
+  php:
+    5.6.17
 
 ## Customize dependencies
 dependencies:
