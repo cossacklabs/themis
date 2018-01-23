@@ -65,9 +65,10 @@ ifdef PHP_VERSION
 	# @echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 	# @echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 	# @echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/ssession_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@cp ./src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so ./tests/phpthemis/phpthemis.so
+	# @cp ./src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so ./tests/phpthemis/phpthemis.so
 	@echo "cd tests/phpthemis; bash ./run_tests.sh" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
+	@cd ./tests/phpthemis; ln -s ../../src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so ./phpthemis.so
 	@$(PRINT_OK_)
 endif
 ifdef RUBY_GEM_VERSION
