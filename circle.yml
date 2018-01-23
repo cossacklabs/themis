@@ -26,6 +26,7 @@ dependencies:
   pre:
     - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev python3 python3-setuptools ruby ninja-build lcov build-essential libc6-dbg
     - sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
+    - sudo ln -sf /opt/circleci/.phpenv/shims/phpize /usr/bin/phpize
     - if [ ! -d $GOROOT ]; then cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz; fi
     - gem install coveralls-lcov
     - go get github.com/mattn/goveralls
