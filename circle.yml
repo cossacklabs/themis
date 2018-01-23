@@ -74,7 +74,7 @@ test:
     - sudo /sbin/ldconfig    
     - make test
     - make test_php
-    - make test_python
+#    - make test_python
     - make test_js
     # it's important to set version of ruby precisely.
     - rvm use system && make test_ruby
