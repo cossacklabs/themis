@@ -1,11 +1,6 @@
 {
     "name": "tests/phpthemis/php-5.6",
     "description": "Some stuff for tests",
-    "autoload": {
-        "classmap": [
-            "src/"
-        ]
-    },
     "require": {
         "php": "^5.6",
         "phpunit/phpunit": "^5"
