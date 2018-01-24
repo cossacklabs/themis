@@ -24,7 +24,7 @@ dependencies:
     - "~/boringssl"
 
   pre:
-    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev python3 python3-setuptools ruby ninja-build lcov build-essential libc6-dbg
+    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev python python-setuptools ruby ninja-build lcov build-essential libc6-dbg
     - sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
     - sudo ln -sf /opt/circleci/.phpenv/shims/phpize /usr/bin/phpize
     - sudo ln -sf /opt/circleci/.phpenv/shims/php-config /usr/bin/php-config
@@ -83,9 +83,9 @@ test:
     - ${VALGRIND_BUILD_PATH}/bin/valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
     - cover_build/tests/soter_test
     - cover_build/tests/themis_test
-    - lcov --directory . --capture --output-file coverage.info
-    - lcov --remove coverage.info 'tests/*' 'src/soter/openssl/*' '/usr/*' --output-file coverage.info
-    - lcov --list coverage.info
+    #- lcov --directory . --capture --output-file coverage.info
+    #- lcov --remove coverage.info 'tests/*' 'src/soter/openssl/*' '/usr/*' --output-file coverage.info
+    #- lcov --list coverage.info
     - coveralls-lcov -v --repo-token $COVERALLS_TOKEN coverage.info || true
     - ${VALGRIND_BUILD_PATH}/bin/valgrind build_with_boringssl/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
     - ${VALGRIND_BUILD_PATH}/bin/valgrind build_with_boringssl/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
