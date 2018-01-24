@@ -17,6 +17,10 @@ check_result_zero
 node ./tests/_integration/scell_token_string_echo.js "dec" "passw2" `node ./tests/_integration/scell_token_string_echo.js "enc" "passw2" "node token with context" "somecontext"` "somecontext"
 check_result_zero
 
+echo ".. testing secure message, node <--> node"
+node ./tests/_integration/smessage_encryption.js "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `node ./tests/_integration/smessage_encryption.js "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "node secure message"`
+check_result_zero
+
 ###
 # NODE <-> RUBY
 echo ".. testing secure cell, seal mode,  node <--> ruby"
@@ -49,6 +53,12 @@ check_result_zero
 node ./tests/_integration/scell_token_string_echo.js "dec" "passwd" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passwd" "ruby->node with context" "somecontext"` "somecontext"
 check_result_zero
 
+echo ".. testing secure message,  node <--> ruby"
+ruby ./tests/_integration/smessage_encryption.rb "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `node ./tests/_integration/smessage_encryption.js "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "node -> ruby secure message"`
+check_result_zero
+node ./tests/_integration/smessage_encryption.js "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `ruby ./tests/_integration/smessage_encryption.rb "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "ruby -> node secure message"`
+check_result_zero
+
 echo ".. testing secure cell, token protect mode, node <--> go"
 go run ./tests/_integration/scell_token_string_echo.go "dec" "passwd" `node ./tests/_integration/scell_token_string_echo.js "enc" "passwd" "node->go token"`
 check_result_zero
@@ -59,6 +69,12 @@ check_result_zero
 node ./tests/_integration/scell_token_string_echo.js "dec" "passwd" `go run ./tests/_integration/scell_token_string_echo.go "enc" "passwd" "go->node token" "somecontext"` "somecontext"
 check_result_zero
 node ./tests/_integration/scell_token_string_echo.js "dec" "passwd" `go run ./tests/_integration/scell_token_string_echo.go "enc" "passwd" "go->node token with context" "somecontext"` "somecontext"
+check_result_zero
+
+echo ".. testing secure message,  node <--> go"
+go run ./tests/_integration/smessage_encryption.go "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `node ./tests/_integration/smessage_encryption.js "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "node -> go secure message"`
+check_result_zero
+node ./tests/_integration/smessage_encryption.js "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `go run ./tests/_integration/smessage_encryption.go "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "go -> node secure message"`
 check_result_zero
 
 echo ".. testing secure cell, token protect mode, node <--> php"
@@ -73,6 +89,12 @@ check_result_zero
 node ./tests/_integration/scell_token_string_echo.js "dec" "passwd" `php -f ./tests/_integration/scell_token_string_echo.php "enc" "passwd" "node->php token with context" "somecontext"` "somecontext"
 check_result_zero
 
+echo ".. testing secure message,  node <--> php"
+php -f ./tests/_integration/smessage_encryption.php "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `node ./tests/_integration/smessage_encryption.js "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "node -> go secure message"`
+check_result_zero
+node ./tests/_integration/smessage_encryption.js "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `php -f ./tests/_integration/smessage_encryption.php "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "go -> node secure message"`
+check_result_zero
+
 echo ".. testing secure cell, token protect mode, node <--> python"
 python ./tests/_integration/scell_token_string_echo.py "dec" "passwd" `node ./tests/_integration/scell_token_string_echo.js "enc" "passwd" "php->node token"`
 check_result_zero
@@ -83,6 +105,12 @@ check_result_zero
 node ./tests/_integration/scell_token_string_echo.js "dec" "passwd" `python ./tests/_integration/scell_token_string_echo.py "enc" "passwd" "node->php token" "somecontext"` "somecontext"
 check_result_zero
 node ./tests/_integration/scell_token_string_echo.js "dec" "passwd" `python ./tests/_integration/scell_token_string_echo.py "enc" "passwd" "node->php token with context" "somecontext"` "somecontext"
+check_result_zero
+
+echo ".. testing secure message,  node <--> python"
+python ./tests/_integration/smessage_encryption.py "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `node ./tests/_integration/smessage_encryption.js "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "node -> go secure message"`
+check_result_zero
+node ./tests/_integration/smessage_encryption.js "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `python ./tests/_integration/smessage_encryption.py "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "go -> node secure message"`
 check_result_zero
 
 exit ${status}
