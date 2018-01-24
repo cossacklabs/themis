@@ -34,10 +34,6 @@ ruby ./tests/_integration/scell_token_string_echo.rb "dec" "passwd" `python ./te
 python ./tests/_integration/scell_token_string_echo.py "dec" "passwd" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passwd" "ruby->python with context" "somecontext"` "somecontext"
 python ./tests/_integration/scell_token_string_echo.py "dec" "passwd" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passwd" "ruby->python with context" "somecontext"` "somecontext"
 
-echo ".. testing secure message, python <--> ruby"
-ruby ./tests/_integration/smessage_encryption.rb "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `python ./tests/_integration/smessage_encryption.py "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "python -> ruby secure message"`
-python ./tests/_integration/smessage_encryption.py "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `ruby ./tests/_integration/smessage_encryption.rb "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "ruby -> python secure message"`
-
 echo ".. testing secure cell, token protect mode, python <--> go"
 go run ./tests/_integration/scell_token_string_echo.go "dec" "passwd" `python ./tests/_integration/scell_token_string_echo.py "enc" "passwd" "python->go token"`
 
@@ -56,3 +52,11 @@ php -f ./tests/_integration/scell_token_string_echo.php "dec" "passwd" `python .
 
 python ./tests/_integration/scell_token_string_echo.py "dec" "passwd" `php -f ./tests/_integration/scell_token_string_echo.php "enc" "passwd" "python->php token" "somecontext"` "somecontext"
 python ./tests/_integration/scell_token_string_echo.py "dec" "passwd" `php -f ./tests/_integration/scell_token_string_echo.php "enc" "passwd" "python->php token with context" "somecontext"` "somecontext"
+
+echo ".. testing secure message, python <--> ruby"
+ruby ./tests/_integration/smessage_encryption.rb "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `python ./tests/_integration/smessage_encryption.py "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "python -> ruby secure message"`
+python ./tests/_integration/smessage_encryption.py "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `ruby ./tests/_integration/smessage_encryption.rb "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "ruby -> python secure message"`
+
+echo ".. testing secure message, python <--> php"
+php -f ./tests/_integration/smessage_encryption.php "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `python ./tests/_integration/smessage_encryption.py "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "python -> php secure message"`
+python ./tests/_integration/smessage_encryption.py "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `php -f ./tests/_integration/smessage_encryption.php "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "php -> python secure message"`
