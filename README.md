@@ -83,8 +83,6 @@ We currently build packages for the following OS and RELEASE combinations:
 - *Debian "Stretch" (Debian 9)*
 - *Ubuntu Trusty Tahr (Ubuntu 14.04)*
 - *Ubuntu Xenial Xerus (Ubuntu 16.04)*
-- *Ubuntu Yakkety Yak (Ubuntu 16.10)*
-- *Ubuntu Zesty Zapus (Ubuntu 17.04)*
 
 For example, if you are running *Debian 9 "Stretch"*, run:
 
