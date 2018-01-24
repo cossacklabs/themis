@@ -22,7 +22,7 @@ require 'base64'
 
 input_args = ARGV
 if input_args.length != 4
-  STDERR.puts "Usage: <command: enc | dec > <send_private_key> <recipient_public_key> <message>\n"
+  STDERR.puts "Usage: <command: enc | dec | sign | verify > <send_private_key> <recipient_public_key> <message>\n"
   exit 1
 end
 
@@ -39,14 +39,19 @@ public_key = file.read
 file.close
 
 smessage = Themis::Smessage.new(private_key, public_key)
-
 if command == "enc"
   encr_message = smessage.wrap(message)
   puts Base64.strict_encode64(encr_message)
 elsif command == "dec"
   decr_message = smessage.unwrap(Base64.decode64(message))
   puts decr_message
+elsif command == "sign"
+  encr_message = Themis::s_sign(private_key, message)
+  puts Base64.strict_encode64(encr_message)
+elsif command == "verify"
+  decr_message = Themis::s_verify(public_key, Base64.decode64(message))
+  puts decr_message
 else
-  STDERR.puts "Wrong command, use \"enc\" or \"dec\""
+  STDERR.puts "Wrong command, use <enc | dev | sign | verify>"
   exit 1
 end

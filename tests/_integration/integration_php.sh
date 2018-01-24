@@ -26,6 +26,10 @@ echo ".. testing secure message, php <--> php"
 php -f ./tests/_integration/smessage_encryption.php "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `php -f ./tests/_integration/smessage_encryption.php "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "php secure message"`
 check_result_zero
 
+echo ".. testing secure message, php <--> php"
+php -f ./tests/_integration/smessage_encryption.php "verify" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `php -f ./tests/_integration/smessage_encryption.php "sign" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "php secure message"`
+check_result_zero
+
 
 
 # PHP <-> RUBY

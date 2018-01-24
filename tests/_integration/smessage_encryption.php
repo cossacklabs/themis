@@ -19,7 +19,7 @@
 if (!extension_loaded('phpthemis')) die("no phpthemis extention found!\n");
 
 if (count($argv) != 5) {
-    die("Usage: <command: enc | dec > <send_private_key> <recipient_public_key> <message>\n");
+    die("Usage: <command: enc | dec | sign | verify> <send_private_key> <recipient_public_key> <message>\n");
 }
 
 $cmd = $argv[1];
@@ -32,8 +32,13 @@ if ($cmd == 'enc') {
     echo base64_encode($enc_message);
 } elseif ($cmd == 'dec') {
     echo phpthemis_secure_message_unwrap($private_key, $public_key, base64_decode($message))."\n";
+} if ($cmd == 'sign') {
+    $enc_message = phpthemis_secure_message_wrap($private_key, NULL, $message);
+    echo base64_encode($enc_message);
+} elseif ($cmd == 'verify') {
+    echo phpthemis_secure_message_unwrap(NULL, $public_key, base64_decode($message))."\n";
 } else {
-    die("Wrong command, use \"enc\" or \"dec\"\n");
+    die("Wrong command, use <enc | dev | sign | verify>\n");
 }
 
 ?>

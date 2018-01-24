@@ -17,7 +17,11 @@ check_result_zero
 ruby ./tests/_integration/scell_token_string_echo.rb "dec" "passw2" `ruby ./tests/_integration/scell_token_string_echo.rb "enc" "passw2" "ruby token with context" "somecontext"` "somecontext"
 check_result_zero
 
+echo ".. testing secure message, ruby <--> ruby"
 ruby ./tests/_integration/smessage_encryption.rb "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `ruby ./tests/_integration/smessage_encryption.rb "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "ruby secure message"`
+check_result_zero
+
+ruby ./tests/_integration/smessage_encryption.rb "verify" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `ruby ./tests/_integration/smessage_encryption.rb "sign" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "ruby secure message"`
 check_result_zero
 
 echo ".. testing secure cell, go <--> go"
@@ -34,8 +38,10 @@ check_result_zero
 go run ./tests/_integration/scell_token_string_echo.go "dec" "passg" `go run ./tests/_integration/scell_token_string_echo.go "enc" "passg" "go token with context" "somecontext"` "somecontext"
 check_result_zero
 
-
 go run ./tests/_integration/smessage_encryption.go "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `go run ./tests/_integration/smessage_encryption.go "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "go secure message"`
+check_result_zero
+
+go run ./tests/_integration/smessage_encryption.go "verify" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `go run ./tests/_integration/smessage_encryption.go "sign" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "go secure message"`
 check_result_zero
 
 echo ".. testing SECURE CELL, SEAL MODE, go <--> ruby"

@@ -21,7 +21,7 @@ from pythemis import smessage
 _, COMMAND, SENDER_PRIVATE_KEY, RECIPIENT_PUBLIC_KEY, MESSAGE = range(5)
 
 if len(sys.argv) != 5:
-    print('Usage: <command: enc | dec > <send_private_key> <recipient_public_key> <message>')
+    print('Usage: <command: enc | dec | sign | verify > <send_private_key> <recipient_public_key> <message>')
     exit(1)
 
 command = sys.argv[COMMAND]
@@ -45,6 +45,14 @@ elif command == 'dec':
     decoded = b64decode(message.encode('utf-8'))
     decrypted = message_encrypter.unwrap(decoded)
     print(decrypted.decode('utf-8'))
+elif command == 'sign':
+    encrypted = smessage.ssign(private_key, message.encode('utf-8'))
+    encoded = b64encode(encrypted)
+    print(encoded.decode('ascii'))
+elif command == 'verify':
+    decoded = b64decode(message.encode('utf-8'))
+    decrypted = smessage.sverify(public_key, decoded)
+    print(decrypted.decode('utf-8'))
 else:
-    print('Wrong command, use "enc" or "dec"')
+    print('Wrong command, use <enc | dev | sign | verify>')
     exit(1)

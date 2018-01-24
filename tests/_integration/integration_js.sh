@@ -21,6 +21,9 @@ echo ".. testing secure message, node <--> node"
 node ./tests/_integration/smessage_encryption.js "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `node ./tests/_integration/smessage_encryption.js "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "node secure message"`
 check_result_zero
 
+node ./tests/_integration/smessage_encryption.js "verify" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `node ./tests/_integration/smessage_encryption.js "sign" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "node secure message"`
+check_result_zero
+
 ###
 # NODE <-> RUBY
 echo ".. testing secure cell, seal mode,  node <--> ruby"

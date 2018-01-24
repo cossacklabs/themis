@@ -21,6 +21,9 @@ echo ".. testing secure message, python <--> python"
 python ./tests/_integration/smessage_encryption.py "dec" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `python ./tests/_integration/smessage_encryption.py "enc" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "python secure message"`
 check_result_zero
 
+python ./tests/_integration/smessage_encryption.py "verify" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `python ./tests/_integration/smessage_encryption.py "sign" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "python secure message"`
+check_result_zero
+
 
 # PYTHON <-> RUBY
 echo ".. testing secure cell, seal mode,  python <--> ruby"

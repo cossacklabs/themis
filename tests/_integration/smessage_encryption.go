@@ -13,7 +13,7 @@ func main() {
 	args := os.Args
 
 	if len(args) != 5 {
-		fmt.Printf("Usage: %s <command: enc | dec > <send_private_key> <recipient_public_key> <message>\n", os.Args[0])
+		fmt.Printf("Usage: %s <command: enc | dec | sign | verify > <send_private_key> <recipient_public_key> <message>\n", os.Args[0])
 		os.Exit(1)
 	}
 
@@ -54,8 +54,29 @@ func main() {
 		}
 		fmt.Println(string(decData[:]))
 
-	} else {
-		fmt.Println(os.Stderr, "Wrong command, use \"enc\" or \"dec\"")
+	} else if "sign" == command {
+        encData, err := message_encrypter.Sign([]byte(message))
+        if nil != err {
+            fmt.Println(os.Stderr, "Error encrypting message")
+            os.Exit(1)
+        }
+        fmt.Println(base64.StdEncoding.EncodeToString(encData))
+    } else if "verify" == command {
+        decoded_message, err := base64.StdEncoding.DecodeString(message)
+        if nil != err {
+            fmt.Println(os.Stderr, "Error decoding message")
+            os.Exit(1)
+        }
+
+        decData, err := message_encrypter.Verify(decoded_message)
+        if nil != err {
+            fmt.Println(os.Stderr, "Error decrypting message")
+            os.Exit(1)
+        }
+        fmt.Println(string(decData[:]))
+
+    } else {
+		fmt.Println(os.Stderr, "Wrong command, use <enc | dev | sign | verify>")
 		os.Exit(1)
 	}
 }
