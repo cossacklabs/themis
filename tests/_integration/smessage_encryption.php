@@ -31,14 +31,14 @@ if ($cmd == 'enc') {
     $enc_message = phpthemis_secure_message_wrap($private_key, $public_key, $message);
     echo base64_encode($enc_message);
 } elseif ($cmd == 'dec') {
-    echo phpthemis_secure_message_unwrap($private_key, $public_key, base64_decode($message))."\n";
-} if ($cmd == 'sign') {
+    echo phpthemis_secure_message_unwrap($private_key, $public_key, base64_decode($message));
+} elseif ($cmd == 'sign') {
     $enc_message = phpthemis_secure_message_wrap($private_key, NULL, $message);
     echo base64_encode($enc_message);
 } elseif ($cmd == 'verify') {
-    echo phpthemis_secure_message_unwrap(NULL, $public_key, base64_decode($message))."\n";
+    echo phpthemis_secure_message_unwrap(NULL, $public_key, base64_decode($message));
 } else {
-    die("Wrong command, use <enc | dev | sign | verify>\n");
+    die("Wrong command, use <enc | dec | sign | verify>\n");
 }
 
 ?>
