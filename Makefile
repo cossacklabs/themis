@@ -408,7 +408,7 @@ uninstall: phpthemis_uninstall rubythemis_uninstall themispp_uninstall
 
 phpthemis_install: CMD = cd src/wrappers/themis/php && phpize && ./configure && make install
 
-phpthemis_install: install
+phpthemis_install:
 ifdef PHP_VERSION
 	@echo -n "phpthemis install "
 	@$(BUILD_CMD_)
@@ -419,7 +419,7 @@ endif
 
 rubythemis_install: CMD = cd src/wrappers/themis/ruby && gem build rubythemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
 
-rubythemis_install: install
+rubythemis_install:
 ifdef RUBY_GEM_VERSION
 	@echo -n "rubythemis install "
 	@$(BUILD_CMD_)
@@ -430,7 +430,7 @@ endif
 
 pythemis_install: CMD = cd src/wrappers/themis/python/ && python2 setup.py install --record files.txt
 
-pythemis_install: install
+pythemis_install:
 ifdef PYTHON_VERSION
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
@@ -444,7 +444,7 @@ endif
 
 themispp_install: CMD = install $(SRC_PATH)/wrappers/themis/themispp/*.hpp $(PREFIX)/include/themispp
 
-themispp_install: install
+themispp_install:
 	@mkdir -p $(PREFIX)/include/themispp
 	@$(BUILD_CMD)
 
