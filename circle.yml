@@ -24,8 +24,7 @@ dependencies:
     - "~/boringssl"
 
   pre:
-    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev python python-setuptools python3-setuptools ruby ninja-build 
-lcov build-essential libc6-dbg
+    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev python python-setuptools python3-setuptools ruby ninja-build lcov build-essential libc6-dbg
     - sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
     - sudo ln -sf /opt/circleci/.phpenv/shims/phpize /usr/bin/phpize
     - sudo ln -sf /opt/circleci/.phpenv/shims/php-config /usr/bin/php-config
