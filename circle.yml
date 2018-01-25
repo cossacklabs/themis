@@ -13,6 +13,8 @@ machine:
     # add define that turn off one nist test (tests/soter/soter_rand_test.c:190) that always fail on ci machine but ok on real machine
     CFLAGS: "-DCIRICLE_TEST"
     BORINGSSL_PATH: "$HOME/boringssl"
+  php:
+    5.6.17 
 
 ## Customize dependencies
 dependencies:
@@ -22,8 +24,10 @@ dependencies:
     - "~/boringssl"
 
   pre:
-    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php5 cmake libssl-dev python3 python3-setuptools ruby ninja-build lcov build-essential libc6-dbg
-    - sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
+    - sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev python python-setuptools python3-setuptools ruby ninja-build lcov build-essential libc6-dbg
+    - sudo ln -sf /usr/bin/gcov-4.8 /usr/bin/gcov
+    - sudo ln -sf /opt/circleci/.phpenv/shims/phpize /usr/bin/phpize
+    - sudo ln -sf /opt/circleci/.phpenv/shims/php-config /usr/bin/php-config
     - if [ ! -d $GOROOT ]; then cd $HOME && wget https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz && tar xf go1.6.2.linux-amd64.tar.gz; fi
     - gem install coveralls-lcov
     - go get github.com/mattn/goveralls
@@ -38,10 +42,14 @@ dependencies:
 
   override:
     - git submodule update --init
+    # setup explicitly versions of python to correctly run scripts with python3 name
     - make
     - make JAVA_HOME=/usr/lib/jvm/default-java themis_jni
     - sudo make install
     - sudo make themispp_install
+    - pyenv global 2.7.12 3.4.4
+    # set python from pyenv global accessible because we install with sudo
+    - sudo rm /usr/bin/python2 /usr/bin/python3 && sudo ln -s `which python2` /usr/bin/python2 && sudo ln -s `which python3` /usr/bin/python3
     - sudo make pythemis_install
     - sudo make rubythemis_install
     - sudo make phpthemis_install

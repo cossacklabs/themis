@@ -165,7 +165,7 @@ else
         VERSION = $(shell date -I | sed s/-/_/g)
 endif
 
-PHP_VERSION := $(shell php --version 2>/dev/null)
+PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 GO_VERSION := $(shell go version 2>&1)
 NPM_VERSION := $(shell npm --version 2>/dev/null)
@@ -405,7 +405,13 @@ uninstall: phpthemis_uninstall rubythemis_uninstall themispp_uninstall
 	@echo -n "themis uninstall "
 	@$(BUILD_CMD_)
 
-phpthemis_install: CMD = cd src/wrappers/themis/php && phpize && ./configure && make install
+ifeq ($(PHP_VERSION),5)
+    PHP_FOLDER = php
+else
+    PHP_FOLDER = php7
+endif
+
+phpthemis_install: CMD = cd src/wrappers/themis/$(PHP_FOLDER) && phpize && ./configure && make install
 
 phpthemis_install: install
 ifdef PHP_VERSION
