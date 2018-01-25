@@ -28,7 +28,7 @@ jobs:
       CFLAGS: "-DCIRICLE_TEST"
     steps:
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common
-      - run: sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
+      - run: sudo ln -sf /usr/bin/gcov-5 /usr/bin/gcov
       - run: sudo gem install coveralls-lcov
       - run: go get github.com/mattn/goveralls
       # ruby rvm repository
