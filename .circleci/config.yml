@@ -95,6 +95,18 @@ jobs:
       - run: coveralls-lcov -v --repo-token $COVERALLS_TOKEN coverage.info || true
       - run: $HOME/valgrind/bin/valgrind build_with_boringssl/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: $HOME/valgrind/bin/valgrind build_with_boringssl/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
+  # using this php5 image until we ensure tests are working for php7
+  php5:
+    docker:
+      - image: circleci/php:5.6
+    steps:
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev build-essential libc6-dbg default-jdk
+      - checkout
+      - run: make
+      - run: sudo make install
+      - run: sudo make phpthemis_install
+      - run: make prepare_tests_all
+      - run: make test_php
 
 workflows:
   version: 2
@@ -102,3 +114,4 @@ workflows:
     jobs:
       - android
       - x86_64
+      - php5
