@@ -27,10 +27,13 @@ jobs:
       GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
       CFLAGS: "-DCIRICLE_TEST"
     steps:
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common
       - run: sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
       - run: sudo gem install coveralls-lcov
       - run: go get github.com/mattn/goveralls
+      # ruby rvm repository
+      - run: sudo apt-add-repository -y ppa:rael-gc/rvm
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
 
       # download last valgrind because current version of valgrind on ubuntu (3.11.0) gives false positive errors
       # link from http://valgrind.org/downloads/current.html
@@ -80,7 +83,7 @@ jobs:
       - run: make test_python
       - run: make test_js
       # it's important to set version of ruby precisely.
-      - run: rvm use system && make test_ruby
+      - run: source /etc/profile.d/rvm.sh && rvm use system && make test_ruby
       - run: make test_go
       - run: $HOME/valgrind/bin/valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: $HOME/valgrind/bin/valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
