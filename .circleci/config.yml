@@ -27,7 +27,7 @@ jobs:
       GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
       CFLAGS: "-DCIRICLE_TEST"
     steps:
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync
       - run: sudo ln -sf /usr/bin/gcov-4.9 /usr/bin/gcov
       - run: sudo gem install coveralls-lcov
       - run: go get github.com/mattn/goveralls
@@ -54,7 +54,6 @@ jobs:
       - run: sudo make themispp_install
       - run: sudo make pythemis_install
       - run: sudo make rubythemis_install
-      - run: sudo make phpthemis_install
 
       - restore_cache:
           keys:
@@ -78,7 +77,6 @@ jobs:
       - run: '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/go/src/$GOTHEMIS_IMPORT && $HOME/go/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
       - run: sudo /sbin/ldconfig    
       - run: make test
-      - run: make test_php
       - run: make test_python
       - run: make test_js
       # it's important to set version of ruby precisely.
