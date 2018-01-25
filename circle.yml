@@ -42,7 +42,7 @@ dependencies:
 
   override:
     - git submodule update --init
-    # setup explicitly versions of python to correctly run scripts with python3 name
+    # setup explicitly versions of python to correctly run scripts with python3 name 
     - pyenv global 2.7.12 3.4.4
     - make
     - make JAVA_HOME=/usr/lib/jvm/default-java themis_jni
