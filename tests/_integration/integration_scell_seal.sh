@@ -101,10 +101,10 @@ check_result_zero
 
 ## with context
 echo ".. testing secure cell, seal mode context,  php <--> python"
-python ./tests/_integration/scell_seal_string_echo.py "dec" "passwd" `php -f ./tests/_integration/scell_seal_string_echo.php "enc" "passwd" "ruby->python seal with context" "somecontext"` "somecontext"
+python ./tests/_integration/scell_seal_string_echo.py "dec" "passwd" `php -f ./tests/_integration/scell_seal_string_echo.php "enc" "passwd" "php->python seal with context" "somecontext"` "somecontext"
 check_result_zero
 echo ".. testing secure cell, seal mode,  python <--> php"
-php -f ./tests/_integration/scell_seal_string_echo.php "dec" "passwd" `python ./tests/_integration/scell_seal_string_echo.py "enc" "passwd" "python->ruby seal with context" "somecontext"` "somecontext"
+php -f ./tests/_integration/scell_seal_string_echo.php "dec" "passwd" `python ./tests/_integration/scell_seal_string_echo.py "enc" "passwd" "python->php seal with context" "somecontext"` "somecontext"
 check_result_zero
 
 # PYTHON <--> GO
