@@ -24,7 +24,7 @@ java_defaults=/usr/share/java/java_defaults.mk
 
 
 ifeq ($(JDK_INCLUDE_PATH),)
-	ifneq ("$(wildcard $(java_defaults))","")
+	ifneq ("$(wildcard $java_defaults)","")
 		include $java_defaults
 	endif
 else
