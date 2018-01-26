@@ -20,8 +20,12 @@ THEMIS_JNI_OBJ = $(patsubst jni/%.c,$(OBJ_PATH)/jni/%.o, $(THEMIS_JNI_SRC))
 
 THEMIS_JNI_BIN = themis_jni
 
+JAVA_DEFAULTS=/usr/share/java/java_defaults.mk
+
 ifeq ($(JDK_INCLUDE_PATH),)
-	include /usr/share/java/java_defaults.mk
+	ifneq ("$(wildcard $(JAVA_DEFAULTS))","")
+		include $(JAVA_DEFAULTS)
+	endif
 else
 	jvm_includes=$(JAVA_HOME)/include
 endif
