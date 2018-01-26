@@ -19,7 +19,6 @@ require __DIR__ . '/vendor/autoload.php';
 
 use PHPUnit\Framework\TestCase;
 
-
 class ScellTest extends TestCase {
 
     /**
@@ -27,7 +26,7 @@ class ScellTest extends TestCase {
      */
     public function testSealWithContext($key, $message, $context, $iscorrect) {
         if (!$iscorrect) {
-            $this->expectException('Exception');
+            $this->expectException(Exception::class);
         }
         $encrypted_message = phpthemis_scell_seal_encrypt($key, $message, $context);
         $decrypted_message = phpthemis_scell_seal_decrypt($key, $encrypted_message, $context);
@@ -129,7 +128,7 @@ class ScellTest extends TestCase {
      */
     public function testTokenProtectWithContextNoDecrypt($key, $message, $context, $iscorrect) {
         if (!$iscorrect) {
-            $this->expectException('Exception');
+            $this->expectException(Exception::class);
         }
         $encrypted_message = phpthemis_scell_token_protect_encrypt($key, $message, $context);
         $decrypted_message = phpthemis_scell_token_protect_decrypt($key."a", $encrypted_message['encrypted_message'], $encrypted_message['token'], $context);
@@ -169,7 +168,7 @@ class ScellTest extends TestCase {
      */
     public function testTokenProtectWithoutContext($key, $message, $iscorrect) {
         if (!$iscorrect) {
-            $this->expectException('Exception');
+            $this->expectException(Exception::class);
         }
         $encrypted_message = phpthemis_scell_token_protect_encrypt($key, $message);
         $decrypted_message = phpthemis_scell_token_protect_decrypt($key, $encrypted_message['encrypted_message'], $encrypted_message['token']);
@@ -193,7 +192,7 @@ class ScellTest extends TestCase {
      */
     public function testContextImprint($key, $message, $context, $iscorrect) {
         if (!$iscorrect) {
-            $this->expectException('Exception');
+            $this->expectException(Exception::class);
         }
         $encrypted_message = phpthemis_scell_context_imprint_encrypt($key, $message, $context);
         $decrypted_message = phpthemis_scell_context_imprint_decrypt($key, $encrypted_message, $context);
@@ -218,7 +217,7 @@ class ScellTest extends TestCase {
      * @dataProvider WrongInputSealWithoutContextProvider
      */
     public function testWrongInputSealDecryptWithoutContext($key, $message) {
-        $this->expectException('Exception');
+        $this->expectException(Exception::class);
         phpthemis_scell_seal_decrypt($key, $message);
     }
 
@@ -226,7 +225,7 @@ class ScellTest extends TestCase {
      * @dataProvider WrongInputSealWithoutContextProvider
      */
     public function testWrongInputSealDecryptWithContext($key, $message) {
-        $this->expectException('Exception');
+        $this->expectException(Exception::class);
         phpthemis_scell_seal_decrypt($key, $message, 'Context');
     }
 
@@ -248,7 +247,7 @@ class ScellTest extends TestCase {
      * @dataProvider WrongParamsProvider
      */
     public function testWrongParams($func, $params) {
-        $this->expectException('Exception');
+        $this->expectException(Exception::class);
         $decrypted_message = call_user_func_array($func, $params);
     }
 
