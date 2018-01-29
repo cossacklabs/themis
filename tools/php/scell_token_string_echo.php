@@ -36,7 +36,7 @@ if ($cmd == 'enc') {
     $enc_data = phpthemis_scell_token_protect_encrypt($key, $message, $context);
     echo implode(',', [base64_encode($enc_data['encrypted_message']), base64_encode($enc_data['token'])]);
 } elseif ($cmd == 'dec') {
-    echo phpthemis_scell_token_protect_decrypt($key, base64_decode($message), base64_decode($token), $context) . "\n";
+    echo phpthemis_scell_token_protect_decrypt($key, base64_decode($message), base64_decode($token), $context)."\n";
 } else {
     die("Wrong command, use \"enc\" or \"dec\"\n");
 }

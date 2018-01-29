@@ -83,8 +83,6 @@ We currently build packages for the following OS and RELEASE combinations:
 - *Debian "Stretch" (Debian 9)*
 - *Ubuntu Trusty Tahr (Ubuntu 14.04)*
 - *Ubuntu Xenial Xerus (Ubuntu 16.04)*
-- *Ubuntu Yakkety Yak (Ubuntu 16.10)*
-- *Ubuntu Zesty Zapus (Ubuntu 17.04)*
 
 For example, if you are running *Debian 9 "Stretch"*, run:
 
@@ -170,7 +168,7 @@ It is checked to compile on the latest stable versions of:
 
 * Debian 7.8+, CentOS 7, Ubuntu 14, Arch Linux 2014+
 * Windows XP+
-* OSX 10.9+
+* macOS 10.9+
 * Android 4-8+ / CyanogenMod 11+
 * iOS8—iOS11+, x32/x64
 

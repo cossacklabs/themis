@@ -1,11 +1,6 @@
 {
     "name": "tests/phpthemis/php-7",
     "description": "Some stuff for tests",
-    "autoload": {
-        "classmap": [
-            "src/"
-        ]
-    },
     "require": {
         "php": "^7",
         "phpunit/phpunit": "^6"
