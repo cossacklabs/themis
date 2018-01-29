@@ -110,7 +110,8 @@ jobs:
       - run: go get github.com/mattn/goveralls
       # ruby rvm repository
       - run: sudo apt-add-repository -y ppa:rael-gc/rvm
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm npm nodejs
+      - run: ln -s /usr/bin/nodejs /usr/bin/node
 
       # themis
       - checkout
