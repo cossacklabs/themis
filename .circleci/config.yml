@@ -105,13 +105,14 @@ jobs:
     steps:
       # dependencies
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common
-      - run: sudo ln -sf /usr/bin/gcov-5 /usr/bin/gcov
       - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
       # ruby rvm repository
       - run: sudo apt-add-repository -y ppa:rael-gc/rvm
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
       # nodejs install (need to install fresh nodejs)
       - run: cd $HOME && curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh && sudo bash nodesource_setup.sh && sudo apt-get -y install nodejs
+      # php7
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php7.0-dev php7.0-xml php7.0-mbstring 
 
       # themis
       - checkout
@@ -121,6 +122,8 @@ jobs:
       - run: sudo make themispp_install
       - run: sudo make pythemis_install
       - run: sudo make rubythemis_install
+      - run: sudo make phpthemis_install
+      #- run: cd tests/phpthemis && bash ./composer-setup.sh && bash ./init_env-php7.sh
       - run: npm install jsthemis
 
       - run: make prepare_tests_all
