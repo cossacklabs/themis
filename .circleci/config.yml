@@ -125,8 +125,6 @@ jobs:
       - run: sudo make phpthemis_install
       - run: sudo bash -c 'echo "extension=phpthemis.so" > /etc/php/7.0/cli/conf.d/20-phpthemis.ini'
       - run: npm install jsthemis
-
-      - run: make prepare_tests_all
       - run: mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
       - run: rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT/
 
