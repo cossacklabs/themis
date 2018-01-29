@@ -121,6 +121,7 @@ jobs:
       - run: sudo make themispp_install
       - run: sudo make pythemis_install
       - run: sudo make rubythemis_install
+      - run: npm install jsthemis
 
       - run: make prepare_tests_all
       - run: mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
