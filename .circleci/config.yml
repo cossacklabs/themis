@@ -126,6 +126,7 @@ jobs:
       - run: rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT/
 
       - run: sudo /sbin/ldconfig   
+      - run: chmod u+x ./tests/_integration/integration_total.sh
       - run: ./tests/_integration/integration_total.sh
 
 
