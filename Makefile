@@ -49,6 +49,7 @@ PRINT_WARNING_ = printf "$(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG
 BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
 BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
 
+PKGINFO_PATH = PKGINFO
 
 UNAME=$(shell uname)
 
@@ -355,8 +356,6 @@ install_shared_libs: err all make_install_dirs
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
 
-install_all: install themispp_install pythemis_install rubythemis_install phpthemis_install
-
 get_version:
 	@echo $(VERSION)
 
@@ -413,7 +412,7 @@ endif
 
 phpthemis_install: CMD = cd src/wrappers/themis/$(PHP_FOLDER) && phpize && ./configure && make install
 
-phpthemis_install: install
+phpthemis_install:
 ifdef PHP_VERSION
 	@echo -n "phpthemis install "
 	@$(BUILD_CMD_)
@@ -424,7 +423,7 @@ endif
 
 rubythemis_install: CMD = cd src/wrappers/themis/ruby && gem build rubythemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
 
-rubythemis_install: install
+rubythemis_install:
 ifdef RUBY_GEM_VERSION
 	@echo -n "rubythemis install "
 	@$(BUILD_CMD_)
@@ -435,7 +434,7 @@ endif
 
 pythemis_install: CMD = cd src/wrappers/themis/python/ && python2 setup.py install --record files.txt
 
-pythemis_install: install
+pythemis_install:
 ifdef PYTHON_VERSION
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
@@ -449,7 +448,7 @@ endif
 
 themispp_install: CMD = install $(SRC_PATH)/wrappers/themis/themispp/*.hpp $(PREFIX)/include/themispp
 
-themispp_install: install
+themispp_install:
 	@mkdir -p $(PREFIX)/include/themispp
 	@$(BUILD_CMD)
 
@@ -507,7 +506,7 @@ else
 	NAME_SUFFIX = $(RPM_VERSION).$(OS_NAME)$(OS_VERSION).$(ARCHITECTURE).rpm
 endif
 
-PACKAGE_NAME = themis
+PACKAGE_NAME = libthemis
 PACKAGE_CATEGORY = security
 SHORT_DESCRIPTION = Data security library for network communication and data storage
 RPM_SUMMARY = Data security library for network communication and data storage. \
@@ -548,21 +547,21 @@ symlink_realname_to_soname:
 strip:
 	@find . -name \*.$(SHARED_EXT)\.* -exec strip -o {} {} \;
 
-deb: test soter_static themis_static soter_shared themis_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
+deb: soter_static themis_static soter_shared themis_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/deb
 
 #libPACKAGE-dev
 	@fpm --input-type dir \
 		 --output-type deb \
-		 --name lib$(PACKAGE_NAME)-dev \
+		 --name $(PACKAGE_NAME)-dev \
 		 --license $(LICENSE_NAME) \
 		 --url '$(COSSACKLABS_URL)' \
 		 --description '$(SHORT_DESCRIPTION)' \
 		 --maintainer $(MAINTAINER) \
-		 --package $(BIN_PATH)/deb/lib$(PACKAGE_NAME)-dev_$(NAME_SUFFIX) \
+		 --package $(BIN_PATH)/deb/$(PACKAGE_NAME)-dev_$(NAME_SUFFIX) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
-		 $(DEBIAN_DEPENDENCIES) --depends "lib$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)" \
+		 $(DEBIAN_DEPENDENCIES) --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)" \
 		 --deb-priority optional \
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
@@ -572,12 +571,12 @@ deb: test soter_static themis_static soter_shared themis_shared collect_headers 
 #libPACKAGE
 	@fpm --input-type dir \
 		 --output-type deb \
-		 --name lib$(PACKAGE_NAME) \
+		 --name $(PACKAGE_NAME) \
 		 --license $(LICENSE_NAME) \
 		 --url '$(COSSACKLABS_URL)' \
 		 --description '$(SHORT_DESCRIPTION)' \
 		 --maintainer $(MAINTAINER) \
-		 --package $(BIN_PATH)/deb/lib$(PACKAGE_NAME)_$(NAME_SUFFIX) \
+		 --package $(BIN_PATH)/deb/$(PACKAGE_NAME)_$(NAME_SUFFIX) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
 		 $(DEBIAN_DEPENDENCIES) \
@@ -591,28 +590,28 @@ deb: test soter_static themis_static soter_shared themis_shared collect_headers 
 	@find $(BIN_PATH) -name \*.deb
 
 
-rpm: test themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
+rpm: themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/rpm
 #libPACKAGE-devel
 	@fpm --input-type dir \
          --output-type rpm \
-         --name lib$(PACKAGE_NAME)-devel \
+         --name $(PACKAGE_NAME)-devel \
          --license $(LICENSE_NAME) \
          --url '$(COSSACKLABS_URL)' \
          --description '$(SHORT_DESCRIPTION)' \
          --rpm-summary '$(RPM_SUMMARY)' \
-         $(RPM_DEPENDENCIES) --depends "lib$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)" \
+         $(RPM_DEPENDENCIES) --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)" \
          --maintainer $(MAINTAINER) \
          --after-install $(POST_INSTALL_SCRIPT) \
          --after-remove $(POST_UNINSTALL_SCRIPT) \
-         --package $(BIN_PATH)/rpm/lib$(PACKAGE_NAME)-devel-$(NAME_SUFFIX) \
+         --package $(BIN_PATH)/rpm/$(PACKAGE_NAME)-devel-$(NAME_SUFFIX) \
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
            $(HEADER_FILES_MAP)
 #libPACKAGE
 	@fpm --input-type dir \
          --output-type rpm \
-         --name lib$(PACKAGE_NAME) \
+         --name $(PACKAGE_NAME) \
          --license $(LICENSE_NAME) \
          --url '$(COSSACKLABS_URL)' \
          --description '$(SHORT_DESCRIPTION)' \
@@ -621,9 +620,22 @@ rpm: test themis_static themis_shared soter_static soter_shared collect_headers 
          --after-install $(POST_INSTALL_SCRIPT) \
          --after-remove $(POST_UNINSTALL_SCRIPT) \
          $(RPM_DEPENDENCIES) \
-         --package $(BIN_PATH)/rpm/lib$(PACKAGE_NAME)-$(NAME_SUFFIX) \
+         --package $(BIN_PATH)/rpm/$(PACKAGE_NAME)-$(NAME_SUFFIX) \
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
          $(BINARY_LIBRARY_MAP)
 # it's just for printing .rpm files
 	@find $(BIN_PATH) -name \*.rpm
+
+define PKGINFO
+PACKAGE=$(PACKAGE_NAME)
+SECTION=$(PACKAGE_CATEGORY)
+MAINTAINER=$(MAINTAINER)
+VERSION=$(VERSION)
+HOMEPAGE=$(COSSACKLABS_URL)
+LICENSE=$(LICENSE_NAME)
+DESCRIPTION="$(SHORT_DESCRIPTION)"
+endef
+export PKGINFO
+pkginfo:
+	@echo "$$PKGINFO" > $(PKGINFO_PATH)
