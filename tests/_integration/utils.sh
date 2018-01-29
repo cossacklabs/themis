@@ -4,17 +4,15 @@ export TOP_PID=$$
 trap "exit 1" TERM
 export status=0
 
-function fail () {
+fail () {
     printf "\033[1m\033[31m ${2} fail \x1b[0m\n"
 }
-#export -f fail
 
-function success () {
+success () {
     printf "\033[1m\033[32m ${2} success \x1b[0m\n"
 }
-#export -f success
 
-function check_result_zero (){
+check_result_zero (){
     result=$?
     if [ ${result} != "0" ]
     then
@@ -24,4 +22,3 @@ function check_result_zero (){
         success
     fi
 }
-#export -f check_result_zero
