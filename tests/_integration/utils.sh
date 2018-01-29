@@ -7,11 +7,12 @@ export status=0
 function fail () {
     printf "\033[1m\033[31m ${2} fail \x1b[0m\n"
 }
-export -f fail
+#export -f fail
+
 function success () {
     printf "\033[1m\033[32m ${2} success \x1b[0m\n"
 }
-export -f success
+#export -f success
 
 function check_result_zero (){
     result=$?
@@ -23,4 +24,4 @@ function check_result_zero (){
         success
     fi
 }
-export -f check_result_zero
+#export -f check_result_zero
