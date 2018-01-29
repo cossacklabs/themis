@@ -123,7 +123,7 @@ jobs:
       - run: sudo make pythemis_install
       - run: sudo make rubythemis_install
       - run: sudo make phpthemis_install
-      #- run: cd tests/phpthemis && bash ./composer-setup.sh && bash ./init_env-php7.sh
+      - run: sudo bash -c 'echo "extension=phpthemis.so" > /etc/php/7.0/cli/conf.d/20-phpthemis.ini'
       - run: npm install jsthemis
 
       - run: make prepare_tests_all
