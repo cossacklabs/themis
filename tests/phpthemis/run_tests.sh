@@ -21,3 +21,5 @@ echo -e "\n >>>> secure message tests <<<<\n"
 php -c php.ini ./vendor/phpunit/phpunit/phpunit smessage_test.php
 echo -e "\n >>>> secure token tests <<<<\n"
 php -c php.ini ./vendor/phpunit/phpunit/phpunit ssession_test.php
+echo -e "\n >>>> memory leakage tests <<<<\n"
+php -c php.ini ./vendor/phpunit/phpunit/phpunit memory_leakage_test.php

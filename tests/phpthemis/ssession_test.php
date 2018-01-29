@@ -68,13 +68,13 @@ class SsessionTest extends TestCase {
 
         $msg_to_send = $client_session->wrap($message);
         $this->assertTrue(isset($msg_to_send));
-        $geted_message = $server_session->unwrap($msg_to_send);
-        $this->assertEquals($geted_message, $message);
+        $gotten_message = $server_session->unwrap($msg_to_send);
+        $this->assertEquals($gotten_message, $message);
 
         $msg_to_send = $server_session->wrap($reply_message);
         $this->assertTrue(isset($msg_to_send));
-        $geted_message = $client_session->unwrap($msg_to_send);
-        $this->assertEquals($geted_message, $reply_message);
+        $gotten_message = $client_session->unwrap($msg_to_send);
+        $this->assertEquals($gotten_message, $reply_message);
     }
 
 
