@@ -635,3 +635,31 @@ endef
 export PKGINFO
 pkginfo:
 	@echo "$$PKGINFO" > $(PKGINFO_PATH)
+
+PHP_PACKAGE_NAME:=libphpthemis
+PHP_VERSION_FULL:=$(shell php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" 2>/dev/null)
+PHP_POST_INSTALL_SCRIPT:=./scripts/phpthemis_postinstall.sh
+PHP_POST_UNINSTALL_SCRIPT:=./scripts/phpthemis_postuninstall.sh
+PHP_API:=$(shell php -i|grep 'PHP API'|sed 's/PHP API => //')
+PHP_LIB_MAP:=./src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so=/usr/lib/$(PHP_API)/
+
+deb_php:
+	@mkdir -p $(BIN_PATH)/deb
+#libPHPPACKAGE
+	@fpm --input-type dir \
+		 --output-type deb \
+		 --name $(PHP_PACKAGE_NAME) \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --package $(BIN_PATH)/deb/$(PHP_PACKAGE_NAME)_$(PHP_VERSION_FULL)_$(NAME_SUFFIX) \
+		 --architecture $(DEBIAN_ARCHITECTURE) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 --depends openssl --depends "libthemis" \
+		 --deb-priority optional \
+		 --after-install $(PHP_POST_INSTALL_SCRIPT) \
+		 --after-remove $(PHP_POST_UNINSTALL_SCRIPT) \
+		 --category $(PACKAGE_CATEGORY) \
+		 $(PHP_LIB_MAP)
+
+	@find $(BIN_PATH) -name \*.deb
