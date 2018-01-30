@@ -26,6 +26,8 @@ include tests/tools/tools.mk
 include tests/themis/themis.mk
 include tests/themispp/themispp.mk
 
+PYTHON2_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis2_test.sh
+PYTHON3_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis3_test.sh
 
 nist_rng_test_suite: CMD = $(MAKE) -C $(NIST_STS_DIR)
 
@@ -62,13 +64,9 @@ prepare_tests_all: err prepare_tests_basic themispp_test
 ifdef PHP_VERSION
 	@echo -n "make tests for phpthemis "
 	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/phpthemis_test.sh
-	# @echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	# @echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	# @echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/ssession_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	# @cp ./src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so ./tests/phpthemis/phpthemis.so
 	@echo "cd tests/phpthemis; bash ./run_tests.sh" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@cd ./tests/phpthemis; ln -s ../../src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so ./phpthemis.so
+	#@cd ./tests/phpthemis; ln -s ../../src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so ./phpthemis.so
 	@$(PRINT_OK_)
 endif
 ifdef RUBY_GEM_VERSION
@@ -81,15 +79,17 @@ ifdef RUBY_GEM_VERSION
 	@chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
 	@$(PRINT_OK_)
 endif
-ifdef PYTHON_VERSION
-	@echo -n "make tests for pythemis "
-	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python -m unittest discover -s tests/pythemis" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-ifdef PYTHON3_VERSION
-	@echo "echo Python3 $(PYTHON3_VERSION) tests" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python3 -m unittest discover -s tests/pythemis" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+ifdef PYTHON2_VERSION
+	@echo -n "make tests for pythemis with python 2 "
+	@echo "#!/bin/bash -e" > ./$(PYTHON2_TEST_SCRIPT)
+	@echo "python2 -m unittest discover -s tests/pythemis" >> ./$(PYTHON2_TEST_SCRIPT)
+	@chmod a+x ./$(PYTHON2_TEST_SCRIPT)
 endif
-	@chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
+ifdef PYTHON3_VERSION
+	@echo -n "make tests for pythemis with python3 "
+	@echo "#!/bin/bash -e" > ./$(PYTHON3_TEST_SCRIPT)
+	@echo "python3 -m unittest discover -s tests/pythemis" >> ./$(PYTHON3_TEST_SCRIPT)
+	@chmod a+x ./$(PYTHON3_TEST_SCRIPT)
 	@$(PRINT_OK_)
 endif
 ifdef NPM_VERSION
@@ -137,13 +137,22 @@ ifdef PHP_VERSION
 endif
 
 test_python:
-ifdef PYTHON_VERSION
+# run test if any of python version available
+ifneq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
 	@echo "------------------------------------------------------------"
 	@echo "Running pythemis tests."
 	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/Python-Howto"
 	@echo "------------------------------------------------------------"
-	$(TEST_BIN_PATH)/pythemis_test.sh
+ifneq ($(PYTHON2_VERSION),)
+	$(PYTHON2_TEST_SCRIPT)
+endif
+ifneq ($(PYTHON3_VERSION),)
+	$(PYTHON3_TEST_SCRIPT)
+endif
 	@echo "------------------------------------------------------------"
+else
+	@echo "python2 or python3 not found"
+	@exit 1
 endif
 
 test_ruby:
