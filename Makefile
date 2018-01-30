@@ -171,7 +171,7 @@ RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 GO_VERSION := $(shell go version 2>&1)
 NPM_VERSION := $(shell npm --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
-PYTHON_VERSION := $(shell python --version 2>&1)
+PYTHON2_VERSION := $(shell python2 --version 2>&1)
 PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
 ifdef PIP_VERSION
 PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
@@ -432,19 +432,15 @@ else
 	@exit 1
 endif
 
-pythemis_install: CMD = cd src/wrappers/themis/python/ && python2 setup.py install --record files.txt
-
+pythemis_install: CMD = cd src/wrappers/themis/python/ && python2 setup.py install --record files.txt;  python3 setup.py install --record files3.txt
 pythemis_install:
-ifdef PYTHON_VERSION
-	@echo -n "pythemis install "
-	@$(BUILD_CMD_)
-else
-	@echo "Error: python not found"
+ifeq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
+	@echo "python2 or python3 not found"
 	@exit 1
 endif
-ifdef PYTHON3_VERSION
-	@cd src/wrappers/themis/python/ && python3 setup.py install --record files3.txt
-endif
+	@echo -n "pythemis install "
+	@$(BUILD_CMD_)
+
 
 themispp_install: CMD = install $(SRC_PATH)/wrappers/themis/themispp/*.hpp $(PREFIX)/include/themispp
 
