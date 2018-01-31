@@ -18,5 +18,5 @@ CONFCONT="extension=phpthemis.so"
 SEARCH="Scan this dir for additional .ini files => "
 PHPCONFD=`php -i | grep "$SEARCH" | sed "s/$SEARCH//"`;
 if [ -d $PHPCONFD ]; then
-    echo "$CONFCONT" > $PHPCONFD/20-phpthemis.ini;
+    rm -f $PHPCONFD/20-phpthemis.ini;
 fi
