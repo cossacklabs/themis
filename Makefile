@@ -383,7 +383,6 @@ for-audit: $(SOTER_AUD) $(THEMIS_AUD)
 
 
 phpthemis_uninstall: CMD = if [ -e src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
-
 phpthemis_uninstall:
 ifdef PHP_THEMIS_INSTALL
 	@echo -n "phpthemis uninstall "
@@ -391,16 +390,22 @@ ifdef PHP_THEMIS_INSTALL
 endif
 
 rubythemis_uninstall: CMD = gem uninstall themis
-
 rubythemis_uninstall:
 ifdef RUBY_GEM_VERSION
 	@echo -n "rubythemis uninstall "
 	@$(BUILD_CMD_)
 endif
 
+jsthemis_uninstall: CMD = rm -rf build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz && npm uninstall jsthemis
+jsthemis_uninstall:
+ifdef NPM_VERSION
+	@echo -n "jsthemis uninstall "
+	@$(BUILD_CMD_)
+endif
+
 uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libthemis.$(SHARED_EXT)
 
-uninstall: phpthemis_uninstall rubythemis_uninstall themispp_uninstall
+uninstall: phpthemis_uninstall rubythemis_uninstall themispp_uninstall jsthemis_uninstall
 	@echo -n "themis uninstall "
 	@$(BUILD_CMD_)
 
@@ -429,6 +434,16 @@ ifdef RUBY_GEM_VERSION
 	@$(BUILD_CMD_)
 else
 	@echo "Error: ruby gem not found"
+	@exit 1
+endif
+
+jsthemis_install: CMD = cd src/wrappers/themis/jsthemis && npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd - && npm install nan && npm install build/jsthemis-0.9.6-4.tgz
+jsthemis_install:
+ifdef NPM_VERSION
+	@echo -n "jsthemis install "
+	@$(BUILD_CMD_)
+else
+	@echo "Error: npm not found"
 	@exit 1
 endif
 
