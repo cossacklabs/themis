@@ -96,8 +96,6 @@ ifdef NPM_VERSION
 	@echo -n "make tests for jsthemis "
 	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/jsthemis_test.sh
 	@echo "npm install mocha" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
-	@echo "npm install nan" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
-	@echo "npm install ./build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
 	@echo "$(shell npm root)/mocha/bin/mocha ./tests/jsthemis" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
 	@chmod a+x ./$(BIN_PATH)/tests/jsthemis_test.sh
 	@$(PRINT_OK_)

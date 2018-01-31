@@ -437,7 +437,7 @@ else
 	@exit 1
 endif
 
-jsthemis_install: CMD = cd src/wrappers/themis/jsthemis && npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd - && npm install nan && npm install build/jsthemis-0.9.6-4.tgz
+jsthemis_install: CMD = cd src/wrappers/themis/jsthemis && npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd - && npm install nan && npm install ./build/jsthemis-0.9.6-4.tgz
 jsthemis_install:
 ifdef NPM_VERSION
 	@echo -n "jsthemis install "
