@@ -176,4 +176,6 @@ workflows:
       - android
       - x86_64
       - php5
+      - php70
+      - php71
       - integration_tests
