@@ -57,6 +57,7 @@ jobs:
       - run: sudo make themispp_install
       - run: sudo make pythemis_install
       - run: sudo make rubythemis_install
+      - run: sudo make jsthemis_install
 
       - restore_cache:
           keys:
@@ -105,7 +106,6 @@ jobs:
     steps:
       # dependencies
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common
-      - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
       # ruby rvm repository
       - run: sudo apt-add-repository -y ppa:rael-gc/rvm
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
@@ -124,7 +124,7 @@ jobs:
       - run: sudo make rubythemis_install
       - run: sudo make phpthemis_install
       - run: sudo bash -c 'echo "extension=phpthemis.so" > /etc/php/7.0/cli/conf.d/20-phpthemis.ini'
-      - run: npm install jsthemis
+      - run: sudo make jsthemis_install
       - run: mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
       - run: rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT/
 
