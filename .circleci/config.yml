@@ -108,7 +108,7 @@ jobs:
       # dependencies
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common
       # nodejs
-      - run: apt-get -y install nodejs npm
+      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get -y install nodejs npm
       - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
       # ruby rvm repository
       - run: sudo apt-add-repository -y ppa:rael-gc/rvm
