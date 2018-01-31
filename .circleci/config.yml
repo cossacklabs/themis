@@ -83,7 +83,7 @@ jobs:
       - run: sudo /sbin/ldconfig    
       - run: make test
       - run: make test_python
-      - run: make test_js
+      - run: sudo make test_js
       # it's important to set version of ruby precisely.
       - run: source /etc/profile.d/rvm.sh && rvm use system && make test_ruby
       - run: make test_go
