@@ -133,6 +133,7 @@ jobs:
       - run: sudo /sbin/ldconfig   
       - run: chmod u+x ./tests/_integration/integration_total.sh
       - run: ./tests/_integration/integration_total.sh
+      - run: bash tests/tools/check_keygen.sh
 
 
   # using this php5 image until we ensure tests are working for php7
