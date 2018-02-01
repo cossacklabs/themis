@@ -148,6 +148,29 @@ jobs:
       - run: make prepare_tests_all
       - run: make test_php
 
+  php70:
+      docker:
+        - image: circleci/php:7.0
+      steps:
+        - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev build-essential libc6-dbg default-jdk
+        - checkout
+        - run: make
+        - run: sudo make install
+        - run: sudo make phpthemis_install
+        - run: make prepare_tests_all
+        - run: make test_php
+  php71:
+        docker:
+          - image: circleci/php:7.1
+        steps:
+          - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev build-essential libc6-dbg default-jdk
+          - checkout
+          - run: make
+          - run: sudo make install
+          - run: sudo make phpthemis_install
+          - run: make prepare_tests_all
+          - run: make test_php
+
 workflows:
   version: 2
   tests:
@@ -155,4 +178,6 @@ workflows:
       - android
       - x86_64
       - php5
+      - php70
+      - php71
       - integration_tests

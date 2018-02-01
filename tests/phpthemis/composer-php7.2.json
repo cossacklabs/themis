@@ -3,6 +3,6 @@
     "description": "Some stuff for tests",
     "require": {
         "php": "^7",
-        "phpunit/phpunit": "6.3.1"
+        "phpunit/phpunit": "^6"
     }
 }
