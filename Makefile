@@ -604,6 +604,7 @@ rpm: themis_static themis_shared soter_static soter_shared collect_headers insta
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
            $(HEADER_FILES_MAP)
+
 #libPACKAGE
 	@fpm --input-type dir \
          --output-type rpm \
@@ -645,7 +646,6 @@ PHP_LIB_MAP:=./src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so=/usr/lib/php
 
 deb_php:
 	@mkdir -p $(BIN_PATH)/deb
-#libPHPPACKAGE
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name $(PHP_PACKAGE_NAME) \
@@ -655,15 +655,31 @@ deb_php:
 		 --package $(BIN_PATH)/deb/$(PHP_PACKAGE_NAME)_$(NAME_SUFFIX) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
-		 --depends openssl --depends "libthemis" \
+		 --depends php$(PHP_VERSION_FULL) \
 		 --deb-priority optional \
 		 --after-install $(PHP_POST_INSTALL_SCRIPT) \
 		 --before-remove $(PHP_PRE_UNINSTALL_SCRIPT) \
 		 --category $(PACKAGE_CATEGORY) \
 		 --deb-no-default-config-files \
 		 $(PHP_LIB_MAP)
+	@find $(BIN_PATH) -name \*.
 
-	@find $(BIN_PATH) -name \*.deb
+rpm_php:
+	@mkdir -p $(BIN_PATH)/rpm
+	@fpm --input-type dir \
+		 --output-type rpm \
+		 --name $(PHP_PACKAGE_NAME) \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --package $(BIN_PATH)/rpm/$(PHP_PACKAGE_NAME)_$(NAME_SUFFIX) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 --depends php$(PHP_VERSION_FULL) \
+		 --after-install $(PHP_POST_INSTALL_SCRIPT) \
+		 --before-remove $(PHP_PRE_UNINSTALL_SCRIPT) \
+		 --category $(PACKAGE_CATEGORY) \
+		 $(PHP_LIB_MAP)
+	@find $(BIN_PATH) -name \*.rpm
 
 php_info:
 	@echo "PHP_VERSION_FULL: $(PHP_VERSION_FULL)"
