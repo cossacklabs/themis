@@ -27,8 +27,9 @@ jobs:
       GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
       CFLAGS: "-DCIRICLE_TEST"
     steps:
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev npm lcov libc6-dbg rsync software-properties-common
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev nodejs npm lcov libc6-dbg rsync software-properties-common
       - run: sudo ln -sf /usr/bin/gcov-5 /usr/bin/gcov
+      - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
       - run: sudo gem install coveralls-lcov
       - run: go get github.com/mattn/goveralls
       # ruby rvm repository
@@ -57,6 +58,7 @@ jobs:
       - run: sudo make themispp_install
       - run: sudo make pythemis_install
       - run: sudo make rubythemis_install
+      - run: sudo make jsthemis_install
 
       - restore_cache:
           keys:
@@ -81,7 +83,7 @@ jobs:
       - run: sudo /sbin/ldconfig    
       - run: make test
       - run: make test_python
-      - run: make test_js
+      - run: sudo make test_js
       # it's important to set version of ruby precisely.
       - run: source /etc/profile.d/rvm.sh && rvm use system && make test_ruby
       - run: make test_go
@@ -105,12 +107,12 @@ jobs:
     steps:
       # dependencies
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common
+      # nodejs
+      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get -y install nodejs npm
       - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
       # ruby rvm repository
       - run: sudo apt-add-repository -y ppa:rael-gc/rvm
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
-      # nodejs install (need to install fresh nodejs)
-      - run: cd $HOME && curl -sL https://deb.nodesource.com/setup_8.x -o nodesource_setup.sh && sudo bash nodesource_setup.sh && sudo apt-get -y install nodejs
       # php7
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php7.0-dev php7.0-xml php7.0-mbstring 
 
@@ -124,7 +126,7 @@ jobs:
       - run: sudo make rubythemis_install
       - run: sudo make phpthemis_install
       - run: sudo bash -c 'echo "extension=phpthemis.so" > /etc/php/7.0/cli/conf.d/20-phpthemis.ini'
-      - run: npm install jsthemis
+      - run: sudo make jsthemis_install
       - run: mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
       - run: rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT/
 

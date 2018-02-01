@@ -94,16 +94,10 @@ ifdef PYTHON3_VERSION
 endif
 ifdef NPM_VERSION
 	@echo -n "make tests for jsthemis "
-	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
-	echo "wget https://nodejs.org/dist/v4.6.0/node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "tar -xvf node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "cd ../../src/wrappers/themis/jsthemis && PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd -" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install mocha" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install nan" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install ../../build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) ./node_modules/mocha/bin/mocha" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) rm -rf ./node_modules" >> ./$(BIN_PATH)/tests/node.sh
-	chmod a+x ./$(BIN_PATH)/tests/node.sh
+	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/jsthemis_test.sh
+	@echo "npm install mocha" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
+	@echo "$(shell npm root)/mocha/bin/mocha ./tests/jsthemis" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
+	@chmod a+x ./$(BIN_PATH)/tests/jsthemis_test.sh
 	@$(PRINT_OK_)
 endif
 
@@ -171,7 +165,7 @@ ifdef NPM_VERSION
 	@echo "Running jsthemis tests."
 	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/NodeJS-Howto"
 	@echo "------------------------------------------------------------"
-	$(TEST_BIN_PATH)/node.sh
+	$(TEST_BIN_PATH)/jsthemis_test.sh
 endif
 
 test_go:

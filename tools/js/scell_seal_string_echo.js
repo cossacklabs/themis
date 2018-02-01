@@ -1,6 +1,6 @@
 var jsthemis = require('jsthemis');
 
-if (![5, 6].includes(process.argv.length)) {
+if (process.argv.length < 5 || process.argv.length > 6) {
     console.log('Usage: <command: enc | dec > <key> <message> <context (optional)>');
     process.exit(1);
 }
