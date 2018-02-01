@@ -619,6 +619,7 @@ rpm: themis_static themis_shared soter_static soter_shared collect_headers insta
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
            $(HEADER_FILES_MAP)
+
 #libPACKAGE
 	@fpm --input-type dir \
          --output-type rpm \
@@ -650,3 +651,53 @@ endef
 export PKGINFO
 pkginfo:
 	@echo "$$PKGINFO" > $(PKGINFO_PATH)
+
+PHP_VERSION_FULL:=$(shell php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" 2>/dev/null)
+PHP_PACKAGE_NAME:=libphpthemis-php$(PHP_VERSION_FULL)
+PHP_POST_INSTALL_SCRIPT:=./scripts/phpthemis_postinstall.sh
+PHP_PRE_UNINSTALL_SCRIPT:=./scripts/phpthemis_preuninstall.sh
+PHP_API:=$(shell php -i|grep 'PHP API'|sed 's/PHP API => //')
+PHP_LIB_MAP:=./src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so=/usr/lib/php/$(PHP_API)/
+
+deb_php:
+	@mkdir -p $(BIN_PATH)/deb
+	@fpm --input-type dir \
+		 --output-type deb \
+		 --name $(PHP_PACKAGE_NAME) \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --package $(BIN_PATH)/deb/$(PHP_PACKAGE_NAME)_$(NAME_SUFFIX) \
+		 --architecture $(DEBIAN_ARCHITECTURE) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 --depends php$(PHP_VERSION_FULL) \
+		 --deb-priority optional \
+		 --after-install $(PHP_POST_INSTALL_SCRIPT) \
+		 --before-remove $(PHP_PRE_UNINSTALL_SCRIPT) \
+		 --category $(PACKAGE_CATEGORY) \
+		 --deb-no-default-config-files \
+		 $(PHP_LIB_MAP)
+	@find $(BIN_PATH) -name \*.
+
+rpm_php:
+	@mkdir -p $(BIN_PATH)/rpm
+	@fpm --input-type dir \
+		 --output-type rpm \
+		 --name $(PHP_PACKAGE_NAME) \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --package $(BIN_PATH)/rpm/$(PHP_PACKAGE_NAME)_$(NAME_SUFFIX) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 --depends php$(PHP_VERSION_FULL) \
+		 --after-install $(PHP_POST_INSTALL_SCRIPT) \
+		 --before-remove $(PHP_PRE_UNINSTALL_SCRIPT) \
+		 --category $(PACKAGE_CATEGORY) \
+		 $(PHP_LIB_MAP)
+	@find $(BIN_PATH) -name \*.rpm
+
+php_info:
+	@echo "PHP_VERSION_FULL: $(PHP_VERSION_FULL)"
+	@echo "PHP_API: $(PHP_API)"
+	@echo "PHP_PACKAGE_NAME: $(PHP_PACKAGE_NAME)"
+	@echo "PHP_FOLDER: $(PHP_FOLDER)"
