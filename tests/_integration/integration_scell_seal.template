@@ -1,0 +1,17 @@
+## ${language_name1} -> ${language_name2}
+echo ".. testing SECURE CELL, SEAL MODE, ${language_name1} --> ${language_name2}"
+text="${language_name1} -> ${language_name2} test"
+result_text=$$(${command2} ${script_path2}/scell_seal_string_echo.${script2_extension} "dec" "passw1" `${command1} ${script_path1}/scell_seal_string_echo.${script1_extension} "enc" "passw1" "$$text"`)
+check_result_zero
+if [[ "$text" != "$result_text" ]]; then
+    status=1
+fi
+
+## with context
+echo ".. testing SECURE CELL, SEAL MODE CONTEXT, ${language_name1} --> ${language_name2}"
+text="${language_name1} -> ${language_name2} test with context"
+result_text=$$(${command2} ${script_path2}/scell_seal_string_echo.${script2_extension} "dec" "passw2" `${command1} ${script_path1}/scell_seal_string_echo.${script1_extension} "enc" "passw2" "$$text" "somecontext"` "somecontext")
+check_result_zero
+if [[ "$text" != "$result_text" ]]; then
+    status=1
+fi

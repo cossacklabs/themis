@@ -1,0 +1,3 @@
+echo ".. test $test_name"
+bash $script_path
+check_result_zero
