@@ -132,7 +132,7 @@ jobs:
 
       - run: sudo /sbin/ldconfig
       # generate integration tests
-      - run: python3 tests/_integration/tests_generator.py
+      - run: python tests/_integration/tests_generator.py
       - run: bash tests/_integration/integration_total.sh
       - run: bash tests/tools/check_keygen.sh
 

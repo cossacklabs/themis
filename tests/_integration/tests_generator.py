@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 import string
 import os
 from collections import namedtuple
@@ -26,9 +26,7 @@ templates = {
     'scell_context_imprint': './tests/_integration/integration_scell_context_imprint.template',
 }
 
-def render_snippet(
-        template: string.Template, setting1: LanguageSetting,
-        setting2: LanguageSetting):
+def render_snippet(template, setting1, setting2):
     return template.safe_substitute(
         language_name1=setting1.name, language_name2=setting2.name,
         command1=setting1.command, command2=setting2.command,
