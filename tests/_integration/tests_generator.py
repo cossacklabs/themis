@@ -49,7 +49,7 @@ for snippet_name in templates:
     with open(templates[snippet_name]) as f:
         snippet_template = string.Template(f.read())
     for setting1 in languages:
-        for setting2 in languages[1:]:
+        for setting2 in languages:
             if (setting1.name not in generate_for_languages or
                     setting2.name not in generate_for_languages):
                 continue
