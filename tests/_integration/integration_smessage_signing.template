@@ -1,0 +1,8 @@
+## ${language_name1} -> ${language_name2}
+echo ".. testing secure message signing, ${language_name1} --> ${language_name2}"
+text="${language_name1} -> ${language_name2} secure message"
+result_text=$$(${command2} ${script_path2}/smessage_encryption.${script2_extension} "verify" "./tests/_integration/keys/server.priv" "./tests/_integration/keys/client.pub" `${command1} ${script_path1}/smessage_encryption.${script1_extension} "sign" "./tests/_integration/keys/client.priv" "./tests/_integration/keys/server.pub" "$$text"`)
+check_result_zero
+if [[ "$text" != "$result_text" ]]; then
+    status=1
+fi
