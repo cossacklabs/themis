@@ -1,0 +1,9 @@
+#!/bin/bash -e
+
+# import functions
+. tests/_integration/utils.sh
+
+${commands}
+
+echo "status=$${status}"
+exit $${status}

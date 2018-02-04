@@ -130,9 +130,11 @@ jobs:
       - run: mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
       - run: rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT/
 
-      - run: sudo /sbin/ldconfig   
-      - run: chmod u+x ./tests/_integration/integration_total.sh
-      - run: ./tests/_integration/integration_total.sh
+      - run: sudo /sbin/ldconfig
+      # generate integration tests
+      - run: python tests/_integration/tests_generator.py
+      - run: bash tests/_integration/integration_total.sh
+      - run: bash tests/tools/check_keygen.sh
 
 
   # using this php5 image until we ensure tests are working for php7
@@ -148,6 +150,29 @@ jobs:
       - run: make prepare_tests_all
       - run: make test_php
 
+  php70:
+      docker:
+        - image: circleci/php:7.0
+      steps:
+        - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev build-essential libc6-dbg default-jdk
+        - checkout
+        - run: make
+        - run: sudo make install
+        - run: sudo make phpthemis_install
+        - run: make prepare_tests_all
+        - run: make test_php
+  php71:
+        docker:
+          - image: circleci/php:7.1
+        steps:
+          - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install cmake libssl-dev build-essential libc6-dbg default-jdk
+          - checkout
+          - run: make
+          - run: sudo make install
+          - run: sudo make phpthemis_install
+          - run: make prepare_tests_all
+          - run: make test_php
+
 workflows:
   version: 2
   tests:
@@ -155,4 +180,6 @@ workflows:
       - android
       - x86_64
       - php5
+      - php70
+      - php71
       - integration_tests

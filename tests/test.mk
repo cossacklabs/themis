@@ -66,7 +66,6 @@ ifdef PHP_VERSION
 	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@echo "cd tests/phpthemis; bash ./run_tests.sh" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
-	#@cd ./tests/phpthemis; ln -s ../../src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so ./phpthemis.so
 	@$(PRINT_OK_)
 endif
 ifdef RUBY_GEM_VERSION
