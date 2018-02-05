@@ -78,14 +78,14 @@ deb https://pkgs.cossacklabs.com/stable/$OS $RELEASE main
 * `$OS` should be `debian` or `ubuntu`.
 * `$RELEASE` should be one of Debian or Ubuntu release names. You can determine this by running `lsb_release -cs`, if you have `lsb_release` installed.
 
-We currently build packages for the following OS and RELEASE combinations:
+We currently build packages for the following OSs and RELEASE combinations:
 
-- *Debian "Wheezy" (Debian 7)*
-- *Debian "Jessie" (Debian 8)*
-- *Debian "Stretch" (Debian 9)*
-- *Ubuntu Trusty Tahr (Ubuntu 14.04)*
-- *Ubuntu Xenial Xerus (Ubuntu 16.04)*
-- *Ubuntu Artful Aardvark (Ubuntu 17.10)*
+- *Debian "Wheezy" (Debian 7)*,
+- *Debian "Jessie" (Debian 8)*,
+- *Debian "Stretch" (Debian 9)*,
+- *Ubuntu Trusty Tahr (Ubuntu 14.04)*,
+- *Ubuntu Xenial Xerus (Ubuntu 16.04)*,
+- *Ubuntu Artful Aardvark (Ubuntu 17.10)*.
 
 For example, if you are running *Debian 9 "Stretch"*, run:
 
@@ -169,11 +169,11 @@ Themis supports the following architectures: x86/x64, armv*, various Android arc
 
 It is checked to compile on the latest stable versions of:
 
-* Debian 7-9, CentOS 7, Ubuntu 14-16, Arch Linux 2014+
-* Windows XP+
-* macOS 10.12+
-* Android 4-8+ / CyanogenMod 11+
-* iOS9—iOS11+, x32/x64
+* Debian 7-9, CentOS 7, Ubuntu (14.04, 16.04, 17.10), Arch Linux 2014+,
+* Windows XP+,
+* macOS 10.12+,
+* Android 4-8+ / CyanogenMod 11+,
+* iOS9—iOS11+, x32/x64.
 
 We plan to expand this list with broader set of platforms. If you'd like to help improve or bring Themis to your favourite platform / language — [get in touch](info@cossacklabs.com).
 
