@@ -653,6 +653,12 @@ pkginfo:
 	@echo "$$PKGINFO" > $(PKGINFO_PATH)
 
 PHP_VERSION_FULL:=$(shell php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" 2>/dev/null)
+ifeq ($(OS_CODENAME),jessie)
+    PHP_DEPENDENCIES:=php5
+else
+    PHP_DEPENDENCIES:=php$(PHP_VERSION_FULL)
+endif
+
 PHP_PACKAGE_NAME:=libphpthemis-php$(PHP_VERSION_FULL)
 PHP_POST_INSTALL_SCRIPT:=./scripts/phpthemis_postinstall.sh
 PHP_PRE_UNINSTALL_SCRIPT:=./scripts/phpthemis_preuninstall.sh
@@ -670,14 +676,14 @@ deb_php:
 		 --package $(BIN_PATH)/deb/$(PHP_PACKAGE_NAME)_$(NAME_SUFFIX) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
-		 --depends php$(PHP_VERSION_FULL) \
+		 --depends "$(PHP_DEPENDENCIES)" \
 		 --deb-priority optional \
 		 --after-install $(PHP_POST_INSTALL_SCRIPT) \
 		 --before-remove $(PHP_PRE_UNINSTALL_SCRIPT) \
 		 --category $(PACKAGE_CATEGORY) \
 		 --deb-no-default-config-files \
 		 $(PHP_LIB_MAP)
-	@find $(BIN_PATH) -name \*.
+	@find $(BIN_PATH) -name \*.deb
 
 rpm_php:
 	@mkdir -p $(BIN_PATH)/rpm
