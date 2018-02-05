@@ -683,24 +683,7 @@ deb_php:
 		 --category $(PACKAGE_CATEGORY) \
 		 --deb-no-default-config-files \
 		 $(PHP_LIB_MAP)
-	@find $(BIN_PATH) -name \*.deb
-
-rpm_php:
-	@mkdir -p $(BIN_PATH)/rpm
-	@fpm --input-type dir \
-		 --output-type rpm \
-		 --name $(PHP_PACKAGE_NAME) \
-		 --license $(LICENSE_NAME) \
-		 --url '$(COSSACKLABS_URL)' \
-		 --description '$(SHORT_DESCRIPTION)' \
-		 --package $(BIN_PATH)/rpm/$(PHP_PACKAGE_NAME)_$(NAME_SUFFIX) \
-		 --version $(VERSION)+$(OS_CODENAME) \
-		 --depends php$(PHP_VERSION_FULL) \
-		 --after-install $(PHP_POST_INSTALL_SCRIPT) \
-		 --before-remove $(PHP_PRE_UNINSTALL_SCRIPT) \
-		 --category $(PACKAGE_CATEGORY) \
-		 $(PHP_LIB_MAP)
-	@find $(BIN_PATH) -name \*.rpm
+	@find $(BIN_PATH) -name $(PHP_PACKAGE_NAME)\*.deb
 
 php_info:
 	@echo "PHP_VERSION_FULL: $(PHP_VERSION_FULL)"
