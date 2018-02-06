@@ -1,12 +1,12 @@
 PODS:
   - GRKOpenSSLFramework (1.0.1.20.4)
-  - themis (0.9.6):
+  - themis (0.10.0):
     - GRKOpenSSLFramework (= 1.0.1.20.4)
-    - themis/core (= 0.9.6)
-    - themis/objcwrapper (= 0.9.6)
-  - themis/core (0.9.6):
+    - themis/core (= 0.10.0)
+    - themis/objcwrapper (= 0.10.0)
+  - themis/core (0.10.0):
     - GRKOpenSSLFramework (= 1.0.1.20.4)
-  - themis/objcwrapper (0.9.6):
+  - themis/objcwrapper (0.10.0):
     - GRKOpenSSLFramework (= 1.0.1.20.4)
     - themis/core
 
@@ -19,12 +19,12 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   themis:
-    :commit: bdbf3763b4553d5ba2949583781d9835e2592b48
+    :commit: 126d1766e1afa20aec013f6a6edc99c7e7866fd9
     :git: https://github.com/cossacklabs/themis.git
 
 SPEC CHECKSUMS:
   GRKOpenSSLFramework: b6172cc34db9b999002483878772a4bf2a1687ba
-  themis: 470fc7b5532b7ff098664185d389fbb1a5ac3603
+  themis: f06f5690dbb18276e98f3c8d7c9ba90e8100bd09
 
 PODFILE CHECKSUM: 917761b1dcd55e14d1d072d4bed52a309ba47467
 
