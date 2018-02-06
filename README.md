@@ -21,7 +21,9 @@
 #### Crypto library for storage and messaging for Swift, Obj-C, Android/Java, С++, JS, Python, Ruby, PHP, Go.
 <br>
 
-Themis is an open-source high-level cryptographic services library for mobile and server platforms, which provides secure data exchange and storage. The current stable release is [0.9.6](https://github.com/cossacklabs/themis/releases/tag/0.9.6), dated 14th of December 2017. 
+Themis is an open-source high-level cryptographic services library for mobile and server platforms, which provides secure data exchange and storage. The current stable release is [0.10.0](https://github.com/cossacklabs/themis/releases/tag/0.10.0), dated 6th of February 2018.
+
+**Important:** If you're upgrading from Themis 0.9.6 or earlier, please see the [Migration Guide](https://github.com/cossacklabs/themis/wiki/Migration-guide). 
 
 Themis provides four important cryptographic services:
 
@@ -76,13 +78,14 @@ deb https://pkgs.cossacklabs.com/stable/$OS $RELEASE main
 * `$OS` should be `debian` or `ubuntu`.
 * `$RELEASE` should be one of Debian or Ubuntu release names. You can determine this by running `lsb_release -cs`, if you have `lsb_release` installed.
 
-We currently build packages for the following OS and RELEASE combinations:
+We currently build packages for the following OSs and RELEASE combinations:
 
-- *Debian "Wheezy" (Debian 7)*
-- *Debian "Jessie" (Debian 8)*
-- *Debian "Stretch" (Debian 9)*
-- *Ubuntu Trusty Tahr (Ubuntu 14.04)*
-- *Ubuntu Xenial Xerus (Ubuntu 16.04)*
+- *Debian "Wheezy" (Debian 7)*,
+- *Debian "Jessie" (Debian 8)*,
+- *Debian "Stretch" (Debian 9)*,
+- *Ubuntu Trusty Tahr (Ubuntu 14.04)*,
+- *Ubuntu Xenial Xerus (Ubuntu 16.04)*,
+- *Ubuntu Artful Aardvark (Ubuntu 17.10)*.
 
 For example, if you are running *Debian 9 "Stretch"*, run:
 
@@ -166,11 +169,11 @@ Themis supports the following architectures: x86/x64, armv*, various Android arc
 
 It is checked to compile on the latest stable versions of:
 
-* Debian 7.8+, CentOS 7, Ubuntu 14, Arch Linux 2014+
-* Windows XP+
-* macOS 10.9+
-* Android 4-8+ / CyanogenMod 11+
-* iOS8—iOS11+, x32/x64
+* Debian 7-9, CentOS 7, Ubuntu (14.04, 16.04, 17.10), Arch Linux 2014+,
+* Windows XP+,
+* macOS 10.12+,
+* Android 4-8+ / CyanogenMod 11+,
+* iOS9—iOS11+, x32/x64.
 
 We plan to expand this list with broader set of platforms. If you'd like to help improve or bring Themis to your favourite platform / language — [get in touch](info@cossacklabs.com).
 
