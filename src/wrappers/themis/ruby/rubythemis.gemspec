@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'rbthemis'
   s.version     = '0.10.0'
-  s.date        = '2017-12-14'
+  s.date        = '2018-02-06'
   s.summary     = 'Data security library for network communication and data storage for Ruby'
   s.description = 'Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern developers, with high level OOP wrappers for Ruby, Python, PHP, Java / Android and iOS / OSX. It is designed with ease of use in mind, high security and cross-platform availability.'
   s.authors     = ['CossackLabs']
