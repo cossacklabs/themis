@@ -146,7 +146,7 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
 
-DEFAULT_VERSION := 0.9.5
+DEFAULT_VERSION := 0.10.0
 GIT_VERSION := $(shell if [ -d ".git" ]; then git version; fi 2>/dev/null)
 # check that repo has any tag
 GIT_TAG_STATUS := $(shell git describe --tags HEAD 2>/dev/null)
@@ -225,7 +225,7 @@ CFLAGS += -Werror -Wno-switch
 # strict checks for docs
 #CFLAGS += -Wdocumentation -Wno-error=documentation
 
-# fixing compatibility between x64 0.9.6 and x64 0.9.7
+# fixing compatibility between x64 0.9.6 and x64 0.10.0
 # https://github.com/cossacklabs/themis/pull/279
 ifeq ($(NO_SCELL_COMPAT),)
 	CFLAGS += -DSCELL_COMPAT
@@ -437,7 +437,7 @@ else
 	@exit 1
 endif
 
-jsthemis_install: CMD = cd src/wrappers/themis/jsthemis && npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd - && npm install nan && npm install ./build/jsthemis-0.9.6-4.tgz
+jsthemis_install: CMD = cd src/wrappers/themis/jsthemis && npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd - && npm install nan && npm install ./build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz
 jsthemis_install:
 ifdef NPM_VERSION
 	@echo -n "jsthemis install "
