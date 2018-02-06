@@ -1,20 +1,23 @@
-import org.apache.tools.ant.taskdefs.condition.Os
+apply plugin: 'com.android.library'
 
 buildscript {
     repositories {
-        mavenCentral()
+        google()
+        jcenter()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.1.3'
+        classpath 'com.android.tools.build:gradle:3.0.1'
     }
 }
 
-apply plugin: 'com.android.library'
+dependencies {
+    implementation project(":boringssl")
+}
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
     
     defaultConfig {
     	minSdkVersion 16
@@ -33,37 +36,12 @@ android {
 
 	}
 
-    task ndkBuild(type: Exec) {
-	workingDir 'jni'
-        commandLine getNdkBuildCmd() 
-	if (project.hasProperty('boringssl_path')){
-	    args = ["BORINGSSL_PATH=$boringssl_path"]
+    // ensure we execute boringssl tasks first
+    tasks.whenTaskAdded({Task task -> task.dependsOn('boringssl:' + task.name)})
+
+	externalNativeBuild {
+	    ndkBuild {
+	        path "jni/Android.mk"
+	    }
 	}
-    }
-
-    tasks.withType(JavaCompile) {
-        compileTask -> compileTask.dependsOn ndkBuild
-    }
-
-    task cleanNative(type: Exec) {
-		workingDir 'jni'
-        commandLine getNdkBuildCmd(), 'clean'
-    }
-
-    clean.dependsOn cleanNative
-}
-
-def getNdkDir() {
-    if (System.env.ANDROID_NDK_ROOT != null)
-        return System.env.ANDROID_NDK_ROOT
-        
-    throw new GradleException("NDK location not found. Define location with an ANDROID_NDK_ROOT environment variable.")
-}
-
-def getNdkBuildCmd() {
-    def ndkbuild = getNdkDir() + "/ndk-build"
-    if (Os.isFamily(Os.FAMILY_WINDOWS))
-        ndkbuild += ".cmd"
-
-    return ndkbuild
 }

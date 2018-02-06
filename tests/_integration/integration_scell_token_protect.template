@@ -1,0 +1,16 @@
+## ${language_name1} -> ${language_name2}
+echo ".. testing secure cell, token protect mode, ${language_name1} --> ${language_name2}"
+text="${language_name1} -> ${language_name2} token test"
+result_text=$$(${command2} ${script_path2}/scell_token_string_echo.${script2_extension} "dec" "passwd" `${command1} ${script_path1}/scell_token_string_echo.${script1_extension} "enc" "passwd" "$$text"`)
+check_result_zero
+if [[ "$text" != "$result_text" ]]; then
+    status=1
+fi
+## with context
+echo ".. testing secure cell, token protect mode context, ${language_name1} --> ${language_name2}"
+text="${language_name1} -> ${language_name2} token test"
+result_text=$$(${command2} ${script_path2}/scell_token_string_echo.${script2_extension} "dec" "passwd" `${command1} ${script_path1}/scell_token_string_echo.${script1_extension} "enc" "passwd" "$$text" "some context"` "some context")
+check_result_zero
+if [[ "$text" != "$result_text" ]]; then
+    status=1
+fi

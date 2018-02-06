@@ -21,80 +21,71 @@ require 'rubythemis'
 require 'test/unit'
 require 'thread'
 
-$q1 = Queue.new
-$q2 = Queue.new
+class MemoryTransport
+  def initialize(to, from)
+    @to = to
+    @from = from
+  end
 
-class Memory_transport
-    def initialize(to, from)
-	@to=to
-	@from=from
+  def send(message)
+    @from.enq message
+  end
+
+  def receive
+    count = 0
+    while @to.empty?
+      raise 'timeout' if count > 5
+      sleep 1
+      count += 1
     end
-    def send(message)
-	@from.enq(message)
-    end
-    
-    def receive()
-	count=0
-	while @to.empty?
-	    if count > 5
-		raise RuntimeError, "timeout"
-	    end
-	    sleep(1)
-	    count=count+1
-	end
-	return @to.deq
-    end
+    @to.deq
+  end
 end
 
 class TestComparator < Test::Unit::TestCase
-    def setup
-      @message1="This is test message"
-      @message2="This is test message2"
-      @server_result=Themis::Scomparator::NOT_READY
-      @client_result=Themis::Scomparator::NOT_READY
-    end
+  def setup
+    @message1 = 'This is test message'
+    @message2 = 'This is test message2'
+    @server_result = Themis::Scomparator::NOT_READY
+    @client_result = Themis::Scomparator::NOT_READY
+    @q1 = Queue.new
+    @q2 = Queue.new
+  end
 
-    def client(message)
-	client_transport = Memory_transport.new($q1,$q2)
-	comparator = Themis::Scomparator.new(message)
-	control_message=comparator.begin_compare()
-	while comparator.result() == Themis::Scomparator::NOT_READY
-	    client_transport.send(control_message)
-	    control_message=comparator.proceed_compare(client_transport.receive())
-	end
-        @client_result=comparator.result()
+  def client(message)
+    client_transport = MemoryTransport.new(@q1, @q2)
+    comparator = Themis::Scomparator.new(message)
+    control_message = comparator.begin_compare
+    while comparator.result == Themis::Scomparator::NOT_READY
+      client_transport.send(control_message)
+      control_message = comparator.proceed_compare(client_transport.receive)
     end
-    
-    def server(message)
-	server_transport = Memory_transport.new($q2,$q1)
-	comparator = Themis::Scomparator.new(message)
-	begin 
-	    server_transport.send(comparator.proceed_compare(server_transport.receive()))
-	end while comparator.result() == Themis::Scomparator::NOT_READY
-        @server_result=comparator.result()
-    end
+    @client_result = comparator.result
+  end
 
-    def testComparator
-	threads = []
-	threads << Thread.new do
-	    server(@message1)
-	end
-	threads << Thread.new do
-	    client(@message1)
-	end
-	threads.each {|thr| thr.join }
-        assert_equal(@client_result, Themis::Scomparator::MATCH)
-        assert_equal(@server_result, Themis::Scomparator::MATCH)
+  def server(message)
+    server_transport = MemoryTransport.new(@q2, @q1)
+    comparator = Themis::Scomparator.new(message)
+    begin
+      server_transport.send(
+        comparator.proceed_compare(server_transport.receive))
+    end while comparator.result == Themis::Scomparator::NOT_READY
+    @server_result = comparator.result
+  end
 
-        threads = []
-	threads << Thread.new do
-	    server(@message1)
-	end
-	threads << Thread.new do
-	    client(@message2)
-	end
-	threads.each {|thr| thr.join }
-        assert_equal(@client_result, Themis::Scomparator::NOT_MATCH)
-        assert_equal(@server_result, Themis::Scomparator::NOT_MATCH)
-    end
+  def test_comparator
+    [
+      Thread.new { server(@message1) },
+      Thread.new { client(@message1) }
+    ].each(&:join)
+    assert_equal(@client_result, Themis::Scomparator::MATCH)
+    assert_equal(@server_result, Themis::Scomparator::MATCH)
+
+    [
+      Thread.new { server(@message1) },
+      Thread.new { client(@message2) }
+    ].each(&:join)
+    assert_equal(@client_result, Themis::Scomparator::NOT_MATCH)
+    assert_equal(@server_result, Themis::Scomparator::NOT_MATCH)
+  end
 end

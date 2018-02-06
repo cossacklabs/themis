@@ -43,3 +43,8 @@ build
 __pycache__/
 *.py[cod]
 *$py.class
+
+tests/phpthemis/vendor
+tests/phpthemis/composer.json
+tests/phpthemis/composer.phar
+tests/phpthemis/composer.lock

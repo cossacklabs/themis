@@ -49,6 +49,7 @@ PRINT_WARNING_ = printf "$(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG
 BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
 BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
 
+PKGINFO_PATH = PKGINFO
 
 UNAME=$(shell uname)
 
@@ -100,7 +101,7 @@ ifdef IS_MACOS
 	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
 
 		# if brew is installed, if openssl is installed
-		PACKAGELIST = $(shell brew list | grep 'openssl')
+		PACKAGELIST = $(shell brew list | grep -om1 '^openssl')
 		ifeq ($(PACKAGELIST),openssl)
 
 		 	# path to openssl (usually "/usr/local/opt/openssl")
@@ -145,7 +146,7 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
 
-DEFAULT_VERSION := 0.9.5
+DEFAULT_VERSION := 0.10.0
 GIT_VERSION := $(shell if [ -d ".git" ]; then git version; fi 2>/dev/null)
 # check that repo has any tag
 GIT_TAG_STATUS := $(shell git describe --tags HEAD 2>/dev/null)
@@ -165,12 +166,12 @@ else
         VERSION = $(shell date -I | sed s/-/_/g)
 endif
 
-PHP_VERSION := $(shell php --version 2>/dev/null)
+PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 GO_VERSION := $(shell go version 2>&1)
 NPM_VERSION := $(shell npm --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
-PYTHON_VERSION := $(shell python --version 2>&1)
+PYTHON2_VERSION := $(shell python2 --version 2>&1)
 PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
 ifdef PIP_VERSION
 PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
@@ -220,6 +221,15 @@ endif
 
 # Should pay attention to warnings (some may be critical for crypto-enabled code (ex. signed-unsigned mismatch)
 CFLAGS += -Werror -Wno-switch
+
+# strict checks for docs
+#CFLAGS += -Wdocumentation -Wno-error=documentation
+
+# fixing compatibility between x64 0.9.6 and x64 0.10.0
+# https://github.com/cossacklabs/themis/pull/279
+ifeq ($(NO_SCELL_COMPAT),)
+	CFLAGS += -DSCELL_COMPAT
+endif
 
 ifndef ERROR
 include src/soter/soter.mk
@@ -346,8 +356,6 @@ install_shared_libs: err all make_install_dirs
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
 
-install_all: install themispp_install pythemis_install rubythemis_install phpthemis_install
-
 get_version:
 	@echo $(VERSION)
 
@@ -375,7 +383,6 @@ for-audit: $(SOTER_AUD) $(THEMIS_AUD)
 
 
 phpthemis_uninstall: CMD = if [ -e src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
-
 phpthemis_uninstall:
 ifdef PHP_THEMIS_INSTALL
 	@echo -n "phpthemis uninstall "
@@ -383,22 +390,34 @@ ifdef PHP_THEMIS_INSTALL
 endif
 
 rubythemis_uninstall: CMD = gem uninstall themis
-
 rubythemis_uninstall:
 ifdef RUBY_GEM_VERSION
 	@echo -n "rubythemis uninstall "
 	@$(BUILD_CMD_)
 endif
 
+jsthemis_uninstall: CMD = rm -rf build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz && npm uninstall jsthemis
+jsthemis_uninstall:
+ifdef NPM_VERSION
+	@echo -n "jsthemis uninstall "
+	@$(BUILD_CMD_)
+endif
+
 uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libthemis.$(SHARED_EXT)
 
-uninstall: phpthemis_uninstall rubythemis_uninstall themispp_uninstall
+uninstall: phpthemis_uninstall rubythemis_uninstall themispp_uninstall jsthemis_uninstall
 	@echo -n "themis uninstall "
 	@$(BUILD_CMD_)
 
-phpthemis_install: CMD = cd src/wrappers/themis/php && phpize && ./configure && make install
+ifeq ($(PHP_VERSION),5)
+    PHP_FOLDER = php
+else
+    PHP_FOLDER = php7
+endif
 
-phpthemis_install: install
+phpthemis_install: CMD = cd src/wrappers/themis/$(PHP_FOLDER) && phpize && ./configure && make install
+
+phpthemis_install:
 ifdef PHP_VERSION
 	@echo -n "phpthemis install "
 	@$(BUILD_CMD_)
@@ -409,7 +428,7 @@ endif
 
 rubythemis_install: CMD = cd src/wrappers/themis/ruby && gem build rubythemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
 
-rubythemis_install: install
+rubythemis_install:
 ifdef RUBY_GEM_VERSION
 	@echo -n "rubythemis install "
 	@$(BUILD_CMD_)
@@ -418,23 +437,29 @@ else
 	@exit 1
 endif
 
-pythemis_install: CMD = cd src/wrappers/themis/python/ && python2 setup.py install --record files.txt
-
-pythemis_install: install
-ifdef PYTHON_VERSION
-	@echo -n "pythemis install "
+jsthemis_install: CMD = cd src/wrappers/themis/jsthemis && npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd - && npm install nan && npm install ./build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz
+jsthemis_install:
+ifdef NPM_VERSION
+	@echo -n "jsthemis install "
 	@$(BUILD_CMD_)
 else
-	@echo "Error: python not found"
+	@echo "Error: npm not found"
 	@exit 1
 endif
-ifdef PYTHON3_VERSION
-	@cd src/wrappers/themis/python/ && python3 setup.py install --record files3.txt
+
+pythemis_install: CMD = cd src/wrappers/themis/python/ && python2 setup.py install --record files.txt;  python3 setup.py install --record files3.txt
+pythemis_install:
+ifeq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
+	@echo "python2 or python3 not found"
+	@exit 1
 endif
+	@echo -n "pythemis install "
+	@$(BUILD_CMD_)
+
 
 themispp_install: CMD = install $(SRC_PATH)/wrappers/themis/themispp/*.hpp $(PREFIX)/include/themispp
 
-themispp_install: install
+themispp_install:
 	@mkdir -p $(PREFIX)/include/themispp
 	@$(BUILD_CMD)
 
@@ -492,7 +517,7 @@ else
 	NAME_SUFFIX = $(RPM_VERSION).$(OS_NAME)$(OS_VERSION).$(ARCHITECTURE).rpm
 endif
 
-PACKAGE_NAME = themis
+PACKAGE_NAME = libthemis
 PACKAGE_CATEGORY = security
 SHORT_DESCRIPTION = Data security library for network communication and data storage
 RPM_SUMMARY = Data security library for network communication and data storage. \
@@ -530,39 +555,39 @@ symlink_realname_to_soname:
 	done
 
 
-strip: 
+strip:
 	@find . -name \*.$(SHARED_EXT)\.* -exec strip -o {} {} \;
 
-deb: test soter_static themis_static soter_shared themis_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
+deb: soter_static themis_static soter_shared themis_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/deb
-	
+
 #libPACKAGE-dev
 	@fpm --input-type dir \
 		 --output-type deb \
-		 --name lib$(PACKAGE_NAME)-dev \
+		 --name $(PACKAGE_NAME)-dev \
 		 --license $(LICENSE_NAME) \
 		 --url '$(COSSACKLABS_URL)' \
 		 --description '$(SHORT_DESCRIPTION)' \
 		 --maintainer $(MAINTAINER) \
-		 --package $(BIN_PATH)/deb/lib$(PACKAGE_NAME)-dev_$(NAME_SUFFIX) \
+		 --package $(BIN_PATH)/deb/$(PACKAGE_NAME)-dev_$(NAME_SUFFIX) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
-		 $(DEBIAN_DEPENDENCIES) --depends "lib$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)" \
+		 $(DEBIAN_DEPENDENCIES) --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)" \
 		 --deb-priority optional \
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --category $(PACKAGE_CATEGORY) \
 		 $(HEADER_FILES_MAP)
-		 
+
 #libPACKAGE
 	@fpm --input-type dir \
 		 --output-type deb \
-		 --name lib$(PACKAGE_NAME) \
+		 --name $(PACKAGE_NAME) \
 		 --license $(LICENSE_NAME) \
 		 --url '$(COSSACKLABS_URL)' \
 		 --description '$(SHORT_DESCRIPTION)' \
 		 --maintainer $(MAINTAINER) \
-		 --package $(BIN_PATH)/deb/lib$(PACKAGE_NAME)_$(NAME_SUFFIX) \
+		 --package $(BIN_PATH)/deb/$(PACKAGE_NAME)_$(NAME_SUFFIX) \
 		 --architecture $(DEBIAN_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
 		 $(DEBIAN_DEPENDENCIES) \
@@ -576,28 +601,29 @@ deb: test soter_static themis_static soter_shared themis_shared collect_headers 
 	@find $(BIN_PATH) -name \*.deb
 
 
-rpm: test themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
+rpm: themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/rpm
 #libPACKAGE-devel
 	@fpm --input-type dir \
          --output-type rpm \
-         --name lib$(PACKAGE_NAME)-devel \
+         --name $(PACKAGE_NAME)-devel \
          --license $(LICENSE_NAME) \
          --url '$(COSSACKLABS_URL)' \
          --description '$(SHORT_DESCRIPTION)' \
          --rpm-summary '$(RPM_SUMMARY)' \
-         $(RPM_DEPENDENCIES) --depends "lib$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)" \
+         $(RPM_DEPENDENCIES) --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)" \
          --maintainer $(MAINTAINER) \
          --after-install $(POST_INSTALL_SCRIPT) \
          --after-remove $(POST_UNINSTALL_SCRIPT) \
-         --package $(BIN_PATH)/rpm/lib$(PACKAGE_NAME)-devel-$(NAME_SUFFIX) \
+         --package $(BIN_PATH)/rpm/$(PACKAGE_NAME)-devel-$(NAME_SUFFIX) \
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
            $(HEADER_FILES_MAP)
+
 #libPACKAGE
 	@fpm --input-type dir \
          --output-type rpm \
-         --name lib$(PACKAGE_NAME) \
+         --name $(PACKAGE_NAME) \
          --license $(LICENSE_NAME) \
          --url '$(COSSACKLABS_URL)' \
          --description '$(SHORT_DESCRIPTION)' \
@@ -606,9 +632,61 @@ rpm: test themis_static themis_shared soter_static soter_shared collect_headers 
          --after-install $(POST_INSTALL_SCRIPT) \
          --after-remove $(POST_UNINSTALL_SCRIPT) \
          $(RPM_DEPENDENCIES) \
-         --package $(BIN_PATH)/rpm/lib$(PACKAGE_NAME)-$(NAME_SUFFIX) \
+         --package $(BIN_PATH)/rpm/$(PACKAGE_NAME)-$(NAME_SUFFIX) \
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
          $(BINARY_LIBRARY_MAP)
 # it's just for printing .rpm files
 	@find $(BIN_PATH) -name \*.rpm
+
+define PKGINFO
+PACKAGE=$(PACKAGE_NAME)
+SECTION=$(PACKAGE_CATEGORY)
+MAINTAINER=$(MAINTAINER)
+VERSION=$(VERSION)
+HOMEPAGE=$(COSSACKLABS_URL)
+LICENSE=$(LICENSE_NAME)
+DESCRIPTION="$(SHORT_DESCRIPTION)"
+endef
+export PKGINFO
+pkginfo:
+	@echo "$$PKGINFO" > $(PKGINFO_PATH)
+
+PHP_VERSION_FULL:=$(shell php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" 2>/dev/null)
+ifeq ($(OS_CODENAME),jessie)
+    PHP_DEPENDENCIES:=php5
+else
+    PHP_DEPENDENCIES:=php$(PHP_VERSION_FULL)
+endif
+
+PHP_PACKAGE_NAME:=libphpthemis-php$(PHP_VERSION_FULL)
+PHP_POST_INSTALL_SCRIPT:=./scripts/phpthemis_postinstall.sh
+PHP_PRE_UNINSTALL_SCRIPT:=./scripts/phpthemis_preuninstall.sh
+PHP_API:=$(shell php -i|grep 'PHP API'|sed 's/PHP API => //')
+PHP_LIB_MAP:=./src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so=/usr/lib/php/$(PHP_API)/
+
+deb_php:
+	@mkdir -p $(BIN_PATH)/deb
+	@fpm --input-type dir \
+		 --output-type deb \
+		 --name $(PHP_PACKAGE_NAME) \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --package $(BIN_PATH)/deb/$(PHP_PACKAGE_NAME)_$(NAME_SUFFIX) \
+		 --architecture $(DEBIAN_ARCHITECTURE) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 --depends "$(PHP_DEPENDENCIES)" \
+		 --deb-priority optional \
+		 --after-install $(PHP_POST_INSTALL_SCRIPT) \
+		 --before-remove $(PHP_PRE_UNINSTALL_SCRIPT) \
+		 --category $(PACKAGE_CATEGORY) \
+		 --deb-no-default-config-files \
+		 $(PHP_LIB_MAP)
+	@find $(BIN_PATH) -name $(PHP_PACKAGE_NAME)\*.deb
+
+php_info:
+	@echo "PHP_VERSION_FULL: $(PHP_VERSION_FULL)"
+	@echo "PHP_API: $(PHP_API)"
+	@echo "PHP_PACKAGE_NAME: $(PHP_PACKAGE_NAME)"
+	@echo "PHP_FOLDER: $(PHP_FOLDER)"

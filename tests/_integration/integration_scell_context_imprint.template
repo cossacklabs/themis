@@ -1,0 +1,8 @@
+# ${language_name1} -> ${language_name2}
+echo ".. testing secure cell, context imprint mode, ${language_name1} --> ${language_name2}"
+text="${language_name1} -> ${language_name2} with context"
+result_text=$$(${command2} ${script_path2}/scell_context_string_echo.${script2_extension} "dec" "passwd" `${command1} ${script_path1}/scell_context_string_echo.${script1_extension} "enc" "passwd" "$$text" "somecontext"` "somecontext")
+check_result_zero
+if [[ "$text" != "$result_text" ]]; then
+    status=1
+fi

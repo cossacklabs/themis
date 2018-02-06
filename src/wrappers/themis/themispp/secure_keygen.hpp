@@ -54,7 +54,7 @@ namespace themispp{
 	throw themispp::exception_t("Themis failed generating KeyPair, unsupported algorithm");
       }
       private_key.resize(private_key_length);
-      public_key.resize(private_key_length);
+      public_key.resize(public_key_length);
     }
       
     const std::vector<uint8_t>& get_priv(){return private_key;}

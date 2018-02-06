@@ -87,6 +87,10 @@ static int secure_cell_token_protect(){
     testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect (encrypted_message_length determination) fail");
     return -1;
   }
+  if(encrypted_message_length !=  sizeof(message)){
+      testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect (encrypted_message_length != message length) fail");
+      return -1;
+  }
   encrypted_message=malloc(encrypted_message_length);
   if(encrypted_message==NULL){
     testsuite_fail_if(true, "encrypted_message malloc fail");
@@ -101,6 +105,12 @@ static int secure_cell_token_protect(){
   
   if(themis_secure_cell_encrypt_token_protect((uint8_t*)passwd, sizeof(passwd), NULL,0, (uint8_t*)message, sizeof(message), context, &context_length, encrypted_message, &encrypted_message_length)!=THEMIS_SUCCESS){
     testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect fail");
+    free(encrypted_message);
+    free(context);
+    return -3;
+  }
+  if(encrypted_message_length !=  sizeof(message)){
+    testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect (encrypted_message_length != message length) fail");
     free(encrypted_message);
     free(context);
     return -3;

@@ -1,0 +1,43 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
+    
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 16
+        externalNativeBuild {
+		    cmake {
+		        arguments "-DCMAKE_TOOLCHAIN_FILE=" + android.ndkDirectory + "/build/cmake/android.toolchain.cmake",
+		                  "-DANDROID_NATIVE_API_LEVEL=21",
+		                  "-DANDROID_TOOLCHAIN=gcc",
+		                  "-DCMAKE_BUILD_TYPE=Release",
+		                  "-GNinja"
+		    }
+	    }
+    }
+    
+    externalNativeBuild {
+        cmake {
+            path "src/CMakeLists.txt"
+        }
+    }
+	
+	sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+        }
+	}
+}

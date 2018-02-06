@@ -26,6 +26,8 @@ include tests/tools/tools.mk
 include tests/themis/themis.mk
 include tests/themispp/themispp.mk
 
+PYTHON2_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis2_test.sh
+PYTHON3_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis3_test.sh
 
 nist_rng_test_suite: CMD = $(MAKE) -C $(NIST_STS_DIR)
 
@@ -62,9 +64,7 @@ prepare_tests_all: err prepare_tests_basic themispp_test
 ifdef PHP_VERSION
 	@echo -n "make tests for phpthemis "
 	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/scell_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/smessage_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
-	@echo "php -c tests/phpthemis/php.ini ./tests/tools/phpunit.phar ./tests/phpthemis/ssession_test.php" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
+	@echo "cd tests/phpthemis; bash ./run_tests.sh" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@$(PRINT_OK_)
 endif
@@ -78,29 +78,25 @@ ifdef RUBY_GEM_VERSION
 	@chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
 	@$(PRINT_OK_)
 endif
-ifdef PYTHON_VERSION
-	@echo -n "make tests for pythemis "
-	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python -m unittest discover -s tests/pythemis" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-ifdef PYTHON3_VERSION
-	@echo "echo Python3 $(PYTHON3_VERSION) tests" >> ./$(BIN_PATH)/tests/pythemis_test.sh
-	@echo "python3 -m unittest discover -s tests/pythemis" >> ./$(BIN_PATH)/tests/pythemis_test.sh
+ifdef PYTHON2_VERSION
+	@echo -n "make tests for pythemis with python 2 "
+	@echo "#!/bin/bash -e" > ./$(PYTHON2_TEST_SCRIPT)
+	@echo "python2 -m unittest discover -s tests/pythemis" >> ./$(PYTHON2_TEST_SCRIPT)
+	@chmod a+x ./$(PYTHON2_TEST_SCRIPT)
 endif
-	@chmod a+x ./$(BIN_PATH)/tests/pythemis_test.sh
+ifdef PYTHON3_VERSION
+	@echo -n "make tests for pythemis with python3 "
+	@echo "#!/bin/bash -e" > ./$(PYTHON3_TEST_SCRIPT)
+	@echo "python3 -m unittest discover -s tests/pythemis" >> ./$(PYTHON3_TEST_SCRIPT)
+	@chmod a+x ./$(PYTHON3_TEST_SCRIPT)
 	@$(PRINT_OK_)
 endif
 ifdef NPM_VERSION
 	@echo -n "make tests for jsthemis "
-	echo "cd ./tests/jsthemis/" > ./$(BIN_PATH)/tests/node.sh
-	echo "wget https://nodejs.org/dist/v4.6.0/node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "tar -xvf node-v4.6.0-linux-x64.tar.gz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "cd ../../src/wrappers/themis/jsthemis && PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd -" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install mocha" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install nan" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) npm install ../../build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) ./node_modules/mocha/bin/mocha" >> ./$(BIN_PATH)/tests/node.sh
-	echo "PATH=`pwd`/tests/jsthemis/node-v4.6.0-linux-x64/bin:$(PATH) rm -rf ./node_modules" >> ./$(BIN_PATH)/tests/node.sh
-	chmod a+x ./$(BIN_PATH)/tests/node.sh
+	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/jsthemis_test.sh
+	@echo "npm install mocha" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
+	@echo "$(shell npm root)/mocha/bin/mocha ./tests/jsthemis" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
+	@chmod a+x ./$(BIN_PATH)/tests/jsthemis_test.sh
 	@$(PRINT_OK_)
 endif
 
@@ -134,13 +130,22 @@ ifdef PHP_VERSION
 endif
 
 test_python:
-ifdef PYTHON_VERSION
+# run test if any of python version available
+ifneq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
 	@echo "------------------------------------------------------------"
 	@echo "Running pythemis tests."
 	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/Python-Howto"
 	@echo "------------------------------------------------------------"
-	$(TEST_BIN_PATH)/pythemis_test.sh
+ifneq ($(PYTHON2_VERSION),)
+	$(PYTHON2_TEST_SCRIPT)
+endif
+ifneq ($(PYTHON3_VERSION),)
+	$(PYTHON3_TEST_SCRIPT)
+endif
 	@echo "------------------------------------------------------------"
+else
+	@echo "python2 or python3 not found"
+	@exit 1
 endif
 
 test_ruby:
@@ -159,7 +164,7 @@ ifdef NPM_VERSION
 	@echo "Running jsthemis tests."
 	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/NodeJS-Howto"
 	@echo "------------------------------------------------------------"
-	$(TEST_BIN_PATH)/node.sh
+	$(TEST_BIN_PATH)/jsthemis_test.sh
 endif
 
 test_go:

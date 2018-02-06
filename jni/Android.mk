@@ -14,11 +14,13 @@
 # limitations under the License.
 #
 
-LOCAL_PATH := $(call my-dir)
+BUILD_TYPE := release
 
-ifeq ($(BORINGSSL_PATH),)
-    $(error "boringSSL path must be set")
+ifeq ($(NDK_DEBUG),1)
+  BUILD_TYPE := debug
 endif
+
+LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
@@ -28,10 +30,10 @@ LOCAL_SRC_FILES := $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/soter/*.c
 LOCAL_SRC_FILES += $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/soter/boringssl/*.c))
 LOCAL_SRC_FILES += $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/soter/ed25519/*.c))
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src
 LOCAL_CFLAGS := -DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl
 LOCAL_EXPORT_CFLAGS := -DBORINGSSL
-LOCAL_STATIC_LIBRARIES := libcrypto libdecrepit
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../third_party/boringssl/src/include
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -41,8 +43,8 @@ LOCAL_MODULE := libthemis
 
 LOCAL_SRC_FILES := $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/themis/*.c))
 LOCAL_CFLAGS := -DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src 
-LOCAL_STATIC_LIBRARIES := libsoter libcrypto libdecrepit
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../third_party/boringssl/src/include
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -54,8 +56,8 @@ LOCAL_SRC_FILES := themis_jni.c themis_message.c themis_keygen.c themis_cell.c t
 LOCAL_SRC_FILES += themis_compare.c
 LOCAL_CFLAGS := -DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../third_party/boringssl/src/include
 LOCAL_STATIC_LIBRARIES := libthemis libsoter libcrypto libdecrepit
-# LOCAL_LDFLAGS := -llog
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -85,26 +87,24 @@ LOCAL_SHARED_LIBRARIES := libthemis_jni
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src $(LOCAL_PATH)/../tests
 
-
 include $(BUILD_EXECUTABLE)
 
-# this is needed to disable targets not present in the NDK otherwise error happens
-#BUILD_HOST_EXECUTABLE := 
-#BUILD_HOST_STATIC_LIBRARY := 
-
-#include $(LOCAL_PATH)/external/openssl/Android.mk
-
-# We are making a separate target with slightly modified script to support building libcrypto with NDK
-# We put it here to make minimal changes in original Google scripts to make importing new versions easier
 include $(CLEAR_VARS)
 
-#LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libcrypto
-LOCAL_SRC_FILES := $(BORINGSSL_PATH)/build-$(TARGET_ARCH_ABI)/crypto/libcrypto.a
-LOCAL_EXPORT_C_INCLUDES := $(BORINGSSL_PATH)/include
-include $(PREBUILT_STATIC_LIBRARY)
+LOCAL_SRC_FILES := $(LOCAL_PATH)/../third_party/boringssl/.externalNativeBuild/cmake/$(BUILD_TYPE)/$(TARGET_ARCH_ABI)/crypto/libcrypto.a
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/../third_party/boringssl/src/include
+
+ifneq (,$(wildcard $(LOCAL_SRC_FILES)))
+  include $(PREBUILT_STATIC_LIBRARY)
+endif
+
+include $(CLEAR_VARS)
 
 LOCAL_MODULE := libdecrepit
-LOCAL_SRC_FILES := $(BORINGSSL_PATH)/build-$(TARGET_ARCH_ABI)/decrepit/libdecrepit.a
-include $(PREBUILT_STATIC_LIBRARY)
+LOCAL_SRC_FILES := $(LOCAL_PATH)/../third_party/boringssl/.externalNativeBuild/cmake/$(BUILD_TYPE)/$(TARGET_ARCH_ABI)/decrepit/libdecrepit.a
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/../third_party/boringssl/src/include
 
+ifneq (,$(wildcard $(LOCAL_SRC_FILES)))
+  include $(PREBUILT_STATIC_LIBRARY)
+endif

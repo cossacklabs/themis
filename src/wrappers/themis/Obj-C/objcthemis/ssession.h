@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
 * @brief Initialise Secure session object
-* @param [in] id User id
+* @param [in] userId User id
 * @param [in] privateKey User private key
 * @param [in] callbacks Reference to TSSessionTransportInterface object
 */
@@ -106,7 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** @brief Unwrap received from peer by \b receive method from callbacks object message.
 * @see TSSessionTransportInterface.
-* @param [in] length
+* @param [in] length of data to receive
 * @param [in] error pointer to Error on failure
 * @return Plain message in NSData object on success or nil on failure.
 */

@@ -7,25 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4FACFCADA7C021E49246C525 /* libPods-objthemis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B071ECDCFBB7652EBEBBA3D2 /* libPods-objthemis.a */; };
 		7308F54F1F717C4500AE0411 /* SecureMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7308F54D1F717BF300AE0411 /* SecureMessageTests.m */; };
 		7308F5531F717D2D00AE0411 /* SecureCellTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7308F5521F717D2D00AE0411 /* SecureCellTests.m */; };
 		7376D8671F7182B70003AF72 /* SecureMessageTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7376D8661F7182B70003AF72 /* SecureMessageTestsSwift.swift */; };
+		73CBA59D2012402B003EC7AC /* SecureComparatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73CBA59C2012402B003EC7AC /* SecureComparatorTests.m */; };
+		73CBA59F20124BB8003EC7AC /* SecureComparatorTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CBA59E20124BB8003EC7AC /* SecureComparatorTestsSwift.swift */; };
 		73D358221F71F06B004E000A /* SecureCellTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D358211F71F06B004E000A /* SecureCellTestsSwift.swift */; };
+		AB23DE0D7640030F31CDB810 /* libPods-objthemis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 43ADAA59C7F41B11CA3F2229 /* libPods-objthemis.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		358E402508571E88A945094B /* Pods-objthemis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.debug.xcconfig"; sourceTree = "<group>"; };
+		43ADAA59C7F41B11CA3F2229 /* libPods-objthemis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objthemis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4C57E92F96150286BD5B0102 /* Pods-objthemis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.debug.xcconfig"; sourceTree = "<group>"; };
 		7308F54D1F717BF300AE0411 /* SecureMessageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureMessageTests.m; sourceTree = "<group>"; };
 		7308F5521F717D2D00AE0411 /* SecureCellTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureCellTests.m; sourceTree = "<group>"; };
 		7376D8651F7182B70003AF72 /* objthemis-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "objthemis-Bridging-Header.h"; sourceTree = "<group>"; };
 		7376D8661F7182B70003AF72 /* SecureMessageTestsSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureMessageTestsSwift.swift; sourceTree = "<group>"; };
+		73CBA59C2012402B003EC7AC /* SecureComparatorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureComparatorTests.m; sourceTree = "<group>"; };
+		73CBA59E20124BB8003EC7AC /* SecureComparatorTestsSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureComparatorTestsSwift.swift; sourceTree = "<group>"; };
 		73D358201F71E6F9004E000A /* StaticKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StaticKeys.h; sourceTree = "<group>"; };
 		73D358211F71F06B004E000A /* SecureCellTestsSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureCellTestsSwift.swift; sourceTree = "<group>"; };
 		843EE74E1B5E1A36003F0138 /* objthemis.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objthemis.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		843EE7521B5E1A36003F0138 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B071ECDCFBB7652EBEBBA3D2 /* libPods-objthemis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objthemis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		BAECA0B3ABC6157DFECDD87B /* Pods-objthemis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.release.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.release.xcconfig"; sourceTree = "<group>"; };
+		D776064FD1313D8FE6AA8A36 /* Pods-objthemis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.release.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,20 +37,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4FACFCADA7C021E49246C525 /* libPods-objthemis.a in Frameworks */,
+				AB23DE0D7640030F31CDB810 /* libPods-objthemis.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2D6BD60791341C03266AC8F8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				43ADAA59C7F41B11CA3F2229 /* libPods-objthemis.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5F38168D4CC69A9485A7F512 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4C57E92F96150286BD5B0102 /* Pods-objthemis.debug.xcconfig */,
+				D776064FD1313D8FE6AA8A36 /* Pods-objthemis.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		843EE7431B5E19E2003F0138 = {
 			isa = PBXGroup;
 			children = (
 				843EE7501B5E1A36003F0138 /* objthemis */,
 				843EE74F1B5E1A36003F0138 /* Products */,
-				A05A952752731FE45D875FC2 /* Pods */,
-				A7C5851B9DF5A86F3702903F /* Frameworks */,
+				5F38168D4CC69A9485A7F512 /* Pods */,
+				2D6BD60791341C03266AC8F8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -62,6 +83,8 @@
 			isa = PBXGroup;
 			children = (
 				7308F5521F717D2D00AE0411 /* SecureCellTests.m */,
+				73CBA59E20124BB8003EC7AC /* SecureComparatorTestsSwift.swift */,
+				73CBA59C2012402B003EC7AC /* SecureComparatorTests.m */,
 				73D358201F71E6F9004E000A /* StaticKeys.h */,
 				73D358211F71F06B004E000A /* SecureCellTestsSwift.swift */,
 				7376D8661F7182B70003AF72 /* SecureMessageTestsSwift.swift */,
@@ -80,23 +103,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		A05A952752731FE45D875FC2 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				358E402508571E88A945094B /* Pods-objthemis.debug.xcconfig */,
-				BAECA0B3ABC6157DFECDD87B /* Pods-objthemis.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
-		A7C5851B9DF5A86F3702903F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				B071ECDCFBB7652EBEBBA3D2 /* libPods-objthemis.a */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -104,12 +110,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 843EE7551B5E1A36003F0138 /* Build configuration list for PBXNativeTarget "objthemis" */;
 			buildPhases = (
-				DAD068CE3A52392D102EEED7 /* [CP] Check Pods Manifest.lock */,
+				6FD029F15063DC4835686A67 /* [CP] Check Pods Manifest.lock */,
 				843EE74A1B5E1A36003F0138 /* Sources */,
 				843EE74B1B5E1A36003F0138 /* Frameworks */,
 				843EE74C1B5E1A36003F0138 /* Resources */,
-				51ACDE77703017327AA8487E /* [CP] Copy Pods Resources */,
-				30F22BA69E5C8FA57362C175 /* [CP] Embed Pods Frameworks */,
+				314B30C54B3CAE7D0483FFAA /* [CP] Embed Pods Frameworks */,
+				06422398472168FCD5296318 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -162,7 +168,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		30F22BA69E5C8FA57362C175 /* [CP] Embed Pods Frameworks */ = {
+		06422398472168FCD5296318 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-objthemis/Pods-objthemis-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		314B30C54B3CAE7D0483FFAA /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -180,22 +201,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-objthemis/Pods-objthemis-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		51ACDE77703017327AA8487E /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-objthemis/Pods-objthemis-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		DAD068CE3A52392D102EEED7 /* [CP] Check Pods Manifest.lock */ = {
+		6FD029F15063DC4835686A67 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -222,8 +228,10 @@
 			files = (
 				73D358221F71F06B004E000A /* SecureCellTestsSwift.swift in Sources */,
 				7376D8671F7182B70003AF72 /* SecureMessageTestsSwift.swift in Sources */,
+				73CBA59F20124BB8003EC7AC /* SecureComparatorTestsSwift.swift in Sources */,
 				7308F54F1F717C4500AE0411 /* SecureMessageTests.m in Sources */,
 				7308F5531F717D2D00AE0411 /* SecureCellTests.m in Sources */,
+				73CBA59D2012402B003EC7AC /* SecureComparatorTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,7 +301,7 @@
 		};
 		843EE7561B5E1A36003F0138 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 358E402508571E88A945094B /* Pods-objthemis.debug.xcconfig */;
+			baseConfigurationReference = 4C57E92F96150286BD5B0102 /* Pods-objthemis.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -347,7 +355,7 @@
 		};
 		843EE7571B5E1A36003F0138 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BAECA0B3ABC6157DFECDD87B /* Pods-objthemis.release.xcconfig */;
+			baseConfigurationReference = D776064FD1313D8FE6AA8A36 /* Pods-objthemis.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";

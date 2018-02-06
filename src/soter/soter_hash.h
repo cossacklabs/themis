@@ -90,7 +90,7 @@ soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo);
 /**
  * @brief destroy hash context
  * @param [in] hash_ctx pointer to hash context previosly created by @ref soter_hash_create
- * @return @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
+ * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
 soter_status_t soter_hash_destroy(soter_hash_ctx_t *hash_ctx);
 soter_status_t soter_hash_cleanup(soter_hash_ctx_t *hash_ctx);
@@ -100,7 +100,7 @@ soter_status_t soter_hash_cleanup(soter_hash_ctx_t *hash_ctx);
  * @param [in] hash_ctx pointer to hash context previosly created by @ref soter_hash_create
  * @param [in] data pointer to buffer with data to hash update
  * @param [in] length of data buffer
- * @return @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
+ * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
 soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, size_t length);
 
@@ -109,7 +109,7 @@ soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, s
  * @param [in] hash_ctx pointer to hash context previosly created by @ref soter_hash_create
  * @param [out] hash_value pointer to buffer for hash value retrieve, may be set to NULL for hash value length determination
  * @param [in, out] hash_length length of hash_value buffer
- * @return @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure. 
+ * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure. 
  * @note If hash_value==NULL or hash_length less then need to store hash value, @ref SOTER_BUFFER_TOO_SMALL will return and hash_length will contain length of buffer thet need to store hash value.
  */
 soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value, size_t* hash_length);
