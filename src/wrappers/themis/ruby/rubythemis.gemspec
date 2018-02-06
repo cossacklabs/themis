@@ -1,5 +1,5 @@
 Gem::Specification.new do |s|
-  s.name        = 'rubythemis'
+  s.name        = 'rbthemis'
   s.version     = '0.10.0'
   s.date        = '2017-12-14'
   s.summary     = 'Data security library for network communication and data storage for Ruby'
@@ -11,4 +11,5 @@ Gem::Specification.new do |s|
   s.license     = 'Apache-2.0'
   s.add_runtime_dependency 'ffi', '~> 1.9', '>= 1.9.8'
   s.requirements << 'libthemis, v0.10.0'
+  s.post_install_message = 'If you were using rubythemis before, please uninstall it from your system using `gem uninstall rubythemis`'
 end
