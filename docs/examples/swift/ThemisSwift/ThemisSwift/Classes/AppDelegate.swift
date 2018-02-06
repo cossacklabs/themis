@@ -351,8 +351,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // send this message to server
         var data = try? client.beginCompare()
         
-        while (client.status() == TSComparatorStateType.comparatorNotReady ||
-            server.status() == TSComparatorStateType.comparatorNotReady ) {
+        while (client.status() == TSComparatorStateType.notReady ||
+            server.status() == TSComparatorStateType.notReady ) {
                 
             // receive from server
             data = try? server.proceedCompare(data)
@@ -361,7 +361,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             data = try? client.proceedCompare(data)
         }
         
-        if (client.status() == TSComparatorStateType.comparatorMatch) {
+        if (client.status() == TSComparatorStateType.match) {
             // secrets match
             print("SecureComparator secrets match")
         } else {
