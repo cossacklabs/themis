@@ -93,7 +93,7 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* si
   if (!pkey) {
     return SOTER_INVALID_PARAMETER;
   }
-  if (EVP_PKEY_base_id(pkey)!=EVP_PKEY_EC) {
+  if (EVP_PKEY_type(pkey->type)!=EVP_PKEY_EC) {
     return SOTER_INVALID_PARAMETER;
   }
   /* TODO: need review */
