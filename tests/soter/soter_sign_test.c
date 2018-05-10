@@ -211,13 +211,7 @@ static void soter_sign_api_test()
 		soter_sign_destroy(sign_ctx);
 		return;
 	}
-
-	// another context with null private key
-	soter_sign_ctx_t *sign_ctx_null_prk = soter_sign_create(SOTER_SIGN_ecdsa_none_pkcs8, priv, priv_length, NULL, 0);
-	soter_sign_update(sign_ctx_null_prk, message, message_length);
-	sign_ctx_null_prk->pkey_ctx = NULL;
-	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_final(sign_ctx_null_prk, signature, &signature_length), "soter_sign_final: invalid context because Private Key is NULL");
-
+  
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_final(NULL, signature, &signature_length), "soter_sign_final: invalid context");
 	testsuite_fail_unless(SOTER_BUFFER_TOO_SMALL == soter_sign_final(sign_ctx, NULL, &signature_length), "soter_sign_final: get output size (NULL out buffer)");
 	signature_length--;
