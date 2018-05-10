@@ -90,9 +90,13 @@ soter_status_t soter_sign_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const v
 soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* signature, size_t *signature_length)
 {
   EVP_PKEY *pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
-  if (!pkey && EVP_PKEY_type(pkey->type)!=EVP_PKEY_EC){
+  if (!pkey) {
     return SOTER_INVALID_PARAMETER;
-  } /* TODO: need review */
+  }
+  if (EVP_PKEY_base_id(pkey)!=EVP_PKEY_EC) {
+    return SOTER_INVALID_PARAMETER;
+  }
+  /* TODO: need review */
   if(!signature || (*signature_length)<(size_t)EVP_PKEY_size(pkey)){
     (*signature_length)=(size_t)EVP_PKEY_size(pkey);
     return SOTER_BUFFER_TOO_SMALL;
