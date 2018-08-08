@@ -32,11 +32,14 @@ xcuserdata
 *~.nib
 *.swp
 
+docs/examples/objc/Pods
 
 # additional rules
 DerivedData/
 .idea/
 build
+.gradle
+
 
 # python rules
 # Byte-compiled / optimized / DLL files
@@ -48,3 +51,5 @@ tests/phpthemis/vendor
 tests/phpthemis/composer.json
 tests/phpthemis/composer.phar
 tests/phpthemis/composer.lock
+
+third_party/boringssl/.externalNativeBuild
