@@ -262,9 +262,6 @@ static void soter_sign_api_test()
 	signature[signature_length / 2]++;
 	testsuite_fail_unless(SOTER_INVALID_SIGNATURE == soter_verify_final(sign_ctx, signature, signature_length), "soter_verify_final: invalid signature value");
 	signature[signature_length / 2]--;
-
-	testsuite_fail_unless(SOTER_SUCCESS == soter_verify_final(sign_ctx, signature, signature_length), "soter_verify_final: normal flow");
-
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_verify_destroy(NULL), "soter_verify_destroy: invalid context");
 	res = soter_verify_destroy(sign_ctx);
 	if (SOTER_SUCCESS != res)
@@ -294,6 +291,24 @@ static void soter_sign_api_test()
 
 	testsuite_fail_unless(SOTER_INVALID_SIGNATURE == soter_verify_final(sign_ctx, signature, signature_length), "soter_verify_final: wrong signed message");
 
+	soter_verify_destroy(sign_ctx);
+
+	sign_ctx = soter_verify_create(SOTER_SIGN_ecdsa_none_pkcs8, NULL, 0, pub, pub_length);
+	if (!sign_ctx)
+	{
+		testsuite_fail_if(true, "soter_verify_create failed");
+		return;
+	}
+
+	res = soter_verify_update(sign_ctx, message, message_length);
+	if (SOTER_SUCCESS != res)
+	{
+		testsuite_fail_if(true, "soter_verify_update failed");
+		soter_verify_destroy(sign_ctx);
+		return;
+	}
+
+	testsuite_fail_unless(SOTER_SUCCESS == soter_verify_final(sign_ctx, signature, signature_length), "soter_verify_final: normal flow");
 	soter_verify_destroy(sign_ctx);
 }
 
