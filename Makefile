@@ -55,6 +55,8 @@ UNAME=$(shell uname)
 
 ifeq ($(UNAME),Darwin)
 	IS_MACOS := true
+else ifeq ($(UNAME),Linux)
+	IS_LINUX := true
 endif
 
 define themisecho
@@ -182,10 +184,6 @@ endif
 
 SHARED_EXT = so
 
-IS_LINUX = $(shell $(CC) -dumpmachine 2>&1 | $(EGREP) -c "linux")
-IS_MINGW = $(shell $(CC) -dumpmachine 2>&1 | $(EGREP) -c "mingw")
-IS_CLANG_COMPILER = $(shell $(CC) --version 2>&1 | $(EGREP) -i -c "clang version")
-
 ifeq ($(shell uname),Darwin)
 SHARED_EXT = dylib
 ifneq ($(SDK),)
@@ -201,6 +199,10 @@ endif
 ifneq ($(ARCH),)
 CFLAFS += -arch $(ARCH)
 endif
+endif
+
+ifneq ($(shell $(CC) --version 2>&1 | grep -E -i -c "clang version"),0)
+	IS_CLANG_COMPILER := true
 endif
 
 ifdef COVERAGE
@@ -355,7 +357,9 @@ install_shared_libs: err all make_install_dirs
 	@$(BUILD_CMD_)
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
+ifdef IS_LINUX
 	@ldconfig
+endif
 
 get_version:
 	@echo $(VERSION)
