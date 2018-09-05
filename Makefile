@@ -355,6 +355,7 @@ install_shared_libs: err all make_install_dirs
 	@$(BUILD_CMD_)
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
+	@ldconfig
 
 get_version:
 	@echo $(VERSION)
