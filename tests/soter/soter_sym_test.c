@@ -268,6 +268,7 @@ static void test_known_values_gcm(void)
 
 
   uint8_t auth_tag[MAX_AUTH_TAG_LENGTH];
+  uint8_t expected_auth_tag[MAX_AUTH_TAG_LENGTH];
   size_t auth_tag_length=sizeof(auth_tag);
   soter_status_t res;
   
@@ -302,6 +303,13 @@ static void test_known_values_gcm(void)
 	}
 
       res = string_to_bytes(vectors_aead[i].aad, aad, sizeof(aad));
+      if (SOTER_SUCCESS != res)
+	{
+	  testsuite_fail_if(res, "string_to_bytes");
+	  continue;
+	}
+	
+      res = string_to_bytes(vectors_aead[i].authtag, expected_auth_tag, MAX_AUTH_TAG_LENGTH);
       if (SOTER_SUCCESS != res)
 	{
 	  testsuite_fail_if(res, "string_to_bytes");
@@ -351,6 +359,9 @@ static void test_known_values_gcm(void)
 	}
 
       testsuite_fail_if(memcmp(computed, ciphertext, computed_length), "known encryption");
+
+      testsuite_fail_if(memcmp(auth_tag, expected_auth_tag, auth_tag_length), "known encryption (auth tag value)");
+
       /* Decryption */
       ctx = soter_sym_aead_decrypt_create(vectors_aead[i].alg, key, strlen(vectors_aead[i].key) / 2, NULL, 0, iv, strlen(vectors_aead[i].iv) / 2);
       if (NULL == ctx)
