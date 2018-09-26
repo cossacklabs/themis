@@ -1,5 +1,5 @@
 <h3 align="center">
-  <a href="https://www.cossacklabs.com"><img src="https://github.com/cossacklabs/themis/wiki/images/logo.png" alt="Themis provides strong, usable cryptography for busy people" width="300"></a>
+  <a href="https://www.cossacklabs.com/themis/"><img src="https://github.com/cossacklabs/themis/wiki/images/logo.png" alt="Themis provides strong, usable cryptography for busy people" width="420"></a>
   <br>
   <br>
   Themis provides strong, usable cryptography for busy people
