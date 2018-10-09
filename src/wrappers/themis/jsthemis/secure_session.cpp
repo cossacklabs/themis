@@ -76,7 +76,7 @@ namespace jsthemis {
       const int argc = 3;
       v8::Local<v8::Value> argv[argc] = { args[0], args[1], args[2]};
       v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
-      args.GetReturnValue().Set(cons->NewInstance(argc, argv));
+      args.GetReturnValue().Set(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
     }
   }
 
