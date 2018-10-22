@@ -145,7 +145,7 @@ Themis is available for the following languages/platforms:
 | :----- | :----- | :------ | :--- |
 | 🔶 Swift (iOS, macOS) | [Swift Howto](https://github.com/cossacklabs/themis/wiki/Swift-Howto) | [docs/examples/swift](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) | [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
 | 📱 Objective-C (iOS, macOS) | [Objective-C Howto](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) | [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)| [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
-| ☕️ Java / Android | [Java & Android Howto](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) | [jni example](https://github.com/cossacklabs/themis/tree/master/jni) ||
+| ☕️ Java / Android | [Java & Android Howto](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) | [Java and Android projects](https://github.com/cossacklabs/themis-java-examples) ||
 | ♦️ Ruby | [Ruby Howto](https://github.com/cossacklabs/themis/wiki/Ruby-Howto) | [docs/examples/ruby](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby) | [![Gem](https://img.shields.io/gem/v/rbthemis.svg)](https://rubygems.org/gems/rbthemis) |
 | 🐍 Python | [Python Howto](https://github.com/cossacklabs/themis/wiki/Python-Howto) | [docs/examples/python](https://github.com/cossacklabs/themis/tree/master/docs/examples/python) | [![PyPI](https://img.shields.io/pypi/v/pythemis.svg)](https://pypi.python.org/pypi?%3Aaction=search&term=pythemis&submit=search) |
 | 🐘 PHP | [PHP Howto](https://github.com/cossacklabs/themis/wiki/PHP-Howto) | [docs/examples/php](https://github.com/cossacklabs/themis/tree/master/docs/examples/php) | |
@@ -190,13 +190,14 @@ During the development stage we frequently do Proof-of-Concept projects to test 
 
 | Demo | Description | Repo | Blog post |
 | :----- | :----- | :------ | :--- |
-| 0fc | Anonymous web chat<br/>* pythemis (Python)<br/>* webthemis (C++ + HTML/JS)| [repo](https://github.com/cossacklabs/0fc) | [blog post](https://cossacklabs.com/building-endtoend-webchat.html) |
-| sesto | Secure storage<br/>* pythemis (Python)<br/>* webthemis (C++ + HTML/JS) | [repo](https://github.com/cossacklabs/sesto) |[blog post](https://cossacklabs.com/presenting-sesto.html) 
-| swift alps demo | Secure communication (iOS app with Python server based on Secure Session)<br/>* Swift wrapper<br/>* pythemis (Python) | [repo](https://github.com/cossacklabs/theswiftalpsdemo) |[slides](https://speakerdeck.com/vixentael/the-swift-alps-security-workshop) |
+| 0fc | Anonymous web chat<br/>* Python<br/>* webthemis (C++ + HTML/JS)| [repo](https://github.com/cossacklabs/0fc) | [blog post](https://cossacklabs.com/building-endtoend-webchat.html) |
+| Sesto | Secure storage<br/>* Python<br/>* webthemis (C++ + HTML/JS) | [repo](https://github.com/cossacklabs/sesto) |[blog post](https://cossacklabs.com/presenting-sesto.html) 
+| Swift Alps demo | Secure communication (iOS app with Python server based on Secure Session)<br/>* Swift<br/>* Python | [repo](https://github.com/cossacklabs/theswiftalpsdemo) |[slides](https://speakerdeck.com/vixentael/the-swift-alps-security-workshop) |
+| Zero-Knowledge<br/> Architectures<br/>workshop | iOS app for storing and sharing encrypted notes stored in Firebase database<br/>* Swift | [repo](https://github.com/vixentael/zka-example) | |
 
 # Themis Server
 
-If you'd like to experiment with Themis in a more interactive environment, check out [Themis Server](https://themis.cossacklabs.com), interactive debugging environment for Themis. 
+If you'd like to experiment with Themis in a more interactive environment, check out [Themis Server](https://themis.cossacklabs.com), interactive debugging environment for Themis. Themis Server can verify and decrypt code encrypted by Secure Cell or Secure Message, and provides a fully-functional backend for Secure Session. Examples for many languages are available in [docs/examples/Themis-server](https://github.com/cossacklabs/themis/tree/master/docs/examples/Themis-server).
 
 # Contributing to us
 
