@@ -16,10 +16,10 @@ Pod::Spec.new do |s|
     s.ios.frameworks = 'UIKit', 'Foundation'
 
 
-    s.ios.xcconfig = { 'OTHER_CFLAGS' => '-DBORINGSSL', 'USE_HEADERMAP' => 'NO', 
+    s.ios.xcconfig = { 'OTHER_CFLAGS' => '-DBORINGSSL -DCRYPTO_ENGINE_PATH=BORINGSSL', 'USE_HEADERMAP' => 'NO', 
         'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
         
-    s.osx.xcconfig = { 'OTHER_CFLAGS' => '-DBORINGSSL', 'USE_HEADERMAP' => 'NO', 
+    s.osx.xcconfig = { 'OTHER_CFLAGS' => '-DBORINGSSL -DCRYPTO_ENGINE_PATH=BORINGSSL', 'USE_HEADERMAP' => 'NO', 
         'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
     
     s.subspec 'core' do |ss|
