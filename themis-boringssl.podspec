@@ -35,6 +35,6 @@ Pod::Spec.new do |s|
         ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{m,h}"
         ss.public_header_files = 'src/wrappers/themis/Obj-C/objcthemis/*.h'
         ss.header_dir = 'objcthemis'
-        ss.dependency 'themis/core'
+        ss.dependency 'themis-boringssl/core'
     end
 end
