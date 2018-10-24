@@ -53,3 +53,9 @@ tests/phpthemis/composer.phar
 tests/phpthemis/composer.lock
 
 third_party/boringssl/.externalNativeBuild
+
+# php
+
+*.lai
+*.la
+*.lo
