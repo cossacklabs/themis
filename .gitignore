@@ -59,3 +59,5 @@ third_party/boringssl/.externalNativeBuild
 *.lai
 *.la
 *.lo
+docs/examples/Themis-server/swift/Pods
+docs/examples/swift/Pods

@@ -1,11 +1,12 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.10.0"
+    s.version = "0.10.1"
     s.summary = "Data security library for network communication and data storage for iOS and mac OS"
     s.description = "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern development practices, with high level OOP wrappers for iOS / macOS, NodeJS, Go, Ruby, Python, PHP and Java / Android. It is designed with ease of use in mind, high security and cross-platform availability."
     s.homepage = "http://cossacklabs.com"
     s.license = { :type => 'Apache 2.0'}    
-    s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
+    #s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
+    s.source = { :git => "https://github.com/cossacklabs/themis.git", :branch => 'vixentael/ios-boringssl'}
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
     s.dependency 'BoringSSL', '~> 10.0'
@@ -16,10 +17,10 @@ Pod::Spec.new do |s|
     s.ios.frameworks = 'UIKit', 'Foundation'
 
 
-    s.ios.xcconfig = { 'OTHER_CFLAGS' => '-DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl', 'USE_HEADERMAP' => 'NO', 
+    s.ios.xcconfig = { 'OTHER_CFLAGS' => '-DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl -DSOTER_BORINGSSL_DISABLE_XTS', 'USE_HEADERMAP' => 'NO', 
         'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
         
-    s.osx.xcconfig = { 'OTHER_CFLAGS' => '-DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl', 'USE_HEADERMAP' => 'NO', 
+    s.osx.xcconfig = { 'OTHER_CFLAGS' => '-DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl -DSOTER_BORINGSSL_DISABLE_XTS', 'USE_HEADERMAP' => 'NO', 
         'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
     
     s.subspec 'core' do |ss|
