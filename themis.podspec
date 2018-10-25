@@ -26,20 +26,17 @@ Pod::Spec.new do |s|
         so.osx.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL', 'USE_HEADERMAP' => 'NO', 
             'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
         
-        so.subspec 'core' do |ss|
-            ss.source_files = "src/themis/*.{h,c}", "src/soter/*.{c,h}", "src/soter/ed25519/*.{c,h}", "src/soter/openssl/*.{c,h}"
-            ss.header_mappings_dir = "src"
-            ss.header_dir = 'src'
-            ss.preserve_paths = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/openssl/*.h"
-            ss.public_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/openssl/*.h"
-        end
-
+        so.source_files = "src/themis/*.{h,c}", "src/soter/*.{c,h}", "src/soter/ed25519/*.{c,h}", "src/soter/openssl/*.{c,h}"
+        so.header_mappings_dir = "src"
+        so.header_dir = 'src'
+        so.preserve_paths = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/openssl/*.h"
+        so.public_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/openssl/*.h"
+        
         so.subspec 'objcwrapper' do |ss|
             ss.header_mappings_dir = 'src/wrappers/themis/Obj-C/objcthemis'
             ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{m,h}"
             ss.public_header_files = 'src/wrappers/themis/Obj-C/objcthemis/*.h'
             ss.header_dir = 'objcthemis'
-            ss.dependency 'themis/themis-openssl/core'
         end
     end
 
@@ -54,21 +51,17 @@ Pod::Spec.new do |s|
         so.osx.xcconfig = { 'OTHER_CFLAGS' => '-DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl -DSOTER_BORINGSSL_DISABLE_XTS', 'USE_HEADERMAP' => 'NO', 
             'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
         
-        so.subspec 'core' do |ss|
-            ss.source_files = "src/themis/*.{h,c}", "src/soter/*.{c,h}", "src/soter/ed25519/*.{c,h}", "src/soter/boringssl/*.{c,h}"
-            ss.header_mappings_dir = "src"
-            ss.header_dir = 'src'
-            ss.preserve_paths = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/boringssl/*.h"
-            ss.public_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/boringssl/*.h"
-        end
+        so.source_files = "src/themis/*.{h,c}", "src/soter/*.{c,h}", "src/soter/ed25519/*.{c,h}", "src/soter/boringssl/*.{c,h}"
+        so.header_mappings_dir = "src"
+        so.header_dir = 'src'
+        so.preserve_paths = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/boringssl/*.h"
+        so.public_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/boringssl/*.h"
 
         so.subspec 'objcwrapper' do |ss|
             ss.header_mappings_dir = 'src/wrappers/themis/Obj-C/objcthemis'
             ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{m,h}"
             ss.public_header_files = 'src/wrappers/themis/Obj-C/objcthemis/*.h'
             ss.header_dir = 'objcthemis'
-            ss.dependency 'themis/themis-boringssl/core'
         end
     end
-
 end
