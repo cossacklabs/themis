@@ -35,13 +35,13 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   themis:
-    :commit: f9782b27b553c0ebb3b85d9dbef42e93756ccf1d
+    :commit: 1bb4604db0e0ffee970b7aad74a54f03d327e729
     :git: https://github.com/cossacklabs/themis
 
 SPEC CHECKSUMS:
   BoringSSL: e10f92a27043805c01071fe815a5cd98ae8212e7
   GRKOpenSSLFramework: 845532a41bd75c6f5b99c9d95b25858357268a78
-  themis: 9483a9d9c2582dc0af21122a9fb2784849409938
+  themis: e5ce8f4d78aa46741b7d3100cebfb67d8a1ca3a6
 
 PODFILE CHECKSUM: d9fd0d0456eb117173cc0eb2bc45d8872b6d49f1
 
