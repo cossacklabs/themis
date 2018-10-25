@@ -35,7 +35,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   themis:
-    :commit: 1bb4604db0e0ffee970b7aad74a54f03d327e729
+    :commit: a9934c2303908e426348c3cc805fc3fecc0943d8
     :git: https://github.com/cossacklabs/themis
 
 SPEC CHECKSUMS:
@@ -45,4 +45,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: d9fd0d0456eb117173cc0eb2bc45d8872b6d49f1
 
-COCOAPODS: 1.6.0.beta.2
+COCOAPODS: 1.5.3
