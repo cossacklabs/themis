@@ -65,8 +65,15 @@ const EVP_CIPHER* algid_to_evp(uint32_t alg){
       return EVP_aes_192_ctr();
     case SOTER_SYM_AES_CTR|SOTER_SYM_128_KEY_LENGTH:
       return EVP_aes_128_ctr();
+/* 
+* Workaround for using BoringSSL on iOS, because XTS is not included in BoringSSL pod implementation.
+* see https://github.com/CocoaPods/Specs/blob/master/Specs/0/8/a/BoringSSL/10.0.6/BoringSSL.podspec.json#L44
+* see https://github.com/cossacklabs/themis/issues/223#issuecomment-432720576
+*/
+#ifndef SOTER_BORINGSSL_DISABLE_XTS
     case SOTER_SYM_AES_XTS|SOTER_SYM_256_KEY_LENGTH:
       return EVP_aes_256_xts();
+#endif
   }
   return NULL;
 }
