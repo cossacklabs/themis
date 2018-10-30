@@ -22,18 +22,14 @@ inhibit_all_warnings!
 target "objthemis" do
 
   # example should work with head
-  #pod 'themis', :git => "https://github.com/cossacklabs/themis.git"
-
-  pod 'themis', :git => 'https://github.com/cossacklabs/themis', :branch => 'vixentael/ios-boringssl'
+  pod 'themis', :git => "https://github.com/cossacklabs/themis.git"
 
 end
 
 target "objthemis_boring" do
 
   # example should work with head
-  #pod 'themis/themis-boringssl', :git => "https://github.com/cossacklabs/themis.git"
-
-  pod 'themis/themis-boringssl', :git => 'https://github.com/cossacklabs/themis', :branch => 'vixentael/ios-boringssl'
+  pod 'themis/themis-boringssl', :git => "https://github.com/cossacklabs/themis.git"
 
 end
 

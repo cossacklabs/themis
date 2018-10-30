@@ -10,18 +10,26 @@ PODS:
     - themis/themis-openssl (= 0.10.1)
   - themis/themis-boringssl (0.10.1):
     - BoringSSL (~> 10.0)
+    - themis/themis-boringssl/core (= 0.10.1)
     - themis/themis-boringssl/objcwrapper (= 0.10.1)
+  - themis/themis-boringssl/core (0.10.1):
+    - BoringSSL (~> 10.0)
   - themis/themis-boringssl/objcwrapper (0.10.1):
     - BoringSSL (~> 10.0)
+    - themis/themis-boringssl/core
   - themis/themis-openssl (0.10.1):
     - GRKOpenSSLFramework (~> 1.0.1)
+    - themis/themis-openssl/core (= 0.10.1)
     - themis/themis-openssl/objcwrapper (= 0.10.1)
+  - themis/themis-openssl/core (0.10.1):
+    - GRKOpenSSLFramework (~> 1.0.1)
   - themis/themis-openssl/objcwrapper (0.10.1):
     - GRKOpenSSLFramework (~> 1.0.1)
+    - themis/themis-openssl/core
 
 DEPENDENCIES:
-  - themis (from `https://github.com/cossacklabs/themis`, branch `vixentael/ios-boringssl`)
-  - themis/themis-boringssl (from `https://github.com/cossacklabs/themis`, branch `vixentael/ios-boringssl`)
+  - themis (from `https://github.com/cossacklabs/themis.git`)
+  - themis/themis-boringssl (from `https://github.com/cossacklabs/themis.git`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -30,19 +38,18 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   themis:
-    :branch: vixentael/ios-boringssl
-    :git: https://github.com/cossacklabs/themis
+    :git: https://github.com/cossacklabs/themis.git
 
 CHECKOUT OPTIONS:
   themis:
-    :commit: a9934c2303908e426348c3cc805fc3fecc0943d8
-    :git: https://github.com/cossacklabs/themis
+    :commit: 911bcaf7ebe79afc6606de184492f30976bc2bf8
+    :git: https://github.com/cossacklabs/themis.git
 
 SPEC CHECKSUMS:
   BoringSSL: e10f92a27043805c01071fe815a5cd98ae8212e7
   GRKOpenSSLFramework: 845532a41bd75c6f5b99c9d95b25858357268a78
-  themis: e5ce8f4d78aa46741b7d3100cebfb67d8a1ca3a6
+  themis: c80f35d57e92089078299c3a6f8f4b859206534c
 
-PODFILE CHECKSUM: d9fd0d0456eb117173cc0eb2bc45d8872b6d49f1
+PODFILE CHECKSUM: 75777382b765353e199301afe97759406a56f7a0
 
 COCOAPODS: 1.5.3
