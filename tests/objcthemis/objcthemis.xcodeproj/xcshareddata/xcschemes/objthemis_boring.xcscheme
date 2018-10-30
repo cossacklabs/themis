@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "843EE74D1B5E1A36003F0138"
-               BuildableName = "objthemis.xctest"
-               BlueprintName = "objthemis"
+               BlueprintIdentifier = "73DDCB792181517000CD4CBB"
+               BuildableName = "objthemis_boring.xctest"
+               BlueprintName = "objthemis_boring"
                ReferencedContainer = "container:objcthemis.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,22 +32,13 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "843EE74D1B5E1A36003F0138"
-               BuildableName = "objthemis.xctest"
-               BlueprintName = "objthemis"
+               BlueprintIdentifier = "73DDCB792181517000CD4CBB"
+               BuildableName = "objthemis_boring.xctest"
+               BlueprintName = "objthemis_boring"
                ReferencedContainer = "container:objcthemis.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "843EE74D1B5E1A36003F0138"
-            BuildableName = "objthemis.xctest"
-            BlueprintName = "objthemis"
-            ReferencedContainer = "container:objcthemis.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -64,9 +55,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "843EE74D1B5E1A36003F0138"
-            BuildableName = "objthemis.xctest"
-            BlueprintName = "objthemis"
+            BlueprintIdentifier = "73DDCB792181517000CD4CBB"
+            BuildableName = "objthemis_boring.xctest"
+            BlueprintName = "objthemis_boring"
             ReferencedContainer = "container:objcthemis.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -82,9 +73,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "843EE74D1B5E1A36003F0138"
-            BuildableName = "objthemis.xctest"
-            BlueprintName = "objthemis"
+            BlueprintIdentifier = "73DDCB792181517000CD4CBB"
+            BuildableName = "objthemis_boring.xctest"
+            BlueprintName = "objthemis_boring"
             ReferencedContainer = "container:objcthemis.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

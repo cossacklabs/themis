@@ -18,7 +18,7 @@
 		73156E171ADBDF0F00E3E520 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 73156E161ADBDF0F00E3E520 /* Images.xcassets */; };
 		731624981ADB174200972A7A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 731624971ADB174200972A7A /* main.m */; };
 		731624B21ADB174200972A7A /* ThemisTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 731624B11ADB174200972A7A /* ThemisTestTests.m */; };
-		D42821A623D83163D33C6454 /* Pods_ThemisTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 693C28B6ED1E0FBE165E60EC /* Pods_ThemisTest.framework */; };
+		E7B0506C2648A672E19A1619 /* Pods_ThemisTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B7CB41E88A9465FFC42D099F /* Pods_ThemisTest.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,7 +36,7 @@
 		192EA533E67AA52864927032 /* server.pub */ = {isa = PBXFileReference; lastKnownFileType = file.pub; path = server.pub; sourceTree = "<group>"; };
 		192EA61539E5DA001A808B56 /* client.pub */ = {isa = PBXFileReference; lastKnownFileType = file.pub; path = client.pub; sourceTree = "<group>"; };
 		192EAEE7A8A8277025A0F60C /* client.priv */ = {isa = PBXFileReference; lastKnownFileType = file.priv; path = client.priv; sourceTree = "<group>"; };
-		693C28B6ED1E0FBE165E60EC /* Pods_ThemisTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ThemisTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6BE8BA545D3BEB785286ADA8 /* Pods-ThemisTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest.debug.xcconfig"; sourceTree = "<group>"; };
 		73156E031ADBDE7900E3E520 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		73156E051ADBDE7900E3E520 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
 		73156E0D1ADBDF0800E3E520 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -51,8 +51,8 @@
 		731624B01ADB174200972A7A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		731624B11ADB174200972A7A /* ThemisTestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThemisTestTests.m; sourceTree = "<group>"; };
 		738D1E7F1ADBBEBB00661F4A /* libobjcthemis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libobjcthemis.a; path = ../themis/objcthemis/ios/lib/libobjcthemis.a; sourceTree = "<group>"; };
-		9C8988D41C9875FDCEC01572 /* Pods-ThemisTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest.debug.xcconfig"; sourceTree = "<group>"; };
-		CE5FADA08806214128B30EE2 /* Pods-ThemisTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest.release.xcconfig"; sourceTree = "<group>"; };
+		B7CB41E88A9465FFC42D099F /* Pods_ThemisTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ThemisTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C55E617C2A3C2C0CFF5C48C1 /* Pods-ThemisTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.release.xcconfig"; path = "../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,7 +60,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D42821A623D83163D33C6454 /* Pods_ThemisTest.framework in Frameworks */,
+				E7B0506C2648A672E19A1619 /* Pods_ThemisTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,18 +100,9 @@
 			isa = PBXGroup;
 			children = (
 				738D1E7F1ADBBEBB00661F4A /* libobjcthemis.a */,
-				693C28B6ED1E0FBE165E60EC /* Pods_ThemisTest.framework */,
+				B7CB41E88A9465FFC42D099F /* Pods_ThemisTest.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		59A4F2651801D852CE280A1E /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				9C8988D41C9875FDCEC01572 /* Pods-ThemisTest.debug.xcconfig */,
-				CE5FADA08806214128B30EE2 /* Pods-ThemisTest.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 		73156E0C1ADBDF0800E3E520 /* Classes */ = {
@@ -132,7 +123,7 @@
 				731624AE1ADB174200972A7A /* ThemisTestTests */,
 				731624931ADB174200972A7A /* Products */,
 				1F5F881BD0CD342D1E9B9E25 /* Frameworks */,
-				59A4F2651801D852CE280A1E /* Pods */,
+				8955180910949D48A2E584B0 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -181,6 +172,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		8955180910949D48A2E584B0 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6BE8BA545D3BEB785286ADA8 /* Pods-ThemisTest.debug.xcconfig */,
+				C55E617C2A3C2C0CFF5C48C1 /* Pods-ThemisTest.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -188,11 +188,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 731624B51ADB174200972A7A /* Build configuration list for PBXNativeTarget "ThemisTest" */;
 			buildPhases = (
-				CBE2965EA2BC2CF591D82F10 /* [CP] Check Pods Manifest.lock */,
+				67747E78A7DCBBFC45423F3C /* [CP] Check Pods Manifest.lock */,
 				7316248E1ADB174200972A7A /* Sources */,
 				7316248F1ADB174200972A7A /* Frameworks */,
 				731624901ADB174200972A7A /* Resources */,
-				C0B21AE78F6B25EA73FA9E6E /* [CP] Embed Pods Frameworks */,
+				068CD7001C475DB274D3EE08 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -285,10 +285,12 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		C0B21AE78F6B25EA73FA9E6E /* [CP] Embed Pods Frameworks */ = {
+		068CD7001C475DB274D3EE08 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			inputFileListPaths = (
 			);
 			inputPaths = (
 				"${SRCROOT}/../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest-frameworks.sh",
@@ -296,6 +298,8 @@
 				"${BUILT_PRODUCTS_DIR}/themis/themis.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/themis.framework",
@@ -305,16 +309,20 @@
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-ThemisTest/Pods-ThemisTest-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CBE2965EA2BC2CF591D82F10 /* [CP] Check Pods Manifest.lock */ = {
+		67747E78A7DCBBFC45423F3C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			inputFileListPaths = (
 			);
 			inputPaths = (
 				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
 				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-ThemisTest-checkManifestLockResult.txt",
 			);
@@ -475,7 +483,7 @@
 		};
 		731624B61ADB174200972A7A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9C8988D41C9875FDCEC01572 /* Pods-ThemisTest.debug.xcconfig */;
+			baseConfigurationReference = 6BE8BA545D3BEB785286ADA8 /* Pods-ThemisTest.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -491,7 +499,7 @@
 		};
 		731624B71ADB174200972A7A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CE5FADA08806214128B30EE2 /* Pods-ThemisTest.release.xcconfig */;
+			baseConfigurationReference = C55E617C2A3C2C0CFF5C48C1 /* Pods-ThemisTest.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";

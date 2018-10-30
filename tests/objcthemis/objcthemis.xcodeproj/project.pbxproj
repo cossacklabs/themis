@@ -13,52 +13,75 @@
 		73CBA59D2012402B003EC7AC /* SecureComparatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73CBA59C2012402B003EC7AC /* SecureComparatorTests.m */; };
 		73CBA59F20124BB8003EC7AC /* SecureComparatorTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CBA59E20124BB8003EC7AC /* SecureComparatorTestsSwift.swift */; };
 		73D358221F71F06B004E000A /* SecureCellTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D358211F71F06B004E000A /* SecureCellTestsSwift.swift */; };
-		AB23DE0D7640030F31CDB810 /* libPods-objthemis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 43ADAA59C7F41B11CA3F2229 /* libPods-objthemis.a */; };
+		73DDCB7C2181517000CD4CBB /* SecureCellTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73D358211F71F06B004E000A /* SecureCellTestsSwift.swift */; };
+		73DDCB7D2181517000CD4CBB /* SecureMessageTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7376D8661F7182B70003AF72 /* SecureMessageTestsSwift.swift */; };
+		73DDCB7E2181517000CD4CBB /* SecureComparatorTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CBA59E20124BB8003EC7AC /* SecureComparatorTestsSwift.swift */; };
+		73DDCB7F2181517000CD4CBB /* SecureMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7308F54D1F717BF300AE0411 /* SecureMessageTests.m */; };
+		73DDCB802181517000CD4CBB /* SecureCellTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7308F5521F717D2D00AE0411 /* SecureCellTests.m */; };
+		73DDCB812181517000CD4CBB /* SecureComparatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73CBA59C2012402B003EC7AC /* SecureComparatorTests.m */; };
+		8CE51C4D419C58D68198A4AC /* libPods-objthemis_boring.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 64FC1444BF320CDB6D216E64 /* libPods-objthemis_boring.a */; };
+		E2A18D3763F4AA79B1C8B2A9 /* libPods-objthemis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D88E9A2999BE4618E97033B /* libPods-objthemis.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		43ADAA59C7F41B11CA3F2229 /* libPods-objthemis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objthemis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4C57E92F96150286BD5B0102 /* Pods-objthemis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.debug.xcconfig"; sourceTree = "<group>"; };
+		2F6EA0651CF16749E3DF8DF2 /* Pods-objthemis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.release.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.release.xcconfig"; sourceTree = "<group>"; };
+		4BFAC3193EC111C952C441E6 /* Pods-objthemis_boring.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis_boring.release.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis_boring/Pods-objthemis_boring.release.xcconfig"; sourceTree = "<group>"; };
+		64FC1444BF320CDB6D216E64 /* libPods-objthemis_boring.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objthemis_boring.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7308F54D1F717BF300AE0411 /* SecureMessageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureMessageTests.m; sourceTree = "<group>"; };
 		7308F5521F717D2D00AE0411 /* SecureCellTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureCellTests.m; sourceTree = "<group>"; };
 		7376D8651F7182B70003AF72 /* objthemis-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "objthemis-Bridging-Header.h"; sourceTree = "<group>"; };
 		7376D8661F7182B70003AF72 /* SecureMessageTestsSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureMessageTestsSwift.swift; sourceTree = "<group>"; };
+		73B26FF321815A4D00D9EEDC /* objthemis_boring-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "objthemis_boring-Info.plist"; sourceTree = "<group>"; };
 		73CBA59C2012402B003EC7AC /* SecureComparatorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureComparatorTests.m; sourceTree = "<group>"; };
 		73CBA59E20124BB8003EC7AC /* SecureComparatorTestsSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureComparatorTestsSwift.swift; sourceTree = "<group>"; };
 		73D358201F71E6F9004E000A /* StaticKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StaticKeys.h; sourceTree = "<group>"; };
 		73D358211F71F06B004E000A /* SecureCellTestsSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureCellTestsSwift.swift; sourceTree = "<group>"; };
+		73DDCB882181517000CD4CBB /* objthemis_boring.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objthemis_boring.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D88E9A2999BE4618E97033B /* libPods-objthemis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objthemis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8296B08908FC2488923F8D38 /* Pods-objthemis_boring.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis_boring.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis_boring/Pods-objthemis_boring.debug.xcconfig"; sourceTree = "<group>"; };
 		843EE74E1B5E1A36003F0138 /* objthemis.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objthemis.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		843EE7521B5E1A36003F0138 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D776064FD1313D8FE6AA8A36 /* Pods-objthemis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.release.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.release.xcconfig"; sourceTree = "<group>"; };
+		B8D41FD17E6C314B81358DDB /* Pods-objthemis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		73DDCB822181517000CD4CBB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8CE51C4D419C58D68198A4AC /* libPods-objthemis_boring.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		843EE74B1B5E1A36003F0138 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AB23DE0D7640030F31CDB810 /* libPods-objthemis.a in Frameworks */,
+				E2A18D3763F4AA79B1C8B2A9 /* libPods-objthemis.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2D6BD60791341C03266AC8F8 /* Frameworks */ = {
+		3F7066E6228816033AE785D6 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				43ADAA59C7F41B11CA3F2229 /* libPods-objthemis.a */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		5F38168D4CC69A9485A7F512 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				4C57E92F96150286BD5B0102 /* Pods-objthemis.debug.xcconfig */,
-				D776064FD1313D8FE6AA8A36 /* Pods-objthemis.release.xcconfig */,
+				B8D41FD17E6C314B81358DDB /* Pods-objthemis.debug.xcconfig */,
+				2F6EA0651CF16749E3DF8DF2 /* Pods-objthemis.release.xcconfig */,
+				8296B08908FC2488923F8D38 /* Pods-objthemis_boring.debug.xcconfig */,
+				4BFAC3193EC111C952C441E6 /* Pods-objthemis_boring.release.xcconfig */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		769AA8F9A70AACEE0994C98E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7D88E9A2999BE4618E97033B /* libPods-objthemis.a */,
+				64FC1444BF320CDB6D216E64 /* libPods-objthemis_boring.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		843EE7431B5E19E2003F0138 = {
@@ -66,8 +89,8 @@
 			children = (
 				843EE7501B5E1A36003F0138 /* objthemis */,
 				843EE74F1B5E1A36003F0138 /* Products */,
-				5F38168D4CC69A9485A7F512 /* Pods */,
-				2D6BD60791341C03266AC8F8 /* Frameworks */,
+				3F7066E6228816033AE785D6 /* Pods */,
+				769AA8F9A70AACEE0994C98E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -75,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				843EE74E1B5E1A36003F0138 /* objthemis.xctest */,
+				73DDCB882181517000CD4CBB /* objthemis_boring.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				843EE7521B5E1A36003F0138 /* Info.plist */,
+				73B26FF321815A4D00D9EEDC /* objthemis_boring-Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -106,16 +131,33 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		73DDCB792181517000CD4CBB /* objthemis_boring */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 73DDCB852181517000CD4CBB /* Build configuration list for PBXNativeTarget "objthemis_boring" */;
+			buildPhases = (
+				8CA38DF7AB7AA773B8E0675C /* [CP] Check Pods Manifest.lock */,
+				73DDCB7B2181517000CD4CBB /* Sources */,
+				73DDCB822181517000CD4CBB /* Frameworks */,
+				73DDCB842181517000CD4CBB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = objthemis_boring;
+			productName = objthemis;
+			productReference = 73DDCB882181517000CD4CBB /* objthemis_boring.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		843EE74D1B5E1A36003F0138 /* objthemis */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 843EE7551B5E1A36003F0138 /* Build configuration list for PBXNativeTarget "objthemis" */;
 			buildPhases = (
-				6FD029F15063DC4835686A67 /* [CP] Check Pods Manifest.lock */,
+				5DFE19144E919AE6F39434AD /* [CP] Check Pods Manifest.lock */,
 				843EE74A1B5E1A36003F0138 /* Sources */,
 				843EE74B1B5E1A36003F0138 /* Frameworks */,
 				843EE74C1B5E1A36003F0138 /* Resources */,
-				314B30C54B3CAE7D0483FFAA /* [CP] Embed Pods Frameworks */,
-				06422398472168FCD5296318 /* [CP] Copy Pods Resources */,
+				2E6A5E92FD1EEFCE9D81D2FF /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -132,8 +174,11 @@
 		843EE7441B5E19E2003F0138 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0910;
+				LastUpgradeCheck = 1000;
 				TargetAttributes = {
+					73DDCB792181517000CD4CBB = {
+						LastSwiftMigration = 1000;
+					};
 					843EE74D1B5E1A36003F0138 = {
 						CreatedOnToolsVersion = 6.4;
 						LastSwiftMigration = 0900;
@@ -153,11 +198,19 @@
 			projectRoot = "";
 			targets = (
 				843EE74D1B5E1A36003F0138 /* objthemis */,
+				73DDCB792181517000CD4CBB /* objthemis_boring */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		73DDCB842181517000CD4CBB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		843EE74C1B5E1A36003F0138 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -168,31 +221,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		06422398472168FCD5296318 /* [CP] Copy Pods Resources */ = {
+		2E6A5E92FD1EEFCE9D81D2FF /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-objthemis/Pods-objthemis-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		314B30C54B3CAE7D0483FFAA /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+			inputFileListPaths = (
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-objthemis/Pods-objthemis-frameworks.sh",
 				"${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
 			);
@@ -201,18 +243,44 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-objthemis/Pods-objthemis-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		6FD029F15063DC4835686A67 /* [CP] Check Pods Manifest.lock */ = {
+		5DFE19144E919AE6F39434AD /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			inputFileListPaths = (
 			);
 			inputPaths = (
 				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
 				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-objthemis-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8CA38DF7AB7AA773B8E0675C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-objthemis_boring-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -222,6 +290,19 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		73DDCB7B2181517000CD4CBB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				73DDCB7C2181517000CD4CBB /* SecureCellTestsSwift.swift in Sources */,
+				73DDCB7D2181517000CD4CBB /* SecureMessageTestsSwift.swift in Sources */,
+				73DDCB7E2181517000CD4CBB /* SecureComparatorTestsSwift.swift in Sources */,
+				73DDCB7F2181517000CD4CBB /* SecureMessageTests.m in Sources */,
+				73DDCB802181517000CD4CBB /* SecureCellTests.m in Sources */,
+				73DDCB812181517000CD4CBB /* SecureComparatorTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		843EE74A1B5E1A36003F0138 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -238,6 +319,109 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		73DDCB862181517000CD4CBB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8296B08908FC2488923F8D38 /* Pods-objthemis_boring.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "objthemis/objthemis_boring-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "obj.Cossacklabs.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "objthemis/objthemis-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.2;
+			};
+			name = Debug;
+		};
+		73DDCB872181517000CD4CBB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4BFAC3193EC111C952C441E6 /* Pods-objthemis_boring.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "objthemis/objthemis_boring-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "obj.Cossacklabs.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "objthemis/objthemis-Bridging-Header.h";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.2;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		843EE7481B5E19E2003F0138 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -245,11 +429,13 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
@@ -276,11 +462,13 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
@@ -301,7 +489,7 @@
 		};
 		843EE7561B5E1A36003F0138 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4C57E92F96150286BD5B0102 /* Pods-objthemis.debug.xcconfig */;
+			baseConfigurationReference = B8D41FD17E6C314B81358DDB /* Pods-objthemis.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -355,7 +543,7 @@
 		};
 		843EE7571B5E1A36003F0138 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D776064FD1313D8FE6AA8A36 /* Pods-objthemis.release.xcconfig */;
+			baseConfigurationReference = 2F6EA0651CF16749E3DF8DF2 /* Pods-objthemis.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -403,6 +591,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		73DDCB852181517000CD4CBB /* Build configuration list for PBXNativeTarget "objthemis_boring" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				73DDCB862181517000CD4CBB /* Debug */,
+				73DDCB872181517000CD4CBB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		843EE7471B5E19E2003F0138 /* Build configuration list for PBXProject "objcthemis" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

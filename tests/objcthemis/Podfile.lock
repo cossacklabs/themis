@@ -1,31 +1,48 @@
 PODS:
-  - GRKOpenSSLFramework (1.0.1.20.4)
-  - themis (0.10.0):
-    - GRKOpenSSLFramework (= 1.0.1.20.4)
-    - themis/core (= 0.10.0)
-    - themis/objcwrapper (= 0.10.0)
-  - themis/core (0.10.0):
-    - GRKOpenSSLFramework (= 1.0.1.20.4)
-  - themis/objcwrapper (0.10.0):
-    - GRKOpenSSLFramework (= 1.0.1.20.4)
-    - themis/core
+  - BoringSSL (10.0.6):
+    - BoringSSL/Implementation (= 10.0.6)
+    - BoringSSL/Interface (= 10.0.6)
+  - BoringSSL/Implementation (10.0.6):
+    - BoringSSL/Interface (= 10.0.6)
+  - BoringSSL/Interface (10.0.6)
+  - GRKOpenSSLFramework (1.0.2.14.1)
+  - themis (0.10.1):
+    - themis/themis-openssl (= 0.10.1)
+  - themis/themis-boringssl (0.10.1):
+    - BoringSSL (~> 10.0)
+    - themis/themis-boringssl/objcwrapper (= 0.10.1)
+  - themis/themis-boringssl/objcwrapper (0.10.1):
+    - BoringSSL (~> 10.0)
+  - themis/themis-openssl (0.10.1):
+    - GRKOpenSSLFramework (~> 1.0.1)
+    - themis/themis-openssl/objcwrapper (= 0.10.1)
+  - themis/themis-openssl/objcwrapper (0.10.1):
+    - GRKOpenSSLFramework (~> 1.0.1)
 
 DEPENDENCIES:
-  - themis (from `https://github.com/cossacklabs/themis.git`)
+  - themis (from `https://github.com/cossacklabs/themis`, branch `vixentael/ios-boringssl`)
+  - themis/themis-boringssl (from `https://github.com/cossacklabs/themis`, branch `vixentael/ios-boringssl`)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - BoringSSL
+    - GRKOpenSSLFramework
 
 EXTERNAL SOURCES:
   themis:
-    :git: https://github.com/cossacklabs/themis.git
+    :branch: vixentael/ios-boringssl
+    :git: https://github.com/cossacklabs/themis
 
 CHECKOUT OPTIONS:
   themis:
-    :commit: 126d1766e1afa20aec013f6a6edc99c7e7866fd9
-    :git: https://github.com/cossacklabs/themis.git
+    :commit: a9934c2303908e426348c3cc805fc3fecc0943d8
+    :git: https://github.com/cossacklabs/themis
 
 SPEC CHECKSUMS:
-  GRKOpenSSLFramework: b6172cc34db9b999002483878772a4bf2a1687ba
-  themis: f06f5690dbb18276e98f3c8d7c9ba90e8100bd09
+  BoringSSL: e10f92a27043805c01071fe815a5cd98ae8212e7
+  GRKOpenSSLFramework: 845532a41bd75c6f5b99c9d95b25858357268a78
+  themis: e5ce8f4d78aa46741b7d3100cebfb67d8a1ca3a6
 
-PODFILE CHECKSUM: 917761b1dcd55e14d1d072d4bed52a309ba47467
+PODFILE CHECKSUM: d9fd0d0456eb117173cc0eb2bc45d8872b6d49f1
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.5.3
