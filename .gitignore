@@ -32,8 +32,6 @@ xcuserdata
 *~.nib
 *.swp
 
-docs/examples/objc/Pods
-
 # additional rules
 DerivedData/
 .idea/
@@ -59,5 +57,9 @@ third_party/boringssl/.externalNativeBuild
 *.lai
 *.la
 *.lo
+
+# ios
 docs/examples/Themis-server/swift/Pods
+docs/examples/Themis-server/Obj-C/Pods
 docs/examples/swift/Pods
+docs/examples/objc/Pods
