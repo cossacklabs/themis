@@ -208,6 +208,7 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
 {
 	EVP_PKEY *pkey;
 	RSA *rsa;
+	const BIGNUM *d = NULL;
 	int rsa_mod_size;
 	size_t output_length;
 
@@ -240,6 +241,18 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
 	if (rsa_mod_size < 0 || cipher_data_length < (size_t)rsa_mod_size)
 	{
 		/* The cipherdata is too small for this key size */
+		return SOTER_INVALID_PARAMETER;
+	}
+
+	/* we can only decrypt, if we have the private key */
+	/* some versions of OpenSSL just crash, if you send RSA public key to EVP_PKEY_decrypt, so we do checks here */
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+	d = rsa->d;
+#else
+	RSA_get0_key(rsa, NULL, NULL, &d);
+#endif
+	if (NULL == d)
+	{
 		return SOTER_INVALID_PARAMETER;
 	}
 
