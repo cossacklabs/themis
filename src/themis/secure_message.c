@@ -52,6 +52,7 @@ themis_status_t themis_gen_rsa_key_pair(uint8_t* private_key,
 				    uint8_t* public_key,
 				    size_t* public_key_length){
   soter_rsa_key_pair_gen_t* key_pair_ctx=soter_rsa_key_pair_gen_create(THEMIS_RSA_KEY_LENGTH);
+  THEMIS_CHECK(key_pair_ctx!=NULL);
   soter_status_t res=soter_rsa_key_pair_gen_export_key(key_pair_ctx, private_key, private_key_length, true);
   if(res!=THEMIS_SUCCESS && res != THEMIS_BUFFER_TOO_SMALL){
     soter_rsa_key_pair_gen_destroy(key_pair_ctx);
