@@ -63,3 +63,8 @@ docs/examples/Themis-server/swift/Pods
 docs/examples/Themis-server/Obj-C/Pods
 docs/examples/swift/Pods
 docs/examples/objc/Pods
+
+# rust
+/target
+**/*.rs.bk
+Cargo.lock

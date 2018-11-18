@@ -1,0 +1,75 @@
+[package]
+name = "themis"
+version = "0.0.2"
+authors = ["rust-themis developers"]
+description = "High-level cryptographic services for storage and messaging"
+homepage = "https://www.cossacklabs.com/themis/"
+repository = "https://github.com/cossacklabs/themis"
+readme = "src/wrappers/themis/rust/README.md"
+keywords = ["crypto", "Themis"]
+categories = ["cryptography", "api-bindings"]
+license = "Apache-2.0"
+include = [
+    "Cargo.toml",
+    "docs/examples/rust/**/*",
+    "src/wrappers/themis/rust/**/*",
+    "tests/rust/**/*",
+]
+
+[workspace]
+
+[lib]
+path = "src/wrappers/themis/rust/src/lib.rs"
+
+[[example]]
+name = "keygen"
+path = "docs/examples/rust/keygen.rs"
+
+[[example]]
+name = "secure_cell"
+path = "docs/examples/rust/secure_cell.rs"
+
+[[example]]
+name = "secure_compare"
+path = "docs/examples/rust/secure_compare.rs"
+
+[[example]]
+name = "secure_message_client_encrypt"
+path = "docs/examples/rust/secure_message_client_encrypt.rs"
+
+[[example]]
+name = "secure_message_client_verify"
+path = "docs/examples/rust/secure_message_client_verify.rs"
+
+[[example]]
+name = "secure_message_server"
+path = "docs/examples/rust/secure_message_server.rs"
+
+[[test]]
+name = "keys"
+path = "tests/rust/keys.rs"
+
+[[test]]
+name = "secure_cell"
+path = "tests/rust/secure_cell.rs"
+
+[[test]]
+name = "secure_comparator"
+path = "tests/rust/secure_comparator.rs"
+
+[[test]]
+name = "secure_message"
+path = "tests/rust/secure_message.rs"
+
+[[test]]
+name = "secure_session"
+path = "tests/rust/secure_session.rs"
+
+[dependencies]
+libthemis-sys = { path = "src/wrappers/themis/rust/libthemis-sys", version = "=0.0.2" }
+
+[dev-dependencies]
+byteorder = "1.2.7"
+clap = "2.32"
+log = "0.4.5"
+env_logger = "0.5.13"
