@@ -23,3 +23,8 @@ THEMIS_OBJ = $(patsubst $(SRC_PATH)/%.c,$(OBJ_PATH)/%.o, $(THEMIS_SRC))
 THEMIS_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(THEMIS_AUD_SRC))
 
 THEMIS_BIN = themis
+
+themis_pkgconfig:
+	@sed -e "s!%prefix%!$(PREFIX)!" \
+	     -e "s!%version%!$(VERSION)!" \
+	    $(SRC_PATH)/themis/libthemis.pc.in > $(BIN_PATH)/libthemis.pc

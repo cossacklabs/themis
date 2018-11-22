@@ -246,7 +246,7 @@ JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
   | sed 's/[",]//g' \
   | tr -d '[[:space:]]')
 
-all: err themis_static themis_shared
+all: err themis_static themis_shared themis_pkgconfig soter_pkgconfig
 	@echo $(VERSION)
 
 soter_static: CMD = $(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
@@ -326,7 +326,7 @@ clean: CMD = rm -rf $(BIN_PATH)
 clean: nist_rng_test_suite_clean
 	@$(BUILD_CMD)
 
-make_install_dirs: CMD = mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter $(PREFIX)/lib
+make_install_dirs: CMD = mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter $(PREFIX)/lib $(PREFIX)/lib/pkgconfig
 
 make_install_dirs:
 	@echo -n "making dirs for install "
@@ -356,7 +356,13 @@ install_shared_libs: err all make_install_dirs
 	@echo -n "install shared libraries "
 	@$(BUILD_CMD_)
 
-install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
+install_pkgconfig: CMD = install $(BIN_PATH)/*.pc $(PREFIX)/lib/pkgconfig
+
+install_pkgconfig: err all make_install_dirs
+	@echo -n "install pkg-config files "
+	@$(BUILD_CMD_)
+
+install: install_soter_headers install_themis_headers install_static_libs install_shared_libs install_pkgconfig
 ifdef IS_LINUX
 	@ldconfig
 endif
@@ -408,7 +414,7 @@ ifdef NPM_VERSION
 	@$(BUILD_CMD_)
 endif
 
-uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libthemis.$(SHARED_EXT)
+uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libthemis.$(SHARED_EXT) && rm -f $(PREFIX)/lib/pkgconfig/libsoter.pc && rm -f $(PREFIX)/lib/pkgconfig/libthemis.pc
 
 uninstall: phpthemis_uninstall rubythemis_uninstall themispp_uninstall jsthemis_uninstall
 	@echo -n "themis uninstall "
@@ -542,7 +548,10 @@ STATIC_BINARY_LIBRARY_MAP = $(foreach file,$(STATIC_LIBRARY_FILES),$(strip $(BIN
 SHARED_LIBRARY_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.$(SHARED_EXT)$$)
 SHARED_BINARY_LIBRARY_MAP = $(foreach file,$(SHARED_LIBRARY_FILES),$(strip $(BIN_PATH)/$(file).$(LIBRARY_SO_VERSION)=$(PREFIX)/lib/$(file).$(LIBRARY_SO_VERSION) $(BIN_PATH)/$(file)=$(PREFIX)/lib/$(file)))
 
-BINARY_LIBRARY_MAP = $(strip $(STATIC_BINARY_LIBRARY_MAP) $(SHARED_BINARY_LIBRARY_MAP))
+PKGCONFIG_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.pc$$)
+PKGCONFIG_MAP = $(foreach file,$(PKGCONFIG_FILES),$(strip $(BIN_PATH)/$(file)=$(PREFIX)/lib/pkgconfig/$(file)))
+
+BINARY_LIBRARY_MAP = $(strip $(STATIC_BINARY_LIBRARY_MAP) $(SHARED_BINARY_LIBRARY_MAP) $(PKGCONFIG_MAP))
 
 POST_INSTALL_SCRIPT := $(BIN_PATH)/post_install.sh
 POST_UNINSTALL_SCRIPT := $(BIN_PATH)/post_uninstall.sh

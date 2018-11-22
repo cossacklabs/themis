@@ -29,3 +29,9 @@ SOTER_OBJ = $(patsubst $(SRC_PATH)/%.c,$(OBJ_PATH)/%.o, $(SOTER_SRC))
 SOTER_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(SOTER_AUD_SRC))
 
 SOTER_BIN = soter
+
+soter_pkgconfig:
+	@sed -e "s!%prefix%!$(PREFIX)!" \
+	     -e "s!%version%!$(VERSION)!" \
+	     -e "s!%crypto-libs%!$(CRYPTO_ENGINE_LDFLAGS)!" \
+	    $(SRC_PATH)/soter/libsoter.pc.in > $(BIN_PATH)/libsoter.pc
