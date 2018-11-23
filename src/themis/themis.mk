@@ -25,6 +25,7 @@ THEMIS_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(THEMIS_AUD_SRC))
 THEMIS_BIN = themis
 
 themis_pkgconfig:
+	@mkdir -p $(BIN_PATH)
 	@sed -e "s!%prefix%!$(PREFIX)!" \
 	     -e "s!%version%!$(VERSION)!" \
 	    $(SRC_PATH)/themis/libthemis.pc.in > $(BIN_PATH)/libthemis.pc

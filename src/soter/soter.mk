@@ -31,6 +31,7 @@ SOTER_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(SOTER_AUD_SRC))
 SOTER_BIN = soter
 
 soter_pkgconfig:
+	@mkdir -p $(BIN_PATH)
 	@sed -e "s!%prefix%!$(PREFIX)!" \
 	     -e "s!%version%!$(VERSION)!" \
 	     -e "s!%crypto-libs%!$(CRYPTO_ENGINE_LDFLAGS)!" \
