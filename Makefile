@@ -171,6 +171,7 @@ endif
 
 PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
+RUST_VERSION := $(shell rustc --version 2>/dev/null)
 GO_VERSION := $(shell go version 2>&1)
 NPM_VERSION := $(shell npm --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)

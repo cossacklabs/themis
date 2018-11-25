@@ -85,6 +85,7 @@ jobs:
       # it's important to set version of ruby precisely.
       - run: source /etc/profile.d/rvm.sh && rvm use system && make test_ruby
       - run: make test_go
+      - run: make test_rust
       - run: $HOME/valgrind/bin/valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: $HOME/valgrind/bin/valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: cover_build/tests/soter_test
