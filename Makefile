@@ -15,6 +15,7 @@
 #
 
 #CC = clang
+SHELL = /bin/bash
 SRC_PATH = src
 ifneq ($(BUILD_PATH),)
 	BIN_PATH = $(BUILD_PATH)
