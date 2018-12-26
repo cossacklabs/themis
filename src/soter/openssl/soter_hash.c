@@ -92,7 +92,7 @@ soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value,
 		return SOTER_BUFFER_TOO_SMALL;
 	}
 
-	if (EVP_DigestFinal_ex(hash_ctx->evp_md_ctx, hash_value, (unsigned int *)&md_length))
+	if (EVP_DigestFinal(hash_ctx->evp_md_ctx, hash_value, (unsigned int *)&md_length))
 	{
 		*hash_length = md_length;
 		return SOTER_SUCCESS;
