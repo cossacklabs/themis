@@ -159,7 +159,7 @@ static void test_api_(soter_hash_ctx_t* ctx)
 
 	res = soter_hash_final(ctx, hash, &hash_len);
 	testsuite_fail_unless((SOTER_SUCCESS == res) && (32 == hash_len) && !memcmp(hash, result, hash_len), "soter_hash_final: normal value");
-
+	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_update(ctx, input, input_len), "soter_hash_update: use after final");
 	testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_hash_destroy(NULL), "soter_hash_destroy: invalid context");
     testsuite_fail_unless(SOTER_SUCCESS == soter_hash_cleanup(ctx), "soter_hash_cleanup: can't cleanup");
 }
