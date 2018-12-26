@@ -64,6 +64,11 @@ soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, s
 		return SOTER_INVALID_PARAMETER;
 	}
 
+	if (!EVP_MD_CTX_md(hash_ctx->evp_md_ctx))
+	{
+		return SOTER_INVALID_PARAMETER;
+	}
+
 	if (EVP_DigestUpdate(hash_ctx->evp_md_ctx, data, length))
 	{
 		return SOTER_SUCCESS;
@@ -79,6 +84,11 @@ soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value,
 	size_t md_length;
 
 	if (!hash_ctx || !hash_length)
+	{
+		return SOTER_INVALID_PARAMETER;
+	}
+
+	if (!EVP_MD_CTX_md(hash_ctx->evp_md_ctx))
 	{
 		return SOTER_INVALID_PARAMETER;
 	}
