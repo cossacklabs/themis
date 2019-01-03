@@ -52,6 +52,7 @@ jobs:
             - ~/valgrind
 
       - checkout
+      - run: git submodule update --init
       - run: make
       - run: make JAVA_HOME=/usr/lib/jvm/default-java themis_jni
       - run: sudo make install
@@ -59,19 +60,7 @@ jobs:
       - run: sudo make pythemis_install
       - run: sudo make rubythemis_install
       - run: sudo make jsthemis_install
-
-      - restore_cache:
-          keys:
-            - boringssl-chromium-stable
-
-      - run: if [ ! -d $HOME/boringssl ]; then cd $HOME && git clone https://boringssl.googlesource.com/boringssl && cd boringssl && git checkout chromium-stable && mkdir build && cd build && cmake .. && make && cp decrepit/libdecrepit.a crypto/; fi
-
-      - save_cache:
-          key: boringssl-chromium-stable
-          paths:
-            - ~/boringssl
-
-      - run: make ENGINE=boringssl ENGINE_INCLUDE_PATH=$HOME/boringssl/include ENGINE_LIB_PATH=$HOME/boringssl/build/crypto BUILD_PATH=build_with_boringssl prepare_tests_basic
+      - run: make ENGINE=boringssl BUILD_PATH=build_with_boringssl prepare_tests_basic
       - run: make BUILD_PATH=cover_build COVERAGE=y prepare_tests_basic
       - run: make prepare_tests_all
       - run: mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT

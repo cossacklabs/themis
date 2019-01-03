@@ -258,7 +258,7 @@ soter_static: $(SOTER_OBJ)
 
 soter_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT) $(SOTER_OBJ) $(LDFLAGS) $(COVERLDFLAGS)
 
-soter_shared: $(SOTER_OBJ)
+soter_shared: $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
 	@echo -n "link "
 	@$(BUILD_CMD)
 ifdef IS_MACOS
