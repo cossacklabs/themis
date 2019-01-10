@@ -483,11 +483,11 @@ themispp_uninstall:
 
 soter_collect_headers:
 	@mkdir -p $(BIN_PATH)/include/soter
-	@cd src/soter && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/soter/ \; && cd - 1 > /dev/null
+	@cd src/soter && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/soter/ \; && cd - > /dev/null
 
 themis_collect_headers:
 	@mkdir -p $(BIN_PATH)/include/themis
-	@cd src/themis && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/themis/ \; && cd - 1 > /dev/null
+	@cd src/themis && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/themis/ \; && cd - > /dev/null
 
 collect_headers: themis_collect_headers soter_collect_headers
 
