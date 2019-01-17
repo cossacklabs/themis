@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-extern crate themis;
-
 use themis::{secure_comparator::SecureComparator, ErrorKind};
 
 #[test]
@@ -127,13 +125,6 @@ fn data_corruption() {
     assert!(comparator2.get_result().unwrap());
 }
 
-// TODO: investigate crash in BoringSSL
-//
-// This tests crashes when Themis uses BoringSSL. It suggests that one cannot reuse Secure
-// Comparators at all because the crypto engine denies this (e.g., can't compute hash twice).
-// Investigate, probably file an issue in core Themis repo as this state should be tracked
-// by Themis library to avoid misuse. However, this may be a feature of Secure Comparator
-// so it may require a workaround.
 #[test]
 fn reusing_comparators() {
     // TODO: avoid reusing comparators via a better API
@@ -152,16 +143,13 @@ fn reusing_comparators() {
     assert!(!comparator1.get_result().unwrap());
     assert!(!comparator2.get_result().unwrap());
 
-    comparator1.append_secret(b"same").unwrap();
-    comparator2.append_secret(b"same").unwrap();
+    // You can't append more data and restart the comparison after it is complete.
+    assert!(comparator1.append_secret(b"something").is_err());
+    assert!(comparator2.begin_compare().is_err());
 
-    let data = comparator1.begin_compare().unwrap();
-    let data = comparator2.proceed_compare(&data).unwrap();
-    let data = comparator1.proceed_compare(&data).unwrap();
-    let data = comparator2.proceed_compare(&data).unwrap();
-    let _ata = comparator1.proceed_compare(&data).unwrap();
-
-    // Previous data is still appended and can't be unappended.
+    // Though you can still view the previous results as much as you wish.
+    assert!(comparator1.is_complete());
+    assert!(comparator2.is_complete());
     assert!(!comparator1.get_result().unwrap());
     assert!(!comparator2.get_result().unwrap());
 }

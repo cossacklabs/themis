@@ -15,18 +15,130 @@
 //! Cryptographic keys.
 //!
 //! This module contains data structures for keys supported by Themis: RSA and ECDSA key pairs.
+//!
+//!   - [`EcdsaKeyPair`] consists of [`EcdsaPublicKey`] and [`EcdsaSecretKey`]
+//!   - [`RsaKeyPair`] consists of [`RsaPublicKey`] and [`RsaSecretKey`]
+//!
+//! There are also generic data types which can hold keys of either kind:
+//!
+//!   - [`KeyPair`] consists of [`PublicKey`] and [`SecretKey`]
+//!
+//! `KeyPair` may hold either an `EcdsaKeyPair` or an `RsaKeyPair`. It is guaranteed to contain
+//! keys of matching kind, just as individual keys are guaranteed to be of the specified kind.
+//!
+//! [`EcdsaKeyPair`]: struct.EcdsaKeyPair.html
+//! [`EcdsaPublicKey`]: struct.EcdsaPublicKey.html
+//! [`EcdsaSecretKey`]: struct.EcdsaSecretKey.html
+//! [`RsaKeyPair`]: struct.RsaKeyPair.html
+//! [`RsaPublicKey`]: struct.RsaPublicKey.html
+//! [`RsaSecretKey`]: struct.RsaSecretKey.html
+//! [`KeyPair`]: struct.KeyPair.html
+//! [`PublicKey`]: struct.PublicKey.html
+//! [`SecretKey`]: struct.SecretKey.html
+//!
+//! # Examples
+//!
+//! ## Splitting and joining
+//!
+//! [Key generation functions][keygen] return matching key pairs. Some APIs (like Secure Message
+//! in encryption mode) require you to pass key pairs so you are ready to go. Sometimes you may
+//! need the keys separately, in which case they can be easily split into public and secret parts:
+//!
+//! [keygen]: ../keygen/index.html
+//!
+//! ```
+//! use themis::keygen::gen_ec_key_pair;
+//!
+//! let key_pair = gen_ec_key_pair();
+//!
+//! let (secret, public) = key_pair.split();
+//! ```
+//!
+//! You may join them back into a pair if you wish:
+//!
+//! ```
+//! # use themis::keygen::gen_ec_key_pair;
+//! use themis::keys::EcdsaKeyPair;
+//!
+//! # let key_pair = gen_ec_key_pair();
+//! # let (secret, public) = key_pair.split();
+//! let key_pair = EcdsaKeyPair::join(secret, public);
+//! ```
+//!
+//! Joining is a zero-cost and error-free operation for concrete key kinds (RSA or ECDSA).
+//! However, when joining generic keys one must explicitly check for kind mismatch:
+//!
+//! ```
+//! # fn check() -> Result<(), themis::Error> {
+//! use themis::keygen::{gen_ec_key_pair, gen_rsa_key_pair};
+//! use themis::keys::KeyPair;
+//!
+//! let (secret_ec, _) = gen_ec_key_pair().split();
+//! let (_, public_rsa) = gen_rsa_key_pair().split();
+//!
+//! // This will return an Err because ECDSA secret key does not match RSA public key:
+//! let key_pair = KeyPair::try_join(secret_ec, public_rsa)?;
+//! # Ok(())
+//! # }
+//! #
+//! # assert!(check().is_err());
+//! ```
+//!
+//! Note that all individual keys as well as key pairs are automatically convertible into generic
+//! types via the standard `From`-`Into` traits.
+//!
+//! ## Serializing and deserializing
+//!
+//! All keys can be converted into bytes slices via the standard `AsRef` trait so that you can
+//! easily write them into files, send via network, pass to other Themis functions, and so on:
+//!
+//! ```no_run
+//! # fn main() -> Result<(), std::io::Error> {
+//! use std::fs::File;
+//! use std::io::Write;
+//!
+//! use themis::keygen::gen_rsa_key_pair;
+//!
+//! let (secret, public) = gen_rsa_key_pair().split();
+//!
+//! let mut file = File::create("secret.key")?;
+//! file.write_all(secret.as_ref())?;
+//! # Ok(())
+//! # }
+//! ```
+//!
+//! You can also restore the keys from raw bytes using `try_from_slice` methods. They check that
+//! the byte slice indeed contains a valid Themis key of the specified kind:
+//!
+//! ```
+//! # fn main() -> Result<(), themis::Error> {
+//! use themis::keys::EcdsaPublicKey;
+//!
+//! # const ECDSA_PUBLIC: &[u8] = b"\x55\x45\x43\x32\x00\x00\x00\x2d\x13\x8b\xdf\x0c\x02\x1f\x09\x88\x39\xd9\x73\x3a\x84\x8f\xa8\x50\xd9\x2b\xed\x3d\x38\xcf\x1d\xd0\xce\xf4\xae\xdb\xcf\xaf\xcb\x6b\xa5\x4a\x08\x11\x21";
+//! #
+//! # fn receive() -> Vec<u8> {
+//! #     ECDSA_PUBLIC.to_vec()
+//! # }
+//! #
+//! // Obtain the key bytes somehow (e.g., read from file).
+//! let bytes: Vec<u8> = receive();
+//!
+//! let public = EcdsaPublicKey::try_from_slice(&bytes)?;
+//! # Ok(())
+//! # }
+//! ```
 
 use std::fmt;
 
 use bindings::{themis_get_key_kind, themis_is_valid_key};
-use error::{Error, ErrorKind, Result};
-use utils::into_raw_parts;
+use zeroize::Zeroize;
+
+use crate::error::{Error, ErrorKind, Result};
+use crate::utils::into_raw_parts;
 
 /// Key material.
 #[derive(Clone, Eq, PartialEq, Hash)]
 pub(crate) struct KeyBytes(Vec<u8>);
-
-// TODO: securely zero memory when dropping KeyBytes (?)
 
 impl KeyBytes {
     /// Makes a key from an owned byte vector.
@@ -53,6 +165,13 @@ impl KeyBytes {
 impl fmt::Debug for KeyBytes {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "KeyBytes({} bytes)", self.0.len())
+    }
+}
+
+// Make sure that sensitive key material is removed from memory as soon as it is no longer needed.
+impl Drop for KeyBytes {
+    fn drop(&mut self) {
+        self.0.zeroize();
     }
 }
 
@@ -235,7 +354,7 @@ impl KeyPair {
     /// to use the secret key to decrypt data encrypted with the public key.
     ///
     /// However, it does verify that _the kinds_ of the keys match: i.e., that they are both
-    /// either RSA or ECDSA keys. An error is returned if that's not the case. You can check
+    /// either RSA or ECDSA keys. An error is returned if that’s not the case. You can check
     /// the kind of the key beforehand via its `kind()` method.
     pub fn try_join<S, P>(secret_key: S, public_key: P) -> Result<KeyPair>
     where

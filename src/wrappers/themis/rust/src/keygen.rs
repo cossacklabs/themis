@@ -14,18 +14,49 @@
 
 //! Generating key material.
 //!
-//! This module contains functions for generating random key pairs for use by Themis.
+//! Themis supports two kinds of asymmetric cryptography keys: Elliptic Curve (ECDSA) and RSA.
+//! These keys are used by [`SecureMessage`] and [`SecureSession`] objects.
 //!
-//! Currently Themis supports two key kinds: RSA and ECDSA. Most of the functions accept either,
-//! but some work only with ECDSA.
+//! This module contains functions for securely generating random key pairs. Note that managing
+//! resulting keys is _your_ responsibility. You have to make sure that secret keys are kept
+//! secret when distributed to your users, and that public keys that you use come from trusted
+//! sources. You can consult [our guidelines][key-management] for some advice on key management.
+//!
+//! [`SecureMessage`]: ../secure_message/index.html
+//! [`SecureSession`]: ../secure_session/index.html
+//! [key-management]: https://github.com/cossacklabs/themis/wiki/Key-management
+//!
+//! # Examples
+//!
+//! ```
+//! # fn main() -> Result<(), themis::Error> {
+//! use themis::keygen::gen_ec_key_pair;
+//! use themis::secure_message::SecureMessage;
+//!
+//! // Here we generate a new random Elliptic Curve key pair.
+//! let key_pair = gen_ec_key_pair();
+//!
+//! let secure = SecureMessage::new(key_pair);
+//!
+//! let encrypted = secure.wrap(b"message")?;
+//! let decrypted = secure.unwrap(&encrypted)?;
+//! assert_eq!(decrypted, b"message");
+//! # Ok(())
+//! # }
+//! ```
 
 use std::ptr;
 
 use bindings::{themis_gen_ec_key_pair, themis_gen_rsa_key_pair};
-use error::{Error, ErrorKind, Result};
-use keys::{EcdsaKeyPair, EcdsaPublicKey, EcdsaSecretKey, RsaKeyPair, RsaPublicKey, RsaSecretKey};
+
+use crate::error::{Error, ErrorKind, Result};
+use crate::keys::{
+    EcdsaKeyPair, EcdsaPublicKey, EcdsaSecretKey, RsaKeyPair, RsaPublicKey, RsaSecretKey,
+};
 
 /// Generates a pair of RSA keys.
+///
+/// RSA keys are supported only by Secure Message objects.
 ///
 /// # Panics
 ///
@@ -83,7 +114,9 @@ fn try_gen_rsa_key_pair() -> Result<RsaKeyPair> {
     Ok(RsaKeyPair::join(secret_key, public_key))
 }
 
-/// Generates a pair of ECDSA keys.
+/// Generates a pair of Elliptic Curve (ECDSA) keys.
+///
+/// Elliptic Curve keys are supported by both Secure Message and Secure Session objects.
 ///
 /// # Panics
 ///

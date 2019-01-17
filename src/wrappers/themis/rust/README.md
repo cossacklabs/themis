@@ -13,10 +13,10 @@ Then you simply add this to your Cargo.toml:
 
 ```toml
 [dependencies]
-themis = "0.0.2"
+themis = "0.0.3"
 ```
 
-And you're ready to go.
+And you’re ready to go.
 You can start off experimenting with [the examples].
 
 [the quickstart guide]: /README.md#quickstart
@@ -24,21 +24,21 @@ You can start off experimenting with [the examples].
 
 ## Building
 
-This is a binding so it requires a native Themis library.
+Rust-Themis is a binding so it requires a native Themis library.
 After that all the usual Cargo commands like `cargo test` should work out-of-the-box.
 
 ### Native Themis library
 
 The easiest way to make native Themis available is to install it into your system.
 Please refer to [the quickstart guide] for installation instructions for your platform.
-Once that's done the build should complete successfully.
+Once that’s done the build should complete successfully.
 
 If the compilation fails with a message like this:
 
 ```
-   Compiling libthemis-sys v0.0.2
-error: failed to run custom build command for `libthemis-sys v0.0.2`
-process didn't exit successfully: `target/debug/build/libthemis-sys-caf961089016a618/build-script-build` (exit code: 101)
+   Compiling libthemis-sys v0.0.3
+error: failed to run custom build command for `libthemis-sys v0.0.3`
+process didn't exit successfully: `target/debug/build/libthemis-sys-ea820c7d68995088/build-script-build` (exit code: 101)
 --- stdout
 cargo:rerun-if-env-changed=LIBTHEMIS_NO_PKG_CONFIG
 
@@ -53,7 +53,7 @@ thread 'main' panicked at '
 
 [ some lines omitted ]
 
-', libthemis-sys/build.rs:60:13
+', libthemis-sys/build.rs:61:23
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
 ```
 
@@ -80,47 +80,18 @@ Refer to [the `pkg_config` documentation] for more information about available e
 
 ### 🍺 A note for Homebrew users
 
-If you install Themis via `brew` on macOS then it will be using Homebrew's OpenSSL libraries.
-Homebrew does not install OpenSSL into default system location (it's _keg-only_).
-That's because your system is likely to contain its own OpenSSL installation in default path
-and Homebrew won't replace it to avoid accidental breakage.
+If you install Themis via `brew` on macOS then it will be using Homebrew’s OpenSSL libraries.
+Homebrew does not install OpenSSL into default system location (it’s _keg-only_).
+That’s because your system is likely to contain its own OpenSSL installation in default path
+and Homebrew won’t replace it to avoid accidental breakage.
 
-You need to tell pkg-config to use Homebrew's OpenSSL
+You need to tell pkg-config to use Homebrew’s OpenSSL
 by setting `PKG_CONFIG_PATH` to the keg location of OpenSSL used by Themis.
 You can usually find out where it is with a spell like this:
 
 ```console
 $ find $(brew --prefix $(brew deps themis-openssl)) -follow -type d -name pkgconfig
 /usr/local/opt/openssl/lib/pkgconfig
-```
-
-### ⛑ Bundled *.pc files
-
-Unfortunately, Themis packages currently do not include *.pc files for pkg-config.
-You can use the ones bundled with this repository as a temporary measure.
-Take a look into [`pkgconfig`](pkgconfig) directory:
-
-- `pkgconfig/system/*.pc` —
-  if you install Themis into `/usr/lib`
-  (usually the case on Linux with package managers)
-- `pkgconfig/local/*.pc` —
-  if you install Themis into `/usr/local/lib`
-  (usually the case on macOS or with `make install`)
-
-Copy these files somewhere in your home directory, for example,
-and tell pkg-config to use them:
-
-```console
-$ mkdir ~/pkgconfig
-$ cp pkgconfig/usr/local/lib/pkgconfig/*.pc ~/pkgconfig/
-$ export PKG_CONFIG_PATH=$HOME/pkgconfig
-```
-
-Multiple paths in `PKG_CONFIG_PATH` are separated with colons,
-like this:
-
-```console
-$ export PKG_CONFIG_PATH=$HOME/pkgconfig:/usr/local/opt/openssl/lib/pkgconfig
 ```
 
 ## Licensing

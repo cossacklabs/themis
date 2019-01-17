@@ -13,14 +13,13 @@
 // limitations under the License.
 
 #[macro_use]
-extern crate clap;
-extern crate env_logger;
-#[macro_use]
 extern crate log;
 
 use std::collections::HashSet;
 use std::io;
 use std::net::{SocketAddr, UdpSocket};
+
+use clap::clap_app;
 
 fn main() {
     env_logger::init();
@@ -29,7 +28,8 @@ fn main() {
         (version: env!("CARGO_PKG_VERSION"))
         (about: "Relay server for Secure Message chat client.")
         (@arg port: -p --port [number] "Listening port (default: 7573)")
-    ).get_matches();
+    )
+    .get_matches();
 
     let port = matches.value_of("port").unwrap_or("7573").parse().unwrap();
     let listen_addr = SocketAddr::new([0; 16].into(), port);

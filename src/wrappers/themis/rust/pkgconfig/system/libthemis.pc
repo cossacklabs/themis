@@ -1,6 +1,0 @@
-Name: libthemis
-Description: libthemis
-Version: 0.10.0
-Requires.private: libsoter
-Cflags: -I/usr/include
-Libs: -L/usr/lib -lthemis

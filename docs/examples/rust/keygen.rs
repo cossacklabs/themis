@@ -12,13 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#[macro_use]
-extern crate clap;
-extern crate themis;
-
 use std::fs::File;
 use std::io::{self, Write};
 
+use clap::clap_app;
 use themis::keygen::gen_ec_key_pair;
 
 fn main() {
@@ -27,7 +24,8 @@ fn main() {
         (about: "Generating ECDSA key pairs.")
         (@arg secret: --secret [path] "Secret key file (default: secret.key)")
         (@arg public: --public [path] "Public key file (default: public.key)")
-    ).get_matches();
+    )
+    .get_matches();
     let secret_path = matches.value_of("secret").unwrap_or("secret.key");
     let public_path = matches.value_of("public").unwrap_or("public.key");
 
