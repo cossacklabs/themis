@@ -712,7 +712,8 @@ pub struct SecureCellContextImprint(SecureCell);
 // TODO: maybe panic if a SecureCell with an empty context is switched into context imprint mode
 
 impl SecureCellContextImprint {
-    /// Encrypts the provided message and returns the encrypted data.
+    /// Encrypts the provided message, combining it with required user context, and returns
+    /// the encrypted data.
     ///
     /// The resulting message has the same length as the input data and does not contain
     /// an authentication token. Secure Cell cannot ensure correctness of later decryption
@@ -764,7 +765,7 @@ impl SecureCellContextImprint {
         )
     }
 
-    /// Decrypts the encrypted data and returns the resulting message.
+    /// Decrypts the encrypted data with provided user context and returns the resulting message.
     ///
     /// Note that in context imprint mode messages do not include any authentication token for
     /// integrity validation, thus the returned message might not be the original one even if
@@ -829,7 +830,7 @@ impl SecureCellContextImprint {
     }
 }
 
-/// Encrypts `message` with `master_key` including optional `context`.
+/// Encrypts `message` with `master_key` including required `context`.
 fn encrypt_context_imprint(master_key: &[u8], message: &[u8], context: &[u8]) -> Result<Vec<u8>> {
     let (master_key_ptr, master_key_len) = into_raw_parts(master_key);
     let (message_ptr, message_len) = into_raw_parts(message);
