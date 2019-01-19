@@ -163,10 +163,10 @@ impl SecureCell {
     /// ```
     /// use themis::secure_cell::SecureCell;
     ///
-    /// SecureCell::with_key_and_context(&[], b"byte string");
-    /// SecureCell::with_key_and_context(&[], &[1, 2, 3, 4, 5]);
-    /// SecureCell::with_key_and_context(&[], vec![6, 7, 8, 9]);
-    /// SecureCell::with_key_and_context(&[], format!("owned string"));
+    /// SecureCell::with_key_and_context(b"key", b"byte string");
+    /// SecureCell::with_key_and_context(b"key", &[1, 2, 3, 4, 5]);
+    /// SecureCell::with_key_and_context(b"key", vec![6, 7, 8, 9]);
+    /// SecureCell::with_key_and_context(b"key", format!("owned string"));
     /// ```
     ///
     /// [secure_cell]: ../secure_cell/index.html
