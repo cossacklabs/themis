@@ -1,6 +1,7 @@
 [package]
 name = "libthemis-sys"
-version = "0.0.2"
+version = "0.0.3"
+edition = "2018"
 authors = ["rust-themis developers"]
 description = "FFI binding to libthemis"
 homepage = "https://www.cossacklabs.com/themis/"
@@ -11,7 +12,15 @@ categories = ["cryptography", "external-ffi-bindings"]
 license = "Apache-2.0"
 links = "themis"
 
+[features]
+vendored = ["libthemis-src"]
+
 [build-dependencies]
-bindgen = "0.42.0"
-cc = "1.0"
+bindgen = "0.46.0"
+cc = "1.0.28"
+libthemis-src = { path = "../libthemis-src", version = "=0.0.3", optional = true }
 pkg-config = "0.3.14"
+
+[package.metadata.docs.rs]
+features = ["vendored"]
+dependencies = ["libssl-dev"]

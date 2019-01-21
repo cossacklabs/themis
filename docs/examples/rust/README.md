@@ -17,10 +17,10 @@ Here we have some examples of Themis usage.
 
 You can run the examples with Cargo like this:
 
-```console
+```
 $ cargo run --example keygen -- --help
-keygen 0.0.1
-Generating private-public ECDSA key pairs.
+keygen 0.0.3
+Generating ECDSA key pairs.
 
 USAGE:
     keygen [OPTIONS]
@@ -30,8 +30,8 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-        --private <path>    Private key file (default: private.key)
-        --public <path>     Public key file (default: public.key)
+        --public <path>    Public key file (default: public.key)
+        --secret <path>    Secret key file (default: secret.key)
 ```
 
 Note that the arguments are passed after `--`.
@@ -85,18 +85,18 @@ It is deliberately kept simple,
 but the same principle can be applied to properly framed TCP transports
 as well as to using Tokio for async IO instead of blocking stdlib.
 
-Usually you don't need to specify any custom options,
+Usually you don’t need to specify any custom options,
 the command-line defaults are expected to work right away.
 But you can override the defaults for port assignment and key file locations if necessary.
 
-First you'll need to generate the keys for clients.
+First you’ll need to generate the keys for clients.
 It also may be useful to enable logging before starting the server.
 This example uses [`env_logger` crate][env_logger] for logging
 which is configurable via environment variable `RUST_LOG`.
 
-[env_logger]: https://docs.rs/env_logger/0.6.0/env_logger/
+[env_logger]: https://crates.io/crates/env_logger
 
-```console
+```
 $ export RUST_LOG=secure_message=info
 $ cargo run --example keygen
 ```
@@ -104,27 +104,27 @@ $ cargo run --example keygen
 Then you can start up the server as well as some clients
 (in separate terminal sessions):
 
-```console
+```
 $ cargo run --example secure_message_server
  INFO 2018-09-30T19:39:49Z: secure_message_server: listening on port 7573
  INFO 2018-09-30T19:40:33Z: secure_message_server: new peer: [::1]:56375
  INFO 2018-09-30T19:40:36Z: secure_message_server: new peer: [::1]:56376
 ```
 
-```console
+```
 $ cargo run --example secure_message_client_encrypt
 2: hello
 1: hello
 ```
 
 The first message from the client will introduce it to the server
-after which the server will relay other clients' messages to the newly joined peer.
-(Sorry, you'll have to manually type in nicknames at the moment.)
+after which the server will relay other clients’ messages to the newly joined peer.
+(Sorry, you have to manually type in nicknames at the moment.)
 
 The clients use the generated keys to secure communications.
 You can observe the exchange with `tcpdump`:
 
-```console
+```
 $ sudo tcpdump -i any -n -X udp port 7573
 tcpdump: data link type PKTAP
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode

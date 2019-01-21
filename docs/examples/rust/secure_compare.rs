@@ -12,15 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-extern crate byteorder;
-#[macro_use]
-extern crate clap;
-extern crate themis;
-
 use std::io::{self, Read, Write};
 use std::net::{TcpListener, TcpStream};
 
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use clap::clap_app;
 use themis::secure_comparator::SecureComparator;
 
 fn main() {
@@ -40,7 +36,8 @@ fn main() {
             (about: "Connect to server for comparison")
             (@arg address: -c --connect [address] "Server address (default: [::1]:7575)")
         )
-    ).get_matches();
+    )
+    .get_matches();
 
     let mut comparison = SecureComparator::new();
 

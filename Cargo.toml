@@ -1,6 +1,7 @@
 [package]
 name = "themis"
-version = "0.0.2"
+version = "0.0.3"
+edition = "2018"
 authors = ["rust-themis developers"]
 description = "High-level cryptographic services for storage and messaging"
 homepage = "https://www.cossacklabs.com/themis/"
@@ -20,6 +21,23 @@ include = [
 
 [lib]
 path = "src/wrappers/themis/rust/src/lib.rs"
+
+[features]
+vendored = ["bindings/vendored"]
+
+[dependencies]
+bindings = { package = "libthemis-sys", path = "src/wrappers/themis/rust/libthemis-sys", version = "=0.0.3" }
+zeroize = "0.5.2"
+
+[dev-dependencies]
+byteorder = "1.2.7"
+clap = "2.32"
+log = "0.4.6"
+env_logger = "0.6.0"
+
+[package.metadata.docs.rs]
+features = ["vendored"]
+dependencies = ["libssl-dev"]
 
 [[example]]
 name = "keygen"
@@ -64,12 +82,3 @@ path = "tests/rust/secure_message.rs"
 [[test]]
 name = "secure_session"
 path = "tests/rust/secure_session.rs"
-
-[dependencies]
-libthemis-sys = { path = "src/wrappers/themis/rust/libthemis-sys", version = "=0.0.2" }
-
-[dev-dependencies]
-byteorder = "1.2.7"
-clap = "2.32"
-log = "0.4.5"
-env_logger = "0.5.13"

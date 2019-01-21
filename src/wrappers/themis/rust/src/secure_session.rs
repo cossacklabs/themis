@@ -27,9 +27,10 @@ use bindings::{
     secure_session_unwrap, secure_session_user_callbacks_t, secure_session_wrap, STATE_ESTABLISHED,
     STATE_IDLE, STATE_NEGOTIATING,
 };
-use error::{themis_status_t, Error, ErrorKind, Result};
-use keys::{EcdsaPublicKey, EcdsaSecretKey};
-use utils::into_raw_parts;
+
+use crate::error::{themis_status_t, Error, ErrorKind, Result};
+use crate::keys::{EcdsaPublicKey, EcdsaSecretKey};
+use crate::utils::into_raw_parts;
 
 /// Secure Session context.
 pub struct SecureSession<T> {
@@ -288,7 +289,7 @@ where
     /// The message can be transferred to the remote peer and unwrapped there with [`unwrap`].
     ///
     /// Wrapped message are independent and can be exchanged out of order. You can wrap multiple
-    /// messages then unwrap them in any order or don't unwrap some of them at all.
+    /// messages then unwrap them in any order or don’t unwrap some of them at all.
     ///
     /// This method will fail if a secure connection has not been established yet.
     ///
@@ -385,7 +386,7 @@ where
     /// Continues connection negotiation with given message.
     ///
     /// This method performs one step of connection negotiation. The server should call this
-    /// method first with a message received from client's [`generate_connect_request`].
+    /// method first with a message received from client’s [`generate_connect_request`].
     /// Its result is another negotiation message that should be transferred to the client.
     /// The client then calls this method on a message and forwards the resulting message
     /// to the server. If the returned message is empty then negotiation is complete and
@@ -530,6 +531,7 @@ impl<T> SecureSessionDelegate<T>
 where
     T: SecureSessionTransport,
 {
+    #[allow(clippy::new_ret_no_self)]
     pub fn new(transport: T) -> Box<Self> {
         let mut delegate = Box::new(Self {
             callbacks: secure_session_user_callbacks_t {

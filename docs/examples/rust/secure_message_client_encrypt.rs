@@ -13,10 +13,6 @@
 // limitations under the License.
 
 #[macro_use]
-extern crate clap;
-extern crate env_logger;
-extern crate themis;
-#[macro_use]
 extern crate log;
 
 use std::fs::File;
@@ -25,6 +21,7 @@ use std::net::UdpSocket;
 use std::sync::Arc;
 use std::thread;
 
+use clap::clap_app;
 use themis::keys::{KeyPair, PublicKey, SecretKey};
 use themis::secure_message::SecureMessage;
 
@@ -37,7 +34,8 @@ fn main() {
         (@arg secret: --secret [path] "Secret key file (default: secret.key)")
         (@arg public: --public [path] "Public key file (default: public.key)")
         (@arg address: -c --connect [addr] "Relay server address (default: localhost:7573)")
-    ).get_matches();
+    )
+    .get_matches();
 
     let secret_path = matches.value_of("secret").unwrap_or("secret.key");
     let public_path = matches.value_of("public").unwrap_or("public.key");

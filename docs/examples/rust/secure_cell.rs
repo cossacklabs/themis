@@ -12,13 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#[macro_use]
-extern crate clap;
-extern crate themis;
-
 use std::fs::File;
 use std::io::{self, Read, Write};
 
+use clap::clap_app;
 use themis::secure_cell::SecureCell;
 
 fn main() {
@@ -32,7 +29,8 @@ fn main() {
         (@arg password: -p --password <string> "Password to use")
         (@arg input:  +required "Input file")
         (@arg output: +required "Output file")
-    ).get_matches();
+    )
+    .get_matches();
 
     let encrypt = !matches.is_present("decrypt");
     let password = matches.value_of("password").unwrap();

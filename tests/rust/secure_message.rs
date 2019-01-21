@@ -12,13 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-extern crate themis;
-
-use themis::{
-    keygen::{gen_ec_key_pair, gen_rsa_key_pair},
-    secure_message::{SecureMessage, SecureSign, SecureVerify},
-    ErrorKind,
-};
+use themis::keygen::{gen_ec_key_pair, gen_rsa_key_pair};
+use themis::secure_message::{SecureMessage, SecureSign, SecureVerify};
+use themis::ErrorKind;
 
 #[test]
 fn mode_encrypt_decrypt() {

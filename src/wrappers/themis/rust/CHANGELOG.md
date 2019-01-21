@@ -3,6 +3,25 @@
 
 The version currently under development.
 
+Version 0.0.3 — 2019-01-17
+==========================
+
+Documentation and internal improvements.
+
+Themis now requires **Rust 2018** (rustc 1.31+) to compile.
+
+## New features
+
+- Crate feature `vendored` allows to build and use a vendored copy of the core
+  Themis library in case it is not installed in the system. ([#9])
+
+- All modules, data types and functions now have proper
+  [API documentation][docs.rs], complete with examples and references to
+  underlying cryptographic algorithms.
+
+[#9]: https://github.com/ilammy/rust-themis/pull/9
+[docs.rs]: https://docs.rs/crate/themis/
+
 Version 0.0.2 — 2018-11-18
 ==========================
 

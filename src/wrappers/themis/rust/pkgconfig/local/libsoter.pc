@@ -1,6 +1,0 @@
-Name: libsoter
-Description: libsoter
-Version: 0.10.0
-Requires.private: libcrypto
-Cflags: -I/usr/local/include
-Libs: -L/usr/local/lib -lsoter
