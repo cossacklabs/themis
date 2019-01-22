@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
     s.ios.frameworks = 'UIKit', 'Foundation'
 
 
-    # use `themis/themis-openssl` as separate target to use Themis with BoringSSL
+    # use `themis/themis-openssl` as separate target to use Themis with OpenSSL
     s.subspec 'themis-openssl' do |so|
 
         so.dependency 'GRKOpenSSLFramework', '~> 1.0.1'
