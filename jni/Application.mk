@@ -19,6 +19,6 @@ APP_MODULES := libthemis_jni
 # we needs this to prevent ndk-build complaining about missing
 # prebuilt boringssl static libraries
 APP_ALLOW_MISSING_DEPS := true
-# currently boringssl does not build well with clang for all archs
-# so we use GCC for Themis as well for maximum compatibility
-NDK_TOOLCHAIN_VERSION := 4.9
+# currently boringssl supports only clang
+#  GCC is no longer supported.  See
+# https://android.googlesource.com/platform/ndk/+/master/docs/ClangMigration.md
