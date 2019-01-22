@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.2.1'
     }
 }
 
@@ -22,7 +22,6 @@ android {
 		    cmake {
 		        arguments "-DCMAKE_TOOLCHAIN_FILE=" + android.ndkDirectory + "/build/cmake/android.toolchain.cmake",
 		                  "-DANDROID_NATIVE_API_LEVEL=21",
-		                  "-DANDROID_TOOLCHAIN=gcc",
 		                  "-DCMAKE_BUILD_TYPE=Release",
 		                  "-GNinja"
 		    }
