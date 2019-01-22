@@ -44,8 +44,10 @@
 //! }
 //! ```
 
+use std::collections::VecDeque;
 use std::env;
 use std::fs;
+use std::io;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
@@ -146,14 +148,14 @@ impl Build {
             fs::remove_dir_all(&themis_install_dir).expect("rm -r themis/install");
         }
 
-        // TODO: fix a bug in copy_dir which ignores directory source if it is a symlink
-        copy_dir::copy_dir(&themis_src_dir, &themis_build_dir).expect("cp -r src build");
+        copy_directory(&themis_src_dir, &themis_build_dir).expect("cp -r src/ build");
         fs::create_dir(&themis_install_dir).expect("mkdir themis/install");
 
         // Now we can build Themis and install it properly into OUT_DIR.
         let mut themis_build_and_install = make_cmd::make();
         themis_build_and_install
             .current_dir(&themis_build_dir)
+            .stdout(Stdio::null())
             .env("PREFIX", &themis_install_dir)
             .arg("install");
 
@@ -195,6 +197,33 @@ impl Library {
 
         env::set_var("PKG_CONFIG_PATH", paths);
     }
+}
+
+/// Copies `src` directory contents into `dst` recursively.
+fn copy_directory(src: &PathBuf, dst: &PathBuf) -> io::Result<()> {
+    let mut worklist = VecDeque::new();
+    worklist.push_back(PathBuf::from("."));
+
+    while let Some(next) = worklist.pop_front() {
+        let src_file = normalize(src.join(&next));
+        let dst_file = normalize(dst.join(&next));
+
+        if src_file.is_dir() {
+            fs::create_dir_all(&dst_file)?;
+
+            for child in fs::read_dir(&src_file)? {
+                worklist.push_back(next.join(child?.file_name()));
+            }
+        } else {
+            fs::copy(&src_file, &dst_file)?;
+        }
+    }
+
+    Ok(())
+}
+
+fn normalize(path: PathBuf) -> PathBuf {
+    path.components().collect()
 }
 
 #[cfg(test)]
