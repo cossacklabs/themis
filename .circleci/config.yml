@@ -22,7 +22,7 @@ jobs:
       - run: ./gradlew --no-daemon --no-parallel --max-workers=2 connectedAndroidTest
   x86_64:
     docker:
-      - image: cossacklabs/android-build
+      - image: cossacklabs/android-build:2019.01
     environment:
       GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
       CFLAGS: "-DCIRICLE_TEST"
@@ -89,7 +89,7 @@ jobs:
 
   integration_tests:
     docker:
-      - image: cossacklabs/android-build
+      - image: cossacklabs/android-build:2019.01
     environment:
       GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
       CFLAGS: "-DCIRICLE_TEST"
