@@ -40,7 +40,7 @@ jobs:
           keys:
             - rust
 
-      - run: curl https://sh.rustup.rs -sSf | sh -s -- -y && source ~/.cargo/env && cargo --version && rustc --version
+      - run: curl https://sh.rustup.rs -sSf | sh -s -- -y && cat ~/.cargo/env >> $BASH_ENV && source ~/.cargo/env && cargo --version && rustc --version
       - run: rustup component add clippy
       - run: rustup component add rustfmt
       - run: cargo deadlinks --version || cargo install cargo-deadlinks
