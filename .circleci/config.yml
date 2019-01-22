@@ -2,7 +2,7 @@ version: 2
 jobs:
   android:
     docker:
-      - image: cossacklabs/android-build
+      - image: cossacklabs/android-build:2019.01
     steps:
       - checkout
       - run: git submodule update --init
