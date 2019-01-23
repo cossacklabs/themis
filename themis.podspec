@@ -25,6 +25,14 @@ Pod::Spec.new do |s|
 
     # use `themis/themis-openssl` as separate target to use Themis with OpenSSL
     s.subspec 'themis-openssl' do |so|
+        # Enable bitcode for openssl only, unfortunately boringssl with bitcode not available at the moment
+        # 'bitcode-marker' directive omits bitcode payload in binary for debug builds
+        so.pod_target_xcconfig = {
+            'OTHER_CFLAGS[config=Debug]'                => '$(inherited) -fembed-bitcode-marker',
+            'OTHER_CFLAGS[config=Release]'              => '$(inherited) -fembed-bitcode',
+            'BITCODE_GENERATION_MODE[config=Release]'   => 'bitcode',
+            'BITCODE_GENERATION_MODE[config=Debug]'     => 'bitcode-marker'
+        }
 
         so.dependency 'GRKOpenSSLFramework', '~> 1.0.1'
 
