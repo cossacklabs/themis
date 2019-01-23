@@ -40,6 +40,8 @@ jobs:
           keys:
             - rust
 
+      # Install Rust toolchain (stable) via rustup
+      # Instructions taken from https://rustup.rs
       - run: curl https://sh.rustup.rs -sSf | sh -s -- -y && cat ~/.cargo/env >> $BASH_ENV && source ~/.cargo/env && cargo --version && rustc --version
       - run: rustup component add clippy
       - run: rustup component add rustfmt
