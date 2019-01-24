@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
     s.subspec 'themis-openssl' do |so|
         # Enable bitcode for openssl only, unfortunately boringssl with bitcode not available at the moment
         # 'bitcode-marker' directive omits bitcode payload in binary for debug builds
-        so.pod_target_xcconfig = {
+        so.ios.pod_target_xcconfig = {
             'OTHER_CFLAGS[config=Debug]'                => '$(inherited) -fembed-bitcode-marker',
             'OTHER_CFLAGS[config=Release]'              => '$(inherited) -fembed-bitcode',
             'BITCODE_GENERATION_MODE[config=Release]'   => 'bitcode',
