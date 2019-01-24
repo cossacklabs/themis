@@ -1,17 +1,18 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.10.1"
+    s.version = "0.10.2"
     s.summary = "Data security library for network communication and data storage for iOS and mac OS"
     s.description = "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern development practices, with high level OOP wrappers for iOS / macOS, NodeJS, Go, Ruby, Python, PHP and Java / Android. It is designed with ease of use in mind, high security and cross-platform availability."
     s.homepage = "https://cossacklabs.com"
     s.license = { :type => 'Apache 2.0'}    
 
-    # will update to particular tag on next release
+    # will update to particular tag on next release (0.11.0)
     #s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
 
     # this commit has fixes in soter that allow to support BoringSSL for iOS
     # more: https://github.com/cossacklabs/themis/pull/330
-    s.source = { :git => "https://github.com/cossacklabs/themis.git", :commit => 'efe288ebaaababa1c7adc633e3f8cf325e3db0be'}
+    # this is a latest master commit as for today
+    s.source = { :git => "https://github.com/cossacklabs/themis.git", :commit => 'a47c962a86f038927e9c9e58e24726ff2314d9eb'}
 
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
