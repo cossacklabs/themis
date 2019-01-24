@@ -1,17 +1,18 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.10.1"
+    s.version = "0.10.2"
     s.summary = "Data security library for network communication and data storage for iOS and mac OS"
     s.description = "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern development practices, with high level OOP wrappers for iOS / macOS, NodeJS, Go, Ruby, Python, PHP and Java / Android. It is designed with ease of use in mind, high security and cross-platform availability."
     s.homepage = "https://cossacklabs.com"
     s.license = { :type => 'Apache 2.0'}    
 
-    # will update to particular tag on next release
+    # will update to particular tag on next release (0.11.0)
     #s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
 
     # this commit has fixes in soter that allow to support BoringSSL for iOS
     # more: https://github.com/cossacklabs/themis/pull/330
-    s.source = { :git => "https://github.com/cossacklabs/themis.git", :commit => 'efe288ebaaababa1c7adc633e3f8cf325e3db0be'}
+    # this is a latest master commit as for today
+    s.source = { :git => "https://github.com/cossacklabs/themis.git", :commit => 'a47c962a86f038927e9c9e58e24726ff2314d9eb'}
 
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
@@ -25,6 +26,14 @@ Pod::Spec.new do |s|
 
     # use `themis/themis-openssl` as separate target to use Themis with OpenSSL
     s.subspec 'themis-openssl' do |so|
+        # Enable bitcode for openssl only, unfortunately boringssl with bitcode not available at the moment
+        # 'bitcode-marker' directive omits bitcode payload in binary for debug builds
+        so.ios.pod_target_xcconfig = {
+            'OTHER_CFLAGS[config=Debug]'                => '$(inherited) -fembed-bitcode-marker',
+            'OTHER_CFLAGS[config=Release]'              => '$(inherited) -fembed-bitcode',
+            'BITCODE_GENERATION_MODE[config=Release]'   => 'bitcode',
+            'BITCODE_GENERATION_MODE[config=Debug]'     => 'bitcode-marker'
+        }
 
         so.dependency 'GRKOpenSSLFramework', '~> 1.0.1'
 
