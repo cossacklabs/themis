@@ -4,7 +4,7 @@ import os
 from collections import namedtuple
 
 generate_for_languages = os.environ.get(
-    'GENERATE_LANGUAGES', 'ruby,python,node,go,php')
+    'GENERATE_LANGUAGES', 'ruby,python,node,go,php,rust')
 generate_for_languages = generate_for_languages.split(',')
 
 LanguageSetting = namedtuple(
@@ -16,6 +16,7 @@ languages = [
     LanguageSetting(name='node', command='node', script_path='./tools/js', extension='js'),
     LanguageSetting(name='go', command='go run', script_path='./tools/go', extension='go'),
     LanguageSetting(name='php', command='php -f', script_path='./tools/php', extension='php'),
+    LanguageSetting(name='rust', command='bash', script_path='./tools/rust', extension='sh'),
 ]
 
 templates = {

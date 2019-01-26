@@ -481,6 +481,16 @@ themispp_uninstall:
 	@echo -n "themispp uninstall "
 	@$(BUILD_CMD_)
 
+rustthemis_examples_install: CMD = cargo install --examples --path .
+rustthemis_examples_install:
+	@echo -n "rust-themis examples install "
+	@$(BUILD_CMD_)
+
+rustthemis_examples_uninstall: CMD = cargo uninstall
+rustthemis_examples_uninstall:
+	@echo -n "rust-themis examples uninstall "
+	@$(BUILD_CMD_)
+
 soter_collect_headers:
 	@mkdir -p $(BIN_PATH)/include/soter
 	@cd src/soter && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/soter/ \; && cd - > /dev/null
