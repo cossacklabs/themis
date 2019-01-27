@@ -21,7 +21,7 @@ use clap::clap_app;
 use themis::keygen::gen_ec_key_pair;
 
 fn main() {
-    let matches = clap_app!(keygen =>
+    let matches = clap_app!(keygen_tool =>
         (version: env!("CARGO_PKG_VERSION"))
         (about: "Generating ECDSA key pairs.")
         (@arg secret: "Secret key file (default: key)")

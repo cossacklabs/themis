@@ -16,7 +16,7 @@ languages = [
     LanguageSetting(name='node', command='node', script_path='./tools/js', extension='js'),
     LanguageSetting(name='go', command='go run', script_path='./tools/go', extension='go'),
     LanguageSetting(name='php', command='php -f', script_path='./tools/php', extension='php'),
-    LanguageSetting(name='rust', command='bash', script_path='./tools/rust', extension='sh'),
+    LanguageSetting(name='rust', command='env', script_path='./tools/rust', extension='rust'),
 ]
 
 templates = {

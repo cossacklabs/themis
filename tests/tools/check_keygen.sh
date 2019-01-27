@@ -24,6 +24,6 @@ test_keygen node tools/js/keygen.js
 test_keygen "php -f" tools/php/keygen.php
 test_keygen ruby tools/ruby/keygen.rb
 test_keygen "go run" tools/go/keygen.go
-test_keygen bash tools/rust/keygen.sh
+test_keygen env tools/rust/keygen_tool.rust
 
 exit ${status}

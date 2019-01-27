@@ -66,7 +66,7 @@ path = "docs/examples/rust/secure_message_server.rs"
 
 [[example]]
 name = "keygen_tool"
-path = "tools/rust/keygen.rs"
+path = "tools/rust/keygen_tool.rs"
 
 [[example]]
 name = "scell_context_string_echo"

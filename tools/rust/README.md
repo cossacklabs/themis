@@ -2,7 +2,7 @@ Here we keep tools for automated testing of Themis
 across the supported platforms.
 (Though, the tools are accessible to humans as well.)
 
-- [**keygen_tool**](keygen.rs) —
+- [**keygen_tool**](keygen_tool.rs) —
   a tool for generating ECDSA keys 
 - <b>scell_*_string_echo</b> —
   encrypt or decrypt a string using Secure Cell
@@ -19,7 +19,7 @@ You can run a particular tool with Cargo like this:
 
 ```
 $ cargo run --example keygen_tool -- --help
-keygen 0.0.3
+keygen_tool 0.0.3
 Generating ECDSA key pairs.
 
 USAGE:
