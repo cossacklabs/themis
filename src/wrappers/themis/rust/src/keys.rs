@@ -151,11 +151,6 @@ impl KeyBytes {
         KeyBytes(bytes.to_vec())
     }
 
-    /// Makes an empty key.
-    pub fn empty() -> KeyBytes {
-        KeyBytes(Vec::new())
-    }
-
     /// Returns key bytes.
     pub fn as_bytes(&self) -> &[u8] {
         &self.0

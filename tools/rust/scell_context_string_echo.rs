@@ -33,15 +33,16 @@ fn main() {
     let message = matches.value_of("message").unwrap();
     let context = matches.value_of("context").unwrap();
 
-    // TODO: context should be passed along with the message
-    let cell = SecureCell::with_key_and_context(&key, &context).context_imprint();
+    let cell = SecureCell::with_key(&key).context_imprint();
 
     match mode {
         "enc" => {
-            let encrypted = cell.encrypt(&message).unwrap_or_else(|error| {
-                eprintln!("failed to encrypt message: {}", error);
-                exit(1);
-            });
+            let encrypted = cell
+                .encrypt_with_context(&context, &message)
+                .unwrap_or_else(|error| {
+                    eprintln!("failed to encrypt message: {}", error);
+                    exit(1);
+                });
             println!("{}", base64::encode(&encrypted));
         }
         "dec" => {
@@ -49,10 +50,12 @@ fn main() {
                 eprintln!("failed to decode message: {}", error);
                 exit(1);
             });
-            let decrypted = cell.decrypt(&decoded_message).unwrap_or_else(|error| {
-                eprintln!("failed to decrypt message: {}", error);
-                exit(1);
-            });
+            let decrypted = cell
+                .decrypt_with_context(&context, &decoded_message)
+                .unwrap_or_else(|error| {
+                    eprintln!("failed to decrypt message: {}", error);
+                    exit(1);
+                });
             println!("{}", std::str::from_utf8(&decrypted).expect("UTF-8 string"));
         }
         other => {

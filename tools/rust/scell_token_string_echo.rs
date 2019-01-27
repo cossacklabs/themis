@@ -37,15 +37,16 @@ fn main() {
     let message = parts.next().unwrap();
     let token = parts.next().unwrap_or("");
 
-    // TODO: context should be passed along with the message
-    let cell = SecureCell::with_key_and_context(&key, &context).token_protect();
+    let cell = SecureCell::with_key(&key).token_protect();
 
     match mode {
         "enc" => {
-            let (encrypted, token) = cell.encrypt(&message).unwrap_or_else(|error| {
-                eprintln!("failed to encrypt message: {}", error);
-                exit(1);
-            });
+            let (encrypted, token) = cell
+                .encrypt_with_context(&context, &message)
+                .unwrap_or_else(|error| {
+                    eprintln!("failed to encrypt message: {}", error);
+                    exit(1);
+                });
             println!("{},{}", base64::encode(&encrypted), base64::encode(&token));
         }
         "dec" => {
@@ -58,7 +59,7 @@ fn main() {
                 exit(1);
             });
             let decrypted = cell
-                .decrypt(&decoded_message, &decoded_token)
+                .decrypt_with_context(&context, &decoded_message, &decoded_token)
                 .unwrap_or_else(|error| {
                     eprintln!("failed to decrypt message: {}", error);
                     exit(1);
