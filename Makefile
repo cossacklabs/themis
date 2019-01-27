@@ -324,8 +324,14 @@ err: ; $(ERROR)
 
 clean: CMD = rm -rf $(BIN_PATH)
 
-clean: nist_rng_test_suite_clean
+clean: nist_rng_test_suite_clean clean_rust
 	@$(BUILD_CMD)
+
+clean_rust:
+ifdef RUST_VERSION
+	@cargo clean
+	@rm -f tools/rust/*.rust
+endif
 
 make_install_dirs: CMD = mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter $(PREFIX)/lib $(PREFIX)/lib/pkgconfig
 
