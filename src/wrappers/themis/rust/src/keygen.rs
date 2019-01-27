@@ -38,8 +38,8 @@
 //!
 //! let secure = SecureMessage::new(key_pair);
 //!
-//! let encrypted = secure.wrap(b"message")?;
-//! let decrypted = secure.unwrap(&encrypted)?;
+//! let encrypted = secure.encrypt(b"message")?;
+//! let decrypted = secure.decrypt(&encrypted)?;
 //! assert_eq!(decrypted, b"message");
 //! # Ok(())
 //! # }

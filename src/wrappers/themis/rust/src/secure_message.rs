@@ -53,8 +53,8 @@
 //!
 //! let secure = SecureMessage::new(key_pair);
 //!
-//! let encrypted = secure.wrap(b"message")?;
-//! let decrypted = secure.unwrap(&encrypted)?;
+//! let encrypted = secure.encrypt(b"message")?;
+//! let decrypted = secure.decrypt(&encrypted)?;
 //! assert_eq!(decrypted, b"message");
 //! # Ok(())
 //! # }
@@ -89,13 +89,13 @@ use crate::utils::into_raw_parts;
 /// // Generate and share this key pair between peers.
 /// let key_pair = gen_ec_key_pair();
 ///
-/// // Alice uses her own Secure Message instance to wrap (encrypt) messages.
+/// // Alice uses her own Secure Message instance to encrypt messages.
 /// let secure_a = SecureMessage::new(key_pair.clone());
-/// let encrypted = secure_a.wrap(b"message")?;
+/// let encrypted = secure_a.encrypt(b"message")?;
 ///
-/// // Bob uses his Secure Message instance to unwrap (decrypt) received messages.
+/// // Bob uses his Secure Message instance to decrypt received messages.
 /// let secure_b = SecureMessage::new(key_pair.clone());
-/// let decrypted = secure_b.unwrap(&encrypted)?;
+/// let decrypted = secure_b.decrypt(&encrypted)?;
 ///
 /// assert_eq!(decrypted, b"message");
 /// # Ok(())
@@ -110,13 +110,13 @@ impl SecureMessage {
     /// Makes a new Secure Message using given key pair.
     ///
     /// Both ECDSA and RSA key pairs are supported.
-    pub fn new<K: Into<KeyPair>>(key_pair: K) -> Self {
+    pub fn new(key_pair: impl Into<KeyPair>) -> Self {
         Self {
             key_pair: key_pair.into(),
         }
     }
 
-    /// Wraps the provided message into a secure encrypted message.
+    /// Encrypts the provided message into a secure container.
     ///
     /// # Examples
     ///
@@ -130,14 +130,14 @@ impl SecureMessage {
     ///
     /// let secure = SecureMessage::new(gen_ec_key_pair());
     ///
-    /// secure.wrap(b"byte string")?;
-    /// secure.wrap(&[1, 2, 3, 4, 5])?;
-    /// secure.wrap(vec![6, 7, 8, 9])?;
-    /// secure.wrap(format!("owned string"))?;
+    /// secure.encrypt(b"byte string")?;
+    /// secure.encrypt(&[1, 2, 3, 4, 5])?;
+    /// secure.encrypt(vec![6, 7, 8, 9])?;
+    /// secure.encrypt(format!("owned string"))?;
     /// # Ok(())
     /// # }
     /// ```
-    pub fn wrap<M: AsRef<[u8]>>(&self, message: M) -> Result<Vec<u8>> {
+    pub fn encrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         wrap(
             self.key_pair.secret_key_bytes(),
             self.key_pair.public_key_bytes(),
@@ -145,12 +145,12 @@ impl SecureMessage {
         )
     }
 
-    /// Unwraps an encrypted message back into its original form.
-    pub fn unwrap<M: AsRef<[u8]>>(&self, wrapped: M) -> Result<Vec<u8>> {
+    /// Decrypts an encrypted message back into its original form.
+    pub fn decrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         unwrap(
             self.key_pair.secret_key_bytes(),
             self.key_pair.public_key_bytes(),
-            wrapped.as_ref(),
+            message.as_ref(),
         )
     }
 }
@@ -215,7 +215,7 @@ impl SecureSign {
     /// Makes a new Secure Message using given secret key.
     ///
     /// Both ECDSA and RSA keys are supported.
-    pub fn new<S: Into<SecretKey>>(secret_key: S) -> Self {
+    pub fn new(secret_key: impl Into<SecretKey>) -> Self {
         Self {
             secret_key: secret_key.into(),
         }
@@ -242,7 +242,7 @@ impl SecureSign {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn sign<M: AsRef<[u8]>>(&self, message: M) -> Result<Vec<u8>> {
+    pub fn sign(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         wrap(self.secret_key.as_ref(), &[], message.as_ref())
     }
 }
@@ -323,14 +323,14 @@ impl SecureVerify {
     /// Makes a new Secure Message using given public key.
     ///
     /// Both ECDSA and RSA keys are supported.
-    pub fn new<P: Into<PublicKey>>(public_key: P) -> Self {
+    pub fn new(public_key: impl Into<PublicKey>) -> Self {
         Self {
             public_key: public_key.into(),
         }
     }
 
     /// Verifies the signature and returns the original message.
-    pub fn verify<M: AsRef<[u8]>>(&self, message: M) -> Result<Vec<u8>> {
+    pub fn verify(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         unwrap(&[], self.public_key.as_ref(), message.as_ref())
     }
 }
