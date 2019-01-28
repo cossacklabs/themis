@@ -70,7 +70,7 @@ mod context_imprint {
 
         let plaintext = b"example plaintext";
         let mut ciphertext = cell.encrypt(&plaintext).unwrap();
-        ciphertext[10] = 42;
+        ciphertext[10] = !ciphertext[10];
         let recovered = cell.decrypt(&ciphertext).unwrap();
 
         assert_ne!(recovered, plaintext);
@@ -121,7 +121,7 @@ mod seal {
 
         let plaintext = b"example plaintext";
         let mut ciphertext = seal.encrypt(&plaintext).unwrap();
-        ciphertext[10] = 42;
+        ciphertext[10] = !ciphertext[10];
         let error = seal.decrypt(&ciphertext).unwrap_err();
 
         assert_eq!(error.kind(), ErrorKind::InvalidParameter);
@@ -174,7 +174,7 @@ mod token_protect {
 
         let plaintext = b"example plaintext";
         let (mut ciphertext, token) = cell.encrypt(&plaintext).unwrap();
-        ciphertext[10] = 42;
+        ciphertext[10] = !ciphertext[10];
         let error = cell.decrypt(&ciphertext, &token).unwrap_err();
 
         assert_eq!(error.kind(), ErrorKind::Fail);
@@ -186,7 +186,7 @@ mod token_protect {
 
         let plaintext = b"example plaintext";
         let (ciphertext, mut token) = cell.encrypt(&plaintext).unwrap();
-        token[10] = 42;
+        token[10] = !token[10];
         let error = cell.decrypt(&ciphertext, &token).unwrap_err();
 
         assert_eq!(error.kind(), ErrorKind::InvalidParameter);

@@ -133,8 +133,8 @@ impl Build {
         let themis_build_dir = out_dir.join("build");
         let themis_install_dir = out_dir.join("install");
 
-        // Themis uses in-source build. Cargo requires build scripts to never write anything
-        // outside of OUT_DIR so we just have to copy the source code there.
+        // Cargo requires build scripts to never write anything outside of OUT_DIR.
+        // Take care to honor this requirement. It is checked by tools during builds.
 
         if !out_dir.exists() {
             fs::create_dir(&out_dir).expect("mkdir themis");
@@ -146,14 +146,15 @@ impl Build {
             fs::remove_dir_all(&themis_install_dir).expect("rm -r themis/install");
         }
 
-        // TODO: fix a bug in copy_dir which ignores directory source if it is a symlink
-        copy_dir::copy_dir(&themis_src_dir, &themis_build_dir).expect("cp -r src build");
+        fs::create_dir(&themis_build_dir).expect("mkdir themis/build");
         fs::create_dir(&themis_install_dir).expect("mkdir themis/install");
 
         // Now we can build Themis and install it properly into OUT_DIR.
         let mut themis_build_and_install = make_cmd::make();
         themis_build_and_install
-            .current_dir(&themis_build_dir)
+            .current_dir(&themis_src_dir)
+            .stdout(Stdio::null())
+            .env("BUILD_PATH", &themis_build_dir)
             .env("PREFIX", &themis_install_dir)
             .arg("install");
 

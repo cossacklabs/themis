@@ -61,7 +61,7 @@ fn corrupted_data() {
     // could use some audit because it does not really handle corrupted messages well.
     let plaintext = b"test message please ignore";
     let mut wrapped = secure.wrap(&plaintext).expect("encryption");
-    wrapped[5] = 42;
+    wrapped[5] = !wrapped[5];
     let error = secure.unwrap(&wrapped).expect_err("decryption error");
 
     assert_eq!(error.kind(), ErrorKind::InvalidParameter);

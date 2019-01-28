@@ -12,7 +12,6 @@ categories = ["development-tools::build-utils"]
 license = "Apache-2.0"
 
 [dependencies]
-copy_dir = "0.1.2"
 make-cmd = "0.1.0"
 
 [dev-dependencies]

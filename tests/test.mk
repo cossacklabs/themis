@@ -184,4 +184,14 @@ ifdef GO_VERSION
 	@go test -v $(GOTHEMIS_IMPORT)/...
 endif
 
-test_all: test prepare_tests_all test_cpp test_php test_python test_ruby test_js test_go
+test_rust:
+ifdef RUST_VERSION
+	@echo "------------------------------------------------------------"
+	@echo "Running rust-themis tests."
+	@echo "In case of errors please see https://github.com/cossacklabs/themis/wiki/Rust-HowTo"
+	@echo "------------------------------------------------------------"
+	$(TEST_SRC_PATH)/rust/run_tests.sh
+	@echo "------------------------------------------------------------"
+endif
+
+test_all: test prepare_tests_all test_cpp test_php test_python test_ruby test_js test_go test_rust

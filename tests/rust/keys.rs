@@ -84,27 +84,3 @@ fn join_mismatching_keys() {
     let error = KeyPair::try_join(secret_ec, public_rsa).expect_err("kind mismatch");
     assert_eq!(error.kind(), ErrorKind::InvalidParameter);
 }
-
-#[test]
-fn zero_memory_on_drop() {
-    let (secret, public) = gen_ec_key_pair().split();
-
-    let secret_bytes = slice_alias(secret.as_ref());
-    let public_bytes = slice_alias(public.as_ref());
-
-    assert!(!secret_bytes.iter().all(|&byte| byte == 0));
-    assert!(!public_bytes.iter().all(|&byte| byte == 0));
-
-    drop(secret);
-    drop(public);
-
-    // Technically, the following is *not* safe and is undefined behavior (the slices contain
-    // dangling pointers that cannot be dereferenced now), but it's gonna be alright, darling.
-
-    assert!(secret_bytes.iter().all(|&byte| byte == 0));
-    assert!(public_bytes.iter().all(|&byte| byte == 0));
-}
-
-fn slice_alias<'a, 'b, T>(slice: &'a [T]) -> &'b [T] {
-    unsafe { std::slice::from_raw_parts(slice.as_ptr(), slice.len()) }
-}
