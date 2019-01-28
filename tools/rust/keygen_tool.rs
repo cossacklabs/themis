@@ -36,11 +36,11 @@ fn main() {
     let (secret_key, public_key) = gen_ec_key_pair().split();
 
     match write_file(&secret_key, &secret_path, 0o400) {
-        Ok(_) => {},
+        Ok(_) => {}
         Err(e) => eprintln!("failed to write secret key to {}: {}", secret_path, e),
     }
     match write_file(&public_key, &public_path, 0o666) {
-        Ok(_) => {},
+        Ok(_) => {}
         Err(e) => eprintln!("failed to write public key to {}: {}", public_path, e),
     }
 }
