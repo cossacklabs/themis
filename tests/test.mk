@@ -58,6 +58,14 @@ themispp_test: $(THEMISPP_TEST_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
+rustthemis_integration_tools:
+	@echo -n "make integration tools for rust-themis "
+	@mkdir -p $(TEST_BIN_PATH)/rust
+	@cargo install --quiet --examples --path . --force --root $(TEST_BIN_PATH)/rust
+	@for tool in $(notdir $(foreach tool,$(wildcard tools/rust/*.rs),$(basename $(tool)))); \
+	do cp $(TEST_BIN_PATH)/rust/bin/$$tool tools/rust/$$tool.rust; done
+	@$(PRINT_OK_)
+
 prepare_tests_basic: soter_test themis_test
 
 prepare_tests_all: err prepare_tests_basic themispp_test

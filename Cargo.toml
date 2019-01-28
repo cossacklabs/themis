@@ -30,6 +30,7 @@ bindings = { package = "libthemis-sys", path = "src/wrappers/themis/rust/libthem
 zeroize = "0.5.2"
 
 [dev-dependencies]
+base64 = "0.10.0"
 byteorder = "1.2.7"
 clap = "2.32"
 log = "0.4.6"
@@ -62,6 +63,26 @@ path = "docs/examples/rust/secure_message_client_verify.rs"
 [[example]]
 name = "secure_message_server"
 path = "docs/examples/rust/secure_message_server.rs"
+
+[[example]]
+name = "keygen_tool"
+path = "tools/rust/keygen_tool.rs"
+
+[[example]]
+name = "scell_context_string_echo"
+path = "tools/rust/scell_context_string_echo.rs"
+
+[[example]]
+name = "scell_seal_string_echo"
+path = "tools/rust/scell_seal_string_echo.rs"
+
+[[example]]
+name = "scell_token_string_echo"
+path = "tools/rust/scell_token_string_echo.rs"
+
+[[example]]
+name = "smessage_encryption"
+path = "tools/rust/smessage_encryption.rs"
 
 [[test]]
 name = "keys"
