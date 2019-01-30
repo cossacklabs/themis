@@ -22,8 +22,8 @@ mod context_imprint {
         let cell = SecureCell::with_key(b"deep secret").context_imprint();
 
         let plaintext = b"example plaintext";
-        let ciphertext = cell.encrypt_with_context(b"123", &plaintext).unwrap();
-        let recovered = cell.decrypt_with_context(b"123", &ciphertext).unwrap();
+        let ciphertext = cell.encrypt_with_context(&plaintext, b"123").unwrap();
+        let recovered = cell.decrypt_with_context(&ciphertext, b"123").unwrap();
 
         assert_eq!(recovered, plaintext);
 
@@ -35,7 +35,7 @@ mod context_imprint {
         let cell = SecureCell::with_key(b"deep secret").context_imprint();
 
         let plaintext = b"example plaintext";
-        let error = cell.encrypt_with_context(b"", &plaintext).unwrap_err();
+        let error = cell.encrypt_with_context(&plaintext, b"").unwrap_err();
 
         assert_eq!(error.kind(), ErrorKind::InvalidParameter);
     }
@@ -46,8 +46,8 @@ mod context_imprint {
         let cell2 = SecureCell::with_key(b"DEEP SECRET").context_imprint();
 
         let plaintext = b"example plaintext";
-        let ciphertext = cell1.encrypt_with_context(b"123", &plaintext).unwrap();
-        let recovered = cell2.decrypt_with_context(b"123", &ciphertext).unwrap();
+        let ciphertext = cell1.encrypt_with_context(&plaintext, b"123").unwrap();
+        let recovered = cell2.decrypt_with_context(&ciphertext, b"123").unwrap();
 
         assert_ne!(recovered, plaintext);
     }
@@ -57,8 +57,8 @@ mod context_imprint {
         let cell = SecureCell::with_key(b"deep secret").context_imprint();
 
         let plaintext = b"example plaintext";
-        let ciphertext = cell.encrypt_with_context(b"123", &plaintext).unwrap();
-        let recovered = cell.decrypt_with_context(b"456", &ciphertext).unwrap();
+        let ciphertext = cell.encrypt_with_context(&plaintext, b"123").unwrap();
+        let recovered = cell.decrypt_with_context(&ciphertext, b"456").unwrap();
 
         assert_ne!(recovered, plaintext);
     }
@@ -68,9 +68,9 @@ mod context_imprint {
         let cell = SecureCell::with_key(b"deep secret").context_imprint();
 
         let plaintext = b"example plaintext";
-        let mut ciphertext = cell.encrypt_with_context(b"123", &plaintext).unwrap();
+        let mut ciphertext = cell.encrypt_with_context(&plaintext, b"123").unwrap();
         ciphertext[10] = !ciphertext[10];
-        let recovered = cell.decrypt_with_context(b"123", &ciphertext).unwrap();
+        let recovered = cell.decrypt_with_context(&ciphertext, b"123").unwrap();
 
         assert_ne!(recovered, plaintext);
     }
@@ -107,8 +107,8 @@ mod seal {
         let seal = SecureCell::with_key(b"deep secret").seal();
 
         let plaintext = b"example plaintext";
-        let ciphertext = seal.encrypt_with_context(b"ctx1", &plaintext).unwrap();
-        let error = seal.decrypt_with_context(b"ctx2", &ciphertext).unwrap_err();
+        let ciphertext = seal.encrypt_with_context(&plaintext, b"ctx1").unwrap();
+        let error = seal.decrypt_with_context(&ciphertext, b"ctx2").unwrap_err();
 
         assert_eq!(error.kind(), ErrorKind::Fail);
     }
@@ -159,9 +159,9 @@ mod token_protect {
         let cell = SecureCell::with_key(b"deep secret").token_protect();
 
         let plaintext = b"example plaintext";
-        let (ciphertext, token) = cell.encrypt_with_context(b"123", plaintext).unwrap();
+        let (ciphertext, token) = cell.encrypt_with_context(plaintext, b"123").unwrap();
         let error = cell
-            .decrypt_with_context(b"456", &ciphertext, &token)
+            .decrypt_with_context(&ciphertext, &token, b"456")
             .unwrap_err();
 
         assert_eq!(error.kind(), ErrorKind::Fail);

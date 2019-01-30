@@ -42,7 +42,7 @@ fn main() {
     match mode {
         "enc" => {
             let (encrypted, token) = cell
-                .encrypt_with_context(&context, &message)
+                .encrypt_with_context(&message, &context)
                 .unwrap_or_else(|error| {
                     eprintln!("failed to encrypt message: {}", error);
                     exit(1);
@@ -59,7 +59,7 @@ fn main() {
                 exit(1);
             });
             let decrypted = cell
-                .decrypt_with_context(&context, &decoded_message, &decoded_token)
+                .decrypt_with_context(&decoded_message, &decoded_token, &context)
                 .unwrap_or_else(|error| {
                     eprintln!("failed to decrypt message: {}", error);
                     exit(1);
