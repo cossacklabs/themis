@@ -14,6 +14,12 @@
 
 use themis::{secure_cell::SecureCell, ErrorKind};
 
+#[test]
+#[should_panic(expected = "empty master key")]
+fn empty_master_key() {
+    SecureCell::with_key(&[]);
+}
+
 mod context_imprint {
     use super::*;
 
@@ -28,16 +34,6 @@ mod context_imprint {
         assert_eq!(recovered, plaintext);
 
         assert_eq!(plaintext.len(), ciphertext.len());
-    }
-
-    #[test]
-    fn empty_context() {
-        let cell = SecureCell::with_key(b"deep secret").context_imprint();
-
-        let plaintext = b"example plaintext";
-        let error = cell.encrypt_with_context(&plaintext, b"").unwrap_err();
-
-        assert_eq!(error.kind(), ErrorKind::InvalidParameter);
     }
 
     #[test]
@@ -61,6 +57,38 @@ mod context_imprint {
         let recovered = cell.decrypt_with_context(&ciphertext, b"456").unwrap();
 
         assert_ne!(recovered, plaintext);
+    }
+
+    #[test]
+    #[should_panic(expected = "empty message")]
+    fn empty_message_encrypt() {
+        let cell = SecureCell::with_key(b"deep secret").context_imprint();
+
+        let _ = cell.encrypt_with_context(b"", b"non-empty context");
+    }
+
+    #[test]
+    #[should_panic(expected = "empty message")]
+    fn empty_message_decrypt() {
+        let cell = SecureCell::with_key(b"deep secret").context_imprint();
+
+        let _ = cell.decrypt_with_context(b"", b"non-empty context");
+    }
+
+    #[test]
+    #[should_panic(expected = "empty user context")]
+    fn empty_context_encrypt() {
+        let cell = SecureCell::with_key(b"deep secret").context_imprint();
+
+        let _ = cell.encrypt_with_context(b"example plaintext", b"");
+    }
+
+    #[test]
+    #[should_panic(expected = "empty user context")]
+    fn empty_context_decrypt() {
+        let cell = SecureCell::with_key(b"deep secret").context_imprint();
+
+        let _ = cell.decrypt_with_context(b"non-empty message", b"");
     }
 
     #[test]
@@ -111,6 +139,22 @@ mod seal {
         let error = seal.decrypt_with_context(&ciphertext, b"ctx2").unwrap_err();
 
         assert_eq!(error.kind(), ErrorKind::Fail);
+    }
+
+    #[test]
+    #[should_panic(expected = "empty message")]
+    fn empty_message_encrypt() {
+        let seal = SecureCell::with_key(b"deep secret").seal();
+
+        let _ = seal.encrypt(b"");
+    }
+
+    #[test]
+    #[should_panic(expected = "empty message")]
+    fn empty_message_decrypt() {
+        let seal = SecureCell::with_key(b"deep secret").seal();
+
+        let _ = seal.decrypt(&[]);
     }
 
     #[test]
@@ -165,6 +209,30 @@ mod token_protect {
             .unwrap_err();
 
         assert_eq!(error.kind(), ErrorKind::Fail);
+    }
+
+    #[test]
+    #[should_panic(expected = "empty message")]
+    fn empty_message_encrypt() {
+        let seal = SecureCell::with_key(b"deep secret").token_protect();
+
+        let _ = seal.encrypt(b"");
+    }
+
+    #[test]
+    #[should_panic(expected = "empty message")]
+    fn empty_message_decrypt() {
+        let seal = SecureCell::with_key(b"deep secret").token_protect();
+
+        let _ = seal.decrypt(&[], b"non-empty token");
+    }
+
+    #[test]
+    #[should_panic(expected = "empty token")]
+    fn empty_token_decrypt() {
+        let seal = SecureCell::with_key(b"deep secret").token_protect();
+
+        let _ = seal.decrypt(b"non-empty message", &[]);
     }
 
     #[test]

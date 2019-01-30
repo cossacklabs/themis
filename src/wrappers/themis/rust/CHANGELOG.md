@@ -14,7 +14,11 @@ The version currently under development.
   `encrypt` and `decrypt` respectively. Their parameters have been
   changed to use _impl Trait_ instead of explicit generics. ([#358])
 
+- `SecureCell` methods panic instead of returning errors when called with
+  forbidden empty key, message, token, or user context parameters. ([#363])
+
 [#358]: https://github.com/cossacklabs/themis/pull/358
+[#363]: https://github.com/cossacklabs/themis/pull/363
 
 Version 0.0.3 — 2019-01-17
 ==========================

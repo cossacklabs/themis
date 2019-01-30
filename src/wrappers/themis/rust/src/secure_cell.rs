@@ -107,6 +107,10 @@ pub struct SecureCell {
 impl SecureCell {
     /// Constructs a new cell secured by a master key.
     ///
+    /// # Panics
+    ///
+    /// Panics if the provided master key is empty.
+    ///
     /// # Examples
     ///
     /// A master key may be provided as anything convertible to a byte slice: a byte slice or an
@@ -126,6 +130,8 @@ impl SecureCell {
     ///
     /// [`keygen`]: ../keygen/index.html
     pub fn with_key(master_key: impl AsRef<[u8]>) -> Self {
+        assert!(!master_key.as_ref().is_empty(), "empty master key");
+
         Self {
             master_key: KeyBytes::copy_slice(master_key.as_ref()),
         }
@@ -171,6 +177,10 @@ pub struct SecureCellSeal(SecureCell);
 impl SecureCellSeal {
     /// Encrypts and puts the provided message into a sealed cell.
     ///
+    /// # Panics
+    ///
+    /// Panics if the message is empty.
+    ///
     /// # Examples
     ///
     /// You can use anything convertible into a byte slice as a message: a byte slice or an array,
@@ -189,21 +199,15 @@ impl SecureCellSeal {
     /// # Ok(())
     /// # }
     /// ```
-    ///
-    /// However, the message must not be empty:
-    ///
-    /// ```
-    /// # use themis::secure_cell::SecureCell;
-    /// #
-    /// # let cell = SecureCell::with_key(b"password").seal();
-    /// #
-    /// assert!(cell.encrypt(&[]).is_err());
-    /// ```
     pub fn encrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         self.encrypt_with_context(message, &[])
     }
 
     /// Encrypts and puts the provided message together with the context into a sealed cell.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the message is empty.
     ///
     /// # Examples
     ///
@@ -223,15 +227,19 @@ impl SecureCellSeal {
     /// ```
     ///
     /// The context may be empty (in which case this call is equivalent to [`encrypt`]).
-    /// However, the message must not be empty.
     ///
     /// ```
+    /// # fn main() -> Result<(), themis::Error> {
     /// # use themis::secure_cell::SecureCell;
     /// #
     /// # let cell = SecureCell::with_key(b"password").seal();
     /// #
-    /// assert!(cell.encrypt_with_context(b"message", &[]).is_ok());
-    /// assert!(cell.encrypt_with_context(&[], b"context").is_err());
+    /// let encrypted = cell.encrypt_with_context(b"message", &[])?;
+    /// let decrypted = cell.decrypt(&encrypted)?;
+    ///
+    /// assert_eq!(decrypted, b"message");
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// [`encrypt`]: struct.SecureCellSeal.html#method.encrypt
@@ -248,6 +256,10 @@ impl SecureCellSeal {
     }
 
     /// Extracts the original message from a sealed cell.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the encrypted message is empty.
     ///
     /// # Examples
     ///
@@ -299,6 +311,10 @@ impl SecureCellSeal {
     }
 
     /// Extracts the original message from a sealed cell given the context.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the encrypted message is empty.
     ///
     /// # Examples
     ///
@@ -361,6 +377,9 @@ impl SecureCellSeal {
 
 /// Encrypts `message` with `master_key` including optional `user_context` for verification.
 fn encrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Result<Vec<u8>> {
+    assert!(!master_key.is_empty(), "empty master key");
+    assert!(!message.is_empty(), "empty message");
+
     let (master_key_ptr, master_key_len) = into_raw_parts(master_key);
     let (user_context_ptr, user_context_len) = into_raw_parts(user_context);
     let (message_ptr, message_len) = into_raw_parts(message);
@@ -411,6 +430,9 @@ fn encrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Resul
 
 /// Decrypts `message` with `master_key` and verifies authenticity of `user_context`.
 fn decrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Result<Vec<u8>> {
+    assert!(!master_key.is_empty(), "empty master key");
+    assert!(!message.is_empty(), "empty message");
+
     let (master_key_ptr, master_key_len) = into_raw_parts(master_key);
     let (user_context_ptr, user_context_len) = into_raw_parts(user_context);
     let (message_ptr, message_len) = into_raw_parts(message);
@@ -488,6 +510,10 @@ impl SecureCellTokenProtect {
     /// The results can be stored or transmitted separately. You will need to provide both later
     /// for successful decryption.
     ///
+    /// # Panics
+    ///
+    /// Panics if the message is empty.
+    ///
     /// # Examples
     ///
     /// You can use anything convertible into a byte slice as a message: a byte slice or an array,
@@ -506,16 +532,6 @@ impl SecureCellTokenProtect {
     /// # Ok(())
     /// # }
     /// ```
-    ///
-    /// However, the message must not be empty:
-    ///
-    /// ```
-    /// # use themis::secure_cell::SecureCell;
-    /// #
-    /// # let cell = SecureCell::with_key(b"password").token_protect();
-    /// #
-    /// assert!(cell.encrypt(&[]).is_err());
-    /// ```
     pub fn encrypt(&self, message: impl AsRef<[u8]>) -> Result<(Vec<u8>, Vec<u8>)> {
         self.encrypt_with_context(message, &[])
     }
@@ -525,6 +541,10 @@ impl SecureCellTokenProtect {
     ///
     /// The results can be stored or transmitted separately. You will need to provide all three
     /// parts later for successful decryption.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the message is empty.
     ///
     /// # Examples
     ///
@@ -544,15 +564,19 @@ impl SecureCellTokenProtect {
     /// ```
     ///
     /// The context may be empty (in which case this call is equivalent to [`encrypt`]).
-    /// However, the message must not be empty.
     ///
     /// ```
+    /// # fn main() -> Result<(), themis::Error> {
     /// # use themis::secure_cell::SecureCell;
     /// #
     /// # let cell = SecureCell::with_key(b"password").token_protect();
     /// #
-    /// assert!(cell.encrypt_with_context(b"message", &[]).is_ok());
-    /// assert!(cell.encrypt_with_context(&[], b"context").is_err());
+    /// let (encrypted, token) = cell.encrypt_with_context(b"message", &[])?;
+    /// let decrypted = cell.decrypt(&encrypted, &token)?;
+    ///
+    /// assert_eq!(decrypted, b"message");
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// [`encrypt`]: struct.SecureCellTokenProtect.html#method.encrypt
@@ -574,6 +598,10 @@ impl SecureCellTokenProtect {
     /// obtained from [`encrypt`]. Decryption will fail if any of them is corrupted or invalid.
     ///
     /// [`encrypt`]: struct.SecureCellTokenProtect.html#method.encrypt
+    ///
+    /// # Panics
+    ///
+    /// Panics if the encrypted message or the token is empty.
     ///
     /// # Examples
     ///
@@ -651,6 +679,10 @@ impl SecureCellTokenProtect {
     /// will fail if any of them is corrupted or invalid.
     ///
     /// [`encrypt_with_context`]: struct.SecureCellTokenProtect.html#method.encrypt_with_context
+    ///
+    /// # Panics
+    ///
+    /// Panics if the encrypted message or the token is empty.
     ///
     /// # Examples
     ///
@@ -731,6 +763,9 @@ fn encrypt_token_protect(
     user_context: &[u8],
     message: &[u8],
 ) -> Result<(Vec<u8>, Vec<u8>)> {
+    assert!(!master_key.is_empty(), "empty master key");
+    assert!(!message.is_empty(), "empty message");
+
     let (master_key_ptr, master_key_len) = into_raw_parts(master_key);
     let (user_context_ptr, user_context_len) = into_raw_parts(user_context);
     let (message_ptr, message_len) = into_raw_parts(message);
@@ -795,6 +830,10 @@ fn decrypt_token_protect(
     message: &[u8],
     token: &[u8],
 ) -> Result<Vec<u8>> {
+    assert!(!master_key.is_empty(), "empty master key");
+    assert!(!message.is_empty(), "empty message");
+    assert!(!token.is_empty(), "empty token");
+
     let (master_key_ptr, master_key_len) = into_raw_parts(master_key);
     let (user_context_ptr, user_context_len) = into_raw_parts(user_context);
     let (message_ptr, message_len) = into_raw_parts(message);
@@ -874,8 +913,6 @@ fn decrypt_token_protect(
 /// some other means in place to validate the output.
 pub struct SecureCellContextImprint(SecureCell);
 
-// TODO: maybe panic if a SecureCell with an empty context is switched into context imprint mode
-
 impl SecureCellContextImprint {
     /// Encrypts the provided message, combining it with provided user context, and returns
     /// the encrypted data.
@@ -883,6 +920,10 @@ impl SecureCellContextImprint {
     /// The resulting message has the same length as the input data and does not contain
     /// an authentication token. Secure Cell cannot ensure correctness of later decryption
     /// if the message gets corrupted or a different master key is used.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the message or the user context is empty.
     ///
     /// # Examples
     ///
@@ -899,18 +940,6 @@ impl SecureCellContextImprint {
     /// cell.encrypt_with_context(&[1, 2, 3, 4, 5], vec![6, 7, 8, 9, 10])?;
     /// # Ok(())
     /// # }
-    /// ```
-    ///
-    /// However, the message and context must not be empty:
-    ///
-    /// ```
-    /// # use themis::secure_cell::SecureCell;
-    /// #
-    /// # let cell = SecureCell::with_key(b"password").context_imprint();
-    /// #
-    /// assert!(cell.encrypt_with_context(b"message", b"context").is_ok());
-    /// assert!(cell.encrypt_with_context(b"",        b"context").is_err());
-    /// assert!(cell.encrypt_with_context(b"message",        b"").is_err());
     /// ```
     pub fn encrypt_with_context(
         &self,
@@ -929,6 +958,10 @@ impl SecureCellContextImprint {
     /// Note that in context imprint mode messages do not include any authentication token for
     /// integrity validation, thus the returned message might not be the original one even if
     /// it has been decrypted ‘successfully’.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the encrypted message or the user context is empty.
     ///
     /// # Examples
     ///
@@ -995,6 +1028,10 @@ impl SecureCellContextImprint {
 
 /// Encrypts `message` with `master_key` including required `context`.
 fn encrypt_context_imprint(master_key: &[u8], message: &[u8], context: &[u8]) -> Result<Vec<u8>> {
+    assert!(!master_key.is_empty(), "empty master key");
+    assert!(!message.is_empty(), "empty message");
+    assert!(!context.is_empty(), "empty user context");
+
     let (master_key_ptr, master_key_len) = into_raw_parts(master_key);
     let (message_ptr, message_len) = into_raw_parts(message);
     let (context_ptr, context_len) = into_raw_parts(context);
@@ -1045,6 +1082,10 @@ fn encrypt_context_imprint(master_key: &[u8], message: &[u8], context: &[u8]) ->
 
 /// Decrypts `message` with `master_key` and expected `context`, but do not verify data.
 fn decrypt_context_imprint(master_key: &[u8], message: &[u8], context: &[u8]) -> Result<Vec<u8>> {
+    assert!(!master_key.is_empty(), "empty master key");
+    assert!(!message.is_empty(), "empty message");
+    assert!(!context.is_empty(), "empty user context");
+
     let (master_key_ptr, master_key_len) = into_raw_parts(master_key);
     let (message_ptr, message_len) = into_raw_parts(message);
     let (context_ptr, context_len) = into_raw_parts(context);
