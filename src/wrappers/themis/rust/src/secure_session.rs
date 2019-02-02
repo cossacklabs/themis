@@ -29,7 +29,7 @@ use bindings::{
 };
 
 use crate::error::{themis_status_t, Error, ErrorKind, Result};
-use crate::keys::{EcdsaPublicKey, EcdsaSecretKey};
+use crate::keys::{EcdsaPrivateKey, EcdsaPublicKey};
 use crate::utils::into_raw_parts;
 
 /// Secure Session context.
@@ -135,7 +135,7 @@ where
     /// ID is an arbitrary byte sequence used to identify this peer.
     ///
     /// Secure Session supports only ECDSA keys.
-    pub fn with_transport<I>(id: I, key: &EcdsaSecretKey, transport: T) -> Result<Self>
+    pub fn with_transport<I>(id: I, key: &EcdsaPrivateKey, transport: T) -> Result<Self>
     where
         I: AsRef<[u8]>,
     {

@@ -24,20 +24,20 @@ fn main() {
     let matches = clap_app!(keygen_tool =>
         (version: env!("CARGO_PKG_VERSION"))
         (about: "Generating ECDSA key pairs.")
-        (@arg secret: "Secret key file (default: key)")
+        (@arg private: "Private key file (default: key)")
         (@arg public: "Public key file (default: key.pub)")
     )
     .get_matches();
-    let secret_path = matches.value_of("secret").unwrap_or("key").to_owned();
+    let private_path = matches.value_of("private").unwrap_or("key").to_owned();
     let public_path = matches
         .value_of("public")
-        .map_or_else(|| secret_path.clone() + ".pub", |s| s.to_owned());
+        .map_or_else(|| private_path.clone() + ".pub", |s| s.to_owned());
 
-    let (secret_key, public_key) = gen_ec_key_pair().split();
+    let (private_key, public_key) = gen_ec_key_pair().split();
 
-    match write_file(&secret_key, &secret_path, 0o400) {
+    match write_file(&private_key, &private_path, 0o400) {
         Ok(_) => {}
-        Err(e) => eprintln!("failed to write secret key to {}: {}", secret_path, e),
+        Err(e) => eprintln!("failed to write private key to {}: {}", private_path, e),
     }
     match write_file(&public_key, &public_path, 0o666) {
         Ok(_) => {}

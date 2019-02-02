@@ -30,8 +30,8 @@ FLAGS:
     -V, --version    Prints version information
 
 OPTIONS:
-        --public <path>    Public key file (default: public.key)
-        --secret <path>    Secret key file (default: secret.key)
+        --private <path>    Private key file (default: private.key)
+        --public <path>     Public key file (default: public.key)
 ```
 
 Note that the arguments are passed after `--`.

@@ -22,7 +22,7 @@ use std::sync::Arc;
 use std::thread;
 
 use clap::clap_app;
-use themis::keys::{KeyPair, PublicKey, SecretKey};
+use themis::keys::{KeyPair, PrivateKey, PublicKey};
 use themis::secure_message::SecureMessage;
 
 fn main() {
@@ -31,21 +31,21 @@ fn main() {
     let matches = clap_app!(secure_message_client_encrypt =>
         (version: env!("CARGO_PKG_VERSION"))
         (about: "Secure Message chat client (encrypt).")
-        (@arg secret: --secret [path] "Secret key file (default: secret.key)")
+        (@arg private: --private [path] "Private key file (default: private.key)")
         (@arg public: --public [path] "Public key file (default: public.key)")
         (@arg address: -c --connect [addr] "Relay server address (default: localhost:7573)")
     )
     .get_matches();
 
-    let secret_path = matches.value_of("secret").unwrap_or("secret.key");
+    let private_path = matches.value_of("private").unwrap_or("private.key");
     let public_path = matches.value_of("public").unwrap_or("public.key");
     let remote_addr = matches.value_of("address").unwrap_or("localhost:7573");
 
-    let secret_key = read_file(&secret_path).expect("read secret key");
-    let secret_key = SecretKey::try_from_slice(secret_key).expect("parse secret key");
+    let private_key = read_file(&private_path).expect("read private key");
+    let private_key = PrivateKey::try_from_slice(private_key).expect("parse private key");
     let public_key = read_file(&public_path).expect("read public key");
     let public_key = PublicKey::try_from_slice(public_key).expect("parse public key");
-    let key_pair = KeyPair::try_join(secret_key, public_key).expect("matching keys");
+    let key_pair = KeyPair::try_join(private_key, public_key).expect("matching keys");
 
     let socket = UdpSocket::bind("localhost:0").expect("client socket");
     socket.connect(&remote_addr).expect("client connection");

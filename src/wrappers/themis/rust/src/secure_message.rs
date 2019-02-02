@@ -67,7 +67,7 @@ use std::ptr;
 use bindings::{themis_secure_message_unwrap, themis_secure_message_wrap};
 
 use crate::error::{Error, ErrorKind, Result};
-use crate::keys::{KeyPair, PublicKey, SecretKey};
+use crate::keys::{KeyPair, PrivateKey, PublicKey};
 use crate::utils::into_raw_parts;
 
 /// Secure Message encryption and decryption.
@@ -79,7 +79,7 @@ use crate::utils::into_raw_parts;
 /// # Examples
 ///
 /// In order to use Secure Message in encrypting mode you will need to have both public and
-/// secret keys available on both peers. Typical usage of Secure Message looks like this:
+/// private keys available on both peers. Typical usage of Secure Message looks like this:
 ///
 /// ```
 /// # fn main() -> Result<(), themis::Error> {
@@ -139,7 +139,7 @@ impl SecureMessage {
     /// ```
     pub fn encrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         wrap(
-            self.key_pair.secret_key_bytes(),
+            self.key_pair.private_key_bytes(),
             self.key_pair.public_key_bytes(),
             message.as_ref(),
         )
@@ -148,7 +148,7 @@ impl SecureMessage {
     /// Decrypts an encrypted message back into its original form.
     pub fn decrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         unwrap(
-            self.key_pair.secret_key_bytes(),
+            self.key_pair.private_key_bytes(),
             self.key_pair.public_key_bytes(),
             message.as_ref(),
         )
@@ -167,7 +167,7 @@ impl SecureMessage {
 ///
 /// # Examples
 ///
-/// In order to sign messages you need only the secret part of a key pair. It does not need to be
+/// In order to sign messages you need only the private half of a key pair. It does not need to be
 /// shared with your peer for verification.
 ///
 /// ```
@@ -176,11 +176,11 @@ impl SecureMessage {
 /// use themis::secure_message::SecureVerify;
 /// use themis::keygen::gen_rsa_key_pair;
 ///
-/// // Alice generates a key pair and shares `public` part with Bob
-/// let (secret, public) = gen_rsa_key_pair().split();
+/// // Alice generates a key pair and shares `public` half with Bob
+/// let (private, public) = gen_rsa_key_pair().split();
 ///
-/// // Alice is able to sign her messages with her secret key.
-/// let secure_a = SecureSign::new(secret);
+/// // Alice is able to sign her messages with her private key.
+/// let secure_a = SecureSign::new(private);
 /// let signed_message = secure_a.sign(b"important message")?;
 ///
 /// // Bob is able to verify that signature on the message matches.
@@ -198,8 +198,8 @@ impl SecureMessage {
 /// # use themis::secure_message::SecureVerify;
 /// # use themis::keygen::gen_rsa_key_pair;
 /// #
-/// # let (secret, _) = gen_rsa_key_pair().split();
-/// # let secure = SecureSign::new(secret);
+/// # let (private, _) = gen_rsa_key_pair().split();
+/// # let secure = SecureSign::new(private);
 /// # let signed_message = secure.sign(b"important message").unwrap();
 /// #
 /// let message = b"important message";
@@ -208,16 +208,16 @@ impl SecureMessage {
 /// ```
 #[derive(Clone)]
 pub struct SecureSign {
-    secret_key: SecretKey,
+    private_key: PrivateKey,
 }
 
 impl SecureSign {
-    /// Makes a new Secure Message using given secret key.
+    /// Makes a new Secure Message using given private key.
     ///
     /// Both ECDSA and RSA keys are supported.
-    pub fn new(secret_key: impl Into<SecretKey>) -> Self {
+    pub fn new(private_key: impl Into<PrivateKey>) -> Self {
         Self {
-            secret_key: secret_key.into(),
+            private_key: private_key.into(),
         }
     }
 
@@ -243,7 +243,7 @@ impl SecureSign {
     /// # }
     /// ```
     pub fn sign(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
-        wrap(self.secret_key.as_ref(), &[], message.as_ref())
+        wrap(self.private_key.as_ref(), &[], message.as_ref())
     }
 }
 
@@ -265,8 +265,8 @@ impl SecureSign {
 ///
 /// # Examples
 ///
-/// In order to verify signed messages you need the public part of a key pair corresponding to the
-/// secret key used by your peer to sign messages.
+/// In order to verify signed messages you need the public half of a key pair corresponding to the
+/// private key used by your peer to sign messages.
 ///
 /// ```
 /// # fn main() -> Result<(), themis::Error> {
@@ -274,11 +274,11 @@ impl SecureSign {
 /// use themis::secure_message::SecureVerify;
 /// use themis::keygen::gen_ec_key_pair;
 ///
-/// // Alice generates a key pair and shares `public` part with Bob
-/// let (secret, public) = gen_ec_key_pair().split();
+/// // Alice generates a key pair and shares `public` half with Bob
+/// let (private, public) = gen_ec_key_pair().split();
 ///
-/// // Alice is able to sign her messages with her secret key.
-/// let secure_a = SecureSign::new(secret);
+/// // Alice is able to sign her messages with her private key.
+/// let secure_a = SecureSign::new(private);
 /// let signed_message = secure_a.sign(b"important message")?;
 ///
 /// // Bob is able to verify that signature on the message matches.
@@ -296,8 +296,8 @@ impl SecureSign {
 /// # use themis::secure_message::SecureVerify;
 /// # use themis::keygen::gen_ec_key_pair;
 /// #
-/// # let (secret, public) = gen_ec_key_pair().split();
-/// # let secure_a = SecureSign::new(secret);
+/// # let (private, public) = gen_ec_key_pair().split();
+/// # let secure_a = SecureSign::new(private);
 /// # let secure_b = SecureVerify::new(public);
 /// # let signed_message = secure_a.sign(b"important message").unwrap();
 /// #
@@ -336,8 +336,8 @@ impl SecureVerify {
 }
 
 /// Wrap a message into a secure message.
-fn wrap(secret_key: &[u8], public_key: &[u8], message: &[u8]) -> Result<Vec<u8>> {
-    let (secret_key_ptr, secret_key_len) = into_raw_parts(secret_key);
+fn wrap(private_key: &[u8], public_key: &[u8], message: &[u8]) -> Result<Vec<u8>> {
+    let (private_key_ptr, private_key_len) = into_raw_parts(private_key);
     let (public_key_ptr, public_key_len) = into_raw_parts(public_key);
     let (message_ptr, message_len) = into_raw_parts(message);
 
@@ -346,8 +346,8 @@ fn wrap(secret_key: &[u8], public_key: &[u8], message: &[u8]) -> Result<Vec<u8>>
 
     unsafe {
         let status = themis_secure_message_wrap(
-            secret_key_ptr,
-            secret_key_len,
+            private_key_ptr,
+            private_key_len,
             public_key_ptr,
             public_key_len,
             message_ptr,
@@ -365,8 +365,8 @@ fn wrap(secret_key: &[u8], public_key: &[u8], message: &[u8]) -> Result<Vec<u8>>
 
     unsafe {
         let status = themis_secure_message_wrap(
-            secret_key_ptr,
-            secret_key_len,
+            private_key_ptr,
+            private_key_len,
             public_key_ptr,
             public_key_len,
             message_ptr,
@@ -386,8 +386,8 @@ fn wrap(secret_key: &[u8], public_key: &[u8], message: &[u8]) -> Result<Vec<u8>>
 }
 
 /// Unwrap a secure message into a message.
-fn unwrap(secret_key: &[u8], public_key: &[u8], wrapped: &[u8]) -> Result<Vec<u8>> {
-    let (secret_key_ptr, secret_key_len) = into_raw_parts(secret_key);
+fn unwrap(private_key: &[u8], public_key: &[u8], wrapped: &[u8]) -> Result<Vec<u8>> {
+    let (private_key_ptr, private_key_len) = into_raw_parts(private_key);
     let (public_key_ptr, public_key_len) = into_raw_parts(public_key);
     let (wrapped_ptr, wrapped_len) = into_raw_parts(wrapped);
 
@@ -396,8 +396,8 @@ fn unwrap(secret_key: &[u8], public_key: &[u8], wrapped: &[u8]) -> Result<Vec<u8
 
     unsafe {
         let status = themis_secure_message_unwrap(
-            secret_key_ptr,
-            secret_key_len,
+            private_key_ptr,
+            private_key_len,
             public_key_ptr,
             public_key_len,
             wrapped_ptr,
@@ -415,8 +415,8 @@ fn unwrap(secret_key: &[u8], public_key: &[u8], wrapped: &[u8]) -> Result<Vec<u8
 
     unsafe {
         let status = themis_secure_message_unwrap(
-            secret_key_ptr,
-            secret_key_len,
+            private_key_ptr,
+            private_key_len,
             public_key_ptr,
             public_key_len,
             wrapped_ptr,

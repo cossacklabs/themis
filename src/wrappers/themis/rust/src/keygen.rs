@@ -18,8 +18,8 @@
 //! These keys are used by [`SecureMessage`] and [`SecureSession`] objects.
 //!
 //! This module contains functions for securely generating random key pairs. Note that managing
-//! resulting keys is _your_ responsibility. You have to make sure that secret keys are kept
-//! secret when distributed to your users, and that public keys that you use come from trusted
+//! resulting keys is _your_ responsibility. You have to make sure that private keys are kept
+//! private when distributed to your users, and that public keys that you use come from trusted
 //! sources. You can consult [our guidelines][key-management] for some advice on key management.
 //!
 //! [`SecureMessage`]: ../secure_message/index.html
@@ -51,7 +51,7 @@ use bindings::{themis_gen_ec_key_pair, themis_gen_rsa_key_pair};
 
 use crate::error::{Error, ErrorKind, Result};
 use crate::keys::{
-    EcdsaKeyPair, EcdsaPublicKey, EcdsaSecretKey, RsaKeyPair, RsaPublicKey, RsaSecretKey,
+    EcdsaKeyPair, EcdsaPrivateKey, EcdsaPublicKey, RsaKeyPair, RsaPrivateKey, RsaPublicKey,
 };
 
 /// Generates a pair of RSA keys.
@@ -69,17 +69,17 @@ pub fn gen_rsa_key_pair() -> RsaKeyPair {
     }
 }
 
-/// Generates a secret-public pair of RSA keys.
+/// Generates a private-public pair of RSA keys.
 fn try_gen_rsa_key_pair() -> Result<RsaKeyPair> {
-    let mut secret_key = Vec::new();
+    let mut private_key = Vec::new();
     let mut public_key = Vec::new();
-    let mut secret_key_len = 0;
+    let mut private_key_len = 0;
     let mut public_key_len = 0;
 
     unsafe {
         let status = themis_gen_rsa_key_pair(
             ptr::null_mut(),
-            &mut secret_key_len,
+            &mut private_key_len,
             ptr::null_mut(),
             &mut public_key_len,
         );
@@ -89,13 +89,13 @@ fn try_gen_rsa_key_pair() -> Result<RsaKeyPair> {
         }
     }
 
-    secret_key.reserve(secret_key_len);
-    public_key.reserve(secret_key_len);
+    private_key.reserve(private_key_len);
+    public_key.reserve(private_key_len);
 
     unsafe {
         let status = themis_gen_rsa_key_pair(
-            secret_key.as_mut_ptr(),
-            &mut secret_key_len,
+            private_key.as_mut_ptr(),
+            &mut private_key_len,
             public_key.as_mut_ptr(),
             &mut public_key_len,
         );
@@ -103,15 +103,15 @@ fn try_gen_rsa_key_pair() -> Result<RsaKeyPair> {
         if error.kind() != ErrorKind::Success {
             return Err(error);
         }
-        debug_assert!(secret_key_len <= secret_key.capacity());
+        debug_assert!(private_key_len <= private_key.capacity());
         debug_assert!(public_key_len <= public_key.capacity());
-        secret_key.set_len(secret_key_len as usize);
+        private_key.set_len(private_key_len as usize);
         public_key.set_len(public_key_len as usize);
     }
 
-    let secret_key = RsaSecretKey::from_vec(secret_key);
+    let private_key = RsaPrivateKey::from_vec(private_key);
     let public_key = RsaPublicKey::from_vec(public_key);
-    Ok(RsaKeyPair::join(secret_key, public_key))
+    Ok(RsaKeyPair::join(private_key, public_key))
 }
 
 /// Generates a pair of Elliptic Curve (ECDSA) keys.
@@ -129,17 +129,17 @@ pub fn gen_ec_key_pair() -> EcdsaKeyPair {
     }
 }
 
-/// Generates a secret-public pair of ECDSA keys.
+/// Generates a private-public pair of ECDSA keys.
 fn try_gen_ec_key_pair() -> Result<EcdsaKeyPair> {
-    let mut secret_key = Vec::new();
+    let mut private_key = Vec::new();
     let mut public_key = Vec::new();
-    let mut secret_key_len = 0;
+    let mut private_key_len = 0;
     let mut public_key_len = 0;
 
     unsafe {
         let status = themis_gen_ec_key_pair(
             ptr::null_mut(),
-            &mut secret_key_len,
+            &mut private_key_len,
             ptr::null_mut(),
             &mut public_key_len,
         );
@@ -149,13 +149,13 @@ fn try_gen_ec_key_pair() -> Result<EcdsaKeyPair> {
         }
     }
 
-    secret_key.reserve(secret_key_len);
-    public_key.reserve(secret_key_len);
+    private_key.reserve(private_key_len);
+    public_key.reserve(private_key_len);
 
     unsafe {
         let status = themis_gen_ec_key_pair(
-            secret_key.as_mut_ptr(),
-            &mut secret_key_len,
+            private_key.as_mut_ptr(),
+            &mut private_key_len,
             public_key.as_mut_ptr(),
             &mut public_key_len,
         );
@@ -163,13 +163,13 @@ fn try_gen_ec_key_pair() -> Result<EcdsaKeyPair> {
         if error.kind() != ErrorKind::Success {
             return Err(error);
         }
-        debug_assert!(secret_key_len <= secret_key.capacity());
+        debug_assert!(private_key_len <= private_key.capacity());
         debug_assert!(public_key_len <= public_key.capacity());
-        secret_key.set_len(secret_key_len as usize);
+        private_key.set_len(private_key_len as usize);
         public_key.set_len(public_key_len as usize);
     }
 
-    let secret_key = EcdsaSecretKey::from_vec(secret_key);
+    let private_key = EcdsaPrivateKey::from_vec(private_key);
     let public_key = EcdsaPublicKey::from_vec(public_key);
-    Ok(EcdsaKeyPair::join(secret_key, public_key))
+    Ok(EcdsaKeyPair::join(private_key, public_key))
 }
