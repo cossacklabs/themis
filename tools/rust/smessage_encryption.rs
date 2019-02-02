@@ -46,8 +46,7 @@ fn main() {
             let key_pair = KeyPair::try_join(secret_key, public_key).expect("matching keys");
             let encrypter = SecureMessage::new(key_pair);
 
-            // TODO: this reads strange, maybe we should use a better name (like, "encrypt")
-            let encrypted = encrypter.wrap(&message).unwrap_or_else(|error| {
+            let encrypted = encrypter.encrypt(&message).unwrap_or_else(|error| {
                 eprintln!("failed to encrypt message: {}", error);
                 exit(1);
             });
@@ -62,8 +61,7 @@ fn main() {
                 eprintln!("failed to decode message: {}", error);
                 exit(1);
             });
-            // TODO: this reads strange, maybe we should use a better name (like, "decrypt")
-            let decrypted = encrypter.unwrap(&decoded_message).unwrap_or_else(|error| {
+            let decrypted = encrypter.decrypt(&decoded_message).unwrap_or_else(|error| {
                 eprintln!("failed to decrypt message: {}", error);
                 exit(1);
             });

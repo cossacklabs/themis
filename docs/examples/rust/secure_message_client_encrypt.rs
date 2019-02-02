@@ -61,7 +61,9 @@ fn main() {
     let receive = thread::spawn(move || {
         let receive_message = || -> io::Result<()> {
             let buffer = recv(&receive_socket)?;
-            let message = receive_secure.unwrap(&buffer).map_err(themis_as_io_error)?;
+            let message = receive_secure
+                .decrypt(&buffer)
+                .map_err(themis_as_io_error)?;
             io::stdout().write_all(&message)?;
             Ok(())
         };
@@ -77,7 +79,7 @@ fn main() {
         let relay_message = || -> io::Result<()> {
             let mut buffer = String::new();
             io::stdin().read_line(&mut buffer)?;
-            let message = relay_secure.wrap(&buffer).map_err(themis_as_io_error)?;
+            let message = relay_secure.encrypt(&buffer).map_err(themis_as_io_error)?;
             relay_socket.send(&message)?;
             Ok(())
         };

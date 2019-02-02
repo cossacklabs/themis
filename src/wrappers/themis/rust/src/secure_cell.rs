@@ -73,7 +73,7 @@
 //! # fn main() -> Result<(), themis::Error> {
 //! use themis::secure_cell::SecureCell;
 //!
-//! let cell = SecureCell::with_key_and_context(b"seekryt", &[1, 42]).seal();
+//! let cell = SecureCell::with_key(b"seekryt").seal();
 //!
 //! let encrypted = cell.encrypt(b"source data")?;
 //! let decrypted = cell.decrypt(&encrypted)?;
@@ -98,11 +98,10 @@ use crate::utils::into_raw_parts;
 
 /// Basic Secure Cell.
 ///
-/// This is modeless, basic cell. First you create a `SecureCell` object with a key and an optional
-/// context then you select the desired operation mode and your Secure Cell is ready to go.
+/// This is modeless, basic cell. First you provide the master key to a new `SecureCell` object
+/// then you select the desired operation mode and your Secure Cell is ready to go.
 pub struct SecureCell {
     master_key: KeyBytes,
-    user_context: KeyBytes,
 }
 
 impl SecureCell {
@@ -125,59 +124,10 @@ impl SecureCell {
     /// SecureCell::with_key(format!("owned string"));
     /// ```
     ///
-    /// This method is equivalent to [`with_key_and_context`] called with an empty context (`&[]`):
-    ///
-    /// ```
-    /// # fn main() -> Result<(), themis::Error> {
-    /// use themis::secure_cell::SecureCell;
-    ///
-    /// let cell1 = SecureCell::with_key(b"key").seal();
-    /// let cell2 = SecureCell::with_key_and_context(b"key", &[]).seal();
-    ///
-    /// let encrypted = cell1.encrypt(b"some data")?;
-    /// let decrypted = cell2.decrypt(&encrypted)?;
-    /// assert_eq!(decrypted, b"some data");
-    /// # Ok(())
-    /// # }
-    /// ```
-    ///
     /// [`keygen`]: ../keygen/index.html
-    /// [`with_key_and_context`]: #method.with_key_and_context
-    pub fn with_key<K: AsRef<[u8]>>(master_key: K) -> Self {
+    pub fn with_key(master_key: impl AsRef<[u8]>) -> Self {
         Self {
             master_key: KeyBytes::copy_slice(master_key.as_ref()),
-            user_context: KeyBytes::empty(),
-        }
-    }
-
-    /// Constructs a new cell secured by a master key and arbitrary “context information”.
-    ///
-    /// User context will be included into encrypted data in a manner specific to the operation
-    /// mode. See [module-level documentation][secure_cell] for details. You will need to provide
-    /// this context again in order to extract the original data from the cell.
-    ///
-    /// # Examples
-    ///
-    /// As with the key, the context information can be anything convertible into a byte slice;
-    ///
-    /// ```
-    /// use themis::secure_cell::SecureCell;
-    ///
-    /// SecureCell::with_key_and_context(b"key", b"byte string");
-    /// SecureCell::with_key_and_context(b"key", &[1, 2, 3, 4, 5]);
-    /// SecureCell::with_key_and_context(b"key", vec![6, 7, 8, 9]);
-    /// SecureCell::with_key_and_context(b"key", format!("owned string"));
-    /// ```
-    ///
-    /// [secure_cell]: ../secure_cell/index.html
-    pub fn with_key_and_context<K, C>(master_key: K, user_context: C) -> Self
-    where
-        K: AsRef<[u8]>,
-        C: AsRef<[u8]>,
-    {
-        Self {
-            master_key: KeyBytes::copy_slice(master_key.as_ref()),
-            user_context: KeyBytes::copy_slice(user_context.as_ref()),
         }
     }
 
@@ -249,10 +199,50 @@ impl SecureCellSeal {
     /// #
     /// assert!(cell.encrypt(&[]).is_err());
     /// ```
-    pub fn encrypt<M: AsRef<[u8]>>(&self, message: M) -> Result<Vec<u8>> {
+    pub fn encrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
+        self.encrypt_with_context(message, &[])
+    }
+
+    /// Encrypts and puts the provided message together with the context into a sealed cell.
+    ///
+    /// # Examples
+    ///
+    /// You can use anything convertible into a byte slice as a message or a context: a byte slice
+    /// or an array, a `Vec<u8>`, or a `String`.
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// use themis::secure_cell::SecureCell;
+    ///
+    /// let cell = SecureCell::with_key(b"password").seal();
+    ///
+    /// cell.encrypt_with_context(b"byte string", format!("owned string"))?;
+    /// cell.encrypt_with_context(&[1, 2, 3, 4, 5], vec![6, 7, 8, 9, 10])?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// The context may be empty (in which case this call is equivalent to [`encrypt`]).
+    /// However, the message must not be empty.
+    ///
+    /// ```
+    /// # use themis::secure_cell::SecureCell;
+    /// #
+    /// # let cell = SecureCell::with_key(b"password").seal();
+    /// #
+    /// assert!(cell.encrypt_with_context(b"message", &[]).is_ok());
+    /// assert!(cell.encrypt_with_context(&[], b"context").is_err());
+    /// ```
+    ///
+    /// [`encrypt`]: struct.SecureCellSeal.html#method.encrypt
+    pub fn encrypt_with_context(
+        &self,
+        message: impl AsRef<[u8]>,
+        user_context: impl AsRef<[u8]>,
+    ) -> Result<Vec<u8>> {
         encrypt_seal(
             self.0.master_key.as_bytes(),
-            self.0.user_context.as_bytes(),
+            user_context.as_ref(),
             message.as_ref(),
         )
     }
@@ -261,7 +251,7 @@ impl SecureCellSeal {
     ///
     /// # Examples
     ///
-    /// If you know the master key and the context then getting back your data is easy:
+    /// If you know the master key then getting back your data is easy:
     ///
     /// ```
     /// # fn main() -> Result<(), themis::Error> {
@@ -276,7 +266,7 @@ impl SecureCellSeal {
     /// # }
     /// ```
     ///
-    /// However, if the key or the context are invalid then decryption fails:
+    /// However, if the key is invalid then decryption fails:
     ///
     /// ```
     /// # use themis::secure_cell::SecureCell;
@@ -285,10 +275,8 @@ impl SecureCellSeal {
     /// # let encrypted = cell.encrypt(b"byte string").unwrap();
     /// #
     /// let different_cell = SecureCell::with_key(b"qwerty123").seal();
-    /// let the_other_cell = SecureCell::with_key_and_context(b"password", b"context").seal();
     ///
     /// assert!(different_cell.decrypt(&encrypted).is_err());
-    /// assert!(the_other_cell.decrypt(&encrypted).is_err());
     /// ```
     ///
     /// Secure Cell in sealing mode checks data integrity and can see if the data was corrupted,
@@ -306,10 +294,66 @@ impl SecureCellSeal {
     ///
     /// assert!(cell.decrypt(&corrupted).is_err());
     /// ```
-    pub fn decrypt<M: AsRef<[u8]>>(&self, message: M) -> Result<Vec<u8>> {
+    pub fn decrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
+        self.decrypt_with_context(message, &[])
+    }
+
+    /// Extracts the original message from a sealed cell given the context.
+    ///
+    /// # Examples
+    ///
+    /// If you know the master key and the context then getting back your data is easy:
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// use themis::secure_cell::SecureCell;
+    ///
+    /// let cell = SecureCell::with_key(b"password").seal();
+    ///
+    /// let encrypted = cell.encrypt_with_context(b"byte string", b"context")?;
+    /// let decrypted = cell.decrypt_with_context(&encrypted, b"context")?;
+    /// assert_eq!(decrypted, b"byte string");
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// However, if the key or the context are invalid then decryption fails:
+    ///
+    /// ```
+    /// # use themis::secure_cell::SecureCell;
+    /// #
+    /// # let cell = SecureCell::with_key(b"password").seal();
+    /// # let encrypted = cell.encrypt_with_context(b"byte string", b"context").unwrap();
+    /// #
+    /// let different_cell = SecureCell::with_key(b"qwerty123").seal();
+    ///
+    /// assert!(different_cell.decrypt_with_context(&encrypted, b"context").is_err());
+    /// assert!(cell.decrypt_with_context(&encrypted, b"different context").is_err());
+    /// ```
+    ///
+    /// Secure Cell in sealing mode checks data integrity and can see if the data was corrupted,
+    /// returning an error on decryption attempts:
+    ///
+    /// ```
+    /// # use themis::secure_cell::SecureCell;
+    /// #
+    /// # let cell = SecureCell::with_key(b"password").seal();
+    /// # let encrypted = cell.encrypt_with_context(b"byte string", b"context").unwrap();
+    /// #
+    /// // Let's flip some bits somewhere.
+    /// let mut corrupted = encrypted.clone();
+    /// corrupted[20] = !corrupted[20];
+    ///
+    /// assert!(cell.decrypt_with_context(&corrupted, b"context").is_err());
+    /// ```
+    pub fn decrypt_with_context(
+        &self,
+        message: impl AsRef<[u8]>,
+        user_context: impl AsRef<[u8]>,
+    ) -> Result<Vec<u8>> {
         decrypt_seal(
             self.0.master_key.as_bytes(),
-            self.0.user_context.as_bytes(),
+            user_context.as_ref(),
             message.as_ref(),
         )
     }
@@ -438,7 +482,7 @@ fn decrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Resul
 pub struct SecureCellTokenProtect(SecureCell);
 
 impl SecureCellTokenProtect {
-    /// Encrypts the provided message and returns the encrypted container and the authentication
+    /// Encrypts the provided message and returns the encrypted container with the authentication
     /// token (in that order).
     ///
     /// The results can be stored or transmitted separately. You will need to provide both later
@@ -472,10 +516,54 @@ impl SecureCellTokenProtect {
     /// #
     /// assert!(cell.encrypt(&[]).is_err());
     /// ```
-    pub fn encrypt<M: AsRef<[u8]>>(&self, message: M) -> Result<(Vec<u8>, Vec<u8>)> {
+    pub fn encrypt(&self, message: impl AsRef<[u8]>) -> Result<(Vec<u8>, Vec<u8>)> {
+        self.encrypt_with_context(message, &[])
+    }
+
+    /// Encrypts the provided message together with the context and returns the encrypted container
+    /// with the authentication token (in that order).
+    ///
+    /// The results can be stored or transmitted separately. You will need to provide all three
+    /// parts later for successful decryption.
+    ///
+    /// # Examples
+    ///
+    /// You can use anything convertible into a byte slice as a message or a context: a byte slice
+    /// or an array, a `Vec<u8>`, or a `String`.
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// use themis::secure_cell::SecureCell;
+    ///
+    /// let cell = SecureCell::with_key(b"password").token_protect();
+    ///
+    /// cell.encrypt_with_context(b"byte string", format!("owned string"))?;
+    /// cell.encrypt_with_context(&[1, 2, 3, 4, 5], vec![6, 7, 8, 9, 10])?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// The context may be empty (in which case this call is equivalent to [`encrypt`]).
+    /// However, the message must not be empty.
+    ///
+    /// ```
+    /// # use themis::secure_cell::SecureCell;
+    /// #
+    /// # let cell = SecureCell::with_key(b"password").token_protect();
+    /// #
+    /// assert!(cell.encrypt_with_context(b"message", &[]).is_ok());
+    /// assert!(cell.encrypt_with_context(&[], b"context").is_err());
+    /// ```
+    ///
+    /// [`encrypt`]: struct.SecureCellTokenProtect.html#method.encrypt
+    pub fn encrypt_with_context(
+        &self,
+        message: impl AsRef<[u8]>,
+        user_context: impl AsRef<[u8]>,
+    ) -> Result<(Vec<u8>, Vec<u8>)> {
         encrypt_token_protect(
             self.0.master_key.as_bytes(),
-            self.0.user_context.as_bytes(),
+            user_context.as_ref(),
             message.as_ref(),
         )
     }
@@ -483,11 +571,13 @@ impl SecureCellTokenProtect {
     /// Extracts the original message from encrypted container and validates its authenticity.
     ///
     /// You need to provide both the encrypted container and the authentication token previously
-    /// obtained from `encrypt()`. Decryption will fail if any of them is corrupted or invalid.
+    /// obtained from [`encrypt`]. Decryption will fail if any of them is corrupted or invalid.
+    ///
+    /// [`encrypt`]: struct.SecureCellTokenProtect.html#method.encrypt
     ///
     /// # Examples
     ///
-    /// If you know the master key, the context, and the token then getting back your data is easy:
+    /// If you know the master key and the token then getting back your data is easy:
     ///
     /// ```
     /// # fn main() -> Result<(), themis::Error> {
@@ -549,10 +639,85 @@ impl SecureCellTokenProtect {
     /// assert!(cell.decrypt(&corrupted_data, &auth_token).is_err());
     /// assert!(cell.decrypt(&encrypted, &corrupted_token).is_err());
     /// ```
-    pub fn decrypt<M: AsRef<[u8]>, T: AsRef<[u8]>>(&self, message: M, token: T) -> Result<Vec<u8>> {
+    pub fn decrypt(&self, message: impl AsRef<[u8]>, token: impl AsRef<[u8]>) -> Result<Vec<u8>> {
+        self.decrypt_with_context(message, token, &[])
+    }
+
+    /// Extracts the original message from encrypted container and validates its authenticity
+    /// given the context.
+    ///
+    /// You need to provide the user context used for encryption as well as the encrypted container
+    /// and the authentication token previously obtained from [`encrypt_with_context`]. Decryption
+    /// will fail if any of them is corrupted or invalid.
+    ///
+    /// [`encrypt_with_context`]: struct.SecureCellTokenProtect.html#method.encrypt_with_context
+    ///
+    /// # Examples
+    ///
+    /// If you know the master key, the context, and the token then getting back your data is easy:
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// use themis::secure_cell::SecureCell;
+    ///
+    /// let cell = SecureCell::with_key(b"password").token_protect();
+    ///
+    /// let (encrypted, token) = cell.encrypt_with_context(b"byte string", b"context")?;
+    /// let decrypted = cell.decrypt_with_context(&encrypted, &token, b"context")?;
+    /// assert_eq!(decrypted, b"byte string");
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// However, you obviously cannot use tokens produced by Secure Cells with different keys,
+    /// tokens for different data, or different contexts:
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// # use themis::secure_cell::SecureCell;
+    /// #
+    /// # let cell = SecureCell::with_key(b"password").token_protect();
+    /// # let (encrypted, token) = cell.encrypt_with_context(b"byte string", b"context").unwrap();
+    /// #
+    /// let different_cell = SecureCell::with_key(b"qwerty123").token_protect();
+    ///
+    /// assert!(different_cell.decrypt_with_context(&encrypted, &token, b"context").is_err());
+    ///
+    /// let (_, other_token) = cell.encrypt_with_context(b"other data", b"context")?;
+    ///
+    /// assert!(cell.decrypt_with_context(&encrypted, &other_token, b"context").is_err());
+    /// assert!(cell.decrypt_with_context(&encrypted, &token, b"other context").is_err());
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// Secure Cell in token protect mode checks data integrity and can see if the data (or the
+    /// token) was corrupted, returning an error on decryption attempts:
+    ///
+    /// ```
+    /// # use themis::secure_cell::SecureCell;
+    /// #
+    /// # let cell = SecureCell::with_key(b"password").token_protect();
+    /// # let (encrypted, auth_token) = cell.encrypt_with_context(b"things", b"context").unwrap();
+    /// #
+    /// // Let's flip some bits somewhere.
+    /// let mut corrupted_data = encrypted.clone();
+    /// let mut corrupted_token = auth_token.clone();
+    /// corrupted_data[4] = !corrupted_data[4];
+    /// corrupted_token[9] = !corrupted_token[9];
+    ///
+    /// assert!(cell.decrypt_with_context(&corrupted_data, &auth_token, b"context").is_err());
+    /// assert!(cell.decrypt_with_context(&encrypted, &corrupted_token, b"context").is_err());
+    /// ```
+    pub fn decrypt_with_context(
+        &self,
+        message: impl AsRef<[u8]>,
+        token: impl AsRef<[u8]>,
+        user_context: impl AsRef<[u8]>,
+    ) -> Result<Vec<u8>> {
         decrypt_token_protect(
             self.0.master_key.as_bytes(),
-            self.0.user_context.as_bytes(),
+            user_context.as_ref(),
             message.as_ref(),
             token.as_ref(),
         )
@@ -694,10 +859,10 @@ fn decrypt_token_protect(
 /// # fn main() -> Result<(), themis::Error> {
 /// use themis::secure_cell::SecureCell;
 ///
-/// let cell = SecureCell::with_key_and_context(b"password", b"context").context_imprint();
+/// let cell = SecureCell::with_key(b"password").context_imprint();
 ///
 /// let input = b"test input";
-/// let output = cell.encrypt(input)?;
+/// let output = cell.encrypt_with_context(input, b"context")?;
 ///
 /// assert!(output.len() == input.len());
 /// # Ok(())
@@ -712,7 +877,7 @@ pub struct SecureCellContextImprint(SecureCell);
 // TODO: maybe panic if a SecureCell with an empty context is switched into context imprint mode
 
 impl SecureCellContextImprint {
-    /// Encrypts the provided message, combining it with required user context, and returns
+    /// Encrypts the provided message, combining it with provided user context, and returns
     /// the encrypted data.
     ///
     /// The resulting message has the same length as the input data and does not contain
@@ -721,47 +886,41 @@ impl SecureCellContextImprint {
     ///
     /// # Examples
     ///
-    /// You can use anything convertible into a byte slice as a message: a byte slice or an array,
-    /// a `Vec<u8>`, or a `String`.
+    /// You can use anything convertible into a byte slice as a message or a context: a byte slice
+    /// or an array, a `Vec<u8>`, or a `String`.
     ///
     /// ```
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key_and_context(b"password", b"context").context_imprint();
+    /// let cell = SecureCell::with_key(b"password").context_imprint();
     ///
-    /// cell.encrypt(b"byte string")?;
-    /// cell.encrypt(&[1, 2, 3, 4, 5])?;
-    /// cell.encrypt(vec![6, 7, 8, 9])?;
-    /// cell.encrypt(format!("owned string"))?;
+    /// cell.encrypt_with_context(b"byte string", format!("owned string"))?;
+    /// cell.encrypt_with_context(&[1, 2, 3, 4, 5], vec![6, 7, 8, 9, 10])?;
     /// # Ok(())
     /// # }
     /// ```
     ///
-    /// However, the message must not be empty:
+    /// However, the message and context must not be empty:
     ///
     /// ```
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key_and_context(b"password", b"context").context_imprint();
+    /// # let cell = SecureCell::with_key(b"password").context_imprint();
     /// #
-    /// assert!(cell.encrypt(&[]).is_err());
+    /// assert!(cell.encrypt_with_context(b"message", b"context").is_ok());
+    /// assert!(cell.encrypt_with_context(b"",        b"context").is_err());
+    /// assert!(cell.encrypt_with_context(b"message",        b"").is_err());
     /// ```
-    ///
-    /// Also, you cannot use empty context with context imprint mode:
-    ///
-    /// ```
-    /// # use themis::secure_cell::SecureCell;
-    /// #
-    /// let cell = SecureCell::with_key(b"password").context_imprint();
-    ///
-    /// assert!(cell.encrypt(b"otherwise fine message").is_err());
-    /// ```
-    pub fn encrypt<M: AsRef<[u8]>>(&self, message: M) -> Result<Vec<u8>> {
+    pub fn encrypt_with_context(
+        &self,
+        message: impl AsRef<[u8]>,
+        user_context: impl AsRef<[u8]>,
+    ) -> Result<Vec<u8>> {
         encrypt_context_imprint(
             self.0.master_key.as_bytes(),
             message.as_ref(),
-            self.0.user_context.as_bytes(),
+            user_context.as_ref(),
         )
     }
 
@@ -779,10 +938,10 @@ impl SecureCellContextImprint {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key_and_context(b"password", b"context").context_imprint();
+    /// let cell = SecureCell::with_key(b"password").context_imprint();
     ///
-    /// let encrypted = cell.encrypt(b"byte string")?;
-    /// let decrypted = cell.decrypt(&encrypted)?;
+    /// let encrypted = cell.encrypt_with_context(b"byte string", b"context")?;
+    /// let decrypted = cell.decrypt_with_context(&encrypted, b"context")?;
     /// assert_eq!(decrypted, b"byte string");
     /// # Ok(())
     /// # }
@@ -795,11 +954,11 @@ impl SecureCellContextImprint {
     /// # fn main() -> Result<(), themis::Error> {
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// let cell1 = SecureCell::with_key_and_context(b"XXX", b"---").context_imprint();
-    /// let cell2 = SecureCell::with_key_and_context(b"OOO", b"|||").context_imprint();
+    /// let cell1 = SecureCell::with_key(b"XXX").context_imprint();
+    /// let cell2 = SecureCell::with_key(b"OOO").context_imprint();
     ///
-    /// let encrypted = cell1.encrypt(b"byte string")?;
-    /// let decrypted = cell2.decrypt(&encrypted)?;
+    /// let encrypted = cell1.encrypt_with_context(b"byte string", b"context")?;
+    /// let decrypted = cell2.decrypt_with_context(&encrypted, b"task-switch")?;
     ///
     /// assert_ne!(decrypted, b"byte string");
     /// # Ok(())
@@ -811,21 +970,25 @@ impl SecureCellContextImprint {
     /// ```
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key_and_context(b"password", b"context").context_imprint();
-    /// # let encrypted = cell.encrypt(b"byte string").unwrap();
+    /// # let cell = SecureCell::with_key(b"password").context_imprint();
+    /// # let encrypted = cell.encrypt_with_context(b"byte string", b"context").unwrap();
     /// #
     /// // Let's flip some bits somewhere.
     /// let mut corrupted_data = encrypted.clone();
     /// corrupted_data[10] = !corrupted_data[10];
     ///
-    /// let result = cell.decrypt(&corrupted_data);
+    /// let result = cell.decrypt_with_context(&corrupted_data, b"context");
     /// assert_ne!(result.expect("no verification"), b"byte string");
     /// ```
-    pub fn decrypt<M: AsRef<[u8]>>(&self, message: M) -> Result<Vec<u8>> {
+    pub fn decrypt_with_context(
+        &self,
+        message: impl AsRef<[u8]>,
+        user_context: impl AsRef<[u8]>,
+    ) -> Result<Vec<u8>> {
         decrypt_context_imprint(
             self.0.master_key.as_bytes(),
             message.as_ref(),
-            self.0.user_context.as_bytes(),
+            user_context.as_ref(),
         )
     }
 }

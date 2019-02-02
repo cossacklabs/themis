@@ -3,6 +3,19 @@
 
 The version currently under development.
 
+## Breaking changes
+
+- `SecureCell` interface has been overhauled for better usability and
+  security. User context has to be provided together with messages
+  instead of being fixed at construction time. The methods now use
+  _impl Trait_ instead of explicit generics as well. ([#358])
+
+- `SecureMessage` methods `wrap` and `unwrap` have been renamed into
+  `encrypt` and `decrypt` respectively. Their parameters have been
+  changed to use _impl Trait_ instead of explicit generics. ([#358])
+
+[#358]: https://github.com/cossacklabs/themis/pull/358
+
 Version 0.0.3 — 2019-01-17
 ==========================
 
