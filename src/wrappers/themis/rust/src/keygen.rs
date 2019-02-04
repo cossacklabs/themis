@@ -90,7 +90,7 @@ fn try_gen_rsa_key_pair() -> Result<RsaKeyPair> {
     }
 
     private_key.reserve(private_key_len);
-    public_key.reserve(private_key_len);
+    public_key.reserve(public_key_len);
 
     unsafe {
         let status = themis_gen_rsa_key_pair(
@@ -150,7 +150,7 @@ fn try_gen_ec_key_pair() -> Result<EcdsaKeyPair> {
     }
 
     private_key.reserve(private_key_len);
-    public_key.reserve(private_key_len);
+    public_key.reserve(public_key_len);
 
     unsafe {
         let status = themis_gen_ec_key_pair(
