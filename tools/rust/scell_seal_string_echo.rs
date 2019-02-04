@@ -33,7 +33,12 @@ fn main() {
     let message = matches.value_of("message").unwrap();
     let context = matches.value_of("context").unwrap_or_default();
 
-    let cell = SecureCell::with_key(&key).seal();
+    let cell = SecureCell::with_key(&key)
+        .unwrap_or_else(|_| {
+            eprintln!("invalid parameters: empty master key");
+            exit(1);
+        })
+        .seal();
 
     match mode {
         "enc" => {

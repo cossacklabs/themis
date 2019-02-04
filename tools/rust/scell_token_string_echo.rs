@@ -37,7 +37,12 @@ fn main() {
     let message = parts.next().unwrap();
     let token = parts.next().unwrap_or("");
 
-    let cell = SecureCell::with_key(&key).token_protect();
+    let cell = SecureCell::with_key(&key)
+        .unwrap_or_else(|_| {
+            eprintln!("invalid parameters: empty master key");
+            exit(1);
+        })
+        .token_protect();
 
     match mode {
         "enc" => {
