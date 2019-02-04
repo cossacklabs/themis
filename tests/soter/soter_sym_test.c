@@ -525,6 +525,69 @@ static void test_auth_tag(void)
 	  testsuite_fail_unless(SOTER_FAIL == res, "detect data tamper");
 }
 
+static void test_invalid_params(void)
+{
+	soter_sym_ctx_t *ctx = NULL;
+	uint8_t key[MAX_KEY_LENGTH] = {0};
+	uint8_t iv[MAX_IV_LENGTH] = {0};
+
+	ctx = soter_sym_encrypt_create(0xFFFFFFFF, key, sizeof(key), NULL, 0, iv, sizeof(iv));
+	testsuite_fail_if(ctx != NULL, "encrypt_create: invalid algorithm");
+	if (ctx != NULL)
+	{
+		soter_sym_encrypt_destroy(ctx);
+	}
+
+	ctx = soter_sym_encrypt_create(SOTER_SYM_AES_GCM | SOTER_SYM_256_KEY_LENGTH, key, 0, NULL, 0, iv, sizeof(iv));
+	testsuite_fail_if(ctx != NULL, "encrypt_create: invalid key length");
+	if (ctx != NULL)
+	{
+		soter_sym_encrypt_destroy(ctx);
+	}
+
+	ctx = soter_sym_encrypt_create(SOTER_SYM_AES_GCM | SOTER_SYM_256_KEY_LENGTH | SOTER_SYM_PBKDF2, key, sizeof(key), NULL, 1, NULL, 0);
+	testsuite_fail_if(ctx != NULL, "encrypt_create: invalid salt length");
+	if (ctx != NULL)
+	{
+		soter_sym_encrypt_destroy(ctx);
+	}
+
+	ctx = soter_sym_encrypt_create(SOTER_SYM_AES_GCM | SOTER_SYM_256_KEY_LENGTH, key, sizeof(key), NULL, 0, iv, 0);
+	testsuite_fail_if(ctx != NULL, "encrypt_create: invalid IV length");
+	if (ctx != NULL)
+	{
+		soter_sym_encrypt_destroy(ctx);
+	}
+
+	ctx = soter_sym_aead_encrypt_create(0xFFFFFFFF, key, sizeof(key), NULL, 0, iv, sizeof(iv));
+	testsuite_fail_if(ctx != NULL, "aead_encrypt_create: invalid algorithm");
+	if (ctx != NULL)
+	{
+		soter_sym_aead_encrypt_destroy(ctx);
+	}
+
+	ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AES_GCM | SOTER_SYM_256_KEY_LENGTH, key, 0, NULL, 0, iv, sizeof(iv));
+	testsuite_fail_if(ctx != NULL, "aead_encrypt_create: invalid key length");
+	if (ctx != NULL)
+	{
+		soter_sym_aead_encrypt_destroy(ctx);
+	}
+
+	ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AES_GCM | SOTER_SYM_256_KEY_LENGTH | SOTER_SYM_PBKDF2, key, sizeof(key), NULL, 1, NULL, 0);
+	testsuite_fail_if(ctx != NULL, "aead_encrypt_create: invalid salt length");
+	if (ctx != NULL)
+	{
+		soter_sym_aead_encrypt_destroy(ctx);
+	}
+
+	ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AES_GCM | SOTER_SYM_256_KEY_LENGTH, key, sizeof(key), NULL, 0, iv, 0);
+	testsuite_fail_if(ctx != NULL, "aead_encrypt_create: invalid IV length");
+	if (ctx != NULL)
+	{
+		soter_sym_aead_encrypt_destroy(ctx);
+	}
+}
+
 void run_soter_sym_test()
 {
   testsuite_enter_suite("soter sym");
@@ -532,5 +595,6 @@ void run_soter_sym_test()
   testsuite_run_test(test_known_values);
   testsuite_run_test(test_known_values_gcm);
   testsuite_run_test(test_auth_tag);
+  testsuite_run_test(test_invalid_params);
   //  soter_sym_test();
 }
