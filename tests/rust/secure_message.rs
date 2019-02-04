@@ -29,8 +29,8 @@ fn mode_encrypt_decrypt() {
 
 #[test]
 fn mode_sign_verify() {
-    let (secret, public) = gen_rsa_key_pair().split();
-    let sign = SecureSign::new(secret);
+    let (private, public) = gen_rsa_key_pair().split();
+    let sign = SecureSign::new(private);
     let verify = SecureVerify::new(public);
 
     let plaintext = b"test message please ignore";

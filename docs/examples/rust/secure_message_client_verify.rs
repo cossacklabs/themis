@@ -21,7 +21,7 @@ use std::net::UdpSocket;
 use std::thread;
 
 use clap::clap_app;
-use themis::keys::{PublicKey, SecretKey};
+use themis::keys::{PrivateKey, PublicKey};
 use themis::secure_message::{SecureSign, SecureVerify};
 
 fn main() {
@@ -30,18 +30,18 @@ fn main() {
     let matches = clap_app!(secure_message_client_verify =>
         (version: env!("CARGO_PKG_VERSION"))
         (about: "Secure Message chat client (sign/verify).")
-        (@arg secret: --secret [path] "Secret key file (default: secret.key)")
+        (@arg private: --private [path] "Private key file (default: private.key)")
         (@arg public: --public [path] "Public key file (default: public.key)")
         (@arg address: -c --connect [addr] "Relay server address (default: localhost:7573)")
     )
     .get_matches();
 
-    let secret_path = matches.value_of("secret").unwrap_or("secret.key");
+    let private_path = matches.value_of("private").unwrap_or("private.key");
     let public_path = matches.value_of("public").unwrap_or("public.key");
     let remote_addr = matches.value_of("address").unwrap_or("localhost:7573");
 
-    let secret_key = read_file(&secret_path).expect("read secret key");
-    let secret_key = SecretKey::try_from_slice(secret_key).expect("parse secret key");
+    let private_key = read_file(&private_path).expect("read private key");
+    let private_key = PrivateKey::try_from_slice(private_key).expect("parse private key");
     let public_key = read_file(&public_path).expect("read public key");
     let public_key = PublicKey::try_from_slice(public_key).expect("parse public key");
 
@@ -54,7 +54,7 @@ fn main() {
     // Each of the threads is using its own object for message processing.
     // Also note that SecureSign/SecureVerify API is deliberately different from SecureMessage.
     let receive_secure = SecureVerify::new(public_key);
-    let relay_secure = SecureSign::new(secret_key);
+    let relay_secure = SecureSign::new(private_key);
 
     let receive = thread::spawn(move || {
         let receive_message = || -> io::Result<()> {

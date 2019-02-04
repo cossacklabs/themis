@@ -16,25 +16,25 @@
 //!
 //! This module contains data structures for keys supported by Themis: RSA and ECDSA key pairs.
 //!
-//!   - [`EcdsaKeyPair`] consists of [`EcdsaPublicKey`] and [`EcdsaSecretKey`]
-//!   - [`RsaKeyPair`] consists of [`RsaPublicKey`] and [`RsaSecretKey`]
+//!   - [`EcdsaKeyPair`] consists of [`EcdsaPublicKey`] and [`EcdsaPrivateKey`]
+//!   - [`RsaKeyPair`] consists of [`RsaPublicKey`] and [`RsaPrivateKey`]
 //!
 //! There are also generic data types which can hold keys of either kind:
 //!
-//!   - [`KeyPair`] consists of [`PublicKey`] and [`SecretKey`]
+//!   - [`KeyPair`] consists of [`PublicKey`] and [`PrivateKey`]
 //!
 //! `KeyPair` may hold either an `EcdsaKeyPair` or an `RsaKeyPair`. It is guaranteed to contain
 //! keys of matching kind, just as individual keys are guaranteed to be of the specified kind.
 //!
 //! [`EcdsaKeyPair`]: struct.EcdsaKeyPair.html
 //! [`EcdsaPublicKey`]: struct.EcdsaPublicKey.html
-//! [`EcdsaSecretKey`]: struct.EcdsaSecretKey.html
+//! [`EcdsaPrivateKey`]: struct.EcdsaPrivateKey.html
 //! [`RsaKeyPair`]: struct.RsaKeyPair.html
 //! [`RsaPublicKey`]: struct.RsaPublicKey.html
-//! [`RsaSecretKey`]: struct.RsaSecretKey.html
+//! [`RsaPrivateKey`]: struct.RsaPrivateKey.html
 //! [`KeyPair`]: struct.KeyPair.html
 //! [`PublicKey`]: struct.PublicKey.html
-//! [`SecretKey`]: struct.SecretKey.html
+//! [`PrivateKey`]: struct.PrivateKey.html
 //!
 //! # Examples
 //!
@@ -42,7 +42,7 @@
 //!
 //! [Key generation functions][keygen] return matching key pairs. Some APIs (like Secure Message
 //! in encryption mode) require you to pass key pairs so you are ready to go. Sometimes you may
-//! need the keys separately, in which case they can be easily split into public and secret parts:
+//! need the keys separately, in which case they can be easily split into public and private half:
 //!
 //! [keygen]: ../keygen/index.html
 //!
@@ -51,7 +51,7 @@
 //!
 //! let key_pair = gen_ec_key_pair();
 //!
-//! let (secret, public) = key_pair.split();
+//! let (private, public) = key_pair.split();
 //! ```
 //!
 //! You may join them back into a pair if you wish:
@@ -61,8 +61,8 @@
 //! use themis::keys::EcdsaKeyPair;
 //!
 //! # let key_pair = gen_ec_key_pair();
-//! # let (secret, public) = key_pair.split();
-//! let key_pair = EcdsaKeyPair::join(secret, public);
+//! # let (private, public) = key_pair.split();
+//! let key_pair = EcdsaKeyPair::join(private, public);
 //! ```
 //!
 //! Joining is a zero-cost and error-free operation for concrete key kinds (RSA or ECDSA).
@@ -73,11 +73,11 @@
 //! use themis::keygen::{gen_ec_key_pair, gen_rsa_key_pair};
 //! use themis::keys::KeyPair;
 //!
-//! let (secret_ec, _) = gen_ec_key_pair().split();
+//! let (private_ec, _) = gen_ec_key_pair().split();
 //! let (_, public_rsa) = gen_rsa_key_pair().split();
 //!
-//! // This will return an Err because ECDSA secret key does not match RSA public key:
-//! let key_pair = KeyPair::try_join(secret_ec, public_rsa)?;
+//! // This will return an Err because ECDSA private key does not match RSA public key:
+//! let key_pair = KeyPair::try_join(private_ec, public_rsa)?;
 //! # Ok(())
 //! # }
 //! #
@@ -99,10 +99,10 @@
 //!
 //! use themis::keygen::gen_rsa_key_pair;
 //!
-//! let (secret, public) = gen_rsa_key_pair().split();
+//! let (private, public) = gen_rsa_key_pair().split();
 //!
-//! let mut file = File::create("secret.key")?;
-//! file.write_all(secret.as_ref())?;
+//! let mut file = File::create("private.key")?;
+//! file.write_all(private.as_ref())?;
 //! # Ok(())
 //! # }
 //! ```
@@ -174,9 +174,9 @@ impl Drop for KeyBytes {
 // Key type definitions
 //
 
-/// RSA secret key.
+/// RSA private key.
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
-pub struct RsaSecretKey {
+pub struct RsaPrivateKey {
     inner: KeyBytes,
 }
 
@@ -189,13 +189,13 @@ pub struct RsaPublicKey {
 /// RSA key pair.
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct RsaKeyPair {
-    secret_key: KeyBytes,
+    private_key: KeyBytes,
     public_key: KeyBytes,
 }
 
-/// ECDSA secret key.
+/// ECDSA private key.
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
-pub struct EcdsaSecretKey {
+pub struct EcdsaPrivateKey {
     inner: KeyBytes,
 }
 
@@ -208,19 +208,19 @@ pub struct EcdsaPublicKey {
 /// ECDSA key pair.
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct EcdsaKeyPair {
-    secret_key: KeyBytes,
+    private_key: KeyBytes,
     public_key: KeyBytes,
 }
 
-/// A secret key.
+/// A private key.
 ///
 /// This structure is used by cryptographic services which can support any kind of key.
-/// [`RsaSecretKey`] or [`EcdsaSecretKey`] can be turned into a `SecretKey` at no cost.
+/// [`RsaPrivateKey`] or [`EcdsaPrivateKey`] can be turned into a `PrivateKey` at no cost.
 ///
-/// [`RsaSecretKey`]: struct.RsaSecretKey.html
-/// [`EcdsaSecretKey`]: struct.EcdsaSecretKey.html
+/// [`RsaPrivateKey`]: struct.RsaPrivateKey.html
+/// [`EcdsaPrivateKey`]: struct.EcdsaPrivateKey.html
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
-pub struct SecretKey {
+pub struct PrivateKey {
     inner: KeyBytes,
 }
 
@@ -240,28 +240,28 @@ pub struct PublicKey {
 ///
 /// This structure is used by cryptographic services which can support any kind of key pair.
 /// [`RsaKeyPair`] or [`EcdsaKeyPair`] can be turned into a `KeyPair` at no cost. A pair of
-/// [`SecretKey`] and [`PublicKey`] can be joined into a `KeyPair` after a quick type check
+/// [`PrivateKey`] and [`PublicKey`] can be joined into a `KeyPair` after a quick type check
 /// if their kinds match (either RSA or ECDSA).
 ///
 /// [`RsaKeyPair`]: struct.RsaKeyPair.html
 /// [`EcdsaKeyPair`]: struct.EcdsaKeyPair.html
-/// [`SecretKey`]: struct.SecretKey.html
+/// [`PrivateKey`]: struct.PrivateKey.html
 /// [`PublicKey`]: struct.PublicKey.html
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub struct KeyPair {
-    secret_key: KeyBytes,
+    private_key: KeyBytes,
     public_key: KeyBytes,
 }
 
 /// Kind of an asymmetric key.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum KeyKind {
-    /// RSA secret key.
-    RsaSecret,
+    /// RSA private key.
+    RsaPrivate,
     /// RSA public key.
     RsaPublic,
-    /// ECDSA secret key.
-    EcdsaSecret,
+    /// ECDSA private key.
+    EcdsaPrivate,
     /// ECDSA public key.
     EcdsaPublic,
 }
@@ -271,11 +271,11 @@ pub enum KeyKind {
 //
 
 impl RsaKeyPair {
-    /// Splits this key pair into secret and public keys.
-    pub fn split(self) -> (RsaSecretKey, RsaPublicKey) {
+    /// Splits this key pair into private and public keys.
+    pub fn split(self) -> (RsaPrivateKey, RsaPublicKey) {
         (
-            RsaSecretKey {
-                inner: self.secret_key,
+            RsaPrivateKey {
+                inner: self.private_key,
             },
             RsaPublicKey {
                 inner: self.public_key,
@@ -283,24 +283,24 @@ impl RsaKeyPair {
         )
     }
 
-    /// Joins a pair of secret and public keys.
+    /// Joins a pair of private and public keys.
     ///
     /// Note that this method _does not_ verify that the keys match: i.e., that it is possible
-    /// to use the secret key to decrypt data encrypted with the public key.
-    pub fn join(secret_key: RsaSecretKey, public_key: RsaPublicKey) -> RsaKeyPair {
+    /// to use the private key to decrypt data encrypted with the public key.
+    pub fn join(private_key: RsaPrivateKey, public_key: RsaPublicKey) -> RsaKeyPair {
         RsaKeyPair {
-            secret_key: secret_key.inner,
+            private_key: private_key.inner,
             public_key: public_key.inner,
         }
     }
 }
 
 impl EcdsaKeyPair {
-    /// Splits this key pair into secret and public keys.
-    pub fn split(self) -> (EcdsaSecretKey, EcdsaPublicKey) {
+    /// Splits this key pair into private and public keys.
+    pub fn split(self) -> (EcdsaPrivateKey, EcdsaPublicKey) {
         (
-            EcdsaSecretKey {
-                inner: self.secret_key,
+            EcdsaPrivateKey {
+                inner: self.private_key,
             },
             EcdsaPublicKey {
                 inner: self.public_key,
@@ -308,22 +308,22 @@ impl EcdsaKeyPair {
         )
     }
 
-    /// Joins a pair of secret and public keys.
+    /// Joins a pair of private and public keys.
     ///
     /// Note that this method _does not_ verify that the keys match: i.e., that it is possible
-    /// to use the secret key to decrypt data encrypted with the public key.
-    pub fn join(secret_key: EcdsaSecretKey, public_key: EcdsaPublicKey) -> EcdsaKeyPair {
+    /// to use the private key to decrypt data encrypted with the public key.
+    pub fn join(private_key: EcdsaPrivateKey, public_key: EcdsaPublicKey) -> EcdsaKeyPair {
         EcdsaKeyPair {
-            secret_key: secret_key.inner,
+            private_key: private_key.inner,
             public_key: public_key.inner,
         }
     }
 }
 
 impl KeyPair {
-    /// Access bytes of the secret key.
-    pub(crate) fn secret_key_bytes(&self) -> &[u8] {
-        self.secret_key.as_bytes()
+    /// Access bytes of the private key.
+    pub(crate) fn private_key_bytes(&self) -> &[u8] {
+        self.private_key.as_bytes()
     }
 
     /// Access bytes of the public key.
@@ -331,11 +331,11 @@ impl KeyPair {
         self.public_key.as_bytes()
     }
 
-    /// Splits this key pair into secret and public keys.
-    pub fn split(self) -> (SecretKey, PublicKey) {
+    /// Splits this key pair into private and public keys.
+    pub fn split(self) -> (PrivateKey, PublicKey) {
         (
-            SecretKey {
-                inner: self.secret_key,
+            PrivateKey {
+                inner: self.private_key,
             },
             PublicKey {
                 inner: self.public_key,
@@ -343,29 +343,29 @@ impl KeyPair {
         )
     }
 
-    /// Joins a pair of secret and public keys.
+    /// Joins a pair of private and public keys.
     ///
     /// Note that this method _does not_ verify that the keys match: i.e., that it is possible
-    /// to use the secret key to decrypt data encrypted with the public key.
+    /// to use the private key to decrypt data encrypted with the public key.
     ///
     /// However, it does verify that _the kinds_ of the keys match: i.e., that they are both
     /// either RSA or ECDSA keys. An error is returned if that’s not the case. You can check
     /// the kind of the key beforehand via its `kind()` method.
-    pub fn try_join<S, P>(secret_key: S, public_key: P) -> Result<KeyPair>
+    pub fn try_join<S, P>(private_key: S, public_key: P) -> Result<KeyPair>
     where
-        S: Into<SecretKey>,
+        S: Into<PrivateKey>,
         P: Into<PublicKey>,
     {
-        let (secret_key, public_key) = (secret_key.into(), public_key.into());
-        match (secret_key.kind(), public_key.kind()) {
-            (KeyKind::RsaSecret, KeyKind::RsaPublic) => {}
-            (KeyKind::EcdsaSecret, KeyKind::EcdsaPublic) => {}
+        let (private_key, public_key) = (private_key.into(), public_key.into());
+        match (private_key.kind(), public_key.kind()) {
+            (KeyKind::RsaPrivate, KeyKind::RsaPublic) => {}
+            (KeyKind::EcdsaPrivate, KeyKind::EcdsaPublic) => {}
             _ => {
                 return Err(Error::with_kind(ErrorKind::InvalidParameter));
             }
         }
         Ok(KeyPair {
-            secret_key: secret_key.inner,
+            private_key: private_key.inner,
             public_key: public_key.inner,
         })
     }
@@ -375,14 +375,14 @@ impl KeyPair {
 // Individual keys
 //
 
-impl RsaSecretKey {
+impl RsaPrivateKey {
     /// Parses a key from a byte slice.
     ///
-    /// Returns an error if the slice does not contain a valid RSA secret key.
+    /// Returns an error if the slice does not contain a valid RSA private key.
     pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
         let key = KeyBytes::copy_slice(bytes.as_ref());
         match get_key_kind(&key)? {
-            KeyKind::RsaSecret => Ok(Self { inner: key }),
+            KeyKind::RsaPrivate => Ok(Self { inner: key }),
             _ => Err(Error::with_kind(ErrorKind::InvalidParameter)),
         }
     }
@@ -390,7 +390,7 @@ impl RsaSecretKey {
     /// Wraps an existing trusted byte vector into a key.
     pub(crate) fn from_vec(bytes: Vec<u8>) -> Self {
         let key = KeyBytes::from_vec(bytes);
-        debug_assert_eq!(get_key_kind(&key), Ok(KeyKind::RsaSecret));
+        debug_assert_eq!(get_key_kind(&key), Ok(KeyKind::RsaPrivate));
         Self { inner: key }
     }
 }
@@ -415,14 +415,14 @@ impl RsaPublicKey {
     }
 }
 
-impl EcdsaSecretKey {
+impl EcdsaPrivateKey {
     /// Parses a key from a byte slice.
     ///
-    /// Returns an error if the slice does not contain a valid ECDSA secret key.
+    /// Returns an error if the slice does not contain a valid ECDSA private key.
     pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
         let key = KeyBytes::copy_slice(bytes.as_ref());
         match get_key_kind(&key)? {
-            KeyKind::EcdsaSecret => Ok(Self { inner: key }),
+            KeyKind::EcdsaPrivate => Ok(Self { inner: key }),
             _ => Err(Error::with_kind(ErrorKind::InvalidParameter)),
         }
     }
@@ -430,7 +430,7 @@ impl EcdsaSecretKey {
     /// Wraps an existing trusted byte vector into a key.
     pub(crate) fn from_vec(bytes: Vec<u8>) -> Self {
         let key = KeyBytes::from_vec(bytes);
-        debug_assert_eq!(get_key_kind(&key), Ok(KeyKind::EcdsaSecret));
+        debug_assert_eq!(get_key_kind(&key), Ok(KeyKind::EcdsaPrivate));
         Self { inner: key }
     }
 }
@@ -455,7 +455,7 @@ impl EcdsaPublicKey {
     }
 }
 
-impl SecretKey {
+impl PrivateKey {
     /// Retrieves actual kind of the stored key.
     pub fn kind(&self) -> KeyKind {
         get_key_kind_trusted(&self.inner)
@@ -463,12 +463,12 @@ impl SecretKey {
 
     /// Parses a key from a byte slice.
     ///
-    /// Returns an error if the slice does not contain a valid RSA or ECDSA secret key.
+    /// Returns an error if the slice does not contain a valid RSA or ECDSA private key.
     pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
         let key = KeyBytes::copy_slice(bytes.as_ref());
         match get_key_kind(&key)? {
-            KeyKind::RsaSecret => Ok(Self { inner: key }),
-            KeyKind::EcdsaSecret => Ok(Self { inner: key }),
+            KeyKind::RsaPrivate => Ok(Self { inner: key }),
+            KeyKind::EcdsaPrivate => Ok(Self { inner: key }),
             _ => Err(Error::with_kind(ErrorKind::InvalidParameter)),
         }
     }
@@ -527,9 +527,9 @@ fn try_get_key_kind(key: &KeyBytes) -> Result<KeyKind> {
     let (ptr, len) = into_raw_parts(key.as_bytes());
     let kind = unsafe { themis_get_key_kind(ptr, len) };
     match kind {
-        THEMIS_KEY_RSA_PRIVATE => Ok(KeyKind::RsaSecret),
+        THEMIS_KEY_RSA_PRIVATE => Ok(KeyKind::RsaPrivate),
         THEMIS_KEY_RSA_PUBLIC => Ok(KeyKind::RsaPublic),
-        THEMIS_KEY_EC_PRIVATE => Ok(KeyKind::EcdsaSecret),
+        THEMIS_KEY_EC_PRIVATE => Ok(KeyKind::EcdsaPrivate),
         THEMIS_KEY_EC_PUBLIC => Ok(KeyKind::EcdsaPublic),
         THEMIS_KEY_INVALID => Err(Error::with_kind(ErrorKind::InvalidParameter)),
     }
@@ -539,7 +539,7 @@ fn try_get_key_kind(key: &KeyBytes) -> Result<KeyKind> {
 // AsRef<[u8]> casts
 //
 
-impl AsRef<[u8]> for RsaSecretKey {
+impl AsRef<[u8]> for RsaPrivateKey {
     fn as_ref(&self) -> &[u8] {
         self.inner.as_bytes()
     }
@@ -551,7 +551,7 @@ impl AsRef<[u8]> for RsaPublicKey {
     }
 }
 
-impl AsRef<[u8]> for EcdsaSecretKey {
+impl AsRef<[u8]> for EcdsaPrivateKey {
     fn as_ref(&self) -> &[u8] {
         self.inner.as_bytes()
     }
@@ -563,7 +563,7 @@ impl AsRef<[u8]> for EcdsaPublicKey {
     }
 }
 
-impl AsRef<[u8]> for SecretKey {
+impl AsRef<[u8]> for PrivateKey {
     fn as_ref(&self) -> &[u8] {
         self.inner.as_bytes()
     }
@@ -579,10 +579,10 @@ impl AsRef<[u8]> for PublicKey {
 // From/Into conversions
 //
 
-impl From<RsaSecretKey> for SecretKey {
-    fn from(secret_key: RsaSecretKey) -> SecretKey {
-        SecretKey {
-            inner: secret_key.inner,
+impl From<RsaPrivateKey> for PrivateKey {
+    fn from(private_key: RsaPrivateKey) -> PrivateKey {
+        PrivateKey {
+            inner: private_key.inner,
         }
     }
 }
@@ -595,10 +595,10 @@ impl From<RsaPublicKey> for PublicKey {
     }
 }
 
-impl From<EcdsaSecretKey> for SecretKey {
-    fn from(secret_key: EcdsaSecretKey) -> SecretKey {
-        SecretKey {
-            inner: secret_key.inner,
+impl From<EcdsaPrivateKey> for PrivateKey {
+    fn from(private_key: EcdsaPrivateKey) -> PrivateKey {
+        PrivateKey {
+            inner: private_key.inner,
         }
     }
 }
@@ -614,7 +614,7 @@ impl From<EcdsaPublicKey> for PublicKey {
 impl From<RsaKeyPair> for KeyPair {
     fn from(key_pair: RsaKeyPair) -> KeyPair {
         KeyPair {
-            secret_key: key_pair.secret_key,
+            private_key: key_pair.private_key,
             public_key: key_pair.public_key,
         }
     }
@@ -623,7 +623,7 @@ impl From<RsaKeyPair> for KeyPair {
 impl From<EcdsaKeyPair> for KeyPair {
     fn from(key_pair: EcdsaKeyPair) -> KeyPair {
         KeyPair {
-            secret_key: key_pair.secret_key,
+            private_key: key_pair.private_key,
             public_key: key_pair.public_key,
         }
     }

@@ -14,7 +14,12 @@ The version currently under development.
   `encrypt` and `decrypt` respectively. Their parameters have been
   changed to use _impl Trait_ instead of explicit generics. ([#358])
 
+- Asymmetric key structures have been renamed in order to be consistent
+  with other language wrappers. They are now called `PrivateKey` instead
+  of `SecretKey` (ditto for `RsaSecretKey`, `EcdsaSecretKey`). ([#362])
+
 [#358]: https://github.com/cossacklabs/themis/pull/358
+[#362]: https://github.com/cossacklabs/themis/pull/362
 
 Version 0.0.3 — 2019-01-17
 ==========================
