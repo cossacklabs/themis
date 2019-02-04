@@ -320,6 +320,7 @@ $(TEST_OBJ_PATH)/%.opp: $(TEST_SRC_PATH)/%.cpp
 	@$(BUILD_CMD)
 
 include tests/test.mk
+include tools/afl/fuzzy.mk
 
 err: ; $(ERROR)
 
