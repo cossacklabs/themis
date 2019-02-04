@@ -142,13 +142,17 @@ pub(crate) struct KeyBytes(Vec<u8>);
 
 impl KeyBytes {
     /// Makes a key from an owned byte vector.
-    pub fn from_vec(bytes: Vec<u8>) -> KeyBytes {
-        KeyBytes(bytes)
+    pub fn from_vec(bytes: Vec<u8>) -> Result<KeyBytes> {
+        if bytes.is_empty() {
+            Err(Error::with_kind(ErrorKind::InvalidParameter))
+        } else {
+            Ok(KeyBytes(bytes))
+        }
     }
 
     /// Makes a key from a copy of a byte slice.
-    pub fn copy_slice(bytes: &[u8]) -> KeyBytes {
-        KeyBytes(bytes.to_vec())
+    pub fn copy_slice(bytes: &[u8]) -> Result<KeyBytes> {
+        KeyBytes::from_vec(bytes.to_vec())
     }
 
     /// Returns key bytes.
@@ -380,7 +384,7 @@ impl RsaPrivateKey {
     ///
     /// Returns an error if the slice does not contain a valid RSA private key.
     pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
-        let key = KeyBytes::copy_slice(bytes.as_ref());
+        let key = KeyBytes::copy_slice(bytes.as_ref())?;
         match get_key_kind(&key)? {
             KeyKind::RsaPrivate => Ok(Self { inner: key }),
             _ => Err(Error::with_kind(ErrorKind::InvalidParameter)),
@@ -389,7 +393,7 @@ impl RsaPrivateKey {
 
     /// Wraps an existing trusted byte vector into a key.
     pub(crate) fn from_vec(bytes: Vec<u8>) -> Self {
-        let key = KeyBytes::from_vec(bytes);
+        let key = KeyBytes::from_vec(bytes).expect("invalid empty key");
         debug_assert_eq!(get_key_kind(&key), Ok(KeyKind::RsaPrivate));
         Self { inner: key }
     }
@@ -400,7 +404,7 @@ impl RsaPublicKey {
     ///
     /// Returns an error if the slice does not contain a valid RSA public key.
     pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
-        let key = KeyBytes::copy_slice(bytes.as_ref());
+        let key = KeyBytes::copy_slice(bytes.as_ref())?;
         match get_key_kind(&key)? {
             KeyKind::RsaPublic => Ok(Self { inner: key }),
             _ => Err(Error::with_kind(ErrorKind::InvalidParameter)),
@@ -409,7 +413,7 @@ impl RsaPublicKey {
 
     /// Wraps an existing trusted byte vector into a key.
     pub(crate) fn from_vec(bytes: Vec<u8>) -> Self {
-        let key = KeyBytes::from_vec(bytes);
+        let key = KeyBytes::from_vec(bytes).expect("invalid empty key");
         debug_assert_eq!(get_key_kind(&key), Ok(KeyKind::RsaPublic));
         Self { inner: key }
     }
@@ -420,7 +424,7 @@ impl EcdsaPrivateKey {
     ///
     /// Returns an error if the slice does not contain a valid ECDSA private key.
     pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
-        let key = KeyBytes::copy_slice(bytes.as_ref());
+        let key = KeyBytes::copy_slice(bytes.as_ref())?;
         match get_key_kind(&key)? {
             KeyKind::EcdsaPrivate => Ok(Self { inner: key }),
             _ => Err(Error::with_kind(ErrorKind::InvalidParameter)),
@@ -429,7 +433,7 @@ impl EcdsaPrivateKey {
 
     /// Wraps an existing trusted byte vector into a key.
     pub(crate) fn from_vec(bytes: Vec<u8>) -> Self {
-        let key = KeyBytes::from_vec(bytes);
+        let key = KeyBytes::from_vec(bytes).expect("invalid empty key");
         debug_assert_eq!(get_key_kind(&key), Ok(KeyKind::EcdsaPrivate));
         Self { inner: key }
     }
@@ -440,7 +444,7 @@ impl EcdsaPublicKey {
     ///
     /// Returns an error if the slice does not contain a valid ECDSA public key.
     pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
-        let key = KeyBytes::copy_slice(bytes.as_ref());
+        let key = KeyBytes::copy_slice(bytes.as_ref())?;
         match get_key_kind(&key)? {
             KeyKind::EcdsaPublic => Ok(Self { inner: key }),
             _ => Err(Error::with_kind(ErrorKind::InvalidParameter)),
@@ -449,7 +453,7 @@ impl EcdsaPublicKey {
 
     /// Wraps an existing trusted byte vector into a key.
     pub(crate) fn from_vec(bytes: Vec<u8>) -> Self {
-        let key = KeyBytes::from_vec(bytes);
+        let key = KeyBytes::from_vec(bytes).expect("invalid empty key");
         debug_assert_eq!(get_key_kind(&key), Ok(KeyKind::EcdsaPublic));
         Self { inner: key }
     }
@@ -465,7 +469,7 @@ impl PrivateKey {
     ///
     /// Returns an error if the slice does not contain a valid RSA or ECDSA private key.
     pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
-        let key = KeyBytes::copy_slice(bytes.as_ref());
+        let key = KeyBytes::copy_slice(bytes.as_ref())?;
         match get_key_kind(&key)? {
             KeyKind::RsaPrivate => Ok(Self { inner: key }),
             KeyKind::EcdsaPrivate => Ok(Self { inner: key }),
@@ -484,7 +488,7 @@ impl PublicKey {
     ///
     /// Returns an error if the slice does not contain a valid RSA or ECDSA public key.
     pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
-        let key = KeyBytes::copy_slice(bytes.as_ref());
+        let key = KeyBytes::copy_slice(bytes.as_ref())?;
         match get_key_kind(&key)? {
             KeyKind::RsaPublic => Ok(Self { inner: key }),
             KeyKind::EcdsaPublic => Ok(Self { inner: key }),

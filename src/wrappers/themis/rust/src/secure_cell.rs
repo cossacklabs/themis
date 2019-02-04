@@ -127,7 +127,7 @@ impl SecureCell {
     /// [`keygen`]: ../keygen/index.html
     pub fn with_key(master_key: impl AsRef<[u8]>) -> Self {
         Self {
-            master_key: KeyBytes::copy_slice(master_key.as_ref()),
+            master_key: KeyBytes::copy_slice(master_key.as_ref()).expect("unimplemented"),
         }
     }
 
