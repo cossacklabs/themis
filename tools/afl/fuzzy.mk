@@ -56,7 +56,7 @@ fuzz: $(FUZZ_TOOLS)
 ifdef FUZZ_BIN
 	@echo "fuzzing $(FUZZ_BIN)..."
 	@mkdir -p $(FUZZ_OUTPUT)
-	@trap 'echo "see $(FUZZ_OUTPUT) for results"' SIGINT && \
+	@trap 'echo "see $(FUZZ_OUTPUT) for results"' SIGINT; \
 	 $(AFL_LINKAGE) $(AFL_FUZZ) -i $(FUZZ_INPUT) -o $(FUZZ_OUTPUT) $(FUZZ_BIN_PATH)/$(FUZZ_BIN) @@
 endif
 
