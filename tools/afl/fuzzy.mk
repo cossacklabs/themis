@@ -46,7 +46,7 @@ endif
 
 ifdef FUZZ_BIN
 FUZZ_INPUT  := $(FUZZ_PATH)/input/$(FUZZ_BIN)
-FUZZ_OUTPUT := $(FUZZ_BIN_PATH)/output/$(FUZZ_BIN)_$(shell date +"%Y-%m-%d_%H-%M-%S")
+FUZZ_OUTPUT := $(FUZZ_BIN_PATH)/output/$(FUZZ_BIN)/$(shell date +"%Y-%m-%d_%H-%M-%S")
 endif
 
 # american fuzzy lop is expected to be stopped via SIGINT (usually by pressing
