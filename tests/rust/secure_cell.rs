@@ -14,12 +14,19 @@
 
 use themis::{secure_cell::SecureCell, ErrorKind};
 
+#[test]
+fn empty_master_key() {
+    assert!(SecureCell::with_key(b"").is_err());
+}
+
 mod context_imprint {
     use super::*;
 
     #[test]
     fn happy_path() {
-        let cell = SecureCell::with_key(b"deep secret").context_imprint();
+        let cell = SecureCell::with_key(b"deep secret")
+            .unwrap()
+            .context_imprint();
 
         let plaintext = b"example plaintext";
         let ciphertext = cell.encrypt_with_context(&plaintext, b"123").unwrap();
@@ -32,7 +39,9 @@ mod context_imprint {
 
     #[test]
     fn empty_context() {
-        let cell = SecureCell::with_key(b"deep secret").context_imprint();
+        let cell = SecureCell::with_key(b"deep secret")
+            .unwrap()
+            .context_imprint();
 
         let plaintext = b"example plaintext";
         let error = cell.encrypt_with_context(&plaintext, b"").unwrap_err();
@@ -42,8 +51,12 @@ mod context_imprint {
 
     #[test]
     fn invalid_key() {
-        let cell1 = SecureCell::with_key(b"deep secret").context_imprint();
-        let cell2 = SecureCell::with_key(b"DEEP SECRET").context_imprint();
+        let cell1 = SecureCell::with_key(b"deep secret")
+            .unwrap()
+            .context_imprint();
+        let cell2 = SecureCell::with_key(b"DEEP SECRET")
+            .unwrap()
+            .context_imprint();
 
         let plaintext = b"example plaintext";
         let ciphertext = cell1.encrypt_with_context(&plaintext, b"123").unwrap();
@@ -54,7 +67,9 @@ mod context_imprint {
 
     #[test]
     fn invalid_context() {
-        let cell = SecureCell::with_key(b"deep secret").context_imprint();
+        let cell = SecureCell::with_key(b"deep secret")
+            .unwrap()
+            .context_imprint();
 
         let plaintext = b"example plaintext";
         let ciphertext = cell.encrypt_with_context(&plaintext, b"123").unwrap();
@@ -65,7 +80,9 @@ mod context_imprint {
 
     #[test]
     fn corrupted_data() {
-        let cell = SecureCell::with_key(b"deep secret").context_imprint();
+        let cell = SecureCell::with_key(b"deep secret")
+            .unwrap()
+            .context_imprint();
 
         let plaintext = b"example plaintext";
         let mut ciphertext = cell.encrypt_with_context(&plaintext, b"123").unwrap();
@@ -81,7 +98,7 @@ mod seal {
 
     #[test]
     fn happy_path() {
-        let seal = SecureCell::with_key("deep secret").seal();
+        let seal = SecureCell::with_key("deep secret").unwrap().seal();
 
         let plaintext = b"example plaintext";
         let ciphertext = seal.encrypt(&plaintext).unwrap();
@@ -92,8 +109,8 @@ mod seal {
 
     #[test]
     fn invalid_key() {
-        let seal1 = SecureCell::with_key(b"deep secret").seal();
-        let seal2 = SecureCell::with_key(b"DEEP SECRET").seal();
+        let seal1 = SecureCell::with_key(b"deep secret").unwrap().seal();
+        let seal2 = SecureCell::with_key(b"DEEP SECRET").unwrap().seal();
 
         let plaintext = b"example plaintext";
         let ciphertext = seal1.encrypt(&plaintext).unwrap();
@@ -104,7 +121,7 @@ mod seal {
 
     #[test]
     fn invalid_context() {
-        let seal = SecureCell::with_key(b"deep secret").seal();
+        let seal = SecureCell::with_key(b"deep secret").unwrap().seal();
 
         let plaintext = b"example plaintext";
         let ciphertext = seal.encrypt_with_context(&plaintext, b"ctx1").unwrap();
@@ -115,7 +132,7 @@ mod seal {
 
     #[test]
     fn corrupted_data() {
-        let seal = SecureCell::with_key(b"deep secret").seal();
+        let seal = SecureCell::with_key(b"deep secret").unwrap().seal();
 
         let plaintext = b"example plaintext";
         let mut ciphertext = seal.encrypt(&plaintext).unwrap();
@@ -131,7 +148,9 @@ mod token_protect {
 
     #[test]
     fn happy_path() {
-        let cell = SecureCell::with_key(b"deep secret").token_protect();
+        let cell = SecureCell::with_key(b"deep secret")
+            .unwrap()
+            .token_protect();
 
         let plaintext = b"example plaintext";
         let (ciphertext, token) = cell.encrypt(&plaintext).unwrap();
@@ -144,8 +163,12 @@ mod token_protect {
 
     #[test]
     fn invalid_key() {
-        let cell1 = SecureCell::with_key(b"deep secret").token_protect();
-        let cell2 = SecureCell::with_key(b"DEEP SECRET").token_protect();
+        let cell1 = SecureCell::with_key(b"deep secret")
+            .unwrap()
+            .token_protect();
+        let cell2 = SecureCell::with_key(b"DEEP SECRET")
+            .unwrap()
+            .token_protect();
 
         let plaintext = b"example plaintext";
         let (ciphertext, token) = cell1.encrypt(plaintext).unwrap();
@@ -156,7 +179,9 @@ mod token_protect {
 
     #[test]
     fn invalid_context() {
-        let cell = SecureCell::with_key(b"deep secret").token_protect();
+        let cell = SecureCell::with_key(b"deep secret")
+            .unwrap()
+            .token_protect();
 
         let plaintext = b"example plaintext";
         let (ciphertext, token) = cell.encrypt_with_context(plaintext, b"123").unwrap();
@@ -169,7 +194,9 @@ mod token_protect {
 
     #[test]
     fn corrupted_data() {
-        let cell = SecureCell::with_key(b"deep secret").token_protect();
+        let cell = SecureCell::with_key(b"deep secret")
+            .unwrap()
+            .token_protect();
 
         let plaintext = b"example plaintext";
         let (mut ciphertext, token) = cell.encrypt(&plaintext).unwrap();
@@ -181,7 +208,9 @@ mod token_protect {
 
     #[test]
     fn corrupted_token() {
-        let cell = SecureCell::with_key(b"deep secret").token_protect();
+        let cell = SecureCell::with_key(b"deep secret")
+            .unwrap()
+            .token_protect();
 
         let plaintext = b"example plaintext";
         let (ciphertext, mut token) = cell.encrypt(&plaintext).unwrap();

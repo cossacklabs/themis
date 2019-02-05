@@ -73,7 +73,7 @@
 //! # fn main() -> Result<(), themis::Error> {
 //! use themis::secure_cell::SecureCell;
 //!
-//! let cell = SecureCell::with_key(b"seekryt").seal();
+//! let cell = SecureCell::with_key(b"seekryt")?.seal();
 //!
 //! let encrypted = cell.encrypt(b"source data")?;
 //! let decrypted = cell.decrypt(&encrypted)?;
@@ -113,22 +113,25 @@ impl SecureCell {
     /// array, a `Vec<u8>`, or a `String`.
     ///
     /// Note that it is actually _a password_. It is not required to be an actual key generated
-    /// by one of the [`keygen`] functions (though you definitely can use those keys as well):
+    /// by one of the [`keygen`] functions (though you definitely can use those keys as well).
+    /// The master key cannot be empty.
     ///
     /// ```
     /// use themis::secure_cell::SecureCell;
     ///
-    /// SecureCell::with_key(b"byte string");
-    /// SecureCell::with_key(&[1, 2, 3, 4, 5]);
-    /// SecureCell::with_key(vec![6, 7, 8, 9]);
-    /// SecureCell::with_key(format!("owned string"));
+    /// assert!(SecureCell::with_key(b"byte string").is_ok());
+    /// assert!(SecureCell::with_key(&[1, 2, 3, 4, 5]).is_ok());
+    /// assert!(SecureCell::with_key(vec![6, 7, 8, 9]).is_ok());
+    /// assert!(SecureCell::with_key(format!("owned string")).is_ok());
+    ///
+    /// assert!(SecureCell::with_key(b"").is_err());
     /// ```
     ///
     /// [`keygen`]: ../keygen/index.html
-    pub fn with_key(master_key: impl AsRef<[u8]>) -> Self {
-        Self {
-            master_key: KeyBytes::copy_slice(master_key.as_ref()),
-        }
+    pub fn with_key(master_key: impl AsRef<[u8]>) -> Result<Self> {
+        Ok(Self {
+            master_key: KeyBytes::copy_slice(master_key.as_ref())?,
+        })
     }
 
     /// Switches this Secure Cell to the _sealing_ operation mode.
@@ -157,7 +160,7 @@ impl SecureCell {
 /// # fn main() -> Result<(), themis::Error> {
 /// use themis::secure_cell::SecureCell;
 ///
-/// let cell = SecureCell::with_key(b"password").seal();
+/// let cell = SecureCell::with_key(b"password")?.seal();
 ///
 /// let input = b"test input";
 /// let output = cell.encrypt(input)?;
@@ -180,7 +183,7 @@ impl SecureCellSeal {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key(b"password").seal();
+    /// let cell = SecureCell::with_key(b"password")?.seal();
     ///
     /// cell.encrypt(b"byte string")?;
     /// cell.encrypt(&[1, 2, 3, 4, 5])?;
@@ -195,7 +198,7 @@ impl SecureCellSeal {
     /// ```
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").seal();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().seal();
     /// #
     /// assert!(cell.encrypt(&[]).is_err());
     /// ```
@@ -214,7 +217,7 @@ impl SecureCellSeal {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key(b"password").seal();
+    /// let cell = SecureCell::with_key(b"password")?.seal();
     ///
     /// cell.encrypt_with_context(b"byte string", format!("owned string"))?;
     /// cell.encrypt_with_context(&[1, 2, 3, 4, 5], vec![6, 7, 8, 9, 10])?;
@@ -228,7 +231,7 @@ impl SecureCellSeal {
     /// ```
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").seal();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().seal();
     /// #
     /// assert!(cell.encrypt_with_context(b"message", &[]).is_ok());
     /// assert!(cell.encrypt_with_context(&[], b"context").is_err());
@@ -257,7 +260,7 @@ impl SecureCellSeal {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key(b"password").seal();
+    /// let cell = SecureCell::with_key(b"password")?.seal();
     ///
     /// let encrypted = cell.encrypt(b"byte string")?;
     /// let decrypted = cell.decrypt(&encrypted)?;
@@ -269,14 +272,17 @@ impl SecureCellSeal {
     /// However, if the key is invalid then decryption fails:
     ///
     /// ```
+    /// # fn main() -> Result<(), themis::Error> {
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").seal();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().seal();
     /// # let encrypted = cell.encrypt(b"byte string").unwrap();
     /// #
-    /// let different_cell = SecureCell::with_key(b"qwerty123").seal();
+    /// let different_cell = SecureCell::with_key(b"qwerty123")?.seal();
     ///
     /// assert!(different_cell.decrypt(&encrypted).is_err());
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// Secure Cell in sealing mode checks data integrity and can see if the data was corrupted,
@@ -285,7 +291,7 @@ impl SecureCellSeal {
     /// ```
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").seal();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().seal();
     /// # let encrypted = cell.encrypt(b"byte string").unwrap();
     /// #
     /// // Let's flip some bits somewhere.
@@ -308,7 +314,7 @@ impl SecureCellSeal {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key(b"password").seal();
+    /// let cell = SecureCell::with_key(b"password")?.seal();
     ///
     /// let encrypted = cell.encrypt_with_context(b"byte string", b"context")?;
     /// let decrypted = cell.decrypt_with_context(&encrypted, b"context")?;
@@ -320,15 +326,18 @@ impl SecureCellSeal {
     /// However, if the key or the context are invalid then decryption fails:
     ///
     /// ```
+    /// # fn main() -> Result<(), themis::Error> {
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").seal();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().seal();
     /// # let encrypted = cell.encrypt_with_context(b"byte string", b"context").unwrap();
     /// #
-    /// let different_cell = SecureCell::with_key(b"qwerty123").seal();
+    /// let different_cell = SecureCell::with_key(b"qwerty123")?.seal();
     ///
     /// assert!(different_cell.decrypt_with_context(&encrypted, b"context").is_err());
     /// assert!(cell.decrypt_with_context(&encrypted, b"different context").is_err());
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// Secure Cell in sealing mode checks data integrity and can see if the data was corrupted,
@@ -337,7 +346,7 @@ impl SecureCellSeal {
     /// ```
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").seal();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().seal();
     /// # let encrypted = cell.encrypt_with_context(b"byte string", b"context").unwrap();
     /// #
     /// // Let's flip some bits somewhere.
@@ -470,7 +479,7 @@ fn decrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Resul
 /// # fn main() -> Result<(), themis::Error> {
 /// use themis::secure_cell::SecureCell;
 ///
-/// let cell = SecureCell::with_key(b"password").token_protect();
+/// let cell = SecureCell::with_key(b"password")?.token_protect();
 ///
 /// let input = b"test input";
 /// let (output, token) = cell.encrypt(input)?;
@@ -497,7 +506,7 @@ impl SecureCellTokenProtect {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key(b"password").token_protect();
+    /// let cell = SecureCell::with_key(b"password")?.token_protect();
     ///
     /// cell.encrypt(b"byte string")?;
     /// cell.encrypt(&[1, 2, 3, 4, 5])?;
@@ -512,7 +521,7 @@ impl SecureCellTokenProtect {
     /// ```
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").token_protect();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().token_protect();
     /// #
     /// assert!(cell.encrypt(&[]).is_err());
     /// ```
@@ -535,7 +544,7 @@ impl SecureCellTokenProtect {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key(b"password").token_protect();
+    /// let cell = SecureCell::with_key(b"password").unwrap().token_protect();
     ///
     /// cell.encrypt_with_context(b"byte string", format!("owned string"))?;
     /// cell.encrypt_with_context(&[1, 2, 3, 4, 5], vec![6, 7, 8, 9, 10])?;
@@ -549,7 +558,7 @@ impl SecureCellTokenProtect {
     /// ```
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").token_protect();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().token_protect();
     /// #
     /// assert!(cell.encrypt_with_context(b"message", &[]).is_ok());
     /// assert!(cell.encrypt_with_context(&[], b"context").is_err());
@@ -583,7 +592,7 @@ impl SecureCellTokenProtect {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key(b"password").token_protect();
+    /// let cell = SecureCell::with_key(b"password")?.token_protect();
     ///
     /// let (encrypted, token) = cell.encrypt(b"byte string")?;
     /// let decrypted = cell.decrypt(&encrypted, &token)?;
@@ -595,14 +604,17 @@ impl SecureCellTokenProtect {
     /// However, you obviously cannot use tokens produced by Secure Cells with different keys:
     ///
     /// ```
+    /// # fn main() -> Result<(), themis::Error> {
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").token_protect();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().token_protect();
     /// # let (encrypted, token) = cell.encrypt(b"byte string").unwrap();
     /// #
-    /// let different_cell = SecureCell::with_key(b"qwerty123").token_protect();
+    /// let different_cell = SecureCell::with_key(b"qwerty123")?.token_protect();
     ///
     /// assert!(different_cell.decrypt(&encrypted, &token).is_err());
+    /// # Ok(())
+    /// # }
     /// ```
     ///
     /// Or by the same Secure Cell for different data:
@@ -611,7 +623,7 @@ impl SecureCellTokenProtect {
     /// # fn main() -> Result<(), themis::Error> {
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").token_protect();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().token_protect();
     /// #
     /// let (encrypted,   _) = cell.encrypt(b"byte string")?;
     /// let (_, other_token) = cell.encrypt(b"other data")?;
@@ -627,7 +639,7 @@ impl SecureCellTokenProtect {
     /// ```
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").token_protect();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().token_protect();
     /// # let (encrypted, auth_token) = cell.encrypt(b"byte string").unwrap();
     /// #
     /// // Let's flip some bits somewhere.
@@ -660,7 +672,7 @@ impl SecureCellTokenProtect {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key(b"password").token_protect();
+    /// let cell = SecureCell::with_key(b"password")?.token_protect();
     ///
     /// let (encrypted, token) = cell.encrypt_with_context(b"byte string", b"context")?;
     /// let decrypted = cell.decrypt_with_context(&encrypted, &token, b"context")?;
@@ -676,10 +688,10 @@ impl SecureCellTokenProtect {
     /// # fn main() -> Result<(), themis::Error> {
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").token_protect();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().token_protect();
     /// # let (encrypted, token) = cell.encrypt_with_context(b"byte string", b"context").unwrap();
     /// #
-    /// let different_cell = SecureCell::with_key(b"qwerty123").token_protect();
+    /// let different_cell = SecureCell::with_key(b"qwerty123")?.token_protect();
     ///
     /// assert!(different_cell.decrypt_with_context(&encrypted, &token, b"context").is_err());
     ///
@@ -697,7 +709,7 @@ impl SecureCellTokenProtect {
     /// ```
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").token_protect();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().token_protect();
     /// # let (encrypted, auth_token) = cell.encrypt_with_context(b"things", b"context").unwrap();
     /// #
     /// // Let's flip some bits somewhere.
@@ -859,7 +871,7 @@ fn decrypt_token_protect(
 /// # fn main() -> Result<(), themis::Error> {
 /// use themis::secure_cell::SecureCell;
 ///
-/// let cell = SecureCell::with_key(b"password").context_imprint();
+/// let cell = SecureCell::with_key(b"password")?.context_imprint();
 ///
 /// let input = b"test input";
 /// let output = cell.encrypt_with_context(input, b"context")?;
@@ -893,7 +905,7 @@ impl SecureCellContextImprint {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key(b"password").context_imprint();
+    /// let cell = SecureCell::with_key(b"password")?.context_imprint();
     ///
     /// cell.encrypt_with_context(b"byte string", format!("owned string"))?;
     /// cell.encrypt_with_context(&[1, 2, 3, 4, 5], vec![6, 7, 8, 9, 10])?;
@@ -906,7 +918,7 @@ impl SecureCellContextImprint {
     /// ```
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").context_imprint();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().context_imprint();
     /// #
     /// assert!(cell.encrypt_with_context(b"message", b"context").is_ok());
     /// assert!(cell.encrypt_with_context(b"",        b"context").is_err());
@@ -938,7 +950,7 @@ impl SecureCellContextImprint {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key(b"password").context_imprint();
+    /// let cell = SecureCell::with_key(b"password")?.context_imprint();
     ///
     /// let encrypted = cell.encrypt_with_context(b"byte string", b"context")?;
     /// let decrypted = cell.decrypt_with_context(&encrypted, b"context")?;
@@ -954,8 +966,8 @@ impl SecureCellContextImprint {
     /// # fn main() -> Result<(), themis::Error> {
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// let cell1 = SecureCell::with_key(b"XXX").context_imprint();
-    /// let cell2 = SecureCell::with_key(b"OOO").context_imprint();
+    /// let cell1 = SecureCell::with_key(b"XXX")?.context_imprint();
+    /// let cell2 = SecureCell::with_key(b"OOO")?.context_imprint();
     ///
     /// let encrypted = cell1.encrypt_with_context(b"byte string", b"context")?;
     /// let decrypted = cell2.decrypt_with_context(&encrypted, b"task-switch")?;
@@ -970,7 +982,7 @@ impl SecureCellContextImprint {
     /// ```
     /// # use themis::secure_cell::SecureCell;
     /// #
-    /// # let cell = SecureCell::with_key(b"password").context_imprint();
+    /// # let cell = SecureCell::with_key(b"password").unwrap().context_imprint();
     /// # let encrypted = cell.encrypt_with_context(b"byte string", b"context").unwrap();
     /// #
     /// // Let's flip some bits somewhere.

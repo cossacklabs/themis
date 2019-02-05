@@ -37,7 +37,7 @@ fn main() {
     let input_path = matches.value_of("input").unwrap();
     let output_path = matches.value_of("output").unwrap();
 
-    let cell = SecureCell::with_key(&password).seal();
+    let cell = SecureCell::with_key(&password).unwrap().seal();
 
     let input = read_file(&input_path).unwrap();
     let output = if encrypt {
