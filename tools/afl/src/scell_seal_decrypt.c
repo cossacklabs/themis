@@ -23,7 +23,7 @@
 
 #include "readline.h"
 
-int main(void)
+int main(int argc, char **argv)
 {
 	themis_status_t err = THEMIS_SUCCESS;
 
@@ -31,10 +31,21 @@ int main(void)
 	 * Read test data.
 	 */
 
+	if (argc != 2)
+	{
+		return 1;
+	}
+
+	FILE* input = fopen(argv[1], "rb");
+	if (!input)
+	{
+		return 1;
+	}
+
 	uint8_t *master_key_bytes = NULL;
 	size_t master_key_size = 0;
 
-	if (read_line_binary(stdin, &master_key_bytes, &master_key_size))
+	if (read_line_binary(input, &master_key_bytes, &master_key_size))
 	{
 		return 1;
 	}
@@ -42,7 +53,7 @@ int main(void)
 	uint8_t *user_context_bytes = NULL;
 	size_t user_context_size = 0;
 
-	if (read_line_binary(stdin, &user_context_bytes, &user_context_size))
+	if (read_line_binary(input, &user_context_bytes, &user_context_size))
 	{
 		return 1;
 	}
@@ -50,10 +61,12 @@ int main(void)
 	uint8_t *message_bytes = NULL;
 	size_t message_size = 0;
 
-	if (read_line_binary(stdin, &message_bytes, &message_size))
+	if (read_line_binary(input, &message_bytes, &message_size))
 	{
 		return 1;
 	}
+
+	fclose(input);
 
 	/*
 	 * Try decrypting it.

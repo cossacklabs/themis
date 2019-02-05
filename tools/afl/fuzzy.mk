@@ -57,7 +57,7 @@ ifdef FUZZ_BIN
 	@echo "fuzzing $(FUZZ_BIN)..."
 	@mkdir -p $(FUZZ_OUTPUT)
 	@trap 'echo "see $(FUZZ_OUTPUT) for results"' SIGINT && \
-	 $(AFL_LINKAGE) $(AFL_FUZZ) -i $(FUZZ_INPUT) -o $(FUZZ_OUTPUT) $(FUZZ_BIN_PATH)/$(FUZZ_BIN)
+	 $(AFL_LINKAGE) $(AFL_FUZZ) -i $(FUZZ_INPUT) -o $(FUZZ_OUTPUT) $(FUZZ_BIN_PATH)/$(FUZZ_BIN) @@
 endif
 
 $(FUZZ_BIN_PATH)/%.o: $(FUZZ_SRC_PATH)/%.c

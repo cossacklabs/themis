@@ -23,13 +23,24 @@
 
 #include "readline.h"
 
-int main(void)
+int main(int argc, char **argv)
 {
 	themis_status_t err = THEMIS_SUCCESS;
 
 	/*
 	 * Read test data.
 	 */
+
+	if (argc != 2)
+	{
+		return 1;
+	}
+
+	FILE* input = fopen(argv[1], "rb");
+	if (!input)
+	{
+		return 1;
+	}
 
 	uint8_t *master_key_bytes = NULL;
 	size_t master_key_size = 0;
@@ -54,6 +65,8 @@ int main(void)
 	{
 		return 1;
 	}
+
+	fclose(input);
 
 	/*
 	 * Try encrypting the message.
