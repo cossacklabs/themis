@@ -76,7 +76,29 @@ namespace themispp{
     }
 
     virtual ~secure_session_t(){
-      secure_session_destroy(_session);
+      if(_session){
+        secure_session_destroy(_session);
+      }
+    }
+
+    secure_session_t(const secure_session_t&) = delete;
+    secure_session_t& operator=(const secure_session_t&) = delete;
+
+    secure_session_t(secure_session_t&& other){
+      _session=other._session;
+      _callback=other._callback;
+      _res=other._res;
+      other._session=nullptr;
+    }
+
+    secure_session_t& operator=(secure_session_t&& other){
+      if(this!=&other){
+        _session=other._session;
+        _callback=other._callback;
+        _res=other._res;
+        other._session=nullptr;
+      }
+      return *this;
     }
 
     const data_t& unwrap(const std::vector<uint8_t>& data){
