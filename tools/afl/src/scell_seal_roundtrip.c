@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,12 +34,14 @@ int main(int argc, char **argv)
 
 	if (argc != 2)
 	{
+		fprintf(stderr, "usage:\n\t%s <input-file>\n", argv[0]);
 		return 1;
 	}
 
 	FILE* input = fopen(argv[1], "rb");
 	if (!input)
 	{
+		fprintf(stderr, "failed to open %s: %s\n", argv[1], strerror(errno));
 		return 1;
 	}
 
@@ -47,6 +50,7 @@ int main(int argc, char **argv)
 
 	if (read_line_binary(input, &master_key_bytes, &master_key_size))
 	{
+		fprintf(stderr, "failed to read %s: %s\n", argv[1], strerror(errno));
 		return 1;
 	}
 
@@ -55,6 +59,7 @@ int main(int argc, char **argv)
 
 	if (read_line_binary(input, &user_context_bytes, &user_context_size))
 	{
+		fprintf(stderr, "failed to read %s: %s\n", argv[1], strerror(errno));
 		return 1;
 	}
 
@@ -63,6 +68,7 @@ int main(int argc, char **argv)
 
 	if (read_line_binary(input, &message_bytes, &message_size))
 	{
+		fprintf(stderr, "failed to read %s: %s\n", argv[1], strerror(errno));
 		return 1;
 	}
 
@@ -83,12 +89,15 @@ int main(int argc, char **argv)
 
 	if (err != THEMIS_BUFFER_TOO_SMALL)
 	{
+		fprintf(stderr, "failed to determine encrypted message size: %d\n", err);
 		return 2;
 	}
 
 	encrypted_bytes = malloc(encrypted_size);
 	if (!encrypted_bytes)
 	{
+		fprintf(stderr, "failed to allocate memory for encrypted message (%zu bytes)\n",
+			encrypted_size);
 		return 2;
 	}
 
@@ -100,6 +109,7 @@ int main(int argc, char **argv)
 
 	if (err != THEMIS_SUCCESS)
 	{
+		fprintf(stderr, "failed to encrypt message: %d\n", err);
 		return 2;
 	}
 
@@ -118,12 +128,15 @@ int main(int argc, char **argv)
 
 	if (err != THEMIS_BUFFER_TOO_SMALL)
 	{
+		fprintf(stderr, "failed to determine decrypted message size: %d\n", err);
 		return 3;
 	}
 
 	decrypted_bytes = malloc(decrypted_size);
 	if (!decrypted_bytes)
 	{
+		fprintf(stderr, "failed to allocate memory for decrypted message (%zu bytes)\n",
+			decrypted_size);
 		return 3;
 	}
 
@@ -135,6 +148,7 @@ int main(int argc, char **argv)
 
 	if (err != THEMIS_SUCCESS)
 	{
+		fprintf(stderr, "failed to decrypt message: %d\n", err);
 		return 3;
 	}
 
@@ -144,10 +158,13 @@ int main(int argc, char **argv)
 
 	if (decrypted_size != message_size)
 	{
+		fprintf(stderr, "message length does not match: actual %zu, expected %zu\n",
+			decrypted_size, message_size);
 		abort();
 	}
 	if (memcmp(message_bytes, decrypted_bytes, message_size) != 0)
 	{
+		fprintf(stderr, "message content does not match\n");
 		abort();
 	}
 
