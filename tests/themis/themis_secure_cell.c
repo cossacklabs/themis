@@ -369,17 +369,35 @@ static void secure_cell_api_test(void)
 /*
  * See themis_auth_sym_message_hdr_t definition.
  */
-static inline uint32_t* context_iv_length(uint8_t* context)
+
+static inline uint32_t get_context_iv_length(const uint8_t* context)
 {
-	return (uint32_t*)context + 1;
+	return ((const uint32_t*)context)[1];
 }
-static inline uint32_t* context_auth_tag_length(uint8_t* context)
+
+static inline void set_context_iv_length(uint8_t* context, uint32_t value)
 {
-	return (uint32_t*)context + 2;
+	((uint32_t*)context)[1] = value;
 }
-static inline uint32_t* context_message_length(uint8_t* context)
+
+static inline uint32_t get_context_auth_tag_length(const uint8_t* context)
 {
-	return (uint32_t*)context + 3;
+	return ((const uint32_t*)context)[2];
+}
+
+static inline void set_context_auth_tag_length(uint8_t* context, uint32_t value)
+{
+	((uint32_t*)context)[2] = value;
+}
+
+static inline uint32_t get_context_message_length(const uint8_t* context)
+{
+	return ((const uint32_t*)context)[3];
+}
+
+static inline void set_context_message_length(uint8_t* context, uint32_t value)
+{
+	((uint32_t*)context)[3] = value;
 }
 
 static themis_status_t encrypt_seal(uint8_t** encrypted_message, size_t* encrypted_message_length)
@@ -444,8 +462,8 @@ static void secure_cell_context_corruption_seal(void)
 	uint8_t* decrypted_message = NULL;
 	size_t decrypted_message_length = 0;
 
-	old_value = *context_iv_length(encrypted_message);
-	*context_iv_length(encrypted_message) = 0xDEADBEEF;
+	old_value = get_context_iv_length(encrypted_message);
+	set_context_iv_length(encrypted_message, 0xDEADBEEF);
 	{
 		res = prepare_decrypt_seal(encrypted_message, encrypted_message_length, &decrypted_message, &decrypted_message_length);
 		if(res!=THEMIS_SUCCESS){
@@ -457,10 +475,10 @@ static void secure_cell_context_corruption_seal(void)
 
 		free(decrypted_message);
 	}
-	*context_iv_length(encrypted_message) = old_value;
+	set_context_iv_length(encrypted_message, old_value);
 
-	old_value = *context_auth_tag_length(encrypted_message);
-	*context_auth_tag_length(encrypted_message) = 0xDEADBEEF;
+	old_value = get_context_auth_tag_length(encrypted_message);
+	set_context_auth_tag_length(encrypted_message, 0xDEADBEEF);
 	{
 		res = prepare_decrypt_seal(encrypted_message, encrypted_message_length, &decrypted_message, &decrypted_message_length);
 		if(res!=THEMIS_SUCCESS){
@@ -472,15 +490,15 @@ static void secure_cell_context_corruption_seal(void)
 
 		free(decrypted_message);
 	}
-	*context_auth_tag_length(encrypted_message) = old_value;
+	set_context_auth_tag_length(encrypted_message, old_value);
 
-	old_value = *context_message_length(encrypted_message);
-	*context_message_length(encrypted_message) = 0xDEADBEEF;
+	old_value = get_context_message_length(encrypted_message);
+	set_context_message_length(encrypted_message, 0xDEADBEEF);
 	{
 		res = themis_secure_cell_decrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length, NULL, &decrypted_message_length);
 		testsuite_fail_if(res==THEMIS_BUFFER_TOO_SMALL, "themis_secure_cell_decrypt_seal detects corrupted message length");
 	}
-	*context_message_length(encrypted_message) = old_value;
+	set_context_message_length(encrypted_message, old_value);
 
 out:
 	free(encrypted_message);
@@ -558,8 +576,8 @@ static void secure_cell_context_corruption_token_protect(void)
 	uint8_t* decrypted_message = NULL;
 	size_t decrypted_message_length = 0;
 
-	old_value = *context_iv_length(context);
-	*context_iv_length(context) = 0xDEADBEEF;
+	old_value = get_context_iv_length(context);
+	set_context_iv_length(context, 0xDEADBEEF);
 	{
 		res = prepare_decrypt_token_protect(encrypted_message, encrypted_message_length, context, context_length, &decrypted_message, &decrypted_message_length);
 		if(res!=THEMIS_SUCCESS){
@@ -571,10 +589,10 @@ static void secure_cell_context_corruption_token_protect(void)
 
 		free(decrypted_message);
 	}
-	*context_iv_length(context) = old_value;
+	set_context_iv_length(context, old_value);
 
-	old_value = *context_auth_tag_length(context);
-	*context_auth_tag_length(context) = 0xDEADBEEF;
+	old_value = get_context_auth_tag_length(context);
+	set_context_auth_tag_length(context, 0xDEADBEEF);
 	{
 		res = prepare_decrypt_token_protect(encrypted_message, encrypted_message_length, context, context_length, &decrypted_message, &decrypted_message_length);
 		if(res!=THEMIS_SUCCESS){
@@ -586,10 +604,10 @@ static void secure_cell_context_corruption_token_protect(void)
 
 		free(decrypted_message);
 	}
-	*context_auth_tag_length(context) = old_value;
+	set_context_auth_tag_length(context, old_value);
 
-	old_value = *context_message_length(context);
-	*context_message_length(context) = 0xDEADBEEF;
+	old_value = get_context_message_length(context);
+	set_context_message_length(context, 0xDEADBEEF);
 	{
 		res = prepare_decrypt_token_protect(encrypted_message, encrypted_message_length, context, context_length, &decrypted_message, &decrypted_message_length);
 		if(res!=THEMIS_SUCCESS){
@@ -601,7 +619,7 @@ static void secure_cell_context_corruption_token_protect(void)
 
 		free(decrypted_message);
 	}
-	*context_message_length(context) = old_value;
+	set_context_message_length(context, old_value);
 
 out:
 	free(encrypted_message);
