@@ -61,7 +61,11 @@ namespace themispp{
   class secure_session_t{
   public:
     typedef std::vector<uint8_t> data_t; 
-    
+
+    secure_session_t():
+      _session(nullptr){
+    }
+
     secure_session_t(const data_t& id, const data_t& priv_key, secure_session_callback_interface_t* callbacks):
       _session(NULL),
       _res(0){
