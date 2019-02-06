@@ -21,19 +21,14 @@ FUZZ_PATH = tools/afl
 FUZZ_BIN_PATH = $(BIN_PATH)/afl
 FUZZ_SRC_PATH = $(FUZZ_PATH)/src
 FUZZ_THEMIS_PATH = $(BIN_PATH)/afl-themis
-FUZZ_THEMIS_LIB = $(FUZZ_THEMIS_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
+FUZZ_THEMIS_LIB = $(FUZZ_THEMIS_PATH)/lib$(THEMIS_BIN).a
 
 FUZZ_TOOLS = $(addprefix $(FUZZ_BIN_PATH)/,$(notdir $(wildcard $(FUZZ_PATH)/input/*)))
 FUZZ_OBJS  = $(patsubst $(FUZZ_SRC_PATH)/%.c,$(FUZZ_BIN_PATH)/%.o,$(wildcard $(FUZZ_SRC_PATH)/*.c))
 FUZZ_UTILS = $(filter-out $(addsuffix .o,$(FUZZ_TOOLS)),$(FUZZ_OBJS))
 
 AFL_CFLAGS  += $(CFLAGS) -I$(FUZZ_SRC_PATH)
-AFL_LDFLAGS += -L$(FUZZ_THEMIS_PATH) -l$(THEMIS_BIN)
-
-# Dynamic loader on Linux requires a bit of help to locate the libraries
-ifdef IS_LINUX
-AFL_LINKAGE = LD_LIBRARY_PATH="$(abspath $(FUZZ_THEMIS_PATH))"
-endif
+AFL_LDFLAGS += -L$(FUZZ_THEMIS_PATH) -l$(THEMIS_BIN) -l$(SOTER_BIN) $(LDFLAGS)
 
 # We don't really track dependencies of $(FUZZ_THEMIS_LIB) here,
 # so ask our make to rebuild it every time. The recursively called
@@ -46,7 +41,7 @@ endif
 
 ifdef FUZZ_BIN
 FUZZ_INPUT  := $(FUZZ_PATH)/input/$(FUZZ_BIN)
-FUZZ_OUTPUT := $(FUZZ_BIN_PATH)/output/$(FUZZ_BIN)_$(shell date +"%Y-%m-%d_%H-%M-%S")
+FUZZ_OUTPUT := $(FUZZ_BIN_PATH)/output/$(FUZZ_BIN)/$(shell date +"%Y-%m-%d_%H-%M-%S")
 endif
 
 # american fuzzy lop is expected to be stopped via SIGINT (usually by pressing
@@ -56,8 +51,8 @@ fuzz: $(FUZZ_TOOLS)
 ifdef FUZZ_BIN
 	@echo "fuzzing $(FUZZ_BIN)..."
 	@mkdir -p $(FUZZ_OUTPUT)
-	@trap 'echo "see $(FUZZ_OUTPUT) for results"' SIGINT && \
-	 $(AFL_LINKAGE) $(AFL_FUZZ) -i $(FUZZ_INPUT) -o $(FUZZ_OUTPUT) $(FUZZ_BIN_PATH)/$(FUZZ_BIN)
+	@trap 'echo "see $(FUZZ_OUTPUT) for results"' SIGINT ; \
+	 $(AFL_FUZZ) -i $(FUZZ_INPUT) -o $(FUZZ_OUTPUT) $(FUZZ_BIN_PATH)/$(FUZZ_BIN) @@
 endif
 
 $(FUZZ_BIN_PATH)/%.o: $(FUZZ_SRC_PATH)/%.c
@@ -66,11 +61,11 @@ $(FUZZ_BIN_PATH)/%.o: $(FUZZ_SRC_PATH)/%.c
 	@AFL_QUIET=1 $(AFL_CC) $(AFL_CFLAGS) -c -o $@ $<
 	@$(PRINT_OK)
 
-$(FUZZ_BIN_PATH)/%: $(FUZZ_BIN_PATH)/%.o $(FUZZ_UTILS) | $(FUZZ_THEMIS_LIB)
+$(FUZZ_BIN_PATH)/%: $(FUZZ_BIN_PATH)/%.o $(FUZZ_UTILS) $(FUZZ_THEMIS_LIB)
 	@mkdir -p $(@D)
 	@echo -n "link "
-	@AFL_QUIET=1 $(AFL_LINKAGE) $(AFL_CC) -o $@ $< $(FUZZ_UTILS) $(AFL_LDFLAGS)
+	@AFL_QUIET=1 $(AFL_CC) -o $@ $< $(FUZZ_UTILS) $(AFL_LDFLAGS)
 	@$(PRINT_OK)
 
 $(FUZZ_THEMIS_LIB):
-	@AFL_QUIET=1 make themis_shared CC=$(AFL_CC) BUILD_PATH=$(FUZZ_THEMIS_PATH)
+	@AFL_QUIET=1 make themis_static CC=$(AFL_CC) BUILD_PATH=$(FUZZ_THEMIS_PATH)

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,7 +24,7 @@
 
 #include "readline.h"
 
-int main(void)
+int main(int argc, char **argv)
 {
 	themis_status_t err = THEMIS_SUCCESS;
 
@@ -31,29 +32,47 @@ int main(void)
 	 * Read test data.
 	 */
 
+	if (argc != 2)
+	{
+		fprintf(stderr, "usage:\n\t%s <input-file>\n", argv[0]);
+		return 1;
+	}
+
+	FILE* input = fopen(argv[1], "rb");
+	if (!input)
+	{
+		fprintf(stderr, "failed to open %s: %s\n", argv[1], strerror(errno));
+		return 1;
+	}
+
 	uint8_t *master_key_bytes = NULL;
 	size_t master_key_size = 0;
 
-	if (read_line_binary(stdin, &master_key_bytes, &master_key_size))
+	if (read_line_binary(input, &master_key_bytes, &master_key_size))
 	{
+		fprintf(stderr, "failed to read %s: %s\n", argv[1], strerror(errno));
 		return 1;
 	}
 
 	uint8_t *user_context_bytes = NULL;
 	size_t user_context_size = 0;
 
-	if (read_line_binary(stdin, &user_context_bytes, &user_context_size))
+	if (read_line_binary(input, &user_context_bytes, &user_context_size))
 	{
+		fprintf(stderr, "failed to read %s: %s\n", argv[1], strerror(errno));
 		return 1;
 	}
 
 	uint8_t *message_bytes = NULL;
 	size_t message_size = 0;
 
-	if (read_line_binary(stdin, &message_bytes, &message_size))
+	if (read_line_binary(input, &message_bytes, &message_size))
 	{
+		fprintf(stderr, "failed to read %s: %s\n", argv[1], strerror(errno));
 		return 1;
 	}
+
+	fclose(input);
 
 	/*
 	 * Try decrypting it.
@@ -70,12 +89,15 @@ int main(void)
 
 	if (err != THEMIS_BUFFER_TOO_SMALL)
 	{
+		fprintf(stderr, "failed to determine decrypted message size: %d\n", err);
 		return 2;
 	}
 
 	decrypted_bytes = malloc(decrypted_size);
 	if (!decrypted_bytes)
 	{
+		fprintf(stderr, "failed to allocate memory for decrypted message (%zu bytes)\n",
+			decrypted_size);
 		return 2;
 	}
 
@@ -87,6 +109,7 @@ int main(void)
 
 	if (err != THEMIS_SUCCESS)
 	{
+		fprintf(stderr, "failed to decrypt message: %d\n", err);
 		return 2;
 	}
 

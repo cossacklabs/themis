@@ -109,7 +109,10 @@ in order to add a `${new_tool}` to fuzz test suite.
 
  1. Create `src/${new_tool}.c` file.
 
-    It should be a simple C program which reads from standard input,
+    It should be a simple C program
+    which accepts a single command-line argument:
+    a path to the file with input data.
+    The tool reads the file,
     exercises Themis in some way using the input data,
     and exits cleanly if the test passes.
 
