@@ -366,10 +366,279 @@ static void secure_cell_api_test(void)
 	secure_cell_api_test_context_imprint();
 }
 
+/*
+ * See themis_auth_sym_message_hdr_t definition.
+ */
+
+static inline uint32_t get_context_iv_length(const uint8_t* context)
+{
+	return ((const uint32_t*)context)[1];
+}
+
+static inline void set_context_iv_length(uint8_t* context, uint32_t value)
+{
+	((uint32_t*)context)[1] = value;
+}
+
+static inline uint32_t get_context_auth_tag_length(const uint8_t* context)
+{
+	return ((const uint32_t*)context)[2];
+}
+
+static inline void set_context_auth_tag_length(uint8_t* context, uint32_t value)
+{
+	((uint32_t*)context)[2] = value;
+}
+
+static inline uint32_t get_context_message_length(const uint8_t* context)
+{
+	return ((const uint32_t*)context)[3];
+}
+
+static inline void set_context_message_length(uint8_t* context, uint32_t value)
+{
+	((uint32_t*)context)[3] = value;
+}
+
+static themis_status_t encrypt_seal(uint8_t** encrypted_message, size_t* encrypted_message_length)
+{
+	themis_status_t res = THEMIS_SUCCESS;
+
+	res = themis_secure_cell_encrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0, (uint8_t*)message, sizeof(message), NULL, encrypted_message_length);
+	if(res!=THEMIS_BUFFER_TOO_SMALL){
+		testsuite_fail_if(true, "themis_secure_cell_encrypt_seal: failed to determine encrypted message length");
+		return res;
+	}
+
+	*encrypted_message = malloc(*encrypted_message_length);
+	if(*encrypted_message==NULL){
+		testsuite_fail_if(true, "themis_secure_cell_encrypt_seal: failed to allocate memory for encrypted message");
+		return THEMIS_NO_MEMORY;
+	}
+
+	res = themis_secure_cell_encrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0, (uint8_t*)message, sizeof(message), *encrypted_message, encrypted_message_length);
+	if(res!=THEMIS_SUCCESS){
+		testsuite_fail_if(true, "themis_secure_cell_encrypt_seal: failed to encrypt message");
+		free(encrypted_message);
+		return res;
+	}
+
+	return THEMIS_SUCCESS;
+}
+
+static themis_status_t prepare_decrypt_seal(uint8_t* encrypted_message, size_t encrypted_message_length, uint8_t** decrypted_message, size_t* decrypted_message_length)
+{
+	themis_status_t res = THEMIS_SUCCESS;
+
+	res = themis_secure_cell_decrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length, NULL, decrypted_message_length);
+	if(res!=THEMIS_BUFFER_TOO_SMALL){
+		testsuite_fail_if(true, "themis_secure_cell_decrypt_seal: failed to determine decrypted message length");
+		return res;
+	}
+
+	*decrypted_message = malloc(*decrypted_message_length);
+	if(*decrypted_message==NULL){
+		testsuite_fail_if(true, "themis_secure_cell_decrypt_seal: failed to allocate memory for decrypted message");
+		return THEMIS_NO_MEMORY;
+	}
+
+	return THEMIS_SUCCESS;
+}
+
+static void secure_cell_context_corruption_seal(void)
+{
+	themis_status_t res = THEMIS_SUCCESS;
+
+	uint8_t* encrypted_message = NULL;
+	size_t encrypted_message_length = 0;
+
+	res = encrypt_seal(&encrypted_message, &encrypted_message_length);
+	if(res!=THEMIS_SUCCESS){
+		goto out;
+	}
+
+	uint32_t old_value = 0;
+
+	uint8_t* decrypted_message = NULL;
+	size_t decrypted_message_length = 0;
+
+	old_value = get_context_iv_length(encrypted_message);
+	set_context_iv_length(encrypted_message, 0xDEADBEEF);
+	{
+		res = prepare_decrypt_seal(encrypted_message, encrypted_message_length, &decrypted_message, &decrypted_message_length);
+		if(res!=THEMIS_SUCCESS){
+			goto out;
+		}
+
+		res = themis_secure_cell_decrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length, decrypted_message, &decrypted_message_length);
+		testsuite_fail_if(res==THEMIS_SUCCESS, "themis_secure_cell_decrypt_seal detects corrupted IV length");
+
+		free(decrypted_message);
+	}
+	set_context_iv_length(encrypted_message, old_value);
+
+	old_value = get_context_auth_tag_length(encrypted_message);
+	set_context_auth_tag_length(encrypted_message, 0xDEADBEEF);
+	{
+		res = prepare_decrypt_seal(encrypted_message, encrypted_message_length, &decrypted_message, &decrypted_message_length);
+		if(res!=THEMIS_SUCCESS){
+			goto out;
+		}
+
+		res = themis_secure_cell_decrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length, decrypted_message, &decrypted_message_length);
+		testsuite_fail_if(res==THEMIS_SUCCESS, "themis_secure_cell_decrypt_seal detects corrupted auth tag length");
+
+		free(decrypted_message);
+	}
+	set_context_auth_tag_length(encrypted_message, old_value);
+
+	old_value = get_context_message_length(encrypted_message);
+	set_context_message_length(encrypted_message, 0xDEADBEEF);
+	{
+		res = themis_secure_cell_decrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length, NULL, &decrypted_message_length);
+		testsuite_fail_if(res==THEMIS_BUFFER_TOO_SMALL, "themis_secure_cell_decrypt_seal detects corrupted message length");
+	}
+	set_context_message_length(encrypted_message, old_value);
+
+out:
+	free(encrypted_message);
+}
+
+static themis_status_t encrypt_token_protect(uint8_t** encrypted_message, size_t* encrypted_message_length, uint8_t** context, size_t* context_length)
+{
+	themis_status_t res = THEMIS_SUCCESS;
+
+	res = themis_secure_cell_encrypt_token_protect((uint8_t*)passwd, sizeof(passwd), NULL, 0, (uint8_t*)message, sizeof(message), NULL, context_length, NULL, encrypted_message_length);
+	if(res!=THEMIS_BUFFER_TOO_SMALL || context_length==0 || encrypted_message_length==0){
+		testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect: failed to determine encrypted message length");
+		return res;
+	}
+
+	*encrypted_message = malloc(*encrypted_message_length);
+	if(*encrypted_message==NULL){
+		testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect: failed to allocate memory for encrypted message");
+		return res;
+	}
+
+	*context = malloc(*context_length);
+	if(*context==NULL){
+		testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect: failed to allocate memory for auth context");
+		free(*encrypted_message);
+		return res;
+	}
+
+	res = themis_secure_cell_encrypt_token_protect((uint8_t*)passwd, sizeof(passwd), NULL, 0, (uint8_t*)message, sizeof(message), *context, context_length, *encrypted_message, encrypted_message_length);
+	if(res!=THEMIS_SUCCESS){
+		testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect: failed to encrypt message");
+		free(*encrypted_message);
+		free(*context);
+		return res;
+	}
+
+	return THEMIS_SUCCESS;
+}
+
+static themis_status_t prepare_decrypt_token_protect(uint8_t* encrypted_message, size_t encrypted_message_length, uint8_t* context, size_t context_length, uint8_t** decrypted_message, size_t* decrypted_message_length)
+{
+	themis_status_t res = THEMIS_SUCCESS;
+
+	res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length, context, context_length, NULL, decrypted_message_length);
+	if(res!=THEMIS_BUFFER_TOO_SMALL || decrypted_message_length==0){
+		testsuite_fail_if(true, "themis_secure_cell_decrypt_token_protect: failed to determine decrypted message length");
+		return res;
+	}
+
+	*decrypted_message = malloc(*decrypted_message_length);
+	if(*decrypted_message==NULL){
+		testsuite_fail_if(true, "themis_secure_cell_decrypt_token_protect: failed to allocate memory for decrypted message");
+		return THEMIS_NO_MEMORY;
+	}
+
+	return THEMIS_SUCCESS;
+}
+
+static void secure_cell_context_corruption_token_protect(void)
+{
+	themis_status_t res = THEMIS_SUCCESS;
+
+	uint8_t* encrypted_message = NULL;
+	size_t encrypted_message_length = 0;
+	uint8_t* context = NULL;
+	size_t context_length = 0;
+
+	res = encrypt_token_protect(&encrypted_message, &encrypted_message_length, &context, &context_length);
+	if(res!=THEMIS_SUCCESS){
+		goto out;
+	}
+
+	uint32_t old_value = 0;
+
+	uint8_t* decrypted_message = NULL;
+	size_t decrypted_message_length = 0;
+
+	old_value = get_context_iv_length(context);
+	set_context_iv_length(context, 0xDEADBEEF);
+	{
+		res = prepare_decrypt_token_protect(encrypted_message, encrypted_message_length, context, context_length, &decrypted_message, &decrypted_message_length);
+		if(res!=THEMIS_SUCCESS){
+			goto out;
+		}
+
+		res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length, context, context_length, decrypted_message, &decrypted_message_length);
+		testsuite_fail_if(res==THEMIS_SUCCESS, "themis_secure_cell_decrypt_token_protect detects corrupted IV length");
+
+		free(decrypted_message);
+	}
+	set_context_iv_length(context, old_value);
+
+	old_value = get_context_auth_tag_length(context);
+	set_context_auth_tag_length(context, 0xDEADBEEF);
+	{
+		res = prepare_decrypt_token_protect(encrypted_message, encrypted_message_length, context, context_length, &decrypted_message, &decrypted_message_length);
+		if(res!=THEMIS_SUCCESS){
+			goto out;
+		}
+
+		res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length, context, context_length, decrypted_message, &decrypted_message_length);
+		testsuite_fail_if(res==THEMIS_SUCCESS, "themis_secure_cell_decrypt_token_protect detects corrupted auth tag length");
+
+		free(decrypted_message);
+	}
+	set_context_auth_tag_length(context, old_value);
+
+	old_value = get_context_message_length(context);
+	set_context_message_length(context, 0xDEADBEEF);
+	{
+		res = prepare_decrypt_token_protect(encrypted_message, encrypted_message_length, context, context_length, &decrypted_message, &decrypted_message_length);
+		if(res!=THEMIS_SUCCESS){
+			goto out;
+		}
+
+		res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length, context, context_length, decrypted_message, &decrypted_message_length);
+		testsuite_fail_if(res==THEMIS_SUCCESS, "themis_secure_cell_decrypt_token_protect detects corrupted message length");
+
+		free(decrypted_message);
+	}
+	set_context_message_length(context, old_value);
+
+out:
+	free(encrypted_message);
+	free(context);
+}
+
+static void secure_cell_context_corruption(void)
+{
+	secure_cell_context_corruption_seal();
+	secure_cell_context_corruption_token_protect();
+}
+
 void run_secure_cell_test(){
   testsuite_enter_suite("secure cell: basic flow");
   testsuite_run_test(secure_cell_test);
 
   testsuite_enter_suite("secure cell: api test");
   testsuite_run_test(secure_cell_api_test);
+
+  testsuite_enter_suite("secure cell: context corruption");
+  testsuite_run_test(secure_cell_context_corruption);
 }
