@@ -106,6 +106,9 @@ namespace themispp{
     }
 
     const data_t& unwrap(const std::vector<uint8_t>& data){
+      if(!_session){
+        throw themispp::exception_t("uninitialized Secure Session");
+      }
       size_t unwrapped_data_length=0;
       themis_status_t r=secure_session_unwrap(_session, &data[0],data.size(), NULL, &unwrapped_data_length);
       if(r==THEMIS_SUCCESS){_res.resize(0); return _res;}
@@ -120,6 +123,9 @@ namespace themispp{
     }
 
     const data_t& wrap(const std::vector<uint8_t>& data){
+      if(!_session){
+        throw themispp::exception_t("uninitialized Secure Session");
+      }
       size_t wrapped_message_length=0;
       if(secure_session_wrap(_session, &data[0], data.size(), NULL, &wrapped_message_length)!=THEMIS_BUFFER_TOO_SMALL)
 	throw themispp::exception_t("Secure Session failed encrypting");
@@ -130,6 +136,9 @@ namespace themispp{
     }
     
     const data_t& init(){
+      if(!_session){
+        throw themispp::exception_t("uninitialized Secure Session");
+      }
       size_t init_data_length=0;
       if(secure_session_generate_connect_request(_session, NULL, &init_data_length)!=THEMIS_BUFFER_TOO_SMALL)
 	throw themispp::exception_t("Secure Session failed making connection request");
@@ -139,14 +148,25 @@ namespace themispp{
       return _res;
     }
     
-    const bool is_established(){return secure_session_is_established(_session);}
+    const bool is_established(){
+      if(!_session){
+        throw themispp::exception_t("uninitialized Secure Session");
+      }
+      return secure_session_is_established(_session);
+    }
 
     void connect(){
+      if(!_session){
+        throw themispp::exception_t("uninitialized Secure Session");
+      }
       if(secure_session_connect(_session)!=THEMIS_SUCCESS)
 	throw themispp::exception_t("Secure Session failed connecting");
     }
 
     const data_t& receive(){
+      if(!_session){
+        throw themispp::exception_t("uninitialized Secure Session");
+      }
       _res.resize(THEMISPP_SECURE_SESSION_MAX_MESSAGE_SIZE);
       ssize_t recv_size=secure_session_receive(_session, &_res[0], _res.size());
       if(recv_size<=0)
@@ -156,6 +176,9 @@ namespace themispp{
     }
 
     void send(const data_t& data){
+      if(!_session){
+        throw themispp::exception_t("uninitialized Secure Session");
+      }
       ssize_t send_size=secure_session_send(_session, &data[0], data.size());
       if(send_size<=0)
 	throw themispp::exception_t("Secure Session failed sending");
