@@ -20,7 +20,10 @@
 #include <common/sput.h>
 #include <string.h>
 #include <themispp/secure_session.hpp>
+
+#if __cplusplus >= 201103L
 #include <unordered_map>
+#endif
 
 namespace themispp{
   namespace secure_session_test{
@@ -85,6 +88,7 @@ namespace themispp{
       sput_fail_unless(init_throws, "using uninitialized session", __LINE__);
     }
 
+#if __cplusplus >= 201103L
     void secure_session_moved(){
       callback client_callbacks;
       std::string client_id("client");
@@ -109,6 +113,11 @@ namespace themispp{
 
       sput_fail_if(client.is_established(), "using moved session again", __LINE__);
     }
+#else
+    void secure_session_moved(){
+      sput_fail_if(false, "move semantics (disabled for C++03)", __LINE__);
+    }
+#endif
 
     int run_secure_session_test(){
       sput_enter_suite("ThemisPP secure session test");

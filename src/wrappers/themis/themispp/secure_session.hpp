@@ -63,7 +63,7 @@ namespace themispp{
     typedef std::vector<uint8_t> data_t; 
 
     secure_session_t():
-      _session(nullptr){
+      _session(NULL){
     }
 
     secure_session_t(const data_t& id, const data_t& priv_key, secure_session_callback_interface_t* callbacks):
@@ -85,6 +85,7 @@ namespace themispp{
       }
     }
 
+#if __cplusplus >= 201103L
     secure_session_t(const secure_session_t&) = delete;
     secure_session_t& operator=(const secure_session_t&) = delete;
 
@@ -104,6 +105,12 @@ namespace themispp{
       }
       return *this;
     }
+#else
+  private:
+    secure_session_t(const secure_session_t&);
+    secure_session_t& operator=(const secure_session_t&);
+  public:
+#endif
 
     const data_t& unwrap(const std::vector<uint8_t>& data){
       if(!_session){
