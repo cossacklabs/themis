@@ -21,6 +21,10 @@
 #include <string.h>
 #include <themispp/secure_session.hpp>
 
+#if __cplusplus >= 201103L
+#include <unordered_map>
+#endif
+
 namespace themispp{
   namespace secure_session_test{
 
@@ -70,10 +74,56 @@ namespace themispp{
       std::vector<uint8_t> msg4=client.unwrap(msg3);
       sput_fail_unless(strcmp(mes.c_str(), (const char*)(&msg4[0]))==0, "client get message", __LINE__);
     }
-    
+
+    void secure_session_uninitialized(){
+      themispp::secure_session_t client;
+
+      bool init_throws=false;
+      try{
+        client.init();
+      }
+      catch(const themispp::exception_t&){
+        init_throws=true;
+      }
+      sput_fail_unless(init_throws, "using uninitialized session", __LINE__);
+    }
+
+#if __cplusplus >= 201103L
+    void secure_session_moved(){
+      callback client_callbacks;
+      std::string client_id("client");
+      themispp::secure_session_t client(std::vector<uint8_t>(client_id.c_str(), client_id.c_str()+client_id.length()), std::vector<uint8_t>(client_priv, client_priv+sizeof(client_priv)), &client_callbacks);
+
+      std::unordered_map<std::string, themispp::secure_session_t> clients;
+      clients.emplace(client_id, std::move(client));
+
+      bool init_throws=false;
+      try{
+        client.init();
+      }
+      catch(const themispp::exception_t&){
+        init_throws=true;
+      }
+      sput_fail_unless(init_throws, "deny using moved-out session", __LINE__);
+
+      std::vector<uint8_t> control_msg1=clients.at(client_id).init();
+      sput_fail_if(control_msg1.empty(), "initializing moved session", __LINE__);
+
+      client=std::move(clients.at(client_id));
+
+      sput_fail_if(client.is_established(), "using moved session again", __LINE__);
+    }
+#else
+    void secure_session_moved(){
+      sput_fail_if(false, "move semantics (disabled for C++03)", __LINE__);
+    }
+#endif
+
     int run_secure_session_test(){
       sput_enter_suite("ThemisPP secure session test");
       sput_run_test(secure_session_test, "secure_session_test", __FILE__);
+      sput_run_test(secure_session_uninitialized, "secure_session_uninitialized", __FILE__);
+      sput_run_test(secure_session_moved, "secure_session_moved", __FILE__);
       return 0;
     }
   }
