@@ -63,26 +63,32 @@ namespace themispp{
     typedef std::vector<uint8_t> data_t; 
 
     secure_session_t():
-      _session(NULL){
+      _session(NULL),
+      _callback(NULL){
     }
 
     secure_session_t(const data_t& id, const data_t& priv_key, secure_session_callback_interface_t* callbacks):
       _session(NULL),
+      _callback(NULL),
       _res(0){
-      _callback.get_public_key_for_id=themispp::get_public_key_for_id_callback;
-      _callback.send_data=themispp::send_callback;
-      _callback.receive_data=themispp::receive_callback;
-      _callback.state_changed=NULL;
-      _callback.user_data=callbacks;
-      _session=secure_session_create(&id[0], id.size(), &priv_key[0], priv_key.size(), &_callback);
-      if(!_session)
-	throw themispp::exception_t("Secure Session failde creating");
+      _callback=new secure_session_user_callbacks_t();
+      _callback->get_public_key_for_id=themispp::get_public_key_for_id_callback;
+      _callback->send_data=themispp::send_callback;
+      _callback->receive_data=themispp::receive_callback;
+      _callback->state_changed=NULL;
+      _callback->user_data=callbacks;
+      _session=secure_session_create(&id[0], id.size(), &priv_key[0], priv_key.size(), _callback);
+      if(!_session){
+        delete _callback;
+        throw themispp::exception_t("Secure Session failde creating");
+      }
     }
 
     virtual ~secure_session_t(){
       if(_session){
         secure_session_destroy(_session);
       }
+      delete _callback;
     }
 
 #if __cplusplus >= 201103L
@@ -94,14 +100,20 @@ namespace themispp{
       _callback=other._callback;
       _res=other._res;
       other._session=nullptr;
+      other._callback=nullptr;
     }
 
     secure_session_t& operator=(secure_session_t&& other){
       if(this!=&other){
+        if(_session){
+          secure_session_destroy(_session);
+        }
+        delete _callback;
         _session=other._session;
         _callback=other._callback;
         _res=other._res;
         other._session=nullptr;
+        other._callback=nullptr;
       }
       return *this;
     }
@@ -192,7 +204,7 @@ namespace themispp{
     }
   private:
     ::secure_session_t* _session;
-    ::secure_session_user_callbacks_t _callback;
+    ::secure_session_user_callbacks_t *_callback;
     std::vector<uint8_t> _res;
   };
 }// ns themis
