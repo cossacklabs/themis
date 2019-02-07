@@ -87,8 +87,10 @@ namespace themispp{
     virtual ~secure_session_t(){
       if(_session){
         secure_session_destroy(_session);
+        _session=NULL;
       }
       delete _callback;
+      _callback=NULL;
     }
 
 #if __cplusplus >= 201103L
