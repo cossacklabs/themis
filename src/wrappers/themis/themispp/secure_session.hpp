@@ -80,7 +80,7 @@ namespace themispp{
       _session=secure_session_create(&id[0], id.size(), &priv_key[0], priv_key.size(), _callback);
       if(!_session){
         delete _callback;
-        throw themispp::exception_t("Secure Session failde creating");
+        throw themispp::exception_t("Secure Session failed creating");
       }
     }
 
