@@ -124,7 +124,7 @@ Here you can see the following files:
   - [`fuzzy.mk`](fuzzy.mk) —
     a Makefile which describes how to build and run fuzzing tests
 
-  - [`analyze_crashes.sh`][analyze_crashes.sh] —
+  - [`analyze_crashes.sh`](analyze_crashes.sh) —
     a shell script producing a report for found crashes
 
   - [`src/`](src) —
