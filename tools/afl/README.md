@@ -73,6 +73,45 @@ by tweaking the following environment variables:
     additional flags for compiler and linker
     if you need them
 
+### Analyzing results
+
+Fuzzing results are placed into the build directory.
+The file layout is as follows:
+
+```
+build
+└── afl
+    ├── output                  results sorted by tool and run date
+    │   │
+    │   ├── scell_seal_decrypt
+    │   │   └── 2019-02-07_13-41-09
+    │   │       ├── crashes
+    │   │       │   └── ...     input files that cause crashes
+    │   │       └── hangs
+    │   │           └── ...     input files that cause hangs
+    │   │
+    │   └── scell_seal_roundtrip
+    │       └── 2019-02-07_13-45-23
+    │           ├── crashes
+    │           │   └── ...
+    │           └── hangs
+    │               └── ...
+    │
+    ├── scell_seal_decrypt      fuzzing tool binaries
+    └── scell_seal_roundtrip
+```
+
+You can use a provided tool to analyze the crashes:
+
+```
+./tools/afl/analyze_crashes.sh
+```
+
+By default the tool reproduces the crashes
+and prints a report with results and backtraces,
+formatted as Markdown.
+Run the tool with `--help` to learn more.
+
 ## Developing fuzzing tests
 
 ### Directory layout
@@ -84,6 +123,9 @@ Here you can see the following files:
 
   - [`fuzzy.mk`](fuzzy.mk) —
     a Makefile which describes how to build and run fuzzing tests
+
+  - [`analyze_crashes.sh`][analyze_crashes.sh] —
+    a shell script producing a report for found crashes
 
   - [`src/`](src) —
     source code for all fuzzing tools lives here
