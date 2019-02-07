@@ -33,14 +33,14 @@ namespace themispp{
     virtual const data_t& receive(){throw themispp::exception_t("Secure Session failed receiving, receive callback not set");}
   };
 
-  ssize_t send_callback(const uint8_t* data, size_t data_length, void *user_data){
+  inline ssize_t send_callback(const uint8_t* data, size_t data_length, void *user_data){
     try{
       ((secure_session_callback_interface_t*)user_data)->send(std::vector<uint8_t>((uint8_t*)data, (uint8_t*)data+data_length));
     }catch(...){return -1;}
     return ssize_t(data_length);
   }
 
-  ssize_t receive_callback(uint8_t* data, size_t data_length, void *user_data){
+  inline ssize_t receive_callback(uint8_t* data, size_t data_length, void *user_data){
     try{
       std::vector<uint8_t> received_data=((secure_session_callback_interface_t*)user_data)->receive();
       memcpy(data, &received_data[0], received_data.size());
@@ -49,7 +49,7 @@ namespace themispp{
     return -1;
   }
 
-  int get_public_key_for_id_callback(const void *id, size_t id_length, void *key_buffer, size_t key_buffer_length, void *user_data){
+  inline int get_public_key_for_id_callback(const void *id, size_t id_length, void *key_buffer, size_t key_buffer_length, void *user_data){
     std::vector<uint8_t> pubk=((secure_session_callback_interface_t*)user_data)->get_pub_key_by_id(std::vector<uint8_t>(static_cast<const uint8_t*>(id), static_cast<const uint8_t*>(id)+id_length));
     if(pubk.size()>key_buffer_length){
       return THEMIS_BUFFER_TOO_SMALL;
