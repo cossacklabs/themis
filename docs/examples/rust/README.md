@@ -14,6 +14,12 @@ Here we have some examples of Themis usage.
     chat client which encrypts messages
   * [**secure_message_client_verify**](secure_message_client_verify.rs) —
     chat client which signs and verifies messages
+* <b>secure_session_echo_*</b> —
+  an example of secure network communication with Secure Session
+  * [**secure_session_echo_server**](secure_session_echo_server.rs) —
+    simple echo client using buffer-oriented API
+  * [**secure_session_echo_server**](secure_session_echo_server.rs) —
+    simple echo server using callback API
 
 You can run the examples with Cargo like this:
 
@@ -148,3 +154,15 @@ Some notable things about this example:
   But it still verifies their integrity.
 
 Currently all clients are expected to use the same keys.
+
+
+## secure_session_echo
+
+The server expects connections from clients
+and echoes back any messages sent by individual clients.
+Communication between parties is secured using Secure Session.
+
+Usually you don’t need to specify any custom options,
+the command-line defaults are expected to work right away.
+But you can override the port assignment
+if the default port is already in use on your system.
