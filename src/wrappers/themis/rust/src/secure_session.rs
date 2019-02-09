@@ -17,6 +17,8 @@
 //! **Secure Session** is a lightweight mechanism for securing any kind of network communication
 //! (both private and public networks, including the Internet).
 
+use std::error;
+use std::fmt;
 use std::os::raw::{c_int, c_void};
 use std::{ptr, result, slice};
 
@@ -101,6 +103,121 @@ pub trait SecureSessionTransport {
     ///
     /// Return `None` if you are unable to find a corresponding public key.
     fn get_public_key_for_id(&mut self, id: &[u8]) -> Option<EcdsaPublicKey>;
+}
+
+/// Transport layer error.
+///
+/// This is a type representing failure in transport layer of [`SecureSessionTransport`],
+/// namely its [`send_data`] and [`receive_data`] methods.
+///
+/// [`SecureSessionTransport`]: trait.SecureSessionTransport.html
+/// [`send_data`]: trait.SecureSessionTransport.html#method.send_data
+/// [`receive_data`]: trait.SecureSessionTransport.html#method.receive_data
+///
+/// # Examples
+///
+/// `TransportError` can conveniently wrap any other error using `?` operator.
+/// You can also explicitly construct an error with a descriptive string.
+///
+/// ```no_run
+/// use std::io::{Read, Write};
+/// use std::net::TcpStream;
+///
+/// use themis::secure_session::{SecureSessionTransport, TransportError};
+/// # use themis::keys::EcdsaPublicKey;
+///
+/// struct SocketTransport {
+///     socket: TcpStream,
+/// }
+///
+/// impl SecureSessionTransport for SocketTransport {
+///     fn send_data(&mut self, data: &[u8]) -> Result<usize, TransportError> {
+///         if data.len() >= 256 {
+///             return Err(TransportError::new(format!("too long data: {} bytes", data.len())));
+///         }
+///
+///         let len_buffer = [data.len() as u8];
+///         self.socket.write_all(&len_buffer)?;
+///
+///         self.socket.write_all(data)?;
+///         Ok(data.len())
+///     }
+///
+///     fn receive_data(&mut self, data: &mut [u8]) -> Result<usize, TransportError> {
+///         let mut len_buffer = [0];
+///         self.socket.read_exact(&mut len_buffer)?;
+///
+///         let len = len_buffer[0] as usize;
+///         if data.len() < len {
+///             return Err(TransportError::new("buffer too short"));
+///         }
+///
+///         self.socket.read_exact(&mut data[0..len])?;
+///         Ok(len)
+///     }
+///
+///     // Other methods omitted
+/// #
+/// #   fn get_public_key_for_id(&mut self, id: &[u8]) -> Option<EcdsaPublicKey> {
+/// #       None
+/// #   }
+/// }
+/// ```
+pub struct TransportError {
+    inner: TransportErrorInner,
+}
+
+enum TransportErrorInner {
+    Unspecified,
+    Simple(String),
+    Custom(Box<dyn error::Error + Send + Sync>),
+}
+
+impl fmt::Display for TransportError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match &self.inner {
+            TransportErrorInner::Unspecified => write!(f, "Secure Session transport failed"),
+            TransportErrorInner::Simple(s) => write!(f, "Secure Session transport failed: {}", s),
+            TransportErrorInner::Custom(e) => write!(f, "Secure Session transport failed: {}", e),
+        }
+    }
+}
+
+impl fmt::Debug for TransportError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match &self.inner {
+            TransportErrorInner::Unspecified => write!(f, "TransportError::Unspecified"),
+            TransportErrorInner::Simple(s) => write!(f, "TransportError::Simple({:?})", s),
+            TransportErrorInner::Custom(e) => write!(f, "TransportError::Custom({:?})", e),
+        }
+    }
+}
+
+impl<T> From<T> for TransportError
+where
+    T: error::Error + Send + Sync + 'static,
+{
+    fn from(error: T) -> Self {
+        TransportError {
+            inner: TransportErrorInner::Custom(Box::new(error)),
+        }
+    }
+}
+
+impl TransportError {
+    /// Returns a new error with a human-readable description.
+    pub fn new(description: impl Into<String>) -> TransportError {
+        TransportError {
+            inner: TransportErrorInner::Simple(description.into()),
+        }
+    }
+
+    /// Returns an unspecified error.
+    pub fn unspecified() -> TransportError {
+        TransportError {
+            inner: TransportErrorInner::Unspecified,
+        }
+    }
 }
 
 /// State of Secure Session connection.
