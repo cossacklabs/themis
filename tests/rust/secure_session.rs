@@ -18,7 +18,7 @@ use std::sync::mpsc::{channel, Receiver, Sender};
 
 use themis::keygen::gen_ec_key_pair;
 use themis::keys::EcdsaPublicKey;
-use themis::secure_session::{SecureSession, SecureSessionTransport};
+use themis::secure_session::{SecureSession, SecureSessionTransport, TransportError};
 
 struct DummyTransport {
     key_map: Rc<BTreeMap<Vec<u8>, EcdsaPublicKey>>,
@@ -66,17 +66,19 @@ impl ChannelTransport {
 }
 
 impl SecureSessionTransport for ChannelTransport {
-    fn send_data(&mut self, data: &[u8]) -> Result<usize, ()> {
-        self.tx
-            .send(data.to_vec())
-            .map(|_| data.len())
-            .map_err(|_| ())
+    fn send_data(&mut self, data: &[u8]) -> Result<usize, TransportError> {
+        self.tx.send(data.to_vec())?;
+        Ok(data.len())
     }
 
-    fn receive_data(&mut self, data: &mut [u8]) -> Result<usize, ()> {
-        let msg = self.rx.recv().map_err(|_| ())?;
+    fn receive_data(&mut self, data: &mut [u8]) -> Result<usize, TransportError> {
+        let msg = self.rx.recv()?;
         if msg.len() > data.len() {
-            return Err(());
+            return Err(TransportError::new(format!(
+                "buffer too small: {} bytes, need {} bytes",
+                data.len(),
+                msg.len(),
+            )));
         }
         data[0..msg.len()].copy_from_slice(&msg);
         Ok(msg.len())

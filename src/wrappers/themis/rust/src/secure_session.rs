@@ -61,8 +61,6 @@ struct SecureSessionContext {
 /// [`get_public_key_for_id`]: trait.SecureSessionTransport.html#tymethod.get_public_key_for_id
 #[allow(unused_variables)]
 pub trait SecureSessionTransport {
-    // TODO: consider send/receive use std::io::Error for errors (or a custom type)
-
     /// Send the provided data to the peer, return the number of bytes transferred.
     ///
     /// This callback will be called when Secure Session needs to send some data to its peer.
@@ -75,8 +73,8 @@ pub trait SecureSessionTransport {
     /// [`connect`]: struct.SecureSession.html#method.connect
     /// [`negotiate_transport`]: struct.SecureSession.html#method.negotiate_transport
     /// [`send`]: struct.SecureSession.html#method.send
-    fn send_data(&mut self, data: &[u8]) -> result::Result<usize, ()> {
-        Err(())
+    fn send_data(&mut self, data: &[u8]) -> result::Result<usize, TransportError> {
+        Err(TransportError::unspecified())
     }
 
     /// Receive some data from the peer into the provided buffer, return the number of bytes.
@@ -90,8 +88,8 @@ pub trait SecureSessionTransport {
     ///
     /// [`negotiate_transport`]: struct.SecureSession.html#method.negotiate_transport
     /// [`receive`]: struct.SecureSession.html#method.receive
-    fn receive_data(&mut self, data: &mut [u8]) -> result::Result<usize, ()> {
-        Err(())
+    fn receive_data(&mut self, data: &mut [u8]) -> result::Result<usize, TransportError> {
+        Err(TransportError::unspecified())
     }
 
     /// Notification about connection state of Secure Session.
