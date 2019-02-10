@@ -43,8 +43,8 @@
 
 #![warn(missing_docs)]
 #![doc(html_no_source)]
-#![doc(html_logo_url = "https://rust-themis.ilammy.net/images/logo.png")]
-#![doc(html_favicon_url = "https://rust-themis.ilammy.net/images/favicon.png")]
+#![doc(html_logo_url = "https://raw.githubusercontent.com/cossacklabs/themis/master/src/wrappers/themis/rust/images/logo.png")]
+#![doc(html_favicon_url = "https://raw.githubusercontent.com/cossacklabs/themis/master/src/wrappers/themis/rust/images/favicon.png")]
 
 pub mod keygen;
 pub mod keys;
