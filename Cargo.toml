@@ -17,6 +17,10 @@ include = [
     "tests/rust/**/*",
 ]
 
+[badges]
+circle-ci = { repository = "cossacklabs/themis", branch = "master" }
+maintenance = { status = "actively-developed" }
+
 [workspace]
 
 [lib]

@@ -12,6 +12,10 @@ categories = ["cryptography", "external-ffi-bindings"]
 license = "Apache-2.0"
 links = "themis"
 
+[badges]
+circle-ci = { repository = "cossacklabs/themis", branch = "master" }
+maintenance = { status = "actively-developed" }
+
 [features]
 vendored = ["libthemis-src"]
 

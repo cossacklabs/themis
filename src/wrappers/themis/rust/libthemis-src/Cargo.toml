@@ -11,6 +11,10 @@ keywords = ["crypto", "Themis"]
 categories = ["development-tools::build-utils"]
 license = "Apache-2.0"
 
+[badges]
+circle-ci = { repository = "cossacklabs/themis", branch = "master" }
+maintenance = { status = "actively-developed" }
+
 [dependencies]
 make-cmd = "0.1.0"
 
