@@ -48,6 +48,7 @@ pub struct SecureSession {
 struct SecureSessionContext {
     callbacks: secure_session_user_callbacks_t,
     transport: Box<dyn SecureSessionTransport>,
+    last_error: Option<TransportError>,
 }
 
 /// Transport delegate for Secure Session.
@@ -265,6 +266,7 @@ impl SecureSession {
                 user_data: std::ptr::null_mut(),
             },
             transport: Box::new(transport),
+            last_error: None,
         });
         context.callbacks.user_data = context_as_user_data(&context);
 
@@ -582,6 +584,13 @@ impl SecureSession {
         unsafe {
             let length =
                 secure_session_send(self.session, message_ptr as *const c_void, message_len);
+            if length == TRANSPORT_FAILURE {
+                let error = self.context.last_error.take().expect("missing error");
+                return Err(Error::from_transport_error(error));
+            }
+            if length == TRANSPORT_OVERFLOW {
+                return Err(Error::with_kind(ErrorKind::BufferTooSmall));
+            }
             if length <= 21 {
                 return Err(Error::from_session_status(length as themis_status_t));
             }
@@ -610,6 +619,13 @@ impl SecureSession {
                 message.as_mut_ptr() as *mut c_void,
                 message.capacity(),
             );
+            if length == TRANSPORT_FAILURE {
+                let error = self.context.last_error.take().expect("missing error");
+                return Err(Error::from_transport_error(error));
+            }
+            if length == TRANSPORT_OVERFLOW {
+                return Err(Error::with_kind(ErrorKind::BufferTooSmall));
+            }
             if length <= 21 {
                 return Err(Error::from_session_status(length as themis_status_t));
             }
@@ -659,19 +675,24 @@ unsafe fn user_data_as_context<'a>(ptr: *mut c_void) -> &'a mut SecureSessionCon
     &mut *(ptr as *mut SecureSessionContext)
 }
 
+const TRANSPORT_FAILURE: isize = -1;
+const TRANSPORT_OVERFLOW: isize = -2;
+
 unsafe extern "C" fn send_data(
     data_ptr: *const u8,
     data_len: usize,
     user_data: *mut c_void,
 ) -> isize {
     let data = byte_slice_from_ptr(data_ptr, data_len);
-    let transport = &mut user_data_as_context(user_data).transport;
+    let context = user_data_as_context(user_data);
 
-    transport
-        .send_data(data)
-        .ok()
-        .and_then(as_isize)
-        .unwrap_or(-1)
+    match context.transport.send_data(data) {
+        Ok(sent_bytes) => as_isize(sent_bytes).unwrap_or(TRANSPORT_OVERFLOW),
+        Err(error) => {
+            context.last_error = Some(error);
+            TRANSPORT_FAILURE
+        }
+    }
 }
 
 unsafe extern "C" fn receive_data(
@@ -680,13 +701,15 @@ unsafe extern "C" fn receive_data(
     user_data: *mut c_void,
 ) -> isize {
     let data = byte_slice_from_ptr_mut(data_ptr, data_len);
-    let transport = &mut user_data_as_context(user_data).transport;
+    let context = user_data_as_context(user_data);
 
-    transport
-        .receive_data(data)
-        .ok()
-        .and_then(as_isize)
-        .unwrap_or(-1)
+    match context.transport.receive_data(data) {
+        Ok(received_bytes) => as_isize(received_bytes).unwrap_or(TRANSPORT_OVERFLOW),
+        Err(error) => {
+            context.last_error = Some(error);
+            TRANSPORT_FAILURE
+        }
+    }
 }
 
 unsafe extern "C" fn state_changed(event: c_int, user_data: *mut c_void) {
