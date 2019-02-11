@@ -33,9 +33,19 @@ use crate::keys::{EcdsaPrivateKey, EcdsaPublicKey};
 use crate::utils::into_raw_parts;
 
 /// Secure Session context.
-pub struct SecureSession<T> {
-    session_ctx: *mut secure_session_t,
-    _delegate: Box<SecureSessionDelegate<T>>,
+pub struct SecureSession {
+    session: *mut secure_session_t,
+
+    // Secure Session instance keeps around pointers to callbacks and contexts internally.
+    // This box is important to have the structure address pinned in memory. It looks "dead"
+    // to Rust code, but we actually need to keep it alive for the C code.
+    #[allow(dead_code)]
+    context: Box<SecureSessionContext>,
+}
+
+struct SecureSessionContext {
+    callbacks: secure_session_user_callbacks_t,
+    transport: Box<dyn SecureSessionTransport>,
 }
 
 /// Transport delegate for Secure Session.
@@ -93,15 +103,6 @@ pub trait SecureSessionTransport {
     fn get_public_key_for_id(&mut self, id: &[u8]) -> Option<EcdsaPublicKey>;
 }
 
-// We keep this struct in a box so that it has fixed address. Themis does *not* copy
-// the callback struct into session context, it keeps a pointer to it. The callback
-// structure itself also stores a `user_data` pointer to itself, so it's important
-// to have this structure pinned in memory.
-struct SecureSessionDelegate<T> {
-    callbacks: secure_session_user_callbacks_t,
-    transport: T,
-}
-
 /// State of Secure Session connection.
 #[derive(PartialEq, Eq)]
 pub enum SecureSessionState {
@@ -124,10 +125,7 @@ impl SecureSessionState {
     }
 }
 
-impl<T> SecureSession<T>
-where
-    T: SecureSessionTransport,
-{
+impl SecureSession {
     // TODO: introduce a builder
 
     /// Creates a new Secure Session.
@@ -135,40 +133,48 @@ where
     /// ID is an arbitrary byte sequence used to identify this peer.
     ///
     /// Secure Session supports only ECDSA keys.
-    pub fn with_transport<I>(id: I, key: &EcdsaPrivateKey, transport: T) -> Result<Self>
-    where
-        I: AsRef<[u8]>,
-    {
+    pub fn with_transport(
+        id: impl AsRef<[u8]>,
+        key: &EcdsaPrivateKey,
+        transport: impl SecureSessionTransport + 'static,
+    ) -> Result<Self> {
         let (id_ptr, id_len) = into_raw_parts(id.as_ref());
         let (key_ptr, key_len) = into_raw_parts(key.as_ref());
-        let delegate = SecureSessionDelegate::new(transport);
 
-        let user_callbacks = delegate.user_callbacks();
-        let session_ctx = unsafe {
+        let mut context = Box::new(SecureSessionContext {
+            callbacks: secure_session_user_callbacks_t {
+                send_data: Some(send_data),
+                receive_data: Some(receive_data),
+                state_changed: Some(state_changed),
+                get_public_key_for_id: Some(get_public_key_for_id),
+                user_data: std::ptr::null_mut(),
+            },
+            transport: Box::new(transport),
+        });
+        context.callbacks.user_data = context_as_user_data(&context);
+
+        let session = unsafe {
             secure_session_create(
                 id_ptr as *const c_void,
                 id_len,
                 key_ptr as *const c_void,
                 key_len,
-                user_callbacks,
+                &context.callbacks,
             )
         };
 
-        if session_ctx.is_null() {
+        if session.is_null() {
             // Technically, this may be an allocation error but we have no way to know so just
             // assume that the user messed up and provided invalid keys (which is more likely).
             return Err(Error::with_kind(ErrorKind::InvalidParameter));
         }
 
-        Ok(Self {
-            session_ctx,
-            _delegate: delegate,
-        })
+        Ok(Self { session, context })
     }
 
     /// Returns `true` if this Secure Session may be used for data transfer.
     pub fn is_established(&self) -> bool {
-        unsafe { secure_session_is_established(self.session_ctx) }
+        unsafe { secure_session_is_established(self.session) }
     }
 
     // TODO: abstract out the 'check-allocate-leap' pattern
@@ -185,8 +191,7 @@ where
         let mut id_len = 0;
 
         unsafe {
-            let status =
-                secure_session_get_remote_id(self.session_ctx, ptr::null_mut(), &mut id_len);
+            let status = secure_session_get_remote_id(self.session, ptr::null_mut(), &mut id_len);
             let error = Error::from_session_status(status);
             if error.kind() != ErrorKind::BufferTooSmall {
                 return Err(error);
@@ -196,8 +201,7 @@ where
         id.reserve(id_len);
 
         unsafe {
-            let status =
-                secure_session_get_remote_id(self.session_ctx, id.as_mut_ptr(), &mut id_len);
+            let status = secure_session_get_remote_id(self.session, id.as_mut_ptr(), &mut id_len);
             let error = Error::from_session_status(status);
             if error.kind() != ErrorKind::Success {
                 return Err(error);
@@ -226,7 +230,7 @@ where
     /// [`send_data`]: trait.SecureSessionTransport.html#method.send_data
     pub fn connect(&mut self) -> Result<()> {
         unsafe {
-            let status = secure_session_connect(self.session_ctx);
+            let status = secure_session_connect(self.session);
             let error = Error::from_session_status(status);
             if error.kind() != ErrorKind::Success {
                 return Err(error);
@@ -255,7 +259,7 @@ where
 
         unsafe {
             let status = secure_session_generate_connect_request(
-                self.session_ctx,
+                self.session,
                 ptr::null_mut(),
                 &mut output_len,
             );
@@ -269,7 +273,7 @@ where
 
         unsafe {
             let status = secure_session_generate_connect_request(
-                self.session_ctx,
+                self.session,
                 output.as_mut_ptr() as *mut c_void,
                 &mut output_len,
             );
@@ -302,7 +306,7 @@ where
 
         unsafe {
             let status = secure_session_wrap(
-                self.session_ctx,
+                self.session,
                 message_ptr as *const c_void,
                 message_len,
                 ptr::null_mut(),
@@ -318,7 +322,7 @@ where
 
         unsafe {
             let status = secure_session_wrap(
-                self.session_ctx,
+                self.session,
                 message_ptr as *const c_void,
                 message_len,
                 wrapped.as_mut_ptr() as *mut c_void,
@@ -350,7 +354,7 @@ where
 
         unsafe {
             let status = secure_session_unwrap(
-                self.session_ctx,
+                self.session,
                 wrapped_ptr as *const c_void,
                 wrapped_len,
                 ptr::null_mut(),
@@ -366,7 +370,7 @@ where
 
         unsafe {
             let status = secure_session_unwrap(
-                self.session_ctx,
+                self.session,
                 wrapped_ptr as *const c_void,
                 wrapped_len,
                 message.as_mut_ptr() as *mut c_void,
@@ -402,7 +406,7 @@ where
 
         unsafe {
             let status = secure_session_unwrap(
-                self.session_ctx,
+                self.session,
                 wrapped_ptr as *const c_void,
                 wrapped_len,
                 ptr::null_mut(),
@@ -421,7 +425,7 @@ where
 
         unsafe {
             let status = secure_session_unwrap(
-                self.session_ctx,
+                self.session,
                 wrapped_ptr as *const c_void,
                 wrapped_len,
                 message.as_mut_ptr() as *mut c_void,
@@ -462,7 +466,7 @@ where
 
         unsafe {
             let length =
-                secure_session_send(self.session_ctx, message_ptr as *const c_void, message_len);
+                secure_session_send(self.session, message_ptr as *const c_void, message_len);
             if length <= 21 {
                 return Err(Error::from_session_status(length as themis_status_t));
             }
@@ -487,7 +491,7 @@ where
 
         unsafe {
             let length = secure_session_receive(
-                self.session_ctx,
+                self.session,
                 message.as_mut_ptr() as *mut c_void,
                 message.capacity(),
             );
@@ -516,7 +520,7 @@ where
     /// [`receive_data`]: trait.SecureSessionTransport.html#method.receive_data
     pub fn negotiate_transport(&mut self) -> Result<()> {
         unsafe {
-            let result = secure_session_receive(self.session_ctx, ptr::null_mut(), 0);
+            let result = secure_session_receive(self.session, ptr::null_mut(), 0);
             let error = Error::from_session_status(result as themis_status_t);
             if error.kind() != ErrorKind::Success {
                 return Err(error);
@@ -527,105 +531,83 @@ where
     }
 }
 
-impl<T> SecureSessionDelegate<T>
-where
-    T: SecureSessionTransport,
-{
-    #[allow(clippy::new_ret_no_self)]
-    pub fn new(transport: T) -> Box<Self> {
-        let mut delegate = Box::new(Self {
-            callbacks: secure_session_user_callbacks_t {
-                send_data: Some(Self::send_data),
-                receive_data: Some(Self::receive_data),
-                state_changed: Some(Self::state_changed),
-                get_public_key_for_id: Some(Self::get_public_key_for_id),
-                user_data: ptr::null_mut(),
-            },
-            transport,
-        });
-        delegate.callbacks.user_data = delegate.transport_ptr();
-        delegate
-    }
+// Secure Session C callback interface. Most of these functions are unsafe for general use.
+// Pay attention when and how you call them.
 
-    pub fn user_callbacks(&self) -> *const secure_session_user_callbacks_t {
-        &self.callbacks
-    }
+// It is important for the context to be boxed, hence this lint suppression.
+#[allow(clippy::borrowed_box)]
+fn context_as_user_data(context: &Box<SecureSessionContext>) -> *mut c_void {
+    (context.as_ref() as *const SecureSessionContext) as *mut c_void
+}
 
-    // These functions are unsafe. They should be used only for `user_data` conversion.
+unsafe fn user_data_as_context<'a>(ptr: *mut c_void) -> &'a mut SecureSessionContext {
+    &mut *(ptr as *mut SecureSessionContext)
+}
 
-    fn transport_ptr(&mut self) -> *mut c_void {
-        &mut self.transport as *mut T as *mut c_void
-    }
+unsafe extern "C" fn send_data(
+    data_ptr: *const u8,
+    data_len: usize,
+    user_data: *mut c_void,
+) -> isize {
+    let data = byte_slice_from_ptr(data_ptr, data_len);
+    let transport = &mut user_data_as_context(user_data).transport;
 
-    fn transport<'a>(ptr: *mut c_void) -> &'a mut T {
-        unsafe { &mut *(ptr as *mut T) }
-    }
+    transport
+        .send_data(data)
+        .ok()
+        .and_then(as_isize)
+        .unwrap_or(-1)
+}
 
-    unsafe extern "C" fn send_data(
-        data_ptr: *const u8,
-        data_len: usize,
-        user_data: *mut c_void,
-    ) -> isize {
-        let data = byte_slice_from_ptr(data_ptr, data_len);
-        let transport = Self::transport(user_data);
+unsafe extern "C" fn receive_data(
+    data_ptr: *mut u8,
+    data_len: usize,
+    user_data: *mut c_void,
+) -> isize {
+    let data = byte_slice_from_ptr_mut(data_ptr, data_len);
+    let transport = &mut user_data_as_context(user_data).transport;
 
-        transport
-            .send_data(data)
-            .ok()
-            .and_then(as_isize)
-            .unwrap_or(-1)
-    }
+    transport
+        .receive_data(data)
+        .ok()
+        .and_then(as_isize)
+        .unwrap_or(-1)
+}
 
-    unsafe extern "C" fn receive_data(
-        data_ptr: *mut u8,
-        data_len: usize,
-        user_data: *mut c_void,
-    ) -> isize {
-        let data = byte_slice_from_ptr_mut(data_ptr, data_len);
-        let transport = Self::transport(user_data);
+unsafe extern "C" fn state_changed(event: c_int, user_data: *mut c_void) {
+    let transport = &mut user_data_as_context(user_data).transport;
 
-        transport
-            .receive_data(data)
-            .ok()
-            .and_then(as_isize)
-            .unwrap_or(-1)
-    }
-
-    unsafe extern "C" fn state_changed(event: c_int, user_data: *mut c_void) {
-        let transport = Self::transport(user_data);
-
-        if let Some(state) = SecureSessionState::from_int(event) {
-            transport.state_changed(state);
-        }
-    }
-
-    unsafe extern "C" fn get_public_key_for_id(
-        id_ptr: *const c_void,
-        id_len: usize,
-        key_ptr: *mut c_void,
-        key_len: usize,
-        user_data: *mut c_void,
-    ) -> c_int {
-        let id = byte_slice_from_ptr(id_ptr as *const u8, id_len);
-        let key_out = byte_slice_from_ptr_mut(key_ptr as *mut u8, key_len);
-        let transport = Self::transport(user_data);
-
-        if let Some(key) = transport.get_public_key_for_id(id) {
-            let key = key.as_ref();
-            if key_out.len() >= key.len() {
-                key_out[0..key.len()].copy_from_slice(key);
-                return 0;
-            }
-        }
-        -1
+    if let Some(state) = SecureSessionState::from_int(event) {
+        transport.state_changed(state);
     }
 }
 
+unsafe extern "C" fn get_public_key_for_id(
+    id_ptr: *const c_void,
+    id_len: usize,
+    key_ptr: *mut c_void,
+    key_len: usize,
+    user_data: *mut c_void,
+) -> c_int {
+    let id = byte_slice_from_ptr(id_ptr as *const u8, id_len);
+    let key_out = byte_slice_from_ptr_mut(key_ptr as *mut u8, key_len);
+    let transport = &mut user_data_as_context(user_data).transport;
+
+    if let Some(key) = transport.get_public_key_for_id(id) {
+        let key = key.as_ref();
+        if key_out.len() >= key.len() {
+            key_out[0..key.len()].copy_from_slice(key);
+            return 0;
+        }
+    }
+    -1
+}
+
 #[doc(hidden)]
-impl<D> Drop for SecureSession<D> {
+impl Drop for SecureSession {
     fn drop(&mut self) {
         unsafe {
-            let status = secure_session_destroy(self.session_ctx);
+            let status = secure_session_destroy(self.session);
             let error = Error::from_session_status(status);
             if (cfg!(debug) || cfg!(test)) && error.kind() != ErrorKind::Success {
                 panic!("secure_session_destroy() failed: {}", error);
@@ -646,12 +628,12 @@ fn as_isize(n: usize) -> Option<isize> {
 // and lengths. Note that empty Rust slices must *not* be constructed from a null raw pointer,
 // they should use a special value instead. This is important for some LLVM magic.
 
-fn byte_slice_from_ptr<'a>(ptr: *const u8, len: usize) -> &'a [u8] {
-    unsafe { slice::from_raw_parts(escape_null_ptr(ptr as *mut u8), len) }
+unsafe fn byte_slice_from_ptr<'a>(ptr: *const u8, len: usize) -> &'a [u8] {
+    slice::from_raw_parts(escape_null_ptr(ptr as *mut u8), len)
 }
 
-fn byte_slice_from_ptr_mut<'a>(ptr: *mut u8, len: usize) -> &'a mut [u8] {
-    unsafe { slice::from_raw_parts_mut(escape_null_ptr(ptr), len) }
+unsafe fn byte_slice_from_ptr_mut<'a>(ptr: *mut u8, len: usize) -> &'a mut [u8] {
+    slice::from_raw_parts_mut(escape_null_ptr(ptr), len)
 }
 
 fn escape_null_ptr<T>(ptr: *mut T) -> *mut T {
