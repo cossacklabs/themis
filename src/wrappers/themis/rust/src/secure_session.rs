@@ -569,6 +569,7 @@ impl SecureSession {
     // Furthermore, Themis expects the send callback to send the whole message so it is kinda
     // pointless to return the amount of bytes send. The receive callback returns accurate number
     // of bytes, but I do not really like the Rust interface this implies. It could be made better.
+    const THEMIX_MAX_ERROR: isize = 21;
 
     /// Sends a message to the remote peer.
     ///
@@ -591,7 +592,7 @@ impl SecureSession {
             if length == TRANSPORT_OVERFLOW {
                 return Err(Error::with_kind(ErrorKind::BufferTooSmall));
             }
-            if length <= 21 {
+            if length <= Self::THEMIX_MAX_ERROR {
                 return Err(Error::from_session_status(length as themis_status_t));
             }
         }
@@ -626,7 +627,7 @@ impl SecureSession {
             if length == TRANSPORT_OVERFLOW {
                 return Err(Error::with_kind(ErrorKind::BufferTooSmall));
             }
-            if length <= 21 {
+            if length <= Self::THEMIX_MAX_ERROR {
                 return Err(Error::from_session_status(length as themis_status_t));
             }
             debug_assert!(length as usize <= message.capacity());
