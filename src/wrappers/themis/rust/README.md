@@ -1,8 +1,18 @@
 # rust-themis
 
+[![crates.io][crates-io-badge]][crates-io]
+[![CircleCI][circle-ci-badge]][circle-ci]
+[![License][license-badge]][license]
+
 Rust binding for [Themis] crypto library.
 
 [Themis]: https://github.com/cossacklabs/themis
+[crates-io]: https://crates.io/crates/themis
+[crates-io-badge]: https://img.shields.io/crates/v/themis.svg
+[circle-ci]: https://circleci.com/gh/cossacklabs/themis/tree/master
+[circle-ci-badge]: https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield
+[license]: LICENSE
+[license-badge]: https://img.shields.io/crates/l/themis.svg
 
 ## Usage
 
