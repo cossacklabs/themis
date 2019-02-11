@@ -26,6 +26,8 @@ use bindings::{
     THEMIS_SSESSION_SEND_OUTPUT_TO_PEER, THEMIS_SSESSION_TRANSPORT_ERROR, THEMIS_SUCCESS,
 };
 
+use crate::secure_session::TransportError;
+
 /// Themis status code.
 pub(crate) use bindings::themis_status_t;
 
@@ -39,7 +41,7 @@ pub type Result<T> = result::Result<T, Error>;
 /// details.
 ///
 /// [`ErrorKind`]: enum.ErrorKind.html
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 pub struct Error {
     kind: ErrorKind,
 }
@@ -71,12 +73,20 @@ impl Error {
         let kind = match status as u32 {
             THEMIS_SSESSION_SEND_OUTPUT_TO_PEER => ErrorKind::SessionSendOutputToPeer,
             THEMIS_SSESSION_KA_NOT_FINISHED => ErrorKind::SessionKeyAgreementNotFinished,
-            THEMIS_SSESSION_TRANSPORT_ERROR => ErrorKind::SessionTransportError,
+            THEMIS_SSESSION_TRANSPORT_ERROR => {
+                ErrorKind::SessionTransportError(TransportError::unspecified())
+            }
             THEMIS_SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR => {
                 ErrorKind::SessionGetPublicKeyForIdError
             }
             _ => return Error::from_themis_status(status),
         };
+        Error { kind }
+    }
+
+    /// Wraps a transport error reported by Secure Session.
+    pub(crate) fn from_transport_error(error: TransportError) -> Error {
+        let kind = ErrorKind::SessionTransportError(error);
         Error { kind }
     }
 
@@ -101,8 +111,8 @@ impl Error {
     }
 
     /// Returns the corresponding `ErrorKind` for this error.
-    pub fn kind(&self) -> ErrorKind {
-        self.kind
+    pub fn kind(&self) -> &ErrorKind {
+        &self.kind
     }
 }
 
@@ -124,7 +134,9 @@ impl fmt::Display for Error {
 
             ErrorKind::SessionSendOutputToPeer => write!(f, "send key agreement data to peer"),
             ErrorKind::SessionKeyAgreementNotFinished => write!(f, "key agreement not finished"),
-            ErrorKind::SessionTransportError => write!(f, "transport layer error"),
+            ErrorKind::SessionTransportError(ref details) => {
+                write!(f, "transport layer error: {}", details)
+            }
             ErrorKind::SessionGetPublicKeyForIdError => {
                 write!(f, "failed to get public key for ID")
             }
@@ -143,7 +155,7 @@ impl fmt::Display for Error {
 /// are specific to particular functions, and some are used internally by the library.
 ///
 /// [`Error`]: struct.Error.html
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug)]
 pub enum ErrorKind {
     /// Catch-all generic error.
     ///
@@ -181,7 +193,7 @@ pub enum ErrorKind {
     /// Attempt to use Secure Session before completing key exchange.
     SessionKeyAgreementNotFinished,
     /// Transport layer returned error.
-    SessionTransportError,
+    SessionTransportError(TransportError),
     /// Could not retrieve a public key corresponding to peer ID.
     SessionGetPublicKeyForIdError,
 
@@ -202,4 +214,63 @@ pub enum ErrorKind {
     CompareNoMatch,
     /// Attempt to use Secure Comparator before completing nonce exchange.
     CompareNotReady,
+}
+
+// TransportError does not implement PartialEq therefore it's not possible to derive the
+// implementation for ErrorKind automatically. TransportErrors cannot be compared because
+// they either contain arbitrary human-readable strings or abstract boxed errors which
+// may have different types. However, we really need to be able to compare ErrorKinds.
+// Implement comparison by ignoring differences in TransportError details, comparing
+// just *kinds* of errors, not their values. This is a full equivalence relationship.
+
+impl Eq for ErrorKind {}
+
+impl PartialEq for ErrorKind {
+    fn eq(&self, other: &ErrorKind) -> bool {
+        error_kinds_equal(self, other)
+    }
+}
+
+impl PartialEq<&ErrorKind> for ErrorKind {
+    fn eq(&self, other: &&ErrorKind) -> bool {
+        error_kinds_equal(self, other)
+    }
+}
+
+impl PartialEq<ErrorKind> for &ErrorKind {
+    fn eq(&self, other: &ErrorKind) -> bool {
+        error_kinds_equal(self, other)
+    }
+}
+
+fn error_kinds_equal(lhs: &ErrorKind, rhs: &ErrorKind) -> bool {
+    match (lhs, rhs) {
+        (ErrorKind::UnknownError(lhs), ErrorKind::UnknownError(rhs)) => (lhs == rhs),
+        (ErrorKind::Success, ErrorKind::Success) => true,
+
+        (ErrorKind::Fail, ErrorKind::Fail) => true,
+        (ErrorKind::InvalidParameter, ErrorKind::InvalidParameter) => true,
+        (ErrorKind::NoMemory, ErrorKind::NoMemory) => true,
+        (ErrorKind::BufferTooSmall, ErrorKind::BufferTooSmall) => true,
+        (ErrorKind::DataCorrupt, ErrorKind::DataCorrupt) => true,
+        (ErrorKind::InvalidSignature, ErrorKind::InvalidSignature) => true,
+        (ErrorKind::NotSupported, ErrorKind::NotSupported) => true,
+
+        (ErrorKind::SessionSendOutputToPeer, ErrorKind::SessionSendOutputToPeer) => true,
+        (ErrorKind::SessionKeyAgreementNotFinished, ErrorKind::SessionKeyAgreementNotFinished) => {
+            true
+        }
+        // Ignore transport error details.
+        (ErrorKind::SessionTransportError(_), ErrorKind::SessionTransportError(_)) => true,
+        (ErrorKind::SessionGetPublicKeyForIdError, ErrorKind::SessionGetPublicKeyForIdError) => {
+            true
+        }
+
+        (ErrorKind::CompareSendOutputToPeer, ErrorKind::CompareSendOutputToPeer) => true,
+        (ErrorKind::CompareMatch, ErrorKind::CompareMatch) => true,
+        (ErrorKind::CompareNoMatch, ErrorKind::CompareNoMatch) => true,
+        (ErrorKind::CompareNotReady, ErrorKind::CompareNotReady) => true,
+
+        _ => false,
+    }
 }
