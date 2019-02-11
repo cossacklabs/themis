@@ -157,6 +157,10 @@ impl fmt::Display for Error {
 /// [`Error`]: struct.Error.html
 #[derive(Debug)]
 pub enum ErrorKind {
+    /*
+     * If you add a new error kind then please add it to the error_kinds_equal() function below
+     * as well. Unfortunately, we cannot derive PartialEq implementation automatically.
+     */
     /// Catch-all generic error.
     ///
     /// If you encounter this error kind then the Themis binding is likely to be out of sync with
