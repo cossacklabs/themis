@@ -120,7 +120,7 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
 {
     EVP_PKEY* pkey;
     RSA* rsa;
-    int rsa_mod_size;
+    size_t rsa_mod_size;
     size_t output_length;
 
     if ((!asym_cipher) || (!plain_data) || (0 == plain_data_length) || (!cipher_data_length)) {
@@ -186,7 +186,7 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
 {
     EVP_PKEY* pkey;
     RSA* rsa;
-    int rsa_mod_size;
+    size_t rsa_mod_size;
     size_t output_length;
 
     if ((!asym_cipher) || (!cipher_data) || (0 == cipher_data_length) || (!plain_data_length)) {

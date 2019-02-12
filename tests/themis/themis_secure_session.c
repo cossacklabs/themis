@@ -429,7 +429,7 @@ static void server_function(void)
         if (bytes_sent == bytes_received) {
             /* Check whether data was indeed encrypted (it should not be the same as in
              * data_to_send) */
-            testsuite_fail_if((bytes_sent == current_length) ||
+            testsuite_fail_if(((size_t)bytes_sent == current_length) ||
                                   (!memcmp(recv_buf, shared_mem, bytes_sent)),
                               "secure_session server message wrap");
         } else {

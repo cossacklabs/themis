@@ -149,7 +149,7 @@ static int on_get_public_key_for_id(const void *id, size_t id_length, void *key_
 	}
 
 	public_key_length = (*(ctx->env))->GetArrayLength(ctx->env, public_key);
-	if (public_key_length > key_buffer_length)
+	if ((size_t)public_key_length > key_buffer_length)
 	{
 		return THEMIS_BUFFER_TOO_SMALL;
 	}
