@@ -109,7 +109,6 @@ static int on_get_public_key_for_id(const void *id, size_t id_length, void *key_
 
 	jbyte *peer_id_buf = NULL;
 
-	jbyte *public_key_buf = NULL;
 	jsize public_key_length = 0;
 
 	if (!ctx)

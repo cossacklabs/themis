@@ -246,7 +246,6 @@ static int client_function_no_transport(void)
     ssize_t bytes_received = 0;
     uint8_t processing_buf[2048];
     size_t processing_buf_size = 0;
-    ssize_t bytes_sent;
 
     /* Client is not connected yet. Initiate key agreement */
     if (!connected) {

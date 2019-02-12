@@ -18,16 +18,6 @@ static size_t current_length = 0;
 
 /* below functions are copied from secure_comparator.c */
 /* Having duplicate code in tests is better than making them public in real code */
-static bool ge_is_zero(const ge_p3* ge)
-{
-    uint8_t y[ED25519_GE_LENGTH];
-    uint8_t z[ED25519_GE_LENGTH];
-
-    fe_tobytes(y, ge->Y);
-    fe_tobytes(z, ge->Z);
-
-    return (!fe_isnonzero(ge->X)) && (!crypto_verify_32(y, z));
-}
 
 static themis_status_t ed_sign(uint8_t pos, const uint8_t* scalar, uint8_t* signature)
 {
@@ -121,62 +111,6 @@ static themis_status_t ed_dbl_base_sign(uint8_t pos, const uint8_t* scalar1, con
         memcpy(signature, k, ED25519_GE_LENGTH);
         sc_muladd(signature + ED25519_GE_LENGTH, k, scalar1, r1);
         sc_muladd(signature + (2 * ED25519_GE_LENGTH), k, scalar2, r2);
-    }
-
-    return res;
-}
-
-static themis_status_t ed_point_sign(uint8_t pos, const uint8_t* scalar, const ge_p3* point,
-                                     uint8_t* signature)
-{
-    uint8_t r[ED25519_GE_LENGTH];
-    ge_p3 R;
-    uint8_t k[64];
-
-    size_t hash_length = 64;
-
-    themis_status_t res;
-
-    generate_random_32(r);
-    ge_scalarmult_base(&R, r);
-    ge_p3_tobytes(k, &R);
-
-    soter_hash_ctx_t* hash_ctx = soter_hash_create(SOTER_HASH_SHA512);
-    if (!hash_ctx) {
-        return THEMIS_FAIL;
-    }
-
-    res = soter_hash_update(hash_ctx, k, ED25519_GE_LENGTH);
-    if (THEMIS_SUCCESS != res) {
-        soter_hash_destroy(hash_ctx);
-        return res;
-    }
-
-    ge_scalarmult_blinded(&R, r, point);
-    ge_p3_tobytes(k, &R);
-
-    res = soter_hash_update(hash_ctx, k, ED25519_GE_LENGTH);
-    if (THEMIS_SUCCESS != res) {
-        soter_hash_destroy(hash_ctx);
-        return res;
-    }
-
-    res = soter_hash_update(hash_ctx, &pos, sizeof(pos));
-    if (THEMIS_SUCCESS != res) {
-        soter_hash_destroy(hash_ctx);
-        return res;
-    }
-
-    res = soter_hash_final(hash_ctx, k, &hash_length);
-    soter_hash_destroy(hash_ctx);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
-
-    if (THEMIS_SUCCESS == res) {
-        sc_reduce(k);
-        memcpy(signature, k, ED25519_GE_LENGTH);
-        sc_muladd(signature + ED25519_GE_LENGTH, k, scalar, r);
     }
 
     return res;
