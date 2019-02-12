@@ -66,10 +66,10 @@ struct client_info_type {
 };
 
 static client_info_t client = {
-    "client", client_priv, sizeof(client_priv), client_pub, sizeof(client_pub), NULL, {0},
+    "client", client_priv, sizeof(client_priv), client_pub, sizeof(client_pub), NULL, {},
 };
 static client_info_t server = {
-    "server", server_priv, sizeof(server_priv), server_pub, sizeof(server_pub), NULL, {0},
+    "server", server_priv, sizeof(server_priv), server_pub, sizeof(server_pub), NULL, {},
 };
 
 /* Peers will communicate using shared memory */
