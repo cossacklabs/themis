@@ -106,6 +106,7 @@ static int on_get_public_key(const void* id, size_t id_length, void* key_buffer,
 
 static ssize_t on_send_data(const uint8_t* data, size_t data_length, void* user_data)
 {
+    UNUSED(user_data);
     memcpy(shared_mem, data, data_length);
     current_length = data_length;
     return (ssize_t)data_length;
@@ -113,6 +114,8 @@ static ssize_t on_send_data(const uint8_t* data, size_t data_length, void* user_
 
 static ssize_t on_receive_data(uint8_t* data, size_t data_length, void* user_data)
 {
+    UNUSED(user_data);
+
     if (data_length < current_length) {
         return -1;
     }
@@ -124,6 +127,8 @@ static ssize_t on_receive_data(uint8_t* data, size_t data_length, void* user_dat
 
 static void on_state_changed(int event, void* user_data)
 {
+    UNUSED(event);
+    UNUSED(user_data);
     /* TODO: implement */
 }
 

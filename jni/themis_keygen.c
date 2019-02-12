@@ -24,6 +24,8 @@
 
 JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_generateKeys(JNIEnv *env, jobject thiz, jint key_type)
 {
+	UNUSED(thiz);
+
 	size_t private_length = 0;
 	size_t public_length = 0;
 

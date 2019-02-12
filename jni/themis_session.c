@@ -161,6 +161,8 @@ static int on_get_public_key_for_id(const void *id, size_t id_length, void *key_
 
 JNIEXPORT jlong JNICALL Java_com_cossacklabs_themis_SecureSession_jniLoad(JNIEnv *env, jobject thiz, jbyteArray state)
 {
+	UNUSED(thiz);
+
 	size_t state_length = (*env)->GetArrayLength(env, state);
 
 	themis_status_t themis_status;
@@ -521,6 +523,8 @@ err:
 
 JNIEXPORT jlong JNICALL Java_com_cossacklabs_themis_SecureSession_create(JNIEnv *env, jobject thiz, jbyteArray id, jbyteArray sign_key)
 {
+	UNUSED(thiz);
+
 	size_t id_length = (*env)->GetArrayLength(env, id);
 	size_t sign_key_length = (*env)->GetArrayLength(env, sign_key);
 
