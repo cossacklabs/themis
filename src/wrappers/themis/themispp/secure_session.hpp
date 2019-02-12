@@ -240,7 +240,7 @@ public:
         return _res;
     }
 
-    const bool is_established()
+    bool is_established() const
     {
         if (!_session) {
             throw themispp::exception_t("uninitialized Secure Session");

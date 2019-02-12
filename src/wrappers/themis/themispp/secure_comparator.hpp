@@ -90,7 +90,7 @@ public:
         return res_;
     }
 
-    const bool get()
+    bool get() const
     {
         return THEMIS_SCOMPARE_MATCH == secure_comparator_get_result(comparator_);
     }
