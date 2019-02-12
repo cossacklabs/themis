@@ -546,14 +546,14 @@ static void test_basic_flow(void)
     client.session = secure_session_create(client.id, strlen(client.id), client.priv,
                                            client.priv_length, &(client.transport));
     if (client.session == NULL) {
-        testsuite_fail_if(res, "secure_session_init failed");
+        testsuite_fail_if(false, "secure_session_init failed");
         return;
     }
 
     server.session = secure_session_create(server.id, strlen(server.id), server.priv,
                                            server.priv_length, &(server.transport));
     if (server.session == NULL) {
-        testsuite_fail_if(res, "secure_session_init failed");
+        testsuite_fail_if(false, "secure_session_init failed");
         secure_session_destroy((client.session));
         return;
     }
@@ -584,14 +584,14 @@ static void test_basic_flow_no_transport(void)
     client.session = secure_session_create(client.id, strlen(client.id), client.priv,
                                            client.priv_length, &(client.transport));
     if (client.session == NULL) {
-        testsuite_fail_if(res, "secure_session_init failed");
+        testsuite_fail_if(false, "secure_session_init failed");
         return;
     }
 
     server.session = secure_session_create(server.id, strlen(server.id), server.priv,
                                            server.priv_length, &(server.transport));
     if (server.session == NULL) {
-        testsuite_fail_if(res, "secure_session_init failed");
+        testsuite_fail_if(false, "secure_session_init failed");
         secure_session_destroy((client.session));
         return;
     }
