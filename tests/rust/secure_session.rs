@@ -22,24 +22,6 @@ use themis::secure_session::{
     SecureSession, SecureSessionState, SecureSessionTransport, TransportError,
 };
 
-struct DummyTransport {
-    key_map: Rc<BTreeMap<Vec<u8>, EcdsaPublicKey>>,
-}
-
-impl DummyTransport {
-    fn new(key_map: &Rc<BTreeMap<Vec<u8>, EcdsaPublicKey>>) -> Self {
-        Self {
-            key_map: key_map.clone(),
-        }
-    }
-}
-
-impl SecureSessionTransport for DummyTransport {
-    fn get_public_key_for_id(&mut self, id: &[u8]) -> Option<EcdsaPublicKey> {
-        self.key_map.get(id).cloned()
-    }
-}
-
 struct ChannelTransport {
     key_map: Rc<BTreeMap<Vec<u8>, EcdsaPublicKey>>,
     tx: Sender<Vec<u8>>,
@@ -93,26 +75,21 @@ impl SecureSessionTransport for ChannelTransport {
 
 #[test]
 fn no_transport() {
-    // Peer credentials. Secure Session supports only ECDSA.
-    // TODO: tests that confirm RSA failure
+    let (name_client, name_server) = ("client", "server");
     let (private_client, public_client) = gen_ec_key_pair().split();
     let (private_server, public_server) = gen_ec_key_pair().split();
-    let (name_client, name_server) = ("client", "server");
 
-    // Shared storage of public peer credentials. These should be communicated between
-    // the peers beforehand in some unspecified trusted way.
-    let mut key_map = BTreeMap::new();
-    key_map.insert(name_client.as_bytes().to_vec(), public_client);
-    key_map.insert(name_server.as_bytes().to_vec(), public_server);
-    let key_map = Rc::new(key_map);
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
+
+    expect_peer(&mut transport_client, &name_server, &public_server);
+    expect_peer(&mut transport_server, &name_client, &public_client);
 
     // The client and the server.
-    let mut client =
-        SecureSession::with_transport(name_client, &private_client, DummyTransport::new(&key_map))
-            .unwrap();
-    let mut server =
-        SecureSession::with_transport(name_server, &private_server, DummyTransport::new(&key_map))
-            .unwrap();
+    let mut client = SecureSession::with_transport(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::with_transport(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     assert!(!client.is_established());
     assert!(!server.is_established());
@@ -286,4 +263,24 @@ impl MockTransport {
         self.impl_state_changed = Some(Box::new(f));
         self
     }
+}
+
+//
+// MockTransport utilities
+//
+
+fn expect_peer(
+    transport: &mut MockTransport,
+    peer_id: impl AsRef<[u8]>,
+    public_key: &EcdsaPublicKey,
+) {
+    let peer_id = peer_id.as_ref().to_vec();
+    let public_key = public_key.clone();
+    transport.when_get_public_key_for_id(move |id| {
+        if peer_id == id {
+            Some(public_key.clone())
+        } else {
+            None
+        }
+    });
 }
