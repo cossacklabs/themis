@@ -68,8 +68,6 @@ fn no_transport() {
     let unwrapped = client.unwrap(&wrapped).expect("unwrap 2 -> 1 message");
     assert_eq!(unwrapped, plaintext);
 
-    // TODO: it seems that one cannot wrap an empty message, check it out
-
     // Messages are independent, can come out-of-order and be lost.
     client.wrap(b"some message").expect("lost message 1");
     client.wrap(b"some message").expect("lost message 2");
@@ -433,6 +431,76 @@ fn forward_error_receive_at_exchange() {
         error.kind(),
         ErrorKind::SessionTransportError(TransportError::new("error"))
     );
+}
+
+#[test]
+fn cannot_send_empty_message() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, public_client) = gen_ec_key_pair().split();
+    let (private_server, public_server) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
+
+    expect_peer(&mut transport_client, &name_server, &public_server);
+    expect_peer(&mut transport_server, &name_client, &public_client);
+
+    connect_with_channels(&mut transport_client, &mut transport_server);
+
+    let mut client = SecureSession::with_transport(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::with_transport(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    client.connect().expect("client-side connection");
+    server.negotiate_transport().expect("connect reply");
+    client.negotiate_transport().expect("key proposed");
+    server.negotiate_transport().expect("key accepted");
+    client.negotiate_transport().expect("key confirmed");
+
+    assert!(client.is_established());
+    assert!(server.is_established());
+
+    let error = client.send(b"").expect_err("failed to send message");
+
+    assert_eq!(error.kind(), ErrorKind::InvalidParameter);
+}
+
+#[test]
+fn cannot_receive_empty_message() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, public_client) = gen_ec_key_pair().split();
+    let (private_server, public_server) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
+
+    expect_peer(&mut transport_client, &name_server, &public_server);
+    expect_peer(&mut transport_server, &name_client, &public_client);
+
+    connect_with_channels(&mut transport_client, &mut transport_server);
+
+    let mut next_client_receive = override_receive(&mut transport_client);
+
+    let mut client = SecureSession::with_transport(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::with_transport(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    client.connect().expect("client-side connection");
+    server.negotiate_transport().expect("connect reply");
+    client.negotiate_transport().expect("key proposed");
+    server.negotiate_transport().expect("key accepted");
+    client.negotiate_transport().expect("key confirmed");
+
+    assert!(client.is_established());
+    assert!(server.is_established());
+
+    next_client_receive.will_be(|_| Ok(0));
+
+    let error = client.receive(1024).expect_err("failed to receive message");
+
+    assert_eq!(error.kind(), ErrorKind::InvalidParameter);
 }
 
 //
