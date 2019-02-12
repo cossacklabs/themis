@@ -218,6 +218,223 @@ fn client_does_not_identify_server() {
     );
 }
 
+#[test]
+fn forward_error_send_at_connection() {
+    let name_client = "client";
+    let (private_client, _public_client) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+
+    let mut next_client_send = override_send(&mut transport_client);
+
+    let mut client = SecureSession::with_transport(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+
+    next_client_send.will_be(|_| Err(TransportError::new("error")));
+
+    let error = client.connect().expect_err("client-side connection");
+
+    assert_eq!(
+        error.kind(),
+        ErrorKind::SessionTransportError(TransportError::new("error"))
+    );
+}
+
+#[test]
+fn forward_error_receive_at_connection() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, public_client) = gen_ec_key_pair().split();
+    let (private_server, public_server) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
+
+    expect_peer(&mut transport_client, &name_server, &public_server);
+    expect_peer(&mut transport_server, &name_client, &public_client);
+
+    connect_with_channels(&mut transport_client, &mut transport_server);
+
+    let mut next_server_receive = override_receive(&mut transport_server);
+
+    let mut client = SecureSession::with_transport(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::with_transport(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    // Establishing connection.
+    client.connect().expect("client-side connection");
+
+    next_server_receive.will_be(|_| Err(TransportError::new("error")));
+
+    let error = server
+        .negotiate_transport()
+        .expect_err("failed to negotiate transport");
+
+    assert_eq!(
+        error.kind(),
+        ErrorKind::SessionTransportError(TransportError::new("error"))
+    );
+}
+
+#[test]
+fn forward_error_send_at_negotiation() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, public_client) = gen_ec_key_pair().split();
+    let (private_server, public_server) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
+
+    expect_peer(&mut transport_client, &name_server, &public_server);
+    expect_peer(&mut transport_server, &name_client, &public_client);
+
+    connect_with_channels(&mut transport_client, &mut transport_server);
+
+    let mut next_server_send = override_send(&mut transport_server);
+
+    let mut client = SecureSession::with_transport(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::with_transport(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    client.connect().expect("client-side connection");
+    server.negotiate_transport().expect("connect reply");
+    client.negotiate_transport().expect("key proposed");
+
+    next_server_send.will_be(|_| Err(TransportError::new("error")));
+
+    let error = server
+        .negotiate_transport()
+        .expect_err("failed to negotiate transport");
+
+    assert_eq!(
+        error.kind(),
+        ErrorKind::SessionTransportError(TransportError::new("error"))
+    );
+}
+
+#[test]
+fn forward_error_receive_at_negotiation() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, public_client) = gen_ec_key_pair().split();
+    let (private_server, public_server) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
+
+    expect_peer(&mut transport_client, &name_server, &public_server);
+    expect_peer(&mut transport_server, &name_client, &public_client);
+
+    connect_with_channels(&mut transport_client, &mut transport_server);
+
+    let mut next_client_receive = override_receive(&mut transport_client);
+
+    let mut client = SecureSession::with_transport(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::with_transport(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    client.connect().expect("client-side connection");
+    server.negotiate_transport().expect("connect reply");
+
+    next_client_receive.will_be(|_| Err(TransportError::new("error")));
+
+    let error = client
+        .negotiate_transport()
+        .expect_err("failed to negotiate transport");
+
+    assert_eq!(
+        error.kind(),
+        ErrorKind::SessionTransportError(TransportError::new("error"))
+    );
+}
+
+#[test]
+fn forward_error_send_at_exchange() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, public_client) = gen_ec_key_pair().split();
+    let (private_server, public_server) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
+
+    expect_peer(&mut transport_client, &name_server, &public_server);
+    expect_peer(&mut transport_server, &name_client, &public_client);
+
+    connect_with_channels(&mut transport_client, &mut transport_server);
+
+    let mut next_client_send = override_send(&mut transport_client);
+
+    let mut client = SecureSession::with_transport(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::with_transport(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    client.connect().expect("client-side connection");
+    server.negotiate_transport().expect("connect reply");
+    client.negotiate_transport().expect("key proposed");
+    server.negotiate_transport().expect("key accepted");
+    client.negotiate_transport().expect("key confirmed");
+
+    assert!(client.is_established());
+    assert!(server.is_established());
+
+    next_client_send.will_be(|_| Err(TransportError::new("error")));
+
+    let error = client
+        .send(b"test message")
+        .expect_err("failed to send message");
+
+    assert_eq!(
+        error.kind(),
+        ErrorKind::SessionTransportError(TransportError::new("error"))
+    );
+}
+
+#[test]
+fn forward_error_receive_at_exchange() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, public_client) = gen_ec_key_pair().split();
+    let (private_server, public_server) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
+
+    expect_peer(&mut transport_client, &name_server, &public_server);
+    expect_peer(&mut transport_server, &name_client, &public_client);
+
+    connect_with_channels(&mut transport_client, &mut transport_server);
+
+    let mut next_server_receive = override_receive(&mut transport_server);
+
+    let mut client = SecureSession::with_transport(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::with_transport(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    client.connect().expect("client-side connection");
+    server.negotiate_transport().expect("connect reply");
+    client.negotiate_transport().expect("key proposed");
+    server.negotiate_transport().expect("key accepted");
+    client.negotiate_transport().expect("key confirmed");
+
+    assert!(client.is_established());
+    assert!(server.is_established());
+
+    client
+        .send(b"test message please ignore")
+        .expect("client send");
+
+    next_server_receive.will_be(|_| Err(TransportError::new("error")));
+
+    let error = server.receive(1024).expect_err("failed to receive message");
+
+    assert_eq!(
+        error.kind(),
+        ErrorKind::SessionTransportError(TransportError::new("error"))
+    );
+}
+
 //
 // MockTransport implementation
 //
@@ -346,6 +563,52 @@ fn connect_channel(transport: &mut MockTransport, tx: Sender<Vec<u8>>, rx: Recei
         data[0..msg.len()].copy_from_slice(&msg);
         Ok(msg.len())
     });
+}
+
+struct SendDataOverride(Sender<SendData>);
+
+impl SendDataOverride {
+    fn will_be(&mut self, f: impl FnMut(&[u8]) -> Result<usize, TransportError> + 'static) {
+        self.0.send(Box::new(f)).expect("unexpected send error");
+    }
+}
+
+fn override_send(transport: &mut MockTransport) -> SendDataOverride {
+    let (tx, rx) = channel::<SendData>();
+    let mut old_send = transport.impl_send_data.take();
+    transport.when_send_data(move |data| {
+        if let Ok(mut override_send) = rx.try_recv() {
+            override_send(data)
+        } else if let Some(ref mut fallback_send) = old_send {
+            fallback_send(data)
+        } else {
+            panic!("no send_data() fallback");
+        }
+    });
+    SendDataOverride(tx)
+}
+
+struct ReceiveDataOverride(Sender<ReceiveData>);
+
+impl ReceiveDataOverride {
+    fn will_be(&mut self, f: impl FnMut(&mut [u8]) -> Result<usize, TransportError> + 'static) {
+        self.0.send(Box::new(f)).expect("unexpected send error");
+    }
+}
+
+fn override_receive(transport: &mut MockTransport) -> ReceiveDataOverride {
+    let (tx, rx) = channel::<ReceiveData>();
+    let mut old_receive = transport.impl_receive_data.take();
+    transport.when_receive_data(move |data| {
+        if let Ok(mut override_receive) = rx.try_recv() {
+            override_receive(data)
+        } else if let Some(ref mut fallback_receive) = old_receive {
+            fallback_receive(data)
+        } else {
+            panic!("no receive_data() fallback");
+        }
+    });
+    ReceiveDataOverride(tx)
 }
 
 fn monitor_state_changes(transport: &mut MockTransport) -> Receiver<SecureSessionState> {
