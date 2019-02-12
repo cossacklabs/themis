@@ -56,8 +56,6 @@ fn no_transport() {
     assert_eq!(client.get_remote_id().unwrap(), name_server.as_bytes());
     assert_eq!(server.get_remote_id().unwrap(), name_client.as_bytes());
 
-    // TODO: check connection states reported to transport delegate
-
     // Try sending a message back and forth.
     let plaintext = b"test message please ignore";
 
@@ -123,6 +121,44 @@ fn with_transport() {
     let received = server.receive(1024).expect("receive message");
 
     assert_eq!(received, message);
+}
+
+#[test]
+fn connection_state_reporting() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, public_client) = gen_ec_key_pair().split();
+    let (private_server, public_server) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
+
+    expect_peer(&mut transport_server, &name_client, &public_client);
+    expect_peer(&mut transport_client, &name_server, &public_server);
+
+    let state_client = monitor_state_changes(&mut transport_client);
+    let state_server = monitor_state_changes(&mut transport_server);
+
+    let mut client = SecureSession::with_transport(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::with_transport(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    let connect_request = client.generate_connect_request().expect("connect request");
+    assert_eq!(state_client.recv(), Ok(SecureSessionState::Negotiating));
+
+    let connect_reply = server.negotiate(&connect_request).expect("connect reply");
+    assert_eq!(state_server.recv(), Ok(SecureSessionState::Negotiating));
+
+    let key_proposed = client.negotiate(&connect_reply).expect("key proposed");
+    // No state change here, both parties are still negotiating...
+
+    let key_accepted = server.negotiate(&key_proposed).expect("key accepted");
+    assert_eq!(state_server.recv(), Ok(SecureSessionState::Established));
+
+    let key_confirmed = client.negotiate(&key_accepted).expect("key confirmed");
+    assert_eq!(state_client.recv(), Ok(SecureSessionState::Established));
+
+    assert!(key_confirmed.is_empty());
 }
 
 //
@@ -249,4 +285,10 @@ fn connect_channel(transport: &mut MockTransport, tx: Sender<Vec<u8>>, rx: Recei
         data[0..msg.len()].copy_from_slice(&msg);
         Ok(msg.len())
     });
+}
+
+fn monitor_state_changes(transport: &mut MockTransport) -> Receiver<SecureSessionState> {
+    let (tx, rx) = channel();
+    transport.when_state_changed(move |state| tx.send(state).expect("send error"));
+    rx
 }
