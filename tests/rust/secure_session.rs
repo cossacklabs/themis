@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::collections::BTreeMap;
-use std::rc::Rc;
 use std::sync::mpsc::{channel, Receiver, Sender};
 
 use themis::keygen::gen_ec_key_pair;
@@ -21,57 +19,6 @@ use themis::keys::EcdsaPublicKey;
 use themis::secure_session::{
     SecureSession, SecureSessionState, SecureSessionTransport, TransportError,
 };
-
-struct ChannelTransport {
-    key_map: Rc<BTreeMap<Vec<u8>, EcdsaPublicKey>>,
-    tx: Sender<Vec<u8>>,
-    rx: Receiver<Vec<u8>>,
-}
-
-impl ChannelTransport {
-    #[allow(clippy::new_ret_no_self)]
-    fn new(key_map: &Rc<BTreeMap<Vec<u8>, EcdsaPublicKey>>) -> (Self, Self) {
-        let (tx12, rx21) = channel();
-        let (tx21, rx12) = channel();
-
-        let transport1 = Self {
-            key_map: key_map.clone(),
-            tx: tx12,
-            rx: rx12,
-        };
-        let transport2 = Self {
-            key_map: key_map.clone(),
-            tx: tx21,
-            rx: rx21,
-        };
-
-        (transport1, transport2)
-    }
-}
-
-impl SecureSessionTransport for ChannelTransport {
-    fn send_data(&mut self, data: &[u8]) -> Result<usize, TransportError> {
-        self.tx.send(data.to_vec())?;
-        Ok(data.len())
-    }
-
-    fn receive_data(&mut self, data: &mut [u8]) -> Result<usize, TransportError> {
-        let msg = self.rx.recv()?;
-        if msg.len() > data.len() {
-            return Err(TransportError::new(format!(
-                "buffer too small: {} bytes, need {} bytes",
-                data.len(),
-                msg.len(),
-            )));
-        }
-        data[0..msg.len()].copy_from_slice(&msg);
-        Ok(msg.len())
-    }
-
-    fn get_public_key_for_id(&mut self, id: &[u8]) -> Option<EcdsaPublicKey> {
-        self.key_map.get(id).cloned()
-    }
-}
 
 #[test]
 fn no_transport() {
@@ -139,25 +86,22 @@ fn no_transport() {
 
 #[test]
 fn with_transport() {
-    // Peer credentials. Secure Session supports only ECDSA.
-    // TODO: tests that confirm RSA failure
+    let (name_client, name_server) = ("client", "server");
     let (private_client, public_client) = gen_ec_key_pair().split();
     let (private_server, public_server) = gen_ec_key_pair().split();
-    let (name_client, name_server) = ("client", "server");
 
-    // Shared storage of public peer credentials. These should be communicated between
-    // the peers beforehand in some unspecified trusted way.
-    let mut key_map = BTreeMap::new();
-    key_map.insert(name_client.as_bytes().to_vec(), public_client);
-    key_map.insert(name_server.as_bytes().to_vec(), public_server);
-    let key_map = Rc::new(key_map);
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
 
-    // The client and the server.
-    let (transport_client, transport_server) = ChannelTransport::new(&key_map);
-    let mut client =
-        SecureSession::with_transport(name_client, &private_client, transport_client).unwrap();
-    let mut server =
-        SecureSession::with_transport(name_server, &private_server, transport_server).unwrap();
+    expect_peer(&mut transport_client, &name_server, &public_server);
+    expect_peer(&mut transport_server, &name_client, &public_client);
+
+    connect_with_channels(&mut transport_client, &mut transport_server);
+
+    let mut client = SecureSession::with_transport(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::with_transport(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     assert!(!client.is_established());
     assert!(!server.is_established());
@@ -282,5 +226,27 @@ fn expect_peer(
         } else {
             None
         }
+    });
+}
+
+fn connect_with_channels(client: &mut MockTransport, server: &mut MockTransport) {
+    let (tx_client_server, rx_server_client) = channel();
+    let (tx_server_client, rx_client_server) = channel();
+    connect_channel(client, tx_client_server, rx_client_server);
+    connect_channel(server, tx_server_client, rx_server_client);
+}
+
+fn connect_channel(transport: &mut MockTransport, tx: Sender<Vec<u8>>, rx: Receiver<Vec<u8>>) {
+    transport.when_send_data(move |data| {
+        tx.send(data.to_vec())?;
+        Ok(data.len())
+    });
+    transport.when_receive_data(move |data| {
+        let msg = rx.recv()?;
+        if msg.len() > data.len() {
+            return Err(TransportError::new("too small buffer"));
+        }
+        data[0..msg.len()].copy_from_slice(&msg);
+        Ok(msg.len())
     });
 }
