@@ -225,8 +225,53 @@ ifneq ($(GEM_INSTALL_OPTIONS),)
 	_GEM_INSTALL_OPTIONS = $(GEM_INSTALL_OPTIONS)
 endif
 
-# Should pay attention to warnings (some may be critical for crypto-enabled code (ex. signed-unsigned mismatch)
-CFLAGS += -Werror -Wno-switch
+define supported =
+$(shell if echo "int main(void){}" | $(CC) -x c -fsyntax-only -Werror $(1) - >/dev/null 2>&1; then echo "yes"; fi)
+endef
+
+# We are security-oriented so we use a pretty paranoid set of flags
+# by default. For starters, enable default set of warnings and treat
+# them as errors. Skip any unknown warning directives though.
+CFLAGS += -Wall -Wextra
+CFLAGS += -Werror
+# Various security-related diagnostics for printf/scanf family
+CFLAGS += -Wformat
+CFLAGS += -Wformat-nonliteral
+ifeq (yes,$(call supported,-Wformat-overflow))
+CFLAGS += -Wformat-overflow
+endif
+CFLAGS += -Wformat-security
+ifeq (yes,$(call supported,-Wformat-signedness))
+CFLAGS += -Wformat-signedness
+endif
+ifeq (yes,$(call supported,-Wformat-truncation))
+CFLAGS += -Wformat-truncation
+endif
+# Warn about possible undefined behavior
+ifeq (yes,$(call supported,-Wnull-dereference))
+CFLAGS += -Wnull-dereference
+endif
+ifeq (yes,$(call supported,-Wshift-overflow))
+CFLAGS += -Wshift-overflow
+endif
+ifeq (yes,$(call supported,-Wshift-negative-value))
+CFLAGS += -Wshift-negative-value
+endif
+CFLAGS += -Wstrict-overflow
+# Ensure full coverage of switch-case branches
+CFLAGS += -Wswitch
+# Forbid alloca() and variable-length arrays
+ifeq (yes,$(call supported,-Walloca))
+CFLAGS += -Walloca
+endif
+CFLAGS += -Wvla
+# Forbid pointer arithmetic with "void*" type
+CFLAGS += -Wpointer-arith
+# Forbid old-style C function prototypes
+# (skip for C++ files as older g++ complains about it)
+ifeq (yes,$(call supported,-Wstrict-prototypes))
+CFLAGS += $(if $(findstring .cpp,$(suffix $<)),,-Wstrict-prototypes)
+endif
 
 # strict checks for docs
 #CFLAGS += -Wdocumentation -Wno-error=documentation
