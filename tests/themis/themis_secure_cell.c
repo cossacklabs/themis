@@ -32,7 +32,7 @@ static char passwd[] = "password";
 static char message[] = "secure cell test message by Mnatsakanov Andrey from Cossack Labs";
 static char user_context[] = "secure cell user context";
 
-static int secure_cell_seal()
+static int secure_cell_seal(void)
 {
     uint8_t* encrypted_message;
     size_t encrypted_message_length = 0;
@@ -96,7 +96,7 @@ static int secure_cell_seal()
     return 0;
 }
 
-static int secure_cell_token_protect()
+static int secure_cell_token_protect(void)
 {
     uint8_t* encrypted_message;
     size_t encrypted_message_length = 0;
@@ -188,7 +188,7 @@ static int secure_cell_token_protect()
     return 0;
 }
 
-static int secure_cell_context_imprint()
+static int secure_cell_context_imprint(void)
 {
     uint8_t* encrypted_message;
     size_t encrypted_message_length = 0;
@@ -258,7 +258,7 @@ static int secure_cell_context_imprint()
     return 0;
 }
 
-static void secure_cell_test()
+static void secure_cell_test(void)
 {
     testsuite_fail_if(secure_cell_seal(), "secure cell seal mode");
     testsuite_fail_if(secure_cell_token_protect(), "secure cell token protect mode");
@@ -878,7 +878,7 @@ static void secure_cell_context_corruption(void)
     secure_cell_context_corruption_token_protect();
 }
 
-void run_secure_cell_test()
+void run_secure_cell_test(void)
 {
     testsuite_enter_suite("secure cell: basic flow");
     testsuite_run_test(secure_cell_test);
