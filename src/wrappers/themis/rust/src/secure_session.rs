@@ -220,7 +220,7 @@ impl TransportError {
 }
 
 /// State of Secure Session connection.
-#[derive(PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SecureSessionState {
     /// Newly created sessions start in this state.
     Idle,
