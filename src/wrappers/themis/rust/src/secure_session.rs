@@ -62,6 +62,11 @@ struct SecureSessionContext {
 /// [`get_public_key_for_id`]: trait.SecureSessionTransport.html#tymethod.get_public_key_for_id
 #[allow(unused_variables)]
 pub trait SecureSessionTransport {
+    /// Get a public key corresponding to a peer ID.
+    ///
+    /// Return `None` if you are unable to find a corresponding public key.
+    fn get_public_key_for_id(&mut self, id: &[u8]) -> Option<EcdsaPublicKey>;
+
     /// Send the provided data to the peer, return the number of bytes transferred.
     ///
     /// This callback will be called when Secure Session needs to send some data to its peer.
@@ -97,11 +102,6 @@ pub trait SecureSessionTransport {
     ///
     /// This method is truly optional and has no effect on Secure Session operation.
     fn state_changed(&mut self, state: SecureSessionState) {}
-
-    /// Get a public key corresponding to a peer ID.
-    ///
-    /// Return `None` if you are unable to find a corresponding public key.
-    fn get_public_key_for_id(&mut self, id: &[u8]) -> Option<EcdsaPublicKey>;
 }
 
 /// Transport layer error.
