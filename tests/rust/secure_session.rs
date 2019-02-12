@@ -19,6 +19,7 @@ use themis::keys::EcdsaPublicKey;
 use themis::secure_session::{
     SecureSession, SecureSessionState, SecureSessionTransport, TransportError,
 };
+use themis::ErrorKind;
 
 #[test]
 fn no_transport() {
@@ -161,6 +162,62 @@ fn connection_state_reporting() {
     assert!(key_confirmed.is_empty());
 }
 
+#[test]
+fn server_does_not_identify_client() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, _public_client) = gen_ec_key_pair().split();
+    let (private_server, _public_server) = gen_ec_key_pair().split();
+
+    let transport_client = MockTransport::new();
+
+    let mut transport_server = MockTransport::new();
+    expect_no_peers(&mut transport_server);
+
+    let mut client = SecureSession::with_transport(&name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::with_transport(&name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    let connect_request = client.generate_connect_request().expect("connect request");
+
+    let connect_error = server
+        .negotiate(&connect_request)
+        .expect_err("server error");
+
+    assert_eq!(
+        connect_error.kind(),
+        ErrorKind::SessionGetPublicKeyForIdError
+    );
+}
+
+#[test]
+fn client_does_not_identify_server() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, public_client) = gen_ec_key_pair().split();
+    let (private_server, _public_server) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+    expect_no_peers(&mut transport_client);
+
+    let mut transport_server = MockTransport::new();
+    expect_peer(&mut transport_server, &name_client, &public_client);
+
+    let mut client = SecureSession::with_transport(&name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::with_transport(&name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    let connect_request = client.generate_connect_request().expect("connect request");
+    let connect_reply = server.negotiate(&connect_request).expect("server reply");
+
+    let negotiate_error = client.negotiate(&connect_reply).expect_err("client error");
+
+    assert_eq!(
+        negotiate_error.kind(),
+        ErrorKind::SessionGetPublicKeyForIdError
+    );
+}
+
 //
 // MockTransport implementation
 //
@@ -263,6 +320,10 @@ fn expect_peer(
             None
         }
     });
+}
+
+fn expect_no_peers(transport: &mut MockTransport) {
+    transport.when_get_public_key_for_id(|_| None);
 }
 
 fn connect_with_channels(client: &mut MockTransport, server: &mut MockTransport) {
