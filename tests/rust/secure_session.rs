@@ -18,7 +18,9 @@ use std::sync::mpsc::{channel, Receiver, Sender};
 
 use themis::keygen::gen_ec_key_pair;
 use themis::keys::EcdsaPublicKey;
-use themis::secure_session::{SecureSession, SecureSessionTransport, TransportError};
+use themis::secure_session::{
+    SecureSession, SecureSessionState, SecureSessionTransport, TransportError,
+};
 
 struct DummyTransport {
     key_map: Rc<BTreeMap<Vec<u8>, EcdsaPublicKey>>,
@@ -200,4 +202,88 @@ fn with_transport() {
     let received = server.receive(1024).expect("receive message");
 
     assert_eq!(received, message);
+}
+
+//
+// MockTransport implementation
+//
+
+type GetPublicKeyForID = Box<dyn FnMut(&[u8]) -> Option<EcdsaPublicKey>>;
+type SendData = Box<dyn FnMut(&[u8]) -> Result<usize, TransportError>>;
+type ReceiveData = Box<dyn FnMut(&mut [u8]) -> Result<usize, TransportError>>;
+type StateChanged = Box<dyn FnMut(SecureSessionState)>;
+
+#[derive(Default)]
+struct MockTransport {
+    impl_get_public_key_for_id: Option<GetPublicKeyForID>,
+    impl_send_data: Option<SendData>,
+    impl_receive_data: Option<ReceiveData>,
+    impl_state_changed: Option<StateChanged>,
+}
+
+impl SecureSessionTransport for MockTransport {
+    fn get_public_key_for_id(&mut self, id: &[u8]) -> Option<EcdsaPublicKey> {
+        if let Some(get_public_key_for_id) = &mut self.impl_get_public_key_for_id {
+            get_public_key_for_id(id)
+        } else {
+            panic!("get_public_key_for_id() used but not implemented")
+        }
+    }
+
+    fn send_data(&mut self, data: &[u8]) -> Result<usize, TransportError> {
+        if let Some(send_data) = &mut self.impl_send_data {
+            send_data(data)
+        } else {
+            panic!("send_data() used but not implemented")
+        }
+    }
+
+    fn receive_data(&mut self, data: &mut [u8]) -> Result<usize, TransportError> {
+        if let Some(receive_data) = &mut self.impl_receive_data {
+            receive_data(data)
+        } else {
+            panic!("receive_data() used but not implemented")
+        }
+    }
+
+    fn state_changed(&mut self, state: SecureSessionState) {
+        if let Some(state_changed) = &mut self.impl_state_changed {
+            state_changed(state)
+        }
+    }
+}
+
+impl MockTransport {
+    fn new() -> Self {
+        MockTransport::default()
+    }
+
+    fn when_get_public_key_for_id(
+        &mut self,
+        f: impl FnMut(&[u8]) -> Option<EcdsaPublicKey> + 'static,
+    ) -> &mut Self {
+        self.impl_get_public_key_for_id = Some(Box::new(f));
+        self
+    }
+
+    fn when_send_data(
+        &mut self,
+        f: impl FnMut(&[u8]) -> Result<usize, TransportError> + 'static,
+    ) -> &mut Self {
+        self.impl_send_data = Some(Box::new(f));
+        self
+    }
+
+    fn when_receive_data(
+        &mut self,
+        f: impl FnMut(&mut [u8]) -> Result<usize, TransportError> + 'static,
+    ) -> &mut Self {
+        self.impl_receive_data = Some(Box::new(f));
+        self
+    }
+
+    fn when_state_changed(&mut self, f: impl FnMut(SecureSessionState) + 'static) -> &mut Self {
+        self.impl_state_changed = Some(Box::new(f));
+        self
+    }
 }
