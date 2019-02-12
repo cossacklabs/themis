@@ -653,6 +653,13 @@ impl SecureSession {
     pub fn negotiate_transport(&mut self) -> Result<()> {
         unsafe {
             let result = secure_session_receive(self.session, ptr::null_mut(), 0);
+            if result == TRANSPORT_FAILURE {
+                let error = self.context.last_error.take().expect("missing error");
+                return Err(Error::from_transport_error(error));
+            }
+            if result == TRANSPORT_OVERFLOW {
+                return Err(Error::with_kind(ErrorKind::BufferTooSmall));
+            }
             let error = Error::from_session_status(result as themis_status_t);
             if error.kind() != ErrorKind::Success {
                 return Err(error);
