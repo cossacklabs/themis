@@ -33,6 +33,8 @@ TEST_OBJ_PATH = $(TEST_BIN_PATH)/obj
 CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC
 LDFLAGS += -L/usr/local/lib
 
+unexport CFLAGS LDFLAGS
+
 NO_COLOR=\033[0m
 OK_COLOR=\033[32;01m
 ERROR_COLOR=\033[31;01m
