@@ -27,8 +27,13 @@ FUZZ_TOOLS = $(addprefix $(FUZZ_BIN_PATH)/,$(notdir $(wildcard $(FUZZ_PATH)/inpu
 FUZZ_OBJS  = $(patsubst $(FUZZ_SRC_PATH)/%.c,$(FUZZ_BIN_PATH)/%.o,$(wildcard $(FUZZ_SRC_PATH)/*.c))
 FUZZ_UTILS = $(filter-out $(addsuffix .o,$(FUZZ_TOOLS)),$(FUZZ_OBJS))
 
-AFL_CFLAGS  += $(CFLAGS) -I$(FUZZ_SRC_PATH)
-AFL_LDFLAGS += -L$(FUZZ_THEMIS_PATH) -l$(THEMIS_BIN) -l$(SOTER_BIN) $(LDFLAGS)
+AFL_CFLAGS  += -I$(FUZZ_SRC_PATH)
+AFL_LDFLAGS += -L$(FUZZ_THEMIS_PATH) -l$(THEMIS_BIN) -l$(SOTER_BIN)
+
+# We would like to use all other compilation flags as well, but some of them
+# (like warnings) might be supported by CC but not AFL_CC. Filter them out.
+AFL_CFLAGS  := $(AFL_CFLAGS)  $(foreach flag,$(CFLAGS),$(if $(call supported,$(flag),$(AFL_CC)),$(flag),))
+AFL_LDFLAGS := $(AFL_LDFLAGS) $(LDFLAGS)
 
 # We don't really track dependencies of $(FUZZ_THEMIS_LIB) here,
 # so ask our make to rebuild it every time. The recursively called

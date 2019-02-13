@@ -228,7 +228,7 @@ ifneq ($(GEM_INSTALL_OPTIONS),)
 endif
 
 define supported =
-$(shell if echo "int main(void){}" | $(CC) -x c -fsyntax-only -Werror $(1) - >/dev/null 2>&1; then echo "yes"; fi)
+$(shell if echo "int main(void){}" | $(if $(2),$(2),$(CC)) -x c -fsyntax-only -Werror $(1) - >/dev/null 2>&1; then echo "yes"; fi)
 endef
 
 # We are security-oriented so we use a pretty paranoid set of flags
