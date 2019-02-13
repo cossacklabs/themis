@@ -23,9 +23,16 @@ The version currently under development.
   with other language wrappers. They are now called `PrivateKey` instead
   of `SecretKey` (ditto for `RsaSecretKey`, `EcdsaSecretKey`). ([#362])
 
+- `SecureSession` interface has been overhauled for better usability.
+  ([#373], [#374], [#375], [#380])
+
 [#358]: https://github.com/cossacklabs/themis/pull/358
 [#362]: https://github.com/cossacklabs/themis/pull/362
 [#365]: https://github.com/cossacklabs/themis/pull/365
+[#373]: https://github.com/cossacklabs/themis/pull/373
+[#374]: https://github.com/cossacklabs/themis/pull/374
+[#375]: https://github.com/cossacklabs/themis/pull/375
+[#380]: https://github.com/cossacklabs/themis/pull/380
 
 Version 0.0.3 — 2019-01-17
 ==========================
