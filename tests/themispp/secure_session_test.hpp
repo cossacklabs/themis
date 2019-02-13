@@ -25,6 +25,12 @@
 #include <unordered_map>
 #endif
 
+// Allow usage of non-owning Secure Session constructor for testing
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 namespace themispp{
   namespace secure_session_test{
 
@@ -113,9 +119,29 @@ namespace themispp{
 
       sput_fail_if(client.is_established(), "using moved session again", __LINE__);
     }
+
+    void secure_session_ownership(){
+      std::string client_id("client");
+
+      auto client_callbacks_shared = std::make_shared<callback>();
+      auto client_callbacks_unique = std::unique_ptr<callback>(new callback());
+
+      themispp::secure_session_t client_shared(std::vector<uint8_t>(client_id.c_str(), client_id.c_str()+client_id.length()), std::vector<uint8_t>(client_priv, client_priv+sizeof(client_priv)), std::move(client_callbacks_shared));
+      themispp::secure_session_t client_unique(std::vector<uint8_t>(client_id.c_str(), client_id.c_str()+client_id.length()), std::vector<uint8_t>(client_priv, client_priv+sizeof(client_priv)), std::move(client_callbacks_unique));
+
+      themispp::secure_session_t client_shared_moved = std::move(client_shared);
+      themispp::secure_session_t client_unique_moved = std::move(client_unique);
+
+      sput_fail_if(client_shared_moved.is_established(), "using shared session", __LINE__);
+      sput_fail_if(client_unique_moved.is_established(), "using unique session", __LINE__);
+    }
 #else
     void secure_session_moved(){
       sput_fail_if(false, "move semantics (disabled for C++03)", __LINE__);
+    }
+
+    void secure_session_ownership(){
+      sput_fail_if(false, "ownership transfer (disabled for C++03)", __LINE__);
     }
 #endif
 
@@ -124,8 +150,13 @@ namespace themispp{
       sput_run_test(secure_session_test, "secure_session_test", __FILE__);
       sput_run_test(secure_session_uninitialized, "secure_session_uninitialized", __FILE__);
       sput_run_test(secure_session_moved, "secure_session_moved", __FILE__);
+      sput_run_test(secure_session_ownership, "secure_session_ownership", __FILE__);
       return 0;
     }
   }
 }
+#endif
+
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
 #endif

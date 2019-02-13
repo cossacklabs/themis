@@ -67,6 +67,16 @@ typedef int32_t soter_status_t;
 	#define UNUSED(x) (void)(x)
 #endif
 
+#ifndef DEPRECATED
+#if __cplusplus >= 201402L
+#define DEPRECATED(msg) [[deprecated(msg)]]
+#elif defined(__GNUC__) || defined(__clang__)
+#define DEPRECATED(msg) __attribute__((deprecated(msg)))
+#else
+#define DEPRECATED(msg)
+#endif
+#endif
+
 /**@}*/
 
 /**

@@ -18,6 +18,9 @@
 #define THEMISPP_SECURE_SESSION_HPP_
 
 #include <cstring>
+#if __cplusplus >= 201103L
+#include <memory>
+#endif
 #include <vector>
 #include <themis/themis.h>
 #include "exception.hpp"
@@ -67,21 +70,14 @@ namespace themispp{
       _callback(NULL){
     }
 
+#if __cplusplus >= 201103L
+    DEPRECATED("use std::shared_ptr variant to transfer callback ownership instead")
+#endif
     secure_session_t(const data_t& id, const data_t& priv_key, secure_session_callback_interface_t* callbacks):
       _session(NULL),
       _callback(NULL),
       _res(0){
-      _callback=new secure_session_user_callbacks_t();
-      _callback->get_public_key_for_id=themispp::get_public_key_for_id_callback;
-      _callback->send_data=themispp::send_callback;
-      _callback->receive_data=themispp::receive_callback;
-      _callback->state_changed=NULL;
-      _callback->user_data=callbacks;
-      _session=secure_session_create(&id[0], id.size(), &priv_key[0], priv_key.size(), _callback);
-      if(!_session){
-        delete _callback;
-        throw themispp::exception_t("Secure Session failed creating");
-      }
+      initialize_session(id, priv_key, callbacks);
     }
 
     virtual ~secure_session_t(){
@@ -94,13 +90,22 @@ namespace themispp{
     }
 
 #if __cplusplus >= 201103L
+    secure_session_t(const data_t& id, const data_t& priv_key, std::shared_ptr<secure_session_callback_interface_t> &&callbacks):
+      _session(nullptr),
+      _callback(nullptr),
+      _res(0),
+      _interface(std::move(callbacks)){
+      initialize_session(id, priv_key, _interface.get());
+    }
+
     secure_session_t(const secure_session_t&) = delete;
     secure_session_t& operator=(const secure_session_t&) = delete;
 
     secure_session_t(secure_session_t&& other){
       _session=other._session;
       _callback=other._callback;
-      _res=other._res;
+      _res=std::move(other._res);
+      _interface=std::move(other._interface);
       other._session=nullptr;
       other._callback=nullptr;
     }
@@ -113,7 +118,8 @@ namespace themispp{
         delete _callback;
         _session=other._session;
         _callback=other._callback;
-        _res=other._res;
+        _res=std::move(other._res);
+        _interface=std::move(other._interface);
         other._session=nullptr;
         other._callback=nullptr;
       }
@@ -204,10 +210,29 @@ namespace themispp{
       if(send_size<=0)
 	throw themispp::exception_t("Secure Session failed sending");
     }
+
+  private:
+    void initialize_session(const data_t& id, const data_t& priv_key, secure_session_callback_interface_t* callbacks){
+      _callback=new secure_session_user_callbacks_t();
+      _callback->get_public_key_for_id=themispp::get_public_key_for_id_callback;
+      _callback->send_data=themispp::send_callback;
+      _callback->receive_data=themispp::receive_callback;
+      _callback->state_changed=NULL;
+      _callback->user_data=callbacks;
+      _session=secure_session_create(&id[0], id.size(), &priv_key[0], priv_key.size(), _callback);
+      if(!_session){
+        delete _callback;
+        throw themispp::exception_t("Secure Session failed creating");
+      }
+    }
+
   private:
     ::secure_session_t* _session;
     ::secure_session_user_callbacks_t *_callback;
     std::vector<uint8_t> _res;
+#if __cplusplus >= 201103L
+    std::shared_ptr<secure_session_callback_interface_t> _interface;
+#endif
   };
 }// ns themis
 
