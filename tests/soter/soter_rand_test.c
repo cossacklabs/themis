@@ -184,5 +184,7 @@ void run_soter_rand_tests(void)
 #ifndef CIRICLE_TEST
     testsuite_enter_suite("soter rand: NIST STS (make take some time...)");
     testsuite_run_test(test_rand_with_nist);
+#else
+    UNUSED(test_rand_with_nist);
 #endif
 }
