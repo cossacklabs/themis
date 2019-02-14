@@ -188,7 +188,7 @@ impl SecureComparator {
     /// a `SecureComparator` to make a new comparison.
     ///
     /// You can use this method only before the comparison has been started. That is,
-    /// [`append_secret`] is safe call only before [`begin_compare`] or [`proceed_compare`].
+    /// [`append_secret`] is safe to call only before [`begin_compare`] or [`proceed_compare`].
     /// It will fail with an error if you try to append more data when you’re in the middle of
     /// a comparison or after it has been completed.
     ///
