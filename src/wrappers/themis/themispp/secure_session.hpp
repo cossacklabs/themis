@@ -71,7 +71,7 @@ namespace themispp{
     }
 
 #if __cplusplus >= 201103L
-    DEPRECATED("use std::shared_ptr variant to transfer callback ownership instead")
+    DEPRECATED("please use std::shared_ptr<secure_session_callback_interface_t> constructor instead")
 #endif
     secure_session_t(const data_t& id, const data_t& priv_key, secure_session_callback_interface_t* callbacks):
       _session(NULL),
