@@ -347,6 +347,34 @@ impl SecureComparator {
         Ok(compare_data)
     }
 
+    /// Checks if this comparison is complete.
+    ///
+    /// Comparison that failed irrecoverably due to an error is also considered complete.
+    ///
+    /// # Examples
+    ///
+    /// Typically you would use this method to terminate the comparison loop. Please see
+    /// [module-level documentation][secure_comparator] for examples.
+    ///
+    /// [secure_comparator]: index.html
+    ///
+    /// It is safe to call this method at any point, even if the comparison has not been initiated
+    /// yet (in which case it is obviously not complete):
+    ///
+    /// ```
+    /// use themis::secure_comparator::SecureComparator;
+    ///
+    /// let mut comparison = SecureComparator::new();
+    ///
+    /// assert!(!comparison.is_complete());
+    /// ```
+    pub fn is_complete(&self) -> bool {
+        match self.get_result() {
+            Err(ref e) if e.kind() == ErrorKind::CompareNotReady => false,
+            _ => true,
+        }
+    }
+
     /// Returns the result of comparison.
     ///
     /// Let it be a surprise: `true` if data has been found equal on both peers, `false` otherwise.
@@ -392,34 +420,6 @@ impl SecureComparator {
             ErrorKind::CompareMatch => Ok(true),
             ErrorKind::CompareNoMatch => Ok(false),
             _ => Err(error),
-        }
-    }
-
-    /// Checks if this comparison is complete.
-    ///
-    /// Comparison that failed irrecoverably due to an error is also considered complete.
-    ///
-    /// # Examples
-    ///
-    /// Typically you would use this method to terminate the comparison loop. Please see
-    /// [module-level documentation][secure_comparator] for examples.
-    ///
-    /// [secure_comparator]: index.html
-    ///
-    /// It is safe to call this method at any point, even if the comparison has not been initiated
-    /// yet (in which case it is obviously not complete):
-    ///
-    /// ```
-    /// use themis::secure_comparator::SecureComparator;
-    ///
-    /// let mut comparison = SecureComparator::new();
-    ///
-    /// assert!(!comparison.is_complete());
-    /// ```
-    pub fn is_complete(&self) -> bool {
-        match self.get_result() {
-            Err(ref e) if e.kind() == ErrorKind::CompareNotReady => false,
-            _ => true,
         }
     }
 }
