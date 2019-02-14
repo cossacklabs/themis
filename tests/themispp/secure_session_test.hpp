@@ -134,6 +134,23 @@ namespace themispp{
 
       sput_fail_if(client_shared_moved.is_established(), "using shared session", __LINE__);
       sput_fail_if(client_unique_moved.is_established(), "using unique session", __LINE__);
+
+      bool shared_throws=false;
+      bool unique_throws=false;
+      try{
+        client_shared.is_established();
+      }
+      catch(const themispp::exception_t&){
+        shared_throws=true;
+      }
+      try{
+        client_unique.is_established();
+      }
+      catch(const themispp::exception_t&){
+        unique_throws=true;
+      }
+      sput_fail_unless(shared_throws, "using shared session after move", __LINE__);
+      sput_fail_unless(unique_throws, "using unique session after move", __LINE__);
     }
 #else
     void secure_session_moved(){
