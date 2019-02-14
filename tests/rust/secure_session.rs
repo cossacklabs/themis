@@ -43,11 +43,17 @@ fn no_transport() {
     assert!(server.get_remote_id().unwrap().is_empty());
 
     // Connection and key negotiation sequence.
-    let connect_request = client.generate_connect_request().expect("connect request");
-    let connect_reply = server.negotiate(&connect_request).expect("connect reply");
-    let key_proposed = client.negotiate(&connect_reply).expect("key proposed");
-    let key_accepted = server.negotiate(&key_proposed).expect("key accepted");
-    let key_confirmed = client.negotiate(&key_accepted).expect("key confirmed");
+    let connect_request = client.connect_request().expect("connect request");
+    let connect_reply = server
+        .negotiate_reply(&connect_request)
+        .expect("connect reply");
+    let key_proposed = client
+        .negotiate_reply(&connect_reply)
+        .expect("key proposed");
+    let key_accepted = server.negotiate_reply(&key_proposed).expect("key accepted");
+    let key_confirmed = client
+        .negotiate_reply(&key_accepted)
+        .expect("key confirmed");
     assert!(key_confirmed.is_empty());
 
     assert!(client.is_established());
@@ -101,10 +107,10 @@ fn with_transport() {
 
     // Establishing connection.
     client.connect().expect("client-side connection");
-    server.negotiate_transport().expect("connect reply");
-    client.negotiate_transport().expect("key proposed");
-    server.negotiate_transport().expect("key accepted");
-    client.negotiate_transport().expect("key confirmed");
+    server.negotiate().expect("connect reply");
+    client.negotiate().expect("key proposed");
+    server.negotiate().expect("key accepted");
+    client.negotiate().expect("key confirmed");
 
     assert!(client.is_established());
     assert!(server.is_established());
@@ -136,19 +142,25 @@ fn connection_state_reporting() {
     let mut client = SecureSession::new(name_client, &private_client, transport_client);
     let mut server = SecureSession::new(name_server, &private_server, transport_server);
 
-    let connect_request = client.generate_connect_request().expect("connect request");
+    let connect_request = client.connect_request().expect("connect request");
     assert_eq!(state_client.recv(), Ok(SecureSessionState::Negotiating));
 
-    let connect_reply = server.negotiate(&connect_request).expect("connect reply");
+    let connect_reply = server
+        .negotiate_reply(&connect_request)
+        .expect("connect reply");
     assert_eq!(state_server.recv(), Ok(SecureSessionState::Negotiating));
 
-    let key_proposed = client.negotiate(&connect_reply).expect("key proposed");
+    let key_proposed = client
+        .negotiate_reply(&connect_reply)
+        .expect("key proposed");
     // No state change here, both parties are still negotiating...
 
-    let key_accepted = server.negotiate(&key_proposed).expect("key accepted");
+    let key_accepted = server.negotiate_reply(&key_proposed).expect("key accepted");
     assert_eq!(state_server.recv(), Ok(SecureSessionState::Established));
 
-    let key_confirmed = client.negotiate(&key_accepted).expect("key confirmed");
+    let key_confirmed = client
+        .negotiate_reply(&key_accepted)
+        .expect("key confirmed");
     assert_eq!(state_client.recv(), Ok(SecureSessionState::Established));
 
     assert!(key_confirmed.is_empty());
@@ -168,10 +180,10 @@ fn server_does_not_identify_client() {
     let mut client = SecureSession::new(&name_client, &private_client, transport_client);
     let mut server = SecureSession::new(&name_server, &private_server, transport_server);
 
-    let connect_request = client.generate_connect_request().expect("connect request");
+    let connect_request = client.connect_request().expect("connect request");
 
     let connect_error = server
-        .negotiate(&connect_request)
+        .negotiate_reply(&connect_request)
         .expect_err("server error");
 
     assert_eq!(
@@ -195,10 +207,14 @@ fn client_does_not_identify_server() {
     let mut client = SecureSession::new(&name_client, &private_client, transport_client);
     let mut server = SecureSession::new(&name_server, &private_server, transport_server);
 
-    let connect_request = client.generate_connect_request().expect("connect request");
-    let connect_reply = server.negotiate(&connect_request).expect("server reply");
+    let connect_request = client.connect_request().expect("connect request");
+    let connect_reply = server
+        .negotiate_reply(&connect_request)
+        .expect("server reply");
 
-    let negotiate_error = client.negotiate(&connect_reply).expect_err("client error");
+    let negotiate_error = client
+        .negotiate_reply(&connect_reply)
+        .expect_err("client error");
 
     assert_eq!(
         negotiate_error.kind(),
@@ -252,7 +268,7 @@ fn forward_error_receive_at_connection() {
     next_server_receive.will_be(|_| Err(TransportError::new("error")));
 
     let error = server
-        .negotiate_transport()
+        .negotiate()
         .expect_err("failed to negotiate transport");
 
     assert_eq!(
@@ -281,13 +297,13 @@ fn forward_error_send_at_negotiation() {
     let mut server = SecureSession::new(name_server, &private_server, transport_server);
 
     client.connect().expect("client-side connection");
-    server.negotiate_transport().expect("connect reply");
-    client.negotiate_transport().expect("key proposed");
+    server.negotiate().expect("connect reply");
+    client.negotiate().expect("key proposed");
 
     next_server_send.will_be(|_| Err(TransportError::new("error")));
 
     let error = server
-        .negotiate_transport()
+        .negotiate()
         .expect_err("failed to negotiate transport");
 
     assert_eq!(
@@ -316,12 +332,12 @@ fn forward_error_receive_at_negotiation() {
     let mut server = SecureSession::new(name_server, &private_server, transport_server);
 
     client.connect().expect("client-side connection");
-    server.negotiate_transport().expect("connect reply");
+    server.negotiate().expect("connect reply");
 
     next_client_receive.will_be(|_| Err(TransportError::new("error")));
 
     let error = client
-        .negotiate_transport()
+        .negotiate()
         .expect_err("failed to negotiate transport");
 
     assert_eq!(
@@ -350,10 +366,10 @@ fn forward_error_send_at_exchange() {
     let mut server = SecureSession::new(name_server, &private_server, transport_server);
 
     client.connect().expect("client-side connection");
-    server.negotiate_transport().expect("connect reply");
-    client.negotiate_transport().expect("key proposed");
-    server.negotiate_transport().expect("key accepted");
-    client.negotiate_transport().expect("key confirmed");
+    server.negotiate().expect("connect reply");
+    client.negotiate().expect("key proposed");
+    server.negotiate().expect("key accepted");
+    client.negotiate().expect("key confirmed");
 
     assert!(client.is_established());
     assert!(server.is_established());
@@ -390,10 +406,10 @@ fn forward_error_receive_at_exchange() {
     let mut server = SecureSession::new(name_server, &private_server, transport_server);
 
     client.connect().expect("client-side connection");
-    server.negotiate_transport().expect("connect reply");
-    client.negotiate_transport().expect("key proposed");
-    server.negotiate_transport().expect("key accepted");
-    client.negotiate_transport().expect("key confirmed");
+    server.negotiate().expect("connect reply");
+    client.negotiate().expect("key proposed");
+    server.negotiate().expect("key accepted");
+    client.negotiate().expect("key confirmed");
 
     assert!(client.is_established());
     assert!(server.is_established());
@@ -430,10 +446,10 @@ fn cannot_send_empty_message() {
     let mut server = SecureSession::new(name_server, &private_server, transport_server);
 
     client.connect().expect("client-side connection");
-    server.negotiate_transport().expect("connect reply");
-    client.negotiate_transport().expect("key proposed");
-    server.negotiate_transport().expect("key accepted");
-    client.negotiate_transport().expect("key confirmed");
+    server.negotiate().expect("connect reply");
+    client.negotiate().expect("key proposed");
+    server.negotiate().expect("key accepted");
+    client.negotiate().expect("key confirmed");
 
     assert!(client.is_established());
     assert!(server.is_established());
@@ -463,10 +479,10 @@ fn cannot_receive_empty_message() {
     let mut server = SecureSession::new(name_server, &private_server, transport_server);
 
     client.connect().expect("client-side connection");
-    server.negotiate_transport().expect("connect reply");
-    client.negotiate_transport().expect("key proposed");
-    server.negotiate_transport().expect("key accepted");
-    client.negotiate_transport().expect("key confirmed");
+    server.negotiate().expect("connect reply");
+    client.negotiate().expect("key proposed");
+    server.negotiate().expect("key accepted");
+    client.negotiate().expect("key confirmed");
 
     assert!(client.is_established());
     assert!(server.is_established());
