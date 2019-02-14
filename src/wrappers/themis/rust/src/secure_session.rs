@@ -517,7 +517,7 @@ impl SecureSession {
     /// [`connect`]: struct.SecureSession.html#method.connect
     /// [`negotiate`]: struct.SecureSession.html#method.negotiate
     /// [`send_data`]: trait.SecureSessionTransport.html#method.send_data
-    pub fn send<M: AsRef<[u8]>>(&mut self, message: M) -> Result<()> {
+    pub fn send(&mut self, message: impl AsRef<[u8]>) -> Result<()> {
         let (message_ptr, message_len) = into_raw_parts(message.as_ref());
 
         unsafe {
@@ -637,7 +637,7 @@ impl SecureSession {
     ///
     /// [`negotiate_reply`]: struct.SecureSession.html#method.negotiate_reply
     /// [`connect_request`]: struct.SecureSession.html#method.connect_request
-    pub fn negotiate_reply<M: AsRef<[u8]>>(&mut self, wrapped: M) -> Result<Vec<u8>> {
+    pub fn negotiate_reply(&mut self, wrapped: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         let (wrapped_ptr, wrapped_len) = into_raw_parts(wrapped.as_ref());
 
         let mut message = Vec::new();
@@ -695,7 +695,7 @@ impl SecureSession {
     /// [`unwrap`]: struct.SecureSession.html#method.unwrap
     /// [`connect_request`]: struct.SecureSession.html#method.connect_request
     /// [`negotiate_reply`]: struct.SecureSession.html#method.negotiate_reply
-    pub fn wrap<M: AsRef<[u8]>>(&mut self, message: M) -> Result<Vec<u8>> {
+    pub fn wrap(&mut self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         let (message_ptr, message_len) = into_raw_parts(message.as_ref());
 
         let mut wrapped = Vec::new();
@@ -746,7 +746,7 @@ impl SecureSession {
     /// [`wrapped`]: struct.SecureSession.html#method.wrap
     /// [`connect_request`]: struct.SecureSession.html#method.connect_request
     /// [`negotiate_reply`]: struct.SecureSession.html#method.negotiate_reply
-    pub fn unwrap<M: AsRef<[u8]>>(&mut self, wrapped: M) -> Result<Vec<u8>> {
+    pub fn unwrap(&mut self, wrapped: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         let (wrapped_ptr, wrapped_len) = into_raw_parts(wrapped.as_ref());
 
         let mut message = Vec::new();
