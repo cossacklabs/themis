@@ -463,6 +463,120 @@ impl SecureSession {
         Ok(())
     }
 
+    /// Continues connection negotiation.
+    ///
+    /// This method performs one step of connection negotiation. This is the first method to call
+    /// for the server, the client calls it after the initial [`connect`]. Both peers shall then
+    /// repeatedly call this method until the connection is established (see [`connect`] for
+    /// details).
+    ///
+    /// This method is a part of callback API and requires [`send_data`] and [`receive_data`]
+    /// methods of `SecureSessionTransport` to be implemented.
+    ///
+    /// [`connect`]: struct.SecureSession.html#method.connect
+    /// [`send_data`]: trait.SecureSessionTransport.html#method.send_data
+    /// [`receive_data`]: trait.SecureSessionTransport.html#method.receive_data
+    pub fn negotiate_transport(&mut self) -> Result<()> {
+        unsafe {
+            let result = secure_session_receive(self.session, ptr::null_mut(), 0);
+            if result == TRANSPORT_FAILURE {
+                let error = self.context.last_error.take().expect("missing error");
+                return Err(Error::from_transport_error(error));
+            }
+            if result == TRANSPORT_OVERFLOW {
+                return Err(Error::with_kind(ErrorKind::BufferTooSmall));
+            }
+            let error = Error::from_session_status(result as themis_status_t);
+            if error.kind() != ErrorKind::Success {
+                return Err(error);
+            }
+        }
+
+        Ok(())
+    }
+
+    // TODO: make Themis improve the error reporting for send and receive
+    //
+    // Themis sends messages in full. Partial transfer is considered an error. In case of an
+    // error the error code is returned in-band and cannot be distinguished from a successful
+    // return of message length. This is the best we can do at the moment.
+    //
+    // Furthermore, Themis expects the send callback to send the whole message so it is kinda
+    // pointless to return the amount of bytes send. The receive callback returns accurate number
+    // of bytes, but I do not really like the Rust interface this implies. It could be made better.
+    const THEMIX_MAX_ERROR: isize = 21;
+
+    /// Sends a message to the remote peer.
+    ///
+    /// This method will fail if a secure connection has not been established yet. See [`connect`]
+    /// and [`negotiate_transport`] methods for establishing a connection.
+    ///
+    /// This method is a part of callback API and requires [`send_data`] method of
+    /// `SecureSessionTransport` to be implemented.
+    ///
+    /// [`connect`]: struct.SecureSession.html#method.connect
+    /// [`negotiate_transport`]: struct.SecureSession.html#method.negotiate_transport
+    /// [`send_data`]: trait.SecureSessionTransport.html#method.send_data
+    pub fn send<M: AsRef<[u8]>>(&mut self, message: M) -> Result<()> {
+        let (message_ptr, message_len) = into_raw_parts(message.as_ref());
+
+        unsafe {
+            let length =
+                secure_session_send(self.session, message_ptr as *const c_void, message_len);
+            if length == TRANSPORT_FAILURE {
+                let error = self.context.last_error.take().expect("missing error");
+                return Err(Error::from_transport_error(error));
+            }
+            if length == TRANSPORT_OVERFLOW {
+                return Err(Error::with_kind(ErrorKind::BufferTooSmall));
+            }
+            if length <= Self::THEMIX_MAX_ERROR {
+                return Err(Error::from_session_status(length as themis_status_t));
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Receives a message from the remote peer.
+    ///
+    /// Maximum length of the message is specified by the parameter.
+    ///
+    /// This method will fail if a secure connection has not been established yet. See [`connect`]
+    /// and [`negotiate_transport`] methods for establishing a connection.
+    ///
+    /// This method is a part of callback API and requires [`receive_data`] method of
+    /// `SecureSessionTransport` to be implemented.
+    ///
+    /// [`connect`]: struct.SecureSession.html#method.connect
+    /// [`negotiate_transport`]: struct.SecureSession.html#method.negotiate_transport
+    /// [`receive_data`]: trait.SecureSessionTransport.html#method.receive_data
+    pub fn receive(&mut self, max_len: usize) -> Result<Vec<u8>> {
+        let mut message = Vec::with_capacity(max_len);
+
+        unsafe {
+            let length = secure_session_receive(
+                self.session,
+                message.as_mut_ptr() as *mut c_void,
+                message.capacity(),
+            );
+            if length == TRANSPORT_FAILURE {
+                let error = self.context.last_error.take().expect("missing error");
+                return Err(Error::from_transport_error(error));
+            }
+            if length == TRANSPORT_OVERFLOW {
+                return Err(Error::with_kind(ErrorKind::BufferTooSmall));
+            }
+            if length <= Self::THEMIX_MAX_ERROR {
+                return Err(Error::from_session_status(length as themis_status_t));
+            }
+            debug_assert!(length as usize <= message.capacity());
+            message.set_len(length as usize);
+        }
+
+        Ok(message)
+    }
+
     /// Initiates connection to the remote peer, returns connection message.
     ///
     /// This is the first method to call for the client, it returns you a message that you must
@@ -510,6 +624,62 @@ impl SecureSession {
         }
 
         Ok(output)
+    }
+
+    /// Continues connection negotiation with given message.
+    ///
+    /// This method performs one step of connection negotiation. The server should call this
+    /// method first with a message received from client’s [`generate_connect_request`].
+    /// Its result is another negotiation message that should be transferred to the client.
+    /// The client then calls this method on a message and forwards the resulting message
+    /// to the server. If the returned message is empty then negotiation is complete and
+    /// the Secure Session is ready to be used.
+    ///
+    /// [`negotiate`]: struct.SecureSession.html#method.negotiate
+    /// [`generate_connect_request`]: struct.SecureSession.html#method.generate_connect_request
+    pub fn negotiate<M: AsRef<[u8]>>(&mut self, wrapped: M) -> Result<Vec<u8>> {
+        let (wrapped_ptr, wrapped_len) = into_raw_parts(wrapped.as_ref());
+
+        let mut message = Vec::new();
+        let mut message_len = 0;
+
+        unsafe {
+            let status = secure_session_unwrap(
+                self.session,
+                wrapped_ptr as *const c_void,
+                wrapped_len,
+                ptr::null_mut(),
+                &mut message_len,
+            );
+            let error = Error::from_session_status(status);
+            if error.kind() == ErrorKind::Success {
+                return Ok(message);
+            }
+            if error.kind() != ErrorKind::BufferTooSmall {
+                return Err(error);
+            }
+        }
+
+        message.reserve(message_len);
+
+        unsafe {
+            let status = secure_session_unwrap(
+                self.session,
+                wrapped_ptr as *const c_void,
+                wrapped_len,
+                message.as_mut_ptr() as *mut c_void,
+                &mut message_len,
+            );
+            let error = Error::from_session_status(status);
+            if error.kind() != ErrorKind::SessionSendOutputToPeer {
+                assert_ne!(error.kind(), ErrorKind::Success);
+                return Err(error);
+            }
+            debug_assert!(message_len <= message.capacity());
+            message.set_len(message_len);
+        }
+
+        Ok(message)
     }
 
     /// Encrypts a message and returns it.
@@ -615,176 +785,6 @@ impl SecureSession {
         }
 
         Ok(message)
-    }
-
-    /// Continues connection negotiation with given message.
-    ///
-    /// This method performs one step of connection negotiation. The server should call this
-    /// method first with a message received from client’s [`generate_connect_request`].
-    /// Its result is another negotiation message that should be transferred to the client.
-    /// The client then calls this method on a message and forwards the resulting message
-    /// to the server. If the returned message is empty then negotiation is complete and
-    /// the Secure Session is ready to be used.
-    ///
-    /// [`negotiate`]: struct.SecureSession.html#method.negotiate
-    /// [`generate_connect_request`]: struct.SecureSession.html#method.generate_connect_request
-    pub fn negotiate<M: AsRef<[u8]>>(&mut self, wrapped: M) -> Result<Vec<u8>> {
-        let (wrapped_ptr, wrapped_len) = into_raw_parts(wrapped.as_ref());
-
-        let mut message = Vec::new();
-        let mut message_len = 0;
-
-        unsafe {
-            let status = secure_session_unwrap(
-                self.session,
-                wrapped_ptr as *const c_void,
-                wrapped_len,
-                ptr::null_mut(),
-                &mut message_len,
-            );
-            let error = Error::from_session_status(status);
-            if error.kind() == ErrorKind::Success {
-                return Ok(message);
-            }
-            if error.kind() != ErrorKind::BufferTooSmall {
-                return Err(error);
-            }
-        }
-
-        message.reserve(message_len);
-
-        unsafe {
-            let status = secure_session_unwrap(
-                self.session,
-                wrapped_ptr as *const c_void,
-                wrapped_len,
-                message.as_mut_ptr() as *mut c_void,
-                &mut message_len,
-            );
-            let error = Error::from_session_status(status);
-            if error.kind() != ErrorKind::SessionSendOutputToPeer {
-                assert_ne!(error.kind(), ErrorKind::Success);
-                return Err(error);
-            }
-            debug_assert!(message_len <= message.capacity());
-            message.set_len(message_len);
-        }
-
-        Ok(message)
-    }
-
-    // TODO: make Themis improve the error reporting for send and receive
-    //
-    // Themis sends messages in full. Partial transfer is considered an error. In case of an
-    // error the error code is returned in-band and cannot be distinguished from a successful
-    // return of message length. This is the best we can do at the moment.
-    //
-    // Furthermore, Themis expects the send callback to send the whole message so it is kinda
-    // pointless to return the amount of bytes send. The receive callback returns accurate number
-    // of bytes, but I do not really like the Rust interface this implies. It could be made better.
-    const THEMIX_MAX_ERROR: isize = 21;
-
-    /// Sends a message to the remote peer.
-    ///
-    /// This method will fail if a secure connection has not been established yet. See [`connect`]
-    /// and [`negotiate_transport`] methods for establishing a connection.
-    ///
-    /// This method is a part of callback API and requires [`send_data`] method of
-    /// `SecureSessionTransport` to be implemented.
-    ///
-    /// [`connect`]: struct.SecureSession.html#method.connect
-    /// [`negotiate_transport`]: struct.SecureSession.html#method.negotiate_transport
-    /// [`send_data`]: trait.SecureSessionTransport.html#method.send_data
-    pub fn send<M: AsRef<[u8]>>(&mut self, message: M) -> Result<()> {
-        let (message_ptr, message_len) = into_raw_parts(message.as_ref());
-
-        unsafe {
-            let length =
-                secure_session_send(self.session, message_ptr as *const c_void, message_len);
-            if length == TRANSPORT_FAILURE {
-                let error = self.context.last_error.take().expect("missing error");
-                return Err(Error::from_transport_error(error));
-            }
-            if length == TRANSPORT_OVERFLOW {
-                return Err(Error::with_kind(ErrorKind::BufferTooSmall));
-            }
-            if length <= Self::THEMIX_MAX_ERROR {
-                return Err(Error::from_session_status(length as themis_status_t));
-            }
-        }
-
-        Ok(())
-    }
-
-    /// Receives a message from the remote peer.
-    ///
-    /// Maximum length of the message is specified by the parameter.
-    ///
-    /// This method will fail if a secure connection has not been established yet. See [`connect`]
-    /// and [`negotiate_transport`] methods for establishing a connection.
-    ///
-    /// This method is a part of callback API and requires [`receive_data`] method of
-    /// `SecureSessionTransport` to be implemented.
-    ///
-    /// [`connect`]: struct.SecureSession.html#method.connect
-    /// [`negotiate_transport`]: struct.SecureSession.html#method.negotiate_transport
-    /// [`receive_data`]: trait.SecureSessionTransport.html#method.receive_data
-    pub fn receive(&mut self, max_len: usize) -> Result<Vec<u8>> {
-        let mut message = Vec::with_capacity(max_len);
-
-        unsafe {
-            let length = secure_session_receive(
-                self.session,
-                message.as_mut_ptr() as *mut c_void,
-                message.capacity(),
-            );
-            if length == TRANSPORT_FAILURE {
-                let error = self.context.last_error.take().expect("missing error");
-                return Err(Error::from_transport_error(error));
-            }
-            if length == TRANSPORT_OVERFLOW {
-                return Err(Error::with_kind(ErrorKind::BufferTooSmall));
-            }
-            if length <= Self::THEMIX_MAX_ERROR {
-                return Err(Error::from_session_status(length as themis_status_t));
-            }
-            debug_assert!(length as usize <= message.capacity());
-            message.set_len(length as usize);
-        }
-
-        Ok(message)
-    }
-
-    /// Continues connection negotiation.
-    ///
-    /// This method performs one step of connection negotiation. This is the first method to call
-    /// for the server, the client calls it after the initial [`connect`]. Both peers shall then
-    /// repeatedly call this method until the connection is established (see [`connect`] for
-    /// details).
-    ///
-    /// This method is a part of callback API and requires [`send_data`] and [`receive_data`]
-    /// methods of `SecureSessionTransport` to be implemented.
-    ///
-    /// [`connect`]: struct.SecureSession.html#method.connect
-    /// [`send_data`]: trait.SecureSessionTransport.html#method.send_data
-    /// [`receive_data`]: trait.SecureSessionTransport.html#method.receive_data
-    pub fn negotiate_transport(&mut self) -> Result<()> {
-        unsafe {
-            let result = secure_session_receive(self.session, ptr::null_mut(), 0);
-            if result == TRANSPORT_FAILURE {
-                let error = self.context.last_error.take().expect("missing error");
-                return Err(Error::from_transport_error(error));
-            }
-            if result == TRANSPORT_OVERFLOW {
-                return Err(Error::with_kind(ErrorKind::BufferTooSmall));
-            }
-            let error = Error::from_session_status(result as themis_status_t);
-            if error.kind() != ErrorKind::Success {
-                return Err(error);
-            }
-        }
-
-        Ok(())
     }
 }
 
