@@ -214,7 +214,7 @@ impl SecureComparator {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn append_secret<S: AsRef<[u8]>>(&mut self, secret: S) -> Result<()> {
+    pub fn append_secret(&mut self, secret: impl AsRef<[u8]>) -> Result<()> {
         let (secret_ptr, secret_len) = into_raw_parts(secret.as_ref());
 
         unsafe {
@@ -302,7 +302,7 @@ impl SecureComparator {
     /// Please see [module-level documentation][secure_comparator] for examples.
     ///
     /// [secure_comparator]: index.html
-    pub fn proceed_compare<D: AsRef<[u8]>>(&mut self, peer_data: D) -> Result<Vec<u8>> {
+    pub fn proceed_compare(&mut self, peer_data: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         let (peer_compare_data_ptr, peer_compare_data_len) = into_raw_parts(peer_data.as_ref());
 
         let mut compare_data = Vec::new();
