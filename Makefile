@@ -231,11 +231,14 @@ define supported =
 $(shell if echo "int main(void){}" | $(if $(2),$(2),$(CC)) -x c -fsyntax-only -Werror $(1) - >/dev/null 2>&1; then echo "yes"; fi)
 endef
 
-# We are security-oriented so we use a pretty paranoid set of flags
-# by default. For starters, enable default set of warnings and treat
-# them as errors. Skip any unknown warning directives though.
-CFLAGS += -Wall -Wextra
+# Treat warnings as errors if requested
+ifeq (yes,$(WITH_FATAL_WARNINGS))
 CFLAGS += -Werror
+endif
+
+# We are security-oriented so we use a pretty paranoid set of flags
+# by default. For starters, enable default set of warnings.
+CFLAGS += -Wall -Wextra
 # Various security-related diagnostics for printf/scanf family
 CFLAGS += -Wformat
 CFLAGS += -Wformat-nonliteral
