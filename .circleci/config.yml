@@ -82,6 +82,8 @@ jobs:
       - run: '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/go/src/$GOTHEMIS_IMPORT && $HOME/go/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
       - run: sudo /sbin/ldconfig    
       - run: make test
+      - run: make clean_themispp_test && CFLAGS="-std=c++03" make themispp_test && make test_cpp
+      - run: make clean_themispp_test && CFLAGS="-std=c++11" make themispp_test && make test_cpp
       - run: make test_python
       - run: sudo make test_js
       # it's important to set version of ruby precisely.
