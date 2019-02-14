@@ -352,12 +352,18 @@ impl SecureSessionState {
 impl SecureSession {
     /// Creates a new Secure Session.
     ///
-    /// ID is an arbitrary byte sequence used to identify this peer.
+    /// ID is an arbitrary non-empty byte sequence used to identify this peer.
     pub fn new(
         id: impl AsRef<[u8]>,
         key: &EcdsaPrivateKey,
         transport: impl SecureSessionTransport + 'static,
     ) -> Result<Self> {
+        // TODO: human-readable detailed descriptions for errors
+        // It would be nice to tell the user what exactly is wrong with parameters.
+        if id.as_ref().is_empty() {
+            return Err(Error::with_kind(ErrorKind::InvalidParameter));
+        }
+
         let (id_ptr, id_len) = into_raw_parts(id.as_ref());
         let (key_ptr, key_len) = into_raw_parts(key.as_ref());
 
@@ -385,9 +391,8 @@ impl SecureSession {
         };
 
         if session.is_null() {
-            // Technically, this may be an allocation error but we have no way to know so just
-            // assume that the user messed up and provided invalid keys (which is more likely).
-            return Err(Error::with_kind(ErrorKind::InvalidParameter));
+            // This is most likely an allocation error but we have no way to know.
+            return Err(Error::with_kind(ErrorKind::NoMemory));
         }
 
         Ok(Self { session, context })
@@ -782,6 +787,14 @@ impl SecureSession {
         }
 
         Ok(message)
+    }
+}
+
+impl fmt::Debug for SecureSession {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        f.debug_struct("SecureSession")
+            .field("session", &self.session)
+            .finish()
     }
 }
 

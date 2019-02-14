@@ -22,6 +22,17 @@ use themis::secure_session::{
 use themis::ErrorKind;
 
 #[test]
+fn invalid_client_id() {
+    let (private, _) = gen_ec_key_pair().split();
+    let transport = MockTransport::new();
+
+    let error = SecureSession::new(&[], &private, transport)
+        .expect_err("construction with empty client ID");
+
+    assert_eq!(error.kind(), ErrorKind::InvalidParameter);
+}
+
+#[test]
 fn no_transport() {
     let (name_client, name_server) = ("client", "server");
     let (private_client, public_client) = gen_ec_key_pair().split();
