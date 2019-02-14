@@ -352,14 +352,12 @@ impl SecureSessionState {
 impl SecureSession {
     /// Creates a new Secure Session.
     ///
-    /// # Panics
-    ///
-    /// May panic on internal unrecoverable errors (e.g., out-of-memory).
+    /// ID is an arbitrary byte sequence used to identify this peer.
     pub fn new(
         id: impl AsRef<[u8]>,
         key: &EcdsaPrivateKey,
         transport: impl SecureSessionTransport + 'static,
-    ) -> Self {
+    ) -> Result<Self> {
         let (id_ptr, id_len) = into_raw_parts(id.as_ref());
         let (key_ptr, key_len) = into_raw_parts(key.as_ref());
 
@@ -387,13 +385,12 @@ impl SecureSession {
         };
 
         if session.is_null() {
-            // This is most likely either a memory allocation error, or a catastrophic failure in
-            // the crypto backend, or our wrappers types do not honor their contracts. Either way,
-            // this failure should not happen normally and is unexpected.
-            panic!("secure_session_create() failed");
+            // Technically, this may be an allocation error but we have no way to know so just
+            // assume that the user messed up and provided invalid keys (which is more likely).
+            return Err(Error::with_kind(ErrorKind::InvalidParameter));
         }
 
-        Self { session, context }
+        Ok(Self { session, context })
     }
 
     /// Returns `true` if this Secure Session may be used for data transfer.

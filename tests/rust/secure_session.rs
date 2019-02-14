@@ -34,8 +34,10 @@ fn no_transport() {
     expect_peer(&mut transport_server, &name_client, &public_client);
 
     // The client and the server.
-    let mut client = SecureSession::new(name_client, &private_client, transport_client);
-    let mut server = SecureSession::new(name_server, &private_server, transport_server);
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     assert!(!client.is_established());
     assert!(!server.is_established());
@@ -99,8 +101,10 @@ fn with_transport() {
 
     connect_with_channels(&mut transport_client, &mut transport_server);
 
-    let mut client = SecureSession::new(name_client, &private_client, transport_client);
-    let mut server = SecureSession::new(name_server, &private_server, transport_server);
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     assert!(!client.is_established());
     assert!(!server.is_established());
@@ -139,8 +143,10 @@ fn connection_state_reporting() {
     let state_client = monitor_state_changes(&mut transport_client);
     let state_server = monitor_state_changes(&mut transport_server);
 
-    let mut client = SecureSession::new(name_client, &private_client, transport_client);
-    let mut server = SecureSession::new(name_server, &private_server, transport_server);
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     let connect_request = client.connect_request().expect("connect request");
     assert_eq!(state_client.recv(), Ok(SecureSessionState::Negotiating));
@@ -177,8 +183,10 @@ fn server_does_not_identify_client() {
     let mut transport_server = MockTransport::new();
     expect_no_peers(&mut transport_server);
 
-    let mut client = SecureSession::new(&name_client, &private_client, transport_client);
-    let mut server = SecureSession::new(&name_server, &private_server, transport_server);
+    let mut client = SecureSession::new(&name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(&name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     let connect_request = client.connect_request().expect("connect request");
 
@@ -204,8 +212,10 @@ fn client_does_not_identify_server() {
     let mut transport_server = MockTransport::new();
     expect_peer(&mut transport_server, &name_client, &public_client);
 
-    let mut client = SecureSession::new(&name_client, &private_client, transport_client);
-    let mut server = SecureSession::new(&name_server, &private_server, transport_server);
+    let mut client = SecureSession::new(&name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(&name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     let connect_request = client.connect_request().expect("connect request");
     let connect_reply = server
@@ -231,7 +241,8 @@ fn forward_error_send_at_connection() {
 
     let mut next_client_send = override_send(&mut transport_client);
 
-    let mut client = SecureSession::new(name_client, &private_client, transport_client);
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
 
     next_client_send.will_be(|_| Err(TransportError::new("error")));
 
@@ -259,8 +270,10 @@ fn forward_error_receive_at_connection() {
 
     let mut next_server_receive = override_receive(&mut transport_server);
 
-    let mut client = SecureSession::new(name_client, &private_client, transport_client);
-    let mut server = SecureSession::new(name_server, &private_server, transport_server);
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     // Establishing connection.
     client.connect().expect("client-side connection");
@@ -293,8 +306,10 @@ fn forward_error_send_at_negotiation() {
 
     let mut next_server_send = override_send(&mut transport_server);
 
-    let mut client = SecureSession::new(name_client, &private_client, transport_client);
-    let mut server = SecureSession::new(name_server, &private_server, transport_server);
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     client.connect().expect("client-side connection");
     server.negotiate().expect("connect reply");
@@ -328,8 +343,10 @@ fn forward_error_receive_at_negotiation() {
 
     let mut next_client_receive = override_receive(&mut transport_client);
 
-    let mut client = SecureSession::new(name_client, &private_client, transport_client);
-    let mut server = SecureSession::new(name_server, &private_server, transport_server);
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     client.connect().expect("client-side connection");
     server.negotiate().expect("connect reply");
@@ -362,8 +379,10 @@ fn forward_error_send_at_exchange() {
 
     let mut next_client_send = override_send(&mut transport_client);
 
-    let mut client = SecureSession::new(name_client, &private_client, transport_client);
-    let mut server = SecureSession::new(name_server, &private_server, transport_server);
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     client.connect().expect("client-side connection");
     server.negotiate().expect("connect reply");
@@ -402,8 +421,10 @@ fn forward_error_receive_at_exchange() {
 
     let mut next_server_receive = override_receive(&mut transport_server);
 
-    let mut client = SecureSession::new(name_client, &private_client, transport_client);
-    let mut server = SecureSession::new(name_server, &private_server, transport_server);
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     client.connect().expect("client-side connection");
     server.negotiate().expect("connect reply");
@@ -442,8 +463,10 @@ fn cannot_send_empty_message() {
 
     connect_with_channels(&mut transport_client, &mut transport_server);
 
-    let mut client = SecureSession::new(name_client, &private_client, transport_client);
-    let mut server = SecureSession::new(name_server, &private_server, transport_server);
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     client.connect().expect("client-side connection");
     server.negotiate().expect("connect reply");
@@ -475,8 +498,10 @@ fn cannot_receive_empty_message() {
 
     let mut next_client_receive = override_receive(&mut transport_client);
 
-    let mut client = SecureSession::new(name_client, &private_client, transport_client);
-    let mut server = SecureSession::new(name_server, &private_server, transport_server);
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
 
     client.connect().expect("client-side connection");
     server.negotiate().expect("connect reply");
