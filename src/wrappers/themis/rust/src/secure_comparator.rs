@@ -335,7 +335,6 @@ impl SecureComparator {
             let error = Error::from_compare_status(status);
             match error.kind() {
                 ErrorKind::CompareSendOutputToPeer => {}
-                // TODO: signal that this does not need to be sent
                 ErrorKind::Success => {}
                 _ => {
                     return Err(error);

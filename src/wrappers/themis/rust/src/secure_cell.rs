@@ -886,8 +886,6 @@ fn decrypt_token_protect(
 /// some other means in place to validate the output.
 pub struct SecureCellContextImprint(SecureCell);
 
-// TODO: maybe panic if a SecureCell with an empty context is switched into context imprint mode
-
 impl SecureCellContextImprint {
     /// Encrypts the provided message, combining it with provided user context, and returns
     /// the encrypted data.
