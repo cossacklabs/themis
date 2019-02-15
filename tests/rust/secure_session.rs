@@ -530,6 +530,126 @@ fn cannot_receive_empty_message() {
     assert_eq!(error.kind(), ErrorKind::InvalidParameter);
 }
 
+#[test]
+fn panic_in_get_pubkey_by_id_client() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, public_client) = gen_ec_key_pair().split();
+    let (private_server, _public_server) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
+
+    transport_client.when_get_public_key_for_id(|_| panic!());
+    expect_peer(&mut transport_server, &name_client, &public_client);
+
+    connect_with_channels(&mut transport_client, &mut transport_server);
+
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    client.connect().expect("client-side connection");
+    server.negotiate().expect("connect reply");
+
+    let error = client.negotiate().expect_err("catch client panic");
+    assert_eq!(error.kind(), ErrorKind::SessionGetPublicKeyForIdError);
+}
+
+#[test]
+fn panic_in_get_pubkey_by_id_server() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, _public_client) = gen_ec_key_pair().split();
+    let (private_server, public_server) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
+
+    expect_peer(&mut transport_client, &name_server, &public_server);
+    transport_server.when_get_public_key_for_id(|_| panic!());
+
+    connect_with_channels(&mut transport_client, &mut transport_server);
+
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    client.connect().expect("client connect");
+
+    let error = server.negotiate().expect_err("catch server panic");
+    assert_eq!(error.kind(), ErrorKind::SessionGetPublicKeyForIdError);
+}
+
+#[test]
+fn panic_in_send_data() {
+    let (private_client, _) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+
+    transport_client.when_send_data(|_| panic!());
+
+    let mut client = SecureSession::new("client", &private_client, transport_client)
+        .expect("Secure Session client");
+
+    let error = client.connect().expect_err("catch client panic");
+    assert_eq!(
+        error.kind(),
+        ErrorKind::SessionTransportError(TransportError::unspecified())
+    );
+}
+
+#[test]
+fn panic_in_receive_data() {
+    let (private_server, _) = gen_ec_key_pair().split();
+
+    let mut transport_server = MockTransport::new();
+
+    transport_server.when_receive_data(|_| panic!());
+
+    let mut server = SecureSession::new("server", &private_server, transport_server)
+        .expect("Secure Session server");
+
+    let error = server.negotiate().expect_err("catch server panic");
+    assert_eq!(
+        error.kind(),
+        ErrorKind::SessionTransportError(TransportError::unspecified())
+    );
+}
+
+#[test]
+fn panic_in_status_change() {
+    let (name_client, name_server) = ("client", "server");
+    let (private_client, public_client) = gen_ec_key_pair().split();
+    let (private_server, public_server) = gen_ec_key_pair().split();
+
+    let mut transport_client = MockTransport::new();
+    let mut transport_server = MockTransport::new();
+
+    expect_peer(&mut transport_client, &name_server, &public_server);
+    expect_peer(&mut transport_server, &name_client, &public_client);
+
+    connect_with_channels(&mut transport_client, &mut transport_server);
+
+    transport_client.when_state_changed(|_| panic!());
+    transport_server.when_state_changed(|_| panic!());
+
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
+        .expect("Secure Session client");
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
+        .expect("Secure Session server");
+
+    client.connect().expect("client-side connection");
+    server.negotiate().expect("connect reply");
+    client.negotiate().expect("key proposed");
+    server.negotiate().expect("key accepted");
+    client.negotiate().expect("key confirmed");
+
+    // Any panics in state_change callback should be ignored.
+    assert!(client.is_established());
+    assert!(server.is_established());
+}
+
 //
 // MockTransport implementation
 //
