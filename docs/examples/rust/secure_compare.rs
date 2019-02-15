@@ -83,7 +83,7 @@ fn main() {
         }
     }
 
-    if comparison.get_result().expect("result") {
+    if comparison.result().expect("result") {
         println!("[+] match OK");
     } else {
         println!("[-] no match");

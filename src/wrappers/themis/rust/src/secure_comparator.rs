@@ -81,7 +81,7 @@
 //!     request = comparison.proceed_compare(&reply)?;
 //! }
 //!
-//! if !comparison.get_result()? {
+//! if !comparison.result()? {
 //!     unimplemented!("handle failed comparison here");
 //! }
 //! # Ok(())
@@ -121,17 +121,17 @@
 //!     send(&reply);   // This function should send the `reply` to the client.
 //! }
 //!
-//! if !comparison.get_result()? {
+//! if !comparison.result()? {
 //!     unimplemented!("handle failed comparison here");
 //! }
 //! # Ok(())
 //! # }
 //! ```
 //!
-//! Both the server and the client use [`get_result`] to get the comparison result
+//! Both the server and the client use [`result`] to get the comparison result
 //! after it [`is_complete`]:
 //!
-//! [`get_result`]: struct.SecureComparator.html#method.get_result
+//! [`result`]: struct.SecureComparator.html#method.result
 //! [`is_complete`]: struct.SecureComparator.html#method.is_complete
 
 use std::os::raw::c_void;
@@ -370,7 +370,7 @@ impl SecureComparator {
     /// assert!(!comparison.is_complete());
     /// ```
     pub fn is_complete(&self) -> bool {
-        match self.get_result() {
+        match self.result() {
             Err(ref e) if e.kind() == ErrorKind::CompareNotReady => false,
             _ => true,
         }
@@ -398,7 +398,7 @@ impl SecureComparator {
     /// comparison.append_secret(b"999-04-1234")?;
     /// # other_peer.append_secret(b"999-04-1234")?;
     ///
-    /// assert!(comparison.get_result().is_err());
+    /// assert!(comparison.result().is_err());
     ///
     /// // Perform comparison
     /// #
@@ -410,11 +410,11 @@ impl SecureComparator {
     /// #   request = comparison.proceed_compare(&reply)?;
     /// }
     ///
-    /// assert!(comparison.get_result().is_ok());
+    /// assert!(comparison.result().is_ok());
     /// # Ok(())
     /// # }
     /// ```
-    pub fn get_result(&self) -> Result<bool> {
+    pub fn result(&self) -> Result<bool> {
         let status = unsafe { secure_comparator_get_result(self.comp_ctx) };
         let error = Error::from_match_status(status);
         match error.kind() {
