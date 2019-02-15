@@ -100,6 +100,7 @@ use crate::utils::into_raw_parts;
 ///
 /// This is modeless, basic cell. First you provide the master key to a new `SecureCell` object
 /// then you select the desired operation mode and your Secure Cell is ready to go.
+#[derive(Debug)]
 pub struct SecureCell {
     master_key: KeyBytes,
 }
@@ -169,6 +170,7 @@ impl SecureCell {
 /// # Ok(())
 /// # }
 /// ```
+#[derive(Debug)]
 pub struct SecureCellSeal(SecureCell);
 
 impl SecureCellSeal {
@@ -488,6 +490,7 @@ fn decrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Resul
 /// # Ok(())
 /// # }
 /// ```
+#[derive(Debug)]
 pub struct SecureCellTokenProtect(SecureCell);
 
 impl SecureCellTokenProtect {
@@ -544,7 +547,7 @@ impl SecureCellTokenProtect {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key(b"password").unwrap().token_protect();
+    /// let cell = SecureCell::with_key(b"password")?.token_protect();
     ///
     /// cell.encrypt_with_context(b"byte string", format!("owned string"))?;
     /// cell.encrypt_with_context(&[1, 2, 3, 4, 5], vec![6, 7, 8, 9, 10])?;
@@ -884,9 +887,8 @@ fn decrypt_token_protect(
 /// Note that in context imprint mode you *must* provide non-empty context. Also keep in mind that
 /// Secure Cell cannot verify integrity and correctness of the decrypted data so you have to have
 /// some other means in place to validate the output.
+#[derive(Debug)]
 pub struct SecureCellContextImprint(SecureCell);
-
-// TODO: maybe panic if a SecureCell with an empty context is switched into context imprint mode
 
 impl SecureCellContextImprint {
     /// Encrypts the provided message, combining it with provided user context, and returns

@@ -31,8 +31,8 @@ fn compare_matching_data() {
     assert!(comparator1.is_complete());
     assert!(comparator2.is_complete());
 
-    assert!(comparator1.get_result().unwrap());
-    assert!(comparator2.get_result().unwrap());
+    assert!(comparator1.result().unwrap());
+    assert!(comparator2.result().unwrap());
 }
 
 #[test]
@@ -56,8 +56,8 @@ fn compare_different_data() {
     let data = comparator2.proceed_compare(&data).unwrap();
     let _ata = comparator1.proceed_compare(&data).unwrap();
 
-    assert!(!comparator1.get_result().unwrap());
-    assert!(!comparator2.get_result().unwrap());
+    assert!(!comparator1.result().unwrap());
+    assert!(!comparator2.result().unwrap());
 }
 
 #[test]
@@ -75,8 +75,8 @@ fn split_secrets() {
     let data = comparator2.proceed_compare(&data).unwrap();
     let _ata = comparator1.proceed_compare(&data).unwrap();
 
-    assert!(comparator1.get_result().unwrap());
-    assert!(comparator2.get_result().unwrap());
+    assert!(comparator1.result().unwrap());
+    assert!(comparator2.result().unwrap());
 }
 
 #[test]
@@ -121,8 +121,8 @@ fn data_corruption() {
     let data = comparator2.proceed_compare(&data).unwrap();
     let _ata = comparator1.proceed_compare(&data).unwrap();
 
-    assert!(comparator1.get_result().unwrap());
-    assert!(comparator2.get_result().unwrap());
+    assert!(comparator1.result().unwrap());
+    assert!(comparator2.result().unwrap());
 }
 
 #[test]
@@ -140,8 +140,8 @@ fn reusing_comparators() {
     let data = comparator2.proceed_compare(&data).unwrap();
     let _ata = comparator1.proceed_compare(&data).unwrap();
 
-    assert!(!comparator1.get_result().unwrap());
-    assert!(!comparator2.get_result().unwrap());
+    assert!(!comparator1.result().unwrap());
+    assert!(!comparator2.result().unwrap());
 
     // You can't append more data and restart the comparison after it is complete.
     assert!(comparator1.append_secret(b"something").is_err());
@@ -150,6 +150,6 @@ fn reusing_comparators() {
     // Though you can still view the previous results as much as you wish.
     assert!(comparator1.is_complete());
     assert!(comparator2.is_complete());
-    assert!(!comparator1.get_result().unwrap());
-    assert!(!comparator2.get_result().unwrap());
+    assert!(!comparator1.result().unwrap());
+    assert!(!comparator2.result().unwrap());
 }

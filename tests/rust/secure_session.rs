@@ -52,8 +52,8 @@ fn no_transport() {
 
     assert!(!client.is_established());
     assert!(!server.is_established());
-    assert!(client.get_remote_id().unwrap().is_empty());
-    assert!(server.get_remote_id().unwrap().is_empty());
+    assert_eq!(client.remote_peer_id(), Ok(None));
+    assert_eq!(server.remote_peer_id(), Ok(None));
 
     // Connection and key negotiation sequence.
     let connect_request = client.connect_request().expect("connect request");
@@ -71,8 +71,14 @@ fn no_transport() {
 
     assert!(client.is_established());
     assert!(server.is_established());
-    assert_eq!(client.get_remote_id().unwrap(), name_server.as_bytes());
-    assert_eq!(server.get_remote_id().unwrap(), name_client.as_bytes());
+    assert_eq!(
+        client.remote_peer_id(),
+        Ok(Some(name_server.as_bytes().to_vec()))
+    );
+    assert_eq!(
+        server.remote_peer_id(),
+        Ok(Some(name_client.as_bytes().to_vec()))
+    );
 
     // Try sending a message back and forth.
     let plaintext = b"test message please ignore";
