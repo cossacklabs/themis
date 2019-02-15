@@ -16,7 +16,7 @@ Here we have some examples of Themis usage.
     chat client which signs and verifies messages
 * <b>secure_session_echo_*</b> —
   an example of secure network communication with Secure Session
-  * [**secure_session_echo_server**](secure_session_echo_server.rs) —
+  * [**secure_session_echo_client**](secure_session_echo_client.rs) —
     simple echo client using buffer-oriented API
   * [**secure_session_echo_server**](secure_session_echo_server.rs) —
     simple echo server using callback API
