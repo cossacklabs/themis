@@ -411,8 +411,8 @@ impl SecureSession {
 
     /// Returns ID of the remote peer.
     ///
-    /// This method will return an error if the connection has not been established yet.
-    pub fn get_remote_id(&self) -> Result<Vec<u8>> {
+    /// Returns `None` if the connection has not been established yet and there is no peer.
+    pub fn remote_peer_id(&self) -> Result<Option<Vec<u8>>> {
         let mut id = Vec::new();
         let mut id_len = 0;
 
@@ -436,7 +436,7 @@ impl SecureSession {
             id.set_len(id_len);
         }
 
-        Ok(id)
+        Ok(if id.is_empty() { None } else { Some(id) })
     }
 
     /// Initiates connection to the remote peer.
