@@ -875,6 +875,9 @@ unsafe extern "C" fn state_changed(event: c_int, user_data: *mut c_void) {
     });
 }
 
+const GET_PUBLIC_KEY_SUCCESS: c_int = 0;
+const GET_PUBLIC_KEY_FAILURE: c_int = -1;
+
 unsafe extern "C" fn get_public_key_for_id(
     id_ptr: *const c_void,
     id_len: usize,
@@ -891,13 +894,13 @@ unsafe extern "C" fn get_public_key_for_id(
             let key = key.as_ref();
             if key_out.len() >= key.len() {
                 key_out[0..key.len()].copy_from_slice(key);
-                return 0;
+                return GET_PUBLIC_KEY_SUCCESS;
             }
         }
 
-        -1
+        GET_PUBLIC_KEY_FAILURE
     });
-    result.unwrap_or(-1)
+    result.unwrap_or(GET_PUBLIC_KEY_FAILURE)
 }
 
 #[doc(hidden)]
