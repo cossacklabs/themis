@@ -895,7 +895,7 @@ unsafe extern "C" fn get_public_key_for_id(
             }
         }
 
-        return -1;
+        -1
     });
     result.unwrap_or(-1)
 }
