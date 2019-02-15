@@ -142,6 +142,10 @@ struct SecureSessionContext {
     last_error: Option<TransportError>,
 }
 
+// It safe to move secure_session_t to another thread, it does not depend on any thread-local
+// state. However, it needs external synchronization for safe concurrent usage (hence no Sync).
+unsafe impl Send for SecureSession {}
+
 /// Transport delegate for Secure Session.
 ///
 /// This is an interface you need to provide for Secure Session operation.

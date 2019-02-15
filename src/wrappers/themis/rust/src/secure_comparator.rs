@@ -156,6 +156,10 @@ pub struct SecureComparator {
     comp_ctx: *mut secure_comparator_t,
 }
 
+// It safe to move secure_comparator_t to another thread, it does not depend on any thread-local
+// state. However, it needs external synchronization for safe concurrent usage (hence no Sync).
+unsafe impl Send for SecureComparator {}
+
 impl SecureComparator {
     /// Prepares a new comparison.
     ///
