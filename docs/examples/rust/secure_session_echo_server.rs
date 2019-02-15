@@ -121,7 +121,8 @@ fn main() {
             info!("{:?}: connected", client_address);
 
             let transport = SocketTransport::new(client);
-            let mut session = SecureSession::new(&SERVER_ID, &SERVER_PRIVATE, transport);
+            let mut session = SecureSession::new(&SERVER_ID, &SERVER_PRIVATE, transport)
+                .expect("Secure Session server");
 
             while !session.is_established() {
                 if let Err(e) = session.negotiate() {

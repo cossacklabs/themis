@@ -64,7 +64,8 @@ fn main() {
 
     let mut socket = TcpStream::connect(&remote_addr).expect("client connection");
 
-    let mut session = SecureSession::new(&CLIENT_ID, &CLIENT_PRIVATE, ExpectServer);
+    let mut session = SecureSession::new(&CLIENT_ID, &CLIENT_PRIVATE, ExpectServer)
+        .expect("Secure Session client");
     let mut buffer = [0; MAX_MESSAGE_SIZE];
 
     let request = session.connect_request().expect("connect request");
