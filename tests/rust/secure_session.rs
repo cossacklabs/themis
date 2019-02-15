@@ -593,7 +593,10 @@ fn panic_in_send_data() {
         .expect("Secure Session client");
 
     let error = client.connect().expect_err("catch client panic");
-    assert_eq!(error.kind(), ErrorKind::SessionTransportError(TransportError::unspecified()));
+    assert_eq!(
+        error.kind(),
+        ErrorKind::SessionTransportError(TransportError::unspecified())
+    );
 }
 
 #[test]
@@ -608,7 +611,10 @@ fn panic_in_receive_data() {
         .expect("Secure Session server");
 
     let error = server.negotiate().expect_err("catch server panic");
-    assert_eq!(error.kind(), ErrorKind::SessionTransportError(TransportError::unspecified()));
+    assert_eq!(
+        error.kind(),
+        ErrorKind::SessionTransportError(TransportError::unspecified())
+    );
 }
 
 #[test]
