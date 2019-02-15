@@ -151,6 +151,7 @@ use crate::utils::into_raw_parts;
 /// Please see [module-level documentation][secure_comparator] for examples.
 ///
 /// [secure_comparator]: index.html
+#[derive(Debug)]
 pub struct SecureComparator {
     comp_ctx: *mut secure_comparator_t,
 }
