@@ -547,7 +547,7 @@ impl SecureCellTokenProtect {
     /// # fn main() -> Result<(), themis::Error> {
     /// use themis::secure_cell::SecureCell;
     ///
-    /// let cell = SecureCell::with_key(b"password").unwrap().token_protect();
+    /// let cell = SecureCell::with_key(b"password")?.token_protect();
     ///
     /// cell.encrypt_with_context(b"byte string", format!("owned string"))?;
     /// cell.encrypt_with_context(&[1, 2, 3, 4, 5], vec![6, 7, 8, 9, 10])?;
