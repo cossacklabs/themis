@@ -117,14 +117,14 @@ namespace jsthemis {
     size_t length=0;
     status=secure_session_generate_connect_request(obj->session_, NULL, &length);
     if(status!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowError("Secure Session failed to generate connect request", status);
+      ThrowSecureSessionError("Secure Session failed to generate connect request", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* data=(uint8_t*)(malloc(length));
     status=secure_session_generate_connect_request(obj->session_, data, &length);
     if(status!=THEMIS_SUCCESS){
-      ThrowError("Secure Session failed to generate connect request", status);
+      ThrowSecureSessionError("Secure Session failed to generate connect request", status);
       free(data);
       args.GetReturnValue().SetUndefined();
       return;
@@ -153,14 +153,14 @@ namespace jsthemis {
     size_t length=0;
     status=secure_session_wrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length);
     if(status!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowError("Secure Session failed to encrypt", status);
+      ThrowSecureSessionError("Secure Session failed to encrypt", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* data=(uint8_t*)(malloc(length));
     status=secure_session_wrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length);
     if(status!=THEMIS_SUCCESS){
-      ThrowError("Secure Session failed to encrypt", status);
+      ThrowSecureSessionError("Secure Session failed to encrypt", status);
       free(data);
       args.GetReturnValue().SetUndefined();
       return;
@@ -190,14 +190,14 @@ namespace jsthemis {
     status=secure_session_unwrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length);
     if(status!=THEMIS_BUFFER_TOO_SMALL){
       if(status!=THEMIS_SUCCESS)
-        ThrowError("Secure Session failed to decrypt", status);
+        ThrowSecureSessionError("Secure Session failed to decrypt", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* data=(uint8_t*)(malloc(length));
     status=secure_session_unwrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length);
     if(status!=THEMIS_SUCCESS && status!=THEMIS_SSESSION_SEND_OUTPUT_TO_PEER){
-      ThrowError("Secure Session failed to decrypt", status);
+      ThrowSecureSessionError("Secure Session failed to decrypt", status);
       free(data);
       args.GetReturnValue().SetUndefined();
       return;

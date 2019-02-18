@@ -92,14 +92,14 @@ namespace jsthemis {
     size_t length=0;
     status = secure_comparator_begin_compare(obj->comparator_, NULL, &length);
     if(THEMIS_BUFFER_TOO_SMALL != status){
-      ThrowError("Secure Comparator failed to begin comparison", status);
+      ThrowSecureComparatorError("Secure Comparator failed to begin comparison", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* data=(uint8_t*)(malloc(length));
     status = secure_comparator_begin_compare(obj->comparator_, data, &length);
     if(THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER!=status){
-      ThrowError("Secure Comparator failed to begin comparison", status);
+      ThrowSecureComparatorError("Secure Comparator failed to begin comparison", status);
       free(data);
       args.GetReturnValue().SetUndefined();
       return;
@@ -125,7 +125,7 @@ namespace jsthemis {
     size_t length=0;
     status = secure_comparator_proceed_compare(obj->comparator_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length);
     if(THEMIS_BUFFER_TOO_SMALL!=status){
-      ThrowError("Secure Comparator failed to proceed comparison", status);
+      ThrowSecureComparatorError("Secure Comparator failed to proceed comparison", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
@@ -133,7 +133,7 @@ namespace jsthemis {
     status = secure_comparator_proceed_compare(obj->comparator_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length);
     if(THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER!=status){
       if(THEMIS_SUCCESS != status){
-        ThrowError("Secure Comparator failed to proceed comparison", status);
+        ThrowSecureComparatorError("Secure Comparator failed to proceed comparison", status);
       }
       free(data);
       args.GetReturnValue().SetUndefined();
@@ -146,7 +146,7 @@ namespace jsthemis {
     SecureComparator* obj = Nan::ObjectWrap::Unwrap<SecureComparator>(args.This());
     themis_status_t res = secure_comparator_get_result(obj->comparator_);
     if(THEMIS_SCOMPARE_NOT_READY == res){
-      ThrowError("Secure Comparator not ready", THEMIS_SCOMPARE_NOT_READY);
+      ThrowSecureComparatorError("Secure Comparator not ready", THEMIS_SCOMPARE_NOT_READY);
       args.GetReturnValue().SetUndefined();
       return;
     }
