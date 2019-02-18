@@ -47,17 +47,17 @@ namespace jsthemis {
   void SecureMessage::New(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     if (args.IsConstructCall()) {
       if(args.Length()<2){
-        ThrowError("Secure Message constructor", THEMIS_INVALID_PARAMETER, "missing private and public key");
+        ThrowError("Secure Message constructor", "not enough arguments, expected private and public key");
         args.GetReturnValue().SetUndefined();
         return;
       }
       if(!args[0]->IsUint8Array()){
-        ThrowError("Secure Message constructor", THEMIS_INVALID_PARAMETER, "private key is not byte buffer");
+        ThrowError("Secure Message constructor", "private key is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
       }
       if(!args[1]->IsUint8Array()){
-        ThrowError("Secure Message constructor", THEMIS_INVALID_PARAMETER, "public key is not byte buffer");
+        ThrowError("Secure Message constructor", "public key is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
       }
@@ -79,27 +79,27 @@ namespace jsthemis {
     themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
     if(obj->private_key_.empty()){
-      ThrowError("Secure Message failed to encrypt message", THEMIS_INVALID_PARAMETER, "private key is empty");
+      ThrowError("Secure Message failed to encrypt message", "private key is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(obj->peer_public_key_.empty()){
-      ThrowError("Secure Message failed to encrypt message", THEMIS_INVALID_PARAMETER, "public key is empty");
+      ThrowError("Secure Message failed to encrypt message", "public key is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(args.Length()<1){
-      ThrowError("Secure Message failed to encrypt message", THEMIS_INVALID_PARAMETER, "missing message");
+      ThrowError("Secure Message failed to encrypt message", "not enough arguments, expected message");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[0]->IsUint8Array()){
-      ThrowError("Secure Message failed to encrypt message", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      ThrowError("Secure Message failed to encrypt message", "message is not a byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[0])==0){
-      ThrowError("Secure Message failed to encrypt message", THEMIS_INVALID_PARAMETER, "message is empty");
+      ThrowError("Secure Message failed to encrypt message", "message is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
@@ -125,27 +125,27 @@ namespace jsthemis {
     themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
     if(obj->private_key_.empty()){
-      ThrowError("Secure Message failed to decrypt message", THEMIS_INVALID_PARAMETER, "private key is empty");
+      ThrowError("Secure Message failed to decrypt message", "private key is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(obj->peer_public_key_.empty()){
-      ThrowError("Secure Message failed to decrypt message", THEMIS_INVALID_PARAMETER, "public key is empty");
+      ThrowError("Secure Message failed to decrypt message", "public key is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(args.Length()<1){
-      ThrowError("Secure Message failed to decrypt message", THEMIS_INVALID_PARAMETER, "missing message");
+      ThrowError("Secure Message failed to decrypt message", "not enough arguments, expected message");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[0]->IsUint8Array()){
-      ThrowError("Secure Message failed to decrypt message", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      ThrowError("Secure Message failed to decrypt message", "message is not a byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[0])==0){
-      ThrowError("Secure Message failed to decrypt message", THEMIS_INVALID_PARAMETER, "message is empty");
+      ThrowError("Secure Message failed to decrypt message", "message is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
@@ -171,22 +171,22 @@ namespace jsthemis {
     themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
     if(obj->peer_public_key_.empty()){
-      ThrowError("Secure Message failed to sign message", THEMIS_INVALID_PARAMETER, "public key is empty");
+      ThrowError("Secure Message failed to sign message", "public key is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(args.Length()<1){
-      ThrowError("Secure Message failed to sign message", THEMIS_INVALID_PARAMETER, "missing message");
+      ThrowError("Secure Message failed to sign message", "not enough arguments, expected message");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[0]->IsUint8Array()){
-      ThrowError("Secure Message failed to sign message", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      ThrowError("Secure Message failed to sign message", "message is not a byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[0])==0){
-      ThrowError("Secure Message failed to sign message", THEMIS_INVALID_PARAMETER, "message is empty");
+      ThrowError("Secure Message failed to sign message", "message is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
@@ -212,22 +212,22 @@ namespace jsthemis {
     themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
     if(obj->private_key_.empty()){
-      ThrowError("Secure Message failed to verify signature", THEMIS_INVALID_PARAMETER, "private key is empty");
+      ThrowError("Secure Message failed to verify signature", "private key is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(args.Length()<1){
-      ThrowError("Secure Message failed to verify signature", THEMIS_INVALID_PARAMETER, "missing message");
+      ThrowError("Secure Message failed to verify signature", "not enough arguments, expected message");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[0]->IsUint8Array()){
-      ThrowError("Secure Message failed to verify signature", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      ThrowError("Secure Message failed to verify signature", "message is not byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[0])==0){
-      ThrowError("Secure Message failed to verify signature", THEMIS_INVALID_PARAMETER, "message is empty");
+      ThrowError("Secure Message failed to verify signature", "message is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }

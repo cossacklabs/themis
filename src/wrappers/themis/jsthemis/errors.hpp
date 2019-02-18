@@ -22,13 +22,11 @@
 namespace jsthemis {
 
   void ThrowError(const char* domain, themis_status_t status);
-  void ThrowError(const char* domain, themis_status_t status, const char* description);
+  void ThrowError(const char* domain, const char* description);
 
   void ThrowSecureSessionError(const char* domain, themis_status_t status);
-  void ThrowSecureSessionError(const char* domain, themis_status_t status, const char* description);
 
   void ThrowSecureComparatorError(const char* domain, themis_status_t status);
-  void ThrowSecureComparatorError(const char* domain, themis_status_t status, const char* description);
 
 }
 

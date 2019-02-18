@@ -44,17 +44,17 @@ namespace jsthemis {
   void SecureCellTokenProtect::New(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     if (args.IsConstructCall()) {
       if(args.Length()<1){
-        ThrowError("Secure Cell (Token Protect) constructor", THEMIS_INVALID_PARAMETER, "missing master key");
+        ThrowError("Secure Cell (Token Protect) constructor", "not enough arguments, expected master key");
         args.GetReturnValue().SetUndefined();
         return;
       }
       if(!args[0]->IsUint8Array()){
-        ThrowError("Secure Cell (Token Protect) constructor", THEMIS_INVALID_PARAMETER, "master key is not byte buffer");
+        ThrowError("Secure Cell (Token Protect) constructor", "master key is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
       }
       if(node::Buffer::Length(args[0])==0){
-        ThrowError("Secure Cell (Token Protect) constructor", THEMIS_INVALID_PARAMETER, "master key is empty");
+        ThrowError("Secure Cell (Token Protect) constructor", "master key is empty");
         args.GetReturnValue().SetUndefined();
         return;
       }
@@ -74,17 +74,17 @@ namespace jsthemis {
     themis_status_t status = THEMIS_FAIL;
     SecureCellTokenProtect* obj = Nan::ObjectWrap::Unwrap<SecureCellTokenProtect>(args.This());
     if(args.Length()<1){
-      ThrowError("Secure Cell (Token Protect) failed to encrypt", THEMIS_INVALID_PARAMETER, "missing message");
+      ThrowError("Secure Cell (Token Protect) failed to encrypt", "not enough arguments, expected message");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[0]->IsUint8Array()){
-      ThrowError("Secure Cell (Token Protect) failed to encrypt", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      ThrowError("Secure Cell (Token Protect) failed to encrypt", "message is not a byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[0])==0){
-      ThrowError("Secure Cell (Token Protect) failed to encrypt", THEMIS_INVALID_PARAMETER, "message is empty");
+      ThrowError("Secure Cell (Token Protect) failed to encrypt", "message is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
@@ -94,7 +94,7 @@ namespace jsthemis {
     size_t context_length=0;
     if(args.Length()==2){
       if(!args[1]->IsUint8Array()){
-        ThrowError("Secure Cell (Token Protect) failed to encrypt", THEMIS_INVALID_PARAMETER, "context is not byte buffer");
+        ThrowError("Secure Cell (Token Protect) failed to encrypt", "context is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
       }
@@ -127,27 +127,27 @@ namespace jsthemis {
     themis_status_t status = THEMIS_FAIL;
     SecureCellTokenProtect* obj = Nan::ObjectWrap::Unwrap<SecureCellTokenProtect>(args.This());
     if(args.Length()<2){
-      ThrowError("Secure Cell (Token Protect) failed to decrypt", THEMIS_INVALID_PARAMETER, "missing message and token");
+      ThrowError("Secure Cell (Token Protect) failed to decrypt", "not enough arguments, expected message and token");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[0]->IsUint8Array()){
-      ThrowError("Secure Cell (Token Protect) failed to decrypt", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      ThrowError("Secure Cell (Token Protect) failed to decrypt", "message is not a byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[0])==0){
-      ThrowError("Secure Cell (Token Protect) failed to decrypt", THEMIS_INVALID_PARAMETER, "message is empty");
+      ThrowError("Secure Cell (Token Protect) failed to decrypt", "message is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[1]->IsUint8Array()){
-      ThrowError("Secure Cell (Token Protect) failed to decrypt", THEMIS_INVALID_PARAMETER, "token is not byte buffer");
+      ThrowError("Secure Cell (Token Protect) failed to decrypt", "token is not a byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[1])==0){
-      ThrowError("Secure Cell (Token Protect) failed to decrypt", THEMIS_INVALID_PARAMETER, "token is empty");
+      ThrowError("Secure Cell (Token Protect) failed to decrypt", "token is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
@@ -156,7 +156,7 @@ namespace jsthemis {
     size_t context_length=0;
     if(args.Length()==3){
       if(!args[2]->IsUint8Array()){
-        ThrowError("Secure Cell (Token Protect) failed to decrypt", THEMIS_INVALID_PARAMETER, "context is not byte buffer");
+        ThrowError("Secure Cell (Token Protect) failed to decrypt", "context is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
       }

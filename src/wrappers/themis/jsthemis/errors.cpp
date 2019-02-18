@@ -83,11 +83,9 @@ namespace jsthemis {
     Nan::ThrowError(message.c_str());
   }
 
-  void ThrowError(const char* domain, themis_status_t status, const char* description) {
+  void ThrowError(const char* domain, const char* description) {
     std::string message;
     message += domain;
-    message += ": ";
-    message += ErrorDescription(status);
     message += ": ";
     message += description;
     Nan::ThrowError(message.c_str());
@@ -101,31 +99,11 @@ namespace jsthemis {
     Nan::ThrowError(message.c_str());
   }
 
-  void ThrowSecureSessionError(const char* domain, themis_status_t status, const char* description) {
-    std::string message;
-    message += domain;
-    message += ": ";
-    message += ErrorDescriptionSecureSession(status);
-    message += ": ";
-    message += description;
-    Nan::ThrowError(message.c_str());
-  }
-
   void ThrowSecureComparatorError(const char* domain, themis_status_t status) {
     std::string message;
     message += domain;
     message += ": ";
     message += ErrorDescriptionSecureComparator(status);
-    Nan::ThrowError(message.c_str());
-  }
-
-  void ThrowSecureComparatorError(const char* domain, themis_status_t status, const char* description) {
-    std::string message;
-    message += domain;
-    message += ": ";
-    message += ErrorDescriptionSecureComparator(status);
-    message += ": ";
-    message += description;
     Nan::ThrowError(message.c_str());
   }
 

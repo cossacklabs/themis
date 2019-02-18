@@ -44,17 +44,17 @@ namespace jsthemis {
   void SecureCellContextImprint::New(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     if (args.IsConstructCall()) {
       if(args.Length()<1){
-        ThrowError("Secure Cell (Context Imprint) constructor", THEMIS_INVALID_PARAMETER, "missing master key");
+        ThrowError("Secure Cell (Context Imprint) constructor", "not enough arguments, expected master key");
         args.GetReturnValue().SetUndefined();
         return;
       }
       if(!args[0]->IsUint8Array()){
-        ThrowError("Secure Cell (Context Imprint) constructor", THEMIS_INVALID_PARAMETER, "master key is not byte buffer");
+        ThrowError("Secure Cell (Context Imprint) constructor", "master key is not a byte buffer");
         args.GetReturnValue().SetUndefined();
         return;
       }
       if(node::Buffer::Length(args[0])==0){
-        ThrowError("Secure Cell (Context Imprint) constructor", THEMIS_INVALID_PARAMETER, "master key is empty");
+        ThrowError("Secure Cell (Context Imprint) constructor", "master key is empty");
         args.GetReturnValue().SetUndefined();
         return;
       }
@@ -74,27 +74,27 @@ namespace jsthemis {
     themis_status_t status = THEMIS_FAIL;
     SecureCellContextImprint* obj = Nan::ObjectWrap::Unwrap<SecureCellContextImprint>(args.This());
     if(args.Length()<2){
-      ThrowError("Secure Cell (Context Imprint) failed to encrypt", THEMIS_INVALID_PARAMETER, "missing message and context");
+      ThrowError("Secure Cell (Context Imprint) failed to encrypt", "not enough arguments, missing message and context");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[0]->IsUint8Array()){
-      ThrowError("Secure Cell (Context Imprint) failed to encrypt", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      ThrowError("Secure Cell (Context Imprint) failed to encrypt", "message is not a byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[0])==0){
-      ThrowError("Secure Cell (Context Imprint) failed to encrypt", THEMIS_INVALID_PARAMETER, "message is empty");
+      ThrowError("Secure Cell (Context Imprint) failed to encrypt", "message is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[1]->IsUint8Array()){
-      ThrowError("Secure Cell (Context Imprint) failed to encrypt", THEMIS_INVALID_PARAMETER, "context is not byte buffer");
+      ThrowError("Secure Cell (Context Imprint) failed to encrypt", "context is not a byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[1])==0){
-      ThrowError("Secure Cell (Context Imprint) failed to encrypt", THEMIS_INVALID_PARAMETER, "context is empty");
+      ThrowError("Secure Cell (Context Imprint) failed to encrypt", "context is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
@@ -122,27 +122,27 @@ namespace jsthemis {
     themis_status_t status = THEMIS_FAIL;
     SecureCellContextImprint* obj = Nan::ObjectWrap::Unwrap<SecureCellContextImprint>(args.This());
     if(args.Length()<2){
-      ThrowError("Secure Cell (Context Imprint) failed to decrypt", THEMIS_INVALID_PARAMETER, "missing message and context");
+      ThrowError("Secure Cell (Context Imprint) failed to decrypt", "not enough arguments, expected message and context");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[0]->IsUint8Array()){
-      ThrowError("Secure Cell (Context Imprint) failed to decrypt", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      ThrowError("Secure Cell (Context Imprint) failed to decrypt", "message is not a byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[0])==0){
-      ThrowError("Secure Cell (Context Imprint) failed to decrypt", THEMIS_INVALID_PARAMETER, "message is empty");
+      ThrowError("Secure Cell (Context Imprint) failed to decrypt", "message is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[1]->IsUint8Array()){
-      ThrowError("Secure Cell (Context Imprint) failed to decrypt", THEMIS_INVALID_PARAMETER, "context is not byte buffer");
+      ThrowError("Secure Cell (Context Imprint) failed to decrypt", "context is not a byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[1])==0){
-      ThrowError("Secure Cell (Context Imprint) failed to decrypt", THEMIS_INVALID_PARAMETER, "context is empty");
+      ThrowError("Secure Cell (Context Imprint) failed to decrypt", "context is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
