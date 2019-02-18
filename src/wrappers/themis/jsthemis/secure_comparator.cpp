@@ -62,6 +62,18 @@ namespace jsthemis {
 
   void SecureComparator::New(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     if (args.IsConstructCall()) {
+      if(args.Length()<1){
+        ThrowParameterError("Secure Comparator constructor", "not enough arguments, expected secret to compare");
+        return;
+      }
+      if(!args[0]->IsUint8Array()){
+        ThrowParameterError("Secure Comparator constructor", "secret is not a byte buffer, use ByteBuffer or Uint8Array");
+        return;
+      }
+      if(node::Buffer::Length(args[0])==0){
+        ThrowParameterError("Secure Comparator constructor", "secret is empty");
+        return;
+      }
       std::vector<uint8_t> secret((uint8_t*)(node::Buffer::Data(args[0])), (uint8_t*)(node::Buffer::Data(args[0])+node::Buffer::Length(args[0])));
       SecureComparator* obj = new SecureComparator(secret);
       obj->Wrap(args.This());
@@ -98,6 +110,18 @@ namespace jsthemis {
   void SecureComparator::proceedCompare(const Nan::FunctionCallbackInfo<v8::Value>& args){
     themis_status_t status = THEMIS_FAIL;
     SecureComparator* obj = Nan::ObjectWrap::Unwrap<SecureComparator>(args.This());
+    if(args.Length()<1){
+      ThrowParameterError("Secure Comparator failed to proceed comparison", "not enough arguments, expected message");
+      return;
+    }
+    if(!args[0]->IsUint8Array()){
+      ThrowParameterError("Secure Comparator failed to proceed comparison", "message is not a byte buffer, use ByteBuffer or Uint8Array");
+      return;
+    }
+    if(node::Buffer::Length(args[0])==0){
+      ThrowParameterError("Secure Comparator failed to proceed comparison", "message is empty");
+      return;
+    }
     size_t length=0;
     status = secure_comparator_proceed_compare(obj->comparator_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length);
     if(THEMIS_BUFFER_TOO_SMALL!=status){
