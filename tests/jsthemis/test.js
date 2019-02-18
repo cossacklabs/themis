@@ -33,10 +33,10 @@ describe("jsthemis", function(){
 	it("empty keys", function(){
 	    encrypted_message = encrypter.encrypt(message);
 	    signed_message = encrypter.sign(message);
-	    assert.throws(function(){empty_secure_message.encrypt(message);});
-	    assert.throws(function(){empty_secure_message.decrypt(encrypted_message);});
-	    assert.throws(function(){empty_secure_message.sign(message);});
-	    assert.throws(function(){empty_secure_message.verify(signed_message);});
+	    assert.throws(function(){empty_secure_message.encrypt(message);}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){empty_secure_message.decrypt(encrypted_message);}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){empty_secure_message.sign(message);}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){empty_secure_message.verify(signed_message);}, expect_code(addon.INVALID_PARAMETER));
 	})
     })
 })
@@ -95,7 +95,7 @@ describe("jsthemis", function(){
 	    seal_encrypter = new addon.SecureCellSeal(password);
 	    seal_decrypter = new addon.SecureCellSeal(password);
 	    seal_intruder_decrypter = new addon.SecureCellSeal(new Buffer("This is test password1"));
-	    assert.throws(function(){new addon.SecureCellSeal(empty_message)});
+	    assert.throws(function(){new addon.SecureCellSeal(empty_message)}, expect_code(addon.INVALID_PARAMETER));
 	    enc_data = seal_encrypter.encrypt(message, context);
 	    dec_data = seal_decrypter.decrypt(enc_data, context);
 	    assert.equal(message.toString(), dec_data.toString());
@@ -105,8 +105,8 @@ describe("jsthemis", function(){
 	    assert.throws(function(){seal_decrypter.decrypt(enc_data, context);});
 	    enc_data[2]--;
 	    dec_data = seal_decrypter.decrypt(enc_data, context);
-	    assert.throws(function(){seal_encrypter.encrypt(empty_message, context)});
-	    assert.throws(function(){seal_decrypter.decrypt(empty_message, context)});
+	    assert.throws(function(){seal_encrypter.encrypt(empty_message, context)}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){seal_decrypter.decrypt(empty_message, context)}, expect_code(addon.INVALID_PARAMETER));
 	});
 	it("seal (without context)", function(){
 	    seal_encrypter = new addon.SecureCellSeal(password);
@@ -120,8 +120,8 @@ describe("jsthemis", function(){
 	    assert.throws(function(){seal_decrypter.decrypt(enc_data);});
 	    enc_data[2]--;
 	    dec_data = seal_decrypter.decrypt(enc_data);
-	    assert.throws(function(){seal_encrypter.encrypt(empty_message)});
-	    assert.throws(function(){seal_decrypter.decrypt(empty_message)});
+	    assert.throws(function(){seal_encrypter.encrypt(empty_message)}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){seal_decrypter.decrypt(empty_message)}, expect_code(addon.INVALID_PARAMETER));
 	});
 	it("context imprint", function(){
 	    context_imprint_encrypter = new addon.SecureCellContextImprint(password);
@@ -134,10 +134,10 @@ describe("jsthemis", function(){
 	    assert.equal(message.toString(), context_imprint_dec_data.toString());
 	    context_imprint_dec_data = context_imprint_intruder_decrypter.decrypt(context_imprint_enc_data, context);
 	    assert.notEqual(message.toString(), context_imprint_dec_data.toString());
-	    assert.throws(function(){context_imprint_encrypter.encrypt(empty_message, context)});
-	    assert.throws(function(){context_imprint_encrypter.encrypt(message, empty_message)});
-	    assert.throws(function(){context_imprint_decrypter.decrypt(empty_message, context)});
-	    assert.throws(function(){context_imprint_decrypter.decrypt(context_imprint_enc_data, empty_message)});
+	    assert.throws(function(){context_imprint_encrypter.encrypt(empty_message, context)}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){context_imprint_encrypter.encrypt(message, empty_message)}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){context_imprint_decrypter.decrypt(empty_message, context)}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){context_imprint_decrypter.decrypt(context_imprint_enc_data, empty_message)}, expect_code(addon.INVALID_PARAMETER));
 	    context_imprint_enc_data[2]++;
 	    context_imprint_dec_data = context_imprint_decrypter.decrypt(context_imprint_enc_data, context);
 	    assert.notEqual(message.toString(), context_imprint_dec_data.toString());
@@ -152,10 +152,10 @@ describe("jsthemis", function(){
 	    dec_data = decrypter.decrypt(enc_data.data, enc_data.token, context);
 	    assert.equal(message.toString(), dec_data.toString());
 	    assert.throws(function(){intruder_decrypter.decrypt(enc_data.data, enc_data.token)});
-	    assert.throws(function(){encrypter.encrypt(empty_message)});
-	    assert.throws(function(){encrypter.encrypt(empty_message, context)});
-	    assert.throws(function(){decrypter.decrypt(empty_message, enc_data.token, context)});
-	    assert.throws(function(){decrypter.decrypt(enc_data.data, empty_message, context)});
+	    assert.throws(function(){encrypter.encrypt(empty_message)}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){encrypter.encrypt(empty_message, context)}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){decrypter.decrypt(empty_message, enc_data.token, context)}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){decrypter.decrypt(enc_data.data, empty_message, context)}, expect_code(addon.INVALID_PARAMETER));
 	    enc_data.data[2]++;
 	    assert.throws(function(){decrypter.decrypt(enc_data.data, enc_data.token, context)});
 	})

@@ -109,12 +109,12 @@ namespace jsthemis {
     Nan::ThrowError(WithStatus(Nan::Error(message.c_str()), status));
   }
 
-  void ThrowError(const char* domain, const char* description) {
+  void ThrowParameterError(const char* domain, const char* description) {
     std::string message;
     message += domain;
     message += ": ";
     message += description;
-    Nan::ThrowError(message.c_str());
+    Nan::ThrowError(WithStatus(Nan::Error(message.c_str()), THEMIS_INVALID_PARAMETER));
   }
 
   void ThrowSecureSessionError(const char* domain, themis_status_t status) {

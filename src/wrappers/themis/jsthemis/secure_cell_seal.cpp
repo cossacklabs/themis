@@ -44,17 +44,17 @@ namespace jsthemis {
   void SecureCellSeal::New(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     if (args.IsConstructCall()) {
       if(args.Length()<1){
-        ThrowError("Secure Cell (Seal) constructor", "not enough arguments, expected master key");
+        ThrowParameterError("Secure Cell (Seal) constructor", "not enough arguments, expected master key");
         args.GetReturnValue().SetUndefined();
         return;
       }
       if(!args[0]->IsUint8Array()){
-        ThrowError("Secure Cell (Seal) constructor", "master key is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowParameterError("Secure Cell (Seal) constructor", "master key is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
       }
       if(node::Buffer::Length(args[0])==0){
-        ThrowError("Secure Cell (Seal) constructor", "master key is empty");
+        ThrowParameterError("Secure Cell (Seal) constructor", "master key is empty");
         args.GetReturnValue().SetUndefined();
         return;
       }
@@ -74,17 +74,17 @@ namespace jsthemis {
     themis_status_t status = THEMIS_FAIL;
     SecureCellSeal* obj = Nan::ObjectWrap::Unwrap<SecureCellSeal>(args.This());
     if(args.Length()<1){
-      ThrowError("Secure Cell (Seal) failed to encrypt", "not enough arguments, expected message");
+      ThrowParameterError("Secure Cell (Seal) failed to encrypt", "not enough arguments, expected message");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[0]->IsUint8Array()){
-      ThrowError("Secure Cell (Seal) failed to encrypt", "message is not a byte buffer, use ByteBuffer or Uint8Array");
+      ThrowParameterError("Secure Cell (Seal) failed to encrypt", "message is not a byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[0])==0){
-      ThrowError("Secure Cell (Seal) failed to encrypt", "message is empty");
+      ThrowParameterError("Secure Cell (Seal) failed to encrypt", "message is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
@@ -93,7 +93,7 @@ namespace jsthemis {
     size_t context_length=0;
     if(args.Length()==2){
       if(!args[1]->IsUint8Array()){
-        ThrowError("Secure Cell (Seal) failed to encrypt", "context is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowParameterError("Secure Cell (Seal) failed to encrypt", "context is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
       }
@@ -121,17 +121,17 @@ namespace jsthemis {
     themis_status_t status = THEMIS_FAIL;
     SecureCellSeal* obj = Nan::ObjectWrap::Unwrap<SecureCellSeal>(args.This());
     if(args.Length()<1){
-      ThrowError("Secure Cell (Seal) failed to decrypt", "not enough arguments, expected message");
+      ThrowParameterError("Secure Cell (Seal) failed to decrypt", "not enough arguments, expected message");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[0]->IsUint8Array()){
-      ThrowError("Secure Cell (Seal) failed to decrypt", "message is not a byte buffer, use ByteBuffer or Uint8Array");
+      ThrowParameterError("Secure Cell (Seal) failed to decrypt", "message is not a byte buffer, use ByteBuffer or Uint8Array");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[0])==0){
-      ThrowError("Secure Cell (Seal) failed to decrypt", "message is empty");
+      ThrowParameterError("Secure Cell (Seal) failed to decrypt", "message is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
@@ -140,7 +140,7 @@ namespace jsthemis {
     size_t context_length=0;
     if(args.Length()==2){
       if(!args[1]->IsUint8Array()){
-        ThrowError("Secure Cell (Seal) failed to decrypt", "context is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowParameterError("Secure Cell (Seal) failed to decrypt", "context is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
       }

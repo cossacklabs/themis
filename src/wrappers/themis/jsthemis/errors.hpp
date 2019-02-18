@@ -23,18 +23,20 @@
 
 namespace jsthemis {
 
-  void ThrowError(const char* domain, themis_status_t status);
-  void ThrowError(const char* domain, const char* description);
-
-  void ThrowSecureSessionError(const char* domain, themis_status_t status);
-
-  void ThrowSecureComparatorError(const char* domain, themis_status_t status);
-
   namespace Errors {
 
     void Init(v8::Handle<v8::Object> exports);
 
   } // namespace Errors
+
+  void ThrowError(const char* domain, themis_status_t status);
+
+  void ThrowParameterError(const char* domain, const char* description);
+
+  void ThrowSecureSessionError(const char* domain, themis_status_t status);
+
+  void ThrowSecureComparatorError(const char* domain, themis_status_t status);
+
 } // namespace jsthemis
 
 #endif /* JSTHEMIS_ERRORS_HPP_ */
