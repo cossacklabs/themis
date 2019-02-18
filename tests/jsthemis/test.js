@@ -255,3 +255,15 @@ describe("jsthemis", function(){
 	})
     })
 })
+
+describe("jsthemis", function(){
+    describe("key generation", function(){
+        it("generates and joins", function(){
+            pair = new addon.KeyPair()
+            new_pair = new addon.KeyPair(pair.private(), pair.public())
+            assert.deepStrictEqual(pair.private(), new_pair.private())
+            assert.deepStrictEqual(pair.public(), new_pair.public())
+            assert.throws(function(){new addon.KeyPair(empty_message, empty_message)}, expect_code(addon.INVALID_PARAMETER));
+        })
+    })
+})

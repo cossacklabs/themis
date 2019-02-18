@@ -18,6 +18,7 @@
 #include <themis/themis.h>
 #include <vector>
 #include "common.hpp"
+#include "errors.hpp"
 #include "secure_keygen.hpp"
 
 namespace jsthemis {
@@ -45,29 +46,48 @@ namespace jsthemis {
   void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     if (args.IsConstructCall()) {
       if(args.Length()==2){
+        if(!args[0]->IsUint8Array()){
+          ThrowParameterError("Key Pair constructor", "private key is not a byte buffer, use ByteBuffer or Uint8Array");
+          return;
+        }
+        if(node::Buffer::Length(args[0])==0){
+          ThrowParameterError("Key Pair constructor", "private key is empty");
+          return;
+        }
+        if(!args[1]->IsUint8Array()){
+          ThrowParameterError("Key Pair constructor", "public key is not a byte buffer, use ByteBuffer or Uint8Array");
+          return;
+        }
+        if(node::Buffer::Length(args[1])==0){
+          ThrowParameterError("Key Pair constructor", "public key is empty");
+          return;
+        }
 	std::vector<uint8_t> private_key((uint8_t*)(node::Buffer::Data(args[0])), (uint8_t*)(node::Buffer::Data(args[0])+node::Buffer::Length(args[0])));
 	std::vector<uint8_t> public_key((uint8_t*)(node::Buffer::Data(args[1])), (uint8_t*)(node::Buffer::Data(args[1])+node::Buffer::Length(args[1])));
 	KeyPair* obj = new KeyPair(private_key, public_key);
 	obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
       }else if(args.Length()==0){
+	themis_status_t status = THEMIS_FAIL;
 	size_t private_key_length, public_key_length;
-	if(themis_gen_ec_key_pair(NULL, &private_key_length, NULL, &public_key_length)!=THEMIS_BUFFER_TOO_SMALL){
-          Nan::ThrowError("Themis failed Key Pair generating");
+	status=themis_gen_ec_key_pair(NULL, &private_key_length, NULL, &public_key_length);
+	if(status!=THEMIS_BUFFER_TOO_SMALL){
+	  ThrowError("Key Pair generation failed", status);
 	  args.GetReturnValue().SetUndefined();
 	}
 	std::vector<uint8_t> prk(private_key_length);
 	std::vector<uint8_t> puk(public_key_length);
-	if(themis_gen_ec_key_pair(&prk[0], &private_key_length, &puk[0], &public_key_length)!=THEMIS_SUCCESS){
-          Nan::ThrowError("Themis failed Key Pair generating");
+	status=themis_gen_ec_key_pair(&prk[0], &private_key_length, &puk[0], &public_key_length);
+	if(status!=THEMIS_SUCCESS){
+	  ThrowError("Key Pair generation failed", status);
 	  args.GetReturnValue().SetUndefined();
 	}
 	KeyPair* obj = new KeyPair(prk, puk);
 	obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
       } else {
-        Nan::ThrowError("Themis failed KeyPair object initialisation");
-	args.GetReturnValue().SetUndefined();
+        ThrowParameterError("Key Pair constructor", "invalid argument count, expected no arguments or private and public keys");
+        args.GetReturnValue().SetUndefined();
       }
     } else {
       const int argc = 2;
