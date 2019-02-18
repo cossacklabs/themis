@@ -82,6 +82,19 @@ describe("jsthemis", function(){
 	    rm=client_session.unwrap(data);
 	    assert.equal(message.toString(), rm.toString());
 	})
+	it("invalid parameters", function(){
+	    valid_id = new Buffer("client");
+	    empty_id = new Buffer("");
+	    keypair = new addon.KeyPair();
+	    assert.throws(function(){new addon.SecureSession(empty_id, keypair.private(), function(){return null})},
+	                  expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){new addon.SecureSession(valid_id, empty_id, function(){return null})},
+	    	          expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){new addon.SecureSession(valid_id, keypair.private(), null)},
+	    	          expect_code(addon.INVALID_PARAMETER));
+	    server_session = new addon.SecureSession(valid_id, keypair.private(), function(){return null});
+	    assert.throws(function(){server_session.unwrap(empty_id)}, expect_code(addon.INVALID_PARAMETER));
+	})
     })
 })
 
