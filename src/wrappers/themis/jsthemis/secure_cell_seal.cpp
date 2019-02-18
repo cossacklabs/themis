@@ -17,6 +17,7 @@
 #include <node_buffer.h>
 #include <themis/themis.h>
 #include <vector>
+#include "errors.hpp"
 #include "secure_cell_seal.hpp"
 
 namespace jsthemis {
@@ -55,6 +56,7 @@ namespace jsthemis {
   }
 
   void SecureCellSeal::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+    themis_status_t status = THEMIS_SUCCESS;
     SecureCellSeal* obj = Nan::ObjectWrap::Unwrap<SecureCellSeal>(args.This());
     size_t length=0;
     const uint8_t* context=NULL;
@@ -63,14 +65,16 @@ namespace jsthemis {
       context = (const uint8_t*)(node::Buffer::Data(args[1]));
       context_length = node::Buffer::Length(args[1]);
     }
-    if(themis_secure_cell_encrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
-      Nan::ThrowError("Secure Cell (seal) failed encrypting");
+    status=themis_secure_cell_encrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length);
+    if(status!=THEMIS_BUFFER_TOO_SMALL){
+      ThrowError("Secure Cell (Seal) failed to encrypt", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* data=(uint8_t*)(malloc(length));
-    if(themis_secure_cell_encrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length)!=THEMIS_SUCCESS){
-      Nan::ThrowError("Secure Cell (seal) failed encrypting");
+    status=themis_secure_cell_encrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length);
+    if(status!=THEMIS_SUCCESS){
+      ThrowError("Secure Cell (Seal) failed to encrypt", status);
       free(data);
       args.GetReturnValue().SetUndefined();
       return;
@@ -79,6 +83,7 @@ namespace jsthemis {
   }
 
   void SecureCellSeal::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+    themis_status_t status = THEMIS_SUCCESS;
     SecureCellSeal* obj = Nan::ObjectWrap::Unwrap<SecureCellSeal>(args.This());
     size_t length=0;
     const uint8_t* context=NULL;
@@ -87,14 +92,16 @@ namespace jsthemis {
       context = (const uint8_t*)(node::Buffer::Data(args[1]));
       context_length = node::Buffer::Length(args[1]);
     }
-    if(themis_secure_cell_decrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
-      Nan::ThrowError("Secure Cell (seal) failed decrypting");
+    status=themis_secure_cell_decrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length);
+    if(status!=THEMIS_BUFFER_TOO_SMALL){
+      ThrowError("Secure Cell (Seal) failed to decrypt", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* data=(uint8_t*)malloc(length);
-    if(themis_secure_cell_decrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length)!=THEMIS_SUCCESS){
-      Nan::ThrowError("Secure Cell (seal) failed decrypting");
+    status=themis_secure_cell_decrypt_seal(&(obj->key_)[0], obj->key_.size(), context, context_length, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length);
+    if(status!=THEMIS_SUCCESS){
+      ThrowError("Secure Cell (Seal) failed to decrypt", status);
       free(data);
       args.GetReturnValue().SetUndefined();
       return;
