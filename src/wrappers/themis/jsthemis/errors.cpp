@@ -19,8 +19,28 @@
 #include <string>
 
 #include <nan.h>
+#include <node.h>
 
 namespace jsthemis {
+
+  static inline void ExportStatusCode(v8::Handle<v8::Object>& exports, const char* name, themis_status_t status) {
+    exports->Set(Nan::New(name).ToLocalChecked(), Nan::New(status));
+  }
+
+  void Errors::Init(v8::Handle<v8::Object> exports) {
+    ExportStatusCode(exports, "SUCCESS",            THEMIS_SUCCESS);
+    ExportStatusCode(exports, "FAIL",               THEMIS_FAIL);
+    ExportStatusCode(exports, "INVALID_PARAMETER",  THEMIS_INVALID_PARAMETER);
+    ExportStatusCode(exports, "NO_MEMORY",          THEMIS_NO_MEMORY);
+    ExportStatusCode(exports, "BUFFER_TOO_SMALL",   THEMIS_BUFFER_TOO_SMALL);
+    ExportStatusCode(exports, "DATA_CORRUPT",       THEMIS_DATA_CORRUPT);
+    ExportStatusCode(exports, "INVALID_SIGNATURE",  THEMIS_INVALID_SIGNATURE);
+    ExportStatusCode(exports, "NOT_SUPPORTED",      THEMIS_NOT_SUPPORTED);
+    ExportStatusCode(exports, "SSESSION_KA_NOT_FINISHED", THEMIS_SSESSION_KA_NOT_FINISHED);
+    ExportStatusCode(exports, "SSESSION_TRANSPORT_ERROR", THEMIS_SSESSION_TRANSPORT_ERROR);
+    ExportStatusCode(exports, "SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR", THEMIS_SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR);
+    ExportStatusCode(exports, "SCOMPARE_NOT_READY", THEMIS_SCOMPARE_NOT_READY);
+  }
 
   static const char* ErrorDescription(themis_status_t status) {
     switch (status) {
@@ -75,12 +95,18 @@ namespace jsthemis {
     }
   }
 
+  static v8::Local<v8::Value> WithStatus(v8::Local<v8::Value> error, themis_status_t status) {
+    v8::Local<v8::Object> object = error.As<v8::Object>();
+    object->Set(Nan::New("code").ToLocalChecked(), Nan::New(status));
+    return error;
+  }
+
   void ThrowError(const char* domain, themis_status_t status) {
     std::string message;
     message += domain;
     message += ": ";
     message += ErrorDescription(status);
-    Nan::ThrowError(message.c_str());
+    Nan::ThrowError(WithStatus(Nan::Error(message.c_str()), status));
   }
 
   void ThrowError(const char* domain, const char* description) {
@@ -96,7 +122,7 @@ namespace jsthemis {
     message += domain;
     message += ": ";
     message += ErrorDescriptionSecureSession(status);
-    Nan::ThrowError(message.c_str());
+    Nan::ThrowError(WithStatus(Nan::Error(message.c_str()), status));
   }
 
   void ThrowSecureComparatorError(const char* domain, themis_status_t status) {
@@ -104,7 +130,7 @@ namespace jsthemis {
     message += domain;
     message += ": ";
     message += ErrorDescriptionSecureComparator(status);
-    Nan::ThrowError(message.c_str());
+    Nan::ThrowError(WithStatus(Nan::Error(message.c_str()), status));
   }
 
 } // namespace jsthemis

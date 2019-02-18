@@ -17,6 +17,8 @@
 #ifndef JSTHEMIS_ERRORS_HPP_
 #define JSTHEMIS_ERRORS_HPP_
 
+#include <nan.h>
+
 #include <themis/themis.h>
 
 namespace jsthemis {
@@ -28,6 +30,11 @@ namespace jsthemis {
 
   void ThrowSecureComparatorError(const char* domain, themis_status_t status);
 
-}
+  namespace Errors {
+
+    void Init(v8::Handle<v8::Object> exports);
+
+  } // namespace Errors
+} // namespace jsthemis
 
 #endif /* JSTHEMIS_ERRORS_HPP_ */

@@ -1,6 +1,11 @@
 var addon = require('jsthemis');
 var assert = require('assert');
 
+function expect_code(code) {
+  return function(err) {
+    return err.code == code
+  }
+}
 
 describe("jsthemis", function(){
     describe("secure message", function(){
@@ -16,14 +21,14 @@ describe("jsthemis", function(){
 	    
 	    encrypted_message = encrypter.encrypt(message);
 	    assert.equal(message.toString(), decrypter.decrypt(encrypted_message).toString());
-	    assert.throws(function(){intruder_decrypter.decrypt(encrypted_message);});
+	    assert.throws(function(){intruder_decrypter.decrypt(encrypted_message);}, expect_code(addon.FAIL));
 	});
 	it("sign/verify", function(){
 	    signed_message=encrypter.sign(message);
 	    assert.equal(message.toString(), decrypter.verify(signed_message).toString());
 	    assert.equal(message.toString(), intruder_decrypter.verify(signed_message).toString());
 	    signed_message[2]++;
-	    assert.throws(function(){decrypter.verify(signed_message);});
+	    assert.throws(function(){decrypter.verify(signed_message);}, expect_code(addon.INVALID_PARAMETER));
 	})
 	it("empty keys", function(){
 	    encrypted_message = encrypter.encrypt(message);
