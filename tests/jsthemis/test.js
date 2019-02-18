@@ -10,6 +10,7 @@ describe("jsthemis", function(){
 	encrypter = new addon.SecureMessage(keypair.private(), peer_keypair.public());
 	decrypter = new addon.SecureMessage(peer_keypair.private(), keypair.public());
 	intruder_decrypter = new addon.SecureMessage(intruder_keypair.private(), keypair.public());
+	empty = new addon.SecureMessage(new Buffer(""), new Buffer(""));
 	message = new Buffer("Test Message");
 	it("encrypt/decrypt", function(){
 	    
@@ -23,6 +24,14 @@ describe("jsthemis", function(){
 	    assert.equal(message.toString(), intruder_decrypter.verify(signed_message).toString());
 	    signed_message[2]++;
 	    assert.throws(function(){decrypter.verify(signed_message);});
+	})
+	it("empty keys", function(){
+	    encrypted_message = encrypter.encrypt(message);
+	    signed_message = encrypter.sign(message);
+	    assert.throws(function(){empty.encrypt(message);}, /invalid parameter/);
+	    assert.throws(function(){empty.decrypt(encrypted_message);}, /invalid parameter/);
+	    assert.throws(function(){empty.sign(message);}, /invalid parameter/);
+	    assert.throws(function(){empty.verify(signed_message);}, /invalid parameter/);
 	})
     })
 })
