@@ -212,36 +212,36 @@ namespace jsthemis {
     themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
     if(obj->private_key_.empty()){
-      ThrowError("Secure Message failed to verify", THEMIS_INVALID_PARAMETER, "private key is empty");
+      ThrowError("Secure Message failed to verify signature", THEMIS_INVALID_PARAMETER, "private key is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(args.Length()<1){
-      ThrowError("Secure Message failed to verify", THEMIS_INVALID_PARAMETER, "missing message");
+      ThrowError("Secure Message failed to verify signature", THEMIS_INVALID_PARAMETER, "missing message");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(!args[0]->IsUint8Array()){
-      ThrowError("Secure Message failed to verify", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      ThrowError("Secure Message failed to verify signature", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
       args.GetReturnValue().SetUndefined();
       return;
     }
     if(node::Buffer::Length(args[0])==0){
-      ThrowError("Secure Message failed to verify", THEMIS_INVALID_PARAMETER, "message is empty");
+      ThrowError("Secure Message failed to verify signature", THEMIS_INVALID_PARAMETER, "message is empty");
       args.GetReturnValue().SetUndefined();
       return;
     }
     size_t decrypted_length=0;
     status=themis_secure_message_unwrap(NULL, 0, &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &decrypted_length);
     if(status!=THEMIS_BUFFER_TOO_SMALL){
-      ThrowError("Secure Message failed to verify", status);
+      ThrowError("Secure Message failed to verify signature", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* decrypted_data=(uint8_t*)(malloc(decrypted_length));
     status=themis_secure_message_unwrap(NULL, 0, &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), decrypted_data, &decrypted_length);
     if(status!=THEMIS_SUCCESS){
-      ThrowError("Secure Message failed to verify", status);
+      ThrowError("Secure Message failed to verify signature", status);
       free(decrypted_data);
       args.GetReturnValue().SetUndefined();
       return;
