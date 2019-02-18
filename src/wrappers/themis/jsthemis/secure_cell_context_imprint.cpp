@@ -43,6 +43,21 @@ namespace jsthemis {
 
   void SecureCellContextImprint::New(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     if (args.IsConstructCall()) {
+      if(args.Length()<1){
+        ThrowError("Secure Cell (Context Imprint) constructor", THEMIS_INVALID_PARAMETER, "missing master key");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
+      if(!args[0]->IsUint8Array()){
+        ThrowError("Secure Cell (Context Imprint) constructor", THEMIS_INVALID_PARAMETER, "master key is not byte buffer");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
+      if(node::Buffer::Length(args[0])==0){
+        ThrowError("Secure Cell (Context Imprint) constructor", THEMIS_INVALID_PARAMETER, "master key is empty");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
       std::vector<uint8_t> key((uint8_t*)(node::Buffer::Data(args[0])), (uint8_t*)(node::Buffer::Data(args[0])+node::Buffer::Length(args[0])));
       SecureCellContextImprint* obj = new SecureCellContextImprint(key);
       obj->Wrap(args.This());
@@ -58,6 +73,31 @@ namespace jsthemis {
   void SecureCellContextImprint::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     themis_status_t status = THEMIS_SUCCESS;
     SecureCellContextImprint* obj = Nan::ObjectWrap::Unwrap<SecureCellContextImprint>(args.This());
+    if(args.Length()<2){
+      ThrowError("Secure Cell (Context Imprint) failed to encrypt", THEMIS_INVALID_PARAMETER, "missing message and context");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(!args[0]->IsUint8Array()){
+      ThrowError("Secure Cell (Context Imprint) failed to encrypt", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(node::Buffer::Length(args[0])==0){
+      ThrowError("Secure Cell (Context Imprint) failed to encrypt", THEMIS_INVALID_PARAMETER, "message is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(!args[1]->IsUint8Array()){
+      ThrowError("Secure Cell (Context Imprint) failed to encrypt", THEMIS_INVALID_PARAMETER, "context is not byte buffer");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(node::Buffer::Length(args[1])==0){
+      ThrowError("Secure Cell (Context Imprint) failed to encrypt", THEMIS_INVALID_PARAMETER, "context is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
     size_t length=0;
     const uint8_t* context=(const uint8_t*)(node::Buffer::Data(args[1]));
     size_t context_length=node::Buffer::Length(args[1]);
@@ -81,6 +121,31 @@ namespace jsthemis {
   void SecureCellContextImprint::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     themis_status_t status = THEMIS_SUCCESS;
     SecureCellContextImprint* obj = Nan::ObjectWrap::Unwrap<SecureCellContextImprint>(args.This());
+    if(args.Length()<2){
+      ThrowError("Secure Cell (Context Imprint) failed to decrypt", THEMIS_INVALID_PARAMETER, "missing message and context");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(!args[0]->IsUint8Array()){
+      ThrowError("Secure Cell (Context Imprint) failed to decrypt", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(node::Buffer::Length(args[0])==0){
+      ThrowError("Secure Cell (Context Imprint) failed to decrypt", THEMIS_INVALID_PARAMETER, "message is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(!args[1]->IsUint8Array()){
+      ThrowError("Secure Cell (Context Imprint) failed to decrypt", THEMIS_INVALID_PARAMETER, "context is not byte buffer");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(node::Buffer::Length(args[1])==0){
+      ThrowError("Secure Cell (Context Imprint) failed to decrypt", THEMIS_INVALID_PARAMETER, "context is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
     size_t length=0;
     const uint8_t* context=(const uint8_t*)(node::Buffer::Data(args[1]));
     size_t context_length=node::Buffer::Length(args[1]);

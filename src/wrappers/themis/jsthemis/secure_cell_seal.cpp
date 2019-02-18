@@ -43,6 +43,21 @@ namespace jsthemis {
 
   void SecureCellSeal::New(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     if (args.IsConstructCall()) {
+      if(args.Length()<1){
+        ThrowError("Secure Cell (Seal) constructor", THEMIS_INVALID_PARAMETER, "missing master key");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
+      if(!args[0]->IsUint8Array()){
+        ThrowError("Secure Cell (Seal) constructor", THEMIS_INVALID_PARAMETER, "master key is not byte buffer");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
+      if(node::Buffer::Length(args[0])==0){
+        ThrowError("Secure Cell (Seal) constructor", THEMIS_INVALID_PARAMETER, "master key is empty");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
       std::vector<uint8_t> key((uint8_t*)(node::Buffer::Data(args[0])), (uint8_t*)(node::Buffer::Data(args[0])+node::Buffer::Length(args[0])));
       SecureCellSeal* obj = new SecureCellSeal(key);
       obj->Wrap(args.This());
@@ -58,10 +73,30 @@ namespace jsthemis {
   void SecureCellSeal::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     themis_status_t status = THEMIS_SUCCESS;
     SecureCellSeal* obj = Nan::ObjectWrap::Unwrap<SecureCellSeal>(args.This());
+    if(args.Length()<1){
+      ThrowError("Secure Cell (Seal) failed to encrypt", THEMIS_INVALID_PARAMETER, "missing message");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(!args[0]->IsUint8Array()){
+      ThrowError("Secure Cell (Seal) failed to encrypt", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(node::Buffer::Length(args[0])==0){
+      ThrowError("Secure Cell (Seal) failed to encrypt", THEMIS_INVALID_PARAMETER, "message is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
     size_t length=0;
     const uint8_t* context=NULL;
     size_t context_length=0;
     if(args.Length()==2){
+      if(!args[1]->IsUint8Array()){
+        ThrowError("Secure Cell (Seal) failed to encrypt", THEMIS_INVALID_PARAMETER, "context is not byte buffer");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
       context = (const uint8_t*)(node::Buffer::Data(args[1]));
       context_length = node::Buffer::Length(args[1]);
     }
@@ -85,10 +120,30 @@ namespace jsthemis {
   void SecureCellSeal::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     themis_status_t status = THEMIS_SUCCESS;
     SecureCellSeal* obj = Nan::ObjectWrap::Unwrap<SecureCellSeal>(args.This());
+    if(args.Length()<1){
+      ThrowError("Secure Cell (Seal) failed to decrypt", THEMIS_INVALID_PARAMETER, "missing message");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(!args[0]->IsUint8Array()){
+      ThrowError("Secure Cell (Seal) failed to decrypt", THEMIS_INVALID_PARAMETER, "message is not byte buffer");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(node::Buffer::Length(args[0])==0){
+      ThrowError("Secure Cell (Seal) failed to decrypt", THEMIS_INVALID_PARAMETER, "message is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
     size_t length=0;
     const uint8_t* context=NULL;
     size_t context_length=0;
     if(args.Length()==2){
+      if(!args[1]->IsUint8Array()){
+        ThrowError("Secure Cell (Seal) failed to decrypt", THEMIS_INVALID_PARAMETER, "context is not byte buffer");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
       context = (const uint8_t*)(node::Buffer::Data(args[1]));
       context_length = node::Buffer::Length(args[1]);
     }
