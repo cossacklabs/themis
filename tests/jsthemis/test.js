@@ -247,5 +247,11 @@ describe("jsthemis", function(){
 	    assert.equal(client_comparator.isMatch(), false);
 	    assert.equal(server_comparator.isMatch(), false);
 	})
+	it("invalid parameters", function(){
+	    empty_secret = new Buffer("");
+	    assert.throws(function(){new addon.SecureComparator(empty_secret)}, expect_code(addon.INVALID_PARAMETER));
+	    server_comparator = new addon.SecureComparator(server_secret);
+	    assert.throws(function(){server_comparator.proceedCompare(empty_message)}, expect_code(addon.INVALID_PARAMETER));
+	})
     })
 })
