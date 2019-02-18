@@ -71,7 +71,7 @@ namespace jsthemis {
   }
 
   void SecureCellContextImprint::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
-    themis_status_t status = THEMIS_SUCCESS;
+    themis_status_t status = THEMIS_FAIL;
     SecureCellContextImprint* obj = Nan::ObjectWrap::Unwrap<SecureCellContextImprint>(args.This());
     if(args.Length()<2){
       ThrowError("Secure Cell (Context Imprint) failed to encrypt", THEMIS_INVALID_PARAMETER, "missing message and context");
@@ -119,7 +119,7 @@ namespace jsthemis {
   }
 
   void SecureCellContextImprint::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
-    themis_status_t status = THEMIS_SUCCESS;
+    themis_status_t status = THEMIS_FAIL;
     SecureCellContextImprint* obj = Nan::ObjectWrap::Unwrap<SecureCellContextImprint>(args.This());
     if(args.Length()<2){
       ThrowError("Secure Cell (Context Imprint) failed to decrypt", THEMIS_INVALID_PARAMETER, "missing message and context");

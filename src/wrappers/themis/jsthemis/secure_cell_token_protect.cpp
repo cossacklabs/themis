@@ -71,7 +71,7 @@ namespace jsthemis {
   }
 
   void SecureCellTokenProtect::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
-    themis_status_t status = THEMIS_SUCCESS;
+    themis_status_t status = THEMIS_FAIL;
     SecureCellTokenProtect* obj = Nan::ObjectWrap::Unwrap<SecureCellTokenProtect>(args.This());
     if(args.Length()<1){
       ThrowError("Secure Cell (Token Protect) failed to encrypt", THEMIS_INVALID_PARAMETER, "missing message");
@@ -124,7 +124,7 @@ namespace jsthemis {
   }
 
   void SecureCellTokenProtect::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
-    themis_status_t status = THEMIS_SUCCESS;
+    themis_status_t status = THEMIS_FAIL;
     SecureCellTokenProtect* obj = Nan::ObjectWrap::Unwrap<SecureCellTokenProtect>(args.This());
     if(args.Length()<2){
       ThrowError("Secure Cell (Token Protect) failed to decrypt", THEMIS_INVALID_PARAMETER, "missing message and token");

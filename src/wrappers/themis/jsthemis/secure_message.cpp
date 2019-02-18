@@ -76,7 +76,7 @@ namespace jsthemis {
   }
 
   void SecureMessage::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
-    themis_status_t status = THEMIS_SUCCESS;
+    themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
     if(obj->private_key_.empty()){
       ThrowError("Secure Message failed to encrypt", THEMIS_INVALID_PARAMETER, "private key is empty");
@@ -122,7 +122,7 @@ namespace jsthemis {
   }
 
   void SecureMessage::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args){
-    themis_status_t status = THEMIS_SUCCESS;
+    themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
     if(obj->private_key_.empty()){
       ThrowError("Secure Message failed to decrypt", THEMIS_INVALID_PARAMETER, "private key is empty");
@@ -168,7 +168,7 @@ namespace jsthemis {
   }
   
   void SecureMessage::sign(const Nan::FunctionCallbackInfo<v8::Value>& args){
-    themis_status_t status = THEMIS_SUCCESS;
+    themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
     if(obj->peer_public_key_.empty()){
       ThrowError("Secure Message failed to sign", THEMIS_INVALID_PARAMETER, "public key is empty");
@@ -209,7 +209,7 @@ namespace jsthemis {
   }
 
   void SecureMessage::verify(const Nan::FunctionCallbackInfo<v8::Value>& args){
-    themis_status_t status = THEMIS_SUCCESS;
+    themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
     if(obj->private_key_.empty()){
       ThrowError("Secure Message failed to verify", THEMIS_INVALID_PARAMETER, "private key is empty");

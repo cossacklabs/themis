@@ -71,7 +71,7 @@ namespace jsthemis {
   }
 
   void SecureCellSeal::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
-    themis_status_t status = THEMIS_SUCCESS;
+    themis_status_t status = THEMIS_FAIL;
     SecureCellSeal* obj = Nan::ObjectWrap::Unwrap<SecureCellSeal>(args.This());
     if(args.Length()<1){
       ThrowError("Secure Cell (Seal) failed to encrypt", THEMIS_INVALID_PARAMETER, "missing message");
@@ -118,7 +118,7 @@ namespace jsthemis {
   }
 
   void SecureCellSeal::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
-    themis_status_t status = THEMIS_SUCCESS;
+    themis_status_t status = THEMIS_FAIL;
     SecureCellSeal* obj = Nan::ObjectWrap::Unwrap<SecureCellSeal>(args.This());
     if(args.Length()<1){
       ThrowError("Secure Cell (Seal) failed to decrypt", THEMIS_INVALID_PARAMETER, "missing message");
