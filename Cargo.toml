@@ -37,6 +37,7 @@ zeroize = "0.5.2"
 base64 = "0.10.0"
 byteorder = "1.2.7"
 clap = "2.32"
+lazy_static = "1.2.0"
 log = "0.4.6"
 env_logger = "0.6.0"
 
@@ -67,6 +68,14 @@ path = "docs/examples/rust/secure_message_client_verify.rs"
 [[example]]
 name = "secure_message_server"
 path = "docs/examples/rust/secure_message_server.rs"
+
+[[example]]
+name = "secure_session_echo_server"
+path = "docs/examples/rust/secure_session_echo_server.rs"
+
+[[example]]
+name = "secure_session_echo_client"
+path = "docs/examples/rust/secure_session_echo_client.rs"
 
 [[example]]
 name = "keygen_tool"

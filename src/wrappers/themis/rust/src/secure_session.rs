@@ -63,6 +63,7 @@
 use std::error;
 use std::fmt;
 use std::os::raw::{c_int, c_void};
+use std::panic;
 use std::{ptr, result, slice};
 
 use bindings::{
@@ -141,6 +142,10 @@ struct SecureSessionContext {
     transport: Box<dyn SecureSessionTransport>,
     last_error: Option<TransportError>,
 }
+
+// It safe to move secure_session_t to another thread, it does not depend on any thread-local
+// state. However, it needs external synchronization for safe concurrent usage (hence no Sync).
+unsafe impl Send for SecureSession {}
 
 /// Transport delegate for Secure Session.
 ///
@@ -411,8 +416,8 @@ impl SecureSession {
 
     /// Returns ID of the remote peer.
     ///
-    /// This method will return an error if the connection has not been established yet.
-    pub fn get_remote_id(&self) -> Result<Vec<u8>> {
+    /// Returns `None` if the connection has not been established yet and there is no peer.
+    pub fn remote_peer_id(&self) -> Result<Option<Vec<u8>>> {
         let mut id = Vec::new();
         let mut id_len = 0;
 
@@ -436,7 +441,7 @@ impl SecureSession {
             id.set_len(id_len);
         }
 
-        Ok(id)
+        Ok(if id.is_empty() { None } else { Some(id) })
     }
 
     /// Initiates connection to the remote peer.
@@ -488,6 +493,9 @@ impl SecureSession {
             if result == TRANSPORT_OVERFLOW {
                 return Err(Error::with_kind(ErrorKind::BufferTooSmall));
             }
+            if result == TRANSPORT_PANIC {
+                return Err(Error::from_transport_error(TransportError::unspecified()));
+            }
             let error = Error::from_session_status(result as themis_status_t);
             if error.kind() != ErrorKind::Success {
                 return Err(error);
@@ -532,6 +540,9 @@ impl SecureSession {
             if length == TRANSPORT_OVERFLOW {
                 return Err(Error::with_kind(ErrorKind::BufferTooSmall));
             }
+            if length == TRANSPORT_PANIC {
+                return Err(Error::from_transport_error(TransportError::unspecified()));
+            }
             if length <= Self::THEMIX_MAX_ERROR {
                 return Err(Error::from_session_status(length as themis_status_t));
             }
@@ -568,6 +579,9 @@ impl SecureSession {
             }
             if length == TRANSPORT_OVERFLOW {
                 return Err(Error::with_kind(ErrorKind::BufferTooSmall));
+            }
+            if length == TRANSPORT_PANIC {
+                return Err(Error::from_transport_error(TransportError::unspecified()));
             }
             if length <= Self::THEMIX_MAX_ERROR {
                 return Err(Error::from_session_status(length as themis_status_t));
@@ -813,22 +827,26 @@ unsafe fn user_data_as_context<'a>(ptr: *mut c_void) -> &'a mut SecureSessionCon
 
 const TRANSPORT_FAILURE: isize = -1;
 const TRANSPORT_OVERFLOW: isize = -2;
+const TRANSPORT_PANIC: isize = -3;
 
 unsafe extern "C" fn send_data(
     data_ptr: *const u8,
     data_len: usize,
     user_data: *mut c_void,
 ) -> isize {
-    let data = byte_slice_from_ptr(data_ptr, data_len);
-    let context = user_data_as_context(user_data);
+    let result = panic::catch_unwind(|| {
+        let data = byte_slice_from_ptr(data_ptr, data_len);
+        let context = user_data_as_context(user_data);
 
-    match context.transport.send_data(data) {
-        Ok(sent_bytes) => as_isize(sent_bytes).unwrap_or(TRANSPORT_OVERFLOW),
-        Err(error) => {
-            context.last_error = Some(error);
-            TRANSPORT_FAILURE
+        match context.transport.send_data(data) {
+            Ok(sent_bytes) => as_isize(sent_bytes).unwrap_or(TRANSPORT_OVERFLOW),
+            Err(error) => {
+                context.last_error = Some(error);
+                TRANSPORT_FAILURE
+            }
         }
-    }
+    });
+    result.unwrap_or(TRANSPORT_PANIC)
 }
 
 unsafe extern "C" fn receive_data(
@@ -836,25 +854,33 @@ unsafe extern "C" fn receive_data(
     data_len: usize,
     user_data: *mut c_void,
 ) -> isize {
-    let data = byte_slice_from_ptr_mut(data_ptr, data_len);
-    let context = user_data_as_context(user_data);
+    let result = panic::catch_unwind(|| {
+        let data = byte_slice_from_ptr_mut(data_ptr, data_len);
+        let context = user_data_as_context(user_data);
 
-    match context.transport.receive_data(data) {
-        Ok(received_bytes) => as_isize(received_bytes).unwrap_or(TRANSPORT_OVERFLOW),
-        Err(error) => {
-            context.last_error = Some(error);
-            TRANSPORT_FAILURE
+        match context.transport.receive_data(data) {
+            Ok(received_bytes) => as_isize(received_bytes).unwrap_or(TRANSPORT_OVERFLOW),
+            Err(error) => {
+                context.last_error = Some(error);
+                TRANSPORT_FAILURE
+            }
         }
-    }
+    });
+    result.unwrap_or(TRANSPORT_PANIC)
 }
 
 unsafe extern "C" fn state_changed(event: c_int, user_data: *mut c_void) {
-    let transport = &mut user_data_as_context(user_data).transport;
+    let _ = panic::catch_unwind(|| {
+        let transport = &mut user_data_as_context(user_data).transport;
 
-    if let Some(state) = SecureSessionState::from_int(event) {
-        transport.state_changed(state);
-    }
+        if let Some(state) = SecureSessionState::from_int(event) {
+            transport.state_changed(state);
+        }
+    });
 }
+
+const GET_PUBLIC_KEY_SUCCESS: c_int = 0;
+const GET_PUBLIC_KEY_FAILURE: c_int = -1;
 
 unsafe extern "C" fn get_public_key_for_id(
     id_ptr: *const c_void,
@@ -863,18 +889,22 @@ unsafe extern "C" fn get_public_key_for_id(
     key_len: usize,
     user_data: *mut c_void,
 ) -> c_int {
-    let id = byte_slice_from_ptr(id_ptr as *const u8, id_len);
-    let key_out = byte_slice_from_ptr_mut(key_ptr as *mut u8, key_len);
-    let transport = &mut user_data_as_context(user_data).transport;
+    let result = panic::catch_unwind(|| {
+        let id = byte_slice_from_ptr(id_ptr as *const u8, id_len);
+        let key_out = byte_slice_from_ptr_mut(key_ptr as *mut u8, key_len);
+        let transport = &mut user_data_as_context(user_data).transport;
 
-    if let Some(key) = transport.get_public_key_for_id(id) {
-        let key = key.as_ref();
-        if key_out.len() >= key.len() {
-            key_out[0..key.len()].copy_from_slice(key);
-            return 0;
+        if let Some(key) = transport.get_public_key_for_id(id) {
+            let key = key.as_ref();
+            if key_out.len() >= key.len() {
+                key_out[0..key.len()].copy_from_slice(key);
+                return GET_PUBLIC_KEY_SUCCESS;
+            }
         }
-    }
-    -1
+
+        GET_PUBLIC_KEY_FAILURE
+    });
+    result.unwrap_or(GET_PUBLIC_KEY_FAILURE)
 }
 
 #[doc(hidden)]

@@ -355,11 +355,10 @@ impl KeyPair {
     /// However, it does verify that _the kinds_ of the keys match: i.e., that they are both
     /// either RSA or ECDSA keys. An error is returned if that’s not the case. You can check
     /// the kind of the key beforehand via its `kind()` method.
-    pub fn try_join<S, P>(private_key: S, public_key: P) -> Result<KeyPair>
-    where
-        S: Into<PrivateKey>,
-        P: Into<PublicKey>,
-    {
+    pub fn try_join(
+        private_key: impl Into<PrivateKey>,
+        public_key: impl Into<PublicKey>,
+    ) -> Result<KeyPair> {
         let (private_key, public_key) = (private_key.into(), public_key.into());
         match (private_key.kind(), public_key.kind()) {
             (KeyKind::RsaPrivate, KeyKind::RsaPublic) => {}
@@ -383,7 +382,7 @@ impl RsaPrivateKey {
     /// Parses a key from a byte slice.
     ///
     /// Returns an error if the slice does not contain a valid RSA private key.
-    pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
+    pub fn try_from_slice(bytes: impl AsRef<[u8]>) -> Result<Self> {
         let key = KeyBytes::copy_slice(bytes.as_ref())?;
         match get_key_kind(&key)? {
             KeyKind::RsaPrivate => Ok(Self { inner: key }),
@@ -403,7 +402,7 @@ impl RsaPublicKey {
     /// Parses a key from a byte slice.
     ///
     /// Returns an error if the slice does not contain a valid RSA public key.
-    pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
+    pub fn try_from_slice(bytes: impl AsRef<[u8]>) -> Result<Self> {
         let key = KeyBytes::copy_slice(bytes.as_ref())?;
         match get_key_kind(&key)? {
             KeyKind::RsaPublic => Ok(Self { inner: key }),
@@ -423,7 +422,7 @@ impl EcdsaPrivateKey {
     /// Parses a key from a byte slice.
     ///
     /// Returns an error if the slice does not contain a valid ECDSA private key.
-    pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
+    pub fn try_from_slice(bytes: impl AsRef<[u8]>) -> Result<Self> {
         let key = KeyBytes::copy_slice(bytes.as_ref())?;
         match get_key_kind(&key)? {
             KeyKind::EcdsaPrivate => Ok(Self { inner: key }),
@@ -443,7 +442,7 @@ impl EcdsaPublicKey {
     /// Parses a key from a byte slice.
     ///
     /// Returns an error if the slice does not contain a valid ECDSA public key.
-    pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
+    pub fn try_from_slice(bytes: impl AsRef<[u8]>) -> Result<Self> {
         let key = KeyBytes::copy_slice(bytes.as_ref())?;
         match get_key_kind(&key)? {
             KeyKind::EcdsaPublic => Ok(Self { inner: key }),
@@ -468,7 +467,7 @@ impl PrivateKey {
     /// Parses a key from a byte slice.
     ///
     /// Returns an error if the slice does not contain a valid RSA or ECDSA private key.
-    pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
+    pub fn try_from_slice(bytes: impl AsRef<[u8]>) -> Result<Self> {
         let key = KeyBytes::copy_slice(bytes.as_ref())?;
         match get_key_kind(&key)? {
             KeyKind::RsaPrivate => Ok(Self { inner: key }),
@@ -487,7 +486,7 @@ impl PublicKey {
     /// Parses a key from a byte slice.
     ///
     /// Returns an error if the slice does not contain a valid RSA or ECDSA public key.
-    pub fn try_from_slice<T: AsRef<[u8]>>(bytes: T) -> Result<Self> {
+    pub fn try_from_slice(bytes: impl AsRef<[u8]>) -> Result<Self> {
         let key = KeyBytes::copy_slice(bytes.as_ref())?;
         match get_key_kind(&key)? {
             KeyKind::RsaPublic => Ok(Self { inner: key }),

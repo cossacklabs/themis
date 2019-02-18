@@ -101,7 +101,7 @@ use crate::utils::into_raw_parts;
 /// # Ok(())
 /// # }
 /// ```
-#[derive(Clone)]
+#[derive(Debug)]
 pub struct SecureMessage {
     key_pair: KeyPair,
 }
@@ -206,7 +206,7 @@ impl SecureMessage {
 ///
 /// assert!(signed_message.windows(message.len()).any(|subslice| subslice == message));
 /// ```
-#[derive(Clone)]
+#[derive(Debug)]
 pub struct SecureSign {
     private_key: PrivateKey,
 }
@@ -314,7 +314,7 @@ impl SecureSign {
 ///
 /// assert!(secure_c.verify(&signed_message).is_err());
 /// ```
-#[derive(Clone)]
+#[derive(Debug)]
 pub struct SecureVerify {
     public_key: PublicKey,
 }

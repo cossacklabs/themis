@@ -81,7 +81,7 @@
 //!     request = comparison.proceed_compare(&reply)?;
 //! }
 //!
-//! if !comparison.get_result()? {
+//! if !comparison.result()? {
 //!     unimplemented!("handle failed comparison here");
 //! }
 //! # Ok(())
@@ -121,17 +121,17 @@
 //!     send(&reply);   // This function should send the `reply` to the client.
 //! }
 //!
-//! if !comparison.get_result()? {
+//! if !comparison.result()? {
 //!     unimplemented!("handle failed comparison here");
 //! }
 //! # Ok(())
 //! # }
 //! ```
 //!
-//! Both the server and the client use [`get_result`] to get the comparison result
+//! Both the server and the client use [`result`] to get the comparison result
 //! after it [`is_complete`]:
 //!
-//! [`get_result`]: struct.SecureComparator.html#method.get_result
+//! [`result`]: struct.SecureComparator.html#method.result
 //! [`is_complete`]: struct.SecureComparator.html#method.is_complete
 
 use std::os::raw::c_void;
@@ -151,9 +151,14 @@ use crate::utils::into_raw_parts;
 /// Please see [module-level documentation][secure_comparator] for examples.
 ///
 /// [secure_comparator]: index.html
+#[derive(Debug)]
 pub struct SecureComparator {
     comp_ctx: *mut secure_comparator_t,
 }
+
+// It safe to move secure_comparator_t to another thread, it does not depend on any thread-local
+// state. However, it needs external synchronization for safe concurrent usage (hence no Sync).
+unsafe impl Send for SecureComparator {}
 
 impl SecureComparator {
     /// Prepares a new comparison.
@@ -188,7 +193,7 @@ impl SecureComparator {
     /// a `SecureComparator` to make a new comparison.
     ///
     /// You can use this method only before the comparison has been started. That is,
-    /// [`append_secret`] is safe call only before [`begin_compare`] or [`proceed_compare`].
+    /// [`append_secret`] is safe to call only before [`begin_compare`] or [`proceed_compare`].
     /// It will fail with an error if you try to append more data when you’re in the middle of
     /// a comparison or after it has been completed.
     ///
@@ -214,7 +219,7 @@ impl SecureComparator {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn append_secret<S: AsRef<[u8]>>(&mut self, secret: S) -> Result<()> {
+    pub fn append_secret(&mut self, secret: impl AsRef<[u8]>) -> Result<()> {
         let (secret_ptr, secret_len) = into_raw_parts(secret.as_ref());
 
         unsafe {
@@ -302,7 +307,7 @@ impl SecureComparator {
     /// Please see [module-level documentation][secure_comparator] for examples.
     ///
     /// [secure_comparator]: index.html
-    pub fn proceed_compare<D: AsRef<[u8]>>(&mut self, peer_data: D) -> Result<Vec<u8>> {
+    pub fn proceed_compare(&mut self, peer_data: impl AsRef<[u8]>) -> Result<Vec<u8>> {
         let (peer_compare_data_ptr, peer_compare_data_len) = into_raw_parts(peer_data.as_ref());
 
         let mut compare_data = Vec::new();
@@ -335,7 +340,6 @@ impl SecureComparator {
             let error = Error::from_compare_status(status);
             match error.kind() {
                 ErrorKind::CompareSendOutputToPeer => {}
-                // TODO: signal that this does not need to be sent
                 ErrorKind::Success => {}
                 _ => {
                     return Err(error);
@@ -346,54 +350,6 @@ impl SecureComparator {
         }
 
         Ok(compare_data)
-    }
-
-    /// Returns the result of comparison.
-    ///
-    /// Let it be a surprise: `true` if data has been found equal on both peers, `false` otherwise.
-    /// Or an error if you call this method too early, or if a real error has happened during the
-    /// comparison.
-    ///
-    /// # Examples
-    ///
-    /// You should call this method only after the comparison is complete.
-    ///
-    /// ```
-    /// # fn main() -> Result<(), themis::Error> {
-    /// use themis::secure_comparator::SecureComparator;
-    /// #
-    /// # use std::cell::RefCell;
-    ///
-    /// let mut comparison = SecureComparator::new();
-    /// # let mut other_peer = SecureComparator::new();
-    ///
-    /// comparison.append_secret(b"999-04-1234")?;
-    /// # other_peer.append_secret(b"999-04-1234")?;
-    ///
-    /// assert!(comparison.get_result().is_err());
-    ///
-    /// // Perform comparison
-    /// #
-    /// # let mut request = comparison.begin_compare()?;
-    /// #
-    /// while !comparison.is_complete() {
-    ///     // ...
-    /// #   let reply = other_peer.proceed_compare(&request)?;
-    /// #   request = comparison.proceed_compare(&reply)?;
-    /// }
-    ///
-    /// assert!(comparison.get_result().is_ok());
-    /// # Ok(())
-    /// # }
-    /// ```
-    pub fn get_result(&self) -> Result<bool> {
-        let status = unsafe { secure_comparator_get_result(self.comp_ctx) };
-        let error = Error::from_match_status(status);
-        match error.kind() {
-            ErrorKind::CompareMatch => Ok(true),
-            ErrorKind::CompareNoMatch => Ok(false),
-            _ => Err(error),
-        }
     }
 
     /// Checks if this comparison is complete.
@@ -418,9 +374,57 @@ impl SecureComparator {
     /// assert!(!comparison.is_complete());
     /// ```
     pub fn is_complete(&self) -> bool {
-        match self.get_result() {
+        match self.result() {
             Err(ref e) if e.kind() == ErrorKind::CompareNotReady => false,
             _ => true,
+        }
+    }
+
+    /// Returns the result of comparison.
+    ///
+    /// Let it be a surprise: `true` if data has been found equal on both peers, `false` otherwise.
+    /// Or an error if you call this method too early, or if a real error has happened during the
+    /// comparison.
+    ///
+    /// # Examples
+    ///
+    /// You should call this method only after the comparison is complete.
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// use themis::secure_comparator::SecureComparator;
+    /// #
+    /// # use std::cell::RefCell;
+    ///
+    /// let mut comparison = SecureComparator::new();
+    /// # let mut other_peer = SecureComparator::new();
+    ///
+    /// comparison.append_secret(b"999-04-1234")?;
+    /// # other_peer.append_secret(b"999-04-1234")?;
+    ///
+    /// assert!(comparison.result().is_err());
+    ///
+    /// // Perform comparison
+    /// #
+    /// # let mut request = comparison.begin_compare()?;
+    /// #
+    /// while !comparison.is_complete() {
+    ///     // ...
+    /// #   let reply = other_peer.proceed_compare(&request)?;
+    /// #   request = comparison.proceed_compare(&reply)?;
+    /// }
+    ///
+    /// assert!(comparison.result().is_ok());
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn result(&self) -> Result<bool> {
+        let status = unsafe { secure_comparator_get_result(self.comp_ctx) };
+        let error = Error::from_match_status(status);
+        match error.kind() {
+            ErrorKind::CompareMatch => Ok(true),
+            ErrorKind::CompareNoMatch => Ok(false),
+            _ => Err(error),
         }
     }
 }
