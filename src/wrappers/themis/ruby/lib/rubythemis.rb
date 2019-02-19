@@ -67,7 +67,6 @@ module ThemisImport
                   [:pointer, :pointer, :pointer, :pointer], :int
   attach_function :themis_gen_ec_key_pair,
                   [:pointer, :pointer, :pointer, :pointer], :int
-  attach_function :themis_version, [], :string
 
   attach_function :themis_secure_cell_encrypt_seal,
                   [:pointer, :int, :pointer, :int, :pointer, :int,
