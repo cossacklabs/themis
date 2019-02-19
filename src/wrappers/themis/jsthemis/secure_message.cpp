@@ -17,6 +17,7 @@
 #include <node_buffer.h>
 #include <themis/themis.h>
 #include <vector>
+#include "errors.hpp"
 #include "secure_message.hpp"
 
 namespace jsthemis {
@@ -45,6 +46,21 @@ namespace jsthemis {
 
   void SecureMessage::New(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     if (args.IsConstructCall()) {
+      if(args.Length()<2){
+        ThrowParameterError("Secure Message constructor", "not enough arguments, expected private and public key");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
+      if(!args[0]->IsUint8Array()){
+        ThrowParameterError("Secure Message constructor", "private key is not a byte buffer, use ByteBuffer or Uint8Array");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
+      if(!args[1]->IsUint8Array()){
+        ThrowParameterError("Secure Message constructor", "public key is not a byte buffer, use ByteBuffer or Uint8Array");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
       std::vector<uint8_t> private_key((uint8_t*)(node::Buffer::Data(args[0])), (uint8_t*)(node::Buffer::Data(args[0])+node::Buffer::Length(args[0])));
       std::vector<uint8_t> public_key((uint8_t*)(node::Buffer::Data(args[1])), (uint8_t*)(node::Buffer::Data(args[1])+node::Buffer::Length(args[1])));
       SecureMessage* obj = new SecureMessage(private_key, public_key);
@@ -60,16 +76,44 @@ namespace jsthemis {
   }
 
   void SecureMessage::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+    themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
+    if(obj->private_key_.empty()){
+      ThrowParameterError("Secure Message failed to encrypt message", "private key is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(obj->peer_public_key_.empty()){
+      ThrowParameterError("Secure Message failed to encrypt message", "public key is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(args.Length()<1){
+      ThrowParameterError("Secure Message failed to encrypt message", "not enough arguments, expected message");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(!args[0]->IsUint8Array()){
+      ThrowParameterError("Secure Message failed to encrypt message", "message is not a byte buffer, use ByteBuffer or Uint8Array");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(node::Buffer::Length(args[0])==0){
+      ThrowParameterError("Secure Message failed to encrypt message", "message is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
     size_t encrypted_length=0;
-    if(themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &encrypted_length)!=THEMIS_BUFFER_TOO_SMALL){
-      Nan::ThrowError("Secure Message failed encrypting");
+    status=themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &encrypted_length);
+    if(status!=THEMIS_BUFFER_TOO_SMALL){
+      ThrowError("Secure Message failed to encrypt message", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* encrypted_data=(uint8_t*)(malloc(encrypted_length));
-    if(themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), encrypted_data, &encrypted_length)!=THEMIS_SUCCESS){
-      Nan::ThrowError("Secure Message failed encrypting");
+    status=themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), encrypted_data, &encrypted_length);
+    if(status!=THEMIS_SUCCESS){
+      ThrowError("Secure Message failed to encrypt message", status);
       free(encrypted_data);
       args.GetReturnValue().SetUndefined();
       return;
@@ -78,16 +122,44 @@ namespace jsthemis {
   }
 
   void SecureMessage::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args){
+    themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
+    if(obj->private_key_.empty()){
+      ThrowParameterError("Secure Message failed to decrypt message", "private key is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(obj->peer_public_key_.empty()){
+      ThrowParameterError("Secure Message failed to decrypt message", "public key is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(args.Length()<1){
+      ThrowParameterError("Secure Message failed to decrypt message", "not enough arguments, expected message");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(!args[0]->IsUint8Array()){
+      ThrowParameterError("Secure Message failed to decrypt message", "message is not a byte buffer, use ByteBuffer or Uint8Array");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(node::Buffer::Length(args[0])==0){
+      ThrowParameterError("Secure Message failed to decrypt message", "message is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
     size_t decrypted_length=0;
-    if(themis_secure_message_unwrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &decrypted_length)!=THEMIS_BUFFER_TOO_SMALL){
-      Nan::ThrowError("Secure Message failed decrypting (length determination)");
+    status=themis_secure_message_unwrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &decrypted_length);
+    if(status!=THEMIS_BUFFER_TOO_SMALL){
+      ThrowError("Secure Message failed to decrypt message", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* decrypted_data=(uint8_t*)(malloc(decrypted_length));
-    if(themis_secure_message_unwrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), decrypted_data, &decrypted_length)!=THEMIS_SUCCESS){
-      Nan::ThrowError("Secure Message failed decrypting");
+    status=themis_secure_message_unwrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), decrypted_data, &decrypted_length);
+    if(status!=THEMIS_SUCCESS){
+      ThrowError("Secure Message failed to decrypt message", status);
       free(decrypted_data);
       args.GetReturnValue().SetUndefined();
       return;
@@ -96,17 +168,39 @@ namespace jsthemis {
   }
   
   void SecureMessage::sign(const Nan::FunctionCallbackInfo<v8::Value>& args){
+    themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
+    if(obj->peer_public_key_.empty()){
+      ThrowParameterError("Secure Message failed to sign message", "public key is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(args.Length()<1){
+      ThrowParameterError("Secure Message failed to sign message", "not enough arguments, expected message");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(!args[0]->IsUint8Array()){
+      ThrowParameterError("Secure Message failed to sign message", "message is not a byte buffer, use ByteBuffer or Uint8Array");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(node::Buffer::Length(args[0])==0){
+      ThrowParameterError("Secure Message failed to sign message", "message is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
     size_t encrypted_length=0;
-    if(themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), NULL, 0, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &encrypted_length)!=THEMIS_BUFFER_TOO_SMALL){
-
-      Nan::ThrowError("Secure Message failed singing");
+    status=themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), NULL, 0, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &encrypted_length);
+    if(status!=THEMIS_BUFFER_TOO_SMALL){
+      ThrowError("Secure Message failed to sign message", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* encrypted_data=(uint8_t*)(malloc(encrypted_length));
-    if(themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), NULL, 0, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), encrypted_data, &encrypted_length)!=THEMIS_SUCCESS){
-      Nan::ThrowError("Secure Message failed singing");
+    status=themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), NULL, 0, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), encrypted_data, &encrypted_length);
+    if(status!=THEMIS_SUCCESS){
+      ThrowError("Secure Message failed to sign message", status);
       free(encrypted_data);
       args.GetReturnValue().SetUndefined();
       return;
@@ -115,16 +209,39 @@ namespace jsthemis {
   }
 
   void SecureMessage::verify(const Nan::FunctionCallbackInfo<v8::Value>& args){
+    themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
+    if(obj->private_key_.empty()){
+      ThrowParameterError("Secure Message failed to verify signature", "private key is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(args.Length()<1){
+      ThrowParameterError("Secure Message failed to verify signature", "not enough arguments, expected message");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(!args[0]->IsUint8Array()){
+      ThrowParameterError("Secure Message failed to verify signature", "message is not byte buffer, use ByteBuffer or Uint8Array");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(node::Buffer::Length(args[0])==0){
+      ThrowParameterError("Secure Message failed to verify signature", "message is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
     size_t decrypted_length=0;
-    if(themis_secure_message_unwrap(NULL, 0, &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &decrypted_length)!=THEMIS_BUFFER_TOO_SMALL){
-      Nan::ThrowError("Secure Message failed verifying");
+    status=themis_secure_message_unwrap(NULL, 0, &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &decrypted_length);
+    if(status!=THEMIS_BUFFER_TOO_SMALL){
+      ThrowError("Secure Message failed to verify signature", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* decrypted_data=(uint8_t*)(malloc(decrypted_length));
-    if(themis_secure_message_unwrap(NULL, 0, &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), decrypted_data, &decrypted_length)!=THEMIS_SUCCESS){
-      Nan::ThrowError("Secure Message failed verifying");
+    status=themis_secure_message_unwrap(NULL, 0, &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), decrypted_data, &decrypted_length);
+    if(status!=THEMIS_SUCCESS){
+      ThrowError("Secure Message failed to verify signature", status);
       free(decrypted_data);
       args.GetReturnValue().SetUndefined();
       return;
