@@ -34,6 +34,34 @@ namespace themispp {
         static std::string context1("secure cell test context1 message");
         static std::string context2("secure cell test context2 message");
 
+        static void secure_cell_construction_test() {
+            std::vector<uint8_t> empty;
+
+            try {
+                themispp::secure_cell_seal_t seal(empty);
+                sput_fail_unless(false, "empty password (seal)", __LINE__);
+            }
+            catch (const themispp::exception_t&) {
+                sput_fail_unless(true, "empty password (seal)", __LINE__);
+            }
+
+            try {
+                themispp::secure_cell_token_protect_t seal(empty);
+                sput_fail_unless(false, "empty password (token protect)", __LINE__);
+            }
+            catch (const themispp::exception_t&) {
+                sput_fail_unless(true, "empty password (token protect)", __LINE__);
+            }
+
+            try {
+                themispp::secure_cell_context_imprint_t seal(empty);
+                sput_fail_unless(false, "empty password (context imprint)", __LINE__);
+            }
+            catch (const themispp::exception_t&) {
+                sput_fail_unless(true, "empty password (context imprint)", __LINE__);
+            }
+        }
+
         static void secure_cell_seal_test() {
             //construction
             std::vector<uint8_t> pass1_vector(password1.c_str(), password1.c_str() + password1.length());
@@ -213,6 +241,7 @@ namespace themispp {
 
         void run_secure_cell_test() {
             sput_enter_suite("ThemisPP secure cell seal mode test:");
+            sput_run_test(secure_cell_construction_test, "secure_cell_construction_test", __FILE__);
             sput_run_test(secure_cell_seal_test, "secure_cell_seal_test", __FILE__);
             sput_run_test(secure_cell_seal_context_test, "secure_cell_seal_context_test", __FILE__);
             sput_run_test(secure_cell_token_protect_test, "secure_cell_token_protect_test", __FILE__);
