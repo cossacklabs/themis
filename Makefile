@@ -72,7 +72,7 @@ endif
 
 #default engine
 ifeq ($(PREFIX),)
-PREFIX = /usr
+PREFIX = /usr/local
 
 # MacOS
 ifdef IS_MACOS
