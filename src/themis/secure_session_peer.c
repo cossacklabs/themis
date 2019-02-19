@@ -33,6 +33,11 @@ themis_status_t secure_session_peer_init(secure_session_peer_t *peer, const void
 {
 	size_t total_len = id_len + sign_key_len;
 
+	if (!id || !id_len || !sign_key || !sign_key_len)
+	{
+		return THEMIS_INVALID_PARAMETER;
+	}
+
 	if (ecdh_key)
 	{
 		total_len += ecdh_key_len;
