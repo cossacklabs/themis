@@ -53,7 +53,7 @@ namespace themispp {
       if(peer_public_key_.empty()){
         throw themispp::exception_t("Secure Message failed to encrypt message: public key not set");
       }
-      if(data_end-data_begin==0){
+      if(data_end<=data_begin){
         throw themispp::exception_t("Secure Message failed to encrypt message: data must be non-empty");
       }
       themis_status_t status=THEMIS_FAIL;
@@ -81,7 +81,7 @@ namespace themispp {
       if(peer_public_key_.empty()){
         throw themispp::exception_t("Secure Message failed to decrypt message: public key not set");
       }
-      if(data_end-data_begin==0){
+      if(data_end<=data_begin){
         throw themispp::exception_t("Secure Message failed to decrypt message: data must be non-empty");
       }
       themis_status_t status=THEMIS_FAIL;
@@ -106,7 +106,7 @@ namespace themispp {
       if(private_key_.empty()){
         throw themispp::exception_t("Secure Message failed to sign message: private key not set");
       }
-      if(data_end-data_begin==0){
+      if(data_end<=data_begin){
         throw themispp::exception_t("Secure Message failed to sign message: data must be non-empty");
       }
       themis_status_t status=THEMIS_FAIL;
@@ -131,7 +131,7 @@ namespace themispp {
       if(peer_public_key_.empty()){
         throw themispp::exception_t("Secure Message failed to verify signature: public key not set");
       }
-      if(data_end-data_begin==0){
+      if(data_end<=data_begin){
         throw themispp::exception_t("Secure Message failed to verify signature: data must be non-empty");
       }
       themis_status_t status=THEMIS_FAIL;
