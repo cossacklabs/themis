@@ -46,6 +46,9 @@ namespace themispp{
   inline ssize_t receive_callback(uint8_t* data, size_t data_length, void *user_data){
     try{
       std::vector<uint8_t> received_data=((secure_session_callback_interface_t*)user_data)->receive();
+      if(received_data.empty() || received_data.size()>data_length){
+        return -1;
+      }
       memcpy(data, &received_data[0], received_data.size());
       return ssize_t(received_data.size());
     }catch(...){}
@@ -54,6 +57,9 @@ namespace themispp{
 
   inline int get_public_key_for_id_callback(const void *id, size_t id_length, void *key_buffer, size_t key_buffer_length, void *user_data){
     std::vector<uint8_t> pubk=((secure_session_callback_interface_t*)user_data)->get_pub_key_by_id(std::vector<uint8_t>(static_cast<const uint8_t*>(id), static_cast<const uint8_t*>(id)+id_length));
+    if(pubk.empty()){
+      return THEMIS_FAIL;
+    }
     if(pubk.size()>key_buffer_length){
       return THEMIS_BUFFER_TOO_SMALL;
     }
@@ -136,6 +142,9 @@ namespace themispp{
       if(!_session){
         throw themispp::exception_t("uninitialized Secure Session");
       }
+      if(data.empty()){
+        throw themispp::exception_t("Secure Session failed to unwrap message: data must be non-empty");
+      }
       themis_status_t status=THEMIS_FAIL;
       size_t unwrapped_data_length=0;
       status=secure_session_unwrap(_session, &data[0],data.size(), NULL, &unwrapped_data_length);
@@ -160,6 +169,9 @@ namespace themispp{
     const data_t& wrap(const std::vector<uint8_t>& data){
       if(!_session){
         throw themispp::exception_t("uninitialized Secure Session");
+      }
+      if(data.empty()){
+        throw themispp::exception_t("Secure Session failed to wrap message: data must be non-empty");
       }
       themis_status_t status=THEMIS_FAIL;
       size_t wrapped_message_length=0;
@@ -217,7 +229,7 @@ namespace themispp{
       _res.resize(THEMISPP_SECURE_SESSION_MAX_MESSAGE_SIZE);
       ssize_t recv_size=secure_session_receive(_session, &_res[0], _res.size());
       if(recv_size<=0){
-        throw themispp::exception_t("Secure Session failed to receive", THEMIS_SSESSION_TRANSPORT_ERROR);
+        throw themispp::exception_t("Secure Session failed to receive message", THEMIS_SSESSION_TRANSPORT_ERROR);
       }
       _res.resize(recv_size);
       return _res;
@@ -227,9 +239,12 @@ namespace themispp{
       if(!_session){
         throw themispp::exception_t("uninitialized Secure Session");
       }
+      if(data.empty()){
+        throw themispp::exception_t("Secure Session failed to send message: data must be non-empty");
+      }
       ssize_t send_size=secure_session_send(_session, &data[0], data.size());
       if(send_size<=0){
-        throw themispp::exception_t("Secure Session failed to send", THEMIS_SSESSION_TRANSPORT_ERROR);
+        throw themispp::exception_t("Secure Session failed to send message", THEMIS_SSESSION_TRANSPORT_ERROR);
       }
     }
 

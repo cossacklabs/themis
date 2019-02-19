@@ -115,14 +115,18 @@ namespace themispp{
       secure_cell_optional_context_t(password){}
 
     const data_t& encrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end,  data_t::const_iterator context_begin, data_t::const_iterator context_end){
+      if(data_end-data_begin==0){
+        throw themispp::exception_t("Secure Cell (Seal) failed to encrypt message: data must be non-empty");
+      }
       themis_status_t status=THEMIS_FAIL;
+      const uint8_t* context_ptr=(context_end-context_begin>0) ? &(*context_begin) : NULL;
       size_t encrypted_length=0;
-      status=themis_secure_cell_encrypt_seal(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, NULL, &encrypted_length);
+      status=themis_secure_cell_encrypt_seal(&_password[0], _password.size(), context_ptr, context_end-context_begin, &(*data_begin), data_end-data_begin, NULL, &encrypted_length);
       if(status!=THEMIS_BUFFER_TOO_SMALL){
         throw themispp::exception_t("Secure Cell (Seal) failed to encrypt message", status);
       }
       _res.resize(encrypted_length);
-      status=themis_secure_cell_encrypt_seal(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, &_res[0], &encrypted_length);
+      status=themis_secure_cell_encrypt_seal(&_password[0], _password.size(), context_ptr, context_end-context_begin, &(*data_begin), data_end-data_begin, &_res[0], &encrypted_length);
       if(status!=THEMIS_SUCCESS){
         throw themispp::exception_t("Secure Cell (Seal) failed to encrypt message", status);
       }
@@ -131,16 +135,20 @@ namespace themispp{
     using secure_cell_optional_context_t::encrypt;
     
     const data_t& decrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end,  data_t::const_iterator context_begin, data_t::const_iterator context_end){
+      if(data_end-data_begin==0){
+        throw themispp::exception_t("Secure Cell (Seal) failed to decrypt message: data must be non-empty");
+      }
       themis_status_t status=THEMIS_FAIL;
+      const uint8_t* context_ptr=(context_end-context_begin>0) ? &(*context_begin) : NULL;
       size_t decrypted_length=0;
-      status=themis_secure_cell_decrypt_seal(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, NULL, &decrypted_length);
+      status=themis_secure_cell_decrypt_seal(&_password[0], _password.size(), context_ptr, context_end-context_begin, &(*data_begin), data_end-data_begin, NULL, &decrypted_length);
       if(status!=THEMIS_BUFFER_TOO_SMALL){
-        throw themispp::exception_t("Secure Cell (Seal) failed to decrypt", status);
+        throw themispp::exception_t("Secure Cell (Seal) failed to decrypt message", status);
       }
       _res.resize(decrypted_length);
-      status=themis_secure_cell_decrypt_seal(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, &_res[0], &decrypted_length);
+      status=themis_secure_cell_decrypt_seal(&_password[0], _password.size(), context_ptr, context_end-context_begin, &(*data_begin), data_end-data_begin, &_res[0], &decrypted_length);
       if(status!=THEMIS_SUCCESS){
-        throw themispp::exception_t("Secure Cell (Seal) failed to decrypt", status);
+        throw themispp::exception_t("Secure Cell (Seal) failed to decrypt message", status);
       }
       return _res;
     }
@@ -158,34 +166,45 @@ namespace themispp{
       _token(0){}
 
     const data_t& encrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end, data_t::const_iterator context_begin, data_t::const_iterator context_end){
+      if(data_end-data_begin==0){
+        throw themispp::exception_t("Secure Cell (Token Protect) failed to encrypt message: data must be non-empty");
+      }
       themis_status_t status=THEMIS_FAIL;
+      const uint8_t* context_ptr=(context_end-context_begin>0) ? &(*context_begin) : NULL;
       size_t encrypted_length=0;
       size_t token_length=0;
-      status=themis_secure_cell_encrypt_token_protect(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, NULL, &token_length, NULL, &encrypted_length);
+      status=themis_secure_cell_encrypt_token_protect(&_password[0], _password.size(), context_ptr, context_end-context_begin, &(*data_begin), data_end-data_begin, NULL, &token_length, NULL, &encrypted_length);
       if(status!=THEMIS_BUFFER_TOO_SMALL){
-        throw themispp::exception_t("Secure Cell (Token Protect) failed to encrypt", status);
+        throw themispp::exception_t("Secure Cell (Token Protect) failed to encrypt message", status);
       }
       _res.resize(encrypted_length);
       _token.resize(token_length);
-      status=themis_secure_cell_encrypt_token_protect(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, &_token[0], &token_length, &_res[0], &encrypted_length);
+      status=themis_secure_cell_encrypt_token_protect(&_password[0], _password.size(), context_ptr, context_end-context_begin, &(*data_begin), data_end-data_begin, &_token[0], &token_length, &_res[0], &encrypted_length);
       if(status!=THEMIS_SUCCESS){
-        throw themispp::exception_t("Secure Cell (Token Protect) failed to encrypt", status);
+        throw themispp::exception_t("Secure Cell (Token Protect) failed to encrypt message", status);
       }
       return _res;
     }
     using secure_cell_optional_context_t::encrypt;
 
     const data_t& decrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end, data_t::const_iterator context_begin, data_t::const_iterator context_end){
+      if(data_end-data_begin==0){
+        throw themispp::exception_t("Secure Cell (Token Protect) failed to decrypt message: data must be non-empty");
+      }
+      if(_token.empty()){
+        throw themispp::exception_t("Secure Cell (Token Protect) failed to decrypt message: token must be non-empty (set with set_token())");
+      }
       themis_status_t status=THEMIS_FAIL;
+      const uint8_t* context_ptr=(context_end-context_begin>0) ? &(*context_begin) : NULL;
       size_t decrypted_length=0;
-      status=themis_secure_cell_decrypt_token_protect(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, &_token[0], _token.size(), NULL, &decrypted_length);
+      status=themis_secure_cell_decrypt_token_protect(&_password[0], _password.size(), context_ptr, context_end-context_begin, &(*data_begin), data_end-data_begin, &_token[0], _token.size(), NULL, &decrypted_length);
       if(status!=THEMIS_BUFFER_TOO_SMALL){
-        throw themispp::exception_t("Secure Cell (Token Protect) failed to decrypt", status);
+        throw themispp::exception_t("Secure Cell (Token Protect) failed to decrypt message", status);
       }
       _res.resize(decrypted_length);
-      status=themis_secure_cell_decrypt_token_protect(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, &_token[0], _token.size(), &_res[0], &decrypted_length);
+      status=themis_secure_cell_decrypt_token_protect(&_password[0], _password.size(), context_ptr, context_end-context_begin, &(*data_begin), data_end-data_begin, &_token[0], _token.size(), &_res[0], &decrypted_length);
       if(status!=THEMIS_SUCCESS){
-        throw themispp::exception_t("Secure Cell (Token Protect) failed to decrypt", status);
+        throw themispp::exception_t("Secure Cell (Token Protect) failed to decrypt message", status);
       }
       return _res;
     }
@@ -204,32 +223,44 @@ namespace themispp{
       secure_cell_t(password){}
 
     const data_t& encrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end, data_t::const_iterator context_begin, data_t::const_iterator context_end){
+      if(data_end-data_begin==0){
+        throw themispp::exception_t("Secure Cell (Context Imprint) failed to encrypt message: data must be non-empty");
+      }
+      if(context_end-context_begin==0){
+        throw themispp::exception_t("Secure Cell (Context Imprint) failed to encrypt message: context must be non-empty");
+      }
       themis_status_t status=THEMIS_FAIL;
       size_t encrypted_length=0;
       status=themis_secure_cell_encrypt_context_imprint(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, NULL, &encrypted_length);
       if(status!=THEMIS_BUFFER_TOO_SMALL){
-        throw themispp::exception_t("Secure Cell (Context Imprint) failed to encrypt", status);
+        throw themispp::exception_t("Secure Cell (Context Imprint) failed to encrypt message", status);
       }
       _res.resize(encrypted_length);
       status=themis_secure_cell_encrypt_context_imprint(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, &_res[0], &encrypted_length);
       if(status!=THEMIS_SUCCESS){
-        throw themispp::exception_t("Secure Cell (Context Imprint) failed to encrypt", status);
+        throw themispp::exception_t("Secure Cell (Context Imprint) failed to encrypt message", status);
       }
       return _res;
     }
     using secure_cell_t::encrypt;
 
     const data_t& decrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end, data_t::const_iterator context_begin, data_t::const_iterator context_end){
+      if(data_end-data_begin==0){
+        throw themispp::exception_t("Secure Cell (Context Imprint) failed to decrypt message: data must be non-empty");
+      }
+      if(context_end-context_begin==0){
+        throw themispp::exception_t("Secure Cell (Context Imprint) failed to decrypt message: context must be non-empty");
+      }
       themis_status_t status=THEMIS_FAIL;
       size_t decrypted_length=0;
       status=themis_secure_cell_decrypt_context_imprint(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, NULL, &decrypted_length);
       if(status!=THEMIS_BUFFER_TOO_SMALL){
-        throw themispp::exception_t("Secure Cell (Context Imprint) failed to decrypt", status);
+        throw themispp::exception_t("Secure Cell (Context Imprint) failed to decrypt message", status);
       }
       _res.resize(decrypted_length);
       status=themis_secure_cell_decrypt_context_imprint(&_password[0], _password.size(), &(*context_begin), context_end-context_begin, &(*data_begin), data_end-data_begin, &_res[0], &decrypted_length);
       if(status!=THEMIS_SUCCESS){
-        throw themispp::exception_t("Secure Cell (Context Imprint) failed to decrypt", status);
+        throw themispp::exception_t("Secure Cell (Context Imprint) failed to decrypt message", status);
       }
       return _res;
     }

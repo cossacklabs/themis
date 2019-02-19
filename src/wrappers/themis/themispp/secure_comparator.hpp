@@ -31,6 +31,9 @@ namespace themispp{
     
     secure_comparator_t(const data_t& shared_secret):
       comparator_(NULL){
+      if(shared_secret.empty()){
+        throw themispp::exception_t("Secure Comparator must have non-empty shared secret");
+      }
       res_.reserve(512);
       comparator_=secure_comparator_create();
       if(!comparator_){
@@ -62,6 +65,9 @@ namespace themispp{
     }
 
     const data_t& proceed(const std::vector<uint8_t>& data){
+      if(data.empty()){
+        throw themispp::exception_t("Secure Comparator failed to proceed comparison: data must be non-empty");
+      }
       themis_status_t status=THEMIS_FAIL;
       size_t res_data_length=0;
       status=secure_comparator_proceed_compare(comparator_, &data[0], data.size(), NULL, &res_data_length);

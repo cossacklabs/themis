@@ -53,6 +53,9 @@ namespace themispp {
       if(peer_public_key_.empty()){
         throw themispp::exception_t("Secure Message failed to encrypt message: public key not set");
       }
+      if(data_end-data_begin==0){
+        throw themispp::exception_t("Secure Message failed to encrypt message: data must be non-empty");
+      }
       themis_status_t status=THEMIS_FAIL;
       size_t encrypted_data_length=0;
       status=themis_secure_message_wrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, NULL, &encrypted_data_length);
@@ -78,6 +81,9 @@ namespace themispp {
       if(peer_public_key_.empty()){
         throw themispp::exception_t("Secure Message failed to decrypt message: public key not set");
       }
+      if(data_end-data_begin==0){
+        throw themispp::exception_t("Secure Message failed to decrypt message: data must be non-empty");
+      }
       themis_status_t status=THEMIS_FAIL;
       size_t decrypted_data_length=0;
       status=themis_secure_message_unwrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, NULL, &decrypted_data_length);
@@ -100,6 +106,9 @@ namespace themispp {
       if(private_key_.empty()){
         throw themispp::exception_t("Secure Message failed to sign message: private key not set");
       }
+      if(data_end-data_begin==0){
+        throw themispp::exception_t("Secure Message failed to sign message: data must be non-empty");
+      }
       themis_status_t status=THEMIS_FAIL;
       size_t encrypted_data_length=0;
       status=themis_secure_message_wrap(&private_key_[0], private_key_.size(), NULL, 0, &(*data_begin), data_end-data_begin, NULL, &encrypted_data_length);
@@ -121,6 +130,9 @@ namespace themispp {
     const data_t& verify(data_t::const_iterator data_begin, data_t::const_iterator data_end){
       if(peer_public_key_.empty()){
         throw themispp::exception_t("Secure Message failed to verify signature: public key not set");
+      }
+      if(data_end-data_begin==0){
+        throw themispp::exception_t("Secure Message failed to verify signature: data must be non-empty");
       }
       themis_status_t status=THEMIS_FAIL;
       size_t decrypted_data_length=0;
