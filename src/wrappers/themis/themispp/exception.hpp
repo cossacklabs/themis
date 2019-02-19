@@ -18,13 +18,29 @@
 #define THEMISPP_EXCEPTION_HPP_
 
 #include <stdexcept>
+#include <themis/themis.h>
 
 namespace themispp{
-    class exception_t: public std::runtime_error{
-	public:
-	explicit exception_t(const char* what):
-	    std::runtime_error(what){}
-    };
+  class exception_t: public std::runtime_error
+  {
+  public:
+    explicit exception_t(const char* what)
+      : std::runtime_error(what)
+      , status_(THEMIS_INVALID_PARAMETER)
+    {}
+
+    exception_t(const char* what, ::themis_status_t status)
+      : std::runtime_error(what)
+      , status_(status)
+    {}
+
+    ::themis_status_t status() const {
+      return status_;
+    }
+
+  private:
+    ::themis_status_t status_;
+  };
 }//themispp ns
 
 #endif
