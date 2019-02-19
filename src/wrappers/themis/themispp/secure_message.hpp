@@ -47,12 +47,23 @@ namespace themispp {
     virtual ~secure_message_t(){}
 
     const data_t& encrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end){
+      if(private_key_.empty()){
+        throw themispp::exception_t("Secure Message failed to encrypt message: private key not set");
+      }
+      if(peer_public_key_.empty()){
+        throw themispp::exception_t("Secure Message failed to encrypt message: public key not set");
+      }
+      themis_status_t status=THEMIS_FAIL;
       size_t encrypted_data_length=0;
-      if(themis_secure_message_wrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, NULL, &encrypted_data_length)!=THEMIS_BUFFER_TOO_SMALL)
-	throw themispp::exception_t("Secure Message failed encrypting");
+      status=themis_secure_message_wrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, NULL, &encrypted_data_length);
+      if(status!=THEMIS_BUFFER_TOO_SMALL){
+        throw themispp::exception_t("Secure Message failed to encrypt message", status);
+      }
       res_.resize(encrypted_data_length);
-      if(themis_secure_message_wrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, &res_[0], &encrypted_data_length)!=THEMIS_SUCCESS)
-	throw themispp::exception_t("Secure Message failed encrypting");
+      status=themis_secure_message_wrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, &res_[0], &encrypted_data_length);
+      if(status!=THEMIS_SUCCESS){
+        throw themispp::exception_t("Secure Message failed to encrypt message", status);
+      }
       return res_;
     }
 
@@ -61,12 +72,23 @@ namespace themispp {
     }
 
     const data_t& decrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end){
+      if(private_key_.empty()){
+        throw themispp::exception_t("Secure Message failed to decrypt message: private key not set");
+      }
+      if(peer_public_key_.empty()){
+        throw themispp::exception_t("Secure Message failed to decrypt message: public key not set");
+      }
+      themis_status_t status=THEMIS_FAIL;
       size_t decrypted_data_length=0;
-      if(themis_secure_message_unwrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, NULL, &decrypted_data_length)!=THEMIS_BUFFER_TOO_SMALL)
-	throw themispp::exception_t("Secure Message failed decrypting");
+      status=themis_secure_message_unwrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, NULL, &decrypted_data_length);
+      if(status!=THEMIS_BUFFER_TOO_SMALL){
+        throw themispp::exception_t("Secure Message failed to decrypt message", status);
+      }
       res_.resize(decrypted_data_length);
-      if(themis_secure_message_unwrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, &res_[0], &decrypted_data_length)!=THEMIS_SUCCESS)
-	throw themispp::exception_t("Secure Message failed decrypting");
+      status=themis_secure_message_unwrap(&private_key_[0], private_key_.size(), &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, &res_[0], &decrypted_data_length);
+      if(status!=THEMIS_SUCCESS){
+        throw themispp::exception_t("Secure Message failed to decrypt message", status);
+      }
       return res_;
     }
 
@@ -75,12 +97,20 @@ namespace themispp {
     }
 
     const data_t& sign(data_t::const_iterator data_begin, data_t::const_iterator data_end){
+      if(private_key_.empty()){
+        throw themispp::exception_t("Secure Message failed to sign message: private key not set");
+      }
+      themis_status_t status=THEMIS_FAIL;
       size_t encrypted_data_length=0;
-      if(themis_secure_message_wrap(&private_key_[0], private_key_.size(), NULL, 0, &(*data_begin), data_end-data_begin, NULL, &encrypted_data_length)!=THEMIS_BUFFER_TOO_SMALL)
-	throw themispp::exception_t("Secure Message failed singing");
+      status=themis_secure_message_wrap(&private_key_[0], private_key_.size(), NULL, 0, &(*data_begin), data_end-data_begin, NULL, &encrypted_data_length);
+      if(status!=THEMIS_BUFFER_TOO_SMALL){
+        throw themispp::exception_t("Secure Message failed to sign message", status);
+      }
       res_.resize(encrypted_data_length);
-      if(themis_secure_message_wrap(&private_key_[0], private_key_.size(), NULL, 0, &(*data_begin), data_end-data_begin, &res_[0], &encrypted_data_length)!=THEMIS_SUCCESS)
-	throw themispp::exception_t("Secure Message failed singing");
+      status=themis_secure_message_wrap(&private_key_[0], private_key_.size(), NULL, 0, &(*data_begin), data_end-data_begin, &res_[0], &encrypted_data_length);
+      if(status!=THEMIS_SUCCESS){
+        throw themispp::exception_t("Secure Message failed to sign message", status);
+      }
       return res_;
     }
 
@@ -89,12 +119,20 @@ namespace themispp {
     }
 
     const data_t& verify(data_t::const_iterator data_begin, data_t::const_iterator data_end){
+      if(peer_public_key_.empty()){
+        throw themispp::exception_t("Secure Message failed to verify signature: public key not set");
+      }
+      themis_status_t status=THEMIS_FAIL;
       size_t decrypted_data_length=0;
-      if(themis_secure_message_unwrap(NULL, 0, &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, NULL, &decrypted_data_length)!=THEMIS_BUFFER_TOO_SMALL)
-	throw themispp::exception_t("Secure Message failed verifying");
+      status=themis_secure_message_unwrap(NULL, 0, &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, NULL, &decrypted_data_length);
+      if(status!=THEMIS_BUFFER_TOO_SMALL){
+        throw themispp::exception_t("Secure Message failed to verify signature", status);
+      }
       res_.resize(decrypted_data_length);
-      if(themis_secure_message_unwrap(NULL, 0, &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, &res_[0], &decrypted_data_length)!=THEMIS_SUCCESS)
-	throw themispp::exception_t("Secure Message failed verifying");
+      status=themis_secure_message_unwrap(NULL, 0, &peer_public_key_[0], peer_public_key_.size(), &(*data_begin), data_end-data_begin, &res_[0], &decrypted_data_length);
+      if(status!=THEMIS_SUCCESS){
+        throw themispp::exception_t("Secure Message failed to verify signature", status);
+      }
       return res_;
     }
 
