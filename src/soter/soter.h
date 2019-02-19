@@ -30,8 +30,6 @@
  * @{
  */
 
-#define SOTER_VERSION_TEXT "soter 0.9: "
-
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -47,12 +45,5 @@
 #include <soter/soter_asym_sign.h>
 #include <soter/soter_kdf.h>
 
-/** 
- *  @brief get version string of soter
- * 
- *  @return version string
- *
- */
-const char* soter_version(void);
 /**@}*/
 #endif /* SOTER_H */
