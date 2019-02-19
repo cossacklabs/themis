@@ -39,19 +39,24 @@ namespace themispp{
     }
     
     void gen(){
+      themis_status_t status=THEMIS_FAIL;
       size_t private_key_length=max_key_length_t_p;
       size_t public_key_length=max_key_length_t_p;
       switch(alg_t_p){
       case EC:
-	if(themis_gen_ec_key_pair(&private_key[0], &private_key_length, &public_key[0], &public_key_length)!=THEMIS_SUCCESS)
-	  throw themispp::exception_t("Themis failed generating EC KeyPair");
-	break;
+        status=themis_gen_ec_key_pair(&private_key[0], &private_key_length, &public_key[0], &public_key_length);
+        if(status!=THEMIS_SUCCESS){
+          throw themispp::exception_t("Themis failed to generate EC key pair", status);
+        }
+        break;
       case RSA:
-	if(themis_gen_rsa_key_pair(&private_key[0], &private_key_length, &public_key[0], &public_key_length)!=THEMIS_SUCCESS)
-	  throw themispp::exception_t("Themis failed generating RSA KeyPair");
-	break;
+        status=themis_gen_rsa_key_pair(&private_key[0], &private_key_length, &public_key[0], &public_key_length);
+        if(status!=THEMIS_SUCCESS){
+          throw themispp::exception_t("Themis failed to generate RSA key pair", status);
+        }
+        break;
       default:
-	throw themispp::exception_t("Themis failed generating KeyPair, unsupported algorithm");
+        throw themispp::exception_t("Themis failed generate key pair: unsupported algorithm");
       }
       private_key.resize(private_key_length);
       public_key.resize(public_key_length);
