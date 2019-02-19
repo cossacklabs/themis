@@ -95,6 +95,44 @@ describe("jsthemis", function(){
 	    server_session = new addon.SecureSession(valid_id, keypair.private(), function(){return null});
 	    assert.throws(function(){server_session.unwrap(empty_id)}, expect_code(addon.INVALID_PARAMETER));
 	})
+        it("callback behavior", function(){
+            message = new Buffer("This is test message")
+            server_id = new Buffer("server")
+            server_keypair = new addon.KeyPair()
+            client_id = new Buffer("client")
+            client_keypair = new addon.KeyPair()
+            broken_id = new Buffer("broken")
+            missing_id = new Buffer("missing")
+            unknown_id = new Buffer("unknown")
+
+            new_server_session = function() {
+                return new addon.SecureSession(server_id, server_keypair.private(), function(id){
+                    if(id.toString() == client_id.toString())
+                        return client_keypair.public()
+                    else if(id.toString() == missing_id.toString())
+                        return null
+                    else if(id.toString() == broken_id.toString())
+                        return 42
+                })
+            }
+
+            server_callback = function(id){
+                if(id.toString() == server_id.toString())
+                    return server_keypair.public()
+            }
+            client_sessions = []
+            client_sessions.push(new addon.SecureSession(broken_id, client_keypair.private(), server_callback))
+            client_sessions.push(new addon.SecureSession(missing_id, client_keypair.private(), server_callback))
+            client_sessions.push(new addon.SecureSession(unknown_id, client_keypair.private(), server_callback))
+
+            client_sessions.forEach(function(client_session){
+                var server_session = new_server_session()
+                var data
+
+                data = client_session.connectRequest();
+                assert.throws(function(){server_session.unwrap(data)}, expect_code(addon.SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR));
+            })
+        })
     })
 })
 

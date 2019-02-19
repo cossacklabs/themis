@@ -30,8 +30,18 @@ namespace jsthemis {
       return THEMIS_BUFFER_TOO_SMALL;
     v8::Local<v8::Value> argv[1] = { Nan::CopyBuffer((char*)id, id_length).ToLocalChecked() };
     v8::Local<v8::Value> a = Nan::Call(((SecureSession*)(user_data))->id_to_pub_key_callback_, 1, argv).ToLocalChecked();
-    std::memcpy(key_buffer, (const uint8_t*)(node::Buffer::Data(a.As<v8::Object>())), node::Buffer::Length(a.As<v8::Object>()));
-    return THEMIS_SUCCESS;
+    if(a->IsUint8Array()){
+      v8::Local<v8::Object> buffer = a.As<v8::Object>();
+      if(key_buffer_length < node::Buffer::Length(buffer)){
+        return THEMIS_BUFFER_TOO_SMALL;
+      }
+      std::memcpy(key_buffer, (const uint8_t*)(node::Buffer::Data(buffer)), node::Buffer::Length(buffer));
+      return THEMIS_SUCCESS;
+    } else if(a->IsNull() || a->IsUndefined()) {
+      return THEMIS_FAIL;
+    } else {
+      return THEMIS_INVALID_PARAMETER;
+    }
   }
   
   SecureSession::SecureSession(const std::vector<uint8_t>& id, const std::vector<uint8_t>& private_key, v8::Local<v8::Function> get_pub_by_id_callback):
