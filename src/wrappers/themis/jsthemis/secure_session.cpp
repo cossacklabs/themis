@@ -29,7 +29,7 @@ namespace jsthemis {
     if(!key_buffer || !key_buffer_length)
       return THEMIS_BUFFER_TOO_SMALL;
     v8::Local<v8::Value> argv[1] = { Nan::CopyBuffer((char*)id, id_length).ToLocalChecked() };
-    v8::Local<v8::Value> a = ((SecureSession*)(user_data))->id_to_pub_key_callback_.Call(1, argv);
+    v8::Local<v8::Value> a = Nan::Call(((SecureSession*)(user_data))->id_to_pub_key_callback_, 1, argv).ToLocalChecked();
     std::memcpy(key_buffer, (const uint8_t*)(node::Buffer::Data(a.As<v8::Object>())), node::Buffer::Length(a.As<v8::Object>()));
     return THEMIS_SUCCESS;
   }
