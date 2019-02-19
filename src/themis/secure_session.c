@@ -62,12 +62,32 @@ themis_status_t secure_session_destroy(secure_session_t *session_ctx)
 	return res;
 }
 
+static themis_status_t secure_session_check_user_callbacks(const secure_session_user_callbacks_t *user_callbacks)
+{
+	if (!user_callbacks)
+	{
+		return THEMIS_INVALID_PARAMETER;
+	}
+
+	if (!user_callbacks->get_public_key_for_id)
+	{
+		return THEMIS_INVALID_PARAMETER;
+	}
+
+	return THEMIS_SUCCESS;
+}
+
 themis_status_t secure_session_init(secure_session_t *session_ctx, const void *id, size_t id_length, const void *sign_key, size_t sign_key_length, const secure_session_user_callbacks_t *user_callbacks)
 {
 	soter_status_t soter_status;
 	themis_status_t res = THEMIS_SUCCESS;
 
-	/* TODO: validate input parameters including callback pointers */
+	res = secure_session_check_user_callbacks(user_callbacks);
+	if (THEMIS_SUCCESS != res)
+	{
+		goto err;
+	}
+
 	res = secure_session_peer_init(&(session_ctx->we), id, id_length, NULL, 0, sign_key, sign_key_length);
 	if (THEMIS_SUCCESS != res)
 	{
@@ -225,7 +245,13 @@ themis_status_t secure_session_connect(secure_session_t *session_ctx)
 
 	if (THEMIS_SUCCESS == res)
 	{
-		ssize_t bytes_sent = session_ctx->user_callbacks->send_data(request, request_length, session_ctx->user_callbacks->user_data);
+		ssize_t bytes_sent = -1;
+
+		if (session_ctx->user_callbacks->send_data)
+		{
+			bytes_sent = session_ctx->user_callbacks->send_data(request, request_length, session_ctx->user_callbacks->user_data);
+		}
+
 		if (bytes_sent != (ssize_t)request_length)
 		{
 			res = THEMIS_SSESSION_TRANSPORT_ERROR;
@@ -924,7 +950,15 @@ ssize_t secure_session_send(secure_session_t *session_ctx, const void *message, 
 		goto err;
 	}
 
-	bytes_sent = session_ctx->user_callbacks->send_data(out, out_size, session_ctx->user_callbacks->user_data);
+	if (session_ctx->user_callbacks->send_data)
+	{
+		bytes_sent = session_ctx->user_callbacks->send_data(out, out_size, session_ctx->user_callbacks->user_data);
+	}
+	else
+	{
+		bytes_sent = -1;
+	}
+
 	if (bytes_sent < 0 || (size_t)bytes_sent != out_size)
 	{
 		message_length = (ssize_t)THEMIS_SSESSION_TRANSPORT_ERROR;
@@ -983,7 +1017,15 @@ ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, siz
 			}
 		}
 	}
-	res = session_ctx->user_callbacks->receive_data(in, in_size, session_ctx->user_callbacks->user_data);
+
+	if (session_ctx->user_callbacks->receive_data)
+	{
+		res = session_ctx->user_callbacks->receive_data(in, in_size, session_ctx->user_callbacks->user_data);
+	}
+	else
+	{
+		res = -1;
+	}
 
 	if (res < 0)
 	{
@@ -1003,7 +1045,13 @@ ssize_t secure_session_receive(secure_session_t *session_ctx, void *message, siz
 		res = session_ctx->state_handler(session_ctx, stack_buf, bytes_received, ka_buf, &ka_buf_length);
 		if ((THEMIS_SUCCESS == res) && (ka_buf_length > 0))
 		{
-			ssize_t bytes_sent = session_ctx->user_callbacks->send_data(ka_buf, ka_buf_length, session_ctx->user_callbacks->user_data);
+			ssize_t bytes_sent = -1;
+
+			if (session_ctx->user_callbacks->send_data)
+			{
+				bytes_sent = session_ctx->user_callbacks->send_data(ka_buf, ka_buf_length, session_ctx->user_callbacks->user_data);
+			}
+
 			if (bytes_sent != (ssize_t)ka_buf_length)
 			{
 				res = THEMIS_SSESSION_TRANSPORT_ERROR;
