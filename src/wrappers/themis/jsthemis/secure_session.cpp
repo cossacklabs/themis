@@ -18,6 +18,7 @@
 #include <themis/themis.h>
 #include <vector>
 #include <cstring>
+#include "errors.hpp"
 #include "secure_session.hpp"
 
 namespace jsthemis {
@@ -28,9 +29,19 @@ namespace jsthemis {
     if(!key_buffer || !key_buffer_length)
       return THEMIS_BUFFER_TOO_SMALL;
     v8::Local<v8::Value> argv[1] = { Nan::CopyBuffer((char*)id, id_length).ToLocalChecked() };
-    v8::Local<v8::Value> a = ((SecureSession*)(user_data))->id_to_pub_key_callback_.Call(1, argv);
-    std::memcpy(key_buffer, (const uint8_t*)(node::Buffer::Data(a.As<v8::Object>())), node::Buffer::Length(a.As<v8::Object>()));
-    return THEMIS_SUCCESS;
+    v8::Local<v8::Value> a = Nan::Call(((SecureSession*)(user_data))->id_to_pub_key_callback_, 1, argv).ToLocalChecked();
+    if(a->IsUint8Array()){
+      v8::Local<v8::Object> buffer = a.As<v8::Object>();
+      if(key_buffer_length < node::Buffer::Length(buffer)){
+        return THEMIS_BUFFER_TOO_SMALL;
+      }
+      std::memcpy(key_buffer, (const uint8_t*)(node::Buffer::Data(buffer)), node::Buffer::Length(buffer));
+      return THEMIS_SUCCESS;
+    } else if(a->IsNull() || a->IsUndefined()) {
+      return THEMIS_FAIL;
+    } else {
+      return THEMIS_INVALID_PARAMETER;
+    }
   }
   
   SecureSession::SecureSession(const std::vector<uint8_t>& id, const std::vector<uint8_t>& private_key, v8::Local<v8::Function> get_pub_by_id_callback):
@@ -67,6 +78,36 @@ namespace jsthemis {
 
   void SecureSession::New(const Nan::FunctionCallbackInfo<v8::Value>& args) {
     if (args.IsConstructCall()) {
+      if(args.Length()<3){
+        ThrowParameterError("Secure Session constructor", "not enough arguments, expected client ID, private key, public key callback");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
+      if(!args[0]->IsUint8Array()){
+        ThrowParameterError("Secure Session constructor", "client ID is not a byte buffer, use ByteBuffer or Uint8Array");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
+      if(node::Buffer::Length(args[0])==0){
+        ThrowParameterError("Secure Session constructor", "client ID is empty");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
+      if(!args[1]->IsUint8Array()){
+        ThrowParameterError("Secure Session constructor", "private key is not a byte buffer, use ByteBuffer or Uint8Array");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
+      if(node::Buffer::Length(args[1])==0){
+        ThrowParameterError("Secure Session constructor", "private key is empty");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
+      if(!args[2]->IsFunction()){
+        ThrowParameterError("Secure Session constructor", "public key callback is not a function");
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
       std::vector<uint8_t> id((uint8_t*)(node::Buffer::Data(args[0])), (uint8_t*)(node::Buffer::Data(args[0])+node::Buffer::Length(args[0])));
       std::vector<uint8_t> private_key((uint8_t*)(node::Buffer::Data(args[1])), (uint8_t*)(node::Buffer::Data(args[1])+node::Buffer::Length(args[1])));
       SecureSession* obj = new SecureSession(id, private_key, v8::Local<v8::Function>::Cast(args[2]));
@@ -81,16 +122,19 @@ namespace jsthemis {
   }
 
   void SecureSession::connectRequest(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+    themis_status_t status = THEMIS_FAIL;
     SecureSession* obj = Nan::ObjectWrap::Unwrap<SecureSession>(args.This());
     size_t length=0;
-    if(secure_session_generate_connect_request(obj->session_, NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
-      Nan::ThrowError("Secure Session failed generating connect request");
+    status=secure_session_generate_connect_request(obj->session_, NULL, &length);
+    if(status!=THEMIS_BUFFER_TOO_SMALL){
+      ThrowSecureSessionError("Secure Session failed to generate connect request", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* data=(uint8_t*)(malloc(length));
-    if(secure_session_generate_connect_request(obj->session_, data, &length)!=THEMIS_SUCCESS){
-      Nan::ThrowError("Secure Session failed generating connect request");
+    status=secure_session_generate_connect_request(obj->session_, data, &length);
+    if(status!=THEMIS_SUCCESS){
+      ThrowSecureSessionError("Secure Session failed to generate connect request", status);
       free(data);
       args.GetReturnValue().SetUndefined();
       return;
@@ -99,16 +143,34 @@ namespace jsthemis {
   }
 
   void SecureSession::wrap(const Nan::FunctionCallbackInfo<v8::Value>& args){
+    themis_status_t status = THEMIS_FAIL;
     SecureSession* obj = Nan::ObjectWrap::Unwrap<SecureSession>(args.This());
+    if(args.Length()<1){
+      ThrowParameterError("Secure Session failed to encrypt", "not enough arguments, expected message");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(!args[0]->IsUint8Array()){
+      ThrowParameterError("Secure Session failed to encrypt", "message is not a byte buffer, use ByteBuffer or Uint8Array");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(node::Buffer::Length(args[0])==0){
+      ThrowParameterError("Secure Session failed to encrypt", "message is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
     size_t length=0;
-    if(secure_session_wrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length)!=THEMIS_BUFFER_TOO_SMALL){
-      Nan::ThrowError("Secure Session failed encrypting");
+    status=secure_session_wrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length);
+    if(status!=THEMIS_BUFFER_TOO_SMALL){
+      ThrowSecureSessionError("Secure Session failed to encrypt", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* data=(uint8_t*)(malloc(length));
-    if(secure_session_wrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length)!=THEMIS_SUCCESS){
-      Nan::ThrowError("Secure Session failed encrypting");
+    status=secure_session_wrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length);
+    if(status!=THEMIS_SUCCESS){
+      ThrowSecureSessionError("Secure Session failed to encrypt", status);
       free(data);
       args.GetReturnValue().SetUndefined();
       return;
@@ -117,19 +179,35 @@ namespace jsthemis {
   }
   
   void SecureSession::unwrap(const Nan::FunctionCallbackInfo<v8::Value>& args){
+    themis_status_t status = THEMIS_FAIL;
     SecureSession* obj = Nan::ObjectWrap::Unwrap<SecureSession>(args.This());
+    if(args.Length()<1){
+      ThrowParameterError("Secure Session failed to decrypt", "not enough arguments, expected message");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(!args[0]->IsUint8Array()){
+      ThrowParameterError("Secure Session failed to decrypt", "message is not a byte buffer, use ByteBuffer or Uint8Array");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
+    if(node::Buffer::Length(args[0])==0){
+      ThrowParameterError("Secure Session failed to decrypt", "message is empty");
+      args.GetReturnValue().SetUndefined();
+      return;
+    }
     size_t length=0;
-    themis_status_t res=secure_session_unwrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length);
-    if(res!=THEMIS_BUFFER_TOO_SMALL){
-      if(res!=THEMIS_SUCCESS)
-        Nan::ThrowError("Secure Session failed decrypting");
+    status=secure_session_unwrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &length);
+    if(status!=THEMIS_BUFFER_TOO_SMALL){
+      if(status!=THEMIS_SUCCESS)
+        ThrowSecureSessionError("Secure Session failed to decrypt", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* data=(uint8_t*)(malloc(length));
-    res=secure_session_unwrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length);
-    if(res!=THEMIS_SUCCESS && res!=THEMIS_SSESSION_SEND_OUTPUT_TO_PEER){
-      Nan::ThrowError("Secure Session failed decrypting");
+    status=secure_session_unwrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), data, &length);
+    if(status!=THEMIS_SUCCESS && status!=THEMIS_SSESSION_SEND_OUTPUT_TO_PEER){
+      ThrowSecureSessionError("Secure Session failed to decrypt", status);
       free(data);
       args.GetReturnValue().SetUndefined();
       return;

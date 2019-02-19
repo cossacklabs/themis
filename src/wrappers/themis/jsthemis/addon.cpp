@@ -15,6 +15,7 @@
  */
 
 #include <node.h>
+#include "errors.hpp"
 #include "secure_message.hpp"
 #include "secure_keygen.hpp"
 #include "secure_session.hpp"
@@ -24,6 +25,7 @@
 #include "secure_comparator.hpp"
 
 void InitAll(v8::Handle<v8::Object> exports) {
+  jsthemis::Errors::Init(exports);
   jsthemis::SecureMessage::Init(exports);
   jsthemis::KeyPair::Init(exports);
   jsthemis::SecureSession::Init(exports);

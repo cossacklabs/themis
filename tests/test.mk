@@ -102,7 +102,7 @@ endif
 ifdef NPM_VERSION
 	@echo -n "make tests for jsthemis "
 	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/jsthemis_test.sh
-	@echo "npm install mocha" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
+	@echo "npm install mocha@^5.2.0" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
 	@echo "$(shell npm root)/mocha/bin/mocha ./tests/jsthemis" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
 	@chmod a+x ./$(BIN_PATH)/tests/jsthemis_test.sh
 	@$(PRINT_OK_)
