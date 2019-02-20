@@ -21,6 +21,7 @@
 
 /* Fuzz parameters */
 #define MAX_MESSAGE_SIZE 2048
+#define MAX_ENCRYPTED_MESSAGE_SIZE (MAX_MESSAGE_SIZE+1024)
 #define MESSAGES_TO_SEND 3
 
 #define MAX_KEY_SIZE 4096
@@ -394,7 +395,7 @@ static void themis_secure_message_encrypt_decrypt_api_test(void){
   size_t public_key_length = sizeof(public_key);
 
   uint8_t plaintext[MAX_MESSAGE_SIZE]={0};
-  uint8_t encrypted[MAX_MESSAGE_SIZE+1024]={0};
+  uint8_t encrypted[MAX_ENCRYPTED_MESSAGE_SIZE]={0};
   uint8_t decrypted[MAX_MESSAGE_SIZE]={0};
   size_t plaintext_length = sizeof(plaintext);
   size_t encrypted_length = sizeof(encrypted);
@@ -490,7 +491,7 @@ static void themis_secure_message_sign_verify_api_test(void){
   size_t public_key_length = sizeof(public_key);
 
   uint8_t plaintext[MAX_MESSAGE_SIZE]={0};
-  uint8_t signed_msg[MAX_MESSAGE_SIZE+1024]={0};
+  uint8_t signed_msg[MAX_ENCRYPTED_MESSAGE_SIZE]={0};
   uint8_t verified[MAX_MESSAGE_SIZE]={0};
   size_t plaintext_length = sizeof(plaintext);
   size_t signed_msg_length = sizeof(signed_msg);
