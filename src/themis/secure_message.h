@@ -169,6 +169,7 @@ themis_status_t themis_secure_message_verify(const uint8_t* public_key,
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
  * @note If wrapped_message==NULL or wrapped_message_length is not enought for wrapped message storage then THEMIS_BUFFER_TOO_SMALL will return and wrapped_message_length will store length of buffer needed for wrapped message store
  */
+DEPRECATED("use 'themis_secure_message_encrypt' or 'themis_secure_message_sign' instead")
 themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
 					   const size_t private_key_length,
 					   const uint8_t* public_key,
@@ -191,6 +192,7 @@ themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
  * @note If message==NULL or message_length is not enought for plain message storage then THEMIS_BUFFER_TOO_SMALL will return and message_length will store length of buffer needed for plain message store
  */
+DEPRECATED("use 'themis_secure_message_decrypt' or 'themis_secure_message_verify' instead")
 themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
 					   const size_t private_key_length,
 					   const uint8_t* public_key,

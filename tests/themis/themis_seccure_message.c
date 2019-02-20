@@ -41,6 +41,14 @@
     return -1;								\
   }}
 
+/*
+ * Allow usage of deprecated Secure Message interface:
+ *   - themis_secure_message_wrap()
+ *   - themis_secure_message_unwrap()
+ */
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 static themis_status_t themis_gen_key_pair(int alg, uint8_t* private_key, size_t* private_key_length, uint8_t* public_key, size_t* public_key_length){
   themis_status_t res=THEMIS_FAIL;
@@ -656,16 +664,3 @@ void run_secure_message_test(){
   testsuite_run_test(themis_secure_message_sign_verify_api_test);
   testsuite_run_test(secure_message_old_api_test);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
