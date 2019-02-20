@@ -31,12 +31,18 @@ namespace themispp{
     
     secure_comparator_t(const data_t& shared_secret):
       comparator_(NULL){
+      if(shared_secret.empty()){
+        throw themispp::exception_t("Secure Comparator must have non-empty shared secret");
+      }
       res_.reserve(512);
       comparator_=secure_comparator_create();
-      if(!comparator_)
-	throw themispp::exception_t("Secure Comparator failed creating");
-      if(THEMIS_SUCCESS!=secure_comparator_append_secret(comparator_, &shared_secret[0], shared_secret.size()))
-	throw themispp::exception_t("Secure Comparator failed appending secret");	
+      if(!comparator_){
+        throw themispp::exception_t("Secure Comparator construction failed");
+      }
+      themis_status_t status=secure_comparator_append_secret(comparator_, &shared_secret[0], shared_secret.size());
+      if(THEMIS_SUCCESS!=status){
+        throw themispp::exception_t("Secure Comparator failed to append secret", status);
+      }
     }
 
     virtual ~secure_comparator_t(){
@@ -44,23 +50,35 @@ namespace themispp{
     }
 
     const data_t& init(){
+      themis_status_t status=THEMIS_FAIL;
       size_t data_length=0;
-      if(THEMIS_BUFFER_TOO_SMALL!=secure_comparator_begin_compare(comparator_, NULL, &data_length))
-	throw themispp::exception_t("Secure Comparator failed making initialisation message");
+      status=secure_comparator_begin_compare(comparator_, NULL, &data_length);
+      if(THEMIS_BUFFER_TOO_SMALL!=status){
+        throw themispp::exception_t("Secure Comparator failed to initialize comparison", status);
+      }
       res_.resize(data_length);
-      if(THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER!=secure_comparator_begin_compare(comparator_, &res_[0], &data_length))
-	throw themispp::exception_t("Secure Comparator failed making initialisation message");
+      status=secure_comparator_begin_compare(comparator_, &res_[0], &data_length);
+      if(THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER!=status){
+        throw themispp::exception_t("Secure Comparator failed to initialize comparison", status);
+      }
       return res_;
     }
 
     const data_t& proceed(const std::vector<uint8_t>& data){
+      if(data.empty()){
+        throw themispp::exception_t("Secure Comparator failed to proceed comparison: data must be non-empty");
+      }
+      themis_status_t status=THEMIS_FAIL;
       size_t res_data_length=0;
-      if(THEMIS_BUFFER_TOO_SMALL!=secure_comparator_proceed_compare(comparator_, &data[0], data.size(), NULL, &res_data_length))
-	throw themispp::exception_t("Secure Comparator failed proceeding message");
+      status=secure_comparator_proceed_compare(comparator_, &data[0], data.size(), NULL, &res_data_length);
+      if(THEMIS_BUFFER_TOO_SMALL!=status){
+        throw themispp::exception_t("Secure Comparator failed to proceed comparison", status);
+      }
       res_.resize(res_data_length);
-      themis_status_t res=secure_comparator_proceed_compare(comparator_, &data[0], data.size(), &res_[0], &res_data_length);
-      if(THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER!=res && THEMIS_SUCCESS!=res)
-	throw themispp::exception_t("Secure Comparator failed proceeding message");
+      status=secure_comparator_proceed_compare(comparator_, &data[0], data.size(), &res_[0], &res_data_length);
+      if(THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER!=status && THEMIS_SUCCESS!=status){
+        throw themispp::exception_t("Secure Comparator failed to proceed comparison", status);
+      }
       return res_;
     }
     

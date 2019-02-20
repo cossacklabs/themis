@@ -53,6 +53,38 @@ namespace themispp{
       }
     };
 
+    void secure_session_invalid_arguments(){
+      std::string client_id("client");
+      std::vector<uint8_t> empty;
+      std::vector<uint8_t> valid_id(client_id.c_str(), client_id.c_str()+client_id.length());
+      std::vector<uint8_t> valid_key(client_priv, client_priv+sizeof(client_priv));
+      callback valid_callbacks;
+
+      try{
+        themispp::secure_session_t client(empty, valid_key, &valid_callbacks);
+        sput_fail_unless(false, "empty client ID", __LINE__);
+      }
+      catch (const themispp::exception_t&){
+        sput_fail_unless(true, "empty client ID", __LINE__);
+      }
+
+      try{
+        themispp::secure_session_t client(valid_id, empty, &valid_callbacks);
+        sput_fail_unless(false, "empty private key", __LINE__);
+      }
+      catch (const themispp::exception_t&){
+        sput_fail_unless(true, "empty private key", __LINE__);
+      }
+
+      try{
+        themispp::secure_session_t client(valid_id, valid_key, 0);
+        sput_fail_unless(false, "empty callback", __LINE__);
+      }
+      catch (const themispp::exception_t&){
+        sput_fail_unless(true, "empty callbacks", __LINE__);
+      }
+    }
+
     void secure_session_test(){
       std::string mes("the test message");
       callback client_callbacks;
@@ -164,6 +196,7 @@ namespace themispp{
 
     int run_secure_session_test(){
       sput_enter_suite("ThemisPP secure session test");
+      sput_run_test(secure_session_invalid_arguments, "secure_session_invalid_arguments", __FILE__);
       sput_run_test(secure_session_test, "secure_session_test", __FILE__);
       sput_run_test(secure_session_uninitialized, "secure_session_uninitialized", __FILE__);
       sput_run_test(secure_session_moved, "secure_session_moved", __FILE__);
