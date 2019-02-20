@@ -64,6 +64,98 @@ themis_status_t themis_gen_ec_key_pair(uint8_t* private_key,
 				       uint8_t* public_key,
 				       size_t* public_key_length);
 
+/**
+ * @brief encrypt message to secure message
+ * @param [in]      private_key                 private key
+ * @param [in]      private_key_length          length of private_key
+ * @param [in]      public_key                  peer public key
+ * @param [in]      public_key_length           length of public_key
+ * @param [in]      message                     message to encrypt
+ * @param [in]      message_length              length of message
+ * @param [out]     encrypted_message           buffer for encrypted message.
+ *                                              May be set to NULL to determine expected length of encrypted message
+ * @param [in, out] encrypted_message_length    length of encrypted_message
+ * @return THEMIS_SUCCESS on success or an error code on failure
+ * @note If encrypted_message is NULL or encrypted_message_length is not enough to store the encrypted message
+ *       then THEMIS_BUFFER_TOO_SMALL will be returned and encrypted_message_length will contain
+ *       the length of the buffer needed to store the encrypted message.
+ */
+themis_status_t themis_secure_message_encrypt(const uint8_t* private_key,
+                                              const size_t private_key_length,
+                                              const uint8_t* public_key,
+                                              const size_t public_key_length,
+                                              const uint8_t* message,
+                                              const size_t message_length,
+                                              uint8_t* encrypted_message,
+                                              size_t* encrypted_message_length);
+
+/**
+ * @brief decrypt secure message to plaintext message
+ * @param [in]      private_key                 private key
+ * @param [in]      private_key_length          length of private_key
+ * @param [in]      public_key                  peer public key
+ * @param [in]      public_key_length           length of public_key
+ * @param [in]      encrypted_message           encrypted message to decrypt
+ * @param [in]      encrypted_message_length    length of encrypted_message
+ * @param [out]     message                     buffer for plaintext message.
+ *                                              May be set to NULL to determine expected length of plaintext message
+ * @param [in, out] message_length              length of message
+ * @return THEMIS_SUCCESS on success or an error code on failure
+ * @note If message is NULL or message_length is not enough to store the plaintext message
+ *       then THEMIS_BUFFER_TOO_SMALL will be returned and message_length will contain
+ *       the length of the buffer needed to store the encrypted message.
+ */
+themis_status_t themis_secure_message_decrypt(const uint8_t* private_key,
+                                              const size_t private_key_length,
+                                              const uint8_t* public_key,
+                                              const size_t public_key_length,
+                                              const uint8_t* encrypted_message,
+                                              const size_t encrypted_message_length,
+                                              uint8_t* message,
+                                              size_t* message_length);
+
+/**
+ * @brief securely sign a message
+ * @param [in]      private_key             private key
+ * @param [in]      private_key_length      length of private_key
+ * @param [in]      message                 message to sign
+ * @param [in]      message_length          length of message
+ * @param [out]     signed_message          buffer for signed message.
+ *                                          May be set to NULL to determine expected length of signed message
+ * @param [in, out] signed_message_length   length of signed_message
+ * @return THEMIS_SUCCESS on success or an error code on failure
+ * @note If signed_message is NULL or signed_message_length is not enough to store the signed message
+ *       then THEMIS_BUFFER_TOO_SMALL will be returned and signed_message_length will contain
+ *       the length of the buffer needed to store the signed message.
+ */
+themis_status_t themis_secure_message_sign(const uint8_t* private_key,
+                                           const size_t private_key_length,
+                                           const uint8_t* message,
+                                           const size_t message_length,
+                                           uint8_t* signed_message,
+                                           size_t* signed_message_length);
+
+/**
+ * @brief verify signature on a signed message
+ * @param [in]      public_key              peer public key
+ * @param [in]      public_key_length       length of public_key
+ * @param [in]      signed_message          signed message to verify
+ * @param [in]      signed_message_length   length of signed_message
+ * @param [out]     message                 buffer for original message (without signature).
+ *                                          May be set to NULL to determine expected length of original message
+ * @param [in, out] message_length          length of message
+ * @return THEMIS_SUCCESS on success or an error code on failure
+ * @note If message is NULL or message_length is not enough to store the original message
+ *       then THEMIS_BUFFER_TOO_SMALL will be returned and message_length will contain
+ *       the length of the buffer needed to store the original message.
+ */
+themis_status_t themis_secure_message_verify(const uint8_t* public_key,
+                                             const size_t public_key_length,
+                                             const uint8_t* signed_message,
+                                             const size_t signed_message_length,
+                                             uint8_t* message,
+                                             size_t* message_length);
+
 /** 
  * @brief wrap message to secure message
  * @param [in] private_key private key
