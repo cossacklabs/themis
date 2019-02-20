@@ -26,5 +26,8 @@ fn check_ffi_call() {
             &mut public_key_len,
         )
     };
-    assert_eq!(status, libthemis_sys::THEMIS_BUFFER_TOO_SMALL);
+    assert_eq!(
+        status,
+        libthemis_sys::THEMIS_BUFFER_TOO_SMALL as libthemis_sys::themis_status_t
+    );
 }
