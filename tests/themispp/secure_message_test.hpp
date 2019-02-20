@@ -55,7 +55,7 @@ namespace themispp {
                     decrypted_message = c.decrypt(encrypted_message);
                     sput_fail_unless(false, "decryption fail", __LINE__);
                 } catch (themispp::exception_t &e) {
-                    sput_fail_unless(true, "decryption by intruder", __LINE__);
+                    sput_fail_unless(e.status()==THEMIS_FAIL, "decryption by intruder", __LINE__);
                 }
             } catch (themispp::exception_t &e) {
                 sput_fail_unless(false, e.what(), __LINE__);
@@ -97,7 +97,7 @@ namespace themispp {
                     verified_message = c.verify(a_signed_message);
                     sput_fail_unless(false, "verification fail", __LINE__);
                 } catch (themispp::exception_t &e) {
-                    sput_fail_unless(true, "verification by intruder", __LINE__);
+                    sput_fail_unless(e.status()==THEMIS_INVALID_PARAMETER, "verification by intruder", __LINE__);
                 }
             } catch (themispp::exception_t &e) {
                 sput_fail_unless(false, e.what(), __LINE__);

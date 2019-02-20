@@ -1,0 +1,13 @@
+# Default reviewer set
+*                   @vixentael @Lagovas
+/src/soter/         @vixentael @Lagovas @ilammy @storojs72 @secumod
+/src/themis/        @vixentael @Lagovas @ilammy @storojs72 @secumod
+
+# Build system
+Makefile            @vixentael @Lagovas @shadinua
+*.mk                @vixentael @Lagovas @shadinua
+*.sh                @vixentael @Lagovas @shadinua
+
+# rust-themis
+Cargo.toml          @vixentael @Lagovas @ilammy
+*.rs                @vixentael @Lagovas @ilammy
