@@ -104,14 +104,14 @@ namespace jsthemis {
       return;
     }
     size_t encrypted_length=0;
-    status=themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &encrypted_length);
+    status=themis_secure_message_encrypt(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &encrypted_length);
     if(status!=THEMIS_BUFFER_TOO_SMALL){
       ThrowError("Secure Message failed to encrypt message", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* encrypted_data=(uint8_t*)(malloc(encrypted_length));
-    status=themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), encrypted_data, &encrypted_length);
+    status=themis_secure_message_encrypt(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), encrypted_data, &encrypted_length);
     if(status!=THEMIS_SUCCESS){
       ThrowError("Secure Message failed to encrypt message", status);
       free(encrypted_data);
@@ -150,14 +150,14 @@ namespace jsthemis {
       return;
     }
     size_t decrypted_length=0;
-    status=themis_secure_message_unwrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &decrypted_length);
+    status=themis_secure_message_decrypt(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &decrypted_length);
     if(status!=THEMIS_BUFFER_TOO_SMALL){
       ThrowError("Secure Message failed to decrypt message", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* decrypted_data=(uint8_t*)(malloc(decrypted_length));
-    status=themis_secure_message_unwrap(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), decrypted_data, &decrypted_length);
+    status=themis_secure_message_decrypt(&(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), decrypted_data, &decrypted_length);
     if(status!=THEMIS_SUCCESS){
       ThrowError("Secure Message failed to decrypt message", status);
       free(decrypted_data);
@@ -191,14 +191,14 @@ namespace jsthemis {
       return;
     }
     size_t encrypted_length=0;
-    status=themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), NULL, 0, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &encrypted_length);
+    status=themis_secure_message_sign(&(obj->private_key_)[0], obj->private_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &encrypted_length);
     if(status!=THEMIS_BUFFER_TOO_SMALL){
       ThrowError("Secure Message failed to sign message", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* encrypted_data=(uint8_t*)(malloc(encrypted_length));
-    status=themis_secure_message_wrap(&(obj->private_key_)[0], obj->private_key_.size(), NULL, 0, (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), encrypted_data, &encrypted_length);
+    status=themis_secure_message_sign(&(obj->private_key_)[0], obj->private_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), encrypted_data, &encrypted_length);
     if(status!=THEMIS_SUCCESS){
       ThrowError("Secure Message failed to sign message", status);
       free(encrypted_data);
@@ -232,14 +232,14 @@ namespace jsthemis {
       return;
     }
     size_t decrypted_length=0;
-    status=themis_secure_message_unwrap(NULL, 0, &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &decrypted_length);
+    status=themis_secure_message_verify(&(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL, &decrypted_length);
     if(status!=THEMIS_BUFFER_TOO_SMALL){
       ThrowError("Secure Message failed to verify signature", status);
       args.GetReturnValue().SetUndefined();
       return;
     }
     uint8_t* decrypted_data=(uint8_t*)(malloc(decrypted_length));
-    status=themis_secure_message_unwrap(NULL, 0, &(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), decrypted_data, &decrypted_length);
+    status=themis_secure_message_verify(&(obj->peer_public_key_)[0], obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), decrypted_data, &decrypted_length);
     if(status!=THEMIS_SUCCESS){
       ThrowError("Secure Message failed to verify signature", status);
       free(decrypted_data);
