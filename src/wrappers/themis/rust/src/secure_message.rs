@@ -64,7 +64,10 @@
 
 use std::ptr;
 
-use bindings::{themis_secure_message_unwrap, themis_secure_message_wrap};
+use bindings::{
+    themis_secure_message_decrypt, themis_secure_message_encrypt, themis_secure_message_sign,
+    themis_secure_message_verify,
+};
 
 use crate::error::{Error, ErrorKind, Result};
 use crate::keys::{KeyPair, PrivateKey, PublicKey};
@@ -138,20 +141,102 @@ impl SecureMessage {
     /// # }
     /// ```
     pub fn encrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
-        wrap(
-            self.key_pair.private_key_bytes(),
-            self.key_pair.public_key_bytes(),
-            message.as_ref(),
-        )
+        let (private_key_ptr, private_key_len) = into_raw_parts(self.key_pair.private_key_bytes());
+        let (public_key_ptr, public_key_len) = into_raw_parts(self.key_pair.public_key_bytes());
+        let (message_ptr, message_len) = into_raw_parts(message.as_ref());
+
+        let mut encrypted = Vec::new();
+        let mut encrypted_len = 0;
+
+        unsafe {
+            let status = themis_secure_message_encrypt(
+                private_key_ptr,
+                private_key_len,
+                public_key_ptr,
+                public_key_len,
+                message_ptr,
+                message_len,
+                ptr::null_mut(),
+                &mut encrypted_len,
+            );
+            let error = Error::from_themis_status(status);
+            if error.kind() != ErrorKind::BufferTooSmall {
+                return Err(error);
+            }
+        }
+
+        encrypted.reserve(encrypted_len);
+
+        unsafe {
+            let status = themis_secure_message_encrypt(
+                private_key_ptr,
+                private_key_len,
+                public_key_ptr,
+                public_key_len,
+                message_ptr,
+                message_len,
+                encrypted.as_mut_ptr(),
+                &mut encrypted_len,
+            );
+            let error = Error::from_themis_status(status);
+            if error.kind() != ErrorKind::Success {
+                return Err(error);
+            }
+            debug_assert!(encrypted_len <= encrypted.capacity());
+            encrypted.set_len(encrypted_len as usize);
+        }
+
+        Ok(encrypted)
     }
 
     /// Decrypts an encrypted message back into its original form.
     pub fn decrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
-        unwrap(
-            self.key_pair.private_key_bytes(),
-            self.key_pair.public_key_bytes(),
-            message.as_ref(),
-        )
+        let (private_key_ptr, private_key_len) = into_raw_parts(self.key_pair.private_key_bytes());
+        let (public_key_ptr, public_key_len) = into_raw_parts(self.key_pair.public_key_bytes());
+        let (wrapped_ptr, wrapped_len) = into_raw_parts(message.as_ref());
+
+        let mut decrypted = Vec::new();
+        let mut decrypted_len = 0;
+
+        unsafe {
+            let status = themis_secure_message_decrypt(
+                private_key_ptr,
+                private_key_len,
+                public_key_ptr,
+                public_key_len,
+                wrapped_ptr,
+                wrapped_len,
+                ptr::null_mut(),
+                &mut decrypted_len,
+            );
+            let error = Error::from_themis_status(status);
+            if error.kind() != ErrorKind::BufferTooSmall {
+                return Err(error);
+            }
+        }
+
+        decrypted.reserve(decrypted_len);
+
+        unsafe {
+            let status = themis_secure_message_decrypt(
+                private_key_ptr,
+                private_key_len,
+                public_key_ptr,
+                public_key_len,
+                wrapped_ptr,
+                wrapped_len,
+                decrypted.as_mut_ptr(),
+                &mut decrypted_len,
+            );
+            let error = Error::from_themis_status(status);
+            if error.kind() != ErrorKind::Success {
+                return Err(error);
+            }
+            debug_assert!(decrypted_len <= decrypted.capacity());
+            decrypted.set_len(decrypted_len as usize);
+        }
+
+        Ok(decrypted)
     }
 }
 
@@ -243,7 +328,47 @@ impl SecureSign {
     /// # }
     /// ```
     pub fn sign(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
-        wrap(self.private_key.as_ref(), &[], message.as_ref())
+        let (private_key_ptr, private_key_len) = into_raw_parts(self.private_key.as_ref());
+        let (message_ptr, message_len) = into_raw_parts(message.as_ref());
+
+        let mut signed = Vec::new();
+        let mut signed_len = 0;
+
+        unsafe {
+            let status = themis_secure_message_sign(
+                private_key_ptr,
+                private_key_len,
+                message_ptr,
+                message_len,
+                ptr::null_mut(),
+                &mut signed_len,
+            );
+            let error = Error::from_themis_status(status);
+            if error.kind() != ErrorKind::BufferTooSmall {
+                return Err(error);
+            }
+        }
+
+        signed.reserve(signed_len);
+
+        unsafe {
+            let status = themis_secure_message_sign(
+                private_key_ptr,
+                private_key_len,
+                message_ptr,
+                message_len,
+                signed.as_mut_ptr(),
+                &mut signed_len,
+            );
+            let error = Error::from_themis_status(status);
+            if error.kind() != ErrorKind::Success {
+                return Err(error);
+            }
+            debug_assert!(signed_len <= signed.capacity());
+            signed.set_len(signed_len as usize);
+        }
+
+        Ok(signed)
     }
 }
 
@@ -331,106 +456,46 @@ impl SecureVerify {
 
     /// Verifies the signature and returns the original message.
     pub fn verify(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
-        unwrap(&[], self.public_key.as_ref(), message.as_ref())
-    }
-}
+        let (public_key_ptr, public_key_len) = into_raw_parts(self.public_key.as_ref());
+        let (signed_ptr, signed_len) = into_raw_parts(message.as_ref());
 
-/// Wrap a message into a secure message.
-fn wrap(private_key: &[u8], public_key: &[u8], message: &[u8]) -> Result<Vec<u8>> {
-    let (private_key_ptr, private_key_len) = into_raw_parts(private_key);
-    let (public_key_ptr, public_key_len) = into_raw_parts(public_key);
-    let (message_ptr, message_len) = into_raw_parts(message);
+        let mut original = Vec::new();
+        let mut original_len = 0;
 
-    let mut wrapped = Vec::new();
-    let mut wrapped_len = 0;
-
-    unsafe {
-        let status = themis_secure_message_wrap(
-            private_key_ptr,
-            private_key_len,
-            public_key_ptr,
-            public_key_len,
-            message_ptr,
-            message_len,
-            ptr::null_mut(),
-            &mut wrapped_len,
-        );
-        let error = Error::from_themis_status(status);
-        if error.kind() != ErrorKind::BufferTooSmall {
-            return Err(error);
+        unsafe {
+            let status = themis_secure_message_verify(
+                public_key_ptr,
+                public_key_len,
+                signed_ptr,
+                signed_len,
+                ptr::null_mut(),
+                &mut original_len,
+            );
+            let error = Error::from_themis_status(status);
+            if error.kind() != ErrorKind::BufferTooSmall {
+                return Err(error);
+            }
         }
-    }
 
-    wrapped.reserve(wrapped_len);
+        original.reserve(original_len);
 
-    unsafe {
-        let status = themis_secure_message_wrap(
-            private_key_ptr,
-            private_key_len,
-            public_key_ptr,
-            public_key_len,
-            message_ptr,
-            message_len,
-            wrapped.as_mut_ptr(),
-            &mut wrapped_len,
-        );
-        let error = Error::from_themis_status(status);
-        if error.kind() != ErrorKind::Success {
-            return Err(error);
+        unsafe {
+            let status = themis_secure_message_verify(
+                public_key_ptr,
+                public_key_len,
+                signed_ptr,
+                signed_len,
+                original.as_mut_ptr(),
+                &mut original_len,
+            );
+            let error = Error::from_themis_status(status);
+            if error.kind() != ErrorKind::Success {
+                return Err(error);
+            }
+            debug_assert!(original_len <= original.capacity());
+            original.set_len(original_len as usize);
         }
-        debug_assert!(wrapped_len <= wrapped.capacity());
-        wrapped.set_len(wrapped_len as usize);
+
+        Ok(original)
     }
-
-    Ok(wrapped)
-}
-
-/// Unwrap a secure message into a message.
-fn unwrap(private_key: &[u8], public_key: &[u8], wrapped: &[u8]) -> Result<Vec<u8>> {
-    let (private_key_ptr, private_key_len) = into_raw_parts(private_key);
-    let (public_key_ptr, public_key_len) = into_raw_parts(public_key);
-    let (wrapped_ptr, wrapped_len) = into_raw_parts(wrapped);
-
-    let mut message = Vec::new();
-    let mut message_len = 0;
-
-    unsafe {
-        let status = themis_secure_message_unwrap(
-            private_key_ptr,
-            private_key_len,
-            public_key_ptr,
-            public_key_len,
-            wrapped_ptr,
-            wrapped_len,
-            ptr::null_mut(),
-            &mut message_len,
-        );
-        let error = Error::from_themis_status(status);
-        if error.kind() != ErrorKind::BufferTooSmall {
-            return Err(error);
-        }
-    }
-
-    message.reserve(message_len);
-
-    unsafe {
-        let status = themis_secure_message_unwrap(
-            private_key_ptr,
-            private_key_len,
-            public_key_ptr,
-            public_key_len,
-            wrapped_ptr,
-            wrapped_len,
-            message.as_mut_ptr(),
-            &mut message_len,
-        );
-        let error = Error::from_themis_status(status);
-        if error.kind() != ErrorKind::Success {
-            return Err(error);
-        }
-        debug_assert!(message_len <= message.capacity());
-        message.set_len(message_len as usize);
-    }
-
-    Ok(message)
 }
