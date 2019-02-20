@@ -504,7 +504,7 @@ static void themis_secure_message_sign_verify_api_test(void){
                         "themis_secure_message_sign: private key is NULL");
   testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_sign(private_key, 0, plaintext, plaintext_length, signed_msg, &signed_msg_length),
                         "themis_secure_message_sign: private key is empty");
-  testsuite_fail_unless(THEMIS_FAIL == themis_secure_message_sign(private_key, private_key_length-1, plaintext, plaintext_length, signed_msg, &signed_msg_length),
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_sign(private_key, private_key_length-1, plaintext, plaintext_length, signed_msg, &signed_msg_length),
                         "themis_secure_message_sign: private key is invalid");
 
   testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_sign(private_key, private_key_length, NULL, plaintext_length, signed_msg, &signed_msg_length),
@@ -531,7 +531,7 @@ static void themis_secure_message_sign_verify_api_test(void){
                         "themis_secure_message_verify: public key is NULL");
   testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_verify(public_key, 0, signed_msg, signed_msg_length, verified, &verified_length),
                         "themis_secure_message_verify: public key is empty");
-  testsuite_fail_unless(THEMIS_FAIL == themis_secure_message_verify(public_key, public_key_length-1, signed_msg, signed_msg_length, verified, &verified_length),
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_verify(public_key, public_key_length-1, signed_msg, signed_msg_length, verified, &verified_length),
                         "themis_secure_message_verify: public key is invalid");
 
   testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_verify(public_key, public_key_length, NULL, signed_msg_length, verified, &verified_length),

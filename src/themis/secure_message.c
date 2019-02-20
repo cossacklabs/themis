@@ -93,7 +93,14 @@ themis_status_t themis_secure_message_encrypt(const uint8_t* private_key,
   THEMIS_CHECK_PARAM(message!=NULL);
   THEMIS_CHECK_PARAM(message_length!=0);
   THEMIS_CHECK_PARAM(encrypted_message_length!=NULL);
-  return themis_secure_message_wrap(private_key, private_key_length, public_key, public_key_length, message, message_length, encrypted_message, encrypted_message_length);
+
+  themis_secure_message_encrypter_t* ctx=NULL;
+  ctx = themis_secure_message_encrypter_init(private_key, private_key_length, public_key, public_key_length);
+  THEMIS_CHECK_PARAM(ctx);
+
+  themis_status_t status=themis_secure_message_encrypter_proceed(ctx, message, message_length, encrypted_message, encrypted_message_length);
+  themis_secure_message_encrypter_destroy(ctx);
+  return status;
 }
 
 themis_status_t themis_secure_message_decrypt(const uint8_t* private_key,
@@ -112,7 +119,18 @@ themis_status_t themis_secure_message_decrypt(const uint8_t* private_key,
   THEMIS_CHECK_PARAM(encrypted_message!=NULL);
   THEMIS_CHECK_PARAM(encrypted_message_length!=0);
   THEMIS_CHECK_PARAM(message_length!=NULL);
-  return themis_secure_message_unwrap(private_key, private_key_length, public_key, public_key_length, encrypted_message, encrypted_message_length, message, message_length);
+
+  themis_secure_message_hdr_t* message_hdr=(themis_secure_message_hdr_t*)encrypted_message;
+  THEMIS_CHECK_PARAM(IS_THEMIS_SECURE_MESSAGE_ENCRYPTED(message_hdr->message_type));
+  THEMIS_CHECK_PARAM(encrypted_message_length>=THEMIS_SECURE_MESSAGE_LENGTH(message_hdr));
+
+  themis_secure_message_decrypter_t* ctx=NULL;
+  ctx = themis_secure_message_decrypter_init(private_key, private_key_length, public_key, public_key_length);
+  THEMIS_CHECK_PARAM(ctx);
+
+  themis_status_t status=themis_secure_message_decrypter_proceed(ctx, encrypted_message, encrypted_message_length, message, message_length);
+  themis_secure_message_decrypter_destroy(ctx);
+  return status;
 }
 
 themis_status_t themis_secure_message_sign(const uint8_t* private_key,
@@ -127,7 +145,14 @@ themis_status_t themis_secure_message_sign(const uint8_t* private_key,
   THEMIS_CHECK_PARAM(message!=NULL);
   THEMIS_CHECK_PARAM(message_length!=0);
   THEMIS_CHECK_PARAM(signed_message_length!=NULL);
-  return themis_secure_message_wrap(private_key, private_key_length, NULL, 0, message, message_length, signed_message, signed_message_length);
+
+  themis_secure_message_signer_t* ctx=NULL;
+  ctx = themis_secure_message_signer_init(private_key, private_key_length);
+  THEMIS_CHECK_PARAM(ctx);
+
+  themis_status_t res=themis_secure_message_signer_proceed(ctx, message, message_length, signed_message, signed_message_length);
+  themis_secure_message_signer_destroy(ctx);
+  return res;
 }
 
 themis_status_t themis_secure_message_verify(const uint8_t* public_key,
@@ -142,8 +167,33 @@ themis_status_t themis_secure_message_verify(const uint8_t* public_key,
   THEMIS_CHECK_PARAM(signed_message!=NULL);
   THEMIS_CHECK_PARAM(signed_message_length!=0);
   THEMIS_CHECK_PARAM(message_length!=NULL);
-  return themis_secure_message_unwrap(NULL, 0, public_key, public_key_length, signed_message, signed_message_length, message, message_length);
+
+  themis_secure_message_hdr_t* message_hdr=(themis_secure_message_hdr_t*)signed_message;
+  THEMIS_CHECK_PARAM(IS_THEMIS_SECURE_MESSAGE_SIGNED(message_hdr->message_type));
+  THEMIS_CHECK_PARAM(signed_message_length>=THEMIS_SECURE_MESSAGE_LENGTH(message_hdr));
+
+  themis_secure_message_verifier_t* ctx=NULL;
+  ctx = themis_secure_message_verifier_init(public_key, public_key_length);
+  THEMIS_CHECK_PARAM(ctx);
+
+  themis_status_t status=themis_secure_message_verifier_proceed(ctx, signed_message, signed_message_length, message, message_length);
+  themis_secure_message_verifier_destroy(ctx);
+  return status;
 }
+
+/*
+ * themis_secure_message_wrap() and themis_secure_message_unwrap() functions
+ * are deprecated in favor of more specific themis_secure_message_encrypt()
+ * and its friends.
+ *
+ * The old functions combined the interface of the new ones (wrap = encrypt
+ * or sign, unwrap = decrypt or verify). The new functions provide a more
+ * cleanly separated interface for distinct concerns.
+ *
+ * Note that while their implementation looks similar, they are not quite
+ * the same and differ slightly in error handling. Don't try to reimplement
+ * them in terms of each other. We will remove wrap and unwrap eventually.
+ */
 
 themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
 					   const size_t private_key_length,
