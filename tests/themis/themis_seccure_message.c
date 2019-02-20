@@ -363,12 +363,13 @@ static void themis_secure_message_test(){
                     "Hit http://ftp.us.debian.org[10] wheezy/contrib i386 Packages"
                     "Hit http://ftp.us.debian.org[11] wheezy/contrib Translation-en";
 
+  const uint8_t* message_bytes=(const uint8_t*)message;
   size_t message_length=strlen(message);
 
-  testsuite_fail_if(generic_themis_secure_message_encrypt_decrypt_test(RSA_ALG, message, message_length), "themis secure encrypt/decrypt message (RSA)");
-  testsuite_fail_if(generic_themis_secure_message_encrypt_decrypt_test(EC_ALG, message, message_length), "themis secure encrypt/decrypt message (EC)");
-  testsuite_fail_if(generic_themis_secure_message_sign_verify_test(RSA_ALG, message, message_length), "themis secure sign/verify message (RSA)");
-  testsuite_fail_if(generic_themis_secure_message_sign_verify_test(EC_ALG, message, message_length), "themis secure sign/verify message (EC)");
+  testsuite_fail_if(generic_themis_secure_message_encrypt_decrypt_test(RSA_ALG, message_bytes, message_length), "themis secure encrypt/decrypt message (RSA)");
+  testsuite_fail_if(generic_themis_secure_message_encrypt_decrypt_test(EC_ALG, message_bytes, message_length), "themis secure encrypt/decrypt message (EC)");
+  testsuite_fail_if(generic_themis_secure_message_sign_verify_test(RSA_ALG, message_bytes, message_length), "themis secure sign/verify message (RSA)");
+  testsuite_fail_if(generic_themis_secure_message_sign_verify_test(EC_ALG, message_bytes, message_length), "themis secure sign/verify message (EC)");
 
   testsuite_fail_if(themis_secure_signed_message_generic_test(RSA_ALG, message, message_length), "(deprecated) themis secure signed message (RSA)");
   testsuite_fail_if(themis_secure_signed_message_generic_test(EC_ALG, message,message_length), "(deprecated) themis secure signed message (EC)");
