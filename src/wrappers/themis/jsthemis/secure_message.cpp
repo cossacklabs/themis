@@ -18,6 +18,7 @@
 #include <themis/themis.h>
 #include <vector>
 #include "errors.hpp"
+#include "secure_keygen.hpp"
 #include "secure_message.hpp"
 
 namespace jsthemis {
@@ -81,40 +82,22 @@ namespace jsthemis {
 
   bool SecureMessage::ValidateKeys(const std::vector<uint8_t>& private_key, const std::vector<uint8_t>& public_key) {
     if(!private_key.empty()){
-      if(THEMIS_SUCCESS!=themis_is_valid_key(&private_key[0], private_key.size())){
+      if(!IsValidKey(private_key)){
         ThrowParameterError("Secure Message constructor", "invalid private key");
         return false;
       }
-      themis_key_kind_t kind=themis_get_key_kind(&private_key[0], private_key.size());
-      switch(kind){
-      case THEMIS_KEY_EC_PRIVATE:
-      case THEMIS_KEY_RSA_PRIVATE:
-        break;
-      case THEMIS_KEY_EC_PUBLIC:
-      case THEMIS_KEY_RSA_PUBLIC:
+      if(!IsPrivateKey(private_key)){
         ThrowParameterError("Secure Message constructor", "using public key instead of private key");
-        return false;
-      default:
-        ThrowParameterError("Secure Message constructor", "private key not supported");
         return false;
       }
     }
     if(!public_key.empty()){
-      if(THEMIS_SUCCESS!=themis_is_valid_key(&public_key[0], public_key.size())){
+      if(!IsValidKey(public_key)){
         ThrowParameterError("Secure Message constructor", "invalid public key");
         return false;
       }
-      themis_key_kind_t kind=themis_get_key_kind(&public_key[0], public_key.size());
-      switch(kind){
-      case THEMIS_KEY_EC_PUBLIC:
-      case THEMIS_KEY_RSA_PUBLIC:
-        break;
-      case THEMIS_KEY_EC_PRIVATE:
-      case THEMIS_KEY_RSA_PRIVATE:
+      if(!IsPublicKey(public_key)){
         ThrowParameterError("Secure Message constructor", "using private key instead of public key");
-        return false;
-      default:
-        ThrowParameterError("Secure Message constructor", "public key not supported");
         return false;
       }
     }

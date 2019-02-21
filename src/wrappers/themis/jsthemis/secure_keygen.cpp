@@ -105,5 +105,43 @@ namespace jsthemis {
   void KeyPair::public_key(const Nan::FunctionCallbackInfo<v8::Value>& args){
     KeyPair* obj = Nan::ObjectWrap::Unwrap<KeyPair>(args.This());
     args.GetReturnValue().Set(Nan::CopyBuffer((char*)(&(obj->public_key_)[0]), obj->public_key_.size()).ToLocalChecked());
-  }  
+  }
+
+  bool IsValidKey(const std::vector<uint8_t>& key){
+    if(!key.empty()){
+      if(THEMIS_SUCCESS==themis_is_valid_key(&key[0], key.size())){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  bool IsPrivateKey(const std::vector<uint8_t>& key){
+    if(!key.empty()){
+      themis_key_kind_t kind=themis_get_key_kind(&key[0], key.size());
+      switch(kind){
+      case THEMIS_KEY_EC_PRIVATE:
+      case THEMIS_KEY_RSA_PRIVATE:
+        return true;
+      default:
+        break;
+      }
+    }
+    return false;
+  }
+
+  bool IsPublicKey(const std::vector<uint8_t>& key){
+    if(!key.empty()){
+      themis_key_kind_t kind=themis_get_key_kind(&key[0], key.size());
+      switch(kind){
+      case THEMIS_KEY_EC_PUBLIC:
+      case THEMIS_KEY_RSA_PUBLIC:
+        return true;
+      default:
+        break;
+      }
+    }
+    return false;
+  }
+
 } //end jsthemis

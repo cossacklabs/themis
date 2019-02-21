@@ -41,5 +41,9 @@ namespace jsthemis{
     std::vector<uint8_t> public_key_;
   };
 
+  bool IsValidKey(const std::vector<uint8_t>& key);
+  bool IsPrivateKey(const std::vector<uint8_t>& key);
+  bool IsPublicKey(const std::vector<uint8_t>& key);
+
 }
 #endif /* JSTHEMIS_KEY_PAIR_HPP_ */
