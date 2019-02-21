@@ -120,6 +120,48 @@ themis_status_t themis_is_valid_key(const uint8_t* key, size_t length){
   return THEMIS_SUCCESS;
 }
 
+static bool valid_private_key(const uint8_t* private_key, size_t private_key_length){
+  if(themis_is_valid_key(private_key, private_key_length)==THEMIS_SUCCESS){
+    themis_key_kind_t private_key_kind=themis_get_key_kind(private_key, private_key_length);
+    switch(private_key_kind){
+      case THEMIS_KEY_EC_PRIVATE:
+      case THEMIS_KEY_RSA_PRIVATE:
+        return true;
+      default:
+        break;
+    }
+  }
+  return false;
+}
+
+static bool valid_public_key(const uint8_t* public_key, size_t public_key_length){
+  if(themis_is_valid_key(public_key, public_key_length)==THEMIS_SUCCESS){
+    themis_key_kind_t public_key_kind=themis_get_key_kind(public_key, public_key_length);
+    switch(public_key_kind){
+      case THEMIS_KEY_EC_PUBLIC:
+      case THEMIS_KEY_RSA_PUBLIC:
+        return true;
+      default:
+        break;
+    }
+  }
+  return false;
+}
+
+static bool matching_key_kinds(const uint8_t* private_key, size_t private_key_length,
+                               const uint8_t* public_key, size_t public_key_length)
+{
+  themis_key_kind_t private_key_kind=themis_get_key_kind(private_key, private_key_length);
+  themis_key_kind_t public_key_kind=themis_get_key_kind(public_key, public_key_length);
+  if(private_key_kind==THEMIS_KEY_EC_PRIVATE && public_key_kind==THEMIS_KEY_EC_PUBLIC){
+    return true;
+  }
+  if(private_key_kind==THEMIS_KEY_RSA_PRIVATE && public_key_kind==THEMIS_KEY_RSA_PUBLIC){
+    return true;
+  }
+  return false;
+}
+
 themis_status_t themis_secure_message_encrypt(const uint8_t* private_key,
                                               const size_t private_key_length,
                                               const uint8_t* public_key,
@@ -136,6 +178,9 @@ themis_status_t themis_secure_message_encrypt(const uint8_t* private_key,
   THEMIS_CHECK_PARAM(message!=NULL);
   THEMIS_CHECK_PARAM(message_length!=0);
   THEMIS_CHECK_PARAM(encrypted_message_length!=NULL);
+  THEMIS_CHECK_PARAM(valid_private_key(private_key, private_key_length));
+  THEMIS_CHECK_PARAM(valid_public_key(public_key, public_key_length));
+  THEMIS_CHECK_PARAM(matching_key_kinds(private_key, private_key_length, public_key, public_key_length));
 
   themis_secure_message_encrypter_t* ctx=NULL;
   ctx = themis_secure_message_encrypter_init(private_key, private_key_length, public_key, public_key_length);
@@ -162,6 +207,9 @@ themis_status_t themis_secure_message_decrypt(const uint8_t* private_key,
   THEMIS_CHECK_PARAM(encrypted_message!=NULL);
   THEMIS_CHECK_PARAM(encrypted_message_length!=0);
   THEMIS_CHECK_PARAM(message_length!=NULL);
+  THEMIS_CHECK_PARAM(valid_private_key(private_key, private_key_length));
+  THEMIS_CHECK_PARAM(valid_public_key(public_key, public_key_length));
+  THEMIS_CHECK_PARAM(matching_key_kinds(private_key, private_key_length, public_key, public_key_length));
 
   themis_secure_message_hdr_t* message_hdr=(themis_secure_message_hdr_t*)encrypted_message;
   THEMIS_CHECK_PARAM(IS_THEMIS_SECURE_MESSAGE_ENCRYPTED(message_hdr->message_type));
@@ -188,6 +236,7 @@ themis_status_t themis_secure_message_sign(const uint8_t* private_key,
   THEMIS_CHECK_PARAM(message!=NULL);
   THEMIS_CHECK_PARAM(message_length!=0);
   THEMIS_CHECK_PARAM(signed_message_length!=NULL);
+  THEMIS_CHECK_PARAM(valid_private_key(private_key, private_key_length));
 
   themis_secure_message_signer_t* ctx=NULL;
   ctx = themis_secure_message_signer_init(private_key, private_key_length);
@@ -210,6 +259,7 @@ themis_status_t themis_secure_message_verify(const uint8_t* public_key,
   THEMIS_CHECK_PARAM(signed_message!=NULL);
   THEMIS_CHECK_PARAM(signed_message_length!=0);
   THEMIS_CHECK_PARAM(message_length!=NULL);
+  THEMIS_CHECK_PARAM(valid_public_key(public_key, public_key_length));
 
   themis_secure_message_hdr_t* message_hdr=(themis_secure_message_hdr_t*)signed_message;
   THEMIS_CHECK_PARAM(IS_THEMIS_SECURE_MESSAGE_SIGNED(message_hdr->message_type));
