@@ -184,7 +184,8 @@ themis_status_t themis_secure_message_verify(const uint8_t* public_key,
 /*
  * themis_secure_message_wrap() and themis_secure_message_unwrap() functions
  * are deprecated in favor of more specific themis_secure_message_encrypt()
- * and its friends.
+ * themis_secure_message_decrypt(), themis_secure_message_sign(), 
+ * themis_secure_message_verify().
  *
  * The old functions combined the interface of the new ones (wrap = encrypt
  * or sign, unwrap = decrypt or verify). The new functions provide a more
