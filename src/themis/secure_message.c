@@ -71,10 +71,6 @@ themis_status_t themis_secure_message_encrypt(const uint8_t* private_key,
                                               uint8_t* encrypted_message,
                                               size_t* encrypted_message_length)
 {
-  THEMIS_CHECK_PARAM(private_key!=NULL);
-  THEMIS_CHECK_PARAM(private_key_length!=0);
-  THEMIS_CHECK_PARAM(public_key!=NULL);
-  THEMIS_CHECK_PARAM(public_key_length!=0);
   THEMIS_CHECK_PARAM(message!=NULL);
   THEMIS_CHECK_PARAM(message_length!=0);
   THEMIS_CHECK_PARAM(encrypted_message_length!=NULL);
@@ -100,10 +96,6 @@ themis_status_t themis_secure_message_decrypt(const uint8_t* private_key,
                                               uint8_t* message,
                                               size_t* message_length)
 {
-  THEMIS_CHECK_PARAM(private_key!=NULL);
-  THEMIS_CHECK_PARAM(private_key_length!=0);
-  THEMIS_CHECK_PARAM(public_key!=NULL);
-  THEMIS_CHECK_PARAM(public_key_length!=0);
   THEMIS_CHECK_PARAM(encrypted_message!=NULL);
   THEMIS_CHECK_PARAM(encrypted_message_length!=0);
   THEMIS_CHECK_PARAM(message_length!=NULL);
@@ -131,8 +123,6 @@ themis_status_t themis_secure_message_sign(const uint8_t* private_key,
                                            uint8_t* signed_message,
                                            size_t* signed_message_length)
 {
-  THEMIS_CHECK_PARAM(private_key!=NULL);
-  THEMIS_CHECK_PARAM(private_key_length!=0);
   THEMIS_CHECK_PARAM(message!=NULL);
   THEMIS_CHECK_PARAM(message_length!=0);
   THEMIS_CHECK_PARAM(signed_message_length!=NULL);
@@ -154,8 +144,6 @@ themis_status_t themis_secure_message_verify(const uint8_t* public_key,
                                              uint8_t* message,
                                              size_t* message_length)
 {
-  THEMIS_CHECK_PARAM(public_key!=NULL);
-  THEMIS_CHECK_PARAM(public_key_length!=0);
   THEMIS_CHECK_PARAM(signed_message!=NULL);
   THEMIS_CHECK_PARAM(signed_message_length!=0);
   THEMIS_CHECK_PARAM(message_length!=NULL);
