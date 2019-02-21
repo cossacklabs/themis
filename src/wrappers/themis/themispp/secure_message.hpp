@@ -30,19 +30,31 @@ namespace themispp {
     
     secure_message_t(data_t::const_iterator private_key_begin, data_t::const_iterator private_key_end, data_t::const_iterator peer_public_key_begin, data_t::const_iterator peer_public_key_end):
       private_key_(private_key_begin, private_key_end),
-      peer_public_key_(peer_public_key_begin, peer_public_key_end){}
+      peer_public_key_(peer_public_key_begin, peer_public_key_end)
+    {
+      validate_keys();
+    }
 
     secure_message_t(const data_t& private_key, data_t::const_iterator peer_public_key_begin, data_t::const_iterator peer_public_key_end):
       private_key_(private_key.begin(), private_key.end()),
-      peer_public_key_(peer_public_key_begin, peer_public_key_end){}
+      peer_public_key_(peer_public_key_begin, peer_public_key_end)
+    {
+      validate_keys();
+    }
 
     secure_message_t(data_t::const_iterator private_key_begin, data_t::const_iterator private_key_end, const data_t& peer_public_key):
       private_key_(private_key_begin, private_key_end),
-      peer_public_key_(peer_public_key.begin(), peer_public_key.end()){}
-    
+      peer_public_key_(peer_public_key.begin(), peer_public_key.end())
+    {
+      validate_keys();
+    }
+
     secure_message_t(const data_t& private_key, const data_t& peer_public_key):
       private_key_(private_key.begin(), private_key.end()),
-      peer_public_key_(peer_public_key.begin(), peer_public_key.end()){}
+      peer_public_key_(peer_public_key.begin(), peer_public_key.end())
+    {
+      validate_keys();
+    }
 
     virtual ~secure_message_t(){}
 
@@ -159,6 +171,41 @@ namespace themispp {
   private:
     secure_message_t(const secure_message_t&);
     secure_message_t& operator=(const secure_message_t&);
+
+    void validate_keys(){
+      if(!private_key_.empty()){
+        if(THEMIS_SUCCESS!=themis_is_valid_key(&private_key_[0], private_key_.size())){
+          throw themispp::exception_t("Secure Message: invalid private key");
+        }
+        themis_key_kind_t kind=themis_get_key_kind(&private_key_[0], private_key_.size());
+        switch(kind){
+        case THEMIS_KEY_EC_PRIVATE:
+        case THEMIS_KEY_RSA_PRIVATE:
+          break;
+        case THEMIS_KEY_EC_PUBLIC:
+        case THEMIS_KEY_RSA_PUBLIC:
+          throw themispp::exception_t("Secure Message: using public key instead of private key");
+        default:
+          throw themispp::exception_t("Secure Message: private key not supported");
+        }
+      }
+      if(!peer_public_key_.empty()){
+        if(THEMIS_SUCCESS!=themis_is_valid_key(&peer_public_key_[0], peer_public_key_.size())){
+          throw themispp::exception_t("Secure Message: invalid public key");
+        }
+        themis_key_kind_t kind=themis_get_key_kind(&peer_public_key_[0], peer_public_key_.size());
+        switch(kind){
+        case THEMIS_KEY_EC_PUBLIC:
+        case THEMIS_KEY_RSA_PUBLIC:
+          break;
+        case THEMIS_KEY_EC_PRIVATE:
+        case THEMIS_KEY_RSA_PRIVATE:
+          throw themispp::exception_t("Secure Message: using private key instead of public key");
+        default:
+          throw themispp::exception_t("Secure Message: public key not supported");
+        }
+      }
+    }
   };
 } //end themispp
 
