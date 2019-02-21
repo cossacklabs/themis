@@ -63,6 +63,10 @@ namespace jsthemis {
       }
       std::vector<uint8_t> private_key((uint8_t*)(node::Buffer::Data(args[0])), (uint8_t*)(node::Buffer::Data(args[0])+node::Buffer::Length(args[0])));
       std::vector<uint8_t> public_key((uint8_t*)(node::Buffer::Data(args[1])), (uint8_t*)(node::Buffer::Data(args[1])+node::Buffer::Length(args[1])));
+      if(!ValidateKeys(private_key, public_key)){
+        args.GetReturnValue().SetUndefined();
+        return;
+      }
       SecureMessage* obj = new SecureMessage(private_key, public_key);
       obj->Wrap(args.This());
       args.GetReturnValue().Set(args.This());
@@ -73,6 +77,48 @@ namespace jsthemis {
       v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
       args.GetReturnValue().Set(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
     }
+  }
+
+  bool SecureMessage::ValidateKeys(const std::vector<uint8_t>& private_key, const std::vector<uint8_t>& public_key) {
+    if(!private_key.empty()){
+      if(THEMIS_SUCCESS!=themis_is_valid_key(&private_key[0], private_key.size())){
+        ThrowParameterError("Secure Message constructor", "invalid private key");
+        return false;
+      }
+      themis_key_kind_t kind=themis_get_key_kind(&private_key[0], private_key.size());
+      switch(kind){
+      case THEMIS_KEY_EC_PRIVATE:
+      case THEMIS_KEY_RSA_PRIVATE:
+        break;
+      case THEMIS_KEY_EC_PUBLIC:
+      case THEMIS_KEY_RSA_PUBLIC:
+        ThrowParameterError("Secure Message constructor", "using public key instead of private key");
+        return false;
+      default:
+        ThrowParameterError("Secure Message constructor", "private key not supported");
+        return false;
+      }
+    }
+    if(!public_key.empty()){
+      if(THEMIS_SUCCESS!=themis_is_valid_key(&public_key[0], public_key.size())){
+        ThrowParameterError("Secure Message constructor", "invalid public key");
+        return false;
+      }
+      themis_key_kind_t kind=themis_get_key_kind(&public_key[0], public_key.size());
+      switch(kind){
+      case THEMIS_KEY_EC_PUBLIC:
+      case THEMIS_KEY_RSA_PUBLIC:
+        break;
+      case THEMIS_KEY_EC_PRIVATE:
+      case THEMIS_KEY_RSA_PRIVATE:
+        ThrowParameterError("Secure Message constructor", "using private key instead of public key");
+        return false;
+      default:
+        ThrowParameterError("Secure Message constructor", "public key not supported");
+        return false;
+      }
+    }
+    return true;
   }
 
   void SecureMessage::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args) {

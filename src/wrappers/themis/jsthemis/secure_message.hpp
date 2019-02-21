@@ -38,6 +38,8 @@ namespace jsthemis{
 
     static Nan::Persistent<v8::Function> constructor;
 
+    static bool ValidateKeys(const std::vector<uint8_t>& private_key, const std::vector<uint8_t>& public_key);
+
     std::vector<uint8_t> private_key_;
     std::vector<uint8_t> peer_public_key_;
   };

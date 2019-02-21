@@ -38,6 +38,9 @@ describe("jsthemis", function(){
 	    assert.throws(function(){empty_secure_message.sign(message);}, expect_code(addon.INVALID_PARAMETER));
 	    assert.throws(function(){empty_secure_message.verify(signed_message);}, expect_code(addon.INVALID_PARAMETER));
 	})
+	it("mismatched keys", function(){
+	    assert.throws(function(){new addon.SecureMessage(keypair.public(), keypair.private())}, expect_code(addon.INVALID_PARAMETER));
+	})
     })
 })
 
