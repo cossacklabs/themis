@@ -64,6 +64,33 @@ themis_status_t themis_gen_ec_key_pair(uint8_t* private_key,
 				       uint8_t* public_key,
 				       size_t* public_key_length);
 
+enum themis_key_kind
+{
+  THEMIS_KEY_INVALID,
+  THEMIS_KEY_RSA_PRIVATE,
+  THEMIS_KEY_RSA_PUBLIC,
+  THEMIS_KEY_EC_PRIVATE,
+  THEMIS_KEY_EC_PUBLIC,
+};
+
+typedef enum themis_key_kind themis_key_kind_t;
+
+/**
+ * @brief get Themis key kind
+ * @param [in]  key     key buffer
+ * @param [in]  length  length of key
+ * @return corresponding key kind if the buffer contains a key, or THEMIS_KEY_INVALID otherwise
+ */
+themis_key_kind_t themis_get_key_kind(const uint8_t* key, size_t length);
+
+/**
+ * @brief validate a Themis key
+ * @param [in]  key     key buffer to validate
+ * @param [in]  length  length of key
+ * @return THEMIS_SUCCESS if the buffer contains a valid Themis key, or an error code otherwise
+ */
+themis_status_t themis_is_valid_key(const uint8_t* key, size_t length);
+
 /**
  * @brief encrypt message to secure message
  * @param [in]      private_key                 private key

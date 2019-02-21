@@ -15,27 +15,3 @@
 //! Wrapper header for bindgen containing all Themis API declarations.
 
 #include <themis/themis.h>
-
-// TODO: move shims into Themis core
-//
-// These shims are here because they use C macros which are not exported by bindgen.
-// Ideally, Themis should provide this functionality, but it's too unstable now
-// for inclusion into the core library.
-
-#include <stddef.h>
-#include <stdint.h>
-
-enum themis_key_kind
-{
-    THEMIS_KEY_INVALID,
-    THEMIS_KEY_RSA_PRIVATE,
-    THEMIS_KEY_RSA_PUBLIC,
-    THEMIS_KEY_EC_PRIVATE,
-    THEMIS_KEY_EC_PUBLIC,
-};
-
-/// Checks if the buffer contains a valid Themis key.
-themis_status_t themis_is_valid_key(const uint8_t *key, size_t length);
-
-/// Extracts the presumed key kind from the buffer.
-enum themis_key_kind themis_get_key_kind(const uint8_t *key, size_t length);

@@ -14,10 +14,16 @@
 * limitations under the License.
 */
 
+#include <string.h>
+#include <arpa/inet.h>
+
 #include <themis/themis_error.h>
 #include <themis/secure_message.h>
 #include <themis/secure_message_wrapper.h>
 #include <soter/soter_t.h>
+#include <soter/soter_container.h>
+#include <soter/soter_ec_key.h>
+#include <soter/soter_rsa_key.h>
 
 #ifndef THEMIS_RSA_KEY_LENGTH
 #define THEMIS_RSA_KEY_LENGTH RSA_KEY_LENGTH_2048
@@ -75,6 +81,43 @@ themis_status_t themis_gen_ec_key_pair(uint8_t* private_key,
 				    uint8_t* public_key,
 				    size_t* public_key_length){
   return themis_gen_key_pair(SOTER_SIGN_ecdsa_none_pkcs8, private_key, private_key_length, public_key, public_key_length);
+}
+
+themis_key_kind_t themis_get_key_kind(const uint8_t* key, size_t length){
+  if(!key || (length<sizeof(soter_container_hdr_t))){
+    return THEMIS_KEY_INVALID;
+  }
+
+  if(!memcmp(key, RSA_PRIV_KEY_PREF, strlen(RSA_PRIV_KEY_PREF))){
+    return THEMIS_KEY_RSA_PRIVATE;
+  }
+  if(!memcmp(key, RSA_PUB_KEY_PREF, strlen(RSA_PUB_KEY_PREF))){
+    return THEMIS_KEY_RSA_PUBLIC;
+  }
+  if(!memcmp(key, EC_PRIV_KEY_PREF, strlen(EC_PRIV_KEY_PREF))){
+    return THEMIS_KEY_EC_PRIVATE;
+  }
+  if(!memcmp(key, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF))){
+    return THEMIS_KEY_EC_PUBLIC;
+  }
+
+  return THEMIS_KEY_INVALID;
+}
+
+themis_status_t themis_is_valid_key(const uint8_t* key, size_t length){
+  const soter_container_hdr_t* container=(const void*)key;
+
+  if(!key || (length<sizeof(soter_container_hdr_t))){
+    return THEMIS_INVALID_PARAMETER;
+  }
+  if(length!=ntohl(container->size)){
+    return THEMIS_INVALID_PARAMETER;
+  }
+  if(SOTER_SUCCESS!=soter_verify_container_checksum(container)){
+    return THEMIS_DATA_CORRUPT;
+  }
+
+  return THEMIS_SUCCESS;
 }
 
 themis_status_t themis_secure_message_encrypt(const uint8_t* private_key,

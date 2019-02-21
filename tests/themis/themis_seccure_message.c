@@ -656,6 +656,85 @@ static void secure_message_old_api_test(void)
 	testsuite_fail_unless((!memcmp(plaintext, decryptext, plaintext_length)), "generic secure message: normal flow 2");
 }
 
+static void key_validation_test(void){
+  themis_status_t status=THEMIS_FAIL;
+
+  uint8_t ec_private_key[MAX_KEY_SIZE]={0};
+  uint8_t ec_public_key[MAX_KEY_SIZE]={0};
+  uint8_t rsa_private_key[MAX_KEY_SIZE]={0};
+  uint8_t rsa_public_key[MAX_KEY_SIZE]={0};
+  size_t ec_private_key_length = sizeof(ec_private_key);
+  size_t ec_public_key_length = sizeof(ec_public_key);
+  size_t rsa_private_key_length = sizeof(rsa_private_key);
+  size_t rsa_public_key_length = sizeof(rsa_public_key);
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_gen_ec_key_pair(NULL, NULL, NULL, NULL),
+                        "themis_gen_ec_key_pair: null pointers");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_gen_rsa_key_pair(NULL, NULL, NULL, NULL),
+                        "themis_gen_rsa_key_pair: null pointers");
+
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(NULL, &ec_private_key_length, NULL, &ec_public_key_length),
+                        "themis_gen_ec_key_pair: check length");
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_rsa_key_pair(NULL, &rsa_private_key_length, NULL, &rsa_public_key_length),
+                    "   themis_gen_rsa_key_pair: check length");
+
+  ec_private_key_length -= 1;
+  ec_public_key_length -= 1;
+  rsa_private_key_length -= 1;
+  rsa_public_key_length -= 1;
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(ec_private_key, &ec_private_key_length, ec_public_key, &ec_public_key_length),
+                        "themis_gen_ec_key_pair: small buffer");
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_rsa_key_pair(rsa_private_key, &rsa_private_key_length, rsa_public_key, &rsa_public_key_length),
+                        "themis_gen_rsa_key_pair: small buffer");
+
+  status=themis_gen_ec_key_pair(ec_private_key, &ec_private_key_length, ec_public_key, &ec_public_key_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_gen_ec_key_pair failed");
+    return;
+  }
+
+  status=themis_gen_rsa_key_pair(rsa_private_key, &rsa_private_key_length, rsa_public_key, &rsa_public_key_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_gen_rsa_key_pair failed");
+    return;
+  }
+
+  testsuite_fail_unless(THEMIS_KEY_EC_PRIVATE == themis_get_key_kind(ec_private_key, ec_private_key_length),
+                        "themis_get_key_kind: EC private");
+  testsuite_fail_unless(THEMIS_KEY_EC_PUBLIC == themis_get_key_kind(ec_public_key, ec_public_key_length),
+                        "themis_get_key_kind: EC public");
+
+  testsuite_fail_unless(THEMIS_KEY_RSA_PRIVATE == themis_get_key_kind(rsa_private_key, rsa_private_key_length),
+                        "themis_get_key_kind: RSA private");
+  testsuite_fail_unless(THEMIS_KEY_RSA_PUBLIC == themis_get_key_kind(rsa_public_key, rsa_public_key_length),
+                        "themis_get_key_kind: RSA public");
+
+  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_key(ec_private_key, ec_private_key_length),
+                        "themis_is_valid_key: EC private");
+  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_key(ec_public_key, ec_public_key_length),
+                        "themis_is_valid_key: EC public");
+  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_key(rsa_private_key, rsa_private_key_length),
+                        "themis_is_valid_key: RSA private");
+  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_key(rsa_public_key, rsa_public_key_length),
+                        "themis_is_valid_key: RSA public");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_key(NULL, 0),
+                        "themis_is_valid_key: invalid arguments");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_key(ec_private_key, ec_private_key_length-1),
+                        "themis_is_valid_key: truncated buffer");
+
+  testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_key_kind(NULL, 0),
+                        "themis_get_key_kind: invalid arguments");
+  testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_key_kind(ec_private_key, 2),
+                        "themis_get_key_kind: truncated buffer");
+
+  const char* input = "definitely not a valid key";
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_key((const uint8_t*)input, strlen(input)),
+                        "themis_is_valid_key: garbage input");
+  testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_key_kind((const uint8_t*)input, strlen(input)),
+                        "themis_get_key_kind: garbage input");
+}
+
 void run_secure_message_test(){
   testsuite_enter_suite("generic secure message");
   testsuite_run_test(themis_secure_message_test);
@@ -664,4 +743,7 @@ void run_secure_message_test(){
   testsuite_run_test(themis_secure_message_encrypt_decrypt_api_test);
   testsuite_run_test(themis_secure_message_sign_verify_api_test);
   testsuite_run_test(secure_message_old_api_test);
+
+  testsuite_enter_suite("key generation and validation");
+  testsuite_run_test(key_validation_test);
 }

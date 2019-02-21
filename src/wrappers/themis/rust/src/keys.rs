@@ -503,7 +503,7 @@ impl PublicKey {
 // get_key_kind_trusted() again on the very same byte slice to get the result faster.
 //
 // There's also a reason why they receive &KeyBytes, not just &[u8]. This is to maintain correct
-// pointer alignment. See "libthemis-sys/src/wrapper.c" for details.
+// pointer alignment.
 
 fn get_key_kind(key: &KeyBytes) -> Result<KeyKind> {
     is_valid_themis_key(key)?;
