@@ -70,13 +70,15 @@ namespace themispp{
     std::vector<uint8_t> public_key;
   };
 
-  inline bool is_valid_key(const std::vector<uint8_t>& key){
-    if(!key.empty()){
-      if(THEMIS_SUCCESS==themis_is_valid_key(&key[0], key.size())){
-        return true;
-      }
+  inline themis_status_t validate_key(const std::vector<uint8_t>& key){
+    if(key.empty()){
+      return THEMIS_INVALID_PARAMETER;
     }
-    return false;
+    return themis_is_valid_key(&key[0], key.size());
+  }
+
+  inline bool is_valid_key(const std::vector<uint8_t>& key){
+    return validate_key(key)==THEMIS_SUCCESS;
   }
 
   inline bool is_private_key(const std::vector<uint8_t>& key){

@@ -19,6 +19,7 @@
 
 #include <nan.h>
 #include <vector>
+#include <themis/themis.h>
 
 namespace jsthemis{
 
@@ -41,6 +42,7 @@ namespace jsthemis{
     std::vector<uint8_t> public_key_;
   };
 
+  themis_status_t ValidateKey(const std::vector<uint8_t>& key);
   bool IsValidKey(const std::vector<uint8_t>& key);
   bool IsPrivateKey(const std::vector<uint8_t>& key);
   bool IsPublicKey(const std::vector<uint8_t>& key);

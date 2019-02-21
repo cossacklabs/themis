@@ -107,13 +107,15 @@ namespace jsthemis {
     args.GetReturnValue().Set(Nan::CopyBuffer((char*)(&(obj->public_key_)[0]), obj->public_key_.size()).ToLocalChecked());
   }
 
-  bool IsValidKey(const std::vector<uint8_t>& key){
-    if(!key.empty()){
-      if(THEMIS_SUCCESS==themis_is_valid_key(&key[0], key.size())){
-        return true;
-      }
+  themis_status_t ValidateKey(const std::vector<uint8_t>& key){
+    if(key.empty()){
+      return false;
     }
-    return false;
+    return themis_is_valid_key(&key[0], key.size());
+  }
+
+  bool IsValidKey(const std::vector<uint8_t>& key){
+    return ValidateKey(key)==THEMIS_SUCCESS;
   }
 
   bool IsPrivateKey(const std::vector<uint8_t>& key){
