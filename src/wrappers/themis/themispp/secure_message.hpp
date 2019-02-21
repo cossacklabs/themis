@@ -18,6 +18,7 @@
 #define THEMISPP_SECURE_MESSAGE_HPP_
 
 #include "exception.hpp"
+#include "secure_keygen.hpp"
 #include <themis/themis.h>
 #include <vector>
 
@@ -174,35 +175,19 @@ namespace themispp {
 
     void validate_keys(){
       if(!private_key_.empty()){
-        if(THEMIS_SUCCESS!=themis_is_valid_key(&private_key_[0], private_key_.size())){
+        if(!is_valid_key(private_key_)){
           throw themispp::exception_t("Secure Message: invalid private key");
         }
-        themis_key_kind_t kind=themis_get_key_kind(&private_key_[0], private_key_.size());
-        switch(kind){
-        case THEMIS_KEY_EC_PRIVATE:
-        case THEMIS_KEY_RSA_PRIVATE:
-          break;
-        case THEMIS_KEY_EC_PUBLIC:
-        case THEMIS_KEY_RSA_PUBLIC:
+        if(!is_private_key(private_key_)){
           throw themispp::exception_t("Secure Message: using public key instead of private key");
-        default:
-          throw themispp::exception_t("Secure Message: private key not supported");
         }
       }
       if(!peer_public_key_.empty()){
-        if(THEMIS_SUCCESS!=themis_is_valid_key(&peer_public_key_[0], peer_public_key_.size())){
+        if(!is_valid_key(peer_public_key_)){
           throw themispp::exception_t("Secure Message: invalid public key");
         }
-        themis_key_kind_t kind=themis_get_key_kind(&peer_public_key_[0], peer_public_key_.size());
-        switch(kind){
-        case THEMIS_KEY_EC_PUBLIC:
-        case THEMIS_KEY_RSA_PUBLIC:
-          break;
-        case THEMIS_KEY_EC_PRIVATE:
-        case THEMIS_KEY_RSA_PRIVATE:
+        if(!is_public_key(peer_public_key_)){
           throw themispp::exception_t("Secure Message: using private key instead of public key");
-        default:
-          throw themispp::exception_t("Secure Message: public key not supported");
         }
       }
     }

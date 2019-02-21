@@ -70,6 +70,43 @@ namespace themispp{
     std::vector<uint8_t> public_key;
   };
 
+  inline bool is_valid_key(const std::vector<uint8_t>& key){
+    if(!key.empty()){
+      if(THEMIS_SUCCESS==themis_is_valid_key(&key[0], key.size())){
+        return true;
+      }
+    }
+    return false;
+  }
+
+  inline bool is_private_key(const std::vector<uint8_t>& key){
+    if(!key.empty()){
+      themis_key_kind_t kind=themis_get_key_kind(&key[0], key.size());
+      switch(kind){
+      case THEMIS_KEY_EC_PRIVATE:
+      case THEMIS_KEY_RSA_PRIVATE:
+        return true;
+      default:
+        break;
+      }
+    }
+    return false;
+  }
+
+  inline bool is_public_key(const std::vector<uint8_t>& key){
+    if(!key.empty()){
+      themis_key_kind_t kind=themis_get_key_kind(&key[0], key.size());
+      switch(kind){
+      case THEMIS_KEY_EC_PUBLIC:
+      case THEMIS_KEY_RSA_PUBLIC:
+        return true;
+      default:
+        break;
+      }
+    }
+    return false;
+  }
+
 }// ns themis
 
 #endif
