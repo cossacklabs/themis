@@ -12,14 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::ffi::CStr;
+use std::ptr;
 
 #[test]
-fn check_version() {
-    let version = unsafe { CStr::from_ptr(libthemis_sys::themis_version()) };
-    // Themis 0.10.0 is slightly buggy and identifies itself as 0.9.
-    assert!(version
-        .to_str()
-        .expect("valid UTF-8")
-        .contains("themis 0.9"));
+fn check_ffi_call() {
+    let mut private_key_len = 0;
+    let mut public_key_len = 0;
+    let status = unsafe {
+        libthemis_sys::themis_gen_ec_key_pair(
+            ptr::null_mut(),
+            &mut private_key_len,
+            ptr::null_mut(),
+            &mut public_key_len,
+        )
+    };
+    assert_eq!(
+        status,
+        libthemis_sys::THEMIS_BUFFER_TOO_SMALL as libthemis_sys::themis_status_t
+    );
 }
