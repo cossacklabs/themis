@@ -84,20 +84,22 @@ themis_status_t themis_gen_ec_key_pair(uint8_t* private_key,
 }
 
 themis_key_kind_t themis_get_key_kind(const uint8_t* key, size_t length){
+  const soter_container_hdr_t* container=(const void*)key;
+
   if(!key || (length<sizeof(soter_container_hdr_t))){
     return THEMIS_KEY_INVALID;
   }
 
-  if(!memcmp(key, RSA_PRIV_KEY_PREF, strlen(RSA_PRIV_KEY_PREF))){
+  if(!memcmp(container->tag, RSA_PRIV_KEY_PREF, strlen(RSA_PRIV_KEY_PREF))){
     return THEMIS_KEY_RSA_PRIVATE;
   }
-  if(!memcmp(key, RSA_PUB_KEY_PREF, strlen(RSA_PUB_KEY_PREF))){
+  if(!memcmp(container->tag, RSA_PUB_KEY_PREF, strlen(RSA_PUB_KEY_PREF))){
     return THEMIS_KEY_RSA_PUBLIC;
   }
-  if(!memcmp(key, EC_PRIV_KEY_PREF, strlen(EC_PRIV_KEY_PREF))){
+  if(!memcmp(container->tag, EC_PRIV_KEY_PREF, strlen(EC_PRIV_KEY_PREF))){
     return THEMIS_KEY_EC_PRIVATE;
   }
-  if(!memcmp(key, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF))){
+  if(!memcmp(container->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF))){
     return THEMIS_KEY_EC_PUBLIC;
   }
 
@@ -108,6 +110,9 @@ themis_status_t themis_is_valid_key(const uint8_t* key, size_t length){
   const soter_container_hdr_t* container=(const void*)key;
 
   if(!key || (length<sizeof(soter_container_hdr_t))){
+    return THEMIS_INVALID_PARAMETER;
+  }
+  if(THEMIS_KEY_INVALID==themis_get_key_kind(key, length)){
     return THEMIS_INVALID_PARAMETER;
   }
   if(length!=ntohl(container->size)){
