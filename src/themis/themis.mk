@@ -22,6 +22,10 @@ THEMIS_OBJ = $(patsubst $(SRC_PATH)/%.c,$(OBJ_PATH)/%.o, $(THEMIS_SRC))
 
 THEMIS_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(THEMIS_AUD_SRC))
 
+THEMIS_FMT_SRC += $(wildcard $(SRC_PATH)/themis/*.c)
+THEMIS_FMT_SRC += $(wildcard $(SRC_PATH)/themis/*.h)
+THEMIS_FMT = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt,$(THEMIS_FMT_SRC))
+
 THEMIS_BIN = themis
 
 themis_pkgconfig:

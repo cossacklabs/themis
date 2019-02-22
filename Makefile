@@ -47,8 +47,8 @@ PRINT_ERROR = printf "$@ $(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LO
 PRINT_ERROR_ = printf "$(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n" && false
 PRINT_WARNING = printf "$@ $(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
 PRINT_WARNING_ = printf "$(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
-BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
-BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
+BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
+BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
 
 PKGINFO_PATH = PKGINFO
 
@@ -297,6 +297,16 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
+FMT_FILES += $(THEMIS_FMT)
+FMT_FILES += $(SOTER_FMT)
+
+$(OBJ_PATH)/%.fmt: CMD = CFLAGS='$(CFLAGS)' ./scripts/fmt.sh $< $@
+
+$(OBJ_PATH)/%.fmt: $(SRC_PATH)/%
+	@mkdir -p $(@D)
+	@echo -n "$(FMT_MODE) $< "
+	@$(BUILD_CMD_)
+
 #$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
 $(AUD_PATH)/%: CMD = ./scripts/pp.sh  $< $@
 
@@ -323,6 +333,15 @@ include tests/test.mk
 include tools/afl/fuzzy.mk
 
 err: ; $(ERROR)
+
+fmt: export FMT_MODE = fix
+fmt: $(FMT_FILES)
+
+fmt_check: export FMT_MODE = check
+fmt_check: $(FMT_FILES)
+
+fmt_clean:
+	@rm -f $(FMT_FILES)
 
 clean: CMD = rm -rf $(BIN_PATH)
 

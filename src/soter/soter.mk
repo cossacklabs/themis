@@ -28,6 +28,11 @@ SOTER_OBJ = $(patsubst $(SRC_PATH)/%.c,$(OBJ_PATH)/%.o, $(SOTER_SRC))
 
 SOTER_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(SOTER_AUD_SRC))
 
+# Ignore ed25519 during code reformatting as it is 3rd-party code (and it breaks clang-tidy)
+SOTER_FMT_SRC += $(wildcard $(SRC_PATH)/soter/*.c)
+SOTER_FMT_SRC += $(wildcard $(SRC_PATH)/soter/*.h)
+SOTER_FMT = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt,$(SOTER_FMT_SRC))
+
 SOTER_BIN = soter
 
 soter_pkgconfig:
