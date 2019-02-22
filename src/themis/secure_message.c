@@ -21,8 +21,8 @@
 #include <themis/secure_message_wrapper.h>
 
 static bool valid_private_key(const uint8_t* private_key, size_t private_key_length){
-  if(themis_is_valid_key(private_key, private_key_length)==THEMIS_SUCCESS){
-    themis_key_kind_t private_key_kind=themis_get_key_kind(private_key, private_key_length);
+  if(themis_is_valid_asym_key(private_key, private_key_length)==THEMIS_SUCCESS){
+    themis_key_kind_t private_key_kind=themis_get_asym_key_kind(private_key, private_key_length);
     switch(private_key_kind){
       case THEMIS_KEY_EC_PRIVATE:
       case THEMIS_KEY_RSA_PRIVATE:
@@ -35,8 +35,8 @@ static bool valid_private_key(const uint8_t* private_key, size_t private_key_len
 }
 
 static bool valid_public_key(const uint8_t* public_key, size_t public_key_length){
-  if(themis_is_valid_key(public_key, public_key_length)==THEMIS_SUCCESS){
-    themis_key_kind_t public_key_kind=themis_get_key_kind(public_key, public_key_length);
+  if(themis_is_valid_asym_key(public_key, public_key_length)==THEMIS_SUCCESS){
+    themis_key_kind_t public_key_kind=themis_get_asym_key_kind(public_key, public_key_length);
     switch(public_key_kind){
       case THEMIS_KEY_EC_PUBLIC:
       case THEMIS_KEY_RSA_PUBLIC:
@@ -51,8 +51,8 @@ static bool valid_public_key(const uint8_t* public_key, size_t public_key_length
 static bool matching_key_kinds(const uint8_t* private_key, size_t private_key_length,
                                const uint8_t* public_key, size_t public_key_length)
 {
-  themis_key_kind_t private_key_kind=themis_get_key_kind(private_key, private_key_length);
-  themis_key_kind_t public_key_kind=themis_get_key_kind(public_key, public_key_length);
+  themis_key_kind_t private_key_kind=themis_get_asym_key_kind(private_key, private_key_length);
+  themis_key_kind_t public_key_kind=themis_get_asym_key_kind(public_key, public_key_length);
   if(private_key_kind==THEMIS_KEY_EC_PRIVATE && public_key_kind==THEMIS_KEY_EC_PUBLIC){
     return true;
   }

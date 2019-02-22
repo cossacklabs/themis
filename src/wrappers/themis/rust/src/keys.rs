@@ -130,7 +130,7 @@
 
 use std::fmt;
 
-use bindings::{themis_get_key_kind, themis_is_valid_key};
+use bindings::{themis_get_asym_key_kind, themis_is_valid_asym_key};
 use zeroize::Zeroize;
 
 use crate::error::{Error, ErrorKind, Result};
@@ -517,7 +517,7 @@ fn get_key_kind_trusted(key: &KeyBytes) -> KeyKind {
 
 fn is_valid_themis_key(key: &KeyBytes) -> Result<()> {
     let (ptr, len) = into_raw_parts(key.as_bytes());
-    let status = unsafe { themis_is_valid_key(ptr, len) };
+    let status = unsafe { themis_is_valid_asym_key(ptr, len) };
     let error = Error::from_themis_status(status);
     if error.kind() != ErrorKind::Success {
         return Err(error);
@@ -528,7 +528,7 @@ fn is_valid_themis_key(key: &KeyBytes) -> Result<()> {
 fn try_get_key_kind(key: &KeyBytes) -> Result<KeyKind> {
     use bindings::themis_key_kind::*;
     let (ptr, len) = into_raw_parts(key.as_bytes());
-    let kind = unsafe { themis_get_key_kind(ptr, len) };
+    let kind = unsafe { themis_get_asym_key_kind(ptr, len) };
     match kind {
         THEMIS_KEY_RSA_PRIVATE => Ok(KeyKind::RsaPrivate),
         THEMIS_KEY_RSA_PUBLIC => Ok(KeyKind::RsaPublic),

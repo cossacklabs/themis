@@ -81,7 +81,7 @@ typedef enum themis_key_kind themis_key_kind_t;
  * @param [in]  length  length of key
  * @return corresponding key kind if the buffer contains a key, or THEMIS_KEY_INVALID otherwise
  */
-themis_key_kind_t themis_get_key_kind(const uint8_t* key, size_t length);
+themis_key_kind_t themis_get_asym_key_kind(const uint8_t* key, size_t length);
 
 /**
  * @brief validate a Themis key
@@ -89,7 +89,7 @@ themis_key_kind_t themis_get_key_kind(const uint8_t* key, size_t length);
  * @param [in]  length  length of key
  * @return THEMIS_SUCCESS if the buffer contains a valid Themis key, or an error code otherwise
  */
-themis_status_t themis_is_valid_key(const uint8_t* key, size_t length);
+themis_status_t themis_is_valid_asym_key(const uint8_t* key, size_t length);
 
 /** @} */
 /** @} */

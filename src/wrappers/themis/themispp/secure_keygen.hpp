@@ -74,7 +74,7 @@ namespace themispp{
     if(key.empty()){
       return THEMIS_INVALID_PARAMETER;
     }
-    return themis_is_valid_key(&key[0], key.size());
+    return themis_is_valid_asym_key(&key[0], key.size());
   }
 
   inline bool is_valid_key(const std::vector<uint8_t>& key){
@@ -83,7 +83,7 @@ namespace themispp{
 
   inline bool is_private_key(const std::vector<uint8_t>& key){
     if(!key.empty()){
-      themis_key_kind_t kind=themis_get_key_kind(&key[0], key.size());
+      themis_key_kind_t kind=themis_get_asym_key_kind(&key[0], key.size());
       switch(kind){
       case THEMIS_KEY_EC_PRIVATE:
       case THEMIS_KEY_RSA_PRIVATE:
@@ -97,7 +97,7 @@ namespace themispp{
 
   inline bool is_public_key(const std::vector<uint8_t>& key){
     if(!key.empty()){
-      themis_key_kind_t kind=themis_get_key_kind(&key[0], key.size());
+      themis_key_kind_t kind=themis_get_asym_key_kind(&key[0], key.size());
       switch(kind){
       case THEMIS_KEY_EC_PUBLIC:
       case THEMIS_KEY_RSA_PUBLIC:

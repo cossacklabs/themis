@@ -711,40 +711,40 @@ static void key_validation_test(void){
     return;
   }
 
-  testsuite_fail_unless(THEMIS_KEY_EC_PRIVATE == themis_get_key_kind(ec_private_key, ec_private_key_length),
-                        "themis_get_key_kind: EC private");
-  testsuite_fail_unless(THEMIS_KEY_EC_PUBLIC == themis_get_key_kind(ec_public_key, ec_public_key_length),
-                        "themis_get_key_kind: EC public");
+  testsuite_fail_unless(THEMIS_KEY_EC_PRIVATE == themis_get_asym_key_kind(ec_private_key, ec_private_key_length),
+                        "themis_get_asym_key_kind: EC private");
+  testsuite_fail_unless(THEMIS_KEY_EC_PUBLIC == themis_get_asym_key_kind(ec_public_key, ec_public_key_length),
+                        "themis_get_asym_key_kind: EC public");
 
-  testsuite_fail_unless(THEMIS_KEY_RSA_PRIVATE == themis_get_key_kind(rsa_private_key, rsa_private_key_length),
-                        "themis_get_key_kind: RSA private");
-  testsuite_fail_unless(THEMIS_KEY_RSA_PUBLIC == themis_get_key_kind(rsa_public_key, rsa_public_key_length),
-                        "themis_get_key_kind: RSA public");
+  testsuite_fail_unless(THEMIS_KEY_RSA_PRIVATE == themis_get_asym_key_kind(rsa_private_key, rsa_private_key_length),
+                        "themis_get_asym_key_kind: RSA private");
+  testsuite_fail_unless(THEMIS_KEY_RSA_PUBLIC == themis_get_asym_key_kind(rsa_public_key, rsa_public_key_length),
+                        "themis_get_asym_key_kind: RSA public");
 
-  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_key(ec_private_key, ec_private_key_length),
-                        "themis_is_valid_key: EC private");
-  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_key(ec_public_key, ec_public_key_length),
-                        "themis_is_valid_key: EC public");
-  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_key(rsa_private_key, rsa_private_key_length),
-                        "themis_is_valid_key: RSA private");
-  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_key(rsa_public_key, rsa_public_key_length),
-                        "themis_is_valid_key: RSA public");
+  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_asym_key(ec_private_key, ec_private_key_length),
+                        "themis_is_valid_asym_key: EC private");
+  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_asym_key(ec_public_key, ec_public_key_length),
+                        "themis_is_valid_asym_key: EC public");
+  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_asym_key(rsa_private_key, rsa_private_key_length),
+                        "themis_is_valid_asym_key: RSA private");
+  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_asym_key(rsa_public_key, rsa_public_key_length),
+                        "themis_is_valid_asym_key: RSA public");
 
-  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_key(NULL, 0),
-                        "themis_is_valid_key: invalid arguments");
-  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_key(ec_private_key, ec_private_key_length-1),
-                        "themis_is_valid_key: truncated buffer");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_asym_key(NULL, 0),
+                        "themis_is_valid_asym_key: invalid arguments");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_asym_key(ec_private_key, ec_private_key_length-1),
+                        "themis_is_valid_asym_key: truncated buffer");
 
-  testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_key_kind(NULL, 0),
-                        "themis_get_key_kind: invalid arguments");
-  testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_key_kind(ec_private_key, 2),
-                        "themis_get_key_kind: truncated buffer");
+  testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_asym_key_kind(NULL, 0),
+                        "themis_get_asym_key_kind: invalid arguments");
+  testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_asym_key_kind(ec_private_key, 2),
+                        "themis_get_asym_key_kind: truncated buffer");
 
   const char* input = "definitely not a valid key";
-  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_key((const uint8_t*)input, strlen(input)),
-                        "themis_is_valid_key: garbage input");
-  testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_key_kind((const uint8_t*)input, strlen(input)),
-                        "themis_get_key_kind: garbage input");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_asym_key((const uint8_t*)input, strlen(input)),
+                        "themis_is_valid_asym_key: garbage input");
+  testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_asym_key_kind((const uint8_t*)input, strlen(input)),
+                        "themis_get_asym_key_kind: garbage input");
 }
 
 void run_secure_message_test(){

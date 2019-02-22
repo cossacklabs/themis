@@ -83,7 +83,7 @@ themis_status_t themis_gen_ec_key_pair(uint8_t* private_key,
   return themis_gen_key_pair(SOTER_SIGN_ecdsa_none_pkcs8, private_key, private_key_length, public_key, public_key_length);
 }
 
-themis_key_kind_t themis_get_key_kind(const uint8_t* key, size_t length){
+themis_key_kind_t themis_get_asym_key_kind(const uint8_t* key, size_t length){
   const soter_container_hdr_t* container=(const void*)key;
 
   if(!key || (length<sizeof(soter_container_hdr_t))){
@@ -106,13 +106,13 @@ themis_key_kind_t themis_get_key_kind(const uint8_t* key, size_t length){
   return THEMIS_KEY_INVALID;
 }
 
-themis_status_t themis_is_valid_key(const uint8_t* key, size_t length){
+themis_status_t themis_is_valid_asym_key(const uint8_t* key, size_t length){
   const soter_container_hdr_t* container=(const void*)key;
 
   if(!key || (length<sizeof(soter_container_hdr_t))){
     return THEMIS_INVALID_PARAMETER;
   }
-  if(THEMIS_KEY_INVALID==themis_get_key_kind(key, length)){
+  if(THEMIS_KEY_INVALID==themis_get_asym_key_kind(key, length)){
     return THEMIS_INVALID_PARAMETER;
   }
   if(length!=ntohl(container->size)){
