@@ -4,7 +4,7 @@
 [![CircleCI][circle-ci-badge]][circle-ci]
 [![License][license-badge]][license]
 
-Rust binding for [Themis] crypto library.
+Rust wrapper for [Themis] crypto library.
 
 [Themis]: https://github.com/cossacklabs/themis
 [crates-io]: https://crates.io/crates/themis
@@ -16,7 +16,7 @@ Rust binding for [Themis] crypto library.
 
 ## Quickstart
 
-Rust-Themis is a binding so it requires a native Themis library.
+Rust-Themis requires a native Themis library.
 Please refer to [the quickstart guide] for installation instructions.
 
 Documentation may be found here:
