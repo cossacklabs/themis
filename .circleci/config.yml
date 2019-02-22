@@ -20,6 +20,20 @@ jobs:
       # wait for emulator to fully boot before running tests
       - run: timeout 10m /bin/bash -c 'while true; do $ANDROID_HOME/platform-tools/adb wait-for-device logcat -b events -d | grep -i boot_progress_enable_screen && break; date; sleep 3; done'
       - run: ./gradlew --no-daemon --no-parallel --max-workers=2 connectedAndroidTest
+
+  analyze:
+    docker:
+      - image: cossacklabs/build:ubuntu-bionic
+    environment:
+      CLANG_FORMAT: clang-format-7
+      CLANG_TIDY: clang-tidy-7
+    steps:
+      # TODO: move package installation to Docker image
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install clang-format-7 clang-tidy-7
+      - checkout
+      - run: make fmt_check ENGINE=boringssl
+      - run: make fmt_check ENGINE=openssl
+
   x86_64:
     docker:
       - image: cossacklabs/android-build:2019.01
@@ -190,6 +204,7 @@ workflows:
   version: 2
   tests:
     jobs:
+      - analyze
       - android
       - x86_64
       - php5
