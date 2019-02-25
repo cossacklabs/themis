@@ -36,12 +36,6 @@ fn main() {
     bindings
         .write_to_file(out_path.join("bindings.rs"))
         .expect("writing bindings!");
-
-    cc::Build::new()
-        .file("src/wrapper.c")
-        .include("src")
-        .includes(&themis.include_paths)
-        .compile("themis_shims");
 }
 
 /// Embarks on an incredible adventure and returns with a suitable Themis (or dies trying).
@@ -51,7 +45,6 @@ fn get_themis() -> Library {
 
     let mut pkg_config = pkg_config::Config::new();
     pkg_config.env_metadata(true);
-    pkg_config.arg("libsoter"); // TODO: remove this together with themis_shims
 
     #[cfg(feature = "vendored")]
     pkg_config.statik(true);

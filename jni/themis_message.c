@@ -18,7 +18,12 @@
 #include <themis/themis_error.h>
 #include <themis/secure_message.h>
 
-JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(JNIEnv *env, jobject thiz, jbyteArray private, jbyteArray public, jbyteArray message, jboolean is_wrap)
+#define SECURE_MESSAGE_ENCRYPT 1
+#define SECURE_MESSAGE_DECRYPT 2
+#define SECURE_MESSAGE_SIGN    3
+#define SECURE_MESSAGE_VERIFY  4
+
+JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(JNIEnv *env, jobject thiz, jbyteArray private, jbyteArray public, jbyteArray message, jint action)
 {
 	size_t private_length = 0;
 	size_t public_length = 0;
@@ -67,13 +72,23 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
 		goto err;
 	}
 
-	if (is_wrap)
+	switch (action)
 	{
-		res = themis_secure_message_wrap((uint8_t *)priv_buf, private_length, (uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, NULL, &output_length);
-	}
-	else
-	{
-		res = themis_secure_message_unwrap((uint8_t *)priv_buf, private_length, (uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, NULL, &output_length);
+	case SECURE_MESSAGE_ENCRYPT:
+		res = themis_secure_message_encrypt((uint8_t *)priv_buf, private_length, (uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, NULL, &output_length);
+		break;
+	case SECURE_MESSAGE_DECRYPT:
+		res = themis_secure_message_decrypt((uint8_t *)priv_buf, private_length, (uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, NULL, &output_length);
+		break;
+	case SECURE_MESSAGE_SIGN:
+		res = themis_secure_message_sign((uint8_t *)priv_buf, private_length, (uint8_t *)message_buf, message_length, NULL, &output_length);
+		break;
+	case SECURE_MESSAGE_VERIFY:
+		res = themis_secure_message_verify((uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, NULL, &output_length);
+		break;
+	default:
+		res = THEMIS_NOT_SUPPORTED;
+		break;
 	}
 
 	if (THEMIS_BUFFER_TOO_SMALL != res)
@@ -93,13 +108,23 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
 		goto err;
 	}
 
-	if (is_wrap)
+	switch (action)
 	{
-		res = themis_secure_message_wrap((uint8_t *)priv_buf, private_length, (uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, (uint8_t *)output_buf, &output_length);
-	}
-	else
-	{
-		res = themis_secure_message_unwrap((uint8_t *)priv_buf, private_length, (uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, (uint8_t *)output_buf, &output_length);
+	case SECURE_MESSAGE_ENCRYPT:
+		res = themis_secure_message_encrypt((uint8_t *)priv_buf, private_length, (uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, (uint8_t *)output_buf, &output_length);
+		break;
+	case SECURE_MESSAGE_DECRYPT:
+		res = themis_secure_message_decrypt((uint8_t *)priv_buf, private_length, (uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, (uint8_t *)output_buf, &output_length);
+		break;
+	case SECURE_MESSAGE_SIGN:
+		res = themis_secure_message_sign((uint8_t *)priv_buf, private_length, (uint8_t *)message_buf, message_length, (uint8_t *)output_buf, &output_length);
+		break;
+	case SECURE_MESSAGE_VERIFY:
+		res = themis_secure_message_verify((uint8_t *)pub_buf, public_length, (uint8_t *)message_buf, message_length, (uint8_t *)output_buf, &output_length);
+		break;
+	default:
+		res = THEMIS_NOT_SUPPORTED;
+		break;
 	}
 
 err:

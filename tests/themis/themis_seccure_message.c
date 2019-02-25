@@ -21,8 +21,10 @@
 
 /* Fuzz parameters */
 #define MAX_MESSAGE_SIZE 2048
+#define MAX_ENCRYPTED_MESSAGE_SIZE (MAX_MESSAGE_SIZE+1024)
 #define MESSAGES_TO_SEND 3
 
+#define MAX_KEY_SIZE 4096
 #define RSA_ALG 1
 #define EC_ALG  2
 #define test_check(function_call, success_res, msg) {			\
@@ -40,6 +42,14 @@
     return -1;								\
   }}
 
+/*
+ * Allow usage of deprecated Secure Message interface:
+ *   - themis_secure_message_wrap()
+ *   - themis_secure_message_unwrap()
+ */
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 static themis_status_t themis_gen_key_pair(int alg, uint8_t* private_key, size_t* private_key_length, uint8_t* public_key, size_t* public_key_length){
   themis_status_t res=THEMIS_FAIL;
@@ -51,6 +61,154 @@ static themis_status_t themis_gen_key_pair(int alg, uint8_t* private_key, size_t
   }
   return res;
 }
+
+static int generic_themis_secure_message_encrypt_decrypt_test(int alg, const uint8_t* message, const size_t message_length){
+  int res=-1;
+  themis_status_t status=THEMIS_FAIL;
+
+  uint8_t private_key[MAX_KEY_SIZE]={0};
+  uint8_t public_key[MAX_KEY_SIZE]={0};
+  size_t private_key_length=sizeof(private_key);
+  size_t public_key_length=sizeof(public_key);
+
+  uint8_t* encrypted_message=NULL;
+  uint8_t* decrypted_message=NULL;
+  size_t encrypted_message_length=0;
+  size_t decrypted_message_length=0;
+
+  status=themis_gen_key_pair(alg, private_key, &private_key_length, public_key, &public_key_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_gen_key_pair failed");
+    goto out;
+  }
+
+  status=themis_secure_message_encrypt(private_key, private_key_length, public_key, public_key_length, message, message_length, NULL, &encrypted_message_length);
+  if(status!=THEMIS_BUFFER_TOO_SMALL){
+    testsuite_fail_if(true, "themis_secure_message_encrypt failed to determine encrypted message length");
+    goto out;
+  }
+
+  encrypted_message=malloc(encrypted_message_length);
+  if(!encrypted_message){
+    testsuite_fail_if(true, "failed to allocate memory for encrypted message");
+    goto out;
+  }
+
+  status=themis_secure_message_encrypt(private_key, private_key_length, public_key, public_key_length, message, message_length, encrypted_message, &encrypted_message_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_secure_message_encrypt failed to encrypt message");
+    goto out;
+  }
+
+  status=themis_secure_message_decrypt(private_key, private_key_length, public_key, public_key_length, encrypted_message, encrypted_message_length, NULL, &decrypted_message_length);
+  if(status!=THEMIS_BUFFER_TOO_SMALL){
+    testsuite_fail_if(true, "themis_secure_message_decrypt failed to determine decrypted message length");
+    goto out;
+  }
+
+  decrypted_message=malloc(decrypted_message_length);
+  if(!decrypted_message){
+    testsuite_fail_if(true, "failed to allocate memory for decrypted message");
+    goto out;
+  }
+
+  status=themis_secure_message_decrypt(private_key, private_key_length, public_key, public_key_length, encrypted_message, encrypted_message_length, decrypted_message, &decrypted_message_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_secure_message_decrypt failed to decrypt message");
+    goto out;
+  }
+
+  if(decrypted_message_length!=message_length){
+    testsuite_fail_if(true, "themis_secure_message_encrypt/decrypt does not preserve message length");
+    goto out;
+  }
+
+  if(memcmp(decrypted_message, message, message_length)!=0){
+    testsuite_fail_if(true, "themis_secure_message_encrypt/decrypt does not preserve message content");
+    goto out;
+  }
+
+  res=0;
+
+out:
+  free(decrypted_message);
+  free(encrypted_message);
+  return res;
+}
+
+static int generic_themis_secure_message_sign_verify_test(int alg, const uint8_t* message, const size_t message_length){
+   int res=-1;
+   themis_status_t status=THEMIS_FAIL;
+
+   uint8_t private_key[MAX_KEY_SIZE]={0};
+   uint8_t public_key[MAX_KEY_SIZE]={0};
+   size_t private_key_length=sizeof(private_key);
+   size_t public_key_length=sizeof(public_key);
+
+   uint8_t* signed_message=NULL;
+   uint8_t* verified_message=NULL;
+   size_t signed_message_length=0;
+   size_t verified_message_length=0;
+
+   status=themis_gen_key_pair(alg, private_key, &private_key_length, public_key, &public_key_length);
+   if(status!=THEMIS_SUCCESS){
+     testsuite_fail_if(true, "themis_gen_key_pair failed");
+     goto out;
+   }
+
+   status=themis_secure_message_sign(private_key, private_key_length, message, message_length, NULL, &signed_message_length);
+   if(status!=THEMIS_BUFFER_TOO_SMALL){
+     testsuite_fail_if(true, "themis_secure_message_sign failed to determine signed message length");
+     goto out;
+   }
+
+   signed_message=malloc(signed_message_length);
+   if(!signed_message){
+     testsuite_fail_if(true, "failed to allocate memory for signed message");
+     goto out;
+   }
+
+   status=themis_secure_message_sign(private_key, private_key_length, message, message_length, signed_message, &signed_message_length);
+   if(status!=THEMIS_SUCCESS){
+     testsuite_fail_if(true, "themis_secure_message_sign failed to sign message");
+     goto out;
+   }
+
+   status=themis_secure_message_verify(public_key, public_key_length, signed_message, signed_message_length, NULL, &verified_message_length);
+   if(status!=THEMIS_BUFFER_TOO_SMALL){
+     testsuite_fail_if(true, "themis_secure_message_verify failed to determine verified message length");
+     goto out;
+   }
+
+   verified_message=malloc(verified_message_length);
+   if(!verified_message){
+     testsuite_fail_if(true, "failed to allocate memory for verified message");
+     goto out;
+   }
+
+   status=themis_secure_message_verify(public_key, public_key_length, signed_message, signed_message_length, verified_message, &verified_message_length);
+   if(status!=THEMIS_SUCCESS){
+     testsuite_fail_if(true, "themis_secure_message_verify failed to verify message");
+     goto out;
+   }
+
+   if(verified_message_length!=message_length){
+     testsuite_fail_if(true, "themis_secure_message_sign/verify does not preserve message length");
+     goto out;
+   }
+
+   if(memcmp(verified_message, message, message_length)!=0){
+     testsuite_fail_if(true, "themis_secure_message_sign/verify does not preserve message content");
+     goto out;
+   }
+
+   res=0;
+
+ out:
+   free(verified_message);
+   free(signed_message);
+   return res;
+ }
 
 static int themis_secure_signed_message_generic_test(int alg, const char* message, const size_t message_length){
   uint8_t private_key[10240];
@@ -214,15 +372,211 @@ static void themis_secure_message_test(){
                     "Hit http://ftp.us.debian.org[10] wheezy/contrib i386 Packages"
                     "Hit http://ftp.us.debian.org[11] wheezy/contrib Translation-en";
 
+  const uint8_t* message_bytes=(const uint8_t*)message;
   size_t message_length=strlen(message);
-  
-  testsuite_fail_if(themis_secure_signed_message_generic_test(RSA_ALG, message, message_length), "themis secure signed message (RSA)");
-  testsuite_fail_if(themis_secure_signed_message_generic_test(EC_ALG, message,message_length), "themis secure signed message (EC)");
-  testsuite_fail_if(themis_secure_encrypted_message_generic_test(RSA_ALG, message, message_length), "themis secure encrypted message (RSA)");
-  testsuite_fail_if(themis_secure_encrypted_message_generic_test(EC_ALG, message,message_length), "themis secure encrypted message (EC)");
+
+  testsuite_fail_if(generic_themis_secure_message_encrypt_decrypt_test(RSA_ALG, message_bytes, message_length), "themis secure encrypt/decrypt message (RSA)");
+  testsuite_fail_if(generic_themis_secure_message_encrypt_decrypt_test(EC_ALG, message_bytes, message_length), "themis secure encrypt/decrypt message (EC)");
+  testsuite_fail_if(generic_themis_secure_message_sign_verify_test(RSA_ALG, message_bytes, message_length), "themis secure sign/verify message (RSA)");
+  testsuite_fail_if(generic_themis_secure_message_sign_verify_test(EC_ALG, message_bytes, message_length), "themis secure sign/verify message (EC)");
+
+  testsuite_fail_if(themis_secure_signed_message_generic_test(RSA_ALG, message, message_length), "(deprecated) themis secure signed message (RSA)");
+  testsuite_fail_if(themis_secure_signed_message_generic_test(EC_ALG, message,message_length), "(deprecated) themis secure signed message (EC)");
+  testsuite_fail_if(themis_secure_encrypted_message_generic_test(RSA_ALG, message, message_length), "(deprecated) themis secure encrypted message (RSA)");
+  testsuite_fail_if(themis_secure_encrypted_message_generic_test(EC_ALG, message,message_length), "(deprecated) themis secure encrypted message (EC)");
 }
 
-static void secure_message_api_test(void)
+static void themis_secure_message_encrypt_decrypt_api_test(void){
+  themis_status_t status=THEMIS_FAIL;
+
+  uint8_t private_key[MAX_KEY_SIZE]={0};
+  uint8_t public_key[MAX_KEY_SIZE]={0};
+  size_t private_key_length = sizeof(private_key);
+  size_t public_key_length = sizeof(public_key);
+
+  uint8_t plaintext[MAX_MESSAGE_SIZE]={0};
+  uint8_t encrypted[MAX_ENCRYPTED_MESSAGE_SIZE]={0};
+  uint8_t decrypted[MAX_MESSAGE_SIZE]={0};
+  size_t plaintext_length = sizeof(plaintext);
+  size_t encrypted_length = sizeof(encrypted);
+  size_t decrypted_length = sizeof(decrypted);
+
+  status=themis_gen_ec_key_pair(private_key, &private_key_length, public_key, &public_key_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_gen_ec_key_pair failed");
+    return;
+  }
+
+  status=soter_rand(plaintext, plaintext_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "soter_rand failed");
+    return;
+  }
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_encrypt(NULL, private_key_length, public_key, public_key_length, plaintext, plaintext_length, encrypted, &encrypted_length),
+                        "themis_secure_message_encrypt: private key is NULL");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_encrypt(private_key, 0, public_key, public_key_length, plaintext, plaintext_length, encrypted, &encrypted_length),
+                        "themis_secure_message_encrypt: private key is empty");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_encrypt(private_key, private_key_length-1, public_key, public_key_length, plaintext, plaintext_length, encrypted, &encrypted_length),
+                        "themis_secure_message_encrypt: private key is invalid");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_encrypt(private_key, private_key_length, NULL, public_key_length, plaintext, plaintext_length, encrypted, &encrypted_length),
+                        "themis_secure_message_encrypt: public key is NULL");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_encrypt(private_key, private_key_length, public_key, 0, plaintext, plaintext_length, encrypted, &encrypted_length),
+                        "themis_secure_message_encrypt: public key is empty");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_encrypt(private_key, private_key_length, public_key, public_key_length-1, plaintext, plaintext_length, encrypted, &encrypted_length),
+                        "themis_secure_message_encrypt: public key is invalid");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_encrypt(public_key, public_key_length, private_key, private_key_length, plaintext, plaintext_length, encrypted, &encrypted_length),
+                        "themis_secure_message_encrypt: misplaced keys");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_encrypt(private_key, private_key_length, public_key, public_key_length, NULL, plaintext_length, encrypted, &encrypted_length),
+                        "themis_secure_message_encrypt: plaintext is NULL");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_encrypt(private_key, private_key_length, public_key, public_key_length, plaintext, 0, encrypted, &encrypted_length),
+                        "themis_secure_message_encrypt: plaintext is empty");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_encrypt(private_key, private_key_length, public_key, public_key_length, plaintext, plaintext_length, NULL, NULL),
+                        "themis_secure_message_encrypt: encrypted_length is NULL");
+
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_encrypt(private_key, private_key_length, public_key, public_key_length, plaintext, plaintext_length, NULL, &encrypted_length),
+                        "themis_secure_message_encrypt: encrypted buffer length");
+  encrypted_length -= 1;
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_encrypt(private_key, private_key_length, public_key, public_key_length, plaintext, plaintext_length, encrypted, &encrypted_length),
+                        "themis_secure_message_encrypt: encrypted buffer too small");
+
+  status=themis_secure_message_encrypt(private_key, private_key_length, public_key, public_key_length, plaintext, plaintext_length, encrypted, &encrypted_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_secure_message_encrypt failed to encrypt");
+    return;
+  }
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_decrypt(NULL, private_key_length, public_key, public_key_length, encrypted, encrypted_length, decrypted, &decrypted_length),
+                        "themis_secure_message_decrypt: private key is NULL");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_decrypt(private_key, 0, public_key, public_key_length, encrypted, encrypted_length, decrypted, &decrypted_length),
+                        "themis_secure_message_decrypt: private key is empty");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_decrypt(private_key, private_key_length-1, public_key, public_key_length, encrypted, encrypted_length, decrypted, &decrypted_length),
+                        "themis_secure_message_decrypt: private key is invalid");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_decrypt(private_key, private_key_length, NULL, public_key_length, encrypted, encrypted_length, decrypted, &decrypted_length),
+                        "themis_secure_message_decrypt: public key is NULL");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_decrypt(private_key, private_key_length, public_key, 0, encrypted, encrypted_length, decrypted, &decrypted_length),
+                        "themis_secure_message_decrypt: public key is empty");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_decrypt(private_key, private_key_length, public_key, public_key_length-1, encrypted, encrypted_length, decrypted, &decrypted_length),
+                        "themis_secure_message_decrypt: public key is invalid");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_decrypt(public_key, public_key_length, private_key, private_key_length, encrypted, encrypted_length, decrypted, &decrypted_length),
+                        "themis_secure_message_decrypt: misplaced keys");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_decrypt(private_key, private_key_length, public_key, public_key_length, NULL, encrypted_length, decrypted, &decrypted_length),
+                        "themis_secure_message_decrypt: encrypted is NULL");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_decrypt(private_key, private_key_length, public_key, public_key_length, encrypted, 0, decrypted, &decrypted_length),
+                        "themis_secure_message_decrypt: encrypted is empty");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_decrypt(private_key, private_key_length, public_key, public_key_length, encrypted, encrypted_length, NULL, NULL),
+                        "themis_secure_message_decrypt: decrypted_length is NULL");
+
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_decrypt(private_key, private_key_length, public_key, public_key_length, encrypted, encrypted_length, NULL, &decrypted_length),
+                        "themis_secure_message_decrypt: decrypted buffer length");
+  decrypted_length -= 1;
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_decrypt(private_key, private_key_length, public_key, public_key_length, encrypted, encrypted_length, decrypted, &decrypted_length),
+                        "themis_secure_message_decrypt: decrypted buffer too small");
+
+  status=themis_secure_message_decrypt(private_key, private_key_length, public_key, public_key_length, encrypted, encrypted_length, decrypted, &decrypted_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_secure_message_decrypt failed to decrypt");
+    return;
+  }
+}
+
+static void themis_secure_message_sign_verify_api_test(void){
+  themis_status_t status=THEMIS_FAIL;
+
+  uint8_t private_key[MAX_KEY_SIZE]={0};
+  uint8_t public_key[MAX_KEY_SIZE]={0};
+  size_t private_key_length = sizeof(private_key);
+  size_t public_key_length = sizeof(public_key);
+
+  uint8_t plaintext[MAX_MESSAGE_SIZE]={0};
+  uint8_t signed_msg[MAX_ENCRYPTED_MESSAGE_SIZE]={0};
+  uint8_t verified[MAX_MESSAGE_SIZE]={0};
+  size_t plaintext_length = sizeof(plaintext);
+  size_t signed_msg_length = sizeof(signed_msg);
+  size_t verified_length = sizeof(verified);
+
+  status=themis_gen_ec_key_pair(private_key, &private_key_length, public_key, &public_key_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_gen_ec_key_pair failed");
+    return;
+  }
+
+  status=soter_rand(plaintext, plaintext_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "soter_rand failed");
+    return;
+  }
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_sign(NULL, private_key_length, plaintext, plaintext_length, signed_msg, &signed_msg_length),
+                        "themis_secure_message_sign: private key is NULL");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_sign(private_key, 0, plaintext, plaintext_length, signed_msg, &signed_msg_length),
+                        "themis_secure_message_sign: private key is empty");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_sign(private_key, private_key_length-1, plaintext, plaintext_length, signed_msg, &signed_msg_length),
+                        "themis_secure_message_sign: private key is invalid");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_sign(public_key, public_key_length, plaintext, plaintext_length, signed_msg, &signed_msg_length),
+                        "themis_secure_message_sign: using public key");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_sign(private_key, private_key_length, NULL, plaintext_length, signed_msg, &signed_msg_length),
+                        "themis_secure_message_sign: plaintext is NULL");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_sign(private_key, private_key_length, plaintext, 0, signed_msg, &signed_msg_length),
+                        "themis_secure_message_sign: plaintext is empty");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_sign(private_key, private_key_length, plaintext, plaintext_length, NULL, NULL),
+                        "themis_secure_message_sign: signed_msg_length is NULL");
+
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_sign(private_key, private_key_length, plaintext, plaintext_length, NULL, &signed_msg_length),
+                        "themis_secure_message_sign: signed buffer length");
+  signed_msg_length -= 1;
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_sign(private_key, private_key_length, plaintext, plaintext_length, signed_msg, &signed_msg_length),
+                        "themis_secure_message_sign: signed buffer too small");
+
+  status=themis_secure_message_sign(private_key, private_key_length, plaintext, plaintext_length, signed_msg, &signed_msg_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_secure_message_sign failed to sign");
+    return;
+  }
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_verify(NULL, public_key_length, signed_msg, signed_msg_length, verified, &verified_length),
+                        "themis_secure_message_verify: public key is NULL");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_verify(public_key, 0, signed_msg, signed_msg_length, verified, &verified_length),
+                        "themis_secure_message_verify: public key is empty");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_verify(public_key, public_key_length-1, signed_msg, signed_msg_length, verified, &verified_length),
+                        "themis_secure_message_verify: public key is invalid");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_verify(private_key, private_key_length, signed_msg, signed_msg_length, verified, &verified_length),
+                        "themis_secure_message_verify: using private key");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_verify(public_key, public_key_length, NULL, signed_msg_length, verified, &verified_length),
+                        "themis_secure_message_verify: signed_msg is NULL");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_verify(public_key, public_key_length, signed_msg, 0, verified, &verified_length),
+                        "themis_secure_message_verify: signed_msg is empty");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_message_verify(public_key, public_key_length, signed_msg, signed_msg_length, NULL, NULL),
+                        "themis_secure_message_verify: verified_length is NULL");
+
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_verify(public_key, public_key_length, signed_msg, signed_msg_length, NULL, &verified_length),
+                        "themis_secure_message_verify: verified buffer length");
+  verified_length -= 1;
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_message_verify(public_key, public_key_length, signed_msg, signed_msg_length, verified, &verified_length),
+                        "themis_secure_message_verify: verified buffer too small");
+
+  status=themis_secure_message_verify(public_key, public_key_length, signed_msg, signed_msg_length, verified, &verified_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_secure_message_verify failed to verify");
+    return;
+  }
+}
+
+static void secure_message_old_api_test(void)
 {
 	uint8_t plaintext[MAX_MESSAGE_SIZE];
 	size_t plaintext_length = 2048; //rand_int(MAX_MESSAGE_SIZE);
@@ -314,23 +668,94 @@ static void secure_message_api_test(void)
 	testsuite_fail_unless((!memcmp(plaintext, decryptext, plaintext_length)), "generic secure message: normal flow 2");
 }
 
+static void key_validation_test(void){
+  themis_status_t status=THEMIS_FAIL;
+
+  uint8_t ec_private_key[MAX_KEY_SIZE]={0};
+  uint8_t ec_public_key[MAX_KEY_SIZE]={0};
+  uint8_t rsa_private_key[MAX_KEY_SIZE]={0};
+  uint8_t rsa_public_key[MAX_KEY_SIZE]={0};
+  size_t ec_private_key_length = sizeof(ec_private_key);
+  size_t ec_public_key_length = sizeof(ec_public_key);
+  size_t rsa_private_key_length = sizeof(rsa_private_key);
+  size_t rsa_public_key_length = sizeof(rsa_public_key);
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_gen_ec_key_pair(NULL, NULL, NULL, NULL),
+                        "themis_gen_ec_key_pair: null pointers");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_gen_rsa_key_pair(NULL, NULL, NULL, NULL),
+                        "themis_gen_rsa_key_pair: null pointers");
+
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(NULL, &ec_private_key_length, NULL, &ec_public_key_length),
+                        "themis_gen_ec_key_pair: check length");
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_rsa_key_pair(NULL, &rsa_private_key_length, NULL, &rsa_public_key_length),
+                    "   themis_gen_rsa_key_pair: check length");
+
+  ec_private_key_length -= 1;
+  ec_public_key_length -= 1;
+  rsa_private_key_length -= 1;
+  rsa_public_key_length -= 1;
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_ec_key_pair(ec_private_key, &ec_private_key_length, ec_public_key, &ec_public_key_length),
+                        "themis_gen_ec_key_pair: small buffer");
+  testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_gen_rsa_key_pair(rsa_private_key, &rsa_private_key_length, rsa_public_key, &rsa_public_key_length),
+                        "themis_gen_rsa_key_pair: small buffer");
+
+  status=themis_gen_ec_key_pair(ec_private_key, &ec_private_key_length, ec_public_key, &ec_public_key_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_gen_ec_key_pair failed");
+    return;
+  }
+
+  status=themis_gen_rsa_key_pair(rsa_private_key, &rsa_private_key_length, rsa_public_key, &rsa_public_key_length);
+  if(status!=THEMIS_SUCCESS){
+    testsuite_fail_if(true, "themis_gen_rsa_key_pair failed");
+    return;
+  }
+
+  testsuite_fail_unless(THEMIS_KEY_EC_PRIVATE == themis_get_asym_key_kind(ec_private_key, ec_private_key_length),
+                        "themis_get_asym_key_kind: EC private");
+  testsuite_fail_unless(THEMIS_KEY_EC_PUBLIC == themis_get_asym_key_kind(ec_public_key, ec_public_key_length),
+                        "themis_get_asym_key_kind: EC public");
+
+  testsuite_fail_unless(THEMIS_KEY_RSA_PRIVATE == themis_get_asym_key_kind(rsa_private_key, rsa_private_key_length),
+                        "themis_get_asym_key_kind: RSA private");
+  testsuite_fail_unless(THEMIS_KEY_RSA_PUBLIC == themis_get_asym_key_kind(rsa_public_key, rsa_public_key_length),
+                        "themis_get_asym_key_kind: RSA public");
+
+  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_asym_key(ec_private_key, ec_private_key_length),
+                        "themis_is_valid_asym_key: EC private");
+  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_asym_key(ec_public_key, ec_public_key_length),
+                        "themis_is_valid_asym_key: EC public");
+  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_asym_key(rsa_private_key, rsa_private_key_length),
+                        "themis_is_valid_asym_key: RSA private");
+  testsuite_fail_unless(THEMIS_SUCCESS == themis_is_valid_asym_key(rsa_public_key, rsa_public_key_length),
+                        "themis_is_valid_asym_key: RSA public");
+
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_asym_key(NULL, 0),
+                        "themis_is_valid_asym_key: invalid arguments");
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_asym_key(ec_private_key, ec_private_key_length-1),
+                        "themis_is_valid_asym_key: truncated buffer");
+
+  testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_asym_key_kind(NULL, 0),
+                        "themis_get_asym_key_kind: invalid arguments");
+  testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_asym_key_kind(ec_private_key, 2),
+                        "themis_get_asym_key_kind: truncated buffer");
+
+  const char* input = "definitely not a valid key";
+  testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_asym_key((const uint8_t*)input, strlen(input)),
+                        "themis_is_valid_asym_key: garbage input");
+  testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_asym_key_kind((const uint8_t*)input, strlen(input)),
+                        "themis_get_asym_key_kind: garbage input");
+}
+
 void run_secure_message_test(){
   testsuite_enter_suite("generic secure message");
   testsuite_run_test(themis_secure_message_test);
 
   testsuite_enter_suite("generic secure message: api test");
-  testsuite_run_test(secure_message_api_test);
+  testsuite_run_test(themis_secure_message_encrypt_decrypt_api_test);
+  testsuite_run_test(themis_secure_message_sign_verify_api_test);
+  testsuite_run_test(secure_message_old_api_test);
+
+  testsuite_enter_suite("key generation and validation");
+  testsuite_run_test(key_validation_test);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -113,12 +113,27 @@ namespace themispp {
             return secure_message_sign_verify_test<themispp::EC>();
         }
 
+        int secure_message_test_key_mismatch(){
+            themispp::secure_key_pair_generator_t<themispp::EC> gen_ec;
+            std::vector<uint8_t> private_key(gen_ec.get_priv());
+            std::vector<uint8_t> public_key(gen_ec.get_pub());
+            try{
+                themispp::secure_message_t a(public_key, private_key);
+                sput_fail_unless(false, "mismatched keys (no failure)", __LINE__);
+            }
+            catch(const themispp::exception_t& e){
+                sput_fail_unless(e.status()==THEMIS_INVALID_PARAMETER, "mismatched keys", __LINE__);
+            }
+            return 0;
+        }
+
         void run_secure_message_test() {
             sput_enter_suite("ThemisPP secure message test");
             sput_run_test(secure_message_test_rsa, "secure_message_test_rsa", __FILE__);
             sput_run_test(secure_message_test_ec, "secure_message_test_ec", __FILE__);
             sput_run_test(secure_message_sign_verify_test_rsa, "secure_message_sign_verify_test_rsa", __FILE__);
             sput_run_test(secure_message_sign_verify_test_ec, "secure_message_sign_verify_test_ec", __FILE__);
+            sput_run_test(secure_message_test_key_mismatch, "secure_message_test_key_mismatch", __FILE__);
         }
     }
 }
