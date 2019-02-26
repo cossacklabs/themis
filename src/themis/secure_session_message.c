@@ -14,18 +14,16 @@
 * limitations under the License.
 */
 
-#include <themis/secure_session.h>
-#include <themis/secure_session_t.h>
-#include <themis/secure_session_utils.h>
-#include <themis/themis_error.h>
+#include <string.h>
+#include <time.h>
+#include <arpa/inet.h>
 
 #include <soter/soter_container.h>
 
-#include <string.h>
-#include <time.h>
-
-#include <arpa/inet.h>
-#include "portable_endian.h"
+#include "themis/portable_endian.h"
+#include "themis/secure_session.h"
+#include "themis/secure_session_t.h"
+#include "themis/secure_session_utils.h"
 
 #define THEMIS_SESSION_WRAP_TAG "TSWM"
 

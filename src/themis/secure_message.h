@@ -19,10 +19,10 @@
  * @brief main Secure Session interface
  */
 
-#ifndef _THEMIS_SECURE_MESSAGE_H_
-#define _THEMIS_SECURE_MESSAGE_H_
+#ifndef THEMIS_SECURE_MESSAGE_H
+#define THEMIS_SECURE_MESSAGE_H
 
-#include <themis/themis.h>
+#include <themis/themis_error.h>
 
 #ifdef __cplusplus
 extern "C"{
@@ -180,21 +180,4 @@ themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
 }
 #endif
 
-
-#endif /* _THEMIS_SECURE_MESSAGE_H_ */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif /* THEMIS_SECURE_MESSAGE_H */

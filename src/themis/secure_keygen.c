@@ -14,16 +14,16 @@
 * limitations under the License.
 */
 
-#include "secure_keygen.h"
+#include "themis/secure_keygen.h"
 
 #include <string.h>
 #include <arpa/inet.h>
 
-#include <themis/themis_error.h>
-#include <soter/soter_t.h>
 #include <soter/soter_container.h>
 #include <soter/soter_ec_key.h>
 #include <soter/soter_rsa_key.h>
+#include <soter/soter_rsa_key_pair_gen.h>
+#include <soter/soter_t.h>
 
 #ifndef THEMIS_RSA_KEY_LENGTH
 #define THEMIS_RSA_KEY_LENGTH RSA_KEY_LENGTH_2048

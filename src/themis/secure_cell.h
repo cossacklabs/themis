@@ -18,10 +18,11 @@
  * @file secure_cell.h
  * @brief Secure cell is a high-level cryptographic service which can protect arbitrary data being stored in various types of storages (like databases, document archives, cloud storage etc)
  */
-#include <themis/themis.h>
 
-#ifndef _SECURE_CELL_H_
-#define _SECURE_CELL_H_
+#ifndef THEMIS_SECURE_CELL_H
+#define THEMIS_SECURE_CELL_H
+
+#include <themis/themis_error.h>
 
 #ifdef __cplusplus
 extern "C"{
@@ -202,4 +203,5 @@ themis_status_t themis_secure_cell_decrypt_context_imprint(const uint8_t* master
 #ifdef __cplusplus
 }
 #endif
-#endif /* _SECURE_CELL_H_ */
+
+#endif /* THEMIS_SECURE_CELL_H */

@@ -21,7 +21,7 @@
 #include <string.h>
 
 #include <soter/soter.h>
-#include <themis/themis.h>
+
 #include <themis/secure_session.h>
 
 #define CIPHER_MAX_BLOCK_SIZE 16

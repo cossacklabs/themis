@@ -14,10 +14,10 @@
 * limitations under the License.
 */
 
-#ifndef _SYM_ENC_MESSAGE_H_
-#define _SYM_ENC_MESSAGE_H_
+#ifndef THEMIS_SYM_ENC_MESSAGE_H
+#define THEMIS_SYM_ENC_MESSAGE_H
 
-#include <themis/themis.h>
+#include <themis/themis_error.h>
 
 themis_status_t themis_auth_sym_encrypt_message(const uint8_t* key,
 						const size_t key_length,
@@ -58,4 +58,4 @@ themis_status_t themis_sym_decrypt_message_u(const uint8_t* key,
     					     const size_t encrypted_message_length,
     					     uint8_t* message,
     					     size_t* message_length);
-#endif /* _SYM_ENC_MESSAGE_H_ */
+#endif /* THEMIS_SYM_ENC_MESSAGE_H */

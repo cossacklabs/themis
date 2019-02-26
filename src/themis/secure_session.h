@@ -21,10 +21,11 @@
 #ifndef THEMIS_SECURE_SESSION_H
 #define THEMIS_SECURE_SESSION_H
 
-#include <themis/themis.h>
-
 #include <sys/types.h>
+
 #include <soter/soter.h>
+
+#include <themis/themis_error.h>
 
 #ifdef __cplusplus
 extern "C"{
@@ -150,4 +151,5 @@ themis_status_t secure_session_get_remote_id(const secure_session_t* session_ctx
 #ifdef __cplusplus
 }
 #endif
+
 #endif /* THEMIS_SECURE_SESSION_H */

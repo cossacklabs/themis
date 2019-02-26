@@ -14,11 +14,13 @@
 * limitations under the License.
 */
 
-#include <themis/themis_error.h>
-#include <themis/sym_enc_message.h>
-#include <soter/soter.h>
+#include "themis/sym_enc_message.h"
+
 #include <string.h>
-#include <themis/secure_cell_alg.h>
+
+#include <soter/soter.h>
+
+#include "themis/secure_cell_alg.h"
 
 #define THEMIS_SYM_KDF_KEY_LABEL "Themis secure cell message key"
 #define THEMIS_SYM_KDF_IV_LABEL "Themis secure cell message iv"

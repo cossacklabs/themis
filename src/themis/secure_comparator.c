@@ -48,8 +48,11 @@
  * 
  */
 
-#include "secure_comparator_t.h"
+#include "themis/secure_comparator.h"
+
 #include <string.h>
+
+#include "themis/secure_comparator_t.h"
 
 static themis_status_t secure_comparator_alice_step1(secure_comparator_t *comp_ctx, void *output, size_t *output_length);
 static themis_status_t secure_comparator_bob_step2(secure_comparator_t *comp_ctx, const void *input, size_t input_length, void *output, size_t *output_length);

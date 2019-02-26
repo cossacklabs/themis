@@ -17,7 +17,8 @@
 #ifndef THEMIS_SECURE_COMPARATOR_T_H
 #define THEMIS_SECURE_COMPARATOR_T_H
 
-#include "secure_comparator.h"
+#include "themis/secure_comparator.h"
+
 #include <soter/ed25519/ge_utils.h>
 #include <soter/ed25519/sc.h>
 #include <soter/soter_t.h>

@@ -14,17 +14,15 @@
 * limitations under the License.
 */
 
+#include "themis/secure_message_wrapper.h"
+
 #include <string.h>
 
-
-#include <themis/themis_error.h>
 #include <soter/soter.h>
-#include <soter/soter_rsa_key.h>
 #include <soter/soter_ec_key.h>
-#include <soter/soter_asym_sign.h>
-#include <soter/soter_asym_ka.h>
-#include <themis/secure_message_wrapper.h>
+#include <soter/soter_rsa_key.h>
 
+#include "themis/secure_cell.h"
 
 #define THEMIS_RSA_SYM_ALG (SOTER_SYM_AES_CTR|SOTER_SYM_256_KEY_LENGTH|SOTER_SYM_PBKDF2)
 #define THEMIS_RSA_SYMM_PASSWD_LENGTH 70 //!!! need to aprove
@@ -444,12 +442,3 @@ themis_status_t themis_secure_message_decrypter_destroy(themis_secure_message_de
     }
   return res;
 }
-
-
-
-
-
-
-
-
-
