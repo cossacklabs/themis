@@ -21,7 +21,7 @@
 #ifndef SOTER_ASYM_KA_H
 #define SOTER_ASYM_KA_H
 
-#include <soter/soter.h>
+#include <soter/soter_error.h>
 
 /** @addtogroup SOTER
  * @{

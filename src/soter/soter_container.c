@@ -14,11 +14,12 @@
 * limitations under the License.
 */
 
-#include <soter/soter_container.h>
-#include <soter/soter.h>
-#include <soter/soter_error.h>
-#include <soter/soter_crc32.h>
+#include "soter/soter_container.h"
+
 #include <arpa/inet.h>
+
+#include "soter/soter_crc32.h"
+
 soter_status_t soter_update_container_checksum(soter_container_hdr_t *hdr)
 {
 	hdr->crc = 0;

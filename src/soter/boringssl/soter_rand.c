@@ -14,7 +14,8 @@
 * limitations under the License.
 */
 
-#include "soter/soter.h"
+#include "soter/soter_rand.h"
+
 #include <openssl/rand.h>
 
 soter_status_t soter_rand(uint8_t* buffer, size_t length)

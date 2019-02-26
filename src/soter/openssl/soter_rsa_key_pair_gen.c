@@ -14,14 +14,14 @@
 * limitations under the License.
 */
 
-#include <soter/soter_error.h>
-#include "soter_engine.h"
-#include <soter/soter_rsa_key_pair_gen.h>
+#include "soter/soter_rsa_key_pair_gen.h"
+
+#include <string.h>
 
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
-#include <string.h>
+#include "soter/openssl/soter_engine.h"
 
 static unsigned rsa_key_length(const int size){
     switch (size){

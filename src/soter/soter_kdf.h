@@ -21,7 +21,7 @@
 #ifndef SOTER_KDF_H
 #define SOTER_KDF_H
 
-#include <soter/soter.h>
+#include <soter/soter_error.h>
 
 /** @addtogroup SOTER
  * @{

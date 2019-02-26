@@ -14,10 +14,11 @@
 * limitations under the License.
 */
 
-#include <soter/soter_t.h>
-#include <soter/soter_error.h>
+#include "soter/soter_hmac.h"
 
 #include <string.h>
+
+#include "soter/soter_t.h"
 
 static size_t hash_block_size(soter_hash_algo_t algo)
 {

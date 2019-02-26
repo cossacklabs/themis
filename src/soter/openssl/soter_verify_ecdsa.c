@@ -14,13 +14,14 @@
 * limitations under the License.
 */
 
-#include <soter/soter_sign_ecdsa.h>
-#include <soter/soter.h>
-#include <soter/soter_ec_key.h>
-#include "soter_engine.h"
-#include "soter_ecdsa_common.h"
-#include <openssl/evp.h>
+#include "soter/soter_sign_ecdsa.h"
+
 #include <openssl/ecdsa.h>
+#include <openssl/evp.h>
+
+#include "soter/soter_ec_key.h"
+#include "soter/openssl/soter_ecdsa_common.h"
+#include "soter/openssl/soter_engine.h"
 
 soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
 {

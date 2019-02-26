@@ -14,17 +14,16 @@
 * limitations under the License.
 */
 
-#ifndef SOTER_RSA_COMMON_H
-#define SOTER_RSA_COMMON_H
+#ifndef SOTER_BORINGSSL_RSA_COMMON_H
+#define SOTER_BORINGSSL_RSA_COMMON_H
 
-#include <soter/soter.h>
+#include <soter/soter_error.h>
 #include <soter/soter_rsa_key.h>
-#include "soter_engine.h"
+#include <soter/boringssl/soter_engine.h>
 
 unsigned rsa_key_length(const int size);
 soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx, const unsigned key_length);
 soter_status_t soter_rsa_import_key(EVP_PKEY *pkey, const void* key, const size_t key_length);
 soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate);
 
-#endif
-
+#endif /* SOTER_BORINGSSL_RSA_COMMON_H */

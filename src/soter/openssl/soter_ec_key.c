@@ -14,13 +14,12 @@
 * limitations under the License.
 */
 
-#include <soter/soter_error.h>
-#include <soter/soter_ec_key.h>
-
-#include <openssl/evp.h>
-#include <openssl/ec.h>
+#include "soter/soter_ec_key.h"
 
 #include <string.h>
+
+#include <openssl/ec.h>
+#include <openssl/evp.h>
 
 static bool is_curve_supported(int curve)
 {

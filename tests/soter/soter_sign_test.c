@@ -14,8 +14,9 @@
 * limitations under the License.
 */
 
+#include "soter/soter_test.h"
+
 #include <string.h>
-#include "soter_test.h"
 
 #define MAX_TEST_DATA 2048
 #define MAX_TEST_KEY MAX_TEST_DATA

@@ -22,7 +22,7 @@
 #ifndef SOTER_HASH_H
 #define SOTER_HASH_H
 
-#include <soter/soter.h>
+#include <soter/soter_error.h>
 
 /**
  * @addtogroup SOTER

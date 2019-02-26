@@ -14,11 +14,11 @@
 * limitations under the License.
 */
 
-#include <soter/soter_kdf.h>
-#include <soter/soter_t.h>
-#include <soter/soter_error.h>
+#include "soter/soter_kdf.h"
 
 #include <string.h>
+
+#include "soter/soter_t.h"
 
 #define MAX_HMAC_SIZE 64 /* For HMAC-SHA512 */
 #define MIN_VAL(_X_, _Y_) ((_X_ < _Y_) ? (_X_) : (_Y_))

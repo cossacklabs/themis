@@ -14,9 +14,10 @@
 * limitations under the License.
 */
 
-#include <string.h>
+#include "soter/soter_test.h"
+
 #include <stdio.h>
-#include "soter_test.h"
+#include <string.h>
 
 struct test_vector_type
 {
