@@ -31,6 +31,7 @@ jobs:
       # TODO: move package installation to Docker image
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install clang-format-7 clang-tidy-7
       - checkout
+      - run: git submodule update --init
       - run: make fmt_check ENGINE=boringssl
       - run: make fmt_check ENGINE=openssl
 
