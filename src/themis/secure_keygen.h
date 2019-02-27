@@ -19,10 +19,10 @@
  * @brief secure key generation
  */
 
-#ifndef _THEMIS_SECURE_KEYGEN_H_
-#define _THEMIS_SECURE_KEYGEN_H_
+#ifndef THEMIS_SECURE_KEYGEN_H
+#define THEMIS_SECURE_KEYGEN_H
 
-#include <themis/themis.h>
+#include <themis/themis_error.h>
 
 #ifdef __cplusplus
 extern "C"{
@@ -98,5 +98,4 @@ themis_status_t themis_is_valid_asym_key(const uint8_t* key, size_t length);
 }
 #endif
 
-
-#endif /* _THEMIS_SECURE_KEYGEN_H_ */
+#endif /* THEMIS_SECURE_KEYGEN_H */

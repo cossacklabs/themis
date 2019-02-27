@@ -14,12 +14,11 @@
 * limitations under the License.
 */
 
-#include <soter/soter.h>
-#include <soter/soter_rsa_key.h>
-#include "soter_engine.h"
+#include "soter/boringssl/soter_rsa_common.h"
+
+#include <openssl/bn.h>
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
-#include <openssl/bn.h>
 
 #ifndef SOTER_RSA_KEY_LENGTH
 #define SOTER_RSA_KEY_LENGTH 2048
@@ -113,4 +112,3 @@ soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* ke
       return soter_engine_specific_to_rsa_pub_key((const soter_engine_specific_rsa_key_t *)pkey, (soter_container_hdr_t *)key, key_length);
     }  
 }
-

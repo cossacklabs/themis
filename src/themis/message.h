@@ -14,10 +14,10 @@
 * limitations under the License.
 */
 
-#ifndef THEMIS_MESSAGE_H_
-#define THEMIS_MESSAGE_H_
+#ifndef THEMIS_MESSAGE_H
+#define THEMIS_MESSAGE_H
 
-#include <themis/themis.h>
+#include <themis/themis_error.h>
 
 struct themis_message_type{
   size_t length;
@@ -35,4 +35,4 @@ size_t themis_message_get_length(themis_message_t* ctx);
 
 themis_status_t themis_message_destroy(themis_message_t* ctx);
 
-#endif /* THEMIS_MESSAGE_H_ */
+#endif /* THEMIS_MESSAGE_H */

@@ -14,11 +14,14 @@
 * limitations under the License.
 */
 
+#include "soter/soter_sym.h"
+
 #include <string.h>
-#include "soter/soter.h"
-#include "soter_engine.h"
-#include <openssl/err.h>
+
 #include <openssl/cipher.h>
+#include <openssl/err.h>
+
+#include "soter/boringssl/soter_engine.h"
 
 #define SOTER_SYM_MAX_KEY_LENGTH 128
 #define SOTER_SYM_MAX_IV_LENGTH 16

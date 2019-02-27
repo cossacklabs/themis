@@ -22,7 +22,7 @@
 #ifndef SOTER_SYM_H
 #define SOTER_SYM_H
 
-#include <soter/soter.h>
+#include <soter/soter_error.h>
 
 /**
  * @addtogroup SOTER
@@ -336,4 +336,3 @@ soter_status_t soter_sym_aead_decrypt_destroy(soter_sym_ctx_t *ctx);
 /** @}@} */
 
 #endif /* SOTER_SYM_H */
-

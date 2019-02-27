@@ -14,15 +14,16 @@
 * limitations under the License.
 */
 
-#ifndef _THEMIS_TEST_H_
-#define _THEMIS_TEST_H_
+#ifndef THEMIS_TEST_H
+#define THEMIS_TEST_H
 
-#include <themis/themis_error.h>
-#include <common/test_utils.h>
 #include <themis/themis.h>
+
+#include <common/test_utils.h>
+
 void run_secure_message_test(void);
 void run_secure_session_test(void);
 void run_secure_cell_test(void);
 void run_secure_comparator_test(void);
 
-#endif /* _THEMIS_TEST_H_ */
+#endif /* THEMIS_TEST_H */

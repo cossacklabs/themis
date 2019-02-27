@@ -14,11 +14,14 @@
 * limitations under the License.
 */
 
-#ifndef SOTER_ENGINE_H
-#define SOTER_ENGINE_H
+#ifndef SOTER_BORINGSSL_ENGINE_H
+#define SOTER_BORINGSSL_ENGINE_H
 
-#include <soter/soter.h>
+#include <stdint.h>
+
 #include <openssl/evp.h>
+
+#include "soter/soter_asym_sign.h"
 
 struct soter_hash_ctx_type
 {
@@ -51,4 +54,4 @@ struct soter_sign_ctx_type{
   soter_sign_alg_t alg;
 };
 
-#endif /* SOTER_ENGINE_H */
+#endif /* SOTER_BORINGSSL_ENGINE_H */

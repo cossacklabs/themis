@@ -16,7 +16,7 @@
 
 #include <jni.h>
 #include <themis/themis_error.h>
-#include <themis/secure_message.h>
+#include <themis/secure_keygen.h>
 
 /* Should be same as in AsymmetricKey.java */
 #define KEYTYPE_EC 0

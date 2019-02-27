@@ -14,7 +14,8 @@
 * limitations under the License.
 */
 
-#include "soter_test.h"
+#include "soter/soter_test.h"
+
 #include <string.h>
 
 typedef struct test_vector_type test_vector_t;

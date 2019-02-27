@@ -14,9 +14,11 @@
 * limitations under the License.
 */
 
+#include "themis/themis_test.h"
+
 #include <string.h>
-#include <common/test_utils.h>
-#include <themis/secure_cell.h>
+
+#include <soter/soter_rand.h>
 
 /* Fuzz parameters */
 #define MAX_KEY_SIZE 256

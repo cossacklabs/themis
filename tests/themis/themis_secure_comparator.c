@@ -14,11 +14,10 @@
 * limitations under the License.
 */
 
-#include <themis/secure_comparator.h>
-#include <themis/secure_comparator_t.h>
+#include "themis/themis_test.h"
+
 #include <stdio.h>
 #include <string.h>
-#include "themis_test.h"
 
 /* Implemented in themis_secure_comparator_security.c */
 void secure_comparator_security_test(void);

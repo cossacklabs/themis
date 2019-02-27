@@ -22,9 +22,11 @@
 #ifndef SOTER_ERROR_H
 #define SOTER_ERROR_H
 
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
 
 /** @brief return type */
 typedef int32_t soter_status_t;

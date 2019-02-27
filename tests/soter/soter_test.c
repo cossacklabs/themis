@@ -14,7 +14,8 @@
 * limitations under the License.
 */
 
-#include "soter_test.h"
+#include "soter/soter_test.h"
+
 #include <stdio.h>
 
 int main(int argc, char *argv[])
