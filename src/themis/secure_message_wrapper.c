@@ -18,9 +18,9 @@
 
 #include <string.h>
 
-#include <soter/soter.h>
-#include <soter/soter_ec_key.h>
-#include <soter/soter_rsa_key.h>
+#include "soter/soter.h"
+#include "soter/soter_ec_key.h"
+#include "soter/soter_rsa_key.h"
 
 #include "themis/secure_cell.h"
 

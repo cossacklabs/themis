@@ -17,9 +17,9 @@
 #ifndef SOTER_BORINGSSL_ECDSA_COMMON_H
 #define SOTER_BORINGSSL_ECDSA_COMMON_H
 
-#include <soter/soter_ec_key.h>
-#include <soter/soter_error.h>
-#include <soter/boringssl/soter_engine.h>
+#include "soter/soter_ec_key.h"
+#include "soter/soter_error.h"
+#include "soter/boringssl/soter_engine.h"
 
 soter_status_t soter_ec_gen_key(EVP_PKEY_CTX *pkey_ctx);
 soter_status_t soter_ec_import_key(EVP_PKEY *pkey, const void* key, const size_t key_length);

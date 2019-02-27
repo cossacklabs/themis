@@ -19,11 +19,11 @@
 #include <string.h>
 #include <arpa/inet.h>
 
-#include <soter/soter_container.h>
-#include <soter/soter_ec_key.h>
-#include <soter/soter_rsa_key.h>
-#include <soter/soter_rsa_key_pair_gen.h>
-#include <soter/soter_t.h>
+#include "soter/soter_container.h"
+#include "soter/soter_ec_key.h"
+#include "soter/soter_rsa_key.h"
+#include "soter/soter_rsa_key_pair_gen.h"
+#include "soter/soter_t.h"
 
 #ifndef THEMIS_RSA_KEY_LENGTH
 #define THEMIS_RSA_KEY_LENGTH RSA_KEY_LENGTH_2048

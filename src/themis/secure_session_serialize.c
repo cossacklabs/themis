@@ -17,7 +17,7 @@
 #include <string.h>
 #include <arpa/inet.h>
 
-#include <soter/soter_container.h>
+#include "soter/soter_container.h"
 
 #include "themis/secure_session.h"
 #include "themis/secure_session_t.h"

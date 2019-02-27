@@ -21,7 +21,7 @@
 
 #include <openssl/evp.h>
 
-#include <soter/soter_asym_sign.h>
+#include "soter/soter_asym_sign.h"
 
 struct soter_hash_ctx_type
 {

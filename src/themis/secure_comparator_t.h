@@ -19,9 +19,9 @@
 
 #include "themis/secure_comparator.h"
 
-#include <soter/ed25519/ge_utils.h>
-#include <soter/ed25519/sc.h>
-#include <soter/soter_t.h>
+#include "soter/ed25519/ge_utils.h"
+#include "soter/ed25519/sc.h"
+#include "soter/soter_t.h"
 
 typedef themis_status_t (*secure_compare_handler)(secure_comparator_t *comp_ctx, const void *input, size_t input_length, void *output, size_t *output_length);
 

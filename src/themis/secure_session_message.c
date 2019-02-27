@@ -18,7 +18,7 @@
 #include <time.h>
 #include <arpa/inet.h>
 
-#include <soter/soter_container.h>
+#include "soter/soter_container.h"
 
 #include "themis/portable_endian.h"
 #include "themis/secure_session.h"
