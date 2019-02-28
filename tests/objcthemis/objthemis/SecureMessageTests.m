@@ -82,6 +82,7 @@
     TSMessage *encrypter = [[TSMessage alloc] initInEncryptModeWithPrivateKey:privateKeyData peerPublicKey:publicKeyData];
 
     NSString *message = @"- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java.";
+    NSData *emptyData = [@"" dataUsingEncoding:NSUTF8StringEncoding];
 
 
     NSError *themisError = nil;
@@ -109,12 +110,12 @@
     
     // empty message
     NSError *emptyErrorEn = nil;
-    NSData *emptyMessageEn = [encrypter wrapData:[@"" dataUsingEncoding:NSUTF8StringEncoding] error:&emptyErrorEn];
+    NSData *emptyMessageEn = [encrypter wrapData:emptyData error:&emptyErrorEn];
     XCTAssertNotNil(emptyErrorEn, @"encrypting data with empty message is error");
     XCTAssertNil(emptyMessageEn, @"encrypting data with empty message should return nil message");
     
     NSError *emptyErrorDe = nil;
-    NSData *emptyMessageDe = [encrypter unwrapData:NULL error:&emptyErrorDe];
+    NSData *emptyMessageDe = [encrypter unwrapData:emptyData error:&emptyErrorDe];
     XCTAssertNotNil(emptyErrorDe, @"decrypting data with empty message is error");
     XCTAssertNil(emptyMessageDe, @"decrypting data with empty message should return nil message");
   
@@ -151,7 +152,7 @@
     TSMessage *encrypter = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:privateKeyData peerPublicKey:publicKeyData];
 
     NSString *message = @"- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java.";
-
+    NSData *emptyData = [@"" dataUsingEncoding:NSUTF8StringEncoding];
 
     NSError *themisError = nil;
     NSData *encryptedMessage = [encrypter wrapData:[message dataUsingEncoding:NSUTF8StringEncoding] error:&themisError];
@@ -178,12 +179,12 @@
     
     // empty message
     NSError *emptyErrorSig = nil;
-    NSData *emptyMessageSig = [encrypter wrapData:NULL error:&emptyErrorSig];
+    NSData *emptyMessageSig = [encrypter wrapData:emptyData error:&emptyErrorSig];
     XCTAssertNotNil(emptyErrorSig, @"signing data with empty message is error");
     XCTAssertNil(emptyMessageSig, @"signing data with empty message should return nil message");
   
     NSError *emptyErrorVer = nil;
-    NSData *emptyMessageVer = [encrypter unwrapData:NULL error:&emptyErrorVer];
+    NSData *emptyMessageVer = [encrypter unwrapData:emptyData error:&emptyErrorVer];
     XCTAssertNotNil(emptyErrorVer, @"verifying data with empty message is error");
     XCTAssertNil(emptyMessageVer, @"verifying data with empty message should return nil message");
   
