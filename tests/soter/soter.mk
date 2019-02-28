@@ -14,5 +14,12 @@
 # limitations under the License.
 #
 
-THEMIS_TEST_SRC = $(wildcard tests/themis/*.c)
+THEMIS_TEST_SOURCES = $(wildcard tests/themis/*.c)
+THEMIS_TEST_HEADERS = $(wildcard tests/themis/*.h)
+
+THEMIS_TEST_SRC = $(THEMIS_TEST_SOURCES)
 THEMIS_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.c,$(TEST_OBJ_PATH)/%.o, $(THEMIS_TEST_SRC))
+
+THEMIS_TEST_FMT_SRC = $(THEMIS_TEST_SOURCES) $(THEMIS_TEST_HEADERS)
+THEMIS_TEST_FMT_FIXUP = $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_fixup, $(THEMIS_TEST_FMT_SRC))
+THEMIS_TEST_FMT_CHECK = $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_check, $(THEMIS_TEST_FMT_SRC))

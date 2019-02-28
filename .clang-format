@@ -10,6 +10,7 @@ AllowShortLoopsOnASingleLine: false
 AlwaysBreakTemplateDeclarations: true
 BreakBeforeBraces: Linux
 BreakConstructorInitializersBeforeComma: true
+BreakStringLiterals: false
 ColumnLimit: 100
 IndentWidth: 4
 ObjCSpaceAfterProperty: true
