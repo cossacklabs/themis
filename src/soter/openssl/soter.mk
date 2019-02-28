@@ -14,9 +14,9 @@
 # limitations under the License.
 #
 
-SOTER_SRC += $(wildcard $(CRYPTO_ENGINE)/*.c)
-SOTER_AUD_SRC += $(wildcard $(CRYPTO_ENGINE)/*.c)
-SOTER_AUD_SRC += $(wildcard $(CRYPTO_ENGINE)/*.h)
+CRYPTO_ENGINE_SOURCES += $(wildcard $(CRYPTO_ENGINE)/*.c)
+CRYPTO_ENGINE_HEADERS += $(wildcard $(CRYPTO_ENGINE)/*.h)
+
 # Put path to your OpenSSL/LibreSSL here
 OPENSSL_DIR = libs/librebin
 
