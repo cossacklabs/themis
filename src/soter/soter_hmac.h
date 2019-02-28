@@ -1,18 +1,18 @@
 /*
-* Copyright (c) 2015 Cossack Labs Limited
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright (c) 2015 Cossack Labs Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 /**
  * @file soter_hmac.h
@@ -25,7 +25,7 @@
 #include <soter/soter_hash.h>
 
 /**
- * @addtogroup SOTER 
+ * @addtogroup SOTER
  * @{
  * @defgroup SOTER_HMAC HMAC
  * @brief HMAC calculation routines
@@ -56,8 +56,8 @@
  * }
  * @endcode
  * @{
- * 
-*/
+ *
+ */
 
 /**
  * @typedef soter_hmac_ctx_t
@@ -77,7 +77,7 @@ soter_hmac_ctx_t* soter_hmac_create(soter_hash_algo_t algo, const uint8_t* key, 
  * @param [in] hmac_ctx pointer to HMAC context previosly created by @ref soter_hmac_create
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
-soter_status_t soter_hmac_destroy(soter_hmac_ctx_t *hmac_ctx);
+soter_status_t soter_hmac_destroy(soter_hmac_ctx_t* hmac_ctx);
 
 /**
  * @brief update HMAC context with data
@@ -86,17 +86,21 @@ soter_status_t soter_hmac_destroy(soter_hmac_ctx_t *hmac_ctx);
  * @param [in] length of data buffer
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
-soter_status_t soter_hmac_update(soter_hmac_ctx_t *hmac_ctx, const void *data, size_t length);
+soter_status_t soter_hmac_update(soter_hmac_ctx_t* hmac_ctx, const void* data, size_t length);
 
 /**
  * @brief final HMAC context and get hash value
  * @param [in] hmac_ctx pointer to hash context previosly created by @ref soter_hmac_create
- * @param [out] hmac_value pointer to buffer for HMAC value retrieve, may be set to NULL for HMAC value length determination
+ * @param [out] hmac_value pointer to buffer for HMAC value retrieve, may be set to NULL for HMAC
+ * value length determination
  * @param [in, out] hmac_length length of hmac_value buffer
- * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure. 
- * @note If hmac_value==NULL or hmac_length less then need to store HMAC value, @ref SOTER_BUFFER_TOO_SMALL will return and hmac_length will contain length of buffer thet need to store HMAC value.
+ * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
+ * @note If hmac_value==NULL or hmac_length less then need to store HMAC value, @ref
+ * SOTER_BUFFER_TOO_SMALL will return and hmac_length will contain length of buffer thet need to
+ * store HMAC value.
  */
-soter_status_t soter_hmac_final(soter_hmac_ctx_t *hmac_ctx, uint8_t* hmac_value, size_t* hmac_length);
+soter_status_t soter_hmac_final(soter_hmac_ctx_t* hmac_ctx, uint8_t* hmac_value,
+                                size_t* hmac_length);
 
 /**@}@}*/
 
