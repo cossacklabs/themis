@@ -196,7 +196,7 @@ themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
     themis_status_t res=themis_secure_message_signer_proceed(ctx, message, message_length, wrapped_message, wrapped_message_length);
     themis_secure_message_signer_destroy(ctx);
     return res;
-  } else {
+  } 
     THEMIS_CHECK_PARAM(public_key!=NULL);
     THEMIS_CHECK_PARAM(public_key_length!=0);
     themis_secure_message_encrypter_t* ctx=NULL;
@@ -205,7 +205,7 @@ themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
     themis_status_t res=themis_secure_message_encrypter_proceed(ctx, message, message_length, wrapped_message, wrapped_message_length);
     themis_secure_message_encrypter_destroy(ctx);
     return res;    
-  }
+  
   return THEMIS_INVALID_PARAMETER;
 }
 
@@ -232,7 +232,7 @@ themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
     themis_status_t res=themis_secure_message_verifier_proceed(ctx, wrapped_message, wrapped_message_length, message, message_length);
     themis_secure_message_verifier_destroy(ctx);
     return res;
-  } else{
+  } 
     THEMIS_CHECK_PARAM(private_key!=NULL);
     THEMIS_CHECK_PARAM(private_key_length!=0);
     themis_secure_message_decrypter_t* ctx=NULL;
@@ -242,6 +242,6 @@ themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
     themis_secure_message_decrypter_destroy(ctx);
     return res;
 
-  }
+  
   return THEMIS_INVALID_PARAMETER;
 }

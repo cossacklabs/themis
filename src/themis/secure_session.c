@@ -137,11 +137,11 @@ secure_session_t* secure_session_create(const void *id, size_t id_length, const 
 	{
 		return ctx;
 	}
-	else
-	{
+	
+	
 		free(ctx);
 		return NULL;
-	}
+	
 }
 
 themis_status_t secure_session_generate_connect_request(secure_session_t *session_ctx, void *output, size_t *output_length)

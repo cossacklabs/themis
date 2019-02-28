@@ -195,15 +195,15 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
 		{
 			return SOTER_SUCCESS;
 		}
-		else
-		{
+		
+		
 			return SOTER_BUFFER_TOO_SMALL;
-		}
+		
 	}
-	else
-	{
+	
+	
 		return SOTER_FAIL;
-	}
+	
 }
 
 soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const void* cipher_data, size_t cipher_data_length, void* plain_data, size_t* plain_data_length)
@@ -291,15 +291,15 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
 		{
 			return SOTER_SUCCESS;
 		}
-		else
-		{
+		
+		
 			return SOTER_BUFFER_TOO_SMALL;
-		}
+		
 	}
-	else
-	{
+	
+	
 		return SOTER_FAIL;
-	}
+	
 }
 
 soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_length, soter_asym_cipher_padding_t pad)
@@ -317,11 +317,11 @@ soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_
 	{
 		return ctx;
 	}
-	else
-	{
+	
+	
 		soter_asym_cipher_destroy(ctx);
 		return NULL;
-	}
+	
 }
 
 soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher)
@@ -339,8 +339,8 @@ soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher)
 	{
 		return SOTER_SUCCESS;
 	}
-	else
-	{
+	
+	
 		return status;
-	}
+	
 }

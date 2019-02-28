@@ -381,8 +381,9 @@ themis_status_t themis_secure_message_encrypter_destroy(themis_secure_message_en
   default:
     return THEMIS_FAIL;
   }
-  if(THEMIS_SUCCESS == res)
+  if(THEMIS_SUCCESS == res) {
     free(ctx);
+}
   return res;
 }
 

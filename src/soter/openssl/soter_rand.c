@@ -29,9 +29,9 @@ soter_status_t soter_rand(uint8_t* buffer, size_t length)
 	{
 		return SOTER_SUCCESS;
 	}
-	else
-	{
+	
+	
 		/* For some reason OpenSSL generator failed */
 		return SOTER_FAIL;
-	}
+	
 }

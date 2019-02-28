@@ -178,10 +178,10 @@ static themis_status_t ed_verify(uint8_t pos, const ge_p3 *point, const uint8_t 
     {
         return THEMIS_INVALID_SIGNATURE;
     }
-    else
-    {
+    
+    
         return THEMIS_SUCCESS;
-    }
+    
 }
 
 static themis_status_t ed_dbl_base_sign(uint8_t pos, const uint8_t *scalar1, const uint8_t *scalar2, const ge_p3 *base1, const ge_p3 *base2, uint8_t *signature)
@@ -313,10 +313,10 @@ static themis_status_t ed_dbl_base_verify(uint8_t pos, const ge_p3 *base1, const
     {
         return THEMIS_INVALID_SIGNATURE;
     }
-    else
-    {
+    
+    
         return THEMIS_SUCCESS;
-    }
+    
 }
 
 static themis_status_t ed_point_sign(uint8_t pos, const uint8_t *scalar, const ge_p3 *point, uint8_t *signature)
@@ -451,10 +451,10 @@ static themis_status_t ed_point_verify(uint8_t pos, const ge_p3 *base2, const ge
     {
         return THEMIS_INVALID_SIGNATURE;
     }
-    else
-    {
+    
+    
         return THEMIS_SUCCESS;
-    }
+    
 }
 
 themis_status_t secure_comparator_init(secure_comparator_t *comp_ctx)
@@ -504,11 +504,11 @@ secure_comparator_t* secure_comparator_create(void)
     {
         return ctx;
     }
-    else
-    {
+    
+    
         free(ctx);
         return NULL;
-    }
+    
 }
 
 themis_status_t secure_comparator_destroy(secure_comparator_t *comp_ctx)

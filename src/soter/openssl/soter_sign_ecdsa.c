@@ -113,8 +113,9 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* si
     (*signature_length)=(size_t)EVP_PKEY_size(pkey);
     res = SOTER_BUFFER_TOO_SMALL;
   } else {
-      if(EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length)!=1)
+      if(EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length)!=1) {
 	res = SOTER_INVALID_SIGNATURE;
+}
   }
   return res;
 }
