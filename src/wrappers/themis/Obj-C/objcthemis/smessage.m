@@ -21,13 +21,13 @@
 @interface TSMessage ()
 
 /** @brief private key */
-@property (nonatomic, readwrite) NSData * privateKey;
+@property(nonatomic, readwrite) NSData *privateKey;
 
 /** @brief public key */
-@property (nonatomic, readwrite) NSData * publicKey;
+@property(nonatomic, readwrite) NSData *publicKey;
 
 /** @brief mode */
-@property (nonatomic, readwrite) TSMessageMode mode;
+@property(nonatomic, readwrite) TSMessageMode mode;
 
 @end
 
@@ -64,74 +64,74 @@
 }
 
 
-- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError * __autoreleasing *)error {
+- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError *__autoreleasing *)error {
     size_t wrappedMessageLength = 0;
     TSErrorType result = TSErrorTypeFail;
 
     switch (self.mode) {
         case TSMessageModeEncryptDecrypt:
             result = (TSErrorType) themis_secure_message_encrypt([self.privateKey bytes], [self.privateKey length],
-                [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
-                NULL, &wrappedMessageLength);
+                    [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
+                    NULL, &wrappedMessageLength);
             break;
 
         case TSMessageModeSignVerify:
             if (!(self.privateKey) || [self.privateKey length] == 0) {
-              NSLog(@"Error during signing: private key is missing");
-				if (error) {
-                	*error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping");
-				}
+                NSLog(@"Error during signing: private key is missing");
+                if (error) {
+                    *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping");
+                }
                 return nil;
             }
             result = (TSErrorType) themis_secure_message_sign([self.privateKey bytes], [self.privateKey length],
-                [message bytes], [message length], NULL, &wrappedMessageLength);
+                    [message bytes], [message length], NULL, &wrappedMessageLength);
             break;
         default:
-			if (error) {
-            	*error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
-			}
+            if (error) {
+                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+            }
             return nil;
     }
 
     if (result != TSErrorTypeBufferTooSmall) {
-      NSLog(@"Error during wrapping data: either key is invalid of message is empty");
-		if (error) {
-        	*error = SCERROR(result, @"Secure Message failed wraping");
-		}
+        NSLog(@"Error during wrapping data: either key is invalid of message is empty");
+        if (error) {
+            *error = SCERROR(result, @"Secure Message failed wraping");
+        }
         return nil;
     }
 
-    unsigned char * wrappedMessage = malloc(wrappedMessageLength);
+    unsigned char *wrappedMessage = malloc(wrappedMessageLength);
     if (!wrappedMessage) {
-		if (error) {
-        	*error = SCERROR(TSErrorTypeFail, @"Secure Message failed, not enough memory");
-		}
+        if (error) {
+            *error = SCERROR(TSErrorTypeFail, @"Secure Message failed, not enough memory");
+        }
         return nil;
     }
 
     switch (self.mode) {
         case TSMessageModeEncryptDecrypt:
             result = (TSErrorType) themis_secure_message_encrypt([self.privateKey bytes], [self.privateKey length],
-                [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
-                wrappedMessage, &wrappedMessageLength);
+                    [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
+                    wrappedMessage, &wrappedMessageLength);
             break;
 
         case TSMessageModeSignVerify:
             result = (TSErrorType) themis_secure_message_sign([self.privateKey bytes], [self.privateKey length],
-                [message bytes], [message length], wrappedMessage, &wrappedMessageLength);
+                    [message bytes], [message length], wrappedMessage, &wrappedMessageLength);
             break;
         default:
-			if (error) {
-            	*error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
-			}
+            if (error) {
+                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+            }
             free(wrappedMessage);
             return NULL;
     }
 
     if (result != TSErrorTypeSuccess) {
-		if (error) {
-        	*error = SCERROR(result, @"Secure Message failed wrapping");
-		}
+        if (error) {
+            *error = SCERROR(result, @"Secure Message failed wrapping");
+        }
         free(wrappedMessage);
         return NULL;
     }
@@ -140,73 +140,73 @@
 }
 
 
-- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError * __autoreleasing *)error {
+- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError *__autoreleasing *)error {
     size_t unwrappedMessageLength = 0;
     TSErrorType result = TSErrorTypeFail;
-  
+
     switch (self.mode) {
-      case TSMessageModeEncryptDecrypt:
-        result = (TSErrorType) themis_secure_message_decrypt([self.privateKey bytes], [self.privateKey length],
-                                                             [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
-                                                             NULL, &unwrappedMessageLength);
-        break;
-        
-      case TSMessageModeSignVerify:
-        if (!(self.publicKey) || [self.publicKey length] == 0) {
-          NSLog(@"Error during verifying: public key is missing");
-          if (error) {
-            *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping");
-          }
-          return nil;
-        }
-        result = (TSErrorType) themis_secure_message_verify([self.publicKey bytes], [self.publicKey length],
-                                                          [message bytes], [message length], NULL, &unwrappedMessageLength);
-        break;
-      default:
-        if (error) {
-          *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
-        }
-        return nil;
+        case TSMessageModeEncryptDecrypt:
+            result = (TSErrorType) themis_secure_message_decrypt([self.privateKey bytes], [self.privateKey length],
+                    [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
+                    NULL, &unwrappedMessageLength);
+            break;
+
+        case TSMessageModeSignVerify:
+            if (!(self.publicKey) || [self.publicKey length] == 0) {
+                NSLog(@"Error during verifying: public key is missing");
+                if (error) {
+                    *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping");
+                }
+                return nil;
+            }
+            result = (TSErrorType) themis_secure_message_verify([self.publicKey bytes], [self.publicKey length],
+                    [message bytes], [message length], NULL, &unwrappedMessageLength);
+            break;
+        default:
+            if (error) {
+                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+            }
+            return nil;
     }
 
     if (result != TSErrorTypeBufferTooSmall) {
-      NSLog(@"Error during wrapping data: either key is invalid of message is empty");
-		if (error) {
-        	*error = SCERROR(result, @"Secure Message failed unwraping");
-		}
+        NSLog(@"Error during wrapping data: either key is invalid of message is empty");
+        if (error) {
+            *error = SCERROR(result, @"Secure Message failed unwraping");
+        }
         return nil;
     }
 
-    unsigned char * unwrappedMessage = malloc(unwrappedMessageLength);
+    unsigned char *unwrappedMessage = malloc(unwrappedMessageLength);
     if (!unwrappedMessage) {
-		if (error) {
-        	*error = SCERROR(TSErrorTypeFail, @"Secure Message failed, not enough memory");
-		}
+        if (error) {
+            *error = SCERROR(TSErrorTypeFail, @"Secure Message failed, not enough memory");
+        }
         return nil;
     }
 
     switch (self.mode) {
-      case TSMessageModeEncryptDecrypt:
-        result = (TSErrorType) themis_secure_message_decrypt([self.privateKey bytes], [self.privateKey length],
-                                                             [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
-                                                             unwrappedMessage, &unwrappedMessageLength);
-        break;
-        
-      case TSMessageModeSignVerify:
-        result = (TSErrorType) themis_secure_message_verify([self.publicKey bytes], [self.publicKey length],
-                                                            [message bytes], [message length], unwrappedMessage, &unwrappedMessageLength);
-        break;
-      default:
-        if (error) {
-          *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
-        }
-        return nil;
+        case TSMessageModeEncryptDecrypt:
+            result = (TSErrorType) themis_secure_message_decrypt([self.privateKey bytes], [self.privateKey length],
+                    [self.publicKey bytes], [self.publicKey length], [message bytes], [message length],
+                    unwrappedMessage, &unwrappedMessageLength);
+            break;
+
+        case TSMessageModeSignVerify:
+            result = (TSErrorType) themis_secure_message_verify([self.publicKey bytes], [self.publicKey length],
+                    [message bytes], [message length], unwrappedMessage, &unwrappedMessageLength);
+            break;
+        default:
+            if (error) {
+                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+            }
+            return nil;
     }
-  
+
     if (result != TSErrorTypeSuccess) {
-		if (error) {
-        	*error = SCERROR(result, @"Secure Message failed unwraping");
-		}
+        if (error) {
+            *error = SCERROR(result, @"Secure Message failed unwraping");
+        }
         free(unwrappedMessage);
         return nil;
     }

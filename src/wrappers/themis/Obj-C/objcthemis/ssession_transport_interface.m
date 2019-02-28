@@ -18,25 +18,25 @@
 #import <objcthemis/serror.h>
 
 
-ssize_t on_send_callback(const uint8_t * data, size_t data_length, void * user_data) {
+ssize_t on_send_callback(const uint8_t *data, size_t data_length, void *user_data) {
     return TSErrorTypeFail;
 }
 
 
-ssize_t on_receive_callback(uint8_t * data, size_t data_length, void * user_data) {
+ssize_t on_receive_callback(uint8_t *data, size_t data_length, void *user_data) {
     return TSErrorTypeFail;
 }
 
 
-void on_state_changed_callback(int event, void * user_data) {
+void on_state_changed_callback(int event, void *user_data) {
     return;
 }
 
 
-int on_get_public_key_for_id_callback(const void * id, size_t id_length, void * key_buffer, size_t key_buffer_length, void * user_data) {
-    TSSessionTransportInterface * referenceObject = (__bridge TSSessionTransportInterface *) user_data;
-    NSError * error = nil;
-    NSData * publicKey = [referenceObject publicKeyFor:[[NSData alloc] initWithBytes:id length:id_length] error:&error];
+int on_get_public_key_for_id_callback(const void *id, size_t id_length, void *key_buffer, size_t key_buffer_length, void *user_data) {
+    TSSessionTransportInterface *referenceObject = (__bridge TSSessionTransportInterface *) user_data;
+    NSError *error = nil;
+    NSData *publicKey = [referenceObject publicKeyFor:[[NSData alloc] initWithBytes:id length:id_length] error:&error];
 
     if (error || key_buffer_length < [publicKey length]) {
         return TSErrorTypeFail;
@@ -62,33 +62,33 @@ int on_get_public_key_for_id_callback(const void * id, size_t id_length, void * 
 
 
 // TODO: implement
-- (void)sendData:(nullable NSData *)data error:(NSError * __autoreleasing *)error {
-	if (error) {
-    	*error = SCERROR(TSErrorTypeFail, @"secure session send callback");
-	}
+- (void)sendData:(nullable NSData *)data error:(NSError *__autoreleasing *)error {
+    if (error) {
+        *error = SCERROR(TSErrorTypeFail, @"secure session send callback");
+    }
     return;
 }
 
 
 // TODO: implement
 - (nullable NSData *)receiveDataWithError:(NSError **)error {
-	if (error) {
-    	*error = SCERROR(TSErrorTypeFail, @"secure session receive callback");
-	}
+    if (error) {
+        *error = SCERROR(TSErrorTypeFail, @"secure session receive callback");
+    }
     return nil;
 }
 
 
-- (nullable NSData *)publicKeyFor:(nullable NSData *)binaryId error:(NSError * __autoreleasing *)error {
+- (nullable NSData *)publicKeyFor:(nullable NSData *)binaryId error:(NSError *__autoreleasing *)error {
     // TODO: approve
-    NSMutableData * key = [[NSMutableData alloc] initWithLength:1024];
+    NSMutableData *key = [[NSMutableData alloc] initWithLength:1024];
     TSErrorType result = (TSErrorType) on_get_public_key_for_id_callback([binaryId bytes], [binaryId length],
-        [key mutableBytes], [key length], (__bridge void *) self);
+            [key mutableBytes], [key length], (__bridge void *) self);
 
     if (result != TSErrorTypeSuccess) {
-		if (error) {
-        	*error = SCERROR(TSErrorTypeFail, @"Secure Session failed getting of public key");
-		}
+        if (error) {
+            *error = SCERROR(TSErrorTypeFail, @"Secure Session failed getting of public key");
+        }
         return nil;
     }
     return [key copy];

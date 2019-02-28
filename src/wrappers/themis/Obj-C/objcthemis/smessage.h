@@ -41,7 +41,7 @@ typedef NS_ENUM(NSInteger, TSMessageMode) {
     * protection.
     * @image html encrypted_message.png Secure Encrypted message
     */
-        TSMessageModeEncryptDecrypt,
+            TSMessageModeEncryptDecrypt,
 
     /** @brief Signed message
     *
@@ -50,7 +50,7 @@ typedef NS_ENUM(NSInteger, TSMessageMode) {
     * (for example, route data based on its type).
     * @image html signed_message.png Secure Signed message
     */
-        TSMessageModeSignVerify
+            TSMessageModeSignVerify
 };
 
 
@@ -75,13 +75,13 @@ typedef NS_ENUM(NSInteger, TSMessageMode) {
 
 
 /** @brief private key */
-@property (nonatomic, readonly) NSData * privateKey;
+@property(nonatomic, readonly) NSData *privateKey;
 
 /** @brief public key */
-@property (nonatomic, readonly) NSData * publicKey;
+@property(nonatomic, readonly) NSData *publicKey;
 
 /** @brief mode */
-@property (nonatomic, readonly) TSMessageMode mode;
+@property(nonatomic, readonly) TSMessageMode mode;
 
 
 /**
@@ -104,7 +104,7 @@ typedef NS_ENUM(NSInteger, TSMessageMode) {
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
  */
-- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError * __autoreleasing *)error;
+- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError *__autoreleasing *)error;
 
 /**
 * @brief Unwrap message (decrypt using both keys or verify using peer's public key)
@@ -112,7 +112,7 @@ typedef NS_ENUM(NSInteger, TSMessageMode) {
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError * __autoreleasing *)error;
+- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError *__autoreleasing *)error;
 
 @end
 
