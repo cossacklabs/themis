@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
-- (nullable NSData *)wrapData:(NSData *)message error:(NSError * __autoreleasing *)error;
+- (nullable NSData *)wrapData:(NSData *)message error:(NSError *__autoreleasing *)error;
 
 /**
 * @brief Unwrap message
@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (nullable NSData *)unwrapData:(NSData *)message error:(NSError * __autoreleasing *)error;
+- (nullable NSData *)unwrapData:(NSData *)message error:(NSError *__autoreleasing *)error;
 
 /**
 * @brief Wrap message with context
@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] error pointer to Error on failure
 * @return Wrapped message as NSData object on success or nil on failure
 */
-- (nullable NSData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError * __autoreleasing *)error;
+- (nullable NSData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError *__autoreleasing *)error;
 
 /**
 * @brief Unwrap message
@@ -84,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message as NSData object on success or nil on failure
 */
-- (nullable NSData *)unwrapData:(NSData *)message context:(nullable NSData *)context error:(NSError * __autoreleasing *)error;
+- (nullable NSData *)unwrapData:(NSData *)message context:(nullable NSData *)context error:(NSError *__autoreleasing *)error;
 
 @end
 

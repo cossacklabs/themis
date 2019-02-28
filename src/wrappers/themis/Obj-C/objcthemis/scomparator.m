@@ -20,7 +20,7 @@
 
 @interface TSComparator ()
 
-@property (nonatomic) secure_comparator_t * comparator;
+@property(nonatomic) secure_comparator_t *comparator;
 
 @end
 
@@ -43,36 +43,36 @@
 
 // TODO: check for memory leak?
 - (void)dealloc {
-    if(self.comparator) {
+    if (self.comparator) {
         secure_comparator_destroy(self.comparator);
     }
 }
 
 
-- (nullable NSData *)beginCompare:(NSError * __autoreleasing *)error {
+- (nullable NSData *)beginCompare:(NSError *__autoreleasing *)error {
     size_t comparationRequestLength = 0;
     TSErrorType result = (TSErrorType) secure_comparator_begin_compare(self.comparator, NULL, &comparationRequestLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
         if (error) {
-        	*error = SCERROR(result, @"Secure Comparator failed making initialisation message");
-		}
+            *error = SCERROR(result, @"Secure Comparator failed making initialisation message");
+        }
         return nil;
     }
 
-    NSMutableData * requestData = [[NSMutableData alloc] initWithLength:comparationRequestLength];
+    NSMutableData *requestData = [[NSMutableData alloc] initWithLength:comparationRequestLength];
     result = (TSErrorType) secure_comparator_begin_compare(self.comparator, [requestData mutableBytes], &comparationRequestLength);
 
-    if (result != TSErrorTypeSuccess && result !=TSErrorTypeSendAsIs) {
-		if (error) {
-        	*error = SCERROR(result, @"Secure Comparator failed making initialisation message");
-		}
+    if (result != TSErrorTypeSuccess && result != TSErrorTypeSendAsIs) {
+        if (error) {
+            *error = SCERROR(result, @"Secure Comparator failed making initialisation message");
+        }
         return nil;
     }
     return [requestData copy];
 }
 
-- (nullable NSData *)proceedCompare:(nullable NSData *)message error:(NSError * __autoreleasing *)error {
+- (nullable NSData *)proceedCompare:(nullable NSData *)message error:(NSError *__autoreleasing *)error {
     size_t unwrappedMessageLength = 0;
     TSErrorType result = (TSErrorType) secure_comparator_proceed_compare(self.comparator, [message bytes], [message length], NULL, &unwrappedMessageLength);
 
@@ -80,23 +80,22 @@
         if (result == TSErrorTypeSuccess) {
             return nil;
         }
-		if (error) {
-        	*error = SCERROR(result, @"Secure Comparator failed proceeding message");
-		}
+        if (error) {
+            *error = SCERROR(result, @"Secure Comparator failed proceeding message");
+        }
         return nil;
     }
 
-    NSMutableData * unwrappedMessage = [[NSMutableData alloc] initWithLength:unwrappedMessageLength];
+    NSMutableData *unwrappedMessage = [[NSMutableData alloc] initWithLength:unwrappedMessageLength];
     result = (TSErrorType) secure_comparator_proceed_compare(self.comparator, [message bytes], [message length], [unwrappedMessage mutableBytes], &unwrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
         if (result == TSErrorTypeSendAsIs) {
             return unwrappedMessage;
-        }
-        else {
-			if (error) {
-            	*error = SCERROR(result, @"Secure Comparator failed proceeding message");
-			}
+        } else {
+            if (error) {
+                *error = SCERROR(result, @"Secure Comparator failed proceeding message");
+            }
             return nil;
         }
     }

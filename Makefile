@@ -15,6 +15,8 @@
 #
 
 #CC = clang
+CLANG_FORMAT ?= clang-format
+CLANG_TIDY   ?= clang-tidy
 SHELL = /bin/bash
 SRC_PATH = src
 ifneq ($(BUILD_PATH),)
@@ -47,8 +49,8 @@ PRINT_ERROR = printf "$@ $(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LO
 PRINT_ERROR_ = printf "$(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n" && false
 PRINT_WARNING = printf "$@ $(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
 PRINT_WARNING_ = printf "$(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
-BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
-BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
+BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
+BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
 
 PKGINFO_PATH = PKGINFO
 
@@ -297,6 +299,25 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
+FMT_FIXUP += $(THEMIS_FMT_FIXUP) $(SOTER_FMT_FIXUP)
+FMT_CHECK += $(THEMIS_FMT_CHECK) $(SOTER_FMT_CHECK)
+
+$(OBJ_PATH)/%.c.fmt_fixup $(OBJ_PATH)/%.h.fmt_fixup: \
+    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
+
+$(OBJ_PATH)/%.c.fmt_check $(OBJ_PATH)/%.h.fmt_check: \
+    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) 2>/dev/null && touch $@
+
+$(OBJ_PATH)/%.fmt_fixup: $(SRC_PATH)/%
+	@mkdir -p $(@D)
+	@echo -n "fixup $< "
+	@$(BUILD_CMD_)
+
+$(OBJ_PATH)/%.fmt_check: $(SRC_PATH)/%
+	@mkdir -p $(@D)
+	@echo -n "check $< "
+	@$(BUILD_CMD_)
+
 #$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
 $(AUD_PATH)/%: CMD = ./scripts/pp.sh  $< $@
 
@@ -323,6 +344,9 @@ include tests/test.mk
 include tools/afl/fuzzy.mk
 
 err: ; $(ERROR)
+
+fmt: $(FMT_FIXUP)
+fmt_check: $(FMT_CHECK)
 
 clean: CMD = rm -rf $(BIN_PATH)
 

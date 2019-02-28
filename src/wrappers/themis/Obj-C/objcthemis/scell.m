@@ -22,7 +22,7 @@
 
 /** @brief store master key, rewrite
 */
-@property (nonatomic, readwrite) NSData * key;
+@property(nonatomic, readwrite) NSData *key;
 
 @end
 
