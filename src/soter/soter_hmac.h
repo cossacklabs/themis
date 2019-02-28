@@ -21,6 +21,7 @@
 #ifndef SOTER_HMAC_H
 #define SOTER_HMAC_H
 
+#include <soter/soter_error.h>
 #include <soter/soter_hash.h>
 
 /**

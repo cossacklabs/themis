@@ -22,9 +22,12 @@
 #ifndef THEMIS_ERROR_H
 #define THEMIS_ERROR_H
 
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
+
 #include <soter/soter_error.h>
 
 /** @brief return type */

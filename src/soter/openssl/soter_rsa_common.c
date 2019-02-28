@@ -14,9 +14,8 @@
 * limitations under the License.
 */
 
-#include <soter/soter.h>
-#include <soter/soter_rsa_key.h>
-#include "soter_engine.h"
+#include "soter/openssl/soter_rsa_common.h"
+
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 

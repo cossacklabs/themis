@@ -14,8 +14,8 @@
 * limitations under the License.
 */
 
-#ifndef PORTABLE_ENDIAN_H__
-#define PORTABLE_ENDIAN_H__
+#ifndef THEMIS_PORTABLE_ENDIAN_H
+#define THEMIS_PORTABLE_ENDIAN_H
  
 #if (defined(_WIN16) || defined(_WIN32) || defined(_WIN64)) && !defined(__WINDOWS__)
  
@@ -125,4 +125,4 @@
  
 #endif
  
-#endif 
+#endif /* THEMIS_PORTABLE_ENDIAN_H */

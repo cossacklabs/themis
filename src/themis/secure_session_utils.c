@@ -14,15 +14,14 @@
 * limitations under the License.
 */
 
-#include <themis/secure_session_utils.h>
-#include <themis/secure_session.h>
-#include <themis/secure_session_t.h>
+#include "themis/secure_session_utils.h"
 
-#include <soter/soter_t.h>
-#include <soter/soter_rsa_key.h>
-#include <soter/soter_ec_key.h>
+#include "soter/soter_ec_key.h"
+#include "soter/soter_rsa_key.h"
+#include "soter/soter_t.h"
 
-#include <themis/themis_error.h>
+#include "themis/secure_session.h"
+#include "themis/secure_session_t.h"
 
 #define MAX_HMAC_SIZE 64 /* For HMAC-SHA512 */
 
@@ -358,4 +357,3 @@ themis_status_t secure_session_derive_message_keys(secure_session_t *session_ctx
 
 	return res;
 }
-

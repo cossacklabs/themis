@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-#include "soter_crc32.h"
+#include "soter/soter_crc32.h"
 
 /* Taken from draft-ietf-tsvwg-sctpcsum-03.txt */
 

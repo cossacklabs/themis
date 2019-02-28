@@ -21,8 +21,8 @@
 #ifndef THEMIS_H
 #define THEMIS_H
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 /**
  * @defgroup THEMIS Themis
@@ -30,31 +30,12 @@
  * @{
  */
 
-#include <themis/themis_error.h>
+#include <themis/secure_cell.h>
+#include <themis/secure_comparator.h>
 #include <themis/secure_keygen.h>
 #include <themis/secure_message.h>
-#include <themis/secure_cell.h>
 #include <themis/secure_session.h>
-#include <themis/secure_comparator.h>
+#include <themis/themis_error.h>
 
 /** @} */
 #endif /* THEMIS_H */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

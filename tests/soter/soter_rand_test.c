@@ -14,10 +14,11 @@
 * limitations under the License.
 */
 
-#include "soter_test.h"
+#include "soter/soter_test.h"
+
 #include <stdio.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
 
 #ifdef NIST_STS_EXE_PATH
 

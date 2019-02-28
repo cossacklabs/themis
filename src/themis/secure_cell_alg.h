@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef _SECURE_CELL_ALG_H_
-#define _SECURE_CELL_ALG_H_
+#ifndef THEMIS_SECURE_CELL_ALG_H
+#define THEMIS_SECURE_CELL_ALG_H
 
 #ifdef THEMIS_AUTH_SYM_ALG_AES_256_GCM
 #define THEMIS_AUTH_SYM_KEY_LENGTH SOTER_SYM_256_KEY_LENGTH
@@ -72,4 +72,4 @@
 #define THEMIS_SYM_IV_LENGTH 16
 #endif
 
-#endif /* _SECURE_CELL_ALG_H_ */
+#endif /* THEMIS_SECURE_CELL_ALG_H */

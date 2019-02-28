@@ -14,7 +14,8 @@
 * limitations under the License.
 */
 
-#include "soter_test.h"
+#include "soter/soter_test.h"
+
 #include <string.h>
 
 #define KEY_BUFFER_SIZE 2048

@@ -16,7 +16,13 @@
 
 #ifndef SOTER_T_H
 #define SOTER_T_H
-#include <soter/soter.h>
+
+#include <soter/soter_asym_cipher.h>
+#include <soter/soter_asym_ka.h>
+#include <soter/soter_asym_sign.h>
+#include <soter/soter_error.h>
+#include <soter/soter_hash.h>
+#include <soter/soter_hmac.h>
 
 #ifdef CRYPTO_ENGINE_PATH
 #define CEP <soter/CRYPTO_ENGINE_PATH/soter_engine.h>

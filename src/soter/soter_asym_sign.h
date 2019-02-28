@@ -21,7 +21,7 @@
 #ifndef SOTER_ASYM_SIGN_H
 #define SOTER_ASYM_SIGN_H
 
-#include <soter/soter.h>
+#include <soter/soter_error.h>
 
 /** @addtogroup SOTER
  * @{

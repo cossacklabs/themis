@@ -14,13 +14,13 @@
 * limitations under the License.
 */
 
-#include <soter/soter_error.h>
-#include <soter/soter_rsa_key.h>
+#include "soter/soter_rsa_key.h"
+
+#include <string.h>
 
 #include <openssl/bn.h>
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
-#include <string.h>
 
 static size_t rsa_pub_key_size(int mod_size)
 {

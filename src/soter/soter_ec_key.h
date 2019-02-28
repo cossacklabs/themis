@@ -17,10 +17,10 @@
 #ifndef SOTER_EC_KEY_H
 #define SOTER_EC_KEY_H
 
-#include <soter/soter_container.h>
-#include <soter/soter.h>
-
 #include <arpa/inet.h>
+
+#include <soter/soter_container.h>
+#include <soter/soter_error.h>
 
 /** private key header part */
 #define EC_PRIV_KEY_PREF "REC"

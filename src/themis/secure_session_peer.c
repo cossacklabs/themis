@@ -14,8 +14,7 @@
 * limitations under the License.
 */
 
-#include <themis/secure_session_peer.h>
-#include <themis/themis_error.h>
+#include "themis/secure_session_peer.h"
 
 #include <string.h>
 

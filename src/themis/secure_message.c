@@ -14,11 +14,10 @@
 * limitations under the License.
 */
 
-#include "secure_message.h"
+#include "themis/secure_message.h"
 
-#include <themis/themis_error.h>
-#include <themis/secure_message.h>
-#include <themis/secure_message_wrapper.h>
+#include "themis/secure_keygen.h"
+#include "themis/secure_message_wrapper.h"
 
 static bool valid_private_key(const uint8_t* private_key, size_t private_key_length){
   if(themis_is_valid_asym_key(private_key, private_key_length)==THEMIS_SUCCESS){

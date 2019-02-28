@@ -14,14 +14,14 @@
 * limitations under the License.
 */
 
-#include <soter/soter_sign_rsa.h>
-#include <soter/soter.h>
-#include <soter/soter_rsa_key.h>
-#include "soter_engine.h"
-#include "soter_rsa_common.h"
+#include "soter/soter_sign_rsa.h"
+
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
+#include "soter/soter_rsa_key.h"
+#include "soter/boringssl/soter_engine.h"
+#include "soter/boringssl/soter_rsa_common.h"
 
 soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* private_key, const size_t private_key_length, const void* public_key, const size_t public_key_length)
 {
