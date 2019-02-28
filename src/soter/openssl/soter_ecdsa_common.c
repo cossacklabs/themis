@@ -14,11 +14,13 @@
 * limitations under the License.
 */
 
-#include <soter/soter.h>
-#include <soter/soter_ec_key.h>
-#include "soter_engine.h"
-#include <openssl/evp.h>
+#include "soter/openssl/soter_ecdsa_common.h"
+
 #include <openssl/ec.h>
+#include <openssl/evp.h>
+
+#include "soter/soter_ec_key.h"
+#include "soter/openssl/soter_engine.h"
 
 soter_status_t soter_ec_gen_key(EVP_PKEY_CTX *pkey_ctx)
 {

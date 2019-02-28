@@ -17,7 +17,8 @@
 #ifndef SOTER_CRC32_H
 #define SOTER_CRC32_H
 
-#include <soter/soter.h>
+#include <stddef.h>
+#include <stdint.h>
 
 typedef uint32_t soter_crc32_t;
 

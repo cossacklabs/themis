@@ -14,11 +14,12 @@
 * limitations under the License.
 */
 
-#ifndef _THEMIS_SECURE_MESSAGE_WRAPPER_H_
-#define _THEMIS_SECURE_MESSAGE_WRAPPER_H_
+#ifndef THEMIS_SECURE_MESSAGE_WRAPPER_H
+#define THEMIS_SECURE_MESSAGE_WRAPPER_H
 
-#include <themis/themis.h>
 #include <soter/soter.h>
+
+#include <themis/themis_error.h>
 
 #define THEMIS_SECURE_MESSAGE                      0x26040000
 
@@ -91,16 +92,4 @@ themis_secure_message_decrypter_t* themis_secure_message_decrypter_init(const ui
 themis_status_t themis_secure_message_decrypter_proceed(themis_secure_message_decrypter_t* ctx, const uint8_t* message, const size_t message_length, uint8_t* wrapped_message, size_t* wrapped_message_length);
 themis_status_t themis_secure_message_decrypter_destroy(themis_secure_message_decrypter_t* ctx);
 
-
-
-#endif /* _THEMIS_SECURE_MESSAGE_WRAPPER_H_ */
-
-
-
-
-
-
-
-
-
-
+#endif /* THEMIS_SECURE_MESSAGE_WRAPPER_H */

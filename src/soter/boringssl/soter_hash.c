@@ -14,10 +14,11 @@
 * limitations under the License.
 */
 
-#include "soter/soter.h"
-#include "soter_engine.h"
+#include "soter/soter_hash.h"
+
 #include <openssl/evp.h>
 
+#include "soter/boringssl/soter_engine.h"
 
 static const EVP_MD* soter_algo_to_evp_md(soter_hash_algo_t algo)
 {

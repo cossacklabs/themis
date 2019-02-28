@@ -14,10 +14,11 @@
 * limitations under the License.
 */
 
+#include "themis/themis_test.h"
 
 #include <string.h>
-#include <common/test_utils.h>
-#include <themis/secure_message.h>
+
+#include <soter/soter_rand.h>
 
 /* Fuzz parameters */
 #define MAX_MESSAGE_SIZE 2048

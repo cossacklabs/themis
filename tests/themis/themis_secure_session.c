@@ -14,11 +14,10 @@
 * limitations under the License.
 */
 
-#include <themis/secure_session.h>
-#include <string.h>
-#include "themis_test.h"
+#include "themis/themis_test.h"
 
 #include <assert.h>
+#include <string.h>
 
 /* Fuzz parameters */
 #define MAX_MESSAGE_SIZE 2048

@@ -14,10 +14,12 @@
 * limitations under the License.
 */
 
-#include <soter/soter_error.h>
-#include "soter_engine.h"
-#include <soter/soter_ec_key.h>
+#include "soter/soter_asym_ka.h"
+
 #include <openssl/ec.h>
+
+#include "soter/soter_ec_key.h"
+#include "soter/openssl/soter_engine.h"
 
 static int soter_alg_to_curve_nid(soter_asym_ka_alg_t alg)
 {

@@ -14,14 +14,15 @@
 * limitations under the License.
 */
 
-#include <soter/soter.h>
-#include <soter/soter_rsa_key.h>
-#include "soter_engine.h"
+#include "soter/soter_asym_cipher.h"
+
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
-#define OAEP_HASH_SIZE 20
+#include "soter/soter_rsa_key.h"
+#include "soter/boringssl/soter_engine.h"
 
+#define OAEP_HASH_SIZE 20
 
 #ifndef SOTER_RSA_KEY_LENGTH
 #define SOTER_RSA_KEY_LENGTH 2048

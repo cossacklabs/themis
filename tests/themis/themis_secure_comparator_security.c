@@ -5,11 +5,12 @@
  *      Author: ignat
  */
 
-#include <themis/secure_comparator.h>
-#include <themis/secure_comparator_t.h>
+#include "themis/themis_test.h"
+
 #include <stdio.h>
 #include <string.h>
-#include "themis_test.h"
+
+#include <themis/secure_comparator_t.h>
 
 /* Peers will communicate using shared memory */
 static uint8_t shared_mem[512];

@@ -17,7 +17,6 @@
 #ifndef SOTER_CONTAINER_H
 #define SOTER_CONTAINER_H
 
-#include <stdint.h>
 #include <soter/soter_error.h>
 
 #define SOTER_CONTAINER_TAG_LENGTH 4

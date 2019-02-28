@@ -16,7 +16,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "themis_test.h"
+
+#include "themis/themis_test.h"
 
 int main(int argc, char* argv[])
 {
@@ -32,4 +33,3 @@ int main(int argc, char* argv[])
   testsuite_finish_testing();
   return testsuite_get_return_value();
 }
-

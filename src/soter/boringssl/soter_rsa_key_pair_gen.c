@@ -14,16 +14,15 @@
 * limitations under the License.
 */
 
-#include <soter/soter_error.h>
-#include "soter_engine.h"
-#include "soter_rsa_common.h"
-#include <soter/soter_rsa_key_pair_gen.h>
+#include "soter/soter_rsa_key_pair_gen.h"
+
+#include <string.h>
 
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
-#include <string.h>
-
+#include "soter/boringssl/soter_engine.h"
+#include "soter/boringssl/soter_rsa_common.h"
 
 soter_rsa_key_pair_gen_t* soter_rsa_key_pair_gen_create(const unsigned key_length){
     SOTER_CHECK_PARAM_(rsa_key_length(key_length)>0);

@@ -14,7 +14,8 @@
 * limitations under the License.
 */
 
-#include "soter_test.h"
+#include "soter/soter_test.h"
+
 #include <string.h>
 
 #define TEST_DATA_SIZE 70
