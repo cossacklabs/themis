@@ -14,16 +14,17 @@
 # limitations under the License.
 #
 
-THEMIS_SRC = $(wildcard $(SRC_PATH)/themis/*.c)
-THEMIS_AUD_SRC = $(wildcard $(SRC_PATH)/themis/*.c)
-THEMIS_AUD_SRC += $(wildcard $(SRC_PATH)/themis/*.h)
+THEMIS_SOURCES = $(wildcard $(SRC_PATH)/themis/*.c)
+THEMIS_HEADERS = $(wildcard $(SRC_PATH)/themis/*.h)
+
+THEMIS_SRC = $(THEMIS_SOURCES)
+THEMIS_AUD_SRC = $(THEMIS_SOURCES) $(THEMIS_HEADERS)
+THEMIS_FMT_SRC = $(THEMIS_SOURCES) $(THEMIS_HEADERS)
 
 THEMIS_OBJ = $(patsubst $(SRC_PATH)/%.c,$(OBJ_PATH)/%.o, $(THEMIS_SRC))
 
 THEMIS_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(THEMIS_AUD_SRC))
 
-THEMIS_FMT_SRC += $(wildcard $(SRC_PATH)/themis/*.c)
-THEMIS_FMT_SRC += $(wildcard $(SRC_PATH)/themis/*.h)
 THEMIS_FMT = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt,$(THEMIS_FMT_SRC))
 
 THEMIS_BIN = themis
