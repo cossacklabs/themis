@@ -326,20 +326,6 @@ $(AUD_PATH)/%: $(SRC_PATH)/%
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
-$(TEST_OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR)) -I$(TEST_SRC_PATH) -c $< -o $@
-
-$(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
-	@mkdir -p $(@D)
-	@echo -n "compile "
-	@$(BUILD_CMD)
-
-$(TEST_OBJ_PATH)/%.opp: CMD = $(CXX) $(CFLAGS) -I$(TEST_SRC_PATH) -c $< -o $@
-
-$(TEST_OBJ_PATH)/%.opp: $(TEST_SRC_PATH)/%.cpp
-	@mkdir -p $(@D)
-	@echo -n "compile "
-	@$(BUILD_CMD)
-
 include tests/test.mk
 include tools/afl/fuzzy.mk
 
