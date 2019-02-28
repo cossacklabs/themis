@@ -14,8 +14,8 @@
 * limitations under the License.
 */
 
-#include "soter_sign_ecdsa.h"
-#include "soter_sign_rsa.h"
+#include "soter/soter_sign_ecdsa.h"
+#include "soter/soter_sign_rsa.h"
 
 #ifdef CRYPTO_ENGINE_PATH
 #define CEP <soter/CRYPTO_ENGINE_PATH/soter_engine.h>
