@@ -22,44 +22,44 @@ class SecureMessageTestsSwift: XCTestCase {
     }
     
     func testSecureMessageEC256() {
-        wrapUnwrapStrings(withPrivateKey: privateKeyEc256, publicKey: publicKeyEc256)
+        encryptDecryptStrings(withPrivateKey: privateKeyEc256, publicKey: publicKeyEc256)
         signVerifyStrings(withPrivateKey: privateKeyEc256, publicKey: publicKeyEc256)
     }
     
     func testSecureMessageRSA1024() {
-        wrapUnwrapStrings(withPrivateKey: privateKeyRSA1024, publicKey: publicKeyRSA1024)
+        encryptDecryptStrings(withPrivateKey: privateKeyRSA1024, publicKey: publicKeyRSA1024)
         signVerifyStrings(withPrivateKey: privateKeyRSA1024, publicKey: publicKeyRSA1024)
     }
     
     func testSecureMessageRSA2048() {
-        wrapUnwrapStrings(withPrivateKey: privateKeyRSA2048, publicKey: publicKeyRSA2048)
+        encryptDecryptStrings(withPrivateKey: privateKeyRSA2048, publicKey: publicKeyRSA2048)
         signVerifyStrings(withPrivateKey: privateKeyRSA2048, publicKey: publicKeyRSA2048)
     }
     
     func testSecureMessageRSA4096() {
-        wrapUnwrapStrings(withPrivateKey: privateKeyRSA4096, publicKey: publicKeyRSA4096)
+        encryptDecryptStrings(withPrivateKey: privateKeyRSA4096, publicKey: publicKeyRSA4096)
         signVerifyStrings(withPrivateKey: privateKeyRSA4096, publicKey: publicKeyRSA4096)
     }
   
     func testSecureMessageKeygenEC() {
       let keyGeneratorEC = TSKeyGen(algorithm: .EC)!
-      wrapUnwrap(withPrivateKey: keyGeneratorEC.privateKey as Data, publicKeyData: keyGeneratorEC.publicKey as Data)
+      encryptDecrypt(withPrivateKey: keyGeneratorEC.privateKey as Data, publicKeyData: keyGeneratorEC.publicKey as Data)
       signVerify(withPrivateKey: keyGeneratorEC.privateKey as Data, publicKeyData: keyGeneratorEC.publicKey as Data)
     }
   
     func testSecureMessageKeygenRSA() {
       let keyGeneratorRSA = TSKeyGen(algorithm: .RSA)!
-      wrapUnwrap(withPrivateKey: keyGeneratorRSA.privateKey as Data, publicKeyData: keyGeneratorRSA.publicKey as Data)
+      encryptDecrypt(withPrivateKey: keyGeneratorRSA.privateKey as Data, publicKeyData: keyGeneratorRSA.publicKey as Data)
       signVerify(withPrivateKey: keyGeneratorRSA.privateKey as Data, publicKeyData: keyGeneratorRSA.publicKey as Data)
     }
   
-    func wrapUnwrapStrings(withPrivateKey privateKey: String, publicKey: String) {
+    func encryptDecryptStrings(withPrivateKey privateKey: String, publicKey: String) {
       let privateKeyData = Data(base64Encoded: privateKey, options: .ignoreUnknownCharacters)!
       let publicKeyData = Data(base64Encoded: publicKey, options: .ignoreUnknownCharacters)!
-      return wrapUnwrap(withPrivateKey:privateKeyData, publicKeyData:publicKeyData)
+      return encryptDecrypt(withPrivateKey:privateKeyData, publicKeyData:publicKeyData)
     }
   
-    func wrapUnwrap(withPrivateKey privateKeyData: Data, publicKeyData: Data) {
+    func encryptDecrypt(withPrivateKey privateKeyData: Data, publicKeyData: Data) {
         let encrypter = TSMessage.init(inEncryptModeWithPrivateKey: privateKeyData,
                                        peerPublicKey: publicKeyData)
         let message: String = "- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java."
@@ -73,11 +73,18 @@ class SecureMessageTestsSwift: XCTestCase {
         let resultString = String(data: decryptedMessage!!, encoding: .utf8)
         XCTAssertTrue((message == resultString), "initial string and decrypted string should be the same")
       
-        // empty message
-        let encryptedEmptyMessage = try? encrypter?.wrap(nil)
-        XCTAssertTrue((encryptedEmptyMessage == nil), "encrypting empty data should return empty data")
+        // nil message
+        let encryptedNilMessage = try? encrypter?.wrap(nil)
+        XCTAssertTrue((encryptedNilMessage == nil), "encrypting nil data should return empty data")
       
-        let decryptedEmptyMessage = try? encrypter?.unwrapData(nil)
+        let decryptedNilMessage = try? encrypter?.unwrapData(nil)
+        XCTAssertTrue((decryptedNilMessage == nil), "decrypting nil data should return empty data")
+        
+        // empty message
+        let encryptedEmptyMessage = try? encrypter?.wrap("".data(using: .utf8))
+        XCTAssertTrue((encryptedEmptyMessage == nil), "encrypting empty data should return empty data")
+        
+        let decryptedEmptyMessage = try? encrypter?.unwrapData("".data(using: .utf8))
         XCTAssertTrue((decryptedEmptyMessage == nil), "decrypting empty data should return empty data")
       
         // another encryptor
@@ -108,13 +115,20 @@ class SecureMessageTestsSwift: XCTestCase {
         let resultString = String(data: verifiedMessage!!, encoding: .utf8)
         XCTAssertTrue((message == resultString), "initial string and verified string should be the same")
     
+        // nil message
+        let signedNilMessage = try? encrypter?.wrap(nil)
+        XCTAssertTrue((signedNilMessage == nil), "signing nil data should return empty data")
+        
+        let verifiedNilMessage = try? encrypter?.unwrapData(nil)
+        XCTAssertTrue((verifiedNilMessage == nil), "verifying nil data should return empty data")
+        
         // empty message
-        let signedEmptyMessage = try? encrypter?.wrap(nil)
+        let signedEmptyMessage = try? encrypter?.wrap("".data(using: .utf8))
         XCTAssertTrue((signedEmptyMessage == nil), "signing empty data should return empty data")
-      
-        let verifiedEmptyMessage = try? encrypter?.unwrapData(nil)
+        
+        let verifiedEmptyMessage = try? encrypter?.unwrapData("".data(using: .utf8))
         XCTAssertTrue((verifiedEmptyMessage == nil), "verifying empty data should return empty data")
-      
+
         // empty both keys
         let wrongSM = TSMessage.init(inSignVerifyModeWithPrivateKey: nil,
                                     peerPublicKey: nil)

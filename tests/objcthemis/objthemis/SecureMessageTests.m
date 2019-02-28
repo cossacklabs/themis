@@ -37,48 +37,48 @@
 }
 
 - (void)testSecureMessageEC256 {
-    [self wrapUnwrapWithPrivateStringKey:privateKeyEc256 publicStringKey:publicKeyEc256];
+    [self encryptDecryptWithPrivateStringKey:privateKeyEc256 publicStringKey:publicKeyEc256];
     [self signVerifyWithPrivateStringKey:privateKeyEc256 publicStringKey:publicKeyEc256];
 }
 
 - (void)testSecureMessageRSA1024 {
-    [self wrapUnwrapWithPrivateStringKey:privateKeyRSA1024 publicStringKey:publicKeyRSA1024];
+    [self encryptDecryptWithPrivateStringKey:privateKeyRSA1024 publicStringKey:publicKeyRSA1024];
     [self signVerifyWithPrivateStringKey:privateKeyRSA1024 publicStringKey:publicKeyRSA1024];
 }
 
 - (void)testSecureMessageRSA2048 {
-    [self wrapUnwrapWithPrivateStringKey:privateKeyRSA2048 publicStringKey:publicKeyRSA2048];
+    [self encryptDecryptWithPrivateStringKey:privateKeyRSA2048 publicStringKey:publicKeyRSA2048];
     [self signVerifyWithPrivateStringKey:privateKeyRSA2048 publicStringKey:publicKeyRSA2048];
 }
 
 - (void)testSecureMessageRSA4096 {
-    [self wrapUnwrapWithPrivateStringKey:privateKeyRSA4096 publicStringKey:publicKeyRSA4096];
+    [self encryptDecryptWithPrivateStringKey:privateKeyRSA4096 publicStringKey:publicKeyRSA4096];
     [self signVerifyWithPrivateStringKey:privateKeyRSA4096 publicStringKey:publicKeyRSA4096];
 }
 
 - (void)testSecureMessageKeygenRSA {
   TSKeyGen *keygenRSA = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmRSA];
-  [self wrapUnwrapWithPrivateKey:keygenRSA.privateKey publicKey:keygenRSA.publicKey];
+  [self encryptDecryptWithPrivateKey:keygenRSA.privateKey publicKey:keygenRSA.publicKey];
   [self signVerifyWithPrivateKey:keygenRSA.privateKey publicKey:keygenRSA.publicKey];
 }
 
 - (void)testSecureMessageKeygenEC {
   TSKeyGen *keygenEC = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmEC];
-  [self wrapUnwrapWithPrivateKey:keygenEC.privateKey publicKey:keygenEC.publicKey];
+  [self encryptDecryptWithPrivateKey:keygenEC.privateKey publicKey:keygenEC.publicKey];
   [self signVerifyWithPrivateKey:keygenEC.privateKey publicKey:keygenEC.publicKey];
 }
 
 
-- (void)wrapUnwrapWithPrivateStringKey:(NSString *)privateKey publicStringKey:(NSString *)publicKey {
+- (void)encryptDecryptWithPrivateStringKey:(NSString *)privateKey publicStringKey:(NSString *)publicKey {
   NSData *publicKeyData = [[NSData alloc] initWithBase64EncodedString:publicKey
                                                               options:NSDataBase64DecodingIgnoreUnknownCharacters];
   NSData *privateKeyData = [[NSData alloc] initWithBase64EncodedString:privateKey
                                                                options:NSDataBase64DecodingIgnoreUnknownCharacters];
   
-  return [self wrapUnwrapWithPrivateKey:privateKeyData publicKey:publicKeyData];
+  return [self encryptDecryptWithPrivateKey:privateKeyData publicKey:publicKeyData];
 }
 
-- (void)wrapUnwrapWithPrivateKey:(NSData *)privateKeyData publicKey:(NSData *)publicKeyData {
+- (void)encryptDecryptWithPrivateKey:(NSData *)privateKeyData publicKey:(NSData *)publicKeyData {
     TSMessage *encrypter = [[TSMessage alloc] initInEncryptModeWithPrivateKey:privateKeyData peerPublicKey:publicKeyData];
 
     NSString *message = @"- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java.";
@@ -96,16 +96,27 @@
     NSString *resultString = [[NSString alloc] initWithData:decryptedMessage encoding:NSUTF8StringEncoding];
     XCTAssertTrue([message isEqualToString:resultString], @"initial string and decrypted string should be the same");
   
+    // NULL message
+    NSError *nullErrorEn = nil;
+    NSData *nullMessageEn = [encrypter wrapData:NULL error:&nullErrorEn];
+    XCTAssertNotNil(nullErrorEn, @"encrypting data with NULL message is error");
+    XCTAssertNil(nullMessageEn, @"encrypting data with NULL message should return nil message");
+    
+    NSError *nullErrorDe = nil;
+    NSData *nullMessageDe = [encrypter unwrapData:NULL error:&nullErrorDe];
+    XCTAssertNotNil(nullErrorDe, @"decrypting data with NULL message is error");
+    XCTAssertNil(nullMessageDe, @"decrypting data with NULL message should return nil message");
+    
     // empty message
-    NSError *themisEmptyErrorEn = nil;
-    NSData *emEmptyMessageEn = [encrypter wrapData:NULL error:&themisEmptyErrorEn];
-    XCTAssertNotNil(themisEmptyErrorEn, @"encrypting data with empty message is error");
-    XCTAssertNil(emEmptyMessageEn, @"encrypting data with empty message should return nil message");
-  
-    NSError *themisEmptyErrorDe = nil;
-    NSData *emEmptyMessageDe = [encrypter unwrapData:NULL error:&themisEmptyErrorDe];
-    XCTAssertNotNil(themisEmptyErrorDe, @"decrypting data with empty message is error");
-    XCTAssertNil(emEmptyMessageDe, @"decrypting data with empty message should return nil message");
+    NSError *emptyErrorEn = nil;
+    NSData *emptyMessageEn = [encrypter wrapData:[@"" dataUsingEncoding:NSUTF8StringEncoding] error:&emptyErrorEn];
+    XCTAssertNotNil(emptyErrorEn, @"encrypting data with empty message is error");
+    XCTAssertNil(emptyMessageEn, @"encrypting data with empty message should return nil message");
+    
+    NSError *emptyErrorDe = nil;
+    NSData *emptyMessageDe = [encrypter unwrapData:NULL error:&emptyErrorDe];
+    XCTAssertNotNil(emptyErrorDe, @"decrypting data with empty message is error");
+    XCTAssertNil(emptyMessageDe, @"decrypting data with empty message should return nil message");
   
     // empty keys
     TSMessage *encrypterEPriv = [[TSMessage alloc] initInEncryptModeWithPrivateKey:NULL peerPublicKey:publicKeyData];
@@ -154,16 +165,27 @@
     NSString *resultString = [[NSString alloc] initWithData:decryptedMessage encoding:NSUTF8StringEncoding];
     XCTAssertTrue([message isEqualToString:resultString], @"initial string and decrypted string should be the same");
   
+    // NULL message
+    NSError *nullErrorEn = nil;
+    NSData *nullMessageEn = [encrypter wrapData:NULL error:&nullErrorEn];
+    XCTAssertNotNil(nullErrorEn, @"signing data with NULL message is error");
+    XCTAssertNil(nullMessageEn, @"signing data with NULL message should return nil message");
+    
+    NSError *nullErrorDe = nil;
+    NSData *nullMessageDe = [encrypter unwrapData:NULL error:&nullErrorDe];
+    XCTAssertNotNil(nullErrorDe, @"verifying data with NULL message is error");
+    XCTAssertNil(nullMessageDe, @"verifying data with NULL message should return nil message");
+    
     // empty message
-    NSError *themisEmptyErrorEn = nil;
-    NSData *emEmptyMessageEn = [encrypter wrapData:NULL error:&themisEmptyErrorEn];
-    XCTAssertNotNil(themisEmptyErrorEn, @"signing data with empty message is error");
-    XCTAssertNil(emEmptyMessageEn, @"signing data with empty message should return nil message");
+    NSError *emptyErrorSig = nil;
+    NSData *emptyMessageSig = [encrypter wrapData:NULL error:&emptyErrorSig];
+    XCTAssertNotNil(emptyErrorSig, @"signing data with empty message is error");
+    XCTAssertNil(emptyMessageSig, @"signing data with empty message should return nil message");
   
-    NSError *themisEmptyErrorDe = nil;
-    NSData *emEmptyMessageDe = [encrypter unwrapData:NULL error:&themisEmptyErrorDe];
-    XCTAssertNotNil(themisEmptyErrorDe, @"verifying data with empty message is error");
-    XCTAssertNil(emEmptyMessageDe, @"verifying data with empty message should return nil message");
+    NSError *emptyErrorVer = nil;
+    NSData *emptyMessageVer = [encrypter unwrapData:NULL error:&emptyErrorVer];
+    XCTAssertNotNil(emptyErrorVer, @"verifying data with empty message is error");
+    XCTAssertNil(emptyMessageVer, @"verifying data with empty message should return nil message");
   
     // empty keys
     TSMessage *encrypterEPriv = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:NULL peerPublicKey:publicKeyData];
