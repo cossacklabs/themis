@@ -43,10 +43,10 @@ typedef NS_ENUM(NSInteger, TSKeyGenAsymmetricAlgorithm) {
 
 
 /** @brief private key */
-@property (nonatomic, readonly) NSMutableData * privateKey;
+@property(nonatomic, readonly) NSMutableData *privateKey;
 
 /** @brief public key */
-@property (nonatomic, readonly) NSMutableData * publicKey;
+@property(nonatomic, readonly) NSMutableData *publicKey;
 
 /**
 * @brief initialise key pair generator, generates privateKey and publicKey

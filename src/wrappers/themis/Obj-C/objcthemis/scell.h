@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /** @brief store master key
 */
-@property (nonatomic, readonly) NSData * key;
+@property(nonatomic, readonly) NSData *key;
 
 /** @brief Initialize Secure Cell object
 * @param [in] key master key

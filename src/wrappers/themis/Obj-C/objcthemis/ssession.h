@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] callbacks Reference to TSSessionTransportInterface object
 */
 - (nullable instancetype)initWithUserId:(NSData *)userId
-                                privateKey:(NSData *)privateKey
+                             privateKey:(NSData *)privateKey
                               callbacks:(TSSessionTransportInterface *)callbacks;
 
 
@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @return Connection initialization message on success or nil on failure
 */
 // TODO: rename method to reflect it's goal
-- (nullable NSData *)connectRequest:(NSError * __autoreleasing *)error;
+- (nullable NSData *)connectRequest:(NSError *__autoreleasing *)error;
 
 
 /**
@@ -74,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @return YES if success, NO if fail.
 */
 // TODO: rename method to reflect it's goal
-- (BOOL)connect:(NSError * __autoreleasing *)error;
+- (BOOL)connect:(NSError *__autoreleasing *)error;
 
 
 /**
@@ -83,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] error pointer to Error on failure
 * @return Wrapped message in NSData object on success or nil on failure.
 */
-- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError * __autoreleasing *)error;
+- (nullable NSData *)wrapData:(nullable NSData *)message error:(NSError *__autoreleasing *)error;
 
 
 /** @brief Unwrap message
@@ -91,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] error pointer to Error on failure
 * @return Unwrapped message in NSData object on success or nil on failure.
 */
-- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError * __autoreleasing *)error;
+- (nullable NSData *)unwrapData:(nullable NSData *)message error:(NSError *__autoreleasing *)error;
 
 
 /** @brief Wrap message and sent it to peer by \b send method from callbacks object.
@@ -101,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @return YES if success, NO if fail.
 */
 // TODO: rename method to reflect it's goal
-- (BOOL)wrapAndSend:(nullable NSData *)message error:(NSError * __autoreleasing *)error;
+- (BOOL)wrapAndSend:(nullable NSData *)message error:(NSError *__autoreleasing *)error;
 
 
 /** @brief Unwrap received from peer by \b receive method from callbacks object message.
@@ -111,7 +111,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @return Plain message in NSData object on success or nil on failure.
 */
 // TODO: rename method to reflect it's goal
-- (nullable NSData *)unwrapAndReceive:(NSUInteger)length error:(NSError * __autoreleasing *)error;
+- (nullable NSData *)unwrapAndReceive:(NSUInteger)length error:(NSError *__autoreleasing *)error;
 
 
 /** @brief indicate session established state.

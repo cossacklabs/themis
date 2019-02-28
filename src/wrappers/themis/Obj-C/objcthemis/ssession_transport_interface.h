@@ -33,14 +33,14 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] data binary data
 * @param [in] error pointer to Error on failure
 */
-- (void)sendData:(nullable NSData *)data error:(NSError * __autoreleasing *)error;
+- (void)sendData:(nullable NSData *)data error:(NSError *__autoreleasing *)error;
 
 
 /** @brief Receive data from peer and return it in NSData object
 * @param [in] error pointer to Error on failure
 * @return data object or nil on failure
 */
-- (nullable NSData *)receiveDataWithError:(NSError * __autoreleasing *)error;
+- (nullable NSData *)receiveDataWithError:(NSError *__autoreleasing *)error;
 
 
 /** @brief Return public key associated with binaryId as NSData object or nil on failure
@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 * @param [in] error pointer to Error on failure
 * @return binary public key associated with binaryId or nil on failure
 */
-- (nullable NSData *)publicKeyFor:(nullable NSData *)binaryId error:(NSError * __autoreleasing *)error;
+- (nullable NSData *)publicKeyFor:(nullable NSData *)binaryId error:(NSError *__autoreleasing *)error;
 
 
 /** @brief Get callbacks */
