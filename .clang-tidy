@@ -1,4 +1,4 @@
 ---
-Checks: 'readability-*'
+Checks: 'readability-*,-readability-implicit-bool-conversion'
 FormatStyle: none
 ...

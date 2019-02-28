@@ -318,6 +318,17 @@ $(OBJ_PATH)/%.fmt_check: $(SRC_PATH)/%
 	@echo -n "check $< "
 	@$(BUILD_CMD_)
 
+THEMISPP_HEADERS = $(wildcard $(SRC_PATH)/wrappers/themis/themispp/*.hpp)
+
+FMT_FIXUP += $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_fixup,$(THEMISPP_HEADERS))
+FMT_CHECK += $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_check,$(THEMISPP_HEADERS))
+
+$(OBJ_PATH)/%.hpp.fmt_fixup: \
+    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
+
+$(OBJ_PATH)/%.hpp.fmt_check: \
+    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) 2>/dev/null && touch $@
+
 #$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
 $(AUD_PATH)/%: CMD = ./scripts/pp.sh  $< $@
 
