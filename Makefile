@@ -15,6 +15,8 @@
 #
 
 #CC = clang
+CLANG_FORMAT ?= clang-format
+CLANG_TIDY   ?= clang-tidy
 SHELL = /bin/bash
 SRC_PATH = src
 ifneq ($(BUILD_PATH),)
@@ -297,14 +299,23 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
-FMT_FILES += $(THEMIS_FMT)
-FMT_FILES += $(SOTER_FMT)
+FMT_FIXUP += $(THEMIS_FMT_FIXUP) $(SOTER_FMT_FIXUP)
+FMT_CHECK += $(THEMIS_FMT_CHECK) $(SOTER_FMT_CHECK)
 
-$(OBJ_PATH)/%.fmt: CMD = CFLAGS='$(CFLAGS)' ./scripts/fmt.sh $< $@
+$(OBJ_PATH)/%.c.fmt_fixup $(OBJ_PATH)/%.h.fmt_fixup: \
+    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
 
-$(OBJ_PATH)/%.fmt: $(SRC_PATH)/%
+$(OBJ_PATH)/%.c.fmt_check $(OBJ_PATH)/%.h.fmt_check: \
+    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) 2>/dev/null && touch $@
+
+$(OBJ_PATH)/%.fmt_fixup: $(SRC_PATH)/%
 	@mkdir -p $(@D)
-	@echo -n "$(FMT_MODE) $< "
+	@echo -n "fixup $< "
+	@$(BUILD_CMD_)
+
+$(OBJ_PATH)/%.fmt_check: $(SRC_PATH)/%
+	@mkdir -p $(@D)
+	@echo -n "check $< "
 	@$(BUILD_CMD_)
 
 #$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
@@ -334,14 +345,8 @@ include tools/afl/fuzzy.mk
 
 err: ; $(ERROR)
 
-fmt: export FMT_MODE = fix
-fmt: $(FMT_FILES)
-
-fmt_check: export FMT_MODE = check
-fmt_check: $(FMT_FILES)
-
-fmt_clean:
-	@rm -f $(FMT_FILES)
+fmt: $(FMT_FIXUP)
+fmt_check: $(FMT_CHECK)
 
 clean: CMD = rm -rf $(BIN_PATH)
 
