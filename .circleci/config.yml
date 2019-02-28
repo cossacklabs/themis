@@ -25,6 +25,8 @@ jobs:
     docker:
       - image: cossacklabs/build:ubuntu-bionic
     environment:
+      CC: clang-7
+      CXX: clang-7
       CLANG_FORMAT: clang-format-7
       CLANG_TIDY: clang-tidy-7
       WITH_FATAL_WARNINGS: yes
