@@ -54,11 +54,11 @@ extern "C"{
  * @note If encrypted_message==NULL or encrypted_message_length is not enought for encrypted message store then THEMIS_BUFFER_TOO_SMALL will return and encrypted_message_length will store length of buffer needed for encrypted message store
  */
 themis_status_t themis_secure_cell_encrypt_seal(const uint8_t* master_key,
-						const size_t master_key_length,
+						size_t master_key_length,
 						const uint8_t* user_context,
-						const size_t user_context_length,
+						size_t user_context_length,
 						const uint8_t* message,
-						const size_t message_length,
+						size_t message_length,
 						uint8_t* encrypted_message,
 						size_t* encrypted_message_length);
 
@@ -76,11 +76,11 @@ themis_status_t themis_secure_cell_encrypt_seal(const uint8_t* master_key,
  * @note If plain_message==NULL or plain_message_length is not enought for plain message store then THEMIS_BUFFER_TOO_SMALL will return and plain_message_length will store length of buffer needed for plain1 message store
  */
 themis_status_t themis_secure_cell_decrypt_seal(const uint8_t* master_key,
-						const size_t master_key_length,
+						size_t master_key_length,
 						const uint8_t* user_context,
-						const size_t user_context_length,
+						size_t user_context_length,
 						const uint8_t* encrypted_message,
-						const size_t encrypted_message_length,
+						size_t encrypted_message_length,
 						uint8_t* plain_message,
 						size_t* plain_message_length);
 
@@ -108,13 +108,13 @@ themis_status_t themis_secure_cell_decrypt_seal(const uint8_t* master_key,
  * @note If encrypted_message==NULL or context==NULL or encrypted_message_length is not enought for encrypted message or context_length is not enougth for additional authentication info store then THEMIS_BUFFER_TOO_SMALL will return and encrypted_message_length will store length of buffer needed for encrypted message store and context_length will store length of buuffer needed for additional authentication info store
  */
 themis_status_t themis_secure_cell_encrypt_token_protect(const uint8_t* master_key,
-						      const size_t master_key_length,
+						      size_t master_key_length,
 						      const uint8_t* user_context,
-						      const size_t user_context_length,
+						      size_t user_context_length,
 						      const uint8_t* message,
-						      const size_t message_length,
-						      uint8_t* token,
-						      size_t* token_length,
+						      size_t message_length,
+						      uint8_t* context,
+						      size_t* context_length,
 						      uint8_t* encrypted_message,
 						      size_t* encrypted_message_length);
 
@@ -134,13 +134,13 @@ themis_status_t themis_secure_cell_encrypt_token_protect(const uint8_t* master_k
  * @note If plain_message==NULL or plain_message_length is not enought for plain message store then THEMIS_BUFFER_TOO_SMALL will return and plain_message_length will store length of buffer needed for plain1 message store
  */
 themis_status_t themis_secure_cell_decrypt_token_protect(const uint8_t* master_key,
-						      const size_t master_key_length,
+						      size_t master_key_length,
 						      const uint8_t* user_context,
-						      const size_t user_context_length,
+						      size_t user_context_length,
 						      const uint8_t* encrypted_message,
-						      const size_t encrypted_message_length,
-						      const uint8_t* token,
-						      const size_t token_length,
+						      size_t encrypted_message_length,
+						      const uint8_t* context,
+						      size_t context_length,
 						      uint8_t* plain_message,
 						      size_t* plain_message_length);
 
@@ -166,11 +166,11 @@ themis_status_t themis_secure_cell_decrypt_token_protect(const uint8_t* master_k
  * @note If encrypted_message==NULL or encrypted_message_length is not enought for encrypted message store then THEMIS_BUFFER_TOO_SMALL will return and encrypted_message_length will store length of buffer needed for encrypted message store
  */
 themis_status_t themis_secure_cell_encrypt_context_imprint(const uint8_t* master_key,
-						      const size_t master_key_length,
+						      size_t master_key_length,
 						      const uint8_t* message,
-						      const size_t message_length,
+						      size_t message_length,
 						      const uint8_t* context,
-						      const size_t context_length,
+						      size_t context_length,
 						      uint8_t* encrypted_message,
 						      size_t* encrypted_message_length);
 
@@ -188,11 +188,11 @@ themis_status_t themis_secure_cell_encrypt_context_imprint(const uint8_t* master
  * @note If plain_message==NULL or plain_message_length is not enought for plain message store then THEMIS_BUFFER_TOO_SMALL will return and plain_message_length will store length of buffer needed for plain1 message store
  */
 themis_status_t themis_secure_cell_decrypt_context_imprint(const uint8_t* master_key,
-						      const size_t master_key_length,
+						      size_t master_key_length,
 						      const uint8_t* encrypted_message,
-						      const size_t encrypted_message_length,
+						      size_t encrypted_message_length,
 						      const uint8_t* context,
-						      const size_t context_length,
+						      size_t context_length,
 						      uint8_t* plain_message,
 						      size_t* plain_message_length);
 

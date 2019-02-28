@@ -98,8 +98,9 @@ static char* ec_priv_key_tag(int curve)
 static size_t bn_encode(const BIGNUM* bn, uint8_t* buffer, size_t length)
 {
 	int bn_size = BN_num_bytes(bn);
-	if (length < (size_t)bn_size)
+	if (length < (size_t)bn_size) {
 		return 0;
+}
 	memset(buffer, 0, length - bn_size);
 	return (length - bn_size) + BN_bn2bin(bn, buffer + (length - bn_size));
 }

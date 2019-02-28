@@ -118,11 +118,11 @@ soter_asym_ka_t* soter_asym_ka_create(soter_asym_ka_alg_t alg)
 	{
 		return ctx;
 	}
-	else
-	{
+	
+	
 		free(ctx);
 		return NULL;
-	}
+	
 }
 
 soter_status_t soter_asym_ka_destroy(soter_asym_ka_t* asym_ka_ctx)
@@ -140,10 +140,10 @@ soter_status_t soter_asym_ka_destroy(soter_asym_ka_t* asym_ka_ctx)
 		free(asym_ka_ctx);
 		return SOTER_SUCCESS;
 	}
-	else
-	{
+	
+	
 		return status;
-	}
+	
 }
 
 soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx)
@@ -178,10 +178,10 @@ soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx)
 	{
 		return SOTER_SUCCESS;
 	}
-	else
-	{
+	
+	
 		return SOTER_FAIL;
-	}
+	
 }
 
 soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void* key, size_t key_length)
@@ -247,10 +247,10 @@ soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx, void* key,
 	{
 		return soter_engine_specific_to_ec_priv_key((const soter_engine_specific_ec_key_t *)pkey, (soter_container_hdr_t *)key, key_length);
 	}
-	else
-	{
+	
+	
 		return soter_engine_specific_to_ec_pub_key((const soter_engine_specific_ec_key_t *)pkey, (soter_container_hdr_t *)key, key_length);
-	}
+	
 }
 
 soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx, const void* peer_key, size_t peer_key_length, void *shared_secret, size_t* shared_secret_length)

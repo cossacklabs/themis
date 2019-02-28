@@ -21,9 +21,9 @@
 #include "soter/soter_rsa_key.h"
 #include "soter/boringssl/soter_engine.h"
 
-unsigned rsa_key_length(const int size);
-soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx, const unsigned key_length);
-soter_status_t soter_rsa_import_key(EVP_PKEY *pkey, const void* key, const size_t key_length);
+unsigned rsa_key_length(int size);
+soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX *pkey_ctx, unsigned key_length);
+soter_status_t soter_rsa_import_key(EVP_PKEY *pkey, const void* key, size_t key_length);
 soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate);
 
 #endif /* SOTER_BORINGSSL_RSA_COMMON_H */

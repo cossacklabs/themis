@@ -214,11 +214,11 @@ soter_hmac_ctx_t* soter_hmac_create(soter_hash_algo_t algo, const uint8_t* key, 
 	{
 		return ctx;
 	}
-	else
-	{
+	
+	
 		soter_hmac_destroy(ctx);
 		return NULL;
-	}
+	
 }
 
 soter_status_t soter_hmac_destroy(soter_hmac_ctx_t *hmac_ctx)

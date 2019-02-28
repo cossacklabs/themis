@@ -53,7 +53,7 @@ typedef struct soter_asym_cipher_type soter_asym_cipher_t;
  * @param [in] pad padding algorithm to be used. See @ref soter_asym_cipher_padding_type
  * @return pointer to created asymmetric encription/decription context on success or NULL on failure
  */
-soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_length, soter_asym_cipher_padding_t pad);
+soter_asym_cipher_t* soter_asym_cipher_create(const void* key, size_t key_length, soter_asym_cipher_padding_t pad);
 
 /**
  * @brief encrypt data

@@ -110,7 +110,8 @@ soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher)
 	if (asym_cipher->pkey_ctx)
 	{
 		EVP_PKEY *pkey=EVP_PKEY_CTX_get0_pkey(asym_cipher->pkey_ctx);
-		if(pkey)EVP_PKEY_free(pkey);
+		if(pkey) {EVP_PKEY_free(pkey);
+}
 		EVP_PKEY_CTX_free(asym_cipher->pkey_ctx);
 	}
 
@@ -186,15 +187,15 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
 		{
 			return SOTER_SUCCESS;
 		}
-		else
-		{
+		
+		
 			return SOTER_BUFFER_TOO_SMALL;
-		}
+		
 	}
-	else
-	{
+	
+	
 		return SOTER_FAIL;
-	}
+	
 }
 
 soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const void* cipher_data, size_t cipher_data_length, void* plain_data, size_t* plain_data_length)
@@ -267,15 +268,15 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
 		{
 			return SOTER_SUCCESS;
 		}
-		else
-		{
+		
+		
 			return SOTER_BUFFER_TOO_SMALL;
-		}
+		
 	}
-	else
-	{
+	
+	
 		return SOTER_FAIL;
-	}
+	
 }
 
 soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_length, soter_asym_cipher_padding_t pad)
@@ -292,11 +293,11 @@ soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_
 	{
 		return ctx;
 	}
-	else
-	{
+	
+	
 		free(ctx);
 		return NULL;
-	}
+	
 }
 
 soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher)
@@ -314,8 +315,8 @@ soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher)
 		free(asym_cipher);
 		return SOTER_SUCCESS;
 	}
-	else
-	{
+	
+	
 		return status;
-	}
+	
 }

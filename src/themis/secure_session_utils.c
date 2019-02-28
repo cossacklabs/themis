@@ -190,10 +190,10 @@ themis_status_t verify_mac(const void *key, size_t key_length, const soter_kdf_c
 	{
 		return THEMIS_INVALID_SIGNATURE;
 	}
-	else
-	{
+	
+	
 		return THEMIS_SUCCESS;
-	}
+	
 }
 
 themis_status_t encrypt_gcm(const void *key, size_t key_length, const void *iv, size_t iv_length, const void *in, size_t in_length, void *out, size_t out_length)

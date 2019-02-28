@@ -46,10 +46,10 @@ soter_status_t soter_hash_init(soter_hash_ctx_t *hash_ctx, soter_hash_algo_t alg
 	{
 		return SOTER_SUCCESS;
 	}
-	else
-	{
+	
+	
 		return SOTER_FAIL;
-	}
+	
 }
 
 soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, size_t length)
@@ -68,10 +68,10 @@ soter_status_t soter_hash_update(soter_hash_ctx_t *hash_ctx, const void *data, s
 	{
 		return SOTER_SUCCESS;
 	}
-	else
-	{
+	
+	
 		return SOTER_FAIL;
-	}
+	
 }
 
 soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value, size_t* hash_length)
@@ -101,10 +101,10 @@ soter_status_t soter_hash_final(soter_hash_ctx_t *hash_ctx, uint8_t* hash_value,
 		*hash_length = md_length;
 		return SOTER_SUCCESS;
 	}
-	else
-	{
+	
+	
 		return SOTER_FAIL;
-	}
+	
 }
 
 soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo)
@@ -121,11 +121,11 @@ soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo)
 	{
 		return ctx;
 	}
-	else
-	{
+	
+	
 		free(ctx);
 		return NULL;
-	}
+	
 }
 
 soter_status_t soter_hash_cleanup(soter_hash_ctx_t* hash_ctx){

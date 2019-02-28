@@ -41,8 +41,8 @@ soter_status_t soter_verify_container_checksum(const soter_container_hdr_t *hdr)
 	{
 		return SOTER_SUCCESS;
 	}
-	else
-	{
+	
+	
 		return SOTER_DATA_CORRUPT;
-	}
+	
 }

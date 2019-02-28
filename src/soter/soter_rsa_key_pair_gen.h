@@ -22,8 +22,8 @@
 
 typedef struct soter_rsa_key_pair_gen_type soter_rsa_key_pair_gen_t;
 
-soter_rsa_key_pair_gen_t* soter_rsa_key_pair_gen_create(const unsigned key_length);
-soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, const unsigned key_length);
+soter_rsa_key_pair_gen_t* soter_rsa_key_pair_gen_create(unsigned key_length);
+soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, unsigned key_length);
 soter_status_t soter_rsa_key_pair_gen_destroy(soter_rsa_key_pair_gen_t* ctx);
 soter_status_t soter_rsa_key_pair_gen_export_key(soter_rsa_key_pair_gen_t* ctx, void* key, size_t* key_length, bool isprivate);
 

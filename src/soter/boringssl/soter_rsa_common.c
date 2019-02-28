@@ -107,8 +107,8 @@ soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* ke
     {
       return soter_engine_specific_to_rsa_priv_key((const soter_engine_specific_rsa_key_t *)pkey, (soter_container_hdr_t *)key, key_length);
     }
-  else
-    {
+  
+    
       return soter_engine_specific_to_rsa_pub_key((const soter_engine_specific_rsa_key_t *)pkey, (soter_container_hdr_t *)key, key_length);
-    }  
+     
 }
