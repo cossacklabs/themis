@@ -79,7 +79,7 @@
             if (!(self.privateKey) || [self.privateKey length] == 0) {
                 NSLog(@"Error during signing: private key is missing");
                 if (error) {
-                    *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping");
+                    *error = SCERROR(TSErrorTypeFail, @"Secure Message failed signing message");
                 }
                 return nil;
             }
@@ -88,15 +88,15 @@
             break;
         default:
             if (error) {
-                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wrapping, mode unknown");
             }
             return nil;
     }
 
     if (result != TSErrorTypeBufferTooSmall) {
-        NSLog(@"Error during wrapping data: either key is invalid of message is empty");
+        NSLog(@"Error during wrapping data: either keys are invalid or message is empty");
         if (error) {
-            *error = SCERROR(result, @"Secure Message failed wraping");
+            *error = SCERROR(result, @"Secure Message failed");
         }
         return nil;
     }
@@ -122,15 +122,16 @@
             break;
         default:
             if (error) {
-                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wrapping, mode unknown");
             }
             free(wrappedMessage);
             return NULL;
     }
 
     if (result != TSErrorTypeSuccess) {
+        NSLog(@"Error during wrapping data: either keys are invalid or message is empty");
         if (error) {
-            *error = SCERROR(result, @"Secure Message failed wrapping");
+            *error = SCERROR(result, @"Secure Message failed");
         }
         free(wrappedMessage);
         return NULL;
@@ -155,7 +156,7 @@
             if (!(self.publicKey) || [self.publicKey length] == 0) {
                 NSLog(@"Error during verifying: public key is missing");
                 if (error) {
-                    *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping");
+                    *error = SCERROR(TSErrorTypeFail, @"Secure Message failed verifying");
                 }
                 return nil;
             }
@@ -164,15 +165,15 @@
             break;
         default:
             if (error) {
-                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wrapping, mode unknown");
             }
             return nil;
     }
 
     if (result != TSErrorTypeBufferTooSmall) {
-        NSLog(@"Error during wrapping data: either key is invalid of message is empty");
+        NSLog(@"Error during wrapping data: either keys are invalid or message is empty");
         if (error) {
-            *error = SCERROR(result, @"Secure Message failed unwraping");
+            *error = SCERROR(result, @"Secure Message failed");
         }
         return nil;
     }
@@ -198,14 +199,15 @@
             break;
         default:
             if (error) {
-                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wraping, mode unknown");
+                *error = SCERROR(TSErrorTypeFail, @"Secure Message failed wrapping, mode unknown");
             }
             return nil;
     }
 
     if (result != TSErrorTypeSuccess) {
+        NSLog(@"Error during unwrapping data: either keys are invalid or message is empty");
         if (error) {
-            *error = SCERROR(result, @"Secure Message failed unwraping");
+            *error = SCERROR(result, @"Secure Message failed");
         }
         free(unwrappedMessage);
         return nil;
