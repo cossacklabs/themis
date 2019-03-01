@@ -30,7 +30,6 @@ echo "Checking documentation..."
 echo
 cargo clean --doc && cargo doc --no-deps
 cargo clean --doc && cargo doc --no-deps --features "vendored"
-cargo deadlinks
 
 echo
 echo "Rust tests OK!"
