@@ -7,7 +7,7 @@ package keys
 #include <stdint.h>
 #include <stdbool.h>
 #include <themis/themis_error.h>
-#include <themis/secure_message.h>
+#include <themis/secure_keygen.h>
 
 #define KEYTYPE_EC 0
 #define KEYTYPE_RSA 1
