@@ -52,7 +52,6 @@ class TestMessage < Test::Unit::TestCase
     ].each do |k1, k2|
       assert_raise(Themis::ThemisError) do
         smessage = Themis::Smessage.new(k1, k2)
-        encrypted_message = smessage.wrap(@message)
       end
     end
 
@@ -74,11 +73,23 @@ class TestMessage < Test::Unit::TestCase
 
   def test_sign_verify
     assert_raise(Themis::ThemisError) do
+      signed_message = Themis.s_sign('', @message)
+    end
+    assert_raise(Themis::ThemisError) do
       signed_message = Themis.s_sign(@ec256_pub, @message)
     end
     assert_raise(Themis::ThemisError) do
       signed_message = Themis.s_sign(@ec256_priv, '')
     end
+
+    signed_message = Themis.s_sign(@ec256_priv, @message)
+    assert_raise(Themis::ThemisError) do
+      verified_message = Themis.s_verify('', signed_message)
+    end
+    assert_raise(Themis::ThemisError) do
+      verified_message = Themis.s_verify(@ec256_priv, signed_message)
+    end
+
     @keys.each do |k|
       signed_message = Themis.s_sign(k[0], @message)
       verifyed_message = Themis.s_verify(k[1], signed_message)
