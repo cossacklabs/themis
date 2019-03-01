@@ -60,7 +60,7 @@ class TestSMessage(unittest.TestCase):
         with self.assertRaises(ThemisError):
             smessage.ssign("", "")
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ThemisError):
             smessage.ssign(None, self.message)
 
         with self.assertRaises(ThemisError):

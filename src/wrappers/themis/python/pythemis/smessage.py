@@ -78,6 +78,12 @@ class SMessage(object):
 
 
 def ssign(private_key, message):
+    if not private_key:
+        raise ThemisError(THEMIS_CODES.FAIL,
+                          "Secure Message: missing private key")
+    if not _private_key(private_key):
+        raise ThemisError(THEMIS_CODES.FAIL,
+                          "Secure Message: invalid private key")
     encrypted_message_length = c_int(0)
     res = themis.themis_secure_message_sign(
         private_key, len(private_key), message, len(message),
@@ -94,6 +100,12 @@ def ssign(private_key, message):
 
 
 def sverify(public_key, message):
+    if not public_key:
+        raise ThemisError(THEMIS_CODES.FAIL,
+                          "Secure Message: missing public key")
+    if not _public_key(public_key):
+        raise ThemisError(THEMIS_CODES.FAIL,
+                          "Secure Message: invalid public key")
     plain_message_length = c_int(0)
     res = themis.themis_secure_message_verify(
         public_key, len(public_key), message, len(message),
