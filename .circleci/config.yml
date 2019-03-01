@@ -58,7 +58,6 @@ jobs:
       - run: curl https://sh.rustup.rs -sSf | sh -s -- -y && cat ~/.cargo/env >> $BASH_ENV && source ~/.cargo/env && cargo --version && rustc --version
       - run: rustup component add clippy
       - run: rustup component add rustfmt
-      - run: cargo deadlinks --version || cargo install cargo-deadlinks
 
       # download last valgrind because current version of valgrind on ubuntu (3.11.0) gives false positive errors
       # link from http://valgrind.org/downloads/current.html
