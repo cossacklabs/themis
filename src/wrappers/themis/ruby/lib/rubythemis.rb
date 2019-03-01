@@ -56,12 +56,18 @@ module ThemisImport
                   [:pointer, :pointer, :int, :pointer, :pointer], :int
   attach_function :secure_session_is_established, [:pointer], :bool
 
-  attach_function :themis_secure_message_wrap,
+  attach_function :themis_secure_message_encrypt,
                   [:pointer, :int, :pointer, :int, :pointer,
                    :int, :pointer, :pointer], :int
-  attach_function :themis_secure_message_unwrap,
+  attach_function :themis_secure_message_decrypt,
                   [:pointer, :int, :pointer, :int, :pointer,
                    :int, :pointer, :pointer], :int
+  attach_function :themis_secure_message_sign,
+                  [:pointer, :int, :pointer, :int, :pointer,
+                   :pointer], :int
+  attach_function :themis_secure_message_verify,
+                  [:pointer, :int, :pointer, :int, :pointer,
+                   :pointer], :int
 
   attach_function :themis_gen_rsa_key_pair,
                   [:pointer, :pointer, :pointer, :pointer], :int
@@ -308,7 +314,7 @@ module Themis
         message_, message_length_ = string_to_pointer_size(message)
 
         wrapped_message_length = FFI::MemoryPointer.new(:uint)
-        res = themis_secure_message_wrap(
+        res = themis_secure_message_encrypt(
           @private_key, @private_key_length, @peer_public_key,
           @peer_public_key_length, message_, message_length_,
           nil, wrapped_message_length)
@@ -318,7 +324,7 @@ module Themis
 
         wrapped_message = FFI::MemoryPointer.new(
           :char, wrapped_message_length.read_uint)
-        res = themis_secure_message_wrap(
+        res = themis_secure_message_encrypt(
           @private_key, @private_key_length, @peer_public_key,
           @peer_public_key_length, message_, message_length_,
           wrapped_message, wrapped_message_length)
@@ -332,7 +338,7 @@ module Themis
     def unwrap(message)
       message_, message_length_ = string_to_pointer_size(message)
       unwrapped_message_length = FFI::MemoryPointer.new(:uint)
-      res = themis_secure_message_unwrap(
+      res = themis_secure_message_decrypt(
         @private_key, @private_key_length, @peer_public_key,
         @peer_public_key_length, message_, message_length_,
         nil, unwrapped_message_length)
@@ -342,7 +348,7 @@ module Themis
 
       unwrapped_message = FFI::MemoryPointer.new(
         :char, unwrapped_message_length.read_uint)
-      res = themis_secure_message_unwrap(
+      res = themis_secure_message_decrypt(
         @private_key, @private_key_length, @peer_public_key,
         @peer_public_key_length, message_, message_length_,
         unwrapped_message, unwrapped_message_length)
@@ -364,8 +370,8 @@ module Themis
     message_, message_length_ = string_to_pointer_size(message)
 
     wrapped_message_length = FFI::MemoryPointer.new(:uint)
-    res = themis_secure_message_wrap(
-      private_key_, private_key_length_, nil, 0, message_,
+    res = themis_secure_message_sign(
+      private_key_, private_key_length_, message_,
       message_length_, nil, wrapped_message_length)
     if res != BUFFER_TOO_SMALL
       raise ThemisError, "Secure Message failed singing: #{res}"
@@ -373,8 +379,8 @@ module Themis
 
     wrapped_message = FFI::MemoryPointer.new(
       :char, wrapped_message_length.read_uint)
-    res = themis_secure_message_wrap(
-      private_key_, private_key_length_, nil, 0, message_,
+    res = themis_secure_message_sign(
+      private_key_, private_key_length_, message_,
       message_length_, wrapped_message, wrapped_message_length)
     if res != SUCCESS
       raise ThemisError, "Secure Message failed singing: #{res}"
@@ -396,8 +402,8 @@ module Themis
     message_, message_length_ = string_to_pointer_size(message)
 
     unwrapped_message_length = FFI::MemoryPointer.new(:uint)
-    res = themis_secure_message_unwrap(
-      nil, 0, public_key_, public_key_length_, message_,
+    res = themis_secure_message_verify(
+      public_key_, public_key_length_, message_,
       message_length_, nil, unwrapped_message_length)
     if res != BUFFER_TOO_SMALL
       raise ThemisError, "Secure Message failed verifying: #{res}"
@@ -405,8 +411,8 @@ module Themis
 
     unwrapped_message = FFI::MemoryPointer.new(
       :char, unwrapped_message_length.read_uint)
-    res = themis_secure_message_unwrap(
-      nil, 0, public_key_, public_key_length_, message_,
+    res = themis_secure_message_verify(
+      public_key_, public_key_length_, message_,
       message_length_, unwrapped_message, unwrapped_message_length)
     if res != SUCCESS
       raise ThemisError, "Secure Message failed verifying: #{res}"
