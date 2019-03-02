@@ -9,26 +9,28 @@ package message
 #include <themis/themis_error.h>
 #include <themis/secure_message.h>
 
-#define SECURE_MESSAGE_ENCRYPT 0
-#define SECURE_MESSAGE_DECRYPT 1
-#define SECURE_MESSAGE_SIGN    2
-#define SECURE_MESSAGE_VERIFY  3
+enum {
+	SecureMessageEncrypt,
+	SecureMessageDecrypt,
+	SecureMessageSign,
+	SecureMessageVerify,
+};
 
 static bool get_message_size(const void *priv, size_t priv_len, const void *public, size_t pub_len, const void *message, size_t message_len, int mode, size_t *out_len)
 {
 	themis_status_t res = THEMIS_NOT_SUPPORTED;
 
 	switch (mode) {
-	case SECURE_MESSAGE_ENCRYPT:
+	case SecureMessageEncrypt:
 		res = themis_secure_message_encrypt(priv, priv_len, public, pub_len, message, message_len, NULL, out_len);
 		break;
-	case SECURE_MESSAGE_DECRYPT:
+	case SecureMessageDecrypt:
 		res = themis_secure_message_decrypt(priv, priv_len, public, pub_len, message, message_len, NULL, out_len);
 		break;
-	case SECURE_MESSAGE_SIGN:
+	case SecureMessageSign:
 		res = themis_secure_message_sign(priv, priv_len, message, message_len, NULL, out_len);
 		break;
-	case SECURE_MESSAGE_VERIFY:
+	case SecureMessageVerify:
 		res = themis_secure_message_verify(public, pub_len, message, message_len, NULL, out_len);
 		break;
 	}
@@ -41,16 +43,16 @@ static bool process(const void *priv, size_t priv_len, const void *public, size_
 	themis_status_t res = THEMIS_NOT_SUPPORTED;
 
 	switch (mode) {
-	case SECURE_MESSAGE_ENCRYPT:
+	case SecureMessageEncrypt:
 		res = themis_secure_message_encrypt(priv, priv_len, public, pub_len, message, message_len, out, &out_len);
 		break;
-	case SECURE_MESSAGE_DECRYPT:
+	case SecureMessageDecrypt:
 		res = themis_secure_message_decrypt(priv, priv_len, public, pub_len, message, message_len, out, &out_len);
 		break;
-	case SECURE_MESSAGE_SIGN:
+	case SecureMessageSign:
 		res = themis_secure_message_sign(priv, priv_len, message, message_len, out, &out_len);
 		break;
-	case SECURE_MESSAGE_VERIFY:
+	case SecureMessageVerify:
 		res = themis_secure_message_verify(public, pub_len, message, message_len, out, &out_len);
 		break;
 	}
@@ -67,10 +69,10 @@ import (
 )
 
 const (
-	SECURE_MESSAGE_ENCRYPT = 0
-	SECURE_MESSAGE_DECRYPT = 1
-	SECURE_MESSAGE_SIGN    = 2
-	SECURE_MESSAGE_VERIFY  = 3
+	SecureMessageEncrypt = iota
+	SecureMessageDecrypt
+	SecureMessageSign
+	SecureMessageVerify
 )
 
 type SecureMessage struct {
@@ -127,13 +129,13 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		unsafe.Pointer(&output[0]),
 		output_length)) {
 		switch mode {
-		case SECURE_MESSAGE_ENCRYPT:
+		case SecureMessageEncrypt:
 			return nil, errors.New("Failed to encrypt message")
-		case SECURE_MESSAGE_DECRYPT:
+		case SecureMessageDecrypt:
 			return nil, errors.New("Failed to decrypt message")
-		case SECURE_MESSAGE_SIGN:
+		case SecureMessageSign:
 			return nil, errors.New("Failed to sign message")
-		case SECURE_MESSAGE_VERIFY:
+		case SecureMessageVerify:
 			return nil, errors.New("Failed to verify message")
 		default:
 			return nil, errors.New("Failed to process message")
@@ -151,7 +153,7 @@ func (sm *SecureMessage) Wrap(message []byte) ([]byte, error) {
 	if nil == sm.peerPublic || 0 == len(sm.peerPublic.Value) {
 		return nil, errors.New("Peer public key was not provided")
 	}
-	return messageProcess(sm.private, sm.peerPublic, message, SECURE_MESSAGE_ENCRYPT)
+	return messageProcess(sm.private, sm.peerPublic, message, SecureMessageEncrypt)
 }
 
 func (sm *SecureMessage) Unwrap(message []byte) ([]byte, error) {
@@ -162,7 +164,7 @@ func (sm *SecureMessage) Unwrap(message []byte) ([]byte, error) {
 	if nil == sm.peerPublic || 0 == len(sm.peerPublic.Value) {
 		return nil, errors.New("Peer public key was not provided")
 	}
-	return messageProcess(sm.private, sm.peerPublic, message, SECURE_MESSAGE_DECRYPT)
+	return messageProcess(sm.private, sm.peerPublic, message, SecureMessageDecrypt)
 }
 
 func (sm *SecureMessage) Sign(message []byte) ([]byte, error) {
@@ -170,7 +172,7 @@ func (sm *SecureMessage) Sign(message []byte) ([]byte, error) {
 		return nil, errors.New("Private key was not provided")
 	}
 
-	return messageProcess(sm.private, nil, message, SECURE_MESSAGE_SIGN)
+	return messageProcess(sm.private, nil, message, SecureMessageSign)
 }
 
 func (sm *SecureMessage) Verify(message []byte) ([]byte, error) {
@@ -178,5 +180,5 @@ func (sm *SecureMessage) Verify(message []byte) ([]byte, error) {
 		return nil, errors.New("Peer public key was not provided")
 	}
 
-	return messageProcess(nil, sm.peerPublic, message, SECURE_MESSAGE_VERIFY)
+	return messageProcess(nil, sm.peerPublic, message, SecureMessageVerify)
 }
