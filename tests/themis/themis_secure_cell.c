@@ -25,6 +25,9 @@
 #define MAX_CONTEXT_SIZE 2048
 #define MAX_MESSAGE_SIZE 4096
 
+/* Keep it under 2^31 to support 32-bit systems. */
+#define CORRUPTED_LENGTH 0x1337BEEF
+
 static char passwd[] = "password";
 static char message[] = "secure cell test message by Mnatsakanov Andrey from Cossack Labs";
 static char user_context[] = "secure cell user context";
@@ -658,7 +661,7 @@ static void secure_cell_context_corruption_seal(void)
     size_t decrypted_message_length = 0;
 
     old_value = get_context_iv_length(encrypted_message);
-    set_context_iv_length(encrypted_message, 0xDEADBEEF);
+    set_context_iv_length(encrypted_message, CORRUPTED_LENGTH);
     {
         res = prepare_decrypt_seal(encrypted_message, encrypted_message_length, &decrypted_message,
                                    &decrypted_message_length);
@@ -677,7 +680,7 @@ static void secure_cell_context_corruption_seal(void)
     set_context_iv_length(encrypted_message, old_value);
 
     old_value = get_context_auth_tag_length(encrypted_message);
-    set_context_auth_tag_length(encrypted_message, 0xDEADBEEF);
+    set_context_auth_tag_length(encrypted_message, CORRUPTED_LENGTH);
     {
         res = prepare_decrypt_seal(encrypted_message, encrypted_message_length, &decrypted_message,
                                    &decrypted_message_length);
@@ -696,7 +699,7 @@ static void secure_cell_context_corruption_seal(void)
     set_context_auth_tag_length(encrypted_message, old_value);
 
     old_value = get_context_message_length(encrypted_message);
-    set_context_message_length(encrypted_message, 0xDEADBEEF);
+    set_context_message_length(encrypted_message, CORRUPTED_LENGTH);
     {
         res = themis_secure_cell_decrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0,
                                               encrypted_message, encrypted_message_length, NULL,
@@ -803,7 +806,7 @@ static void secure_cell_context_corruption_token_protect(void)
     size_t decrypted_message_length = 0;
 
     old_value = get_context_iv_length(context);
-    set_context_iv_length(context, 0xDEADBEEF);
+    set_context_iv_length(context, CORRUPTED_LENGTH);
     {
         res = prepare_decrypt_token_protect(encrypted_message, encrypted_message_length, context,
                                             context_length, &decrypted_message,
@@ -823,7 +826,7 @@ static void secure_cell_context_corruption_token_protect(void)
     set_context_iv_length(context, old_value);
 
     old_value = get_context_auth_tag_length(context);
-    set_context_auth_tag_length(context, 0xDEADBEEF);
+    set_context_auth_tag_length(context, CORRUPTED_LENGTH);
     {
         res = prepare_decrypt_token_protect(encrypted_message, encrypted_message_length, context,
                                             context_length, &decrypted_message,
@@ -844,7 +847,7 @@ static void secure_cell_context_corruption_token_protect(void)
     set_context_auth_tag_length(context, old_value);
 
     old_value = get_context_message_length(context);
-    set_context_message_length(context, 0xDEADBEEF);
+    set_context_message_length(context, CORRUPTED_LENGTH);
     {
         res = prepare_decrypt_token_protect(encrypted_message, encrypted_message_length, context,
                                             context_length, &decrypted_message,
