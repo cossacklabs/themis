@@ -414,7 +414,7 @@ module Themis
       raise ThemisError, "Secure Message: invalid private key"
     end
     if not private_key(private_key)
-      raise ThemisError, "Secure Message: not a private key"
+      raise ThemisError, "Secure Message: public key used instead of private"
     end
 
     private_key_, private_key_length_ = string_to_pointer_size(private_key)
@@ -450,7 +450,7 @@ module Themis
       raise ThemisError, "Secure Message: invalid public key"
     end
     if not public_key(peer_public_key)
-      raise ThemisError, "Secure Message: not a public key"
+      raise ThemisError, "Secure Message: private key used instead of public"
     end
 
     public_key_, public_key_length_ = string_to_pointer_size(peer_public_key)
