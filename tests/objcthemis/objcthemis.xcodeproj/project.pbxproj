@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0A59E174F159E9266860B285 /* libPods-objthemis_boring.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 40C7BF22CEC5F2B349A2EF03 /* libPods-objthemis_boring.a */; };
 		7308F54F1F717C4500AE0411 /* SecureMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7308F54D1F717BF300AE0411 /* SecureMessageTests.m */; };
 		7308F5531F717D2D00AE0411 /* SecureCellTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7308F5521F717D2D00AE0411 /* SecureCellTests.m */; };
-		735D9F866F353EEC816BC9EA /* libPods-objthemis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B9266FCF4D3BDFBDCEAD6267 /* libPods-objthemis.a */; };
 		7376D8671F7182B70003AF72 /* SecureMessageTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7376D8661F7182B70003AF72 /* SecureMessageTestsSwift.swift */; };
 		73CBA59D2012402B003EC7AC /* SecureComparatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73CBA59C2012402B003EC7AC /* SecureComparatorTests.m */; };
 		73CBA59F20124BB8003EC7AC /* SecureComparatorTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73CBA59E20124BB8003EC7AC /* SecureComparatorTestsSwift.swift */; };
@@ -21,12 +19,17 @@
 		73DDCB7F2181517000CD4CBB /* SecureMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7308F54D1F717BF300AE0411 /* SecureMessageTests.m */; };
 		73DDCB802181517000CD4CBB /* SecureCellTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7308F5521F717D2D00AE0411 /* SecureCellTests.m */; };
 		73DDCB812181517000CD4CBB /* SecureComparatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 73CBA59C2012402B003EC7AC /* SecureComparatorTests.m */; };
+		99DDB3CA5B14353820527D61 /* libPods-objthemis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D2062F489FDBBD43568C11E /* libPods-objthemis.a */; };
+		EC9E511233FF0DACAC47ACA1 /* libPods-objthemis_boring.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DA113964985808C6E22802C /* libPods-objthemis_boring.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		26D906F27F31E9CE04E9C7F1 /* Pods-objthemis_boring.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis_boring.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis_boring/Pods-objthemis_boring.debug.xcconfig"; sourceTree = "<group>"; };
-		40C7BF22CEC5F2B349A2EF03 /* libPods-objthemis_boring.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objthemis_boring.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		667D1BA31CC54276E7B69943 /* Pods-objthemis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.release.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.release.xcconfig"; sourceTree = "<group>"; };
+		1D2062F489FDBBD43568C11E /* libPods-objthemis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objthemis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2160CC37B5512D481C1E5B99 /* Pods-objthemis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.release.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.release.xcconfig"; sourceTree = "<group>"; };
+		440B7304E7A314B9058DDD25 /* Pods-objthemis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.debug.xcconfig"; sourceTree = "<group>"; };
+		674708F4DCC33EA3575340F2 /* Pods-objthemis_boring.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis_boring.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis_boring/Pods-objthemis_boring.debug.xcconfig"; sourceTree = "<group>"; };
+		6DA113964985808C6E22802C /* libPods-objthemis_boring.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objthemis_boring.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7300FFB607483CC5AD8A9263 /* Pods-objthemis_boring.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis_boring.release.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis_boring/Pods-objthemis_boring.release.xcconfig"; sourceTree = "<group>"; };
 		7308F54D1F717BF300AE0411 /* SecureMessageTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureMessageTests.m; sourceTree = "<group>"; };
 		7308F5521F717D2D00AE0411 /* SecureCellTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SecureCellTests.m; sourceTree = "<group>"; };
 		7376D8651F7182B70003AF72 /* objthemis-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "objthemis-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -37,11 +40,8 @@
 		73D358201F71E6F9004E000A /* StaticKeys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StaticKeys.h; sourceTree = "<group>"; };
 		73D358211F71F06B004E000A /* SecureCellTestsSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureCellTestsSwift.swift; sourceTree = "<group>"; };
 		73DDCB882181517000CD4CBB /* objthemis_boring.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objthemis_boring.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		77229469EFA9482F570BD657 /* Pods-objthemis_boring.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis_boring.release.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis_boring/Pods-objthemis_boring.release.xcconfig"; sourceTree = "<group>"; };
 		843EE74E1B5E1A36003F0138 /* objthemis.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = objthemis.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		843EE7521B5E1A36003F0138 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		B9266FCF4D3BDFBDCEAD6267 /* libPods-objthemis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-objthemis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E6456FB392A8604B41E4B1EC /* Pods-objthemis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-objthemis.debug.xcconfig"; path = "Pods/Target Support Files/Pods-objthemis/Pods-objthemis.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,7 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A59E174F159E9266860B285 /* libPods-objthemis_boring.a in Frameworks */,
+				EC9E511233FF0DACAC47ACA1 /* libPods-objthemis_boring.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,31 +57,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				735D9F866F353EEC816BC9EA /* libPods-objthemis.a in Frameworks */,
+				99DDB3CA5B14353820527D61 /* libPods-objthemis.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0E59F6585F26D585AF0D2567 /* Pods */ = {
+		5D4291C3FDD828025FF78A0E /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				E6456FB392A8604B41E4B1EC /* Pods-objthemis.debug.xcconfig */,
-				667D1BA31CC54276E7B69943 /* Pods-objthemis.release.xcconfig */,
-				26D906F27F31E9CE04E9C7F1 /* Pods-objthemis_boring.debug.xcconfig */,
-				77229469EFA9482F570BD657 /* Pods-objthemis_boring.release.xcconfig */,
+				440B7304E7A314B9058DDD25 /* Pods-objthemis.debug.xcconfig */,
+				2160CC37B5512D481C1E5B99 /* Pods-objthemis.release.xcconfig */,
+				674708F4DCC33EA3575340F2 /* Pods-objthemis_boring.debug.xcconfig */,
+				7300FFB607483CC5AD8A9263 /* Pods-objthemis_boring.release.xcconfig */,
 			);
 			name = Pods;
-			sourceTree = "<group>";
-		};
-		34AC31C52377FB45730FEE0D /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				B9266FCF4D3BDFBDCEAD6267 /* libPods-objthemis.a */,
-				40C7BF22CEC5F2B349A2EF03 /* libPods-objthemis_boring.a */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		843EE7431B5E19E2003F0138 = {
@@ -89,8 +80,8 @@
 			children = (
 				843EE7501B5E1A36003F0138 /* objthemis */,
 				843EE74F1B5E1A36003F0138 /* Products */,
-				0E59F6585F26D585AF0D2567 /* Pods */,
-				34AC31C52377FB45730FEE0D /* Frameworks */,
+				5D4291C3FDD828025FF78A0E /* Pods */,
+				91C1A8DFB374CA13CA2A4C6E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -128,6 +119,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		91C1A8DFB374CA13CA2A4C6E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1D2062F489FDBBD43568C11E /* libPods-objthemis.a */,
+				6DA113964985808C6E22802C /* libPods-objthemis_boring.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -135,7 +135,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 73DDCB852181517000CD4CBB /* Build configuration list for PBXNativeTarget "objthemis_boring" */;
 			buildPhases = (
-				3D714C22058A6495F63D5C2D /* [CP] Check Pods Manifest.lock */,
+				1777F3B58363EC100316BFED /* [CP] Check Pods Manifest.lock */,
 				73DDCB7B2181517000CD4CBB /* Sources */,
 				73DDCB822181517000CD4CBB /* Frameworks */,
 				73DDCB842181517000CD4CBB /* Resources */,
@@ -153,11 +153,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 843EE7551B5E1A36003F0138 /* Build configuration list for PBXNativeTarget "objthemis" */;
 			buildPhases = (
-				B0B4E3DF68139B2EEAEEDB1F /* [CP] Check Pods Manifest.lock */,
+				F22ABA1C9C5F467FBCE3FB7F /* [CP] Check Pods Manifest.lock */,
 				843EE74A1B5E1A36003F0138 /* Sources */,
 				843EE74B1B5E1A36003F0138 /* Frameworks */,
 				843EE74C1B5E1A36003F0138 /* Resources */,
-				7347F2D56C8226159DC7C98C /* [CP] Embed Pods Frameworks */,
+				3A6B41F14AD42F8EC4F258D8 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -221,7 +221,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3D714C22058A6495F63D5C2D /* [CP] Check Pods Manifest.lock */ = {
+		1777F3B58363EC100316BFED /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -243,7 +243,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7347F2D56C8226159DC7C98C /* [CP] Embed Pods Frameworks */ = {
+		3A6B41F14AD42F8EC4F258D8 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -265,7 +265,7 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-objthemis/Pods-objthemis-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B0B4E3DF68139B2EEAEEDB1F /* [CP] Check Pods Manifest.lock */ = {
+		F22ABA1C9C5F467FBCE3FB7F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -321,7 +321,7 @@
 /* Begin XCBuildConfiguration section */
 		73DDCB862181517000CD4CBB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 26D906F27F31E9CE04E9C7F1 /* Pods-objthemis_boring.debug.xcconfig */;
+			baseConfigurationReference = 674708F4DCC33EA3575340F2 /* Pods-objthemis_boring.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -376,7 +376,7 @@
 		};
 		73DDCB872181517000CD4CBB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 77229469EFA9482F570BD657 /* Pods-objthemis_boring.release.xcconfig */;
+			baseConfigurationReference = 7300FFB607483CC5AD8A9263 /* Pods-objthemis_boring.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -489,7 +489,7 @@
 		};
 		843EE7561B5E1A36003F0138 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E6456FB392A8604B41E4B1EC /* Pods-objthemis.debug.xcconfig */;
+			baseConfigurationReference = 440B7304E7A314B9058DDD25 /* Pods-objthemis.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -543,7 +543,7 @@
 		};
 		843EE7571B5E1A36003F0138 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 667D1BA31CC54276E7B69943 /* Pods-objthemis.release.xcconfig */;
+			baseConfigurationReference = 2160CC37B5512D481C1E5B99 /* Pods-objthemis.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";

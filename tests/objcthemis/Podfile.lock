@@ -5,51 +5,43 @@ PODS:
   - BoringSSL/Implementation (10.0.6):
     - BoringSSL/Interface (= 10.0.6)
   - BoringSSL/Interface (10.0.6)
-  - GRKOpenSSLFramework (1.0.2.15)
-  - themis (0.10.2):
-    - themis/themis-openssl (= 0.10.2)
-  - themis/themis-boringssl (0.10.2):
+  - GRKOpenSSLFramework (1.0.2.16)
+  - themis (0.10.3):
+    - themis/themis-openssl (= 0.10.3)
+  - themis/themis-boringssl (0.10.3):
     - BoringSSL (~> 10.0)
-    - themis/themis-boringssl/core (= 0.10.2)
-    - themis/themis-boringssl/objcwrapper (= 0.10.2)
-  - themis/themis-boringssl/core (0.10.2):
+    - themis/themis-boringssl/core (= 0.10.3)
+    - themis/themis-boringssl/objcwrapper (= 0.10.3)
+  - themis/themis-boringssl/core (0.10.3):
     - BoringSSL (~> 10.0)
-  - themis/themis-boringssl/objcwrapper (0.10.2):
+  - themis/themis-boringssl/objcwrapper (0.10.3):
     - BoringSSL (~> 10.0)
     - themis/themis-boringssl/core
-  - themis/themis-openssl (0.10.2):
+  - themis/themis-openssl (0.10.3):
     - GRKOpenSSLFramework (~> 1.0.1)
-    - themis/themis-openssl/core (= 0.10.2)
-    - themis/themis-openssl/objcwrapper (= 0.10.2)
-  - themis/themis-openssl/core (0.10.2):
+    - themis/themis-openssl/core (= 0.10.3)
+    - themis/themis-openssl/objcwrapper (= 0.10.3)
+  - themis/themis-openssl/core (0.10.3):
     - GRKOpenSSLFramework (~> 1.0.1)
-  - themis/themis-openssl/objcwrapper (0.10.2):
+  - themis/themis-openssl/objcwrapper (0.10.3):
     - GRKOpenSSLFramework (~> 1.0.1)
     - themis/themis-openssl/core
 
 DEPENDENCIES:
-  - themis (from `https://github.com/cossacklabs/themis.git`)
-  - themis/themis-boringssl (from `https://github.com/cossacklabs/themis.git`)
+  - themis (= 0.10.3)
+  - themis/themis-boringssl (= 0.10.3)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - BoringSSL
     - GRKOpenSSLFramework
-
-EXTERNAL SOURCES:
-  themis:
-    :git: https://github.com/cossacklabs/themis.git
-
-CHECKOUT OPTIONS:
-  themis:
-    :commit: 8d8285c13dcbe2d5b6c7745c8d06f99336aed74c
-    :git: https://github.com/cossacklabs/themis.git
+    - themis
 
 SPEC CHECKSUMS:
   BoringSSL: e10f92a27043805c01071fe815a5cd98ae8212e7
-  GRKOpenSSLFramework: 8180d66833be66fc0f2d4942757d095edb0778d0
-  themis: bb0d7915dcb400748942969d9ab4c48f95193514
+  GRKOpenSSLFramework: 35944e317e6336b2944ad70b059d84db6b2d8532
+  themis: bdbb1d0baeee19ff213dc7355e9e2b48debea359
 
-PODFILE CHECKSUM: 75777382b765353e199301afe97759406a56f7a0
+PODFILE CHECKSUM: c597acee50b92cb2cbffaf8976cb442950c047fa
 
 COCOAPODS: 1.5.3

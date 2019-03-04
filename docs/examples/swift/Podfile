@@ -23,7 +23,7 @@ use_frameworks!
 
 target :"ThemisSwift" do
 
-  pod 'themis', '0.10.0'
+  pod 'themis', '0.10.3'
 
 end
 
