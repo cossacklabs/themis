@@ -23,7 +23,10 @@ LIBTHEMIS_STATIC=1  cargo build
 echo
 echo "Running tests..."
 echo
-cargo test --all
+# Rust tests are multithreaded by default. Themis may be using an old OpenSSL
+# which requires global initialization for correct operation. This is hard to
+# do in Rust for tests so simply don't use multithreading to avoid failures.
+cargo test --all -- --test-threads 1
 
 echo
 echo "Checking documentation..."
