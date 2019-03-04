@@ -42,6 +42,9 @@ class TestSMessage(unittest.TestCase):
         with self.assertRaises(ThemisError):
             smessage.SMessage(private, "")
 
+        with self.assertRaises(ThemisError):
+            smessage.SMessage(public, private)
+
         encryptor = smessage.SMessage(private, public)
         with self.assertRaises(ThemisError):
             encryptor.wrap("")
@@ -57,15 +60,21 @@ class TestSMessage(unittest.TestCase):
         with self.assertRaises(ThemisError):
             smessage.ssign("", "")
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(ThemisError):
             smessage.ssign(None, self.message)
 
         with self.assertRaises(ThemisError):
             smessage.ssign(private, "")
 
+        with self.assertRaises(ThemisError):
+            smessage.ssign(public, "message")
+
         encrypted_message = smessage.ssign(private, self.message)
         with self.assertRaises(ThemisError):
             smessage.sverify(public, "")
+
+        with self.assertRaises(ThemisError):
+            smessage.sverify(private, encrypted_message)
 
         with self.assertRaises(ThemisError):
             smessage.sverify(public, b"".join([b"11", encrypted_message]))
