@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.10.2"
+    s.version = "0.10.3"
     s.summary = "Data security library for network communication and data storage for iOS and mac OS"
     s.description = "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern development practices, with high level OOP wrappers for iOS / macOS, NodeJS, Go, Ruby, Python, PHP and Java / Android. It is designed with ease of use in mind, high security and cross-platform availability."
     s.homepage = "https://cossacklabs.com"
@@ -9,10 +9,14 @@ Pod::Spec.new do |s|
     # will update to particular tag on next release (0.11.0)
     #s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
 
-    # this commit has fixes in soter that allow to support BoringSSL for iOS
-    # more: https://github.com/cossacklabs/themis/pull/330
+    # this commit has fixes in soter that allow to support BoringSSL for iOS,
+    # and updates in Secure Message API
+    # more: 
+    # https://github.com/cossacklabs/themis/pull/330
+    # https://github.com/cossacklabs/themis/pull/393
+    # https://github.com/cossacklabs/themis/pull/394
     # this is a latest master commit as for today
-    s.source = { :git => "https://github.com/cossacklabs/themis.git", :commit => 'a47c962a86f038927e9c9e58e24726ff2314d9eb'}
+    s.source = { :git => "https://github.com/cossacklabs/themis.git", :commit => '742b6550ba1d0c3c034f15494985a169e1bb3ae4'}
 
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
@@ -27,13 +31,7 @@ Pod::Spec.new do |s|
     # use `themis/themis-openssl` as separate target to use Themis with OpenSSL
     s.subspec 'themis-openssl' do |so|
         # Enable bitcode for openssl only, unfortunately boringssl with bitcode not available at the moment
-        # 'bitcode-marker' directive omits bitcode payload in binary for debug builds
-        so.ios.pod_target_xcconfig = {
-            'OTHER_CFLAGS[config=Debug]'                => '$(inherited) -fembed-bitcode-marker',
-            'OTHER_CFLAGS[config=Release]'              => '$(inherited) -fembed-bitcode',
-            'BITCODE_GENERATION_MODE[config=Release]'   => 'bitcode',
-            'BITCODE_GENERATION_MODE[config=Debug]'     => 'bitcode-marker'
-        }
+        so.ios.pod_target_xcconfig = {'ENABLE_BITCODE' => 'YES' }
 
         so.dependency 'GRKOpenSSLFramework', '~> 1.0.1'
 
