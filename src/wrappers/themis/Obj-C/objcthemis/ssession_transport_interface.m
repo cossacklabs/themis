@@ -18,6 +18,11 @@
 #import <objcthemis/serror.h>
 #import <themis/themis.h>
 
+@interface TSSessionTransportInterface () {
+    secure_session_user_callbacks_t _callbacks;
+}
+@end
+
 ssize_t on_send_callback(const uint8_t *data, size_t data_length, void *user_data) {
     return TSErrorTypeFail;
 }

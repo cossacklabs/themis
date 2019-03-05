@@ -19,6 +19,7 @@
 * @brief secure comparator interface
 */
 
+#import <Foundation/Foundation.h>
 
 /**
 * @addtogroup WRAPPERS
