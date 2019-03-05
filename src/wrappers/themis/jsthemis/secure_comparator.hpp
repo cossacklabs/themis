@@ -48,4 +48,5 @@ private:
 };
 
 } // namespace jsthemis
+
 #endif /* JSTHEMIS_SECURE_Comparator_HPP_ */

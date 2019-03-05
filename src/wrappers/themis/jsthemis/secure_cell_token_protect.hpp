@@ -43,4 +43,5 @@ private:
 };
 
 } // namespace jsthemis
+
 #endif /* JSTHEMIS_SECURE_CELL_TOKEN_PROTECT_HPP_ */

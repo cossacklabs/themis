@@ -53,4 +53,5 @@ bool IsPrivateKey(const std::vector<uint8_t>& key);
 bool IsPublicKey(const std::vector<uint8_t>& key);
 
 } // namespace jsthemis
+
 #endif /* JSTHEMIS_KEY_PAIR_HPP_ */

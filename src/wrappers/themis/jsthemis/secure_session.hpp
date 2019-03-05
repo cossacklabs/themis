@@ -53,4 +53,5 @@ public:
 };
 
 } // namespace jsthemis
+
 #endif /* JSTHEMIS_SECURE_SESSION_HPP_ */

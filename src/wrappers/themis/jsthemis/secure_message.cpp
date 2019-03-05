@@ -335,4 +335,5 @@ void SecureMessage::verify(const Nan::FunctionCallbackInfo<v8::Value>& args)
     args.GetReturnValue().Set(
         Nan::NewBuffer((char*)decrypted_data, decrypted_length).ToLocalChecked());
 }
+
 } // namespace jsthemis

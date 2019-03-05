@@ -218,4 +218,5 @@ void SecureCellTokenProtect::decrypt(const Nan::FunctionCallbackInfo<v8::Value>&
     }
     args.GetReturnValue().Set(Nan::NewBuffer((char*)(data), length).ToLocalChecked());
 }
+
 } // namespace jsthemis
