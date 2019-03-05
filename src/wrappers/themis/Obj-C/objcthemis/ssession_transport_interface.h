@@ -19,7 +19,7 @@
 * @brief secure session trancport callbacs interface
 */
 #import <Foundation/Foundation.h>
-#import <themis/themis.h>
+#include <themis/secure_session.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

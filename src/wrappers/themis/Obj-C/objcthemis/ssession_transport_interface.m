@@ -16,7 +16,7 @@
 
 #import <objcthemis/ssession_transport_interface.h>
 #import <objcthemis/serror.h>
-
+#import <themis/themis.h>
 
 ssize_t on_send_callback(const uint8_t *data, size_t data_length, void *user_data) {
     return TSErrorTypeFail;

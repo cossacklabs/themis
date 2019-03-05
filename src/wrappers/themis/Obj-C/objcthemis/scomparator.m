@@ -16,7 +16,7 @@
 
 #import <objcthemis/scomparator.h>
 #import <objcthemis/serror.h>
-
+#import <themis/themis.h>
 
 @interface TSComparator ()
 

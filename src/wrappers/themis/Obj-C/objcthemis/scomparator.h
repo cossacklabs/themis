@@ -19,7 +19,6 @@
 * @brief secure comparator interface
 */
 
-#import <themis/themis.h>
 
 /**
 * @addtogroup WRAPPERS

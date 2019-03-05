@@ -20,7 +20,6 @@
 */
 
 #import <objcthemis/ssession_transport_interface.h>
-#import <themis/themis.h>
 
 /**
 * @addtogroup WRAPPERS
