@@ -21,14 +21,17 @@
 
 #include <nan.h>
 
-namespace jsthemis{
+namespace jsthemis
+{
 
-  class SecureMessage : public Nan::ObjectWrap {
-  public:
+class SecureMessage : public Nan::ObjectWrap
+{
+public:
     static void Init(v8::Handle<v8::Object> exports);
 
-  private:
-    explicit SecureMessage(const std::vector<uint8_t>& private_key, const std::vector<uint8_t>& peer_public_key);
+private:
+    explicit SecureMessage(const std::vector<uint8_t>& private_key,
+                           const std::vector<uint8_t>& peer_public_key);
     ~SecureMessage();
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);
@@ -39,11 +42,12 @@ namespace jsthemis{
 
     static Nan::Persistent<v8::Function> constructor;
 
-    static bool ValidateKeys(const std::vector<uint8_t>& private_key, const std::vector<uint8_t>& public_key);
+    static bool ValidateKeys(const std::vector<uint8_t>& private_key,
+                             const std::vector<uint8_t>& public_key);
 
     std::vector<uint8_t> private_key_;
     std::vector<uint8_t> peer_public_key_;
-  };
+};
 
-}
+} // namespace jsthemis
 #endif /* JSTHEMIS_SECURE_MESSAGE_HPP_ */

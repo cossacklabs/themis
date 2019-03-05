@@ -21,13 +21,15 @@
 
 #include <nan.h>
 
-namespace jsthemis{
+namespace jsthemis
+{
 
-  class SecureCellTokenProtect : public Nan::ObjectWrap {
-  public:
+class SecureCellTokenProtect : public Nan::ObjectWrap
+{
+public:
     static void Init(v8::Handle<v8::Object> exports);
 
-  private:
+private:
     explicit SecureCellTokenProtect(const std::vector<uint8_t>& key);
     ~SecureCellTokenProtect();
 
@@ -38,7 +40,7 @@ namespace jsthemis{
     static Nan::Persistent<v8::Function> constructor;
 
     std::vector<uint8_t> key_;
-  };
+};
 
-}
+} // namespace jsthemis
 #endif /* JSTHEMIS_SECURE_CELL_TOKEN_PROTECT_HPP_ */
