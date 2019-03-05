@@ -51,4 +51,15 @@ $(JSTHEMIS_OBJ)/%.hpp.fmt_fixup $(JSTHEMIS_OBJ)/%.cpp.fmt_fixup: \
 $(JSTHEMIS_OBJ)/%.hpp.fmt_check $(JSTHEMIS_OBJ)/%.cpp.fmt_check: \
 	CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(JSTHEMIS_CFLAGS) 2>/dev/null && touch $@
 
+else # ifdef NPM_VERSION
+
+FMT_FIXUP += $(JSTHEMIS_OBJ)/warning_fixup
+FMT_CHECK += $(JSTHEMIS_OBJ)/warning_check
+
+$(JSTHEMIS_OBJ)/warning_fixup:
+	$(warning NodeJS not installed, JsThemis code will not be formatted)
+
+$(JSTHEMIS_OBJ)/warning_check:
+	$(warning NodeJS not installed, JsThemis code will not be checked)
+
 endif # ifdef NPM_VERSION
