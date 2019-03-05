@@ -15,6 +15,7 @@
  */
 
 #include <node.h>
+
 #include "errors.hpp"
 #include "secure_message.hpp"
 #include "secure_keygen.hpp"

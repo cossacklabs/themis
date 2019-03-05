@@ -17,8 +17,10 @@
 #ifndef JSTHEMIS_SECURE_COMPARATOR_HPP_
 #define JSTHEMIS_SECURE_COMPARATOR_HPP_
 
-#include <nan.h>
 #include <vector>
+
+#include <nan.h>
+
 #include <themis/themis.h>
 
 namespace jsthemis{

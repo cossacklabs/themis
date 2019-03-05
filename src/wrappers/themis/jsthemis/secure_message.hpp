@@ -17,8 +17,9 @@
 #ifndef JSTHEMIS_SECURE_MESSAGE_HPP_
 #define JSTHEMIS_SECURE_MESSAGE_HPP_
 
-#include <nan.h>
 #include <vector>
+
+#include <nan.h>
 
 namespace jsthemis{
 

@@ -17,8 +17,10 @@
 #ifndef JSTHEMIS_KEY_PAIR_HPP_
 #define JSTHEMIS_KEY_PAIR_HPP_
 
-#include <nan.h>
 #include <vector>
+
+#include <nan.h>
+
 #include <themis/themis.h>
 
 namespace jsthemis{

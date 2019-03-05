@@ -17,8 +17,9 @@
 #ifndef JSTHEMIS_SECURE_CELL_SEAL_HPP_
 #define JSTHEMIS_SECURE_CELL_SEAL_HPP_
 
-#include <nan.h>
 #include <vector>
+
+#include <nan.h>
 
 namespace jsthemis{
 

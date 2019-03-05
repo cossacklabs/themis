@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-#include <node_buffer.h>
-#include <themis/themis.h>
-#include <vector>
-#include <cstring>
-#include "errors.hpp"
 #include "secure_session.hpp"
+
+#include <cstring>
+
+#include <node_buffer.h>
+
+#include <themis/themis.h>
+
+#include "errors.hpp"
 
 namespace jsthemis {
 

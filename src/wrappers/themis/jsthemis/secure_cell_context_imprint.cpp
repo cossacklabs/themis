@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-#include <node_buffer.h>
-#include <themis/themis.h>
-#include <vector>
-#include "errors.hpp"
 #include "secure_cell_context_imprint.hpp"
+
+#include <node_buffer.h>
+
+#include <themis/themis.h>
+
+#include "errors.hpp"
 
 namespace jsthemis {
 

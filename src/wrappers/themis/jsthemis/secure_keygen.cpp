@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
+#include "secure_keygen.hpp"
+
 #include <node_buffer.h>
+
 #include <themis/themis.h>
-#include <vector>
+
 #include "common.hpp"
 #include "errors.hpp"
-#include "secure_keygen.hpp"
 
 namespace jsthemis {
 
