@@ -15,6 +15,7 @@
 #
 
 source 'https://github.com/CocoaPods/Specs.git'
+source 'https://github.com/cossacklabs/Podspecs.git'
 
 platform :ios, '8.0'
 project 'ThemisSwift/ThemisSwift.xcodeproj'
@@ -23,7 +24,7 @@ use_frameworks!
 
 target :"ThemisSwift" do
 
-  pod 'themis', :podspec => "https://gist.githubusercontent.com/vixentael/ddd4b19dfd354b24ad7fcf022ffaff4b/raw/7a3fd60f3367640917c6aaec82e58318ac39d16d/themis.podspec"
+  pod 'themis', '0.10.4'
 
 end
 
