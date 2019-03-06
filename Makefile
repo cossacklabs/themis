@@ -37,18 +37,18 @@ NO_COLOR=\033[0m
 OK_COLOR=\033[32;01m
 ERROR_COLOR=\033[31;01m
 WARN_COLOR=\033[33;01m
+MOVE_COLUMN=\033[65G
 
-OK_STRING=$(OK_COLOR)[OK]$(NO_COLOR)
-ERROR_STRING=$(ERROR_COLOR)[ERRORS]$(NO_COLOR)
-WARN_STRING=$(WARN_COLOR)[WARNINGS]$(NO_COLOR)
+OK_STRING=$(MOVE_COLUMN)$(OK_COLOR)[OK]$(NO_COLOR)
+ERROR_STRING=$(MOVE_COLUMN)$(ERROR_COLOR)[ERRORS]$(NO_COLOR)
+WARN_STRING=$(MOVE_COLUMN)$(WARN_COLOR)[WARNINGS]$(NO_COLOR)
 
-AWK_CMD = awk '{ printf "%-30s %-10s\n",$$1, $$2; }'
-PRINT_OK = printf "$@ $(OK_STRING)\n" | $(AWK_CMD)
-PRINT_OK_ = printf "$(OK_STRING)\n" | $(AWK_CMD)
-PRINT_ERROR = printf "$@ $(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n" && false
-PRINT_ERROR_ = printf "$(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n" && false
-PRINT_WARNING = printf "$@ $(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
-PRINT_WARNING_ = printf "$(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
+PRINT_OK = printf "$@ $(OK_STRING)\n"
+PRINT_OK_ = printf "$(OK_STRING)\n"
+PRINT_ERROR = printf "$@ $(ERROR_STRING)\n" && printf "$(CMD)\n$$LOG\n" && false
+PRINT_ERROR_ = printf "$(ERROR_STRING)\n" && printf "$(CMD)\n$$LOG\n" && false
+PRINT_WARNING = printf "$@ $(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
+PRINT_WARNING_ = printf "$(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
 BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
 BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
 
