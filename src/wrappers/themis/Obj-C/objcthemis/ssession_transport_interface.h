@@ -19,15 +19,13 @@
 * @brief secure session trancport callbacs interface
 */
 #import <Foundation/Foundation.h>
-#import <themis/themis.h>
+
+typedef struct secure_session_user_callbacks_type secure_session_user_callbacks_t;
 
 NS_ASSUME_NONNULL_BEGIN
 
 /** @brief Secure session transport callbacks interface */
-@interface TSSessionTransportInterface : NSObject {
-    secure_session_user_callbacks_t _callbacks;
-}
-
+@interface TSSessionTransportInterface : NSObject
 
 /** @brief Send binary data to peer
 * @param [in] data binary data

@@ -20,7 +20,6 @@
 */
 
 #import <Foundation/Foundation.h>
-#import <themis/themis.h>
 
 /**
 * @addtogroup WRAPPERS
