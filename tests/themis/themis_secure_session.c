@@ -66,18 +66,30 @@ struct client_info_type {
 };
 
 static client_info_t client = {
-    "client", client_priv, sizeof(client_priv), client_pub, sizeof(client_pub), NULL, {0},
+    "client",
+    client_priv,
+    sizeof(client_priv),
+    client_pub,
+    sizeof(client_pub),
+    NULL,
+    {0},
 };
 static client_info_t server = {
-    "server", server_priv, sizeof(server_priv), server_pub, sizeof(server_pub), NULL, {0},
+    "server",
+    server_priv,
+    sizeof(server_priv),
+    server_pub,
+    sizeof(server_pub),
+    NULL,
+    {0},
 };
 
 /* Peers will communicate using shared memory */
 static uint8_t shared_mem[4096];
 static size_t current_length = 0;
 
-static int on_get_public_key(const void* id, size_t id_length, void* key_buffer,
-                             size_t key_buffer_length, void* user_data)
+static int on_get_public_key(
+    const void* id, size_t id_length, void* key_buffer, size_t key_buffer_length, void* user_data)
 {
     client_info_t* info = user_data;
     client_info_t* peer;
@@ -127,8 +139,11 @@ static void on_state_changed(int event, void* user_data)
     /* TODO: implement */
 }
 
-static secure_session_user_callbacks_t transport = {on_send_data, on_receive_data, on_state_changed,
-                                                    on_get_public_key, NULL};
+static secure_session_user_callbacks_t transport = {on_send_data,
+                                                    on_receive_data,
+                                                    on_state_changed,
+                                                    on_get_public_key,
+                                                    NULL};
 
 static int client_function(void)
 {
@@ -151,21 +166,21 @@ static int client_function(void)
     }
     if (secure_session_is_established(client.session)) {
         size_t remote_id_length = 0;
-        if (THEMIS_BUFFER_TOO_SMALL !=
-            secure_session_get_remote_id(client.session, NULL, &remote_id_length)) {
+        if (THEMIS_BUFFER_TOO_SMALL
+            != secure_session_get_remote_id(client.session, NULL, &remote_id_length)) {
             testsuite_fail_if(true, "remote id getting failed (length_determination)");
             return TEST_STOP_ERROR;
         }
         uint8_t* remote_id = malloc(remote_id_length);
         assert(remote_id);
-        if (THEMIS_SUCCESS !=
-            secure_session_get_remote_id(client.session, remote_id, &remote_id_length)) {
+        if (THEMIS_SUCCESS
+            != secure_session_get_remote_id(client.session, remote_id, &remote_id_length)) {
             testsuite_fail_if(true, "remote id getting failed");
             free(remote_id);
             return TEST_STOP_ERROR;
         }
-        testsuite_fail_unless(remote_id_length == strlen(server.id) &&
-                                  0 == memcmp(remote_id, server.id, strlen(server.id)),
+        testsuite_fail_unless(remote_id_length == strlen(server.id)
+                                  && 0 == memcmp(remote_id, server.id, strlen(server.id)),
                               "secure_session remote id getting");
         free(remote_id);
 
@@ -180,8 +195,8 @@ static int client_function(void)
             bytes_received = secure_session_receive(client.session, recv_buf, sizeof(recv_buf));
             if (bytes_received > 0) {
                 /* The server should echo our previously sent data */
-                testsuite_fail_unless((length_to_send == (size_t)bytes_received) &&
-                                          (!memcmp(recv_buf, data_to_send, bytes_received)),
+                testsuite_fail_unless((length_to_send == (size_t)bytes_received)
+                                          && (!memcmp(recv_buf, data_to_send, bytes_received)),
                                       "secure_session message send/receive");
                 messages_to_send--;
 
@@ -206,8 +221,8 @@ static int client_function(void)
         if (bytes_sent > 0) {
             /* Check whether data was indeed encrypted (it should not be the same as in
              * data_to_send) */
-            testsuite_fail_if((length_to_send == current_length) ||
-                                  (!memcmp(data_to_send, shared_mem, length_to_send)),
+            testsuite_fail_if((length_to_send == current_length)
+                                  || (!memcmp(data_to_send, shared_mem, length_to_send)),
                               "secure_session client message wrap");
             return TEST_CONTINUE;
         }
@@ -245,14 +260,16 @@ static int client_function_no_transport(void)
 
     /* Client is not connected yet. Initiate key agreement */
     if (!connected) {
-        res = secure_session_generate_connect_request((client.session), processing_buf,
+        res = secure_session_generate_connect_request((client.session),
+                                                      processing_buf,
                                                       (size_t*)(&processing_buf_size));
         if (THEMIS_BUFFER_TOO_SMALL != res) {
             testsuite_fail_if(res, "secure_session_generate_connect_request failed");
             return TEST_STOP_ERROR;
         }
 
-        res = secure_session_generate_connect_request((client.session), processing_buf,
+        res = secure_session_generate_connect_request((client.session),
+                                                      processing_buf,
                                                       (size_t*)(&processing_buf_size));
         if (THEMIS_SUCCESS == res) {
             /* This test-send function never fails, so we do not check for error here */
@@ -267,21 +284,21 @@ static int client_function_no_transport(void)
 
     if (secure_session_is_established((client.session))) {
         size_t remote_id_length = 0;
-        if (THEMIS_BUFFER_TOO_SMALL !=
-            secure_session_get_remote_id(client.session, NULL, &remote_id_length)) {
+        if (THEMIS_BUFFER_TOO_SMALL
+            != secure_session_get_remote_id(client.session, NULL, &remote_id_length)) {
             testsuite_fail_if(true, "remote id getting failed (length_determination)");
             return TEST_STOP_ERROR;
         }
         uint8_t* remote_id = malloc(remote_id_length);
         assert(remote_id);
-        if (THEMIS_SUCCESS !=
-            secure_session_get_remote_id(client.session, remote_id, &remote_id_length)) {
+        if (THEMIS_SUCCESS
+            != secure_session_get_remote_id(client.session, remote_id, &remote_id_length)) {
             testsuite_fail_if(true, "remote id getting failed");
             free(remote_id);
             return TEST_STOP_ERROR;
         }
-        testsuite_fail_unless(remote_id_length == strlen(server.id) &&
-                                  0 == memcmp(remote_id, server.id, strlen(server.id)),
+        testsuite_fail_unless(remote_id_length == strlen(server.id)
+                                  && 0 == memcmp(remote_id, server.id, strlen(server.id)),
                               "secure_session remote id getting");
         free(remote_id);
 
@@ -296,8 +313,11 @@ static int client_function_no_transport(void)
         if (current_length) {
             bytes_received = on_receive_data(recv_buf, sizeof(recv_buf), NULL);
             if (bytes_received > 0) {
-                res = secure_session_unwrap((client.session), recv_buf, (size_t)bytes_received,
-                                            processing_buf, (size_t*)(&processing_buf_size));
+                res = secure_session_unwrap((client.session),
+                                            recv_buf,
+                                            (size_t)bytes_received,
+                                            processing_buf,
+                                            (size_t*)(&processing_buf_size));
                 if (THEMIS_SUCCESS != res) {
                     testsuite_fail_if(res, "secure_session_unwrap failed");
                     return TEST_STOP_ERROR;
@@ -326,7 +346,10 @@ static int client_function_no_transport(void)
         }
 
         processing_buf_size = sizeof(processing_buf);
-        res = secure_session_wrap((client.session), data_to_send, length_to_send, processing_buf,
+        res = secure_session_wrap((client.session),
+                                  data_to_send,
+                                  length_to_send,
+                                  processing_buf,
                                   (size_t*)(&processing_buf_size));
         if (THEMIS_SUCCESS != res) {
             testsuite_fail_if(res, "secure_session_wrap failed");
@@ -347,7 +370,10 @@ static int client_function_no_transport(void)
         return TEST_STOP_ERROR;
     }
 
-    res = secure_session_unwrap((client.session), recv_buf, bytes_received, processing_buf,
+    res = secure_session_unwrap((client.session),
+                                recv_buf,
+                                bytes_received,
+                                processing_buf,
                                 (size_t*)(&processing_buf_size));
     if (THEMIS_SUCCESS == res) {
         if (secure_session_is_established((client.session))) {
@@ -364,7 +390,10 @@ static int client_function_no_transport(void)
         return TEST_STOP_ERROR;
     }
 
-    res = secure_session_unwrap((client.session), recv_buf, bytes_received, processing_buf,
+    res = secure_session_unwrap((client.session),
+                                recv_buf,
+                                bytes_received,
+                                processing_buf,
                                 (size_t*)(&processing_buf_size));
     if ((THEMIS_SSESSION_SEND_OUTPUT_TO_PEER == res) && (processing_buf_size > 0)) {
         /* This test-send function never fails, so we do not check for error here */
@@ -394,21 +423,20 @@ static void server_function(void)
     }
 
     size_t remote_id_length = 0;
-    if (THEMIS_BUFFER_TOO_SMALL !=
-        secure_session_get_remote_id(server.session, NULL, &remote_id_length)) {
+    if (THEMIS_BUFFER_TOO_SMALL
+        != secure_session_get_remote_id(server.session, NULL, &remote_id_length)) {
         testsuite_fail_if(true, "remote id getting failed (length_determination)");
         return;
     }
     uint8_t* remote_id = malloc(remote_id_length);
     assert(remote_id);
-    if (THEMIS_SUCCESS !=
-        secure_session_get_remote_id(server.session, remote_id, &remote_id_length)) {
+    if (THEMIS_SUCCESS != secure_session_get_remote_id(server.session, remote_id, &remote_id_length)) {
         testsuite_fail_if(true, "remote id getting failed");
         free(remote_id);
         return;
     }
-    testsuite_fail_unless(remote_id_length == strlen(client.id) &&
-                              0 == memcmp(remote_id, client.id, strlen(client.id)),
+    testsuite_fail_unless(remote_id_length == strlen(client.id)
+                              && 0 == memcmp(remote_id, client.id, strlen(client.id)),
                           "secure_session remote id getting");
     free(remote_id);
 
@@ -419,14 +447,13 @@ static void server_function(void)
 
     if (bytes_received > 0) {
         /* We received some data. Echo it back to the client. */
-        ssize_t bytes_sent =
-            secure_session_send((server.session), recv_buf, (size_t)bytes_received);
+        ssize_t bytes_sent = secure_session_send((server.session), recv_buf, (size_t)bytes_received);
 
         if (bytes_sent == bytes_received) {
             /* Check whether data was indeed encrypted (it should not be the same as in
              * data_to_send) */
-            testsuite_fail_if((bytes_sent == current_length) ||
-                                  (!memcmp(recv_buf, shared_mem, bytes_sent)),
+            testsuite_fail_if((bytes_sent == current_length)
+                                  || (!memcmp(recv_buf, shared_mem, bytes_sent)),
                               "secure_session server message wrap");
         } else {
             testsuite_fail_if(true, "secure_session_send failed");
@@ -443,7 +470,10 @@ static void server_function_no_transport(void)
     themis_status_t res;
     if (current_length > 0) {
         bytes_received = on_receive_data(recv_buf, sizeof(recv_buf), NULL);
-        res = secure_session_unwrap((server.session), recv_buf, bytes_received, processing_buf,
+        res = secure_session_unwrap((server.session),
+                                    recv_buf,
+                                    bytes_received,
+                                    processing_buf,
                                     (size_t*)(&processing_buf_size));
     } else {
         /* Nothing to receive. Do nothing */
@@ -451,21 +481,20 @@ static void server_function_no_transport(void)
     }
 
     size_t remote_id_length = 0;
-    if (THEMIS_BUFFER_TOO_SMALL !=
-        secure_session_get_remote_id(server.session, NULL, &remote_id_length)) {
+    if (THEMIS_BUFFER_TOO_SMALL
+        != secure_session_get_remote_id(server.session, NULL, &remote_id_length)) {
         testsuite_fail_if(true, "remote id getting failed (length_determination)");
         return;
     }
     uint8_t* remote_id = malloc(remote_id_length);
     assert(remote_id);
-    if (THEMIS_SUCCESS !=
-        secure_session_get_remote_id(server.session, remote_id, &remote_id_length)) {
+    if (THEMIS_SUCCESS != secure_session_get_remote_id(server.session, remote_id, &remote_id_length)) {
         testsuite_fail_if(true, "remote id getting failed");
         free(remote_id);
         return;
     }
-    testsuite_fail_unless(remote_id_length == strlen(client.id) &&
-                              0 == memcmp(remote_id, client.id, strlen(client.id)),
+    testsuite_fail_unless(remote_id_length == strlen(client.id)
+                              && 0 == memcmp(remote_id, client.id, strlen(client.id)),
                           "secure_session remote id getting");
     free(remote_id);
 
@@ -484,14 +513,20 @@ static void server_function_no_transport(void)
             return;
         }
         memcpy(recv_buf, processing_buf, (size_t)processing_buf_size);
-        res = secure_session_wrap((server.session), recv_buf, processing_buf_size, processing_buf,
+        res = secure_session_wrap((server.session),
+                                  recv_buf,
+                                  processing_buf_size,
+                                  processing_buf,
                                   (size_t*)(&bytes_sent));
         if (THEMIS_BUFFER_TOO_SMALL != res) {
             testsuite_fail_if(true, "secure_session_wrap failed");
             return;
         }
 
-        res = secure_session_wrap((server.session), recv_buf, processing_buf_size, processing_buf,
+        res = secure_session_wrap((server.session),
+                                  recv_buf,
+                                  processing_buf_size,
+                                  processing_buf,
                                   (size_t*)(&bytes_sent));
         if (THEMIS_SUCCESS != res) {
             testsuite_fail_if(true, "secure_session_wrap failed");
@@ -539,15 +574,21 @@ static void test_basic_flow(void)
     memcpy(&(server.transport), &transport, sizeof(secure_session_user_callbacks_t));
     server.transport.user_data = &server;
 
-    client.session = secure_session_create(client.id, strlen(client.id), client.priv,
-                                           client.priv_length, &(client.transport));
+    client.session = secure_session_create(client.id,
+                                           strlen(client.id),
+                                           client.priv,
+                                           client.priv_length,
+                                           &(client.transport));
     if (client.session == NULL) {
         testsuite_fail_if(res, "secure_session_init failed");
         return;
     }
 
-    server.session = secure_session_create(server.id, strlen(server.id), server.priv,
-                                           server.priv_length, &(server.transport));
+    server.session = secure_session_create(server.id,
+                                           strlen(server.id),
+                                           server.priv,
+                                           server.priv_length,
+                                           &(server.transport));
     if (server.session == NULL) {
         testsuite_fail_if(res, "secure_session_init failed");
         secure_session_destroy((client.session));
@@ -577,15 +618,21 @@ static void test_basic_flow_no_transport(void)
     memcpy(&(server.transport), &transport, sizeof(secure_session_user_callbacks_t));
     server.transport.user_data = &server;
 
-    client.session = secure_session_create(client.id, strlen(client.id), client.priv,
-                                           client.priv_length, &(client.transport));
+    client.session = secure_session_create(client.id,
+                                           strlen(client.id),
+                                           client.priv,
+                                           client.priv_length,
+                                           &(client.transport));
     if (client.session == NULL) {
         testsuite_fail_if(res, "secure_session_init failed");
         return;
     }
 
-    server.session = secure_session_create(server.id, strlen(server.id), server.priv,
-                                           server.priv_length, &(server.transport));
+    server.session = secure_session_create(server.id,
+                                           strlen(server.id),
+                                           server.priv,
+                                           server.priv_length,
+                                           &(server.transport));
     if (server.session == NULL) {
         testsuite_fail_if(res, "secure_session_init failed");
         secure_session_destroy((client.session));

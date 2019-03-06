@@ -68,8 +68,10 @@ soter_status_t soter_rsa_key_pair_gen_destroy(soter_rsa_key_pair_gen_t* ctx)
     return SOTER_SUCCESS;
 }
 
-soter_status_t soter_rsa_key_pair_gen_export_key(soter_rsa_key_pair_gen_t* ctx, void* key,
-                                                 size_t* key_length, bool isprivate)
+soter_status_t soter_rsa_key_pair_gen_export_key(soter_rsa_key_pair_gen_t* ctx,
+                                                 void* key,
+                                                 size_t* key_length,
+                                                 bool isprivate)
 {
     EVP_PKEY* pkey;
     SOTER_CHECK_PARAM(ctx);
@@ -78,9 +80,11 @@ soter_status_t soter_rsa_key_pair_gen_export_key(soter_rsa_key_pair_gen_t* ctx, 
     SOTER_CHECK_PARAM(EVP_PKEY_RSA == EVP_PKEY_id(pkey));
     if (isprivate) {
         return soter_engine_specific_to_rsa_priv_key((const soter_engine_specific_rsa_key_t*)pkey,
-                                                     (soter_container_hdr_t*)key, key_length);
+                                                     (soter_container_hdr_t*)key,
+                                                     key_length);
     }
 
     return soter_engine_specific_to_rsa_pub_key((const soter_engine_specific_rsa_key_t*)pkey,
-                                                (soter_container_hdr_t*)key, key_length);
+                                                (soter_container_hdr_t*)key,
+                                                key_length);
 }

@@ -58,8 +58,10 @@ typedef struct soter_sign_ctx_type soter_sign_ctx_t;
  * @note If private_key==NULL and public_key==NULL with creating of sign context will be generated
  * new key pair.
  */
-soter_sign_ctx_t* soter_sign_create(soter_sign_alg_t alg, const void* private_key,
-                                    size_t private_key_length, const void* public_key,
+soter_sign_ctx_t* soter_sign_create(soter_sign_alg_t alg,
+                                    const void* private_key,
+                                    size_t private_key_length,
+                                    const void* public_key,
                                     size_t public_key_length);
 
 /** @brief update sign context
@@ -91,8 +93,7 @@ soter_status_t soter_sign_final(soter_sign_ctx_t* ctx, void* signature, size_t* 
  * @note If key==NULL or key_length less then need to store key, @ref SOTER_BUFFER_TOO_SMALL will
  * return and key_length will contain length of buffer thet need to store key.
  */
-soter_status_t soter_sign_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length,
-                                     bool isprivate);
+soter_status_t soter_sign_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate);
 
 /** @brief destroy sign context
  * @param [in] ctx pointer to sign context previously created by soter_sign_create
@@ -124,8 +125,10 @@ typedef struct soter_sign_ctx_type soter_verify_ctx_t;
  * @param [in] public_key_length length of public_key
  * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
  */
-soter_verify_ctx_t* soter_verify_create(soter_sign_alg_t alg, const void* private_key,
-                                        size_t private_key_length, const void* public_key,
+soter_verify_ctx_t* soter_verify_create(soter_sign_alg_t alg,
+                                        const void* private_key,
+                                        size_t private_key_length,
+                                        const void* public_key,
                                         size_t public_key_length);
 
 /** @brief update verify context
@@ -143,8 +146,7 @@ soter_status_t soter_verify_update(soter_verify_ctx_t* ctx, const void* data, si
  * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_INVALID_SIGNATURE on
  * incorrect signature or @ref SOTER_FAIL on other failure
  */
-soter_status_t soter_verify_final(soter_verify_ctx_t* ctx, const void* signature,
-                                  size_t signature_length);
+soter_status_t soter_verify_final(soter_verify_ctx_t* ctx, const void* signature, size_t signature_length);
 
 /** @brief destroy verify context
  * @param [in] ctx pointer to verify context previously created by soter_verify_create

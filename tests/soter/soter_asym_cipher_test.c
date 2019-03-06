@@ -60,8 +60,7 @@ static void test_basic_encryption_flow(void)
         return;
     }
 
-    res = soter_asym_cipher_encrypt(ctx, test_data, sizeof(test_data), encrypted_data,
-                                    &encrypted_data_length);
+    res = soter_asym_cipher_encrypt(ctx, test_data, sizeof(test_data), encrypted_data, &encrypted_data_length);
     if (SOTER_SUCCESS != res) {
         testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_cipher_encrypt fail");
         soter_asym_cipher_destroy(ctx);
@@ -87,8 +86,11 @@ static void test_basic_encryption_flow(void)
         return;
     }
 
-    res = soter_asym_cipher_decrypt(decrypt_ctx, encrypted_data, encrypted_data_length,
-                                    decrypted_data, &decrypted_data_length);
+    res = soter_asym_cipher_decrypt(decrypt_ctx,
+                                    encrypted_data,
+                                    encrypted_data_length,
+                                    decrypted_data,
+                                    &decrypted_data_length);
     if (SOTER_SUCCESS != res) {
         testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_cipher_decrypt fail");
         soter_asym_cipher_destroy(ctx);
@@ -97,8 +99,8 @@ static void test_basic_encryption_flow(void)
         return;
     }
 
-    testsuite_fail_unless((sizeof(test_data) == decrypted_data_length) &&
-                              !(memcmp(test_data, decrypted_data, sizeof(test_data))),
+    testsuite_fail_unless((sizeof(test_data) == decrypted_data_length)
+                              && !(memcmp(test_data, decrypted_data, sizeof(test_data))),
                           "RSA OAEP decryption");
 
     key_data_length = sizeof(key_data);
@@ -149,25 +151,30 @@ void test_api(int key_length)
         return;
     }
 
-    testsuite_fail_unless(SOTER_SUCCESS == soter_rsa_key_pair_gen_export_key(
-                                               key_pair_ctx, key_data, &key_data_length, false),
+    testsuite_fail_unless(SOTER_SUCCESS
+                              == soter_rsa_key_pair_gen_export_key(key_pair_ctx,
+                                                                   key_data,
+                                                                   &key_data_length,
+                                                                   false),
                           "export private_key failed");
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_cipher_init(NULL, key_data,
-                                                                            key_data_length,
-                                                                            SOTER_ASYM_CIPHER_OAEP),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_init(NULL, key_data, key_data_length, SOTER_ASYM_CIPHER_OAEP),
                           "soter_asym_cipher_init: invalid context");
-    testsuite_fail_unless(
-        SOTER_FAIL == soter_asym_cipher_init(&ctx, NULL, key_data_length, SOTER_ASYM_CIPHER_OAEP),
-        "soter_asym_cipher_init: invalid key");
-    testsuite_fail_unless(SOTER_FAIL ==
-                              soter_asym_cipher_init(&ctx, key_data, 0, SOTER_ASYM_CIPHER_OAEP),
+    testsuite_fail_unless(SOTER_FAIL
+                              == soter_asym_cipher_init(&ctx, NULL, key_data_length, SOTER_ASYM_CIPHER_OAEP),
+                          "soter_asym_cipher_init: invalid key");
+    testsuite_fail_unless(SOTER_FAIL == soter_asym_cipher_init(&ctx, key_data, 0, SOTER_ASYM_CIPHER_OAEP),
                           "soter_asym_cipher_init: invalid key length");
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_asym_cipher_init(&ctx, key_data, key_data_length,
-                                                     (soter_asym_cipher_padding_t)0xffffffff),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_init(&ctx,
+                                                        key_data,
+                                                        key_data_length,
+                                                        (soter_asym_cipher_padding_t)0xffffffff),
                           "soter_asym_cipher_init: invalid algorithm type");
-    testsuite_fail_unless(NULL == soter_asym_cipher_create(key_data, key_data_length,
-                                                           (soter_asym_cipher_padding_t)0xffffffff),
+    testsuite_fail_unless(NULL
+                              == soter_asym_cipher_create(key_data,
+                                                          key_data_length,
+                                                          (soter_asym_cipher_padding_t)0xffffffff),
                           "soter_asym_cipher_create: invalid algorithm type");
 
     res = soter_asym_cipher_init(&ctx, key_data, key_data_length, SOTER_ASYM_CIPHER_OAEP);
@@ -175,67 +182,77 @@ void test_api(int key_length)
         testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_cipher_init fail");
         return;
     }
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_asym_cipher_encrypt(NULL, test_data, sizeof(test_data),
-                                                        encrypted_data, &encrypted_data_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_encrypt(NULL,
+                                                           test_data,
+                                                           sizeof(test_data),
+                                                           encrypted_data,
+                                                           &encrypted_data_length),
                           "soter_asym_cipher_encrypt: invalid context");
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_asym_cipher_encrypt(&ctx, NULL, sizeof(test_data),
-                                                        encrypted_data, &encrypted_data_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_encrypt(&ctx,
+                                                           NULL,
+                                                           sizeof(test_data),
+                                                           encrypted_data,
+                                                           &encrypted_data_length),
                           "soter_asym_cipher_encrypt: invalid input data");
-    testsuite_fail_unless(
-        SOTER_INVALID_PARAMETER ==
-            soter_asym_cipher_encrypt(&ctx, test_data, 0, encrypted_data, &encrypted_data_length),
-        "soter_asym_cipher_encrypt: invalid input data length");
-    testsuite_fail_unless(
-        SOTER_INVALID_PARAMETER ==
-            soter_asym_cipher_encrypt(&ctx, test_data, sizeof(test_data), encrypted_data, NULL),
-        "soter_asym_cipher_encrypt: invalid output data length");
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_encrypt(&ctx, test_data, 0, encrypted_data, &encrypted_data_length),
+                          "soter_asym_cipher_encrypt: invalid input data length");
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_encrypt(&ctx,
+                                                           test_data,
+                                                           sizeof(test_data),
+                                                           encrypted_data,
+                                                           NULL),
+                          "soter_asym_cipher_encrypt: invalid output data length");
 
     encrypted_data_length = 0;
-    res =
-        soter_asym_cipher_encrypt(&ctx, test_data, sizeof(test_data), NULL, &encrypted_data_length);
+    res = soter_asym_cipher_encrypt(&ctx, test_data, sizeof(test_data), NULL, &encrypted_data_length);
     testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (encrypted_data_length > 0),
                           "soter_asym_cipher_encrypt: get output size (NULL out buffer)");
 
     encrypted_data_length--;
-    res = soter_asym_cipher_encrypt(&ctx, test_data, sizeof(test_data), encrypted_data,
-                                    &encrypted_data_length);
+    res = soter_asym_cipher_encrypt(&ctx, test_data, sizeof(test_data), encrypted_data, &encrypted_data_length);
     testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (encrypted_data_length > 0),
                           "soter_asym_cipher_encrypt: get output size (small out buffer)");
 
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_asym_cipher_encrypt(&ctx, test_data, 2048, encrypted_data,
-                                                        &encrypted_data_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_encrypt(&ctx, test_data, 2048, encrypted_data, &encrypted_data_length),
                           "soter_asym_cipher_encrypt: plaintext too large");
 
-    res = soter_asym_cipher_encrypt(&ctx, test_data, sizeof(test_data), encrypted_data,
-                                    &encrypted_data_length);
+    res = soter_asym_cipher_encrypt(&ctx, test_data, sizeof(test_data), encrypted_data, &encrypted_data_length);
     if (SOTER_SUCCESS != res) {
         testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_cipher_encrypt fail");
         return;
     }
 
     key_data_length = sizeof(key_data);
-    testsuite_fail_unless(SOTER_SUCCESS == soter_rsa_key_pair_gen_export_key(
-                                               key_pair_ctx, key_data, &key_data_length, true),
+    testsuite_fail_unless(SOTER_SUCCESS
+                              == soter_rsa_key_pair_gen_export_key(key_pair_ctx,
+                                                                   key_data,
+                                                                   &key_data_length,
+                                                                   true),
                           "export private_key failed");
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_cipher_init(NULL, key_data,
-                                                                            key_data_length,
-                                                                            SOTER_ASYM_CIPHER_OAEP),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_init(NULL, key_data, key_data_length, SOTER_ASYM_CIPHER_OAEP),
                           "soter_asym_cipher_init: invalid context");
-    testsuite_fail_unless(SOTER_FAIL == soter_asym_cipher_init(&decrypt_ctx, NULL, key_data_length,
-                                                               SOTER_ASYM_CIPHER_OAEP),
+    testsuite_fail_unless(SOTER_FAIL
+                              == soter_asym_cipher_init(&decrypt_ctx, NULL, key_data_length, SOTER_ASYM_CIPHER_OAEP),
                           "soter_asym_cipher_init: invalid key");
-    testsuite_fail_unless(
-        SOTER_FAIL == soter_asym_cipher_init(&decrypt_ctx, key_data, 0, SOTER_ASYM_CIPHER_OAEP),
-        "soter_asym_cipher_init: invalid key length");
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_asym_cipher_init(&decrypt_ctx, key_data, key_data_length,
-                                                     (soter_asym_cipher_padding_t)0xffffffff),
+    testsuite_fail_unless(SOTER_FAIL
+                              == soter_asym_cipher_init(&decrypt_ctx, key_data, 0, SOTER_ASYM_CIPHER_OAEP),
+                          "soter_asym_cipher_init: invalid key length");
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_init(&decrypt_ctx,
+                                                        key_data,
+                                                        key_data_length,
+                                                        (soter_asym_cipher_padding_t)0xffffffff),
                           "soter_asym_cipher_init: invalid algorithm type");
-    testsuite_fail_unless(NULL == soter_asym_cipher_create(key_data, key_data_length,
-                                                           (soter_asym_cipher_padding_t)0xffffffff),
+    testsuite_fail_unless(NULL
+                              == soter_asym_cipher_create(key_data,
+                                                          key_data_length,
+                                                          (soter_asym_cipher_padding_t)0xffffffff),
                           "soter_asym_cipher_create: invalid algorithm type");
 
     res = soter_asym_cipher_init(&decrypt_ctx, key_data, key_data_length, SOTER_ASYM_CIPHER_OAEP);
@@ -243,51 +260,73 @@ void test_api(int key_length)
         testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_cipher_init fail");
         return;
     }
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_asym_cipher_decrypt(NULL, encrypted_data, encrypted_data_length,
-                                                        decrypted_data, &decrypted_data_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_decrypt(NULL,
+                                                           encrypted_data,
+                                                           encrypted_data_length,
+                                                           decrypted_data,
+                                                           &decrypted_data_length),
                           "soter_asym_cipher_decrypt: invalid context");
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_asym_cipher_decrypt(&decrypt_ctx, NULL, encrypted_data_length,
-                                                        decrypted_data, &decrypted_data_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_decrypt(&decrypt_ctx,
+                                                           NULL,
+                                                           encrypted_data_length,
+                                                           decrypted_data,
+                                                           &decrypted_data_length),
                           "soter_asym_cipher_decrypt: invalid input data");
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_asym_cipher_decrypt(&decrypt_ctx, encrypted_data, 0,
-                                                        decrypted_data, &decrypted_data_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_decrypt(&decrypt_ctx,
+                                                           encrypted_data,
+                                                           0,
+                                                           decrypted_data,
+                                                           &decrypted_data_length),
                           "soter_asym_cipher_decrypt: invalid input data length");
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_asym_cipher_decrypt(&decrypt_ctx, encrypted_data,
-                                                        encrypted_data_length, decrypted_data,
-                                                        NULL),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_decrypt(&decrypt_ctx,
+                                                           encrypted_data,
+                                                           encrypted_data_length,
+                                                           decrypted_data,
+                                                           NULL),
                           "soter_asym_cipher_decrypt: invalid output data length");
 
     decrypted_data_length = 0;
-    res = soter_asym_cipher_decrypt(&decrypt_ctx, encrypted_data, encrypted_data_length, NULL,
+    res = soter_asym_cipher_decrypt(&decrypt_ctx,
+                                    encrypted_data,
+                                    encrypted_data_length,
+                                    NULL,
                                     &decrypted_data_length);
     testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (decrypted_data_length > 0),
                           "soter_asym_cipher_decrypt: get output size (NULL out buffer)");
 
     decrypted_data_length = 0;
-    res = soter_asym_cipher_decrypt(&decrypt_ctx, encrypted_data, encrypted_data_length,
-                                    decrypted_data, &decrypted_data_length);
+    res = soter_asym_cipher_decrypt(&decrypt_ctx,
+                                    encrypted_data,
+                                    encrypted_data_length,
+                                    decrypted_data,
+                                    &decrypted_data_length);
     testsuite_fail_unless((SOTER_BUFFER_TOO_SMALL == res) && (decrypted_data_length > 0),
                           "soter_asym_cipher_decrypt: get output size (small out buffer)");
 
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_asym_cipher_decrypt(&decrypt_ctx, encrypted_data,
-                                                        encrypted_data_length - 1, decrypted_data,
-                                                        &decrypted_data_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_decrypt(&decrypt_ctx,
+                                                           encrypted_data,
+                                                           encrypted_data_length - 1,
+                                                           decrypted_data,
+                                                           &decrypted_data_length),
                           "soter_asym_cipher_decrypt: ciphertext too small");
 
-    res = soter_asym_cipher_decrypt(&decrypt_ctx, encrypted_data, encrypted_data_length,
-                                    decrypted_data, &decrypted_data_length);
+    res = soter_asym_cipher_decrypt(&decrypt_ctx,
+                                    encrypted_data,
+                                    encrypted_data_length,
+                                    decrypted_data,
+                                    &decrypted_data_length);
     if (SOTER_SUCCESS != res) {
         testsuite_fail_unless(SOTER_SUCCESS == res, "soter_asym_cipher_decrypt fail");
         return;
     }
 
-    testsuite_fail_if((sizeof(test_data) != decrypted_data_length) ||
-                          (memcmp(test_data, decrypted_data, sizeof(test_data))),
+    testsuite_fail_if((sizeof(test_data) != decrypted_data_length)
+                          || (memcmp(test_data, decrypted_data, sizeof(test_data))),
                       "soter_asym_cipher: normal value");
 
     testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_cipher_cleanup(NULL),

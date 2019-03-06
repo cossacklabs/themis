@@ -60,17 +60,18 @@ soter_status_t soter_ec_import_key(EVP_PKEY* pkey, const void* key, const size_t
     }
     switch (hdr->tag[0]) {
     case 'R':
-        return soter_ec_priv_key_to_engine_specific(hdr, key_length,
+        return soter_ec_priv_key_to_engine_specific(hdr,
+                                                    key_length,
                                                     ((soter_engine_specific_ec_key_t**)&pkey));
     case 'U':
-        return soter_ec_pub_key_to_engine_specific(hdr, key_length,
+        return soter_ec_pub_key_to_engine_specific(hdr,
+                                                   key_length,
                                                    ((soter_engine_specific_ec_key_t**)&pkey));
     }
     return SOTER_INVALID_PARAMETER;
 }
 
-soter_status_t soter_ec_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length,
-                                   bool isprivate)
+soter_status_t soter_ec_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate)
 {
     EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
     if (!pkey) {
@@ -78,8 +79,10 @@ soter_status_t soter_ec_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key
     }
     if (isprivate) {
         return soter_engine_specific_to_ec_priv_key((const soter_engine_specific_ec_key_t*)pkey,
-                                                    (soter_container_hdr_t*)key, key_length);
+                                                    (soter_container_hdr_t*)key,
+                                                    key_length);
     }
     return soter_engine_specific_to_ec_pub_key((const soter_engine_specific_ec_key_t*)pkey,
-                                               (soter_container_hdr_t*)key, key_length);
+                                               (soter_container_hdr_t*)key,
+                                               key_length);
 }

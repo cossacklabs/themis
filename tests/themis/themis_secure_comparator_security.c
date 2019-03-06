@@ -70,8 +70,12 @@ static themis_status_t ed_sign(uint8_t pos, const uint8_t* scalar, uint8_t* sign
     return res;
 }
 
-static themis_status_t ed_dbl_base_sign(uint8_t pos, const uint8_t* scalar1, const uint8_t* scalar2,
-                                        const ge_p3* base1, const ge_p3* base2, uint8_t* signature)
+static themis_status_t ed_dbl_base_sign(uint8_t pos,
+                                        const uint8_t* scalar1,
+                                        const uint8_t* scalar2,
+                                        const ge_p3* base1,
+                                        const ge_p3* base2,
+                                        uint8_t* signature)
 {
     uint8_t r1[ED25519_GE_LENGTH];
     uint8_t r2[ED25519_GE_LENGTH];
@@ -126,8 +130,7 @@ static themis_status_t ed_dbl_base_sign(uint8_t pos, const uint8_t* scalar1, con
     return res;
 }
 
-static themis_status_t ed_point_sign(uint8_t pos, const uint8_t* scalar, const ge_p3* point,
-                                     uint8_t* signature)
+static themis_status_t ed_point_sign(uint8_t pos, const uint8_t* scalar, const ge_p3* point, uint8_t* signature)
 {
     uint8_t r[ED25519_GE_LENGTH];
     ge_p3 R;
@@ -202,8 +205,11 @@ static void corrupt_alice_step1(secure_comparator_t* alice, void* output)
     ed_sign(2, alice->rand3, ((unsigned char*)output) + (4 * ED25519_GE_LENGTH));
 }
 
-static void corrupt_bob_step2(secure_comparator_t* bob, const void* input, size_t input_length,
-                              void* output, size_t* output_length)
+static void corrupt_bob_step2(secure_comparator_t* bob,
+                              const void* input,
+                              size_t input_length,
+                              void* output,
+                              size_t* output_length)
 {
     /* Let's assume bob is malicious and uses zeroes instead of random numbers */
 
@@ -216,8 +222,8 @@ static void corrupt_bob_step2(secure_comparator_t* bob, const void* input, size_
     ge_frombytes_vartime(&g2a, (const unsigned char*)input);
     ge_frombytes_vartime(&g3a, ((const unsigned char*)input) + (3 * ED25519_GE_LENGTH));
 
-    if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER !=
-        secure_comparator_proceed_compare(bob, input, input_length, output, output_length)) {
+    if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER
+        != secure_comparator_proceed_compare(bob, input, input_length, output, output_length)) {
         testsuite_fail_if(true, "secure_comparator_proceed_compare failed");
         return;
     }
@@ -245,7 +251,11 @@ static void corrupt_bob_step2(secure_comparator_t* bob, const void* input, size_
 
     ge_p3_tobytes(((unsigned char*)output) + (6 * ED25519_GE_LENGTH), &(bob->P));
     ge_p3_tobytes(((unsigned char*)output) + (7 * ED25519_GE_LENGTH), &(bob->Q));
-    ed_dbl_base_sign(5, bob->rand, bob->secret, &(bob->g2), &(bob->g3),
+    ed_dbl_base_sign(5,
+                     bob->rand,
+                     bob->secret,
+                     &(bob->g2),
+                     &(bob->g3),
                      ((unsigned char*)output) + (8 * ED25519_GE_LENGTH));
 }
 
@@ -267,8 +277,7 @@ void secure_comparator_security_test(void)
         return;
     }
 
-    if (THEMIS_SUCCESS !=
-        secure_comparator_append_secret(alice, alice_secret, sizeof(alice_secret))) {
+    if (THEMIS_SUCCESS != secure_comparator_append_secret(alice, alice_secret, sizeof(alice_secret))) {
         testsuite_fail_if(true, "secure_comparator_append_secret failed");
         return;
     }
@@ -280,8 +289,8 @@ void secure_comparator_security_test(void)
 
     current_length = sizeof(shared_mem);
 
-    if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER !=
-        secure_comparator_begin_compare(alice, shared_mem, &current_length)) {
+    if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER
+        != secure_comparator_begin_compare(alice, shared_mem, &current_length)) {
         testsuite_fail_if(true, "secure_comparator_begin_compare failed");
         return;
     }
@@ -293,9 +302,8 @@ void secure_comparator_security_test(void)
     current_length = output_length;
     output_length = sizeof(shared_mem);
 
-    if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER !=
-        secure_comparator_proceed_compare(alice, shared_mem, current_length, shared_mem,
-                                          &output_length)) {
+    if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER
+        != secure_comparator_proceed_compare(alice, shared_mem, current_length, shared_mem, &output_length)) {
         testsuite_fail_if(true, "secure_comparator_proceed_compare failed");
         return;
     }
@@ -303,9 +311,8 @@ void secure_comparator_security_test(void)
     current_length = output_length;
     output_length = sizeof(shared_mem);
 
-    if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER !=
-        secure_comparator_proceed_compare(bob, shared_mem, current_length, shared_mem,
-                                          &output_length)) {
+    if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER
+        != secure_comparator_proceed_compare(bob, shared_mem, current_length, shared_mem, &output_length)) {
         testsuite_fail_if(true, "secure_comparator_proceed_compare failed");
         return;
     }
@@ -313,14 +320,14 @@ void secure_comparator_security_test(void)
     current_length = output_length;
     output_length = sizeof(shared_mem);
 
-    if (THEMIS_SUCCESS != secure_comparator_proceed_compare(alice, shared_mem, current_length,
-                                                            shared_mem, &output_length)) {
+    if (THEMIS_SUCCESS
+        != secure_comparator_proceed_compare(alice, shared_mem, current_length, shared_mem, &output_length)) {
         testsuite_fail_if(true, "secure_comparator_proceed_compare failed");
         return;
     }
 
-    testsuite_fail_unless((THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(alice)) &&
-                              (THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(bob)),
+    testsuite_fail_unless((THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(alice))
+                              && (THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(bob)),
                           "compare result no match");
     secure_comparator_destroy(alice);
     secure_comparator_destroy(bob);
