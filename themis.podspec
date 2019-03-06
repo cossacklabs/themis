@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.10.3"
+    s.version = "0.10.4"
     s.summary = "Data security library for network communication and data storage for iOS and mac OS"
     s.description = "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern development practices, with high level OOP wrappers for iOS / macOS, NodeJS, Go, Ruby, Python, PHP and Java / Android. It is designed with ease of use in mind, high security and cross-platform availability."
     s.homepage = "https://cossacklabs.com"
@@ -16,7 +16,10 @@ Pod::Spec.new do |s|
     # https://github.com/cossacklabs/themis/pull/393
     # https://github.com/cossacklabs/themis/pull/394
     # this is a latest master commit as for today
-    s.source = { :git => "https://github.com/cossacklabs/themis.git", :commit => '742b6550ba1d0c3c034f15494985a169e1bb3ae4'}
+    #s.source = { :git => "https://github.com/cossacklabs/themis.git", :commit => '742b6550ba1d0c3c034f15494985a169e1bb3ae4'}
+  
+    # temporary for tests, change to master after merging branch
+    s.source = { :git => "https://github.com/cossacklabs/themis.git", :branch => 'vxtl/ios-header'}
 
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
@@ -48,7 +51,7 @@ Pod::Spec.new do |s|
             ss.header_mappings_dir = "src"
             ss.header_dir = 'src'
             ss.preserve_paths = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/openssl/*.h"
-            ss.public_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/openssl/*.h"
+            ss.private_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/openssl/*.h"
         end
         
         # don't use as independent target
@@ -79,7 +82,7 @@ Pod::Spec.new do |s|
             ss.header_mappings_dir = "src"
             ss.header_dir = 'src'
             ss.preserve_paths = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/boringssl/*.h"
-            ss.public_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/boringssl/*.h"
+            ss.private_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/boringssl/*.h"
         end
 
         # don't use as independent target
