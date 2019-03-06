@@ -16,8 +16,16 @@
 
 CC ?= /usr/bin/gcc
 
-CFLAGS  += -Wall -Wno-unused-variable -Wno-unused-but-set-variable
+CFLAGS  += -Wall -Wno-unused
 LDFLAGS += -lm
+
+ifeq (yes,$(shell $(CC) --version | grep -qi clang && echo yes))
+CFLAGS += -Wno-absolute-value
+endif
+
+ifeq (yes,$(shell $(CC) --version | grep -qi gcc && echo yes))
+CFLAGS += -Wno-misleading-indentation
+endif
 
 SRCDIR = src
 OBJDIR = obj
