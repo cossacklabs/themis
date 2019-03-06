@@ -103,10 +103,10 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCompare_jniBegin(
 	{
 		return compare_data;
 	}
-	else
-	{
+	
+	
 		return NULL;
-	}
+	
 }
 
 static void throwSecureCompareException(JNIEnv *env)
@@ -127,7 +127,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCompare_jniProcee
 
 	themis_status_t res = THEMIS_FAIL;
 	size_t output_length = 0;
-	jbyteArray output;
+	jbyteArray output = NULL;
 	jbyte *output_buf = NULL;
 
 	if (NULL == ctx)
@@ -179,15 +179,15 @@ err:
 	{
 		return output;
 	}
-	else
-	{
+	
+	
 		if (THEMIS_SUCCESS != res)
 		{
 			throwSecureCompareException(env);
 		}
 
 		return NULL;
-	}
+	
 }
 
 JNIEXPORT jint JNICALL Java_com_cossacklabs_themis_SecureCompare_jniGetResult(JNIEnv *env, jobject thiz)

@@ -242,10 +242,10 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniSave(J
 	{
 		return state;
 	}
-	else
-	{
+	
+	
 		return NULL;
-	}
+	
 }
 
 JNIEXPORT jboolean JNICALL Java_com_cossacklabs_themis_SecureSession_jniIsEstablished(JNIEnv *env, jobject thiz)
@@ -261,10 +261,10 @@ JNIEXPORT jboolean JNICALL Java_com_cossacklabs_themis_SecureSession_jniIsEstabl
 	{
 		return JNI_TRUE;
 	}
-	else
-	{
+	
+	
 		return JNI_FALSE;
-	}
+	
 }
 
 JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniWrap(JNIEnv *env, jobject thiz, jbyteArray data)

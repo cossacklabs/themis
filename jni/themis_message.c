@@ -153,8 +153,8 @@ err:
 	{
 		return output;
 	}
-	else
-	{
+	
+	
 		return NULL;
-	}
+	
 }
