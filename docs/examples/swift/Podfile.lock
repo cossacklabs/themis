@@ -1,29 +1,37 @@
 PODS:
   - GRKOpenSSLFramework (1.0.2.16)
-  - themis (0.10.3):
-    - themis/themis-openssl (= 0.10.3)
-  - themis/themis-openssl (0.10.3):
+  - themis (0.10.5):
+    - themis/themis-openssl (= 0.10.5)
+  - themis/themis-openssl (0.10.5):
     - GRKOpenSSLFramework (~> 1.0.1)
-    - themis/themis-openssl/core (= 0.10.3)
-    - themis/themis-openssl/objcwrapper (= 0.10.3)
-  - themis/themis-openssl/core (0.10.3):
+    - themis/themis-openssl/core (= 0.10.5)
+    - themis/themis-openssl/objcwrapper (= 0.10.5)
+  - themis/themis-openssl/core (0.10.5):
     - GRKOpenSSLFramework (~> 1.0.1)
-  - themis/themis-openssl/objcwrapper (0.10.3):
+  - themis/themis-openssl/objcwrapper (0.10.5):
     - GRKOpenSSLFramework (~> 1.0.1)
     - themis/themis-openssl/core
 
 DEPENDENCIES:
-  - themis (= 0.10.3)
+  - themis (from `https://gist.githubusercontent.com/vixentael/ddd4b19dfd354b24ad7fcf022ffaff4b/raw/7a3fd60f3367640917c6aaec82e58318ac39d16d/themis.podspec`)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - GRKOpenSSLFramework
-    - themis
+
+EXTERNAL SOURCES:
+  themis:
+    :podspec: https://gist.githubusercontent.com/vixentael/ddd4b19dfd354b24ad7fcf022ffaff4b/raw/7a3fd60f3367640917c6aaec82e58318ac39d16d/themis.podspec
+
+CHECKOUT OPTIONS:
+  themis:
+    :commit: d91d2f58f6765067f77747dddf2817b863503b55
+    :git: https://github.com/cossacklabs/themis.git
 
 SPEC CHECKSUMS:
   GRKOpenSSLFramework: 35944e317e6336b2944ad70b059d84db6b2d8532
-  themis: bdbb1d0baeee19ff213dc7355e9e2b48debea359
+  themis: 47e2e513d090407b3c3c3b89253fef38a0209cb7
 
-PODFILE CHECKSUM: f5f6e45353fa284e162f817a401303a38430bc12
+PODFILE CHECKSUM: d63205eaf0fb10330df50e675d3e09b5611710f4
 
 COCOAPODS: 1.5.3

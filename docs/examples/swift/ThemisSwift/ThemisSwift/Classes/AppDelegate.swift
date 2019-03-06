@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import themis
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
