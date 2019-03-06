@@ -487,9 +487,10 @@ themis_secure_message_encrypter_init(const uint8_t* private_key, const size_t pr
         THEMIS_IF_FAIL_(ctx->ctx.rsa_encrypter, free(ctx));
         ctx->alg = alg;
         return ctx;
+    default:
+        free(ctx);
+        return NULL;
     }
-    free(ctx);
-    return NULL;
 }
 themis_status_t themis_secure_message_encrypter_proceed(themis_secure_message_encrypter_t* ctx,
                                                         const uint8_t* message,
@@ -557,9 +558,10 @@ themis_secure_message_decrypter_init(const uint8_t* private_key, const size_t pr
         THEMIS_CHECK__(ctx->ctx.rsa_encrypter, free(ctx); return NULL);
         ctx->alg = alg;
         return ctx;
+    default:
+        free(ctx);
+        return NULL;
     }
-    free(ctx);
-    return NULL;
 }
 
 themis_status_t themis_secure_message_decrypter_proceed(themis_secure_message_decrypter_t* ctx,
