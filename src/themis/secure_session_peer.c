@@ -27,9 +27,13 @@ void secure_session_peer_cleanup(secure_session_peer_t* peer)
     memset(peer, 0, sizeof(secure_session_peer_t));
 }
 
-themis_status_t secure_session_peer_init(secure_session_peer_t* peer, const void* id, size_t id_len,
-                                         const void* ecdh_key, size_t ecdh_key_len,
-                                         const void* sign_key, size_t sign_key_len)
+themis_status_t secure_session_peer_init(secure_session_peer_t* peer,
+                                         const void* id,
+                                         size_t id_len,
+                                         const void* ecdh_key,
+                                         size_t ecdh_key_len,
+                                         const void* sign_key,
+                                         size_t sign_key_len)
 {
     size_t total_len = id_len + sign_key_len;
 

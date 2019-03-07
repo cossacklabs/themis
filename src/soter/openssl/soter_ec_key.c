@@ -101,7 +101,8 @@ static size_t bn_encode(const BIGNUM* bn, uint8_t* buffer, size_t length)
 }
 
 soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_ec_key_t* engine_key,
-                                                   soter_container_hdr_t* key, size_t* key_length)
+                                                   soter_container_hdr_t* key,
+                                                   size_t* key_length)
 {
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
     soter_status_t res;
@@ -147,9 +148,13 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
         goto err;
     }
 
-    if ((output_length - sizeof(soter_container_hdr_t)) !=
-        EC_POINT_point2oct(group, Q, POINT_CONVERSION_COMPRESSED, (unsigned char*)(key + 1),
-                           output_length - sizeof(soter_container_hdr_t), NULL)) {
+    if ((output_length - sizeof(soter_container_hdr_t))
+        != EC_POINT_point2oct(group,
+                              Q,
+                              POINT_CONVERSION_COMPRESSED,
+                              (unsigned char*)(key + 1),
+                              output_length - sizeof(soter_container_hdr_t),
+                              NULL)) {
         res = SOTER_FAIL;
         goto err;
     }
@@ -167,9 +172,9 @@ err:
     return res;
 }
 
-soter_status_t
-soter_engine_specific_to_ec_priv_key(const soter_engine_specific_ec_key_t* engine_key,
-                                     soter_container_hdr_t* key, size_t* key_length)
+soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_ec_key_t* engine_key,
+                                                    soter_container_hdr_t* key,
+                                                    size_t* key_length)
 {
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
     soter_status_t res;
@@ -215,8 +220,8 @@ soter_engine_specific_to_ec_priv_key(const soter_engine_specific_ec_key_t* engin
         goto err;
     }
 
-    if ((output_length - sizeof(soter_container_hdr_t)) !=
-        bn_encode(d, (unsigned char*)(key + 1), output_length - sizeof(soter_container_hdr_t))) {
+    if ((output_length - sizeof(soter_container_hdr_t))
+        != bn_encode(d, (unsigned char*)(key + 1), output_length - sizeof(soter_container_hdr_t))) {
         res = SOTER_FAIL;
         goto err;
     }
@@ -297,8 +302,12 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
         goto err;
     }
 
-    if (1 != EC_POINT_oct2point(group, Q, (const unsigned char*)(key + 1),
-                                (int)(key_length - sizeof(soter_container_hdr_t)), NULL)) {
+    if (1
+        != EC_POINT_oct2point(group,
+                              Q,
+                              (const unsigned char*)(key + 1),
+                              (int)(key_length - sizeof(soter_container_hdr_t)),
+                              NULL)) {
         res = SOTER_INVALID_PARAMETER;
         goto err;
     }
@@ -384,8 +393,7 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
         goto err;
     }
 
-    d = BN_bin2bn((const unsigned char*)(key + 1),
-                  (int)(key_length - sizeof(soter_container_hdr_t)), NULL);
+    d = BN_bin2bn((const unsigned char*)(key + 1), (int)(key_length - sizeof(soter_container_hdr_t)), NULL);
     if (NULL == d) {
         res = SOTER_NO_MEMORY;
         goto err;
