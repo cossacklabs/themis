@@ -11,9 +11,10 @@ keywords = ["crypto", "Themis"]
 categories = ["development-tools::build-utils"]
 license = "Apache-2.0"
 include = [
-    "/LICENSE",
     "/Cargo.toml",
-    "/src/**/*",
+    "/LICENSE",
+    "/README.md",
+    "/src/**/*.rs",
     "/themis/LICENSE",
     "/themis/Makefile",
     "/themis/src/soter/**/*",
