@@ -18,13 +18,12 @@ DEPENDENCIES:
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - GRKOpenSSLFramework
-  https://github.com/cossacklabs/Podspecs.git:
     - themis
 
 SPEC CHECKSUMS:
   GRKOpenSSLFramework: 35944e317e6336b2944ad70b059d84db6b2d8532
-  themis: 7e0ee3b12ba243c11ac95f25f552df6481740ce0
+  themis: 56654bb58700ece55439716058943f8f435b228d
 
-PODFILE CHECKSUM: 2ce293e8232afcf7e23e5943358ba0e39583e2a0
+PODFILE CHECKSUM: ccacdf481a158d5d83c3c7801294580d57b9928d
 
 COCOAPODS: 1.5.3

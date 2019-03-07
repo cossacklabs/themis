@@ -43,10 +43,12 @@ $(TEST_OBJ_PATH)/%.opp: $(TEST_SRC_PATH)/%.cpp
 FMT_FIXUP += $(THEMIS_TEST_FMT_FIXUP) $(SOTER_TEST_FMT_FIXUP)
 FMT_CHECK += $(THEMIS_TEST_FMT_CHECK) $(SOTER_TEST_FMT_CHECK)
 
-$(TEST_OBJ_PATH)/%.c.fmt_fixup $(TEST_OBJ_PATH)/%.h.fmt_fixup: \
+$(TEST_OBJ_PATH)/%.c.fmt_fixup   $(TEST_OBJ_PATH)/%.h.fmt_fixup \
+$(TEST_OBJ_PATH)/%.cpp.fmt_fixup $(TEST_OBJ_PATH)/%.hpp.fmt_fixup: \
     CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) -I$(TEST_SRC_PATH) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
 
-$(TEST_OBJ_PATH)/%.c.fmt_check $(TEST_OBJ_PATH)/%.h.fmt_check: \
+$(TEST_OBJ_PATH)/%.c.fmt_check   $(TEST_OBJ_PATH)/%.h.fmt_check \
+$(TEST_OBJ_PATH)/%.cpp.fmt_check $(TEST_OBJ_PATH)/%.hpp.fmt_check: \
     CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) -I$(TEST_SRC_PATH) 2>/dev/null && touch $@
 
 $(TEST_OBJ_PATH)/%.fmt_fixup: $(TEST_SRC_PATH)/%

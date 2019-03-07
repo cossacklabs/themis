@@ -242,6 +242,7 @@ endif
 ifndef ERROR
 include src/soter/soter.mk
 include src/themis/themis.mk
+include src/wrappers/themis/jsthemis/jsthemis.mk
 include jni/themis_jni.mk
 endif
 
