@@ -21,21 +21,23 @@
 
 #include <themis/themis.h>
 
-namespace jsthemis {
+namespace jsthemis
+{
 
-  namespace Errors {
+namespace Errors
+{
 
-    void Init(v8::Handle<v8::Object> exports);
+void Init(v8::Handle<v8::Object> exports);
 
-  } // namespace Errors
+} // namespace Errors
 
-  void ThrowError(const char* domain, themis_status_t status);
+void ThrowError(const char* domain, themis_status_t status);
 
-  void ThrowParameterError(const char* domain, const char* description);
+void ThrowParameterError(const char* domain, const char* description);
 
-  void ThrowSecureSessionError(const char* domain, themis_status_t status);
+void ThrowSecureSessionError(const char* domain, themis_status_t status);
 
-  void ThrowSecureComparatorError(const char* domain, themis_status_t status);
+void ThrowSecureComparatorError(const char* domain, themis_status_t status);
 
 } // namespace jsthemis
 
