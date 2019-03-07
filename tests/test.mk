@@ -64,16 +64,13 @@ $(TEST_OBJ_PATH)/%.fmt_check: $(TEST_SRC_PATH)/%
 PYTHON2_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis2_test.sh
 PYTHON3_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis3_test.sh
 
-nist_rng_test_suite: CMD = $(MAKE) -C $(NIST_STS_DIR)
-
 nist_rng_test_suite:
 	@mkdir -p $(NIST_STS_DIR)/obj
 	@cd $(NIST_STS_DIR)/experiments && ./create-dir-script
-	@$(BUILD_CMD)
+	@$(MAKE) --quiet -C $(NIST_STS_DIR)
 
 nist_rng_test_suite_clean: 
-	@echo "cleaning nist suit"
-	@make clean -C $(NIST_STS_DIR)
+	@$(MAKE) --quiet -C $(NIST_STS_DIR) clean
 
 soter_test: CMD = $(CC) -o $(TEST_BIN_PATH)/soter_test $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) -L$(BIN_PATH) -lsoter $(LDFLAGS) $(COVERLDFLAGS)
 

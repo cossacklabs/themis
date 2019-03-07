@@ -160,8 +160,7 @@ soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx)
     return SOTER_FAIL;
 }
 
-soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void* key,
-                                        size_t key_length)
+soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void* key, size_t key_length)
 {
     const soter_container_hdr_t* hdr = key;
     EVP_PKEY* pkey;
@@ -186,17 +185,21 @@ soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void
 
     switch (hdr->tag[0]) {
     case 'R':
-        return soter_ec_priv_key_to_engine_specific(hdr, key_length,
+        return soter_ec_priv_key_to_engine_specific(hdr,
+                                                    key_length,
                                                     ((soter_engine_specific_ec_key_t**)&pkey));
     case 'U':
-        return soter_ec_pub_key_to_engine_specific(hdr, key_length,
+        return soter_ec_pub_key_to_engine_specific(hdr,
+                                                   key_length,
                                                    ((soter_engine_specific_ec_key_t**)&pkey));
     default:
         return SOTER_INVALID_PARAMETER;
     }
 }
 
-soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx, void* key, size_t* key_length,
+soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx,
+                                        void* key,
+                                        size_t* key_length,
                                         bool isprivate)
 {
     EVP_PKEY* pkey;
@@ -217,15 +220,19 @@ soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx, void* key,
 
     if (isprivate) {
         return soter_engine_specific_to_ec_priv_key((const soter_engine_specific_ec_key_t*)pkey,
-                                                    (soter_container_hdr_t*)key, key_length);
+                                                    (soter_container_hdr_t*)key,
+                                                    key_length);
     }
 
     return soter_engine_specific_to_ec_pub_key((const soter_engine_specific_ec_key_t*)pkey,
-                                               (soter_container_hdr_t*)key, key_length);
+                                               (soter_container_hdr_t*)key,
+                                               key_length);
 }
 
-soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx, const void* peer_key,
-                                    size_t peer_key_length, void* shared_secret,
+soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
+                                    const void* peer_key,
+                                    size_t peer_key_length,
+                                    void* shared_secret,
                                     size_t* shared_secret_length)
 {
     EVP_PKEY* peer_pkey = EVP_PKEY_new();
@@ -241,9 +248,9 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx, const void* pe
         return SOTER_INVALID_PARAMETER;
     }
 
-    res =
-        soter_ec_pub_key_to_engine_specific((const soter_container_hdr_t*)peer_key, peer_key_length,
-                                            ((soter_engine_specific_ec_key_t**)&peer_pkey));
+    res = soter_ec_pub_key_to_engine_specific((const soter_container_hdr_t*)peer_key,
+                                              peer_key_length,
+                                              ((soter_engine_specific_ec_key_t**)&peer_pkey));
     if (SOTER_SUCCESS != res) {
         EVP_PKEY_free(peer_pkey);
         return res;
@@ -270,8 +277,7 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx, const void* pe
         return SOTER_BUFFER_TOO_SMALL;
     }
 
-    if (1 != EVP_PKEY_derive(asym_ka_ctx->pkey_ctx, (unsigned char*)shared_secret,
-                             shared_secret_length)) {
+    if (1 != EVP_PKEY_derive(asym_ka_ctx->pkey_ctx, (unsigned char*)shared_secret, shared_secret_length)) {
         EVP_PKEY_free(peer_pkey);
         return SOTER_FAIL;
     }

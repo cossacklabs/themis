@@ -36,12 +36,18 @@ static int secure_cell_seal()
 {
     uint8_t* encrypted_message;
     size_t encrypted_message_length = 0;
-    if (themis_secure_cell_encrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0,
-                                        (uint8_t*)message, sizeof(message), NULL,
-                                        &encrypted_message_length) != THEMIS_BUFFER_TOO_SMALL ||
-        encrypted_message_length == 0) {
-        testsuite_fail_if(
-            true, "themis_secure_cell_encrypt_seal (encrypted_message_length determination) fail");
+    if (themis_secure_cell_encrypt_seal((uint8_t*)passwd,
+                                        sizeof(passwd),
+                                        NULL,
+                                        0,
+                                        (uint8_t*)message,
+                                        sizeof(message),
+                                        NULL,
+                                        &encrypted_message_length)
+            != THEMIS_BUFFER_TOO_SMALL
+        || encrypted_message_length == 0) {
+        testsuite_fail_if(true,
+                          "themis_secure_cell_encrypt_seal (encrypted_message_length determination) fail");
         return -1;
     }
     encrypted_message = malloc(encrypted_message_length);
@@ -49,9 +55,15 @@ static int secure_cell_seal()
         testsuite_fail_if(true, "encrypted_message malloc fail");
         return -2;
     }
-    if (themis_secure_cell_encrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0,
-                                        (uint8_t*)message, sizeof(message), encrypted_message,
-                                        &encrypted_message_length) != THEMIS_SUCCESS) {
+    if (themis_secure_cell_encrypt_seal((uint8_t*)passwd,
+                                        sizeof(passwd),
+                                        NULL,
+                                        0,
+                                        (uint8_t*)message,
+                                        sizeof(message),
+                                        encrypted_message,
+                                        &encrypted_message_length)
+        != THEMIS_SUCCESS) {
         testsuite_fail_if(true, "themis_secure_cell_encrypt_seal fail");
         free(encrypted_message);
         return -3;
@@ -60,12 +72,18 @@ static int secure_cell_seal()
     uint8_t* decrypted_message;
     size_t decrypted_message_length = 0;
 
-    if (themis_secure_cell_decrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0,
-                                        encrypted_message, encrypted_message_length, NULL,
-                                        &decrypted_message_length) != THEMIS_BUFFER_TOO_SMALL ||
-        decrypted_message_length == 0) {
-        testsuite_fail_if(
-            true, "themis_secure_cell_decrypt_seal (decrypted_message_length determination) fail");
+    if (themis_secure_cell_decrypt_seal((uint8_t*)passwd,
+                                        sizeof(passwd),
+                                        NULL,
+                                        0,
+                                        encrypted_message,
+                                        encrypted_message_length,
+                                        NULL,
+                                        &decrypted_message_length)
+            != THEMIS_BUFFER_TOO_SMALL
+        || decrypted_message_length == 0) {
+        testsuite_fail_if(true,
+                          "themis_secure_cell_decrypt_seal (decrypted_message_length determination) fail");
         free(encrypted_message);
         return -4;
     }
@@ -75,17 +93,23 @@ static int secure_cell_seal()
         free(encrypted_message);
         return -5;
     }
-    if (themis_secure_cell_decrypt_seal(
-            (uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length,
-            decrypted_message, &decrypted_message_length) != THEMIS_SUCCESS) {
+    if (themis_secure_cell_decrypt_seal((uint8_t*)passwd,
+                                        sizeof(passwd),
+                                        NULL,
+                                        0,
+                                        encrypted_message,
+                                        encrypted_message_length,
+                                        decrypted_message,
+                                        &decrypted_message_length)
+        != THEMIS_SUCCESS) {
         testsuite_fail_if(true, "themis_secure_cell_decrypt_seal fail");
         free(encrypted_message);
         free(decrypted_message);
         return -6;
     }
 
-    if (sizeof(message) != decrypted_message_length ||
-        memcmp((uint8_t*)message, decrypted_message, decrypted_message_length) != 0) {
+    if (sizeof(message) != decrypted_message_length
+        || memcmp((uint8_t*)message, decrypted_message, decrypted_message_length) != 0) {
         testsuite_fail_if(true, "message and decrypted_message not equal");
         free(encrypted_message);
         free(decrypted_message);
@@ -103,17 +127,27 @@ static int secure_cell_token_protect()
     uint8_t* context;
     size_t context_length = 0;
 
-    if (themis_secure_cell_encrypt_token_protect(
-            (uint8_t*)passwd, sizeof(passwd), NULL, 0, (uint8_t*)message, sizeof(message), NULL,
-            &context_length, NULL, &encrypted_message_length) != THEMIS_BUFFER_TOO_SMALL ||
-        encrypted_message_length == 0) {
-        testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect "
-                                "(encrypted_message_length determination) fail");
+    if (themis_secure_cell_encrypt_token_protect((uint8_t*)passwd,
+                                                 sizeof(passwd),
+                                                 NULL,
+                                                 0,
+                                                 (uint8_t*)message,
+                                                 sizeof(message),
+                                                 NULL,
+                                                 &context_length,
+                                                 NULL,
+                                                 &encrypted_message_length)
+            != THEMIS_BUFFER_TOO_SMALL
+        || encrypted_message_length == 0) {
+        testsuite_fail_if(true,
+                          "themis_secure_cell_encrypt_token_protect "
+                          "(encrypted_message_length determination) fail");
         return -1;
     }
     if (encrypted_message_length != sizeof(message)) {
-        testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect "
-                                "(encrypted_message_length != message length) fail");
+        testsuite_fail_if(true,
+                          "themis_secure_cell_encrypt_token_protect "
+                          "(encrypted_message_length != message length) fail");
         return -1;
     }
     encrypted_message = malloc(encrypted_message_length);
@@ -128,17 +162,26 @@ static int secure_cell_token_protect()
         return -2;
     }
 
-    if (themis_secure_cell_encrypt_token_protect(
-            (uint8_t*)passwd, sizeof(passwd), NULL, 0, (uint8_t*)message, sizeof(message), context,
-            &context_length, encrypted_message, &encrypted_message_length) != THEMIS_SUCCESS) {
+    if (themis_secure_cell_encrypt_token_protect((uint8_t*)passwd,
+                                                 sizeof(passwd),
+                                                 NULL,
+                                                 0,
+                                                 (uint8_t*)message,
+                                                 sizeof(message),
+                                                 context,
+                                                 &context_length,
+                                                 encrypted_message,
+                                                 &encrypted_message_length)
+        != THEMIS_SUCCESS) {
         testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect fail");
         free(encrypted_message);
         free(context);
         return -3;
     }
     if (encrypted_message_length != sizeof(message)) {
-        testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect "
-                                "(encrypted_message_length != message length) fail");
+        testsuite_fail_if(true,
+                          "themis_secure_cell_encrypt_token_protect "
+                          "(encrypted_message_length != message length) fail");
         free(encrypted_message);
         free(context);
         return -3;
@@ -146,12 +189,21 @@ static int secure_cell_token_protect()
     uint8_t* decrypted_message;
     size_t decrypted_message_length = 0;
 
-    if (themis_secure_cell_decrypt_token_protect(
-            (uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length,
-            context, context_length, NULL, &decrypted_message_length) != THEMIS_BUFFER_TOO_SMALL ||
-        decrypted_message_length == 0) {
-        testsuite_fail_if(true, "themis_secure_cell_decrypt_token_protect "
-                                "(decrypted_message_length determination) fail");
+    if (themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
+                                                 sizeof(passwd),
+                                                 NULL,
+                                                 0,
+                                                 encrypted_message,
+                                                 encrypted_message_length,
+                                                 context,
+                                                 context_length,
+                                                 NULL,
+                                                 &decrypted_message_length)
+            != THEMIS_BUFFER_TOO_SMALL
+        || decrypted_message_length == 0) {
+        testsuite_fail_if(true,
+                          "themis_secure_cell_decrypt_token_protect "
+                          "(decrypted_message_length determination) fail");
         free(encrypted_message);
         free(context);
         return -4;
@@ -163,10 +215,17 @@ static int secure_cell_token_protect()
         free(context);
         return -5;
     }
-    if (themis_secure_cell_decrypt_token_protect((uint8_t*)passwd, sizeof(passwd), NULL, 0,
-                                                 encrypted_message, encrypted_message_length,
-                                                 context, context_length, decrypted_message,
-                                                 &decrypted_message_length) != THEMIS_SUCCESS) {
+    if (themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
+                                                 sizeof(passwd),
+                                                 NULL,
+                                                 0,
+                                                 encrypted_message,
+                                                 encrypted_message_length,
+                                                 context,
+                                                 context_length,
+                                                 decrypted_message,
+                                                 &decrypted_message_length)
+        != THEMIS_SUCCESS) {
         testsuite_fail_if(true, "themis_secure_cell_decrypt_token_protect fail");
         free(encrypted_message);
         free(decrypted_message);
@@ -174,8 +233,8 @@ static int secure_cell_token_protect()
         return -6;
     }
 
-    if (sizeof(message) != decrypted_message_length ||
-        memcmp((uint8_t*)message, decrypted_message, decrypted_message_length) != 0) {
+    if (sizeof(message) != decrypted_message_length
+        || memcmp((uint8_t*)message, decrypted_message, decrypted_message_length) != 0) {
         testsuite_fail_if(true, "message and decrypted_message not equal");
         free(encrypted_message);
         free(decrypted_message);
@@ -193,13 +252,19 @@ static int secure_cell_context_imprint()
     uint8_t* encrypted_message;
     size_t encrypted_message_length = 0;
 
-    if (themis_secure_cell_encrypt_context_imprint(
-            (uint8_t*)passwd, sizeof(passwd), (uint8_t*)message, sizeof(message),
-            (uint8_t*)user_context, strlen(user_context), NULL,
-            &encrypted_message_length) != THEMIS_BUFFER_TOO_SMALL ||
-        encrypted_message_length == 0) {
-        testsuite_fail_if(true, "themis_secure_cell_encrypt_context_imprint "
-                                "(encrypted_message_length determination) fail");
+    if (themis_secure_cell_encrypt_context_imprint((uint8_t*)passwd,
+                                                   sizeof(passwd),
+                                                   (uint8_t*)message,
+                                                   sizeof(message),
+                                                   (uint8_t*)user_context,
+                                                   strlen(user_context),
+                                                   NULL,
+                                                   &encrypted_message_length)
+            != THEMIS_BUFFER_TOO_SMALL
+        || encrypted_message_length == 0) {
+        testsuite_fail_if(true,
+                          "themis_secure_cell_encrypt_context_imprint "
+                          "(encrypted_message_length determination) fail");
         return -1;
     }
     encrypted_message = malloc(encrypted_message_length);
@@ -208,10 +273,15 @@ static int secure_cell_context_imprint()
         return -2;
     }
 
-    if (themis_secure_cell_encrypt_context_imprint(
-            (uint8_t*)passwd, sizeof(passwd), (uint8_t*)message, sizeof(message),
-            (uint8_t*)user_context, strlen(user_context), encrypted_message,
-            &encrypted_message_length) != THEMIS_SUCCESS) {
+    if (themis_secure_cell_encrypt_context_imprint((uint8_t*)passwd,
+                                                   sizeof(passwd),
+                                                   (uint8_t*)message,
+                                                   sizeof(message),
+                                                   (uint8_t*)user_context,
+                                                   strlen(user_context),
+                                                   encrypted_message,
+                                                   &encrypted_message_length)
+        != THEMIS_SUCCESS) {
         testsuite_fail_if(true, "themis_secure_cell_encrypt_context_imprint fail");
         free(encrypted_message);
         return -3;
@@ -220,13 +290,19 @@ static int secure_cell_context_imprint()
     uint8_t* decrypted_message;
     size_t decrypted_message_length = 0;
 
-    if (themis_secure_cell_decrypt_context_imprint(
-            (uint8_t*)passwd, sizeof(passwd), encrypted_message, encrypted_message_length,
-            (uint8_t*)user_context, strlen(user_context), NULL,
-            &decrypted_message_length) != THEMIS_BUFFER_TOO_SMALL ||
-        decrypted_message_length == 0) {
-        testsuite_fail_if(true, "themis_secure_cell_decrypt_context_imprint "
-                                "(decrypted_message_length determination) fail");
+    if (themis_secure_cell_decrypt_context_imprint((uint8_t*)passwd,
+                                                   sizeof(passwd),
+                                                   encrypted_message,
+                                                   encrypted_message_length,
+                                                   (uint8_t*)user_context,
+                                                   strlen(user_context),
+                                                   NULL,
+                                                   &decrypted_message_length)
+            != THEMIS_BUFFER_TOO_SMALL
+        || decrypted_message_length == 0) {
+        testsuite_fail_if(true,
+                          "themis_secure_cell_decrypt_context_imprint "
+                          "(decrypted_message_length determination) fail");
         free(encrypted_message);
         return -4;
     }
@@ -236,18 +312,23 @@ static int secure_cell_context_imprint()
         free(encrypted_message);
         return -5;
     }
-    if (themis_secure_cell_encrypt_context_imprint(
-            (uint8_t*)passwd, sizeof(passwd), encrypted_message, encrypted_message_length,
-            (uint8_t*)user_context, strlen(user_context), decrypted_message,
-            &decrypted_message_length) != THEMIS_SUCCESS) {
+    if (themis_secure_cell_encrypt_context_imprint((uint8_t*)passwd,
+                                                   sizeof(passwd),
+                                                   encrypted_message,
+                                                   encrypted_message_length,
+                                                   (uint8_t*)user_context,
+                                                   strlen(user_context),
+                                                   decrypted_message,
+                                                   &decrypted_message_length)
+        != THEMIS_SUCCESS) {
         testsuite_fail_if(true, "themis_secure_cell_decrypt_context_imprint fail");
         free(encrypted_message);
         free(decrypted_message);
         return -6;
     }
 
-    if (sizeof(message) != decrypted_message_length ||
-        memcmp((uint8_t*)message, decrypted_message, decrypted_message_length) != 0) {
+    if (sizeof(message) != decrypted_message_length
+        || memcmp((uint8_t*)message, decrypted_message, decrypted_message_length) != 0) {
         testsuite_fail_if(true, "message and decrypted_message not equal");
         free(encrypted_message);
         free(decrypted_message);
@@ -289,9 +370,15 @@ static void secure_cell_api_test_seal(void)
         return;
     }
 
-    testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_cell_encrypt_seal(
-                                                         key, key_length, NULL, 0, message,
-                                                         message_length, NULL, &encrypted_length),
+    testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL
+                              == themis_secure_cell_encrypt_seal(key,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 message,
+                                                                 message_length,
+                                                                 NULL,
+                                                                 &encrypted_length),
                           "themis_secure_cell_encrypt_seal: get output size (NULL out buffer)");
     encrypted = malloc(encrypted_length);
     if (!encrypted) {
@@ -299,41 +386,80 @@ static void secure_cell_api_test_seal(void)
         return;
     }
 
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER ==
-                              themis_secure_cell_encrypt_seal(NULL, key_length, NULL, 0, message,
-                                                              message_length, encrypted,
-                                                              &encrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_encrypt_seal(NULL,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 message,
+                                                                 message_length,
+                                                                 encrypted,
+                                                                 &encrypted_length),
                           "themis_secure_cell_encrypt_seal: invalid key");
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_cell_encrypt_seal(
-                                                          key, 0, NULL, 0, message, message_length,
-                                                          encrypted, &encrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_encrypt_seal(key,
+                                                                 0,
+                                                                 NULL,
+                                                                 0,
+                                                                 message,
+                                                                 message_length,
+                                                                 encrypted,
+                                                                 &encrypted_length),
                           "themis_secure_cell_encrypt_seal: invalid key length");
 
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER ==
-                              themis_secure_cell_encrypt_seal(key, key_length, NULL, 0, NULL,
-                                                              message_length, encrypted,
-                                                              &encrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_encrypt_seal(key,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 NULL,
+                                                                 message_length,
+                                                                 encrypted,
+                                                                 &encrypted_length),
                           "themis_secure_cell_encrypt_seal: invalid message");
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER ==
-                              themis_secure_cell_encrypt_seal(key, key_length, NULL, 0, message, 0,
-                                                              encrypted, &encrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_encrypt_seal(key,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 message,
+                                                                 0,
+                                                                 encrypted,
+                                                                 &encrypted_length),
                           "themis_secure_cell_encrypt_seal: invalid message length");
 
     encrypted_length--;
-    testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL ==
-                              themis_secure_cell_encrypt_seal(key, key_length, NULL, 0, message,
-                                                              message_length, encrypted,
-                                                              &encrypted_length),
+    testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL
+                              == themis_secure_cell_encrypt_seal(key,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 message,
+                                                                 message_length,
+                                                                 encrypted,
+                                                                 &encrypted_length),
                           "themis_secure_cell_encrypt_seal: get output size (small out buffer)");
 
-    testsuite_fail_unless(THEMIS_SUCCESS == themis_secure_cell_encrypt_seal(
-                                                key, key_length, NULL, 0, message, message_length,
-                                                encrypted, &encrypted_length),
+    testsuite_fail_unless(THEMIS_SUCCESS
+                              == themis_secure_cell_encrypt_seal(key,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 message,
+                                                                 message_length,
+                                                                 encrypted,
+                                                                 &encrypted_length),
                           "themis_secure_cell_encrypt_seal: normal flow");
 
-    testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL == themis_secure_cell_decrypt_seal(
-                                                         key, key_length, NULL, 0, encrypted,
-                                                         encrypted_length, NULL, &decrypted_length),
+    testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL
+                              == themis_secure_cell_decrypt_seal(key,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 encrypted,
+                                                                 encrypted_length,
+                                                                 NULL,
+                                                                 &decrypted_length),
                           "themis_secure_cell_decrypt_seal: get output size (NULL out buffer)");
 
     decrypted = malloc(decrypted_length);
@@ -343,61 +469,111 @@ static void secure_cell_api_test_seal(void)
         return;
     }
 
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER ==
-                              themis_secure_cell_decrypt_seal(NULL, key_length, NULL, 0, encrypted,
-                                                              encrypted_length, decrypted,
-                                                              &decrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_decrypt_seal(NULL,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 encrypted,
+                                                                 encrypted_length,
+                                                                 decrypted,
+                                                                 &decrypted_length),
                           "themis_secure_cell_decrypt_seal: invalid key");
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER ==
-                              themis_secure_cell_decrypt_seal(key, 0, NULL, 0, encrypted,
-                                                              encrypted_length, decrypted,
-                                                              &decrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_decrypt_seal(key,
+                                                                 0,
+                                                                 NULL,
+                                                                 0,
+                                                                 encrypted,
+                                                                 encrypted_length,
+                                                                 decrypted,
+                                                                 &decrypted_length),
                           "themis_secure_cell_decrypt_seal: invalid key length");
 
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER ==
-                              themis_secure_cell_decrypt_seal(key, key_length, NULL, 0, NULL,
-                                                              encrypted_length, decrypted,
-                                                              &decrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_decrypt_seal(key,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 NULL,
+                                                                 encrypted_length,
+                                                                 decrypted,
+                                                                 &decrypted_length),
                           "themis_secure_cell_decrypt_seal: invalid message");
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER ==
-                              themis_secure_cell_decrypt_seal(key, key_length, NULL, 0, encrypted,
-                                                              0, decrypted, &decrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_decrypt_seal(key,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 encrypted,
+                                                                 0,
+                                                                 decrypted,
+                                                                 &decrypted_length),
                           "themis_secure_cell_decrypt_seal: invalid message length");
 
     decrypted_length--;
-    testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL ==
-                              themis_secure_cell_decrypt_seal(key, key_length, NULL, 0, encrypted,
-                                                              encrypted_length, decrypted,
-                                                              &decrypted_length),
+    testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL
+                              == themis_secure_cell_decrypt_seal(key,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 encrypted,
+                                                                 encrypted_length,
+                                                                 decrypted,
+                                                                 &decrypted_length),
                           "themis_secure_cell_decrypt_seal: get output size (small out buffer)");
 
     encrypted[0]++;
-    testsuite_fail_unless(THEMIS_FAIL == themis_secure_cell_decrypt_seal(
-                                             key, key_length, NULL, 0, encrypted, encrypted_length,
-                                             decrypted, &decrypted_length),
+    testsuite_fail_unless(THEMIS_FAIL
+                              == themis_secure_cell_decrypt_seal(key,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 encrypted,
+                                                                 encrypted_length,
+                                                                 decrypted,
+                                                                 &decrypted_length),
                           "themis_secure_cell_decrypt_seal: header corrupt");
     encrypted[0]--;
 
     encrypted[encrypted_length / 2]++;
-    testsuite_fail_unless(THEMIS_FAIL == themis_secure_cell_decrypt_seal(
-                                             key, key_length, NULL, 0, encrypted, encrypted_length,
-                                             decrypted, &decrypted_length),
+    testsuite_fail_unless(THEMIS_FAIL
+                              == themis_secure_cell_decrypt_seal(key,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 encrypted,
+                                                                 encrypted_length,
+                                                                 decrypted,
+                                                                 &decrypted_length),
                           "themis_secure_cell_decrypt_seal: message corrupt");
     encrypted[encrypted_length / 2]--;
 
     encrypted[encrypted_length - 1]++;
-    testsuite_fail_unless(THEMIS_FAIL == themis_secure_cell_decrypt_seal(
-                                             key, key_length, NULL, 0, encrypted, encrypted_length,
-                                             decrypted, &decrypted_length),
+    testsuite_fail_unless(THEMIS_FAIL
+                              == themis_secure_cell_decrypt_seal(key,
+                                                                 key_length,
+                                                                 NULL,
+                                                                 0,
+                                                                 encrypted,
+                                                                 encrypted_length,
+                                                                 decrypted,
+                                                                 &decrypted_length),
                           "themis_secure_cell_decrypt_seal: tag corrupt");
     encrypted[encrypted_length - 1]--;
 
-    testsuite_fail_unless(
-        THEMIS_SUCCESS == themis_secure_cell_decrypt_seal(key, key_length, NULL, 0, encrypted,
-                                                          encrypted_length, decrypted,
-                                                          &decrypted_length) &&
-            (message_length == decrypted_length) && !memcmp(message, decrypted, message_length),
-        "themis_secure_cell_decrypt_seal: normal flow");
+    testsuite_fail_unless(THEMIS_SUCCESS
+                                  == themis_secure_cell_decrypt_seal(key,
+                                                                     key_length,
+                                                                     NULL,
+                                                                     0,
+                                                                     encrypted,
+                                                                     encrypted_length,
+                                                                     decrypted,
+                                                                     &decrypted_length)
+                              && (message_length == decrypted_length)
+                              && !memcmp(message, decrypted, message_length),
+                          "themis_secure_cell_decrypt_seal: normal flow");
 
     free(decrypted);
     free(encrypted);
@@ -434,113 +610,206 @@ static void secure_cell_api_test_context_imprint(void)
         return;
     }
 
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_cell_encrypt_context_imprint(
-                                                          NULL, key_length, message, message_length,
-                                                          context, context_length, encrypted,
-                                                          &encrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_encrypt_context_imprint(NULL,
+                                                                            key_length,
+                                                                            message,
+                                                                            message_length,
+                                                                            context,
+                                                                            context_length,
+                                                                            encrypted,
+                                                                            &encrypted_length),
                           "themis_secure_cell_encrypt_context_imprint: invalid key");
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_cell_encrypt_context_imprint(
-                                                          key, 0, message, message_length, context,
-                                                          context_length, encrypted,
-                                                          &encrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_encrypt_context_imprint(key,
+                                                                            0,
+                                                                            message,
+                                                                            message_length,
+                                                                            context,
+                                                                            context_length,
+                                                                            encrypted,
+                                                                            &encrypted_length),
                           "themis_secure_cell_encrypt_context_imprint: invalid key length");
 
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_cell_encrypt_context_imprint(
-                                                          key, key_length, NULL, message_length,
-                                                          context, context_length, encrypted,
-                                                          &encrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_encrypt_context_imprint(key,
+                                                                            key_length,
+                                                                            NULL,
+                                                                            message_length,
+                                                                            context,
+                                                                            context_length,
+                                                                            encrypted,
+                                                                            &encrypted_length),
                           "themis_secure_cell_encrypt_context_imprint: invalid message");
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_cell_encrypt_context_imprint(
-                                                          key, key_length, message, 0, context,
-                                                          context_length, encrypted,
-                                                          &encrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_encrypt_context_imprint(key,
+                                                                            key_length,
+                                                                            message,
+                                                                            0,
+                                                                            context,
+                                                                            context_length,
+                                                                            encrypted,
+                                                                            &encrypted_length),
                           "themis_secure_cell_encrypt_context_imprint: invalid message length");
 
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_cell_encrypt_context_imprint(
-                                                          key, key_length, message, message_length,
-                                                          NULL, context_length, encrypted,
-                                                          &encrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_encrypt_context_imprint(key,
+                                                                            key_length,
+                                                                            message,
+                                                                            message_length,
+                                                                            NULL,
+                                                                            context_length,
+                                                                            encrypted,
+                                                                            &encrypted_length),
                           "themis_secure_cell_encrypt_context_imprint: invalid context");
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_cell_encrypt_context_imprint(
-                                                          key, key_length, message, message_length,
-                                                          context, 0, encrypted, &encrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_encrypt_context_imprint(key,
+                                                                            key_length,
+                                                                            message,
+                                                                            message_length,
+                                                                            context,
+                                                                            0,
+                                                                            encrypted,
+                                                                            &encrypted_length),
                           "themis_secure_cell_encrypt_context_imprint: invalid context length");
 
-    testsuite_fail_unless(
-        (THEMIS_BUFFER_TOO_SMALL == themis_secure_cell_encrypt_context_imprint(
-                                        key, key_length, message, message_length, context,
-                                        context_length, NULL, &encrypted_length)) &&
-            (encrypted_length == message_length),
-        "themis_secure_cell_encrypt_context_imprint: get output size (NULL out buffer)");
+    testsuite_fail_unless((THEMIS_BUFFER_TOO_SMALL
+                           == themis_secure_cell_encrypt_context_imprint(key,
+                                                                         key_length,
+                                                                         message,
+                                                                         message_length,
+                                                                         context,
+                                                                         context_length,
+                                                                         NULL,
+                                                                         &encrypted_length))
+                              && (encrypted_length == message_length),
+                          "themis_secure_cell_encrypt_context_imprint: get output size (NULL out buffer)");
 
     encrypted_length--;
-    testsuite_fail_unless(
-        (THEMIS_BUFFER_TOO_SMALL == themis_secure_cell_encrypt_context_imprint(
-                                        key, key_length, message, message_length, context,
-                                        context_length, encrypted, &encrypted_length)) &&
-            (encrypted_length == message_length),
-        "themis_secure_cell_encrypt_context_imprint: get output size (small out buffer)");
+    testsuite_fail_unless((THEMIS_BUFFER_TOO_SMALL
+                           == themis_secure_cell_encrypt_context_imprint(key,
+                                                                         key_length,
+                                                                         message,
+                                                                         message_length,
+                                                                         context,
+                                                                         context_length,
+                                                                         encrypted,
+                                                                         &encrypted_length))
+                              && (encrypted_length == message_length),
+                          "themis_secure_cell_encrypt_context_imprint: get output size (small out buffer)");
 
-    testsuite_fail_unless((THEMIS_SUCCESS == themis_secure_cell_encrypt_context_imprint(
-                                                 key, key_length, message, message_length, context,
-                                                 context_length, encrypted, &encrypted_length)) &&
-                              (encrypted_length == message_length),
+    testsuite_fail_unless((THEMIS_SUCCESS
+                           == themis_secure_cell_encrypt_context_imprint(key,
+                                                                         key_length,
+                                                                         message,
+                                                                         message_length,
+                                                                         context,
+                                                                         context_length,
+                                                                         encrypted,
+                                                                         &encrypted_length))
+                              && (encrypted_length == message_length),
                           "themis_secure_cell_encrypt_context_imprint: normal flow");
 
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_cell_decrypt_context_imprint(
-                                                          NULL, key_length, encrypted,
-                                                          encrypted_length, context, context_length,
-                                                          decrypted, &decrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_decrypt_context_imprint(NULL,
+                                                                            key_length,
+                                                                            encrypted,
+                                                                            encrypted_length,
+                                                                            context,
+                                                                            context_length,
+                                                                            decrypted,
+                                                                            &decrypted_length),
                           "themis_secure_cell_decrypt_context_imprint: invalid key");
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_cell_decrypt_context_imprint(
-                                                          key, 0, encrypted, encrypted_length,
-                                                          context, context_length, decrypted,
-                                                          &decrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_decrypt_context_imprint(key,
+                                                                            0,
+                                                                            encrypted,
+                                                                            encrypted_length,
+                                                                            context,
+                                                                            context_length,
+                                                                            decrypted,
+                                                                            &decrypted_length),
                           "themis_secure_cell_decrypt_context_imprint: invalid key length");
 
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_cell_decrypt_context_imprint(
-                                                          key, key_length, NULL, encrypted_length,
-                                                          context, context_length, decrypted,
-                                                          &decrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_decrypt_context_imprint(key,
+                                                                            key_length,
+                                                                            NULL,
+                                                                            encrypted_length,
+                                                                            context,
+                                                                            context_length,
+                                                                            decrypted,
+                                                                            &decrypted_length),
                           "themis_secure_cell_decrypt_context_imprint: invalid message");
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_cell_decrypt_context_imprint(
-                                                          key, key_length, encrypted, 0, context,
-                                                          context_length, decrypted,
-                                                          &decrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_decrypt_context_imprint(key,
+                                                                            key_length,
+                                                                            encrypted,
+                                                                            0,
+                                                                            context,
+                                                                            context_length,
+                                                                            decrypted,
+                                                                            &decrypted_length),
                           "themis_secure_cell_decrypt_context_imprint: invalid message length");
 
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_secure_cell_decrypt_context_imprint(
-                                                          key, key_length, encrypted,
-                                                          encrypted_length, NULL, context_length,
-                                                          decrypted, &decrypted_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_decrypt_context_imprint(key,
+                                                                            key_length,
+                                                                            encrypted,
+                                                                            encrypted_length,
+                                                                            NULL,
+                                                                            context_length,
+                                                                            decrypted,
+                                                                            &decrypted_length),
                           "themis_secure_cell_decrypt_context_imprint: invalid context");
-    testsuite_fail_unless(
-        THEMIS_INVALID_PARAMETER ==
-            themis_secure_cell_decrypt_context_imprint(key, key_length, encrypted, encrypted_length,
-                                                       context, 0, decrypted, &decrypted_length),
-        "themis_secure_cell_decrypt_context_imprint: invalid context length");
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_secure_cell_decrypt_context_imprint(key,
+                                                                            key_length,
+                                                                            encrypted,
+                                                                            encrypted_length,
+                                                                            context,
+                                                                            0,
+                                                                            decrypted,
+                                                                            &decrypted_length),
+                          "themis_secure_cell_decrypt_context_imprint: invalid context length");
 
-    testsuite_fail_unless(
-        (THEMIS_BUFFER_TOO_SMALL == themis_secure_cell_decrypt_context_imprint(
-                                        key, key_length, encrypted, encrypted_length, context,
-                                        context_length, NULL, &decrypted_length)) &&
-            (decrypted_length == encrypted_length),
-        "themis_secure_cell_decrypt_context_imprint: get output size (NULL out buffer)");
+    testsuite_fail_unless((THEMIS_BUFFER_TOO_SMALL
+                           == themis_secure_cell_decrypt_context_imprint(key,
+                                                                         key_length,
+                                                                         encrypted,
+                                                                         encrypted_length,
+                                                                         context,
+                                                                         context_length,
+                                                                         NULL,
+                                                                         &decrypted_length))
+                              && (decrypted_length == encrypted_length),
+                          "themis_secure_cell_decrypt_context_imprint: get output size (NULL out buffer)");
 
     decrypted_length--;
-    testsuite_fail_unless(
-        (THEMIS_BUFFER_TOO_SMALL == themis_secure_cell_decrypt_context_imprint(
-                                        key, key_length, encrypted, encrypted_length, context,
-                                        context_length, decrypted, &decrypted_length)) &&
-            (decrypted_length == encrypted_length),
-        "themis_secure_cell_decrypt_context_imprint: get output size (small out buffer)");
+    testsuite_fail_unless((THEMIS_BUFFER_TOO_SMALL
+                           == themis_secure_cell_decrypt_context_imprint(key,
+                                                                         key_length,
+                                                                         encrypted,
+                                                                         encrypted_length,
+                                                                         context,
+                                                                         context_length,
+                                                                         decrypted,
+                                                                         &decrypted_length))
+                              && (decrypted_length == encrypted_length),
+                          "themis_secure_cell_decrypt_context_imprint: get output size (small out buffer)");
 
-    testsuite_fail_unless(
-        THEMIS_SUCCESS == themis_secure_cell_decrypt_context_imprint(
-                              key, key_length, encrypted, encrypted_length, context, context_length,
-                              decrypted, &decrypted_length) &&
-            (message_length == decrypted_length) && (!memcmp(message, decrypted, message_length)),
-        "themis_secure_cell_decrypt_context_imprint: normal flow");
+    testsuite_fail_unless(THEMIS_SUCCESS
+                                  == themis_secure_cell_decrypt_context_imprint(key,
+                                                                                key_length,
+                                                                                encrypted,
+                                                                                encrypted_length,
+                                                                                context,
+                                                                                context_length,
+                                                                                decrypted,
+                                                                                &decrypted_length)
+                              && (message_length == decrypted_length)
+                              && (!memcmp(message, decrypted, message_length)),
+                          "themis_secure_cell_decrypt_context_imprint: normal flow");
 }
 
 static void secure_cell_api_test(void)
@@ -587,25 +856,34 @@ static themis_status_t encrypt_seal(uint8_t** encrypted_message, size_t* encrypt
 {
     themis_status_t res = THEMIS_SUCCESS;
 
-    res = themis_secure_cell_encrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0,
-                                          (uint8_t*)message, sizeof(message), NULL,
+    res = themis_secure_cell_encrypt_seal((uint8_t*)passwd,
+                                          sizeof(passwd),
+                                          NULL,
+                                          0,
+                                          (uint8_t*)message,
+                                          sizeof(message),
+                                          NULL,
                                           encrypted_message_length);
     if (res != THEMIS_BUFFER_TOO_SMALL) {
-        testsuite_fail_if(
-            true, "themis_secure_cell_encrypt_seal: failed to determine encrypted message length");
+        testsuite_fail_if(true,
+                          "themis_secure_cell_encrypt_seal: failed to determine encrypted message length");
         return res;
     }
 
     *encrypted_message = malloc(*encrypted_message_length);
     if (*encrypted_message == NULL) {
-        testsuite_fail_if(
-            true,
-            "themis_secure_cell_encrypt_seal: failed to allocate memory for encrypted message");
+        testsuite_fail_if(true,
+                          "themis_secure_cell_encrypt_seal: failed to allocate memory for encrypted message");
         return THEMIS_NO_MEMORY;
     }
 
-    res = themis_secure_cell_encrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0,
-                                          (uint8_t*)message, sizeof(message), *encrypted_message,
+    res = themis_secure_cell_encrypt_seal((uint8_t*)passwd,
+                                          sizeof(passwd),
+                                          NULL,
+                                          0,
+                                          (uint8_t*)message,
+                                          sizeof(message),
+                                          *encrypted_message,
                                           encrypted_message_length);
     if (res != THEMIS_SUCCESS) {
         testsuite_fail_if(true, "themis_secure_cell_encrypt_seal: failed to encrypt message");
@@ -623,20 +901,24 @@ static themis_status_t prepare_decrypt_seal(uint8_t* encrypted_message,
 {
     themis_status_t res = THEMIS_SUCCESS;
 
-    res = themis_secure_cell_decrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0,
-                                          encrypted_message, encrypted_message_length, NULL,
+    res = themis_secure_cell_decrypt_seal((uint8_t*)passwd,
+                                          sizeof(passwd),
+                                          NULL,
+                                          0,
+                                          encrypted_message,
+                                          encrypted_message_length,
+                                          NULL,
                                           decrypted_message_length);
     if (res != THEMIS_BUFFER_TOO_SMALL) {
-        testsuite_fail_if(
-            true, "themis_secure_cell_decrypt_seal: failed to determine decrypted message length");
+        testsuite_fail_if(true,
+                          "themis_secure_cell_decrypt_seal: failed to determine decrypted message length");
         return res;
     }
 
     *decrypted_message = malloc(*decrypted_message_length);
     if (*decrypted_message == NULL) {
-        testsuite_fail_if(
-            true,
-            "themis_secure_cell_decrypt_seal: failed to allocate memory for decrypted message");
+        testsuite_fail_if(true,
+                          "themis_secure_cell_decrypt_seal: failed to allocate memory for decrypted message");
         return THEMIS_NO_MEMORY;
     }
 
@@ -663,15 +945,22 @@ static void secure_cell_context_corruption_seal(void)
     old_value = get_context_iv_length(encrypted_message);
     set_context_iv_length(encrypted_message, CORRUPTED_LENGTH);
     {
-        res = prepare_decrypt_seal(encrypted_message, encrypted_message_length, &decrypted_message,
+        res = prepare_decrypt_seal(encrypted_message,
+                                   encrypted_message_length,
+                                   &decrypted_message,
                                    &decrypted_message_length);
         if (res != THEMIS_SUCCESS) {
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0,
-                                              encrypted_message, encrypted_message_length,
-                                              decrypted_message, &decrypted_message_length);
+        res = themis_secure_cell_decrypt_seal((uint8_t*)passwd,
+                                              sizeof(passwd),
+                                              NULL,
+                                              0,
+                                              encrypted_message,
+                                              encrypted_message_length,
+                                              decrypted_message,
+                                              &decrypted_message_length);
         testsuite_fail_if(res == THEMIS_SUCCESS,
                           "themis_secure_cell_decrypt_seal detects corrupted IV length");
 
@@ -682,15 +971,22 @@ static void secure_cell_context_corruption_seal(void)
     old_value = get_context_auth_tag_length(encrypted_message);
     set_context_auth_tag_length(encrypted_message, CORRUPTED_LENGTH);
     {
-        res = prepare_decrypt_seal(encrypted_message, encrypted_message_length, &decrypted_message,
+        res = prepare_decrypt_seal(encrypted_message,
+                                   encrypted_message_length,
+                                   &decrypted_message,
                                    &decrypted_message_length);
         if (res != THEMIS_SUCCESS) {
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0,
-                                              encrypted_message, encrypted_message_length,
-                                              decrypted_message, &decrypted_message_length);
+        res = themis_secure_cell_decrypt_seal((uint8_t*)passwd,
+                                              sizeof(passwd),
+                                              NULL,
+                                              0,
+                                              encrypted_message,
+                                              encrypted_message_length,
+                                              decrypted_message,
+                                              &decrypted_message_length);
         testsuite_fail_if(res == THEMIS_SUCCESS,
                           "themis_secure_cell_decrypt_seal detects corrupted auth tag length");
 
@@ -701,8 +997,13 @@ static void secure_cell_context_corruption_seal(void)
     old_value = get_context_message_length(encrypted_message);
     set_context_message_length(encrypted_message, CORRUPTED_LENGTH);
     {
-        res = themis_secure_cell_decrypt_seal((uint8_t*)passwd, sizeof(passwd), NULL, 0,
-                                              encrypted_message, encrypted_message_length, NULL,
+        res = themis_secure_cell_decrypt_seal((uint8_t*)passwd,
+                                              sizeof(passwd),
+                                              NULL,
+                                              0,
+                                              encrypted_message,
+                                              encrypted_message_length,
+                                              NULL,
                                               &decrypted_message_length);
         testsuite_fail_if(res == THEMIS_BUFFER_TOO_SMALL,
                           "themis_secure_cell_decrypt_seal detects corrupted message length");
@@ -714,42 +1015,57 @@ out:
 }
 
 static themis_status_t encrypt_token_protect(uint8_t** encrypted_message,
-                                             size_t* encrypted_message_length, uint8_t** context,
+                                             size_t* encrypted_message_length,
+                                             uint8_t** context,
                                              size_t* context_length)
 {
     themis_status_t res = THEMIS_SUCCESS;
 
-    res = themis_secure_cell_encrypt_token_protect((uint8_t*)passwd, sizeof(passwd), NULL, 0,
-                                                   (uint8_t*)message, sizeof(message), NULL,
-                                                   context_length, NULL, encrypted_message_length);
+    res = themis_secure_cell_encrypt_token_protect((uint8_t*)passwd,
+                                                   sizeof(passwd),
+                                                   NULL,
+                                                   0,
+                                                   (uint8_t*)message,
+                                                   sizeof(message),
+                                                   NULL,
+                                                   context_length,
+                                                   NULL,
+                                                   encrypted_message_length);
     if (res != THEMIS_BUFFER_TOO_SMALL || context_length == 0 || encrypted_message_length == 0) {
-        testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect: failed to determine "
-                                "encrypted message length");
+        testsuite_fail_if(true,
+                          "themis_secure_cell_encrypt_token_protect: failed to determine "
+                          "encrypted message length");
         return res;
     }
 
     *encrypted_message = malloc(*encrypted_message_length);
     if (*encrypted_message == NULL) {
-        testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect: failed to allocate "
-                                "memory for encrypted message");
+        testsuite_fail_if(true,
+                          "themis_secure_cell_encrypt_token_protect: failed to allocate "
+                          "memory for encrypted message");
         return res;
     }
 
     *context = malloc(*context_length);
     if (*context == NULL) {
-        testsuite_fail_if(
-            true,
-            "themis_secure_cell_encrypt_token_protect: failed to allocate memory for auth context");
+        testsuite_fail_if(true,
+                          "themis_secure_cell_encrypt_token_protect: failed to allocate memory for auth context");
         free(*encrypted_message);
         return res;
     }
 
-    res = themis_secure_cell_encrypt_token_protect(
-        (uint8_t*)passwd, sizeof(passwd), NULL, 0, (uint8_t*)message, sizeof(message), *context,
-        context_length, *encrypted_message, encrypted_message_length);
+    res = themis_secure_cell_encrypt_token_protect((uint8_t*)passwd,
+                                                   sizeof(passwd),
+                                                   NULL,
+                                                   0,
+                                                   (uint8_t*)message,
+                                                   sizeof(message),
+                                                   *context,
+                                                   context_length,
+                                                   *encrypted_message,
+                                                   encrypted_message_length);
     if (res != THEMIS_SUCCESS) {
-        testsuite_fail_if(true,
-                          "themis_secure_cell_encrypt_token_protect: failed to encrypt message");
+        testsuite_fail_if(true, "themis_secure_cell_encrypt_token_protect: failed to encrypt message");
         free(*encrypted_message);
         free(*context);
         return res;
@@ -760,25 +1076,35 @@ static themis_status_t encrypt_token_protect(uint8_t** encrypted_message,
 
 static themis_status_t prepare_decrypt_token_protect(uint8_t* encrypted_message,
                                                      size_t encrypted_message_length,
-                                                     uint8_t* context, size_t context_length,
+                                                     uint8_t* context,
+                                                     size_t context_length,
                                                      uint8_t** decrypted_message,
                                                      size_t* decrypted_message_length)
 {
     themis_status_t res = THEMIS_SUCCESS;
 
-    res = themis_secure_cell_decrypt_token_protect(
-        (uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length,
-        context, context_length, NULL, decrypted_message_length);
+    res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
+                                                   sizeof(passwd),
+                                                   NULL,
+                                                   0,
+                                                   encrypted_message,
+                                                   encrypted_message_length,
+                                                   context,
+                                                   context_length,
+                                                   NULL,
+                                                   decrypted_message_length);
     if (res != THEMIS_BUFFER_TOO_SMALL || decrypted_message_length == 0) {
-        testsuite_fail_if(true, "themis_secure_cell_decrypt_token_protect: failed to determine "
-                                "decrypted message length");
+        testsuite_fail_if(true,
+                          "themis_secure_cell_decrypt_token_protect: failed to determine "
+                          "decrypted message length");
         return res;
     }
 
     *decrypted_message = malloc(*decrypted_message_length);
     if (*decrypted_message == NULL) {
-        testsuite_fail_if(true, "themis_secure_cell_decrypt_token_protect: failed to allocate "
-                                "memory for decrypted message");
+        testsuite_fail_if(true,
+                          "themis_secure_cell_decrypt_token_protect: failed to allocate "
+                          "memory for decrypted message");
         return THEMIS_NO_MEMORY;
     }
 
@@ -794,8 +1120,7 @@ static void secure_cell_context_corruption_token_protect(void)
     uint8_t* context = NULL;
     size_t context_length = 0;
 
-    res = encrypt_token_protect(&encrypted_message, &encrypted_message_length, &context,
-                                &context_length);
+    res = encrypt_token_protect(&encrypted_message, &encrypted_message_length, &context, &context_length);
     if (res != THEMIS_SUCCESS) {
         goto out;
     }
@@ -808,16 +1133,26 @@ static void secure_cell_context_corruption_token_protect(void)
     old_value = get_context_iv_length(context);
     set_context_iv_length(context, CORRUPTED_LENGTH);
     {
-        res = prepare_decrypt_token_protect(encrypted_message, encrypted_message_length, context,
-                                            context_length, &decrypted_message,
+        res = prepare_decrypt_token_protect(encrypted_message,
+                                            encrypted_message_length,
+                                            context,
+                                            context_length,
+                                            &decrypted_message,
                                             &decrypted_message_length);
         if (res != THEMIS_SUCCESS) {
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_token_protect(
-            (uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length,
-            context, context_length, decrypted_message, &decrypted_message_length);
+        res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
+                                                       sizeof(passwd),
+                                                       NULL,
+                                                       0,
+                                                       encrypted_message,
+                                                       encrypted_message_length,
+                                                       context,
+                                                       context_length,
+                                                       decrypted_message,
+                                                       &decrypted_message_length);
         testsuite_fail_if(res == THEMIS_SUCCESS,
                           "themis_secure_cell_decrypt_token_protect detects corrupted IV length");
 
@@ -828,19 +1163,28 @@ static void secure_cell_context_corruption_token_protect(void)
     old_value = get_context_auth_tag_length(context);
     set_context_auth_tag_length(context, CORRUPTED_LENGTH);
     {
-        res = prepare_decrypt_token_protect(encrypted_message, encrypted_message_length, context,
-                                            context_length, &decrypted_message,
+        res = prepare_decrypt_token_protect(encrypted_message,
+                                            encrypted_message_length,
+                                            context,
+                                            context_length,
+                                            &decrypted_message,
                                             &decrypted_message_length);
         if (res != THEMIS_SUCCESS) {
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_token_protect(
-            (uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length,
-            context, context_length, decrypted_message, &decrypted_message_length);
-        testsuite_fail_if(
-            res == THEMIS_SUCCESS,
-            "themis_secure_cell_decrypt_token_protect detects corrupted auth tag length");
+        res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
+                                                       sizeof(passwd),
+                                                       NULL,
+                                                       0,
+                                                       encrypted_message,
+                                                       encrypted_message_length,
+                                                       context,
+                                                       context_length,
+                                                       decrypted_message,
+                                                       &decrypted_message_length);
+        testsuite_fail_if(res == THEMIS_SUCCESS,
+                          "themis_secure_cell_decrypt_token_protect detects corrupted auth tag length");
 
         free(decrypted_message);
     }
@@ -849,19 +1193,28 @@ static void secure_cell_context_corruption_token_protect(void)
     old_value = get_context_message_length(context);
     set_context_message_length(context, CORRUPTED_LENGTH);
     {
-        res = prepare_decrypt_token_protect(encrypted_message, encrypted_message_length, context,
-                                            context_length, &decrypted_message,
+        res = prepare_decrypt_token_protect(encrypted_message,
+                                            encrypted_message_length,
+                                            context,
+                                            context_length,
+                                            &decrypted_message,
                                             &decrypted_message_length);
         if (res != THEMIS_SUCCESS) {
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_token_protect(
-            (uint8_t*)passwd, sizeof(passwd), NULL, 0, encrypted_message, encrypted_message_length,
-            context, context_length, decrypted_message, &decrypted_message_length);
-        testsuite_fail_if(
-            res == THEMIS_SUCCESS,
-            "themis_secure_cell_decrypt_token_protect detects corrupted message length");
+        res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
+                                                       sizeof(passwd),
+                                                       NULL,
+                                                       0,
+                                                       encrypted_message,
+                                                       encrypted_message_length,
+                                                       context,
+                                                       context_length,
+                                                       decrypted_message,
+                                                       &decrypted_message_length);
+        testsuite_fail_if(res == THEMIS_SUCCESS,
+                          "themis_secure_cell_decrypt_token_protect detects corrupted message length");
 
         free(decrypted_message);
     }

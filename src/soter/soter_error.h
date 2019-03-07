@@ -85,91 +85,91 @@ typedef int32_t soter_status_t;
  * @defgroup SOTER_CHECK_ROUTINES routines for parameters and variables checking
  * @{
  */
-#define SOTER_CHECK(x)                                                                             \
-    if (!(x)) {                                                                                    \
-        SOTER_ERROR_OUT(#x);                                                                       \
-        return SOTER_FAIL;                                                                         \
+#define SOTER_CHECK(x)       \
+    if (!(x)) {              \
+        SOTER_ERROR_OUT(#x); \
+        return SOTER_FAIL;   \
     }
 
-#define SOTER_CHECK_(x)                                                                            \
-    if (!(x)) {                                                                                    \
-        SOTER_ERROR_OUT(#x);                                                                       \
-        return NULL;                                                                               \
+#define SOTER_CHECK_(x)      \
+    if (!(x)) {              \
+        SOTER_ERROR_OUT(#x); \
+        return NULL;         \
     }
 
-#define SOTER_CHECK_PARAM(x)                                                                       \
-    if (!(x)) {                                                                                    \
-        SOTER_ERROR_OUT(#x);                                                                       \
-        return SOTER_INVALID_PARAMETER;                                                            \
+#define SOTER_CHECK_PARAM(x)            \
+    if (!(x)) {                         \
+        SOTER_ERROR_OUT(#x);            \
+        return SOTER_INVALID_PARAMETER; \
     }
 
-#define SOTER_CHECK_PARAM_(x)                                                                      \
-    if (!(x)) {                                                                                    \
-        SOTER_ERROR_OUT(#x);                                                                       \
-        return NULL;                                                                               \
+#define SOTER_CHECK_PARAM_(x) \
+    if (!(x)) {               \
+        SOTER_ERROR_OUT(#x);  \
+        return NULL;          \
     }
 
-#define SOTER_CHECK_MALLOC(x, y)                                                                   \
-    y = malloc(sizeof(x));                                                                         \
-    if (!(x)) {                                                                                    \
-        SOTER_ERROR_OUT(#x);                                                                       \
-        return SOTER_NO_MEMORY;                                                                    \
+#define SOTER_CHECK_MALLOC(x, y) \
+    y = malloc(sizeof(x));       \
+    if (!(x)) {                  \
+        SOTER_ERROR_OUT(#x);     \
+        return SOTER_NO_MEMORY;  \
     }
 
-#define SOTER_CHECK_MALLOC_(x)                                                                     \
-    if (!(x)) {                                                                                    \
-        SOTER_ERROR_OUT(#x);                                                                       \
-        return NULL;                                                                               \
+#define SOTER_CHECK_MALLOC_(x) \
+    if (!(x)) {                \
+        SOTER_ERROR_OUT(#x);   \
+        return NULL;           \
     }
 
-#define SOTER_CHECK_MALLOC_(x)                                                                     \
-    if (!(x)) {                                                                                    \
-        SOTER_ERROR_OUT(#x);                                                                       \
-        return NULL;                                                                               \
+#define SOTER_CHECK_MALLOC_(x) \
+    if (!(x)) {                \
+        SOTER_ERROR_OUT(#x);   \
+        return NULL;           \
     }
 
-#define SOTER_CHECK_FREE(x, y)                                                                     \
-    if (!(x)) {                                                                                    \
-        SOTER_ERROR_OUT(#x);                                                                       \
-        free(y);                                                                                   \
-        return SOTER_FAIL;                                                                         \
+#define SOTER_CHECK_FREE(x, y) \
+    if (!(x)) {                \
+        SOTER_ERROR_OUT(#x);   \
+        free(y);               \
+        return SOTER_FAIL;     \
     }
 
-#define SOTER_IF_FAIL(x, y)                                                                        \
-    if (!(x)) {                                                                                    \
-        SOTER_ERROR_OUT(#x);                                                                       \
-        {                                                                                          \
-            y;                                                                                     \
-        }                                                                                          \
-        return SOTER_FAIL;                                                                         \
+#define SOTER_IF_FAIL(x, y)  \
+    if (!(x)) {              \
+        SOTER_ERROR_OUT(#x); \
+        {                    \
+            y;               \
+        }                    \
+        return SOTER_FAIL;   \
     }
 
-#define SOTER_IF_FAIL_(x, y)                                                                       \
-    if (!(x)) {                                                                                    \
-        SOTER_ERROR_OUT(#x);                                                                       \
-        {                                                                                          \
-            y;                                                                                     \
-        }                                                                                          \
-        return NULL;                                                                               \
+#define SOTER_IF_FAIL_(x, y) \
+    if (!(x)) {              \
+        SOTER_ERROR_OUT(#x); \
+        {                    \
+            y;               \
+        }                    \
+        return NULL;         \
     }
 
-#define SOTER_STATUS_CHECK(x, y)                                                                   \
-    {                                                                                              \
-        soter_status_t res = x;                                                                    \
-        if (res != y) {                                                                            \
-            SOTER_ERROR_OUT(#x);                                                                   \
-            return res;                                                                            \
-        }                                                                                          \
+#define SOTER_STATUS_CHECK(x, y) \
+    {                            \
+        soter_status_t res = x;  \
+        if (res != y) {          \
+            SOTER_ERROR_OUT(#x); \
+            return res;          \
+        }                        \
     }
 
-#define SOTER_STATUS_CHECK_FREE(x, y, z)                                                           \
-    {                                                                                              \
-        soter_status_t res = x;                                                                    \
-        if (res != y) {                                                                            \
-            SOTER_ERROR_OUT(#x);                                                                   \
-            free(z);                                                                               \
-            return res;                                                                            \
-        }                                                                                          \
+#define SOTER_STATUS_CHECK_FREE(x, y, z) \
+    {                                    \
+        soter_status_t res = x;          \
+        if (res != y) {                  \
+            SOTER_ERROR_OUT(#x);         \
+            free(z);                     \
+            return res;                  \
+        }                                \
     }
 
 /** @}

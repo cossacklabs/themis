@@ -19,8 +19,7 @@
 * @brief secure session interface
 */
 
-#import <objcthemis/ssession_transport_interface.h>
-#import <themis/themis.h>
+#import "ssession_transport_interface.h"
 
 /**
 * @addtogroup WRAPPERS

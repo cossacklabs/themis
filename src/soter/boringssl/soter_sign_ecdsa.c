@@ -24,7 +24,8 @@
 #include "soter/boringssl/soter_engine.h"
 #include "soter/soter_ec_key.h"
 
-soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const void* private_key,
+soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
+                                                const void* private_key,
                                                 const size_t private_key_length,
                                                 const void* public_key,
                                                 const size_t public_key_length)
@@ -77,13 +78,16 @@ soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const voi
     return SOTER_SUCCESS;
 }
 
-soter_status_t soter_sign_export_key_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* key,
-                                                      size_t* key_length, bool isprivate)
+soter_status_t soter_sign_export_key_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
+                                                      void* key,
+                                                      size_t* key_length,
+                                                      bool isprivate)
 {
     return soter_ec_export_key(ctx, key, key_length, isprivate);
 }
 
-soter_status_t soter_sign_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const void* data,
+soter_status_t soter_sign_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
+                                                  const void* data,
                                                   const size_t data_length)
 {
     if (EVP_DigestSignUpdate(ctx->md_ctx, data, data_length) != 1) {
@@ -92,7 +96,8 @@ soter_status_t soter_sign_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, const v
     return SOTER_SUCCESS;
 }
 
-soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx, void* signature,
+soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
+                                                 void* signature,
                                                  size_t* signature_length)
 {
     EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);

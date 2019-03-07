@@ -33,8 +33,10 @@ static size_t hash_block_size(soter_hash_algo_t algo)
     }
 }
 
-soter_status_t soter_hmac_init(soter_hmac_ctx_t* hmac_ctx, soter_hash_algo_t algo,
-                               const uint8_t* key, size_t key_length)
+soter_status_t soter_hmac_init(soter_hmac_ctx_t* hmac_ctx,
+                               soter_hash_algo_t algo,
+                               const uint8_t* key,
+                               size_t key_length)
 {
     size_t block_size = hash_block_size(algo);
     uint8_t i_key_pad[HASH_MAX_BLOCK_SIZE];
@@ -42,8 +44,8 @@ soter_status_t soter_hmac_init(soter_hmac_ctx_t* hmac_ctx, soter_hash_algo_t alg
     size_t i;
     size_t o_key_pad_length = sizeof(hmac_ctx->o_key_pad);
 
-    if ((NULL == hmac_ctx) || (0 == block_size) || (HASH_MAX_BLOCK_SIZE < block_size) ||
-        (NULL == key) || (0 == key_length)) {
+    if ((NULL == hmac_ctx) || (0 == block_size) || (HASH_MAX_BLOCK_SIZE < block_size)
+        || (NULL == key) || (0 == key_length)) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -127,8 +129,7 @@ soter_status_t soter_hmac_update(soter_hmac_ctx_t* hmac_ctx, const void* data, s
     return soter_hash_update(hmac_ctx->hash_ctx, data, length);
 }
 
-soter_status_t soter_hmac_final(soter_hmac_ctx_t* hmac_ctx, uint8_t* hmac_value,
-                                size_t* hmac_length)
+soter_status_t soter_hmac_final(soter_hmac_ctx_t* hmac_ctx, uint8_t* hmac_value, size_t* hmac_length)
 {
     soter_status_t res;
     size_t output_length;

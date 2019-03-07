@@ -42,8 +42,11 @@ struct secure_session_type {
     bool is_client;
 };
 
-themis_status_t secure_session_init(secure_session_t* session_ctx, const void* id, size_t id_length,
-                                    const void* sign_key, size_t sign_key_length,
+themis_status_t secure_session_init(secure_session_t* session_ctx,
+                                    const void* id,
+                                    size_t id_length,
+                                    const void* sign_key,
+                                    size_t sign_key_length,
                                     const secure_session_user_callbacks_t* user_callbacks);
 themis_status_t secure_session_cleanup(secure_session_t* session_ctx);
 

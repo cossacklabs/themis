@@ -64,8 +64,7 @@ soter_status_t soter_hash_update(soter_hash_ctx_t* hash_ctx, const void* data, s
     return SOTER_FAIL;
 }
 
-soter_status_t soter_hash_final(soter_hash_ctx_t* hash_ctx, uint8_t* hash_value,
-                                size_t* hash_length)
+soter_status_t soter_hash_final(soter_hash_ctx_t* hash_ctx, uint8_t* hash_value, size_t* hash_length)
 {
     size_t md_length;
 

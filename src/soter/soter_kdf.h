@@ -48,8 +48,12 @@ typedef struct soter_kdf_context_buf_type soter_kdf_context_buf_t;
  * @param [in] output_length length of data to derive
  * @return SOTER_SUCCESS on success or SOTER_FAIL on failure
  */
-soter_status_t soter_kdf(const void* key, size_t key_length, const char* label,
-                         const soter_kdf_context_buf_t* context, size_t context_count, void* output,
+soter_status_t soter_kdf(const void* key,
+                         size_t key_length,
+                         const char* label,
+                         const soter_kdf_context_buf_t* context,
+                         size_t context_count,
+                         void* output,
                          size_t output_length);
 /** @} */
 /** @} */

@@ -24,8 +24,12 @@
 #define MIN_VAL(_X_, _Y_) ((_X_ < _Y_) ? (_X_) : (_Y_))
 
 /* RFC 6189 p 4.5.1 */
-soter_status_t soter_kdf(const void* key, size_t key_length, const char* label,
-                         const soter_kdf_context_buf_t* context, size_t context_count, void* output,
+soter_status_t soter_kdf(const void* key,
+                         size_t key_length,
+                         const char* label,
+                         const soter_kdf_context_buf_t* context,
+                         size_t context_count,
+                         void* output,
                          size_t output_length)
 {
     soter_status_t res = SOTER_SUCCESS;

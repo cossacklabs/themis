@@ -53,7 +53,8 @@ typedef struct soter_asym_cipher_type soter_asym_cipher_t;
  * @param [in] pad padding algorithm to be used. See @ref soter_asym_cipher_padding_type
  * @return pointer to created asymmetric encription/decription context on success or NULL on failure
  */
-soter_asym_cipher_t* soter_asym_cipher_create(const void* key, size_t key_length,
+soter_asym_cipher_t* soter_asym_cipher_create(const void* key,
+                                              size_t key_length,
                                               soter_asym_cipher_padding_t pad);
 
 /**
@@ -71,8 +72,10 @@ soter_asym_cipher_t* soter_asym_cipher_create(const void* key, size_t key_length
  * to store cipher data.
  */
 soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher_ctx,
-                                         const void* plain_data, size_t plain_data_length,
-                                         void* cipher_data, size_t* cipher_data_length);
+                                         const void* plain_data,
+                                         size_t plain_data_length,
+                                         void* cipher_data,
+                                         size_t* cipher_data_length);
 
 /**
  * @brief decrypt data
@@ -89,8 +92,10 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher_ctx,
  * to store plain data.
  */
 soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher_ctx,
-                                         const void* cipher_data, size_t cipher_data_length,
-                                         void* plain_data, size_t* plain_data_length);
+                                         const void* cipher_data,
+                                         size_t cipher_data_length,
+                                         void* plain_data,
+                                         size_t* plain_data_length);
 
 /**
  * @brief import key to asymmetric encription/decription context
