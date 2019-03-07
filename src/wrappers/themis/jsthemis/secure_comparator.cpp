@@ -37,8 +37,7 @@ SecureComparator::SecureComparator(const std::vector<uint8_t>& secret)
         ThrowError("Secure Comparator constructor", THEMIS_FAIL);
         return;
     }
-    themis_status_t status =
-        secure_comparator_append_secret(comparator_, &secret[0], secret.size());
+    themis_status_t status = secure_comparator_append_secret(comparator_, &secret[0], secret.size());
     if (THEMIS_SUCCESS != status) {
         ThrowError("Secure Comparator failed to append secret", status);
         return;
@@ -85,9 +84,9 @@ void SecureComparator::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             ThrowParameterError("Secure Comparator constructor", "secret is empty");
             return;
         }
-        std::vector<uint8_t> secret(
-            (uint8_t*)(node::Buffer::Data(args[0])),
-            (uint8_t*)(node::Buffer::Data(args[0]) + node::Buffer::Length(args[0])));
+        std::vector<uint8_t> secret((uint8_t*)(node::Buffer::Data(args[0])),
+                                    (uint8_t*)(node::Buffer::Data(args[0])
+                                               + node::Buffer::Length(args[0])));
         SecureComparator* obj = new SecureComparator(secret);
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
@@ -142,7 +141,9 @@ void SecureComparator::proceedCompare(const Nan::FunctionCallbackInfo<v8::Value>
     size_t length = 0;
     status = secure_comparator_proceed_compare(obj->comparator_,
                                                (const uint8_t*)(node::Buffer::Data(args[0])),
-                                               node::Buffer::Length(args[0]), NULL, &length);
+                                               node::Buffer::Length(args[0]),
+                                               NULL,
+                                               &length);
     if (THEMIS_BUFFER_TOO_SMALL != status) {
         ThrowSecureComparatorError("Secure Comparator failed to proceed comparison", status);
         args.GetReturnValue().SetUndefined();
@@ -151,7 +152,9 @@ void SecureComparator::proceedCompare(const Nan::FunctionCallbackInfo<v8::Value>
     uint8_t* data = (uint8_t*)(malloc(length));
     status = secure_comparator_proceed_compare(obj->comparator_,
                                                (const uint8_t*)(node::Buffer::Data(args[0])),
-                                               node::Buffer::Length(args[0]), data, &length);
+                                               node::Buffer::Length(args[0]),
+                                               data,
+                                               &length);
     if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != status) {
         if (THEMIS_SUCCESS != status) {
             ThrowSecureComparatorError("Secure Comparator failed to proceed comparison", status);

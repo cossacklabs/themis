@@ -56,9 +56,8 @@ void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
     if (args.IsConstructCall()) {
         if (args.Length() == 2) {
             if (!args[0]->IsUint8Array()) {
-                ThrowParameterError(
-                    "Key Pair constructor",
-                    "private key is not a byte buffer, use ByteBuffer or Uint8Array");
+                ThrowParameterError("Key Pair constructor",
+                                    "private key is not a byte buffer, use ByteBuffer or Uint8Array");
                 return;
             }
             if (node::Buffer::Length(args[0]) == 0) {
@@ -66,21 +65,20 @@ void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
                 return;
             }
             if (!args[1]->IsUint8Array()) {
-                ThrowParameterError(
-                    "Key Pair constructor",
-                    "public key is not a byte buffer, use ByteBuffer or Uint8Array");
+                ThrowParameterError("Key Pair constructor",
+                                    "public key is not a byte buffer, use ByteBuffer or Uint8Array");
                 return;
             }
             if (node::Buffer::Length(args[1]) == 0) {
                 ThrowParameterError("Key Pair constructor", "public key is empty");
                 return;
             }
-            std::vector<uint8_t> private_key(
-                (uint8_t*)(node::Buffer::Data(args[0])),
-                (uint8_t*)(node::Buffer::Data(args[0]) + node::Buffer::Length(args[0])));
-            std::vector<uint8_t> public_key(
-                (uint8_t*)(node::Buffer::Data(args[1])),
-                (uint8_t*)(node::Buffer::Data(args[1]) + node::Buffer::Length(args[1])));
+            std::vector<uint8_t> private_key((uint8_t*)(node::Buffer::Data(args[0])),
+                                             (uint8_t*)(node::Buffer::Data(args[0])
+                                                        + node::Buffer::Length(args[0])));
+            std::vector<uint8_t> public_key((uint8_t*)(node::Buffer::Data(args[1])),
+                                            (uint8_t*)(node::Buffer::Data(args[1])
+                                                       + node::Buffer::Length(args[1])));
             KeyPair* obj = new KeyPair(private_key, public_key);
             obj->Wrap(args.This());
             args.GetReturnValue().Set(args.This());
@@ -94,8 +92,7 @@ void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             }
             std::vector<uint8_t> prk(private_key_length);
             std::vector<uint8_t> puk(public_key_length);
-            status =
-                themis_gen_ec_key_pair(&prk[0], &private_key_length, &puk[0], &public_key_length);
+            status = themis_gen_ec_key_pair(&prk[0], &private_key_length, &puk[0], &public_key_length);
             if (status != THEMIS_SUCCESS) {
                 ThrowError("Key Pair generation failed", status);
                 args.GetReturnValue().SetUndefined();
@@ -104,9 +101,8 @@ void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             obj->Wrap(args.This());
             args.GetReturnValue().Set(args.This());
         } else {
-            ThrowParameterError(
-                "Key Pair constructor",
-                "invalid argument count, expected no arguments or private and public keys");
+            ThrowParameterError("Key Pair constructor",
+                                "invalid argument count, expected no arguments or private and public keys");
             args.GetReturnValue().SetUndefined();
         }
     } else {
@@ -121,8 +117,7 @@ void KeyPair::private_key(const Nan::FunctionCallbackInfo<v8::Value>& args)
 {
     KeyPair* obj = Nan::ObjectWrap::Unwrap<KeyPair>(args.This());
     args.GetReturnValue().Set(
-        Nan::CopyBuffer((char*)(&(obj->private_key_)[0]), obj->private_key_.size())
-            .ToLocalChecked());
+        Nan::CopyBuffer((char*)(&(obj->private_key_)[0]), obj->private_key_.size()).ToLocalChecked());
 }
 
 void KeyPair::public_key(const Nan::FunctionCallbackInfo<v8::Value>& args)

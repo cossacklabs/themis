@@ -39,8 +39,7 @@ SecureCellTokenProtect::~SecureCellTokenProtect()
 void SecureCellTokenProtect::Init(v8::Handle<v8::Object> exports)
 {
     // Prepare constructor template
-    v8::Local<v8::FunctionTemplate> tpl =
-        Nan::New<v8::FunctionTemplate>(SecureCellTokenProtect::New);
+    v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SecureCellTokenProtect::New);
     tpl->SetClassName(Nan::New("SecureCellTokenProtect").ToLocalChecked());
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     // Prototype
@@ -70,9 +69,8 @@ void SecureCellTokenProtect::New(const Nan::FunctionCallbackInfo<v8::Value>& arg
             args.GetReturnValue().SetUndefined();
             return;
         }
-        std::vector<uint8_t> key(
-            (uint8_t*)(node::Buffer::Data(args[0])),
-            (uint8_t*)(node::Buffer::Data(args[0]) + node::Buffer::Length(args[0])));
+        std::vector<uint8_t> key((uint8_t*)(node::Buffer::Data(args[0])),
+                                 (uint8_t*)(node::Buffer::Data(args[0]) + node::Buffer::Length(args[0])));
         SecureCellTokenProtect* obj = new SecureCellTokenProtect(key);
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
@@ -119,10 +117,16 @@ void SecureCellTokenProtect::encrypt(const Nan::FunctionCallbackInfo<v8::Value>&
         context = (const uint8_t*)(node::Buffer::Data(args[1]));
         context_length = node::Buffer::Length(args[1]);
     }
-    status = themis_secure_cell_encrypt_token_protect(
-        &(obj->key_)[0], obj->key_.size(), context, context_length,
-        (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), NULL,
-        &token_length, NULL, &length);
+    status = themis_secure_cell_encrypt_token_protect(&(obj->key_)[0],
+                                                      obj->key_.size(),
+                                                      context,
+                                                      context_length,
+                                                      (const uint8_t*)(node::Buffer::Data(args[0])),
+                                                      node::Buffer::Length(args[0]),
+                                                      NULL,
+                                                      &token_length,
+                                                      NULL,
+                                                      &length);
     if (status != THEMIS_BUFFER_TOO_SMALL) {
         ThrowError("Secure Cell (Token Protect) failed to encrypt", status);
         args.GetReturnValue().SetUndefined();
@@ -130,10 +134,16 @@ void SecureCellTokenProtect::encrypt(const Nan::FunctionCallbackInfo<v8::Value>&
     }
     uint8_t* data = (uint8_t*)(malloc(length));
     uint8_t* token = (uint8_t*)(malloc(token_length));
-    status = themis_secure_cell_encrypt_token_protect(
-        &(obj->key_)[0], obj->key_.size(), context, context_length,
-        (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]), token,
-        &token_length, data, &length);
+    status = themis_secure_cell_encrypt_token_protect(&(obj->key_)[0],
+                                                      obj->key_.size(),
+                                                      context,
+                                                      context_length,
+                                                      (const uint8_t*)(node::Buffer::Data(args[0])),
+                                                      node::Buffer::Length(args[0]),
+                                                      token,
+                                                      &token_length,
+                                                      data,
+                                                      &length);
     if (status != THEMIS_SUCCESS) {
         ThrowError("Secure Cell (Token Protect) failed to encrypt", status);
         free(data);
@@ -142,9 +152,11 @@ void SecureCellTokenProtect::encrypt(const Nan::FunctionCallbackInfo<v8::Value>&
         return;
     }
     v8::Local<v8::Object> retobj = Nan::New<v8::Object>();
-    Nan::Set(retobj, Nan::New("data").ToLocalChecked(),
+    Nan::Set(retobj,
+             Nan::New("data").ToLocalChecked(),
              Nan::NewBuffer((char*)(data), length).ToLocalChecked());
-    Nan::Set(retobj, Nan::New("token").ToLocalChecked(),
+    Nan::Set(retobj,
+             Nan::New("token").ToLocalChecked(),
              Nan::NewBuffer((char*)(token), token_length).ToLocalChecked());
     args.GetReturnValue().Set(retobj);
 }
@@ -194,22 +206,32 @@ void SecureCellTokenProtect::decrypt(const Nan::FunctionCallbackInfo<v8::Value>&
         context = (const uint8_t*)(node::Buffer::Data(args[2]));
         context_length = node::Buffer::Length(args[2]);
     }
-    status = themis_secure_cell_decrypt_token_protect(
-        &(obj->key_)[0], obj->key_.size(), context, context_length,
-        (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]),
-        (const uint8_t*)(node::Buffer::Data(args[1])), node::Buffer::Length(args[1]), NULL,
-        &length);
+    status = themis_secure_cell_decrypt_token_protect(&(obj->key_)[0],
+                                                      obj->key_.size(),
+                                                      context,
+                                                      context_length,
+                                                      (const uint8_t*)(node::Buffer::Data(args[0])),
+                                                      node::Buffer::Length(args[0]),
+                                                      (const uint8_t*)(node::Buffer::Data(args[1])),
+                                                      node::Buffer::Length(args[1]),
+                                                      NULL,
+                                                      &length);
     if (status != THEMIS_BUFFER_TOO_SMALL) {
         ThrowError("Secure Cell (Token Protect) failed to decrypt", status);
         args.GetReturnValue().SetUndefined();
         return;
     }
     uint8_t* data = (uint8_t*)(malloc(length));
-    status = themis_secure_cell_decrypt_token_protect(
-        &(obj->key_)[0], obj->key_.size(), context, context_length,
-        (const uint8_t*)(node::Buffer::Data(args[0])), node::Buffer::Length(args[0]),
-        (const uint8_t*)(node::Buffer::Data(args[1])), node::Buffer::Length(args[1]), data,
-        &length);
+    status = themis_secure_cell_decrypt_token_protect(&(obj->key_)[0],
+                                                      obj->key_.size(),
+                                                      context,
+                                                      context_length,
+                                                      (const uint8_t*)(node::Buffer::Data(args[0])),
+                                                      node::Buffer::Length(args[0]),
+                                                      (const uint8_t*)(node::Buffer::Data(args[1])),
+                                                      node::Buffer::Length(args[1]),
+                                                      data,
+                                                      &length);
     if (status != THEMIS_SUCCESS) {
         ThrowError("Secure Cell (Token Protect) failed to decrypt", status);
         free(data);

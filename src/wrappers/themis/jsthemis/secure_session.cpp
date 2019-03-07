@@ -29,8 +29,8 @@ namespace jsthemis
 
 Nan::Persistent<v8::Function> SecureSession::constructor;
 
-int get_public_key_for_id_callback(const void* id, size_t id_length, void* key_buffer,
-                                   size_t key_buffer_length, void* user_data)
+int get_public_key_for_id_callback(
+    const void* id, size_t id_length, void* key_buffer, size_t key_buffer_length, void* user_data)
 {
     if (!key_buffer || !key_buffer_length) {
         return THEMIS_BUFFER_TOO_SMALL;
@@ -43,7 +43,8 @@ int get_public_key_for_id_callback(const void* id, size_t id_length, void* key_b
         if (key_buffer_length < node::Buffer::Length(buffer)) {
             return THEMIS_BUFFER_TOO_SMALL;
         }
-        std::memcpy(key_buffer, (const uint8_t*)(node::Buffer::Data(buffer)),
+        std::memcpy(key_buffer,
+                    (const uint8_t*)(node::Buffer::Data(buffer)),
                     node::Buffer::Length(buffer));
         return THEMIS_SUCCESS;
     }
@@ -64,8 +65,7 @@ SecureSession::SecureSession(const std::vector<uint8_t>& id,
     callback_.receive_data = NULL;
     callback_.state_changed = NULL;
     callback_.user_data = this;
-    session_ =
-        secure_session_create(&id[0], id.size(), &private_key[0], private_key.size(), &callback_);
+    session_ = secure_session_create(&id[0], id.size(), &private_key[0], private_key.size(), &callback_);
 }
 
 SecureSession::~SecureSession()
@@ -95,9 +95,8 @@ void SecureSession::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
 {
     if (args.IsConstructCall()) {
         if (args.Length() < 3) {
-            ThrowParameterError(
-                "Secure Session constructor",
-                "not enough arguments, expected client ID, private key, public key callback");
+            ThrowParameterError("Secure Session constructor",
+                                "not enough arguments, expected client ID, private key, public key callback");
             args.GetReturnValue().SetUndefined();
             return;
         }
@@ -124,19 +123,16 @@ void SecureSession::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             return;
         }
         if (!args[2]->IsFunction()) {
-            ThrowParameterError("Secure Session constructor",
-                                "public key callback is not a function");
+            ThrowParameterError("Secure Session constructor", "public key callback is not a function");
             args.GetReturnValue().SetUndefined();
             return;
         }
-        std::vector<uint8_t> id(
-            (uint8_t*)(node::Buffer::Data(args[0])),
-            (uint8_t*)(node::Buffer::Data(args[0]) + node::Buffer::Length(args[0])));
-        std::vector<uint8_t> private_key(
-            (uint8_t*)(node::Buffer::Data(args[1])),
-            (uint8_t*)(node::Buffer::Data(args[1]) + node::Buffer::Length(args[1])));
-        SecureSession* obj =
-            new SecureSession(id, private_key, v8::Local<v8::Function>::Cast(args[2]));
+        std::vector<uint8_t> id((uint8_t*)(node::Buffer::Data(args[0])),
+                                (uint8_t*)(node::Buffer::Data(args[0]) + node::Buffer::Length(args[0])));
+        std::vector<uint8_t> private_key((uint8_t*)(node::Buffer::Data(args[1])),
+                                         (uint8_t*)(node::Buffer::Data(args[1])
+                                                    + node::Buffer::Length(args[1])));
+        SecureSession* obj = new SecureSession(id, private_key, v8::Local<v8::Function>::Cast(args[2]));
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
     } else {
@@ -191,16 +187,22 @@ void SecureSession::wrap(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     size_t length = 0;
-    status = secure_session_wrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])),
-                                 node::Buffer::Length(args[0]), NULL, &length);
+    status = secure_session_wrap(obj->session_,
+                                 (const uint8_t*)(node::Buffer::Data(args[0])),
+                                 node::Buffer::Length(args[0]),
+                                 NULL,
+                                 &length);
     if (status != THEMIS_BUFFER_TOO_SMALL) {
         ThrowSecureSessionError("Secure Session failed to encrypt", status);
         args.GetReturnValue().SetUndefined();
         return;
     }
     uint8_t* data = (uint8_t*)(malloc(length));
-    status = secure_session_wrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])),
-                                 node::Buffer::Length(args[0]), data, &length);
+    status = secure_session_wrap(obj->session_,
+                                 (const uint8_t*)(node::Buffer::Data(args[0])),
+                                 node::Buffer::Length(args[0]),
+                                 data,
+                                 &length);
     if (status != THEMIS_SUCCESS) {
         ThrowSecureSessionError("Secure Session failed to encrypt", status);
         free(data);
@@ -232,8 +234,11 @@ void SecureSession::unwrap(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     size_t length = 0;
-    status = secure_session_unwrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])),
-                                   node::Buffer::Length(args[0]), NULL, &length);
+    status = secure_session_unwrap(obj->session_,
+                                   (const uint8_t*)(node::Buffer::Data(args[0])),
+                                   node::Buffer::Length(args[0]),
+                                   NULL,
+                                   &length);
     if (status != THEMIS_BUFFER_TOO_SMALL) {
         if (status != THEMIS_SUCCESS) {
             ThrowSecureSessionError("Secure Session failed to decrypt", status);
@@ -242,8 +247,11 @@ void SecureSession::unwrap(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     uint8_t* data = (uint8_t*)(malloc(length));
-    status = secure_session_unwrap(obj->session_, (const uint8_t*)(node::Buffer::Data(args[0])),
-                                   node::Buffer::Length(args[0]), data, &length);
+    status = secure_session_unwrap(obj->session_,
+                                   (const uint8_t*)(node::Buffer::Data(args[0])),
+                                   node::Buffer::Length(args[0]),
+                                   data,
+                                   &length);
     if (status != THEMIS_SUCCESS && status != THEMIS_SSESSION_SEND_OUTPUT_TO_PEER) {
         ThrowSecureSessionError("Secure Session failed to decrypt", status);
         free(data);

@@ -32,8 +32,7 @@ public:
     static void Init(v8::Handle<v8::Object> exports);
 
 private:
-    explicit KeyPair(const std::vector<uint8_t>& private_key,
-                     const std::vector<uint8_t>& public_key);
+    explicit KeyPair(const std::vector<uint8_t>& private_key, const std::vector<uint8_t>& public_key);
     explicit KeyPair();
     ~KeyPair();
 

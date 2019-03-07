@@ -24,8 +24,7 @@
 namespace jsthemis
 {
 
-static inline void ExportStatusCode(v8::Handle<v8::Object>& exports, const char* name,
-                                    themis_status_t status)
+static inline void ExportStatusCode(v8::Handle<v8::Object>& exports, const char* name, themis_status_t status)
 {
     exports->Set(Nan::New(name).ToLocalChecked(), Nan::New(status));
 }
@@ -42,7 +41,8 @@ void Errors::Init(v8::Handle<v8::Object> exports)
     ExportStatusCode(exports, "NOT_SUPPORTED", THEMIS_NOT_SUPPORTED);
     ExportStatusCode(exports, "SSESSION_KA_NOT_FINISHED", THEMIS_SSESSION_KA_NOT_FINISHED);
     ExportStatusCode(exports, "SSESSION_TRANSPORT_ERROR", THEMIS_SSESSION_TRANSPORT_ERROR);
-    ExportStatusCode(exports, "SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR",
+    ExportStatusCode(exports,
+                     "SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR",
                      THEMIS_SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR);
     ExportStatusCode(exports, "SCOMPARE_NOT_READY", THEMIS_SCOMPARE_NOT_READY);
 }

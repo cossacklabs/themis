@@ -75,12 +75,12 @@ void SecureMessage::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             args.GetReturnValue().SetUndefined();
             return;
         }
-        std::vector<uint8_t> private_key(
-            (uint8_t*)(node::Buffer::Data(args[0])),
-            (uint8_t*)(node::Buffer::Data(args[0]) + node::Buffer::Length(args[0])));
-        std::vector<uint8_t> public_key(
-            (uint8_t*)(node::Buffer::Data(args[1])),
-            (uint8_t*)(node::Buffer::Data(args[1]) + node::Buffer::Length(args[1])));
+        std::vector<uint8_t> private_key((uint8_t*)(node::Buffer::Data(args[0])),
+                                         (uint8_t*)(node::Buffer::Data(args[0])
+                                                    + node::Buffer::Length(args[0])));
+        std::vector<uint8_t> public_key((uint8_t*)(node::Buffer::Data(args[1])),
+                                        (uint8_t*)(node::Buffer::Data(args[1])
+                                                   + node::Buffer::Length(args[1])));
         if (!ValidateKeys(private_key, public_key)) {
             args.GetReturnValue().SetUndefined();
             return;
@@ -105,8 +105,7 @@ bool SecureMessage::ValidateKeys(const std::vector<uint8_t>& private_key,
             return false;
         }
         if (!IsPrivateKey(private_key)) {
-            ThrowParameterError("Secure Message constructor",
-                                "using public key instead of private key");
+            ThrowParameterError("Secure Message constructor", "using public key instead of private key");
             return false;
         }
     }
@@ -116,8 +115,7 @@ bool SecureMessage::ValidateKeys(const std::vector<uint8_t>& private_key,
             return false;
         }
         if (!IsPublicKey(public_key)) {
-            ThrowParameterError("Secure Message constructor",
-                                "using private key instead of public key");
+            ThrowParameterError("Secure Message constructor", "using private key instead of public key");
             return false;
         }
     }
@@ -156,28 +154,35 @@ void SecureMessage::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     size_t encrypted_length = 0;
-    status = themis_secure_message_encrypt(
-        &(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0],
-        obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])),
-        node::Buffer::Length(args[0]), NULL, &encrypted_length);
+    status = themis_secure_message_encrypt(&(obj->private_key_)[0],
+                                           obj->private_key_.size(),
+                                           &(obj->peer_public_key_)[0],
+                                           obj->peer_public_key_.size(),
+                                           (const uint8_t*)(node::Buffer::Data(args[0])),
+                                           node::Buffer::Length(args[0]),
+                                           NULL,
+                                           &encrypted_length);
     if (status != THEMIS_BUFFER_TOO_SMALL) {
         ThrowError("Secure Message failed to encrypt message", status);
         args.GetReturnValue().SetUndefined();
         return;
     }
     uint8_t* encrypted_data = (uint8_t*)(malloc(encrypted_length));
-    status = themis_secure_message_encrypt(
-        &(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0],
-        obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])),
-        node::Buffer::Length(args[0]), encrypted_data, &encrypted_length);
+    status = themis_secure_message_encrypt(&(obj->private_key_)[0],
+                                           obj->private_key_.size(),
+                                           &(obj->peer_public_key_)[0],
+                                           obj->peer_public_key_.size(),
+                                           (const uint8_t*)(node::Buffer::Data(args[0])),
+                                           node::Buffer::Length(args[0]),
+                                           encrypted_data,
+                                           &encrypted_length);
     if (status != THEMIS_SUCCESS) {
         ThrowError("Secure Message failed to encrypt message", status);
         free(encrypted_data);
         args.GetReturnValue().SetUndefined();
         return;
     }
-    args.GetReturnValue().Set(
-        Nan::NewBuffer((char*)encrypted_data, encrypted_length).ToLocalChecked());
+    args.GetReturnValue().Set(Nan::NewBuffer((char*)encrypted_data, encrypted_length).ToLocalChecked());
 }
 
 void SecureMessage::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
@@ -212,28 +217,35 @@ void SecureMessage::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     size_t decrypted_length = 0;
-    status = themis_secure_message_decrypt(
-        &(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0],
-        obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])),
-        node::Buffer::Length(args[0]), NULL, &decrypted_length);
+    status = themis_secure_message_decrypt(&(obj->private_key_)[0],
+                                           obj->private_key_.size(),
+                                           &(obj->peer_public_key_)[0],
+                                           obj->peer_public_key_.size(),
+                                           (const uint8_t*)(node::Buffer::Data(args[0])),
+                                           node::Buffer::Length(args[0]),
+                                           NULL,
+                                           &decrypted_length);
     if (status != THEMIS_BUFFER_TOO_SMALL) {
         ThrowError("Secure Message failed to decrypt message", status);
         args.GetReturnValue().SetUndefined();
         return;
     }
     uint8_t* decrypted_data = (uint8_t*)(malloc(decrypted_length));
-    status = themis_secure_message_decrypt(
-        &(obj->private_key_)[0], obj->private_key_.size(), &(obj->peer_public_key_)[0],
-        obj->peer_public_key_.size(), (const uint8_t*)(node::Buffer::Data(args[0])),
-        node::Buffer::Length(args[0]), decrypted_data, &decrypted_length);
+    status = themis_secure_message_decrypt(&(obj->private_key_)[0],
+                                           obj->private_key_.size(),
+                                           &(obj->peer_public_key_)[0],
+                                           obj->peer_public_key_.size(),
+                                           (const uint8_t*)(node::Buffer::Data(args[0])),
+                                           node::Buffer::Length(args[0]),
+                                           decrypted_data,
+                                           &decrypted_length);
     if (status != THEMIS_SUCCESS) {
         ThrowError("Secure Message failed to decrypt message", status);
         free(decrypted_data);
         args.GetReturnValue().SetUndefined();
         return;
     }
-    args.GetReturnValue().Set(
-        Nan::NewBuffer((char*)decrypted_data, decrypted_length).ToLocalChecked());
+    args.GetReturnValue().Set(Nan::NewBuffer((char*)decrypted_data, decrypted_length).ToLocalChecked());
 }
 
 void SecureMessage::sign(const Nan::FunctionCallbackInfo<v8::Value>& args)
@@ -263,18 +275,23 @@ void SecureMessage::sign(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     size_t encrypted_length = 0;
-    status = themis_secure_message_sign(&(obj->private_key_)[0], obj->private_key_.size(),
+    status = themis_secure_message_sign(&(obj->private_key_)[0],
+                                        obj->private_key_.size(),
                                         (const uint8_t*)(node::Buffer::Data(args[0])),
-                                        node::Buffer::Length(args[0]), NULL, &encrypted_length);
+                                        node::Buffer::Length(args[0]),
+                                        NULL,
+                                        &encrypted_length);
     if (status != THEMIS_BUFFER_TOO_SMALL) {
         ThrowError("Secure Message failed to sign message", status);
         args.GetReturnValue().SetUndefined();
         return;
     }
     uint8_t* encrypted_data = (uint8_t*)(malloc(encrypted_length));
-    status = themis_secure_message_sign(&(obj->private_key_)[0], obj->private_key_.size(),
+    status = themis_secure_message_sign(&(obj->private_key_)[0],
+                                        obj->private_key_.size(),
                                         (const uint8_t*)(node::Buffer::Data(args[0])),
-                                        node::Buffer::Length(args[0]), encrypted_data,
+                                        node::Buffer::Length(args[0]),
+                                        encrypted_data,
                                         &encrypted_length);
     if (status != THEMIS_SUCCESS) {
         ThrowError("Secure Message failed to sign message", status);
@@ -282,8 +299,7 @@ void SecureMessage::sign(const Nan::FunctionCallbackInfo<v8::Value>& args)
         args.GetReturnValue().SetUndefined();
         return;
     }
-    args.GetReturnValue().Set(
-        Nan::NewBuffer((char*)encrypted_data, encrypted_length).ToLocalChecked());
+    args.GetReturnValue().Set(Nan::NewBuffer((char*)encrypted_data, encrypted_length).ToLocalChecked());
 }
 
 void SecureMessage::verify(const Nan::FunctionCallbackInfo<v8::Value>& args)
@@ -313,18 +329,23 @@ void SecureMessage::verify(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     size_t decrypted_length = 0;
-    status = themis_secure_message_verify(&(obj->peer_public_key_)[0], obj->peer_public_key_.size(),
+    status = themis_secure_message_verify(&(obj->peer_public_key_)[0],
+                                          obj->peer_public_key_.size(),
                                           (const uint8_t*)(node::Buffer::Data(args[0])),
-                                          node::Buffer::Length(args[0]), NULL, &decrypted_length);
+                                          node::Buffer::Length(args[0]),
+                                          NULL,
+                                          &decrypted_length);
     if (status != THEMIS_BUFFER_TOO_SMALL) {
         ThrowError("Secure Message failed to verify signature", status);
         args.GetReturnValue().SetUndefined();
         return;
     }
     uint8_t* decrypted_data = (uint8_t*)(malloc(decrypted_length));
-    status = themis_secure_message_verify(&(obj->peer_public_key_)[0], obj->peer_public_key_.size(),
+    status = themis_secure_message_verify(&(obj->peer_public_key_)[0],
+                                          obj->peer_public_key_.size(),
                                           (const uint8_t*)(node::Buffer::Data(args[0])),
-                                          node::Buffer::Length(args[0]), decrypted_data,
+                                          node::Buffer::Length(args[0]),
+                                          decrypted_data,
                                           &decrypted_length);
     if (status != THEMIS_SUCCESS) {
         ThrowError("Secure Message failed to verify signature", status);
@@ -332,8 +353,7 @@ void SecureMessage::verify(const Nan::FunctionCallbackInfo<v8::Value>& args)
         args.GetReturnValue().SetUndefined();
         return;
     }
-    args.GetReturnValue().Set(
-        Nan::NewBuffer((char*)decrypted_data, decrypted_length).ToLocalChecked());
+    args.GetReturnValue().Set(Nan::NewBuffer((char*)decrypted_data, decrypted_length).ToLocalChecked());
 }
 
 } // namespace jsthemis
