@@ -7,12 +7,12 @@
 //
 
 import UIKit
+import themis
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions
         launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -38,16 +38,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    
     func generateMasterKey() -> Data {
         let masterKeyString: String = "UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg"
         let masterKeyData: Data = Data(base64Encoded: masterKeyString, options: .ignoreUnknownCharacters)!
         return masterKeyData
     }
     
-    
-    // MARK:- Secure Cell
-    // MARK:- cell seal mode
+    // MARK: - Secure Cell
+    // MARK: - cell seal mode
     func runExampleSecureCellSealMode() {
         print("----------------------------------", #function)
         let masterKeyData: Data = self.generateMasterKey()
@@ -70,7 +68,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
         
-        
         do {
             let decryptedMessage: Data = try cellSeal.unwrapData(encryptedMessage,
                                                        context: context.data(using: .utf8)!)
@@ -83,7 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    // MARK:- cell token protect mode
+    // MARK: - cell token protect mode
     func runExampleSecureCellTokenProtectMode() {
         print("----------------------------------", #function)
         let masterKeyData: Data = self.generateMasterKey()
@@ -107,7 +104,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
         
-    
         do {
             let decryptedMessage: Data = try cellToken.unwrapData(encryptedMessage,
                                                                   context: context.data(using: .utf8)!)
@@ -120,8 +116,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    
-    // MARK:- cell imprint
+    // MARK: - cell imprint
     func runExampleSecureCellImprint() {
         print("----------------------------------", #function)
         let masterKeyData: Data = self.generateMasterKey()
@@ -144,7 +139,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
         
-        
         do {
             // context is NOT optional parameter here
             let decryptedMessage: Data = try contextImprint.unwrapData(encryptedMessage,
@@ -158,10 +152,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    
-    // MARK:- Key Generation
-    
-    // MARK:- RSA/EC
+    // MARK: - Key Generation
+    // MARK: - RSA/EC
     func runExampleGeneratingKeys() {
         print("----------------------------------", #function)
         
@@ -186,8 +178,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("RSA publicKey = \(publicKeyEC)")
     }
     
-
-    // MARK:- Keys from file
+    // MARK: - Keys from file
     // Sometimes you will need to read keys from files
     func readingKeysFromFile() {
         print("----------------------------------", #function)
@@ -211,10 +202,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("clientPublicKeyOldFromFile = \(clientPublicKeyOldFromFile)")
     }
     
-    
-    // MARK:- Secure Message
-    
-    // MARK:- encryption/decryption
+    // MARK: - Secure Message
+    // MARK: - encryption/decryption
     func runExampleSecureMessageEncryptionDecryption() {
         print("----------------------------------", #function)
         
@@ -250,7 +239,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
         
-        
         // ---------- decryption ----------------
         let serverPrivateKeyString: String = "UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR"
         let clientPublicKeyString: String = "VUVDMgAAAC1SsL32Axjosnf2XXUwm/4WxPlZauQ+v+0eOOjpwMN/EO+Huh5d"
@@ -277,7 +265,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    // MARK:- sign/vefiry
+    // MARK: - sign/vefiry
     func runExampleSecureMessageSignVerify() {
         print("----------------------------------", #function)
         
@@ -312,7 +300,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Error occurred while encrypting \(error)", #function)
             return
         }
-        
         
         // ---------- verification ----------------
         let serverPrivateKeyString: String = "UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR"

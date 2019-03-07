@@ -17,16 +17,19 @@
 #ifndef JSTHEMIS_SECURE_CELL_SEAL_HPP_
 #define JSTHEMIS_SECURE_CELL_SEAL_HPP_
 
-#include <nan.h>
 #include <vector>
 
-namespace jsthemis{
+#include <nan.h>
 
-  class SecureCellSeal : public Nan::ObjectWrap {
-  public:
+namespace jsthemis
+{
+
+class SecureCellSeal : public Nan::ObjectWrap
+{
+public:
     static void Init(v8::Handle<v8::Object> exports);
 
-  private:
+private:
     explicit SecureCellSeal(const std::vector<uint8_t>& key);
     ~SecureCellSeal();
 
@@ -37,7 +40,8 @@ namespace jsthemis{
     static Nan::Persistent<v8::Function> constructor;
 
     std::vector<uint8_t> key_;
-  };
+};
 
-}
+} // namespace jsthemis
+
 #endif /* JSTHEMIS_SECURE_CELL_SEAL_HPP_ */

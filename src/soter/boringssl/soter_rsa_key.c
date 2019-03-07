@@ -119,9 +119,9 @@ static soter_status_t bignum_to_bytes(BIGNUM* bn, uint8_t* to, size_t to_length)
     return SOTER_SUCCESS;
 }
 
-soter_status_t
-soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_rsa_key_t* engine_key,
-                                     soter_container_hdr_t* key, size_t* key_length)
+soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_rsa_key_t* engine_key,
+                                                    soter_container_hdr_t* key,
+                                                    size_t* key_length)
 {
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
     RSA* rsa;
@@ -184,9 +184,9 @@ err:
     return res;
 }
 
-soter_status_t
-soter_engine_specific_to_rsa_priv_key(const soter_engine_specific_rsa_key_t* engine_key,
-                                      soter_container_hdr_t* key, size_t* key_length)
+soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific_rsa_key_t* engine_key,
+                                                     soter_container_hdr_t* key,
+                                                     size_t* key_length)
 {
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
     RSA* rsa;
@@ -550,8 +550,8 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
     }
 
     /* If at least one CRT parameter is zero, free them */
-    if (BN_is_zero(rsa->p) || BN_is_zero(rsa->q) || BN_is_zero(rsa->dmp1) ||
-        BN_is_zero(rsa->dmq1) || BN_is_zero(rsa->iqmp)) {
+    if (BN_is_zero(rsa->p) || BN_is_zero(rsa->q) || BN_is_zero(rsa->dmp1) || BN_is_zero(rsa->dmq1)
+        || BN_is_zero(rsa->iqmp)) {
         BN_free(rsa->p);
         rsa->p = NULL;
 

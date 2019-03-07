@@ -59,8 +59,7 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx)
 
     /* Override default key size for RSA key. Currently OpenSSL has default key size of 1024.
      * LibreSSL has 2048. We will put 2048 explicitly */
-    if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_BITS, SOTER_RSA_KEY_LENGTH,
-                              NULL)) {
+    if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_BITS, SOTER_RSA_KEY_LENGTH, NULL)) {
         return SOTER_FAIL;
     }
 
@@ -83,17 +82,18 @@ soter_status_t soter_rsa_import_key(EVP_PKEY* pkey, const void* key, const size_
     }
     switch (hdr->tag[0]) {
     case 'R':
-        return soter_rsa_priv_key_to_engine_specific(hdr, key_length,
+        return soter_rsa_priv_key_to_engine_specific(hdr,
+                                                     key_length,
                                                      ((soter_engine_specific_rsa_key_t**)&pkey));
     case 'U':
-        return soter_rsa_pub_key_to_engine_specific(hdr, key_length,
+        return soter_rsa_pub_key_to_engine_specific(hdr,
+                                                    key_length,
                                                     ((soter_engine_specific_rsa_key_t**)&pkey));
     }
     return SOTER_INVALID_PARAMETER;
 }
 
-soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length,
-                                    bool isprivate)
+soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate)
 {
     EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
 
@@ -102,9 +102,11 @@ soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* ke
     }
     if (isprivate) {
         return soter_engine_specific_to_rsa_priv_key((const soter_engine_specific_rsa_key_t*)pkey,
-                                                     (soter_container_hdr_t*)key, key_length);
+                                                     (soter_container_hdr_t*)key,
+                                                     key_length);
     }
 
     return soter_engine_specific_to_rsa_pub_key((const soter_engine_specific_rsa_key_t*)pkey,
-                                                (soter_container_hdr_t*)key, key_length);
+                                                (soter_container_hdr_t*)key,
+                                                key_length);
 }

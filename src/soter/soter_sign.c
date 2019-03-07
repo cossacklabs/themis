@@ -25,17 +25,23 @@
 #include <soter/openssl/soter_engine.h>
 #endif
 
-#define SOTER_SIGN_ALGS                                                                            \
-    SOTER_SIGN_ALG(rsa, pss, pkcs8)                                                                \
+#define SOTER_SIGN_ALGS             \
+    SOTER_SIGN_ALG(rsa, pss, pkcs8) \
     SOTER_SIGN_ALG(ecdsa, none, pkcs8)
 
-#define SOTER_SIGN_ALG(alg, padding, kdf)                                                          \
-    case SOTER_SIGN_##alg##_##padding##_##kdf:                                                     \
-        return soter_sign_init_##alg##_##padding##_##kdf(ctx, private_key, private_key_length,     \
-                                                         public_key, public_key_length);
-soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId,
-                               const void* private_key, const size_t private_key_length,
-                               const void* public_key, const size_t public_key_length)
+#define SOTER_SIGN_ALG(alg, padding, kdf)                                    \
+    case SOTER_SIGN_##alg##_##padding##_##kdf:                               \
+        return soter_sign_init_##alg##_##padding##_##kdf(ctx,                \
+                                                         private_key,        \
+                                                         private_key_length, \
+                                                         public_key,         \
+                                                         public_key_length);
+soter_status_t soter_sign_init(soter_sign_ctx_t* ctx,
+                               soter_sign_alg_t algId,
+                               const void* private_key,
+                               const size_t private_key_length,
+                               const void* public_key,
+                               const size_t public_key_length)
 {
     if (!ctx) {
         return SOTER_INVALID_PARAMETER;
@@ -51,13 +57,19 @@ soter_status_t soter_sign_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId,
 }
 #undef SOTER_SIGN_ALG
 
-#define SOTER_SIGN_ALG(alg, padding, kdf)                                                          \
-    case SOTER_SIGN_##alg##_##padding##_##kdf:                                                     \
-        return soter_verify_init_##alg##_##padding##_##kdf(ctx, private_key, private_key_length,   \
-                                                           public_key, public_key_length);
-soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId,
-                                 const void* private_key, const size_t private_key_length,
-                                 const void* public_key, const size_t public_key_length)
+#define SOTER_SIGN_ALG(alg, padding, kdf)                                      \
+    case SOTER_SIGN_##alg##_##padding##_##kdf:                                 \
+        return soter_verify_init_##alg##_##padding##_##kdf(ctx,                \
+                                                           private_key,        \
+                                                           private_key_length, \
+                                                           public_key,         \
+                                                           public_key_length);
+soter_status_t soter_verify_init(soter_sign_ctx_t* ctx,
+                                 soter_sign_alg_t algId,
+                                 const void* private_key,
+                                 const size_t private_key_length,
+                                 const void* public_key,
+                                 const size_t public_key_length)
 {
     if (!ctx) {
         return SOTER_INVALID_PARAMETER;
@@ -72,11 +84,10 @@ soter_status_t soter_verify_init(soter_sign_ctx_t* ctx, soter_sign_alg_t algId,
 }
 #undef SOTER_SIGN_ALG
 
-#define SOTER_SIGN_ALG(alg, padding, kdf)                                                          \
-    case SOTER_SIGN_##alg##_##padding##_##kdf:                                                     \
+#define SOTER_SIGN_ALG(alg, padding, kdf)      \
+    case SOTER_SIGN_##alg##_##padding##_##kdf: \
         return soter_sign_export_key_##alg##_##padding##_##kdf(ctx, key, key_length, isprivate);
-soter_status_t soter_sign_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length,
-                                     bool isprivate)
+soter_status_t soter_sign_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate)
 {
     if (!ctx) {
         return SOTER_INVALID_PARAMETER;
@@ -90,8 +101,8 @@ soter_status_t soter_sign_export_key(soter_sign_ctx_t* ctx, void* key, size_t* k
 }
 #undef SOTER_SIGN_ALG
 
-#define SOTER_SIGN_ALG(alg, padding, kdf)                                                          \
-    case SOTER_SIGN_##alg##_##padding##_##kdf:                                                     \
+#define SOTER_SIGN_ALG(alg, padding, kdf)      \
+    case SOTER_SIGN_##alg##_##padding##_##kdf: \
         return soter_sign_update_##alg##_##padding##_##kdf(ctx, data, data_length);
 soter_status_t soter_sign_update(soter_sign_ctx_t* ctx, const void* data, const size_t data_length)
 {
@@ -107,11 +118,10 @@ soter_status_t soter_sign_update(soter_sign_ctx_t* ctx, const void* data, const 
 }
 #undef SOTER_SIGN_ALG
 
-#define SOTER_SIGN_ALG(alg, padding, kdf)                                                          \
-    case SOTER_SIGN_##alg##_##padding##_##kdf:                                                     \
+#define SOTER_SIGN_ALG(alg, padding, kdf)      \
+    case SOTER_SIGN_##alg##_##padding##_##kdf: \
         return soter_verify_update_##alg##_##padding##_##kdf(ctx, data, data_length);
-soter_status_t soter_verify_update(soter_sign_ctx_t* ctx, const void* data,
-                                   const size_t data_length)
+soter_status_t soter_verify_update(soter_sign_ctx_t* ctx, const void* data, const size_t data_length)
 {
     if (!ctx || !data || !data_length) {
         return SOTER_INVALID_PARAMETER;
@@ -125,8 +135,8 @@ soter_status_t soter_verify_update(soter_sign_ctx_t* ctx, const void* data,
 }
 #undef SOTER_SIGN_ALG
 
-#define SOTER_SIGN_ALG(alg, padding, kdf)                                                          \
-    case SOTER_SIGN_##alg##_##padding##_##kdf:                                                     \
+#define SOTER_SIGN_ALG(alg, padding, kdf)      \
+    case SOTER_SIGN_##alg##_##padding##_##kdf: \
         return soter_sign_final_##alg##_##padding##_##kdf(ctx, signature, signature_length);
 soter_status_t soter_sign_final(soter_sign_ctx_t* ctx, void* signature, size_t* signature_length)
 {
@@ -142,11 +152,10 @@ soter_status_t soter_sign_final(soter_sign_ctx_t* ctx, void* signature, size_t* 
 }
 #undef SOTER_SIGN_ALG
 
-#define SOTER_SIGN_ALG(alg, padding, kdf)                                                          \
-    case SOTER_SIGN_##alg##_##padding##_##kdf:                                                     \
+#define SOTER_SIGN_ALG(alg, padding, kdf)      \
+    case SOTER_SIGN_##alg##_##padding##_##kdf: \
         return soter_verify_final_##alg##_##padding##_##kdf(ctx, signature, signature_length);
-soter_status_t soter_verify_final(soter_sign_ctx_t* ctx, const void* signature,
-                                  const size_t signature_length)
+soter_status_t soter_verify_final(soter_sign_ctx_t* ctx, const void* signature, const size_t signature_length)
 {
     if (!ctx || !signature || !signature_length) {
         return SOTER_INVALID_PARAMETER;
@@ -160,8 +169,8 @@ soter_status_t soter_verify_final(soter_sign_ctx_t* ctx, const void* signature,
 }
 #undef SOTER_SIGN_ALG
 
-#define SOTER_SIGN_ALG(alg, padding, kdf)                                                          \
-    case SOTER_SIGN_##alg##_##padding##_##kdf:                                                     \
+#define SOTER_SIGN_ALG(alg, padding, kdf)      \
+    case SOTER_SIGN_##alg##_##padding##_##kdf: \
         return soter_sign_cleanup_##alg##_##padding##_##kdf(ctx);
 soter_status_t soter_sign_cleanup(soter_sign_ctx_t* ctx)
 {
@@ -177,8 +186,8 @@ soter_status_t soter_sign_cleanup(soter_sign_ctx_t* ctx)
 }
 #undef SOTER_SIGN_ALG
 
-#define SOTER_SIGN_ALG(alg, padding, kdf)                                                          \
-    case SOTER_SIGN_##alg##_##padding##_##kdf:                                                     \
+#define SOTER_SIGN_ALG(alg, padding, kdf)      \
+    case SOTER_SIGN_##alg##_##padding##_##kdf: \
         return soter_verify_cleanup_##alg##_##padding##_##kdf(ctx);
 soter_status_t soter_verify_cleanup(soter_sign_ctx_t* ctx)
 {
@@ -194,16 +203,18 @@ soter_status_t soter_verify_cleanup(soter_sign_ctx_t* ctx)
 }
 #undef SOTER_SIGN_ALG
 
-soter_sign_ctx_t* soter_sign_create(soter_sign_alg_t alg, const void* private_key,
-                                    const size_t private_key_length, const void* public_key,
+soter_sign_ctx_t* soter_sign_create(soter_sign_alg_t alg,
+                                    const void* private_key,
+                                    const size_t private_key_length,
+                                    const void* public_key,
                                     const size_t public_key_length)
 {
     soter_sign_ctx_t* ctx = calloc(sizeof(soter_sign_ctx_t), 1);
     if (!ctx) {
         return NULL;
     }
-    if (soter_sign_init(ctx, alg, private_key, private_key_length, public_key, public_key_length) !=
-        SOTER_SUCCESS) {
+    if (soter_sign_init(ctx, alg, private_key, private_key_length, public_key, public_key_length)
+        != SOTER_SUCCESS) {
         soter_sign_cleanup(ctx);
         free(ctx);
         return NULL;
@@ -211,16 +222,18 @@ soter_sign_ctx_t* soter_sign_create(soter_sign_alg_t alg, const void* private_ke
     return ctx;
 }
 
-soter_sign_ctx_t* soter_verify_create(soter_sign_alg_t alg, const void* private_key,
-                                      const size_t private_key_length, const void* public_key,
+soter_sign_ctx_t* soter_verify_create(soter_sign_alg_t alg,
+                                      const void* private_key,
+                                      const size_t private_key_length,
+                                      const void* public_key,
                                       const size_t public_key_length)
 {
     soter_sign_ctx_t* ctx = calloc(sizeof(soter_sign_ctx_t), 1);
     if (!ctx) {
         return NULL;
     }
-    if (soter_verify_init(ctx, alg, private_key, private_key_length, public_key,
-                          public_key_length) != SOTER_SUCCESS) {
+    if (soter_verify_init(ctx, alg, private_key, private_key_length, public_key, public_key_length)
+        != SOTER_SUCCESS) {
         soter_verify_destroy(ctx);
         return NULL;
     }

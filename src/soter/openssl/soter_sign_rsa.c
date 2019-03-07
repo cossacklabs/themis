@@ -23,9 +23,11 @@
 #include "soter/openssl/soter_rsa_common.h"
 #include "soter/soter_rsa_key.h"
 
-soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* private_key,
+soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
+                                             const void* private_key,
                                              const size_t private_key_length,
-                                             const void* public_key, const size_t public_key_length)
+                                             const void* public_key,
+                                             const size_t public_key_length)
 {
     /* pkey_ctx init */
     EVP_PKEY* pkey;
@@ -84,13 +86,16 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* 
     return SOTER_SUCCESS;
 }
 
-soter_status_t soter_sign_export_key_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* key,
-                                                   size_t* key_length, bool isprivate)
+soter_status_t soter_sign_export_key_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
+                                                   void* key,
+                                                   size_t* key_length,
+                                                   bool isprivate)
 {
     return soter_rsa_export_key(ctx, key, key_length, isprivate);
 }
 
-soter_status_t soter_sign_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void* data,
+soter_status_t soter_sign_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
+                                               const void* data,
                                                const size_t data_length)
 {
     if (!EVP_DigestSignUpdate(ctx->md_ctx, data, data_length)) {
@@ -99,8 +104,7 @@ soter_status_t soter_sign_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void
     return SOTER_SUCCESS;
 }
 
-soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signature,
-                                              size_t* signature_length)
+soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signature, size_t* signature_length)
 {
     EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
     if (!pkey) {

@@ -28,6 +28,7 @@ jobs:
       CLANG_FORMAT: clang-format-7
       CLANG_TIDY: clang-tidy-7
     steps:
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install nodejs npm
       - checkout
       - run: git submodule update --init
       - run: make fmt_check ENGINE=boringssl

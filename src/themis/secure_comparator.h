@@ -33,14 +33,17 @@ secure_comparator_t* secure_comparator_create(void);
 themis_status_t secure_comparator_destroy(secure_comparator_t* comp_ctx);
 
 themis_status_t secure_comparator_append_secret(secure_comparator_t* comp_ctx,
-                                                const void* secret_data, size_t secret_data_length);
+                                                const void* secret_data,
+                                                size_t secret_data_length);
 
-themis_status_t secure_comparator_begin_compare(secure_comparator_t* comp_ctx, void* compare_data,
+themis_status_t secure_comparator_begin_compare(secure_comparator_t* comp_ctx,
+                                                void* compare_data,
                                                 size_t* compare_data_length);
 themis_status_t secure_comparator_proceed_compare(secure_comparator_t* comp_ctx,
                                                   const void* peer_compare_data,
                                                   size_t peer_compare_data_length,
-                                                  void* compare_data, size_t* compare_data_length);
+                                                  void* compare_data,
+                                                  size_t* compare_data_length);
 
 themis_status_t secure_comparator_get_result(const secure_comparator_t* comp_ctx);
 

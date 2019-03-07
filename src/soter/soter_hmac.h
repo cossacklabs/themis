@@ -99,8 +99,7 @@ soter_status_t soter_hmac_update(soter_hmac_ctx_t* hmac_ctx, const void* data, s
  * SOTER_BUFFER_TOO_SMALL will return and hmac_length will contain length of buffer thet need to
  * store HMAC value.
  */
-soter_status_t soter_hmac_final(soter_hmac_ctx_t* hmac_ctx, uint8_t* hmac_value,
-                                size_t* hmac_length);
+soter_status_t soter_hmac_final(soter_hmac_ctx_t* hmac_ctx, uint8_t* hmac_value, size_t* hmac_length);
 
 /**@}@}*/
 

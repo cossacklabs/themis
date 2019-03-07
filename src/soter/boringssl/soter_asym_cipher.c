@@ -28,7 +28,8 @@
 #define SOTER_RSA_KEY_LENGTH 2048
 #endif
 
-soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx, const void* key,
+soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx,
+                                            const void* key,
                                             size_t key_length)
 {
     const soter_container_hdr_t* hdr = key;
@@ -55,10 +56,12 @@ soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx
 
     switch (hdr->tag[0]) {
     case 'R':
-        return soter_rsa_priv_key_to_engine_specific(hdr, key_length,
+        return soter_rsa_priv_key_to_engine_specific(hdr,
+                                                     key_length,
                                                      ((soter_engine_specific_rsa_key_t**)&pkey));
     case 'U':
-        return soter_rsa_pub_key_to_engine_specific(hdr, key_length,
+        return soter_rsa_pub_key_to_engine_specific(hdr,
+                                                    key_length,
                                                     ((soter_engine_specific_rsa_key_t**)&pkey));
     default:
         return SOTER_INVALID_PARAMETER;
@@ -67,8 +70,10 @@ soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx
 
 /* Padding is ignored. We use OAEP by default. Parameter is to support more paddings in the future
  */
-soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher, const void* key,
-                                      const size_t key_length, soter_asym_cipher_padding_t pad)
+soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher,
+                                      const void* key,
+                                      const size_t key_length,
+                                      soter_asym_cipher_padding_t pad)
 {
     EVP_PKEY* pkey;
 
@@ -114,8 +119,10 @@ soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher)
     return SOTER_SUCCESS;
 }
 
-soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const void* plain_data,
-                                         size_t plain_data_length, void* cipher_data,
+soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher,
+                                         const void* plain_data,
+                                         size_t plain_data_length,
+                                         void* cipher_data,
                                          size_t* cipher_data_length)
 {
     EVP_PKEY* pkey;
@@ -158,8 +165,11 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
         return SOTER_FAIL;
     }
     /* We will check the size of the output buffer first */
-    if (EVP_PKEY_encrypt(asym_cipher->pkey_ctx, NULL, &output_length,
-                         (const unsigned char*)plain_data, plain_data_length)) {
+    if (EVP_PKEY_encrypt(asym_cipher->pkey_ctx,
+                         NULL,
+                         &output_length,
+                         (const unsigned char*)plain_data,
+                         plain_data_length)) {
         if (output_length > *cipher_data_length) {
             *cipher_data_length = output_length;
             return SOTER_BUFFER_TOO_SMALL;
@@ -168,8 +178,11 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
         return SOTER_FAIL;
     }
 
-    if (EVP_PKEY_encrypt(asym_cipher->pkey_ctx, (unsigned char*)cipher_data, cipher_data_length,
-                         (const unsigned char*)plain_data, plain_data_length)) {
+    if (EVP_PKEY_encrypt(asym_cipher->pkey_ctx,
+                         (unsigned char*)cipher_data,
+                         cipher_data_length,
+                         (const unsigned char*)plain_data,
+                         plain_data_length)) {
         if (cipher_data) {
             return SOTER_SUCCESS;
         }
@@ -180,8 +193,10 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher, const
     return SOTER_FAIL;
 }
 
-soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const void* cipher_data,
-                                         size_t cipher_data_length, void* plain_data,
+soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
+                                         const void* cipher_data,
+                                         size_t cipher_data_length,
+                                         void* plain_data,
                                          size_t* plain_data_length)
 {
     EVP_PKEY* pkey;
@@ -226,8 +241,11 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
         return SOTER_FAIL;
     }
     /* We will check the size of the output buffer first */
-    if (EVP_PKEY_decrypt(asym_cipher->pkey_ctx, NULL, &output_length,
-                         (const unsigned char*)cipher_data, cipher_data_length)) {
+    if (EVP_PKEY_decrypt(asym_cipher->pkey_ctx,
+                         NULL,
+                         &output_length,
+                         (const unsigned char*)cipher_data,
+                         cipher_data_length)) {
         if (output_length > *plain_data_length) {
             *plain_data_length = output_length;
             return SOTER_BUFFER_TOO_SMALL;
@@ -236,8 +254,11 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
         return SOTER_FAIL;
     }
 
-    if (EVP_PKEY_decrypt(asym_cipher->pkey_ctx, (unsigned char*)plain_data, plain_data_length,
-                         (const unsigned char*)cipher_data, cipher_data_length)) {
+    if (EVP_PKEY_decrypt(asym_cipher->pkey_ctx,
+                         (unsigned char*)plain_data,
+                         plain_data_length,
+                         (const unsigned char*)cipher_data,
+                         cipher_data_length)) {
         if (plain_data) {
             return SOTER_SUCCESS;
         }
@@ -248,7 +269,8 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher, const
     return SOTER_FAIL;
 }
 
-soter_asym_cipher_t* soter_asym_cipher_create(const void* key, const size_t key_length,
+soter_asym_cipher_t* soter_asym_cipher_create(const void* key,
+                                              const size_t key_length,
                                               soter_asym_cipher_padding_t pad)
 {
     soter_status_t status;

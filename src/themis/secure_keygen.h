@@ -50,8 +50,10 @@ extern "C" {
  * THEMIS_BUFFER_TOO_SMALL will return and private_key_length and public_key_length will store
  * lengths of buffers needed for private key and public key store respectively
  */
-themis_status_t themis_gen_rsa_key_pair(uint8_t* private_key, size_t* private_key_length,
-                                        uint8_t* public_key, size_t* public_key_length);
+themis_status_t themis_gen_rsa_key_pair(uint8_t* private_key,
+                                        size_t* private_key_length,
+                                        uint8_t* public_key,
+                                        size_t* public_key_length);
 
 /**
  * @brief generate EC key pair
@@ -67,8 +69,10 @@ themis_status_t themis_gen_rsa_key_pair(uint8_t* private_key, size_t* private_ke
  * THEMIS_BUFFER_TOO_SMALL will return and private_key_length and public_key_length will store
  * lengths of buffers needed for private key and public key store respectively
  */
-themis_status_t themis_gen_ec_key_pair(uint8_t* private_key, size_t* private_key_length,
-                                       uint8_t* public_key, size_t* public_key_length);
+themis_status_t themis_gen_ec_key_pair(uint8_t* private_key,
+                                       size_t* private_key_length,
+                                       uint8_t* public_key,
+                                       size_t* public_key_length);
 
 enum themis_key_kind {
     THEMIS_KEY_INVALID,
