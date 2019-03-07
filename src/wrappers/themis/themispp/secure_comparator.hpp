@@ -44,7 +44,9 @@ public:
         if (!comparator_) {
             throw themispp::exception_t("Secure Comparator construction failed");
         }
-        themis_status_t status = secure_comparator_append_secret(comparator_, &shared_secret[0], shared_secret.size());
+        themis_status_t status = secure_comparator_append_secret(comparator_,
+                                                                 &shared_secret[0],
+                                                                 shared_secret.size());
         if (THEMIS_SUCCESS != status) {
             throw themispp::exception_t("Secure Comparator failed to append secret", status);
         }
@@ -74,7 +76,8 @@ public:
     const data_t& proceed(const std::vector<uint8_t>& data)
     {
         if (data.empty()) {
-            throw themispp::exception_t("Secure Comparator failed to proceed comparison: data must be non-empty");
+            throw themispp::exception_t(
+                "Secure Comparator failed to proceed comparison: data must be non-empty");
         }
         themis_status_t status = THEMIS_FAIL;
         size_t res_data_length = 0;

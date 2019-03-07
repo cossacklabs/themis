@@ -38,17 +38,19 @@ OK_COLOR=\033[32;01m
 ERROR_COLOR=\033[31;01m
 WARN_COLOR=\033[33;01m
 
-OK_STRING=$(OK_COLOR)[OK]$(NO_COLOR)
-ERROR_STRING=$(ERROR_COLOR)[ERRORS]$(NO_COLOR)
-WARN_STRING=$(WARN_COLOR)[WARNINGS]$(NO_COLOR)
+RIGHT_EDGE:=$(shell cols=$$(($$(tput cols) - 12)); cols=$$((cols > 68 ? 68 : cols)); echo $$cols)
+MOVE_COLUMN=\033[$(RIGHT_EDGE)G
 
-AWK_CMD = awk '{ printf "%-30s %-10s\n",$$1, $$2; }'
-PRINT_OK = printf "$@ $(OK_STRING)\n" | $(AWK_CMD)
-PRINT_OK_ = printf "$(OK_STRING)\n" | $(AWK_CMD)
-PRINT_ERROR = printf "$@ $(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n" && false
-PRINT_ERROR_ = printf "$(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n" && false
-PRINT_WARNING = printf "$@ $(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
-PRINT_WARNING_ = printf "$(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
+OK_STRING=$(MOVE_COLUMN)$(OK_COLOR)[OK]$(NO_COLOR)
+ERROR_STRING=$(MOVE_COLUMN)$(ERROR_COLOR)[ERRORS]$(NO_COLOR)
+WARN_STRING=$(MOVE_COLUMN)$(WARN_COLOR)[WARNINGS]$(NO_COLOR)
+
+PRINT_OK = printf "$@ $(OK_STRING)\n"
+PRINT_OK_ = printf "$(OK_STRING)\n"
+PRINT_ERROR = printf "$@ $(ERROR_STRING)\n" && printf "$(CMD)\n$$LOG\n" && false
+PRINT_ERROR_ = printf "$(ERROR_STRING)\n" && printf "$(CMD)\n$$LOG\n" && false
+PRINT_WARNING = printf "$@ $(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
+PRINT_WARNING_ = printf "$(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
 BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
 BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
 
@@ -174,10 +176,10 @@ endif
 PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 RUST_VERSION := $(shell rustc --version 2>/dev/null)
-GO_VERSION := $(shell go version 2>&1)
+GO_VERSION := $(shell which go >/dev/null 2>&1 && go version 2>&1)
 NPM_VERSION := $(shell npm --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
-PYTHON2_VERSION := $(shell python2 --version 2>&1)
+PYTHON2_VERSION := $(shell which python2 >/dev/null 2>&1 && python2 --version 2>&1)
 PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
 ifdef PIP_VERSION
 PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
@@ -707,7 +709,7 @@ endif
 PHP_PACKAGE_NAME:=libphpthemis-php$(PHP_VERSION_FULL)
 PHP_POST_INSTALL_SCRIPT:=./scripts/phpthemis_postinstall.sh
 PHP_PRE_UNINSTALL_SCRIPT:=./scripts/phpthemis_preuninstall.sh
-PHP_API:=$(shell php -i|grep 'PHP API'|sed 's/PHP API => //')
+PHP_API:=$(shell php -i 2>/dev/null|grep 'PHP API'|sed 's/PHP API => //')
 PHP_LIB_MAP:=./src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so=/usr/lib/php/$(PHP_API)/
 
 deb_php:

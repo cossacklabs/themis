@@ -140,8 +140,7 @@ static int sign_test(soter_sign_alg_t alg)
 static void soter_sign_test()
 {
     testsuite_fail_if(sign_test(SOTER_SIGN_rsa_pss_pkcs8), "soter sign SOTER_SIGN_rsa_pss_pkcs8");
-    testsuite_fail_if(sign_test(SOTER_SIGN_ecdsa_none_pkcs8),
-                      "soter sign SOTER_SIGN_ecdsa_none_pkcs8");
+    testsuite_fail_if(sign_test(SOTER_SIGN_ecdsa_none_pkcs8), "soter sign SOTER_SIGN_ecdsa_none_pkcs8");
 }
 
 static void soter_sign_api_test()
@@ -198,11 +197,9 @@ static void soter_sign_api_test()
         testsuite_fail_if(true, "soter_sign_create failed");
         return;
     }
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_sign_update(NULL, message, message_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_update(NULL, message, message_length),
                           "soter_sign_update: invalid context");
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_sign_update(sign_ctx, NULL, message_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_update(sign_ctx, NULL, message_length),
                           "soter_sign_update: invalid message");
     testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_update(sign_ctx, message, 0),
                           "soter_sign_update: invalid message length");
@@ -214,15 +211,13 @@ static void soter_sign_api_test()
         return;
     }
 
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_sign_final(NULL, signature, &signature_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_sign_final(NULL, signature, &signature_length),
                           "soter_sign_final: invalid context");
-    testsuite_fail_unless(SOTER_BUFFER_TOO_SMALL ==
-                              soter_sign_final(sign_ctx, NULL, &signature_length),
+    testsuite_fail_unless(SOTER_BUFFER_TOO_SMALL == soter_sign_final(sign_ctx, NULL, &signature_length),
                           "soter_sign_final: get output size (NULL out buffer)");
     signature_length--;
-    testsuite_fail_unless(SOTER_BUFFER_TOO_SMALL ==
-                              soter_sign_final(sign_ctx, signature, &signature_length),
+    testsuite_fail_unless(SOTER_BUFFER_TOO_SMALL
+                              == soter_sign_final(sign_ctx, signature, &signature_length),
                           "soter_sign_final: get output size (small out buffer)");
 
     res = soter_sign_final(sign_ctx, signature, &signature_length);
@@ -251,11 +246,9 @@ static void soter_sign_api_test()
         return;
     }
 
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_verify_update(NULL, message, message_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_verify_update(NULL, message, message_length),
                           "soter_verify_update: invalid context");
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_verify_update(sign_ctx, NULL, message_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_verify_update(sign_ctx, NULL, message_length),
                           "soter_verify_update: invalid message");
     testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_verify_update(sign_ctx, message, 0),
                           "soter_verify_update: invalid message length");
@@ -267,18 +260,17 @@ static void soter_sign_api_test()
         return;
     }
 
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_verify_final(NULL, signature, signature_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_verify_final(NULL, signature, signature_length),
                           "soter_verify_final: invalid context");
-    testsuite_fail_unless(SOTER_INVALID_PARAMETER ==
-                              soter_verify_final(sign_ctx, NULL, signature_length),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_verify_final(sign_ctx, NULL, signature_length),
                           "soter_verify_final: invalid signature buffer");
-    testsuite_fail_unless(SOTER_INVALID_SIGNATURE ==
-                              soter_verify_final(sign_ctx, signature, signature_length - 1),
+    testsuite_fail_unless(SOTER_INVALID_SIGNATURE
+                              == soter_verify_final(sign_ctx, signature, signature_length - 1),
                           "soter_verify_final: invalid signature length");
     signature[signature_length / 2]++;
-    testsuite_fail_unless(SOTER_INVALID_SIGNATURE ==
-                              soter_verify_final(sign_ctx, signature, signature_length),
+    testsuite_fail_unless(SOTER_INVALID_SIGNATURE
+                              == soter_verify_final(sign_ctx, signature, signature_length),
                           "soter_verify_final: invalid signature value");
     signature[signature_length / 2]--;
     testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_verify_destroy(NULL),
@@ -306,8 +298,8 @@ static void soter_sign_api_test()
 
     message[message_length / 2]--;
 
-    testsuite_fail_unless(SOTER_INVALID_SIGNATURE ==
-                              soter_verify_final(sign_ctx, signature, signature_length),
+    testsuite_fail_unless(SOTER_INVALID_SIGNATURE
+                              == soter_verify_final(sign_ctx, signature, signature_length),
                           "soter_verify_final: wrong signed message");
 
     soter_verify_destroy(sign_ctx);
@@ -325,8 +317,7 @@ static void soter_sign_api_test()
         return;
     }
 
-    testsuite_fail_unless(SOTER_SUCCESS ==
-                              soter_verify_final(sign_ctx, signature, signature_length),
+    testsuite_fail_unless(SOTER_SUCCESS == soter_verify_final(sign_ctx, signature, signature_length),
                           "soter_verify_final: normal flow");
     soter_verify_destroy(sign_ctx);
 }

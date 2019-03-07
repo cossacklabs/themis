@@ -114,8 +114,7 @@ soter_status_t soter_hash_update(soter_hash_ctx_t* hash_ctx, const void* data, s
  * SOTER_BUFFER_TOO_SMALL will return and hash_length will contain length of buffer thet need to
  * store hash value.
  */
-soter_status_t soter_hash_final(soter_hash_ctx_t* hash_ctx, uint8_t* hash_value,
-                                size_t* hash_length);
+soter_status_t soter_hash_final(soter_hash_ctx_t* hash_ctx, uint8_t* hash_value, size_t* hash_length);
 
 /**@}@}*/
 

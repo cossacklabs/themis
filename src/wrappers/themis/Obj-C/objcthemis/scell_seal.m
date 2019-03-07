@@ -16,7 +16,7 @@
 
 #import <objcthemis/scell_seal.h>
 #import <objcthemis/serror.h>
-
+#import <themis/themis.h>
 
 @implementation TSCellSeal
 

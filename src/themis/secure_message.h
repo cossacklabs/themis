@@ -54,9 +54,12 @@ extern "C" {
  * encrypted message then THEMIS_BUFFER_TOO_SMALL will be returned and encrypted_message_length will
  * contain the length of the buffer needed to store the encrypted message.
  */
-themis_status_t themis_secure_message_encrypt(const uint8_t* private_key, size_t private_key_length,
-                                              const uint8_t* public_key, size_t public_key_length,
-                                              const uint8_t* message, size_t message_length,
+themis_status_t themis_secure_message_encrypt(const uint8_t* private_key,
+                                              size_t private_key_length,
+                                              const uint8_t* public_key,
+                                              size_t public_key_length,
+                                              const uint8_t* message,
+                                              size_t message_length,
                                               uint8_t* encrypted_message,
                                               size_t* encrypted_message_length);
 
@@ -77,10 +80,13 @@ themis_status_t themis_secure_message_encrypt(const uint8_t* private_key, size_t
  *       then THEMIS_BUFFER_TOO_SMALL will be returned and message_length will contain
  *       the length of the buffer needed to store the encrypted message.
  */
-themis_status_t themis_secure_message_decrypt(const uint8_t* private_key, size_t private_key_length,
-                                              const uint8_t* public_key, size_t public_key_length,
+themis_status_t themis_secure_message_decrypt(const uint8_t* private_key,
+                                              size_t private_key_length,
+                                              const uint8_t* public_key,
+                                              size_t public_key_length,
                                               const uint8_t* encrypted_message,
-                                              size_t encrypted_message_length, uint8_t* message,
+                                              size_t encrypted_message_length,
+                                              uint8_t* message,
                                               size_t* message_length);
 
 /**
@@ -98,9 +104,12 @@ themis_status_t themis_secure_message_decrypt(const uint8_t* private_key, size_t
  * message then THEMIS_BUFFER_TOO_SMALL will be returned and signed_message_length will contain the
  * length of the buffer needed to store the signed message.
  */
-themis_status_t themis_secure_message_sign(const uint8_t* private_key, size_t private_key_length,
-                                           const uint8_t* message, size_t message_length,
-                                           uint8_t* signed_message, size_t* signed_message_length);
+themis_status_t themis_secure_message_sign(const uint8_t* private_key,
+                                           size_t private_key_length,
+                                           const uint8_t* message,
+                                           size_t message_length,
+                                           uint8_t* signed_message,
+                                           size_t* signed_message_length);
 
 /**
  * @brief verify signature on a signed message
@@ -117,9 +126,11 @@ themis_status_t themis_secure_message_sign(const uint8_t* private_key, size_t pr
  *       then THEMIS_BUFFER_TOO_SMALL will be returned and message_length will contain
  *       the length of the buffer needed to store the original message.
  */
-themis_status_t themis_secure_message_verify(const uint8_t* public_key, size_t public_key_length,
+themis_status_t themis_secure_message_verify(const uint8_t* public_key,
+                                             size_t public_key_length,
                                              const uint8_t* signed_message,
-                                             size_t signed_message_length, uint8_t* message,
+                                             size_t signed_message_length,
+                                             uint8_t* message,
                                              size_t* message_length);
 
 /**
@@ -140,9 +151,12 @@ themis_status_t themis_secure_message_verify(const uint8_t* public_key, size_t p
  */
 DEPRECATED("use 'themis_secure_message_encrypt' with private and public keys to encrypt message, "
            "or 'themis_secure_message_sign' with private key to sign message")
-themis_status_t themis_secure_message_wrap(const uint8_t* private_key, size_t private_key_length,
-                                           const uint8_t* public_key, size_t public_key_length,
-                                           const uint8_t* message, size_t message_length,
+themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
+                                           size_t private_key_length,
+                                           const uint8_t* public_key,
+                                           size_t public_key_length,
+                                           const uint8_t* message,
+                                           size_t message_length,
                                            uint8_t* wrapped_message,
                                            size_t* wrapped_message_length);
 
@@ -164,10 +178,13 @@ themis_status_t themis_secure_message_wrap(const uint8_t* private_key, size_t pr
  */
 DEPRECATED("use 'themis_secure_message_decrypt' with private and public key to decrypt message or "
            "'themis_secure_message_verify' with public key to verify signed message")
-themis_status_t themis_secure_message_unwrap(const uint8_t* private_key, size_t private_key_length,
-                                             const uint8_t* public_key, size_t public_key_length,
+themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
+                                             size_t private_key_length,
+                                             const uint8_t* public_key,
+                                             size_t public_key_length,
                                              const uint8_t* wrapped_message,
-                                             size_t wrapped_message_length, uint8_t* message,
+                                             size_t wrapped_message_length,
+                                             uint8_t* message,
                                              size_t* message_length);
 /** @} */
 /** @} */
