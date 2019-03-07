@@ -10,6 +10,15 @@ readme = "README.md"
 keywords = ["crypto", "Themis"]
 categories = ["development-tools::build-utils"]
 license = "Apache-2.0"
+include = [
+    "/LICENSE",
+    "/Cargo.toml",
+    "/src/**/*",
+    "/themis/LICENSE",
+    "/themis/Makefile",
+    "/themis/src/soter/**/*",
+    "/themis/src/themis/**/*",
+]
 
 [badges]
 circle-ci = { repository = "cossacklabs/themis", branch = "master" }
