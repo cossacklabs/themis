@@ -47,8 +47,8 @@ static int alice_function(void)
 
     current_length = sizeof(shared_mem);
 
-    themis_status = secure_comparator_proceed_compare(alice, shared_mem, input_length, shared_mem,
-                                                      &current_length);
+    themis_status =
+        secure_comparator_proceed_compare(alice, shared_mem, input_length, shared_mem, &current_length);
 
     switch (themis_status) {
     case THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER:
@@ -75,8 +75,8 @@ static int bob_function(void)
 
     current_length = sizeof(shared_mem);
 
-    themis_status = secure_comparator_proceed_compare(bob, shared_mem, input_length, shared_mem,
-                                                      &current_length);
+    themis_status =
+        secure_comparator_proceed_compare(bob, shared_mem, input_length, shared_mem, &current_length);
 
     switch (themis_status) {
     case THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER:
@@ -98,15 +98,15 @@ static void schedule(void)
     themis_status_t themis_status;
 
     /* alice starts */
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER ==
-                              secure_comparator_begin_compare(NULL, shared_mem, &current_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == secure_comparator_begin_compare(NULL, shared_mem, &current_length),
                           "secure_comparator_begin_compare: invalid context");
-    testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL ==
-                              secure_comparator_begin_compare(alice, NULL, &current_length),
+    testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL
+                              == secure_comparator_begin_compare(alice, NULL, &current_length),
                           "secure_comparator_begin_compare: get output size (NULL out buffer)");
     current_length--;
-    testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL ==
-                              secure_comparator_begin_compare(alice, shared_mem, &current_length),
+    testsuite_fail_unless(THEMIS_BUFFER_TOO_SMALL
+                              == secure_comparator_begin_compare(alice, shared_mem, &current_length),
                           "secure_comparator_begin_compare: get output size (small out buffer)");
 
     themis_status = secure_comparator_begin_compare(alice, shared_mem, &current_length);
@@ -148,14 +148,13 @@ static void secure_comparator_api_test(void)
         return;
     }
 
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER ==
-                              secure_comparator_append_secret(NULL, secret, secret_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == secure_comparator_append_secret(NULL, secret, secret_length),
                           "secure_comparator_append_secret: invalid context");
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER ==
-                              secure_comparator_append_secret(alice, NULL, secret_length),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == secure_comparator_append_secret(alice, NULL, secret_length),
                           "secure_comparator_append_secret: invalid input buffer");
-    testsuite_fail_unless(THEMIS_INVALID_PARAMETER ==
-                              secure_comparator_append_secret(alice, secret, 0),
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER == secure_comparator_append_secret(alice, secret, 0),
                           "secure_comparator_append_secret: invalid input length");
 
     themis_status = secure_comparator_append_secret(alice, secret, secret_length);
@@ -180,8 +179,8 @@ static void secure_comparator_api_test(void)
 
     schedule();
 
-    testsuite_fail_unless((THEMIS_SCOMPARE_MATCH == secure_comparator_get_result(alice)) &&
-                              (THEMIS_SCOMPARE_MATCH == secure_comparator_get_result(bob)),
+    testsuite_fail_unless((THEMIS_SCOMPARE_MATCH == secure_comparator_get_result(alice))
+                              && (THEMIS_SCOMPARE_MATCH == secure_comparator_get_result(bob)),
                           "compare result match");
 
     testsuite_fail_unless(THEMIS_INVALID_PARAMETER == secure_comparator_destroy(NULL),
@@ -230,8 +229,8 @@ static void secure_comparator_api_test(void)
 
     schedule();
 
-    testsuite_fail_unless((THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(alice)) &&
-                              (THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(bob)),
+    testsuite_fail_unless((THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(alice))
+                              && (THEMIS_SCOMPARE_NO_MATCH == secure_comparator_get_result(bob)),
                           "compare result no match");
 
     testsuite_fail_unless(THEMIS_SUCCESS == secure_comparator_destroy(bob),

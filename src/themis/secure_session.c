@@ -28,17 +28,25 @@
 #define SESSION_ID_GENERATION_LABEL "Themis secure session unique identifier"
 #define SESSION_MASTER_KEY_GENERATION_LABEL "Themis secure session master key"
 
-static themis_status_t secure_session_accept(secure_session_t* session_ctx, const void* data,
-                                             size_t data_length, void* output,
+static themis_status_t secure_session_accept(secure_session_t* session_ctx,
+                                             const void* data,
+                                             size_t data_length,
+                                             void* output,
                                              size_t* output_length);
 static themis_status_t secure_session_proceed_client(secure_session_t* session_ctx,
-                                                     const void* data, size_t data_length,
-                                                     void* output, size_t* output_length);
-static themis_status_t secure_session_finish_client(secure_session_t* session_ctx, const void* data,
-                                                    size_t data_length, void* output,
+                                                     const void* data,
+                                                     size_t data_length,
+                                                     void* output,
+                                                     size_t* output_length);
+static themis_status_t secure_session_finish_client(secure_session_t* session_ctx,
+                                                    const void* data,
+                                                    size_t data_length,
+                                                    void* output,
                                                     size_t* output_length);
-static themis_status_t secure_session_finish_server(secure_session_t* session_ctx, const void* data,
-                                                    size_t data_length, void* output,
+static themis_status_t secure_session_finish_server(secure_session_t* session_ctx,
+                                                    const void* data,
+                                                    size_t data_length,
+                                                    void* output,
                                                     size_t* output_length);
 
 themis_status_t secure_session_cleanup(secure_session_t* session_ctx)
@@ -68,8 +76,7 @@ themis_status_t secure_session_destroy(secure_session_t* session_ctx)
     return res;
 }
 
-static themis_status_t
-secure_session_check_user_callbacks(const secure_session_user_callbacks_t* user_callbacks)
+static themis_status_t secure_session_check_user_callbacks(const secure_session_user_callbacks_t* user_callbacks)
 {
     if (!user_callbacks) {
         return THEMIS_INVALID_PARAMETER;
@@ -82,8 +89,11 @@ secure_session_check_user_callbacks(const secure_session_user_callbacks_t* user_
     return THEMIS_SUCCESS;
 }
 
-themis_status_t secure_session_init(secure_session_t* session_ctx, const void* id, size_t id_length,
-                                    const void* sign_key, size_t sign_key_length,
+themis_status_t secure_session_init(secure_session_t* session_ctx,
+                                    const void* id,
+                                    size_t id_length,
+                                    const void* sign_key,
+                                    size_t sign_key_length,
                                     const secure_session_user_callbacks_t* user_callbacks)
 {
     soter_status_t soter_status;
@@ -94,8 +104,7 @@ themis_status_t secure_session_init(secure_session_t* session_ctx, const void* i
         goto err;
     }
 
-    res = secure_session_peer_init(&(session_ctx->we), id, id_length, NULL, 0, sign_key,
-                                   sign_key_length);
+    res = secure_session_peer_init(&(session_ctx->we), id, id_length, NULL, 0, sign_key, sign_key_length);
     if (THEMIS_SUCCESS != res) {
         goto err;
     }
@@ -125,7 +134,9 @@ err:
     return res;
 }
 
-secure_session_t* secure_session_create(const void* id, size_t id_length, const void* sign_key,
+secure_session_t* secure_session_create(const void* id,
+                                        size_t id_length,
+                                        const void* sign_key,
                                         size_t sign_key_length,
                                         const secure_session_user_callbacks_t* user_callbacks)
 {
@@ -137,8 +148,8 @@ secure_session_t* secure_session_create(const void* id, size_t id_length, const 
 
     memset(ctx, 0, sizeof(secure_session_t));
 
-    if (THEMIS_SUCCESS ==
-        secure_session_init(ctx, id, id_length, sign_key, sign_key_length, user_callbacks)) {
+    if (THEMIS_SUCCESS
+        == secure_session_init(ctx, id, id_length, sign_key, sign_key_length, user_callbacks)) {
         return ctx;
     }
 
@@ -146,7 +157,8 @@ secure_session_t* secure_session_create(const void* id, size_t id_length, const 
     return NULL;
 }
 
-themis_status_t secure_session_generate_connect_request(secure_session_t* session_ctx, void* output,
+themis_status_t secure_session_generate_connect_request(secure_session_t* session_ctx,
+                                                        void* output,
                                                         size_t* output_length)
 {
     uint8_t* data_to_send = output;
@@ -162,18 +174,21 @@ themis_status_t secure_session_generate_connect_request(secure_session_t* sessio
 
     soter_kdf_context_buf_t sign_data;
 
-    soter_status =
-        soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), NULL, &ecdh_key_length, false);
+    soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), NULL, &ecdh_key_length, false);
     if (THEMIS_BUFFER_TOO_SMALL != soter_status) {
         return soter_status;
     }
-    res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, NULL, 0,
-                            NULL, &signature_length);
+    res = compute_signature(session_ctx->we.sign_key,
+                            session_ctx->we.sign_key_length,
+                            NULL,
+                            0,
+                            NULL,
+                            &signature_length);
     if (THEMIS_BUFFER_TOO_SMALL != res) {
         return res;
     }
-    length_to_send = 2 * sizeof(soter_container_hdr_t) + session_ctx->we.id_length +
-                     ecdh_key_length + signature_length;
+    length_to_send = 2 * sizeof(soter_container_hdr_t) + session_ctx->we.id_length + ecdh_key_length
+                     + signature_length;
     if ((NULL == output) || (*output_length < length_to_send)) {
         *output_length = length_to_send;
         return THEMIS_BUFFER_TOO_SMALL;
@@ -191,9 +206,10 @@ themis_status_t secure_session_generate_connect_request(secure_session_t* sessio
     container = (soter_container_hdr_t*)data_to_send;
 
     soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx),
-                                            data_to_send + (2 * sizeof(soter_container_hdr_t)) +
-                                                session_ctx->we.id_length,
-                                            &ecdh_key_length, false);
+                                            data_to_send + (2 * sizeof(soter_container_hdr_t))
+                                                + session_ctx->we.id_length,
+                                            &ecdh_key_length,
+                                            false);
     if (THEMIS_SUCCESS != soter_status) {
         return soter_status;
     }
@@ -204,11 +220,13 @@ themis_status_t secure_session_generate_connect_request(secure_session_t* sessio
      * stripped */
     length_to_send -= signature_length;
 
-    res =
-        compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, &sign_data, 1,
-                          data_to_send + (2 * sizeof(soter_container_hdr_t)) +
-                              session_ctx->we.id_length + ecdh_key_length,
-                          &signature_length);
+    res = compute_signature(session_ctx->we.sign_key,
+                            session_ctx->we.sign_key_length,
+                            &sign_data,
+                            1,
+                            data_to_send + (2 * sizeof(soter_container_hdr_t))
+                                + session_ctx->we.id_length + ecdh_key_length,
+                            &signature_length);
     if (THEMIS_SUCCESS != res) {
         return res;
     }
@@ -239,8 +257,7 @@ themis_status_t secure_session_connect(secure_session_t* session_ctx)
     size_t request_length = sizeof(stack_buf);
     uint8_t* request = stack_buf;
 
-    themis_status_t res =
-        secure_session_generate_connect_request(session_ctx, request, &request_length);
+    themis_status_t res = secure_session_generate_connect_request(session_ctx, request, &request_length);
 
     if (THEMIS_BUFFER_TOO_SMALL == res) {
         request = malloc(request_length);
@@ -255,8 +272,9 @@ themis_status_t secure_session_connect(secure_session_t* session_ctx)
         ssize_t bytes_sent = -1;
 
         if (session_ctx->user_callbacks->send_data) {
-            bytes_sent = session_ctx->user_callbacks->send_data(
-                request, request_length, session_ctx->user_callbacks->user_data);
+            bytes_sent = session_ctx->user_callbacks->send_data(request,
+                                                                request_length,
+                                                                session_ctx->user_callbacks->user_data);
         }
 
         if (bytes_sent != (ssize_t)request_length) {
@@ -275,8 +293,10 @@ themis_status_t secure_session_connect(secure_session_t* session_ctx)
     return res;
 }
 
-static themis_status_t secure_session_accept(secure_session_t* session_ctx, const void* data,
-                                             size_t data_length, void* output,
+static themis_status_t secure_session_accept(secure_session_t* session_ctx,
+                                             const void* data,
+                                             size_t data_length,
+                                             void* output,
                                              size_t* output_length)
 {
     const soter_container_hdr_t* proto_message = data;
@@ -330,8 +350,8 @@ static themis_status_t secure_session_accept(secure_session_t* session_ctx, cons
         return THEMIS_INVALID_PARAMETER;
     }
 
-    peer_ecdh_key = (const soter_container_hdr_t*)(soter_container_const_data(peer_id) +
-                                                   soter_container_data_size(peer_id));
+    peer_ecdh_key = (const soter_container_hdr_t*)(soter_container_const_data(peer_id)
+                                                   + soter_container_data_size(peer_id));
 
     if (memcmp(peer_ecdh_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF))) {
         return THEMIS_INVALID_PARAMETER;
@@ -340,11 +360,13 @@ static themis_status_t secure_session_accept(secure_session_t* session_ctx, cons
     peer_ecdh_key_length = soter_container_data_size(peer_ecdh_key) + sizeof(soter_container_hdr_t);
 
     signature = (const uint8_t*)peer_ecdh_key + peer_ecdh_key_length;
-    signature_length = (const uint8_t*)data + soter_container_data_size(proto_message) +
-                       sizeof(soter_container_hdr_t) - signature;
-    if (session_ctx->user_callbacks->get_public_key_for_id(
-            soter_container_const_data(peer_id), soter_container_data_size(peer_id), sign_key,
-            sizeof(sign_key), session_ctx->user_callbacks->user_data)) {
+    signature_length = (const uint8_t*)data + soter_container_data_size(proto_message)
+                       + sizeof(soter_container_hdr_t) - signature;
+    if (session_ctx->user_callbacks->get_public_key_for_id(soter_container_const_data(peer_id),
+                                                           soter_container_data_size(peer_id),
+                                                           sign_key,
+                                                           sizeof(sign_key),
+                                                           session_ctx->user_callbacks->user_data)) {
         return THEMIS_SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR;
     }
 
@@ -363,35 +385,41 @@ static themis_status_t secure_session_accept(secure_session_t* session_ctx, cons
     sign_data[0].data = (const uint8_t*)peer_ecdh_key;
     sign_data[0].length = peer_ecdh_key_length;
 
-    res =
-        verify_signature(peer_sign_key, sign_key_length, sign_data, 1, signature, signature_length);
+    res = verify_signature(peer_sign_key, sign_key_length, sign_data, 1, signature, signature_length);
     if (THEMIS_SUCCESS != res) {
         return res;
     }
 
     /* Preparing to send response */
-    res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, NULL, 0,
-                            NULL, &signature_length);
+    res = compute_signature(session_ctx->we.sign_key,
+                            session_ctx->we.sign_key_length,
+                            NULL,
+                            0,
+                            NULL,
+                            &signature_length);
     if (THEMIS_BUFFER_TOO_SMALL != res) {
         return res;
     }
 
-    soter_status =
-        soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), NULL, &ecdh_key_length, false);
+    soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), NULL, &ecdh_key_length, false);
     if (THEMIS_BUFFER_TOO_SMALL != soter_status) {
         return soter_status;
     }
 
-    length_to_send = 2 * sizeof(soter_container_hdr_t) + session_ctx->we.id_length +
-                     ecdh_key_length + signature_length;
+    length_to_send = 2 * sizeof(soter_container_hdr_t) + session_ctx->we.id_length + ecdh_key_length
+                     + signature_length;
     if ((NULL == output) || (*output_length < length_to_send)) {
         *output_length = length_to_send;
         return THEMIS_BUFFER_TOO_SMALL;
     }
 
-    res = secure_session_peer_init(&(session_ctx->peer), soter_container_const_data(peer_id),
-                                   soter_container_data_size(peer_id), peer_ecdh_key,
-                                   peer_ecdh_key_length, peer_sign_key, sign_key_length);
+    res = secure_session_peer_init(&(session_ctx->peer),
+                                   soter_container_const_data(peer_id),
+                                   soter_container_data_size(peer_id),
+                                   peer_ecdh_key,
+                                   peer_ecdh_key_length,
+                                   peer_sign_key,
+                                   sign_key_length);
     if (THEMIS_SUCCESS != res) {
         goto err;
     }
@@ -408,16 +436,16 @@ static themis_status_t secure_session_accept(secure_session_t* session_ctx, cons
     container = (soter_container_hdr_t*)data_to_send;
 
     soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx),
-                                            data_to_send + (2 * sizeof(soter_container_hdr_t)) +
-                                                session_ctx->we.id_length,
-                                            &ecdh_key_length, false);
+                                            data_to_send + (2 * sizeof(soter_container_hdr_t))
+                                                + session_ctx->we.id_length,
+                                            &ecdh_key_length,
+                                            false);
     if (THEMIS_SUCCESS != soter_status) {
         res = soter_status;
         goto err;
     }
 
-    sign_data[0].data =
-        data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length;
+    sign_data[0].data = data_to_send + (2 * sizeof(soter_container_hdr_t)) + session_ctx->we.id_length;
     sign_data[0].length = ecdh_key_length;
 
     sign_data[1].data = session_ctx->peer.ecdh_key;
@@ -433,9 +461,12 @@ static themis_status_t secure_session_accept(secure_session_t* session_ctx, cons
      * stripped */
     length_to_send -= signature_length;
 
-    res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, sign_data, 4,
-                            data_to_send + (2 * sizeof(soter_container_hdr_t)) +
-                                session_ctx->we.id_length + ecdh_key_length,
+    res = compute_signature(session_ctx->we.sign_key,
+                            session_ctx->we.sign_key_length,
+                            sign_data,
+                            4,
+                            data_to_send + (2 * sizeof(soter_container_hdr_t))
+                                + session_ctx->we.id_length + ecdh_key_length,
                             &signature_length);
     if (THEMIS_SUCCESS != res) {
         goto err;
@@ -466,8 +497,10 @@ err:
 }
 
 static themis_status_t secure_session_proceed_client(secure_session_t* session_ctx,
-                                                     const void* data, size_t data_length,
-                                                     void* output, size_t* output_length)
+                                                     const void* data,
+                                                     size_t data_length,
+                                                     void* output,
+                                                     size_t* output_length)
 {
     const soter_container_hdr_t* proto_message = data;
     const soter_container_hdr_t* peer_id;
@@ -522,8 +555,8 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
         return THEMIS_INVALID_PARAMETER;
     }
 
-    peer_ecdh_key = (const soter_container_hdr_t*)(soter_container_const_data(peer_id) +
-                                                   soter_container_data_size(peer_id));
+    peer_ecdh_key = (const soter_container_hdr_t*)(soter_container_const_data(peer_id)
+                                                   + soter_container_data_size(peer_id));
 
     if (memcmp(peer_ecdh_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF))) {
         return THEMIS_INVALID_PARAMETER;
@@ -532,11 +565,13 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
     peer_ecdh_key_length = ntohl(peer_ecdh_key->size);
 
     signature = (const uint8_t*)peer_ecdh_key + peer_ecdh_key_length;
-    signature_length = (const uint8_t*)data + soter_container_data_size(proto_message) +
-                       sizeof(soter_container_hdr_t) - signature;
-    if (session_ctx->user_callbacks->get_public_key_for_id(
-            soter_container_const_data(peer_id), soter_container_data_size(peer_id), sign_key,
-            sizeof(sign_key), session_ctx->user_callbacks->user_data)) {
+    signature_length = (const uint8_t*)data + soter_container_data_size(proto_message)
+                       + sizeof(soter_container_hdr_t) - signature;
+    if (session_ctx->user_callbacks->get_public_key_for_id(soter_container_const_data(peer_id),
+                                                           soter_container_data_size(peer_id),
+                                                           sign_key,
+                                                           sizeof(sign_key),
+                                                           session_ctx->user_callbacks->user_data)) {
         return THEMIS_SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR;
     }
 
@@ -552,8 +587,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
         return THEMIS_INVALID_PARAMETER;
     }
 
-    soter_status =
-        soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), ecdh_key, &ecdh_key_length, false);
+    soter_status = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), ecdh_key, &ecdh_key_length, false);
     if (THEMIS_SUCCESS != soter_status) {
         return soter_status;
     }
@@ -570,15 +604,18 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
     sign_data[3].data = session_ctx->we.id;
     sign_data[3].length = session_ctx->we.id_length;
 
-    res =
-        verify_signature(peer_sign_key, sign_key_length, sign_data, 4, signature, signature_length);
+    res = verify_signature(peer_sign_key, sign_key_length, sign_data, 4, signature, signature_length);
     if (THEMIS_SUCCESS != res) {
         return res;
     }
 
-    res = secure_session_peer_init(&(session_ctx->peer), soter_container_const_data(peer_id),
-                                   soter_container_data_size(peer_id), peer_ecdh_key,
-                                   peer_ecdh_key_length, peer_sign_key, sign_key_length);
+    res = secure_session_peer_init(&(session_ctx->peer),
+                                   soter_container_const_data(peer_id),
+                                   soter_container_data_size(peer_id),
+                                   peer_ecdh_key,
+                                   peer_ecdh_key_length,
+                                   peer_sign_key,
+                                   sign_key_length);
     if (THEMIS_SUCCESS != res) {
         goto err;
     }
@@ -595,7 +632,12 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
     sign_data[3].data = soter_container_const_data(peer_id);
     sign_data[3].length = soter_container_data_size(peer_id);
 
-    res = soter_kdf(NULL, 0, SESSION_ID_GENERATION_LABEL, sign_data, 4, &(session_ctx->session_id),
+    res = soter_kdf(NULL,
+                    0,
+                    SESSION_ID_GENERATION_LABEL,
+                    sign_data,
+                    4,
+                    &(session_ctx->session_id),
                     sizeof(session_ctx->session_id));
     if (THEMIS_SUCCESS != res) {
         goto err;
@@ -603,8 +645,11 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
 
     /* we will reuse sign_key buffer for shared secret computation */
     sign_key_length = sizeof(sign_key);
-    res = soter_asym_ka_derive(&(session_ctx->ecdh_ctx), peer_ecdh_key, peer_ecdh_key_length,
-                               sign_key, &sign_key_length);
+    res = soter_asym_ka_derive(&(session_ctx->ecdh_ctx),
+                               peer_ecdh_key,
+                               peer_ecdh_key_length,
+                               sign_key,
+                               &sign_key_length);
     if (THEMIS_SUCCESS != res) {
         goto err;
     }
@@ -612,8 +657,13 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
     sign_data[0].data = (const uint8_t*)(&(session_ctx->session_id));
     sign_data[0].length = sizeof(session_ctx->session_id);
 
-    res = soter_kdf(sign_key, sign_key_length, SESSION_MASTER_KEY_GENERATION_LABEL, sign_data, 1,
-                    session_ctx->session_master_key, sizeof(session_ctx->session_master_key));
+    res = soter_kdf(sign_key,
+                    sign_key_length,
+                    SESSION_MASTER_KEY_GENERATION_LABEL,
+                    sign_data,
+                    1,
+                    session_ctx->session_master_key,
+                    sizeof(session_ctx->session_master_key));
     if (THEMIS_SUCCESS != res) {
         goto err;
     }
@@ -622,15 +672,23 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
     sign_data[0].data = ecdh_key;
     sign_data[0].length = ecdh_key_length;
 
-    res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, NULL, 0,
-                            NULL, &signature_length);
+    res = compute_signature(session_ctx->we.sign_key,
+                            session_ctx->we.sign_key_length,
+                            NULL,
+                            0,
+                            NULL,
+                            &signature_length);
     if (THEMIS_BUFFER_TOO_SMALL != res) {
         goto err;
     }
 
     /* we will reuse sign_key_length for mac length retrieval */
-    res = compute_mac(session_ctx->session_master_key, sizeof(session_ctx->session_master_key),
-                      NULL, 0, NULL, &sign_key_length);
+    res = compute_mac(session_ctx->session_master_key,
+                      sizeof(session_ctx->session_master_key),
+                      NULL,
+                      0,
+                      NULL,
+                      &sign_key_length);
     if (THEMIS_BUFFER_TOO_SMALL != res) {
         goto err;
     }
@@ -648,8 +706,12 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
      * stripped */
     length_to_send -= signature_length;
 
-    res = compute_signature(session_ctx->we.sign_key, session_ctx->we.sign_key_length, sign_data, 4,
-                            soter_container_data(container), &signature_length);
+    res = compute_signature(session_ctx->we.sign_key,
+                            session_ctx->we.sign_key_length,
+                            sign_data,
+                            4,
+                            soter_container_data(container),
+                            &signature_length);
     if (THEMIS_SUCCESS != res) {
         goto err;
     }
@@ -663,8 +725,12 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
     sign_data[1].data = (const uint8_t*)(&(session_ctx->session_id));
     sign_data[1].length = sizeof(session_ctx->session_id);
 
-    res = compute_mac(session_ctx->session_master_key, sizeof(session_ctx->session_master_key),
-                      sign_data, 2, mac, &sign_key_length);
+    res = compute_mac(session_ctx->session_master_key,
+                      sizeof(session_ctx->session_master_key),
+                      sign_data,
+                      2,
+                      mac,
+                      &sign_key_length);
     if (THEMIS_SUCCESS != res) {
         goto err;
     }
@@ -687,8 +753,10 @@ err:
     return res;
 }
 
-static themis_status_t secure_session_finish_server(secure_session_t* session_ctx, const void* data,
-                                                    size_t data_length, void* output,
+static themis_status_t secure_session_finish_server(secure_session_t* session_ctx,
+                                                    const void* data,
+                                                    size_t data_length,
+                                                    void* output,
                                                     size_t* output_length)
 {
     const soter_container_hdr_t* proto_message = data;
@@ -726,8 +794,7 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
     }
 
     /* Get length of used mac */
-    res = compute_mac(session_ctx->peer.ecdh_key, session_ctx->peer.ecdh_key_length, NULL, 0, NULL,
-                      &mac_length);
+    res = compute_mac(session_ctx->peer.ecdh_key, session_ctx->peer.ecdh_key_length, NULL, 0, NULL, &mac_length);
     if (THEMIS_BUFFER_TOO_SMALL != res) {
         return res;
     }
@@ -753,20 +820,31 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
     sign_data[3].data = session_ctx->we.id;
     sign_data[3].length = session_ctx->we.id_length;
 
-    res = verify_signature(session_ctx->peer.sign_key, session_ctx->peer.sign_key_length, sign_data,
-                           4, signature, signature_length);
+    res = verify_signature(session_ctx->peer.sign_key,
+                           session_ctx->peer.sign_key_length,
+                           sign_data,
+                           4,
+                           signature,
+                           signature_length);
     if (THEMIS_SUCCESS != res) {
         return res;
     }
 
-    res = soter_asym_ka_derive(&(session_ctx->ecdh_ctx), session_ctx->peer.ecdh_key,
-                               session_ctx->peer.ecdh_key_length, shared_secret,
+    res = soter_asym_ka_derive(&(session_ctx->ecdh_ctx),
+                               session_ctx->peer.ecdh_key,
+                               session_ctx->peer.ecdh_key_length,
+                               shared_secret,
                                &shared_secret_length);
     if (THEMIS_SUCCESS != res) {
         return res;
     }
 
-    res = soter_kdf(NULL, 0, SESSION_ID_GENERATION_LABEL, sign_data, 4, &(session_ctx->session_id),
+    res = soter_kdf(NULL,
+                    0,
+                    SESSION_ID_GENERATION_LABEL,
+                    sign_data,
+                    4,
+                    &(session_ctx->session_id),
                     sizeof(session_ctx->session_id));
     if (THEMIS_SUCCESS != res) {
         return res;
@@ -775,8 +853,12 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
     sign_data[0].data = (const uint8_t*)(&(session_ctx->session_id));
     sign_data[0].length = sizeof(session_ctx->session_id);
 
-    res = soter_kdf(shared_secret, shared_secret_length, SESSION_MASTER_KEY_GENERATION_LABEL,
-                    sign_data, 1, session_ctx->session_master_key,
+    res = soter_kdf(shared_secret,
+                    shared_secret_length,
+                    SESSION_MASTER_KEY_GENERATION_LABEL,
+                    sign_data,
+                    1,
+                    session_ctx->session_master_key,
                     sizeof(session_ctx->session_master_key));
     if (THEMIS_SUCCESS != res) {
         return res;
@@ -788,8 +870,12 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
     sign_data[1].data = (const uint8_t*)(&(session_ctx->session_id));
     sign_data[1].length = sizeof(session_ctx->session_id);
 
-    res = verify_mac(session_ctx->session_master_key, sizeof(session_ctx->session_master_key),
-                     sign_data, 2, mac, mac_length);
+    res = verify_mac(session_ctx->session_master_key,
+                     sizeof(session_ctx->session_master_key),
+                     sign_data,
+                     2,
+                     mac,
+                     mac_length);
     if (THEMIS_SUCCESS != res) {
         return res;
     }
@@ -801,8 +887,12 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
     ecdh_key_length = sizeof(ecdh_key) - sizeof(soter_container_hdr_t);
     response_message = (soter_container_hdr_t*)ecdh_key;
 
-    res = compute_mac(session_ctx->session_master_key, sizeof(session_ctx->session_master_key),
-                      sign_data, 2, soter_container_data(response_message), &ecdh_key_length);
+    res = compute_mac(session_ctx->session_master_key,
+                      sizeof(session_ctx->session_master_key),
+                      sign_data,
+                      2,
+                      soter_container_data(response_message),
+                      &ecdh_key_length);
     if (THEMIS_SUCCESS != res) {
         return res;
     }
@@ -823,8 +913,7 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
     soter_container_set_data_size(response_message, ecdh_key_length);
     soter_update_container_checksum(response_message);
 
-    memcpy(output, ecdh_key,
-           soter_container_data_size(response_message) + sizeof(soter_container_hdr_t));
+    memcpy(output, ecdh_key, soter_container_data_size(response_message) + sizeof(soter_container_hdr_t));
 
     /* "Server mode": negotiation completed */
     session_ctx->state_handler = NULL;
@@ -837,8 +926,10 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
     return res;
 }
 
-static themis_status_t secure_session_finish_client(secure_session_t* session_ctx, const void* data,
-                                                    size_t data_length, void* output,
+static themis_status_t secure_session_finish_client(secure_session_t* session_ctx,
+                                                    const void* data,
+                                                    size_t data_length,
+                                                    void* output,
                                                     size_t* output_length)
 {
     UNUSED(output);
@@ -877,8 +968,11 @@ static themis_status_t secure_session_finish_client(secure_session_t* session_ct
     sign_data[1].data = (const uint8_t*)(&(session_ctx->session_id));
     sign_data[1].length = sizeof(session_ctx->session_id);
 
-    res = verify_mac(session_ctx->session_master_key, sizeof(session_ctx->session_master_key),
-                     sign_data, 2, soter_container_const_data(proto_message),
+    res = verify_mac(session_ctx->session_master_key,
+                     sizeof(session_ctx->session_master_key),
+                     sign_data,
+                     2,
+                     soter_container_const_data(proto_message),
                      soter_container_data_size(proto_message));
     if (THEMIS_SUCCESS != res) {
         return res;
@@ -902,8 +996,7 @@ static themis_status_t secure_session_finish_client(secure_session_t* session_ct
     return res;
 }
 
-ssize_t secure_session_send(secure_session_t* session_ctx, const void* message,
-                            size_t message_length)
+ssize_t secure_session_send(secure_session_t* session_ctx, const void* message, size_t message_length)
 {
     uint8_t stack_buf[2048];
 
@@ -942,7 +1035,8 @@ ssize_t secure_session_send(secure_session_t* session_ctx, const void* message,
     }
 
     if (session_ctx->user_callbacks->send_data) {
-        bytes_sent = session_ctx->user_callbacks->send_data(out, out_size,
+        bytes_sent = session_ctx->user_callbacks->send_data(out,
+                                                            out_size,
                                                             session_ctx->user_callbacks->user_data);
     } else {
         bytes_sent = -1;
@@ -997,8 +1091,7 @@ ssize_t secure_session_receive(secure_session_t* session_ctx, void* message, siz
     }
 
     if (session_ctx->user_callbacks->receive_data) {
-        res = session_ctx->user_callbacks->receive_data(in, in_size,
-                                                        session_ctx->user_callbacks->user_data);
+        res = session_ctx->user_callbacks->receive_data(in, in_size, session_ctx->user_callbacks->user_data);
     } else {
         res = -1;
     }
@@ -1016,14 +1109,14 @@ ssize_t secure_session_receive(secure_session_t* session_ctx, void* message, siz
         /* save current session state */
         secure_session_handler state = session_ctx->state_handler;
 
-        res = session_ctx->state_handler(session_ctx, stack_buf, bytes_received, ka_buf,
-                                         &ka_buf_length);
+        res = session_ctx->state_handler(session_ctx, stack_buf, bytes_received, ka_buf, &ka_buf_length);
         if ((THEMIS_SUCCESS == res) && (ka_buf_length > 0)) {
             ssize_t bytes_sent = -1;
 
             if (session_ctx->user_callbacks->send_data) {
-                bytes_sent = session_ctx->user_callbacks->send_data(
-                    ka_buf, ka_buf_length, session_ctx->user_callbacks->user_data);
+                bytes_sent = session_ctx->user_callbacks->send_data(ka_buf,
+                                                                    ka_buf_length,
+                                                                    session_ctx->user_callbacks->user_data);
             }
 
             if (bytes_sent != (ssize_t)ka_buf_length) {
@@ -1055,7 +1148,8 @@ bool secure_session_is_established(const secure_session_t* session_ctx)
     return (NULL == session_ctx->state_handler);
 }
 
-themis_status_t secure_session_get_remote_id(const secure_session_t* session_ctx, uint8_t* id,
+themis_status_t secure_session_get_remote_id(const secure_session_t* session_ctx,
+                                             uint8_t* id,
                                              size_t* id_length)
 {
     if (!session_ctx || !id_length) {

@@ -73,12 +73,13 @@ inline ssize_t receive_callback(uint8_t* data, size_t data_length, void* user_da
     return -1;
 }
 
-inline int get_public_key_for_id_callback(const void* id, size_t id_length, void* key_buffer, size_t key_buffer_length,
-                                          void* user_data)
+inline int get_public_key_for_id_callback(
+    const void* id, size_t id_length, void* key_buffer, size_t key_buffer_length, void* user_data)
 {
-    std::vector<uint8_t> pubk = ((secure_session_callback_interface_t*)user_data)
-                                    ->get_pub_key_by_id(std::vector<uint8_t>(
-                                        static_cast<const uint8_t*>(id), static_cast<const uint8_t*>(id) + id_length));
+    std::vector<uint8_t> pubk =
+        ((secure_session_callback_interface_t*)user_data)
+            ->get_pub_key_by_id(std::vector<uint8_t>(static_cast<const uint8_t*>(id),
+                                                     static_cast<const uint8_t*>(id) + id_length));
     if (pubk.empty()) {
         return THEMIS_FAIL;
     }
@@ -122,7 +123,8 @@ public:
     }
 
 #if __cplusplus >= 201103L
-    secure_session_t(const data_t& id, const data_t& priv_key,
+    secure_session_t(const data_t& id,
+                     const data_t& priv_key,
                      std::shared_ptr<secure_session_callback_interface_t>&& callbacks)
         : _session(nullptr)
         , _callback(nullptr)
@@ -266,7 +268,8 @@ public:
         _res.resize(THEMISPP_SECURE_SESSION_MAX_MESSAGE_SIZE);
         ssize_t recv_size = secure_session_receive(_session, &_res[0], _res.size());
         if (recv_size <= 0) {
-            throw themispp::exception_t("Secure Session failed to receive message", THEMIS_SSESSION_TRANSPORT_ERROR);
+            throw themispp::exception_t("Secure Session failed to receive message",
+                                        THEMIS_SSESSION_TRANSPORT_ERROR);
         }
         _res.resize(recv_size);
         return _res;
@@ -282,18 +285,22 @@ public:
         }
         ssize_t send_size = secure_session_send(_session, &data[0], data.size());
         if (send_size <= 0) {
-            throw themispp::exception_t("Secure Session failed to send message", THEMIS_SSESSION_TRANSPORT_ERROR);
+            throw themispp::exception_t("Secure Session failed to send message",
+                                        THEMIS_SSESSION_TRANSPORT_ERROR);
         }
     }
 
 private:
-    void initialize_session(const data_t& id, const data_t& priv_key, secure_session_callback_interface_t* callbacks)
+    void initialize_session(const data_t& id,
+                            const data_t& priv_key,
+                            secure_session_callback_interface_t* callbacks)
     {
         if (id.empty()) {
             throw themispp::exception_t("Secure Session construction failed: client ID must be non-empty");
         }
         if (priv_key.empty()) {
-            throw themispp::exception_t("Secure Session construction failed: private key must be non-empty");
+            throw themispp::exception_t(
+                "Secure Session construction failed: private key must be non-empty");
         }
         if (!callbacks) {
             throw themispp::exception_t("Secure Session construction failed: callbacks must be non-NULL");
