@@ -32,6 +32,6 @@
  *
  * @returns zero on success, negative value on error.
  */
-int read_line_binary(FILE *input, uint8_t **out_bytes, size_t *out_size);
+int read_line_binary(FILE* input, uint8_t** out_bytes, size_t* out_size);
 
 #endif /* READ_LINE_H */
