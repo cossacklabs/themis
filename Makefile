@@ -174,10 +174,10 @@ endif
 PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 RUST_VERSION := $(shell rustc --version 2>/dev/null)
-GO_VERSION := $(shell go version 2>&1)
+GO_VERSION := $(shell which go >/dev/null 2>&1 && go version 2>&1)
 NPM_VERSION := $(shell npm --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
-PYTHON2_VERSION := $(shell python2 --version 2>&1)
+PYTHON2_VERSION := $(shell which python2 >/dev/null 2>&1 && python2 --version 2>&1)
 PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
 ifdef PIP_VERSION
 PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
@@ -706,7 +706,7 @@ endif
 PHP_PACKAGE_NAME:=libphpthemis-php$(PHP_VERSION_FULL)
 PHP_POST_INSTALL_SCRIPT:=./scripts/phpthemis_postinstall.sh
 PHP_PRE_UNINSTALL_SCRIPT:=./scripts/phpthemis_preuninstall.sh
-PHP_API:=$(shell php -i|grep 'PHP API'|sed 's/PHP API => //')
+PHP_API:=$(shell php -i 2>/dev/null|grep 'PHP API'|sed 's/PHP API => //')
 PHP_LIB_MAP:=./src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so=/usr/lib/php/$(PHP_API)/
 
 deb_php:
