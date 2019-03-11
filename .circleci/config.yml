@@ -25,8 +25,11 @@ jobs:
     docker:
       - image: cossacklabs/build:ubuntu-bionic
     environment:
+      CC: clang-7
+      CXX: clang-7
       CLANG_FORMAT: clang-format-7
       CLANG_TIDY: clang-tidy-7
+      WITH_FATAL_WARNINGS: yes
     steps:
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install default-jdk nodejs npm
       - checkout
@@ -40,6 +43,7 @@ jobs:
     environment:
       GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
       CFLAGS: "-DCIRICLE_TEST"
+      WITH_FATAL_WARNINGS: yes
     steps:
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev nodejs npm lcov libc6-dbg rsync software-properties-common pkg-config clang afl
       - run: sudo ln -sf /usr/bin/gcov-5 /usr/bin/gcov
@@ -127,6 +131,7 @@ jobs:
     environment:
       GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
       CFLAGS: "-DCIRICLE_TEST"
+      WITH_FATAL_WARNINGS: yes
     steps:
       # dependencies
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common pkg-config clang

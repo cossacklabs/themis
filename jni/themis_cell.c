@@ -26,6 +26,8 @@
 JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(
     JNIEnv* env, jobject thiz, jbyteArray key, jbyteArray context, jbyteArray data, jint mode)
 {
+    UNUSED(thiz);
+
     size_t key_length = (*env)->GetArrayLength(env, key);
     size_t data_length = (*env)->GetArrayLength(env, data);
     size_t context_length = 0;
@@ -222,6 +224,8 @@ err:
 JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(
     JNIEnv* env, jobject thiz, jbyteArray key, jbyteArray context, jobjectArray protected_data, jint mode)
 {
+    UNUSED(thiz);
+
     size_t key_length = (*env)->GetArrayLength(env, key);
     size_t data_length = 0;
     size_t context_length = 0;

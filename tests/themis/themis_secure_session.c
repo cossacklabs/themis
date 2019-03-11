@@ -72,7 +72,7 @@ static client_info_t client = {
     client_pub,
     sizeof(client_pub),
     NULL,
-    {0},
+    {},
 };
 static client_info_t server = {
     "server",
@@ -81,7 +81,7 @@ static client_info_t server = {
     server_pub,
     sizeof(server_pub),
     NULL,
-    {0},
+    {},
 };
 
 /* Peers will communicate using shared memory */
@@ -118,6 +118,7 @@ static int on_get_public_key(
 
 static ssize_t on_send_data(const uint8_t* data, size_t data_length, void* user_data)
 {
+    UNUSED(user_data);
     memcpy(shared_mem, data, data_length);
     current_length = data_length;
     return (ssize_t)data_length;
@@ -125,6 +126,8 @@ static ssize_t on_send_data(const uint8_t* data, size_t data_length, void* user_
 
 static ssize_t on_receive_data(uint8_t* data, size_t data_length, void* user_data)
 {
+    UNUSED(user_data);
+
     if (data_length < current_length) {
         return -1;
     }
@@ -136,6 +139,8 @@ static ssize_t on_receive_data(uint8_t* data, size_t data_length, void* user_dat
 
 static void on_state_changed(int event, void* user_data)
 {
+    UNUSED(event);
+    UNUSED(user_data);
     /* TODO: implement */
 }
 
@@ -256,7 +261,6 @@ static int client_function_no_transport(void)
     ssize_t bytes_received = 0;
     uint8_t processing_buf[2048];
     size_t processing_buf_size = 0;
-    ssize_t bytes_sent;
 
     /* Client is not connected yet. Initiate key agreement */
     if (!connected) {
@@ -452,7 +456,7 @@ static void server_function(void)
         if (bytes_sent == bytes_received) {
             /* Check whether data was indeed encrypted (it should not be the same as in
              * data_to_send) */
-            testsuite_fail_if((bytes_sent == current_length)
+            testsuite_fail_if(((size_t)bytes_sent == current_length)
                                   || (!memcmp(recv_buf, shared_mem, bytes_sent)),
                               "secure_session server message wrap");
         } else {
@@ -580,7 +584,7 @@ static void test_basic_flow(void)
                                            client.priv_length,
                                            &(client.transport));
     if (client.session == NULL) {
-        testsuite_fail_if(res, "secure_session_init failed");
+        testsuite_fail_if(false, "secure_session_init failed");
         return;
     }
 
@@ -590,7 +594,7 @@ static void test_basic_flow(void)
                                            server.priv_length,
                                            &(server.transport));
     if (server.session == NULL) {
-        testsuite_fail_if(res, "secure_session_init failed");
+        testsuite_fail_if(false, "secure_session_init failed");
         secure_session_destroy((client.session));
         return;
     }
@@ -624,7 +628,7 @@ static void test_basic_flow_no_transport(void)
                                            client.priv_length,
                                            &(client.transport));
     if (client.session == NULL) {
-        testsuite_fail_if(res, "secure_session_init failed");
+        testsuite_fail_if(false, "secure_session_init failed");
         return;
     }
 
@@ -634,7 +638,7 @@ static void test_basic_flow_no_transport(void)
                                            server.priv_length,
                                            &(server.transport));
     if (server.session == NULL) {
-        testsuite_fail_if(res, "secure_session_init failed");
+        testsuite_fail_if(false, "secure_session_init failed");
         secure_session_destroy((client.session));
         return;
     }

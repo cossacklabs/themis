@@ -16,12 +16,15 @@
 
 #include <jni.h>
 #include <string.h>
+#include <themis/themis_error.h>
 
 /*JavaVM *g_vm = NULL;*/
 
 jint JNI_OnLoad(JavaVM* vm, void* reserved)
 {
     /*g_vm = vm;*/
+    UNUSED(vm);
+    UNUSED(reserved);
 
     return JNI_VERSION_1_6;
 }

@@ -30,6 +30,8 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
                                                                                jbyteArray message,
                                                                                jint action)
 {
+    UNUSED(thiz);
+
     size_t private_key_length = 0;
     size_t public_key_length = 0;
     size_t message_length = (*env)->GetArrayLength(env, message);

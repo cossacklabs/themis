@@ -119,29 +119,32 @@ static bool get_result_from_report(void)
 static void test_rand_with_nist(void)
 {
     int path_max = (int)pathconf("/", _PC_PATH_MAX);
-    ;
-    char curr_work_dir[path_max];
+    char* curr_work_dir = malloc(path_max);
+    if (!curr_work_dir) {
+        testsuite_fail_if(true, "get PATH_MAX failed");
+        goto out;
+    }
 
     /* Store current work dir */
-    if (NULL == getcwd(curr_work_dir, sizeof(curr_work_dir))) {
+    if (NULL == getcwd(curr_work_dir, path_max)) {
         testsuite_fail_if(true, "getcwd failed");
-        return;
+        goto out;
     }
 
     /* Change to NIST directory */
     if (0 != chdir(TO_STRING(NIST_STS_EXE_PATH))) {
         testsuite_fail_if(true, "chdir failed");
-        return;
+        goto out;
     }
 
     if (!generate_test_data()) {
         testsuite_fail_if(true, "generate_test_data failed");
-        return;
+        goto out;
     }
 
     if (!run_nist_suite()) {
         testsuite_fail_if(true, "run_nist_suite failed");
-        return;
+        goto out;
     }
 
     testsuite_fail_unless(get_result_from_report(), "NIST tests");
@@ -149,8 +152,11 @@ static void test_rand_with_nist(void)
     /* Change back to original directory */
     if (0 != chdir(curr_work_dir)) {
         testsuite_fail_if(true, "chdir failed");
-        return;
+        goto out;
     }
+
+out:
+    free(curr_work_dir);
 }
 
 #else
@@ -178,5 +184,7 @@ void run_soter_rand_tests(void)
 #ifndef CIRICLE_TEST
     testsuite_enter_suite("soter rand: NIST STS (make take some time...)");
     testsuite_run_test(test_rand_with_nist);
+#else
+    UNUSED(test_rand_with_nist);
 #endif
 }
