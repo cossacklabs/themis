@@ -110,7 +110,7 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		pubLen = C.size_t(len(peerPublic.Value))
 	}
 
-	var output_length C.size_t
+	var outputLength C.size_t
 	if !bool(C.get_message_size(priv,
 		privLen,
 		pub,
@@ -118,11 +118,11 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		unsafe.Pointer(&message[0]),
 		C.size_t(len(message)),
 		C.int(mode),
-		&output_length)) {
+		&outputLength)) {
 		return nil, errors.New("Failed to get output size")
 	}
 
-	output := make([]byte, int(output_length), int(output_length))
+	output := make([]byte, int(outputLength), int(outputLength))
 	if !bool(C.process(priv,
 		privLen,
 		pub,
@@ -131,7 +131,7 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		C.size_t(len(message)),
 		C.int(mode),
 		unsafe.Pointer(&output[0]),
-		output_length)) {
+		outputLength)) {
 		switch mode {
 		case secureMessageEncrypt:
 			return nil, errors.New("Failed to encrypt message")

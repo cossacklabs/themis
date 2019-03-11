@@ -31,11 +31,11 @@ func (clb *testCallbacks) StateChanged(ss *SecureSession, state int) {
 }
 
 func genRandData() ([]byte, error) {
-	data_length, err := rand.Int(rand.Reader, big.NewInt(2048))
+	dataLength, err := rand.Int(rand.Reader, big.NewInt(2048))
 	if nil != err {
 		return nil, err
 	}
-	length := data_length.Int64()
+	length := dataLength.Int64()
 	if length == 0 {
 		length = 1
 	}
@@ -177,7 +177,7 @@ func testSession(keytype int, t *testing.T) {
 
 	clb := &testCallbacks{kpa, kpb}
 
-	empty_key := keys.PrivateKey{[]byte{}}
+	emptyKey := keys.PrivateKey{[]byte{}}
 
 	client, err := New(clientId, nil, clb)
 	if nil == err {
@@ -185,7 +185,7 @@ func testSession(keytype int, t *testing.T) {
 		return
 	}
 
-	client, err = New(clientId, &empty_key, clb)
+	client, err = New(clientId, &emptyKey, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty private key")
 		return

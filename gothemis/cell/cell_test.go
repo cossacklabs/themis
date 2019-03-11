@@ -8,11 +8,11 @@ import (
 )
 
 func testProtect(mode int, context []byte, t *testing.T) {
-	data_len, err := rand.Int(rand.Reader, big.NewInt(1024))
+	dataLen, err := rand.Int(rand.Reader, big.NewInt(1024))
 	if nil != err {
 		t.Error(err)
 	}
-	size := data_len.Int64()
+	size := dataLen.Int64()
 	if size == 0 {
 		size = 1
 	}

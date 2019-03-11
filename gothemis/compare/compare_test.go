@@ -7,11 +7,11 @@ import (
 )
 
 func genRandData() ([]byte, error) {
-	data_length, err := rand.Int(rand.Reader, big.NewInt(256))
+	dataLength, err := rand.Int(rand.Reader, big.NewInt(256))
 	if nil != err {
 		return nil, err
 	}
-	size := data_length.Int64()
+	size := dataLength.Int64()
 	if size == 0 {
 		size = 1
 	}
