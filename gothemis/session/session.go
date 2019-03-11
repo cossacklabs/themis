@@ -97,7 +97,7 @@ func onPublicKeyForId(ssCtx unsafe.Pointer, idPtr unsafe.Pointer, idLen C.size_t
 	if len(pub.Value) > int(keyLen) {
 		return int(C.GOTHEMIS_BUFFER_TOO_SMALL)
 	}
-	sliceHeader := reflect.SliceHeader{uintptr(keyPtr), int(keyLen), int(keyLen)}
+	sliceHeader := reflect.SliceHeader{Data: uintptr(keyPtr), Len: int(keyLen), Cap: int(keyLen)}
 	key := *(*[]byte)(unsafe.Pointer(&sliceHeader))
 	copy(key, pub.Value)
 	return int(C.GOTHEMIS_SUCCESS)

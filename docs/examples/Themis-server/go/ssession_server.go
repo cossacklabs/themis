@@ -22,7 +22,7 @@ type clientTransportCallback struct {
 
 func (clb *clientTransportCallback) GetPublicKeyForId(ss *session.SecureSession, id []byte) *keys.PublicKey {
 	if bytes.Equal(id, clb.serverID) {
-		return &keys.PublicKey{clb.serverPublic}
+		return &keys.PublicKey{Value: clb.serverPublic}
 	}
 	return nil
 
@@ -114,7 +114,7 @@ func main() {
 	// create session object
 	clientSession, err := session.New(
 		bytes.TrimRight(clientID, "\r\n"),
-		&keys.PrivateKey{bytes.TrimRight(clientPrivate, "\r\n")},
+		&keys.PrivateKey{Value: bytes.TrimRight(clientPrivate, "\r\n")},
 		&cb)
 	if err != nil {
 		fmt.Println("Session creation error")

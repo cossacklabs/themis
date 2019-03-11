@@ -177,7 +177,7 @@ func testSession(keytype int, t *testing.T) {
 
 	clb := &testCallbacks{kpa, kpb}
 
-	emptyKey := keys.PrivateKey{[]byte{}}
+	emptyKey := keys.PrivateKey{Value: []byte{}}
 
 	client, err := New(clientID, nil, clb)
 	if nil == err {

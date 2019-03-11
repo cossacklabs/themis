@@ -18,13 +18,13 @@ func main() {
 		fmt.Println("error decoding private key")
 		return
 	}
-	pr := keys.PrivateKey{decodedKey}
+	pr := keys.PrivateKey{Value: decodedKey}
 	decodedKey, err = base64.StdEncoding.DecodeString(os.Args[3])
 	if nil != err {
 		fmt.Println("error decoding private key")
 		return
 	}
-	pu := keys.PublicKey{decodedKey}
+	pu := keys.PublicKey{Value: decodedKey}
 	sm := message.New(&pr, &pu)
 	if "enc" == os.Args[1] {
 		wrapped, err := sm.Wrap([]byte(os.Args[4]))

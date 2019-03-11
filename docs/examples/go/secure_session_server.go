@@ -16,7 +16,7 @@ func (clb *callbacks) GetPublicKeyForId(ss *session.SecureSession, id []byte) *k
 	if nil != err {
 		return nil
 	}
-	return &keys.PublicKey{decodedID}
+	return &keys.PublicKey{Value: decodedID}
 }
 
 func (clb *callbacks) StateChanged(ss *session.SecureSession, state int) {

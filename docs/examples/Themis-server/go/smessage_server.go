@@ -59,8 +59,8 @@ func main() {
 	serverPublic = bytes.TrimRight(serverPublic, "\r\n")
 	serverPublic, err = base64.StdEncoding.DecodeString(string(serverPublic))
 	secureMessage := message.New(
-		&keys.PrivateKey{bytes.TrimRight(clientPrivate, "\r\n")},
-		&keys.PublicKey{serverPublic})
+		&keys.PrivateKey{Value: bytes.TrimRight(clientPrivate, "\r\n")},
+		&keys.PublicKey{Value: serverPublic})
 
 	for {
 		fmt.Println("Print message to send (or quit to stop):")
