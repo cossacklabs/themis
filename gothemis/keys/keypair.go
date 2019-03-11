@@ -58,24 +58,29 @@ import (
 	"unsafe"
 )
 
+// Type of Themis key.
 const (
 	KEYTYPE_EC  = 0
 	KEYTYPE_RSA = 1
 )
 
+// PrivateKey stores a ECDSA or RSA private key.
 type PrivateKey struct {
 	Value []byte
 }
 
+// PublicKey stores a ECDSA or RSA public key.
 type PublicKey struct {
 	Value []byte
 }
 
+// Keypair stores a ECDSA or RSA key pair.
 type Keypair struct {
 	Private *PrivateKey
 	Public  *PublicKey
 }
 
+// New generates a new random pair of keys of the specified type.
 func New(keytype int) (*Keypair, error) {
 	if (keytype != KEYTYPE_EC) && (keytype != KEYTYPE_RSA) {
 		return nil, errors.New("Incorrect key type")

@@ -75,11 +75,15 @@ const (
 	SecureMessageVerify
 )
 
+// SecureMessage provides a sequence-independent, stateless, contextless messaging system.
 type SecureMessage struct {
 	private    *keys.PrivateKey
 	peerPublic *keys.PublicKey
 }
 
+// New makes a new Secure Message context.
+// You need to specify both keys for encrypt-decrypt mode.
+// Private key is required for signing messages. Public key is required for verifying messages
 func New(private *keys.PrivateKey, peerPublic *keys.PublicKey) *SecureMessage {
 	return &SecureMessage{private, peerPublic}
 }
@@ -145,6 +149,7 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 	return output, nil
 }
 
+// Wrap encrypts the provided message.
 func (sm *SecureMessage) Wrap(message []byte) ([]byte, error) {
 	if nil == sm.private || 0 == len(sm.private.Value) {
 		return nil, errors.New("Private key was not provided")
@@ -156,6 +161,7 @@ func (sm *SecureMessage) Wrap(message []byte) ([]byte, error) {
 	return messageProcess(sm.private, sm.peerPublic, message, SecureMessageEncrypt)
 }
 
+// Unwrap decrypts the encrypted message.
 func (sm *SecureMessage) Unwrap(message []byte) ([]byte, error) {
 	if nil == sm.private || 0 == len(sm.private.Value) {
 		return nil, errors.New("Private key was not provided")
@@ -167,6 +173,7 @@ func (sm *SecureMessage) Unwrap(message []byte) ([]byte, error) {
 	return messageProcess(sm.private, sm.peerPublic, message, SecureMessageDecrypt)
 }
 
+// Sign signs the provided message and returns it signed.
 func (sm *SecureMessage) Sign(message []byte) ([]byte, error) {
 	if nil == sm.private || 0 == len(sm.private.Value) {
 		return nil, errors.New("Private key was not provided")
@@ -175,6 +182,7 @@ func (sm *SecureMessage) Sign(message []byte) ([]byte, error) {
 	return messageProcess(sm.private, nil, message, SecureMessageSign)
 }
 
+// Verify checks the signature on the message and returns the original message.
 func (sm *SecureMessage) Verify(message []byte) ([]byte, error) {
 	if nil == sm.peerPublic || 0 == len(sm.peerPublic.Value) {
 		return nil, errors.New("Peer public key was not provided")
