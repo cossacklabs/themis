@@ -292,8 +292,10 @@ endif
 ifndef ERROR
 include src/soter/soter.mk
 include src/themis/themis.mk
+ifndef CARGO
 include src/wrappers/themis/jsthemis/jsthemis.mk
 include jni/themis_jni.mk
+endif
 endif
 
 JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
@@ -390,8 +392,10 @@ $(AUD_PATH)/%: $(SRC_PATH)/%
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
+ifndef CARGO
 include tests/test.mk
 include tools/afl/fuzzy.mk
+endif
 
 err: ; $(ERROR)
 

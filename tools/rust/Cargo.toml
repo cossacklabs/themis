@@ -1,0 +1,30 @@
+[package]
+name = "themis-integration-tools"
+version = "0.0.0"
+edition = "2018"
+publish = false
+
+[dependencies]
+base64 = "0.10.0"
+clap = "2.32"
+themis = { path = "../../src/wrappers/themis/rust" }
+
+[[bin]]
+name = "keygen_tool"
+path = "keygen_tool.rs"
+
+[[bin]]
+name = "scell_context_string_echo"
+path = "scell_context_string_echo.rs"
+
+[[bin]]
+name = "scell_seal_string_echo"
+path = "scell_seal_string_echo.rs"
+
+[[bin]]
+name = "scell_token_string_echo"
+path = "scell_token_string_echo.rs"
+
+[[bin]]
+name = "smessage_encryption"
+path = "smessage_encryption.rs"
