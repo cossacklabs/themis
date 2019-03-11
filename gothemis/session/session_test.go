@@ -18,9 +18,9 @@ var clientID = []byte("client a")
 var serverID = []byte("client b")
 
 func (clb *testCallbacks) GetPublicKeyForId(ss *SecureSession, id []byte) *keys.PublicKey {
-	if bytes.Equal(clientID, id){
+	if bytes.Equal(clientID, id) {
 		return clb.a.Public
-	} else if bytes.Equal(serverID, id){
+	} else if bytes.Equal(serverID, id) {
 		return clb.b.Public
 	}
 	return nil
@@ -81,11 +81,11 @@ func clientService(client *SecureSession, ch chan []byte, finCh chan int, t *tes
 		}
 
 		remoteID, err := client.GetRemoteId()
-		if err != nil{
+		if err != nil {
 			t.Error(err)
 			return
 		}
-		if !bytes.Equal(remoteID, serverID){
+		if !bytes.Equal(remoteID, serverID) {
 			t.Error("incorrect remote id")
 			return
 		}
@@ -134,11 +134,11 @@ func serverService(server *SecureSession, ch chan []byte, finCh chan int, t *tes
 			return
 		}
 		remoteID, err := server.GetRemoteId()
-		if err != nil{
+		if err != nil {
 			t.Error(err)
 			return
 		}
-		if !bytes.Equal(remoteID, clientID){
+		if !bytes.Equal(remoteID, clientID) {
 			t.Error("incorrect remote id")
 			return
 		}

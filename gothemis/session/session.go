@@ -207,17 +207,17 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 }
 
 // GetRemoteId returns ID of the remote peer.
-func (ss *SecureSession) GetRemoteId()([]byte, error){
+func (ss *SecureSession) GetRemoteId() ([]byte, error) {
 	// secure_session_get_remote_id
 	var outLength C.size_t
-	if C.secure_session_get_remote_id(ss.ctx.session, nil, &outLength) != C.THEMIS_BUFFER_TOO_SMALL{
+	if C.secure_session_get_remote_id(ss.ctx.session, nil, &outLength) != C.THEMIS_BUFFER_TOO_SMALL {
 		return nil, errors.NewCallbackError("Failed to get session remote id length")
 	}
-	if outLength == 0{
+	if outLength == 0 {
 		return nil, errors.NewCallbackError("Incorrect remote id length (0)")
 	}
 	out := make([]byte, int(outLength))
-	if C.secure_session_get_remote_id(ss.ctx.session, (*C.uint8_t)(&out[0]), &outLength) != C.THEMIS_SUCCESS{
+	if C.secure_session_get_remote_id(ss.ctx.session, (*C.uint8_t)(&out[0]), &outLength) != C.THEMIS_SUCCESS {
 		return nil, errors.NewCallbackError("Failed to get session remote id")
 	}
 	return out, nil
