@@ -169,8 +169,8 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		}
 	}
 
-	var ctx unsafe.Pointer = nil
-	var ctxLen C.size_t = 0
+	var ctx unsafe.Pointer
+	var ctxLen C.size_t
 
 	if nil != context && 0 < len(context) {
 		ctx = unsafe.Pointer(&context[0])
