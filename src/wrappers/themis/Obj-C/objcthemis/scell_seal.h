@@ -20,8 +20,7 @@
 */
 
 #import <Foundation/Foundation.h>
-#import <themis/themis.h>
-#import <objcthemis/scell.h>
+#import "scell.h"
 
 /**
 * @addtogroup WRAPPERS

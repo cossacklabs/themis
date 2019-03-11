@@ -25,12 +25,11 @@
 
 #define THEMIS_SESSION_CONTEXT_TAG "TSSC"
 
-#define SESSION_CTX_SERIZALIZED_SIZE(_CTX_)                                                        \
-    (sizeof(_CTX_->session_id) + sizeof(_CTX_->is_client) + sizeof(_CTX_->session_master_key) +    \
-     sizeof(_CTX_->out_seq) + sizeof(_CTX_->in_seq))
+#define SESSION_CTX_SERIZALIZED_SIZE(_CTX_)                                                   \
+    (sizeof(_CTX_->session_id) + sizeof(_CTX_->is_client) + sizeof(_CTX_->session_master_key) \
+     + sizeof(_CTX_->out_seq) + sizeof(_CTX_->in_seq))
 
-themis_status_t secure_session_save(const secure_session_t* session_ctx, void* out,
-                                    size_t* out_length)
+themis_status_t secure_session_save(const secure_session_t* session_ctx, void* out, size_t* out_length)
 {
     soter_container_hdr_t* hdr = out;
     uint32_t* curr;
@@ -46,8 +45,8 @@ themis_status_t secure_session_save(const secure_session_t* session_ctx, void* o
 
     /* | session_id | is_client | master_key | out_seq | in_seq | */
 
-    if ((!out) || (*out_length <
-                   (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIZALIZED_SIZE(session_ctx)))) {
+    if ((!out)
+        || (*out_length < (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIZALIZED_SIZE(session_ctx)))) {
         *out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIZALIZED_SIZE(session_ctx));
         return THEMIS_BUFFER_TOO_SMALL;
     }
@@ -83,7 +82,9 @@ themis_status_t secure_session_save(const secure_session_t* session_ctx, void* o
     return THEMIS_SUCCESS;
 }
 
-themis_status_t secure_session_load(secure_session_t* session_ctx, const void* in, size_t in_length,
+themis_status_t secure_session_load(secure_session_t* session_ctx,
+                                    const void* in,
+                                    size_t in_length,
                                     const secure_session_user_callbacks_t* user_callbacks)
 {
     const soter_container_hdr_t* hdr = in;

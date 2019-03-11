@@ -23,8 +23,11 @@ FUZZ_SRC_PATH = $(FUZZ_PATH)/src
 FUZZ_THEMIS_PATH = $(BIN_PATH)/afl-themis
 FUZZ_THEMIS_LIB = $(FUZZ_THEMIS_PATH)/lib$(THEMIS_BIN).a
 
+FUZZ_SOURCES = $(wildcard $(FUZZ_SRC_PATH)/*.c)
+FUZZ_HEADERS = $(wildcard $(FUZZ_SRC_PATH)/*.h)
+
 FUZZ_TOOLS = $(addprefix $(FUZZ_BIN_PATH)/,$(notdir $(wildcard $(FUZZ_PATH)/input/*)))
-FUZZ_OBJS  = $(patsubst $(FUZZ_SRC_PATH)/%.c,$(FUZZ_BIN_PATH)/%.o,$(wildcard $(FUZZ_SRC_PATH)/*.c))
+FUZZ_OBJS  = $(patsubst $(FUZZ_SRC_PATH)/%.c,$(FUZZ_BIN_PATH)/%.o,$(FUZZ_SOURCES))
 FUZZ_UTILS = $(filter-out $(addsuffix .o,$(FUZZ_TOOLS)),$(FUZZ_OBJS))
 
 AFL_CFLAGS  += -I$(FUZZ_SRC_PATH)
@@ -74,3 +77,22 @@ $(FUZZ_BIN_PATH)/%: $(FUZZ_BIN_PATH)/%.o $(FUZZ_UTILS) $(FUZZ_THEMIS_LIB)
 
 $(FUZZ_THEMIS_LIB):
 	@AFL_QUIET=1 make themis_static CC=$(AFL_CC) BUILD_PATH=$(FUZZ_THEMIS_PATH)
+
+FMT_FIXUP += $(patsubst $(FUZZ_SRC_PATH)/%,$(FUZZ_BIN_PATH)/%.fmt_fixup,$(FUZZ_SOURCES) $(FUZZ_HEADERS))
+FMT_CHECK += $(patsubst $(FUZZ_SRC_PATH)/%,$(FUZZ_BIN_PATH)/%.fmt_check,$(FUZZ_SOURCES) $(FUZZ_HEADERS))
+
+$(FUZZ_BIN_PATH)/%.c.fmt_fixup $(FUZZ_BIN_PATH)/%.h.fmt_fixup: \
+    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) -I$(FUZZ_SRC_PATH) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
+
+$(FUZZ_BIN_PATH)/%.c.fmt_check $(FUZZ_BIN_PATH)/%.h.fmt_check: \
+    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) -I$(FUZZ_SRC_PATH) 2>/dev/null && touch $@
+
+$(FUZZ_BIN_PATH)/%.fmt_fixup: $(FUZZ_SRC_PATH)/%
+	@mkdir -p $(@D)
+	@echo -n "fixup $< "
+	@$(BUILD_CMD_)
+
+$(FUZZ_BIN_PATH)/%.fmt_check: $(FUZZ_SRC_PATH)/%
+	@mkdir -p $(@D)
+	@echo -n "check $< "
+	@$(BUILD_CMD_)

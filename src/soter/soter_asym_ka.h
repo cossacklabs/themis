@@ -66,7 +66,9 @@ soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx);
  * @note If key==NULL or key_length less then need to store key, @ref SOTER_BUFFER_TOO_SMALL will
  * return and key_length will contain length of buffer thet need to store key.
  */
-soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx, void* key, size_t* key_length,
+soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx,
+                                        void* key,
+                                        size_t* key_length,
                                         bool isprivate);
 
 /**
@@ -77,8 +79,7 @@ soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx, void* key,
  * @param [in] key_length length of key
  * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
  */
-soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void* key,
-                                        size_t key_length);
+soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void* key, size_t key_length);
 
 /**
  * @brief derive shared secret from key agreement context
@@ -94,8 +95,10 @@ soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void
  * SOTER_BUFFER_TOO_SMALL will return and shared_secret_length will contain length of buffer thet
  * need to store shared secret.
  */
-soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx, const void* peer_key,
-                                    size_t peer_key_length, void* shared_secret,
+soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
+                                    const void* peer_key,
+                                    size_t peer_key_length,
+                                    void* shared_secret,
                                     size_t* shared_secret_length);
 
 /**

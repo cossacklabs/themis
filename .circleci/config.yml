@@ -31,6 +31,7 @@ jobs:
       CLANG_TIDY: clang-tidy-7
       WITH_FATAL_WARNINGS: yes
     steps:
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install default-jdk nodejs npm
       - checkout
       - run: git submodule update --init
       - run: make fmt_check ENGINE=boringssl

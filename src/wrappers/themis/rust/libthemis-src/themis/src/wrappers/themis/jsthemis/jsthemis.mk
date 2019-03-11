@@ -1,0 +1,1 @@
+../../../../../../../../../../src/wrappers/themis/jsthemis/jsthemis.mk

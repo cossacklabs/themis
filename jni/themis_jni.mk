@@ -20,6 +20,9 @@ THEMIS_JNI_OBJ = $(patsubst jni/%.c,$(OBJ_PATH)/jni/%.o, $(THEMIS_JNI_SRC))
 
 THEMIS_JNI_BIN = themis_jni
 
+FMT_FIXUP += $(patsubst jni/%,$(OBJ_PATH)/jni/%.fmt_fixup,$(THEMIS_JNI_SRC))
+FMT_CHECK += $(patsubst jni/%,$(OBJ_PATH)/jni/%.fmt_check,$(THEMIS_JNI_SRC))
+
 JAVA_DEFAULTS=/usr/share/java/java_defaults.mk
 
 ifeq ($(JDK_INCLUDE_PATH),)
@@ -33,3 +36,19 @@ endif
 $(OBJ_PATH)/jni/%.o: jni/%.c
 	@mkdir -p $(@D)
 	@$(CC) $(CFLAGS) $(jvm_includes) -c $< -o $@
+
+$(OBJ_PATH)/jni/%.c.fmt_fixup: \
+    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) $(jvm_includes) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
+
+$(OBJ_PATH)/jni/%.c.fmt_check: \
+    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) $(jvm_includes) 2>/dev/null && touch $@
+
+$(OBJ_PATH)/jni/%.fmt_fixup: jni/%
+	@mkdir -p $(@D)
+	@echo -n "fixup $< "
+	@$(BUILD_CMD_)
+
+$(OBJ_PATH)/jni/%.fmt_check: jni/%
+	@mkdir -p $(@D)
+	@echo -n "check $< "
+	@$(BUILD_CMD_)

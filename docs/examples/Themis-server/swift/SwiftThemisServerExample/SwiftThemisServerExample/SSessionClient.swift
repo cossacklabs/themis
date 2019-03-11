@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import themis
 
 final class Transport: TSSessionTransportInterface {
     

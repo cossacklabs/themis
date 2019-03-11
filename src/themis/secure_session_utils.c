@@ -67,16 +67,22 @@ soter_sign_alg_t get_peer_key_sign_type(const void* sign_key, size_t sign_key_le
     return (soter_sign_alg_t)0xffffffff;
 }
 
-themis_status_t compute_signature(const void* sign_key, size_t sign_key_length,
-                                  const soter_kdf_context_buf_t* sign_data, size_t sign_data_count,
-                                  void* signature, size_t* signature_length)
+themis_status_t compute_signature(const void* sign_key,
+                                  size_t sign_key_length,
+                                  const soter_kdf_context_buf_t* sign_data,
+                                  size_t sign_data_count,
+                                  void* signature,
+                                  size_t* signature_length)
 {
     soter_sign_ctx_t* sign_ctx = NULL;
     soter_status_t soter_status;
     size_t i;
 
-    sign_ctx = soter_sign_create(get_key_sign_type(sign_key, sign_key_length), sign_key,
-                                 sign_key_length, NULL, 0);
+    sign_ctx = soter_sign_create(get_key_sign_type(sign_key, sign_key_length),
+                                 sign_key,
+                                 sign_key_length,
+                                 NULL,
+                                 0);
     if (!sign_ctx) {
         return THEMIS_FAIL;
     }
@@ -99,16 +105,22 @@ err:
     return soter_status;
 }
 
-themis_status_t verify_signature(const void* verify_key, size_t verify_key_length,
-                                 const soter_kdf_context_buf_t* sign_data, size_t sign_data_count,
-                                 const void* signature, size_t signature_length)
+themis_status_t verify_signature(const void* verify_key,
+                                 size_t verify_key_length,
+                                 const soter_kdf_context_buf_t* sign_data,
+                                 size_t sign_data_count,
+                                 const void* signature,
+                                 size_t signature_length)
 {
     soter_sign_ctx_t* sign_ctx = NULL;
     soter_status_t soter_status;
     size_t i;
 
-    sign_ctx = soter_verify_create(get_peer_key_sign_type(verify_key, verify_key_length), NULL, 0,
-                                   verify_key, verify_key_length);
+    sign_ctx = soter_verify_create(get_peer_key_sign_type(verify_key, verify_key_length),
+                                   NULL,
+                                   0,
+                                   verify_key,
+                                   verify_key_length);
     if (!sign_ctx) {
         return SOTER_FAIL;
     }
@@ -131,8 +143,12 @@ err:
     return soter_status;
 }
 
-themis_status_t compute_mac(const void* key, size_t key_length, const soter_kdf_context_buf_t* data,
-                            size_t data_count, void* mac, size_t* mac_length)
+themis_status_t compute_mac(const void* key,
+                            size_t key_length,
+                            const soter_kdf_context_buf_t* data,
+                            size_t data_count,
+                            void* mac,
+                            size_t* mac_length)
 {
     soter_hmac_ctx_t* mac_ctx = soter_hmac_create(SOTER_HASH_SHA256, key, key_length);
     if (!mac_ctx) {
@@ -160,14 +176,17 @@ err:
     return soter_status;
 }
 
-themis_status_t verify_mac(const void* key, size_t key_length, const soter_kdf_context_buf_t* data,
-                           size_t data_count, const void* mac, size_t mac_length)
+themis_status_t verify_mac(const void* key,
+                           size_t key_length,
+                           const soter_kdf_context_buf_t* data,
+                           size_t data_count,
+                           const void* mac,
+                           size_t mac_length)
 {
     uint8_t computed_mac[MAX_HMAC_SIZE];
     size_t computed_mac_length = sizeof(computed_mac);
 
-    themis_status_t res =
-        compute_mac(key, key_length, data, data_count, computed_mac, &computed_mac_length);
+    themis_status_t res = compute_mac(key, key_length, data, data_count, computed_mac, &computed_mac_length);
     if (THEMIS_SUCCESS != res) {
         return res;
     }
@@ -183,8 +202,14 @@ themis_status_t verify_mac(const void* key, size_t key_length, const soter_kdf_c
     return THEMIS_SUCCESS;
 }
 
-themis_status_t encrypt_gcm(const void* key, size_t key_length, const void* iv, size_t iv_length,
-                            const void* in, size_t in_length, void* out, size_t out_length)
+themis_status_t encrypt_gcm(const void* key,
+                            size_t key_length,
+                            const void* iv,
+                            size_t iv_length,
+                            const void* in,
+                            size_t in_length,
+                            void* out,
+                            size_t out_length)
 {
     soter_sym_ctx_t* ctx;
     soter_status_t res;
@@ -195,8 +220,13 @@ themis_status_t encrypt_gcm(const void* key, size_t key_length, const void* iv, 
         return THEMIS_BUFFER_TOO_SMALL;
     }
 
-    ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AES_GCM | SOTER_SYM_256_KEY_LENGTH, key,
-                                        key_length, NULL, 0, iv, iv_length);
+    ctx = soter_sym_aead_encrypt_create(SOTER_SYM_AES_GCM | SOTER_SYM_256_KEY_LENGTH,
+                                        key,
+                                        key_length,
+                                        NULL,
+                                        0,
+                                        iv,
+                                        iv_length);
     if (NULL == ctx) {
         return THEMIS_FAIL;
     }
@@ -312,26 +342,46 @@ themis_status_t secure_session_derive_message_keys(secure_session_t* session_ctx
         in_seq_label = "Themis secure session client initial sequence number";
     }
 
-    res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, out_key_label,
-                    &context, 1, session_ctx->out_cipher_key, SESSION_MESSAGE_KEY_LENGTH);
+    res = soter_kdf(session_ctx->session_master_key,
+                    SESSION_MASTER_KEY_LENGTH,
+                    out_key_label,
+                    &context,
+                    1,
+                    session_ctx->out_cipher_key,
+                    SESSION_MESSAGE_KEY_LENGTH);
     if (THEMIS_SUCCESS != res) {
         return res;
     }
 
-    res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, in_key_label,
-                    &context, 1, session_ctx->in_cipher_key, SESSION_MESSAGE_KEY_LENGTH);
+    res = soter_kdf(session_ctx->session_master_key,
+                    SESSION_MASTER_KEY_LENGTH,
+                    in_key_label,
+                    &context,
+                    1,
+                    session_ctx->in_cipher_key,
+                    SESSION_MESSAGE_KEY_LENGTH);
     if (THEMIS_SUCCESS != res) {
         return res;
     }
 
-    res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, out_seq_label,
-                    &context, 1, &(session_ctx->out_seq), sizeof(session_ctx->out_seq));
+    res = soter_kdf(session_ctx->session_master_key,
+                    SESSION_MASTER_KEY_LENGTH,
+                    out_seq_label,
+                    &context,
+                    1,
+                    &(session_ctx->out_seq),
+                    sizeof(session_ctx->out_seq));
     if (THEMIS_SUCCESS != res) {
         return res;
     }
 
-    res = soter_kdf(session_ctx->session_master_key, SESSION_MASTER_KEY_LENGTH, in_seq_label,
-                    &context, 1, &(session_ctx->in_seq), sizeof(session_ctx->in_seq));
+    res = soter_kdf(session_ctx->session_master_key,
+                    SESSION_MASTER_KEY_LENGTH,
+                    in_seq_label,
+                    &context,
+                    1,
+                    &(session_ctx->in_seq),
+                    sizeof(session_ctx->in_seq));
     if (THEMIS_SUCCESS != res) {
         return res;
     }

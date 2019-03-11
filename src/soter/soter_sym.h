@@ -129,8 +129,12 @@ typedef struct soter_sym_ctx_type soter_sym_ctx_t;
  * @param [in] iv_length length of iv
  * @return pointer to new symmetric encryption context on success or NULL on failure
  */
-soter_sym_ctx_t* soter_sym_encrypt_create(uint32_t alg, const void* key, size_t key_length,
-                                          const void* salt, size_t salt_length, const void* iv,
+soter_sym_ctx_t* soter_sym_encrypt_create(uint32_t alg,
+                                          const void* key,
+                                          size_t key_length,
+                                          const void* salt,
+                                          size_t salt_length,
+                                          const void* iv,
                                           size_t iv_length);
 
 /**
@@ -147,8 +151,10 @@ soter_sym_ctx_t* soter_sym_encrypt_create(uint32_t alg, const void* key, size_t 
  * SOTER_BUFFER_TOO_SMALL will return and cipher_data_length will contain length of buffer thet need
  * to store cipher data.
  */
-soter_status_t soter_sym_encrypt_update(soter_sym_ctx_t* ctx, const void* plain_data,
-                                        size_t data_length, void* cipher_data,
+soter_status_t soter_sym_encrypt_update(soter_sym_ctx_t* ctx,
+                                        const void* plain_data,
+                                        size_t data_length,
+                                        void* cipher_data,
                                         size_t* cipher_data_length);
 
 /**
@@ -163,8 +169,7 @@ soter_status_t soter_sym_encrypt_update(soter_sym_ctx_t* ctx, const void* plain_
  * SOTER_BUFFER_TOO_SMALL will return and cipher_data_length will contain length of buffer thet need
  * to store cipher data.
  */
-soter_status_t soter_sym_encrypt_final(soter_sym_ctx_t* ctx, void* cipher_data,
-                                       size_t* cipher_data_length);
+soter_status_t soter_sym_encrypt_final(soter_sym_ctx_t* ctx, void* cipher_data, size_t* cipher_data_length);
 
 /**
  * @brief destroy symmetric encryption context
@@ -192,8 +197,12 @@ soter_status_t soter_sym_encrypt_destroy(soter_sym_ctx_t* ctx);
  * @param [in] iv_length length of iv
  * @return pointer to new symmetric decryption context on success or NULL on failure
  */
-soter_sym_ctx_t* soter_sym_decrypt_create(uint32_t alg, const void* key, size_t key_length,
-                                          const void* salt, size_t salt_length, const void* iv,
+soter_sym_ctx_t* soter_sym_decrypt_create(uint32_t alg,
+                                          const void* key,
+                                          size_t key_length,
+                                          const void* salt,
+                                          size_t salt_length,
+                                          const void* iv,
                                           size_t iv_length);
 
 /**
@@ -210,8 +219,10 @@ soter_sym_ctx_t* soter_sym_decrypt_create(uint32_t alg, const void* key, size_t 
  * SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer thet need
  * to store plain data.
  */
-soter_status_t soter_sym_decrypt_update(soter_sym_ctx_t* ctx, const void* cipher_data,
-                                        size_t data_length, void* plain_data,
+soter_status_t soter_sym_decrypt_update(soter_sym_ctx_t* ctx,
+                                        const void* cipher_data,
+                                        size_t data_length,
+                                        void* plain_data,
                                         size_t* plain_data_length);
 
 /**
@@ -226,8 +237,7 @@ soter_status_t soter_sym_decrypt_update(soter_sym_ctx_t* ctx, const void* cipher
  * SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer thet need
  * to store plain data.
  */
-soter_status_t soter_sym_decrypt_final(soter_sym_ctx_t* ctx, void* plain_data,
-                                       size_t* plain_data_length);
+soter_status_t soter_sym_decrypt_final(soter_sym_ctx_t* ctx, void* plain_data, size_t* plain_data_length);
 
 /**
  * @brief destroy symmetric decryption context
@@ -262,8 +272,12 @@ soter_status_t soter_sym_decrypt_destroy(soter_sym_ctx_t* ctx);
  * @param [in] iv_length length of iv
  * @return pointer to new symmetric encryption context on success or NULL on failure
  */
-soter_sym_ctx_t* soter_sym_aead_encrypt_create(uint32_t alg, const void* key, size_t key_length,
-                                               const void* salt, size_t salt_length, const void* iv,
+soter_sym_ctx_t* soter_sym_aead_encrypt_create(uint32_t alg,
+                                               const void* key,
+                                               size_t key_length,
+                                               const void* salt,
+                                               size_t salt_length,
+                                               const void* iv,
                                                size_t iv_length);
 
 /**
@@ -274,8 +288,7 @@ soter_sym_ctx_t* soter_sym_aead_encrypt_create(uint32_t alg, const void* key, si
  * @param [in] data_length length of AAD data
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
  */
-soter_status_t soter_sym_aead_encrypt_aad(soter_sym_ctx_t* ctx, const void* plain_data,
-                                          size_t data_length);
+soter_status_t soter_sym_aead_encrypt_aad(soter_sym_ctx_t* ctx, const void* plain_data, size_t data_length);
 
 /**
  * @brief update symmetric encryption context
@@ -291,8 +304,10 @@ soter_status_t soter_sym_aead_encrypt_aad(soter_sym_ctx_t* ctx, const void* plai
  * SOTER_BUFFER_TOO_SMALL will return and cipher_data_length will contain length of buffer thet need
  * to store cipher data.
  */
-soter_status_t soter_sym_aead_encrypt_update(soter_sym_ctx_t* ctx, const void* plain_data,
-                                             size_t data_length, void* cipher_data,
+soter_status_t soter_sym_aead_encrypt_update(soter_sym_ctx_t* ctx,
+                                             const void* plain_data,
+                                             size_t data_length,
+                                             void* cipher_data,
                                              size_t* cipher_data_length);
 
 /**
@@ -307,8 +322,7 @@ soter_status_t soter_sym_aead_encrypt_update(soter_sym_ctx_t* ctx, const void* p
  * SOTER_BUFFER_TOO_SMALL will return and auth_tag_length will contain length of buffer thet need to
  * store auth_tag.
  */
-soter_status_t soter_sym_aead_encrypt_final(soter_sym_ctx_t* ctx, void* auth_tag,
-                                            size_t* auth_tag_length);
+soter_status_t soter_sym_aead_encrypt_final(soter_sym_ctx_t* ctx, void* auth_tag, size_t* auth_tag_length);
 
 /**
  * @brief destroy symmetric encryption context
@@ -336,8 +350,12 @@ soter_status_t soter_sym_aead_encrypt_destroy(soter_sym_ctx_t* ctx);
  * @param [in] iv_length length of iv
  * @return pointer to new symmetric decryption context on success or NULL on failure
  */
-soter_sym_ctx_t* soter_sym_aead_decrypt_create(uint32_t alg, const void* key, size_t key_length,
-                                               const void* salt, size_t salt_length, const void* iv,
+soter_sym_ctx_t* soter_sym_aead_decrypt_create(uint32_t alg,
+                                               const void* key,
+                                               size_t key_length,
+                                               const void* salt,
+                                               size_t salt_length,
+                                               const void* iv,
                                                size_t iv_length);
 
 /**
@@ -348,8 +366,7 @@ soter_sym_ctx_t* soter_sym_aead_decrypt_create(uint32_t alg, const void* key, si
  * @param [in] data_length length of AAD data
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
  */
-soter_status_t soter_sym_aead_decrypt_aad(soter_sym_ctx_t* ctx, const void* plain_data,
-                                          size_t data_length);
+soter_status_t soter_sym_aead_decrypt_aad(soter_sym_ctx_t* ctx, const void* plain_data, size_t data_length);
 
 /**
  * @brief update symmetric decryption context
@@ -365,8 +382,10 @@ soter_status_t soter_sym_aead_decrypt_aad(soter_sym_ctx_t* ctx, const void* plai
  * SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer thet need
  * to store plain data.
  */
-soter_status_t soter_sym_aead_decrypt_update(soter_sym_ctx_t* ctx, const void* cipher_data,
-                                             size_t data_length, void* plain_data,
+soter_status_t soter_sym_aead_decrypt_update(soter_sym_ctx_t* ctx,
+                                             const void* cipher_data,
+                                             size_t data_length,
+                                             void* plain_data,
                                              size_t* plain_data_length);
 
 /**
@@ -377,7 +396,8 @@ soter_status_t soter_sym_aead_decrypt_update(soter_sym_ctx_t* ctx, const void* c
  * @param [in] auth_tag_length length of auth_tag
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
  */
-soter_status_t soter_sym_aead_decrypt_final(soter_sym_ctx_t* ctx, const void* auth_tag,
+soter_status_t soter_sym_aead_decrypt_final(soter_sym_ctx_t* ctx,
+                                            const void* auth_tag,
                                             size_t auth_tag_length);
 
 /**

@@ -27,8 +27,7 @@ struct themis_message_type {
 typedef struct themis_message_type themis_message_t;
 
 themis_message_t* themis_message_init(const uint8_t* message, size_t message_length);
-themis_status_t themis_message_set(themis_message_t* ctx, const uint8_t* message,
-                                   size_t message_length);
+themis_status_t themis_message_set(themis_message_t* ctx, const uint8_t* message, size_t message_length);
 
 const uint8_t* themis_message_get_data(themis_message_t* ctx);
 

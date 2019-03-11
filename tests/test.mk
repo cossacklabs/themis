@@ -43,10 +43,12 @@ $(TEST_OBJ_PATH)/%.opp: $(TEST_SRC_PATH)/%.cpp
 FMT_FIXUP += $(THEMIS_TEST_FMT_FIXUP) $(SOTER_TEST_FMT_FIXUP)
 FMT_CHECK += $(THEMIS_TEST_FMT_CHECK) $(SOTER_TEST_FMT_CHECK)
 
-$(TEST_OBJ_PATH)/%.c.fmt_fixup $(TEST_OBJ_PATH)/%.h.fmt_fixup: \
+$(TEST_OBJ_PATH)/%.c.fmt_fixup   $(TEST_OBJ_PATH)/%.h.fmt_fixup \
+$(TEST_OBJ_PATH)/%.cpp.fmt_fixup $(TEST_OBJ_PATH)/%.hpp.fmt_fixup: \
     CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) -I$(TEST_SRC_PATH) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
 
-$(TEST_OBJ_PATH)/%.c.fmt_check $(TEST_OBJ_PATH)/%.h.fmt_check: \
+$(TEST_OBJ_PATH)/%.c.fmt_check   $(TEST_OBJ_PATH)/%.h.fmt_check \
+$(TEST_OBJ_PATH)/%.cpp.fmt_check $(TEST_OBJ_PATH)/%.hpp.fmt_check: \
     CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) -I$(TEST_SRC_PATH) 2>/dev/null && touch $@
 
 $(TEST_OBJ_PATH)/%.fmt_fixup: $(TEST_SRC_PATH)/%
@@ -62,16 +64,13 @@ $(TEST_OBJ_PATH)/%.fmt_check: $(TEST_SRC_PATH)/%
 PYTHON2_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis2_test.sh
 PYTHON3_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis3_test.sh
 
-nist_rng_test_suite: CMD = $(MAKE) -C $(NIST_STS_DIR)
-
 nist_rng_test_suite:
 	@mkdir -p $(NIST_STS_DIR)/obj
 	@cd $(NIST_STS_DIR)/experiments && ./create-dir-script
-	@$(BUILD_CMD)
+	@$(MAKE) --quiet -C $(NIST_STS_DIR)
 
 nist_rng_test_suite_clean: 
-	@echo "cleaning nist suit"
-	@make clean -C $(NIST_STS_DIR)
+	@$(MAKE) --quiet -C $(NIST_STS_DIR) clean
 
 soter_test: CMD = $(CC) -o $(TEST_BIN_PATH)/soter_test $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) -L$(BIN_PATH) -lsoter $(LDFLAGS) $(COVERLDFLAGS)
 
