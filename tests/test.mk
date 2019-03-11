@@ -91,11 +91,10 @@ themispp_test: $(THEMISPP_TEST_OBJ)
 	@$(BUILD_CMD)
 
 rustthemis_integration_tools:
-	@echo -n "make integration tools for rust-themis "
-	@mkdir -p $(TEST_BIN_PATH)/rust
-	@cargo install --quiet --examples --path . --force --root $(TEST_BIN_PATH)/rust
+	@echo "make integration tools for rust-themis..."
+	@cargo build --package themis-integration-tools
 	@for tool in $(notdir $(foreach tool,$(wildcard tools/rust/*.rs),$(basename $(tool)))); \
-	do cp $(TEST_BIN_PATH)/rust/bin/$$tool tools/rust/$$tool.rust; done
+	do cp target/debug/$$tool tools/rust/$$tool.rust; done
 	@$(PRINT_OK_)
 
 prepare_tests_basic: soter_test themis_test
