@@ -44,20 +44,38 @@ func main() {
 
 	fmt.Println("JSON endpoint: ")
 	endpoint, err := inputBuffer.ReadString('\n')
+	if err != nil {
+		fmt.Println("Failed to read JSON endpoint:", err)
+		return
+	}
 	endpoint = strings.TrimRight(endpoint, "\n\r")
 
 	fmt.Println("Your private key in base64 format:")
 	clientPrivate, err := inputBuffer.ReadBytes('\n')
+	if err != nil {
+		fmt.Println("Failed to read user private key:", err)
+		return
+	}
 	clientPrivate, err = base64.StdEncoding.DecodeString(string(clientPrivate))
 	if err != nil {
-		fmt.Println("Incorrect base64 format for private key")
+		fmt.Println("Incorrect base64 format for private key:", err)
 		return
 	}
 
 	fmt.Println("Server public key in base64 format:")
 	serverPublic, err := inputBuffer.ReadBytes('\n')
+	if err != nil {
+		fmt.Println("Failed to read server public key:", err)
+		return
+	}
+
 	serverPublic = bytes.TrimRight(serverPublic, "\r\n")
 	serverPublic, err = base64.StdEncoding.DecodeString(string(serverPublic))
+	if err != nil {
+		fmt.Println("Incorrect base64 format for public key:", err)
+		return
+	}
+
 	secureMessage := message.New(
 		&keys.PrivateKey{Value: bytes.TrimRight(clientPrivate, "\r\n")},
 		&keys.PublicKey{Value: serverPublic})
@@ -84,6 +102,10 @@ func main() {
 			return
 		}
 		unwrapped, err := secureMessage.Unwrap(data)
+		if err != nil {
+			fmt.Println("Error unwrapping:", err)
+			return
+		}
 		fmt.Println(string(unwrapped))
 	}
 }

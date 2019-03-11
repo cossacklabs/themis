@@ -87,25 +87,50 @@ func main() {
 
 	fmt.Println("JSON endpoint: ")
 	endpoint, err := inputBuffer.ReadString('\n')
+	if err != nil {
+		fmt.Println("Failed to read endpoint URL:", err)
+		return
+	}
 	endpoint = strings.TrimRight(endpoint, "\n\r")
 
 	fmt.Println("Your private key in base64 format:")
 	clientPrivate, err := inputBuffer.ReadBytes('\n')
+	if err != nil {
+		fmt.Println("Failed to read user private key:", err)
+		return
+	}
 	clientPrivate, err = base64.StdEncoding.DecodeString(string(clientPrivate))
 	if err != nil {
-		fmt.Println("Incorrect base64 format for private key")
+		fmt.Println("Incorrect base64 format for private key:", err)
 		return
 	}
 
-	fmt.Println("User_id:")
+	fmt.Println("User ID:")
 	clientID, err := inputBuffer.ReadBytes('\n')
+	if err != nil {
+		fmt.Println("Failed to read user ID:", err)
+		return
+	}
 
-	fmt.Println("Server_id:")
+	fmt.Println("Server ID:")
 	serverID, err := inputBuffer.ReadBytes('\n')
+	if err != nil {
+		fmt.Println("Failed to read server ID:", err)
+		return
+	}
 
 	fmt.Println("Server public key in base64 format:")
 	serverPublic, err := inputBuffer.ReadBytes('\n')
+	if err != nil {
+		fmt.Println("Failed to read server public key:", err)
+		return
+	}
 	serverPublic, err = base64.StdEncoding.DecodeString(string(serverPublic))
+	if err != nil {
+		fmt.Println("Incorrect base64 format for public key:", err)
+		return
+	}
+
 	// init callback structure
 	cb := clientTransportCallback{
 		serverPublic,
@@ -117,7 +142,7 @@ func main() {
 		&keys.PrivateKey{Value: bytes.TrimRight(clientPrivate, "\r\n")},
 		&cb)
 	if err != nil {
-		fmt.Println("Session creation error")
+		fmt.Println("Cannot create Secure Session:", err)
 		return
 	}
 
@@ -151,12 +176,20 @@ func main() {
 			return
 		}
 		wrapped, err := clientSession.Wrap(line)
+		if err != nil {
+			fmt.Println("Failed to encrypt message:", err)
+			return
+		}
 		data, err := sendMessage(wrapped, endpoint)
 		if err != nil {
 			fmt.Println("Error occurred:", err)
 			return
 		}
 		unwrapped, _, err := clientSession.Unwrap(data)
+		if err != nil {
+			fmt.Println("Failed to decrypt message:", err)
+			return
+		}
 		fmt.Println(string(unwrapped))
 	}
 }

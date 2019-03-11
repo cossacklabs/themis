@@ -179,31 +179,31 @@ func testSession(keytype int, t *testing.T) {
 
 	emptyKey := keys.PrivateKey{Value: []byte{}}
 
-	client, err := New(clientID, nil, clb)
+	_, err = New(clientID, nil, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty private key")
 		return
 	}
 
-	client, err = New(clientID, &emptyKey, clb)
+	_, err = New(clientID, &emptyKey, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty private key")
 		return
 	}
 
-	client, err = New(nil, kpa.Private, clb)
+	_, err = New(nil, kpa.Private, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty id")
 		return
 	}
 
-	client, err = New([]byte{}, kpa.Private, clb)
+	_, err = New([]byte{}, kpa.Private, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty id")
 		return
 	}
 
-	client, err = New(clientID, kpa.Private, clb)
+	client, err := New(clientID, kpa.Private, clb)
 	if nil != err {
 		t.Error(err)
 		return
