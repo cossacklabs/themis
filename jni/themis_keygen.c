@@ -26,6 +26,8 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_gene
                                                                                          jobject thiz,
                                                                                          jint key_type)
 {
+    UNUSED(thiz);
+
     size_t private_key_length = 0;
     size_t public_key_length = 0;
 

@@ -348,7 +348,7 @@ void test_api(int key_length)
     soter_rsa_key_pair_gen_destroy(key_pair_ctx);
 }
 
-void test_api_all()
+void test_api_all(void)
 {
     test_api(RSA_KEY_LENGTH_1024);
     test_api(RSA_KEY_LENGTH_2048);

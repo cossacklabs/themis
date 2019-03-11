@@ -137,13 +137,13 @@ static int sign_test(soter_sign_alg_t alg)
     return 0;
 }
 
-static void soter_sign_test()
+static void soter_sign_test(void)
 {
     testsuite_fail_if(sign_test(SOTER_SIGN_rsa_pss_pkcs8), "soter sign SOTER_SIGN_rsa_pss_pkcs8");
     testsuite_fail_if(sign_test(SOTER_SIGN_ecdsa_none_pkcs8), "soter sign SOTER_SIGN_ecdsa_none_pkcs8");
 }
 
-static void soter_sign_api_test()
+static void soter_sign_api_test(void)
 {
     uint8_t priv[MAX_TEST_KEY];
     size_t priv_length = sizeof(priv);
@@ -322,7 +322,7 @@ static void soter_sign_api_test()
     soter_verify_destroy(sign_ctx);
 }
 
-void run_soter_sign_test()
+void run_soter_sign_test(void)
 {
     testsuite_enter_suite("soter sign: basic flow");
     testsuite_run_test(soter_sign_test);

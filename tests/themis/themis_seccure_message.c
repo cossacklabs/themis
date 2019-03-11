@@ -602,7 +602,7 @@ static int themis_secure_encrypted_message_generic_test(int alg,
     return 0;
 }
 
-static void themis_secure_message_test()
+static void themis_secure_message_test(void)
 {
     char message[] = "Hit http://ftp.us.debian.org[1] wheezy Release.gpg"
                      "Hit http://ftp.us.debian.org[2] wheezy-updates Release.gpg"
@@ -1523,7 +1523,7 @@ static void key_validation_test(void)
                           "themis_get_asym_key_kind: garbage input");
 }
 
-void run_secure_message_test()
+void run_secure_message_test(void)
 {
     testsuite_enter_suite("generic secure message");
     testsuite_run_test(themis_secure_message_test);

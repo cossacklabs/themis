@@ -129,7 +129,7 @@ soter_sym_ctx_t* soter_sym_ctx_init(const uint32_t alg,
         SOTER_CHECK_PARAM_(salt_length == 0);
     }
     if (iv != NULL) {
-        SOTER_CHECK_PARAM_(iv_length >= EVP_CIPHER_iv_length(evp));
+        SOTER_CHECK_PARAM_(iv_length >= (size_t)EVP_CIPHER_iv_length(evp));
     }
     soter_sym_ctx_t* ctx = NULL;
     ctx = malloc(sizeof(soter_sym_ctx_t));
@@ -173,7 +173,7 @@ soter_sym_ctx_t* soter_sym_aead_ctx_init(const uint32_t alg,
         SOTER_CHECK_PARAM_(salt_length == 0);
     }
     if (iv != NULL) {
-        SOTER_CHECK_PARAM_(iv_length >= EVP_CIPHER_iv_length(evp));
+        SOTER_CHECK_PARAM_(iv_length >= (size_t)EVP_CIPHER_iv_length(evp));
     }
     soter_sym_ctx_t* ctx = NULL;
     ctx = malloc(sizeof(soter_sym_ctx_t));

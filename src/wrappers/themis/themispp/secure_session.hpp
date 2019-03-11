@@ -40,6 +40,7 @@ public:
     virtual const data_t get_pub_key_by_id(const data_t& id) = 0;
     virtual void send(const data_t& data)
     {
+        UNUSED(data);
         throw themispp::exception_t("Secure Session failed sending, send callback not set");
     }
     virtual const data_t& receive()
@@ -241,7 +242,7 @@ public:
         return _res;
     }
 
-    const bool is_established()
+    bool is_established() const
     {
         if (!_session) {
             throw themispp::exception_t("uninitialized Secure Session");
