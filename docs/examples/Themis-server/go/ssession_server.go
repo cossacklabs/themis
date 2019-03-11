@@ -81,15 +81,14 @@ func clientService(client *session.SecureSession, ch chan []byte, finCh chan int
 	finCh <- 1
 }
 
-func main() {
-	inputBuffer := bufio.NewReader(os.Stdin)
+func createSecureSession(inputBuffer *bufio.Reader) (*session.SecureSession, string) {
 	fmt.Println("Type your settings from https://themis.cossacklabs.com/interactive-simulator/setup/")
 
 	fmt.Println("JSON endpoint: ")
 	endpoint, err := inputBuffer.ReadString('\n')
 	if err != nil {
 		fmt.Println("Failed to read endpoint URL:", err)
-		return
+		return nil, ""
 	}
 	endpoint = strings.TrimRight(endpoint, "\n\r")
 
@@ -97,38 +96,38 @@ func main() {
 	clientPrivate, err := inputBuffer.ReadBytes('\n')
 	if err != nil {
 		fmt.Println("Failed to read user private key:", err)
-		return
+		return nil, ""
 	}
 	clientPrivate, err = base64.StdEncoding.DecodeString(string(clientPrivate))
 	if err != nil {
 		fmt.Println("Incorrect base64 format for private key:", err)
-		return
+		return nil, ""
 	}
 
 	fmt.Println("User ID:")
 	clientID, err := inputBuffer.ReadBytes('\n')
 	if err != nil {
 		fmt.Println("Failed to read user ID:", err)
-		return
+		return nil, ""
 	}
 
 	fmt.Println("Server ID:")
 	serverID, err := inputBuffer.ReadBytes('\n')
 	if err != nil {
 		fmt.Println("Failed to read server ID:", err)
-		return
+		return nil, ""
 	}
 
 	fmt.Println("Server public key in base64 format:")
 	serverPublic, err := inputBuffer.ReadBytes('\n')
 	if err != nil {
 		fmt.Println("Failed to read server public key:", err)
-		return
+		return nil, ""
 	}
 	serverPublic, err = base64.StdEncoding.DecodeString(string(serverPublic))
 	if err != nil {
 		fmt.Println("Incorrect base64 format for public key:", err)
-		return
+		return nil, ""
 	}
 
 	// init callback structure
@@ -143,13 +142,18 @@ func main() {
 		&cb)
 	if err != nil {
 		fmt.Println("Cannot create Secure Session:", err)
-		return
+		return nil, ""
 	}
 
+	return clientSession, endpoint
+}
+
+func runSecureSession(clientSession *session.SecureSession, endpoint string, inputBuffer *bufio.Reader) {
 	ch := make(chan []byte)
 	quitChannel := make(chan int)
 	go clientService(clientSession, ch, quitChannel)
 	isEstablished := false
+
 	fmt.Println("Initialize session")
 	for !isEstablished {
 		select {
@@ -165,6 +169,7 @@ func main() {
 		}
 	}
 	fmt.Println("Session established")
+
 	for {
 		fmt.Println("Print message to send (or quit to stop):")
 		line, _, err := inputBuffer.ReadLine()
@@ -192,4 +197,15 @@ func main() {
 		}
 		fmt.Println(string(unwrapped))
 	}
+}
+
+func main() {
+	inputBuffer := bufio.NewReader(os.Stdin)
+
+	clientSession, endpoint := createSecureSession(inputBuffer)
+	if clientSession == nil {
+		return
+	}
+
+	runSecureSession(clientSession, endpoint, inputBuffer)
 }
