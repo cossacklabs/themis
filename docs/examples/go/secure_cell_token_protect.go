@@ -26,17 +26,17 @@ func main() {
 			fmt.Println("token not set")
 			return
 		}
-		decoded_message, err := base64.StdEncoding.DecodeString(os.Args[3])
+		decodedMessage, err := base64.StdEncoding.DecodeString(os.Args[3])
 		if nil != err {
 			fmt.Println("error decoding message")
 			return
 		}
-		decoded_token, err := base64.StdEncoding.DecodeString(os.Args[4])
+		decodedToken, err := base64.StdEncoding.DecodeString(os.Args[4])
 		if nil != err {
 			fmt.Println("error decoding token")
 			return
 		}
-		decData, err := sc.Unprotect(decoded_message, decoded_token, nil)
+		decData, err := sc.Unprotect(decodedMessage, decodedToken, nil)
 		if nil != err {
 			fmt.Println("error decrypting message")
 			return

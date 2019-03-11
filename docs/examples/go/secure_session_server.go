@@ -12,36 +12,36 @@ type callbacks struct {
 }
 
 func (clb *callbacks) GetPublicKeyForId(ss *session.SecureSession, id []byte) *keys.PublicKey {
-	decoded_id, err := base64.StdEncoding.DecodeString(string(id[:]))
+	decodedID, err := base64.StdEncoding.DecodeString(string(id[:]))
 	if nil != err {
 		return nil
 	}
-	return &keys.PublicKey{decoded_id}
+	return &keys.PublicKey{decodedID}
 }
 
 func (clb *callbacks) StateChanged(ss *session.SecureSession, state int) {
 
 }
 
-func connectionHandler(c net.Conn, server_id string, server_private_key *keys.PrivateKey) {
-	ss, err := session.New([]byte(server_id), server_private_key, &callbacks{})
+func connectionHandler(c net.Conn, serverID string, serverPrivateKey *keys.PrivateKey) {
+	ss, err := session.New([]byte(serverID), serverPrivateKey, &callbacks{})
 	if err != nil {
 		fmt.Println("error creating secure session object")
 		return
 	}
 	for {
 		buf := make([]byte, 10240)
-		readed_bytes, err := c.Read(buf)
+		readBytes, err := c.Read(buf)
 		if err != nil {
 			fmt.Println("error reading bytes from socket")
 			return
 		}
-		buf, send_peer, err := ss.Unwrap(buf[:readed_bytes])
+		buf, sendPeer, err := ss.Unwrap(buf[:readBytes])
 		if nil != err {
 			fmt.Println("error unwraping message")
 			return
 		}
-		if !send_peer {
+		if !sendPeer {
 			if "finish" == string(buf[:]) {
 				return
 			}
@@ -66,7 +66,7 @@ func main() {
 		fmt.Println("listen error")
 		return
 	}
-	server_keypair, err := keys.New(keys.KEYTYPE_EC)
+	serverKeyPair, err := keys.New(keys.KEYTYPE_EC)
 	if err != nil {
 		fmt.Println("error generating key pair")
 		return
@@ -78,6 +78,6 @@ func main() {
 			return
 		}
 
-		go connectionHandler(conn, base64.StdEncoding.EncodeToString(server_keypair.Public.Value), server_keypair.Private)
+		go connectionHandler(conn, base64.StdEncoding.EncodeToString(serverKeyPair.Public.Value), serverKeyPair.Private)
 	}
 }
