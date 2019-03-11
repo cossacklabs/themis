@@ -32,13 +32,13 @@ func testProtect(mode int, context []byte, t *testing.T) {
 	sc := New(nil, mode)
 	_, _, err = sc.Protect(data, context)
 	if nil == err {
-		t.Error("Scell encription with empty password ")
+		t.Error("Scell encryption with empty password ")
 	}
 
 	sc = New([]byte{}, mode)
 	_, _, err = sc.Protect(data, context)
 	if nil == err {
-		t.Error("Scell encription with empty password ")
+		t.Error("Scell encryption with empty password ")
 	}
 
 	sc = New(key, mode)
