@@ -137,15 +137,6 @@ const (
 	ModeContextImprint
 )
 
-// Secure Cell operation mode.
-//
-// Deprecated: Since 0.11. Use "cell.Mode..." constants instead.
-const (
-	CELL_MODE_SEAL            = ModeSeal
-	CELL_MODE_TOKEN_PROTECT   = ModeTokenProtect
-	CELL_MODE_CONTEXT_IMPRINT = ModeContextImprint
-)
-
 // SecureCell is a high-level cryptographic service aimed at protecting arbitrary data
 // stored in various types of storage
 type SecureCell struct {

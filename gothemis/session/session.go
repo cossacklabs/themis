@@ -25,15 +25,6 @@ const (
 	StateEstablished
 )
 
-// Secure Session states.
-//
-// Deprecated: Since 0.11. Use "session.State..." constants instead.
-const (
-	STATE_IDLE        = StateIdle
-	STATE_NEGOTIATING = StateNegotiating
-	STATE_ESTABLISHED = StateEstablished
-)
-
 // SessionCallbacks implements a delegate for SecureSession.
 type SessionCallbacks interface {
 	GetPublicKeyForId(ss *SecureSession, id []byte) *keys.PublicKey
@@ -230,11 +221,4 @@ func (ss *SecureSession) GetRemoteID() ([]byte, error) {
 		return nil, errors.NewCallbackError("Failed to get session remote id")
 	}
 	return out, nil
-}
-
-// GetRemoteId returns ID of the remote peer.
-//
-// Deprecated: Since 0.11. Use GetRemoteID() instead.
-func (ss *SecureSession) GetRemoteId() ([]byte, error) {
-	return ss.GetRemoteID()
 }

@@ -64,14 +64,6 @@ const (
 	TypeRSA
 )
 
-// Type of Themis key.
-//
-// Deprecated: Since 0.11. Use "keys.Type..." constants instead.
-const (
-	KEYTYPE_EC  = TypeEC
-	KEYTYPE_RSA = TypeRSA
-)
-
 // PrivateKey stores a ECDSA or RSA private key.
 type PrivateKey struct {
 	Value []byte

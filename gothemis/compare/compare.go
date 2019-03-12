@@ -65,15 +65,6 @@ const (
 	NotReady = int(C.THEMIS_SCOMPARE_NOT_READY)
 )
 
-// Secure comparison result.
-//
-// Deprecated: Since 0.11. Use "compare.Match..." constants instead.
-const (
-	COMPARE_MATCH     = Match
-	COMPARE_NO_MATCH  = NoMatch
-	COMPARE_NOT_READY = NotReady
-)
-
 // SecureCompare is an interactive protocol for two parties that compares whether
 // they share the same secret or not.
 type SecureCompare struct {
