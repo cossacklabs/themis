@@ -19,12 +19,12 @@ func main() {
 	command := args[1]
 	key := args[2]
 
-	message_and_token := strings.Split(args[3], ",")
-	message := message_and_token[0]
+	messageAndToken := strings.Split(args[3], ",")
+	message := messageAndToken[0]
 
 	var token string
-	if len(message_and_token) == 2 {
-		token = message_and_token[1] 
+	if len(messageAndToken) == 2 {
+		token = messageAndToken[1]
 	}
 
 	var context []byte
@@ -38,31 +38,31 @@ func main() {
 	if "enc" == command {
 		encData, encToken, err := sc.Protect([]byte(message), context)
 		if nil != err {
-			fmt.Println(os.Stderr, "Error encrypting message")
+			fmt.Fprintln(os.Stderr, "Error encrypting message")
 			os.Exit(1)
 		}
 		fmt.Println(base64.StdEncoding.EncodeToString(encData) + "," + base64.StdEncoding.EncodeToString(encToken))
 
 	} else if "dec" == command {
-		decoded_message, err := base64.StdEncoding.DecodeString(message)
+		decodedMessage, err := base64.StdEncoding.DecodeString(message)
 		if nil != err {
-			fmt.Println(os.Stderr, "Error decoding message")
+			fmt.Fprintln(os.Stderr, "Error decoding message")
 			os.Exit(1)
 		}
-		decoded_token, err := base64.StdEncoding.DecodeString(token)
+		decodedToken, err := base64.StdEncoding.DecodeString(token)
 		if nil != err {
-			fmt.Println("Error decoding token")
+			fmt.Fprintln(os.Stderr, "Error decoding token")
 			os.Exit(1)
 		}
-		decData, err := sc.Unprotect(decoded_message, decoded_token, context)
+		decData, err := sc.Unprotect(decodedMessage, decodedToken, context)
 		if nil != err {
-			fmt.Println(os.Stderr, "Error decrypting message")
+			fmt.Fprintln(os.Stderr, "Error decrypting message")
 			os.Exit(1)
 		}
 		fmt.Println(string(decData[:]))
 
 	} else {
-		fmt.Println(os.Stderr, "Wrong command, use \"enc\" or \"dec\"")
+		fmt.Fprintln(os.Stderr, "Wrong command, use \"enc\" or \"dec\"")
 		os.Exit(1)
 	}
 }
