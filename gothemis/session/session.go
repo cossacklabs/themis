@@ -34,10 +34,30 @@ const (
 	STATE_ESTABLISHED = StateEstablished
 )
 
+// Callbacks implements a delegate for SecureSession.
+type Callbacks interface {
+	GetPublicKeyForID(ss *SecureSession, id []byte) *keys.PublicKey
+	StateChanged(ss *SecureSession, state int)
+}
+
 // SessionCallbacks implements a delegate for SecureSession.
+//
+// Deprecated: Since 0.11. Use "session.Callbacks" instead.
 type SessionCallbacks interface {
 	GetPublicKeyForId(ss *SecureSession, id []byte) *keys.PublicKey
 	StateChanged(ss *SecureSession, state int)
+}
+
+type sessionCallbacksAdapter struct {
+	inner SessionCallbacks
+}
+
+func (adapter *sessionCallbacksAdapter) GetPublicKeyForID(ss *SecureSession, id []byte) *keys.PublicKey {
+	return adapter.inner.GetPublicKeyForId(ss, id)
+}
+
+func (adapter *sessionCallbacksAdapter) StateChanged(ss *SecureSession, state int) {
+	adapter.inner.StateChanged(ss, state)
 }
 
 // SecureSession is a lightweight mechanism for securing any kind of network communication
@@ -45,7 +65,7 @@ type SessionCallbacks interface {
 // operates on the 5th layer of the network OSI model (the session layer).
 type SecureSession struct {
 	ctx   *C.struct_session_with_callbacks_type
-	clb   SessionCallbacks
+	clb   Callbacks
 	state int
 }
 
@@ -54,8 +74,18 @@ func finalize(ss *SecureSession) {
 }
 
 // New makes a new Secure Session with provided peer ID, private key, and callbacks.
-func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*SecureSession, error) {
-	ss := &SecureSession{clb: callbacks}
+func New(id []byte, signKey *keys.PrivateKey, callbacks interface{}) (*SecureSession, error) {
+	// TODO: remove these dynamic type checks together with SessionCallbacks
+	realCallbacks, newInterface := callbacks.(Callbacks)
+	if !newInterface {
+		oldCallbacks, oldInterface := callbacks.(SessionCallbacks)
+		if oldInterface {
+			realCallbacks = &sessionCallbacksAdapter{inner: oldCallbacks}
+		} else {
+			return nil, errors.New("Invalid callback interface")
+		}
+	}
+	ss := &SecureSession{clb: realCallbacks}
 
 	if nil == id || 0 == len(id) {
 		return nil, errors.New("Failed to creating secure session object with empty id")
@@ -98,7 +128,7 @@ func onPublicKeyForId(ssCtx unsafe.Pointer, idPtr unsafe.Pointer, idLen C.size_t
 	id := C.GoBytes(idPtr, C.int(idLen))
 	ss = (*SecureSession)(unsafe.Pointer(uintptr(ssCtx) - unsafe.Offsetof(ss.ctx)))
 
-	pub := ss.clb.GetPublicKeyForId(ss, id)
+	pub := ss.clb.GetPublicKeyForID(ss, id)
 	if nil == pub {
 		return int(C.GOTHEMIS_INVALID_PARAMETER)
 	}

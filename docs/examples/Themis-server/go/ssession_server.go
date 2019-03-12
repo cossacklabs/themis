@@ -20,7 +20,7 @@ type clientTransportCallback struct {
 	serverID     []byte
 }
 
-func (clb *clientTransportCallback) GetPublicKeyForId(ss *session.SecureSession, id []byte) *keys.PublicKey {
+func (clb *clientTransportCallback) GetPublicKeyForID(ss *session.SecureSession, id []byte) *keys.PublicKey {
 	if bytes.Equal(id, clb.serverID) {
 		return &keys.PublicKey{Value: clb.serverPublic}
 	}
