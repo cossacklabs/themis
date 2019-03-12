@@ -20,9 +20,18 @@ import (
 
 // Secure Session states.
 const (
-	STATE_IDLE        = 0
-	STATE_NEGOTIATING = 1
-	STATE_ESTABLISHED = 2
+	StateIdle = iota
+	StateNegotiating
+	StateEstablished
+)
+
+// Secure Session states.
+//
+// Deprecated: Since 0.11. Use "session.State..." constants instead.
+const (
+	STATE_IDLE        = StateIdle
+	STATE_NEGOTIATING = StateNegotiating
+	STATE_ESTABLISHED = StateEstablished
 )
 
 // SessionCallbacks implements a delegate for SecureSession.
