@@ -50,10 +50,6 @@ static int compare_result(void *ctx)
 	return (int)res;
 }
 
-const int GOTHEMIS_SCOMPARE_MATCH = THEMIS_SCOMPARE_MATCH;
-const int GOTHEMIS_SCOMPARE_NO_MATCH = THEMIS_SCOMPARE_NO_MATCH;
-const int GOTHEMIS_SCOMPARE_NOT_READY = THEMIS_SCOMPARE_NOT_READY;
-
 */
 import "C"
 import (
@@ -64,9 +60,9 @@ import (
 
 // Secure comparison result.
 const (
-	Match    = int(C.GOTHEMIS_SCOMPARE_MATCH)
-	NoMatch  = int(C.GOTHEMIS_SCOMPARE_NO_MATCH)
-	NotReady = int(C.GOTHEMIS_SCOMPARE_NOT_READY)
+	Match    = int(C.THEMIS_SCOMPARE_MATCH)
+	NoMatch  = int(C.THEMIS_SCOMPARE_NO_MATCH)
+	NotReady = int(C.THEMIS_SCOMPARE_NOT_READY)
 )
 
 // Secure comparison result.
