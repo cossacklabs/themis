@@ -46,7 +46,7 @@ func main() {
 		context = []byte(args[3])
 	}
 
-	sc := cell.New(key, cell.CELL_MODE_SEAL)
+	sc := cell.New(key, cell.ModeSeal)
 
 	encrypted, _, _ := sc.Protect(message, context)
 

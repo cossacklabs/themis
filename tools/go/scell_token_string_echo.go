@@ -33,7 +33,7 @@ func main() {
 		context = []byte(args[4])
 	}
 
-	sc := cell.New([]byte(key), cell.CELL_MODE_TOKEN_PROTECT)
+	sc := cell.New([]byte(key), cell.ModeTokenProtect)
 
 	if "enc" == command {
 		encData, encToken, err := sc.Protect([]byte(message), context)

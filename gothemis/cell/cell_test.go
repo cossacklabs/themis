@@ -88,11 +88,11 @@ func TestProtect(t *testing.T) {
 		t.Error(err)
 	}
 
-	testProtect(CELL_MODE_SEAL, nil, t)
-	testProtect(CELL_MODE_SEAL, context, t)
+	testProtect(ModeSeal, nil, t)
+	testProtect(ModeSeal, context, t)
 
-	testProtect(CELL_MODE_TOKEN_PROTECT, nil, t)
-	testProtect(CELL_MODE_TOKEN_PROTECT, context, t)
+	testProtect(ModeTokenProtect, nil, t)
+	testProtect(ModeTokenProtect, context, t)
 
-	testProtect(CELL_MODE_CONTEXT_IMPRINT, context, t)
+	testProtect(ModeContextImprint, context, t)
 }
