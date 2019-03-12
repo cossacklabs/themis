@@ -69,17 +69,21 @@ import (
 )
 
 const (
-	SecureMessageEncrypt = iota
-	SecureMessageDecrypt
-	SecureMessageSign
-	SecureMessageVerify
+	secureMessageEncrypt = iota
+	secureMessageDecrypt
+	secureMessageSign
+	secureMessageVerify
 )
 
+// SecureMessage provides a sequence-independent, stateless, contextless messaging system.
 type SecureMessage struct {
 	private    *keys.PrivateKey
 	peerPublic *keys.PublicKey
 }
 
+// New makes a new Secure Message context.
+// You need to specify both keys for encrypt-decrypt mode.
+// Private key is required for signing messages. Public key is required for verifying messages
 func New(private *keys.PrivateKey, peerPublic *keys.PublicKey) *SecureMessage {
 	return &SecureMessage{private, peerPublic}
 }
@@ -106,7 +110,7 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		pubLen = C.size_t(len(peerPublic.Value))
 	}
 
-	var output_length C.size_t
+	var outputLength C.size_t
 	if !bool(C.get_message_size(priv,
 		privLen,
 		pub,
@@ -114,11 +118,11 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		unsafe.Pointer(&message[0]),
 		C.size_t(len(message)),
 		C.int(mode),
-		&output_length)) {
+		&outputLength)) {
 		return nil, errors.New("Failed to get output size")
 	}
 
-	output := make([]byte, int(output_length), int(output_length))
+	output := make([]byte, int(outputLength), int(outputLength))
 	if !bool(C.process(priv,
 		privLen,
 		pub,
@@ -127,15 +131,15 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		C.size_t(len(message)),
 		C.int(mode),
 		unsafe.Pointer(&output[0]),
-		output_length)) {
+		outputLength)) {
 		switch mode {
-		case SecureMessageEncrypt:
+		case secureMessageEncrypt:
 			return nil, errors.New("Failed to encrypt message")
-		case SecureMessageDecrypt:
+		case secureMessageDecrypt:
 			return nil, errors.New("Failed to decrypt message")
-		case SecureMessageSign:
+		case secureMessageSign:
 			return nil, errors.New("Failed to sign message")
-		case SecureMessageVerify:
+		case secureMessageVerify:
 			return nil, errors.New("Failed to verify message")
 		default:
 			return nil, errors.New("Failed to process message")
@@ -145,6 +149,7 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 	return output, nil
 }
 
+// Wrap encrypts the provided message.
 func (sm *SecureMessage) Wrap(message []byte) ([]byte, error) {
 	if nil == sm.private || 0 == len(sm.private.Value) {
 		return nil, errors.New("Private key was not provided")
@@ -153,9 +158,10 @@ func (sm *SecureMessage) Wrap(message []byte) ([]byte, error) {
 	if nil == sm.peerPublic || 0 == len(sm.peerPublic.Value) {
 		return nil, errors.New("Peer public key was not provided")
 	}
-	return messageProcess(sm.private, sm.peerPublic, message, SecureMessageEncrypt)
+	return messageProcess(sm.private, sm.peerPublic, message, secureMessageEncrypt)
 }
 
+// Unwrap decrypts the encrypted message.
 func (sm *SecureMessage) Unwrap(message []byte) ([]byte, error) {
 	if nil == sm.private || 0 == len(sm.private.Value) {
 		return nil, errors.New("Private key was not provided")
@@ -164,21 +170,23 @@ func (sm *SecureMessage) Unwrap(message []byte) ([]byte, error) {
 	if nil == sm.peerPublic || 0 == len(sm.peerPublic.Value) {
 		return nil, errors.New("Peer public key was not provided")
 	}
-	return messageProcess(sm.private, sm.peerPublic, message, SecureMessageDecrypt)
+	return messageProcess(sm.private, sm.peerPublic, message, secureMessageDecrypt)
 }
 
+// Sign signs the provided message and returns it signed.
 func (sm *SecureMessage) Sign(message []byte) ([]byte, error) {
 	if nil == sm.private || 0 == len(sm.private.Value) {
 		return nil, errors.New("Private key was not provided")
 	}
 
-	return messageProcess(sm.private, nil, message, SecureMessageSign)
+	return messageProcess(sm.private, nil, message, secureMessageSign)
 }
 
+// Verify checks the signature on the message and returns the original message.
 func (sm *SecureMessage) Verify(message []byte) ([]byte, error) {
 	if nil == sm.peerPublic || 0 == len(sm.peerPublic.Value) {
 		return nil, errors.New("Peer public key was not provided")
 	}
 
-	return messageProcess(nil, sm.peerPublic, message, SecureMessageVerify)
+	return messageProcess(nil, sm.peerPublic, message, secureMessageVerify)
 }

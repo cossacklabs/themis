@@ -130,21 +130,26 @@ import (
 	"unsafe"
 )
 
+// Secure Cell operation mode.
 const (
 	CELL_MODE_SEAL            = 0
 	CELL_MODE_TOKEN_PROTECT   = 1
 	CELL_MODE_CONTEXT_IMPRINT = 2
 )
 
+// SecureCell is a high-level cryptographic service aimed at protecting arbitrary data
+// stored in various types of storage
 type SecureCell struct {
 	key  []byte
 	mode int
 }
 
+// New makes a new Secure Cell with master key and specified mode.
 func New(key []byte, mode int) *SecureCell {
 	return &SecureCell{key, mode}
 }
 
+// Protect encrypts or signs data with optional user context (depending on the Cell mode).
 func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, error) {
 	if (sc.mode < CELL_MODE_SEAL) || (sc.mode > CELL_MODE_CONTEXT_IMPRINT) {
 		return nil, nil, errors.New("Invalid mode specified")
@@ -164,8 +169,8 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		}
 	}
 
-	var ctx unsafe.Pointer = nil
-	var ctxLen C.size_t = 0
+	var ctx unsafe.Pointer
+	var ctxLen C.size_t
 
 	if nil != context && 0 < len(context) {
 		ctx = unsafe.Pointer(&context[0])
@@ -212,6 +217,7 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 	return encData, addData, nil
 }
 
+// Unprotect decrypts or verify data with optional user context (depending on the Cell mode).
 func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, context []byte) ([]byte, error) {
 	if (sc.mode < CELL_MODE_SEAL) || (sc.mode > CELL_MODE_CONTEXT_IMPRINT) {
 		return nil, errors.New("Invalid mode specified")

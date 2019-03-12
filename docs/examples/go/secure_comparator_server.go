@@ -27,12 +27,12 @@ func connectionHandler(c net.Conn, secret string) {
 
 		if compare.COMPARE_NOT_READY == res {
 			buf := make([]byte, 10240)
-			readed_bytes, err := c.Read(buf)
+			readBytes, err := c.Read(buf)
 			if err != nil {
 				fmt.Println("error reading bytes from socket")
 				return
 			}
-			buf, err = sc.Proceed(buf[:readed_bytes])
+			buf, err = sc.Proceed(buf[:readBytes])
 			if nil != err {
 				fmt.Println("error proceeding message")
 				return
