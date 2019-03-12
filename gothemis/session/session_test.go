@@ -30,25 +30,6 @@ func (clb *testCallbacks) StateChanged(ss *SecureSession, state int) {
 
 }
 
-// TODO: remove together with deprecated SessionCallbacks interface
-type testCallbacksOld struct {
-	a *keys.Keypair
-	b *keys.Keypair
-}
-
-func (clb *testCallbacksOld) GetPublicKeyForId(ss *SecureSession, id []byte) *keys.PublicKey {
-	if bytes.Equal(clientID, id) {
-		return clb.a.Public
-	} else if bytes.Equal(serverID, id) {
-		return clb.b.Public
-	}
-	return nil
-}
-
-func (clb *testCallbacksOld) StateChanged(ss *SecureSession, state int) {
-
-}
-
 func genRandData() ([]byte, error) {
 	dataLength, err := rand.Int(rand.Reader, big.NewInt(2048))
 	if nil != err {
@@ -181,8 +162,21 @@ func serverService(server *SecureSession, ch chan []byte, finCh chan int, t *tes
 	}
 }
 
-func testSession(kpa *keys.Keypair, kpb *keys.Keypair, clb interface{}, t *testing.T) {
-	var err error
+func testSession(keytype int, t *testing.T) {
+	kpa, err := keys.New(keytype)
+	if nil != err {
+		t.Error(err)
+		return
+	}
+
+	kpb, err := keys.New(keytype)
+	if nil != err {
+		t.Error(err)
+		return
+	}
+
+	clb := &testCallbacks{kpa, kpb}
+
 	emptyKey := keys.PrivateKey{Value: []byte{}}
 
 	_, err = New(clientID, nil, clb)
@@ -230,53 +224,5 @@ func testSession(kpa *keys.Keypair, kpb *keys.Keypair, clb interface{}, t *testi
 }
 
 func TestSession(t *testing.T) {
-	kpa, err := keys.New(keys.TypeEC)
-	if nil != err {
-		t.Error(err)
-		return
-	}
-
-	kpb, err := keys.New(keys.TypeEC)
-	if nil != err {
-		t.Error(err)
-		return
-	}
-
-	clb := &testCallbacks{kpa, kpb}
-
-	testSession(kpa, kpb, clb, t)
-}
-
-// TODO: remove together with deprecated SessionCallbacks interface
-func TestSessionOldAPI(t *testing.T) {
-	kpa, err := keys.New(keys.TypeEC)
-	if nil != err {
-		t.Error(err)
-		return
-	}
-
-	kpb, err := keys.New(keys.TypeEC)
-	if nil != err {
-		t.Error(err)
-		return
-	}
-
-	clb := &testCallbacksOld{kpa, kpb}
-
-	testSession(kpa, kpb, clb, t)
-}
-
-// TODO: remove together with deprecated SessionCallbacks interface
-func TestSessionInvalidCallbacks(t *testing.T) {
-	keyPair, err := keys.New(keys.TypeEC)
-	if err != nil {
-		t.Error(err)
-		return
-	}
-
-	_, err = New(serverID, keyPair.Private, "definitely not a callback")
-	if err == nil {
-		t.Error("Expected secure.New() to fail for invalid type")
-		return
-	}
+	testSession(keys.TypeEC, t)
 }
