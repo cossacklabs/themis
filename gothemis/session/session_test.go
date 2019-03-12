@@ -224,5 +224,5 @@ func testSession(keytype int, t *testing.T) {
 }
 
 func TestSession(t *testing.T) {
-	testSession(keys.KEYTYPE_EC, t)
+	testSession(keys.TypeEC, t)
 }

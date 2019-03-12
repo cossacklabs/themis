@@ -58,7 +58,7 @@ func main() {
 		fmt.Println("connection error")
 		return
 	}
-	clientKeyPair, err := keys.New(keys.KEYTYPE_EC)
+	clientKeyPair, err := keys.New(keys.TypeEC)
 	if err != nil {
 		fmt.Println("error generating key pair")
 		return

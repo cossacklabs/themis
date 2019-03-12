@@ -24,7 +24,7 @@ func main() {
 		public_key_path = os.Args[2]
 	}
 
-	keypair, err := keys.New(keys.KEYTYPE_EC)
+	keypair, err := keys.New(keys.TypeEC)
 	if err != nil {
 		panic(err)
 	}

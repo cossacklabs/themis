@@ -66,7 +66,7 @@ func main() {
 		fmt.Println("listen error")
 		return
 	}
-	serverKeyPair, err := keys.New(keys.KEYTYPE_EC)
+	serverKeyPair, err := keys.New(keys.TypeEC)
 	if err != nil {
 		fmt.Println("error generating key pair")
 		return

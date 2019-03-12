@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	keyPair, err := keys.New(keys.KEYTYPE_EC)
+	keyPair, err := keys.New(keys.TypeEC)
 	if nil != err {
 		fmt.Println("Keypair generating error")
 		return
