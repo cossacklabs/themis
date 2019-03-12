@@ -25,7 +25,7 @@ func main() {
 	if "enc" == command {
 		encData, _, err := sc.Protect([]byte(message), context)
 		if nil != err {
-			fmt.Println(os.Stderr, "Error encrypting message")
+			fmt.Fprintln(os.Stderr, "Error encrypting message")
 			os.Exit(1)
 		}
 		fmt.Println(base64.StdEncoding.EncodeToString(encData))
@@ -33,18 +33,18 @@ func main() {
 	} else if "dec" == command {
 		decodedMessage, err := base64.StdEncoding.DecodeString(message)
 		if nil != err {
-			fmt.Println(os.Stderr, "Error decoding message")
+			fmt.Fprintln(os.Stderr, "Error decoding message")
 			os.Exit(1)
 		}
 		decData, err := sc.Unprotect(decodedMessage, nil, context)
 		if nil != err {
-			fmt.Println(os.Stderr, "Error decrypting message")
+			fmt.Fprintln(os.Stderr, "Error decrypting message")
 			os.Exit(1)
 		}
 		fmt.Println(string(decData[:]))
 
 	} else {
-		fmt.Println(os.Stderr, "Wrong command, use \"enc\" or \"dec\"")
+		fmt.Fprintln(os.Stderr, "Wrong command, use \"enc\" or \"dec\"")
 		os.Exit(1)
 	}
 }
