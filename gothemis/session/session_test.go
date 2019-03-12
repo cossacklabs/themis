@@ -80,7 +80,7 @@ func clientService(client *SecureSession, ch chan []byte, finCh chan int, t *tes
 			return
 		}
 
-		remoteID, err := client.GetRemoteId()
+		remoteID, err := client.GetRemoteID()
 		if err != nil {
 			t.Error(err)
 			return
@@ -133,7 +133,7 @@ func serverService(server *SecureSession, ch chan []byte, finCh chan int, t *tes
 			t.Error(err)
 			return
 		}
-		remoteID, err := server.GetRemoteId()
+		remoteID, err := server.GetRemoteID()
 		if err != nil {
 			t.Error(err)
 			return
