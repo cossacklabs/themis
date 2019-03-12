@@ -44,7 +44,7 @@ func createSecureMessage(inputBuffer *bufio.Reader) (*message.SecureMessage, str
 	fmt.Println("JSON endpoint: ")
 	endpoint, err := inputBuffer.ReadString('\n')
 	if err != nil {
-		err = fmt.Errorf("Failed to read JSON endpoint:", err)
+		err = fmt.Errorf("Failed to read JSON endpoint: %s", err)
 		return nil, "", err
 	}
 	endpoint = strings.TrimRight(endpoint, "\n\r")
@@ -52,26 +52,26 @@ func createSecureMessage(inputBuffer *bufio.Reader) (*message.SecureMessage, str
 	fmt.Println("Your private key in base64 format:")
 	clientPrivate, err := inputBuffer.ReadBytes('\n')
 	if err != nil {
-		err = fmt.Errorf("Failed to read user private key:", err)
+		err = fmt.Errorf("Failed to read user private key: %s", err)
 		return nil, "", err
 	}
 	clientPrivate, err = base64.StdEncoding.DecodeString(string(clientPrivate))
 	if err != nil {
-		err = fmt.Errorf("Incorrect base64 format for private key:", err)
+		err = fmt.Errorf("Incorrect base64 format for private key: %s", err)
 		return nil, "", err
 	}
 
 	fmt.Println("Server public key in base64 format:")
 	serverPublic, err := inputBuffer.ReadBytes('\n')
 	if err != nil {
-		err = fmt.Errorf("Failed to read server public key:", err)
+		err = fmt.Errorf("Failed to read server public key: %s", err)
 		return nil, "", err
 	}
 
 	serverPublic = bytes.TrimRight(serverPublic, "\r\n")
 	serverPublic, err = base64.StdEncoding.DecodeString(string(serverPublic))
 	if err != nil {
-		err = fmt.Errorf("Incorrect base64 format for public key:", err)
+		err = fmt.Errorf("Incorrect base64 format for public key: %s", err)
 		return nil, "", err
 	}
 
@@ -87,7 +87,7 @@ func runSecureMessage(secureMessage *message.SecureMessage, endpoint string, inp
 		fmt.Println("Print message to send (or \"quit\" to stop):")
 		line, _, err := inputBuffer.ReadLine()
 		if err != nil {
-			err = fmt.Errorf("Failed to read message:", err)
+			err = fmt.Errorf("Failed to read message: %s", err)
 			return err
 		}
 		if bytes.Equal(line, []byte("quit")) {
@@ -96,17 +96,17 @@ func runSecureMessage(secureMessage *message.SecureMessage, endpoint string, inp
 
 		wrapped, err := secureMessage.Wrap(line)
 		if err != nil {
-			err = fmt.Errorf("Failed to encrypt message:", err)
+			err = fmt.Errorf("Failed to encrypt message: %s", err)
 			return err
 		}
 		data, err := sendMessage(wrapped, endpoint)
 		if err != nil {
-			err = fmt.Errorf("Failed to send message:", err)
+			err = fmt.Errorf("Failed to send message: %s", err)
 			return err
 		}
 		unwrapped, err := secureMessage.Unwrap(data)
 		if err != nil {
-			err = fmt.Errorf("Failed to decrypt message:", err)
+			err = fmt.Errorf("Failed to decrypt message: %s", err)
 			return err
 		}
 		fmt.Println(string(unwrapped))
