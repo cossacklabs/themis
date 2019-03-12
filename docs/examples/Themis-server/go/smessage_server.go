@@ -38,74 +38,93 @@ func sendMessage(message []byte, endpoint string) ([]byte, error) {
 	return data, nil
 }
 
-func main() {
-	inputBuffer := bufio.NewReader(os.Stdin)
+func createSecureMessage(inputBuffer *bufio.Reader) (*message.SecureMessage, string, error) {
 	fmt.Println("Type your settings from https://themis.cossacklabs.com/interactive-simulator/setup/")
 
 	fmt.Println("JSON endpoint: ")
 	endpoint, err := inputBuffer.ReadString('\n')
 	if err != nil {
-		fmt.Println("Failed to read JSON endpoint:", err)
-		return
+		err = fmt.Errorf("Failed to read JSON endpoint:", err)
+		return nil, "", err
 	}
 	endpoint = strings.TrimRight(endpoint, "\n\r")
 
 	fmt.Println("Your private key in base64 format:")
 	clientPrivate, err := inputBuffer.ReadBytes('\n')
 	if err != nil {
-		fmt.Println("Failed to read user private key:", err)
-		return
+		err = fmt.Errorf("Failed to read user private key:", err)
+		return nil, "", err
 	}
 	clientPrivate, err = base64.StdEncoding.DecodeString(string(clientPrivate))
 	if err != nil {
-		fmt.Println("Incorrect base64 format for private key:", err)
-		return
+		err = fmt.Errorf("Incorrect base64 format for private key:", err)
+		return nil, "", err
 	}
 
 	fmt.Println("Server public key in base64 format:")
 	serverPublic, err := inputBuffer.ReadBytes('\n')
 	if err != nil {
-		fmt.Println("Failed to read server public key:", err)
-		return
+		err = fmt.Errorf("Failed to read server public key:", err)
+		return nil, "", err
 	}
 
 	serverPublic = bytes.TrimRight(serverPublic, "\r\n")
 	serverPublic, err = base64.StdEncoding.DecodeString(string(serverPublic))
 	if err != nil {
-		fmt.Println("Incorrect base64 format for public key:", err)
-		return
+		err = fmt.Errorf("Incorrect base64 format for public key:", err)
+		return nil, "", err
 	}
 
 	secureMessage := message.New(
 		&keys.PrivateKey{Value: bytes.TrimRight(clientPrivate, "\r\n")},
 		&keys.PublicKey{Value: serverPublic})
 
+	return secureMessage, endpoint, nil
+}
+
+func runSecureMessage(secureMessage *message.SecureMessage, endpoint string, inputBuffer *bufio.Reader) error {
 	for {
-		fmt.Println("Print message to send (or quit to stop):")
+		fmt.Println("Print message to send (or \"quit\" to stop):")
 		line, _, err := inputBuffer.ReadLine()
 		if err != nil {
-			fmt.Println(err)
-			return
+			err = fmt.Errorf("Failed to read message:", err)
+			return err
 		}
 		if bytes.Equal(line, []byte("quit")) {
-			return
+			return nil
 		}
 
 		wrapped, err := secureMessage.Wrap(line)
 		if err != nil {
-			fmt.Println("Error in wraping", err)
-			return
+			err = fmt.Errorf("Failed to encrypt message:", err)
+			return err
 		}
 		data, err := sendMessage(wrapped, endpoint)
 		if err != nil {
-			fmt.Println("Error occurred:", err)
-			return
+			err = fmt.Errorf("Failed to send message:", err)
+			return err
 		}
 		unwrapped, err := secureMessage.Unwrap(data)
 		if err != nil {
-			fmt.Println("Error unwrapping:", err)
-			return
+			err = fmt.Errorf("Failed to decrypt message:", err)
+			return err
 		}
 		fmt.Println(string(unwrapped))
+	}
+}
+
+func main() {
+	inputBuffer := bufio.NewReader(os.Stdin)
+
+	secureMessage, endpoint, err := createSecureMessage(inputBuffer)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	err = runSecureMessage(secureMessage, endpoint, inputBuffer)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }
