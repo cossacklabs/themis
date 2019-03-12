@@ -31,12 +31,12 @@ func main() {
 		fmt.Println(base64.StdEncoding.EncodeToString(encData))
 
 	} else if "dec" == command {
-		decoded_message, err := base64.StdEncoding.DecodeString(message)
+		decodedMessage, err := base64.StdEncoding.DecodeString(message)
 		if nil != err {
 			fmt.Println(os.Stderr, "Error decoding message")
 			os.Exit(1)
 		}
-		decData, err := sc.Unprotect(decoded_message, nil, context)
+		decData, err := sc.Unprotect(decodedMessage, nil, context)
 		if nil != err {
 			fmt.Println(os.Stderr, "Error decrypting message")
 			os.Exit(1)
