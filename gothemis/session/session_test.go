@@ -17,7 +17,7 @@ type testCallbacks struct {
 var clientID = []byte("client a")
 var serverID = []byte("client b")
 
-func (clb *testCallbacks) GetPublicKeyForID(ss *SecureSession, id []byte) *keys.PublicKey {
+func (clb *testCallbacks) GetPublicKeyForId(ss *SecureSession, id []byte) *keys.PublicKey {
 	if bytes.Equal(clientID, id) {
 		return clb.a.Public
 	} else if bytes.Equal(serverID, id) {

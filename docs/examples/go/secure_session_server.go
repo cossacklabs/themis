@@ -11,7 +11,7 @@ import (
 type callbacks struct {
 }
 
-func (clb *callbacks) GetPublicKeyForID(ss *session.SecureSession, id []byte) *keys.PublicKey {
+func (clb *callbacks) GetPublicKeyForId(ss *session.SecureSession, id []byte) *keys.PublicKey {
 	decodedID, err := base64.StdEncoding.DecodeString(string(id[:]))
 	if nil != err {
 		return nil
