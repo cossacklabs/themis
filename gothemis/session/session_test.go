@@ -18,9 +18,9 @@ var clientID = []byte("client a")
 var serverID = []byte("client b")
 
 func (clb *testCallbacks) GetPublicKeyForId(ss *SecureSession, id []byte) *keys.PublicKey {
-	if bytes.Equal(clientID, id){
+	if bytes.Equal(clientID, id) {
 		return clb.a.Public
-	} else if bytes.Equal(serverID, id){
+	} else if bytes.Equal(serverID, id) {
 		return clb.b.Public
 	}
 	return nil
@@ -81,11 +81,11 @@ func clientService(client *SecureSession, ch chan []byte, finCh chan int, t *tes
 		}
 
 		remoteID, err := client.GetRemoteId()
-		if err != nil{
+		if err != nil {
 			t.Error(err)
 			return
 		}
-		if !bytes.Equal(remoteID, serverID){
+		if !bytes.Equal(remoteID, serverID) {
 			t.Error("incorrect remote id")
 			return
 		}
@@ -134,11 +134,11 @@ func serverService(server *SecureSession, ch chan []byte, finCh chan int, t *tes
 			return
 		}
 		remoteID, err := server.GetRemoteId()
-		if err != nil{
+		if err != nil {
 			t.Error(err)
 			return
 		}
-		if !bytes.Equal(remoteID, clientID){
+		if !bytes.Equal(remoteID, clientID) {
 			t.Error("incorrect remote id")
 			return
 		}
@@ -177,33 +177,33 @@ func testSession(keytype int, t *testing.T) {
 
 	clb := &testCallbacks{kpa, kpb}
 
-	emptyKey := keys.PrivateKey{[]byte{}}
+	emptyKey := keys.PrivateKey{Value: []byte{}}
 
-	client, err := New(clientID, nil, clb)
+	_, err = New(clientID, nil, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty private key")
 		return
 	}
 
-	client, err = New(clientID, &emptyKey, clb)
+	_, err = New(clientID, &emptyKey, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty private key")
 		return
 	}
 
-	client, err = New(nil, kpa.Private, clb)
+	_, err = New(nil, kpa.Private, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty id")
 		return
 	}
 
-	client, err = New([]byte{}, kpa.Private, clb)
+	_, err = New([]byte{}, kpa.Private, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty id")
 		return
 	}
 
-	client, err = New(clientID, kpa.Private, clb)
+	client, err := New(clientID, kpa.Private, clb)
 	if nil != err {
 		t.Error(err)
 		return

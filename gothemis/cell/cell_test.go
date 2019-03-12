@@ -30,29 +30,29 @@ func testProtect(mode int, context []byte, t *testing.T) {
 	}
 
 	sc := New(nil, mode)
-	encData, addData, err := sc.Protect(data, context)
+	_, _, err = sc.Protect(data, context)
 	if nil == err {
-		t.Error("Scell encription with empty password ")
+		t.Error("Scell encryption with empty password ")
 	}
 
 	sc = New([]byte{}, mode)
-	encData, addData, err = sc.Protect(data, context)
+	_, _, err = sc.Protect(data, context)
 	if nil == err {
-		t.Error("Scell encription with empty password ")
+		t.Error("Scell encryption with empty password ")
 	}
 
 	sc = New(key, mode)
-	encData, addData, err = sc.Protect(nil, context)
+	_, _, err = sc.Protect(nil, context)
 	if nil == err {
 		t.Error("Scell encrypt empty data")
 	}
 
-	encData, addData, err = sc.Protect([]byte{}, context)
+	_, _, err = sc.Protect([]byte{}, context)
 	if nil == err {
 		t.Error("Scell encrypt empty data")
 	}
 
-	encData, addData, err = sc.Protect(data, context)
+	encData, addData, err := sc.Protect(data, context)
 	if nil != err {
 		t.Error(err)
 	}
@@ -61,16 +61,20 @@ func testProtect(mode int, context []byte, t *testing.T) {
 		t.Error("Original data and encrypted data match")
 	}
 
-	decData, err := sc.Unprotect(nil, addData, context)
+	_, err = sc.Unprotect(nil, addData, context)
 	if nil == err {
 		t.Error("Scell decrypt empty data")
 	}
 
-	decData, err = sc.Unprotect([]byte{}, addData, context)
+	_, err = sc.Unprotect([]byte{}, addData, context)
 	if nil == err {
 		t.Error("Scell decrypt empty data")
 	}
-	decData, err = sc.Unprotect(encData, addData, context)
+
+	decData, err := sc.Unprotect(encData, addData, context)
+	if nil != err {
+		t.Error(err)
+	}
 
 	if 0 != bytes.Compare(data, decData) {
 		t.Error("Original data and decrypted do not match")
