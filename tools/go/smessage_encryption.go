@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
-	smessage "github.com/cossacklabs/themis/gothemis/message"
-	"os"
-	"io/ioutil"
 	"github.com/cossacklabs/themis/gothemis/keys"
+	smessage "github.com/cossacklabs/themis/gothemis/message"
+	"io/ioutil"
+	"os"
 )
 
 func main() {
@@ -55,27 +55,27 @@ func main() {
 		fmt.Println(string(decData[:]))
 
 	} else if "sign" == command {
-        encData, err := messageEncrypter.Sign([]byte(message))
-        if nil != err {
-            fmt.Fprintln(os.Stderr, "Error encrypting message")
-            os.Exit(1)
-        }
-        fmt.Println(base64.StdEncoding.EncodeToString(encData))
-    } else if "verify" == command {
-        decodedMessage, err := base64.StdEncoding.DecodeString(message)
-        if nil != err {
-            fmt.Fprintln(os.Stderr, "Error decoding message")
-            os.Exit(1)
-        }
+		encData, err := messageEncrypter.Sign([]byte(message))
+		if nil != err {
+			fmt.Fprintln(os.Stderr, "Error encrypting message")
+			os.Exit(1)
+		}
+		fmt.Println(base64.StdEncoding.EncodeToString(encData))
+	} else if "verify" == command {
+		decodedMessage, err := base64.StdEncoding.DecodeString(message)
+		if nil != err {
+			fmt.Fprintln(os.Stderr, "Error decoding message")
+			os.Exit(1)
+		}
 
-        decData, err := messageEncrypter.Verify(decodedMessage)
-        if nil != err {
-            fmt.Fprintln(os.Stderr, "Error decrypting message")
-            os.Exit(1)
-        }
-        fmt.Println(string(decData[:]))
+		decData, err := messageEncrypter.Verify(decodedMessage)
+		if nil != err {
+			fmt.Fprintln(os.Stderr, "Error decrypting message")
+			os.Exit(1)
+		}
+		fmt.Println(string(decData[:]))
 
-    } else {
+	} else {
 		fmt.Fprintln(os.Stderr, "Wrong command, use <enc | dev | sign | verify>")
 		os.Exit(1)
 	}
