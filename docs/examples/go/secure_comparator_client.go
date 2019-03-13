@@ -48,7 +48,7 @@ func main() {
 			return
 		}
 
-		if compare.COMPARE_NOT_READY == res {
+		if compare.NotReady == res {
 			buf = make([]byte, 10240)
 			readBytes, err := conn.Read(buf)
 			if err != nil {
@@ -62,7 +62,7 @@ func main() {
 			}
 			buf = buffer
 		} else {
-			if compare.COMPARE_MATCH == res {
+			if compare.Match == res {
 				fmt.Println("match")
 			} else {
 				fmt.Println("not match")

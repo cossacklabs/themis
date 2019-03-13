@@ -116,11 +116,11 @@ func testSign(keytype int, t *testing.T) {
 }
 
 func TestMessageWrap(t *testing.T) {
-	testWrap(keys.KEYTYPE_EC, t)
-	testWrap(keys.KEYTYPE_RSA, t)
+	testWrap(keys.TypeEC, t)
+	testWrap(keys.TypeRSA, t)
 }
 
 func TestMessageSign(t *testing.T) {
-	testSign(keys.KEYTYPE_EC, t)
-	testSign(keys.KEYTYPE_RSA, t)
+	testSign(keys.TypeEC, t)
+	testSign(keys.TypeRSA, t)
 }

@@ -12,7 +12,7 @@ func main() {
 		fmt.Printf("usage %s <command> <password> <message> [<token>]\n", os.Args[0])
 		return
 	}
-	sc := cell.New([]byte(os.Args[2]), cell.CELL_MODE_TOKEN_PROTECT)
+	sc := cell.New([]byte(os.Args[2]), cell.ModeTokenProtect)
 	if "enc" == os.Args[1] {
 		encData, token, err := sc.Protect([]byte(os.Args[3]), nil)
 		if nil != err {

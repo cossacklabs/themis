@@ -50,10 +50,6 @@ static int compare_result(void *ctx)
 	return (int)res;
 }
 
-const int GOTHEMIS_SCOMPARE_MATCH = THEMIS_SCOMPARE_MATCH;
-const int GOTHEMIS_SCOMPARE_NO_MATCH = THEMIS_SCOMPARE_NO_MATCH;
-const int GOTHEMIS_SCOMPARE_NOT_READY = THEMIS_SCOMPARE_NOT_READY;
-
 */
 import "C"
 import (
@@ -63,10 +59,19 @@ import (
 )
 
 // Secure comparison result.
-var (
-	COMPARE_MATCH     = int(C.GOTHEMIS_SCOMPARE_MATCH)
-	COMPARE_NO_MATCH  = int(C.GOTHEMIS_SCOMPARE_NO_MATCH)
-	COMPARE_NOT_READY = int(C.GOTHEMIS_SCOMPARE_NOT_READY)
+const (
+	Match    = int(C.THEMIS_SCOMPARE_MATCH)
+	NoMatch  = int(C.THEMIS_SCOMPARE_NO_MATCH)
+	NotReady = int(C.THEMIS_SCOMPARE_NOT_READY)
+)
+
+// Secure comparison result.
+//
+// Deprecated: Since 0.11. Use "compare.Match..." constants instead.
+const (
+	COMPARE_MATCH     = Match
+	COMPARE_NO_MATCH  = NoMatch
+	COMPARE_NOT_READY = NotReady
 )
 
 // SecureCompare is an interactive protocol for two parties that compares whether
@@ -168,9 +173,9 @@ func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 func (sc *SecureCompare) Result() (int, error) {
 	res := int(C.compare_result(sc.ctx))
 	switch res {
-	case COMPARE_NOT_READY, COMPARE_NO_MATCH, COMPARE_MATCH:
+	case NotReady, NoMatch, Match:
 		return int(res), nil
 	}
 
-	return COMPARE_NOT_READY, errors.New("Failed to get compare result")
+	return NotReady, errors.New("Failed to get compare result")
 }

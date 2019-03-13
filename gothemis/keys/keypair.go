@@ -60,8 +60,16 @@ import (
 
 // Type of Themis key.
 const (
-	KEYTYPE_EC  = 0
-	KEYTYPE_RSA = 1
+	TypeEC = iota
+	TypeRSA
+)
+
+// Type of Themis key.
+//
+// Deprecated: Since 0.11. Use "keys.Type..." constants instead.
+const (
+	KEYTYPE_EC  = TypeEC
+	KEYTYPE_RSA = TypeRSA
 )
 
 // PrivateKey stores a ECDSA or RSA private key.
@@ -82,7 +90,7 @@ type Keypair struct {
 
 // New generates a new random pair of keys of the specified type.
 func New(keytype int) (*Keypair, error) {
-	if (keytype != KEYTYPE_EC) && (keytype != KEYTYPE_RSA) {
+	if (keytype != TypeEC) && (keytype != TypeRSA) {
 		return nil, errors.New("Incorrect key type")
 	}
 

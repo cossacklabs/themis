@@ -24,7 +24,7 @@ func main() {
 		context = []byte(args[4])
 	}
 
-	sc := cell.New([]byte(key), cell.CELL_MODE_SEAL)
+	sc := cell.New([]byte(key), cell.ModeSeal)
 
 	if "enc" == command {
 		encData, _, err := sc.Protect([]byte(message), context)

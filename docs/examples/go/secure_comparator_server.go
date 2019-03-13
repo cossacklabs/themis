@@ -25,7 +25,7 @@ func connectionHandler(c net.Conn, secret string) {
 			return
 		}
 
-		if compare.COMPARE_NOT_READY == res {
+		if compare.NotReady == res {
 			buf := make([]byte, 10240)
 			readBytes, err := c.Read(buf)
 			if err != nil {
@@ -43,7 +43,7 @@ func connectionHandler(c net.Conn, secret string) {
 				return
 			}
 		} else {
-			if compare.COMPARE_MATCH == res {
+			if compare.Match == res {
 				fmt.Println("match")
 			} else {
 				fmt.Println("not match")

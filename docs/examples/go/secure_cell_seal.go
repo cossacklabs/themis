@@ -12,7 +12,7 @@ func main() {
 		fmt.Printf("usage %s <command> <password> <message>\n", os.Args[0])
 		return
 	}
-	sc := cell.New([]byte(os.Args[2]), cell.CELL_MODE_SEAL)
+	sc := cell.New([]byte(os.Args[2]), cell.ModeSeal)
 	if "enc" == os.Args[1] {
 		encData, _, err := sc.Protect([]byte(os.Args[3]), nil)
 		if nil != err {

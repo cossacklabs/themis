@@ -29,17 +29,17 @@ func scService(sc *SecureCompare, ch chan []byte, finCh chan int, t *testing.T) 
 	res, err := sc.Result()
 	if err != nil {
 		t.Error(err)
-		finCh <- COMPARE_NOT_READY
+		finCh <- NotReady
 		return
 	}
 
-	for COMPARE_NOT_READY == res {
+	for NotReady == res {
 		buf := <-ch
 
 		buf, err := sc.Proceed(buf)
 		if err != nil {
 			t.Error(err)
-			finCh <- COMPARE_NOT_READY
+			finCh <- NotReady
 			return
 		}
 
@@ -50,7 +50,7 @@ func scService(sc *SecureCompare, ch chan []byte, finCh chan int, t *testing.T) 
 		res, err = sc.Result()
 		if err != nil {
 			t.Error(err)
-			finCh <- COMPARE_NOT_READY
+			finCh <- NotReady
 			return
 		}
 	}
@@ -123,6 +123,6 @@ func TestCompare(t *testing.T) {
 		return
 	}
 
-	compare(sec1, sec2, COMPARE_NO_MATCH, t)
-	compare(sec1, sec1, COMPARE_MATCH, t)
+	compare(sec1, sec2, NoMatch, t)
+	compare(sec1, sec1, Match, t)
 }

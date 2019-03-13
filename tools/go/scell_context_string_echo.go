@@ -20,7 +20,7 @@ func main() {
 	message := args[3]
 	context := []byte(args[4])
 
-	sc := cell.New([]byte(key), cell.CELL_MODE_CONTEXT_IMPRINT)
+	sc := cell.New([]byte(key), cell.ModeContextImprint)
 
 	if "enc" == command {
 		encData, _, err := sc.Protect([]byte(message), context)

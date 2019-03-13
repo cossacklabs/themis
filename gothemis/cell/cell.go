@@ -132,9 +132,18 @@ import (
 
 // Secure Cell operation mode.
 const (
-	CELL_MODE_SEAL            = 0
-	CELL_MODE_TOKEN_PROTECT   = 1
-	CELL_MODE_CONTEXT_IMPRINT = 2
+	ModeSeal = iota
+	ModeTokenProtect
+	ModeContextImprint
+)
+
+// Secure Cell operation mode.
+//
+// Deprecated: Since 0.11. Use "cell.Mode..." constants instead.
+const (
+	CELL_MODE_SEAL            = ModeSeal
+	CELL_MODE_TOKEN_PROTECT   = ModeTokenProtect
+	CELL_MODE_CONTEXT_IMPRINT = ModeContextImprint
 )
 
 // SecureCell is a high-level cryptographic service aimed at protecting arbitrary data
@@ -155,7 +164,7 @@ func missing(data []byte) bool {
 
 // Protect encrypts or signs data with optional user context (depending on the Cell mode).
 func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, error) {
-	if (sc.mode < CELL_MODE_SEAL) || (sc.mode > CELL_MODE_CONTEXT_IMPRINT) {
+	if (sc.mode < ModeSeal) || (sc.mode > ModeContextImprint) {
 		return nil, nil, errors.New("Invalid mode specified")
 	}
 
@@ -167,7 +176,7 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		return nil, nil, errors.New("Data was not provided")
 	}
 
-	if CELL_MODE_CONTEXT_IMPRINT == sc.mode {
+	if ModeContextImprint == sc.mode {
 		if missing(context) {
 			return nil, nil, errors.New("Context is mandatory for context imprint mode")
 		}
@@ -223,7 +232,7 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 
 // Unprotect decrypts or verify data with optional user context (depending on the Cell mode).
 func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, context []byte) ([]byte, error) {
-	if (sc.mode < CELL_MODE_SEAL) || (sc.mode > CELL_MODE_CONTEXT_IMPRINT) {
+	if (sc.mode < ModeSeal) || (sc.mode > ModeContextImprint) {
 		return nil, errors.New("Invalid mode specified")
 	}
 
@@ -235,13 +244,13 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		return nil, errors.New("Data was not provided")
 	}
 
-	if CELL_MODE_CONTEXT_IMPRINT == sc.mode {
+	if ModeContextImprint == sc.mode {
 		if missing(context) {
 			return nil, errors.New("Context is mandatory for context imprint mode")
 		}
 	}
 
-	if CELL_MODE_TOKEN_PROTECT == sc.mode {
+	if ModeTokenProtect == sc.mode {
 		if missing(additionalData) {
 			return nil, errors.New("Additional data is mandatory for token protect mode")
 		}

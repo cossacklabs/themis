@@ -80,7 +80,7 @@ func clientService(client *SecureSession, ch chan []byte, finCh chan int, t *tes
 			return
 		}
 
-		remoteID, err := client.GetRemoteId()
+		remoteID, err := client.GetRemoteID()
 		if err != nil {
 			t.Error(err)
 			return
@@ -95,7 +95,7 @@ func clientService(client *SecureSession, ch chan []byte, finCh chan int, t *tes
 			continue
 		}
 
-		if client.GetState() != STATE_ESTABLISHED {
+		if client.GetState() != StateEstablished {
 			t.Error(errors.New("Incorrect secure session state"))
 		}
 
@@ -133,7 +133,7 @@ func serverService(server *SecureSession, ch chan []byte, finCh chan int, t *tes
 			t.Error(err)
 			return
 		}
-		remoteID, err := server.GetRemoteId()
+		remoteID, err := server.GetRemoteID()
 		if err != nil {
 			t.Error(err)
 			return
@@ -144,7 +144,7 @@ func serverService(server *SecureSession, ch chan []byte, finCh chan int, t *tes
 		}
 
 		if !sendPeer {
-			if server.GetState() != STATE_ESTABLISHED {
+			if server.GetState() != StateEstablished {
 				t.Error(errors.New("Incorrect secure session state"))
 			}
 			if isFin(buf) {
@@ -224,5 +224,5 @@ func testSession(keytype int, t *testing.T) {
 }
 
 func TestSession(t *testing.T) {
-	testSession(keys.KEYTYPE_EC, t)
+	testSession(keys.TypeEC, t)
 }

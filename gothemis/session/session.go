@@ -20,9 +20,18 @@ import (
 
 // Secure Session states.
 const (
-	STATE_IDLE        = 0
-	STATE_NEGOTIATING = 1
-	STATE_ESTABLISHED = 2
+	StateIdle = iota
+	StateNegotiating
+	StateEstablished
+)
+
+// Secure Session states.
+//
+// Deprecated: Since 0.11. Use "session.State..." constants instead.
+const (
+	STATE_IDLE        = StateIdle
+	STATE_NEGOTIATING = StateNegotiating
+	STATE_ESTABLISHED = StateEstablished
 )
 
 // SessionCallbacks implements a delegate for SecureSession.
@@ -206,8 +215,8 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	return nil, false, errors.New("Failed to unwrap data")
 }
 
-// GetRemoteId returns ID of the remote peer.
-func (ss *SecureSession) GetRemoteId() ([]byte, error) {
+// GetRemoteID returns ID of the remote peer.
+func (ss *SecureSession) GetRemoteID() ([]byte, error) {
 	// secure_session_get_remote_id
 	var outLength C.size_t
 	if C.secure_session_get_remote_id(ss.ctx.session, nil, &outLength) != C.THEMIS_BUFFER_TOO_SMALL {
@@ -221,4 +230,11 @@ func (ss *SecureSession) GetRemoteId() ([]byte, error) {
 		return nil, errors.NewCallbackError("Failed to get session remote id")
 	}
 	return out, nil
+}
+
+// GetRemoteId returns ID of the remote peer.
+//
+// Deprecated: Since 0.11. Use GetRemoteID() instead.
+func (ss *SecureSession) GetRemoteId() ([]byte, error) {
+	return ss.GetRemoteID()
 }
