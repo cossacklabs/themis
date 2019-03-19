@@ -68,3 +68,6 @@ docs/examples/objc/Pods
 /target
 **/*.rs.bk
 Cargo.lock
+
+# Carthage
+Carthage/
