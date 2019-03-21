@@ -3,11 +3,11 @@ var themis = require('jsthemis');
 
 var server = net.createServer(function(socket) {
 
-    session = new themis.SecureSession(new Buffer("server"), new Buffer("UkVDMgAAAC0U6AK7AAm6ha0cgHmovSTpZax01+icg9xwFlZAqqGWeGTqbHUt","base64"), function(id){
+    session = new themis.SecureSession(new Buffer.from("server"), new Buffer.from("UkVDMgAAAC0U6AK7AAm6ha0cgHmovSTpZax01+icg9xwFlZAqqGWeGTqbHUt","base64"), function(id){
 	if(id.toString()=="server".toString())
-	    return new Buffer("VUVDMgAAAC30/vs+AwciK6egi82A9TkTydVuOzMFsJ9AkA0gMGyNH0tSu5Bk", "base64");
+	    return new Buffer.from("VUVDMgAAAC30/vs+AwciK6egi82A9TkTydVuOzMFsJ9AkA0gMGyNH0tSu5Bk", "base64");
 	else if(id.toString()=="client".toString()){
-	    return new Buffer("VUVDMgAAAC15KNjgAr1DQEw+So1oztUarO4Jw/CGgyehBRCbOxbpHrPBKO7s","base64");
+	    return new Buffer.from("VUVDMgAAAC15KNjgAr1DQEw+So1oztUarO4Jw/CGgyehBRCbOxbpHrPBKO7s","base64");
 	}
     });
   

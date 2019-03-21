@@ -2,7 +2,7 @@ version: 2
 jobs:
   android:
     docker:
-      - image: cossacklabs/android-build
+      - image: cossacklabs/android-build:2019.01
     steps:
       - checkout
       - run: git submodule update --init
@@ -20,14 +20,32 @@ jobs:
       # wait for emulator to fully boot before running tests
       - run: timeout 10m /bin/bash -c 'while true; do $ANDROID_HOME/platform-tools/adb wait-for-device logcat -b events -d | grep -i boot_progress_enable_screen && break; date; sleep 3; done'
       - run: ./gradlew --no-daemon --no-parallel --max-workers=2 connectedAndroidTest
+
+  analyze:
+    docker:
+      - image: cossacklabs/build:ubuntu-bionic
+    environment:
+      CC: clang-7
+      CXX: clang-7
+      CLANG_FORMAT: clang-format-7
+      CLANG_TIDY: clang-tidy-7
+      WITH_FATAL_WARNINGS: yes
+    steps:
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install default-jdk nodejs npm
+      - checkout
+      - run: git submodule update --init
+      - run: make fmt_check ENGINE=boringssl
+      - run: make fmt_check ENGINE=openssl
+
   x86_64:
     docker:
-      - image: cossacklabs/android-build
+      - image: cossacklabs/android-build:2019.01
     environment:
       GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
       CFLAGS: "-DCIRICLE_TEST"
+      WITH_FATAL_WARNINGS: yes
     steps:
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev nodejs npm lcov libc6-dbg rsync software-properties-common
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev nodejs npm lcov libc6-dbg rsync software-properties-common pkg-config clang afl
       - run: sudo ln -sf /usr/bin/gcov-5 /usr/bin/gcov
       - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
       - run: sudo gem install coveralls-lcov
@@ -35,6 +53,16 @@ jobs:
       # ruby rvm repository
       - run: sudo apt-add-repository -y ppa:rael-gc/rvm
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
+
+      - restore_cache:
+          keys:
+            - rust
+
+      # Install Rust toolchain (stable) via rustup
+      # Instructions taken from https://rustup.rs
+      - run: curl https://sh.rustup.rs -sSf | sh -s -- -y && cat ~/.cargo/env >> $BASH_ENV && source ~/.cargo/env && cargo --version && rustc --version
+      - run: rustup component add clippy
+      - run: rustup component add rustfmt
 
       # download last valgrind because current version of valgrind on ubuntu (3.11.0) gives false positive errors
       # link from http://valgrind.org/downloads/current.html
@@ -52,6 +80,7 @@ jobs:
             - ~/valgrind
 
       - checkout
+      - run: git submodule update --init
       - run: make
       - run: make JAVA_HOME=/usr/lib/jvm/default-java themis_jni
       - run: sudo make install
@@ -59,19 +88,7 @@ jobs:
       - run: sudo make pythemis_install
       - run: sudo make rubythemis_install
       - run: sudo make jsthemis_install
-
-      - restore_cache:
-          keys:
-            - boringssl-chromium-stable
-
-      - run: if [ ! -d $HOME/boringssl ]; then cd $HOME && git clone https://boringssl.googlesource.com/boringssl && cd boringssl && git checkout chromium-stable && mkdir build && cd build && cmake .. && make && cp decrepit/libdecrepit.a crypto/; fi
-
-      - save_cache:
-          key: boringssl-chromium-stable
-          paths:
-            - ~/boringssl
-
-      - run: make ENGINE=boringssl ENGINE_INCLUDE_PATH=$HOME/boringssl/include ENGINE_LIB_PATH=$HOME/boringssl/build/crypto BUILD_PATH=build_with_boringssl prepare_tests_basic
+      - run: make ENGINE=boringssl BUILD_PATH=build_with_boringssl prepare_tests_basic
       - run: make BUILD_PATH=cover_build COVERAGE=y prepare_tests_basic
       - run: make prepare_tests_all
       - run: mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
@@ -82,11 +99,15 @@ jobs:
       - run: '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/go/src/$GOTHEMIS_IMPORT && $HOME/go/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
       - run: sudo /sbin/ldconfig    
       - run: make test
+      - run: make clean_themispp_test && CFLAGS="-std=c++03" make themispp_test && make test_cpp
+      - run: make clean_themispp_test && CFLAGS="-std=c++11" make themispp_test && make test_cpp
       - run: make test_python
       - run: sudo make test_js
       # it's important to set version of ruby precisely.
       - run: source /etc/profile.d/rvm.sh && rvm use system && make test_ruby
       - run: make test_go
+      - run: make test_rust
+      - run: make fuzz
       - run: $HOME/valgrind/bin/valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: $HOME/valgrind/bin/valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: cover_build/tests/soter_test
@@ -98,15 +119,22 @@ jobs:
       - run: $HOME/valgrind/bin/valgrind build_with_boringssl/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: $HOME/valgrind/bin/valgrind build_with_boringssl/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
 
+      - save_cache:
+          key: rust
+          paths:
+            - ~/.cargo
+            - ~/.rustup
+
   integration_tests:
     docker:
-      - image: cossacklabs/android-build
+      - image: cossacklabs/android-build:2019.01
     environment:
       GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
       CFLAGS: "-DCIRICLE_TEST"
+      WITH_FATAL_WARNINGS: yes
     steps:
       # dependencies
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common pkg-config clang
       # nodejs
       - run: sudo DEBIAN_FRONTEND=noninteractive apt-get -y install nodejs npm
       - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
@@ -115,6 +143,8 @@ jobs:
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
       # php7
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php7.0-dev php7.0-xml php7.0-mbstring 
+      # Rust stable (see https://rustup.rs)
+      - run: curl https://sh.rustup.rs -sSf | sh -s -- -y && cat ~/.cargo/env >> $BASH_ENV && source ~/.cargo/env && cargo --version && rustc --version
 
       # themis
       - checkout
@@ -127,6 +157,7 @@ jobs:
       - run: sudo make phpthemis_install
       - run: sudo bash -c 'echo "extension=phpthemis.so" > /etc/php/7.0/cli/conf.d/20-phpthemis.ini'
       - run: sudo make jsthemis_install
+      - run: make rustthemis_integration_tools
       - run: mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
       - run: rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT/
 
@@ -177,6 +208,7 @@ workflows:
   version: 2
   tests:
     jobs:
+      - analyze
       - android
       - x86_64
       - php5

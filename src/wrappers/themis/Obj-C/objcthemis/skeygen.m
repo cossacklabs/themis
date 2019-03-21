@@ -16,16 +16,16 @@
 
 #import <objcthemis/skeygen.h>
 #import <objcthemis/serror.h>
-
+#import <themis/themis.h>
 
 @interface TSKeyGen ()
 
-@property (nonatomic, readwrite) TSKeyGenAsymmetricAlgorithm algorithm;
+@property(nonatomic, readwrite) TSKeyGenAsymmetricAlgorithm algorithm;
 
 /** @brief private key */
-@property (nonatomic, readwrite) NSMutableData * privateKey;
+@property(nonatomic, readwrite) NSMutableData *privateKey;
 /** @brief public key */
-@property (nonatomic, readwrite) NSMutableData * publicKey;
+@property(nonatomic, readwrite) NSMutableData *publicKey;
 
 @end
 
@@ -70,11 +70,11 @@
     switch (self.algorithm) {
         case TSKeyGenAsymmetricAlgorithmEC:
             result = (TSErrorType) themis_gen_ec_key_pair([self.privateKey mutableBytes], &privateKeyLength,
-                            [self.publicKey mutableBytes], &publicKeyLength);
+                    [self.publicKey mutableBytes], &publicKeyLength);
             break;
         case TSKeyGenAsymmetricAlgorithmRSA:
             result = (TSErrorType) themis_gen_rsa_key_pair([self.privateKey mutableBytes], &privateKeyLength,
-                            [self.publicKey mutableBytes], &publicKeyLength);
+                    [self.publicKey mutableBytes], &publicKeyLength);
     }
     return result;
 }

@@ -12,7 +12,7 @@ func main() {
 		fmt.Printf("usage %s <command> <password> <message> [<token>]\n", os.Args[0])
 		return
 	}
-	sc := cell.New([]byte(os.Args[2]), cell.CELL_MODE_TOKEN_PROTECT)
+	sc := cell.New([]byte(os.Args[2]), cell.ModeTokenProtect)
 	if "enc" == os.Args[1] {
 		encData, token, err := sc.Protect([]byte(os.Args[3]), nil)
 		if nil != err {
@@ -26,17 +26,17 @@ func main() {
 			fmt.Println("token not set")
 			return
 		}
-		decoded_message, err := base64.StdEncoding.DecodeString(os.Args[3])
+		decodedMessage, err := base64.StdEncoding.DecodeString(os.Args[3])
 		if nil != err {
 			fmt.Println("error decoding message")
 			return
 		}
-		decoded_token, err := base64.StdEncoding.DecodeString(os.Args[4])
+		decodedToken, err := base64.StdEncoding.DecodeString(os.Args[4])
 		if nil != err {
 			fmt.Println("error decoding token")
 			return
 		}
-		decData, err := sc.Unprotect(decoded_message, decoded_token, nil)
+		decData, err := sc.Unprotect(decodedMessage, decodedToken, nil)
 		if nil != err {
 			fmt.Println("error decrypting message")
 			return

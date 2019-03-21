@@ -25,14 +25,14 @@ func connectionHandler(c net.Conn, secret string) {
 			return
 		}
 
-		if compare.COMPARE_NOT_READY == res {
+		if compare.NotReady == res {
 			buf := make([]byte, 10240)
-			readed_bytes, err := c.Read(buf)
+			readBytes, err := c.Read(buf)
 			if err != nil {
 				fmt.Println("error reading bytes from socket")
 				return
 			}
-			buf, err = sc.Proceed(buf[:readed_bytes])
+			buf, err = sc.Proceed(buf[:readBytes])
 			if nil != err {
 				fmt.Println("error proceeding message")
 				return
@@ -43,7 +43,7 @@ func connectionHandler(c net.Conn, secret string) {
 				return
 			}
 		} else {
-			if compare.COMPARE_MATCH == res {
+			if compare.Match == res {
 				fmt.Println("match")
 			} else {
 				fmt.Println("not match")

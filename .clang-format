@@ -1,0 +1,47 @@
+﻿---
+BasedOnStyle: LLVM
+AccessModifierOffset: -4
+AlignEscapedNewlines: Left
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: false
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakTemplateDeclarations: true
+BinPackArguments: false
+BinPackParameters: false
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Linux
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializersBeforeComma: true
+BreakStringLiterals: false
+ColumnLimit: 100
+IncludeBlocks: Preserve
+IncludeCategories:
+  - Regex:      '^<([^/]+|(sys|arpa)/.+)>$'
+    Priority:   1
+  - Regex:      '^<soter/.+>$'
+    Priority:   2
+  - Regex:      '^<(themis|themispp|jsthemis)/.+>$'
+    Priority:   3
+  - Regex:      '^<.+>$'
+    Priority:   4
+  - Regex:      '^"soter/.+"$'
+    Priority:   5
+  - Regex:      '^"(themis|themispp|jsthemis)/.+"$'
+    Priority:   6
+  - Regex:      '^".+"$'
+    Priority:   7
+IndentWidth: 4
+ObjCSpaceAfterProperty: true
+PenaltyBreakAssignment: 100
+PenaltyBreakBeforeFirstCallParameter: 1000
+PenaltyBreakComment: 10000
+PenaltyReturnTypeOnItsOwnLine: 10000
+PenaltyExcessCharacter: 4
+PointerAlignment: Left
+ReflowComments: false
+TabWidth: 8
+UseTab: Never
+...

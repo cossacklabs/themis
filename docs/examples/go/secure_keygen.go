@@ -7,12 +7,12 @@ import (
 )
 
 func main() {
-	key_pair, err := keys.New(keys.KEYTYPE_EC)
+	keyPair, err := keys.New(keys.TypeEC)
 	if nil != err {
 		fmt.Println("Keypair generating error")
 		return
 	}
-	fmt.Println(base64.StdEncoding.EncodeToString(key_pair.Private.Value))
-	fmt.Println(base64.StdEncoding.EncodeToString(key_pair.Public.Value))
+	fmt.Println(base64.StdEncoding.EncodeToString(keyPair.Private.Value))
+	fmt.Println(base64.StdEncoding.EncodeToString(keyPair.Public.Value))
 	return
 }

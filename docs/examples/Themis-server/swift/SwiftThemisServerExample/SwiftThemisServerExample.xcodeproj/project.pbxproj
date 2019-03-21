@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0819CDE154DA23E52D54342E /* Pods_SwiftThemisServerExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 494589D9F377EF1818FBB28C /* Pods_SwiftThemisServerExample.framework */; };
+		2FC21F8198CD38C3731B8EC6 /* Pods_SwiftThemisServerExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA738A3EB8F2F86047D8CEC2 /* Pods_SwiftThemisServerExample.framework */; };
 		736DDB661CC5990900CD0C31 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736DDB651CC5990900CD0C31 /* AppDelegate.swift */; };
 		736DDB681CC5990900CD0C31 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 736DDB671CC5990900CD0C31 /* ViewController.swift */; };
 		736DDB6B1CC5990900CD0C31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 736DDB691CC5990900CD0C31 /* Main.storyboard */; };
@@ -18,8 +18,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		494589D9F377EF1818FBB28C /* Pods_SwiftThemisServerExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftThemisServerExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		67DE84A0DE595BE3F7090292 /* Pods-SwiftThemisServerExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftThemisServerExample.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SwiftThemisServerExample/Pods-SwiftThemisServerExample.release.xcconfig"; sourceTree = "<group>"; };
 		736DDB621CC5990900CD0C31 /* SwiftThemisServerExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftThemisServerExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		736DDB651CC5990900CD0C31 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		736DDB671CC5990900CD0C31 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -30,7 +28,9 @@
 		736DDB771CC5A24A00CD0C31 /* SMessageClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SMessageClient.swift; sourceTree = "<group>"; };
 		736DDB791CC5A25200CD0C31 /* SSessionClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SSessionClient.swift; sourceTree = "<group>"; };
 		736DDB7B1CC5A32400CD0C31 /* SwiftThemisServerExample-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftThemisServerExample-Bridging-Header.h"; sourceTree = "<group>"; };
-		9F60CA09758C7F6E5BF85AAA /* Pods-SwiftThemisServerExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftThemisServerExample.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SwiftThemisServerExample/Pods-SwiftThemisServerExample.debug.xcconfig"; sourceTree = "<group>"; };
+		75D29D72035E4F884E78B8AC /* Pods-SwiftThemisServerExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftThemisServerExample.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-SwiftThemisServerExample/Pods-SwiftThemisServerExample.debug.xcconfig"; sourceTree = "<group>"; };
+		8C836590FDA85CE009B30B63 /* Pods-SwiftThemisServerExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftThemisServerExample.release.xcconfig"; path = "../Pods/Target Support Files/Pods-SwiftThemisServerExample/Pods-SwiftThemisServerExample.release.xcconfig"; sourceTree = "<group>"; };
+		BA738A3EB8F2F86047D8CEC2 /* Pods_SwiftThemisServerExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SwiftThemisServerExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,18 +38,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0819CDE154DA23E52D54342E /* Pods_SwiftThemisServerExample.framework in Frameworks */,
+				2FC21F8198CD38C3731B8EC6 /* Pods_SwiftThemisServerExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		23381EEDD17AD4AD4E6840A4 /* Pods */ = {
+		2DB412AE9BE13C498B985683 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				9F60CA09758C7F6E5BF85AAA /* Pods-SwiftThemisServerExample.debug.xcconfig */,
-				67DE84A0DE595BE3F7090292 /* Pods-SwiftThemisServerExample.release.xcconfig */,
+				75D29D72035E4F884E78B8AC /* Pods-SwiftThemisServerExample.debug.xcconfig */,
+				8C836590FDA85CE009B30B63 /* Pods-SwiftThemisServerExample.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -59,8 +59,8 @@
 			children = (
 				736DDB641CC5990900CD0C31 /* SwiftThemisServerExample */,
 				736DDB631CC5990900CD0C31 /* Products */,
-				23381EEDD17AD4AD4E6840A4 /* Pods */,
-				A0433715979DD020F5BD95FC /* Frameworks */,
+				2DB412AE9BE13C498B985683 /* Pods */,
+				9FA633501B35B3593C90DB2F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -88,10 +88,10 @@
 			path = SwiftThemisServerExample;
 			sourceTree = "<group>";
 		};
-		A0433715979DD020F5BD95FC /* Frameworks */ = {
+		9FA633501B35B3593C90DB2F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				494589D9F377EF1818FBB28C /* Pods_SwiftThemisServerExample.framework */,
+				BA738A3EB8F2F86047D8CEC2 /* Pods_SwiftThemisServerExample.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -103,12 +103,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 736DDB741CC5990900CD0C31 /* Build configuration list for PBXNativeTarget "SwiftThemisServerExample" */;
 			buildPhases = (
-				597D462650A10BEFDEE28DE9 /* [CP] Check Pods Manifest.lock */,
+				B2A939CE985F6D823C4C9843 /* [CP] Check Pods Manifest.lock */,
 				736DDB5E1CC5990900CD0C31 /* Sources */,
 				736DDB5F1CC5990900CD0C31 /* Frameworks */,
 				736DDB601CC5990900CD0C31 /* Resources */,
-				91A449915EA8C151EDE83657 /* [CP] Embed Pods Frameworks */,
-				F73DA7A435C37FB9E5F3176F /* [CP] Copy Pods Resources */,
+				B8305360BEEC905C3995033E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -167,16 +166,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		597D462650A10BEFDEE28DE9 /* [CP] Check Pods Manifest.lock */ = {
+		B2A939CE985F6D823C4C9843 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			inputFileListPaths = (
 			);
 			inputPaths = (
 				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
 				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-SwiftThemisServerExample-checkManifestLockResult.txt",
 			);
@@ -185,10 +188,12 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		91A449915EA8C151EDE83657 /* [CP] Embed Pods Frameworks */ = {
+		B8305360BEEC905C3995033E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			inputFileListPaths = (
 			);
 			inputPaths = (
 				"${SRCROOT}/../Pods/Target Support Files/Pods-SwiftThemisServerExample/Pods-SwiftThemisServerExample-frameworks.sh",
@@ -196,6 +201,8 @@
 				"${BUILT_PRODUCTS_DIR}/themis/themis.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/themis.framework",
@@ -203,21 +210,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SwiftThemisServerExample/Pods-SwiftThemisServerExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F73DA7A435C37FB9E5F3176F /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-SwiftThemisServerExample/Pods-SwiftThemisServerExample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -358,7 +350,7 @@
 		};
 		736DDB751CC5990900CD0C31 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9F60CA09758C7F6E5BF85AAA /* Pods-SwiftThemisServerExample.debug.xcconfig */;
+			baseConfigurationReference = 75D29D72035E4F884E78B8AC /* Pods-SwiftThemisServerExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = SwiftThemisServerExample/Info.plist;
@@ -373,7 +365,7 @@
 		};
 		736DDB761CC5990900CD0C31 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 67DE84A0DE595BE3F7090292 /* Pods-SwiftThemisServerExample.release.xcconfig */;
+			baseConfigurationReference = 8C836590FDA85CE009B30B63 /* Pods-SwiftThemisServerExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = SwiftThemisServerExample/Info.plist;

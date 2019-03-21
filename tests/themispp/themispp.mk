@@ -14,5 +14,15 @@
 # limitations under the License.
 #
 
-THEMISPP_TEST_SRC = $(wildcard tests/themispp/*.cpp)
-THEMISPP_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.cpp,$(TEST_OBJ_PATH)/%.opp, $(THEMISPP_TEST_SRC))
+THEMISPP_TEST_SOURCES = $(wildcard $(TEST_SRC_PATH)/themispp/*.cpp)
+THEMISPP_TEST_HEADERS = $(wildcard $(TEST_SRC_PATH)/themispp/*.hpp)
+
+THEMISPP_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.cpp,$(TEST_OBJ_PATH)/%.opp,$(THEMISPP_TEST_SOURCES))
+
+THEMISPP_TEST_FMT = $(THEMISPP_TEST_SOURCES) $(THEMISPP_TEST_HEADERS)
+
+FMT_FIXUP += $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_fixup,$(THEMISPP_TEST_FMT))
+FMT_CHECK += $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_check,$(THEMISPP_TEST_FMT))
+
+clean_themispp_test:
+	@rm -f $(THEMISPP_TEST_OBJ)

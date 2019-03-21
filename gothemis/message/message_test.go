@@ -19,11 +19,11 @@ func testWrap(keytype int, t *testing.T) {
 		t.Error(err)
 	}
 
-	message_length, err := rand.Int(rand.Reader, big.NewInt(2048))
+	messageLength, err := rand.Int(rand.Reader, big.NewInt(2048))
 	if nil != err {
 		t.Error(err)
 	}
-	length := message_length.Int64()
+	length := messageLength.Int64()
 	if length == 0 {
 		length = 1
 	}
@@ -35,17 +35,18 @@ func testWrap(keytype int, t *testing.T) {
 	}
 
 	sma := New(kpa.Private, kpb.Public)
-	wrapped, err := sma.Wrap(nil)
+
+	_, err = sma.Wrap(nil)
 	if nil == err {
 		t.Error("Secure message empty data encryption")
 	}
 
-	wrapped, err = sma.Wrap([]byte{})
+	_, err = sma.Wrap([]byte{})
 	if nil == err {
 		t.Error("Secure message empty data encryption")
 	}
 
-	wrapped, err = sma.Wrap(message)
+	wrapped, err := sma.Wrap(message)
 	if nil != err {
 		t.Error(err)
 	}
@@ -55,17 +56,18 @@ func testWrap(keytype int, t *testing.T) {
 	}
 
 	smb := New(kpb.Private, kpa.Public)
-	unwrapped, err := smb.Unwrap(nil)
+
+	_, err = smb.Unwrap(nil)
 	if nil == err {
 		t.Error("Secure Message empty data decryption")
 	}
 
-	unwrapped, err = smb.Unwrap([]byte{})
+	_, err = smb.Unwrap([]byte{})
 	if nil == err {
 		t.Error("Secure Message empty data decryption")
 	}
 
-	unwrapped, err = smb.Unwrap(wrapped)
+	unwrapped, err := smb.Unwrap(wrapped)
 	if nil != err {
 		t.Error(err)
 	}
@@ -81,11 +83,11 @@ func testSign(keytype int, t *testing.T) {
 		t.Error(err)
 	}
 
-	message_length, err := rand.Int(rand.Reader, big.NewInt(2048))
+	messageLength, err := rand.Int(rand.Reader, big.NewInt(2048))
 	if nil != err {
 		t.Error(err)
 	}
-	length := message_length.Int64()
+	length := messageLength.Int64()
 	if length == 0 {
 		length = 1
 	}
@@ -114,11 +116,11 @@ func testSign(keytype int, t *testing.T) {
 }
 
 func TestMessageWrap(t *testing.T) {
-	testWrap(keys.KEYTYPE_EC, t)
-	testWrap(keys.KEYTYPE_RSA, t)
+	testWrap(keys.TypeEC, t)
+	testWrap(keys.TypeRSA, t)
 }
 
 func TestMessageSign(t *testing.T) {
-	testSign(keys.KEYTYPE_EC, t)
-	testSign(keys.KEYTYPE_RSA, t)
+	testSign(keys.TypeEC, t)
+	testSign(keys.TypeRSA, t)
 }

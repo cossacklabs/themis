@@ -1,76 +1,108 @@
 /*
-* Copyright (c) 2015 Cossack Labs Limited
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright (c) 2015 Cossack Labs Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #ifndef THEMISPP_SECURE_COMPARATOR_HPP_
 #define THEMISPP_SECURE_COMPARATOR_HPP_
 
 #include <cstring>
 #include <vector>
+
 #include <themis/themis.h>
+
 #include "exception.hpp"
 
 #define THEMISPP_SECURE_SESSION_MAX_MESSAGE_SIZE 2048
-namespace themispp{
+namespace themispp
+{
 
-  class secure_comparator_t{
-  public:
-    typedef std::vector<uint8_t> data_t; 
-    
-    secure_comparator_t(const data_t& shared_secret):
-      comparator_(NULL){
-      res_.reserve(512);
-      comparator_=secure_comparator_create();
-      if(!comparator_)
-	throw themispp::exception_t("Secure Comparator failed creating");
-      if(THEMIS_SUCCESS!=secure_comparator_append_secret(comparator_, &shared_secret[0], shared_secret.size()))
-	throw themispp::exception_t("Secure Comparator failed appending secret");	
-    }
+class secure_comparator_t
+{
+public:
+    typedef std::vector<uint8_t> data_t;
 
-    virtual ~secure_comparator_t(){
-      secure_comparator_destroy(comparator_);
-    }
-
-    const data_t& init(){
-      size_t data_length=0;
-      if(THEMIS_BUFFER_TOO_SMALL!=secure_comparator_begin_compare(comparator_, NULL, &data_length))
-	throw themispp::exception_t("Secure Comparator failed making initialisation message");
-      res_.resize(data_length);
-      if(THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER!=secure_comparator_begin_compare(comparator_, &res_[0], &data_length))
-	throw themispp::exception_t("Secure Comparator failed making initialisation message");
-      return res_;
+    secure_comparator_t(const data_t& shared_secret)
+        : comparator_(NULL)
+    {
+        if (shared_secret.empty()) {
+            throw themispp::exception_t("Secure Comparator must have non-empty shared secret");
+        }
+        res_.reserve(512);
+        comparator_ = secure_comparator_create();
+        if (!comparator_) {
+            throw themispp::exception_t("Secure Comparator construction failed");
+        }
+        themis_status_t status = secure_comparator_append_secret(comparator_,
+                                                                 &shared_secret[0],
+                                                                 shared_secret.size());
+        if (THEMIS_SUCCESS != status) {
+            throw themispp::exception_t("Secure Comparator failed to append secret", status);
+        }
     }
 
-    const data_t& proceed(const std::vector<uint8_t>& data){
-      size_t res_data_length=0;
-      if(THEMIS_BUFFER_TOO_SMALL!=secure_comparator_proceed_compare(comparator_, &data[0], data.size(), NULL, &res_data_length))
-	throw themispp::exception_t("Secure Comparator failed proceeding message");
-      res_.resize(res_data_length);
-      themis_status_t res=secure_comparator_proceed_compare(comparator_, &data[0], data.size(), &res_[0], &res_data_length);
-      if(THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER!=res && THEMIS_SUCCESS!=res)
-	throw themispp::exception_t("Secure Comparator failed proceeding message");
-      return res_;
+    virtual ~secure_comparator_t()
+    {
+        secure_comparator_destroy(comparator_);
     }
-    
-    const bool get(){
-      return (THEMIS_SCOMPARE_MATCH == secure_comparator_get_result(comparator_))?true:false;
+
+    const data_t& init()
+    {
+        themis_status_t status = THEMIS_FAIL;
+        size_t data_length = 0;
+        status = secure_comparator_begin_compare(comparator_, NULL, &data_length);
+        if (THEMIS_BUFFER_TOO_SMALL != status) {
+            throw themispp::exception_t("Secure Comparator failed to initialize comparison", status);
+        }
+        res_.resize(data_length);
+        status = secure_comparator_begin_compare(comparator_, &res_[0], &data_length);
+        if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != status) {
+            throw themispp::exception_t("Secure Comparator failed to initialize comparison", status);
+        }
+        return res_;
     }
-  private:
+
+    const data_t& proceed(const std::vector<uint8_t>& data)
+    {
+        if (data.empty()) {
+            throw themispp::exception_t(
+                "Secure Comparator failed to proceed comparison: data must be non-empty");
+        }
+        themis_status_t status = THEMIS_FAIL;
+        size_t res_data_length = 0;
+        status = secure_comparator_proceed_compare(comparator_, &data[0], data.size(), NULL, &res_data_length);
+        if (THEMIS_BUFFER_TOO_SMALL != status) {
+            throw themispp::exception_t("Secure Comparator failed to proceed comparison", status);
+        }
+        res_.resize(res_data_length);
+        status = secure_comparator_proceed_compare(comparator_, &data[0], data.size(), &res_[0], &res_data_length);
+        if (THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER != status && THEMIS_SUCCESS != status) {
+            throw themispp::exception_t("Secure Comparator failed to proceed comparison", status);
+        }
+        return res_;
+    }
+
+    bool get() const
+    {
+        return THEMIS_SCOMPARE_MATCH == secure_comparator_get_result(comparator_);
+    }
+
+private:
     ::secure_comparator_t* comparator_;
     std::vector<uint8_t> res_;
-  };
-}// ns themis
+};
+
+} // namespace themispp
 
 #endif

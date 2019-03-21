@@ -19,12 +19,20 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 inhibit_all_warnings!
 
-target :"objthemis" do
+target "objthemis" do
 
   # example should work with head
   pod 'themis', :git => "https://github.com/cossacklabs/themis.git"
 
 end
+
+target "objthemis_boring" do
+
+  # example should work with head
+  pod 'themis/themis-boringssl', :git => "https://github.com/cossacklabs/themis.git"
+
+end
+
 
 post_install do |installer_representation|
     installer_representation.pods_project.targets.each do |target|

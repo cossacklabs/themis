@@ -26,23 +26,55 @@ include tests/tools/tools.mk
 include tests/themis/themis.mk
 include tests/themispp/themispp.mk
 
+$(TEST_OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR)) -I$(TEST_SRC_PATH) -c $< -o $@
+
+$(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
+	@mkdir -p $(@D)
+	@echo -n "compile "
+	@$(BUILD_CMD)
+
+$(TEST_OBJ_PATH)/%.opp: CMD = $(CXX) $(CFLAGS) -I$(TEST_SRC_PATH) -c $< -o $@
+
+$(TEST_OBJ_PATH)/%.opp: $(TEST_SRC_PATH)/%.cpp
+	@mkdir -p $(@D)
+	@echo -n "compile "
+	@$(BUILD_CMD)
+
+FMT_FIXUP += $(THEMIS_TEST_FMT_FIXUP) $(SOTER_TEST_FMT_FIXUP)
+FMT_CHECK += $(THEMIS_TEST_FMT_CHECK) $(SOTER_TEST_FMT_CHECK)
+
+$(TEST_OBJ_PATH)/%.c.fmt_fixup   $(TEST_OBJ_PATH)/%.h.fmt_fixup \
+$(TEST_OBJ_PATH)/%.cpp.fmt_fixup $(TEST_OBJ_PATH)/%.hpp.fmt_fixup: \
+    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) -I$(TEST_SRC_PATH) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
+
+$(TEST_OBJ_PATH)/%.c.fmt_check   $(TEST_OBJ_PATH)/%.h.fmt_check \
+$(TEST_OBJ_PATH)/%.cpp.fmt_check $(TEST_OBJ_PATH)/%.hpp.fmt_check: \
+    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) -I$(TEST_SRC_PATH) 2>/dev/null && touch $@
+
+$(TEST_OBJ_PATH)/%.fmt_fixup: $(TEST_SRC_PATH)/%
+	@mkdir -p $(@D)
+	@echo -n "fixup $< "
+	@$(BUILD_CMD_)
+
+$(TEST_OBJ_PATH)/%.fmt_check: $(TEST_SRC_PATH)/%
+	@mkdir -p $(@D)
+	@echo -n "check $< "
+	@$(BUILD_CMD_)
+
 PYTHON2_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis2_test.sh
 PYTHON3_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis3_test.sh
-
-nist_rng_test_suite: CMD = $(MAKE) -C $(NIST_STS_DIR)
 
 nist_rng_test_suite:
 	@mkdir -p $(NIST_STS_DIR)/obj
 	@cd $(NIST_STS_DIR)/experiments && ./create-dir-script
-	@$(BUILD_CMD)
+	@$(MAKE) --quiet -C $(NIST_STS_DIR)
 
 nist_rng_test_suite_clean: 
-	@echo "cleaning nist suit"
-	@make clean -C $(NIST_STS_DIR)
+	@$(MAKE) --quiet -C $(NIST_STS_DIR) clean
 
 soter_test: CMD = $(CC) -o $(TEST_BIN_PATH)/soter_test $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) -L$(BIN_PATH) -lsoter $(LDFLAGS) $(COVERLDFLAGS)
 
-soter_test: nist_rng_test_suite soter_static $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ)
+soter_test: nist_rng_test_suite soter_static $(SOTER_ENGINE_DEPS) $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
@@ -57,6 +89,13 @@ themispp_test: CMD = $(CXX) -o $(TEST_BIN_PATH)/themispp_test $(THEMISPP_TEST_OB
 themispp_test: $(THEMISPP_TEST_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
+
+rustthemis_integration_tools:
+	@echo "make integration tools for rust-themis..."
+	@cargo build --package themis-integration-tools
+	@for tool in $(notdir $(foreach tool,$(wildcard tools/rust/*.rs),$(basename $(tool)))); \
+	do cp target/debug/$$tool tools/rust/$$tool.rust; done
+	@$(PRINT_OK_)
 
 prepare_tests_basic: soter_test themis_test
 
@@ -94,7 +133,7 @@ endif
 ifdef NPM_VERSION
 	@echo -n "make tests for jsthemis "
 	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/jsthemis_test.sh
-	@echo "npm install mocha" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
+	@echo "npm install mocha@^5.2.0" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
 	@echo "$(shell npm root)/mocha/bin/mocha ./tests/jsthemis" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
 	@chmod a+x ./$(BIN_PATH)/tests/jsthemis_test.sh
 	@$(PRINT_OK_)
@@ -176,4 +215,14 @@ ifdef GO_VERSION
 	@go test -v $(GOTHEMIS_IMPORT)/...
 endif
 
-test_all: test prepare_tests_all test_cpp test_php test_python test_ruby test_js test_go
+test_rust:
+ifdef RUST_VERSION
+	@echo "------------------------------------------------------------"
+	@echo "Running rust-themis tests."
+	@echo "In case of errors please see https://github.com/cossacklabs/themis/wiki/Rust-HowTo"
+	@echo "------------------------------------------------------------"
+	$(TEST_SRC_PATH)/rust/run_tests.sh
+	@echo "------------------------------------------------------------"
+endif
+
+test_all: test prepare_tests_all test_cpp test_php test_python test_ruby test_js test_go test_rust

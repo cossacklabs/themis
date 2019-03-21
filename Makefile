@@ -15,6 +15,9 @@
 #
 
 #CC = clang
+CLANG_FORMAT ?= clang-format
+CLANG_TIDY   ?= clang-tidy
+SHELL = /bin/bash
 SRC_PATH = src
 ifneq ($(BUILD_PATH),)
 	BIN_PATH = $(BUILD_PATH)
@@ -30,24 +33,28 @@ TEST_OBJ_PATH = $(TEST_BIN_PATH)/obj
 CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC
 LDFLAGS += -L/usr/local/lib
 
+unexport CFLAGS LDFLAGS
+
 NO_COLOR=\033[0m
 OK_COLOR=\033[32;01m
 ERROR_COLOR=\033[31;01m
 WARN_COLOR=\033[33;01m
 
-OK_STRING=$(OK_COLOR)[OK]$(NO_COLOR)
-ERROR_STRING=$(ERROR_COLOR)[ERRORS]$(NO_COLOR)
-WARN_STRING=$(WARN_COLOR)[WARNINGS]$(NO_COLOR)
+RIGHT_EDGE:=$(shell cols=$$(($$(tput cols) - 12)); cols=$$((cols > 68 ? 68 : cols)); echo $$cols)
+MOVE_COLUMN=\033[$(RIGHT_EDGE)G
 
-AWK_CMD = awk '{ printf "%-30s %-10s\n",$$1, $$2; }'
-PRINT_OK = printf "$@ $(OK_STRING)\n" | $(AWK_CMD)
-PRINT_OK_ = printf "$(OK_STRING)\n" | $(AWK_CMD)
-PRINT_ERROR = printf "$@ $(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n" && false
-PRINT_ERROR_ = printf "$(ERROR_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n" && false
-PRINT_WARNING = printf "$@ $(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
-PRINT_WARNING_ = printf "$(WARN_STRING)\n" | $(AWK_CMD) && printf "$(CMD)\n$$LOG\n"
-BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
-BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -eq 1 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
+OK_STRING=$(MOVE_COLUMN)$(OK_COLOR)[OK]$(NO_COLOR)
+ERROR_STRING=$(MOVE_COLUMN)$(ERROR_COLOR)[ERRORS]$(NO_COLOR)
+WARN_STRING=$(MOVE_COLUMN)$(WARN_COLOR)[WARNINGS]$(NO_COLOR)
+
+PRINT_OK = printf "$@ $(OK_STRING)\n"
+PRINT_OK_ = printf "$(OK_STRING)\n"
+PRINT_ERROR = printf "$@ $(ERROR_STRING)\n" && printf "$(CMD)\n$$LOG\n" && false
+PRINT_ERROR_ = printf "$(ERROR_STRING)\n" && printf "$(CMD)\n$$LOG\n" && false
+PRINT_WARNING = printf "$@ $(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
+PRINT_WARNING_ = printf "$(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
+BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
+BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
 
 PKGINFO_PATH = PKGINFO
 
@@ -55,6 +62,8 @@ UNAME=$(shell uname)
 
 ifeq ($(UNAME),Darwin)
 	IS_MACOS := true
+else ifeq ($(UNAME),Linux)
+	IS_LINUX := true
 endif
 
 define themisecho
@@ -168,10 +177,11 @@ endif
 
 PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
-GO_VERSION := $(shell go version 2>&1)
+RUST_VERSION := $(shell rustc --version 2>/dev/null)
+GO_VERSION := $(shell which go >/dev/null 2>&1 && go version 2>&1)
 NPM_VERSION := $(shell npm --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
-PYTHON2_VERSION := $(shell python2 --version 2>&1)
+PYTHON2_VERSION := $(shell which python2 >/dev/null 2>&1 && python2 --version 2>&1)
 PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
 ifdef PIP_VERSION
 PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
@@ -181,10 +191,6 @@ PHP_THEMIS_INSTALL = 1
 endif
 
 SHARED_EXT = so
-
-IS_LINUX = $(shell $(CC) -dumpmachine 2>&1 | $(EGREP) -c "linux")
-IS_MINGW = $(shell $(CC) -dumpmachine 2>&1 | $(EGREP) -c "mingw")
-IS_CLANG_COMPILER = $(shell $(CC) --version 2>&1 | $(EGREP) -i -c "clang version")
 
 ifeq ($(shell uname),Darwin)
 SHARED_EXT = dylib
@@ -203,6 +209,10 @@ CFLAFS += -arch $(ARCH)
 endif
 endif
 
+ifneq ($(shell $(CC) --version 2>&1 | grep -E -i -c "clang version"),0)
+	IS_CLANG_COMPILER := true
+endif
+
 ifdef COVERAGE
 	CFLAGS += -g -O0 --coverage
 	COVERLDFLAGS = --coverage
@@ -219,8 +229,56 @@ ifneq ($(GEM_INSTALL_OPTIONS),)
 	_GEM_INSTALL_OPTIONS = $(GEM_INSTALL_OPTIONS)
 endif
 
-# Should pay attention to warnings (some may be critical for crypto-enabled code (ex. signed-unsigned mismatch)
-CFLAGS += -Werror -Wno-switch
+define supported =
+$(shell if echo "int main(void){}" | $(if $(2),$(2),$(CC)) -x c -fsyntax-only -Werror $(1) - >/dev/null 2>&1; then echo "yes"; fi)
+endef
+
+# Treat warnings as errors if requested
+ifeq (yes,$(WITH_FATAL_WARNINGS))
+CFLAGS += -Werror
+endif
+
+# We are security-oriented so we use a pretty paranoid set of flags
+# by default. For starters, enable default set of warnings.
+CFLAGS += -Wall -Wextra
+# Various security-related diagnostics for printf/scanf family
+CFLAGS += -Wformat
+CFLAGS += -Wformat-nonliteral
+ifeq (yes,$(call supported,-Wformat-overflow))
+CFLAGS += -Wformat-overflow
+endif
+CFLAGS += -Wformat-security
+ifeq (yes,$(call supported,-Wformat-signedness))
+CFLAGS += -Wformat-signedness
+endif
+ifeq (yes,$(call supported,-Wformat-truncation))
+CFLAGS += -Wformat-truncation
+endif
+# Warn about possible undefined behavior
+ifeq (yes,$(call supported,-Wnull-dereference))
+CFLAGS += -Wnull-dereference
+endif
+ifeq (yes,$(call supported,-Wshift-overflow))
+CFLAGS += -Wshift-overflow
+endif
+ifeq (yes,$(call supported,-Wshift-negative-value))
+CFLAGS += -Wshift-negative-value
+endif
+CFLAGS += -Wstrict-overflow
+# Ensure full coverage of switch-case branches
+CFLAGS += -Wswitch
+# Forbid alloca() and variable-length arrays
+ifeq (yes,$(call supported,-Walloca))
+CFLAGS += -Walloca
+endif
+CFLAGS += -Wvla
+# Forbid pointer arithmetic with "void*" type
+CFLAGS += -Wpointer-arith
+# Forbid old-style C function prototypes
+# (skip for C++ files as older g++ complains about it)
+ifeq (yes,$(call supported,-Wstrict-prototypes))
+CFLAGS += $(if $(findstring .cpp,$(suffix $<)),,-Wstrict-prototypes)
+endif
 
 # strict checks for docs
 #CFLAGS += -Wdocumentation -Wno-error=documentation
@@ -234,7 +292,10 @@ endif
 ifndef ERROR
 include src/soter/soter.mk
 include src/themis/themis.mk
+ifndef CARGO
+include src/wrappers/themis/jsthemis/jsthemis.mk
 include jni/themis_jni.mk
+endif
 endif
 
 JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
@@ -244,7 +305,7 @@ JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
   | sed 's/[",]//g' \
   | tr -d '[[:space:]]')
 
-all: err themis_static themis_shared
+all: err themis_static themis_shared themis_pkgconfig soter_pkgconfig
 	@echo $(VERSION)
 
 soter_static: CMD = $(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
@@ -255,7 +316,7 @@ soter_static: $(SOTER_OBJ)
 
 soter_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT) $(SOTER_OBJ) $(LDFLAGS) $(COVERLDFLAGS)
 
-soter_shared: $(SOTER_OBJ)
+soter_shared: $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
 	@echo -n "link "
 	@$(BUILD_CMD)
 ifdef IS_MACOS
@@ -293,6 +354,36 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
+FMT_FIXUP += $(THEMIS_FMT_FIXUP) $(SOTER_FMT_FIXUP)
+FMT_CHECK += $(THEMIS_FMT_CHECK) $(SOTER_FMT_CHECK)
+
+$(OBJ_PATH)/%.c.fmt_fixup $(OBJ_PATH)/%.h.fmt_fixup: \
+    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
+
+$(OBJ_PATH)/%.c.fmt_check $(OBJ_PATH)/%.h.fmt_check: \
+    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) 2>/dev/null && touch $@
+
+$(OBJ_PATH)/%.fmt_fixup: $(SRC_PATH)/%
+	@mkdir -p $(@D)
+	@echo -n "fixup $< "
+	@$(BUILD_CMD_)
+
+$(OBJ_PATH)/%.fmt_check: $(SRC_PATH)/%
+	@mkdir -p $(@D)
+	@echo -n "check $< "
+	@$(BUILD_CMD_)
+
+THEMISPP_HEADERS = $(wildcard $(SRC_PATH)/wrappers/themis/themispp/*.hpp)
+
+FMT_FIXUP += $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_fixup,$(THEMISPP_HEADERS))
+FMT_CHECK += $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_check,$(THEMISPP_HEADERS))
+
+$(OBJ_PATH)/%.hpp.fmt_fixup: \
+    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
+
+$(OBJ_PATH)/%.hpp.fmt_check: \
+    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) 2>/dev/null && touch $@
+
 #$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
 $(AUD_PATH)/%: CMD = ./scripts/pp.sh  $< $@
 
@@ -301,30 +392,28 @@ $(AUD_PATH)/%: $(SRC_PATH)/%
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
-$(TEST_OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR)) -I$(TEST_SRC_PATH) -c $< -o $@
-
-$(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
-	@mkdir -p $(@D)
-	@echo -n "compile "
-	@$(BUILD_CMD)
-
-$(TEST_OBJ_PATH)/%.opp: CMD = $(CXX) $(CFLAGS) -I$(TEST_SRC_PATH) -c $< -o $@
-
-$(TEST_OBJ_PATH)/%.opp: $(TEST_SRC_PATH)/%.cpp
-	@mkdir -p $(@D)
-	@echo -n "compile "
-	@$(BUILD_CMD)
-
+ifndef CARGO
 include tests/test.mk
+include tools/afl/fuzzy.mk
+endif
 
 err: ; $(ERROR)
 
+fmt: $(FMT_FIXUP)
+fmt_check: $(FMT_CHECK)
+
 clean: CMD = rm -rf $(BIN_PATH)
 
-clean: nist_rng_test_suite_clean
+clean: nist_rng_test_suite_clean clean_rust
 	@$(BUILD_CMD)
 
-make_install_dirs: CMD = mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter $(PREFIX)/lib
+clean_rust:
+ifdef RUST_VERSION
+	@cargo clean
+	@rm -f tools/rust/*.rust
+endif
+
+make_install_dirs: CMD = mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter $(PREFIX)/lib $(PREFIX)/lib/pkgconfig
 
 make_install_dirs:
 	@echo -n "making dirs for install "
@@ -354,7 +443,16 @@ install_shared_libs: err all make_install_dirs
 	@echo -n "install shared libraries "
 	@$(BUILD_CMD_)
 
-install: install_soter_headers install_themis_headers install_static_libs install_shared_libs
+install_pkgconfig: CMD = install $(BIN_PATH)/*.pc $(PREFIX)/lib/pkgconfig
+
+install_pkgconfig: err all make_install_dirs
+	@echo -n "install pkg-config files "
+	@$(BUILD_CMD_)
+
+install: install_soter_headers install_themis_headers install_static_libs install_shared_libs install_pkgconfig
+ifdef IS_LINUX
+	@ldconfig || (status=$$?; if [ $$(id -u) = "0" ]; then exit $$status; else exit 0; fi)
+endif
 
 get_version:
 	@echo $(VERSION)
@@ -403,7 +501,7 @@ ifdef NPM_VERSION
 	@$(BUILD_CMD_)
 endif
 
-uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libthemis.$(SHARED_EXT)
+uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libthemis.$(SHARED_EXT) && rm -f $(PREFIX)/lib/pkgconfig/libsoter.pc && rm -f $(PREFIX)/lib/pkgconfig/libthemis.pc
 
 uninstall: phpthemis_uninstall rubythemis_uninstall themispp_uninstall jsthemis_uninstall
 	@echo -n "themis uninstall "
@@ -471,11 +569,11 @@ themispp_uninstall:
 
 soter_collect_headers:
 	@mkdir -p $(BIN_PATH)/include/soter
-	@cd src/soter && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/soter/ \; && cd - 1 > /dev/null
+	@cd src/soter && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/soter/ \; && cd - > /dev/null
 
 themis_collect_headers:
 	@mkdir -p $(BIN_PATH)/include/themis
-	@cd src/themis && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/themis/ \; && cd - 1 > /dev/null
+	@cd src/themis && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/themis/ \; && cd - > /dev/null
 
 collect_headers: themis_collect_headers soter_collect_headers
 
@@ -537,7 +635,10 @@ STATIC_BINARY_LIBRARY_MAP = $(foreach file,$(STATIC_LIBRARY_FILES),$(strip $(BIN
 SHARED_LIBRARY_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.$(SHARED_EXT)$$)
 SHARED_BINARY_LIBRARY_MAP = $(foreach file,$(SHARED_LIBRARY_FILES),$(strip $(BIN_PATH)/$(file).$(LIBRARY_SO_VERSION)=$(PREFIX)/lib/$(file).$(LIBRARY_SO_VERSION) $(BIN_PATH)/$(file)=$(PREFIX)/lib/$(file)))
 
-BINARY_LIBRARY_MAP = $(strip $(STATIC_BINARY_LIBRARY_MAP) $(SHARED_BINARY_LIBRARY_MAP))
+PKGCONFIG_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.pc$$)
+PKGCONFIG_MAP = $(foreach file,$(PKGCONFIG_FILES),$(strip $(BIN_PATH)/$(file)=$(PREFIX)/lib/pkgconfig/$(file)))
+
+BINARY_LIBRARY_MAP = $(strip $(STATIC_BINARY_LIBRARY_MAP) $(SHARED_BINARY_LIBRARY_MAP) $(PKGCONFIG_MAP))
 
 POST_INSTALL_SCRIPT := $(BIN_PATH)/post_install.sh
 POST_UNINSTALL_SCRIPT := $(BIN_PATH)/post_uninstall.sh
@@ -662,7 +763,7 @@ endif
 PHP_PACKAGE_NAME:=libphpthemis-php$(PHP_VERSION_FULL)
 PHP_POST_INSTALL_SCRIPT:=./scripts/phpthemis_postinstall.sh
 PHP_PRE_UNINSTALL_SCRIPT:=./scripts/phpthemis_preuninstall.sh
-PHP_API:=$(shell php -i|grep 'PHP API'|sed 's/PHP API => //')
+PHP_API:=$(shell php -i 2>/dev/null|grep 'PHP API'|sed 's/PHP API => //')
 PHP_LIB_MAP:=./src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so=/usr/lib/php/$(PHP_API)/
 
 deb_php:

@@ -3,7 +3,7 @@ var themis = require('jsthemis');
 
 var server = net.createServer(function(socket) {
 
-    comparator = new themis.SecureComparator(new Buffer("secret"));
+    comparator = new themis.SecureComparator(new Buffer.from("secret"));
   
     socket.on('data', function (data) {
 	d=comparator.proceedCompare(data);

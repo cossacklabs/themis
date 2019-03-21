@@ -14,13 +14,13 @@ type testCallbacks struct {
 	b *keys.Keypair
 }
 
-var clientId = []byte("client a")
-var serverId = []byte("client b")
+var clientID = []byte("client a")
+var serverID = []byte("client b")
 
 func (clb *testCallbacks) GetPublicKeyForId(ss *SecureSession, id []byte) *keys.PublicKey {
-	if bytes.Equal(clientId, id){
+	if bytes.Equal(clientID, id) {
 		return clb.a.Public
-	} else if bytes.Equal(serverId, id){
+	} else if bytes.Equal(serverID, id) {
 		return clb.b.Public
 	}
 	return nil
@@ -31,11 +31,11 @@ func (clb *testCallbacks) StateChanged(ss *SecureSession, state int) {
 }
 
 func genRandData() ([]byte, error) {
-	data_length, err := rand.Int(rand.Reader, big.NewInt(2048))
+	dataLength, err := rand.Int(rand.Reader, big.NewInt(2048))
 	if nil != err {
 		return nil, err
 	}
-	length := data_length.Int64()
+	length := dataLength.Int64()
 	if length == 0 {
 		length = 1
 	}
@@ -80,12 +80,12 @@ func clientService(client *SecureSession, ch chan []byte, finCh chan int, t *tes
 			return
 		}
 
-		remoteId, err := client.GetRemoteId()
-		if err != nil{
+		remoteID, err := client.GetRemoteID()
+		if err != nil {
 			t.Error(err)
 			return
 		}
-		if !bytes.Equal(remoteId, serverId){
+		if !bytes.Equal(remoteID, serverID) {
 			t.Error("incorrect remote id")
 			return
 		}
@@ -95,7 +95,7 @@ func clientService(client *SecureSession, ch chan []byte, finCh chan int, t *tes
 			continue
 		}
 
-		if client.GetState() != STATE_ESTABLISHED {
+		if client.GetState() != StateEstablished {
 			t.Error(errors.New("Incorrect secure session state"))
 		}
 
@@ -133,18 +133,18 @@ func serverService(server *SecureSession, ch chan []byte, finCh chan int, t *tes
 			t.Error(err)
 			return
 		}
-		remoteId, err := server.GetRemoteId()
-		if err != nil{
+		remoteID, err := server.GetRemoteID()
+		if err != nil {
 			t.Error(err)
 			return
 		}
-		if !bytes.Equal(remoteId, clientId){
+		if !bytes.Equal(remoteID, clientID) {
 			t.Error("incorrect remote id")
 			return
 		}
 
 		if !sendPeer {
-			if server.GetState() != STATE_ESTABLISHED {
+			if server.GetState() != StateEstablished {
 				t.Error(errors.New("Incorrect secure session state"))
 			}
 			if isFin(buf) {
@@ -177,39 +177,39 @@ func testSession(keytype int, t *testing.T) {
 
 	clb := &testCallbacks{kpa, kpb}
 
-	empty_key := keys.PrivateKey{[]byte{}}
+	emptyKey := keys.PrivateKey{Value: []byte{}}
 
-	client, err := New(clientId, nil, clb)
+	_, err = New(clientID, nil, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty private key")
 		return
 	}
 
-	client, err = New(clientId, &empty_key, clb)
+	_, err = New(clientID, &emptyKey, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty private key")
 		return
 	}
 
-	client, err = New(nil, kpa.Private, clb)
+	_, err = New(nil, kpa.Private, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty id")
 		return
 	}
 
-	client, err = New([]byte{}, kpa.Private, clb)
+	_, err = New([]byte{}, kpa.Private, clb)
 	if nil == err {
 		t.Error("Creating Secure session object with empty id")
 		return
 	}
 
-	client, err = New(clientId, kpa.Private, clb)
+	client, err := New(clientID, kpa.Private, clb)
 	if nil != err {
 		t.Error(err)
 		return
 	}
 
-	server, err := New(serverId, kpb.Private, clb)
+	server, err := New(serverID, kpb.Private, clb)
 	if nil != err {
 		t.Error(err)
 		return
@@ -224,5 +224,5 @@ func testSession(keytype int, t *testing.T) {
 }
 
 func TestSession(t *testing.T) {
-	testSession(keys.KEYTYPE_EC, t)
+	testSession(keys.TypeEC, t)
 }

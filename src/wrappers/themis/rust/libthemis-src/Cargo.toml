@@ -1,0 +1,32 @@
+[package]
+name = "libthemis-src"
+version = "0.0.3"
+edition = "2018"
+authors = ["rust-themis developers"]
+description = "Building native Themis library"
+homepage = "https://www.cossacklabs.com/themis/"
+repository = "https://github.com/cossacklabs/themis"
+readme = "README.md"
+keywords = ["crypto", "Themis"]
+categories = ["development-tools::build-utils"]
+license = "Apache-2.0"
+include = [
+    "/Cargo.toml",
+    "/LICENSE",
+    "/README.md",
+    "/src/**/*.rs",
+    "/themis/LICENSE",
+    "/themis/Makefile",
+    "/themis/src/soter/**/*",
+    "/themis/src/themis/**/*",
+]
+
+[badges]
+circle-ci = { repository = "cossacklabs/themis", branch = "master" }
+maintenance = { status = "actively-developed" }
+
+[dependencies]
+make-cmd = "0.1.0"
+
+[dev-dependencies]
+tempfile = "3.0.5"
