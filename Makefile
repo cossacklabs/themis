@@ -236,13 +236,15 @@ ifdef IS_LINUX
 LDFLAGS += -Wl,--no-undefined
 endif
 
+CFLAGS += -O2 -fno-omit-frame-pointer -g
+
 ifdef COVERAGE
-	CFLAGS += -g -O0 --coverage
+	CFLAGS += -O0 --coverage
 	LDFLAGS += --coverage
 endif
 
 ifdef DEBUG
-	CFLAGS += -DDEBUG -g
+	CFLAGS += -O0 -DDEBUG
 endif
 
 ifneq ($(GEM_INSTALL_OPTIONS),)
