@@ -64,6 +64,8 @@ docs/examples/Themis-server/swift/Pods
 docs/examples/Themis-server/Obj-C/Pods
 docs/examples/swift/Pods
 docs/examples/objc/Pods
+docs/examples/**/Carthage
+docs/examples/**/Cartfile.resolved
 
 # rust
 /target
