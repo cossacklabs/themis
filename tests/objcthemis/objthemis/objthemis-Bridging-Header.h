@@ -9,7 +9,4 @@
     #import <objcthemis/objcthemis.h>
     #import "StaticKeys.h"
 
-    #define SECURE_COMPARATOR_ENABLED
-    #import <objcthemis/scomparator.h>
-
 #endif /* objcthemis_Bridging_Header_h */

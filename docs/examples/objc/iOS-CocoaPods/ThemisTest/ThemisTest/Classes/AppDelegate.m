@@ -17,10 +17,6 @@
 #import "AppDelegate.h"
 #import <objcthemis/objcthemis.h>
 
-#define SECURE_COMPARATOR_ENABLED
-#import <objcthemis/scomparator.h>
-
-
 @interface AppDelegate ()
 
 @end
