@@ -1,7 +1,7 @@
 [Unreleased]
 ============
 
-The version currently under development.
+The version currently in development.
 
 ## Breaking changes
 
@@ -44,9 +44,9 @@ Themis now requires **Rust 2018** (rustc 1.31+) to compile.
 ## New features
 
 - Crate feature `vendored` allows to build and use a vendored copy of the core
-  Themis library in case it is not installed in the system. ([#9])
+  Themis library if it is not installed in the system. ([#9])
 
-- All modules, data types and functions now have proper
+- All modules, data types, and functions now have proper
   [API documentation][docs.rs], complete with examples and references to
   underlying cryptographic algorithms.
 
@@ -67,7 +67,7 @@ Improving type safety and dependency management.
 - `SecureComparator` now provides `is_complete()` method.
 
 - `SecureCell` and `SecureMessage` now own the provided keys, which will be
-  copied if necessary. This relaxes lifetime restrictions on instances
+  copied if necessary. This relaxes the lifetime restrictions on instances
   constructed using byte slices.
 
 - Themis now uses strong types for keys instead of `Vec<u8>` and `&[u8]`.
