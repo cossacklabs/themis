@@ -1,1 +1,2 @@
 github "cossacklabs/themis" "a415c1da65105ad42d4a201e57493f1b6e38cfee"
+github "ilammy/OpenSSL" "1.0.2.14.1"
