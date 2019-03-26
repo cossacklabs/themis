@@ -1,4 +1,4 @@
-# themis
+# Rust-Themis
 
 [![crates.io][crates-io-badge]][crates-io]
 [![CircleCI][circle-ci-badge]][circle-ci]
@@ -17,26 +17,26 @@ Rust wrapper for [Themis] crypto library.
 ## Quickstart
 
 Rust-Themis requires a native Themis library.
-Please refer to [the quickstart guide] for installation instructions.
+Please refer to the [Quickstart guide] for the installation instructions.
 
 Documentation may be found here:
 
- - [general documentation on our wiki][wiki]
- - [in-depth documentation on our site][docserver]
- - [Rust API documentation on docs.rs][docs.rs]
- - [change log for versions on GitHub][CHANGELOG]
+ - [General documentation on our wiki][Wiki],    
+ - [In-depth documentation on our site][Documentation Server],     
+ - [Rust API documentation on docs.rs][Docs.rs],     
+ - [Changelog for versions on GitHub][CHANGELOG].
 
-You can start off experimenting with [the examples]
-or take a look at [the tests]
+You can start experimenting with [Examples]
+or take a look at [Tests]
 to get a feeling of how Themis can be used.
 
-[the quickstart guide]: https://github.com/cossacklabs/themis/wiki/Rust-Howto
-[wiki]: https://github.com/cossacklabs/themis/wiki
-[docs.rs]: https://docs.rs/themis
-[docserver]: https://docs.cossacklabs.com/products/themis/
+[Quickstart guide]: https://github.com/cossacklabs/themis/wiki/Rust-Howto
+[Wiki]: https://github.com/cossacklabs/themis/wiki
+[Docs.rs]: https://docs.rs/themis
+[Documentation Server]: https://docs.cossacklabs.com/products/themis/
 [CHANGELOG]: /src/wrappers/themis/rust/CHANGELOG.md
-[the examples]: /docs/examples/rust
-[the tests]: /tests/rust
+[Examples]: /docs/examples/rust
+[Tests]: /tests/rust
 
 ## Licensing
 
