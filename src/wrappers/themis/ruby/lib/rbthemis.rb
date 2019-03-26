@@ -14,10 +14,6 @@
 # limitations under the License.
 #
 
-warn %(DEPRECATION WARNING: The `rubythemis` gem is deprecated. ) +
-  %(Please use "require 'rbthemis'" instead of "require 'rubythemis'". ) +
-  %(`rubythemis.rb` will be removed in 0.12.0 release.)
-
 require 'ffi'
 
 module ThemisCommon
