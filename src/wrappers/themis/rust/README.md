@@ -21,10 +21,10 @@ Please refer to the [Quickstart guide] for the installation instructions.
 
 Documentation may be found here:
 
- - [General documentation on our wiki][Wiki],    
- - [In-depth documentation on our site][Documentation Server],     
- - [Rust API documentation on docs.rs][Docs.rs],     
- - [Changelog for versions on GitHub][CHANGELOG].
+ - [General documentation in Themis Wiki][Wiki],    
+ - [In-depth documentation on our Documentation Server][Documentation Server],     
+ - [Rust API documentation on Docs.rs][Docs.rs],     
+ - [Changelog on GitHub][CHANGELOG].
 
 You can start experimenting with [Examples]
 or take a look at [Tests]
