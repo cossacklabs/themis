@@ -84,7 +84,7 @@ Themis is available for the following languages/platforms:
 | ➕ C++ | [CPP Howto](https://docs.cossacklabs.com/pages/cpp-howto/) | [docs/examples/c++](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) ||
 | 🍭 Node.js | [Node.js Howto](https://docs.cossacklabs.com/pages/nodejs-howto/) | [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/jsthemis.svg)](https://www.npmjs.com/package/jsthemis) |
 | 🐹 Go | [Go Howto](https://docs.cossacklabs.com/pages/go-howto/)| [docs/examples/go](https://github.com/cossacklabs/themis/tree/master/docs/examples/go) ||
-| ☢️ Rust | [Rust Howto](https://docs.cossacklabs.com/pages/rust-howto/)| [docs/examples/rust](https://github.com/cossacklabs/themis/tree/master/docs/examples/rust) | [![crates](https://img.shields.io/crates/v/themis.svg)](https://crates.io/crates/themis)|
+| 🦀 Rust | [Rust Howto](https://docs.cossacklabs.com/pages/rust-howto/)| [docs/examples/rust](https://github.com/cossacklabs/themis/tree/master/docs/examples/rust) | [![crates](https://img.shields.io/crates/v/themis.svg)](https://crates.io/crates/themis)|
 | 🕸 С++ PNaCl for Google Chrome||[WebThemis project](https://github.com/cossacklabs/webthemis)|
 
 
