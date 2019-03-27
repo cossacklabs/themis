@@ -18,19 +18,19 @@
 </p>
 <br>
 
-#### Crypto library for storage and messaging for Swift, Obj-C, Android, Desktop Java, С++, Node.js, Python, Ruby, PHP, Go, Rust.
+#### Crypto library for storage and messaging for Swift, Obj-C, Android, Desktop Java, С++, Node.js,<br>  Python, Ruby, PHP, Go, Rust.
 <br>
 
-Themis is an open-source high-level cryptographic services library for mobile and server platforms, which provides secure data exchange and storage.
+Themis is an open-source high-level cryptographic services library for secure data exchange and storage on mobile and server platforms. 
 
-Themis provides four important cryptographic services:
+Themis provides 4 important cryptographic services:
 
 * **[Secure Cell](https://github.com/cossacklabs/themis/wiki/Secure-Cell-cryptosystem)**: a multi-mode cryptographic container suitable for storing anything from encrypted files to database records and format-preserved strings. Secure Cell is built around AES-256 in GCM (Token and Seal modes) and CTR (Context imprint mode).
-* **[Secure Message](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem)**: a simple encrypted messaging solution for the widest scope of applications. Exchange the keys between the parties and you're good to go. Two pairs of the underlying crytosystems: ECC + ECDSA / RSA + PSS + PKCS#7. 
-* **[Secure Session](https://github.com/cossacklabs/themis/wiki/Secure-Session-cryptosystem)**: session-oriented, forward secrecy datagram exchange solution with better security guarantees, but more demanding infrastructure. Secure Session can perfectly function as socket encryption, session security, or (with some additional infrastructure) as a high-level messaging primitive. ECDH key agreement, ECC & AES encryption.
+* **[Secure Message](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem)**: a simple encrypted messaging solution for the widest scope of applications. Exchange the keys between the parties and you're good to go. Two pairs of underlying cryptosystems: ECC + ECDSA / RSA + PSS + PKCS#7. 
+* **[Secure Session](https://github.com/cossacklabs/themis/wiki/Secure-Session-cryptosystem)**: session-oriented, forward secrecy datagram exchange solution with better security guarantees and more demanding infrastructure. Secure Session can perfectly function as socket encryption, session security, or a high-level messaging primitive (with some additional infrastructure). ECDH key agreement, ECC & AES encryption.
 * **[Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem)**: a Zero-Knowledge based cryptographic protocol for authentication and comparing secrets.
 
-**Want to go straight to the detailed documentation?** [Please proceed here](https://docs.cossacklabs.com/pages/documentation-themis/#start-here). 
+**Want to go straight to documentation?** [Please proceed here](https://docs.cossacklabs.com/pages/documentation-themis/#start-here). 
 
 We created Themis to build other products on top of it - i.e. [Acra](https://github.com/cossacklabs/acra) and [Hermes](https://github.com/cossacklabs/hermes-core).
 
@@ -40,17 +40,17 @@ Themis works on most operating systems (see [Availability](https://github.com/co
 [Node.js](https://docs.cossacklabs.com/pages/nodejs-howto/), [Go](https://docs.cossacklabs.com/pages/go-howto/), [Rust](https://docs.cossacklabs.com/pages/rust-howto/),
 [Google Chrome](https://github.com/cossacklabs/webthemis). 
 
-We're also porting Themis features to different environments where people might need them: [Redis module](https://www.github.com/cossacklabs/rd_themis), [PostgreSQL module](https://www.github.com/cossacklabs/pg_themis)
+We're also porting Themis features to different environments where people might need them: [Redis module](https://www.github.com/cossacklabs/rd_themis), [PostgreSQL module](https://www.github.com/cossacklabs/pg_themis).
 
 Themis was designed to provide complicated cryptosystems in an easy-to-use infrastructure, with modern rapid development in mind:
 
-* **EASY**: Themis does not require users to obsess over parameters, cipher combination, and yet it provides high levels of security.
-* **DO YOUR THING**: Themis allows developers to focus on doing the necessary: developing their applications. 
+* **EASY**: Themis does not require users to obsess over parameters, cipher combination, yet it provides high levels of security.
+* **DO YOUR THING**: Themis allows developers to focus on the main thing: developing their applications. 
 * **BEST PRACTICE**: Themis is based on the best modern practices in implementing complicated security systems.
 
 Themis relies on [the best available](https://github.com/cossacklabs/themis/wiki/Cryptographic-donors) open-source implementations of cryptographic primitives (ciphers). 
 
-Themis is open source, Apache 2 Licensed. 
+Themis is open source, Apache 2-licensed. 
 
 # Quickstart
 
@@ -60,13 +60,13 @@ Themis is open source, Apache 2 Licensed.
 
 The easiest way to install Themis is [to use package repositories for your OS and language](https://docs.cossacklabs.com/pages/documentation-themis/#getting-themis). Package repositories contain the stable versions of Themis, prebuilt and packaged for the most widely-used systems. Each supported platform has 
 
-Installation for server-side platforms (like Linux, Debian, Ubuntu, macOS) consists of two parts: installing Themis Core library into system and installing Themis language wrapper to use from your application. Refer to [the Installation guide](https://docs.cossacklabs.com/pages/documentation-themis/#getting-themis).
+Installation for server-side platforms (like Linux, Debian, Ubuntu, macOS) consists of two parts: installing Themis Core library into the system and installing Themis language wrapper to use from your application. Refer to [the Installation guide](https://docs.cossacklabs.com/pages/documentation-themis/#getting-themis).
 
 Installation for mobile platforms (iOS, Android) is easier: just use package manager popular at this platform. Refer to [the Installation guide](https://docs.cossacklabs.com/pages/documentation-themis/#getting-themis).
 
 ## Install from sources
 
-If you need the latest development version of Themis, or your system is not supported yet, you can [build and install Themis from GitHub source code](https://docs.cossacklabs.com/pages/documentation-themis/#getting-themis).
+If you need the latest development version of Themis or your system is not supported yet, you can [build and install Themis from GitHub source code](https://docs.cossacklabs.com/pages/documentation-themis/#getting-themis).
 
 # Languages
 
@@ -92,8 +92,8 @@ Themis is available for the following languages/platforms:
 
 Themis-based plugins are built to enable Themis' features across various platforms and products: 
 
-- [RD_Themis](https://github.com/cossacklabs/rd_themis) for Redis database
-- [PG_Themis](https://github.com/cossacklabs/pg_themis) for PostgreSQL database
+- [RD_Themis](https://github.com/cossacklabs/rd_themis) for Redis database,
+- [PG_Themis](https://github.com/cossacklabs/pg_themis) for PostgreSQL database.
 
 # Availability
 
@@ -106,23 +106,23 @@ It is checked to compile on the latest stable versions of:
 * Android (4 - 9) / CyanogenMod 11+,
 * iOS (9 - 12).
 
-We plan to expand this list with broader set of platforms. If you'd like to help improve or bring Themis to your favourite platform / language — [get in touch](dev@cossacklabs.com).
+We plan to expand this list with a broader set of platforms. If you'd like to help improve or bring Themis to your favourite platform / language — [get in touch](dev@cossacklabs.com).
 
 # Tutorials
 
 As long as it remains feasible, we'll be accumulating the list of all our tutorials on how to use Themis in different cases here:
 
-* [Building end-to-end encrypted Firebase-based application](https://github.com/vixentael/zka-example) for note sharing: build bullet-proof application even when using backend-as-a-service which can't be fully trusted.
+* [Building end-to-end encrypted Firebase-based application](https://github.com/vixentael/zka-example) for note sharing: build bullet-proof application for when using backend-as-a-service which can't be fully trusted.
 
-* [Key management basics for iOS](https://github.com/vixentael/ios-datasec-basics) shows numerous ways how to store keys (API tokens, user passwords) using obfuscation and encryption techniques.
+* [Key management basics for iOS](https://github.com/vixentael/ios-datasec-basics) illustrates numerous ways to store keys (API tokens, user passwords) using obfuscation and encryption techniques.
 
-* [Releasing Themis into public: usability testing](https://www.cossacklabs.com/02-usability-testing.html), which goes a bit into how to use Secure Message for iOS and Python. Go directly into [corresponding GitHub repository](https://github.com/cossacklabs/themis-ux-testing) to play with code. 
+* [Releasing Themis into public: usability testing](https://www.cossacklabs.com/02-usability-testing.html) which provides some explanation of how to use Secure Message for iOS and Python. Go directly into [corresponding GitHub repository](https://github.com/cossacklabs/themis-ux-testing) to play with code. 
 
-* [Building encrypted chat service with Themis and mobile websocket example](https://www.cossacklabs.com/building-secure-chat), which outlines stages necessary to build encrypted chat service around Ruby websocket server with clients in iOS and Android. [GitHub repository](https://github.com/cossacklabs/mobile-websocket-example) with accompanying code.
+* [Building encrypted chat service with Themis and mobile websocket example](https://www.cossacklabs.com/building-secure-chat), which outlines the stages necessary for building an encrypted chat service around Ruby websocket server with clients in iOS and Android. [GitHub repository](https://github.com/cossacklabs/mobile-websocket-example) with the accompanying code.
 
 # Sample projects
 
-During the development stage we frequently do Proof-of-Concept projects to test different assumptions. They serve as interesting demos of what Themis is capable of:
+During the development stage, we frequently do Proof-of-Concept projects to test different assumptions. They serve as interesting demos (examples) of what Themis is capable of:
 
 | Demo | Description | Repo | Blog post |
 | :----- | :----- | :------ | :--- |
@@ -130,38 +130,38 @@ During the development stage we frequently do Proof-of-Concept projects to test 
 | Sesto | Secure storage<br/>* Python<br/>* webthemis (C++ + HTML/JS) | [repo](https://github.com/cossacklabs/sesto) |[blog post](https://cossacklabs.com/presenting-sesto.html) 
 | Swift Alps demo | Secure communication (iOS app with Python server based on Secure Session)<br/>* Swift<br/>* Python | [repo](https://github.com/cossacklabs/theswiftalpsdemo) |[slides](https://speakerdeck.com/vixentael/the-swift-alps-security-workshop) |
 | Zero-Knowledge<br/> Architectures<br/>workshop | iOS app for storing and sharing encrypted notes stored in Firebase database<br/>* Swift | [repo](https://github.com/vixentael/zka-example) | |
-| Java and<br/>Android examples | A set of handy examples that show how to encrypt data for storing (Themis Secure Cell) or for sending to peers (Themis Secure Message and Themis Secure Session)<br/>* Java | [repo](https://github.com/cossacklabs/themis-java-examples) | |
-| Android secure storage<br/> library | SecureStorage is used to keep private information in a safe mode without requiring a password or a fingerprint <br/>* Java<br/>* Kotlin | [repo](https://github.com/epam/Android-Secure-Storage) | |
+| Java and<br/>Android examples | A set of handy examples that show how to encrypt data for storing (Themis Secure Cell) or for sending it to peers (Themis Secure Message and Themis Secure Session)<br/>* Java | [repo](https://github.com/cossacklabs/themis-java-examples) | |
+| Android secure storage<br/> library | SecureStorage is used for keeping private information in a safe mode without requiring a password or a fingerprint <br/>* Java<br/>* Kotlin | [repo](https://github.com/epam/Android-Secure-Storage) | |
 
 # Themis Server
 
-If you'd like to experiment with Themis in a more interactive environment, check out [Themis Server](https://themis.cossacklabs.com), interactive debugging environment for Themis. Themis Server can verify and decrypt code encrypted by Secure Cell or Secure Message, and provides a fully-functional backend for Secure Session. Examples for many languages are available in [docs/examples/Themis-server](https://github.com/cossacklabs/themis/tree/master/docs/examples/Themis-server).
+If you'd like to experiment with Themis in a more interactive environment, check out [Themis Server](https://themis.cossacklabs.com) interactive debugging environment for Themis. Themis Server can verify and decrypt the code encrypted by Secure Cell or Secure Message and provides a fully-functional backend for Secure Session. Examples for many languages are available in [docs/examples/Themis-server](https://github.com/cossacklabs/themis/tree/master/docs/examples/Themis-server).
 
 # Documentation
 
-[Themis DocServer](https://docs.cossacklabs.com/products/themis/) contains the ever-evolving official documentation, which contains everything from deployment guidelines to use-cases, with a brief explanation of cryptosystems and architecture behind the main Themis library sandwiched in. 
+[Documentation Server for Themis](https://docs.cossacklabs.com/products/themis/) contains the ever-evolving official documentation, which covers everything from deployment guidelines to use cases, with brief explanations of cryptosystems and architecture behind the main Themis library. 
 
 # Cryptography
 
-This distribution includes cryptographic software. The country in which you currently reside may have restrictions on the import, possession, use, and/or re-export to another country, of encryption software. BEFORE using any encryption software, please check your country's laws, regulations and policies concerning the import, possession, or use, and re-export of encryption software, to see if this is permitted. See http://www.wassenaar.org/ for more information.
+This distribution includes cryptographic software. The country in which you currently reside may have restrictions on the import, possession, use, and/or re-export to another country, of encryption software. BEFORE using any encryption software, please check your country's laws, regulations, and policies concerning the import, possession, or use, and re-export of encryption software, to see if this is permitted. See http://www.wassenaar.org/ for more information.
 
-The U.S. Government Department of Commerce, Bureau of Industry and Security (BIS), has classified this software as Export Commodity Control Number (ECCN) 5D002.C.1, which includes information security software using or performing cryptographic functions with asymmetric algorithms. The form and manner of this distribution makes it eligible for export under the License Exception ENC Technology Software Unrestricted (TSU) exception (see the BIS Export Administration Regulations, Section 740.13) for both object code and source code.
+The U.S. Government Department of Commerce, Bureau of Industry and Security (BIS), has classified this software as Export Commodity Control Number (ECCN) 5D002.C.1, which includes information security software using or performing cryptographic functions with asymmetric algorithms. The form and manner of this distribution make it eligible for export under the License Exception ENC Technology Software Unrestricted (TSU) exception (see the BIS Export Administration Regulations, Section 740.13) for both object code and source code.
 
 # Submitting apps to the App Store
 
-If you’re using Themis as your means of encryption within your iOS/macOS app you’re submitting to the App Store, your encryption falls under the “open source” exception (although if your app is not open source/distributed free of charge, we strongly recommend that you seek legal advice). 
+If you’re using Themis as your means of encryption within your iOS/macOS app that you’re submitting to the App Store, your encryption falls under the “open source” exception (although if your app is not open source/distributed free of charge, we strongly recommend that you seek legal advice). 
 
-Themis is a free cryptographic library that builds on existing, community-tested cryptographic instruments (OpenSSL, LibreSSL, BoringSSL, depending on the target platform). It is open source and Apache 2 licensed, with its full source code publicly available on line on GitHub. 
+Themis is a free cryptographic library that builds on the existing, community-tested cryptographic instruments (OpenSSL, LibreSSL, BoringSSL, depending on the target platform). It is open source and Apache 2-licensed, with its full source code publicly available online on GitHub. 
 
 This means you should indicate that you’re using encryption and only submit annual self-classification reports. Read more about [Apple regulations on cryptography](https://medium.com/@cossacklabs/apple-export-regulations-on-crypto-6306380682e1).
 
 # Security
 
-Each change in Themis core library is being reviewed and approved by our internal team of cryptographers and security engineers. Once per release we perform internal audits by cryptographers who don't work on Themis.
+Each change in Themis core library is being reviewed and approved by our internal team of cryptographers and security engineers. For every release, we perform internal audits by cryptographers who don't work on Themis.
 
-We use a lot of automated security testing, like static code analysers, fuzzlers, memory analysers, unit tests (per each platform), integration tests (to find compatibility issues between different Themis-supported languages, OS and x86/x64 architectures). Read more about our security testing practices in [a blog post](https://medium.com/@cossacklabs/automated-security-testing-56ee1253c1fd).
+We use a lot of automated security testing, i.e. static code analysers, fuzzlers, memory analysers, unit tests (per each platform), integration tests (to find compatibility issues between different Themis-supported languages, OS and x86/x64 architectures). Read more about our security testing practices in [a blog post](https://medium.com/@cossacklabs/automated-security-testing-56ee1253c1fd).
 
-If you believe that you found a security-related issue please drop us an email to [dev@cossacklabs.com](mailto:dev@cossacklabs.com). Bug bounty program may apply.
+If you believe that you've found a security-related issue, please drop us an email to [dev@cossacklabs.com](mailto:dev@cossacklabs.com). Bug bounty program may apply.
 
 # Community
 
@@ -169,23 +169,23 @@ Themis is [recommended by OWASP](https://github.com/OWASP/owasp-mstg/blob/1.1.0/
 
 <!-- TODO: re-link into internal "Projects the use Themis" page instead of blog post -->
 
-Themis is widely-used for both non-commercial and commercial projects, a list with [some public projects can be found here](https://www.cossacklabs.com/blog/themis-contributors-and-projects-2018.html). [Android secure storage library by EPAM](https://github.com/epam/Android-Secure-Storage) is using Themis under the hood.
+Themis is widely-used for both non-commercial and commercial projects, [some public projects can be found here](https://www.cossacklabs.com/blog/themis-contributors-and-projects-2018.html). [Android secure storage library by EPAM](https://github.com/epam/Android-Secure-Storage) is using Themis under the hood.
 
-Want to be featured on our blog and on the list of contributors too? [Write us](mailto:dev@cossacklabs.com) about the project you’ve created using Themis!
+Want to be featured on our blog and on the list of contributors, too? [Write us](mailto:dev@cossacklabs.com) about the project you’ve created using Themis!
 
 # Contributing to us
 
 If you're looking for something to contribute to and gain eternal respect, just pick the things in the [list of issues](https://github.com/cossacklabs/themis/issues). Head over to our [Contribution guidelines](https://github.com/cossacklabs/themis/wiki/Contribute) as your starting point.
 
-Being honest, it's quite complicated to support Themis for these numerous platforms. Most issues that our users encounter are connected with installation process and dependency management. We put a lot of efforts in supporting Themis, so if you face any challenges please [let us know](https://github.com/cossacklabs/themis/issues).
+Supporting Themis for all these numerous platforms is hard work, but we try to do our best to make using Themis convenient for everyone. Most issues that our users encounter are connected with installation process and dependency management. If you face any challenges, please [let us know](https://github.com/cossacklabs/themis/issues).
 
 # Commercial support
 
-At Cossack Labs we offer professional support services for Themis and applications using Themis. 
+At Cossack Labs, we offer professional support services for Themis and applications using Themis. 
 
-This support includes, but not limited to the library integration, with a focus on web and mobile applications; designing and building end-to-end encryption schemes for mobile applications; security audits, for in-house library integrations or high-level protocol; custom application development that requires cryptography; consulting and [training services](https://training.cossacklabs.com).
+This support includes, but is not limited to the library integration, with a focus on web and mobile applications; designing and building end-to-end encryption schemes for mobile applications; security audits, for in-house library integrations or high-level protocol; custom application development that requires cryptography; consulting and [training services](https://training.cossacklabs.com).
 
-Drop us an email to [info@cossacklabs.com](mailto:info@cossacklabs.com) or check [DataGuardian assistance program](https://cossacklabs.com/dgap/).
+Drop us an email to [info@cossacklabs.com](mailto:info@cossacklabs.com) or check out the [DataGuardian assistance program](https://cossacklabs.com/dgap/).
 
 # Contacts
 
