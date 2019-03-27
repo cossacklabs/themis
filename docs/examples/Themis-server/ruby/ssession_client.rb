@@ -1,6 +1,6 @@
 require 'net/http'
 require 'base64'
-require 'rubythemis'
+require 'rbthemis'
 
 class CallbacksForThemis < Themis::Callbacks
   def get_pub_key_by_id(id)

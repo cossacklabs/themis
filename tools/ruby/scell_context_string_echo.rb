@@ -17,12 +17,12 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
-require 'rubythemis'
+require 'rbthemis'
 require 'base64'
 
 input_args = ARGV
 
-if input_args.length != 4 
+if input_args.length != 4
 	STDERR.puts "Usage: <command: enc | dec > <key> <message> <context>\n"
 	exit 1
 end

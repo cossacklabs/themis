@@ -1,6 +1,6 @@
 require 'net/http'
 require 'base64'
-require 'rubythemis'
+require 'rbthemis'
 
 message_maker = Themis::Smessage.new(
   Base64.decode64('UkVDMgAAAC1whm6SAJ7vIP18Kq5QXgLd413DMjnb6Z5jAeiRgUeekMqMC0+x'),

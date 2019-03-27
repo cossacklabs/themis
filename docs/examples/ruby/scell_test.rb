@@ -17,7 +17,7 @@
 #!/usr/bin/env ruby
 
 require 'rubygems'
-require 'rubythemis'
+require 'rbthemis'
 
 key = 'password'
 context = 'context'
