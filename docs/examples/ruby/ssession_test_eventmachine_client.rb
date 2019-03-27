@@ -18,7 +18,7 @@
 
 require 'rubygems'
 require 'eventmachine'
-require 'rubythemis'
+require 'rbthemis'
 
 module HttpHeaders
   class CallbacksForThemis < Themis::Callbacks

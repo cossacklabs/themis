@@ -487,12 +487,19 @@ ifdef PHP_THEMIS_INSTALL
 	@$(BUILD_CMD_)
 endif
 
-rubythemis_uninstall: CMD = gem uninstall themis
-rubythemis_uninstall:
+rbthemis_uninstall: CMD = gem uninstall themis
+rbthemis_uninstall:
 ifdef RUBY_GEM_VERSION
-	@echo -n "rubythemis uninstall "
+	@echo -n "rbthemis uninstall "
 	@$(BUILD_CMD_)
 endif
+
+rubythemis_uninstall_deprecation_warning:
+	@printf "The rubythemis gem is deprecated. Please use rbthemis_uninstall$(WARN_STRING)\n"
+	@printf "target instead of rubythemis_uninstall.$(WARN_STRING)\n"
+
+rubythemis_uninstall: rubythemis_uninstall_deprecation_warning rbthemis_uninstall
+
 
 jsthemis_uninstall: CMD = rm -rf build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz && npm uninstall jsthemis
 jsthemis_uninstall:
@@ -503,7 +510,7 @@ endif
 
 uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libthemis.$(SHARED_EXT) && rm -f $(PREFIX)/lib/pkgconfig/libsoter.pc && rm -f $(PREFIX)/lib/pkgconfig/libthemis.pc
 
-uninstall: phpthemis_uninstall rubythemis_uninstall themispp_uninstall jsthemis_uninstall
+uninstall: phpthemis_uninstall rbthemis_uninstall themispp_uninstall jsthemis_uninstall
 	@echo -n "themis uninstall "
 	@$(BUILD_CMD_)
 
@@ -524,16 +531,22 @@ else
 	@exit 1
 endif
 
-rubythemis_install: CMD = cd src/wrappers/themis/ruby && gem build rbthemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
+rbthemis_install: CMD = cd src/wrappers/themis/ruby && gem build rbthemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
 
-rubythemis_install:
+rbthemis_install:
 ifdef RUBY_GEM_VERSION
-	@echo -n "rubythemis install "
+	@echo -n "rbthemis install "
 	@$(BUILD_CMD_)
 else
 	@echo "Error: ruby gem not found"
 	@exit 1
 endif
+
+rubythemis_install_deprecation_warning:
+	@printf "The rubythemis gem is deprecated. Please use rbthemis_install$(WARN_STRING)\n"
+	@printf "target instead of rubythemis_install.$(WARN_STRING)\n"
+
+rubythemis_install: rubythemis_install_deprecation_warning rbthemis_install
 
 jsthemis_install: CMD = cd src/wrappers/themis/jsthemis && npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd - && npm install nan && npm install ./build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz
 jsthemis_install:

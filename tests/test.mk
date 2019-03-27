@@ -69,7 +69,7 @@ nist_rng_test_suite:
 	@cd $(NIST_STS_DIR)/experiments && ./create-dir-script
 	@$(MAKE) --quiet -C $(NIST_STS_DIR)
 
-nist_rng_test_suite_clean: 
+nist_rng_test_suite_clean:
 	@$(MAKE) --quiet -C $(NIST_STS_DIR) clean
 
 soter_test: CMD = $(CC) -o $(TEST_BIN_PATH)/soter_test $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) -L$(BIN_PATH) -lsoter $(LDFLAGS) $(COVERLDFLAGS)
@@ -108,13 +108,13 @@ ifdef PHP_VERSION
 	@$(PRINT_OK_)
 endif
 ifdef RUBY_GEM_VERSION
-	@echo -n "make tests for rubythemis "
-	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@echo "ruby ./tests/rubythemis/scell_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@echo "ruby ./tests/rubythemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@echo "ruby ./tests/rubythemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@echo "ruby ./tests/rubythemis/scomparator_test.rb" >> ./$(BIN_PATH)/tests/rubythemis_test.sh
-	@chmod a+x ./$(BIN_PATH)/tests/rubythemis_test.sh
+	@echo -n "make tests for rbthemis "
+	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/rbthemis_test.sh
+	@echo "ruby ./tests/rbthemis/scell_test.rb" >> ./$(BIN_PATH)/tests/rbthemis_test.sh
+	@echo "ruby ./tests/rbthemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rbthemis_test.sh
+	@echo "ruby ./tests/rbthemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rbthemis_test.sh
+	@echo "ruby ./tests/rbthemis/scomparator_test.rb" >> ./$(BIN_PATH)/tests/rbthemis_test.sh
+	@chmod a+x ./$(BIN_PATH)/tests/rbthemis_test.sh
 	@$(PRINT_OK_)
 endif
 ifdef PYTHON2_VERSION
@@ -190,10 +190,10 @@ endif
 test_ruby:
 ifdef RUBY_GEM_VERSION
 	@echo "------------------------------------------------------------"
-	@echo "Running rubythemis tests."
+	@echo "Running rbthemis tests."
 	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/Ruby-Howto"
 	@echo "------------------------------------------------------------"
-	$(TEST_BIN_PATH)/rubythemis_test.sh
+	$(TEST_BIN_PATH)/rbthemis_test.sh
 	@echo "------------------------------------------------------------"
 endif
 
@@ -207,7 +207,7 @@ ifdef NPM_VERSION
 endif
 
 test_go:
-ifdef GO_VERSION	
+ifdef GO_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running gothemis tests."
 	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/Go-HowTo"

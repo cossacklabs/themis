@@ -18,7 +18,7 @@
 
 require 'fileutils'
 require 'rubygems'
-require 'rubythemis'
+require 'rbthemis'
 
 if ARGV.length != 0 && ARGV.length != 2
     puts "Usage: ruby keygen.rb <private_key_path> <public_key_path>"

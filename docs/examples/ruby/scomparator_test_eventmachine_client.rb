@@ -18,7 +18,7 @@
 
 require 'rubygems'
 require 'eventmachine'
-require 'rubythemis'
+require 'rbthemis'
 
 module ComparationClient
   def post_init
