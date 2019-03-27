@@ -77,7 +77,7 @@ Themis is available for the following languages/platforms:
 | 🔶 Swift (iOS, macOS) | [Swift Howto](https://docs.cossacklabs.com/pages/swift-howto/) | [docs/examples/swift](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) | [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
 | 📱 Objective-C (iOS, macOS) | [Objective-C Howto](https://docs.cossacklabs.com/pages/objective-c-howto/) | [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)| [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
 | ☕️ Java (Desktop) | [Java & Android Howto](https://docs.cossacklabs.com/pages/java-and-android-howto/) | [Java projects](https://github.com/cossacklabs/themis-java-examples) | |
-| ☎️ Java (Android) | [Java & Android Howto](https://docs.cossacklabs.com/pages/java-and-android-howto/) | [Android projects](https://github.com/cossacklabs/themis-java-examples) | ![maven](https://img.shields.io/bintray/v/cossacklabs/maven/themis.svg)](https://bintray.com/cossacklabs/maven) |
+| ☎️ Java (Android) | [Java & Android Howto](https://docs.cossacklabs.com/pages/java-and-android-howto/) | [Android projects](https://github.com/cossacklabs/themis-java-examples) | [![maven](https://img.shields.io/bintray/v/cossacklabs/maven/themis.svg)](https://bintray.com/cossacklabs/maven) |
 | ♦️ Ruby | [Ruby Howto](https://docs.cossacklabs.com/pages/ruby-howto/) | [docs/examples/ruby](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby) | [![Gem](https://img.shields.io/gem/v/rbthemis.svg)](https://rubygems.org/gems/rbthemis) |
 | 🐍 Python | [Python Howto](https://docs.cossacklabs.com/pages/python-howto/) | [docs/examples/python](https://github.com/cossacklabs/themis/tree/master/docs/examples/python) | [![PyPI](https://img.shields.io/pypi/v/pythemis.svg)](https://pypi.python.org/pypi?%3Aaction=search&term=pythemis&submit=search) |
 | 🐘 PHP | [PHP Howto](https://docs.cossacklabs.com/pages/php-howto/) | [docs/examples/php](https://github.com/cossacklabs/themis/tree/master/docs/examples/php) | |
@@ -139,7 +139,7 @@ If you'd like to experiment with Themis in a more interactive environment, check
 
 # Documentation
 
-[Project's DocServer](https://docs.cossacklabs.com/products/themis/) contains the ever-evolving official documentation, which contains everything from deployment guidelines to use-cases, with a brief explanation of cryptosystems and architecture behind the main Themis library sandwiched in. 
+[Themis DocServer](https://docs.cossacklabs.com/products/themis/) contains the ever-evolving official documentation, which contains everything from deployment guidelines to use-cases, with a brief explanation of cryptosystems and architecture behind the main Themis library sandwiched in. 
 
 # Cryptography
 
@@ -151,9 +151,9 @@ The U.S. Government Department of Commerce, Bureau of Industry and Security (BIS
 
 If you’re using Themis as your means of encryption within your iOS/macOS app you’re submitting to the App Store, your encryption falls under the “open source” exception (although if your app is not open source/distributed free of charge, we strongly recommend that you seek legal advice). 
 
-Themis is a free cryptographic library that builds on existing, community-tested cryptographic instruments (OpenSSL, LibreSSL, BoringSSL, depending on the target platform). It is open source and Apache 2 licensed, with its full source code publicly available on line on GitHub. This means you should indicate that you’re using encryption and only submit annual self-classification reports.
+Themis is a free cryptographic library that builds on existing, community-tested cryptographic instruments (OpenSSL, LibreSSL, BoringSSL, depending on the target platform). It is open source and Apache 2 licensed, with its full source code publicly available on line on GitHub. 
 
-Read more about [Apple regulations on cryptography](https://medium.com/@cossacklabs/apple-export-regulations-on-crypto-6306380682e1).
+This means you should indicate that you’re using encryption and only submit annual self-classification reports. Read more about [Apple regulations on cryptography](https://medium.com/@cossacklabs/apple-export-regulations-on-crypto-6306380682e1).
 
 # Security
 
