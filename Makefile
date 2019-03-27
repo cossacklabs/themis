@@ -524,7 +524,7 @@ else
 	@exit 1
 endif
 
-rubythemis_install: CMD = cd src/wrappers/themis/ruby && gem build rubythemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
+rubythemis_install: CMD = cd src/wrappers/themis/ruby && gem build rbthemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
 
 rubythemis_install:
 ifdef RUBY_GEM_VERSION
