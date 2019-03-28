@@ -70,7 +70,7 @@ publishing {
             artifact("$buildDir/outputs/aar/mainfork-release.aar")
             groupId 'com.cossacklabs.com'
             artifactId 'themis'
-            version '0.10.0'
+            version '0.11.0'
         }
     }
 }
@@ -90,7 +90,7 @@ bintray {
         vcsUrl = 'https://github.com/cossacklabs/themis.git'
         publish = true
         version {
-            name = '0.10.0'
+            name = '0.11.0'
             released  = new Date()            
             gpg {
                 sign = true
