@@ -17,8 +17,7 @@
   <a href='https://goreportcard.com/report/github.com/cossacklabs/themis'><img class="badge" tag="github.com/cossacklabs/themis" src="https://goreportcard.com/badge/github.com/cossacklabs/themis"></a>
 </p>
 
-<h4 align="center">General purpose cryptographic library for storage and messaging for Swift, Obj-C, Android, Desktop Java, С++, Node.js, Python, Ruby, PHP, Go, Rust. </h6>
-<h4 align="center">Unified API. Hidden cryptographic details. Made by cryptographers for developers 🧡 </h6>
+<h4 align="center">General purpose cryptographic library for storage and messaging for Swift, Obj-C, Android, desktop Java, С++, Node.js, Python, Ruby, PHP, Go, Rust. Hides cryptographic details. Made by cryptographers for developers 🧡</h4>
 
 Themis is an open-source high-level cryptographic services library for secure data exchange and storage on mobile and server platforms. 
 
