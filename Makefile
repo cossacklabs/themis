@@ -155,7 +155,7 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
 
-DEFAULT_VERSION := 0.10.0
+DEFAULT_VERSION := 0.11.0
 GIT_VERSION := $(shell if [ -d ".git" ]; then git version; fi 2>/dev/null)
 # check that repo has any tag
 GIT_TAG_STATUS := $(shell git describe --tags HEAD 2>/dev/null)
