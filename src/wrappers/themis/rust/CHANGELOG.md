@@ -3,6 +3,11 @@
 
 The version currently in development.
 
+Version 0.11.0 — 2019-03-28
+===========================
+
+The first stable release of Rust-Themis.
+
 ## Breaking changes
 
 - `SecureCell` interface has been overhauled for better usability and
