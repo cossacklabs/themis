@@ -7,8 +7,7 @@
 
 We found that Themis is now [recommended by OWASP](https://github.com/OWASP/owasp-mstg/blob/1.1.0/Document/0x06e-Testing-Cryptography.md#third-party-libraries) as data encryption library for mobile platforms.
 
-**Breaking changes:** We renamed `rubythemis` to `rbthemis` and removed `themis_version()` function that allowed checking Themis' version at run-time (with no replacement function).
-
+**Breaking changes:** We renamed `rubythemis` to `rbthemis` as a beginning of a tradition of gentle deprecations, with timely warning of all the users that can potentially be affected. We removed `themis_version()` function that allowed checking Themis' version at run-time (with no replacement function).
 
 _Code:_
 
