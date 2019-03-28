@@ -3,30 +3,30 @@
 
 ## [0.11.0](https://github.com/cossacklabs/themis/releases/tag/0.11.0), March 28th 2019
 
-**TL;DR:** Added Rust Themis, added Carthage distribution for iOS and maven distribution for Android. Improved Secure Message API and propagated it to all language wrappers.
+**TL;DR:** Added Rust Themis, added Carthage distribution for iOS and Maven distribution for Android. Improved Secure Message API and propagated it to all our language wrappers.
 
-We found that [OWASP recommends](https://github.com/OWASP/owasp-mstg/blob/1.1.0/Document/0x06e-Testing-Cryptography.md#third-party-libraries) using Themias as data encryption library for mobile platforms.
+We found that Themis is now [recommended by OWASP](https://github.com/OWASP/owasp-mstg/blob/1.1.0/Document/0x06e-Testing-Cryptography.md#third-party-libraries) as data encryption library for mobile platforms.
 
-**Breaking changes:** `rubythemis` has been renamed to `rbthemis`. Removed `themis_version()` function that allowed looking for Themis version at run-time, there is no replacement function.
+**Breaking changes:** We renamed `rubythemis` to `rbthemis` and removed `themis_version()` function that allowed checking Themis' version at run-time (with no replacement function).
 
 
 _Code:_
 
 - **Core** 
 
-  - **Fixes in Soter (low level security core used by Themis):**
+  - **Fixes in Soter (low-level security core used by Themis):**
 
-    - Fixed a possible null pointer deference caused by the misusage of short-circuit evaluation. Huge thanks to [@movie-travel-code](https://github.com/movie-travel-code) for pointing out ([#315](https://github.com/cossacklabs/themis/pull/315), [#314](https://github.com/cossacklabs/themis/pull/314)).
+    - Fixed possible null pointer deference caused by the misusage of short-circuit evaluation. Huge thanks to [@movie-travel-code](https://github.com/movie-travel-code) for pointing out ([#315](https://github.com/cossacklabs/themis/pull/315), [#314](https://github.com/cossacklabs/themis/pull/314)).
 
-    - Fixed crash in Secure Message when RSA keys are used incorrectly (swapped or empty) – shoutout for [@ilammy](https://github.com/ilammy) and [@secumod](https://github.com/secumod) for fixing this ([#334](https://github.com/cossacklabs/themis/pull/334)).
+    - Fixed crash in Secure Message when RSA keys are used incorrectly (swapped or empty) – a shoutout for [@ilammy](https://github.com/ilammy) and [@secumod](https://github.com/secumod) for fixing this ([#334](https://github.com/cossacklabs/themis/pull/334)).
 
-    - Fixed issue when RSA key generator silently truncates private keys – our best wishes flying to [@ilammy](https://github.com/ilammy) and [@secumod](https://github.com/secumod) again ([#335](https://github.com/cossacklabs/themis/pull/335)).
+    - Fixed issue with RSA key generator silently truncating private keys – our gratitude going out to [@ilammy](https://github.com/ilammy) and [@secumod](https://github.com/secumod) again ([#335](https://github.com/cossacklabs/themis/pull/335)).
 
-    - Fixed crash that occured on re-using of Secure Comparator with BoringSSL – thanks to [@ilammy](https://github.com/ilammy) and [@secumod](https://github.com/secumod) for this fix ([#347](https://github.com/cossacklabs/themis/pull/347)).
+    - Fixed crash that occured on re-using Secure Comparator with BoringSSL – thanks to [@ilammy](https://github.com/ilammy) and [@secumod](https://github.com/secumod) for this fix ([#347](https://github.com/cossacklabs/themis/pull/347)).
 
     - Fixed overflow during Secure Cell decryption in Seal mode - thanks to [@ilammy](https://github.com/ilammy) and his skills in fuzz testing ([#367](https://github.com/cossacklabs/themis/pull/367)).
 
-    - Improved test suite to catch more corner cases, including OpenSSL-specific issues ([#323](https://github.com/cossacklabs/themis/pull/323), [#319](https://github.com/cossacklabs/themis/pull/319)).
+    - Improved the test suite to catch more corner cases, including with OpenSSL-specific issues ([#323](https://github.com/cossacklabs/themis/pull/323), [#319](https://github.com/cossacklabs/themis/pull/319)).
 
   - **Secure Session**
 
@@ -36,37 +36,37 @@ _Code:_
 
   - **Secure Message**
     
-    - Updated Secure Message API: separated function `wrap` into `encrypt` and `sign`, and function `unwrap` into `decrypt` and `verify`. The new API has more obvious naming and should be harder to misuse, with encrypt/decrypt and sign/verify API clearly named and separated. 
+    - Updated Secure Message API: divided the `wrap` function into `encrypt` and `sign`, and the `unwrap` function into `decrypt` and `verify`. The new API has more intuitive naming and should be harder to misuse, with encrypt/decrypt and sign/verify API clearly named and separated. 
 
-      A common mistake with the old API was that users could accidentally use sign/verify API instead of encryption because they don't provide a private key. New API features more strict checks and prevents this kind of mistakes.
+      A common mistake with the old API was that users could accidentally use sign/verify API instead of encryption because they didn't provide a private key. The new API features more strict checks and prevents this kind of mistake.
 
-      This change doesn't affect language wrappers you are using, so no code changes required from you.
+      This change doesn't affect the language wrappers you are using, so no code changes are required from you.
 
-      Documentation for new API calls are available [on wiki page](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem#implementation-details) and for each language separately in their Howtos.
+      Documentation for the new API calls is available [in the Wiki documentation](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem#implementation-details) and for each language separately (in their Howtos).
 
       ([#389](https://github.com/cossacklabs/themis/pull/389)).
 
-    - Fixed potential memory leak in Secure Message encryption and decryption ([#398](https://github.com/cossacklabs/themis/pull/398)).
+    - Fixed a potential memory leak in Secure Message encryption and decryption ([#398](https://github.com/cossacklabs/themis/pull/398)).
 
   - **Code quality**
 
-    - Cleaned up circular dependencies in header files. This change made code cleaner and compilation time faster ([#392](https://github.com/cossacklabs/themis/pull/392)).
+    - Cleaned up circular dependencies in header files. This change has made the code cleaner and the compilation time faster ([#392](https://github.com/cossacklabs/themis/pull/392)).
 
     - Improved code quality by fixing warnings from various compiler flags (`-Wall -Wextra -Wformat-security -Wnull-dereference -Wshift-overflow` and so on) ([#377](https://github.com/cossacklabs/themis/pull/377)).
 
-    - Formatted code using `clang-format` and `clang-tidy`, added automated formatting for core and tests ([#418](https://github.com/cossacklabs/themis/pull/418), [#399](https://github.com/cossacklabs/themis/pull/399), [#397](https://github.com/cossacklabs/themis/pull/397), [#396](https://github.com/cossacklabs/themis/pull/396), [#395](https://github.com/cossacklabs/themis/pull/395)).
+    - Formatted the code using `clang-format` and `clang-tidy`, added automated formatting for core and tests ([#418](https://github.com/cossacklabs/themis/pull/418), [#399](https://github.com/cossacklabs/themis/pull/399), [#397](https://github.com/cossacklabs/themis/pull/397), [#396](https://github.com/cossacklabs/themis/pull/396), [#395](https://github.com/cossacklabs/themis/pull/395)).
 
   - **Other changes**
 
     - Improved and refactored our Great Makefile to be more stable, more user-friendly, and to support OS-specific issues ([#417](https://github.com/cossacklabs/themis/pull/417), [#413](https://github.com/cossacklabs/themis/pull/413), [#348](https://github.com/cossacklabs/themis/pull/348), [#346](https://github.com/cossacklabs/themis/pull/346), [#345](https://github.com/cossacklabs/themis/pull/345), [#343](https://github.com/cossacklabs/themis/pull/343), [#321](https://github.com/cossacklabs/themis/pull/321)).
 
-    - Removed `themis_version()` function and all related API for querying Themis and Soter versions at run-time. There is no replacement and this is obviously a breaking change ([#388](https://github.com/cossacklabs/themis/pull/388)).
+    - Removed `themis_version()` function and all related API for querying Themis and Soter versions at run-time. There is no replacement for it and this is obviously a breaking change ([#388](https://github.com/cossacklabs/themis/pull/388)).
 
 - **Rust**
 
   - Introduced Rust Themis wrapper, all work done by brilliant [@ilammy](https://github.com/ilammy)!
 
-    Rust Themis supports same functionality as other Themis wrappers: Secure Cell, Secure Message, Secure Session and Secure Comparator. Rust Themis package is available through [crates.io](https://crates.io/crates/themis), examples are stored in [docs/examples/rust](https://github.com/cossacklabs/themis/tree/master/docs/examples/rust), HowTo guide is available [on wiki](https://github.com/cossacklabs/themis/wiki/Rust-Howto).
+    Rust Themis supports the same functionality as other Themis wrappers: Secure Cell, Secure Message, Secure Session, and Secure Comparator. Rust Themis package is available through [crates.io](https://crates.io/crates/themis), examples are stored in [docs/examples/rust](https://github.com/cossacklabs/themis/tree/master/docs/examples/rust), the HowTo guide is available [in Wiki](https://github.com/cossacklabs/themis/wiki/Rust-Howto).
 
    ([#419](https://github.com/cossacklabs/themis/pull/419), [#405](https://github.com/cossacklabs/themis/pull/405), [#403](https://github.com/cossacklabs/themis/pull/403), [#390](https://github.com/cossacklabs/themis/pull/390), [#383](https://github.com/cossacklabs/themis/pull/383), [#382](https://github.com/cossacklabs/themis/pull/382), [#381](https://github.com/cossacklabs/themis/pull/381), [#380](https://github.com/cossacklabs/themis/pull/380), [#376](https://github.com/cossacklabs/themis/pull/376), [#375](https://github.com/cossacklabs/themis/pull/375), [#374](https://github.com/cossacklabs/themis/pull/374), [#373](https://github.com/cossacklabs/themis/pull/373), [#372](https://github.com/cossacklabs/themis/pull/372), [#365](https://github.com/cossacklabs/themis/pull/365), [#363](https://github.com/cossacklabs/themis/pull/363), [#362](https://github.com/cossacklabs/themis/pull/362), [#358](https://github.com/cossacklabs/themis/pull/358), [#357](https://github.com/cossacklabs/themis/pull/357), [#356](https://github.com/cossacklabs/themis/pull/356), [#353](https://github.com/cossacklabs/themis/pull/353), [#349](https://github.com/cossacklabs/themis/pull/349), [#340](https://github.com/cossacklabs/themis/pull/340)).
 
@@ -82,9 +82,9 @@ _Code:_
 
   - Added bitcode support. This affects only Themis CocoaPod that uses OpenSSL – thanks [@deszip](https://github.com/deszip) and [@popaaaandrei](https://github.com/popaaaandrei) ([#407](https://github.com/cossacklabs/themis/pull/407), [#355](https://github.com/cossacklabs/themis/pull/355), [#354](https://github.com/cossacklabs/themis/pull/354)).
 
-  - Added compatibility for Swift frameworks, now Themis can be used directly from Swift without Bridging header file, kudos to [@popaaaandrei](https://github.com/popaaaandrei) for pointing on this ([#416](https://github.com/cossacklabs/themis/pull/416), [#415](https://github.com/cossacklabs/themis/pull/415)).
+  - Added compatibility for Swift frameworks. Now Themis can be used directly from Swift without Bridging header file, kudos to [@popaaaandrei](https://github.com/popaaaandrei) for pointing on this out ([#416](https://github.com/cossacklabs/themis/pull/416), [#415](https://github.com/cossacklabs/themis/pull/415)).
 
-  - Updated code to use latest Secure Message API (see decription of core changes above). This change doesn't affect user-facing code, so no code changes required from users ([#393](https://github.com/cossacklabs/themis/pull/393)).
+  - Updated code to use the latest Secure Message API (see description of core changes above). This change doesn't affect user-facing code so no code changes are required from users ([#393](https://github.com/cossacklabs/themis/pull/393)).
 
   - Updated error codes and error messages for all crypto systems, now errors and logs are more user-friendly and understandable ([#394](https://github.com/cossacklabs/themis/pull/394), [#393](https://github.com/cossacklabs/themis/pull/393)).
 
@@ -94,7 +94,7 @@ _Code:_
 
 - **macOS specific**
   
-  - Added Homebrew support for Themis Core. Now users can install Themis Core libraby using `brew tap cossacklabs/tap && brew update && brew install libthemis`. This is useful when you're developing on macOS.
+  - Added Homebrew support for Themis Core. Now users can install Themis Core library using `brew tap cossacklabs/tap && brew update && brew install libthemis`. This is useful when you're developing on macOS.
 
   More details can be found in [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#macos).
 
@@ -124,10 +124,10 @@ _Code:_
 
 - **Android**
 
-  - Added maven distribution ([#361](https://github.com/cossacklabs/themis/pull/361)).
+  - Added Maven distribution ([#361](https://github.com/cossacklabs/themis/pull/361)).
 
-    New installation way requires adding only two lines to the maven app configuration (instead of manual re-compiling the whole Themis library)!
-    See updated [HowTo guide](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) on wiki.
+    The new installation process requires adding only two lines to the Maven app configuration (instead of manually re-compiling the whole Themis library)!
+    See the updated [HowTo guide](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) in Wiki.
 
   - Significantly improved [Themis usage examples for Android](https://github.com/cossacklabs/themis-java-examples) - thanks to [@Dimdron](https://github.com/Dimdron) [#3](https://github.com/cossacklabs/themis-java-examples/pull/3).
 
@@ -137,7 +137,7 @@ _Code:_
 
 - **Go**
 
-  - Updated code to use latest Secure Message API (see decription of core changes above). This change doesn't affect user-facing code, so no code changes required from users ([#400](https://github.com/cossacklabs/themis/pull/400)).
+  - Updated code to use the latest Secure Message API (see the description of core changes above). This change doesn't affect user-facing code so no code changes are required from users ([#400](https://github.com/cossacklabs/themis/pull/400)).
 
   - Formatted code and fixed `gofmt` and `golint` warnings ([#426](https://github.com/cossacklabs/themis/pull/426), [#424](https://github.com/cossacklabs/themis/pull/424), [#432](https://github.com/cossacklabs/themis/pull/423), [#422](https://github.com/cossacklabs/themis/pull/422)).
 
@@ -153,17 +153,17 @@ _Code:_
 
 - **PHP**
 
-  - Updated PHP installer to use latest Composer installer ([#360](https://github.com/cossacklabs/themis/pull/360), [#328](https://github.com/cossacklabs/themis/pull/328)).
+  - Updated PHP installer to use the latest Composer installer ([#360](https://github.com/cossacklabs/themis/pull/360), [#328](https://github.com/cossacklabs/themis/pull/328)).
 
 - **Python**
 
-  - Updated code to use latest Secure Message API (see decription of core changes above). This change doesn't affect user-facing code, so no code changes required from users ([#401](https://github.com/cossacklabs/themis/pull/401)).
+  - Updated code to use the latest Secure Message API (see description of core changes above). This change doesn't affect user-facing code so no code changes are required from users ([#401](https://github.com/cossacklabs/themis/pull/401)).
 
   - Updated error codes and error messages for all crypto systems, now errors and logs are more user-friendly and understandable ([#401](https://github.com/cossacklabs/themis/pull/401)).
 
 - **Ruby**
 
-  - Updated code to use latest Secure Message API (see decription of core changes above). This change doesn't affect user-facing code, so no code changes required from users ([#402](https://github.com/cossacklabs/themis/pull/402)).
+  - Updated code to use latest Secure Message API (see description of core changes above). This change doesn't affect user-facing code so no code changes are required from users ([#402](https://github.com/cossacklabs/themis/pull/402)).
 
   - Updated error codes and error messages for all crypto systems, now errors and logs are more user-friendly and understandable ([#402](https://github.com/cossacklabs/themis/pull/402)).
 
@@ -171,16 +171,16 @@ _Code:_
 
 - **Tests and other things**
 
-  - Added tools for fuzzling testing and tests on Themis Core ([#421](https://github.com/cossacklabs/themis/pull/421), [#368](https://github.com/cossacklabs/themis/pull/368), [#366](https://github.com/cossacklabs/themis/pull/366), [#364](https://github.com/cossacklabs/themis/pull/364)).
+  - Added tools for fuzzing testing and tests on Themis Core ([#421](https://github.com/cossacklabs/themis/pull/421), [#368](https://github.com/cossacklabs/themis/pull/368), [#366](https://github.com/cossacklabs/themis/pull/366), [#364](https://github.com/cossacklabs/themis/pull/364)).
 
   - Updated BoringSSL submodule configuration to use Clang while building ([#352](https://github.com/cossacklabs/themis/pull/352)).
 
-  - Updated NIST test suite: improved readability, maintainability and output of NIST STS makefile, added build files to gitignore ([#414](https://github.com/cossacklabs/themis/pull/414)).
+  - Updated NIST test suite: improved readability, maintainability, and output of NIST STS makefile, added build files to gitignore ([#414](https://github.com/cossacklabs/themis/pull/414)).
 
 
 _Docs:_
 
-- Described new [Secure Message API](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem#implementation-details): how we separated function `wrap` into `encrypt` and `sign`, and function `unwrap` into `decrypt` and `verify` to make it more obvious for user.
+- Described the new [Secure Message API](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem#implementation-details): how we divided the `wrap` function into `encrypt` and `sign`, and the `unwrap` function — into `decrypt` and `verify` to make it more obvious for the users.
 
 - Described [thread safety code practices](https://github.com/cossacklabs/themis/wiki/Thread-Safety) when using Secure Session.
 
@@ -191,7 +191,7 @@ _Infrastructure:_
 
 - Added Homebrew support for Themis Core. Now users can install Themis Core libraby using `brew tap cossacklabs/tap && brew update && brew install libthemis`. This is useful when you're developing on macOS. More details can be found in [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#macos).
 
-- Added [installation guide on using Docker container](https://github.com/cossacklabs/themis/wiki/Building-and-Installing#docker) as building environment for Themis: if you can't download Themis Core from packages, feel free to use Docker container for this.
+- Added [installation guide on using Docker container](https://github.com/cossacklabs/themis/wiki/Building-and-Installing#docker) as a building environment for Themis: if you can't download Themis Core from packages, feel free to use Docker container for this.
 
 
 ## [0.10.0](https://github.com/cossacklabs/themis/releases/tag/0.10.0), February 6th 2018
