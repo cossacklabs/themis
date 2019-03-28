@@ -19,18 +19,16 @@
 
 <h4 align="center">General purpose cryptographic library for storage and messaging for Swift, Obj-C, Android, desktop Java, С++, Node.js, Python, Ruby, PHP, Go, Rust. Hides cryptographic details. Made by cryptographers for developers 🧡</h4>
 
-Themis is an open-source high-level cryptographic services library for secure data exchange and storage on mobile and server platforms. 
-
 ### Crypto systems
+
+Themis is an open-source high-level cryptographic services library for mobile and server platforms that provides secure data exchange, authentication, and storage protection. Themis provides ready-made building components, which simplify usage of core cryptographic security operations.
 
 Themis provides 4 important cryptographic services:
 
 * **[Secure Cell](https://github.com/cossacklabs/themis/wiki/Secure-Cell-cryptosystem)**: a multi-mode cryptographic container suitable for **storing anything** from encrypted files to database records and format-preserved strings. Secure Cell is built around AES-256 in GCM (Token and Seal modes) and CTR (Context imprint mode).
 * **[Secure Message](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem)**: a simple **encrypted messaging** solution for the widest scope of applications. Exchange the keys between the parties and you're good to go. Two pairs of underlying cryptosystems: ECC + ECDSA / RSA + PSS + PKCS#7. 
 * **[Secure Session](https://github.com/cossacklabs/themis/wiki/Secure-Session-cryptosystem)**: **session-oriented encrypted data exchange** with forward secrecy for better security guarantees and more demanding infrastructures. Secure Session can perfectly function as socket encryption, session security, or a high-level messaging primitive (with some additional infrastructure like PKI). ECDH key agreement, ECC & AES encryption.
-* **[Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem)**: a zero knowledge based cryptographic protocol for authentication and comparing secrets.
-
-**Want to go straight to documentation?** [Please proceed here](https://docs.cossacklabs.com/pages/documentation-themis/#start-here). 
+* **[Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem)**: a zero knowledge based cryptographic protocol for **authentication** and comparing secrets.
 
 We created Themis to build other products on top of it - i.e. [Acra](https://github.com/cossacklabs/acra) and [Hermes](https://github.com/cossacklabs/hermes-core).
 
@@ -44,9 +42,7 @@ Themis was designed to provide complicated cryptosystems in an easy-to-use infra
 * **DO YOUR THING**: Themis allows developers to focus on the main thing: developing their applications. 
 * **BEST PRACTICE**: Themis is based on the best modern practices in implementing complicated security systems.
 
-Themis relies on [the best available](https://github.com/cossacklabs/themis/wiki/Cryptographic-donors) open-source implementations of cryptographic primitives (ciphers). 
-
-Themis is open source, Apache 2-licensed. 
+Themis relies on [the best available](https://github.com/cossacklabs/themis/wiki/Cryptographic-donors) open-source implementations of cryptographic primitives (ciphers).
 
 # Quickstart
 
@@ -81,6 +77,7 @@ Themis is available for the following languages/platforms:
 | 🦀 Rust | [Rust Howto](https://github.com/cossacklabs/themis/wiki/Rust-Howto)| [docs/examples/rust](https://github.com/cossacklabs/themis/wiki/Rust-Howto) | [![crates](https://img.shields.io/crates/v/themis.svg)](https://crates.io/crates/themis)|
 | 🕸 С++ PNaCl for Google Chrome||[WebThemis project](https://github.com/cossacklabs/webthemis)|
 
+Want to jump straight to the documentation? [Please proceed here](https://docs.cossacklabs.com/pages/documentation-themis/#start-here).
 
 # Plugins
 
