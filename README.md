@@ -34,10 +34,10 @@ Themis provides 4 important cryptographic services:
 
 We created Themis to build other products on top of it - i.e. [Acra](https://github.com/cossacklabs/acra) and [Hermes](https://github.com/cossacklabs/hermes-core).
 
-Themis works on most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)) and is available for [Swift (iOS, macOS)](https://docs.cossacklabs.com/pages/swift-howto/), [Objective-C (iOS, macOS)](https://docs.cossacklabs.com/pages/objective-c-howto/), [Java desktop and Android](https://docs.cossacklabs.com/pages/java-and-android-howto/), [Ruby](https://docs.cossacklabs.com/pages/ruby-howto/),  [Python](https://docs.cossacklabs.com/pages/python-howto/), 
-[PHP](https://docs.cossacklabs.com/pages/php-howto/), 
-[C++](https://docs.cossacklabs.com/pages/cpp-howto/), 
-[Node.js](https://docs.cossacklabs.com/pages/nodejs-howto/), [Go](https://docs.cossacklabs.com/pages/go-howto/), [Rust](https://docs.cossacklabs.com/pages/rust-howto/),
+Themis works on most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)) and is available for [Swift (iOS, macOS)](https://github.com/cossacklabs/themis/wiki/Swift-Howto), [Objective-C (iOS, macOS)](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto), [Java desktop and Android](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto), [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto), 
+[PHP](https://github.com/cossacklabs/themis/wiki/PHP-Howto), 
+[C++](https://github.com/cossacklabs/themis/wiki/CPP-Howto), 
+[Node.js](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto), [Go](https://github.com/cossacklabs/themis/wiki/Go-HowTo), [Rust](https://github.com/cossacklabs/themis/wiki/Rust-Howto),
 [Google Chrome](https://github.com/cossacklabs/webthemis). 
 
 We're also porting Themis features to different environments where people might need them: [Redis module](https://www.github.com/cossacklabs/rd_themis), [PostgreSQL module](https://www.github.com/cossacklabs/pg_themis).
@@ -54,19 +54,17 @@ Themis is open source, Apache 2-licensed.
 
 # Quickstart
 
-⚠️ TODO: update installation links ⚠️
-
 ## Install from package managers
 
-The easiest way to install Themis is [to use package repositories for your OS and language](https://docs.cossacklabs.com/pages/documentation-themis/#getting-themis). Package repositories contain the stable versions of Themis, prebuilt and packaged for the most widely-used systems. Each supported platform has 
+The easiest way to install Themis is [to use package repositories for your OS and language](https://github.com/cossacklabs/themis/wiki/Installing-Themis). Package repositories contain the stable versions of Themis, prebuilt and packaged for the most widely-used systems. Each supported platform has 
 
-Installation for server-side platforms (like Linux, Debian, Ubuntu, macOS) consists of two parts: installing Themis Core library into the system and installing Themis language wrapper to use from your application. Refer to [the Installation guide](https://docs.cossacklabs.com/pages/documentation-themis/#getting-themis).
+Installation for server-side platforms (like Linux, Debian, Ubuntu, macOS) consists of two parts: installing Themis Core library into the system and installing Themis language wrapper to use from your application. Refer to [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#installing-themis-wrappers).
 
-Installation for mobile platforms (iOS, Android) is easier: just use package manager popular at this platform. Refer to [the Installation guide](https://docs.cossacklabs.com/pages/documentation-themis/#getting-themis).
+Installation for mobile platforms (iOS, Android) is easier: just use package manager popular at this platform. Refer to [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#swift-and-objective-c).
 
 ## Install from sources
 
-If you need the latest development version of Themis or your system is not supported yet, you can [build and install Themis from GitHub source code](https://docs.cossacklabs.com/pages/documentation-themis/#getting-themis).
+If you need the latest development version of Themis or your system is not supported yet, you can [build and install Themis from GitHub source code](https://github.com/cossacklabs/themis/wiki/Building-and-Installing).
 
 # Languages
 
@@ -74,17 +72,17 @@ Themis is available for the following languages/platforms:
 
 | Platform | Documentation | Examples | Version |
 | :----- | :----- | :------ | :--- |
-| 🔶 Swift (iOS, macOS) | [Swift Howto](https://docs.cossacklabs.com/pages/swift-howto/) | [docs/examples/swift](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) | [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
-| 📱 Objective-C (iOS, macOS) | [Objective-C Howto](https://docs.cossacklabs.com/pages/objective-c-howto/) | [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)| [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
-| ☕️ Java (Desktop) | [Java & Android Howto](https://docs.cossacklabs.com/pages/java-and-android-howto/) | [Java projects](https://github.com/cossacklabs/themis-java-examples) | |
-| ☎️ Java (Android) | [Java & Android Howto](https://docs.cossacklabs.com/pages/java-and-android-howto/) | [Android projects](https://github.com/cossacklabs/themis-java-examples) | [![maven](https://api.bintray.com/packages/cossacklabs/maven/themis/images/download.svg)](https://bintray.com/cossacklabs/maven/themis/_latestVersion) |
-| ♦️ Ruby | [Ruby Howto](https://docs.cossacklabs.com/pages/ruby-howto/) | [docs/examples/ruby](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby) | [![Gem](https://img.shields.io/gem/v/rbthemis.svg)](https://rubygems.org/gems/rbthemis) |
-| 🐍 Python | [Python Howto](https://docs.cossacklabs.com/pages/python-howto/) | [docs/examples/python](https://github.com/cossacklabs/themis/tree/master/docs/examples/python) | [![PyPI](https://img.shields.io/pypi/v/pythemis.svg)](https://pypi.python.org/pypi?%3Aaction=search&term=pythemis&submit=search) |
-| 🐘 PHP | [PHP Howto](https://docs.cossacklabs.com/pages/php-howto/) | [docs/examples/php](https://github.com/cossacklabs/themis/tree/master/docs/examples/php) | |
-| ➕ C++ | [CPP Howto](https://docs.cossacklabs.com/pages/cpp-howto/) | [docs/examples/c++](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) ||
-| 🍭 Node.js | [Node.js Howto](https://docs.cossacklabs.com/pages/nodejs-howto/) | [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/jsthemis.svg)](https://www.npmjs.com/package/jsthemis) |
-| 🐹 Go | [Go Howto](https://docs.cossacklabs.com/pages/go-howto/)| [docs/examples/go](https://github.com/cossacklabs/themis/tree/master/docs/examples/go) ||
-| 🦀 Rust | [Rust Howto](https://docs.cossacklabs.com/pages/rust-howto/)| [docs/examples/rust](https://github.com/cossacklabs/themis/tree/master/docs/examples/rust) | [![crates](https://img.shields.io/crates/v/themis.svg)](https://crates.io/crates/themis)|
+| 🔶 Swift (iOS, macOS) | [Swift Howto](https://github.com/cossacklabs/themis/wiki/Swift-Howto) | [docs/examples/swift](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) | [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
+| 📱 Objective-C (iOS, macOS) | [Objective-C Howto](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) | [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)| [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
+| ☕️ Java (Desktop) | [Java & Android Howto](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) | [Java projects](https://github.com/cossacklabs/themis-java-examples) | |
+| ☎️ Java (Android) | [Java & Android Howto](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) | [Android projects](https://github.com/cossacklabs/themis-java-examples) | [![maven](https://api.bintray.com/packages/cossacklabs/maven/themis/images/download.svg)](https://bintray.com/cossacklabs/maven/themis/_latestVersion) |
+| ♦️ Ruby | [Ruby Howto](https://github.com/cossacklabs/themis/wiki/Ruby-Howto) | [docs/examples/ruby](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby) | [![Gem](https://img.shields.io/gem/v/rbthemis.svg)](https://rubygems.org/gems/rbthemis) |
+| 🐍 Python | [Python Howto](https://github.com/cossacklabs/themis/wiki/Python-Howto) | [docs/examples/python](https://github.com/cossacklabs/themis/tree/master/docs/examples/python) | [![PyPI](https://img.shields.io/pypi/v/pythemis.svg)](https://pypi.python.org/pypi?%3Aaction=search&term=pythemis&submit=search) |
+| 🐘 PHP | [PHP Howto](https://github.com/cossacklabs/themis/wiki/PHP-Howto) | [docs/examples/php](https://github.com/cossacklabs/themis/tree/master/docs/examples/php) | |
+| ➕ C++ | [CPP Howto](https://github.com/cossacklabs/themis/wiki/CPP-Howto) | [docs/examples/c++](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) ||
+| 🍭 Node.js | [Node.js Howto](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto) | [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/jsthemis.svg)](https://www.npmjs.com/package/jsthemis) |
+| 🐹 Go | [Go Howto](https://github.com/cossacklabs/themis/wiki/Go-HowTo)| [docs/examples/go](https://github.com/cossacklabs/themis/tree/master/docs/examples/go) ||
+| 🦀 Rust | [Rust Howto](https://github.com/cossacklabs/themis/wiki/Rust-Howto)| [docs/examples/rust](https://github.com/cossacklabs/themis/wiki/Rust-Howto) | [![crates](https://img.shields.io/crates/v/themis.svg)](https://crates.io/crates/themis)|
 | 🕸 С++ PNaCl for Google Chrome||[WebThemis project](https://github.com/cossacklabs/webthemis)|
 
 
