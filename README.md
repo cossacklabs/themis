@@ -18,33 +18,32 @@
 </p>
 <br>
 
-#### Crypto library for storage and messaging for Swift, Obj-C, Android, Desktop Java, С++, Node.js,<br>  Python, Ruby, PHP, Go, Rust.
+#### General purpose cryptographic library for storage and messaging for Swift, Obj-C, Android, Desktop Java, С++, Node.js, Python, Ruby, PHP, Go, Rust. Unified API. Hidden cryptographic details. Made by cryptographers for developers 🧡
+
 <br>
 
 Themis is an open-source high-level cryptographic services library for secure data exchange and storage on mobile and server platforms. 
 
+### Crypto systems
+
 Themis provides 4 important cryptographic services:
 
-* **[Secure Cell](https://github.com/cossacklabs/themis/wiki/Secure-Cell-cryptosystem)**: a multi-mode cryptographic container suitable for storing anything from encrypted files to database records and format-preserved strings. Secure Cell is built around AES-256 in GCM (Token and Seal modes) and CTR (Context imprint mode).
-* **[Secure Message](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem)**: a simple encrypted messaging solution for the widest scope of applications. Exchange the keys between the parties and you're good to go. Two pairs of underlying cryptosystems: ECC + ECDSA / RSA + PSS + PKCS#7. 
-* **[Secure Session](https://github.com/cossacklabs/themis/wiki/Secure-Session-cryptosystem)**: session-oriented, forward secrecy datagram exchange solution with better security guarantees and more demanding infrastructure. Secure Session can perfectly function as socket encryption, session security, or a high-level messaging primitive (with some additional infrastructure). ECDH key agreement, ECC & AES encryption.
-* **[Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem)**: a Zero-Knowledge based cryptographic protocol for authentication and comparing secrets.
+* **[Secure Cell](https://github.com/cossacklabs/themis/wiki/Secure-Cell-cryptosystem)**: a multi-mode cryptographic container suitable for **storing anything** from encrypted files to database records and format-preserved strings. Secure Cell is built around AES-256 in GCM (Token and Seal modes) and CTR (Context imprint mode).
+* **[Secure Message](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem)**: a simple **encrypted messaging** solution for the widest scope of applications. Exchange the keys between the parties and you're good to go. Two pairs of underlying cryptosystems: ECC + ECDSA / RSA + PSS + PKCS#7. 
+* **[Secure Session](https://github.com/cossacklabs/themis/wiki/Secure-Session-cryptosystem)**: **session-oriented encrypted data exchange** with forward secrecy for better security guarantees and more demanding infrastructures. Secure Session can perfectly function as socket encryption, session security, or a high-level messaging primitive (with some additional infrastructure like PKI). ECDH key agreement, ECC & AES encryption.
+* **[Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem)**: a zero knowledge based cryptographic protocol for authentication and comparing secrets.
 
 **Want to go straight to documentation?** [Please proceed here](https://docs.cossacklabs.com/pages/documentation-themis/#start-here). 
 
 We created Themis to build other products on top of it - i.e. [Acra](https://github.com/cossacklabs/acra) and [Hermes](https://github.com/cossacklabs/hermes-core).
 
-Themis works on most operating systems (see [Availability](https://github.com/cossacklabs/themis#availability)) and is available for [Swift (iOS, macOS)](https://github.com/cossacklabs/themis/wiki/Swift-Howto), [Objective-C (iOS, macOS)](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto), [Java desktop and Android](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto), [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto),  [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto), 
-[PHP](https://github.com/cossacklabs/themis/wiki/PHP-Howto), 
-[C++](https://github.com/cossacklabs/themis/wiki/CPP-Howto), 
-[Node.js](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto), [Go](https://github.com/cossacklabs/themis/wiki/Go-HowTo), [Rust](https://github.com/cossacklabs/themis/wiki/Rust-Howto),
-[Google Chrome](https://github.com/cossacklabs/webthemis). 
+### Easy to use, hard to misuse 
 
-We're also porting Themis features to different environments where people might need them: [Redis module](https://www.github.com/cossacklabs/rd_themis), [PostgreSQL module](https://www.github.com/cossacklabs/pg_themis).
+Implementing cryptography in applications is often hard. Choosing cipher suites, defining key lengths, and designing key exchange schemes require plenty of particular competences and lead to mistakes when done by applied developers.
 
 Themis was designed to provide complicated cryptosystems in an easy-to-use infrastructure, with modern rapid development in mind:
 
-* **EASY**: Themis does not require users to obsess over parameters, cipher combination, yet it provides high levels of security.
+* **EASY**: Themis does not require users to obsess over parameters, cipher combination, IV, salt, yet it provides high levels of security.
 * **DO YOUR THING**: Themis allows developers to focus on the main thing: developing their applications. 
 * **BEST PRACTICE**: Themis is based on the best modern practices in implementing complicated security systems.
 
