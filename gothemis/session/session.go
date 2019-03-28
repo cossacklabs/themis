@@ -18,17 +18,31 @@ import (
 	"unsafe"
 )
 
+// Secure Session states.
 const (
-	STATE_IDLE        = 0
-	STATE_NEGOTIATING = 1
-	STATE_ESTABLISHED = 2
+	StateIdle = iota
+	StateNegotiating
+	StateEstablished
 )
 
+// Secure Session states.
+//
+// Deprecated: Since 0.11. Use "session.State..." constants instead.
+const (
+	STATE_IDLE        = StateIdle
+	STATE_NEGOTIATING = StateNegotiating
+	STATE_ESTABLISHED = StateEstablished
+)
+
+// SessionCallbacks implements a delegate for SecureSession.
 type SessionCallbacks interface {
 	GetPublicKeyForId(ss *SecureSession, id []byte) *keys.PublicKey
 	StateChanged(ss *SecureSession, state int)
 }
 
+// SecureSession is a lightweight mechanism for securing any kind of network communication
+// (both private and public networks, including the Internet). It is protocol-agnostic and
+// operates on the 5th layer of the network OSI model (the session layer).
 type SecureSession struct {
 	ctx   *C.struct_session_with_callbacks_type
 	clb   SessionCallbacks
@@ -39,6 +53,7 @@ func finalize(ss *SecureSession) {
 	ss.Close()
 }
 
+// New makes a new Secure Session with provided peer ID, private key, and callbacks.
 func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*SecureSession, error) {
 	ss := &SecureSession{clb: callbacks}
 
@@ -64,6 +79,7 @@ func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*Secu
 	return ss, nil
 }
 
+// Close destroys a Secure Session.
 func (ss *SecureSession) Close() error {
 	if nil != ss.ctx {
 		if bool(C.session_destroy(ss.ctx)) {
@@ -90,7 +106,7 @@ func onPublicKeyForId(ssCtx unsafe.Pointer, idPtr unsafe.Pointer, idLen C.size_t
 	if len(pub.Value) > int(keyLen) {
 		return int(C.GOTHEMIS_BUFFER_TOO_SMALL)
 	}
-	sliceHeader := reflect.SliceHeader{uintptr(keyPtr), int(keyLen), int(keyLen)}
+	sliceHeader := reflect.SliceHeader{Data: uintptr(keyPtr), Len: int(keyLen), Cap: int(keyLen)}
 	key := *(*[]byte)(unsafe.Pointer(&sliceHeader))
 	copy(key, pub.Value)
 	return int(C.GOTHEMIS_SUCCESS)
@@ -104,10 +120,12 @@ func onStateChanged(ssCtx unsafe.Pointer, event int) {
 	ss.clb.StateChanged(ss, event)
 }
 
+// GetState returns current state of Secure Session.
 func (ss *SecureSession) GetState() int {
 	return ss.state
 }
 
+// ConnectRequest generates a connection request that must be sent to the remote peer.
 func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 	var reqLen C.size_t
 
@@ -126,6 +144,7 @@ func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 	return req, nil
 }
 
+// Wrap encrypts the provided data for the peer.
 func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 	var outLen C.size_t
 
@@ -152,6 +171,8 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 	return out, nil
 }
 
+// Unwrap decrypts the encrypted data from the peer.
+// It is also used for connection negotiation.
 func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	var outLen C.size_t
 
@@ -194,18 +215,26 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	return nil, false, errors.New("Failed to unwrap data")
 }
 
-func (ss *SecureSession) GetRemoteId()([]byte, error){
+// GetRemoteID returns ID of the remote peer.
+func (ss *SecureSession) GetRemoteID() ([]byte, error) {
 	// secure_session_get_remote_id
 	var outLength C.size_t
-	if C.secure_session_get_remote_id(ss.ctx.session, nil, &outLength) != C.THEMIS_BUFFER_TOO_SMALL{
+	if C.secure_session_get_remote_id(ss.ctx.session, nil, &outLength) != C.THEMIS_BUFFER_TOO_SMALL {
 		return nil, errors.NewCallbackError("Failed to get session remote id length")
 	}
-	if outLength == 0{
+	if outLength == 0 {
 		return nil, errors.NewCallbackError("Incorrect remote id length (0)")
 	}
 	out := make([]byte, int(outLength))
-	if C.secure_session_get_remote_id(ss.ctx.session, (*C.uint8_t)(&out[0]), &outLength) != C.THEMIS_SUCCESS{
+	if C.secure_session_get_remote_id(ss.ctx.session, (*C.uint8_t)(&out[0]), &outLength) != C.THEMIS_SUCCESS {
 		return nil, errors.NewCallbackError("Failed to get session remote id")
 	}
 	return out, nil
+}
+
+// GetRemoteId returns ID of the remote peer.
+//
+// Deprecated: Since 0.11. Use GetRemoteID() instead.
+func (ss *SecureSession) GetRemoteId() ([]byte, error) {
+	return ss.GetRemoteID()
 }

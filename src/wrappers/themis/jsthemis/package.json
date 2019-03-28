@@ -1,6 +1,6 @@
 {
   "name": "jsthemis",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern developers, with high level OOP wrappers for Ruby, Python, PHP, Java / Android and iOS / OSX. It is designed with ease of use in mind, high security and cross-platform availability.",
   "main": "build/Release/jsthemis.node",
   "scripts": {
@@ -12,7 +12,7 @@
     "url": "https://www.cossacklabs.com/"
   },
   "dependencies": {
-    "nan": "^2.4.0"
+    "nan": "^2.8.0"
   },
   "license": " Apache-2.0",
   "gypfile": true

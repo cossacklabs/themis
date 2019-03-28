@@ -50,10 +50,6 @@ static int compare_result(void *ctx)
 	return (int)res;
 }
 
-const int GOTHEMIS_SCOMPARE_MATCH = THEMIS_SCOMPARE_MATCH;
-const int GOTHEMIS_SCOMPARE_NO_MATCH = THEMIS_SCOMPARE_NO_MATCH;
-const int GOTHEMIS_SCOMPARE_NOT_READY = THEMIS_SCOMPARE_NOT_READY;
-
 */
 import "C"
 import (
@@ -62,12 +58,24 @@ import (
 	"unsafe"
 )
 
-var (
-	COMPARE_MATCH = int(C.GOTHEMIS_SCOMPARE_MATCH)
-	COMPARE_NO_MATCH = int(C.GOTHEMIS_SCOMPARE_NO_MATCH)
-	COMPARE_NOT_READY = int(C.GOTHEMIS_SCOMPARE_NOT_READY)
+// Secure comparison result.
+const (
+	Match    = int(C.THEMIS_SCOMPARE_MATCH)
+	NoMatch  = int(C.THEMIS_SCOMPARE_NO_MATCH)
+	NotReady = int(C.THEMIS_SCOMPARE_NOT_READY)
 )
 
+// Secure comparison result.
+//
+// Deprecated: Since 0.11. Use "compare.Match..." constants instead.
+const (
+	COMPARE_MATCH     = Match
+	COMPARE_NO_MATCH  = NoMatch
+	COMPARE_NOT_READY = NotReady
+)
+
+// SecureCompare is an interactive protocol for two parties that compares whether
+// they share the same secret or not.
 type SecureCompare struct {
 	ctx unsafe.Pointer
 }
@@ -76,6 +84,7 @@ func finalize(sc *SecureCompare) {
 	sc.Close()
 }
 
+// New prepares a new secure comparison.
 func New() (*SecureCompare, error) {
 	ctx := C.compare_init()
 	if nil == ctx {
@@ -88,6 +97,7 @@ func New() (*SecureCompare, error) {
 	return sc, nil
 }
 
+// Close destroys Secure Comparator.
 func (sc *SecureCompare) Close() error {
 	if nil != sc.ctx {
 		if bool(C.compare_destroy(sc.ctx)) {
@@ -100,6 +110,7 @@ func (sc *SecureCompare) Close() error {
 	return nil
 }
 
+// Append adds data to be compared.
 func (sc *SecureCompare) Append(secret []byte) error {
 	if nil == secret || 0 == len(secret) {
 		return errors.New("Secret was not provided")
@@ -111,6 +122,7 @@ func (sc *SecureCompare) Append(secret []byte) error {
 	return nil
 }
 
+// Begin initiates secure comparison and returns data to be sent to the peer.
 func (sc *SecureCompare) Begin() ([]byte, error) {
 	var outLen C.size_t
 
@@ -127,6 +139,8 @@ func (sc *SecureCompare) Begin() ([]byte, error) {
 	return out, nil
 }
 
+// Proceed continues the comparison process with peer data and returns a reply.
+// Comparison is complete when this method returns nil successfully.
 func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 	var outLen C.size_t
 
@@ -155,12 +169,13 @@ func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 	return nil, errors.New("Failed to get output")
 }
 
+// Result returns the result of the comparison.
 func (sc *SecureCompare) Result() (int, error) {
 	res := int(C.compare_result(sc.ctx))
 	switch res {
-	case COMPARE_NOT_READY, COMPARE_NO_MATCH, COMPARE_MATCH:
+	case NotReady, NoMatch, Match:
 		return int(res), nil
 	}
 
-	return COMPARE_NOT_READY, errors.New("Failed to get compare result")
+	return NotReady, errors.New("Failed to get compare result")
 }

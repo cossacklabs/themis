@@ -1,7 +1,7 @@
 var net = require('net');
 var themis = require('jsthemis');
 
-comparator = new themis.SecureComparator(new Buffer("secret"));
+comparator = new themis.SecureComparator(new Buffer.from("secret"));
 
 var client = new net.Socket();
 client.connect(1337, '127.0.0.1', function() {

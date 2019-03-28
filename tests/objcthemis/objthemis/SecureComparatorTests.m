@@ -8,11 +8,6 @@
 #import <XCTest/XCTest.h>
 #import <objcthemis/objcthemis.h>
 
-
-#define SECURE_COMPARATOR_ENABLED
-#import <objcthemis/scomparator.h>
-
-
 @interface SecureComparatorTests : XCTestCase
 
 @end

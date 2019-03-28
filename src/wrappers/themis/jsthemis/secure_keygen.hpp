@@ -17,16 +17,21 @@
 #ifndef JSTHEMIS_KEY_PAIR_HPP_
 #define JSTHEMIS_KEY_PAIR_HPP_
 
-#include <nan.h>
 #include <vector>
 
-namespace jsthemis{
+#include <nan.h>
 
-  class KeyPair : public Nan::ObjectWrap {
-  public:
+#include <themis/themis.h>
+
+namespace jsthemis
+{
+
+class KeyPair : public Nan::ObjectWrap
+{
+public:
     static void Init(v8::Handle<v8::Object> exports);
 
-  private:
+private:
     explicit KeyPair(const std::vector<uint8_t>& private_key, const std::vector<uint8_t>& public_key);
     explicit KeyPair();
     ~KeyPair();
@@ -39,7 +44,13 @@ namespace jsthemis{
 
     std::vector<uint8_t> private_key_;
     std::vector<uint8_t> public_key_;
-  };
+};
 
-}
+themis_status_t ValidateKey(const std::vector<uint8_t>& key);
+bool IsValidKey(const std::vector<uint8_t>& key);
+bool IsPrivateKey(const std::vector<uint8_t>& key);
+bool IsPublicKey(const std::vector<uint8_t>& key);
+
+} // namespace jsthemis
+
 #endif /* JSTHEMIS_KEY_PAIR_HPP_ */

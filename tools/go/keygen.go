@@ -8,31 +8,31 @@ import (
 )
 
 func main() {
-	args_count := len(os.Args)
+	argsCount := len(os.Args)
 
-	if args_count != 1 && args_count != 3 {
+	if argsCount != 1 && argsCount != 3 {
 		fmt.Printf("Usage: go %s <private_key_path> <public_key_path>\n", os.Args[0])
 		os.Exit(1)
 	}
 
-	var private_key_path, public_key_path string
-	if args_count == 1 {
-		private_key_path = "key"
-		public_key_path = "key.pub"
-	} else if args_count == 3 {
-		private_key_path = os.Args[1]
-		public_key_path = os.Args[2]
+	var privateKeyPath, publicKeyPath string
+	if argsCount == 1 {
+		privateKeyPath = "key"
+		publicKeyPath = "key.pub"
+	} else if argsCount == 3 {
+		privateKeyPath = os.Args[1]
+		publicKeyPath = os.Args[2]
 	}
 
-	keypair, err := keys.New(keys.KEYTYPE_EC)
+	keypair, err := keys.New(keys.TypeEC)
 	if err != nil {
 		panic(err)
 	}
-	err = ioutil.WriteFile(private_key_path, keypair.Private.Value, 0400)
+	err = ioutil.WriteFile(privateKeyPath, keypair.Private.Value, 0400)
 	if err != nil {
 		panic(err)
 	}
-	err = ioutil.WriteFile(public_key_path, keypair.Public.Value, 0666)
+	err = ioutil.WriteFile(publicKeyPath, keypair.Public.Value, 0666)
 	if err != nil {
 		panic(err)
 	}

@@ -19,7 +19,7 @@
 * @brief secure comparator interface
 */
 
-#import <themis/themis.h>
+#import <Foundation/Foundation.h>
 
 /**
 * @addtogroup WRAPPERS
@@ -31,11 +31,12 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /** @brief Secure comparator states */
-typedef NS_ENUM(NSInteger, TSComparatorStateType){
-  TSComparatorNotReady = 0,
-  TSComparatorNotMatch = 22,
-  TSComparatorMatch = 21
+typedef NS_ENUM(NSInteger, TSComparatorStateType) {
+    TSComparatorNotReady = 0,
+    TSComparatorNotMatch = 22,
+    TSComparatorMatch = 21
 };
+
 /** @brief Secure comparator interface
 *
 * Secure comparator is a lightweight mechanism
@@ -54,7 +55,7 @@ typedef NS_ENUM(NSInteger, TSComparatorStateType){
 * @param [in] error pointer to Error on failure
 * @return Comparation initialization message on success or nil on failure
 */
-- (nullable NSData *)beginCompare:(NSError * __autoreleasing *)error;
+- (nullable NSData *)beginCompare:(NSError *__autoreleasing *)error;
 
 
 /** @brief Proceed comparation message 
@@ -62,7 +63,7 @@ typedef NS_ENUM(NSInteger, TSComparatorStateType){
 * @param [in] error pointer to Error on failure
 * @return Next comparation message in NSData object on success or nil on failure.
 */
-- (nullable NSData *)proceedCompare:(nullable NSData *)message error:(NSError * __autoreleasing *)error;
+- (nullable NSData *)proceedCompare:(nullable NSData *)message error:(NSError *__autoreleasing *)error;
 
 /** @brief indicate comparation state.
 * @return comparation state.

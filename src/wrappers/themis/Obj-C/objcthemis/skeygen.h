@@ -20,7 +20,6 @@
 */
 
 #import <Foundation/Foundation.h>
-#import <themis/themis.h>
 
 /**
 * @addtogroup WRAPPERS
@@ -43,14 +42,14 @@ typedef NS_ENUM(NSInteger, TSKeyGenAsymmetricAlgorithm) {
 
 
 /** @brief private key */
-@property (nonatomic, readonly) NSMutableData * privateKey;
+@property(nonatomic, readonly) NSMutableData *privateKey;
 
 /** @brief public key */
-@property (nonatomic, readonly) NSMutableData * publicKey;
+@property(nonatomic, readonly) NSMutableData *publicKey;
 
 /**
 * @brief initialise key pair generator, generates privateKey and publicKey
-* @param [in] algorithm, RSA or EC. @see TSKeyGenAsymmetricAlgorithm
+* @param [in] algorithm RSA or EC. @see TSKeyGenAsymmetricAlgorithm
 */
 - (nullable instancetype)initWithAlgorithm:(TSKeyGenAsymmetricAlgorithm)algorithm;
 

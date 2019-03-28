@@ -15,7 +15,7 @@ import (
 	"strings"
 )
 
-func send_message(message []byte, endpoint string) ([]byte, error) {
+func sendMessage(message []byte, endpoint string) ([]byte, error) {
 	values := url.Values{}
 	values.Add("message", base64.StdEncoding.EncodeToString(message))
 	request, err := http.NewRequest("POST", endpoint, bytes.NewBufferString(values.Encode()))
@@ -38,52 +38,93 @@ func send_message(message []byte, endpoint string) ([]byte, error) {
 	return data, nil
 }
 
-func main() {
-	input_buffer := bufio.NewReader(os.Stdin)
+func createSecureMessage(inputBuffer *bufio.Reader) (*message.SecureMessage, string, error) {
 	fmt.Println("Type your settings from https://themis.cossacklabs.com/interactive-simulator/setup/")
 
 	fmt.Println("JSON endpoint: ")
-	endpoint, err := input_buffer.ReadString('\n')
+	endpoint, err := inputBuffer.ReadString('\n')
+	if err != nil {
+		err = fmt.Errorf("Failed to read JSON endpoint: %s", err)
+		return nil, "", err
+	}
 	endpoint = strings.TrimRight(endpoint, "\n\r")
 
 	fmt.Println("Your private key in base64 format:")
-	client_private, err := input_buffer.ReadBytes('\n')
-	client_private, err = base64.StdEncoding.DecodeString(string(client_private))
+	clientPrivate, err := inputBuffer.ReadBytes('\n')
 	if err != nil {
-		fmt.Println("Incorrect base64 format for private key")
-		return
+		err = fmt.Errorf("Failed to read user private key: %s", err)
+		return nil, "", err
+	}
+	clientPrivate, err = base64.StdEncoding.DecodeString(string(clientPrivate))
+	if err != nil {
+		err = fmt.Errorf("Incorrect base64 format for private key: %s", err)
+		return nil, "", err
 	}
 
 	fmt.Println("Server public key in base64 format:")
-	server_public, err := input_buffer.ReadBytes('\n')
-	server_public = bytes.TrimRight(server_public, "\r\n")
-	server_public, err = base64.StdEncoding.DecodeString(string(server_public))
-	secure_message := message.New(
-		&keys.PrivateKey{bytes.TrimRight(client_private, "\r\n")},
-		&keys.PublicKey{server_public})
+	serverPublic, err := inputBuffer.ReadBytes('\n')
+	if err != nil {
+		err = fmt.Errorf("Failed to read server public key: %s", err)
+		return nil, "", err
+	}
 
+	serverPublic = bytes.TrimRight(serverPublic, "\r\n")
+	serverPublic, err = base64.StdEncoding.DecodeString(string(serverPublic))
+	if err != nil {
+		err = fmt.Errorf("Incorrect base64 format for public key: %s", err)
+		return nil, "", err
+	}
+
+	secureMessage := message.New(
+		&keys.PrivateKey{Value: bytes.TrimRight(clientPrivate, "\r\n")},
+		&keys.PublicKey{Value: serverPublic})
+
+	return secureMessage, endpoint, nil
+}
+
+func runSecureMessage(secureMessage *message.SecureMessage, endpoint string, inputBuffer *bufio.Reader) error {
 	for {
-		fmt.Println("Print message to send (or quit to stop):")
-		line, _, err := input_buffer.ReadLine()
+		fmt.Println("Print message to send (or \"quit\" to stop):")
+		line, _, err := inputBuffer.ReadLine()
 		if err != nil {
-			fmt.Println(err)
-			return
+			err = fmt.Errorf("Failed to read message: %s", err)
+			return err
 		}
 		if bytes.Equal(line, []byte("quit")) {
-			return
+			return nil
 		}
 
-		wrapped, err := secure_message.Wrap(line)
+		wrapped, err := secureMessage.Wrap(line)
 		if err != nil {
-			fmt.Println("Error in wraping", err)
-			return
+			err = fmt.Errorf("Failed to encrypt message: %s", err)
+			return err
 		}
-		data, err := send_message(wrapped, endpoint)
+		data, err := sendMessage(wrapped, endpoint)
 		if err != nil {
-			fmt.Println("Error occurred:", err)
-			return
+			err = fmt.Errorf("Failed to send message: %s", err)
+			return err
 		}
-		unwrapped, err := secure_message.Unwrap(data)
+		unwrapped, err := secureMessage.Unwrap(data)
+		if err != nil {
+			err = fmt.Errorf("Failed to decrypt message: %s", err)
+			return err
+		}
 		fmt.Println(string(unwrapped))
+	}
+}
+
+func main() {
+	inputBuffer := bufio.NewReader(os.Stdin)
+
+	secureMessage, endpoint, err := createSecureMessage(inputBuffer)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	err = runSecureMessage(secureMessage, endpoint, inputBuffer)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }

@@ -14,6 +14,10 @@
 # limitations under the License.
 #
 
+warn %(DEPRECATION WARNING: The `rubythemis` gem is deprecated. ) +
+  %(Please use "require 'rbthemis'" instead of "require 'rubythemis'". ) +
+  %(`rubythemis.rb` will be removed in 0.12.0 release.)
+
 require 'ffi'
 
 module ThemisCommon
@@ -56,18 +60,32 @@ module ThemisImport
                   [:pointer, :pointer, :int, :pointer, :pointer], :int
   attach_function :secure_session_is_established, [:pointer], :bool
 
-  attach_function :themis_secure_message_wrap,
+  attach_function :themis_secure_message_encrypt,
                   [:pointer, :int, :pointer, :int, :pointer,
                    :int, :pointer, :pointer], :int
-  attach_function :themis_secure_message_unwrap,
+  attach_function :themis_secure_message_decrypt,
                   [:pointer, :int, :pointer, :int, :pointer,
                    :int, :pointer, :pointer], :int
+  attach_function :themis_secure_message_sign,
+                  [:pointer, :int, :pointer, :int, :pointer,
+                   :pointer], :int
+  attach_function :themis_secure_message_verify,
+                  [:pointer, :int, :pointer, :int, :pointer,
+                   :pointer], :int
 
   attach_function :themis_gen_rsa_key_pair,
                   [:pointer, :pointer, :pointer, :pointer], :int
   attach_function :themis_gen_ec_key_pair,
                   [:pointer, :pointer, :pointer, :pointer], :int
-  attach_function :themis_version, [], :string
+
+  THEMIS_KEY_INVALID = 0
+  THEMIS_KEY_RSA_PRIVATE = 1
+  THEMIS_KEY_RSA_PUBLIC = 2
+  THEMIS_KEY_EC_PRIVATE = 3
+  THEMIS_KEY_EC_PUBLIC = 4
+
+  attach_function :themis_is_valid_asym_key, [:pointer, :int], :int
+  attach_function :themis_get_asym_key_kind, [:pointer, :int], :int
 
   attach_function :themis_secure_cell_encrypt_seal,
                   [:pointer, :int, :pointer, :int, :pointer, :int,
@@ -180,6 +198,28 @@ module Themis
       [private_key.get_bytes(0, private_key_length.read_uint),
        public_key.get_bytes(0, public_key_length.read_uint)]
     end
+  end
+
+  def Themis.valid_key(key)
+    if key.nil? || key.empty?
+      return false
+    end
+    key_, len_ = string_to_pointer_size(key)
+    return themis_is_valid_asym_key(key_, len_) == SUCCESS
+  end
+
+  def Themis.private_key(key)
+    key_, len_ = string_to_pointer_size(key)
+    kind = themis_get_asym_key_kind(key_, len_)
+    return kind == ThemisImport::THEMIS_KEY_RSA_PRIVATE \
+        || kind == ThemisImport::THEMIS_KEY_EC_PRIVATE
+  end
+
+  def Themis.public_key(key)
+    key_, len_ = string_to_pointer_size(key)
+    kind = themis_get_asym_key_kind(key_, len_)
+    return kind == ThemisImport::THEMIS_KEY_RSA_PUBLIC \
+        || kind == ThemisImport::THEMIS_KEY_EC_PUBLIC
   end
 
   class Ssession
@@ -300,6 +340,19 @@ module Themis
     include ThemisImport
 
     def initialize(private_key, peer_public_key)
+      if not Themis.valid_key(private_key)
+        raise ThemisError, "Secure Message: invalid private key"
+      end
+      if not Themis.valid_key(peer_public_key)
+        raise ThemisError, "Secure Message: invalid public key"
+      end
+      if not Themis.private_key(private_key)
+        raise ThemisError, "Secure Message: public key used instead of private"
+      end
+      if not Themis.public_key(peer_public_key)
+        raise ThemisError, "Secure Message: private key used instead of public"
+      end
+
       @private_key, @private_key_length = string_to_pointer_size(private_key)
       @peer_public_key, @peer_public_key_length =
         string_to_pointer_size(peer_public_key)
@@ -309,22 +362,22 @@ module Themis
         message_, message_length_ = string_to_pointer_size(message)
 
         wrapped_message_length = FFI::MemoryPointer.new(:uint)
-        res = themis_secure_message_wrap(
+        res = themis_secure_message_encrypt(
           @private_key, @private_key_length, @peer_public_key,
           @peer_public_key_length, message_, message_length_,
           nil, wrapped_message_length)
         if res != BUFFER_TOO_SMALL
-          raise ThemisError, "Secure Message failed encrypting: #{res}"
+          raise ThemisError, "Secure Message failed to encrypt: #{res}"
         end
 
         wrapped_message = FFI::MemoryPointer.new(
           :char, wrapped_message_length.read_uint)
-        res = themis_secure_message_wrap(
+        res = themis_secure_message_encrypt(
           @private_key, @private_key_length, @peer_public_key,
           @peer_public_key_length, message_, message_length_,
           wrapped_message, wrapped_message_length)
         if res != SUCCESS
-          raise ThemisError, "Secure Message failed encrypting: #{res}"
+          raise ThemisError, "Secure Message failed to encrypt: #{res}"
         end
 
         wrapped_message.get_bytes(0, wrapped_message_length.read_uint)
@@ -333,22 +386,22 @@ module Themis
     def unwrap(message)
       message_, message_length_ = string_to_pointer_size(message)
       unwrapped_message_length = FFI::MemoryPointer.new(:uint)
-      res = themis_secure_message_unwrap(
+      res = themis_secure_message_decrypt(
         @private_key, @private_key_length, @peer_public_key,
         @peer_public_key_length, message_, message_length_,
         nil, unwrapped_message_length)
       if res != BUFFER_TOO_SMALL
-        raise ThemisError, "Secure Message failed decrypting: #{res}"
+        raise ThemisError, "Secure Message failed to decrypt: #{res}"
       end
 
       unwrapped_message = FFI::MemoryPointer.new(
         :char, unwrapped_message_length.read_uint)
-      res = themis_secure_message_unwrap(
+      res = themis_secure_message_decrypt(
         @private_key, @private_key_length, @peer_public_key,
         @peer_public_key_length, message_, message_length_,
         unwrapped_message, unwrapped_message_length)
       if res != SUCCESS
-        raise ThemisError, "Secure Message failed decrypting: #{res}"
+        raise ThemisError, "Secure Message failed to decrypt: #{res}"
       end
 
       unwrapped_message.get_bytes(0, unwrapped_message_length.read_uint)
@@ -361,24 +414,31 @@ module Themis
   deprecate :Ssign, :s_sign, 2018, 6
 
   def s_sign(private_key, message)
+    if not valid_key(private_key)
+      raise ThemisError, "Secure Message: invalid private key"
+    end
+    if not private_key(private_key)
+      raise ThemisError, "Secure Message: public key used instead of private"
+    end
+
     private_key_, private_key_length_ = string_to_pointer_size(private_key)
     message_, message_length_ = string_to_pointer_size(message)
 
     wrapped_message_length = FFI::MemoryPointer.new(:uint)
-    res = themis_secure_message_wrap(
-      private_key_, private_key_length_, nil, 0, message_,
+    res = themis_secure_message_sign(
+      private_key_, private_key_length_, message_,
       message_length_, nil, wrapped_message_length)
     if res != BUFFER_TOO_SMALL
-      raise ThemisError, "Secure Message failed singing: #{res}"
+      raise ThemisError, "Secure Message failed to sign: #{res}"
     end
 
     wrapped_message = FFI::MemoryPointer.new(
       :char, wrapped_message_length.read_uint)
-    res = themis_secure_message_wrap(
-      private_key_, private_key_length_, nil, 0, message_,
+    res = themis_secure_message_sign(
+      private_key_, private_key_length_, message_,
       message_length_, wrapped_message, wrapped_message_length)
     if res != SUCCESS
-      raise ThemisError, "Secure Message failed singing: #{res}"
+      raise ThemisError, "Secure Message failed to sign: #{res}"
     end
 
     wrapped_message.get_bytes(0, wrapped_message_length.read_uint)
@@ -390,27 +450,31 @@ module Themis
   deprecate :Sverify, :s_verify, 2018, 6
 
   def s_verify(peer_public_key, message)
-    include ThemisCommon
-    include ThemisImport
+    if not valid_key(peer_public_key)
+      raise ThemisError, "Secure Message: invalid public key"
+    end
+    if not public_key(peer_public_key)
+      raise ThemisError, "Secure Message: private key used instead of public"
+    end
 
     public_key_, public_key_length_ = string_to_pointer_size(peer_public_key)
     message_, message_length_ = string_to_pointer_size(message)
 
     unwrapped_message_length = FFI::MemoryPointer.new(:uint)
-    res = themis_secure_message_unwrap(
-      nil, 0, public_key_, public_key_length_, message_,
+    res = themis_secure_message_verify(
+      public_key_, public_key_length_, message_,
       message_length_, nil, unwrapped_message_length)
     if res != BUFFER_TOO_SMALL
-      raise ThemisError, "Secure Message failed verifying: #{res}"
+      raise ThemisError, "Secure Message failed to verify: #{res}"
     end
 
     unwrapped_message = FFI::MemoryPointer.new(
       :char, unwrapped_message_length.read_uint)
-    res = themis_secure_message_unwrap(
-      nil, 0, public_key_, public_key_length_, message_,
+    res = themis_secure_message_verify(
+      public_key_, public_key_length_, message_,
       message_length_, unwrapped_message, unwrapped_message_length)
     if res != SUCCESS
-      raise ThemisError, "Secure Message failed verifying: #{res}"
+      raise ThemisError, "Secure Message failed to verify: #{res}"
     end
 
     unwrapped_message.get_bytes(0, unwrapped_message_length.read_uint)

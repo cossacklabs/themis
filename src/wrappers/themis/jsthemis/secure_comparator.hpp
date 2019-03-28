@@ -17,17 +17,21 @@
 #ifndef JSTHEMIS_SECURE_COMPARATOR_HPP_
 #define JSTHEMIS_SECURE_COMPARATOR_HPP_
 
-#include <nan.h>
 #include <vector>
+
+#include <nan.h>
+
 #include <themis/themis.h>
 
-namespace jsthemis{
+namespace jsthemis
+{
 
-  class SecureComparator : public Nan::ObjectWrap {
-  public:
+class SecureComparator : public Nan::ObjectWrap
+{
+public:
     static void Init(v8::Handle<v8::Object> exports);
 
-  private:
+private:
     explicit SecureComparator(const std::vector<uint8_t>& secret);
     ~SecureComparator();
 
@@ -39,9 +43,10 @@ namespace jsthemis{
 
     static Nan::Persistent<v8::Function> constructor;
 
-  private:
+private:
     secure_comparator_t* comparator_;
-  };
+};
 
-}
+} // namespace jsthemis
+
 #endif /* JSTHEMIS_SECURE_Comparator_HPP_ */

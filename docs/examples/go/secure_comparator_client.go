@@ -48,21 +48,21 @@ func main() {
 			return
 		}
 
-		if compare.COMPARE_NOT_READY == res {
+		if compare.NotReady == res {
 			buf = make([]byte, 10240)
-			readed_bytes, err := conn.Read(buf)
+			readBytes, err := conn.Read(buf)
 			if err != nil {
 				fmt.Println("error reading bytes from socket")
 				return
 			}
-			buffer, err := sc.Proceed(buf[:readed_bytes])
+			buffer, err := sc.Proceed(buf[:readBytes])
 			if nil != err {
 				fmt.Println("error unwraping message")
 				return
 			}
 			buf = buffer
 		} else {
-			if compare.COMPARE_MATCH == res {
+			if compare.Match == res {
 				fmt.Println("match")
 			} else {
 				fmt.Println("not match")

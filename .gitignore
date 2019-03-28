@@ -31,12 +31,14 @@ xcuserdata
 *.moved-aside
 *~.nib
 *.swp
-
+*.xcworkspacedata
 
 # additional rules
 DerivedData/
 .idea/
 build
+.gradle
+
 
 # python rules
 # Byte-compiled / optimized / DLL files
@@ -48,3 +50,25 @@ tests/phpthemis/vendor
 tests/phpthemis/composer.json
 tests/phpthemis/composer.phar
 tests/phpthemis/composer.lock
+
+third_party/boringssl/.externalNativeBuild
+
+# php
+
+*.lai
+*.la
+*.lo
+
+# ios
+docs/examples/Themis-server/swift/Pods
+docs/examples/Themis-server/Obj-C/Pods
+docs/examples/swift/Pods
+docs/examples/objc/Pods
+
+# rust
+/target
+**/*.rs.bk
+Cargo.lock
+
+# Carthage
+Carthage/

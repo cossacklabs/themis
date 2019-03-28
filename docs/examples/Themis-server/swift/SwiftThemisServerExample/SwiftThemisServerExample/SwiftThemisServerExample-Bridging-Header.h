@@ -9,6 +9,4 @@
 #ifndef SwiftThemisServerExample_Bridging_Header_h
 #define SwiftThemisServerExample_Bridging_Header_h
 
-    #import <objcthemis/objcthemis.h>
-
 #endif /* SwiftThemisServerExample_Bridging_Header_h */

@@ -18,7 +18,7 @@
 
 require 'rubygems'
 require 'eventmachine'
-require 'rubythemis'
+require 'rbthemis'
 
 module EchoServer
   class CallbacksForThemis < Themis::Callbacks
