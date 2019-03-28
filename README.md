@@ -28,13 +28,13 @@ Themis provides 4 important cryptographic services:
 * **[Secure Cell](https://github.com/cossacklabs/themis/wiki/Secure-Cell-cryptosystem)**: a multi-mode cryptographic container suitable for **storing anything** from encrypted files to database records and format-preserved strings. Secure Cell is built around AES-256 in GCM (Token and Seal modes) and CTR (Context imprint mode).
 * **[Secure Message](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem)**: a simple **encrypted messaging** solution for the widest scope of applications. Exchange the keys between the parties and you're good to go. Two pairs of underlying cryptosystems: ECC + ECDSA / RSA + PSS + PKCS#7. 
 * **[Secure Session](https://github.com/cossacklabs/themis/wiki/Secure-Session-cryptosystem)**: **session-oriented encrypted data exchange** with forward secrecy for better security guarantees and more demanding infrastructures. Secure Session can perfectly function as socket encryption, session security, or a high-level messaging primitive (with some additional infrastructure like PKI). ECDH key agreement, ECC & AES encryption.
-* **[Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem)**: a zero knowledge based cryptographic protocol for **authentication** and comparing secrets.
+* **[Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem)**: Zero knowledge-based cryptographic protocol for **authentication** and comparing secrets.
 
 We created Themis to build other products on top of it - i.e. [Acra](https://github.com/cossacklabs/acra) and [Hermes](https://github.com/cossacklabs/hermes-core).
 
 ### Easy to use, hard to misuse 
 
-Implementing cryptography in applications is often hard. Choosing cipher suites, defining key lengths, and designing key exchange schemes require plenty of particular competences and lead to mistakes when done by applied developers.
+Implementing cryptography in applications is often hard. Choosing cipher suites, defining key lengths, and designing key exchange schemes require plenty of particular competencies and lead to mistakes when done by applied developers.
 
 Themis was designed to provide complicated cryptosystems in an easy-to-use infrastructure, with modern rapid development in mind:
 
@@ -48,7 +48,7 @@ Themis relies on [the best available](https://github.com/cossacklabs/themis/wiki
 
 ## Install from package managers
 
-The easiest way to install Themis is [to use package repositories for your OS and language](https://github.com/cossacklabs/themis/wiki/Installing-Themis). Package repositories contain the stable versions of Themis, prebuilt and packaged for the most widely-used systems. Each supported platform has 
+The easiest way to install Themis is [to use package repositories for your OS and language](https://github.com/cossacklabs/themis/wiki/Installing-Themis). Package repositories contain stable versions of Themis, prebuilt and packaged for the most widely-used systems.     
 
 Installation for server-side platforms (like Linux, Debian, Ubuntu, macOS) consists of two parts: installing Themis Core library into the system and installing Themis language wrapper to use from your application. Refer to [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#installing-themis-wrappers).
 
@@ -77,7 +77,7 @@ Themis is available for the following languages/platforms:
 | 🦀 Rust | [Rust Howto](https://github.com/cossacklabs/themis/wiki/Rust-Howto)| [docs/examples/rust](https://github.com/cossacklabs/themis/wiki/Rust-Howto) | [![crates](https://img.shields.io/crates/v/themis.svg)](https://crates.io/crates/themis)|
 | 🕸 С++ PNaCl for Google Chrome||[WebThemis project](https://github.com/cossacklabs/webthemis)|
 
-Want to jump straight to the documentation? [Please proceed here](https://docs.cossacklabs.com/pages/documentation-themis/#start-here).
+Want to jump straight to the documentation? [Please head over here](https://docs.cossacklabs.com/pages/documentation-themis/#start-here).
 
 # Plugins
 
@@ -103,7 +103,7 @@ We plan to expand this list with a broader set of platforms. If you'd like to he
 
 As long as it remains feasible, we'll be accumulating the list of all our tutorials on how to use Themis in different cases here:
 
-* [Building end-to-end encrypted Firebase-based application](https://github.com/vixentael/zka-example) for note sharing: build bullet-proof application for when using backend-as-a-service which can't be fully trusted.
+* [Building end-to-end encrypted Firebase-based application](https://github.com/vixentael/zka-example) for note sharing: build a bullet-proof application for when using backend-as-a-service which can't be fully trusted.
 
 * [Key management basics for iOS](https://github.com/vixentael/ios-datasec-basics) illustrates numerous ways to store keys (API tokens, user passwords) using obfuscation and encryption techniques.
 
@@ -168,7 +168,7 @@ Want to be featured on our blog and on the list of contributors, too? [Write us]
 
 If you're looking for something to contribute to and gain eternal respect, just pick the things in the [list of issues](https://github.com/cossacklabs/themis/issues). Head over to our [Contribution guidelines](https://github.com/cossacklabs/themis/wiki/Contribute) as your starting point.
 
-Supporting Themis for all these numerous platforms is hard work, but we try to do our best to make using Themis convenient for everyone. Most issues that our users encounter are connected with installation process and dependency management. If you face any challenges, please [let us know](https://github.com/cossacklabs/themis/issues).
+Supporting Themis for all these numerous platforms is hard work, but we try to do our best to make using Themis convenient for everyone. Most issues that our users encounter are connected with the installation process and dependency management. If you face any challenges, please [let us know](https://github.com/cossacklabs/themis/issues).
 
 # Commercial support
 
