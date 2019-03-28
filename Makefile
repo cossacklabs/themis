@@ -467,6 +467,7 @@ dist:
 	rsync -avz gradle $(VERSION)
 	rsync -avz jni $(VERSION)
 	rsync -avz --exclude 'tests/soter/nist-sts/assess' tests $(VERSION)
+	rsync -avz tools $(VERSION)
 	rsync -avz CHANGELOG.md $(VERSION)
 	rsync -avz LICENSE $(VERSION)
 	rsync -avz Makefile $(VERSION)
