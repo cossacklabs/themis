@@ -15,8 +15,6 @@
 use std::env;
 use std::path::{Path, PathBuf};
 
-use pkg_config::Library;
-
 fn main() {
     let themis = get_themis();
 
@@ -38,6 +36,11 @@ fn main() {
         .expect("writing bindings!");
 }
 
+struct Library {
+    include_paths: Vec<PathBuf>,
+    link_paths: Vec<PathBuf>,
+}
+
 /// Embarks on an incredible adventure and returns with a suitable Themis (or dies trying).
 fn get_themis() -> Library {
     #[cfg(feature = "vendored")]
@@ -50,7 +53,12 @@ fn get_themis() -> Library {
     pkg_config.statik(true);
 
     match pkg_config.probe("libthemis") {
-        Ok(library) => return library,
+        Ok(library) => {
+            return Library {
+                include_paths: library.include_paths,
+                link_paths: library.link_paths,
+            };
+        }
         Err(error) => panic!(format!(
             "
 
