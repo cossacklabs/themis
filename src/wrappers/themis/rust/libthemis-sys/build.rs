@@ -59,14 +59,14 @@ fn get_themis() -> Library {
                 link_paths: library.link_paths,
             };
         }
-        Err(error) => panic!(format!(
-            "
-
+        Err(error) => {
+            eprintln!(
+                "
 `libthemis-sys` could not find Themis installation in your system.
 
 Please make sure you have appropriate development package installed.
 On Linux it's called `libthemis-dev`, not just `libthemis`.
-On macOS Homebrew formula is called `themis` or `themis-openssl`.
+On macOS Homebrew formula is called `libthemis`.
 
 Please refer to the documentation for installation instructions:
 
@@ -76,11 +76,11 @@ This crate uses `pkg-config` to locate the library. If you use
 non-standard installation of Themis then you can help pkg-config
 to locate your library by setting the PKG_CONFIG_PATH environment
 variable to the path where `libthemis.pc` file is located.
-
-{}
-",
-            error
-        )),
+"
+            );
+            eprintln!("{}", error);
+            panic!("Themis Core not installed");
+        }
     }
 }
 
