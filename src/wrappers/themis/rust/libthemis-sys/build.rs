@@ -79,6 +79,11 @@ variable to the path where `libthemis.pc` file is located.
 "
             );
             eprintln!("{}", error);
+
+            if let Some(library) = try_system_themis() {
+                return library;
+            }
+
             panic!("Themis Core not installed");
         }
     }
@@ -117,5 +122,39 @@ impl CCBuildEx for cc::Build {
             self.include(dir);
         }
         self
+    }
+}
+
+fn try_system_themis() -> Option<Library> {
+    let mut build = cc::Build::new();
+    build.file("src/dummy.c");
+    build.flag("-lthemis");
+
+    match build.try_compile("dummy") {
+        Ok(_) => {
+            eprintln!(
+                "\
+`libthemis-sys` tried using standard system paths and it seems that Themis
+is available on your system. (However, pkg-config failed to find it.)
+We will link against the system library.
+"
+            );
+            println!("cargo:rustc-link-lib=dylib=themis");
+
+            // Use only system paths for header and library lookup.
+            Some(Library {
+                include_paths: vec![],
+                link_paths: vec![],
+            })
+        }
+        Err(_) => {
+            eprintln!(
+                "\
+`libthemis-sys` also tried to use standard system paths, but without success.
+It seems that Themis is really not installed in your system.
+"
+            );
+            None
+        }
     }
 }
