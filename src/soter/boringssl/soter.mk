@@ -40,4 +40,4 @@ $(BIN_PATH)/boringssl/crypto/libcrypto.a $(BIN_PATH)/boringssl/decrepit/libdecre
 	@echo "building embedded BoringSSL..."
 	@mkdir -p $(BIN_PATH)/boringssl
 	@cd $(BIN_PATH)/boringssl && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-fpic" ../../third_party/boringssl/src
-	@$(MAKE) -C $(BIN_PATH)/boringssl
+	@$(MAKE) -C $(BIN_PATH)/boringssl crypto decrepit
