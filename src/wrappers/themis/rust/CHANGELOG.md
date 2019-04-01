@@ -3,6 +3,9 @@
 
 The version currently in development.
 
+Version 0.11.1 - 2019-04-01
+===========================
+
 ## Internal improvements
 
 - `libthemis-sys` is now able to use core Themis library installed in
