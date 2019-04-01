@@ -15,8 +15,6 @@
 use std::env;
 use std::path::{Path, PathBuf};
 
-use pkg_config::Library;
-
 fn main() {
     let themis = get_themis();
 
@@ -38,6 +36,11 @@ fn main() {
         .expect("writing bindings!");
 }
 
+struct Library {
+    include_paths: Vec<PathBuf>,
+    link_paths: Vec<PathBuf>,
+}
+
 /// Embarks on an incredible adventure and returns with a suitable Themis (or dies trying).
 fn get_themis() -> Library {
     #[cfg(feature = "vendored")]
@@ -50,15 +53,20 @@ fn get_themis() -> Library {
     pkg_config.statik(true);
 
     match pkg_config.probe("libthemis") {
-        Ok(library) => return library,
-        Err(error) => panic!(format!(
-            "
-
+        Ok(library) => {
+            return Library {
+                include_paths: library.include_paths,
+                link_paths: library.link_paths,
+            };
+        }
+        Err(error) => {
+            eprintln!(
+                "
 `libthemis-sys` could not find Themis installation in your system.
 
 Please make sure you have appropriate development package installed.
 On Linux it's called `libthemis-dev`, not just `libthemis`.
-On macOS Homebrew formula is called `themis` or `themis-openssl`.
+On macOS Homebrew formula is called `libthemis`.
 
 Please refer to the documentation for installation instructions:
 
@@ -68,11 +76,30 @@ This crate uses `pkg-config` to locate the library. If you use
 non-standard installation of Themis then you can help pkg-config
 to locate your library by setting the PKG_CONFIG_PATH environment
 variable to the path where `libthemis.pc` file is located.
+"
+            );
+            eprintln!("{}", error);
 
-{}
-",
-            error
-        )),
+            if let Some(library) = try_system_themis() {
+                eprintln!(
+                    "\
+`libthemis-sys` tried using standard system paths and it seems that Themis
+is available on your system. (However, pkg-config failed to find it.)
+We will link against the system library.
+"
+                );
+                return library;
+            } else {
+                eprintln!(
+                    "\
+`libthemis-sys` also tried to use standard system paths, but without success.
+It seems that Themis is really not installed in your system.
+"
+                );
+            }
+
+            panic!("Themis Core not installed");
+        }
     }
 }
 
@@ -109,5 +136,24 @@ impl CCBuildEx for cc::Build {
             self.include(dir);
         }
         self
+    }
+}
+
+fn try_system_themis() -> Option<Library> {
+    let mut build = cc::Build::new();
+    build.file("src/dummy.c");
+    build.flag("-lthemis");
+
+    match build.try_compile("dummy") {
+        Ok(_) => {
+            println!("cargo:rustc-link-lib=dylib=themis");
+
+            // Use only system paths for header and library lookup.
+            Some(Library {
+                include_paths: vec![],
+                link_paths: vec![],
+            })
+        }
+        Err(_) => None,
     }
 }

@@ -3,6 +3,16 @@
 
 The version currently in development.
 
+Version 0.11.1 - 2019-04-01
+===========================
+
+## Internal improvements
+
+- `libthemis-sys` is now able to use core Themis library installed in
+  standard system paths, without _pkg-config_ assistance. ([#444])
+
+[#444]: https://github.com/cossacklabs/themis/pull/444
+
 Version 0.11.0 — 2019-03-28
 ===========================
 
