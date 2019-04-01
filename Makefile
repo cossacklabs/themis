@@ -652,7 +652,7 @@ SHARED_BINARY_LIBRARY_MAP = $(foreach file,$(SHARED_LIBRARY_FILES),$(strip $(BIN
 PKGCONFIG_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.pc$$)
 PKGCONFIG_MAP = $(foreach file,$(PKGCONFIG_FILES),$(strip $(BIN_PATH)/$(file)=$(PREFIX)/lib/pkgconfig/$(file)))
 
-BINARY_LIBRARY_MAP = $(strip $(STATIC_BINARY_LIBRARY_MAP) $(SHARED_BINARY_LIBRARY_MAP) $(PKGCONFIG_MAP))
+BINARY_LIBRARY_MAP = $(strip $(STATIC_BINARY_LIBRARY_MAP) $(SHARED_BINARY_LIBRARY_MAP))
 
 POST_INSTALL_SCRIPT := $(BIN_PATH)/post_install.sh
 POST_UNINSTALL_SCRIPT := $(BIN_PATH)/post_uninstall.sh
@@ -673,7 +673,7 @@ symlink_realname_to_soname:
 strip:
 	@find . -name \*.$(SHARED_EXT)\.* -exec strip -o {} {} \;
 
-deb: soter_static themis_static soter_shared themis_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
+deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themis_pkgconfig collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/deb
 
 #libPACKAGE-dev
@@ -692,7 +692,7 @@ deb: soter_static themis_static soter_shared themis_shared collect_headers insta
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --category $(PACKAGE_CATEGORY) \
-		 $(HEADER_FILES_MAP)
+		 $(HEADER_FILES_MAP) $(PKGCONFIG_MAP)
 
 #libPACKAGE
 	@fpm --input-type dir \
@@ -716,7 +716,7 @@ deb: soter_static themis_static soter_shared themis_shared collect_headers insta
 	@find $(BIN_PATH) -name \*.deb
 
 
-rpm: themis_static themis_shared soter_static soter_shared collect_headers install_shell_scripts strip symlink_realname_to_soname
+rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared soter_pkgconfig collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/rpm
 #libPACKAGE-devel
 	@fpm --input-type dir \
@@ -733,7 +733,7 @@ rpm: themis_static themis_shared soter_static soter_shared collect_headers insta
          --package $(BIN_PATH)/rpm/$(PACKAGE_NAME)-devel-$(NAME_SUFFIX) \
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
-           $(HEADER_FILES_MAP)
+           $(HEADER_FILES_MAP) $(PKGCONFIG_MAP)
 
 #libPACKAGE
 	@fpm --input-type dir \
