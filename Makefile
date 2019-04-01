@@ -606,19 +606,21 @@ ifeq ($(LIBRARY_SO_VERSION),)
 	LIBRARY_SO_VERSION := $(DEFAULT_VERSION)
 endif
 
-DEBIAN_CODENAME := $(shell lsb_release -cs 2> /dev/null)
-DEBIAN_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
-DEBIAN_DEPENDENCIES := --depends openssl
+DEB_CODENAME := $(shell lsb_release -cs 2> /dev/null)
+DEB_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
+DEB_DEPENDENCIES := --depends openssl
+DEB_DEPENDENCIES_DEV := $(DEB_DEPENDENCIES) --depends libssl-dev
 
 RPM_DEPENDENCIES = --depends openssl
+RPM_DEPENDENCIES_DEV := $(RPM_DEPENDENCIES) --depends openssl-devel
 RPM_RELEASE_NUM = 1
 
 ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
 #0.9.4-153-g9915004+jessie_amd64.deb.
-	NAME_SUFFIX = $(VERSION)+$(DEBIAN_CODENAME)_$(DEBIAN_ARCHITECTURE).deb
+	NAME_SUFFIX = $(VERSION)+$(DEB_CODENAME)_$(DEB_ARCHITECTURE).deb
 	OS_CODENAME = $(shell lsb_release -cs)
 else ifeq ($(shell lsb_release -is 2> /dev/null),Ubuntu)
-	NAME_SUFFIX = $(VERSION)+$(DEBIAN_CODENAME)_$(DEBIAN_ARCHITECTURE).deb
+	NAME_SUFFIX = $(VERSION)+$(DEB_CODENAME)_$(DEB_ARCHITECTURE).deb
 	OS_CODENAME = $(shell lsb_release -cs)
 else
 # centos/rpm
@@ -685,9 +687,9 @@ deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themi
 		 --description '$(SHORT_DESCRIPTION)' \
 		 --maintainer $(MAINTAINER) \
 		 --package $(BIN_PATH)/deb/$(PACKAGE_NAME)-dev_$(NAME_SUFFIX) \
-		 --architecture $(DEBIAN_ARCHITECTURE) \
+		 --architecture $(DEB_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
-		 $(DEBIAN_DEPENDENCIES) --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)" \
+		 $(DEB_DEPENDENCIES_DEV) --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)" \
 		 --deb-priority optional \
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
@@ -703,9 +705,9 @@ deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themi
 		 --description '$(SHORT_DESCRIPTION)' \
 		 --maintainer $(MAINTAINER) \
 		 --package $(BIN_PATH)/deb/$(PACKAGE_NAME)_$(NAME_SUFFIX) \
-		 --architecture $(DEBIAN_ARCHITECTURE) \
+		 --architecture $(DEB_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
-		 $(DEBIAN_DEPENDENCIES) \
+		 $(DEB_DEPENDENCIES) \
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --deb-priority optional \
@@ -726,7 +728,7 @@ rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared sote
          --url '$(COSSACKLABS_URL)' \
          --description '$(SHORT_DESCRIPTION)' \
          --rpm-summary '$(RPM_SUMMARY)' \
-         $(RPM_DEPENDENCIES) --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)" \
+         $(RPM_DEPENDENCIES_DEV) --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)" \
          --maintainer $(MAINTAINER) \
          --after-install $(POST_INSTALL_SCRIPT) \
          --after-remove $(POST_UNINSTALL_SCRIPT) \
@@ -789,7 +791,7 @@ deb_php:
 		 --url '$(COSSACKLABS_URL)' \
 		 --description '$(SHORT_DESCRIPTION)' \
 		 --package $(BIN_PATH)/deb/$(PHP_PACKAGE_NAME)_$(NAME_SUFFIX) \
-		 --architecture $(DEBIAN_ARCHITECTURE) \
+		 --architecture $(DEB_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
 		 --depends "$(PHP_DEPENDENCIES)" \
 		 --deb-priority optional \
