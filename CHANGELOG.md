@@ -1,5 +1,21 @@
 # Themis ChangeLog
 
+## [0.11.1](https://github.com/cossacklabs/themis/releases/tag/0.11.1), April 1st 2019
+
+**TL;DR:** Rust-Themis can now be installed entirely from packages (repositories and crates.io), without building anything from source.
+
+_Code:_
+
+- **Rust**
+
+  - Improvements in lookup of core Themis library ([#444](https://github.com/cossacklabs/themis/pull/444))
+
+  - Minor changes in dependencies ([#443](https://github.com/cossacklabs/themis/pull/443))
+
+_Infrastructure:_
+
+- Minor fixes in packaging process ([#442](https://github.com/cossacklabs/themis/pull/442))
+
 
 ## [0.11.0](https://github.com/cossacklabs/themis/releases/tag/0.11.0), March 28th 2019
 
