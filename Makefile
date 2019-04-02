@@ -72,20 +72,11 @@ define themisecho
       @tput sgr0
 endef
 
-ifeq ($(ENGINE),)
-	ENGINE=libressl
-endif
+# default installation prefix
+PREFIX ?= /usr/local
 
-#default engine
-ifeq ($(PREFIX),)
-PREFIX = /usr
-
-# MacOS
-ifdef IS_MACOS
-	PREFIX = /usr/local
-endif
-
-endif
+# default cryptographic engine
+ENGINE ?= libressl
 
 #engine selection block
 ifneq ($(ENGINE),)
@@ -675,6 +666,8 @@ symlink_realname_to_soname:
 strip:
 	@find . -name \*.$(SHARED_EXT)\.* -exec strip -o {} {} \;
 
+deb: PREFIX = /usr
+
 deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themis_pkgconfig collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/deb
 
@@ -717,6 +710,7 @@ deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themi
 # it's just for printing .deb files
 	@find $(BIN_PATH) -name \*.deb
 
+rpm: PREFIX = /usr
 
 rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared soter_pkgconfig collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/rpm
