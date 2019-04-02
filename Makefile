@@ -215,9 +215,7 @@ endif
 
 ifdef COVERAGE
 	CFLAGS += -g -O0 --coverage
-	COVERLDFLAGS = --coverage
-else
-	COVERLDFLAGS =
+	LDFLAGS += --coverage
 endif
 
 ifdef DEBUG
@@ -314,7 +312,7 @@ soter_static: $(SOTER_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-soter_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT) $(SOTER_OBJ) $(LDFLAGS) $(COVERLDFLAGS)
+soter_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT) $(SOTER_OBJ) $(LDFLAGS)
 
 soter_shared: $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
 	@echo -n "link "
@@ -330,7 +328,7 @@ themis_static: soter_static $(THEMIS_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-themis_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT) $(THEMIS_OBJ) -L$(BIN_PATH) -l$(SOTER_BIN) $(COVERLDFLAGS)
+themis_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT) $(THEMIS_OBJ) -L$(BIN_PATH) -l$(SOTER_BIN) $(LDFLAGS)
 
 themis_shared: soter_shared $(THEMIS_OBJ)
 	@echo -n "link "
