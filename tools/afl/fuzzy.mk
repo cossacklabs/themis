@@ -21,7 +21,7 @@ FUZZ_PATH = tools/afl
 FUZZ_BIN_PATH = $(BIN_PATH)/afl
 FUZZ_SRC_PATH = $(FUZZ_PATH)/src
 FUZZ_THEMIS_PATH = $(BIN_PATH)/afl-themis
-FUZZ_THEMIS_LIB = $(FUZZ_THEMIS_PATH)/lib$(THEMIS_BIN).a
+FUZZ_THEMIS_LIB = $(FUZZ_THEMIS_PATH)/$(LIBTHEMIS_A)
 
 FUZZ_SOURCES = $(wildcard $(FUZZ_SRC_PATH)/*.c)
 FUZZ_HEADERS = $(wildcard $(FUZZ_SRC_PATH)/*.h)
@@ -31,7 +31,7 @@ FUZZ_OBJS  = $(patsubst $(FUZZ_SRC_PATH)/%.c,$(FUZZ_BIN_PATH)/%.o,$(FUZZ_SOURCES
 FUZZ_UTILS = $(filter-out $(addsuffix .o,$(FUZZ_TOOLS)),$(FUZZ_OBJS))
 
 AFL_CFLAGS  += -I$(FUZZ_SRC_PATH)
-AFL_LDFLAGS += -L$(FUZZ_THEMIS_PATH) -l$(THEMIS_BIN) -l$(SOTER_BIN)
+AFL_LDFLAGS += -L$(FUZZ_THEMIS_PATH) -lthemis -lsoter
 
 # We would like to use all other compilation flags as well, but some of them
 # (like warnings) might be supported by CC but not AFL_CC. Filter them out.
@@ -76,7 +76,7 @@ $(FUZZ_BIN_PATH)/%: $(FUZZ_BIN_PATH)/%.o $(FUZZ_UTILS) $(FUZZ_THEMIS_LIB)
 	@$(PRINT_OK)
 
 $(FUZZ_THEMIS_LIB):
-	@AFL_QUIET=1 make themis_static CC=$(AFL_CC) BUILD_PATH=$(FUZZ_THEMIS_PATH)
+	@AFL_QUIET=1 make themis_static soter_static CC=$(AFL_CC) BUILD_PATH=$(FUZZ_THEMIS_PATH)
 
 FMT_FIXUP += $(patsubst $(FUZZ_SRC_PATH)/%,$(FUZZ_BIN_PATH)/%.fmt_fixup,$(FUZZ_SOURCES) $(FUZZ_HEADERS))
 FMT_CHECK += $(patsubst $(FUZZ_SRC_PATH)/%,$(FUZZ_BIN_PATH)/%.fmt_check,$(FUZZ_SOURCES) $(FUZZ_HEADERS))

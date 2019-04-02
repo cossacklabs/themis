@@ -14,11 +14,11 @@
 # limitations under the License.
 #
 
+LIBTHEMISJNI_SO = libthemis_jni.$(SHARED_EXT)
+
 THEMIS_JNI_SRC = $(wildcard jni/*.c)
 
 THEMIS_JNI_OBJ = $(patsubst jni/%.c,$(OBJ_PATH)/jni/%.o, $(THEMIS_JNI_SRC))
-
-THEMIS_JNI_BIN = themis_jni
 
 FMT_FIXUP += $(patsubst jni/%,$(OBJ_PATH)/jni/%.fmt_fixup,$(THEMIS_JNI_SRC))
 FMT_CHECK += $(patsubst jni/%,$(OBJ_PATH)/jni/%.fmt_check,$(THEMIS_JNI_SRC))
@@ -31,6 +31,17 @@ ifeq ($(JDK_INCLUDE_PATH),)
 	endif
 else
 	jvm_includes=$(JAVA_HOME)/include
+endif
+
+$(BIN_PATH)/$(LIBTHEMISJNI_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS)
+
+$(BIN_PATH)/$(LIBTHEMISJNI_SO): $(THEMIS_JNI_OBJ) $(BIN_PATH)/$(LIBTHEMIS_A) $(BIN_PATH)/$(LIBSOTER_A) $(SOTER_ENGINE_DEPS)
+	@mkdir -p $(@D)
+	@echo -n "link "
+	@$(BUILD_CMD)
+ifdef IS_MACOS
+	@install_name_tool -id "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
+	@install_name_tool -change "$(BIN_PATH)/$(notdir $@)" "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
 endif
 
 $(OBJ_PATH)/jni/%.o: jni/%.c
