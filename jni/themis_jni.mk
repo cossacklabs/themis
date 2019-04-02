@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+LIBTHEMISJNI_SO = libthemis_jni.$(SHARED_EXT)
+
 THEMIS_JNI_SRC = $(wildcard jni/*.c)
 
 THEMIS_JNI_OBJ = $(patsubst jni/%.c,$(OBJ_PATH)/jni/%.o, $(THEMIS_JNI_SRC))
@@ -32,6 +34,11 @@ ifeq ($(JDK_INCLUDE_PATH),)
 else
 	jvm_includes=$(JAVA_HOME)/include
 endif
+
+# Embed Themis, Soter, and cryptographic backed into shared JNI library
+$(BIN_PATH)/$(LIBTHEMISJNI_SO): $(THEMIS_JNI_OBJ)
+$(BIN_PATH)/$(LIBTHEMISJNI_SO): $(BIN_PATH)/$(LIBTHEMIS_A)
+$(BIN_PATH)/$(LIBTHEMISJNI_SO): $(BIN_PATH)/$(LIBSOTER_A) $(SOTER_ENGINE_DEPS)
 
 $(OBJ_PATH)/jni/%.o: jni/%.c
 	@mkdir -p $(@D)

@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+LIBTHEMIS_A  = libthemis.a
+LIBTHEMIS_SO = libthemis.$(SHARED_EXT)
+
 THEMIS_SOURCES = $(wildcard $(SRC_PATH)/themis/*.c)
 THEMIS_HEADERS = $(wildcard $(SRC_PATH)/themis/*.h)
 
@@ -28,7 +31,12 @@ THEMIS_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(THEMIS_AUD_SRC))
 THEMIS_FMT_FIXUP = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_fixup,$(THEMIS_FMT_SRC))
 THEMIS_FMT_CHECK = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_check,$(THEMIS_FMT_SRC))
 
-THEMIS_BIN = themis
+$(BIN_PATH)/$(LIBTHEMIS_A):  $(THEMIS_OBJ)
+$(BIN_PATH)/$(LIBTHEMIS_SO): $(THEMIS_OBJ)
+
+# Link shared Themis library against shared Soter library
+$(BIN_PATH)/$(LIBTHEMIS_SO): $(BIN_PATH)/$(LIBSOTER_SO)
+$(BIN_PATH)/$(LIBTHEMIS_SO): private LDFLAGS += -L$(BIN_PATH) -lsoter
 
 themis_pkgconfig:
 	@mkdir -p $(BIN_PATH)
