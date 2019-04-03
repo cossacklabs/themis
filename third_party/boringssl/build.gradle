@@ -24,6 +24,7 @@ android {
 		                  "-DANDROID_NATIVE_API_LEVEL=21",
 		                  "-DCMAKE_BUILD_TYPE=Release",
 		                  "-GNinja"
+		        targets "crypto", "decrepit"
 		    }
 	    }
     }
