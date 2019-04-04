@@ -21,8 +21,8 @@ THEMISPP_TEST_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(THEMISPP_TEST_SOURCES))
 
 THEMISPP_TEST_FMT = $(THEMISPP_TEST_SOURCES) $(THEMISPP_TEST_HEADERS)
 
-FMT_FIXUP += $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_fixup,$(THEMISPP_TEST_FMT))
-FMT_CHECK += $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_check,$(THEMISPP_TEST_FMT))
+FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(THEMISPP_TEST_FMT))
+FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(THEMISPP_TEST_FMT))
 
 $(TEST_BIN_PATH)/themispp_test: CMD = $(CXX) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
 

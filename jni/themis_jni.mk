@@ -20,8 +20,8 @@ THEMIS_JNI_SRC = $(wildcard jni/*.c)
 
 THEMIS_JNI_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(THEMIS_JNI_SRC))
 
-FMT_FIXUP += $(patsubst jni/%,$(OBJ_PATH)/jni/%.fmt_fixup,$(THEMIS_JNI_SRC))
-FMT_CHECK += $(patsubst jni/%,$(OBJ_PATH)/jni/%.fmt_check,$(THEMIS_JNI_SRC))
+FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(THEMIS_JNI_SRC))
+FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(THEMIS_JNI_SRC))
 
 JAVA_DEFAULTS=/usr/share/java/java_defaults.mk
 
@@ -45,19 +45,3 @@ ifdef IS_MACOS
 	@install_name_tool -id "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
 	@install_name_tool -change "$(BIN_PATH)/$(notdir $@)" "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
 endif
-
-$(OBJ_PATH)/jni/%.c.fmt_fixup: \
-    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) $(jvm_includes) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
-
-$(OBJ_PATH)/jni/%.c.fmt_check: \
-    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) $(jvm_includes) 2>/dev/null && touch $@
-
-$(OBJ_PATH)/jni/%.fmt_fixup: jni/%
-	@mkdir -p $(@D)
-	@echo -n "fixup $< "
-	@$(BUILD_CMD_)
-
-$(OBJ_PATH)/jni/%.fmt_check: jni/%
-	@mkdir -p $(@D)
-	@echo -n "check $< "
-	@$(BUILD_CMD_)

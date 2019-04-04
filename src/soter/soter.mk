@@ -37,8 +37,8 @@ SOTER_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(SOTER_SRC))
 
 SOTER_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(SOTER_AUD_SRC))
 
-SOTER_FMT_FIXUP = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_fixup,$(SOTER_FMT_SRC))
-SOTER_FMT_CHECK = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_check,$(SOTER_FMT_SRC))
+FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(SOTER_FMT_SRC))
+FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(SOTER_FMT_SRC))
 
 SOTER_STATIC = $(BIN_PATH)/$(LIBSOTER_A) $(SOTER_ENGINE_DEPS)
 

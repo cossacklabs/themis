@@ -28,8 +28,8 @@ THEMIS_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(THEMIS_SRC))
 
 THEMIS_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(THEMIS_AUD_SRC))
 
-THEMIS_FMT_FIXUP = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_fixup,$(THEMIS_FMT_SRC))
-THEMIS_FMT_CHECK = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_check,$(THEMIS_FMT_SRC))
+FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(THEMIS_FMT_SRC))
+FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(THEMIS_FMT_SRC))
 
 THEMIS_STATIC = $(BIN_PATH)/$(LIBTHEMIS_A) $(SOTER_STATIC)
 

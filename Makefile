@@ -329,35 +329,26 @@ $(OBJ_PATH)/%.cpp.o: %.cpp
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
-FMT_FIXUP += $(THEMIS_FMT_FIXUP) $(SOTER_FMT_FIXUP)
-FMT_CHECK += $(THEMIS_FMT_CHECK) $(SOTER_FMT_CHECK)
-
-$(OBJ_PATH)/%.c.fmt_fixup $(OBJ_PATH)/%.h.fmt_fixup: \
+$(OBJ_PATH)/%.c.fmt_fixup $(OBJ_PATH)/%.h.fmt_fixup $(OBJ_PATH)/%.cpp.fmt_fixup $(OBJ_PATH)/%.hpp.fmt_fixup: \
     CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
 
-$(OBJ_PATH)/%.c.fmt_check $(OBJ_PATH)/%.h.fmt_check: \
+$(OBJ_PATH)/%.c.fmt_check $(OBJ_PATH)/%.h.fmt_check $(OBJ_PATH)/%.cpp.fmt_check $(OBJ_PATH)/%.hpp.fmt_check: \
     CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) 2>/dev/null && touch $@
 
-$(OBJ_PATH)/%.fmt_fixup: $(SRC_PATH)/%
+$(OBJ_PATH)/%.fmt_fixup: %
 	@mkdir -p $(@D)
 	@echo -n "fixup $< "
 	@$(BUILD_CMD_)
 
-$(OBJ_PATH)/%.fmt_check: $(SRC_PATH)/%
+$(OBJ_PATH)/%.fmt_check: %
 	@mkdir -p $(@D)
 	@echo -n "check $< "
 	@$(BUILD_CMD_)
 
 THEMISPP_HEADERS = $(wildcard $(SRC_PATH)/wrappers/themis/themispp/*.hpp)
 
-FMT_FIXUP += $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_fixup,$(THEMISPP_HEADERS))
-FMT_CHECK += $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_check,$(THEMISPP_HEADERS))
-
-$(OBJ_PATH)/%.hpp.fmt_fixup: \
-    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
-
-$(OBJ_PATH)/%.hpp.fmt_check: \
-    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) 2>/dev/null && touch $@
+FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(THEMISPP_HEADERS))
+FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(THEMISPP_HEADERS))
 
 #$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
 $(AUD_PATH)/%: CMD = ./scripts/pp.sh  $< $@
