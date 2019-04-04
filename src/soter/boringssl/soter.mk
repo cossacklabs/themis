@@ -33,9 +33,6 @@ else
 endif
 CRYPTO_ENGINE_LDFLAGS += -lcrypto -ldecrepit -lpthread
 
-CFLAGS += $(CRYPTO_ENGINE_CFLAGS)
-LDFLAGS += $(CRYPTO_ENGINE_LDFLAGS)
-
 $(BIN_PATH)/boringssl/crypto/libcrypto.a $(BIN_PATH)/boringssl/decrepit/libdecrepit.a:
 	@echo "building embedded BoringSSL..."
 	@mkdir -p $(BIN_PATH)/boringssl
