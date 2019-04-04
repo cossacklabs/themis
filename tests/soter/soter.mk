@@ -26,7 +26,7 @@ SOTER_TEST_FMT_CHECK = $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_chec
 
 $(TEST_BIN_PATH)/soter_test: CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS)
 
-$(TEST_BIN_PATH)/soter_test: nist_rng_test_suite $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) $(BIN_PATH)/$(LIBSOTER_A) $(SOTER_ENGINE_DEPS)
+$(TEST_BIN_PATH)/soter_test: nist_rng_test_suite $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) $(SOTER_STATIC)
 	@echo -n "link "
 	@$(BUILD_CMD)
 

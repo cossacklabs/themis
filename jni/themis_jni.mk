@@ -35,7 +35,7 @@ endif
 
 $(BIN_PATH)/$(LIBTHEMISJNI_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS)
 
-$(BIN_PATH)/$(LIBTHEMISJNI_SO): $(THEMIS_JNI_OBJ) $(BIN_PATH)/$(LIBTHEMIS_A) $(BIN_PATH)/$(LIBSOTER_A) $(SOTER_ENGINE_DEPS)
+$(BIN_PATH)/$(LIBTHEMISJNI_SO): $(THEMIS_JNI_OBJ) $(THEMIS_STATIC)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)

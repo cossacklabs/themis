@@ -26,6 +26,6 @@ THEMIS_TEST_FMT_CHECK = $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_che
 
 $(TEST_BIN_PATH)/themis_test: CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS)
 
-$(TEST_BIN_PATH)/themis_test: $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ) $(BIN_PATH)/$(LIBTHEMIS_A) $(BIN_PATH)/$(LIBSOTER_A) $(SOTER_ENGINE_DEPS)
+$(TEST_BIN_PATH)/themis_test: $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ) $(THEMIS_STATIC)
 	@echo -n "link "
 	@$(BUILD_CMD)
