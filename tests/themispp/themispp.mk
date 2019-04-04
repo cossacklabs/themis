@@ -17,14 +17,14 @@
 THEMISPP_TEST_SOURCES = $(wildcard $(TEST_SRC_PATH)/themispp/*.cpp)
 THEMISPP_TEST_HEADERS = $(wildcard $(TEST_SRC_PATH)/themispp/*.hpp)
 
-THEMISPP_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.cpp,$(TEST_OBJ_PATH)/%.opp,$(THEMISPP_TEST_SOURCES))
+THEMISPP_TEST_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(THEMISPP_TEST_SOURCES))
 
 THEMISPP_TEST_FMT = $(THEMISPP_TEST_SOURCES) $(THEMISPP_TEST_HEADERS)
 
 FMT_FIXUP += $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_fixup,$(THEMISPP_TEST_FMT))
 FMT_CHECK += $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_check,$(THEMISPP_TEST_FMT))
 
-$(TEST_BIN_PATH)/themispp_test: CMD = $(CXX) -o $@ $(filter %.o %.opp %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
+$(TEST_BIN_PATH)/themispp_test: CMD = $(CXX) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
 
 $(TEST_BIN_PATH)/themispp_test: $(THEMISPP_TEST_OBJ) $(COMMON_TEST_OBJ) $(THEMIS_STATIC)
 	@echo -n "link "

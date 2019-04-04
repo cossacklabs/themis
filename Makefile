@@ -28,7 +28,6 @@ OBJ_PATH = $(BIN_PATH)/obj
 AUD_PATH = $(BIN_PATH)/for_audit
 TEST_SRC_PATH = tests
 TEST_BIN_PATH = $(BIN_PATH)/tests
-TEST_OBJ_PATH = $(TEST_BIN_PATH)/obj
 
 CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC $(CRYPTO_ENGINE_CFLAGS)
 LDFLAGS += -L/usr/local/lib
@@ -316,9 +315,16 @@ themis_jni:    $(BIN_PATH)/$(LIBTHEMISJNI_SO)
 # Common build rules
 #
 
-$(OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -c $< -o $@
+$(OBJ_PATH)/%.c.o: CMD = $(CC) -c -o $@ $< $(CFLAGS)
 
-$(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
+$(OBJ_PATH)/%.c.o: %.c
+	@mkdir -p $(@D)
+	@echo -n "compile "
+	@$(BUILD_CMD)
+
+$(OBJ_PATH)/%.cpp.o: CMD = $(CXX) -c -o $@ $< $(CFLAGS)
+
+$(OBJ_PATH)/%.cpp.o: %.cpp
 	@mkdir -p $(@D)
 	@echo -n "compile "
 	@$(BUILD_CMD)

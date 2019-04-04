@@ -17,8 +17,7 @@
 SOTER_TEST_SOURCES = $(wildcard tests/soter/*.c)
 SOTER_TEST_HEADERS = $(wildcard tests/soter/*.h)
 
-SOTER_TEST_SRC = $(wildcard tests/soter/*.c)
-SOTER_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.c,$(TEST_OBJ_PATH)/%.o, $(SOTER_TEST_SRC))
+SOTER_TEST_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(SOTER_TEST_SOURCES))
 
 SOTER_TEST_FMT_SRC = $(SOTER_TEST_SOURCES) $(SOTER_TEST_HEADERS)
 SOTER_TEST_FMT_FIXUP = $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_fixup, $(SOTER_TEST_FMT_SRC))
@@ -27,6 +26,7 @@ SOTER_TEST_FMT_CHECK = $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_chec
 $(TEST_BIN_PATH)/soter_test: CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
 
 $(TEST_BIN_PATH)/soter_test: nist_rng_test_suite $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) $(SOTER_STATIC)
+	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
 

@@ -15,7 +15,7 @@
 #
 
 COMMON_TEST_SRC = $(wildcard tests/common/*.c)
-COMMON_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.c,$(TEST_OBJ_PATH)/%.o, $(COMMON_TEST_SRC))
+COMMON_TEST_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(COMMON_TEST_SRC))
 
 NIST_STS_DIR = tests/soter/nist-sts
 
@@ -30,19 +30,7 @@ soter_test:    $(TEST_BIN_PATH)/soter_test
 themis_test:   $(TEST_BIN_PATH)/themis_test
 themispp_test: $(TEST_BIN_PATH)/themispp_test
 
-$(TEST_OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR)) -I$(TEST_SRC_PATH) -c $< -o $@
-
-$(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
-	@mkdir -p $(@D)
-	@echo -n "compile "
-	@$(BUILD_CMD)
-
-$(TEST_OBJ_PATH)/%.opp: CMD = $(CXX) $(CFLAGS) -I$(TEST_SRC_PATH) -c $< -o $@
-
-$(TEST_OBJ_PATH)/%.opp: $(TEST_SRC_PATH)/%.cpp
-	@mkdir -p $(@D)
-	@echo -n "compile "
-	@$(BUILD_CMD)
+$(OBJ_PATH)/tests/%: CFLAGS += -I$(TEST_SRC_PATH) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR))
 
 FMT_FIXUP += $(THEMIS_TEST_FMT_FIXUP) $(SOTER_TEST_FMT_FIXUP)
 FMT_CHECK += $(THEMIS_TEST_FMT_CHECK) $(SOTER_TEST_FMT_CHECK)
