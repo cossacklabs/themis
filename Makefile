@@ -66,6 +66,31 @@ else ifeq ($(UNAME),Linux)
 	IS_LINUX := true
 endif
 
+ifdef IS_MACOS
+    ifeq ($(MAKE_VERSION),3.81)
+        $(warning ! You seem to be running the default GNU make 3.81 on macOS.)
+        $(warning ! Unfortunately, this version is not fully supported by Themis)
+        $(warning ! and some build targets may work incorrectly with it.)
+        $(warning ! Please use GNU make 3.82 or later.)
+        $(warning ! )
+        $(warning ! On macOS you can use Homebrew (https://brew.sh) to install)
+        $(warning ! a newer version of GNU make:)
+        $(warning ! )
+        $(warning !     brew install make)
+        $(warning ! )
+        $(warning ! Then use "gmake" to run it, for example:)
+        $(warning ! )
+        $(warning !     gmake all)
+        $(warning ! )
+        $(warning ! Note that "make" will still refer to the system default make.)
+# Make sure to break the build if the user ignores the warning and tries using
+# some target that needs the "private" modifier added in GNU make 3.82
+.PHONY: private
+private:
+	$(error GNU make 3.81 is not supported. Please upgrade)
+    endif
+endif
+
 define themisecho
       @tput setaf 6
       @echo $1
