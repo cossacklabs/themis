@@ -23,3 +23,9 @@ THEMIS_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.c,$(TEST_OBJ_PATH)/%.o, $(THEMIS
 THEMIS_TEST_FMT_SRC = $(THEMIS_TEST_SOURCES) $(THEMIS_TEST_HEADERS)
 THEMIS_TEST_FMT_FIXUP = $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_fixup, $(THEMIS_TEST_FMT_SRC))
 THEMIS_TEST_FMT_CHECK = $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_check, $(THEMIS_TEST_FMT_SRC))
+
+$(TEST_BIN_PATH)/themis_test: CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS)
+
+$(TEST_BIN_PATH)/themis_test: $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ) $(BIN_PATH)/$(LIBTHEMIS_A) $(BIN_PATH)/$(LIBSOTER_A) $(SOTER_ENGINE_DEPS)
+	@echo -n "link "
+	@$(BUILD_CMD)
