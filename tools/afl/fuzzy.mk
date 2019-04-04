@@ -36,7 +36,7 @@ AFL_LDFLAGS += -L$(FUZZ_THEMIS_PATH) -lthemis -lsoter
 # We would like to use all other compilation flags as well, but some of them
 # (like warnings) might be supported by CC but not AFL_CC. Filter them out.
 AFL_CFLAGS  := $(AFL_CFLAGS)  $(foreach flag,$(CFLAGS),$(if $(call supported,$(flag),$(AFL_CC)),$(flag),))
-AFL_LDFLAGS := $(AFL_LDFLAGS) $(LDFLAGS)
+AFL_LDFLAGS := $(AFL_LDFLAGS) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
 
 # We don't really track dependencies of $(FUZZ_THEMIS_LIB) here,
 # so ask our make to rebuild it every time. The recursively called

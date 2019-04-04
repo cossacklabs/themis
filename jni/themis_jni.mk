@@ -33,7 +33,7 @@ else
 	jvm_includes=$(JAVA_HOME)/include
 endif
 
-$(BIN_PATH)/$(LIBTHEMISJNI_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS)
+$(BIN_PATH)/$(LIBTHEMISJNI_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
 
 $(BIN_PATH)/$(LIBTHEMISJNI_SO): $(THEMIS_JNI_OBJ) $(THEMIS_STATIC)
 	@mkdir -p $(@D)

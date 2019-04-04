@@ -30,7 +30,7 @@ TEST_SRC_PATH = tests
 TEST_BIN_PATH = $(BIN_PATH)/tests
 TEST_OBJ_PATH = $(TEST_BIN_PATH)/obj
 
-CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC
+CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC $(CRYPTO_ENGINE_CFLAGS)
 LDFLAGS += -L/usr/local/lib
 
 unexport CFLAGS LDFLAGS

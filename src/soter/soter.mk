@@ -49,7 +49,7 @@ $(BIN_PATH)/$(LIBSOTER_A): $(SOTER_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-$(BIN_PATH)/$(LIBSOTER_SO): CMD = $(CC) -shared -o $@ $(filter %.o %a, $^) $(LDFLAGS)
+$(BIN_PATH)/$(LIBSOTER_SO): CMD = $(CC) -shared -o $@ $(filter %.o %a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
 
 $(BIN_PATH)/$(LIBSOTER_SO): $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
 	@mkdir -p $(@D)
