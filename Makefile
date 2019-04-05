@@ -157,25 +157,12 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
 
-DEFAULT_VERSION := 0.11.0
-GIT_VERSION := $(shell if [ -d ".git" ]; then git version; fi 2>/dev/null)
-# check that repo has any tag
-GIT_TAG_STATUS := $(shell git describe --tags HEAD 2>/dev/null)
-GIT_TAG_STATUS := $(.SHELLSTATUS)
-
-ifdef GIT_VERSION
-# if has tag then use it
-        ifeq ($(GIT_TAG_STATUS),0)
-# <tag>-<commit_count_after_tag>-<last_commit-hash>
-                VERSION = $(shell git describe --tags HEAD | cut -b 1-)
-        else
-# <base_version>-<total_commit_count>-<last_commit_hash>
-                VERSION = $(DEFAULT_VERSION)-$(shell git rev-list --all --count)-$(shell git describe --always HEAD)
-        endif
-else
-# if it's not git repo then use date as version
-        VERSION = $(shell date -I | sed s/-/_/g)
-endif
+# Increment VERSION when making a new release of Themis.
+#
+# If you make breaking (backwards-incompatible) changes to API or ABI
+# then increment LIBRARY_SO_VERSION as well, and update package names.
+VERSION = 0.11.1
+LIBRARY_SO_VERSION = 0
 
 PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
@@ -533,14 +520,7 @@ unpack_dist:
 
 COSSACKLABS_URL = https://www.cossacklabs.com
 MAINTAINER = "Cossack Labs Limited <dev@cossacklabs.com>"
-# tag version from VCS
-VERSION := $(shell git describe --tags HEAD | cut -b 1-)
 LICENSE_NAME = "Apache License Version 2.0"
-
-LIBRARY_SO_VERSION := $(shell echo $(VERSION) | sed 's/^\([0-9.]*\)\(.*\)*$$/\1/')
-ifeq ($(LIBRARY_SO_VERSION),)
-	LIBRARY_SO_VERSION := $(DEFAULT_VERSION)
-endif
 
 DEB_CODENAME := $(shell lsb_release -cs 2> /dev/null)
 DEB_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
