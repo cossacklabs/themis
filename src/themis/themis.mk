@@ -51,8 +51,27 @@ ifdef IS_MACOS
 	@install_name_tool -change "$(BIN_PATH)/$(notdir $@)" "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
 endif
 
-themis_pkgconfig:
+$(BIN_PATH)/libthemis.pc:
 	@mkdir -p $(BIN_PATH)
 	@sed -e "s!%prefix%!$(PREFIX)!" \
 	     -e "s!%version%!$(VERSION)!" \
 	    $(SRC_PATH)/themis/libthemis.pc.in > $(BIN_PATH)/libthemis.pc
+
+install_themis: err $(BIN_PATH)/$(LIBTHEMIS_A) $(BIN_PATH)/$(LIBTHEMIS_SO) $(BIN_PATH)/libthemis.pc
+	@echo -n "install Themis "
+	@mkdir -p $(DESTDIR)/$(includedir)/themis
+	@mkdir -p $(DESTDIR)/$(pkgconfigdir)
+	@mkdir -p $(DESTDIR)/$(libdir)
+	@$(INSTALL_DATA) $(SRC_PATH)/themis/*.h             $(DESTDIR)/$(includedir)/themis
+	@$(INSTALL_DATA) $(BIN_PATH)/libthemis.pc           $(DESTDIR)/$(pkgconfigdir)
+	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBTHEMIS_A)         $(DESTDIR)/$(libdir)
+	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBTHEMIS_SO)     $(DESTDIR)/$(libdir)
+	@$(PRINT_OK_)
+
+uninstall_themis:
+	@echo -n "uninstall Themis "
+	@rm -rf $(DESTDIR)/$(includedir)/themis
+	@rm  -f $(DESTDIR)/$(pkgconfigdir)/libthemis.pc
+	@rm  -f $(DESTDIR)/$(libdir)/$(LIBTHEMIS_A)
+	@rm  -f $(DESTDIR)/$(libdir)/$(LIBTHEMIS_SO)
+	@$(PRINT_OK_)
