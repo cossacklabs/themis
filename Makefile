@@ -294,6 +294,7 @@ include src/soter/soter.mk
 include src/themis/themis.mk
 ifndef CARGO
 include src/wrappers/themis/jsthemis/jsthemis.mk
+include src/wrappers/themis/themispp/themispp.mk
 include jni/themis_jni.mk
 endif
 endif
@@ -349,11 +350,6 @@ $(OBJ_PATH)/%.fmt_check: %
 	@mkdir -p $(@D)
 	@echo -n "check $< "
 	@$(BUILD_CMD_)
-
-THEMISPP_HEADERS = $(wildcard $(SRC_PATH)/wrappers/themis/themispp/*.hpp)
-
-FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(THEMISPP_HEADERS))
-FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(THEMISPP_HEADERS))
 
 #$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
 $(AUD_PATH)/%: CMD = ./scripts/pp.sh  $< $@
@@ -519,19 +515,6 @@ ifeq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
 	@exit 1
 endif
 	@echo -n "pythemis install "
-	@$(BUILD_CMD_)
-
-
-themispp_install: CMD = install $(SRC_PATH)/wrappers/themis/themispp/*.hpp $(PREFIX)/include/themispp
-
-themispp_install:
-	@mkdir -p $(PREFIX)/include/themispp
-	@$(BUILD_CMD)
-
-themispp_uninstall: CMD = rm -rf $(PREFIX)/include/themispp
-
-themispp_uninstall:
-	@echo -n "themispp uninstall "
 	@$(BUILD_CMD_)
 
 soter_collect_headers:
