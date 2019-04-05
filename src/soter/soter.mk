@@ -14,8 +14,18 @@
 # limitations under the License.
 #
 
-LIBSOTER_A  = libsoter.a
+LIBSOTER_A = libsoter.a
 LIBSOTER_SO = libsoter.$(SHARED_EXT)
+LIBSOTER_LINK = libsoter.$(SHARED_EXT)
+
+ifdef IS_LINUX
+LIBSOTER_SO = libsoter.$(SHARED_EXT).$(LIBRARY_SO_VERSION)
+LIBSOTER_SO_LDFLAGS = -Wl,-soname,$(LIBSOTER_SO)
+endif
+ifdef IS_MACOS
+LIBSOTER_SO = libsoter.$(LIBRARY_SO_VERSION).$(SHARED_EXT)
+LIBSOTER_SO_LDFLAGS = -dylinker_install_name "$(LIBDIR)/$(LIBSOTER_SO)"
+endif
 
 SOTER_SOURCES = $(wildcard $(SRC_PATH)/soter/*.c)
 SOTER_HEADERS = $(wildcard $(SRC_PATH)/soter/*.h)
@@ -49,15 +59,14 @@ $(BIN_PATH)/$(LIBSOTER_A): $(SOTER_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-$(BIN_PATH)/$(LIBSOTER_SO): CMD = $(CC) -shared -o $@ $(filter %.o %a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
+$(BIN_PATH)/$(LIBSOTER_SO): CMD = $(CC) -shared -o $@ $(filter %.o %a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS) $(LIBSOTER_SO_LDFLAGS)
 
 $(BIN_PATH)/$(LIBSOTER_SO): $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
-ifdef IS_MACOS
-	@install_name_tool -id "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
-	@install_name_tool -change "$(BIN_PATH)/$(notdir $@)" "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
+ifneq ($(LIBSOTER_SO),$(LIBSOTER_LINK))
+	@ln -sf $(LIBSOTER_SO) $(BIN_PATH)/$(LIBSOTER_LINK)
 endif
 
 $(BIN_PATH)/libsoter.pc:
@@ -76,6 +85,9 @@ install_soter: err $(BIN_PATH)/$(LIBSOTER_A) $(BIN_PATH)/$(LIBSOTER_SO) $(BIN_PA
 	@$(INSTALL_DATA) $(BIN_PATH)/libsoter.pc            $(DESTDIR)/$(pkgconfigdir)
 	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBSOTER_A)          $(DESTDIR)/$(libdir)
 	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBSOTER_SO)      $(DESTDIR)/$(libdir)
+ifneq ($(LIBSOTER_SO),$(LIBSOTER_LINK))
+	@ln -sf $(LIBSOTER_SO)                              $(DESTDIR)/$(libdir)/$(LIBSOTER_LINK)
+endif
 	@$(PRINT_OK_)
 
 uninstall_soter:
@@ -84,4 +96,5 @@ uninstall_soter:
 	@rm  -f $(DESTDIR)/$(pkgconfigdir)/libsoter.pc
 	@rm  -f $(DESTDIR)/$(libdir)/$(LIBSOTER_A)
 	@rm  -f $(DESTDIR)/$(libdir)/$(LIBSOTER_SO)
+	@rm  -f $(DESTDIR)/$(libdir)/$(LIBSOTER_LINK)
 	@$(PRINT_OK_)

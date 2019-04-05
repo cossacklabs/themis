@@ -14,8 +14,18 @@
 # limitations under the License.
 #
 
-LIBTHEMIS_A  = libthemis.a
+LIBTHEMIS_A = libthemis.a
 LIBTHEMIS_SO = libthemis.$(SHARED_EXT)
+LIBTHEMIS_LINK = libthemis.$(SHARED_EXT)
+
+ifdef IS_LINUX
+LIBTHEMIS_SO = libthemis.$(SHARED_EXT).$(LIBRARY_SO_VERSION)
+LIBTHEMIS_SO_LDFLAGS = -Wl,-soname,$(LIBTHEMIS_SO)
+endif
+ifdef IS_MACOS
+LIBTHEMIS_SO = libthemis.$(LIBRARY_SO_VERSION).$(SHARED_EXT)
+LIBTHEMIS_SO_LDFLAGS = -dylinker_install_name "$(LIBDIR)/$(LIBTHEMIS_SO)"
+endif
 
 THEMIS_SOURCES = $(wildcard $(SRC_PATH)/themis/*.c)
 THEMIS_HEADERS = $(wildcard $(SRC_PATH)/themis/*.h)
@@ -40,15 +50,14 @@ $(BIN_PATH)/$(LIBTHEMIS_A): $(THEMIS_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-$(BIN_PATH)/$(LIBTHEMIS_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS) -L$(BIN_PATH) -lsoter
+$(BIN_PATH)/$(LIBTHEMIS_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS) -L$(BIN_PATH) -lsoter $(LIBTHEMIS_SO_LDFLAGS)
 
 $(BIN_PATH)/$(LIBTHEMIS_SO): $(BIN_PATH)/$(LIBSOTER_SO) $(THEMIS_OBJ)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
-ifdef IS_MACOS
-	@install_name_tool -id "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
-	@install_name_tool -change "$(BIN_PATH)/$(notdir $@)" "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
+ifneq ($(LIBTHEMIS_SO),$(LIBTHEMIS_LINK))
+	@ln -sf $(LIBTHEMIS_SO) $(BIN_PATH)/$(LIBTHEMIS_LINK)
 endif
 
 $(BIN_PATH)/libthemis.pc:
@@ -66,6 +75,9 @@ install_themis: err $(BIN_PATH)/$(LIBTHEMIS_A) $(BIN_PATH)/$(LIBTHEMIS_SO) $(BIN
 	@$(INSTALL_DATA) $(BIN_PATH)/libthemis.pc           $(DESTDIR)/$(pkgconfigdir)
 	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBTHEMIS_A)         $(DESTDIR)/$(libdir)
 	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBTHEMIS_SO)     $(DESTDIR)/$(libdir)
+ifneq ($(LIBTHEMIS_SO),$(LIBTHEMIS_LINK))
+	@ln -sf $(LIBTHEMIS_SO)                             $(DESTDIR)/$(libdir)/$(LIBTHEMIS_LINK)
+endif
 	@$(PRINT_OK_)
 
 uninstall_themis:
@@ -74,4 +86,5 @@ uninstall_themis:
 	@rm  -f $(DESTDIR)/$(pkgconfigdir)/libthemis.pc
 	@rm  -f $(DESTDIR)/$(libdir)/$(LIBTHEMIS_A)
 	@rm  -f $(DESTDIR)/$(libdir)/$(LIBTHEMIS_SO)
+	@rm  -f $(DESTDIR)/$(libdir)/$(LIBTHEMIS_LINK)
 	@$(PRINT_OK_)
