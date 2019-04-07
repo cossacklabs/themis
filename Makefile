@@ -562,7 +562,7 @@ HEADER_DIRS = $(shell ls $(BIN_PATH)/include)
 HEADER_FILES_MAP = $(foreach dir,$(HEADER_DIRS), $(BIN_PATH)/include/$(dir)/=$(PREFIX)/include/$(dir))
 
 STATIC_LIBRARY_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.a$$)
-STATIC_BINARY_LIBRARY_MAP = $(foreach file,$(STATIC_LIBRARY_FILES),$(strip $(BIN_PATH)/$(file)=$(PREFIX)/lib/$(file) $(BIN_PATH)/$(file).$(LIBRARY_SO_VERSION)=$(PREFIX)/lib/$(file).$(LIBRARY_SO_VERSION)))
+STATIC_BINARY_LIBRARY_MAP = $(foreach file,$(STATIC_LIBRARY_FILES),$(strip $(BIN_PATH)/$(file)=$(PREFIX)/lib/$(file)))
 
 SHARED_LIBRARY_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.$(SHARED_EXT)$$)
 SHARED_BINARY_LIBRARY_MAP = $(foreach file,$(SHARED_LIBRARY_FILES),$(strip $(BIN_PATH)/$(file).$(LIBRARY_SO_VERSION)=$(PREFIX)/lib/$(file).$(LIBRARY_SO_VERSION) $(BIN_PATH)/$(file)=$(PREFIX)/lib/$(file)))
@@ -580,20 +580,12 @@ install_shell_scripts:
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
 	@cp $(POST_INSTALL_SCRIPT) $(POST_UNINSTALL_SCRIPT)
 
-symlink_realname_to_soname:
-	# add version to filename and create symlink with realname to full name of library
-	@for f in `ls $(BIN_PATH) | egrep ".*\.(so|a)(\..*)?$$" | tr '\n' ' '`; do \
-		mv $(BIN_PATH)/$$f $(BIN_PATH)/$$f.$(LIBRARY_SO_VERSION); \
-		ln -s $(PREFIX)/lib/$$f.$(LIBRARY_SO_VERSION) $(BIN_PATH)/$$f; \
-	done
-
-
 strip:
 	@find . -name \*.$(SHARED_EXT)\.* -exec strip -o {} {} \;
 
 deb: PREFIX = /usr
 
-deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themis_pkgconfig collect_headers install_shell_scripts strip symlink_realname_to_soname
+deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themis_pkgconfig collect_headers install_shell_scripts strip
 	@mkdir -p $(BIN_PATH)/deb
 
 #libPACKAGE-dev
@@ -637,7 +629,7 @@ deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themi
 
 rpm: PREFIX = /usr
 
-rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared soter_pkgconfig collect_headers install_shell_scripts strip symlink_realname_to_soname
+rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared soter_pkgconfig collect_headers install_shell_scripts strip
 	@mkdir -p $(BIN_PATH)/rpm
 #libPACKAGE-devel
 	@fpm --input-type dir \
