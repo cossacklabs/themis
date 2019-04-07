@@ -420,7 +420,7 @@ install_pkgconfig: err all make_install_dirs
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs install_pkgconfig
 ifdef IS_LINUX
-	@ldconfig || (status=$$?; if [ $$(id -u) = "0" ]; then exit $$status; else exit 0; fi)
+	-@ldconfig
 endif
 
 get_version:
