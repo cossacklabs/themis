@@ -448,6 +448,8 @@ install_pkgconfig: err all make_install_dirs
 	@$(BUILD_CMD_)
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs install_pkgconfig
+	@echo -n "Themis installed to $(PREFIX)"
+	@$(PRINT_OK_)
 ifdef IS_LINUX
 	@ldconfig || (status=$$?; if [ $$(id -u) = "0" ]; then exit $$status; else exit 0; fi)
 endif
@@ -510,7 +512,7 @@ endif
 uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libthemis.$(SHARED_EXT) && rm -f $(PREFIX)/lib/pkgconfig/libsoter.pc && rm -f $(PREFIX)/lib/pkgconfig/libthemis.pc
 
 uninstall: phpthemis_uninstall rbthemis_uninstall themispp_uninstall jsthemis_uninstall
-	@echo -n "themis uninstall "
+	@echo -n "Themis uninstalled from $(PREFIX) "
 	@$(BUILD_CMD_)
 
 ifeq ($(PHP_VERSION),5)
