@@ -30,7 +30,7 @@ TEST_SRC_PATH = tests
 TEST_BIN_PATH = $(BIN_PATH)/tests
 TEST_OBJ_PATH = $(TEST_BIN_PATH)/obj
 
-CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC
+CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC $(CRYPTO_ENGINE_CFLAGS)
 LDFLAGS += -L/usr/local/lib
 
 unexport CFLAGS LDFLAGS
@@ -215,9 +215,7 @@ endif
 
 ifdef COVERAGE
 	CFLAGS += -g -O0 --coverage
-	COVERLDFLAGS = --coverage
-else
-	COVERLDFLAGS =
+	LDFLAGS += --coverage
 endif
 
 ifdef DEBUG
@@ -305,47 +303,18 @@ JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
   | sed 's/[",]//g' \
   | tr -d '[[:space:]]')
 
-all: err themis_static themis_shared themis_pkgconfig soter_pkgconfig
+all: err themis_static soter_static themis_shared soter_shared themis_pkgconfig soter_pkgconfig
 	@echo $(VERSION)
 
-soter_static: CMD = $(AR) rcs $(BIN_PATH)/lib$(SOTER_BIN).a $(SOTER_OBJ)
+soter_static:  $(BIN_PATH)/$(LIBSOTER_A)
+soter_shared:  $(BIN_PATH)/$(LIBSOTER_SO)
+themis_static: $(BIN_PATH)/$(LIBTHEMIS_A)
+themis_shared: $(BIN_PATH)/$(LIBTHEMIS_SO)
+themis_jni:    $(BIN_PATH)/$(LIBTHEMISJNI_SO)
 
-soter_static: $(SOTER_OBJ)
-	@echo -n "link "
-	@$(BUILD_CMD)
-
-soter_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT) $(SOTER_OBJ) $(LDFLAGS) $(COVERLDFLAGS)
-
-soter_shared: $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
-	@echo -n "link "
-	@$(BUILD_CMD)
-ifdef IS_MACOS
-	@install_name_tool -id "$(PREFIX)/lib/lib$(SOTER_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)
-	@install_name_tool -change "$(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)" "$(PREFIX)/lib/lib(SOTER_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(SOTER_BIN).$(SHARED_EXT)
-endif
-
-themis_static: CMD = $(AR) rcs $(BIN_PATH)/lib$(THEMIS_BIN).a $(THEMIS_OBJ)
-
-themis_static: soter_static $(THEMIS_OBJ)
-	@echo -n "link "
-	@$(BUILD_CMD)
-
-themis_shared: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT) $(THEMIS_OBJ) -L$(BIN_PATH) -l$(SOTER_BIN) $(COVERLDFLAGS)
-
-themis_shared: soter_shared $(THEMIS_OBJ)
-	@echo -n "link "
-	@$(BUILD_CMD)
-ifdef IS_MACOS
-	@install_name_tool -id "$(PREFIX)/lib/lib$(THEMIS_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
-	@install_name_tool -change "$(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)" "$(PREFIX)/lib/lib$(THEMIS_BIN).$(SHARED_EXT)" $(BIN_PATH)/lib$(THEMIS_BIN).$(SHARED_EXT)
-endif
-
-themis_jni: CMD = $(CC) -shared -o $(BIN_PATH)/lib$(THEMIS_JNI_BIN).$(SHARED_EXT) $(THEMIS_JNI_OBJ) -L$(BIN_PATH) -l$(THEMIS_BIN) -l$(SOTER_BIN)
-
-themis_jni: themis_static $(THEMIS_JNI_OBJ)
-	@echo -n "link "
-	@$(BUILD_CMD)
-
+#
+# Common build rules
+#
 
 $(OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -c $< -o $@
 

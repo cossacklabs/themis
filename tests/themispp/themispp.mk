@@ -24,5 +24,11 @@ THEMISPP_TEST_FMT = $(THEMISPP_TEST_SOURCES) $(THEMISPP_TEST_HEADERS)
 FMT_FIXUP += $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_fixup,$(THEMISPP_TEST_FMT))
 FMT_CHECK += $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_check,$(THEMISPP_TEST_FMT))
 
+$(TEST_BIN_PATH)/themispp_test: CMD = $(CXX) -o $@ $(filter %.o %.opp %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
+
+$(TEST_BIN_PATH)/themispp_test: $(THEMISPP_TEST_OBJ) $(COMMON_TEST_OBJ) $(THEMIS_STATIC)
+	@echo -n "link "
+	@$(BUILD_CMD)
+
 clean_themispp_test:
 	@rm -f $(THEMISPP_TEST_OBJ)

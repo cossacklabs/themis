@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+LIBSOTER_A  = libsoter.a
+LIBSOTER_SO = libsoter.$(SHARED_EXT)
+
 SOTER_SOURCES = $(wildcard $(SRC_PATH)/soter/*.c)
 SOTER_HEADERS = $(wildcard $(SRC_PATH)/soter/*.h)
 ED25519_SOURCES = $(wildcard $(SRC_PATH)/soter/ed25519/*.c)
@@ -37,7 +40,25 @@ SOTER_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(SOTER_AUD_SRC))
 SOTER_FMT_FIXUP = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_fixup,$(SOTER_FMT_SRC))
 SOTER_FMT_CHECK = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_check,$(SOTER_FMT_SRC))
 
-SOTER_BIN = soter
+SOTER_STATIC = $(BIN_PATH)/$(LIBSOTER_A) $(SOTER_ENGINE_DEPS)
+
+$(BIN_PATH)/$(LIBSOTER_A): CMD = $(AR) rcs $@ $(filter %.o, $^)
+
+$(BIN_PATH)/$(LIBSOTER_A): $(SOTER_OBJ)
+	@mkdir -p $(@D)
+	@echo -n "link "
+	@$(BUILD_CMD)
+
+$(BIN_PATH)/$(LIBSOTER_SO): CMD = $(CC) -shared -o $@ $(filter %.o %a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
+
+$(BIN_PATH)/$(LIBSOTER_SO): $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
+	@mkdir -p $(@D)
+	@echo -n "link "
+	@$(BUILD_CMD)
+ifdef IS_MACOS
+	@install_name_tool -id "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
+	@install_name_tool -change "$(BIN_PATH)/$(notdir $@)" "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
+endif
 
 soter_pkgconfig:
 	@mkdir -p $(BIN_PATH)

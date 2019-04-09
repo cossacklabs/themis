@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+LIBTHEMIS_A  = libthemis.a
+LIBTHEMIS_SO = libthemis.$(SHARED_EXT)
+
 THEMIS_SOURCES = $(wildcard $(SRC_PATH)/themis/*.c)
 THEMIS_HEADERS = $(wildcard $(SRC_PATH)/themis/*.h)
 
@@ -28,7 +31,25 @@ THEMIS_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(THEMIS_AUD_SRC))
 THEMIS_FMT_FIXUP = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_fixup,$(THEMIS_FMT_SRC))
 THEMIS_FMT_CHECK = $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_check,$(THEMIS_FMT_SRC))
 
-THEMIS_BIN = themis
+THEMIS_STATIC = $(BIN_PATH)/$(LIBTHEMIS_A) $(SOTER_STATIC)
+
+$(BIN_PATH)/$(LIBTHEMIS_A): CMD = $(AR) rcs $@ $(filter %.o, $^)
+
+$(BIN_PATH)/$(LIBTHEMIS_A): $(THEMIS_OBJ)
+	@mkdir -p $(@D)
+	@echo -n "link "
+	@$(BUILD_CMD)
+
+$(BIN_PATH)/$(LIBTHEMIS_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS) -L$(BIN_PATH) -lsoter
+
+$(BIN_PATH)/$(LIBTHEMIS_SO): $(BIN_PATH)/$(LIBSOTER_SO) $(THEMIS_OBJ)
+	@mkdir -p $(@D)
+	@echo -n "link "
+	@$(BUILD_CMD)
+ifdef IS_MACOS
+	@install_name_tool -id "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
+	@install_name_tool -change "$(BIN_PATH)/$(notdir $@)" "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
+endif
 
 themis_pkgconfig:
 	@mkdir -p $(BIN_PATH)
