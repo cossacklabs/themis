@@ -446,6 +446,24 @@ install: install_soter_headers install_themis_headers install_static_libs instal
 ifdef IS_LINUX
 	@ldconfig || (status=$$?; if [ $$(id -u) = "0" ]; then exit $$status; else exit 0; fi)
 endif
+	@if [ -e /usr/include/themis/themis.h ] && [ -e /usr/local/include/themis/themis.h ]; then \
+	     echo ""; \
+	     echo "Multiple Themis installations detected in standard system paths:"; \
+	     echo ""; \
+	     echo "  - /usr"; \
+	     echo "  - /usr/local"; \
+	     echo ""; \
+	     echo "This may lead to surprising behaviour when building and using software"; \
+	     echo "which depends on Themis."; \
+	     echo ""; \
+	     echo "If you previously had Themis installed from source to \"/usr\","; \
+	     echo "consider uninstalling the old version with"; \
+	     echo ""; \
+	     echo "    sudo $(MAKE) uninstall PREFIX=/usr"; \
+	     echo ""; \
+	     echo "and keep the new version in \"/usr/local\"."; \
+	     echo ""; \
+	 fi
 
 get_version:
 	@echo $(VERSION)
