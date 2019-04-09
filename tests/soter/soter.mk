@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+NIST_STS_DIR = tests/soter/nist-sts
+
 SOTER_TEST_SOURCES = $(wildcard tests/soter/*.c)
 SOTER_TEST_HEADERS = $(wildcard tests/soter/*.h)
 
@@ -24,9 +26,17 @@ SOTER_TEST_FMT = $(SOTER_TEST_SOURCES) $(SOTER_TEST_HEADERS)
 FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(SOTER_TEST_FMT))
 FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(SOTER_TEST_FMT))
 
+ifdef NO_NIST_STS
+$(OBJ_PATH)/tests/soter/%: CFLAGS += -DNO_NIST_STS=1
+else
+$(OBJ_PATH)/tests/soter/%: CFLAGS += -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR))
+
+$(TEST_BIN_PATH)/soter_test: nist_rng_test_suite
+endif
+
 $(TEST_BIN_PATH)/soter_test: CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
 
-$(TEST_BIN_PATH)/soter_test: nist_rng_test_suite $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) $(SOTER_STATIC)
+$(TEST_BIN_PATH)/soter_test: $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) $(SOTER_STATIC)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
