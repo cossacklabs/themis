@@ -24,8 +24,8 @@ include tests/tools/tools.mk
 include tests/themis/themis.mk
 include tests/themispp/themispp.mk
 
-soter_test:    $(TEST_BIN_PATH)/soter_test
-themis_test:   $(TEST_BIN_PATH)/themis_test
+soter_test:    $(SOTER_TEST_BIN)
+themis_test:   $(THEMIS_TEST_BIN)
 themispp_test: $(TEST_BIN_PATH)/themispp_test
 
 $(OBJ_PATH)/tests/%: CFLAGS += -I$(TEST_SRC_PATH)
@@ -83,13 +83,26 @@ ifdef NPM_VERSION
 endif
 
 
+ifdef IS_EMSCRIPTEN
+RUN_TEST = node
+endif
 
 test: prepare_tests_basic
+ifdef IS_EMSCRIPTEN
+ifeq ($(NODE_VERSION),)
+	@echo 2>&1 "------------------------------------------------------------"
+	@echo 2>&1 "Node.js is not installed. Cannot run tests in Emscripten environment."
+	@echo 2>&1 ""
+	@echo 2>&1 "Please make sure you have \"node\" binary available in PATH and try again."
+	@echo 2>&1 "------------------------------------------------------------"
+	@exit 1
+endif
+endif
 	@echo "------------------------------------------------------------"
 	@echo "Running themis-core basic tests."
-	$(TEST_BIN_PATH)/soter_test
+	$(RUN_TEST) $(SOTER_TEST_BIN)
 	@echo "------------------------------------------------------------"
-	$(TEST_BIN_PATH)/themis_test
+	$(RUN_TEST) $(THEMIS_TEST_BIN)
 	@echo "------------------------------------------------------------"
 
 # require all dependencies to be installed

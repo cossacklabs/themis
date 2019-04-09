@@ -14,6 +14,12 @@
 # limitations under the License.
 #
 
+ifdef IS_EMSCRIPTEN
+THEMIS_TEST_BIN = $(TEST_BIN_PATH)/themis_test.js
+else
+THEMIS_TEST_BIN = $(TEST_BIN_PATH)/themis_test
+endif
+
 THEMIS_TEST_SOURCES = $(wildcard tests/themis/*.c)
 THEMIS_TEST_HEADERS = $(wildcard tests/themis/*.h)
 
@@ -24,9 +30,13 @@ THEMIS_TEST_FMT = $(THEMIS_TEST_SOURCES) $(THEMIS_TEST_HEADERS)
 FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(THEMIS_TEST_FMT))
 FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(THEMIS_TEST_FMT))
 
-$(TEST_BIN_PATH)/themis_test: CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
+ifdef IS_EMSCRIPTEN
+$(THEMIS_TEST_BIN): LDFLAGS += -s SINGLE_FILE=1
+endif
 
-$(TEST_BIN_PATH)/themis_test: $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ) $(THEMIS_STATIC)
+$(THEMIS_TEST_BIN): CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
+
+$(THEMIS_TEST_BIN): $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ) $(THEMIS_STATIC)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
