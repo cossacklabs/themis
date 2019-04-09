@@ -15,6 +15,9 @@
 #
 
 #CC = clang
+
+CMAKE = cmake
+
 CLANG_FORMAT ?= clang-format
 CLANG_TIDY   ?= clang-tidy
 SHELL = /bin/bash
@@ -63,6 +66,14 @@ ifeq ($(UNAME),Darwin)
 	IS_MACOS := true
 else ifeq ($(UNAME),Linux)
 	IS_LINUX := true
+endif
+
+ifneq ($(shell $(CC) --version 2>&1 | grep -oi "Emscripten"),)
+	IS_EMSCRIPTEN := true
+endif
+
+ifdef IS_EMSCRIPTEN
+CMAKE = emconfigure cmake
 endif
 
 define themisecho
