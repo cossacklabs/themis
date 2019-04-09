@@ -72,15 +72,8 @@ define themisecho
       @tput sgr0
 endef
 
-# Backwards compatibility with existing non-managed installations on Linux
-DEFAULT_PREFIX := $(shell \
-    test -e /usr/include/themis/themis.h && \
-    ! (dpkg --status libthemis | grep '^Status:.*installed' || \
-       rpm -q libthemis) >/dev/null 2>&1 \
-    && echo "/usr" || echo "/usr/local")
-
-# Default installation prefix
-PREFIX ?= $(DEFAULT_PREFIX)
+# default installation prefix
+PREFIX ?= /usr/local
 
 # default cryptographic engine
 ENGINE ?= libressl
