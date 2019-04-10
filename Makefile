@@ -413,7 +413,7 @@ install: install_soter_headers install_themis_headers install_static_libs instal
 	@echo -n "Themis installed to $(PREFIX)"
 	@$(PRINT_OK_)
 ifdef IS_LINUX
-	@ldconfig || (status=$$?; if [ $$(id -u) = "0" ]; then exit $$status; else exit 0; fi)
+	-@ldconfig
 endif
 	@if [ -e /usr/include/themis/themis.h ] && [ -e /usr/local/include/themis/themis.h ]; then \
 	     echo ""; \
