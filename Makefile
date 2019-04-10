@@ -86,7 +86,11 @@ endef
 PREFIX ?= /usr/local
 
 # default cryptographic engine
+ifdef IS_EMSCRIPTEN
+ENGINE ?= boringssl
+else
 ENGINE ?= libressl
+endif
 
 #engine selection block
 ifneq ($(ENGINE),)
