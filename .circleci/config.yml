@@ -80,6 +80,34 @@ jobs:
           paths:
             - ~/valgrind
 
+      # Install Emscripten toolchain for Wasm support
+      # See https://emscripten.org/docs/getting_started/downloads.html
+
+      - restore_cache:
+          keys:
+            - emscripten
+
+      - run:
+          name: Update Emscripten
+          command: |
+            if [ ! -d $HOME/emsdk ]
+            then
+                cd $HOME
+                git clone https://github.com/emscripten-core/emsdk.git
+            fi
+            cd $HOME/emsdk
+            git pull
+
+      - run:
+          name: Install and activate Emscripten
+          command: |
+            cd $HOME/emsdk
+            ./emsdk install latest
+            ./emsdk activate latest
+            cat ./emsdk_env.sh >> $BASH_ENV
+            source ./emsdk_env.sh
+            emcc --version
+
       - checkout
       - run: git submodule update --init
       - run: make
@@ -108,6 +136,7 @@ jobs:
       - run: source /etc/profile.d/rvm.sh && rvm use system && make test_ruby
       - run: make test_go
       - run: make test_rust
+      - run: emmake make test BUILD_PATH=build-wasm
       - run: make fuzz
       - run: $HOME/valgrind/bin/valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: $HOME/valgrind/bin/valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
@@ -125,6 +154,14 @@ jobs:
           paths:
             - ~/.cargo
             - ~/.rustup
+
+      - save_cache:
+          key: emscripten
+          paths:
+            - ~/emsdk
+            - ~/.emscripten
+            - ~/.emscripten_cache
+            - ~/.emscripten_cache.lock
 
   integration_tests:
     docker:
