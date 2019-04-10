@@ -104,7 +104,7 @@ jobs:
             cd $HOME/emsdk
             ./emsdk install latest
             ./emsdk activate latest
-            cat ./emsdk_env.sh >> $BASH_ENV
+            echo 'source "$HOME/emsdk/emsdk_env.sh"' >> $BASH_ENV
             source ./emsdk_env.sh
             emcc --version
 
