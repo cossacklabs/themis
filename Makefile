@@ -72,20 +72,11 @@ define themisecho
       @tput sgr0
 endef
 
-ifeq ($(ENGINE),)
-	ENGINE=libressl
-endif
+# default installation prefix
+PREFIX ?= /usr/local
 
-#default engine
-ifeq ($(PREFIX),)
-PREFIX = /usr
-
-# MacOS
-ifdef IS_MACOS
-	PREFIX = /usr/local
-endif
-
-endif
+# default cryptographic engine
+ENGINE ?= libressl
 
 #engine selection block
 ifneq ($(ENGINE),)
@@ -419,9 +410,29 @@ install_pkgconfig: err all make_install_dirs
 	@$(BUILD_CMD_)
 
 install: install_soter_headers install_themis_headers install_static_libs install_shared_libs install_pkgconfig
+	@echo -n "Themis installed to $(PREFIX)"
+	@$(PRINT_OK_)
 ifdef IS_LINUX
 	@ldconfig || (status=$$?; if [ $$(id -u) = "0" ]; then exit $$status; else exit 0; fi)
 endif
+	@if [ -e /usr/include/themis/themis.h ] && [ -e /usr/local/include/themis/themis.h ]; then \
+	     echo ""; \
+	     echo "Multiple Themis installations detected in standard system paths:"; \
+	     echo ""; \
+	     echo "  - /usr"; \
+	     echo "  - /usr/local"; \
+	     echo ""; \
+	     echo "This may lead to surprising behaviour when building and using software"; \
+	     echo "which depends on Themis."; \
+	     echo ""; \
+	     echo "If you previously had Themis installed from source to \"/usr\","; \
+	     echo "consider uninstalling the old version with"; \
+	     echo ""; \
+	     echo "    sudo $(MAKE) uninstall PREFIX=/usr"; \
+	     echo ""; \
+	     echo "and keep the new version in \"/usr/local\"."; \
+	     echo ""; \
+	 fi
 
 get_version:
 	@echo $(VERSION)
@@ -481,7 +492,7 @@ endif
 uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libthemis.$(SHARED_EXT) && rm -f $(PREFIX)/lib/pkgconfig/libsoter.pc && rm -f $(PREFIX)/lib/pkgconfig/libthemis.pc
 
 uninstall: phpthemis_uninstall rbthemis_uninstall themispp_uninstall jsthemis_uninstall
-	@echo -n "themis uninstall "
+	@echo -n "Themis uninstalled from $(PREFIX) "
 	@$(BUILD_CMD_)
 
 ifeq ($(PHP_VERSION),5)
@@ -644,6 +655,8 @@ symlink_realname_to_soname:
 strip:
 	@find . -name \*.$(SHARED_EXT)\.* -exec strip -o {} {} \;
 
+deb: PREFIX = /usr
+
 deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themis_pkgconfig collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/deb
 
@@ -686,6 +699,7 @@ deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themi
 # it's just for printing .deb files
 	@find $(BIN_PATH) -name \*.deb
 
+rpm: PREFIX = /usr
 
 rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared soter_pkgconfig collect_headers install_shell_scripts strip symlink_realname_to_soname
 	@mkdir -p $(BIN_PATH)/rpm
