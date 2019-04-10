@@ -20,7 +20,11 @@
 #include <string.h>
 #include <unistd.h>
 
-#ifdef NIST_STS_EXE_PATH
+#ifndef NIST_STS_EXE_PATH
+#define NO_NIST_STS 1
+#endif
+
+#ifndef NO_NIST_STS
 
 #define _TO_STRING_(_X_) (#_X_)
 #define TO_STRING(_X_) _TO_STRING_(_X_)
@@ -159,14 +163,7 @@ out:
     free(curr_work_dir);
 }
 
-#else
-
-static void test_rand_with_nist(void)
-{
-    testsuite_fail_if(true, "NIST tests");
-}
-
-#endif
+#endif /* NO_NIST_STS */
 
 static void test_api(void)
 {
@@ -180,11 +177,8 @@ void run_soter_rand_tests(void)
 {
     testsuite_enter_suite("soter rand: api");
     testsuite_run_test(test_api);
-// always fail under ci
-#ifndef CIRICLE_TEST
+#ifndef NO_NIST_STS
     testsuite_enter_suite("soter rand: NIST STS (make take some time...)");
     testsuite_run_test(test_rand_with_nist);
-#else
-    UNUSED(test_rand_with_nist);
 #endif
 }

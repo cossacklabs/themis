@@ -17,8 +17,6 @@
 COMMON_TEST_SRC = $(wildcard tests/common/*.c)
 COMMON_TEST_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(COMMON_TEST_SRC))
 
-NIST_STS_DIR = tests/soter/nist-sts
-
 GOTHEMIS_IMPORT = github.com/cossacklabs/themis/gothemis
 
 include tests/soter/soter.mk
@@ -30,7 +28,7 @@ soter_test:    $(TEST_BIN_PATH)/soter_test
 themis_test:   $(TEST_BIN_PATH)/themis_test
 themispp_test: $(TEST_BIN_PATH)/themispp_test
 
-$(OBJ_PATH)/tests/%: CFLAGS += -I$(TEST_SRC_PATH) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR))
+$(OBJ_PATH)/tests/%: CFLAGS += -I$(TEST_SRC_PATH)
 
 PYTHON2_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis2_test.sh
 PYTHON3_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis3_test.sh
