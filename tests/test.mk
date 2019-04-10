@@ -15,7 +15,7 @@
 #
 
 COMMON_TEST_SRC = $(wildcard tests/common/*.c)
-COMMON_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.c,$(TEST_OBJ_PATH)/%.o, $(COMMON_TEST_SRC))
+COMMON_TEST_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(COMMON_TEST_SRC))
 
 NIST_STS_DIR = tests/soter/nist-sts
 
@@ -30,40 +30,7 @@ soter_test:    $(TEST_BIN_PATH)/soter_test
 themis_test:   $(TEST_BIN_PATH)/themis_test
 themispp_test: $(TEST_BIN_PATH)/themispp_test
 
-$(TEST_OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR)) -I$(TEST_SRC_PATH) -c $< -o $@
-
-$(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
-	@mkdir -p $(@D)
-	@echo -n "compile "
-	@$(BUILD_CMD)
-
-$(TEST_OBJ_PATH)/%.opp: CMD = $(CXX) $(CFLAGS) -I$(TEST_SRC_PATH) -c $< -o $@
-
-$(TEST_OBJ_PATH)/%.opp: $(TEST_SRC_PATH)/%.cpp
-	@mkdir -p $(@D)
-	@echo -n "compile "
-	@$(BUILD_CMD)
-
-FMT_FIXUP += $(THEMIS_TEST_FMT_FIXUP) $(SOTER_TEST_FMT_FIXUP)
-FMT_CHECK += $(THEMIS_TEST_FMT_CHECK) $(SOTER_TEST_FMT_CHECK)
-
-$(TEST_OBJ_PATH)/%.c.fmt_fixup   $(TEST_OBJ_PATH)/%.h.fmt_fixup \
-$(TEST_OBJ_PATH)/%.cpp.fmt_fixup $(TEST_OBJ_PATH)/%.hpp.fmt_fixup: \
-    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) -I$(TEST_SRC_PATH) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
-
-$(TEST_OBJ_PATH)/%.c.fmt_check   $(TEST_OBJ_PATH)/%.h.fmt_check \
-$(TEST_OBJ_PATH)/%.cpp.fmt_check $(TEST_OBJ_PATH)/%.hpp.fmt_check: \
-    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) -I$(TEST_SRC_PATH) 2>/dev/null && touch $@
-
-$(TEST_OBJ_PATH)/%.fmt_fixup: $(TEST_SRC_PATH)/%
-	@mkdir -p $(@D)
-	@echo -n "fixup $< "
-	@$(BUILD_CMD_)
-
-$(TEST_OBJ_PATH)/%.fmt_check: $(TEST_SRC_PATH)/%
-	@mkdir -p $(@D)
-	@echo -n "check $< "
-	@$(BUILD_CMD_)
+$(OBJ_PATH)/tests/%: CFLAGS += -I$(TEST_SRC_PATH) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR))
 
 PYTHON2_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis2_test.sh
 PYTHON3_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis3_test.sh

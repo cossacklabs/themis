@@ -28,7 +28,6 @@ OBJ_PATH = $(BIN_PATH)/obj
 AUD_PATH = $(BIN_PATH)/for_audit
 TEST_SRC_PATH = tests
 TEST_BIN_PATH = $(BIN_PATH)/tests
-TEST_OBJ_PATH = $(TEST_BIN_PATH)/obj
 
 CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC $(CRYPTO_ENGINE_CFLAGS)
 LDFLAGS += -L/usr/local/lib
@@ -307,42 +306,40 @@ themis_jni:    $(BIN_PATH)/$(LIBTHEMISJNI_SO)
 # Common build rules
 #
 
-$(OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -c $< -o $@
+$(OBJ_PATH)/%.c.o: CMD = $(CC) -c -o $@ $< $(CFLAGS)
 
-$(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
+$(OBJ_PATH)/%.c.o: %.c
 	@mkdir -p $(@D)
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
-FMT_FIXUP += $(THEMIS_FMT_FIXUP) $(SOTER_FMT_FIXUP)
-FMT_CHECK += $(THEMIS_FMT_CHECK) $(SOTER_FMT_CHECK)
+$(OBJ_PATH)/%.cpp.o: CMD = $(CXX) -c -o $@ $< $(CFLAGS)
 
-$(OBJ_PATH)/%.c.fmt_fixup $(OBJ_PATH)/%.h.fmt_fixup: \
+$(OBJ_PATH)/%.cpp.o: %.cpp
+	@mkdir -p $(@D)
+	@echo -n "compile "
+	@$(BUILD_CMD)
+
+$(OBJ_PATH)/%.c.fmt_fixup $(OBJ_PATH)/%.h.fmt_fixup $(OBJ_PATH)/%.cpp.fmt_fixup $(OBJ_PATH)/%.hpp.fmt_fixup: \
     CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
 
-$(OBJ_PATH)/%.c.fmt_check $(OBJ_PATH)/%.h.fmt_check: \
+$(OBJ_PATH)/%.c.fmt_check $(OBJ_PATH)/%.h.fmt_check $(OBJ_PATH)/%.cpp.fmt_check $(OBJ_PATH)/%.hpp.fmt_check: \
     CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) 2>/dev/null && touch $@
 
-$(OBJ_PATH)/%.fmt_fixup: $(SRC_PATH)/%
+$(OBJ_PATH)/%.fmt_fixup: %
 	@mkdir -p $(@D)
 	@echo -n "fixup $< "
 	@$(BUILD_CMD_)
 
-$(OBJ_PATH)/%.fmt_check: $(SRC_PATH)/%
+$(OBJ_PATH)/%.fmt_check: %
 	@mkdir -p $(@D)
 	@echo -n "check $< "
 	@$(BUILD_CMD_)
 
 THEMISPP_HEADERS = $(wildcard $(SRC_PATH)/wrappers/themis/themispp/*.hpp)
 
-FMT_FIXUP += $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_fixup,$(THEMISPP_HEADERS))
-FMT_CHECK += $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_check,$(THEMISPP_HEADERS))
-
-$(OBJ_PATH)/%.hpp.fmt_fixup: \
-    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
-
-$(OBJ_PATH)/%.hpp.fmt_check: \
-    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) 2>/dev/null && touch $@
+FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(THEMISPP_HEADERS))
+FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(THEMISPP_HEADERS))
 
 #$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
 $(AUD_PATH)/%: CMD = ./scripts/pp.sh  $< $@

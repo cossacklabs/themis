@@ -15,7 +15,7 @@
 #
 
 JSTHEMIS_SRC = $(SRC_PATH)/wrappers/themis/jsthemis
-JSTHEMIS_OBJ = $(OBJ_PATH)/wrappers/themis/jsthemis
+JSTHEMIS_OBJ = $(OBJ_PATH)/$(JSTHEMIS_SRC)
 
 JSTHEMIS_SOURCES = $(wildcard $(JSTHEMIS_SRC)/*.cpp)
 JSTHEMIS_HEADERS = $(wildcard $(JSTHEMIS_SRC)/*.hpp)
@@ -34,22 +34,17 @@ FMT_CHECK += $(JSTHEMIS_OBJ)/node_modules/nan
 $(JSTHEMIS_OBJ)/node_modules/nan:
 	@mkdir -p $(JSTHEMIS_OBJ) && cd $(JSTHEMIS_OBJ) && npm install nan && cd -
 
-FMT_FIXUP += $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_fixup,$(JSTHEMIS_SOURCES) $(JSTHEMIS_HEADERS))
-FMT_CHECK += $(patsubst $(SRC_PATH)/%,$(OBJ_PATH)/%.fmt_check,$(JSTHEMIS_SOURCES) $(JSTHEMIS_HEADERS))
+FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(JSTHEMIS_SOURCES) $(JSTHEMIS_HEADERS))
+FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(JSTHEMIS_SOURCES) $(JSTHEMIS_HEADERS))
 
-JSTHEMIS_CFLAGS += $(CFLAGS)
+$(JSTHEMIS_OBJ)/%: CFLAGS += $(JSTHEMIS_CFLAGS)
+
 JSTHEMIS_CFLAGS += -I$(JSTHEMIS_OBJ)/node_modules/nan
 
 ifdef IS_LINUX
 JSTHEMIS_CFLAGS += -I/usr/include/nodejs/src
 JSTHEMIS_CFLAGS += -I/usr/include/nodejs/deps/v8/include
 endif
-
-$(JSTHEMIS_OBJ)/%.hpp.fmt_fixup $(JSTHEMIS_OBJ)/%.cpp.fmt_fixup: \
-	CMD = $(CLANG_TIDY) -fix $< -- $(JSTHEMIS_CFLAGS) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
-
-$(JSTHEMIS_OBJ)/%.hpp.fmt_check $(JSTHEMIS_OBJ)/%.cpp.fmt_check: \
-	CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(JSTHEMIS_CFLAGS) 2>/dev/null && touch $@
 
 else # ifdef NPM_VERSION
 
