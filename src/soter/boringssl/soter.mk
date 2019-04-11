@@ -43,5 +43,5 @@ endif
 $(BIN_PATH)/boringssl/crypto/libcrypto.a $(BIN_PATH)/boringssl/decrepit/libdecrepit.a:
 	@echo "building embedded BoringSSL..."
 	@mkdir -p $(BIN_PATH)/boringssl
-	@$(CMAKE) $(SOTER_ENGINE_CMAKE_FLAGS) -S third_party/boringssl/src -B $(BIN_PATH)/boringssl
+	@cd $(BIN_PATH)/boringssl && $(CMAKE) $(SOTER_ENGINE_CMAKE_FLAGS) $(abspath third_party/boringssl/src)
 	@$(MAKE) -C $(BIN_PATH)/boringssl crypto decrepit
