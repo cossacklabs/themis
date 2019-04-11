@@ -22,6 +22,7 @@
 #ifndef SOTER_SYM_H
 #define SOTER_SYM_H
 
+#include <soter/soter_api.h>
 #include <soter/soter_error.h>
 
 /**
@@ -129,6 +130,7 @@ typedef struct soter_sym_ctx_type soter_sym_ctx_t;
  * @param [in] iv_length length of iv
  * @return pointer to new symmetric encryption context on success or NULL on failure
  */
+SOTER_API
 soter_sym_ctx_t* soter_sym_encrypt_create(uint32_t alg,
                                           const void* key,
                                           size_t key_length,
@@ -151,6 +153,7 @@ soter_sym_ctx_t* soter_sym_encrypt_create(uint32_t alg,
  * SOTER_BUFFER_TOO_SMALL will return and cipher_data_length will contain length of buffer thet need
  * to store cipher data.
  */
+SOTER_API
 soter_status_t soter_sym_encrypt_update(soter_sym_ctx_t* ctx,
                                         const void* plain_data,
                                         size_t data_length,
@@ -169,6 +172,7 @@ soter_status_t soter_sym_encrypt_update(soter_sym_ctx_t* ctx,
  * SOTER_BUFFER_TOO_SMALL will return and cipher_data_length will contain length of buffer thet need
  * to store cipher data.
  */
+SOTER_API
 soter_status_t soter_sym_encrypt_final(soter_sym_ctx_t* ctx, void* cipher_data, size_t* cipher_data_length);
 
 /**
@@ -177,6 +181,7 @@ soter_status_t soter_sym_encrypt_final(soter_sym_ctx_t* ctx, void* cipher_data, 
  * soter_sym_encrypt_create
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
  */
+SOTER_API
 soter_status_t soter_sym_encrypt_destroy(soter_sym_ctx_t* ctx);
 /** @} */
 
@@ -197,6 +202,7 @@ soter_status_t soter_sym_encrypt_destroy(soter_sym_ctx_t* ctx);
  * @param [in] iv_length length of iv
  * @return pointer to new symmetric decryption context on success or NULL on failure
  */
+SOTER_API
 soter_sym_ctx_t* soter_sym_decrypt_create(uint32_t alg,
                                           const void* key,
                                           size_t key_length,
@@ -219,6 +225,7 @@ soter_sym_ctx_t* soter_sym_decrypt_create(uint32_t alg,
  * SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer thet need
  * to store plain data.
  */
+SOTER_API
 soter_status_t soter_sym_decrypt_update(soter_sym_ctx_t* ctx,
                                         const void* cipher_data,
                                         size_t data_length,
@@ -237,6 +244,7 @@ soter_status_t soter_sym_decrypt_update(soter_sym_ctx_t* ctx,
  * SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer thet need
  * to store plain data.
  */
+SOTER_API
 soter_status_t soter_sym_decrypt_final(soter_sym_ctx_t* ctx, void* plain_data, size_t* plain_data_length);
 
 /**
@@ -245,6 +253,7 @@ soter_status_t soter_sym_decrypt_final(soter_sym_ctx_t* ctx, void* plain_data, s
  * soter_sym_decrypt_create
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
  */
+SOTER_API
 soter_status_t soter_sym_decrypt_destroy(soter_sym_ctx_t* ctx);
 /** @} */
 /** @} */
@@ -272,6 +281,7 @@ soter_status_t soter_sym_decrypt_destroy(soter_sym_ctx_t* ctx);
  * @param [in] iv_length length of iv
  * @return pointer to new symmetric encryption context on success or NULL on failure
  */
+SOTER_API
 soter_sym_ctx_t* soter_sym_aead_encrypt_create(uint32_t alg,
                                                const void* key,
                                                size_t key_length,
@@ -288,6 +298,7 @@ soter_sym_ctx_t* soter_sym_aead_encrypt_create(uint32_t alg,
  * @param [in] data_length length of AAD data
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
  */
+SOTER_API
 soter_status_t soter_sym_aead_encrypt_aad(soter_sym_ctx_t* ctx, const void* plain_data, size_t data_length);
 
 /**
@@ -304,6 +315,7 @@ soter_status_t soter_sym_aead_encrypt_aad(soter_sym_ctx_t* ctx, const void* plai
  * SOTER_BUFFER_TOO_SMALL will return and cipher_data_length will contain length of buffer thet need
  * to store cipher data.
  */
+SOTER_API
 soter_status_t soter_sym_aead_encrypt_update(soter_sym_ctx_t* ctx,
                                              const void* plain_data,
                                              size_t data_length,
@@ -322,6 +334,7 @@ soter_status_t soter_sym_aead_encrypt_update(soter_sym_ctx_t* ctx,
  * SOTER_BUFFER_TOO_SMALL will return and auth_tag_length will contain length of buffer thet need to
  * store auth_tag.
  */
+SOTER_API
 soter_status_t soter_sym_aead_encrypt_final(soter_sym_ctx_t* ctx, void* auth_tag, size_t* auth_tag_length);
 
 /**
@@ -330,6 +343,7 @@ soter_status_t soter_sym_aead_encrypt_final(soter_sym_ctx_t* ctx, void* auth_tag
  * soter_sym_encrypt_create
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
  */
+SOTER_API
 soter_status_t soter_sym_aead_encrypt_destroy(soter_sym_ctx_t* ctx);
 /** @} */
 
@@ -350,6 +364,7 @@ soter_status_t soter_sym_aead_encrypt_destroy(soter_sym_ctx_t* ctx);
  * @param [in] iv_length length of iv
  * @return pointer to new symmetric decryption context on success or NULL on failure
  */
+SOTER_API
 soter_sym_ctx_t* soter_sym_aead_decrypt_create(uint32_t alg,
                                                const void* key,
                                                size_t key_length,
@@ -366,6 +381,7 @@ soter_sym_ctx_t* soter_sym_aead_decrypt_create(uint32_t alg,
  * @param [in] data_length length of AAD data
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
  */
+SOTER_API
 soter_status_t soter_sym_aead_decrypt_aad(soter_sym_ctx_t* ctx, const void* plain_data, size_t data_length);
 
 /**
@@ -382,6 +398,7 @@ soter_status_t soter_sym_aead_decrypt_aad(soter_sym_ctx_t* ctx, const void* plai
  * SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer thet need
  * to store plain data.
  */
+SOTER_API
 soter_status_t soter_sym_aead_decrypt_update(soter_sym_ctx_t* ctx,
                                              const void* cipher_data,
                                              size_t data_length,
@@ -396,6 +413,7 @@ soter_status_t soter_sym_aead_decrypt_update(soter_sym_ctx_t* ctx,
  * @param [in] auth_tag_length length of auth_tag
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
  */
+SOTER_API
 soter_status_t soter_sym_aead_decrypt_final(soter_sym_ctx_t* ctx,
                                             const void* auth_tag,
                                             size_t auth_tag_length);
@@ -406,6 +424,7 @@ soter_status_t soter_sym_aead_decrypt_final(soter_sym_ctx_t* ctx,
  * soter_sym_decrypt_create
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
  */
+SOTER_API
 soter_status_t soter_sym_aead_decrypt_destroy(soter_sym_ctx_t* ctx);
 /** @} */
 /** @} */

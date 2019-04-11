@@ -17,6 +17,7 @@
 #ifndef SOTER_CONTAINER_H
 #define SOTER_CONTAINER_H
 
+#include <soter/soter_api.h>
 #include <soter/soter_error.h>
 
 #define SOTER_CONTAINER_TAG_LENGTH 4
@@ -30,7 +31,10 @@ struct soter_container_hdr_type {
 
 typedef struct soter_container_hdr_type soter_container_hdr_t;
 
+SOTER_API
 soter_status_t soter_update_container_checksum(soter_container_hdr_t* hdr);
+
+SOTER_API
 soter_status_t soter_verify_container_checksum(const soter_container_hdr_t* hdr);
 
 #define soter_container_data(_HDR_) ((uint8_t*)((_HDR_) + 1))

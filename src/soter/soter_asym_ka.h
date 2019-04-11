@@ -21,6 +21,7 @@
 #ifndef SOTER_ASYM_KA_H
 #define SOTER_ASYM_KA_H
 
+#include <soter/soter_api.h>
 #include <soter/soter_error.h>
 
 /** @addtogroup SOTER
@@ -45,6 +46,7 @@ typedef struct soter_asym_ka_type soter_asym_ka_t;
  * @param [in] alg algorithm to use. See @ref soter_asym_ka_alg_type
  * @return pointer to created key agreement context on success or NULL on failure
  */
+SOTER_API
 soter_asym_ka_t* soter_asym_ka_create(soter_asym_ka_alg_t alg);
 
 /**
@@ -53,6 +55,7 @@ soter_asym_ka_t* soter_asym_ka_create(soter_asym_ka_alg_t alg);
  * soter_asym_ka_create
  * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx);
 
 /**
@@ -66,6 +69,7 @@ soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx);
  * @note If key==NULL or key_length less then need to store key, @ref SOTER_BUFFER_TOO_SMALL will
  * return and key_length will contain length of buffer thet need to store key.
  */
+SOTER_API
 soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx,
                                         void* key,
                                         size_t* key_length,
@@ -79,6 +83,7 @@ soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx,
  * @param [in] key_length length of key
  * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void* key, size_t key_length);
 
 /**
@@ -95,6 +100,7 @@ soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void
  * SOTER_BUFFER_TOO_SMALL will return and shared_secret_length will contain length of buffer thet
  * need to store shared secret.
  */
+SOTER_API
 soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
                                     const void* peer_key,
                                     size_t peer_key_length,
@@ -107,6 +113,7 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
  * soter_asym_ka_create
  * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_asym_ka_destroy(soter_asym_ka_t* asym_ka_ctx);
 
 /** @} */

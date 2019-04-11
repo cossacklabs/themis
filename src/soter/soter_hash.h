@@ -22,6 +22,7 @@
 #ifndef SOTER_HASH_H
 #define SOTER_HASH_H
 
+#include <soter/soter_api.h>
 #include <soter/soter_error.h>
 
 /**
@@ -84,6 +85,7 @@ typedef struct soter_hash_ctx_type soter_hash_ctx_t;
  * @param [in] algo hash algorithm to be used; see @ref soter_hash_algo_type
  * @return pointer to hash context on sussecc and  NULL on failure
  */
+SOTER_API
 soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo);
 
 /**
@@ -91,7 +93,10 @@ soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo);
  * @param [in] hash_ctx pointer to hash context previosly created by @ref soter_hash_create
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_hash_destroy(soter_hash_ctx_t* hash_ctx);
+
+SOTER_API
 soter_status_t soter_hash_cleanup(soter_hash_ctx_t* hash_ctx);
 
 /**
@@ -101,6 +106,7 @@ soter_status_t soter_hash_cleanup(soter_hash_ctx_t* hash_ctx);
  * @param [in] length of data buffer
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_hash_update(soter_hash_ctx_t* hash_ctx, const void* data, size_t length);
 
 /**
@@ -114,6 +120,7 @@ soter_status_t soter_hash_update(soter_hash_ctx_t* hash_ctx, const void* data, s
  * SOTER_BUFFER_TOO_SMALL will return and hash_length will contain length of buffer thet need to
  * store hash value.
  */
+SOTER_API
 soter_status_t soter_hash_final(soter_hash_ctx_t* hash_ctx, uint8_t* hash_value, size_t* hash_length);
 
 /**@}@}*/

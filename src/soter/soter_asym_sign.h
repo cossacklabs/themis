@@ -21,6 +21,7 @@
 #ifndef SOTER_ASYM_SIGN_H
 #define SOTER_ASYM_SIGN_H
 
+#include <soter/soter_api.h>
 #include <soter/soter_error.h>
 
 /** @addtogroup SOTER
@@ -58,6 +59,7 @@ typedef struct soter_sign_ctx_type soter_sign_ctx_t;
  * @note If private_key==NULL and public_key==NULL with creating of sign context will be generated
  * new key pair.
  */
+SOTER_API
 soter_sign_ctx_t* soter_sign_create(soter_sign_alg_t alg,
                                     const void* private_key,
                                     size_t private_key_length,
@@ -70,6 +72,7 @@ soter_sign_ctx_t* soter_sign_create(soter_sign_alg_t alg,
  * @param [in] data_length length of data
  * @return result of operation, @ref SOTER_SUCCESS on success or SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_sign_update(soter_sign_ctx_t* ctx, const void* data, size_t data_length);
 
 /** @brief final sign context
@@ -82,6 +85,7 @@ soter_status_t soter_sign_update(soter_sign_ctx_t* ctx, const void* data, size_t
  * SOTER_BUFFER_TOO_SMALL will return and signature_length will contain length of buffer thet need
  * to store signature.
  */
+SOTER_API
 soter_status_t soter_sign_final(soter_sign_ctx_t* ctx, void* signature, size_t* signature_length);
 
 /** @brief export key from sign context
@@ -93,12 +97,14 @@ soter_status_t soter_sign_final(soter_sign_ctx_t* ctx, void* signature, size_t* 
  * @note If key==NULL or key_length less then need to store key, @ref SOTER_BUFFER_TOO_SMALL will
  * return and key_length will contain length of buffer thet need to store key.
  */
+SOTER_API
 soter_status_t soter_sign_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate);
 
 /** @brief destroy sign context
  * @param [in] ctx pointer to sign context previously created by soter_sign_create
  * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_sign_destroy(soter_sign_ctx_t* ctx);
 
 /** @brief get used algorithm id from sign context
@@ -106,6 +112,7 @@ soter_status_t soter_sign_destroy(soter_sign_ctx_t* ctx);
  * @return used algorithm id (see @ref soter_sign_alg_type) on success or @ref SOTER_SIGN_undefined
  * on failure
  */
+SOTER_API
 soter_sign_alg_t soter_sign_get_alg_id(soter_sign_ctx_t* ctx);
 /** @}*/
 
@@ -125,6 +132,7 @@ typedef struct soter_sign_ctx_type soter_verify_ctx_t;
  * @param [in] public_key_length length of public_key
  * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
  */
+SOTER_API
 soter_verify_ctx_t* soter_verify_create(soter_sign_alg_t alg,
                                         const void* private_key,
                                         size_t private_key_length,
@@ -137,6 +145,7 @@ soter_verify_ctx_t* soter_verify_create(soter_sign_alg_t alg,
  * @param [in] data_length length of data
  * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_verify_update(soter_verify_ctx_t* ctx, const void* data, size_t data_length);
 
 /** @brief final verify context
@@ -146,12 +155,14 @@ soter_status_t soter_verify_update(soter_verify_ctx_t* ctx, const void* data, si
  * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_INVALID_SIGNATURE on
  * incorrect signature or @ref SOTER_FAIL on other failure
  */
+SOTER_API
 soter_status_t soter_verify_final(soter_verify_ctx_t* ctx, const void* signature, size_t signature_length);
 
 /** @brief destroy verify context
  * @param [in] ctx pointer to verify context previously created by soter_verify_create
  * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_verify_destroy(soter_verify_ctx_t* ctx);
 
 /** @brief get used algorithm id from verify context
@@ -159,6 +170,7 @@ soter_status_t soter_verify_destroy(soter_verify_ctx_t* ctx);
  * @return used algorithm id (see @ref soter_sign_alg_type) on success or @ref SOTER_SIGN_undefined
  * on failure
  */
+SOTER_API
 soter_sign_alg_t soter_verify_get_alg_id(soter_verify_ctx_t* ctx);
 
 /** @} */
