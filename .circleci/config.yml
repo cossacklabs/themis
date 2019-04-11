@@ -5,7 +5,7 @@ jobs:
       - image: cossacklabs/android-build:2019.01
     steps:
       - checkout
-      - run: git submodule update --init
+      - run: git submodule sync && git submodule update --init
       # limit CMake/Ninja build concurrency when building BoringSSL
       # otherwise we hit the 4GB memory limit for the build container
       - run: echo 'set_property(GLOBAL APPEND PROPERTY JOB_POOLS circleci_job_pool=4)' >> third_party/boringssl/src/CMakeLists.txt
@@ -33,7 +33,7 @@ jobs:
     steps:
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install default-jdk nodejs npm
       - checkout
-      - run: git submodule update --init
+      - run: git submodule sync && git submodule update --init
       - run: make fmt_check ENGINE=boringssl
       - run: make fmt_check ENGINE=openssl
 
@@ -106,7 +106,7 @@ jobs:
             ./emsdk activate latest
 
       - checkout
-      - run: git submodule update --init
+      - run: git submodule sync && git submodule update --init
       - run: make
       - run: make JAVA_HOME=/usr/lib/jvm/default-java themis_jni
       - run: sudo make install
