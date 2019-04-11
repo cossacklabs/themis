@@ -271,6 +271,9 @@ endif
 # strict checks for docs
 #CFLAGS += -Wdocumentation -Wno-error=documentation
 
+# Explicitly list all exports
+CFLAGS += -fvisibility=hidden
+
 # fixing compatibility between x64 0.9.6 and x64 0.10.0
 # https://github.com/cossacklabs/themis/pull/279
 ifeq ($(NO_SCELL_COMPAT),)
