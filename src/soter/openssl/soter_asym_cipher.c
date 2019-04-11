@@ -20,6 +20,7 @@
 #include <openssl/rsa.h>
 
 #include "soter/openssl/soter_engine.h"
+#include "soter/soter_api.h"
 #include "soter/soter_rsa_key.h"
 
 /* We use only SHA1 for now */
@@ -71,6 +72,7 @@ soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx
 
 /* Padding is ignored. We use OAEP by default. Parameter is to support more paddings in the future
  */
+SOTER_PRIVATE_API
 soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher,
                                       const void* key,
                                       const size_t key_length,
@@ -106,6 +108,7 @@ soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher,
     return SOTER_SUCCESS;
 }
 
+SOTER_PRIVATE_API
 soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher)
 {
     if (!asym_cipher) {

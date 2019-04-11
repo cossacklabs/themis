@@ -23,4 +23,10 @@
 #define SOTER_API
 #endif
 
+/*
+ * Marks API that needs to be exported for technical reasons, but otherwise
+ * is not intended for user consumption.
+ */
+#define SOTER_PRIVATE_API SOTER_API
+
 #endif /* SOTER_API_H */

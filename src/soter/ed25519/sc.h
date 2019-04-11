@@ -1,6 +1,8 @@
 #ifndef SC_H
 #define SC_H
 
+#include <soter/soter_api.h>
+
 /*
 The set of scalars is \Z/l
 where l = 2^252 + 27742317777372353535851937790883648493.

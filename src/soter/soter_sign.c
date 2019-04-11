@@ -25,6 +25,8 @@
 #include <soter/openssl/soter_engine.h>
 #endif
 
+#include "soter/soter_api.h"
+
 #define SOTER_SIGN_ALGS             \
     SOTER_SIGN_ALG(rsa, pss, pkcs8) \
     SOTER_SIGN_ALG(ecdsa, none, pkcs8)
@@ -36,6 +38,7 @@
                                                          private_key_length, \
                                                          public_key,         \
                                                          public_key_length);
+SOTER_PRIVATE_API
 soter_status_t soter_sign_init(soter_sign_ctx_t* ctx,
                                soter_sign_alg_t algId,
                                const void* private_key,
@@ -64,6 +67,7 @@ soter_status_t soter_sign_init(soter_sign_ctx_t* ctx,
                                                            private_key_length, \
                                                            public_key,         \
                                                            public_key_length);
+SOTER_PRIVATE_API
 soter_status_t soter_verify_init(soter_sign_ctx_t* ctx,
                                  soter_sign_alg_t algId,
                                  const void* private_key,
