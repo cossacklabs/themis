@@ -22,6 +22,7 @@
 #ifndef THEMIS_SECURE_KEYGEN_H
 #define THEMIS_SECURE_KEYGEN_H
 
+#include <themis/themis_api.h>
 #include <themis/themis_error.h>
 
 #ifdef __cplusplus
@@ -50,6 +51,7 @@ extern "C" {
  * THEMIS_BUFFER_TOO_SMALL will return and private_key_length and public_key_length will store
  * lengths of buffers needed for private key and public key store respectively
  */
+THEMIS_API
 themis_status_t themis_gen_rsa_key_pair(uint8_t* private_key,
                                         size_t* private_key_length,
                                         uint8_t* public_key,
@@ -69,6 +71,7 @@ themis_status_t themis_gen_rsa_key_pair(uint8_t* private_key,
  * THEMIS_BUFFER_TOO_SMALL will return and private_key_length and public_key_length will store
  * lengths of buffers needed for private key and public key store respectively
  */
+THEMIS_API
 themis_status_t themis_gen_ec_key_pair(uint8_t* private_key,
                                        size_t* private_key_length,
                                        uint8_t* public_key,
@@ -90,6 +93,7 @@ typedef enum themis_key_kind themis_key_kind_t;
  * @param [in]  length  length of key
  * @return corresponding key kind if the buffer contains a key, or THEMIS_KEY_INVALID otherwise
  */
+THEMIS_API
 themis_key_kind_t themis_get_asym_key_kind(const uint8_t* key, size_t length);
 
 /**
@@ -98,6 +102,7 @@ themis_key_kind_t themis_get_asym_key_kind(const uint8_t* key, size_t length);
  * @param [in]  length  length of key
  * @return THEMIS_SUCCESS if the buffer contains a valid Themis key, or an error code otherwise
  */
+THEMIS_API
 themis_status_t themis_is_valid_asym_key(const uint8_t* key, size_t length);
 
 /** @} */
