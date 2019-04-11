@@ -16,6 +16,9 @@
 
 WASM_PATH = src/wrappers/themis/wasm
 
+WASM_SRC += $(WASM_PATH)/package.json
+WASM_SRC += $(wildcard $(WASM_PATH)/src/*.js)
+
 WASM_RUNTIME = $(abspath $(WASM_PATH)/runtime_exports.json)
 
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s EXTRA_EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME)
@@ -27,7 +30,15 @@ $(BIN_PATH)/libthemis.js: $(THEMIS_STATIC) $(WASM_RUNTIME)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-wasm_themis: check_emscripten $(BIN_PATH)/libthemis.js
+$(BIN_PATH)/wasm-themis.tgz: $(BIN_PATH)/libthemis.js $(WASM_SRC)
+	@mkdir -p $(@D)
+	@echo -n "pack $@ "
+	@cp $(BIN_PATH)/libthemis.{js,wasm} $(WASM_PATH)/src
+	@cd $(WASM_PATH) && npm pack >/dev/null
+	@mv $(WASM_PATH)/wasm-themis-*.tgz $(BIN_PATH)/wasm-themis.tgz
+	@$(PRINT_OK_)
+
+wasm_themis: check_emscripten $(BIN_PATH)/wasm-themis.tgz
 
 check_emscripten:
 ifndef IS_EMSCRIPTEN

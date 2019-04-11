@@ -1,0 +1,3 @@
+# Precompiled Wasm wrapper (override .gitignore)
+!libthemis.js
+!libthemis.wasm
