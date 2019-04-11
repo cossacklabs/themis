@@ -33,6 +33,8 @@ FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(THEMIS_FMT_SRC))
 
 THEMIS_STATIC = $(BIN_PATH)/$(LIBTHEMIS_A) $(SOTER_STATIC)
 
+$(THEMIS_OBJ): CFLAGS += -DTHEMIS_EXPORT
+
 $(BIN_PATH)/$(LIBTHEMIS_A): CMD = $(AR) rcs $@ $(filter %.o, $^)
 
 $(BIN_PATH)/$(LIBTHEMIS_A): $(THEMIS_OBJ)

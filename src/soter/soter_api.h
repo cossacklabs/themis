@@ -19,6 +19,12 @@
 
 #if defined(__GNUC__) || defined(__clang__)
 #define SOTER_API __attribute__((visibility("default")))
+#elif defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+#ifdef SOTER_EXPORT
+#define SOTER_API __declspec(dllexport)
+#else
+#define SOTER_API __declspec(dllimport)
+#endif
 #else
 #define SOTER_API
 #endif

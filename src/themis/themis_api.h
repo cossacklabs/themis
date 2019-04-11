@@ -19,6 +19,12 @@
 
 #if defined(__GNUC__) || defined(__clang__)
 #define THEMIS_API __attribute__((visibility("default")))
+#elif defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
+#ifdef THEMIS_EXPORT
+#define THEMIS_API __declspec(dllexport)
+#else
+#define THEMIS_API __declspec(dllimport)
+#endif
 #else
 #define THEMIS_API
 #endif

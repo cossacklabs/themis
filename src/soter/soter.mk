@@ -42,6 +42,8 @@ FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(SOTER_FMT_SRC))
 
 SOTER_STATIC = $(BIN_PATH)/$(LIBSOTER_A) $(SOTER_ENGINE_DEPS)
 
+$(SOTER_OBJ): CFLAGS += -DSOTER_EXPORT
+
 $(BIN_PATH)/$(LIBSOTER_A): CMD = $(AR) rcs $@ $(filter %.o, $^)
 
 $(BIN_PATH)/$(LIBSOTER_A): $(SOTER_OBJ)
