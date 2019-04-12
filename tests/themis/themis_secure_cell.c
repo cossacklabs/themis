@@ -26,7 +26,7 @@
 #define MAX_MESSAGE_SIZE 4096
 
 /* Keep it under 2^31 to support 32-bit systems. */
-#define CORRUPTED_LENGTH (16 * 1024)
+#define CORRUPTED_LENGTH 0x5AFE
 
 static char passwd[] = "password";
 static char message[] = "secure cell test message by Mnatsakanov Andrey from Cossack Labs";
