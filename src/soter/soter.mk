@@ -60,9 +60,28 @@ ifdef IS_MACOS
 	@install_name_tool -change "$(BIN_PATH)/$(notdir $@)" "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
 endif
 
-soter_pkgconfig:
+$(BIN_PATH)/libsoter.pc:
 	@mkdir -p $(BIN_PATH)
 	@sed -e "s!%prefix%!$(PREFIX)!" \
 	     -e "s!%version%!$(VERSION)!" \
 	     -e "s!%crypto-libs%!$(CRYPTO_ENGINE_LDFLAGS)!" \
 	    $(SRC_PATH)/soter/libsoter.pc.in > $(BIN_PATH)/libsoter.pc
+
+install_soter: err $(BIN_PATH)/$(LIBSOTER_A) $(BIN_PATH)/$(LIBSOTER_SO) $(BIN_PATH)/libsoter.pc
+	@echo -n "install Soter "
+	@mkdir -p $(DESTDIR)/$(includedir)/soter
+	@mkdir -p $(DESTDIR)/$(pkgconfigdir)
+	@mkdir -p $(DESTDIR)/$(libdir)
+	@$(INSTALL_DATA) $(SRC_PATH)/soter/*.h              $(DESTDIR)/$(includedir)/soter
+	@$(INSTALL_DATA) $(BIN_PATH)/libsoter.pc            $(DESTDIR)/$(pkgconfigdir)
+	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBSOTER_A)          $(DESTDIR)/$(libdir)
+	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBSOTER_SO)      $(DESTDIR)/$(libdir)
+	@$(PRINT_OK_)
+
+uninstall_soter:
+	@echo -n "uninstall Soter "
+	@rm -rf $(DESTDIR)/$(includedir)/soter
+	@rm  -f $(DESTDIR)/$(pkgconfigdir)/libsoter.pc
+	@rm  -f $(DESTDIR)/$(libdir)/$(LIBSOTER_A)
+	@rm  -f $(DESTDIR)/$(libdir)/$(LIBSOTER_SO)
+	@$(PRINT_OK_)

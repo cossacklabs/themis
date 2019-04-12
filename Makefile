@@ -18,6 +18,11 @@
 CLANG_FORMAT ?= clang-format
 CLANG_TIDY   ?= clang-tidy
 SHELL = /bin/bash
+
+INSTALL = install
+INSTALL_PROGRAM = $(INSTALL)
+INSTALL_DATA    = $(INSTALL) -m 644
+
 SRC_PATH = src
 ifneq ($(BUILD_PATH),)
 	BIN_PATH = $(BUILD_PATH)
@@ -76,6 +81,13 @@ PREFIX ?= /usr/local
 
 # default cryptographic engine
 ENGINE ?= libressl
+
+# default installation paths
+prefix          = $(PREFIX)
+exec_prefix     = $(prefix)
+includedir      = $(prefix)/include
+libdir          = $(exec_prefix)/lib
+pkgconfigdir    = $(libdir)/pkgconfig
 
 #engine selection block
 ifneq ($(ENGINE),)
@@ -282,6 +294,7 @@ include src/soter/soter.mk
 include src/themis/themis.mk
 ifndef CARGO
 include src/wrappers/themis/jsthemis/jsthemis.mk
+include src/wrappers/themis/themispp/themispp.mk
 include jni/themis_jni.mk
 endif
 endif
@@ -298,8 +311,10 @@ all: err themis_static soter_static themis_shared soter_shared themis_pkgconfig 
 
 soter_static:  $(BIN_PATH)/$(LIBSOTER_A)
 soter_shared:  $(BIN_PATH)/$(LIBSOTER_SO)
+soter_pkgconfig: $(BIN_PATH)/libsoter.pc
 themis_static: $(BIN_PATH)/$(LIBTHEMIS_A)
 themis_shared: $(BIN_PATH)/$(LIBTHEMIS_SO)
+themis_pkgconfig: $(BIN_PATH)/libthemis.pc
 themis_jni:    $(BIN_PATH)/$(LIBTHEMISJNI_SO)
 
 #
@@ -336,11 +351,6 @@ $(OBJ_PATH)/%.fmt_check: %
 	@echo -n "check $< "
 	@$(BUILD_CMD_)
 
-THEMISPP_HEADERS = $(wildcard $(SRC_PATH)/wrappers/themis/themispp/*.hpp)
-
-FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(THEMISPP_HEADERS))
-FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(THEMISPP_HEADERS))
-
 #$(AUD_PATH)/%: CMD = $(CC) $(CFLAGS) -E -dI -dD $< -o $@
 $(AUD_PATH)/%: CMD = ./scripts/pp.sh  $< $@
 
@@ -370,43 +380,7 @@ ifdef RUST_VERSION
 	@rm -f tools/rust/*.rust
 endif
 
-make_install_dirs: CMD = mkdir -p $(PREFIX)/include/themis $(PREFIX)/include/soter $(PREFIX)/lib $(PREFIX)/lib/pkgconfig
-
-make_install_dirs:
-	@echo -n "making dirs for install "
-	@$(BUILD_CMD_)
-
-install_soter_headers: CMD = install $(SRC_PATH)/soter/*.h $(PREFIX)/include/soter
-
-install_soter_headers: err all make_install_dirs
-	@echo -n "install soter headers "
-	@$(BUILD_CMD_)
-
-install_themis_headers: CMD = install $(SRC_PATH)/themis/*.h $(PREFIX)/include/themis
-
-install_themis_headers: err all make_install_dirs
-	@echo -n "install themis headers "
-	@$(BUILD_CMD_)
-
-install_static_libs: CMD = install $(BIN_PATH)/*.a $(PREFIX)/lib
-
-install_static_libs: err all make_install_dirs
-	@echo -n "install static libraries "
-	@$(BUILD_CMD_)
-
-install_shared_libs: CMD = install $(BIN_PATH)/*.$(SHARED_EXT) $(PREFIX)/lib
-
-install_shared_libs: err all make_install_dirs
-	@echo -n "install shared libraries "
-	@$(BUILD_CMD_)
-
-install_pkgconfig: CMD = install $(BIN_PATH)/*.pc $(PREFIX)/lib/pkgconfig
-
-install_pkgconfig: err all make_install_dirs
-	@echo -n "install pkg-config files "
-	@$(BUILD_CMD_)
-
-install: install_soter_headers install_themis_headers install_static_libs install_shared_libs install_pkgconfig
+install: all install_soter install_themis
 	@echo -n "Themis installed to $(PREFIX)"
 	@$(PRINT_OK_)
 ifdef IS_LINUX
@@ -486,9 +460,7 @@ ifdef NPM_VERSION
 	@$(BUILD_CMD_)
 endif
 
-uninstall: CMD = rm -rf $(PREFIX)/include/themis && rm -rf $(PREFIX)/include/soter && rm -f $(PREFIX)/lib/libsoter.a && rm -f $(PREFIX)/lib/libthemis.a && rm -f $(PREFIX)/lib/libsoter.$(SHARED_EXT) && rm -f $(PREFIX)/lib/libthemis.$(SHARED_EXT) && rm -f $(PREFIX)/lib/pkgconfig/libsoter.pc && rm -f $(PREFIX)/lib/pkgconfig/libthemis.pc
-
-uninstall: phpthemis_uninstall rbthemis_uninstall themispp_uninstall jsthemis_uninstall
+uninstall: phpthemis_uninstall rbthemis_uninstall themispp_uninstall jsthemis_uninstall uninstall_themis uninstall_soter
 	@echo -n "Themis uninstalled from $(PREFIX) "
 	@$(BUILD_CMD_)
 
@@ -543,19 +515,6 @@ ifeq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
 	@exit 1
 endif
 	@echo -n "pythemis install "
-	@$(BUILD_CMD_)
-
-
-themispp_install: CMD = install $(SRC_PATH)/wrappers/themis/themispp/*.hpp $(PREFIX)/include/themispp
-
-themispp_install:
-	@mkdir -p $(PREFIX)/include/themispp
-	@$(BUILD_CMD)
-
-themispp_uninstall: CMD = rm -rf $(PREFIX)/include/themispp
-
-themispp_uninstall:
-	@echo -n "themispp uninstall "
 	@$(BUILD_CMD_)
 
 soter_collect_headers:
