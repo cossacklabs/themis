@@ -5,7 +5,7 @@
   "description": "Themis data security library",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/cossacklabs/themis/issues"
   },
-  "homepage": "https://github.com/cossacklabs/themis#readme"
+  "homepage": "https://github.com/cossacklabs/themis#readme",
+  "devDependencies": {
+    "mocha": "^6.1.3"
+  }
 }

@@ -61,13 +61,13 @@ function coerceToBytes(key) {
     if (key instanceof ArrayBuffer) {
         return new Uint8Array(key)
     }
-    throw new ThemisError(subsystem, ThemisError.INVALID_PARAMETER,
+    throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
         'key type mismatch, expect "Uint8Array" or "ArrayBuffer"')
 }
 
 function validateKeyBuffer(buffer, expectedKinds) {
     if (buffer.length == 0) {
-        throw new ThemisError(subsystem, ThemisError.INVALID_PARAMETER,
+        throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
             'key must not be empty')
     }
 
@@ -96,7 +96,7 @@ function validateKeyBuffer(buffer, expectedKinds) {
     }
 
     if (!expectedKinds.includes(kind)) {
-        throw new ThemisError(subsystem, ThemisError.INVALID_PARAMETER,
+        throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
             'invalid key kind')
     }
 }
