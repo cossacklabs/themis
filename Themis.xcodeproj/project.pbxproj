@@ -398,6 +398,8 @@
 		9F4A24C2223A8FA8005CB63A /* smessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smessage.h; path = "src/wrappers/themis/Obj-C/objcthemis/smessage.h"; sourceTree = "<group>"; };
 		9F4A24C3223A8FA8005CB63A /* scell_token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scell_token.h; path = "src/wrappers/themis/Obj-C/objcthemis/scell_token.h"; sourceTree = "<group>"; };
 		9FBD853C223BFB5E009EAEB3 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Carthage/Build/iOS/openssl.framework; sourceTree = "<group>"; };
+		9FD4C3522260D41700132A88 /* soter_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_api.h; path = src/soter/soter_api.h; sourceTree = "<group>"; };
+		9FD4C3532260D43B00132A88 /* themis_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = themis_api.h; path = src/themis/themis_api.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -443,6 +445,7 @@
 			children = (
 				9F4A23A6223A742F005CB63A /* ed25519 */,
 				9F4A2383223A740E005CB63A /* openssl */,
+				9FD4C3522260D41700132A88 /* soter_api.h */,
 				9F4A2343223A73B0005CB63A /* soter_asym_cipher.h */,
 				9F4A234B223A73B0005CB63A /* soter_asym_ka.h */,
 				9F4A2350223A73B1005CB63A /* soter_asym_sign.h */,
@@ -589,6 +592,7 @@
 				9F4A242D223A74AF005CB63A /* secure_session.h */,
 				9F4A2431223A74AF005CB63A /* sym_enc_message.c */,
 				9F4A242B223A74AF005CB63A /* sym_enc_message.h */,
+				9FD4C3532260D43B00132A88 /* themis_api.h */,
 				9F4A242F223A74AF005CB63A /* themis_error.h */,
 				9F4A2433223A74AF005CB63A /* themis.h */,
 			);
