@@ -24,7 +24,6 @@ LIBTHEMIS_SO_LDFLAGS = -Wl,-soname,$(LIBTHEMIS_SO)
 endif
 ifdef IS_MACOS
 LIBTHEMIS_SO = libthemis.$(LIBRARY_SO_VERSION).$(SHARED_EXT)
-LIBTHEMIS_SO_LDFLAGS = -dylinker_install_name "$(LIBDIR)/$(LIBTHEMIS_SO)"
 endif
 
 THEMIS_SOURCES = $(wildcard $(SRC_PATH)/themis/*.c)
@@ -75,6 +74,11 @@ install_themis: err $(BIN_PATH)/$(LIBTHEMIS_A) $(BIN_PATH)/$(LIBTHEMIS_SO) $(BIN
 	@$(INSTALL_DATA) $(BIN_PATH)/libthemis.pc           $(DESTDIR)/$(pkgconfigdir)
 	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBTHEMIS_A)         $(DESTDIR)/$(libdir)
 	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBTHEMIS_SO)     $(DESTDIR)/$(libdir)
+ifdef IS_MACOS
+	@install_name_tool -id "$(libdir)/$(LIBTHEMIS_SO)" "$(DESTDIR)/$(libdir)/$(LIBTHEMIS_SO)"
+	@install_name_tool -change "$(BIN_PATH)/$(LIBTHEMIS_SO)" "$(libdir)/$(LIBTHEMIS_SO)" "$(DESTDIR)/$(libdir)/$(LIBTHEMIS_SO)"
+	@install_name_tool -change "$(BIN_PATH)/$(LIBSOTER_SO)"  "$(libdir)/$(LIBSOTER_SO)"  "$(DESTDIR)/$(libdir)/$(LIBTHEMIS_SO)"
+endif
 ifneq ($(LIBTHEMIS_SO),$(LIBTHEMIS_LINK))
 	@ln -sf $(LIBTHEMIS_SO)                             $(DESTDIR)/$(libdir)/$(LIBTHEMIS_LINK)
 endif

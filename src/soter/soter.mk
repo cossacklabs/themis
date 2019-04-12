@@ -24,7 +24,6 @@ LIBSOTER_SO_LDFLAGS = -Wl,-soname,$(LIBSOTER_SO)
 endif
 ifdef IS_MACOS
 LIBSOTER_SO = libsoter.$(LIBRARY_SO_VERSION).$(SHARED_EXT)
-LIBSOTER_SO_LDFLAGS = -dylinker_install_name "$(LIBDIR)/$(LIBSOTER_SO)"
 endif
 
 SOTER_SOURCES = $(wildcard $(SRC_PATH)/soter/*.c)
@@ -85,6 +84,10 @@ install_soter: err $(BIN_PATH)/$(LIBSOTER_A) $(BIN_PATH)/$(LIBSOTER_SO) $(BIN_PA
 	@$(INSTALL_DATA) $(BIN_PATH)/libsoter.pc            $(DESTDIR)/$(pkgconfigdir)
 	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBSOTER_A)          $(DESTDIR)/$(libdir)
 	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBSOTER_SO)      $(DESTDIR)/$(libdir)
+ifdef IS_MACOS
+	@install_name_tool -id "$(libdir)/$(LIBSOTER_SO)" "$(DESTDIR)/$(libdir)/$(LIBSOTER_SO)"
+	@install_name_tool -change "$(BIN_PATH)/$(LIBSOTER_SO)" "$(libdir)/$(LIBSOTER_SO)" "$(DESTDIR)/$(libdir)/$(LIBSOTER_SO)"
+endif
 ifneq ($(LIBSOTER_SO),$(LIBSOTER_LINK))
 	@ln -sf $(LIBSOTER_SO)                              $(DESTDIR)/$(libdir)/$(LIBSOTER_LINK)
 endif
