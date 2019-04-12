@@ -47,9 +47,16 @@ $(OBJ_PATH)/tests/soter/%: CFLAGS += -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_D
 $(SOTER_TEST_BIN): nist_rng_test_suite
 endif
 
-$(SOTER_TEST_BIN): CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
+# Link dynamically against the Soter library in the build directory,
+# not the one in the standard system paths (if any).
+SOTER_TEST_LDFLAGS += -L$(BIN_PATH) -lsoter
+ifdef IS_LINUX
+SOTER_TEST_LDFLAGS += -Wl,-rpath,$(abspath $(BIN_PATH))
+endif
 
-$(SOTER_TEST_BIN): $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) $(SOTER_STATIC)
+$(SOTER_TEST_BIN): CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(SOTER_TEST_LDFLAGS)
+
+$(SOTER_TEST_BIN): $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) $(BIN_PATH)/$(LIBSOTER_SO)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
