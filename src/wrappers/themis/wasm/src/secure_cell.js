@@ -14,11 +14,7 @@
 
 /**
  * @file
- * WasmThemis module entry point.
+ * Themis Secure Cell.
  */
 
-Object.assign(module.exports
-  , require('./secure_cell.js')
-  , require('./secure_keygen.js')
-  , require('./themis_error.js')
-)
+module.exports.SecureCellSeal = require('./secure_cell_seal.js')

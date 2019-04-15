@@ -77,4 +77,73 @@ describe('wasm-themis', function() {
             })
         })
     })
+    describe('SecureCell', function() {
+        let masterKey1 = new Uint8Array([1, 2, 3, 4])
+        let masterKey2 = new Uint8Array([5, 6, 7, 8, 9])
+        let emptyArray = new Uint8Array()
+        let testInput = new Uint8Array([1, 1, 2, 3, 5, 8, 13])
+        let testContext = new Uint8Array([42])
+        describe('Seal mode', function() {
+            it('does not accept strings', function() {
+                // It's a really nice idea to accept strings as 'master keys', but we have
+                // to define their interpretetaion. So treat them as errors for now.
+                assert.throws(() => new themis.SecureCellSeal('master key'), TypeError)
+            })
+            it('encrypts without context', function() {
+                let cell = new themis.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('encrypts with context', function() {
+                let cell = new themis.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                let decrypted = cell.decrypt(encrypted, testContext)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('produces extended results', function() {
+                let cell = new themis.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                assert(encrypted.length > testInput.length)
+            })
+            it('forbits empty inputs', function() {
+                assert.throws(() => new themis.SecureCellSeal(emptyArray),
+                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                )
+                let cell = new themis.SecureCellSeal(masterKey1)
+                assert.throws(() => cell.encrypt(emptyArray),
+                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                )
+            })
+            it('empty context == no context', function() {
+                let cell = new themis.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted, emptyArray)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('detects invalid master key', function() {
+                let cell1 = new themis.SecureCellSeal(masterKey1)
+                let cell2 = new themis.SecureCellSeal(masterKey2)
+                let encrypted = cell1.encrypt(testInput)
+                assert.throws(() => cell2.decrypt(encrypted),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('detects invalid context', function() {
+                let cell = new themis.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                assert.throws(() => cell.decrypt(encrypted, testInput),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('detects corrupted data', function() {
+                let cell = new themis.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                encrypted[20] = 256 - encrypted[20]
+                assert.throws(() => cell.decrypt(encrypted),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+        })
+    })
 })
