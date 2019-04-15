@@ -18,3 +18,4 @@
  */
 
 module.exports.SecureCellSeal = require('./secure_cell_seal.js')
+module.exports.SecureCellContextImprint = require('./secure_cell_context_imprint.js')

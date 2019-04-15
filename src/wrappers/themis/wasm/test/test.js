@@ -145,5 +145,56 @@ describe('wasm-themis', function() {
                 )
             })
         })
+        describe('Context Imprint mode', function() {
+            it('does not accept strings', function() {
+                // It's a really nice idea to accept strings as 'master keys', but we have
+                // to define their interpretetaion. So treat them as errors for now.
+                assert.throws(() => new themis.SecureCellContextImprint('master key'), TypeError)
+            })
+            it('encrypts only with context', function() {
+                let cell = new themis.SecureCellContextImprint(masterKey1)
+                assert.throws(() => cell.encrypt(testInput))
+                let encrypted = cell.encrypt(testInput, testContext)
+                let decrypted = cell.decrypt(encrypted, testContext)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('encryption does not change data length', function() {
+                let cell = new themis.SecureCellContextImprint(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                assert.equal(encrypted.length, testInput.length)
+            })
+            it('forbids empty message and context', function() {
+                assert.throws(() => new themis.SecureCellContextImprint(emptyArray),
+                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                )
+                let cell = new themis.SecureCellContextImprint(masterKey1)
+                assert.throws(() => cell.encrypt(emptyArray, testContext))
+                assert.throws(() => cell.encrypt(testInput,  emptyArray))
+                assert.throws(() => cell.encrypt(emptyArray, emptyArray))
+                assert.throws(() => cell.decrypt(emptyArray, testContext))
+                assert.throws(() => cell.decrypt(testInput,  emptyArray))
+                assert.throws(() => cell.decrypt(emptyArray, emptyArray))
+            })
+            it('does not detect incorrect master key', function() {
+                let cell1 = new themis.SecureCellContextImprint(masterKey1)
+                let cell2 = new themis.SecureCellContextImprint(masterKey2)
+                let encrypted = cell1.encrypt(testInput, testContext)
+                let decrypted = cell2.decrypt(encrypted, testContext)
+                assert.notDeepStrictEqual(testInput, decrypted)
+            })
+            it('does not detect incorrect context', function() {
+                let cell = new themis.SecureCellContextImprint(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                let decrypted = cell.decrypt(encrypted, testInput)
+                assert.notDeepStrictEqual(testInput, decrypted)
+            })
+            it('does not detect corrupted data', function() {
+                let cell = new themis.SecureCellContextImprint(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                encrypted[5] = 256 - encrypted[5]
+                let decrypted = cell.decrypt(encrypted, testContext)
+                assert.notDeepStrictEqual(testInput, decrypted)
+            })
+        })
     })
 })
