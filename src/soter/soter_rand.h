@@ -22,6 +22,7 @@
 #ifndef SOTER_RAND_H
 #define SOTER_RAND_H
 
+#include <soter/soter_api.h>
 #include <soter/soter_error.h>
 
 /**
@@ -44,6 +45,7 @@ extern "C" {
  *
  * This function generates random bits and puts them in memory pointed by buffer.
  */
+SOTER_API
 soter_status_t soter_rand(uint8_t* buffer, size_t length);
 
 #ifdef __cplusplus

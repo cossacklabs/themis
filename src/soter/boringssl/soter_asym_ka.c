@@ -19,6 +19,7 @@
 #include <openssl/ec.h>
 
 #include "soter/boringssl/soter_engine.h"
+#include "soter/soter_api.h"
 #include "soter/soter_ec_key.h"
 
 static int soter_alg_to_curve_nid(soter_asym_ka_alg_t alg)
@@ -31,6 +32,7 @@ static int soter_alg_to_curve_nid(soter_asym_ka_alg_t alg)
     }
 }
 
+SOTER_PRIVATE_API
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_alg_t alg)
 {
     EVP_PKEY* pkey;
@@ -70,6 +72,7 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_al
     return SOTER_SUCCESS;
 }
 
+SOTER_PRIVATE_API
 soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
 {
     if (!asym_ka_ctx) {

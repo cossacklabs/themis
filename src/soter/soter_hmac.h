@@ -21,6 +21,7 @@
 #ifndef SOTER_HMAC_H
 #define SOTER_HMAC_H
 
+#include <soter/soter_api.h>
 #include <soter/soter_error.h>
 #include <soter/soter_hash.h>
 
@@ -70,6 +71,7 @@ typedef struct soter_hmac_ctx_type soter_hmac_ctx_t;
  * @param [in] algo hash algorithm to be used; see @ref soter_hash_algo_type
  * @return pointer to HMAC context on sussecc and  NULL on failure
  */
+SOTER_API
 soter_hmac_ctx_t* soter_hmac_create(soter_hash_algo_t algo, const uint8_t* key, size_t key_length);
 
 /**
@@ -77,6 +79,7 @@ soter_hmac_ctx_t* soter_hmac_create(soter_hash_algo_t algo, const uint8_t* key, 
  * @param [in] hmac_ctx pointer to HMAC context previosly created by @ref soter_hmac_create
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_hmac_destroy(soter_hmac_ctx_t* hmac_ctx);
 
 /**
@@ -86,6 +89,7 @@ soter_status_t soter_hmac_destroy(soter_hmac_ctx_t* hmac_ctx);
  * @param [in] length of data buffer
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_hmac_update(soter_hmac_ctx_t* hmac_ctx, const void* data, size_t length);
 
 /**
@@ -99,6 +103,7 @@ soter_status_t soter_hmac_update(soter_hmac_ctx_t* hmac_ctx, const void* data, s
  * SOTER_BUFFER_TOO_SMALL will return and hmac_length will contain length of buffer thet need to
  * store HMAC value.
  */
+SOTER_API
 soter_status_t soter_hmac_final(soter_hmac_ctx_t* hmac_ctx, uint8_t* hmac_value, size_t* hmac_length);
 
 /**@}@}*/

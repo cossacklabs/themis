@@ -15,6 +15,8 @@ Representations:
   ge_precomp (Duif): (y+x,y-x,2dxy)
 */
 
+#include <soter/soter_api.h>
+
 #include "fe.h"
 
 typedef struct {

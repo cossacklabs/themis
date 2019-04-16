@@ -21,6 +21,7 @@
 #ifndef SOTER_KDF_H
 #define SOTER_KDF_H
 
+#include <soter/soter_api.h>
 #include <soter/soter_error.h>
 
 /** @addtogroup SOTER
@@ -48,6 +49,7 @@ typedef struct soter_kdf_context_buf_type soter_kdf_context_buf_t;
  * @param [in] output_length length of data to derive
  * @return SOTER_SUCCESS on success or SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_kdf(const void* key,
                          size_t key_length,
                          const char* label,

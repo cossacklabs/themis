@@ -4,6 +4,8 @@
 /* #include "crypto_int32.h" */
 #include <stdint.h>
 
+#include <soter/soter_api.h>
+
 typedef int32_t crypto_int32;
 typedef int64_t crypto_int64;
 typedef uint32_t crypto_uint32;

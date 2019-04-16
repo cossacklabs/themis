@@ -19,6 +19,8 @@
 #ifndef GE_UTILS_H
 #define GE_UTILS_H
 
+#include <soter/soter_api.h>
+
 #include "ge.h"
 
 #define ED25519_GE_LENGTH 32
