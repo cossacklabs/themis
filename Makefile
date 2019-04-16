@@ -161,7 +161,7 @@ endif
 #
 # If you make breaking (backwards-incompatible) changes to API or ABI
 # then increment LIBRARY_SO_VERSION as well, and update package names.
-VERSION = 0.11.1
+VERSION := $(shell test -d .git && git describe --tags || cat VERSION)
 LIBRARY_SO_VERSION = 0
 
 PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
@@ -413,6 +413,7 @@ dist:
 	rsync -avz build.gradle $(VERSION)
 	rsync -avz gradlew $(VERSION)
 	rsync -avz themis.podspec $(VERSION)
+	rsync -avz VERSION $(VERSION)
 	tar -zcvf $(THEMIS_DIST_FILENAME) $(VERSION)
 	rm -rf $(VERSION)
 
