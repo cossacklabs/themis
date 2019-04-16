@@ -53,6 +53,10 @@ SOTER_TEST_LDFLAGS += -L$(BIN_PATH) -lsoter
 ifdef IS_LINUX
 SOTER_TEST_LDFLAGS += -Wl,-rpath,$(abspath $(BIN_PATH))
 endif
+# Emscripten still links statically, provide all dependencies for it
+ifdef IS_EMSCRIPTEN
+SOTER_TEST_LDFLAGS += $(CRYPTO_ENGINE_LDFLAGS)
+endif
 
 $(SOTER_TEST_BIN): CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(SOTER_TEST_LDFLAGS)
 

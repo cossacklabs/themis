@@ -41,6 +41,10 @@ THEMIS_TEST_LDFLAGS += -L$(BIN_PATH) -lthemis -lsoter
 ifdef IS_LINUX
 THEMIS_TEST_LDFLAGS += -Wl,-rpath,$(abspath $(BIN_PATH))
 endif
+# Emscripten still links statically, provide all dependencies for it
+ifdef IS_EMSCRIPTEN
+THEMIS_TEST_LDFLAGS += $(CRYPTO_ENGINE_LDFLAGS)
+endif
 
 $(THEMIS_TEST_BIN): CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(THEMIS_TEST_LDFLAGS)
 
