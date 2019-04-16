@@ -18,6 +18,9 @@
 all:
 
 #CC = clang
+
+CMAKE = cmake
+
 CLANG_FORMAT ?= clang-format
 CLANG_TIDY   ?= clang-tidy
 SHELL = /bin/bash
@@ -73,6 +76,14 @@ else ifeq ($(UNAME),Linux)
 	IS_LINUX := true
 endif
 
+ifneq ($(shell $(CC) --version 2>&1 | grep -oi "Emscripten"),)
+	IS_EMSCRIPTEN := true
+endif
+
+ifdef IS_EMSCRIPTEN
+CMAKE = emconfigure cmake
+endif
+
 define themisecho
       @tput setaf 6
       @echo $1
@@ -83,7 +94,11 @@ endef
 PREFIX ?= /usr/local
 
 # default cryptographic engine
+ifdef IS_EMSCRIPTEN
+ENGINE ?= boringssl
+else
 ENGINE ?= libressl
+endif
 
 # default installation paths
 prefix          = $(PREFIX)
@@ -184,6 +199,7 @@ PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
 RUST_VERSION := $(shell rustc --version 2>/dev/null)
 GO_VERSION := $(shell which go >/dev/null 2>&1 && go version 2>&1)
+NODE_VERSION := $(shell node --version 2>/dev/null)
 NPM_VERSION := $(shell npm --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
 PYTHON2_VERSION := $(shell which python2 >/dev/null 2>&1 && python2 --version 2>&1)

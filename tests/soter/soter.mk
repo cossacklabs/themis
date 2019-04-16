@@ -14,6 +14,12 @@
 # limitations under the License.
 #
 
+ifdef IS_EMSCRIPTEN
+SOTER_TEST_BIN = $(TEST_BIN_PATH)/soter_test.js
+else
+SOTER_TEST_BIN = $(TEST_BIN_PATH)/soter_test
+endif
+
 NIST_STS_DIR = tests/soter/nist-sts
 
 SOTER_TEST_SOURCES = $(wildcard tests/soter/*.c)
@@ -26,17 +32,24 @@ SOTER_TEST_FMT = $(SOTER_TEST_SOURCES) $(SOTER_TEST_HEADERS)
 FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(SOTER_TEST_FMT))
 FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(SOTER_TEST_FMT))
 
+ifdef IS_EMSCRIPTEN
+$(SOTER_TEST_BIN): LDFLAGS += -s SINGLE_FILE=1
+
+# Emscripten cannot conveniently run NIST STS therefore we disable it.
+NO_NIST_STS := true
+endif
+
 ifdef NO_NIST_STS
 $(OBJ_PATH)/tests/soter/%: CFLAGS += -DNO_NIST_STS=1
 else
 $(OBJ_PATH)/tests/soter/%: CFLAGS += -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR))
 
-$(TEST_BIN_PATH)/soter_test: nist_rng_test_suite
+$(SOTER_TEST_BIN): nist_rng_test_suite
 endif
 
-$(TEST_BIN_PATH)/soter_test: CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
+$(SOTER_TEST_BIN): CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
 
-$(TEST_BIN_PATH)/soter_test: $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) $(SOTER_STATIC)
+$(SOTER_TEST_BIN): $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) $(SOTER_STATIC)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
