@@ -175,25 +175,12 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
 
-DEFAULT_VERSION := 0.11.0
-GIT_VERSION := $(shell if [ -d ".git" ]; then git version; fi 2>/dev/null)
-# check that repo has any tag
-GIT_TAG_STATUS := $(shell git describe --tags HEAD 2>/dev/null)
-GIT_TAG_STATUS := $(.SHELLSTATUS)
-
-ifdef GIT_VERSION
-# if has tag then use it
-        ifeq ($(GIT_TAG_STATUS),0)
-# <tag>-<commit_count_after_tag>-<last_commit-hash>
-                VERSION = $(shell git describe --tags HEAD | cut -b 1-)
-        else
-# <base_version>-<total_commit_count>-<last_commit_hash>
-                VERSION = $(DEFAULT_VERSION)-$(shell git rev-list --all --count)-$(shell git describe --always HEAD)
-        endif
-else
-# if it's not git repo then use date as version
-        VERSION = $(shell date -I | sed s/-/_/g)
-endif
+# Increment VERSION when making a new release of Themis.
+#
+# If you make breaking (backwards-incompatible) changes to API or ABI
+# then increment LIBRARY_SO_VERSION as well, and update package names.
+VERSION := $(shell test -d .git && git describe --tags || cat VERSION)
+LIBRARY_SO_VERSION = 0
 
 PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
@@ -449,6 +436,7 @@ dist:
 	rsync -avz build.gradle $(VERSION)
 	rsync -avz gradlew $(VERSION)
 	rsync -avz themis.podspec $(VERSION)
+	rsync -avz VERSION $(VERSION)
 	tar -zcvf $(THEMIS_DIST_FILENAME) $(VERSION)
 	rm -rf $(VERSION)
 
@@ -556,14 +544,7 @@ unpack_dist:
 
 COSSACKLABS_URL = https://www.cossacklabs.com
 MAINTAINER = "Cossack Labs Limited <dev@cossacklabs.com>"
-# tag version from VCS
-VERSION := $(shell git describe --tags HEAD | cut -b 1-)
 LICENSE_NAME = "Apache License Version 2.0"
-
-LIBRARY_SO_VERSION := $(shell echo $(VERSION) | sed 's/^\([0-9.]*\)\(.*\)*$$/\1/')
-ifeq ($(LIBRARY_SO_VERSION),)
-	LIBRARY_SO_VERSION := $(DEFAULT_VERSION)
-endif
 
 DEB_CODENAME := $(shell lsb_release -cs 2> /dev/null)
 DEB_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
@@ -605,7 +586,7 @@ HEADER_DIRS = $(shell ls $(BIN_PATH)/include)
 HEADER_FILES_MAP = $(foreach dir,$(HEADER_DIRS), $(BIN_PATH)/include/$(dir)/=$(PREFIX)/include/$(dir))
 
 STATIC_LIBRARY_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.a$$)
-STATIC_BINARY_LIBRARY_MAP = $(foreach file,$(STATIC_LIBRARY_FILES),$(strip $(BIN_PATH)/$(file)=$(PREFIX)/lib/$(file) $(BIN_PATH)/$(file).$(LIBRARY_SO_VERSION)=$(PREFIX)/lib/$(file).$(LIBRARY_SO_VERSION)))
+STATIC_BINARY_LIBRARY_MAP = $(foreach file,$(STATIC_LIBRARY_FILES),$(strip $(BIN_PATH)/$(file)=$(PREFIX)/lib/$(file)))
 
 SHARED_LIBRARY_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.$(SHARED_EXT)$$)
 SHARED_BINARY_LIBRARY_MAP = $(foreach file,$(SHARED_LIBRARY_FILES),$(strip $(BIN_PATH)/$(file).$(LIBRARY_SO_VERSION)=$(PREFIX)/lib/$(file).$(LIBRARY_SO_VERSION) $(BIN_PATH)/$(file)=$(PREFIX)/lib/$(file)))
@@ -623,20 +604,12 @@ install_shell_scripts:
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
 	@cp $(POST_INSTALL_SCRIPT) $(POST_UNINSTALL_SCRIPT)
 
-symlink_realname_to_soname:
-	# add version to filename and create symlink with realname to full name of library
-	@for f in `ls $(BIN_PATH) | egrep ".*\.(so|a)(\..*)?$$" | tr '\n' ' '`; do \
-		mv $(BIN_PATH)/$$f $(BIN_PATH)/$$f.$(LIBRARY_SO_VERSION); \
-		ln -s $(PREFIX)/lib/$$f.$(LIBRARY_SO_VERSION) $(BIN_PATH)/$$f; \
-	done
-
-
 strip:
 	@find . -name \*.$(SHARED_EXT)\.* -exec strip -o {} {} \;
 
 deb: PREFIX = /usr
 
-deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themis_pkgconfig collect_headers install_shell_scripts strip symlink_realname_to_soname
+deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themis_pkgconfig collect_headers install_shell_scripts strip
 	@mkdir -p $(BIN_PATH)/deb
 
 #libPACKAGE-dev
@@ -680,7 +653,7 @@ deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themi
 
 rpm: PREFIX = /usr
 
-rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared soter_pkgconfig collect_headers install_shell_scripts strip symlink_realname_to_soname
+rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared soter_pkgconfig collect_headers install_shell_scripts strip
 	@mkdir -p $(BIN_PATH)/rpm
 #libPACKAGE-devel
 	@fpm --input-type dir \
