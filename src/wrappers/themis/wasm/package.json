@@ -1,0 +1,29 @@
+{
+  "name": "wasm-themis",
+  "version": "0.11.1",
+  "private": true,
+  "description": "Themis data security library",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cossacklabs/themis.git"
+  },
+  "keywords": [
+    "security",
+    "encryption",
+    "cryptography",
+    "themis"
+  ],
+  "author": "Cossack Labs Limited",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/cossacklabs/themis/issues"
+  },
+  "homepage": "https://github.com/cossacklabs/themis#readme",
+  "devDependencies": {
+    "mocha": "^6.1.3"
+  }
+}

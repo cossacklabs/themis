@@ -1,0 +1,6 @@
+# Themis build system
+runtime_exports.json
+wasmthemis.mk
+
+# Results of local "npm pack"
+*.tgz

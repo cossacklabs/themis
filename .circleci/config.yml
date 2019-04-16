@@ -133,7 +133,8 @@ jobs:
       - run: source /etc/profile.d/rvm.sh && rvm use system && make test_ruby
       - run: make test_go
       - run: make test_rust
-      - run: source "$HOME/emsdk/emsdk_env.sh"; emmake make test BUILD_PATH=build-wasm
+      - run: source "$HOME/emsdk/emsdk_env.sh"; emmake make BUILD_PATH=build-wasm test
+      - run: source "$HOME/emsdk/emsdk_env.sh"; emmake make BUILD_PATH=build-wasm test_wasm
       - run: make fuzz
       - run: $HOME/valgrind/bin/valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: $HOME/valgrind/bin/valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'

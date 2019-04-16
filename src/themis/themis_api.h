@@ -17,16 +17,22 @@
 #ifndef THEMIS_API_H
 #define THEMIS_API_H
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#else
+#define EMSCRIPTEN_KEEPALIVE
+#endif
+
 #if defined(__GNUC__) || defined(__clang__)
-#define THEMIS_API __attribute__((visibility("default")))
+#define THEMIS_API EMSCRIPTEN_KEEPALIVE __attribute__((visibility("default")))
 #elif defined(_WIN32) || defined(_WIN64) || defined(__CYGWIN__)
 #ifdef THEMIS_EXPORT
-#define THEMIS_API __declspec(dllexport)
+#define THEMIS_API EMSCRIPTEN_KEEPALIVE __declspec(dllexport)
 #else
-#define THEMIS_API __declspec(dllimport)
+#define THEMIS_API EMSCRIPTEN_KEEPALIVE __declspec(dllimport)
 #endif
 #else
-#define THEMIS_API
+#define THEMIS_API EMSCRIPTEN_KEEPALIVE
 #endif
 
 #endif /* THEMIS_API_H */

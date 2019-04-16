@@ -181,4 +181,13 @@ ifdef RUST_VERSION
 	@echo "------------------------------------------------------------"
 endif
 
+test_wasm: wasm_themis
+ifdef NPM_VERSION
+	@echo "------------------------------------------------------------"
+	@echo "Running wasm-themis tests."
+	@echo "------------------------------------------------------------"
+	cd $(WASM_PATH) && npm install && npm test
+	@echo "------------------------------------------------------------"
+endif
+
 test_all: test prepare_tests_all test_cpp test_php test_python test_ruby test_js test_go test_rust

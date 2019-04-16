@@ -317,6 +317,7 @@ include src/themis/themis.mk
 ifndef CARGO
 include src/wrappers/themis/jsthemis/jsthemis.mk
 include src/wrappers/themis/themispp/themispp.mk
+include src/wrappers/themis/wasm/wasmthemis.mk
 include jni/themis_jni.mk
 endif
 endif
