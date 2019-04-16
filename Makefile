@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+# Make sure that "all" is the default target no matter what
+all:
+
 #CC = clang
 CLANG_FORMAT ?= clang-format
 CLANG_TIDY   ?= clang-tidy
