@@ -48,7 +48,7 @@ module.exports = class SecureCellContextImprint {
         // of an error about 'undefined' being invalid byte buffer type.
         if (context === undefined) {
             throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
-                'SecureCellContextImprint requires context')
+                'SecureCellContextImprint requires context for encrypting')
         }
 
         context = utils.coerceToBytes(context)
@@ -124,7 +124,7 @@ module.exports = class SecureCellContextImprint {
         // of an error about 'undefined' being invalid byte buffer type.
         if (context === undefined) {
             throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
-                'SecureCellContextImprint requires context')
+                'SecureCellContextImprint requires context for decrypting')
         }
 
         context = utils.coerceToBytes(context)
