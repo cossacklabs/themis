@@ -31,9 +31,10 @@ FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(THEMIS_TEST_FMT))
 FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(THEMIS_TEST_FMT))
 
 ifdef IS_EMSCRIPTEN
+# Emscripten does not support dynamic linkage, do a static build for it.
 THEMIS_TEST_LDFLAGS += -s SINGLE_FILE=1
-endif
-
+$(THEMIS_TEST_BIN): $(THEMIS_STATIC)
+else
 # Link dynamically against the Themis library in the build directory,
 # not the one in the standard system paths (if any).
 # We also need to link against Soter explicitly because of private imports.
@@ -41,14 +42,12 @@ THEMIS_TEST_LDFLAGS += -L$(BIN_PATH) -lthemis -lsoter
 ifdef IS_LINUX
 THEMIS_TEST_LDFLAGS += -Wl,-rpath,$(abspath $(BIN_PATH))
 endif
-# Emscripten still links statically, provide all dependencies for it
-ifdef IS_EMSCRIPTEN
-THEMIS_TEST_LDFLAGS += $(CRYPTO_ENGINE_LDFLAGS)
+$(THEMIS_TEST_BIN): $(BIN_PATH)/$(LIBTHEMIS_SO)
 endif
 
 $(THEMIS_TEST_BIN): CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(THEMIS_TEST_LDFLAGS)
 
-$(THEMIS_TEST_BIN): $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ) $(BIN_PATH)/$(LIBTHEMIS_SO)
+$(THEMIS_TEST_BIN): $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
