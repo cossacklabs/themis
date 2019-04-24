@@ -67,8 +67,8 @@ docs/examples/objc/iOS-CocoaPods/Pods
 
 # Carthage
 Carthage/
-#docs/examples/swift/iOS-Carthage/Carthage
-#docs/examples/objc/iOS-Carthage/Carthage
+docs/examples/swift/iOS-Carthage/Carthage
+docs/examples/objc/iOS-Carthage/Carthage
 
 
 # rust
