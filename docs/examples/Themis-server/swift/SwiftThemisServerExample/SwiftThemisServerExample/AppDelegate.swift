@@ -14,14 +14,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         // Check ReadME!
         // Start server simulator 
-        // https://themis.cossacklabs.com/interactive-simulator/setup/
+        // https://docs.cossacklabs.com/simulator/interactive/
         // 
         // Read more how server simulator works
-        // https://github.com/cossacklabs/themis/wiki/Using-Themis-Server
+        // https://docs.cossacklabs.com/pages/documentation-themis/#interactive-simulator-themis-server
         
         print(" ------------ running SMessage Client example ")
         SMessageClient().runSecureMessageCITest()

@@ -6,7 +6,9 @@
 // ---------------------- IMPORTANT SETUP ---------------------------------------
 
 // User id and Server Public Key should be copied from the Server Setup Page
-// https://themis.cossacklabs.com/interactive-simulator/setup/
+// https://docs.cossacklabs.com/simulator/interactive/
+
+static NSString * kSimulatorURL = @"https://docs.cossacklabs.com/api/";
 
 // looks like "UMHHCkqYkSNyeee"
 static NSString * kUserId = @"<user id>";
@@ -88,7 +90,7 @@ static NSString * kClientPublicKey = @"VUVDMgAAAC0IpZHJAp6MORixTEmgX8VrUghTyoGb/
         return;
     }
 
-    NSString * stringURL = [NSString stringWithFormat:@"%@%@/", @"https://themis.cossacklabs.com/api/", kUserId];
+    NSString * stringURL = [NSString stringWithFormat:@"%@%@/", kSimulatorURL, kUserId];
     [self postRequestTo:stringURL message:encryptedMessage
              completion:^(NSData * data, NSError * error) {
                  if (error || !data) {
@@ -111,7 +113,7 @@ static NSString * kClientPublicKey = @"VUVDMgAAAC0IpZHJAp6MORixTEmgX8VrUghTyoGb/
 
 - (void)generateClientKeys {
     // Use Client Public Key to run server (copy and paste Client Public Key to the Setup page)
-    // https://themis.cossacklabs.com/interactive-simulator/setup/
+    // https://docs.cossacklabs.com/simulator/interactive/
     //
     // Use client private key to encrypt your message
     TSKeyGen * keygenEC = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmEC];
@@ -130,13 +132,13 @@ static NSString * kClientPublicKey = @"VUVDMgAAAC0IpZHJAp6MORixTEmgX8VrUghTyoGb/
 
 
 - (void)checkKeysNotEmpty {
-    NSAssert(![kUserId isEqualToString:@"<user id>"], @"Get user id from https://themis.cossacklabs.com/interactive-simulator/setup/");
+    NSAssert(![kUserId isEqualToString:@"<user id>"], @"Get user id from https://docs.cossacklabs.com/simulator/interactive//");
 
-    NSAssert(![kServerPublicKey isEqualToString:@"<server public key>"], @"Get server key from https://themis.cossacklabs.com/interactive-simulator/setup/");
+    NSAssert(![kServerPublicKey isEqualToString:@"<server public key>"], @"Get server key from https://docs.cossacklabs.com/simulator/interactive/");
 
-    NSAssert(![kClientPrivateKey isEqualToString:@"<generated client private key>"], @"Generate client keys by running `[self generateClientKeys]` or obtain from server https://themis.cossacklabs.com/interactive-simulator/setup/");
+    NSAssert(![kClientPrivateKey isEqualToString:@"<generated client private key>"], @"Generate client keys by running `[self generateClientKeys]` or obtain from server https://docs.cossacklabs.com/simulator/interactive/");
 
-    NSAssert(![kClientPublicKey isEqualToString:@"<generated client public key>"], @"Generate client keys by running `[self generateClientKeys]` or obtain from server https://themis.cossacklabs.com/interactive-simulator/setup/");
+    NSAssert(![kClientPublicKey isEqualToString:@"<generated client public key>"], @"Generate client keys by running `[self generateClientKeys]` or obtain from server https://docs.cossacklabs.com/simulator/interactive/");
 }
 
 @end
