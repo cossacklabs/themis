@@ -528,16 +528,6 @@ endif
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
 
-soter_collect_headers:
-	@mkdir -p $(BIN_PATH)/include/soter
-	@cd src/soter && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/soter/ \; && cd - > /dev/null
-
-themis_collect_headers:
-	@mkdir -p $(BIN_PATH)/include/themis
-	@cd src/themis && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/themis/ \; && cd - > /dev/null
-
-collect_headers: themis_collect_headers soter_collect_headers
-
 unpack_dist:
 	@tar -xf $(THEMIS_DIST_FILENAME)
 
@@ -581,38 +571,28 @@ RPM_SUMMARY = Data security library for network communication and data storage. 
 	 PHP, Java / Android and iOS / OSX. It is designed with ease of use in mind, \
 	 high security and cross-platform availability.
 
-HEADER_DIRS = $(shell ls $(BIN_PATH)/include)
-
-HEADER_FILES_MAP = $(foreach dir,$(HEADER_DIRS), $(BIN_PATH)/include/$(dir)/=$(PREFIX)/include/$(dir))
-
-STATIC_LIBRARY_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.a$$)
-STATIC_BINARY_LIBRARY_MAP = $(foreach file,$(STATIC_LIBRARY_FILES),$(strip $(BIN_PATH)/$(file)=$(PREFIX)/lib/$(file)))
-
-SHARED_LIBRARY_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.$(SHARED_EXT)$$)
-SHARED_BINARY_LIBRARY_MAP = $(foreach file,$(SHARED_LIBRARY_FILES),$(strip $(BIN_PATH)/$(file).$(LIBRARY_SO_VERSION)=$(PREFIX)/lib/$(file).$(LIBRARY_SO_VERSION) $(BIN_PATH)/$(file)=$(PREFIX)/lib/$(file)))
-
-PKGCONFIG_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.pc$$)
-PKGCONFIG_MAP = $(foreach file,$(PKGCONFIG_FILES),$(strip $(BIN_PATH)/$(file)=$(PREFIX)/lib/pkgconfig/$(file)))
-
-BINARY_LIBRARY_MAP = $(strip $(STATIC_BINARY_LIBRARY_MAP) $(SHARED_BINARY_LIBRARY_MAP))
-
 POST_INSTALL_SCRIPT := $(BIN_PATH)/post_install.sh
 POST_UNINSTALL_SCRIPT := $(BIN_PATH)/post_uninstall.sh
 
-install_shell_scripts:
-# run ldconfig to update ld.$(SHARED_EXT) cache
-	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
-	@cp $(POST_INSTALL_SCRIPT) $(POST_UNINSTALL_SCRIPT)
+DEV_PACKAGE_FILES += $(includedir)/
+DEV_PACKAGE_FILES += $(pkgconfigdir)/
 
-strip:
-	@find . -name \*.$(SHARED_EXT)\.* -exec strip -o {} {} \;
+LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_A)
+LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_SO)
+LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_LINK)
+LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_A)
+LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_SO)
+LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_LINK)
 
+deb: DESTDIR = $(BIN_PATH)/deb/root
 deb: PREFIX = /usr
 
-deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themis_pkgconfig collect_headers install_shell_scripts strip
-	@mkdir -p $(BIN_PATH)/deb
+deb: install
+	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
+	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
 
-#libPACKAGE-dev
+	@find $(DESTDIR) -name '*.$(SHARED_EXT)*' -exec strip -o {} {} \;
+
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name $(PACKAGE_NAME)-dev \
@@ -628,9 +608,8 @@ deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themi
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --category $(PACKAGE_CATEGORY) \
-		 $(HEADER_FILES_MAP) $(PKGCONFIG_MAP)
+		 $(foreach file,$(DEV_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
-#libPACKAGE
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name $(PACKAGE_NAME) \
@@ -646,16 +625,19 @@ deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themi
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --deb-priority optional \
 		 --category $(PACKAGE_CATEGORY) \
-		 $(BINARY_LIBRARY_MAP)
+		 $(foreach file,$(LIB_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
-# it's just for printing .deb files
 	@find $(BIN_PATH) -name \*.deb
 
+rpm: DESTDIR = $(BIN_PATH)/rpm/root
 rpm: PREFIX = /usr
 
-rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared soter_pkgconfig collect_headers install_shell_scripts strip
-	@mkdir -p $(BIN_PATH)/rpm
-#libPACKAGE-devel
+rpm: install
+	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
+	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
+
+	@find $(DESTDIR) -name '*.$(SHARED_EXT)*' -exec strip -o {} {} \;
+
 	@fpm --input-type dir \
          --output-type rpm \
          --name $(PACKAGE_NAME)-devel \
@@ -670,9 +652,8 @@ rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared sote
          --package $(BIN_PATH)/rpm/$(PACKAGE_NAME)-devel-$(NAME_SUFFIX) \
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
-           $(HEADER_FILES_MAP) $(PKGCONFIG_MAP)
+         $(foreach file,$(DEV_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
-#libPACKAGE
 	@fpm --input-type dir \
          --output-type rpm \
          --name $(PACKAGE_NAME) \
@@ -687,8 +668,8 @@ rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared sote
          --package $(BIN_PATH)/rpm/$(PACKAGE_NAME)-$(NAME_SUFFIX) \
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
-         $(BINARY_LIBRARY_MAP)
-# it's just for printing .rpm files
+         $(foreach file,$(LIB_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
+
 	@find $(BIN_PATH) -name \*.rpm
 
 define PKGINFO
