@@ -80,6 +80,14 @@ ifneq ($(shell $(CC) --version 2>&1 | grep -oi "Emscripten"),)
 	IS_EMSCRIPTEN := true
 endif
 
+# Detect early if we have undefined symbols due to missing exports
+ifdef IS_MACOS
+LDFLAGS += -Wl,-undefined,error
+endif
+ifdef IS_LINUX
+LDFLAGS += -Wl,--no-undefined
+endif
+
 ifdef IS_EMSCRIPTEN
 CMAKE = emconfigure cmake
 endif
