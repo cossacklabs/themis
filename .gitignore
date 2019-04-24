@@ -62,13 +62,17 @@ third_party/boringssl/.externalNativeBuild
 # ios
 docs/examples/Themis-server/swift/Pods
 docs/examples/Themis-server/Obj-C/Pods
-docs/examples/swift/Pods
-docs/examples/objc/Pods
+docs/examples/swift/iOS-CocoaPods/Pods
+docs/examples/objc/iOS-CocoaPods/Pods
+
+# Carthage
+Carthage/
+#docs/examples/swift/iOS-Carthage/Carthage
+#docs/examples/objc/iOS-Carthage/Carthage
+
 
 # rust
 /target
 **/*.rs.bk
 Cargo.lock
 
-# Carthage
-Carthage/
