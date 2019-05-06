@@ -28,10 +28,9 @@ fn main() {
         (@arg public: "Public key file (default: key.pub)")
     )
     .get_matches();
-    let private_path = matches.value_of("private").unwrap_or("key").to_owned();
-    let public_path = matches
-        .value_of("public")
-        .map_or_else(|| private_path.clone() + ".pub", |s| s.to_owned());
+    let private_path = matches.value_of("private").unwrap_or("key");
+    let default_path = private_path.to_owned() + ".pub";
+    let public_path = matches.value_of("public").unwrap_or(&default_path);
 
     let (private_key, public_key) = gen_ec_key_pair().split();
 
