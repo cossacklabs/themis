@@ -38,8 +38,8 @@ describe("jsthemis", function(){
 	    encrypted_message = encrypter.encrypt(message);
 	    signed_message = encrypter.sign(message);
 
-		// check codes and messages when SM is empty
-		empty_secure_message = new addon.SecureMessage(new Buffer(""), new Buffer(""));
+	    // check codes and messages when SM is empty
+	    empty_secure_message = new addon.SecureMessage(new Buffer(""), new Buffer(""));
 	    assert.throws(function(){empty_secure_message.encrypt(message);}, expect_code(addon.INVALID_PARAMETER));
 	    assert.throws(function(){empty_secure_message.encrypt(message);}, expect_message("private key is empty"));
 
@@ -52,8 +52,8 @@ describe("jsthemis", function(){
 	    assert.throws(function(){empty_secure_message.verify(signed_message);}, expect_code(addon.INVALID_PARAMETER));
 	    assert.throws(function(){empty_secure_message.verify(signed_message);}, expect_message("public key is empty"));
 
-		// check codes and messages when SM has no public key
-		secure_message_no_public = new addon.SecureMessage(keypair.private(), new Buffer(""));
+	    // check codes and messages when SM has no public key
+	    secure_message_no_public = new addon.SecureMessage(keypair.private(), new Buffer(""));
 	    assert.throws(function(){secure_message_no_public.encrypt(message);}, expect_code(addon.INVALID_PARAMETER));
 	    assert.throws(function(){secure_message_no_public.encrypt(message);}, expect_message("public key is empty"));
 
@@ -61,10 +61,10 @@ describe("jsthemis", function(){
 	    assert.throws(function(){secure_message_no_public.decrypt(encrypted_message);}, expect_message("public key is empty"));
 	})
 	it("sign/verify with single key", function() {
-		signer = new addon.SecureMessage(keypair.private(), new Buffer(""));
-		verifier = new addon.SecureMessage(new Buffer(""), keypair.public());
-		signed_message = signer.sign(message);
-		verified_message = verifier.verify(signed_message);
+	    signer = new addon.SecureMessage(keypair.private(), new Buffer(""));
+	    verifier = new addon.SecureMessage(new Buffer(""), keypair.public());
+	    signed_message = signer.sign(message);
+	    verified_message = verifier.verify(signed_message);
 	    assert.equal(message.toString(), verified_message.toString());
 	    assert.throws(function(){signer.verify(signed_message);}, expect_code(addon.INVALID_PARAMETER));
 	})
