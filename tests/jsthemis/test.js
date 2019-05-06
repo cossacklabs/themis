@@ -7,6 +7,12 @@ function expect_code(code) {
   }
 }
 
+function expect_message(message) {
+  return function(err) {
+    return err.message.includes(message)
+  }
+}
+
 describe("jsthemis", function(){
     describe("secure message", function(){
 	keypair = new addon.KeyPair();
@@ -15,10 +21,8 @@ describe("jsthemis", function(){
 	encrypter = new addon.SecureMessage(keypair.private(), peer_keypair.public());
 	decrypter = new addon.SecureMessage(peer_keypair.private(), keypair.public());
 	intruder_decrypter = new addon.SecureMessage(intruder_keypair.private(), keypair.public());
-	empty_secure_message = new addon.SecureMessage(new Buffer(""), new Buffer(""));
 	message = new Buffer("Test Message");
-	it("encrypt/decrypt", function(){
-	    
+	it("encrypt/decrypt", function(){	    
 	    encrypted_message = encrypter.encrypt(message);
 	    assert.equal(message.toString(), decrypter.decrypt(encrypted_message).toString());
 	    assert.throws(function(){intruder_decrypter.decrypt(encrypted_message);}, expect_code(addon.FAIL));
@@ -33,13 +37,43 @@ describe("jsthemis", function(){
 	it("empty keys", function(){
 	    encrypted_message = encrypter.encrypt(message);
 	    signed_message = encrypter.sign(message);
+
+		// check codes and messages when SM is empty
+		empty_secure_message = new addon.SecureMessage(new Buffer(""), new Buffer(""));
 	    assert.throws(function(){empty_secure_message.encrypt(message);}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){empty_secure_message.encrypt(message);}, expect_message("private key is empty"));
+
 	    assert.throws(function(){empty_secure_message.decrypt(encrypted_message);}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){empty_secure_message.decrypt(encrypted_message);}, expect_message("private key is empty"));
+
 	    assert.throws(function(){empty_secure_message.sign(message);}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){empty_secure_message.sign(message);}, expect_message("private key is empty"));
+
 	    assert.throws(function(){empty_secure_message.verify(signed_message);}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){empty_secure_message.verify(signed_message);}, expect_message("public key is empty"));
+
+		// check codes and messages when SM has no public key
+		secure_message_no_public = new addon.SecureMessage(keypair.private(), new Buffer(""));
+	    assert.throws(function(){secure_message_no_public.encrypt(message);}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){secure_message_no_public.encrypt(message);}, expect_message("public key is empty"));
+
+	    assert.throws(function(){secure_message_no_public.decrypt(encrypted_message);}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){secure_message_no_public.decrypt(encrypted_message);}, expect_message("public key is empty"));
+	})
+	it("sign/verify with single key", function() {
+		signer = new addon.SecureMessage(keypair.private(), new Buffer(""));
+		verifier = new addon.SecureMessage(new Buffer(""), keypair.public());
+		signed_message = signer.sign(message);
+		verified_message = verifier.verify(signed_message);
+	    assert.equal(message.toString(), verified_message.toString());
+	    assert.throws(function(){signer.verify(signed_message);}, expect_code(addon.INVALID_PARAMETER));
 	})
 	it("mismatched keys", function(){
 	    assert.throws(function(){new addon.SecureMessage(keypair.public(), keypair.private())}, expect_code(addon.INVALID_PARAMETER));
+	})
+	it("keys misuse", function(){
+	    assert.throws(function(){new addon.SecureMessage(new Buffer("i am not a real private key"), new Buffer(""))}, expect_code(addon.INVALID_PARAMETER));
+	    assert.throws(function(){new addon.SecureMessage(new Buffer(""), new Buffer("i am not a real public key"))}, expect_code(addon.INVALID_PARAMETER));
 	})
     })
 })
