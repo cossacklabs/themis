@@ -77,4 +77,127 @@ describe('wasm-themis', function() {
             })
         })
     })
+    describe('Secure Message', function() {
+        let emptyArray = new Uint8Array()
+        let testInput = new Uint8Array([1, 1, 2, 3, 5, 8, 13])
+        describe('encrypt/decrypt mode', function() {
+            it('requires valid keys', function() {
+                let keyPair = new themis.KeyPair()
+                // It's okay to use key pairs or individual keys
+                let ok
+                ok = new themis.SecureMessage(keyPair)
+                ok = new themis.SecureMessage(keyPair.privateKey, keyPair.publicKey)
+                ok = new themis.SecureMessage(keyPair.publicKey, keyPair.privateKey)
+                // But they must be private *and* public (or vice versa)
+                assert.throws(() => new themis.SecureMessage(keyPair.privateKey, keyPair.privateKey))
+                assert.throws(() => new themis.SecureMessage(keyPair.publicKey, keyPair.publicKey))
+                // And both must be specified, no nulls allowed
+                assert.throws(() => new themis.SecureMessage(keyPair.privateKey))
+                assert.throws(() => new themis.SecureMessage(keyPair.publicKey))
+                assert.throws(() => new themis.SecureMessage(keyPair.publicKey, null))
+                assert.throws(() => new themis.SecureMessage(null, keyPair.privateKey))
+                // Byte arrays are not okay, even if they are valid
+                let privateKey = new Uint8Array(keyPair.privateKey)
+                let publicKey = new Uint8Array(keyPair.publicKey)
+                assert.throws(() => new themis.SecureMessage(privateKey, publicKey))
+            })
+            it('encrypts and decrypts', function() {
+                let secureMessage = new themis.SecureMessage(new themis.KeyPair())
+                let encrypted = secureMessage.encrypt(testInput)
+                let decrypted = secureMessage.decrypt(encrypted)
+                assert.deepStrictEqual(testInput, decrypted)
+            })
+            it('does not allow empty messages', function() {
+                let secureMessage = new themis.SecureMessage(new themis.KeyPair())
+                assert.throws(() => secureMessage.encrypt(emptyArray))
+            })
+            it('cannot decrypt with a different key', function() {
+                let secureMessageAlpha = new themis.SecureMessage(new themis.KeyPair())
+                let secureMessageBravo = new themis.SecureMessage(new themis.KeyPair())
+                let encrypted = secureMessageAlpha.encrypt(testInput)
+                assert.throws(() => secureMessageBravo.decrypt(encrypted),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('detects corrupted data', function() {
+                let secureMessage = new themis.SecureMessage(new themis.KeyPair())
+                let encrypted = secureMessage.encrypt(testInput)
+                encrypted[10] = 256 - encrypted[10]
+                assert.throws(() => secureMessage.decrypt(encrypted),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+        })
+        describe('sign/verify mode', function() {
+            it('requires valid keys', function() {
+                let keyPair = new themis.KeyPair()
+                // Signer requires private key and verifier needs public key
+                let ok
+                ok = new themis.SecureMessageSign(keyPair.privateKey)
+                ok = new themis.SecureMessageVerify(keyPair.publicKey)
+                // Different key types are not okay
+                assert.throws(() => new themis.SecureMessageSign(keyPair.publicKey))
+                assert.throws(() => new themis.SecureMessageVerify(keyPair.privateKey))
+                // Key pairs are not allowed
+                assert.throws(() => new themis.SecureMessageSign(keyPair))
+                assert.throws(() => new themis.SecureMessageVerify(keyPair))
+                // And raw byte arrays are not allowed too
+                let privateKey = new Uint8Array(keyPair.privateKey)
+                let publicKey = new Uint8Array(keyPair.publicKey)
+                assert.throws(() => new themis.SecureMessageSign(privateKey))
+                assert.throws(() => new themis.SecureMessageVerify(publicKey))
+            })
+            it('signs and verifies', function() {
+                let keyPair = new themis.KeyPair()
+                let signer = new themis.SecureMessageSign(keyPair.privateKey)
+                let verifier = new themis.SecureMessageVerify(keyPair.publicKey)
+                let signed = signer.sign(testInput)
+                let verified = verifier.verify(signed)
+                assert.deepStrictEqual(testInput, verified)
+            })
+            it('does not allow empty messages', function() {
+                let signer = new themis.SecureMessageSign(new themis.KeyPair().privateKey)
+                assert.throws(() => signer.sign(emptyArray))
+            })
+            it('leaves signed data in plaintext', function() {
+                let keyPair = new themis.KeyPair()
+                let signer = new themis.SecureMessageSign(keyPair.privateKey)
+                let verifier = new themis.SecureMessageVerify(keyPair.publicKey)
+                let signed = signer.sign(testInput)
+                // TODO: there has to be more idiomatic way for this check...
+                for (var i = 0; i < signed.length - testInput.length; i++) {
+                    let slice = signed.slice(i, i + testInput.length)
+                    var allEqual = true
+                    for (var j = 0; j < testInput.length; j++){
+                        if (slice[j] != testInput[j]) {
+                            allEqual = false
+                            break
+                        }
+                    }
+                    if (allEqual) {
+                        return
+                    }
+                }
+                assert.fail('plaintext not found in signed message')
+            })
+            it('cannot verify with a different key', function() {
+                let signer = new themis.SecureMessageSign(new themis.KeyPair().privateKey)
+                let verifier = new themis.SecureMessageVerify(new themis.KeyPair().publicKey)
+                let signed = signer.sign(testInput)
+                assert.throws(() => verifier.verify(signed),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('detects corrupted data', function() {
+                let keyPair = new themis.KeyPair()
+                let signer = new themis.SecureMessageSign(keyPair.privateKey)
+                let verifier = new themis.SecureMessageVerify(keyPair.publicKey)
+                let signed = signer.sign(testInput)
+                signed[12] = 256 - signed[12]
+                assert.throws(() => verifier.verify(signed),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+        })
+    })
 })
