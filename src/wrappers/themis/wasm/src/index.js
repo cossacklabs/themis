@@ -19,5 +19,6 @@
 
 Object.assign(module.exports
   , require('./secure_keygen.js')
+  , require('./secure_session.js')
   , require('./themis_error.js')
 )
