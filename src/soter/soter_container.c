@@ -42,3 +42,23 @@ soter_status_t soter_verify_container_checksum(const soter_container_hdr_t* hdr)
 
     return SOTER_DATA_CORRUPT;
 }
+
+uint8_t* soter_container_data(soter_container_hdr_t* hdr)
+{
+	return (uint8_t*)(hdr + 1);
+}
+
+const uint8_t* soter_container_const_data(const soter_container_hdr_t* hdr)
+{
+	return (const uint8_t*)(hdr + 1);
+}
+
+size_t soter_container_data_size(const soter_container_hdr_t* hdr)
+{
+	return be32toh(hdr->size) - sizeof(soter_container_hdr_t);
+}
+
+void soter_container_set_data_size(soter_container_hdr_t* hdr, size_t size)
+{
+	hdr->size = htobe32(size + sizeof(soter_container_hdr_t));
+}
