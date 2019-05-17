@@ -25,6 +25,12 @@ endif
 ifdef IS_MACOS
 LIBSOTER_SO = libsoter.$(LIBRARY_SO_VERSION).$(SHARED_EXT)
 endif
+ifdef IS_MSYS
+LIBSOTER_SO = msys-soter-$(LIBRARY_SO_VERSION).$(SHARED_EXT)
+LIBSOTER_LINK =
+LIBSOTER_IMPORT = libsoter.dll.a
+LIBSOTER_SO_LDFLAGS = -Wl,-out-implib,$(BIN_PATH)/$(LIBSOTER_IMPORT)
+endif
 
 SOTER_SOURCES = $(wildcard $(SRC_PATH)/soter/*.c)
 SOTER_HEADERS = $(wildcard $(SRC_PATH)/soter/*.h)
@@ -79,27 +85,42 @@ $(BIN_PATH)/libsoter.pc:
 
 install_soter: err $(BIN_PATH)/$(LIBSOTER_A) $(BIN_PATH)/$(LIBSOTER_SO) $(BIN_PATH)/libsoter.pc
 	@echo -n "install Soter "
-	@mkdir -p $(DESTDIR)/$(includedir)/soter
-	@mkdir -p $(DESTDIR)/$(pkgconfigdir)
-	@mkdir -p $(DESTDIR)/$(libdir)
-	@$(INSTALL_DATA) $(SRC_PATH)/soter/*.h              $(DESTDIR)/$(includedir)/soter
-	@$(INSTALL_DATA) $(BIN_PATH)/libsoter.pc            $(DESTDIR)/$(pkgconfigdir)
-	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBSOTER_A)          $(DESTDIR)/$(libdir)
-	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBSOTER_SO)      $(DESTDIR)/$(libdir)
-ifdef IS_MACOS
-	@install_name_tool -id "$(libdir)/$(LIBSOTER_SO)" "$(DESTDIR)/$(libdir)/$(LIBSOTER_SO)"
-	@install_name_tool -change "$(BIN_PATH)/$(LIBSOTER_SO)" "$(libdir)/$(LIBSOTER_SO)" "$(DESTDIR)/$(libdir)/$(LIBSOTER_SO)"
+	@mkdir -p $(DESTDIR)$(includedir)/soter
+	@mkdir -p $(DESTDIR)$(pkgconfigdir)
+ifdef IS_MSYS
+	@mkdir -p $(DESTDIR)$(bindir)
 endif
-ifneq ($(LIBSOTER_SO),$(LIBSOTER_LINK))
-	@ln -sf $(LIBSOTER_SO)                              $(DESTDIR)/$(libdir)/$(LIBSOTER_LINK)
+	@mkdir -p $(DESTDIR)$(libdir)
+	@$(INSTALL_DATA) $(SRC_PATH)/soter/*.h              $(DESTDIR)$(includedir)/soter
+	@$(INSTALL_DATA) $(BIN_PATH)/libsoter.pc            $(DESTDIR)$(pkgconfigdir)
+	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBSOTER_A)          $(DESTDIR)$(libdir)
+ifdef IS_MSYS
+	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBSOTER_SO)      $(DESTDIR)$(bindir)
+else
+	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBSOTER_SO)      $(DESTDIR)$(libdir)
+endif
+ifdef IS_MACOS
+	@install_name_tool -id "$(libdir)/$(LIBSOTER_SO)" "$(DESTDIR)$(libdir)/$(LIBSOTER_SO)"
+	@install_name_tool -change "$(BIN_PATH)/$(LIBSOTER_SO)" "$(libdir)/$(LIBSOTER_SO)" "$(DESTDIR)$(libdir)/$(LIBSOTER_SO)"
+endif
+ifneq ($(LIBSOTER_IMPORT),)
+	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBSOTER_IMPORT)     $(DESTDIR)$(libdir)
+endif
+ifneq ($(LIBSOTER_LINK),)
+	@ln -sf $(LIBSOTER_SO)                              $(DESTDIR)$(libdir)/$(LIBSOTER_LINK)
 endif
 	@$(PRINT_OK_)
 
 uninstall_soter:
 	@echo -n "uninstall Soter "
-	@rm -rf $(DESTDIR)/$(includedir)/soter
-	@rm  -f $(DESTDIR)/$(pkgconfigdir)/libsoter.pc
-	@rm  -f $(DESTDIR)/$(libdir)/$(LIBSOTER_A)
-	@rm  -f $(DESTDIR)/$(libdir)/$(LIBSOTER_SO)
-	@rm  -f $(DESTDIR)/$(libdir)/$(LIBSOTER_LINK)
+	@rm -rf $(DESTDIR)$(includedir)/soter
+	@rm  -f $(DESTDIR)$(pkgconfigdir)/libsoter.pc
+	@rm  -f $(DESTDIR)$(libdir)/$(LIBSOTER_A)
+ifdef IS_MSYS
+	@rm  -f $(DESTDIR)$(bindir)/$(LIBSOTER_SO)
+	@rm  -f $(DESTDIR)$(libdir)/$(LIBSOTER_IMPORT)
+else
+	@rm  -f $(DESTDIR)$(libdir)/$(LIBSOTER_SO)
+	@rm  -f $(DESTDIR)$(libdir)/$(LIBSOTER_LINK)
+endif
 	@$(PRINT_OK_)

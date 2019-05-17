@@ -14,10 +14,12 @@
 # limitations under the License.
 #
 
+SOTER_TEST_BIN = $(TEST_BIN_PATH)/soter_test
 ifdef IS_EMSCRIPTEN
 SOTER_TEST_BIN = $(TEST_BIN_PATH)/soter_test.js
-else
-SOTER_TEST_BIN = $(TEST_BIN_PATH)/soter_test
+endif
+ifdef IS_MSYS
+SOTER_TEST_BIN = $(BIN_PATH)/soter_test
 endif
 
 NIST_STS_DIR = tests/soter/nist-sts
