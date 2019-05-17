@@ -196,6 +196,8 @@
 		9F4A2620223ABEF2005CB63A /* secure_session_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A242E223A74AF005CB63A /* secure_session_utils.c */; };
 		9F4A2621223ABEF2005CB63A /* secure_session.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2438223A74AF005CB63A /* secure_session.c */; };
 		9F4A2622223ABEF2005CB63A /* sym_enc_message.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2431223A74AF005CB63A /* sym_enc_message.c */; };
+		9F5391F12293F2D90051DA66 /* portable_endian.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F5391F02293F2D90051DA66 /* portable_endian.h */; };
+		9F5391F22293F2D90051DA66 /* portable_endian.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F5391F02293F2D90051DA66 /* portable_endian.h */; };
 		9FBD853D223BFB5E009EAEB3 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBD853C223BFB5E009EAEB3 /* openssl.framework */; };
 /* End PBXBuildFile section */
 
@@ -397,6 +399,7 @@
 		9F4A24C1223A8FA8005CB63A /* skeygen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = skeygen.h; path = "src/wrappers/themis/Obj-C/objcthemis/skeygen.h"; sourceTree = "<group>"; };
 		9F4A24C2223A8FA8005CB63A /* smessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smessage.h; path = "src/wrappers/themis/Obj-C/objcthemis/smessage.h"; sourceTree = "<group>"; };
 		9F4A24C3223A8FA8005CB63A /* scell_token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scell_token.h; path = "src/wrappers/themis/Obj-C/objcthemis/scell_token.h"; sourceTree = "<group>"; };
+		9F5391F02293F2D90051DA66 /* portable_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = portable_endian.h; path = src/soter/portable_endian.h; sourceTree = "<group>"; };
 		9FBD853C223BFB5E009EAEB3 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Carthage/Build/iOS/openssl.framework; sourceTree = "<group>"; };
 		9FD4C3522260D41700132A88 /* soter_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_api.h; path = src/soter/soter_api.h; sourceTree = "<group>"; };
 		9FD4C3532260D43B00132A88 /* themis_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = themis_api.h; path = src/themis/themis_api.h; sourceTree = "<group>"; };
@@ -445,6 +448,7 @@
 			children = (
 				9F4A23A6223A742F005CB63A /* ed25519 */,
 				9F4A2383223A740E005CB63A /* openssl */,
+				9F5391F02293F2D90051DA66 /* portable_endian.h */,
 				9FD4C3522260D41700132A88 /* soter_api.h */,
 				9F4A2343223A73B0005CB63A /* soter_asym_cipher.h */,
 				9F4A234B223A73B0005CB63A /* soter_asym_ka.h */,
@@ -654,6 +658,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F5391F22293F2D90051DA66 /* portable_endian.h in Headers */,
 				9F00E8E0223C19E000EC1EF3 /* themis.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -662,6 +667,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F5391F12293F2D90051DA66 /* portable_endian.h in Headers */,
 				9F00E8DF223C19D900EC1EF3 /* themis.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
