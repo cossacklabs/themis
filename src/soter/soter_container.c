@@ -16,14 +16,13 @@
 
 #include "soter/soter_container.h"
 
-#include <arpa/inet.h>
-
+#include "soter/portable_endian.h"
 #include "soter/soter_crc32.h"
 
 soter_status_t soter_update_container_checksum(soter_container_hdr_t* hdr)
 {
     hdr->crc = 0;
-    hdr->crc = htonl(soter_crc32(hdr, ntohl(hdr->size)));
+    hdr->crc = htobe32(soter_crc32(hdr, be32toh(hdr->size)));
 
     return SOTER_SUCCESS;
 }
@@ -35,9 +34,9 @@ soter_status_t soter_verify_container_checksum(const soter_container_hdr_t* hdr)
 
     soter_crc32_update(&crc, hdr, sizeof(soter_container_hdr_t) - sizeof(uint32_t));
     soter_crc32_update(&crc, &dummy_crc, sizeof(uint32_t));
-    soter_crc32_update(&crc, hdr + 1, ntohl(hdr->size) - sizeof(soter_container_hdr_t));
+    soter_crc32_update(&crc, hdr + 1, be32toh(hdr->size) - sizeof(soter_container_hdr_t));
 
-    if (hdr->crc == htonl(soter_crc32_final(&crc))) {
+    if (hdr->crc == htobe32(soter_crc32_final(&crc))) {
         return SOTER_SUCCESS;
     }
 
