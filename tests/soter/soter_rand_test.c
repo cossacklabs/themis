@@ -18,13 +18,14 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 
 #ifndef NIST_STS_EXE_PATH
 #define NO_NIST_STS 1
 #endif
 
 #ifndef NO_NIST_STS
+
+#include <unistd.h>
 
 #define _TO_STRING_(_X_) (#_X_)
 #define TO_STRING(_X_) _TO_STRING_(_X_)
