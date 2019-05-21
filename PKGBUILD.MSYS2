@@ -16,11 +16,7 @@ arch=('x86_64' 'i686')
 depends=('libopenssl>=1.1.1')
 makedepends=('tar' 'gcc' 'make' 'openssl-devel>=1.1.1')
 
-# TODO: replace with an proper release tarball
-#
-# Currently a fork with MSYS2 support is used. Replace this with 'cossacklabs'
-# repository once official release tarball with MSYS2 support is available.
-source=("https://github.com/ilammy/themis/archive/$pkgver.tar.gz")
+source=("https://github.com/cossacklabs/themis/archive/$pkgver.tar.gz")
 sha256sums=('ee5c4be360401094dc5429035e1499912b3ccc10e93f71d0c2578934a5b2c81f')
 sha1sums=('418d71b0d3dd1ffff93ef025908bacb99d4c4aa4')
 md5sums=('afc3ac4e7d6c6db59e4e2f059a4fc973')
