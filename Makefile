@@ -539,6 +539,21 @@ endif
 unpack_dist:
 	@tar -xf $(THEMIS_DIST_FILENAME)
 
+nsis_installer: $(BIN_PATH)/InstallThemis.exe
+
+$(BIN_PATH)/InstallThemis.exe: FORCE
+	@$(MAKE) install PREFIX=/ DESTDIR="$(BIN_PATH)/install"
+# Windows users will need MSYS runtime libraries, so copy dependencies
+# into the installation directory as well
+ifdef IS_MSYS
+	@ldd "$(BIN_PATH)/install/bin"/*.dll | \
+	 awk '$$3 ~ "^/usr/bin" { print $$3}' | sort --uniq | \
+	 xargs -I % cp % "$(BIN_PATH)/install/bin"
+endif
+	@makensis Themis.nsi
+	@rm -r "$(BIN_PATH)/install"
+
+FORCE:
 
 COSSACKLABS_URL = https://www.cossacklabs.com
 MAINTAINER = "Cossack Labs Limited <dev@cossacklabs.com>"
