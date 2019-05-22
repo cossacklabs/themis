@@ -16,7 +16,6 @@
 
 #include "themis/secure_keygen.h"
 
-#include <arpa/inet.h>
 #include <string.h>
 
 #include "soter/soter_container.h"
@@ -24,6 +23,8 @@
 #include "soter/soter_rsa_key.h"
 #include "soter/soter_rsa_key_pair_gen.h"
 #include "soter/soter_t.h"
+
+#include "themis/portable_endian.h"
 
 #ifndef THEMIS_RSA_KEY_LENGTH
 #define THEMIS_RSA_KEY_LENGTH RSA_KEY_LENGTH_2048
@@ -125,7 +126,7 @@ themis_status_t themis_is_valid_asym_key(const uint8_t* key, size_t length)
     if (THEMIS_KEY_INVALID == themis_get_asym_key_kind(key, length)) {
         return THEMIS_INVALID_PARAMETER;
     }
-    if (length != ntohl(container->size)) {
+    if (length != be32toh(container->size)) {
         return THEMIS_INVALID_PARAMETER;
     }
     if (SOTER_SUCCESS != soter_verify_container_checksum(container)) {

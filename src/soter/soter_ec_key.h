@@ -17,8 +17,6 @@
 #ifndef SOTER_EC_KEY_H
 #define SOTER_EC_KEY_H
 
-#include <arpa/inet.h>
-
 #include <soter/soter_container.h>
 #include <soter/soter_error.h>
 

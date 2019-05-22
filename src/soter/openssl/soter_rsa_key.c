@@ -21,6 +21,8 @@
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
+#include "soter/portable_endian.h"
+
 static size_t rsa_pub_key_size(int mod_size)
 {
     switch (mod_size) {
@@ -165,9 +167,9 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     RSA_get0_key(rsa, (const BIGNUM**)&rsa_n, &rsa_e, NULL);
 #endif
     if (BN_is_word(rsa_e, RSA_F4)) {
-        *pub_exp = htonl(RSA_F4);
+        *pub_exp = htobe32(RSA_F4);
     } else if (BN_is_word(rsa_e, RSA_3)) {
-        *pub_exp = htonl(RSA_3);
+        *pub_exp = htobe32(RSA_3);
     } else {
         res = SOTER_INVALID_PARAMETER;
         goto err;
@@ -179,7 +181,7 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     }
 
     memcpy(key->tag, rsa_pub_key_tag(rsa_mod_size), SOTER_CONTAINER_TAG_LENGTH);
-    key->size = htonl(output_length);
+    key->size = htobe32(output_length);
     soter_update_container_checksum(key);
     *key_length = output_length;
     res = SOTER_SUCCESS;
@@ -241,9 +243,9 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     RSA_get0_key(rsa, &rsa_n, &rsa_e, &rsa_d);
 #endif
     if (BN_is_word(rsa_e, RSA_F4)) {
-        *pub_exp = htonl(RSA_F4);
+        *pub_exp = htobe32(RSA_F4);
     } else if (BN_is_word(rsa_e, RSA_3)) {
-        *pub_exp = htonl(RSA_3);
+        *pub_exp = htobe32(RSA_3);
     } else {
         res = SOTER_INVALID_PARAMETER;
         goto err;
@@ -318,7 +320,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     }
 
     memcpy(key->tag, rsa_priv_key_tag(rsa_mod_size), SOTER_CONTAINER_TAG_LENGTH);
-    key->size = htonl(output_length);
+    key->size = htobe32(output_length);
     soter_update_container_checksum(key);
     *key_length = output_length;
     res = SOTER_SUCCESS;
@@ -347,7 +349,7 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
     const uint32_t* pub_exp;
 
-    if (key_length != ntohl(key->size)) {
+    if (key_length != be32toh(key->size)) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -382,7 +384,7 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
     }
 
     pub_exp = (const uint32_t*)((unsigned char*)(key + 1) + rsa_mod_size);
-    switch (ntohl(*pub_exp)) {
+    switch (be32toh(*pub_exp)) {
     case RSA_3:
     case RSA_F4:
         break;
@@ -406,7 +408,7 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
         return SOTER_NO_MEMORY;
     }
 
-    if (!BN_set_word(rsa_e, ntohl(*pub_exp))) {
+    if (!BN_set_word(rsa_e, be32toh(*pub_exp))) {
         BN_free(rsa_n);
         BN_free(rsa_e);
         RSA_free(rsa);
@@ -447,7 +449,7 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
     const uint32_t* pub_exp;
     const unsigned char* curr_bn = (const unsigned char*)(key + 1);
 
-    if (key_length != ntohl(key->size)) {
+    if (key_length != be32toh(key->size)) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -483,7 +485,7 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 
     pub_exp = (const uint32_t*)(curr_bn + ((rsa_mod_size * 4) + (rsa_mod_size / 2)));
     ;
-    switch (ntohl(*pub_exp)) {
+    switch (be32toh(*pub_exp)) {
     case RSA_3:
     case RSA_F4:
         break;
@@ -501,7 +503,7 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
         return SOTER_NO_MEMORY;
     }
 
-    if (!BN_set_word(rsa_e, ntohl(*pub_exp))) {
+    if (!BN_set_word(rsa_e, be32toh(*pub_exp))) {
         RSA_free(rsa);
         return SOTER_FAIL;
     }

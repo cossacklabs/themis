@@ -22,6 +22,7 @@
 #include "soter/soter_rsa_key.h"
 #include "soter/soter_t.h"
 
+#include "themis/portable_endian.h"
 #include "themis/secure_session_t.h"
 #include "themis/secure_session_utils.h"
 
@@ -376,7 +377,7 @@ static themis_status_t secure_session_accept(secure_session_t* session_ctx,
         return THEMIS_INVALID_PARAMETER;
     }
 
-    sign_key_length = ntohl(peer_sign_key->size);
+    sign_key_length = be32toh(peer_sign_key->size);
 
     if (sizeof(soter_container_hdr_t) >= sign_key_length) {
         return THEMIS_INVALID_PARAMETER;
@@ -562,7 +563,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
         return THEMIS_INVALID_PARAMETER;
     }
 
-    peer_ecdh_key_length = ntohl(peer_ecdh_key->size);
+    peer_ecdh_key_length = be32toh(peer_ecdh_key->size);
 
     signature = (const uint8_t*)peer_ecdh_key + peer_ecdh_key_length;
     signature_length = (const uint8_t*)data + soter_container_data_size(proto_message)
@@ -581,7 +582,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
         return THEMIS_INVALID_PARAMETER;
     }
 
-    sign_key_length = ntohl(peer_sign_key->size);
+    sign_key_length = be32toh(peer_sign_key->size);
 
     if (sizeof(soter_container_hdr_t) >= sign_key_length) {
         return THEMIS_INVALID_PARAMETER;
