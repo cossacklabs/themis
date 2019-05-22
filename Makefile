@@ -542,16 +542,23 @@ unpack_dist:
 nsis_installer: $(BIN_PATH)/InstallThemis.exe
 
 $(BIN_PATH)/InstallThemis.exe: FORCE
-	@$(MAKE) install PREFIX=/ DESTDIR="$(BIN_PATH)/install"
-# Windows users will need MSYS runtime libraries, so copy dependencies
-# into the installation directory as well
 ifdef IS_MSYS
+	@$(MAKE) install PREFIX=/ DESTDIR="$(BIN_PATH)/install"
 	@ldd "$(BIN_PATH)/install/bin"/*.dll | \
 	 awk '$$3 ~ "^/usr/bin" { print $$3}' | sort --uniq | \
 	 xargs -I % cp % "$(BIN_PATH)/install/bin"
-endif
 	@makensis Themis.nsi
 	@rm -r "$(BIN_PATH)/install"
+else
+	@echo "NSIS installers can only be build in MSYS environment on Windows."
+	@echo
+	@echo "Please make sure that you are using MSYS terminal session which"
+	@echo "is usually available as 'MSYS2 MSYS' shortcut in the MSYS group"
+	@echo "of the Start menu."
+	@exit 1
+endif
+
+endif
 
 FORCE:
 
