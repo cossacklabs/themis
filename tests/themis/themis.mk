@@ -14,10 +14,12 @@
 # limitations under the License.
 #
 
+THEMIS_TEST_BIN = $(TEST_BIN_PATH)/themis_test
 ifdef IS_EMSCRIPTEN
 THEMIS_TEST_BIN = $(TEST_BIN_PATH)/themis_test.js
-else
-THEMIS_TEST_BIN = $(TEST_BIN_PATH)/themis_test
+endif
+ifdef IS_MSYS
+THEMIS_TEST_BIN = $(BIN_PATH)/themis_test
 endif
 
 THEMIS_TEST_SOURCES = $(wildcard tests/themis/*.c)

@@ -68,12 +68,14 @@ BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR_); elif 
 
 PKGINFO_PATH = PKGINFO
 
-UNAME=$(shell uname)
+UNAME := $(shell uname)
 
 ifeq ($(UNAME),Darwin)
 	IS_MACOS := true
 else ifeq ($(UNAME),Linux)
 	IS_LINUX := true
+else ifeq ($(shell uname -o),Msys)
+	IS_MSYS := true
 endif
 
 ifneq ($(shell $(CC) --version 2>&1 | grep -oi "Emscripten"),)
@@ -111,6 +113,7 @@ endif
 # default installation paths
 prefix          = $(PREFIX)
 exec_prefix     = $(prefix)
+bindir          = $(prefix)/bin
 includedir      = $(prefix)/include
 libdir          = $(exec_prefix)/lib
 pkgconfigdir    = $(libdir)/pkgconfig
@@ -208,7 +211,7 @@ endif
 
 SHARED_EXT = so
 
-ifeq ($(shell uname),Darwin)
+ifdef IS_MACOS
 SHARED_EXT = dylib
 ifneq ($(SDK),)
 SDK_PLATFORM_VERSION=$(shell xcrun --sdk $(SDK) --show-sdk-platform-version)
@@ -223,6 +226,10 @@ endif
 ifneq ($(ARCH),)
 CFLAFS += -arch $(ARCH)
 endif
+endif
+
+ifdef IS_MSYS
+SHARED_EXT = dll
 endif
 
 ifneq ($(shell $(CC) --version 2>&1 | grep -E -i -c "clang version"),0)

@@ -25,6 +25,12 @@ endif
 ifdef IS_MACOS
 LIBTHEMIS_SO = libthemis.$(LIBRARY_SO_VERSION).$(SHARED_EXT)
 endif
+ifdef IS_MSYS
+LIBTHEMIS_SO = msys-themis-$(LIBRARY_SO_VERSION).$(SHARED_EXT)
+LIBTHEMIS_LINK =
+LIBTHEMIS_IMPORT = libthemis.dll.a
+LIBTHEMIS_SO_LDFLAGS = -Wl,-out-implib,$(BIN_PATH)/$(LIBTHEMIS_IMPORT)
+endif
 
 THEMIS_SOURCES = $(wildcard $(SRC_PATH)/themis/*.c)
 THEMIS_HEADERS = $(wildcard $(SRC_PATH)/themis/*.h)
@@ -69,28 +75,43 @@ $(BIN_PATH)/libthemis.pc:
 
 install_themis: err $(BIN_PATH)/$(LIBTHEMIS_A) $(BIN_PATH)/$(LIBTHEMIS_SO) $(BIN_PATH)/libthemis.pc
 	@echo -n "install Themis "
-	@mkdir -p $(DESTDIR)/$(includedir)/themis
-	@mkdir -p $(DESTDIR)/$(pkgconfigdir)
-	@mkdir -p $(DESTDIR)/$(libdir)
-	@$(INSTALL_DATA) $(SRC_PATH)/themis/*.h             $(DESTDIR)/$(includedir)/themis
-	@$(INSTALL_DATA) $(BIN_PATH)/libthemis.pc           $(DESTDIR)/$(pkgconfigdir)
-	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBTHEMIS_A)         $(DESTDIR)/$(libdir)
-	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBTHEMIS_SO)     $(DESTDIR)/$(libdir)
-ifdef IS_MACOS
-	@install_name_tool -id "$(libdir)/$(LIBTHEMIS_SO)" "$(DESTDIR)/$(libdir)/$(LIBTHEMIS_SO)"
-	@install_name_tool -change "$(BIN_PATH)/$(LIBTHEMIS_SO)" "$(libdir)/$(LIBTHEMIS_SO)" "$(DESTDIR)/$(libdir)/$(LIBTHEMIS_SO)"
-	@install_name_tool -change "$(BIN_PATH)/$(LIBSOTER_SO)"  "$(libdir)/$(LIBSOTER_SO)"  "$(DESTDIR)/$(libdir)/$(LIBTHEMIS_SO)"
+	@mkdir -p $(DESTDIR)$(includedir)/themis
+	@mkdir -p $(DESTDIR)$(pkgconfigdir)
+ifdef IS_MSYS
+	@mkdir -p $(DESTDIR)$(bindir)
 endif
-ifneq ($(LIBTHEMIS_SO),$(LIBTHEMIS_LINK))
-	@ln -sf $(LIBTHEMIS_SO)                             $(DESTDIR)/$(libdir)/$(LIBTHEMIS_LINK)
+	@mkdir -p $(DESTDIR)$(libdir)
+	@$(INSTALL_DATA) $(SRC_PATH)/themis/*.h             $(DESTDIR)$(includedir)/themis
+	@$(INSTALL_DATA) $(BIN_PATH)/libthemis.pc           $(DESTDIR)$(pkgconfigdir)
+	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBTHEMIS_A)         $(DESTDIR)$(libdir)
+ifdef IS_MSYS
+	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBTHEMIS_SO)     $(DESTDIR)$(bindir)
+else
+	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBTHEMIS_SO)     $(DESTDIR)$(libdir)
+endif
+ifdef IS_MACOS
+	@install_name_tool -id "$(libdir)/$(LIBTHEMIS_SO)" "$(DESTDIR)$(libdir)/$(LIBTHEMIS_SO)"
+	@install_name_tool -change "$(BIN_PATH)/$(LIBTHEMIS_SO)" "$(libdir)/$(LIBTHEMIS_SO)" "$(DESTDIR)$(libdir)/$(LIBTHEMIS_SO)"
+	@install_name_tool -change "$(BIN_PATH)/$(LIBSOTER_SO)"  "$(libdir)/$(LIBSOTER_SO)"  "$(DESTDIR)$(libdir)/$(LIBTHEMIS_SO)"
+endif
+ifneq ($(LIBTHEMIS_IMPORT),)
+	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBTHEMIS_IMPORT)    $(DESTDIR)$(libdir)
+endif
+ifneq ($(LIBTHEMIS_LINK),)
+	@ln -sf $(LIBTHEMIS_SO)                             $(DESTDIR)$(libdir)/$(LIBTHEMIS_LINK)
 endif
 	@$(PRINT_OK_)
 
 uninstall_themis:
 	@echo -n "uninstall Themis "
-	@rm -rf $(DESTDIR)/$(includedir)/themis
-	@rm  -f $(DESTDIR)/$(pkgconfigdir)/libthemis.pc
-	@rm  -f $(DESTDIR)/$(libdir)/$(LIBTHEMIS_A)
-	@rm  -f $(DESTDIR)/$(libdir)/$(LIBTHEMIS_SO)
-	@rm  -f $(DESTDIR)/$(libdir)/$(LIBTHEMIS_LINK)
+	@rm -rf $(DESTDIR)$(includedir)/themis
+	@rm  -f $(DESTDIR)$(pkgconfigdir)/libthemis.pc
+	@rm  -f $(DESTDIR)$(libdir)/$(LIBTHEMIS_A)
+ifdef IS_MSYS
+	@rm  -f $(DESTDIR)$(bindir)/$(LIBTHEMIS_SO)
+	@rm  -f $(DESTDIR)$(libdir)/$(LIBTHEMIS_IMPORT)
+else
+	@rm  -f $(DESTDIR)$(libdir)/$(LIBTHEMIS_SO)
+	@rm  -f $(DESTDIR)$(libdir)/$(LIBTHEMIS_LINK)
+endif
 	@$(PRINT_OK_)
