@@ -558,8 +558,6 @@ else
 	@exit 1
 endif
 
-endif
-
 FORCE:
 
 COSSACKLABS_URL = https://www.cossacklabs.com
