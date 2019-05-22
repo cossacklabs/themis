@@ -16,7 +16,6 @@
 
 #include "ge_utils.h"
 
-SOTER_PRIVATE_API
 void ge_p2_to_p3(ge_p3 *r, const ge_p2 *p)
 {
 	if (p != (const ge_p2 *)r)

@@ -25,7 +25,6 @@ Proof:
   so floor(2^(-255)(h + 19 2^(-25) h9 + 2^(-1))) = q.
 */
 
-SOTER_PRIVATE_API
 void fe_tobytes(unsigned char *s,const fe h)
 {
   crypto_int32 h0 = h[0];

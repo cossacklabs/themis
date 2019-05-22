@@ -66,10 +66,12 @@ struct soter_hmac_ctx_type {
     soter_hash_ctx_t* hash_ctx;
 };
 
+SOTER_PRIVATE_API
 soter_status_t soter_hmac_init(soter_hmac_ctx_t* hmac_ctx,
                                soter_hash_algo_t algo,
                                const uint8_t* key,
                                size_t key_length);
+SOTER_PRIVATE_API
 soter_status_t soter_hmac_cleanup(soter_hmac_ctx_t* hmac_ctx);
 
 #endif /* SOTER_T_H */
