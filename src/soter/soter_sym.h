@@ -389,10 +389,10 @@ soter_status_t soter_sym_aead_decrypt_aad(soter_sym_ctx_t* ctx, const void* plai
  * @param [in] ctx pointer to symmetric decryption context prerviosly created by
  * soter_sym_decrypt_create
  * @param [in] cipher_data pointer to data buffer to decrypt
- * @param [in] cipher_data_length length of cipher_data
+ * @param [in] data_length length of cipher_data
  * @param [out] plain_data pointer to buffer to plain data store, may be set to NULL for plain data
  * length determination
- * @param [in, out] data_length length of plain_data
+ * @param [in, out] plain_data_length length of plain_data
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
  * @note If plain_data==NULL or plain_data_length less then need to store plain data, @ref
  * SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer thet need
