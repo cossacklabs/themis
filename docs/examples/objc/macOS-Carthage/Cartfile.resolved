@@ -1,2 +1,2 @@
-github "cossacklabs/themis" "0.11.0"
-github "krzyzanowskim/OpenSSL" "1.0.2.17"
+github "cossacklabs/themis" "0.11.2"
+github "krzyzanowskim/OpenSSL" "990bd88219da80d7a77289aeae245b3eb400d834"
