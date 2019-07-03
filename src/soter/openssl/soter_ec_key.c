@@ -207,7 +207,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
         goto err;
     }
 
-    output_length = ec_pub_key_size(curve);
+    output_length = ec_priv_key_size(curve);
     if ((!key) || (output_length > *key_length)) {
         *key_length = output_length;
         res = SOTER_BUFFER_TOO_SMALL;
