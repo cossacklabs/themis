@@ -1506,8 +1506,17 @@ static void key_validation_test(void)
     testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_asym_key(NULL, 0),
                           "themis_is_valid_asym_key: invalid arguments");
     testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_is_valid_asym_key(rsa_public_key, rsa_public_key_length - 1),
+                          "themis_is_valid_asym_key: truncated RSA buffer");
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
                               == themis_is_valid_asym_key(ec_private_key, ec_private_key_length - 1),
-                          "themis_is_valid_asym_key: truncated buffer");
+                          "themis_is_valid_asym_key: truncated EC buffer");
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_is_valid_asym_key(rsa_private_key, rsa_private_key_length + 1),
+                          "themis_is_valid_asym_key: extended RSA buffer");
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_is_valid_asym_key(ec_public_key, ec_public_key_length + 1),
+                          "themis_is_valid_asym_key: extended EC buffer");
 
     testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_asym_key_kind(NULL, 0),
                           "themis_get_asym_key_kind: invalid arguments");
