@@ -247,7 +247,8 @@ workflows:
   tests:
     jobs:
       - analyze
-      - android
+      # Broken build temporarily disabled (see T1133, 2019-07-03)
+      # - android
       - x86_64
       - php5
       - php70
