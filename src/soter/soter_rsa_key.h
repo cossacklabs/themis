@@ -92,4 +92,7 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
                                                     soter_container_hdr_t* key,
                                                     size_t* key_length);
 
+soter_status_t soter_rsa_pub_key_check_length(const soter_container_hdr_t* key, size_t key_length);
+soter_status_t soter_rsa_priv_key_check_length(const soter_container_hdr_t* key, size_t key_length);
+
 #endif /* SOTER_RSA_KEY_H */

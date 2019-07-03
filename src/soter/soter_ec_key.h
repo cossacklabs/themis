@@ -83,4 +83,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
                                                    soter_container_hdr_t* key,
                                                    size_t* key_length);
 
+soter_status_t soter_ec_pub_key_check_length(const soter_container_hdr_t* key, size_t key_length);
+soter_status_t soter_ec_priv_key_check_length(const soter_container_hdr_t* key, size_t key_length);
+
 #endif /* SOTER_EC_KEY_H */
