@@ -55,6 +55,8 @@
 
 #include <string.h>
 
+#include "soter/soter_wipe.h"
+
 #include "themis/secure_comparator_t.h"
 
 static themis_status_t secure_comparator_alice_step1(secure_comparator_t* comp_ctx,
@@ -479,7 +481,8 @@ themis_status_t secure_comparator_cleanup(secure_comparator_t* comp_ctx)
     }
 
     soter_hash_cleanup(&(comp_ctx->hash_ctx));
-    memset(comp_ctx, 0, sizeof(secure_comparator_t));
+
+    soter_wipe(comp_ctx, sizeof(secure_comparator_t));
 
     return THEMIS_SUCCESS;
 }
@@ -938,7 +941,7 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t* comp_ctx
         return themis_status;
     }
 
-    memset(comp_ctx->secret, 0, sizeof(comp_ctx->secret));
+    soter_wipe(comp_ctx->secret, sizeof(comp_ctx->secret));
 
     /* Finally Bob sends to Alice on 4 step:
      * Rb || Rb signature
@@ -1005,7 +1008,8 @@ static themis_status_t secure_comparator_alice_step5(secure_comparator_t* comp_c
         comp_ctx->result = ge_cmp(&Rab, &Pa_Pb) ? THEMIS_SCOMPARE_NO_MATCH : THEMIS_SCOMPARE_MATCH;
     }
 
-    memset(comp_ctx->secret, 0, sizeof(comp_ctx->secret));
+    soter_wipe(comp_ctx->secret, sizeof(comp_ctx->secret));
+
     comp_ctx->state_handler = NULL;
 
     return THEMIS_SUCCESS;
