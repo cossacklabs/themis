@@ -320,7 +320,7 @@ static void test_ec_key_size_quirk(void)
     testsuite_fail_unless(private_key_buffer_length == public_key_buffer_length,
                           "private key has the same length as public key");
 
-    testsuite_fail_unless(soter_container_const_data((const void*) private_key_buffer)[0] == 0,
+    testsuite_fail_unless(soter_container_const_data((const void*)private_key_buffer)[0] == 0,
                           "first byte of private key is zero");
 }
 
@@ -332,6 +332,6 @@ void run_soter_asym_ka_tests(void)
     testsuite_enter_suite("soter asym ka: api");
     testsuite_run_test(test_api);
 
-    testsuite_enter_suite("soter asym ka: EC key quirks");
+    testsuite_enter_suite("soter asym ka: EC key size quirks");
     testsuite_run_test(test_ec_key_size_quirk);
 }
