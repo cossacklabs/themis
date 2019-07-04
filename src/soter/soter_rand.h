@@ -28,8 +28,8 @@
 /**
  * @addtogroup SOTER
  * @{
- * @defgroup SOTER_RAND random bits generator
- * @brief Routine for rundom bits generation
+ * @defgroup SOTER_RAND generating random data
+ * @brief Routines for generating random data
  * @{
  */
 #ifdef __cplusplus
@@ -37,13 +37,17 @@ extern "C" {
 #endif
 
 /**
- * @brief Generates random bits
+ * @brief Generates pseudo-random bytes
  *
- * @param [out] buffer pointer to a buffer for random bits
- * @param [in] length length of the buffer
+ * @param [out] buffer pointer to the output buffer for random data
+ * @param [in]  length length of the buffer
  * @return success code
  *
- * This function generates random bits and puts them in memory pointed by buffer.
+ * This function generates cryptographically strong pseudo-random bytes
+ * and fills the provided buffer with them.
+ *
+ * SOTER_FAIL indicates that there is not enough entropy available
+ * to fill the entire buffer. Please try again later.
  */
 SOTER_API
 soter_status_t soter_rand(uint8_t* buffer, size_t length);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cossack Labs Limited
+ * Copyright (c) 2019 Cossack Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-#include "soter/soter_rand.h"
+#include "soter/soter_wipe.h"
 
-#include <limits.h>
+#include <openssl/crypto.h>
 
-#include <openssl/rand.h>
-
-soter_status_t soter_rand(uint8_t* buffer, size_t length)
+soter_status_t soter_wipe(void* data, size_t length)
 {
-    int result;
-
-    if (!buffer || !length || length > INT_MAX) {
+    if (!data) {
         return SOTER_INVALID_PARAMETER;
     }
 
-    result = RAND_bytes(buffer, (int)length);
+    OPENSSL_cleanse(data, length);
 
-    if (result < 0) {
-        return SOTER_NOT_SUPPORTED;
-    }
-
-    return (result == 1) ? SOTER_SUCCESS : SOTER_FAIL;
+    return SOTER_SUCCESS;
 }

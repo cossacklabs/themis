@@ -21,6 +21,7 @@
 #include "soter/soter_ec_key.h"
 #include "soter/soter_rsa_key.h"
 #include "soter/soter_t.h"
+#include "soter/soter_wipe.h"
 
 #include "themis/portable_endian.h"
 #include "themis/secure_session_t.h"
@@ -61,7 +62,7 @@ themis_status_t secure_session_cleanup(secure_session_t* session_ctx)
 
     soter_asym_ka_cleanup(&(session_ctx->ecdh_ctx));
 
-    memset(session_ctx, 0, sizeof(secure_session_t));
+    soter_wipe(session_ctx, sizeof(secure_session_t));
 
     return THEMIS_SUCCESS;
 }

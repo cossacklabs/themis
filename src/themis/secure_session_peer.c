@@ -18,9 +18,13 @@
 
 #include <string.h>
 
+#include "soter/soter_wipe.h"
+
 void secure_session_peer_cleanup(secure_session_peer_t* peer)
 {
     if (peer->id) {
+        size_t length = peer->id_length + peer->ecdh_key_length + peer->sign_key_length;
+        soter_wipe(peer->id, length);
         free(peer->id);
     }
 

@@ -202,6 +202,10 @@
 		9F874AB422CCB0D100E8DECA /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB122CCB0D100E8DECA /* soter_ec_key.c */; };
 		9F874AB522CCB0D100E8DECA /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */; };
 		9F874AB622CCB0D100E8DECA /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */; };
+		9F98F32522CCEA5D008E14E6 /* soter_wipe.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F98F32422CCEA5D008E14E6 /* soter_wipe.h */; };
+		9F98F32622CCEA5D008E14E6 /* soter_wipe.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F98F32422CCEA5D008E14E6 /* soter_wipe.h */; };
+		9F98F32822CCEB0E008E14E6 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F98F32722CCEB0E008E14E6 /* soter_wipe.c */; };
+		9F98F32922CCEB0E008E14E6 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F98F32722CCEB0E008E14E6 /* soter_wipe.c */; };
 		9FBD853D223BFB5E009EAEB3 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBD853C223BFB5E009EAEB3 /* openssl.framework */; };
 /* End PBXBuildFile section */
 
@@ -406,6 +410,8 @@
 		9F5391F02293F2D90051DA66 /* portable_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = portable_endian.h; path = src/soter/portable_endian.h; sourceTree = "<group>"; };
 		9F874AB122CCB0D100E8DECA /* soter_ec_key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_ec_key.c; path = src/soter/soter_ec_key.c; sourceTree = "<group>"; };
 		9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_rsa_key.c; path = src/soter/soter_rsa_key.c; sourceTree = "<group>"; };
+		9F98F32422CCEA5D008E14E6 /* soter_wipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_wipe.h; path = src/soter/soter_wipe.h; sourceTree = "<group>"; };
+		9F98F32722CCEB0E008E14E6 /* soter_wipe.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_wipe.c; path = src/soter/openssl/soter_wipe.c; sourceTree = "<group>"; };
 		9FBD853C223BFB5E009EAEB3 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Carthage/Build/iOS/openssl.framework; sourceTree = "<group>"; };
 		9FD4C3522260D41700132A88 /* soter_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_api.h; path = src/soter/soter_api.h; sourceTree = "<group>"; };
 		9FD4C3532260D43B00132A88 /* themis_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = themis_api.h; path = src/themis/themis_api.h; sourceTree = "<group>"; };
@@ -479,6 +485,7 @@
 				9F4A2344223A73B0005CB63A /* soter_sign_rsa.h */,
 				9F4A2351223A73B1005CB63A /* soter_sign.c */,
 				9F4A2356223A73B1005CB63A /* soter_sym.h */,
+				9F98F32422CCEA5D008E14E6 /* soter_wipe.h */,
 				9F4A2346223A73B0005CB63A /* soter_t.h */,
 				9F4A2345223A73B0005CB63A /* soter.h */,
 			);
@@ -505,6 +512,7 @@
 				9F4A2394223A7426005CB63A /* soter_sym.c */,
 				9F4A2393223A7426005CB63A /* soter_verify_ecdsa.c */,
 				9F4A238D223A7426005CB63A /* soter_verify_rsa.c */,
+				9F98F32722CCEB0E008E14E6 /* soter_wipe.c */,
 			);
 			name = openssl;
 			sourceTree = "<group>";
@@ -667,6 +675,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F5391F22293F2D90051DA66 /* portable_endian.h in Headers */,
+				9F98F32622CCEA5D008E14E6 /* soter_wipe.h in Headers */,
 				9F00E8E0223C19E000EC1EF3 /* themis.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -676,6 +685,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F5391F12293F2D90051DA66 /* portable_endian.h in Headers */,
+				9F98F32522CCEA5D008E14E6 /* soter_wipe.h in Headers */,
 				9F00E8DF223C19D900EC1EF3 /* themis.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -805,6 +815,7 @@
 				9F00E927223C1AC000EC1EF3 /* soter_rsa_common.c in Sources */,
 				9F00E928223C1AC000EC1EF3 /* soter_rsa_key_pair_gen.c in Sources */,
 				9F00E929223C1AC000EC1EF3 /* soter_rsa_key.c in Sources */,
+				9F98F32922CCEB0E008E14E6 /* soter_wipe.c in Sources */,
 				9F00E92A223C1AC000EC1EF3 /* soter_sign_ecdsa.c in Sources */,
 				9F00E92B223C1AC000EC1EF3 /* soter_sign_rsa.c in Sources */,
 				9F00E92C223C1AC000EC1EF3 /* soter_sym.c in Sources */,
@@ -896,6 +907,7 @@
 				9F4A260A223ABECC005CB63A /* soter_rsa_common.c in Sources */,
 				9F4A260B223ABECC005CB63A /* soter_rsa_key_pair_gen.c in Sources */,
 				9F4A260C223ABECC005CB63A /* soter_rsa_key.c in Sources */,
+				9F98F32822CCEB0E008E14E6 /* soter_wipe.c in Sources */,
 				9F4A260D223ABECC005CB63A /* soter_sign_ecdsa.c in Sources */,
 				9F4A260E223ABECC005CB63A /* soter_sign_rsa.c in Sources */,
 				9F4A260F223ABECC005CB63A /* soter_sym.c in Sources */,
