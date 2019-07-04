@@ -119,11 +119,14 @@ themis_key_kind_t themis_get_asym_key_kind(const uint8_t* key, size_t length)
 themis_status_t themis_is_valid_asym_key(const uint8_t* key, size_t length)
 {
     const soter_container_hdr_t* container = (const void*)key;
+    themis_key_kind_t kind = THEMIS_KEY_INVALID;
 
     if (!key || (length < sizeof(soter_container_hdr_t))) {
         return THEMIS_INVALID_PARAMETER;
     }
-    if (THEMIS_KEY_INVALID == themis_get_asym_key_kind(key, length)) {
+
+    kind = themis_get_asym_key_kind(key, length);
+    if (kind == THEMIS_KEY_INVALID) {
         return THEMIS_INVALID_PARAMETER;
     }
     if (length != be32toh(container->size)) {
@@ -133,5 +136,18 @@ themis_status_t themis_is_valid_asym_key(const uint8_t* key, size_t length)
         return THEMIS_DATA_CORRUPT;
     }
 
-    return THEMIS_SUCCESS;
+    switch (kind) {
+    case THEMIS_KEY_RSA_PRIVATE:
+        return soter_rsa_priv_key_check_length(container, length);
+    case THEMIS_KEY_RSA_PUBLIC:
+        return soter_rsa_pub_key_check_length(container, length);
+    case THEMIS_KEY_EC_PRIVATE:
+        return soter_ec_priv_key_check_length(container, length);
+    case THEMIS_KEY_EC_PUBLIC:
+        return soter_ec_pub_key_check_length(container, length);
+    default:
+        return THEMIS_INVALID_PARAMETER;
+    }
+
+    return THEMIS_INVALID_PARAMETER;
 }

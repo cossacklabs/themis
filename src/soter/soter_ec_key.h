@@ -32,6 +32,10 @@
 /** @brief elliptic curve header part for 521bits key*/
 #define EC_521 "5"
 
+#define EC_SIZE_TAG_256 '2'
+#define EC_SIZE_TAG_384 '3'
+#define EC_SIZE_TAG_521 '5'
+
 #define EC_KEY_SUF(_KEY_SIZE_) EC_##_KEY_SIZE_
 
 #define EC_PRIV_KEY_TAG(_KEY_SIZE_) (EC_PRIV_KEY_PREF EC_KEY_SUF(_KEY_SIZE_))
@@ -82,5 +86,8 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
 soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_ec_key_t* engine_key,
                                                    soter_container_hdr_t* key,
                                                    size_t* key_length);
+
+soter_status_t soter_ec_pub_key_check_length(const soter_container_hdr_t* key, size_t key_length);
+soter_status_t soter_ec_priv_key_check_length(const soter_container_hdr_t* key, size_t key_length);
 
 #endif /* SOTER_EC_KEY_H */

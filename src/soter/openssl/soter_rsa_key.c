@@ -363,16 +363,16 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
     }
 
     switch (key->tag[3]) {
-    case '1':
+    case RSA_SIZE_TAG_1024:
         rsa_mod_size = 128;
         break;
-    case '2':
+    case RSA_SIZE_TAG_2048:
         rsa_mod_size = 256;
         break;
-    case '4':
+    case RSA_SIZE_TAG_4096:
         rsa_mod_size = 512;
         break;
-    case '8':
+    case RSA_SIZE_TAG_8192:
         rsa_mod_size = 1024;
         break;
     default:
@@ -463,16 +463,16 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
     }
 
     switch (key->tag[3]) {
-    case '1':
+    case RSA_SIZE_TAG_1024:
         rsa_mod_size = 128;
         break;
-    case '2':
+    case RSA_SIZE_TAG_2048:
         rsa_mod_size = 256;
         break;
-    case '4':
+    case RSA_SIZE_TAG_4096:
         rsa_mod_size = 512;
         break;
-    case '8':
+    case RSA_SIZE_TAG_8192:
         rsa_mod_size = 1024;
         break;
     default:
