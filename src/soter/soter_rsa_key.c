@@ -22,25 +22,25 @@ SOTER_PRIVATE_API
 soter_status_t soter_rsa_pub_key_check_length(const soter_container_hdr_t* key, size_t key_length)
 {
     switch (key->tag[3]) {
-    case '1':
+    case RSA_SIZE_TAG_1024:
         if (key_length == sizeof(soter_rsa_pub_key_1024_t)) {
             return SOTER_SUCCESS;
         }
         return SOTER_INVALID_PARAMETER;
 
-    case '2':
+    case RSA_SIZE_TAG_2048:
         if (key_length == sizeof(soter_rsa_pub_key_2048_t)) {
             return SOTER_SUCCESS;
         }
         return SOTER_INVALID_PARAMETER;
 
-    case '4':
+    case RSA_SIZE_TAG_4096:
         if (key_length == sizeof(soter_rsa_pub_key_4096_t)) {
             return SOTER_SUCCESS;
         }
         return SOTER_INVALID_PARAMETER;
 
-    case '8':
+    case RSA_SIZE_TAG_8192:
         if (key_length == sizeof(soter_rsa_pub_key_8192_t)) {
             return SOTER_SUCCESS;
         }
@@ -53,25 +53,25 @@ SOTER_PRIVATE_API
 soter_status_t soter_rsa_priv_key_check_length(const soter_container_hdr_t* key, size_t key_length)
 {
     switch (key->tag[3]) {
-    case '1':
+    case RSA_SIZE_TAG_1024:
         if (key_length == sizeof(soter_rsa_priv_key_1024_t)) {
             return SOTER_SUCCESS;
         }
         return SOTER_INVALID_PARAMETER;
 
-    case '2':
+    case RSA_SIZE_TAG_2048:
         if (key_length == sizeof(soter_rsa_priv_key_2048_t)) {
             return SOTER_SUCCESS;
         }
         return SOTER_INVALID_PARAMETER;
 
-    case '4':
+    case RSA_SIZE_TAG_4096:
         if (key_length == sizeof(soter_rsa_priv_key_4096_t)) {
             return SOTER_SUCCESS;
         }
         return SOTER_INVALID_PARAMETER;
 
-    case '8':
+    case RSA_SIZE_TAG_8192:
         if (key_length == sizeof(soter_rsa_priv_key_8192_t)) {
             return SOTER_SUCCESS;
         }

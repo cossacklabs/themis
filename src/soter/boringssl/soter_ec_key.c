@@ -275,13 +275,13 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
     }
 
     switch (key->tag[3]) {
-    case '2':
+    case EC_SIZE_TAG_256:
         curve = NID_X9_62_prime256v1;
         break;
-    case '3':
+    case EC_SIZE_TAG_384:
         curve = NID_secp384r1;
         break;
-    case '5':
+    case EC_SIZE_TAG_521:
         curve = NID_secp521r1;
         break;
     default:
@@ -372,13 +372,13 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
     }
 
     switch (key->tag[3]) {
-    case '2':
+    case EC_SIZE_TAG_256:
         curve = NID_X9_62_prime256v1;
         break;
-    case '3':
+    case EC_SIZE_TAG_384:
         curve = NID_secp384r1;
         break;
-    case '5':
+    case EC_SIZE_TAG_521:
         curve = NID_secp521r1;
         break;
     default:

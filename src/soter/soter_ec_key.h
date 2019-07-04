@@ -32,6 +32,10 @@
 /** @brief elliptic curve header part for 521bits key*/
 #define EC_521 "5"
 
+#define EC_SIZE_TAG_256 '2'
+#define EC_SIZE_TAG_384 '3'
+#define EC_SIZE_TAG_521 '5'
+
 #define EC_KEY_SUF(_KEY_SIZE_) EC_##_KEY_SIZE_
 
 #define EC_PRIV_KEY_TAG(_KEY_SIZE_) (EC_PRIV_KEY_PREF EC_KEY_SUF(_KEY_SIZE_))
