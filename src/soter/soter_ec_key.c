@@ -53,19 +53,9 @@ soter_status_t soter_ec_pub_key_check_length(const soter_container_hdr_t* key, s
 SOTER_PRIVATE_API
 soter_status_t soter_ec_priv_key_check_length(const soter_container_hdr_t* key, size_t key_length)
 {
-    /*
-     * Due to a mistake in historical key exporting implementation, private
-     * keys were exported into slightly bigger buffers suitable for public
-     * keys. Allow such buffer lengths as well because there might exist
-     * perfectly valid keys in the wild that are stored with extra garbage
-     * appended to them.
-     */
     switch (key->tag[3]) {
     case '2':
         if (key_length == sizeof(soter_container_hdr_t) + EC_PRIV_SIZE(256)) {
-            return SOTER_SUCCESS;
-        }
-        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(256)) {
             return SOTER_SUCCESS;
         }
         return SOTER_INVALID_PARAMETER;
@@ -74,16 +64,10 @@ soter_status_t soter_ec_priv_key_check_length(const soter_container_hdr_t* key, 
         if (key_length == sizeof(soter_container_hdr_t) + EC_PRIV_SIZE(384)) {
             return SOTER_SUCCESS;
         }
-        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(384)) {
-            return SOTER_SUCCESS;
-        }
         return SOTER_INVALID_PARAMETER;
 
     case '5':
         if (key_length == sizeof(soter_container_hdr_t) + EC_PRIV_SIZE(521)) {
-            return SOTER_SUCCESS;
-        }
-        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(521)) {
             return SOTER_SUCCESS;
         }
         return SOTER_INVALID_PARAMETER;
