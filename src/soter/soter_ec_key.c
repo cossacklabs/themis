@@ -53,24 +53,10 @@ soter_status_t soter_ec_pub_key_check_length(const soter_container_hdr_t* key, s
 SOTER_PRIVATE_API
 soter_status_t soter_ec_priv_key_check_length(const soter_container_hdr_t* key, size_t key_length)
 {
-    switch (key->tag[3]) {
-    case '2':
-        if (key_length == sizeof(soter_container_hdr_t) + EC_PRIV_SIZE(256)) {
-            return SOTER_SUCCESS;
-        }
-        return SOTER_INVALID_PARAMETER;
-
-    case '3':
-        if (key_length == sizeof(soter_container_hdr_t) + EC_PRIV_SIZE(384)) {
-            return SOTER_SUCCESS;
-        }
-        return SOTER_INVALID_PARAMETER;
-
-    case '5':
-        if (key_length == sizeof(soter_container_hdr_t) + EC_PRIV_SIZE(521)) {
-            return SOTER_SUCCESS;
-        }
-        return SOTER_INVALID_PARAMETER;
-    }
-    return SOTER_INVALID_PARAMETER;
+    /*
+     * Due to a historical mistake, EC private keys in Themis have the same
+     * length as public keys, not EC_PRIV_SIZE(bits). That's one byte more
+     * than necessary and that last byte is always zero.
+     */
+    return soter_ec_pub_key_check_length(key, key_length);
 }

@@ -208,6 +208,10 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
         goto err;
     }
 
+    /*
+     * Note that we use a buffer suitable for a public key to store a private
+     * key. This was a historical mistake, now preserved for compatibility.
+     */
     output_length = ec_pub_key_size(curve);
     if ((!key) || (output_length > *key_length)) {
         *key_length = output_length;
