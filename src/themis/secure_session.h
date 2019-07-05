@@ -22,7 +22,21 @@
 #ifndef THEMIS_SECURE_SESSION_H
 #define THEMIS_SECURE_SESSION_H
 
+/*
+ * ssize_t is POSIX-specific (as is <sys/types.h>).
+ * Explicitly define ssize_t as signed counterpart of size_t on Windows.
+ */
+#if _WIN32
+#include <stddef.h>
+#include <stdint.h>
+#ifdef _WIN64
+typedef signed __int64 ssize_t;
+#else
+typedef signed int ssize_t;
+#endif
+#else
 #include <sys/types.h>
+#endif
 
 #include <soter/soter.h>
 

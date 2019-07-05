@@ -17,7 +17,6 @@
 #include "ge_utils.h"
 #include <soter/soter.h>
 
-SOTER_PRIVATE_API
 void clip_random_32(unsigned char *r)
 {
     r[0] &= 248;
@@ -25,7 +24,6 @@ void clip_random_32(unsigned char *r)
     r[31] |= 64;
 }
 
-SOTER_PRIVATE_API
 void generate_random_32(unsigned char *r)
 {
 	soter_status_t res = soter_rand(r, ED25519_GE_LENGTH);

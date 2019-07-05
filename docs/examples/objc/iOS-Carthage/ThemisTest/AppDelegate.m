@@ -282,56 +282,46 @@
 - (void)runExampleSecureMessageSignVerify {
     NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
 
-    // ---------- signing
-
     // base64 encoded keys:
-    // client private key
-    // server public key
-    NSString *serverPublicKeyString = @"VUVDMgAAAC2ELbj5Aue5xjiJWW3P2KNrBX+HkaeJAb+Z4MrK0cWZlAfpBUql";
-    NSString *clientPrivateKeyString = @"UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg";
+    // private key
+    // public key
+    
+    NSString *publicKeyString = @"VUVDMgAAAC2ELbj5Aue5xjiJWW3P2KNrBX+HkaeJAb+Z4MrK0cWZlAfpBUql";
+    NSString *privateKeyString = @"UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR";
 
-    NSData *serverPublicKey = [[NSData alloc] initWithBase64EncodedString:serverPublicKeyString
-                                                                  options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    NSData *clientPrivateKey = [[NSData alloc] initWithBase64EncodedString:clientPrivateKeyString
-                                                                   options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    NSData *publicKey = [[NSData alloc] initWithBase64EncodedString:publicKeyString
+                                                            options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    NSData *privateKey = [[NSData alloc] initWithBase64EncodedString:privateKeyString
+                                                             options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
-    // initialize encrypter
-    TSMessage *encrypter = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:clientPrivateKey peerPublicKey:serverPublicKey];
+    
+    // ---------- signing
+    
+    // initialize signer, use private key
+    TSMessage *signer = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:privateKey peerPublicKey:nil];
 
     NSString *message = @"- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java.";
 
     NSError *themisError;
-    NSData *encryptedMessage = [encrypter wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                             error:&themisError];
+    NSData *signedMessage = [signer wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                       error:&themisError];
     if (themisError) {
-        NSLog(@"%s Error occurred while encrypting %@", sel_getName(_cmd), themisError);
+        NSLog(@"%s Error occurred while signing %@", sel_getName(_cmd), themisError);
         return;
     }
-    NSLog(@"%@", encryptedMessage);
 
     // -------- verification
 
-    // base64 encoded keys:
-    // server private key
-    // client public key
-    NSString *serverPrivateKeyString = @"UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR";
-    NSString *clientPublicKeyString = @"VUVDMgAAAC1SsL32Axjosnf2XXUwm/4WxPlZauQ+v+0eOOjpwMN/EO+Huh5d";
+    // initialize verifier, use public key
+    TSMessage *verifier = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:nil peerPublicKey:publicKey];
 
-    NSData *serverPrivateKey = [[NSData alloc] initWithBase64EncodedString:serverPrivateKeyString
-                                                                   options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    NSData *clientPublicKey = [[NSData alloc] initWithBase64EncodedString:clientPublicKeyString
-                                                                  options:NSDataBase64DecodingIgnoreUnknownCharacters];
-
-    // initialize decrypter
-    TSMessage *decrypter = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:serverPrivateKey peerPublicKey:clientPublicKey];
-
-    NSData *decryptedMessage = [decrypter unwrapData:encryptedMessage error:&themisError];
+    NSData *verifiedMessage = [verifier unwrapData:signedMessage error:&themisError];
     if (themisError) {
-        NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
+        NSLog(@"%s Error occurred while verifying %@", sel_getName(_cmd), themisError);
         return;
     }
 
-    NSString *resultString = [[NSString alloc] initWithData:decryptedMessage encoding:NSUTF8StringEncoding];
+    NSString *resultString = [[NSString alloc] initWithData:verifiedMessage encoding:NSUTF8StringEncoding];
     NSLog(@"%@", resultString);
 }
 

@@ -16,7 +16,6 @@
 
 #include "ge_utils.h"
 
-SOTER_PRIVATE_API
 void ge_scalarmult_blinded(ge_p3 *r, const unsigned char *a, const ge_p3 *A)
 {
 	unsigned char rnd[32];

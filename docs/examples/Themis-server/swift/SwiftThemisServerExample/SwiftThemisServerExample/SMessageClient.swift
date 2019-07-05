@@ -14,21 +14,23 @@ final class SMessageClient {
     
     // ---------------------- IMPORTANT SETUP ---------------------------------------
     // Read how Themis Server works:
-    // https://github.com/cossacklabs/themis/wiki/Using-Themis-Server
+    // https://docs.cossacklabs.com/pages/documentation-themis/#interactive-simulator-themis-server
     
     // You may NEED to re-generate all keys
     
     // User id and Server Public Key should be copied from the Server Setup Page
-    // https://themis.cossacklabs.com/interactive-simulator/setup/
+    // https://docs.cossacklabs.com/simulator/interactive/
     
-    let kUserId: String = "<user id>"
-    let kServerPublicKey: String = "<server public key>"
+    let kServerURL = "https://docs.cossacklabs.com/api/"
+    
+    let kUserId = "<user id>"
+    let kServerPublicKey = "<server public key>"
     
     // These are default keys, you can re-generate them by running `generateClientKeys()`
     // Copy and paste `kClientPublicKey` to Server Setup Page.
     // RE-GENERATE these keys before using your app in production.
-    let kClientPrivateKey: String = "UkVDMgAAAC0TXvcoAGxwWV3QQ9fgds+4pqAWmDqQAfkb0r/+gAi89sggGLpV"
-    let kClientPublicKey: String = "VUVDMgAAAC3mmD1pAuXBcr8k+1rLNYkmw+MwTJMofuDaOTXLf75HW8BIG/5l"
+    let kClientPrivateKey = "UkVDMgAAAC0TXvcoAGxwWV3QQ9fgds+4pqAWmDqQAfkb0r/+gAi89sggGLpV"
+    let kClientPublicKey = "VUVDMgAAAC3mmD1pAuXBcr8k+1rLNYkmw+MwTJMofuDaOTXLf75HW8BIG/5l"
     
     // ---------------------- END OF SETUP ---------------------------------------
 
@@ -105,7 +107,7 @@ final class SMessageClient {
             return
         }
         
-        let stringURL: String = "\("https://themis.cossacklabs.com/api/")\(kUserId)/"
+        let stringURL: String = "\(kServerURL)\(kUserId)/"
         postRequestTo(stringURL, message: encryptedMessage, completion: {(data: Data?, error: Error?) -> Void in
             guard let data = data else {
                 print("response error \(error as Optional)")
@@ -126,7 +128,7 @@ final class SMessageClient {
 
     fileprivate func generateClientKeys() {
         // Use Client Public Key to run server (copy and paste Client Public Key to the Setup page)
-        // https://themis.cossacklabs.com/interactive-simulator/setup/
+        // https://docs.cossacklabs.com/simulator/interactive/
         //
         // Use client private key to encrypt your message
         
@@ -148,12 +150,12 @@ final class SMessageClient {
 
     fileprivate func checkKeysNotEmpty() {
         // Read how Themis Server works:
-        // https://github.com/cossacklabs/themis/wiki/Using-Themis-Server
+        // https://docs.cossacklabs.com/pages/documentation-themis/#interactive-simulator-themis-server
         
         
-        assert(!(kUserId == "<user id>"), "Get user id from https://themis.cossacklabs.com/interactive-simulator/setup/")
-        assert(!(kServerPublicKey == "<server public key>"), "Get server key from https://themis.cossacklabs.com/interactive-simulator/setup/")
-        assert(!(kClientPrivateKey == "<generated client private key>"), "Generate client keys by running `generateClientKeys()` or obtain from server https://themis.cossacklabs.com/interactive-simulator/setup/")
-        assert(!(kClientPublicKey == "<generated client public key>"), "Generate client keys by running `generateClientKeys()` or obtain from server https://themis.cossacklabs.com/interactive-simulator/setup/")
+        assert(!(kUserId == "<user id>"), "Get user id from https://docs.cossacklabs.com/simulator/interactive/")
+        assert(!(kServerPublicKey == "<server public key>"), "Get server key from https://docs.cossacklabs.com/simulator/interactive/")
+        assert(!(kClientPrivateKey == "<generated client private key>"), "Generate client keys by running `generateClientKeys()` or obtain from server https://docs.cossacklabs.com/simulator/interactive/")
+        assert(!(kClientPublicKey == "<generated client public key>"), "Generate client keys by running `generateClientKeys()` or obtain from server https://docs.cossacklabs.com/simulator/interactive/")
     }
 }

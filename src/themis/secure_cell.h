@@ -113,9 +113,9 @@ themis_status_t themis_secure_cell_decrypt_seal(const uint8_t* master_key,
  * @param [in] user_context_length length of user_context
  * @param [in] message message to encrypt
  * @param [in] message_length length of message
- * @param [out] token additional authentication info. May be set to NULL for additional
+ * @param [out] context additional authentication info. May be set to NULL for additional
  * authentication info length determination
- * @param [in, out] token_length length of additional authentication info
+ * @param [in, out] context_length length of additional authentication info
  * @param [out] encrypted_message buffer for encrypted message store. May be set to NULL for
  * encrypted message length determination
  * @param [in, out] encrypted_message_length length of encrypted_message
@@ -146,8 +146,8 @@ themis_status_t themis_secure_cell_encrypt_token_protect(const uint8_t* master_k
  * @param [in] user_context_length length of user_context
  * @param [in] encrypted_message message to decrypt
  * @param [in] encrypted_message_length length of encrypted_message
- * @param [in] token additional authentication info
- * @param [in] token_length length of additional authentication info
+ * @param [in] context additional authentication info
+ * @param [in] context_length length of additional authentication info
  * @param [out] plain_message buffer for plain message store. May be set to NULL for plain message
  * length determination
  * @param [in, out] plain_message_length length of plain_message

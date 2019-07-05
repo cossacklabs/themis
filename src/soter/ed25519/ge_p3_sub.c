@@ -16,7 +16,6 @@
 
 #include "ge_utils.h"
 
-SOTER_PRIVATE_API
 void ge_p3_sub(ge_p3 *r, const ge_p3 *p, const ge_p3 *q)
 {
 	ge_cached q_cached;

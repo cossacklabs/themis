@@ -265,60 +265,51 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func runExampleSecureMessageSignVerify() {
         print("----------------------------------", #function)
 
-        // ---------- signing ----------------
-
         // base64 encoded keys:
-        // client private key
-        // server public key
+        // private key
+        // public key
 
-        let serverPublicKeyString: String = "VUVDMgAAAC2ELbj5Aue5xjiJWW3P2KNrBX+HkaeJAb+Z4MrK0cWZlAfpBUql"
-        let clientPrivateKeyString: String = "UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg"
+        let publicKeyString: String = "VUVDMgAAAC2ELbj5Aue5xjiJWW3P2KNrBX+HkaeJAb+Z4MrK0cWZlAfpBUql"
+        let privateKeyString: String = "UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR"
 
-        guard let serverPublicKey: Data = Data(base64Encoded: serverPublicKeyString,
+        guard let publicKey: Data = Data(base64Encoded: publicKeyString,
                                                options: .ignoreUnknownCharacters),
-            let clientPrivateKey: Data = Data(base64Encoded: clientPrivateKeyString,
+            let privateKey: Data = Data(base64Encoded: privateKeyString,
                                               options: .ignoreUnknownCharacters) else {
                                                 print("Error occurred during base64 encoding", #function)
                                                 return
         }
 
-        let encrypter: TSMessage = TSMessage.init(inSignVerifyModeWithPrivateKey: clientPrivateKey,
-                                                  peerPublicKey: serverPublicKey)!
+        // ---------- signing ----------------
+        // use private key
+        
+        let signer: TSMessage = TSMessage.init(inSignVerifyModeWithPrivateKey: privateKey,
+                                               peerPublicKey: nil)!
 
         let message: String = "I had a problem so I though to use Java. Now I have a ProblemFactory."
 
-        var encryptedMessage: Data = Data()
+        var signedMessage: Data = Data()
         do {
-            encryptedMessage = try encrypter.wrap(message.data(using: .utf8))
-            print("encryptedMessage = \(encryptedMessage)")
+            signedMessage = try signer.wrap(message.data(using: .utf8))
+            print("signedMessage = \(signedMessage)")
 
         } catch let error as NSError {
-            print("Error occurred while encrypting \(error)", #function)
+            print("Error occurred while signing \(error)", #function)
             return
         }
 
         // ---------- verification ----------------
-        let serverPrivateKeyString: String = "UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR"
-        let clientPublicKeyString: String = "VUVDMgAAAC1SsL32Axjosnf2XXUwm/4WxPlZauQ+v+0eOOjpwMN/EO+Huh5d"
-
-        guard let serverPrivateKey: Data = Data(base64Encoded: serverPrivateKeyString,
-                                                options: .ignoreUnknownCharacters),
-            let clientPublicKey: Data = Data(base64Encoded: clientPublicKeyString,
-                                             options: .ignoreUnknownCharacters) else {
-                                                print("Error occurred during base64 encoding", #function)
-                                                return
-        }
-
-        let decrypter: TSMessage = TSMessage.init(inSignVerifyModeWithPrivateKey: serverPrivateKey,
-                                                  peerPublicKey: clientPublicKey)!
+        // use public key
+        let verifier = TSMessage.init(inSignVerifyModeWithPrivateKey: nil,
+                                      peerPublicKey: publicKey)!
 
         do {
-            let decryptedMessage: Data = try decrypter.unwrapData(encryptedMessage)
-            let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
-            print("decryptedMessage->\n\(resultString)")
+            let verifiedMessage: Data = try verifier.unwrapData(signedMessage)
+            let resultString: String = String(data: verifiedMessage, encoding: .utf8)!
+            print("verifiedMessage ->\n\(resultString)")
 
         } catch let error as NSError {
-            print("Error occurred while decrypting \(error)", #function)
+            print("Error occurred while verifing \(error)", #function)
             return
         }
     }

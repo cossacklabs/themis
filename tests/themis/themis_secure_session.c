@@ -72,7 +72,13 @@ static client_info_t client = {
     client_pub,
     sizeof(client_pub),
     NULL,
-    {},
+    {
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+    },
 };
 static client_info_t server = {
     "server",
@@ -81,7 +87,13 @@ static client_info_t server = {
     server_pub,
     sizeof(server_pub),
     NULL,
-    {},
+    {
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+    },
 };
 
 /* Peers will communicate using shared memory */

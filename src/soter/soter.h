@@ -44,6 +44,7 @@
 #include <soter/soter_rand.h>
 #include <soter/soter_rsa_key_pair_gen.h>
 #include <soter/soter_sym.h>
+#include <soter/soter_wipe.h>
 
 /**@}*/
 #endif /* SOTER_H */

@@ -20,6 +20,7 @@
 #include "soter/soter_rsa_key.h"
 #include "soter/soter_t.h"
 
+#include "themis/portable_endian.h"
 #include "themis/secure_session.h"
 #include "themis/secure_session_t.h"
 
@@ -30,7 +31,7 @@ soter_sign_alg_t get_key_sign_type(const void* sign_key, size_t sign_key_length)
     const soter_container_hdr_t* key = sign_key;
 
     if (sign_key_length >= sizeof(soter_container_hdr_t)) {
-        if (sign_key_length < ntohl(key->size)) {
+        if (sign_key_length < be32toh(key->size)) {
             return (soter_sign_alg_t)0xffffffff;
         }
 
@@ -51,7 +52,7 @@ soter_sign_alg_t get_peer_key_sign_type(const void* sign_key, size_t sign_key_le
     const soter_container_hdr_t* key = sign_key;
 
     if (sign_key_length >= sizeof(soter_container_hdr_t)) {
-        if (sign_key_length < ntohl(key->size)) {
+        if (sign_key_length < be32toh(key->size)) {
             return (soter_sign_alg_t)0xffffffff;
         }
 

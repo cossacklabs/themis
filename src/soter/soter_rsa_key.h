@@ -17,8 +17,6 @@
 #ifndef SOTER_RSA_KEY_H
 #define SOTER_RSA_KEY_H
 
-#include <arpa/inet.h>
-
 #include <soter/soter_container.h>
 #include <soter/soter_error.h>
 
@@ -29,6 +27,11 @@
 #define RSA_2048 "2"
 #define RSA_4096 "4"
 #define RSA_8192 "8"
+
+#define RSA_SIZE_TAG_1024 '1'
+#define RSA_SIZE_TAG_2048 '2'
+#define RSA_SIZE_TAG_4096 '4'
+#define RSA_SIZE_TAG_8192 '8'
 
 #define RSA_KEY_LENGTH_1024 1
 #define RSA_KEY_LENGTH_2048 2
@@ -93,5 +96,8 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_rsa_key_t* engine_key,
                                                     soter_container_hdr_t* key,
                                                     size_t* key_length);
+
+soter_status_t soter_rsa_pub_key_check_length(const soter_container_hdr_t* key, size_t key_length);
+soter_status_t soter_rsa_priv_key_check_length(const soter_container_hdr_t* key, size_t key_length);
 
 #endif /* SOTER_RSA_KEY_H */

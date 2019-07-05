@@ -252,8 +252,8 @@ void SecureMessage::sign(const Nan::FunctionCallbackInfo<v8::Value>& args)
 {
     themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
-    if (obj->peer_public_key_.empty()) {
-        ThrowParameterError("Secure Message failed to sign message", "public key is empty");
+    if (obj->private_key_.empty()) {
+        ThrowParameterError("Secure Message failed to sign message", "private key is empty");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -306,8 +306,8 @@ void SecureMessage::verify(const Nan::FunctionCallbackInfo<v8::Value>& args)
 {
     themis_status_t status = THEMIS_FAIL;
     SecureMessage* obj = Nan::ObjectWrap::Unwrap<SecureMessage>(args.This());
-    if (obj->private_key_.empty()) {
-        ThrowParameterError("Secure Message failed to verify signature", "private key is empty");
+    if (obj->peer_public_key_.empty()) {
+        ThrowParameterError("Secure Message failed to verify signature", "public key is empty");
         args.GetReturnValue().SetUndefined();
         return;
     }

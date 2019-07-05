@@ -1,6 +1,5 @@
 #include "ge.h"
 
-SOTER_PRIVATE_API
 void ge_p3_tobytes(unsigned char *s,const ge_p3 *h)
 {
   fe recip;
