@@ -47,7 +47,7 @@ const errorCodes = {
 class ThemisError extends Error {
     constructor(subsystem, errorCode) {
         var message = 'Themis: ' + subsystem + ': '
-        if (arguments.length >= 2) {
+        if (arguments.length > 2) {
             message += arguments[2]
             for (var i = 3; i < arguments.length; i++) {
                 message += ', '

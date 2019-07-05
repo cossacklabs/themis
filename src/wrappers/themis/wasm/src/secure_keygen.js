@@ -19,6 +19,7 @@
 
 const libthemis = require('./libthemis.js')
 const errors = require('./themis_error.js')
+const utils = require('./utils.js')
 
 const subsystem = 'KeyPair'
 
@@ -40,7 +41,7 @@ const keyKinds = {
 
 class PrivateKey extends Uint8Array {
     constructor(array) {
-        array = coerceToBytes(array)
+        array = utils.coerceToBytes(array)
         super(array)
         validateKeyBuffer(this, [keyKinds.EC_PRIVATE, keyKinds.RSA_PRIVATE])
     }
@@ -48,21 +49,10 @@ class PrivateKey extends Uint8Array {
 
 class PublicKey extends Uint8Array {
     constructor(array) {
-        array = coerceToBytes(array)
+        array = utils.coerceToBytes(array)
         super(array)
         validateKeyBuffer(this, [keyKinds.EC_PUBLIC, keyKinds.RSA_PUBLIC])
     }
-}
-
-function coerceToBytes(key) {
-    if (key instanceof Uint8Array) {
-        return key
-    }
-    if (key instanceof ArrayBuffer) {
-        return new Uint8Array(key)
-    }
-    throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
-        'key type mismatch, expect "Uint8Array" or "ArrayBuffer"')
 }
 
 function validateKeyBuffer(buffer, expectedKinds) {
