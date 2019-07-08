@@ -21,7 +21,7 @@ const libthemis = require('./libthemis.js')
 const errors = require('./themis_error.js')
 const utils = require('./utils.js')
 
-const subsystem = 'SecureCellSeal'
+const cryptosystem_name = 'SecureCellSeal'
 
 const ThemisError = errors.ThemisError
 const ThemisErrorCode = errors.ThemisErrorCode
@@ -30,7 +30,7 @@ module.exports = class SecureCellSeal {
     constructor(masterKey) {
         masterKey = utils.coerceToBytes(masterKey)
         if (masterKey.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'master key must be not empty')
         }
         this.masterKey = masterKey
@@ -39,7 +39,7 @@ module.exports = class SecureCellSeal {
     encrypt(message) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
@@ -59,7 +59,7 @@ module.exports = class SecureCellSeal {
             message_ptr = libthemis._malloc(message.length)
             context_ptr = libthemis._malloc(context.length)
             if (!master_key_ptr || !message_ptr || !context_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             libthemis.writeArrayToMemory(this.masterKey, master_key_ptr)
@@ -73,13 +73,13 @@ module.exports = class SecureCellSeal {
                 null, result_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
             result_ptr = libthemis._malloc(result_length)
             if (!result_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._themis_secure_cell_encrypt_seal(
@@ -89,7 +89,7 @@ module.exports = class SecureCellSeal {
                 result_ptr, result_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
@@ -108,7 +108,7 @@ module.exports = class SecureCellSeal {
     decrypt(message) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
@@ -128,7 +128,7 @@ module.exports = class SecureCellSeal {
             message_ptr = libthemis._malloc(message.length)
             context_ptr = libthemis._malloc(context.length)
             if (!master_key_ptr || !message_ptr || !context_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             libthemis.writeArrayToMemory(this.masterKey, master_key_ptr)
@@ -142,13 +142,13 @@ module.exports = class SecureCellSeal {
                 null, result_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
             result_ptr = libthemis._malloc(result_length)
             if (!result_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._themis_secure_cell_decrypt_seal(
@@ -158,7 +158,7 @@ module.exports = class SecureCellSeal {
                 result_ptr, result_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')

@@ -21,7 +21,7 @@ const libthemis = require('./libthemis.js')
 const errors = require('./themis_error.js')
 const utils = require('./utils.js')
 
-const subsystem = 'SecureCellTokenProtect'
+const cryptosystem_name = 'SecureCellTokenProtect'
 
 const ThemisError = errors.ThemisError
 const ThemisErrorCode = errors.ThemisErrorCode
@@ -30,7 +30,7 @@ module.exports = class SecureCellTokenProtect {
     constructor(masterKey) {
         masterKey = utils.coerceToBytes(masterKey)
         if (masterKey.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'master key must be not empty')
         }
         this.masterKey = masterKey
@@ -39,7 +39,7 @@ module.exports = class SecureCellTokenProtect {
     encrypt(message) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
@@ -60,7 +60,7 @@ module.exports = class SecureCellTokenProtect {
             message_ptr = libthemis._malloc(message.length)
             context_ptr = libthemis._malloc(context.length)
             if (!master_key_ptr || !message_ptr || !context_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             libthemis.writeArrayToMemory(this.masterKey, master_key_ptr)
@@ -75,7 +75,7 @@ module.exports = class SecureCellTokenProtect {
                 null, result_length_ptr,
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
@@ -83,7 +83,7 @@ module.exports = class SecureCellTokenProtect {
             result_ptr = libthemis._malloc(result_length)
             token_ptr = libthemis._malloc(token_length)
             if (!result_ptr || !token_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._themis_secure_cell_encrypt_token_protect(
@@ -94,7 +94,7 @@ module.exports = class SecureCellTokenProtect {
                 result_ptr, result_length_ptr,
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
@@ -118,13 +118,13 @@ module.exports = class SecureCellTokenProtect {
     decrypt(message, token) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
         token = utils.coerceToBytes(token)
         if (token.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'token must be not empty')
         }
 
@@ -145,7 +145,7 @@ module.exports = class SecureCellTokenProtect {
             context_ptr = libthemis._malloc(context.length)
             token_ptr = libthemis._malloc(token.length)
             if (!master_key_ptr || !message_ptr || !context_ptr || !token_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             libthemis.writeArrayToMemory(this.masterKey, master_key_ptr)
@@ -161,13 +161,13 @@ module.exports = class SecureCellTokenProtect {
                 null, result_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
             result_ptr = libthemis._malloc(result_length)
             if (!result_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._themis_secure_cell_decrypt_token_protect(
@@ -178,7 +178,7 @@ module.exports = class SecureCellTokenProtect {
                 result_ptr, result_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')

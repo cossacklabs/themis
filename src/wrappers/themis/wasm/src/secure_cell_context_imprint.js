@@ -21,7 +21,7 @@ const libthemis = require('./libthemis.js')
 const errors = require('./themis_error.js')
 const utils = require('./utils.js')
 
-const subsystem = 'SecureCellContextImprint'
+const cryptosystem_name = 'SecureCellContextImprint'
 
 const ThemisError = errors.ThemisError
 const ThemisErrorCode = errors.ThemisErrorCode
@@ -30,7 +30,7 @@ module.exports = class SecureCellContextImprint {
     constructor(masterKey) {
         masterKey = utils.coerceToBytes(masterKey)
         if (masterKey.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'master key must be not empty')
         }
         this.masterKey = masterKey
@@ -39,7 +39,7 @@ module.exports = class SecureCellContextImprint {
     encrypt(message, context) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
@@ -47,13 +47,13 @@ module.exports = class SecureCellContextImprint {
         // the context here as well. Let's produce a more helpful error message instead
         // of an error about 'undefined' being invalid byte buffer type.
         if (context === undefined) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'SecureCellContextImprint requires context for encrypting')
         }
 
         context = utils.coerceToBytes(context)
         if (context.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'context must be not empty')
         }
 
@@ -66,7 +66,7 @@ module.exports = class SecureCellContextImprint {
             message_ptr = libthemis._malloc(message.length)
             context_ptr = libthemis._malloc(context.length)
             if (!master_key_ptr || !message_ptr || !context_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             libthemis.writeArrayToMemory(this.masterKey, master_key_ptr)
@@ -80,13 +80,13 @@ module.exports = class SecureCellContextImprint {
                 null, result_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
             result_ptr = libthemis._malloc(result_length)
             if (!result_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._themis_secure_cell_encrypt_context_imprint(
@@ -96,7 +96,7 @@ module.exports = class SecureCellContextImprint {
                 result_ptr, result_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
@@ -115,7 +115,7 @@ module.exports = class SecureCellContextImprint {
     decrypt(message, context) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
@@ -123,13 +123,13 @@ module.exports = class SecureCellContextImprint {
         // the context here as well. Let's produce a more helpful error message instead
         // of an error about 'undefined' being invalid byte buffer type.
         if (context === undefined) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'SecureCellContextImprint requires context for decrypting')
         }
 
         context = utils.coerceToBytes(context)
         if (context.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'context must be not empty')
         }
 
@@ -142,7 +142,7 @@ module.exports = class SecureCellContextImprint {
             message_ptr = libthemis._malloc(message.length)
             context_ptr = libthemis._malloc(context.length)
             if (!master_key_ptr || !message_ptr || !context_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             libthemis.writeArrayToMemory(this.masterKey, master_key_ptr)
@@ -156,13 +156,13 @@ module.exports = class SecureCellContextImprint {
                 null, result_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
             result_ptr = libthemis._malloc(result_length)
             if (!result_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._themis_secure_cell_decrypt_context_imprint(
@@ -172,7 +172,7 @@ module.exports = class SecureCellContextImprint {
                 result_ptr, result_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
