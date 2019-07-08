@@ -22,7 +22,7 @@ const keygen = require('./secure_keygen.js')
 const errors = require('./themis_error.js')
 const utils = require('./utils.js')
 
-const subsystem = 'SecureMessage'
+const cryptosystem_name = 'SecureMessage'
 
 const ThemisError = errors.ThemisError
 const ThemisErrorCode = errors.ThemisErrorCode
@@ -31,7 +31,7 @@ class SecureMessage {
     constructor(keyPair) {
         if (arguments.length == 1) {
             if (!(keyPair instanceof keygen.KeyPair)) {
-                throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                     'invalid argument: must be KeyPair')
             }
             this.privateKey = keyPair.privateKey
@@ -56,18 +56,18 @@ class SecureMessage {
                 return
             }
 
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'invalid arguments: expected PrivateKey and PublicKey')
         }
 
-        throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
             'invalid argument count: expected either one KeyPair, or PrivateKey and PublicKey')
     }
 
     encrypt(message) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
@@ -80,7 +80,7 @@ class SecureMessage {
             public_key_ptr = libthemis._malloc(this.publicKey.length)
             message_ptr = libthemis._malloc(message.length)
             if (!private_key_ptr || !public_key_ptr || !message_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             libthemis.writeArrayToMemory(this.privateKey, private_key_ptr)
@@ -94,13 +94,13 @@ class SecureMessage {
                 null, result_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
             result_ptr = libthemis._malloc(result_length)
             if (!result_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._themis_secure_message_encrypt(
@@ -110,7 +110,7 @@ class SecureMessage {
                 result_ptr, result_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
@@ -129,7 +129,7 @@ class SecureMessage {
     decrypt(message) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
@@ -142,7 +142,7 @@ class SecureMessage {
             public_key_ptr = libthemis._malloc(this.publicKey.length)
             message_ptr = libthemis._malloc(message.length)
             if (!private_key_ptr || !public_key_ptr || !message_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             libthemis.writeArrayToMemory(this.privateKey, private_key_ptr)
@@ -156,13 +156,13 @@ class SecureMessage {
                 null, result_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
             result_ptr = libthemis._malloc(result_length)
             if (!result_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._themis_secure_message_decrypt(
@@ -172,7 +172,7 @@ class SecureMessage {
                 result_ptr, result_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
@@ -192,7 +192,7 @@ class SecureMessage {
 class SecureMessageSign {
     constructor(privateKey) {
         if (!(privateKey instanceof keygen.PrivateKey)) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'invalid argument: expected PrivateKey')
         }
         this.privateKey = privateKey
@@ -201,7 +201,7 @@ class SecureMessageSign {
     sign(message) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
@@ -213,7 +213,7 @@ class SecureMessageSign {
             private_key_ptr = libthemis._malloc(this.privateKey.length)
             message_ptr = libthemis._malloc(message.length)
             if (!private_key_ptr || !message_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             libthemis.writeArrayToMemory(this.privateKey, private_key_ptr)
@@ -225,13 +225,13 @@ class SecureMessageSign {
                 null, result_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
             result_ptr = libthemis._malloc(result_length)
             if (!result_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._themis_secure_message_sign(
@@ -240,7 +240,7 @@ class SecureMessageSign {
                 result_ptr, result_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
@@ -259,7 +259,7 @@ class SecureMessageSign {
 class SecureMessageVerify {
     constructor(publicKey) {
         if (!(publicKey instanceof keygen.PublicKey)) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'invalid argument: expected PublicKey')
         }
         this.publicKey = publicKey
@@ -268,7 +268,7 @@ class SecureMessageVerify {
     verify(message) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
@@ -280,7 +280,7 @@ class SecureMessageVerify {
             public_key_ptr = libthemis._malloc(this.publicKey.length)
             message_ptr = libthemis._malloc(message.length)
             if (!public_key_ptr || !message_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             libthemis.writeArrayToMemory(this.publicKey, public_key_ptr)
@@ -292,13 +292,13 @@ class SecureMessageVerify {
                 null, result_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
             result_ptr = libthemis._malloc(result_length)
             if (!result_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._themis_secure_message_verify(
@@ -307,7 +307,7 @@ class SecureMessageVerify {
                 result_ptr, result_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
