@@ -55,8 +55,8 @@ function isFunction(obj) {
 // Hence the following sizes and offsets:
 
 const sizeof_secure_session_user_callbacks_t = 20
-const offsetof_get_public_key_for_id         = 12
 const offsetof_user_data                     = 16
+const offsetof_get_public_key_for_id         = 12
 
 // One does not simply pass JavaScript function into Emscripten memory. We need to use
 // the "addFunction" API which registers a limited number of JavaScript functions and
