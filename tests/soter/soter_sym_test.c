@@ -458,6 +458,14 @@ static void test_auth_tag(void)
         return;
     }
 
+    res = soter_sym_aead_encrypt_final(ctx, NULL, NULL);
+    testsuite_fail_if(res != SOTER_INVALID_PARAMETER,
+                      "soter_sym_aead_encrypt_final: NULL length");
+
+    res = soter_sym_aead_encrypt_final(ctx, NULL, &tag_length);
+    testsuite_fail_if(res != SOTER_BUFFER_TOO_SMALL,
+                      "soter_sym_aead_encrypt_final: query size");
+
     res = soter_sym_aead_encrypt_final(ctx, tag, &tag_length);
     if (SOTER_SUCCESS != res) {
         testsuite_fail_if(res, "soter_sym_aead_encrypt_final");
