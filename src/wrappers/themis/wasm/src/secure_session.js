@@ -22,7 +22,7 @@ const keygen = require('./secure_keygen.js')
 const errors = require('./themis_error.js')
 const utils = require('./utils.js')
 
-const subsystem = 'SecureSession'
+const cryptosystem_name = 'SecureSession'
 
 const ThemisError = errors.ThemisError
 const ThemisErrorCode = errors.ThemisErrorCode
@@ -131,11 +131,11 @@ function getPublicKeyForIdThunk(idPtr, idLen, keyPtr, keyLen, userData) {
     }
 
     if (!(publicKey instanceof keygen.PublicKey)) {
-        throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
             'Secure Session callback must return PublicKey or null')
     }
     if (publicKey.length > keyLen) {
-        throw new ThemisError(subsystem, ThemisErrorCode.BUFFER_TOO_SMALL,
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.BUFFER_TOO_SMALL,
             'public key cannot fit into provided buffer')
     }
     libthemis.writeArrayToMemory(publicKey, keyPtr)
@@ -147,15 +147,15 @@ class SecureSession {
     constructor(sessionID, privateKey, keyCallback) {
         sessionID = utils.coerceToBytes(sessionID)
         if (sessionID.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'session ID must be not empty')
         }
         if (!(privateKey instanceof keygen.PrivateKey)) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'expected PrivateKey as second argument')
         }
         if (!isFunction(keyCallback)) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'expected callback as third argument')
         }
 
@@ -165,7 +165,7 @@ class SecureSession {
             private_key_ptr = libthemis._malloc(privateKey.length)
             callbacks_ptr = libthemis._malloc(sizeof_secure_session_user_callbacks_t)
             if (!session_id_ptr || !private_key_ptr || !callbacks_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
             libthemis.writeArrayToMemory(sessionID, session_id_ptr)
             libthemis.writeArrayToMemory(privateKey, private_key_ptr)
@@ -179,7 +179,7 @@ class SecureSession {
                 callbacks_ptr
             )
             if (!this.sessionPtr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY,
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY,
                     'failed to allocate Secure Session')
             }
 
@@ -198,7 +198,7 @@ class SecureSession {
     destroy() {
         let status = libthemis._secure_session_destroy(this.sessionPtr)
         if (status != ThemisErrorCode.SUCCESS) {
-            throw new ThemisError(subsystem, status,
+            throw new ThemisError(cryptosystem_name, status,
                 'failed to destroy Secure Session')
         }
         this.sessionPtr = null
@@ -224,13 +224,13 @@ class SecureSession {
                 null, request_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             request_length = libthemis.getValue(request_length_ptr, 'i32')
             request_ptr = libthemis._malloc(request_length)
             if (!request_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._secure_session_generate_connect_request(
@@ -238,7 +238,7 @@ class SecureSession {
                 request_ptr, request_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             request_length = libthemis.getValue(request_length_ptr, 'i32')
@@ -253,7 +253,7 @@ class SecureSession {
     negotiateReply(message) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
@@ -264,7 +264,7 @@ class SecureSession {
         try {
             message_ptr = libthemis._malloc(message.length)
             if (!message_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
             libthemis.writeArrayToMemory(message, message_ptr)
 
@@ -277,13 +277,13 @@ class SecureSession {
                 return new Uint8Array()
             }
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             reply_length = libthemis.getValue(reply_length_ptr, 'i32')
             reply_ptr = libthemis._malloc(reply_length)
             if (!reply_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._secure_session_unwrap(
@@ -292,7 +292,7 @@ class SecureSession {
                 reply_ptr, reply_length_ptr
             )
             if (status != ThemisErrorCode.SSESSION_SEND_OUTPUT_TO_PEER) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             reply_length = libthemis.getValue(reply_length_ptr, 'i32')
@@ -308,7 +308,7 @@ class SecureSession {
     wrap(message) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
@@ -319,7 +319,7 @@ class SecureSession {
         try {
             message_ptr = libthemis._malloc(message.length)
             if (!message_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
             libthemis.writeArrayToMemory(message, message_ptr)
 
@@ -329,13 +329,13 @@ class SecureSession {
                 null, wrapped_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             wrapped_length = libthemis.getValue(wrapped_length_ptr, 'i32')
             wrapped_ptr = libthemis._malloc(wrapped_length)
             if (!wrapped_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._secure_session_wrap(
@@ -344,7 +344,7 @@ class SecureSession {
                 wrapped_ptr, wrapped_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             wrapped_length = libthemis.getValue(wrapped_length_ptr, 'i32')
@@ -360,7 +360,7 @@ class SecureSession {
     unwrap(message) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'message must be not empty')
         }
 
@@ -371,7 +371,7 @@ class SecureSession {
         try {
             message_ptr = libthemis._malloc(message.length)
             if (!message_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
             libthemis.writeArrayToMemory(message, message_ptr)
 
@@ -381,13 +381,13 @@ class SecureSession {
                 null, unwrapped_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             unwrapped_length = libthemis.getValue(unwrapped_length_ptr, 'i32')
             unwrapped_ptr = libthemis._malloc(unwrapped_length)
             if (!unwrapped_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._secure_session_unwrap(
@@ -396,7 +396,7 @@ class SecureSession {
                 unwrapped_ptr, unwrapped_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             unwrapped_length = libthemis.getValue(unwrapped_length_ptr, 'i32')
