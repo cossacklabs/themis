@@ -21,7 +21,7 @@ const libthemis = require('./libthemis.js')
 const errors = require('./themis_error.js')
 const utils = require('./utils.js')
 
-const subsystem = 'SecureComparator'
+const cryptosystem_name = 'SecureComparator'
 
 const ThemisError = errors.ThemisError
 const ThemisErrorCode = errors.ThemisErrorCode
@@ -31,7 +31,7 @@ class SecureComparator {
         this.haveSecret = false
         this.comparatorPtr = libthemis._secure_comparator_create()
         if (!this.comparatorPtr) {
-            throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY,
                 'failed to allocate Secure Comparator')
         }
         for (var i = 0; i < arguments.length; i++) {
@@ -46,7 +46,7 @@ class SecureComparator {
     destroy() {
         let status = libthemis._secure_comparator_destroy(this.comparatorPtr)
         if (status != ThemisErrorCode.SUCCESS) {
-            throw new ThemisError(subsystem, status,
+            throw new ThemisError(cryptosystem_name, status,
                 'failed to destroy Secure Comparator')
         }
         this.comparatorPtr = null
@@ -55,7 +55,7 @@ class SecureComparator {
     append(secret) {
         secret = utils.coerceToBytes(secret)
         if (secret.length == 0) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'secret must be not empty')
         }
 
@@ -63,7 +63,7 @@ class SecureComparator {
         try {
             secret_ptr = libthemis._malloc(secret.length)
             if (!secret_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
             libthemis.writeArrayToMemory(secret, secret_ptr)
 
@@ -71,7 +71,7 @@ class SecureComparator {
                 this.comparatorPtr, secret_ptr, secret.length
             )
             if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
         }
         finally {
@@ -95,12 +95,12 @@ class SecureComparator {
         if (status == ThemisErrorCode.SCOMPARE_NO_MATCH) {
             return false
         }
-        throw new ThemisError(subsystem, status)
+        throw new ThemisError(cryptosystem_name, status)
     }
 
     begin() {
         if (!this.haveSecret) {
-            throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
                 'secret must be not empty')
         }
 
@@ -113,20 +113,20 @@ class SecureComparator {
                 null, message_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             message_length = libthemis.getValue(message_length_ptr, 'i32')
             message_ptr = libthemis._malloc(message_length)
             if (!message_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._secure_comparator_begin_compare(this.comparatorPtr,
                 message_ptr, message_length_ptr
             )
             if (status != ThemisErrorCode.SCOMPARE_SEND_OUTPUT_TO_PEER) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             message_length = libthemis.getValue(message_length_ptr, 'i32')
@@ -148,7 +148,7 @@ class SecureComparator {
         try {
             request_ptr = libthemis._malloc(request.length)
             if (!request_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
             libthemis.writeArrayToMemory(request, request_ptr)
 
@@ -157,13 +157,13 @@ class SecureComparator {
                 null, reply_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             reply_length = libthemis.getValue(reply_length_ptr, 'i32')
             reply_ptr = libthemis._malloc(reply_length)
             if (!reply_ptr) {
-                throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
             status = libthemis._secure_comparator_proceed_compare(this.comparatorPtr,
@@ -173,7 +173,7 @@ class SecureComparator {
             if ((status != ThemisErrorCode.SCOMPARE_SEND_OUTPUT_TO_PEER)
              && (status != ThemisErrorCode.SUCCESS))
             {
-                throw new ThemisError(subsystem, status)
+                throw new ThemisError(cryptosystem_name, status)
             }
 
             reply_length = libthemis.getValue(reply_length_ptr, 'i32')
