@@ -61,7 +61,6 @@ Preconditions:
   a[31] <= 127
 */
 
-SOTER_PRIVATE_API
 void ge_scalarmult_base(ge_p3 *h,const unsigned char *a)
 {
   signed char e[64];

@@ -21,6 +21,8 @@
 #include <openssl/ec.h>
 #include <openssl/evp.h>
 
+#include "soter/portable_endian.h"
+
 static bool is_curve_supported(int curve)
 {
     switch (curve) {
@@ -160,7 +162,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
     }
 
     memcpy(key->tag, ec_pub_key_tag(curve), SOTER_CONTAINER_TAG_LENGTH);
-    key->size = htonl(output_length);
+    key->size = htobe32(output_length);
     soter_update_container_checksum(key);
     *key_length = output_length;
     res = SOTER_SUCCESS;
@@ -205,6 +207,10 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
         goto err;
     }
 
+    /*
+     * Note that we use a buffer suitable for a public key to store a private
+     * key. This was a historical mistake, now preserved for compatibility.
+     */
     output_length = ec_pub_key_size(curve);
     if ((!key) || (output_length > *key_length)) {
         *key_length = output_length;
@@ -227,7 +233,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     }
 
     memcpy(key->tag, ec_priv_key_tag(curve), SOTER_CONTAINER_TAG_LENGTH);
-    key->size = htonl(output_length);
+    key->size = htobe32(output_length);
     soter_update_container_checksum(key);
     *key_length = output_length;
     res = SOTER_SUCCESS;
@@ -254,7 +260,7 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
         return SOTER_INVALID_PARAMETER;
     }
 
-    if (key_length != ntohl(key->size)) {
+    if (key_length != be32toh(key->size)) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -268,13 +274,13 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
     }
 
     switch (key->tag[3]) {
-    case '2':
+    case EC_SIZE_TAG_256:
         curve = NID_X9_62_prime256v1;
         break;
-    case '3':
+    case EC_SIZE_TAG_384:
         curve = NID_secp384r1;
         break;
-    case '5':
+    case EC_SIZE_TAG_521:
         curve = NID_secp521r1;
         break;
     default:
@@ -351,7 +357,7 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
     soter_status_t res;
 
-    if (key_length != ntohl(key->size)) {
+    if (key_length != be32toh(key->size)) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -365,13 +371,13 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
     }
 
     switch (key->tag[3]) {
-    case '2':
+    case EC_SIZE_TAG_256:
         curve = NID_X9_62_prime256v1;
         break;
-    case '3':
+    case EC_SIZE_TAG_384:
         curve = NID_secp384r1;
         break;
-    case '5':
+    case EC_SIZE_TAG_521:
         curve = NID_secp521r1;
         break;
     default:

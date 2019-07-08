@@ -68,16 +68,26 @@ BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR_); elif 
 
 PKGINFO_PATH = PKGINFO
 
-UNAME=$(shell uname)
+UNAME := $(shell uname)
 
 ifeq ($(UNAME),Darwin)
 	IS_MACOS := true
 else ifeq ($(UNAME),Linux)
 	IS_LINUX := true
+else ifeq ($(shell uname -o),Msys)
+	IS_MSYS := true
 endif
 
 ifneq ($(shell $(CC) --version 2>&1 | grep -oi "Emscripten"),)
 	IS_EMSCRIPTEN := true
+endif
+
+# Detect early if we have undefined symbols due to missing exports
+ifdef IS_MACOS
+LDFLAGS += -Wl,-undefined,error
+endif
+ifdef IS_LINUX
+LDFLAGS += -Wl,--no-undefined
 endif
 
 ifdef IS_EMSCRIPTEN
@@ -103,6 +113,7 @@ endif
 # default installation paths
 prefix          = $(PREFIX)
 exec_prefix     = $(prefix)
+bindir          = $(prefix)/bin
 includedir      = $(prefix)/include
 libdir          = $(exec_prefix)/lib
 pkgconfigdir    = $(libdir)/pkgconfig
@@ -175,25 +186,12 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
 
-DEFAULT_VERSION := 0.11.0
-GIT_VERSION := $(shell if [ -d ".git" ]; then git version; fi 2>/dev/null)
-# check that repo has any tag
-GIT_TAG_STATUS := $(shell git describe --tags HEAD 2>/dev/null)
-GIT_TAG_STATUS := $(.SHELLSTATUS)
-
-ifdef GIT_VERSION
-# if has tag then use it
-        ifeq ($(GIT_TAG_STATUS),0)
-# <tag>-<commit_count_after_tag>-<last_commit-hash>
-                VERSION = $(shell git describe --tags HEAD | cut -b 1-)
-        else
-# <base_version>-<total_commit_count>-<last_commit_hash>
-                VERSION = $(DEFAULT_VERSION)-$(shell git rev-list --all --count)-$(shell git describe --always HEAD)
-        endif
-else
-# if it's not git repo then use date as version
-        VERSION = $(shell date -I | sed s/-/_/g)
-endif
+# Increment VERSION when making a new release of Themis.
+#
+# If you make breaking (backwards-incompatible) changes to API or ABI
+# then increment LIBRARY_SO_VERSION as well, and update package names.
+VERSION := $(shell test -d .git && git describe --tags || cat VERSION)
+LIBRARY_SO_VERSION = 0
 
 PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
@@ -213,7 +211,7 @@ endif
 
 SHARED_EXT = so
 
-ifeq ($(shell uname),Darwin)
+ifdef IS_MACOS
 SHARED_EXT = dylib
 ifneq ($(SDK),)
 SDK_PLATFORM_VERSION=$(shell xcrun --sdk $(SDK) --show-sdk-platform-version)
@@ -228,6 +226,10 @@ endif
 ifneq ($(ARCH),)
 CFLAFS += -arch $(ARCH)
 endif
+endif
+
+ifdef IS_MSYS
+SHARED_EXT = dll
 endif
 
 ifneq ($(shell $(CC) --version 2>&1 | grep -E -i -c "clang version"),0)
@@ -449,6 +451,7 @@ dist:
 	rsync -avz build.gradle $(VERSION)
 	rsync -avz gradlew $(VERSION)
 	rsync -avz themis.podspec $(VERSION)
+	rsync -avz VERSION $(VERSION)
 	tar -zcvf $(THEMIS_DIST_FILENAME) $(VERSION)
 	rm -rf $(VERSION)
 
@@ -540,30 +543,33 @@ endif
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
 
-soter_collect_headers:
-	@mkdir -p $(BIN_PATH)/include/soter
-	@cd src/soter && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/soter/ \; && cd - > /dev/null
-
-themis_collect_headers:
-	@mkdir -p $(BIN_PATH)/include/themis
-	@cd src/themis && find . -name \*.h -exec cp --parents {} ../../$(BIN_PATH)/include/themis/ \; && cd - > /dev/null
-
-collect_headers: themis_collect_headers soter_collect_headers
-
 unpack_dist:
 	@tar -xf $(THEMIS_DIST_FILENAME)
 
+nsis_installer: $(BIN_PATH)/InstallThemis.exe
+
+$(BIN_PATH)/InstallThemis.exe: FORCE
+ifdef IS_MSYS
+	@$(MAKE) install PREFIX=/ DESTDIR="$(BIN_PATH)/install"
+	@ldd "$(BIN_PATH)/install/bin"/*.dll | \
+	 awk '$$3 ~ "^/usr/bin" { print $$3}' | sort --uniq | \
+	 xargs -I % cp % "$(BIN_PATH)/install/bin"
+	@makensis Themis.nsi
+	@rm -r "$(BIN_PATH)/install"
+else
+	@echo "NSIS installers can only be build in MSYS environment on Windows."
+	@echo
+	@echo "Please make sure that you are using MSYS terminal session which"
+	@echo "is usually available as 'MSYS2 MSYS' shortcut in the MSYS group"
+	@echo "of the Start menu."
+	@exit 1
+endif
+
+FORCE:
 
 COSSACKLABS_URL = https://www.cossacklabs.com
 MAINTAINER = "Cossack Labs Limited <dev@cossacklabs.com>"
-# tag version from VCS
-VERSION := $(shell git describe --tags HEAD | cut -b 1-)
 LICENSE_NAME = "Apache License Version 2.0"
-
-LIBRARY_SO_VERSION := $(shell echo $(VERSION) | sed 's/^\([0-9.]*\)\(.*\)*$$/\1/')
-ifeq ($(LIBRARY_SO_VERSION),)
-	LIBRARY_SO_VERSION := $(DEFAULT_VERSION)
-endif
 
 DEB_CODENAME := $(shell lsb_release -cs 2> /dev/null)
 DEB_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
@@ -600,46 +606,28 @@ RPM_SUMMARY = Data security library for network communication and data storage. 
 	 PHP, Java / Android and iOS / OSX. It is designed with ease of use in mind, \
 	 high security and cross-platform availability.
 
-HEADER_DIRS = $(shell ls $(BIN_PATH)/include)
-
-HEADER_FILES_MAP = $(foreach dir,$(HEADER_DIRS), $(BIN_PATH)/include/$(dir)/=$(PREFIX)/include/$(dir))
-
-STATIC_LIBRARY_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.a$$)
-STATIC_BINARY_LIBRARY_MAP = $(foreach file,$(STATIC_LIBRARY_FILES),$(strip $(BIN_PATH)/$(file)=$(PREFIX)/lib/$(file) $(BIN_PATH)/$(file).$(LIBRARY_SO_VERSION)=$(PREFIX)/lib/$(file).$(LIBRARY_SO_VERSION)))
-
-SHARED_LIBRARY_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.$(SHARED_EXT)$$)
-SHARED_BINARY_LIBRARY_MAP = $(foreach file,$(SHARED_LIBRARY_FILES),$(strip $(BIN_PATH)/$(file).$(LIBRARY_SO_VERSION)=$(PREFIX)/lib/$(file).$(LIBRARY_SO_VERSION) $(BIN_PATH)/$(file)=$(PREFIX)/lib/$(file)))
-
-PKGCONFIG_FILES = $(shell ls $(BIN_PATH)/ | egrep *\.pc$$)
-PKGCONFIG_MAP = $(foreach file,$(PKGCONFIG_FILES),$(strip $(BIN_PATH)/$(file)=$(PREFIX)/lib/pkgconfig/$(file)))
-
-BINARY_LIBRARY_MAP = $(strip $(STATIC_BINARY_LIBRARY_MAP) $(SHARED_BINARY_LIBRARY_MAP))
-
 POST_INSTALL_SCRIPT := $(BIN_PATH)/post_install.sh
 POST_UNINSTALL_SCRIPT := $(BIN_PATH)/post_uninstall.sh
 
-install_shell_scripts:
-# run ldconfig to update ld.$(SHARED_EXT) cache
-	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
-	@cp $(POST_INSTALL_SCRIPT) $(POST_UNINSTALL_SCRIPT)
+DEV_PACKAGE_FILES += $(includedir)/
+DEV_PACKAGE_FILES += $(pkgconfigdir)/
 
-symlink_realname_to_soname:
-	# add version to filename and create symlink with realname to full name of library
-	@for f in `ls $(BIN_PATH) | egrep ".*\.(so|a)(\..*)?$$" | tr '\n' ' '`; do \
-		mv $(BIN_PATH)/$$f $(BIN_PATH)/$$f.$(LIBRARY_SO_VERSION); \
-		ln -s $(PREFIX)/lib/$$f.$(LIBRARY_SO_VERSION) $(BIN_PATH)/$$f; \
-	done
+LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_A)
+LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_SO)
+LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_LINK)
+LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_A)
+LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_SO)
+LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_LINK)
 
-
-strip:
-	@find . -name \*.$(SHARED_EXT)\.* -exec strip -o {} {} \;
-
+deb: DESTDIR = $(BIN_PATH)/deb/root
 deb: PREFIX = /usr
 
-deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themis_pkgconfig collect_headers install_shell_scripts strip symlink_realname_to_soname
-	@mkdir -p $(BIN_PATH)/deb
+deb: install
+	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
+	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
 
-#libPACKAGE-dev
+	@find $(DESTDIR) -name '*.$(SHARED_EXT)*' -exec strip -o {} {} \;
+
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name $(PACKAGE_NAME)-dev \
@@ -655,9 +643,8 @@ deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themi
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --category $(PACKAGE_CATEGORY) \
-		 $(HEADER_FILES_MAP) $(PKGCONFIG_MAP)
+		 $(foreach file,$(DEV_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
-#libPACKAGE
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name $(PACKAGE_NAME) \
@@ -673,16 +660,19 @@ deb: soter_static themis_static soter_shared themis_shared soter_pkgconfig themi
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --deb-priority optional \
 		 --category $(PACKAGE_CATEGORY) \
-		 $(BINARY_LIBRARY_MAP)
+		 $(foreach file,$(LIB_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
-# it's just for printing .deb files
 	@find $(BIN_PATH) -name \*.deb
 
+rpm: DESTDIR = $(BIN_PATH)/rpm/root
 rpm: PREFIX = /usr
 
-rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared soter_pkgconfig collect_headers install_shell_scripts strip symlink_realname_to_soname
-	@mkdir -p $(BIN_PATH)/rpm
-#libPACKAGE-devel
+rpm: install
+	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
+	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
+
+	@find $(DESTDIR) -name '*.$(SHARED_EXT)*' -exec strip -o {} {} \;
+
 	@fpm --input-type dir \
          --output-type rpm \
          --name $(PACKAGE_NAME)-devel \
@@ -697,9 +687,8 @@ rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared sote
          --package $(BIN_PATH)/rpm/$(PACKAGE_NAME)-devel-$(NAME_SUFFIX) \
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
-           $(HEADER_FILES_MAP) $(PKGCONFIG_MAP)
+         $(foreach file,$(DEV_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
-#libPACKAGE
 	@fpm --input-type dir \
          --output-type rpm \
          --name $(PACKAGE_NAME) \
@@ -714,8 +703,8 @@ rpm: themis_static themis_shared themis_pkgconfig soter_static soter_shared sote
          --package $(BIN_PATH)/rpm/$(PACKAGE_NAME)-$(NAME_SUFFIX) \
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
-         $(BINARY_LIBRARY_MAP)
-# it's just for printing .rpm files
+         $(foreach file,$(LIB_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
+
 	@find $(BIN_PATH) -name \*.rpm
 
 define PKGINFO

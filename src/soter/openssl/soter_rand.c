@@ -16,18 +16,23 @@
 
 #include "soter/soter_rand.h"
 
+#include <limits.h>
+
 #include <openssl/rand.h>
 
 soter_status_t soter_rand(uint8_t* buffer, size_t length)
 {
-    if ((!buffer) || (!length)) {
+    int result;
+
+    if (!buffer || !length || length > INT_MAX) {
         return SOTER_INVALID_PARAMETER;
     }
 
-    if (RAND_bytes(buffer, (int)length)) {
-        return SOTER_SUCCESS;
+    result = RAND_bytes(buffer, (int)length);
+
+    if (result < 0) {
+        return SOTER_NOT_SUPPORTED;
     }
 
-    /* For some reason OpenSSL generator failed */
-    return SOTER_FAIL;
+    return (result == 1) ? SOTER_SUCCESS : SOTER_FAIL;
 }

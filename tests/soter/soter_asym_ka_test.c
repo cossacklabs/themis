@@ -267,6 +267,63 @@ static void test_api(void)
                           "soter_asym_ka_destroy: invalid context");
 }
 
+static void test_ec_key_size_quirk(void)
+{
+    soter_status_t res;
+    soter_asym_ka_t ctx;
+
+    uint8_t public_key_buffer[KEY_BUFFER_SIZE];
+    uint8_t private_key_buffer[KEY_BUFFER_SIZE];
+    size_t public_key_buffer_length = sizeof(public_key_buffer);
+    size_t private_key_buffer_length = sizeof(private_key_buffer);
+
+    memset(&ctx, 0, sizeof(soter_asym_ka_t));
+    memset(&public_key_buffer, 0xFF, sizeof(public_key_buffer));
+    memset(&private_key_buffer, 0xFF, sizeof(private_key_buffer));
+
+    res = soter_asym_ka_init(&ctx, SOTER_ASYM_KA_EC_P256);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_unless(false, "soter_asym_ka_init failed");
+        return;
+    }
+
+    res = soter_asym_ka_gen_key(&ctx);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_unless(false, "soter_asym_ka_gen_key failed");
+        return;
+    }
+
+    res = soter_asym_ka_export_key(&ctx, public_key_buffer, &public_key_buffer_length, false);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_unless(false, "soter_asym_ka_export_key failed");
+        return;
+    }
+
+    res = soter_asym_ka_export_key(&ctx, private_key_buffer, &private_key_buffer_length, true);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_unless(false, "soter_asym_ka_export_key failed");
+        return;
+    }
+
+    res = soter_asym_ka_cleanup(&ctx);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_unless(false, "soter_asym_ka_cleanup failed");
+        return;
+    }
+
+    /*
+     * Due to historical reasons, private keys have the same length as public
+     * ones, with the most significant byte (the first one in network order)
+     * always being set to zero. We have to maintain this format to preserve
+     * backwards compatibility.
+     */
+    testsuite_fail_unless(private_key_buffer_length == public_key_buffer_length,
+                          "private key has the same length as public key");
+
+    testsuite_fail_unless(soter_container_const_data((const void*)private_key_buffer)[0] == 0,
+                          "first byte of private key is zero");
+}
+
 void run_soter_asym_ka_tests(void)
 {
     testsuite_enter_suite("soter asym ka: basic flow");
@@ -274,4 +331,7 @@ void run_soter_asym_ka_tests(void)
 
     testsuite_enter_suite("soter asym ka: api");
     testsuite_run_test(test_api);
+
+    testsuite_enter_suite("soter asym ka: EC key size quirks");
+    testsuite_run_test(test_ec_key_size_quirk);
 }

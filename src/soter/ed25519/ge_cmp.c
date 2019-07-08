@@ -18,7 +18,6 @@
 #include <string.h>
 #include <stdint.h>
 
-SOTER_PRIVATE_API
 int ge_cmp(const ge_p3 *a, const ge_p3 *b)
 {
 	unsigned char a_comp[ED25519_GE_LENGTH];

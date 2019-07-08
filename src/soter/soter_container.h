@@ -37,11 +37,16 @@ soter_status_t soter_update_container_checksum(soter_container_hdr_t* hdr);
 SOTER_API
 soter_status_t soter_verify_container_checksum(const soter_container_hdr_t* hdr);
 
-#define soter_container_data(_HDR_) ((uint8_t*)((_HDR_) + 1))
-#define soter_container_const_data(_HDR_) ((const uint8_t*)((_HDR_) + 1))
-#define soter_container_data_size(_HDR_) \
-    ((size_t)ntohl((_HDR_)->size) - sizeof(soter_container_hdr_t))
-#define soter_container_set_data_size(_HDR_, _SIZE_) \
-    ((_HDR_)->size = htonl(_SIZE_ + sizeof(soter_container_hdr_t)))
+SOTER_API
+uint8_t* soter_container_data(soter_container_hdr_t* hdr);
+
+SOTER_API
+const uint8_t* soter_container_const_data(const soter_container_hdr_t* hdr);
+
+SOTER_API
+size_t soter_container_data_size(const soter_container_hdr_t* hdr);
+
+SOTER_API
+void soter_container_set_data_size(soter_container_hdr_t* hdr, size_t size);
 
 #endif /* SOTER_CONTAINER_H */

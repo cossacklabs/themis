@@ -43,7 +43,6 @@ and b = b[0]+256*b[1]+...+256^31 b[31].
 B is the Ed25519 base point (x,4/5) with x positive.
 */
 
-SOTER_PRIVATE_API
 void ge_double_scalarmult_vartime(ge_p2 *r,const unsigned char *a,const ge_p3 *A,const unsigned char *b)
 {
   signed char aslide[256];

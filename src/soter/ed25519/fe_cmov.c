@@ -1,5 +1,7 @@
 #include "fe.h"
 
+#include <limits.h>
+
 /*
 Replace (f,g) with (g,g) if b == 1;
 replace (f,g) with (f,g) if b == 0.
@@ -39,7 +41,7 @@ void fe_cmov(fe f,const fe g,unsigned int b)
   crypto_int32 x7 = f7 ^ g7;
   crypto_int32 x8 = f8 ^ g8;
   crypto_int32 x9 = f9 ^ g9;
-  b = -b;
+  b = UINT_MAX - b + 1;
   x0 &= b;
   x1 &= b;
   x2 &= b;

@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "soter/soter_t.h"
+#include "soter/soter_wipe.h"
 
 #define MAX_HMAC_SIZE 64 /* For HMAC-SHA512 */
 #define MIN_VAL(_X_, _Y_) ((_X_ < _Y_) ? (_X_) : (_Y_))
@@ -105,7 +106,7 @@ soter_status_t soter_kdf(const void* key,
 
 err:
 
-    memset(out, 0, sizeof(out));
+    soter_wipe(out, sizeof(out));
 
     soter_hmac_destroy(hmac_ctx);
 

@@ -24,6 +24,6 @@
   },
   "homepage": "https://github.com/cossacklabs/themis#readme",
   "devDependencies": {
-    "mocha": "^6.1.3"
+    "mocha": "^6.1.4"
   }
 }

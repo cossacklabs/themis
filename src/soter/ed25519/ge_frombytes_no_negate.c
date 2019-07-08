@@ -16,7 +16,6 @@
 
 #include "ge_utils.h"
 
-SOTER_PRIVATE_API
 int ge_frombytes_vartime(ge_p3 *h, const unsigned char *s)
 {
 	int res = ge_frombytes_negate_vartime(h, s);
