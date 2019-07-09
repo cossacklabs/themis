@@ -138,7 +138,7 @@ function getPublicKeyForIdThunk(idPtr, idLen, keyPtr, keyLen, userData) {
         throw new ThemisError(cryptosystem_name, ThemisErrorCode.BUFFER_TOO_SMALL,
             'public key cannot fit into provided buffer')
     }
-    libthemis.writeArrayToMemory(publicKey, keyPtr)
+    utils.heapPutArray(publicKey, keyPtr)
 
     return GetPublicKeySuccess
 }
@@ -161,14 +161,15 @@ class SecureSession {
 
         let session_id_ptr, private_key_ptr, callbacks_ptr
         try {
-            session_id_ptr = libthemis._malloc(sessionID.length)
-            private_key_ptr = libthemis._malloc(privateKey.length)
-            callbacks_ptr = libthemis._malloc(sizeof_secure_session_user_callbacks_t)
+            session_id_ptr = utils.heapAlloc(sessionID.length)
+            private_key_ptr = utils.heapAlloc(privateKey.length)
+            callbacks_ptr = utils.heapAlloc(sizeof_secure_session_user_callbacks_t)
             if (!session_id_ptr || !private_key_ptr || !callbacks_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
-            libthemis.writeArrayToMemory(sessionID, session_id_ptr)
-            libthemis.writeArrayToMemory(privateKey, private_key_ptr)
+
+            utils.heapPutArray(sessionID, session_id_ptr)
+            utils.heapPutArray(privateKey, private_key_ptr)
 
             this.keyCallback = keyCallback
             initUserCallbacks(callbacks_ptr)
@@ -188,10 +189,9 @@ class SecureSession {
             callbacks_ptr = null
         }
         finally {
-            libthemis._memset(private_key_ptr, 0, privateKey.length)
-            libthemis._free(private_key_ptr)
-            libthemis._free(session_id_ptr)
-            libthemis._free(callbacks_ptr)
+            utils.heapFree(private_key_ptr, privateKey.length)
+            utils.heapFree(session_id_ptr, sessionID.length)
+            utils.heapFree(callbacks_ptr, sizeof_secure_session_user_callbacks_t)
         }
     }
 
@@ -204,7 +204,7 @@ class SecureSession {
         this.sessionPtr = null
 
         unregisterSecureSession(this.callbacksPtr)
-        libthemis._free(this.callbacksPtr)
+        utils.heapFree(this.callbacksPtr, sizeof_secure_session_user_callbacks_t)
         this.callbacksPtr = null
     }
 
@@ -228,7 +228,7 @@ class SecureSession {
             }
 
             request_length = libthemis.getValue(request_length_ptr, 'i32')
-            request_ptr = libthemis._malloc(request_length)
+            request_ptr = utils.heapAlloc(request_length)
             if (!request_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
@@ -243,10 +243,10 @@ class SecureSession {
 
             request_length = libthemis.getValue(request_length_ptr, 'i32')
 
-            return libthemis.HEAPU8.slice(request_ptr, request_ptr + request_length)
+            return utils.heapGetArray(request_ptr, request_length)
         }
         finally {
-            libthemis._free(request_ptr)
+            utils.heapFree(request_ptr, request_length)
         }
     }
 
@@ -262,11 +262,12 @@ class SecureSession {
         let reply_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
         let message_ptr, reply_ptr, reply_length
         try {
-            message_ptr = libthemis._malloc(message.length)
+            message_ptr = utils.heapAlloc(message.length)
             if (!message_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
-            libthemis.writeArrayToMemory(message, message_ptr)
+
+            utils.heapPutArray(message, message_ptr)
 
             status = libthemis._secure_session_unwrap(
                 this.sessionPtr,
@@ -281,7 +282,7 @@ class SecureSession {
             }
 
             reply_length = libthemis.getValue(reply_length_ptr, 'i32')
-            reply_ptr = libthemis._malloc(reply_length)
+            reply_ptr = utils.heapAlloc(reply_length)
             if (!reply_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
@@ -297,11 +298,11 @@ class SecureSession {
 
             reply_length = libthemis.getValue(reply_length_ptr, 'i32')
 
-            return libthemis.HEAPU8.slice(reply_ptr, reply_ptr + reply_length)
+            return utils.heapGetArray(reply_ptr, reply_length)
         }
         finally {
-            libthemis._free(message_ptr)
-            libthemis._free(reply_ptr)
+            utils.heapFree(message_ptr, message.length)
+            utils.heapFree(reply_ptr, reply_length)
         }
     }
 
@@ -317,11 +318,12 @@ class SecureSession {
         let wrapped_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
         let message_ptr, wrapped_ptr, wrapped_length
         try {
-            message_ptr = libthemis._malloc(message.length)
+            message_ptr = utils.heapAlloc(message.length)
             if (!message_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
-            libthemis.writeArrayToMemory(message, message_ptr)
+
+            utils.heapPutArray(message, message_ptr)
 
             status = libthemis._secure_session_wrap(
                 this.sessionPtr,
@@ -333,7 +335,7 @@ class SecureSession {
             }
 
             wrapped_length = libthemis.getValue(wrapped_length_ptr, 'i32')
-            wrapped_ptr = libthemis._malloc(wrapped_length)
+            wrapped_ptr = utils.heapAlloc(wrapped_length)
             if (!wrapped_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
@@ -349,11 +351,11 @@ class SecureSession {
 
             wrapped_length = libthemis.getValue(wrapped_length_ptr, 'i32')
 
-            return libthemis.HEAPU8.slice(wrapped_ptr, wrapped_ptr + wrapped_length)
+            return utils.heapGetArray(wrapped_ptr, wrapped_length)
         }
         finally {
-            libthemis._free(message_ptr)
-            libthemis._free(wrapped_ptr)
+            utils.heapFree(message_ptr, message.length)
+            utils.heapFree(wrapped_ptr, wrapped_length)
         }
     }
 
@@ -369,11 +371,12 @@ class SecureSession {
         let unwrapped_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
         let message_ptr, unwrapped_ptr, unwrapped_length
         try {
-            message_ptr = libthemis._malloc(message.length)
+            message_ptr = utils.heapAlloc(message.length)
             if (!message_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
-            libthemis.writeArrayToMemory(message, message_ptr)
+
+            utils.heapPutArray(message, message_ptr)
 
             status = libthemis._secure_session_unwrap(
                 this.sessionPtr,
@@ -385,7 +388,7 @@ class SecureSession {
             }
 
             unwrapped_length = libthemis.getValue(unwrapped_length_ptr, 'i32')
-            unwrapped_ptr = libthemis._malloc(unwrapped_length)
+            unwrapped_ptr = utils.heapAlloc(unwrapped_length)
             if (!unwrapped_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
@@ -401,11 +404,11 @@ class SecureSession {
 
             unwrapped_length = libthemis.getValue(unwrapped_length_ptr, 'i32')
 
-            return libthemis.HEAPU8.slice(unwrapped_ptr, unwrapped_ptr + unwrapped_length)
+            return utils.heapGetArray(unwrapped_ptr, unwrapped_length)
         }
         finally {
-            libthemis._free(message_ptr)
-            libthemis._free(unwrapped_ptr)
+            utils.heapFree(message_ptr, message.length)
+            utils.heapFree(unwrapped_ptr, unwrapped_length)
         }
     }
 }
