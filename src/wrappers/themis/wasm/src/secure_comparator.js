@@ -61,11 +61,12 @@ class SecureComparator {
 
         let secret_ptr
         try {
-            secret_ptr = libthemis._malloc(secret.length)
+            secret_ptr = utils.heapAlloc(secret.length)
             if (!secret_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
-            libthemis.writeArrayToMemory(secret, secret_ptr)
+
+            utils.heapPutArray(secret, secret_ptr)
 
             let status = libthemis._secure_comparator_append_secret(
                 this.comparatorPtr, secret_ptr, secret.length
@@ -75,8 +76,7 @@ class SecureComparator {
             }
         }
         finally {
-            libthemis._memset(secret_ptr, 0, secret.length)
-            libthemis._free(secret_ptr)
+            utils.heapFree(secret_ptr, secret.length)
         }
 
         this.haveSecret = true
@@ -117,7 +117,7 @@ class SecureComparator {
             }
 
             message_length = libthemis.getValue(message_length_ptr, 'i32')
-            message_ptr = libthemis._malloc(message_length)
+            message_ptr = utils.heapAlloc(message_length)
             if (!message_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
@@ -131,10 +131,10 @@ class SecureComparator {
 
             message_length = libthemis.getValue(message_length_ptr, 'i32')
 
-            return libthemis.HEAPU8.slice(message_ptr, message_ptr + message_length)
+            return utils.heapGetArray(message_ptr, message_length)
         }
         finally {
-            libthemis._free(message_ptr)
+            utils.heapFree(message_ptr, message_length)
         }
     }
 
@@ -146,11 +146,12 @@ class SecureComparator {
         let reply_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
         let request_ptr, reply_ptr, reply_length
         try {
-            request_ptr = libthemis._malloc(request.length)
+            request_ptr = utils.heapAlloc(request.length)
             if (!request_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
-            libthemis.writeArrayToMemory(request, request_ptr)
+
+            utils.heapPutArray(request, request_ptr)
 
             status = libthemis._secure_comparator_proceed_compare(this.comparatorPtr,
                 request_ptr, request.length,
@@ -161,7 +162,7 @@ class SecureComparator {
             }
 
             reply_length = libthemis.getValue(reply_length_ptr, 'i32')
-            reply_ptr = libthemis._malloc(reply_length)
+            reply_ptr = utils.heapAlloc(reply_length)
             if (!reply_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
@@ -178,11 +179,11 @@ class SecureComparator {
 
             reply_length = libthemis.getValue(reply_length_ptr, 'i32')
 
-            return libthemis.HEAPU8.slice(reply_ptr, reply_ptr + reply_length)
+            return utils.heapGetArray(reply_ptr, reply_length)
         }
         finally {
-            libthemis._free(request_ptr)
-            libthemis._free(reply_ptr)
+            utils.heapFree(request_ptr, request.length)
+            utils.heapFree(reply_ptr, reply_length)
         }
     }
 }
