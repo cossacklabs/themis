@@ -92,7 +92,7 @@ function registerSecureSession(callbacksPtr, session) {
     SecureSessionCallbackRegistry[callbacksPtr] = session
 }
 
-function unregisterSecureSssion(callbacksPtr) {
+function unregisterSecureSession(callbacksPtr) {
     delete SecureSessionCallbackRegistry[callbacksPtr]
 }
 
@@ -203,7 +203,7 @@ class SecureSession {
         }
         this.sessionPtr = null
 
-        unregisterSecureSssion(this.callbacksPtr)
+        unregisterSecureSession(this.callbacksPtr)
         libthemis._free(this.callbacksPtr)
         this.callbacksPtr = null
     }
