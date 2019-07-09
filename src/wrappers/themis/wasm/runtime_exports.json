@@ -3,4 +3,5 @@
 , "allocate"
 , "ALLOC_STACK"
 , "writeArrayToMemory"
+, "addFunction"
 ]

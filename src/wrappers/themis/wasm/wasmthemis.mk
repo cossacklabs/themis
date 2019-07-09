@@ -21,7 +21,7 @@ WASM_SRC += $(wildcard $(WASM_PATH)/src/*.js)
 
 WASM_RUNTIME = $(abspath $(WASM_PATH)/runtime_exports.json)
 
-$(BIN_PATH)/libthemis.js: LDFLAGS += -s EXTRA_EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME)
+$(BIN_PATH)/libthemis.js: LDFLAGS += -s EXTRA_EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME) -s RESERVED_FUNCTION_POINTERS=1
 
 $(BIN_PATH)/libthemis.js: CMD = $(CC) -o $@ $(filter %.o %a, $^) $(LDFLAGS)
 
