@@ -367,8 +367,10 @@ soter_status_t soter_sym_aead_encrypt_aad(soter_sym_ctx_t* ctx,
 
 soter_status_t soter_sym_aead_encrypt_final(soter_sym_ctx_t* ctx, void* auth_tag, size_t* auth_tag_length)
 {
-    SOTER_CHECK_PARAM(auth_tag != NULL);
-    if ((*auth_tag_length) < SOTER_AES_GCM_AUTH_TAG_LENGTH) {
+    if (!auth_tag_length) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    if (!auth_tag || (*auth_tag_length) < SOTER_AES_GCM_AUTH_TAG_LENGTH) {
         (*auth_tag_length) = SOTER_AES_GCM_AUTH_TAG_LENGTH;
         return SOTER_BUFFER_TOO_SMALL;
     }
