@@ -17,6 +17,8 @@
  * Miscellaneous utilities.
  */
 
+const libthemis = require('./libthemis.js')
+
 /**
  * Convert an object into a byte buffer.
  *
@@ -30,4 +32,37 @@ module.exports.coerceToBytes = function(buffer) {
         return new Uint8Array(buffer)
     }
     throw new TypeError('type mismatch, expect "Uint8Array" or "ArrayBuffer"')
+}
+
+/**
+ * Allocate a buffer of specified length on Emscripten heap.
+ */
+module.exports.heapAlloc = function(length) {
+	// calloc() in not provided by Emscripten
+	let buffer = libthemis._malloc(length)
+	libthemis._memset(buffer, 0, length)
+	return buffer
+}
+
+/**
+ * Move an array into Emscripten heap from JavaScript heap.
+ */
+module.exports.heapPutArray = function(array, buffer) {
+	libthemis.writeArrayToMemory(array, buffer)
+}
+
+/**
+ * Move an array from Emscripten heap into JavaScript heap.
+ */
+module.exports.heapGetArray = function(buffer, length) {
+	return libthemis.HEAPU8.slice(buffer, buffer + length)
+}
+
+/**
+ * Free a buffer on Emscripten heap.
+ */
+module.exports.heapFree = function(buffer, length) {
+	// Prevent sensitive data leakage througn heap:
+	libthemis._memset(buffer, 0, length)
+	libthemis._free(buffer)
 }
