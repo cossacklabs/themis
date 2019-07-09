@@ -76,16 +76,16 @@ class SecureMessage {
         let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
         let private_key_ptr, public_key_ptr, message_ptr, result_ptr, result_length
         try {
-            private_key_ptr = libthemis._malloc(this.privateKey.length)
-            public_key_ptr = libthemis._malloc(this.publicKey.length)
-            message_ptr = libthemis._malloc(message.length)
+            private_key_ptr = utils.heapAlloc(this.privateKey.length)
+            public_key_ptr = utils.heapAlloc(this.publicKey.length)
+            message_ptr = utils.heapAlloc(message.length)
             if (!private_key_ptr || !public_key_ptr || !message_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
-            libthemis.writeArrayToMemory(this.privateKey, private_key_ptr)
-            libthemis.writeArrayToMemory(this.publicKey, public_key_ptr)
-            libthemis.writeArrayToMemory(message, message_ptr)
+            utils.heapPutArray(this.privateKey, private_key_ptr)
+            utils.heapPutArray(this.publicKey, public_key_ptr)
+            utils.heapPutArray(message, message_ptr)
 
             status = libthemis._themis_secure_message_encrypt(
                 private_key_ptr, this.privateKey.length,
@@ -98,7 +98,7 @@ class SecureMessage {
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
-            result_ptr = libthemis._malloc(result_length)
+            result_ptr = utils.heapAlloc(result_length)
             if (!result_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
@@ -115,14 +115,13 @@ class SecureMessage {
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
 
-            return libthemis.HEAPU8.slice(result_ptr, result_ptr + result_length)
+            return utils.heapGetArray(result_ptr, result_length)
         }
         finally {
-            libthemis._memset(private_key_ptr, 0, this.privateKey.length)
-            libthemis._free(private_key_ptr)
-            libthemis._free(public_key_ptr)
-            libthemis._free(message_ptr)
-            libthemis._free(result_ptr)
+            utils.heapFree(private_key_ptr, this.privateKey.length)
+            utils.heapFree(public_key_ptr, this.publicKey.length)
+            utils.heapFree(message_ptr, message.length)
+            utils.heapFree(result_ptr, result_length)
         }
     }
 
@@ -138,16 +137,16 @@ class SecureMessage {
         let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
         let private_key_ptr, public_key_ptr, message_ptr, result_ptr, result_length
         try {
-            private_key_ptr = libthemis._malloc(this.privateKey.length)
-            public_key_ptr = libthemis._malloc(this.publicKey.length)
-            message_ptr = libthemis._malloc(message.length)
+            private_key_ptr = utils.heapAlloc(this.privateKey.length)
+            public_key_ptr = utils.heapAlloc(this.publicKey.length)
+            message_ptr = utils.heapAlloc(message.length)
             if (!private_key_ptr || !public_key_ptr || !message_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
-            libthemis.writeArrayToMemory(this.privateKey, private_key_ptr)
-            libthemis.writeArrayToMemory(this.publicKey, public_key_ptr)
-            libthemis.writeArrayToMemory(message, message_ptr)
+            utils.heapPutArray(this.privateKey, private_key_ptr)
+            utils.heapPutArray(this.publicKey, public_key_ptr)
+            utils.heapPutArray(message, message_ptr)
 
             status = libthemis._themis_secure_message_decrypt(
                 private_key_ptr, this.privateKey.length,
@@ -160,7 +159,7 @@ class SecureMessage {
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
-            result_ptr = libthemis._malloc(result_length)
+            result_ptr = utils.heapAlloc(result_length)
             if (!result_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
@@ -177,14 +176,13 @@ class SecureMessage {
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
 
-            return libthemis.HEAPU8.slice(result_ptr, result_ptr + result_length)
+            return utils.heapGetArray(result_ptr, result_length)
         }
         finally {
-            libthemis._memset(private_key_ptr, 0, this.privateKey.length)
-            libthemis._free(private_key_ptr)
-            libthemis._free(public_key_ptr)
-            libthemis._free(message_ptr)
-            libthemis._free(result_ptr)
+            utils.heapFree(private_key_ptr, this.privateKey.length)
+            utils.heapFree(public_key_ptr, this.publicKey.length)
+            utils.heapFree(message_ptr, message.length)
+            utils.heapFree(result_ptr, result_length)
         }
     }
 }
@@ -210,14 +208,14 @@ class SecureMessageSign {
         let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
         let private_key_ptr, message_ptr, result_ptr, result_length
         try {
-            private_key_ptr = libthemis._malloc(this.privateKey.length)
-            message_ptr = libthemis._malloc(message.length)
+            private_key_ptr = utils.heapAlloc(this.privateKey.length)
+            message_ptr = utils.heapAlloc(message.length)
             if (!private_key_ptr || !message_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
-            libthemis.writeArrayToMemory(this.privateKey, private_key_ptr)
-            libthemis.writeArrayToMemory(message, message_ptr)
+            utils.heapPutArray(this.privateKey, private_key_ptr)
+            utils.heapPutArray(message, message_ptr)
 
             status = libthemis._themis_secure_message_sign(
                 private_key_ptr, this.privateKey.length,
@@ -229,7 +227,7 @@ class SecureMessageSign {
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
-            result_ptr = libthemis._malloc(result_length)
+            result_ptr = utils.heapAlloc(result_length)
             if (!result_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
@@ -245,13 +243,12 @@ class SecureMessageSign {
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
 
-            return libthemis.HEAPU8.slice(result_ptr, result_ptr + result_length)
+            return utils.heapGetArray(result_ptr, result_length)
         }
         finally {
-            libthemis._memset(private_key_ptr, 0, this.privateKey.length)
-            libthemis._free(private_key_ptr)
-            libthemis._free(message_ptr)
-            libthemis._free(result_ptr)
+            utils.heapFree(private_key_ptr, this.privateKey.length)
+            utils.heapFree(message_ptr, message.length)
+            utils.heapFree(result_ptr, result_length)
         }
     }
 }
@@ -277,14 +274,14 @@ class SecureMessageVerify {
         let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
         let public_key_ptr, message_ptr, result_ptr, result_length
         try {
-            public_key_ptr = libthemis._malloc(this.publicKey.length)
-            message_ptr = libthemis._malloc(message.length)
+            public_key_ptr = utils.heapAlloc(this.publicKey.length)
+            message_ptr = utils.heapAlloc(message.length)
             if (!public_key_ptr || !message_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
-            libthemis.writeArrayToMemory(this.publicKey, public_key_ptr)
-            libthemis.writeArrayToMemory(message, message_ptr)
+            utils.heapPutArray(this.publicKey, public_key_ptr)
+            utils.heapPutArray(message, message_ptr)
 
             status = libthemis._themis_secure_message_verify(
                 public_key_ptr, this.publicKey.length,
@@ -296,7 +293,7 @@ class SecureMessageVerify {
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
-            result_ptr = libthemis._malloc(result_length)
+            result_ptr = utils.heapAlloc(result_length)
             if (!result_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
@@ -312,12 +309,12 @@ class SecureMessageVerify {
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
 
-            return libthemis.HEAPU8.slice(result_ptr, result_ptr + result_length)
+            return utils.heapGetArray(result_ptr, result_length)
         }
         finally {
-            libthemis._free(public_key_ptr)
-            libthemis._free(message_ptr)
-            libthemis._free(result_ptr)
+            utils.heapFree(public_key_ptr, this.publicKey.length)
+            utils.heapFree(message_ptr, message.length)
+            utils.heapFree(result_ptr, result_length)
         }
     }
 }
