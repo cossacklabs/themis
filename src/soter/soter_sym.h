@@ -323,16 +323,19 @@ soter_status_t soter_sym_aead_encrypt_update(soter_sym_ctx_t* ctx,
                                              size_t* cipher_data_length);
 
 /**
- * @brief final symmetric encryption context
- * @param [in] ctx pointer to symmetric encryption context prerviosly created by
- * soter_sym_encrypt_create
- * @param [out] auth_tag pointer to buffer for auth tag store, may be set to NULL for auth tag
- * length determination
- * @param [in, out] auth_tag_length length of auth_tag
+ * Finalize symmetric encryption context.
+ *
+ * @param [in]  ctx       pointer to symmetric encryption context previously
+ *                        created by soter_sym_encrypt_create
+ * @param [out] auth_tag  pointer to buffer for auth tag store,
+ *                        may be set to NULL to query auth tag length
+ * @param [in, out] auth_tag_length  length of auth_tag
+ *
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
- * @note If auth_tag==NULL or auth_tag_length less then need to store auth tag, @ref
- * SOTER_BUFFER_TOO_SMALL will return and auth_tag_length will contain length of buffer thet need to
- * store auth_tag.
+ *
+ * @note If auth_tag is NULL or auth_tag_length is not big enough to store an auth tag,
+ *       @ref SOTER_BUFFER_TOO_SMALL is returned and auth_tag_length will contain suitable
+ *       size for the buffer that is required to store auth_tag.
  */
 SOTER_API
 soter_status_t soter_sym_aead_encrypt_final(soter_sym_ctx_t* ctx, void* auth_tag, size_t* auth_tag_length);
