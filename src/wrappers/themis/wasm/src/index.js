@@ -22,5 +22,6 @@ Object.assign(module.exports
   , require('./secure_comparator.js')
   , require('./secure_keygen.js')
   , require('./secure_message.js')
+  , require('./secure_session.js')
   , require('./themis_error.js')
 )
