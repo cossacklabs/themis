@@ -26,7 +26,54 @@ function expectError(errorCode) {
     }
 }
 
+function forEachCombination(closure) {
+    if (arguments.length <= 1) {
+        return
+    }
+    let args = new Array(arguments.length - 1)
+    let indices = new Array(arguments.length - 1)
+    for (var i = 0; i < indices.length; i++) {
+        indices[i] = 0
+    }
+    // So that we get all-zeros values on the first entry into the loop:
+    indices[indices.length - 1] = -1
+    // For each iteration increase the last index and propagate carry-over,
+    // continue until we iterate through all possible index combinations.
+    while (true) {
+        indices[indices.length - 1]++
+        for (var i = indices.length - 1; i >=0; i--) {
+            // If there is no carry-over then we're done
+            if (indices[i] < arguments[i + 1].length) {
+                break
+            }
+            // If we overflow then there are no more combinations to try
+            if (i == 0) {
+                return
+            }
+            indices[i] = 0
+            indices[i - 1]++
+        }
+        // Construct argument array with actual values and pass it to the closure
+        for (var i = 0; i < indices.length; i++) {
+            args[i] = arguments[i + 1][indices[i]]
+        }
+        closure.apply(null, args)
+    }
+}
+
 describe('wasm-themis', function() {
+    describe('test utilities', function() {
+        it('enumerates all combinations', function() {
+            var combinations = []
+            forEachCombination(function(n1, n2, n3) {
+                combinations.push([n1, n2, n3])
+            }, [1, 2], [3, 4, 5], [6, 7])
+            assert.deepStrictEqual(combinations, [
+                [1, 3, 6], [1, 3, 7], [1, 4, 6], [1, 4, 7], [1, 5, 6], [1, 5, 7],
+                [2, 3, 6], [2, 3, 7], [2, 4, 6], [2, 4, 7], [2, 5, 6], [2, 5, 7]
+            ])
+        })
+    })
     describe('KeyPair', function() {
         it('generates EC key pairs', function() {
             let pair = new themis.KeyPair()
