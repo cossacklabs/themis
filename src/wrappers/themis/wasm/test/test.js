@@ -121,6 +121,12 @@ describe('wasm-themis', function() {
                 let decrypted = cell.decrypt(encrypted, emptyArray)
                 assert.deepStrictEqual(decrypted, testInput)
             })
+            it('null context == no context', function() {
+                let cell = new themis.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput, null)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
             it('detects invalid master key', function() {
                 let cell1 = new themis.SecureCellSeal(masterKey1)
                 let cell2 = new themis.SecureCellSeal(masterKey2)
@@ -191,6 +197,12 @@ describe('wasm-themis', function() {
                 let decrypted = cell.decrypt(result.data, result.token)
                 assert.deepStrictEqual(decrypted, testInput)
             })
+            it('null context == no context', function() {
+                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let result = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(result.data, result.token, null)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
             it('detects incorrect master key', function() {
                 let cell1 = new themis.SecureCellTokenProtect(masterKey1)
                 let cell2 = new themis.SecureCellTokenProtect(masterKey2)
@@ -259,11 +271,17 @@ describe('wasm-themis', function() {
                 )
                 let cell = new themis.SecureCellContextImprint(masterKey1)
                 assert.throws(() => cell.encrypt(emptyArray, testContext))
+                assert.throws(() => cell.encrypt(null,       testContext))
                 assert.throws(() => cell.encrypt(testInput,  emptyArray))
+                assert.throws(() => cell.encrypt(testInput,  null))
                 assert.throws(() => cell.encrypt(emptyArray, emptyArray))
+                assert.throws(() => cell.encrypt(null,       null))
                 assert.throws(() => cell.decrypt(emptyArray, testContext))
+                assert.throws(() => cell.decrypt(null,       testContext))
                 assert.throws(() => cell.decrypt(testInput,  emptyArray))
+                assert.throws(() => cell.decrypt(testInput,  null))
                 assert.throws(() => cell.decrypt(emptyArray, emptyArray))
+                assert.throws(() => cell.decrypt(null,       null))
             })
             it('does not detect incorrect master key', function() {
                 let cell1 = new themis.SecureCellContextImprint(masterKey1)

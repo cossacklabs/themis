@@ -44,7 +44,7 @@ module.exports = class SecureCellSeal {
         }
 
         let context
-        if (arguments.length > 1) {
+        if (arguments.length > 1 && arguments[1] !== null) {
             context = utils.coerceToBytes(arguments[1])
         } else {
             context = new Uint8Array()
@@ -113,7 +113,7 @@ module.exports = class SecureCellSeal {
         }
 
         let context
-        if (arguments.length > 1) {
+        if (arguments.length > 1 && arguments[1] !== null) {
             context = utils.coerceToBytes(arguments[1])
         } else {
             context = new Uint8Array()
