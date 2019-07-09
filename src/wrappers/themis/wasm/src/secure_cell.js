@@ -14,13 +14,9 @@
 
 /**
  * @file
- * WasmThemis module entry point.
+ * Themis Secure Cell.
  */
 
-Object.assign(module.exports
-  , require('./secure_cell.js')
-  , require('./secure_comparator.js')
-  , require('./secure_keygen.js')
-  , require('./secure_message.js')
-  , require('./themis_error.js')
-)
+module.exports.SecureCellSeal = require('./secure_cell_seal.js')
+module.exports.SecureCellTokenProtect = require('./secure_cell_token_protect.js')
+module.exports.SecureCellContextImprint = require('./secure_cell_context_imprint.js')
