@@ -74,6 +74,12 @@ describe('wasm-themis', function() {
             ])
         })
     })
+    let generallyInvalidArguments = [
+        null, undefined, 'string',
+        new Int16Array([1, 2, 3]), [4, 5, 6],
+        () => new Uint8Array([27, 18, 28, 18, 28]),
+        { value: [3, 14, 15, 92, 6] }
+    ]
     describe('KeyPair', function() {
         it('generates EC key pairs', function() {
             let pair = new themis.KeyPair()
@@ -95,6 +101,13 @@ describe('wasm-themis', function() {
                     new themis.KeyPair(thatPair.publicKey, thatPair.privateKey)
                 },
                 expectError(ThemisErrorCode.INVALID_PARAMETER)
+            )
+        })
+        it('handles type mismatches', function() {
+            forEachCombination(function(private, public) {
+                    assert.throws(() => new themis.KeyPair(private, public), TypeError)
+                },
+                generallyInvalidArguments, generallyInvalidArguments
             )
         })
         describe('invididual keys', function() {
@@ -121,6 +134,14 @@ describe('wasm-themis', function() {
                 let key = new themis.KeyPair().privateKey
                 key[20] = 256 - key[20]
                 assert.throws(() => new themis.PrivateKey(key))
+            })
+            it('handles type mismatches', function() {
+                forEachCombination(function(key) {
+                        assert.throws(() => new themis.PrivateKey(key), TypeError)
+                        assert.throws(() => new themis.PublicKey(key), TypeError)
+                    },
+                    generallyInvalidArguments
+                )
             })
         })
     })
