@@ -218,6 +218,22 @@ describe('wasm-themis', function() {
                     expectError(ThemisErrorCode.FAIL)
                 )
             })
+            it('handles type mismatches', function() {
+                let cell = new themis.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                forEachCombination(function(invalid) {
+                        assert.throws(() => new themis.SecureCellSeal(invalid), TypeError)
+                        assert.throws(() => cell.encrypt(invalid), TypeError)
+                        assert.throws(() => cell.decrypt(invalid), TypeError)
+                        // null context is okay, it should not throw
+                        if (invalid !== null) {
+                            assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
+                            assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
+                        }
+                    },
+                    generallyInvalidArguments
+                )
+            })
         })
         describe('Token Protect mode', function() {
             it('does not accept strings', function() {
@@ -314,6 +330,23 @@ describe('wasm-themis', function() {
                     expectError(ThemisErrorCode.INVALID_PARAMETER)
                 )
             })
+            it('handles type mismatches', function() {
+                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let result = cell.encrypt(testInput)
+                forEachCombination(function(invalid) {
+                        assert.throws(() => new themis.SecureCellTokenProtect(invalid), TypeError)
+                        assert.throws(() => cell.encrypt(invalid), TypeError)
+                        assert.throws(() => cell.decrypt(result.data, invalid), TypeError)
+                        assert.throws(() => cell.decrypt(invalid, result.token), TypeError)
+                        // null context is okay, it should not throw
+                        if (invalid !== null) {
+                            assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
+                            assert.throws(() => cell.decrypt(result.data, result.token, invalid), TypeError)
+                        }
+                    },
+                    generallyInvalidArguments
+                )
+            })
         })
         describe('Context Imprint mode', function() {
             it('does not accept strings', function() {
@@ -370,6 +403,23 @@ describe('wasm-themis', function() {
                 encrypted[5] = 256 - encrypted[5]
                 let decrypted = cell.decrypt(encrypted, testContext)
                 assert.notDeepStrictEqual(testInput, decrypted)
+            })
+            it('handles type mismatches', function() {
+                let cell = new themis.SecureCellContextImprint(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                forEachCombination(function(invalid) {
+                        assert.throws(() => new themis.SecureCellContextImprint(invalid), TypeError)
+                        assert.throws(() => cell.encrypt(invalid, testContext), TypeError)
+                        assert.throws(() => cell.decrypt(invalid, testContext), TypeError)
+                        // Contest Imprint mode has a custom error for omitted context
+                        let expectedError = (invalid === undefined)
+                                          ? expectError(ThemisErrorCode.INVALID_PARAMETER)
+                                          : TypeError
+                        assert.throws(() => cell.encrypt(testInput, invalid), expectedError)
+                        assert.throws(() => cell.decrypt(encrypted, invalid), expectedError)
+                    },
+                    generallyInvalidArguments
+                )
             })
         })
     })
