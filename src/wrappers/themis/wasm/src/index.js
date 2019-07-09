@@ -19,6 +19,7 @@
 
 Object.assign(module.exports
   , require('./secure_cell.js')
+  , require('./secure_comparator.js')
   , require('./secure_keygen.js')
   , require('./secure_message.js')
   , require('./themis_error.js')

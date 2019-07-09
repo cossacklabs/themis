@@ -428,4 +428,107 @@ describe('wasm-themis', function() {
             })
         })
     })
+    describe('Secure Comparator', function() {
+        let secretBytes = new Uint8Array([0x73, 0x65, 0x63, 0x72, 0x65, 0x74])
+        let randomBytes = new Uint8Array([0x11, 0x22, 0x33, 0x44, 0x55, 0x66])
+        it('confirms matching data', function() {
+            let comparison1 = new themis.SecureComparator(secretBytes)
+            let comparison2 = new themis.SecureComparator(secretBytes)
+
+            let data = comparison1.begin()
+            while (!comparison1.complete() && !comparison2.complete()) {
+                data = comparison2.proceed(data)
+                data = comparison1.proceed(data)
+            }
+
+            assert(comparison1.compareEqual())
+            assert(comparison2.compareEqual())
+
+            comparison1.destroy()
+            comparison2.destroy()
+        })
+        it('notices different data', function() {
+            let comparison1 = new themis.SecureComparator(secretBytes)
+            let comparison2 = new themis.SecureComparator(randomBytes)
+
+            let data = comparison1.begin()
+            while (!comparison1.complete() && !comparison2.complete()) {
+                data = comparison2.proceed(data)
+                data = comparison1.proceed(data)
+            }
+
+            assert(!comparison1.compareEqual())
+            assert(!comparison2.compareEqual())
+
+            comparison1.destroy()
+            comparison2.destroy()
+        })
+        it('allows appending secrets', function() {
+            let comparison1 = new themis.SecureComparator(secretBytes)
+            let comparison2 = new themis.SecureComparator()
+            comparison2.append(new Uint8Array([0x73]))
+            comparison2.append(new Uint8Array([0x65, 0x63]))
+            comparison2.append(new Uint8Array([0x72, 0x65, 0x74]))
+
+            let data = comparison1.begin()
+            while (!comparison1.complete() && !comparison2.complete()) {
+                data = comparison2.proceed(data)
+                data = comparison1.proceed(data)
+            }
+
+            assert(comparison1.compareEqual())
+            assert(comparison2.compareEqual())
+
+            comparison1.destroy()
+            comparison2.destroy()
+        })
+        it('handles simultaneous start', function() {
+            let comparison1 = new themis.SecureComparator(secretBytes)
+            let comparison2 = new themis.SecureComparator(secretBytes)
+
+            let data1 = comparison1.begin()
+            let data2 = comparison2.begin()
+
+            assert.throws(() => comparison1.proceed(data2))
+            assert.throws(() => comparison2.proceed(data1))
+            assert(!comparison1.complete())
+            assert(!comparison2.complete())
+
+            comparison1.destroy()
+            comparison2.destroy()
+        })
+        it('does not allow reusing', function() {
+            let comparison1 = new themis.SecureComparator(secretBytes)
+            let comparison2 = new themis.SecureComparator(secretBytes)
+
+            let data = comparison1.begin()
+            while (!comparison1.complete() && !comparison2.complete()) {
+                data = comparison2.proceed(data)
+                data = comparison1.proceed(data)
+            }
+
+            // Cannot restart comparison and append after starting it
+            assert.throws(() => comparison1.begin())
+            assert.throws(() => comparison2.append(randomBytes))
+
+            comparison1.destroy()
+            comparison2.destroy()
+        })
+        it('does not allow strings', function() {
+            // Technically, it is possible to allow strings (e.g., decode them as UTF-8)
+            // but for consistency with other wrappers we allow only byte arrays for now.
+            assert.throws(() => new themis.SecureComparator('secret'))
+            assert.throws(function() {
+                let comparison = new themis.SecureComparator()
+                comparison.append('secret')
+                comparison.destroy()
+            })
+        })
+        it('does not allow empty data', function() {
+            let comparison = new themis.SecureComparator()
+            assert.throws(() => comparison.begin())
+            assert.throws(() => comparison.append(new Uint8Array()))
+            comparison.destroy()
+        })
+    })
 })
