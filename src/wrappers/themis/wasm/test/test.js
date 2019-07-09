@@ -473,6 +473,23 @@ describe('wasm-themis', function() {
                     expectError(ThemisErrorCode.FAIL)
                 )
             })
+            it('handles type mismatches', function() {
+                let keyPair = new themis.KeyPair()
+                let secureMessage = new themis.SecureMessage(keyPair)
+                forEachCombination(function(invalid) {
+                        assert.throws(() => new themis.SecureMessage(invalid),
+                                      expectError(ThemisErrorCode.INVALID_PARAMETER))
+                        assert.throws(() => new themis.SecureMessage(keyPair.publicKey, invalid),
+                                      expectError(ThemisErrorCode.INVALID_PARAMETER))
+                        assert.throws(() => new themis.SecureMessage(invalid, keyPair.privateKey),
+                                      expectError(ThemisErrorCode.INVALID_PARAMETER))
+
+                        assert.throws(() => secureMessage.encrypt(invalid), TypeError)
+                        assert.throws(() => secureMessage.decrypt(invalid), TypeError)
+                    },
+                    generallyInvalidArguments
+                )
+            })
         })
         describe('sign/verify mode', function() {
             it('requires valid keys', function() {
@@ -542,6 +559,22 @@ describe('wasm-themis', function() {
                 signed[12] = 256 - signed[12]
                 assert.throws(() => verifier.verify(signed),
                     expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('handles type mismatches', function() {
+                let keyPair = new themis.KeyPair()
+                let signer = new themis.SecureMessageSign(keyPair.privateKey)
+                let verifier = new themis.SecureMessageVerify(keyPair.publicKey)
+                forEachCombination(function(invalid) {
+                        assert.throws(() => new themis.SecureMessageSign(invalid),
+                                      expectError(ThemisErrorCode.INVALID_PARAMETER))
+                        assert.throws(() => new themis.SecureMessageVerify(invalid),
+                                      expectError(ThemisErrorCode.INVALID_PARAMETER))
+
+                        assert.throws(() => signer.sign(invalid), TypeError)
+                        assert.throws(() => verifier.verify(invalid), TypeError)
+                    },
+                    generallyInvalidArguments
                 )
             })
         })
