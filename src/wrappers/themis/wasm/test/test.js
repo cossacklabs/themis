@@ -681,6 +681,21 @@ describe('wasm-themis', function() {
             assert.throws(() => comparison.append(new Uint8Array()))
             comparison.destroy()
         })
+        it('handles type mismatches', function() {
+            let comparison = new themis.SecureComparator()
+            forEachCombination(function(invalid) {
+                    assert.throws(() => comparison.append(invalid), TypeError)
+                },
+                generallyInvalidArguments
+            )
+            comparison.append(secretBytes)
+            forEachCombination(function(invalid) {
+                    assert.throws(() => comparison.proceed(invalid), TypeError)
+                },
+                generallyInvalidArguments
+            )
+            comparison.destroy()
+        })
     })
     describe('Secure Session', function() {
         let emptyArray = new Uint8Array()
