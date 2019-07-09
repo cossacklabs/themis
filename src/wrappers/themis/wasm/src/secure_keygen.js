@@ -21,7 +21,7 @@ const libthemis = require('./libthemis.js')
 const errors = require('./themis_error.js')
 const utils = require('./utils.js')
 
-const subsystem = 'KeyPair'
+const cryptosystem_name = 'KeyPair'
 
 const ThemisError = errors.ThemisError
 const ThemisErrorCode = errors.ThemisErrorCode
@@ -57,7 +57,7 @@ class PublicKey extends Uint8Array {
 
 function validateKeyBuffer(buffer, expectedKinds) {
     if (buffer.length == 0) {
-        throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
             'key must not be empty')
     }
 
@@ -67,7 +67,7 @@ function validateKeyBuffer(buffer, expectedKinds) {
     let buffer_len = buffer.length
     let buffer_ptr = utils.heapAlloc(buffer_len)
     if (!buffer_ptr) {
-        throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
     }
 
     var kind
@@ -76,7 +76,7 @@ function validateKeyBuffer(buffer, expectedKinds) {
 
         let err = libthemis._themis_is_valid_asym_key(buffer_ptr, buffer_len)
         if (err != ThemisErrorCode.SUCCESS) {
-            throw new ThemisError(subsystem, err, 'invalid key')
+            throw new ThemisError(cryptosystem_name, err, 'invalid key')
         }
 
         kind = libthemis._themis_get_asym_key_kind(buffer_ptr, buffer_len)
@@ -86,7 +86,7 @@ function validateKeyBuffer(buffer, expectedKinds) {
     }
 
     if (!expectedKinds.includes(kind)) {
-        throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
             'invalid key kind')
     }
 }
@@ -113,7 +113,7 @@ class KeyPair {
             return
         }
 
-        throw new ThemisError(subsystem, ThemisErrorCode.INVALID_PARAMETER,
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
             'invalid argument count: expected either no arguments, or private and public keys')
     }
 }
@@ -127,7 +127,7 @@ function generateECKeyPair() {
 
     err = libthemis._themis_gen_ec_key_pair(null, private_len_ptr, null, public_len_ptr)
     if (err != ThemisErrorCode.BUFFER_TOO_SMALL) {
-        throw new ThemisError(subsystem, err)
+        throw new ThemisError(cryptosystem_name, err)
     }
 
     let private_len = libthemis.getValue(private_len_ptr, 'i32')
@@ -138,12 +138,12 @@ function generateECKeyPair() {
 
     try {
         if (!private_ptr || !public_ptr) {
-            throw new ThemisError(subsystem, ThemisErrorCode.NO_MEMORY)
+            throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
         }
 
         err = libthemis._themis_gen_ec_key_pair(private_ptr, private_len_ptr, public_ptr, public_len_ptr)
         if (err != ThemisErrorCode.SUCCESS) {
-            throw new ThemisError(subsystem, err, 'failed to generate key pair')
+            throw new ThemisError(cryptosystem_name, err, 'failed to generate key pair')
         }
 
         let private_len = libthemis.getValue(private_len_ptr, 'i32')
