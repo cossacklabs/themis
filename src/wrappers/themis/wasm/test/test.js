@@ -119,6 +119,8 @@ describe('wasm-themis', function() {
             it('do not allow empty keys', function() {
                 assert.throws(() => new themis.PrivateKey(new Uint8Array()))
                 assert.throws(() => new themis.PublicKey(new Uint8Array()))
+                assert.throws(() => new themis.PrivateKey(''))
+                assert.throws(() => new themis.PublicKey(''))
             })
             it('check strict types', function() {
                 let key = new themis.KeyPair().publicKey
