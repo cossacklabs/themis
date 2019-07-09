@@ -853,5 +853,62 @@ describe('wasm-themis', function() {
             client.destroy()
             server.destroy()
         })
+        it('handles type mismatches', function() {
+            function isFunction(obj) {
+                return !!(obj && obj.constructor && obj.call && obj.apply)
+            }
+
+            let keys = makeKeyMaterial()
+            let client = new themis.SecureSession(clientID, keys.client.privateKey, keys.clientCallback)
+            let server = new themis.SecureSession(serverID, keys.server.privateKey, keys.serverCallback)
+
+            forEachCombination(
+                function(invalid) {
+                    assert.throws(
+                        () => new themis.SecureSession(invalid, keys.client.privateKey, keys.clientCallback),
+                        TypeError
+                    )
+                    assert.throws(
+                        () => new themis.SecureSession(clientID, invalid, keys.clientCallback),
+                        expectError(ThemisErrorCode.INVALID_PARAMETER)
+                    )
+                    // Functions are actually okay for callbacks
+                    if (!isFunction(invalid)) {
+                        assert.throws(
+                            () => new themis.SecureSession(clientID, keys.client.privateKey, invalid),
+                            expectError(ThemisErrorCode.INVALID_PARAMETER)
+                        )
+                    }
+
+                    assert.throws(() => client.negotiateReply(invalid), TypeError)
+                    assert.throws(() => server.negotiateReply(invalid), TypeError)
+                },
+                generallyInvalidArguments
+            )
+
+            let data = client.connectionRequest()
+            let peer = server
+            while (!(client.established() && server.established())) {
+                data = peer.negotiateReply(data)
+                if (peer == server) {
+                    peer = client
+                } else {
+                    peer = server
+                }
+            }
+
+            forEachCombination(
+                function(invalid) {
+                    assert.throws(() => client.wrap(invalid), TypeError)
+                    assert.throws(() => client.unwrap(invalid), TypeError)
+                    assert.throws(() => server.wrap(invalid), TypeError)
+                    assert.throws(() => server.unwrap(invalid), TypeError)
+                },
+                generallyInvalidArguments
+            )
+
+            client.destroy()
+            server.destroy()
+        })
     })
 })
