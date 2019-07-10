@@ -202,8 +202,12 @@ themis_status_t themis_auth_sym_encrypt_message_(const uint8_t* key,
     *out_context_length = auth_sym_context_length;
     *encrypted_message_length = message_length;
 
-    // TODO: TYPE WARNING Should update `sizeof(uint32_t)` to `sizeof(message_length)` after
-    // changing encrypted_message_length type to uint32_t
+    /*
+     * We store the message length as 32-bit integer, messages longer than 4 GB are not supported.
+     */
+    if (message_length >= UINT32_MAX) {
+        return THEMIS_INVALID_PARAMETER;
+    }
     THEMIS_STATUS_CHECK(themis_sym_kdf(key,
                                        key_length,
                                        THEMIS_SYM_KDF_KEY_LABEL,
@@ -297,8 +301,12 @@ themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
 
     *message_length = hdr->message_length;
 
-    // TODO: TYPE WARNING Should update `sizeof(uint32_t)` to `sizeof(encrypted_message_length)`
-    // after changing encrypted_message_length type to uint32_t
+    /*
+     * We store the message length as 32-bit integer, messages longer than 4 GB are not supported.
+     */
+    if (encrypted_message_length >= UINT32_MAX) {
+        return THEMIS_INVALID_PARAMETER;
+    }
     THEMIS_STATUS_CHECK(themis_sym_kdf(key,
                                        key_length,
                                        THEMIS_SYM_KDF_KEY_LABEL,
