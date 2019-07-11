@@ -27,6 +27,12 @@ function expectError(errorCode) {
 }
 
 describe('wasm-themis', function() {
+    let generallyInvalidArguments = [
+        null, undefined, 'string',
+        new Int16Array([1, 2, 3]), [4, 5, 6],
+        () => new Uint8Array([27, 18, 28, 18, 28]),
+        { value: [3, 14, 15, 92, 6] }
+    ]
     describe('KeyPair', function() {
         it('generates EC key pairs', function() {
             let pair = new themis.KeyPair()
@@ -50,6 +56,13 @@ describe('wasm-themis', function() {
                 expectError(ThemisErrorCode.INVALID_PARAMETER)
             )
         })
+        it('handles type mismatches', function() {
+            let keyPair = new themis.KeyPair()
+            generallyInvalidArguments.forEach(function(invalid) {
+                assert.throws(() => new themis.KeyPair(keyPair.privateKey, invalid), TypeError)
+                assert.throws(() => new themis.KeyPair(invalid, keyPair.publicKey), TypeError)
+            })
+        })
         describe('invididual keys', function() {
             it('ensure matching kinds', function() {
                 let pair = new themis.KeyPair()
@@ -59,6 +72,8 @@ describe('wasm-themis', function() {
             it('do not allow empty keys', function() {
                 assert.throws(() => new themis.PrivateKey(new Uint8Array()))
                 assert.throws(() => new themis.PublicKey(new Uint8Array()))
+                assert.throws(() => new themis.PrivateKey(''))
+                assert.throws(() => new themis.PublicKey(''))
             })
             it('check strict types', function() {
                 let key = new themis.KeyPair().publicKey
@@ -74,6 +89,12 @@ describe('wasm-themis', function() {
                 let key = new themis.KeyPair().privateKey
                 key[20] = 256 - key[20]
                 assert.throws(() => new themis.PrivateKey(key))
+            })
+            it('handles type mismatches', function() {
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new themis.PrivateKey(invalid), TypeError)
+                    assert.throws(() => new themis.PublicKey(invalid), TypeError)
+                })
             })
         })
     })
@@ -149,6 +170,20 @@ describe('wasm-themis', function() {
                 assert.throws(() => cell.decrypt(encrypted),
                     expectError(ThemisErrorCode.FAIL)
                 )
+            })
+            it('handles type mismatches', function() {
+                let cell = new themis.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new themis.SecureCellSeal(invalid), TypeError)
+                    assert.throws(() => cell.encrypt(invalid), TypeError)
+                    assert.throws(() => cell.decrypt(invalid), TypeError)
+                    // null context is okay, it should not throw
+                    if (invalid !== null) {
+                        assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
+                        assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
+                    }
+                })
             })
         })
         describe('Token Protect mode', function() {
@@ -246,6 +281,21 @@ describe('wasm-themis', function() {
                     expectError(ThemisErrorCode.INVALID_PARAMETER)
                 )
             })
+            it('handles type mismatches', function() {
+                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let result = cell.encrypt(testInput)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new themis.SecureCellTokenProtect(invalid), TypeError)
+                    assert.throws(() => cell.encrypt(invalid), TypeError)
+                    assert.throws(() => cell.decrypt(result.data, invalid), TypeError)
+                    assert.throws(() => cell.decrypt(invalid, result.token), TypeError)
+                    // null context is okay, it should not throw
+                    if (invalid !== null) {
+                        assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
+                        assert.throws(() => cell.decrypt(result.data, result.token, invalid), TypeError)
+                    }
+                })
+            })
         })
         describe('Context Imprint mode', function() {
             it('does not accept strings', function() {
@@ -303,6 +353,21 @@ describe('wasm-themis', function() {
                 let decrypted = cell.decrypt(encrypted, testContext)
                 assert.notDeepStrictEqual(testInput, decrypted)
             })
+            it('handles type mismatches', function() {
+                let cell = new themis.SecureCellContextImprint(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new themis.SecureCellContextImprint(invalid), TypeError)
+                    assert.throws(() => cell.encrypt(invalid, testContext), TypeError)
+                    assert.throws(() => cell.decrypt(invalid, testContext), TypeError)
+                    // Contest Imprint mode has a custom error for omitted context
+                    let expectedError = (invalid === undefined)
+                                      ? expectError(ThemisErrorCode.INVALID_PARAMETER)
+                                      : TypeError
+                    assert.throws(() => cell.encrypt(testInput, invalid), expectedError)
+                    assert.throws(() => cell.decrypt(encrypted, invalid), expectedError)
+                })
+            })
         })
     })
     describe('Secure Message', function() {
@@ -354,6 +419,21 @@ describe('wasm-themis', function() {
                 assert.throws(() => secureMessage.decrypt(encrypted),
                     expectError(ThemisErrorCode.FAIL)
                 )
+            })
+            it('handles type mismatches', function() {
+                let keyPair = new themis.KeyPair()
+                let secureMessage = new themis.SecureMessage(keyPair)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new themis.SecureMessage(invalid),
+                                  expectError(ThemisErrorCode.INVALID_PARAMETER))
+                    assert.throws(() => new themis.SecureMessage(keyPair.publicKey, invalid),
+                                  expectError(ThemisErrorCode.INVALID_PARAMETER))
+                    assert.throws(() => new themis.SecureMessage(invalid, keyPair.privateKey),
+                                  expectError(ThemisErrorCode.INVALID_PARAMETER))
+
+                    assert.throws(() => secureMessage.encrypt(invalid), TypeError)
+                    assert.throws(() => secureMessage.decrypt(invalid), TypeError)
+                })
             })
         })
         describe('sign/verify mode', function() {
@@ -425,6 +505,20 @@ describe('wasm-themis', function() {
                 assert.throws(() => verifier.verify(signed),
                     expectError(ThemisErrorCode.FAIL)
                 )
+            })
+            it('handles type mismatches', function() {
+                let keyPair = new themis.KeyPair()
+                let signer = new themis.SecureMessageSign(keyPair.privateKey)
+                let verifier = new themis.SecureMessageVerify(keyPair.publicKey)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new themis.SecureMessageSign(invalid),
+                                  expectError(ThemisErrorCode.INVALID_PARAMETER))
+                    assert.throws(() => new themis.SecureMessageVerify(invalid),
+                                  expectError(ThemisErrorCode.INVALID_PARAMETER))
+
+                    assert.throws(() => signer.sign(invalid), TypeError)
+                    assert.throws(() => verifier.verify(invalid), TypeError)
+                })
             })
         })
     })
@@ -528,6 +622,17 @@ describe('wasm-themis', function() {
             let comparison = new themis.SecureComparator()
             assert.throws(() => comparison.begin())
             assert.throws(() => comparison.append(new Uint8Array()))
+            comparison.destroy()
+        })
+        it('handles type mismatches', function() {
+            let comparison = new themis.SecureComparator()
+            generallyInvalidArguments.forEach(function(invalid) {
+                assert.throws(() => comparison.append(invalid), TypeError)
+            })
+            comparison.append(secretBytes)
+            generallyInvalidArguments.forEach(function(invalid) {
+                assert.throws(() => comparison.proceed(invalid), TypeError)
+            })
             comparison.destroy()
         })
     })
@@ -683,6 +788,57 @@ describe('wasm-themis', function() {
 
             let request = client.connectionRequest()
             assert.throws(() => server.negotiateReply(request), "a ball")
+
+            client.destroy()
+            server.destroy()
+        })
+        it('handles type mismatches', function() {
+            function isFunction(obj) {
+                return !!(obj && obj.constructor && obj.call && obj.apply)
+            }
+
+            let keys = makeKeyMaterial()
+            let client = new themis.SecureSession(clientID, keys.client.privateKey, keys.clientCallback)
+            let server = new themis.SecureSession(serverID, keys.server.privateKey, keys.serverCallback)
+
+            generallyInvalidArguments.forEach(function(invalid) {
+                assert.throws(
+                    () => new themis.SecureSession(invalid, keys.client.privateKey, keys.clientCallback),
+                    TypeError
+                )
+                assert.throws(
+                    () => new themis.SecureSession(clientID, invalid, keys.clientCallback),
+                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                )
+                // Functions are actually okay for callbacks
+                if (!isFunction(invalid)) {
+                    assert.throws(
+                        () => new themis.SecureSession(clientID, keys.client.privateKey, invalid),
+                        expectError(ThemisErrorCode.INVALID_PARAMETER)
+                    )
+                }
+
+                assert.throws(() => client.negotiateReply(invalid), TypeError)
+                assert.throws(() => server.negotiateReply(invalid), TypeError)
+            })
+
+            let data = client.connectionRequest()
+            let peer = server
+            while (!(client.established() && server.established())) {
+                data = peer.negotiateReply(data)
+                if (peer == server) {
+                    peer = client
+                } else {
+                    peer = server
+                }
+            }
+
+            generallyInvalidArguments.forEach(function(invalid) {
+                assert.throws(() => client.wrap(invalid), TypeError)
+                assert.throws(() => client.unwrap(invalid), TypeError)
+                assert.throws(() => server.wrap(invalid), TypeError)
+                assert.throws(() => server.unwrap(invalid), TypeError)
+            })
 
             client.destroy()
             server.destroy()
