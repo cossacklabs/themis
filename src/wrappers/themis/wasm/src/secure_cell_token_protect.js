@@ -56,16 +56,16 @@ module.exports = class SecureCellTokenProtect {
         let token_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
         let master_key_ptr, message_ptr, context_ptr, result_ptr, result_length, token_ptr, token_length
         try {
-            master_key_ptr = libthemis._malloc(this.masterKey.length)
-            message_ptr = libthemis._malloc(message.length)
-            context_ptr = libthemis._malloc(context.length)
+            master_key_ptr = utils.heapAlloc(this.masterKey.length)
+            message_ptr = utils.heapAlloc(message.length)
+            context_ptr = utils.heapAlloc(context.length)
             if (!master_key_ptr || !message_ptr || !context_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
-            libthemis.writeArrayToMemory(this.masterKey, master_key_ptr)
-            libthemis.writeArrayToMemory(message, message_ptr)
-            libthemis.writeArrayToMemory(context, context_ptr)
+            utils.heapPutArray(this.masterKey, master_key_ptr)
+            utils.heapPutArray(message, message_ptr)
+            utils.heapPutArray(context, context_ptr)
 
             status = libthemis._themis_secure_cell_encrypt_token_protect(
                 master_key_ptr, this.masterKey.length,
@@ -80,8 +80,8 @@ module.exports = class SecureCellTokenProtect {
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
             token_length = libthemis.getValue(token_length_ptr, 'i32')
-            result_ptr = libthemis._malloc(result_length)
-            token_ptr = libthemis._malloc(token_length)
+            result_ptr = utils.heapAlloc(result_length)
+            token_ptr = utils.heapAlloc(token_length)
             if (!result_ptr || !token_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
@@ -101,17 +101,16 @@ module.exports = class SecureCellTokenProtect {
             token_length = libthemis.getValue(token_length_ptr, 'i32')
 
             return {
-                data: libthemis.HEAPU8.slice(result_ptr, result_ptr + result_length),
-                token: libthemis.HEAPU8.slice(token_ptr, token_ptr + token_length)
+                data: utils.heapGetArray(result_ptr, result_length),
+                token: utils.heapGetArray(token_ptr, token_length)
             }
         }
         finally {
-            libthemis._memset(master_key_ptr, 0, this.masterKey.length)
-            libthemis._free(master_key_ptr)
-            libthemis._free(message_ptr)
-            libthemis._free(context_ptr)
-            libthemis._free(result_ptr)
-            libthemis._free(token_ptr)
+            utils.heapFree(master_key_ptr, this.masterKey.length)
+            utils.heapFree(message_ptr, message.length)
+            utils.heapFree(context_ptr, context.length)
+            utils.heapFree(result_ptr, result_length)
+            utils.heapFree(token_ptr, token_length)
         }
     }
 
@@ -140,18 +139,18 @@ module.exports = class SecureCellTokenProtect {
         let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
         let master_key_ptr, message_ptr, context_ptr, token_ptr, result_ptr, result_length
         try {
-            master_key_ptr = libthemis._malloc(this.masterKey.length)
-            message_ptr = libthemis._malloc(message.length)
-            context_ptr = libthemis._malloc(context.length)
-            token_ptr = libthemis._malloc(token.length)
+            master_key_ptr = utils.heapAlloc(this.masterKey.length)
+            message_ptr = utils.heapAlloc(message.length)
+            context_ptr = utils.heapAlloc(context.length)
+            token_ptr = utils.heapAlloc(token.length)
             if (!master_key_ptr || !message_ptr || !context_ptr || !token_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
 
-            libthemis.writeArrayToMemory(this.masterKey, master_key_ptr)
-            libthemis.writeArrayToMemory(message, message_ptr)
-            libthemis.writeArrayToMemory(context, context_ptr)
-            libthemis.writeArrayToMemory(token, token_ptr)
+            utils.heapPutArray(this.masterKey, master_key_ptr)
+            utils.heapPutArray(message, message_ptr)
+            utils.heapPutArray(context, context_ptr)
+            utils.heapPutArray(token, token_ptr)
 
             status = libthemis._themis_secure_cell_decrypt_token_protect(
                 master_key_ptr, this.masterKey.length,
@@ -165,7 +164,7 @@ module.exports = class SecureCellTokenProtect {
             }
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
-            result_ptr = libthemis._malloc(result_length)
+            result_ptr = utils.heapAlloc(result_length)
             if (!result_ptr) {
                 throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
             }
@@ -183,15 +182,14 @@ module.exports = class SecureCellTokenProtect {
 
             result_length = libthemis.getValue(result_length_ptr, 'i32')
 
-            return libthemis.HEAPU8.slice(result_ptr, result_ptr + result_length)
+            return utils.heapGetArray(result_ptr, result_length)
         }
         finally {
-            libthemis._memset(master_key_ptr, 0, this.masterKey.length)
-            libthemis._free(master_key_ptr)
-            libthemis._free(message_ptr)
-            libthemis._free(context_ptr)
-            libthemis._free(token_ptr)
-            libthemis._free(result_ptr)
+            utils.heapFree(master_key_ptr, this.masterKey.length)
+            utils.heapFree(message_ptr, message.length)
+            utils.heapFree(context_ptr, context.length)
+            utils.heapFree(result_ptr, result_length)
+            utils.heapFree(token_ptr, token.length)
         }
     }
 }

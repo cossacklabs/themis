@@ -65,14 +65,14 @@ function validateKeyBuffer(buffer, expectedKinds) {
     // so we validate the key and query its kind as a single operation
     // to avoid copying the key twice.
     let buffer_len = buffer.length
-    let buffer_ptr = libthemis._malloc(buffer_len)
+    let buffer_ptr = utils.heapAlloc(buffer_len)
     if (!buffer_ptr) {
         throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
     }
 
     var kind
     try {
-        libthemis.writeArrayToMemory(buffer, buffer_ptr)
+        utils.heapPutArray(buffer, buffer_ptr)
 
         let err = libthemis._themis_is_valid_asym_key(buffer_ptr, buffer_len)
         if (err != ThemisErrorCode.SUCCESS) {
@@ -82,7 +82,7 @@ function validateKeyBuffer(buffer, expectedKinds) {
         kind = libthemis._themis_get_asym_key_kind(buffer_ptr, buffer_len)
     }
     finally {
-        libthemis._free(buffer_ptr)
+        utils.heapFree(buffer_ptr, buffer_len)
     }
 
     if (!expectedKinds.includes(kind)) {
@@ -133,8 +133,8 @@ function generateECKeyPair() {
     let private_len = libthemis.getValue(private_len_ptr, 'i32')
     let public_len = libthemis.getValue(public_len_ptr, 'i32')
 
-    let private_ptr = libthemis._malloc(private_len)
-    let public_ptr = libthemis._malloc(public_len)
+    let private_ptr = utils.heapAlloc(private_len)
+    let public_ptr = utils.heapAlloc(public_len)
 
     try {
         if (!private_ptr || !public_ptr) {
@@ -150,13 +150,13 @@ function generateECKeyPair() {
         let public_len = libthemis.getValue(public_len_ptr, 'i32')
 
         return {
-            private: libthemis.HEAPU8.slice(private_ptr, private_ptr + private_len),
-            public: libthemis.HEAPU8.slice(public_ptr, public_ptr + public_len),
+            private: utils.heapGetArray(private_ptr, private_len),
+            public: utils.heapGetArray(public_ptr, public_len),
         }
     }
     finally {
-        libthemis._free(private_ptr)
-        libthemis._free(public_ptr)
+        utils.heapFree(private_ptr, private_len)
+        utils.heapFree(public_ptr, public_len)
     }
 }
 
