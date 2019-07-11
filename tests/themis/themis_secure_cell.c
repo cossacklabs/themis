@@ -346,6 +346,109 @@ static void secure_cell_test(void)
     testsuite_fail_if(secure_cell_context_imprint(), "secure cell context imprint mode");
 }
 
+/*
+ * Make sure that we always return correct and consistent lengths, regardless of input.
+ */
+static void secure_cell_test_lengths(void)
+{
+    themis_status_t res;
+    uint8_t encrypted_buffer[MAX_MESSAGE_SIZE];
+    uint8_t authtoken_buffer[MAX_MESSAGE_SIZE];
+    size_t encrypted_length;
+    size_t encrypted_length_measured;
+    size_t authtoken_length;
+    size_t authtoken_length_measured;
+
+    /* Seal mode */
+
+    encrypted_length_measured = sizeof(encrypted_buffer);
+    res = themis_secure_cell_encrypt_seal((const uint8_t*)"master key",
+                                          strlen("master key"),
+                                          (const uint8_t*)"my context",
+                                          strlen("my context"),
+                                          (const uint8_t*)"a message!",
+                                          strlen("a message!"),
+                                          NULL,
+                                          &encrypted_length_measured);
+    testsuite_fail_unless(res == THEMIS_BUFFER_TOO_SMALL, "seal: measuring length");
+
+    encrypted_length = sizeof(encrypted_buffer);
+    res = themis_secure_cell_encrypt_seal((const uint8_t*)"master key",
+                                          strlen("master key"),
+                                          (const uint8_t*)"my context",
+                                          strlen("my context"),
+                                          (const uint8_t*)"a message!",
+                                          strlen("a message!"),
+                                          encrypted_buffer,
+                                          &encrypted_length);
+    testsuite_fail_unless(res == THEMIS_SUCCESS, "seal: encrypting buffer");
+
+    testsuite_fail_unless(encrypted_length == encrypted_length_measured,
+                          "seal: returned message length");
+
+    /* Token protect mode */
+
+    authtoken_length_measured = sizeof(authtoken_buffer);
+    encrypted_length_measured = sizeof(encrypted_buffer);
+    res = themis_secure_cell_encrypt_token_protect((const uint8_t*)"master key",
+                                                   strlen("master key"),
+                                                   (const uint8_t*)"my context",
+                                                   strlen("my context"),
+                                                   (const uint8_t*)"a message!",
+                                                   strlen("a message!"),
+                                                   NULL,
+                                                   &authtoken_length_measured,
+                                                   NULL,
+                                                   &encrypted_length_measured);
+    testsuite_fail_unless(res == THEMIS_BUFFER_TOO_SMALL, "token protect: measuring length");
+
+    authtoken_length = sizeof(authtoken_buffer);
+    encrypted_length = sizeof(encrypted_buffer);
+    res = themis_secure_cell_encrypt_token_protect((const uint8_t*)"master key",
+                                                   strlen("master key"),
+                                                   (const uint8_t*)"my context",
+                                                   strlen("my context"),
+                                                   (const uint8_t*)"a message!",
+                                                   strlen("a message!"),
+                                                   authtoken_buffer,
+                                                   &authtoken_length,
+                                                   encrypted_buffer,
+                                                   &encrypted_length);
+    testsuite_fail_unless(res == THEMIS_SUCCESS, "token protect: encrypting buffer");
+
+    testsuite_fail_unless(authtoken_length == authtoken_length_measured,
+                          "token protect: returned auth token length");
+    testsuite_fail_unless(encrypted_length == encrypted_length_measured,
+                          "token protect: returned message length");
+
+    /* Context imprint mode */
+
+    encrypted_length_measured = sizeof(encrypted_buffer);
+    res = themis_secure_cell_encrypt_context_imprint((const uint8_t*)"master key",
+                                                     strlen("master key"),
+                                                     (const uint8_t*)"a message!",
+                                                     strlen("a message!"),
+                                                     (const uint8_t*)"my context",
+                                                     strlen("my context"),
+                                                     NULL,
+                                                     &encrypted_length_measured);
+    testsuite_fail_unless(res == THEMIS_BUFFER_TOO_SMALL, "context imprint: measuring length");
+
+    encrypted_length = sizeof(encrypted_buffer);
+    res = themis_secure_cell_encrypt_context_imprint((const uint8_t*)"master key",
+                                                     strlen("master key"),
+                                                     (const uint8_t*)"a message!",
+                                                     strlen("a message!"),
+                                                     (const uint8_t*)"my context",
+                                                     strlen("my context"),
+                                                     encrypted_buffer,
+                                                     &encrypted_length);
+    testsuite_fail_unless(res == THEMIS_SUCCESS, "context imprint: encrypting buffer");
+
+    testsuite_fail_unless(encrypted_length == encrypted_length_measured,
+                          "context imprint: returned message length");
+}
+
 static void secure_cell_api_test_seal(void)
 {
     uint8_t key[MAX_KEY_SIZE];
@@ -1235,6 +1338,7 @@ void run_secure_cell_test(void)
 {
     testsuite_enter_suite("secure cell: basic flow");
     testsuite_run_test(secure_cell_test);
+    testsuite_run_test(secure_cell_test_lengths);
 
     testsuite_enter_suite("secure cell: api test");
     testsuite_run_test(secure_cell_api_test);
