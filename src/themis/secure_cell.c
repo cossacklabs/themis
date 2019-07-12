@@ -29,6 +29,9 @@ themis_status_t themis_secure_cell_encrypt_seal(const uint8_t* master_key,
 {
     size_t ctx_length_;
     size_t msg_length_;
+    size_t total_length;
+
+    THEMIS_CHECK_PARAM(encrypted_message_length != NULL);
     THEMIS_STATUS_CHECK(themis_auth_sym_encrypt_message(master_key,
                                                         master_key_length,
                                                         message,
@@ -40,10 +43,14 @@ themis_status_t themis_secure_cell_encrypt_seal(const uint8_t* master_key,
                                                         NULL,
                                                         &msg_length_),
                         THEMIS_BUFFER_TOO_SMALL);
-    if (encrypted_message == NULL || (*encrypted_message_length) < (ctx_length_ + msg_length_)) {
-        (*encrypted_message_length) = (ctx_length_ + msg_length_);
+
+    total_length = ctx_length_ + msg_length_;
+    if (!encrypted_message || *encrypted_message_length < total_length) {
+        *encrypted_message_length = total_length;
         return THEMIS_BUFFER_TOO_SMALL;
     }
+
+    *encrypted_message_length = total_length;
     return themis_auth_sym_encrypt_message(master_key,
                                            master_key_length,
                                            message,
