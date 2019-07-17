@@ -26,7 +26,7 @@ namespace jsthemis
 
 static inline void ExportStatusCode(v8::Local<v8::Object>& exports, const char* name, themis_status_t status)
 {
-    exports->Set(Nan::New(name).ToLocalChecked(), Nan::New(status));
+    Nan::Set(exports, Nan::New(name).ToLocalChecked(), Nan::New(status));
 }
 
 void Errors::Init(v8::Local<v8::Object> exports)
@@ -106,7 +106,7 @@ static const char* ErrorDescriptionSecureComparator(themis_status_t status)
 static v8::Local<v8::Value> WithStatus(v8::Local<v8::Value> error, themis_status_t status)
 {
     v8::Local<v8::Object> object = error.As<v8::Object>();
-    object->Set(Nan::New("code").ToLocalChecked(), Nan::New(status));
+    Nan::Set(object, Nan::New("code").ToLocalChecked(), Nan::New(status));
     return error;
 }
 

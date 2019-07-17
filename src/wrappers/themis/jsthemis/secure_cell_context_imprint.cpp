@@ -38,15 +38,18 @@ SecureCellContextImprint::~SecureCellContextImprint()
 
 void SecureCellContextImprint::Init(v8::Local<v8::Object> exports)
 {
+    v8::Local<v8::String> className = Nan::New("SecureCellContextImprint").ToLocalChecked();
     // Prepare constructor template
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SecureCellContextImprint::New);
-    tpl->SetClassName(Nan::New("SecureCellContextImprint").ToLocalChecked());
+    tpl->SetClassName(className);
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     // Prototype
     Nan::SetPrototypeMethod(tpl, "encrypt", encrypt);
     Nan::SetPrototypeMethod(tpl, "decrypt", decrypt);
-    constructor.Reset(tpl->GetFunction());
-    exports->Set(Nan::New("SecureCellContextImprint").ToLocalChecked(), tpl->GetFunction());
+    // Export constructor
+    v8::Local<v8::Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(exports, className, function);
 }
 
 void SecureCellContextImprint::New(const Nan::FunctionCallbackInfo<v8::Value>& args)

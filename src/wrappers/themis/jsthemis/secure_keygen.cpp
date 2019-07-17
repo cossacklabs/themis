@@ -40,15 +40,18 @@ KeyPair::~KeyPair()
 
 void KeyPair::Init(v8::Local<v8::Object> exports)
 {
+    v8::Local<v8::String> className = Nan::New("KeyPair").ToLocalChecked();
     // Prepare constructor template
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(KeyPair::New);
-    tpl->SetClassName(Nan::New("KeyPair").ToLocalChecked());
+    tpl->SetClassName(className);
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     // Prototype
     Nan::SetPrototypeMethod(tpl, "private", private_key);
     Nan::SetPrototypeMethod(tpl, "public", public_key);
-    constructor.Reset(tpl->GetFunction());
-    exports->Set(Nan::New("KeyPair").ToLocalChecked(), tpl->GetFunction());
+    // Export constructor
+    v8::Local<v8::Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(exports, className, function);
 }
 
 void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args)

@@ -78,17 +78,20 @@ SecureSession::~SecureSession()
 
 void SecureSession::Init(v8::Local<v8::Object> exports)
 {
+    v8::Local<v8::String> className = Nan::New("SecureSession").ToLocalChecked();
     // Prepare constructor template
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
-    tpl->SetClassName(Nan::New("SecureSession").ToLocalChecked());
+    tpl->SetClassName(className);
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     // Prototype
     Nan::SetPrototypeMethod(tpl, "connectRequest", connectRequest);
     Nan::SetPrototypeMethod(tpl, "wrap", wrap);
     Nan::SetPrototypeMethod(tpl, "unwrap", unwrap);
     Nan::SetPrototypeMethod(tpl, "isEstablished", isEstablished);
-    constructor.Reset(tpl->GetFunction());
-    exports->Set(Nan::New("SecureSession").ToLocalChecked(), tpl->GetFunction());
+    // Export constructor
+    v8::Local<v8::Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(exports, className, function);
 }
 
 void SecureSession::New(const Nan::FunctionCallbackInfo<v8::Value>& args)

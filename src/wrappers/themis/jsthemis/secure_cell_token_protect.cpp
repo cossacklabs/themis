@@ -38,15 +38,18 @@ SecureCellTokenProtect::~SecureCellTokenProtect()
 
 void SecureCellTokenProtect::Init(v8::Local<v8::Object> exports)
 {
+    v8::Local<v8::String> className = Nan::New("SecureCellTokenProtect").ToLocalChecked();
     // Prepare constructor template
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SecureCellTokenProtect::New);
-    tpl->SetClassName(Nan::New("SecureCellTokenProtect").ToLocalChecked());
+    tpl->SetClassName(className);
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     // Prototype
     Nan::SetPrototypeMethod(tpl, "encrypt", encrypt);
     Nan::SetPrototypeMethod(tpl, "decrypt", decrypt);
-    constructor.Reset(tpl->GetFunction());
-    exports->Set(Nan::New("SecureCellTokenProtect").ToLocalChecked(), tpl->GetFunction());
+    // Export constructor
+    v8::Local<v8::Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(exports, className, function);
 }
 
 void SecureCellTokenProtect::New(const Nan::FunctionCallbackInfo<v8::Value>& args)

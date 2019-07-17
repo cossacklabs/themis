@@ -54,17 +54,20 @@ SecureComparator::~SecureComparator()
 
 void SecureComparator::Init(v8::Local<v8::Object> exports)
 {
+    v8::Local<v8::String> className = Nan::New("SecureComparator").ToLocalChecked();
     // Prepare constructor template
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(New);
-    tpl->SetClassName(Nan::New("SecureComparator").ToLocalChecked());
+    tpl->SetClassName(className);
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     // Prototype
     Nan::SetPrototypeMethod(tpl, "beginCompare", beginCompare);
     Nan::SetPrototypeMethod(tpl, "proceedCompare", proceedCompare);
     Nan::SetPrototypeMethod(tpl, "isMatch", isMatch);
     Nan::SetPrototypeMethod(tpl, "isCompareComplete", isCompareComplete);
-    constructor.Reset(tpl->GetFunction());
-    exports->Set(Nan::New("SecureComparator").ToLocalChecked(), tpl->GetFunction());
+    // Export constructor
+    v8::Local<v8::Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(exports, className, function);
 }
 
 void SecureComparator::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
