@@ -24,12 +24,12 @@
 namespace jsthemis
 {
 
-static inline void ExportStatusCode(v8::Handle<v8::Object>& exports, const char* name, themis_status_t status)
+static inline void ExportStatusCode(v8::Local<v8::Object>& exports, const char* name, themis_status_t status)
 {
     exports->Set(Nan::New(name).ToLocalChecked(), Nan::New(status));
 }
 
-void Errors::Init(v8::Handle<v8::Object> exports)
+void Errors::Init(v8::Local<v8::Object> exports)
 {
     ExportStatusCode(exports, "SUCCESS", THEMIS_SUCCESS);
     ExportStatusCode(exports, "FAIL", THEMIS_FAIL);

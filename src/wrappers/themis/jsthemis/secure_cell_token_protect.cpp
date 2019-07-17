@@ -36,7 +36,7 @@ SecureCellTokenProtect::~SecureCellTokenProtect()
 {
 }
 
-void SecureCellTokenProtect::Init(v8::Handle<v8::Object> exports)
+void SecureCellTokenProtect::Init(v8::Local<v8::Object> exports)
 {
     // Prepare constructor template
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SecureCellTokenProtect::New);
