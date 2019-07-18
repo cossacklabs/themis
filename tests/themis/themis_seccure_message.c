@@ -1540,19 +1540,13 @@ static void keygen_parameters_ec(void)
     size_t ec_private_key_length = sizeof(ec_private_key);
     size_t ec_public_key_length = sizeof(ec_public_key);
 
-    status = themis_gen_ec_key_pair(ec_private_key,
-                                    &ec_private_key_length,
-                                    NULL,
-                                    NULL);
+    status = themis_gen_ec_key_pair(ec_private_key, &ec_private_key_length, NULL, NULL);
     testsuite_fail_unless(status == THEMIS_INVALID_PARAMETER,
-                          "themis_gen_ec_key_pair: only private key");
+                          "themis_gen_ec_key_pair: only private key requested");
 
-    status = themis_gen_ec_key_pair(NULL,
-                                    NULL,
-                                    ec_public_key,
-                                    &ec_public_key_length);
+    status = themis_gen_ec_key_pair(NULL, NULL, ec_public_key, &ec_public_key_length);
     testsuite_fail_unless(status == THEMIS_INVALID_PARAMETER,
-                          "themis_gen_ec_key_pair: only public key");
+                          "themis_gen_ec_key_pair: only public key requested");
 }
 
 static void keygen_parameters_rsa(void)
@@ -1563,19 +1557,13 @@ static void keygen_parameters_rsa(void)
     size_t rsa_private_key_length = sizeof(rsa_private_key);
     size_t rsa_public_key_length = sizeof(rsa_public_key);
 
-    status = themis_gen_rsa_key_pair(rsa_private_key,
-                                     &rsa_private_key_length,
-                                     NULL,
-                                     NULL);
+    status = themis_gen_rsa_key_pair(rsa_private_key, &rsa_private_key_length, NULL, NULL);
     testsuite_fail_unless(status == THEMIS_INVALID_PARAMETER,
-                          "themis_gen_rsa_key_pair: only private key");
+                          "themis_gen_rsa_key_pair: only private key requested");
 
-    status = themis_gen_rsa_key_pair(NULL,
-                                     NULL,
-                                     rsa_public_key,
-                                     &rsa_public_key_length);
+    status = themis_gen_rsa_key_pair(NULL, NULL, rsa_public_key, &rsa_public_key_length);
     testsuite_fail_unless(status == THEMIS_INVALID_PARAMETER,
-                          "themis_gen_rsa_key_pair: only public key");
+                          "themis_gen_rsa_key_pair: only public key requested");
 }
 
 void run_secure_message_test(void)
