@@ -46,9 +46,8 @@ jobs:
       NO_NIST_STS: 1
       WITH_FATAL_WARNINGS: yes
     steps:
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev nodejs npm lcov libc6-dbg rsync software-properties-common pkg-config clang afl
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common pkg-config clang afl
       - run: sudo ln -sf /usr/bin/gcov-5 /usr/bin/gcov
-      - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
       - run: sudo gem install coveralls-lcov
       - run: go get github.com/mattn/goveralls
       # ruby rvm repository
@@ -114,7 +113,6 @@ jobs:
       - run: sudo make themispp_install
       - run: sudo make pythemis_install
       - run: sudo make rubythemis_install
-      - run: sudo make jsthemis_install
       - run: make ENGINE=boringssl BUILD_PATH=build_with_boringssl prepare_tests_basic
       - run: make BUILD_PATH=cover_build COVERAGE=y prepare_tests_basic
       - run: make prepare_tests_all
@@ -124,12 +122,11 @@ jobs:
       # run only if CIRCLE_PR_NUMBER variable is not set (it's not pull request and COVERALLS_TOKEN will be set via circleCI for non-PR build) and COVERALLS_TOKEN is set
       # we should calculate coverage for gothemis and send report before sending coverage of main C part
       - run: '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/go/src/$GOTHEMIS_IMPORT && $HOME/go/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
-      - run: sudo /sbin/ldconfig    
+      - run: sudo /sbin/ldconfig
       - run: make test
       - run: make clean_themispp_test && CFLAGS="-std=c++03" make themispp_test && make test_cpp
       - run: make clean_themispp_test && CFLAGS="-std=c++11" make themispp_test && make test_cpp
       - run: make test_python
-      - run: sudo make test_js
       # it's important to set version of ruby precisely.
       - run: source /etc/profile.d/rvm.sh && rvm use system && make test_ruby
       - run: make test_go
@@ -273,7 +270,7 @@ jobs:
       - run: sudo apt-add-repository -y ppa:rael-gc/rvm
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
       # php7
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php7.0-dev php7.0-xml php7.0-mbstring 
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php7.0-dev php7.0-xml php7.0-mbstring
       # Rust stable (see https://rustup.rs)
       - run: curl https://sh.rustup.rs -sSf | sh -s -- -y && cat ~/.cargo/env >> $BASH_ENV && source ~/.cargo/env && cargo --version && rustc --version
 
