@@ -51,9 +51,14 @@ jobs:
       - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
       - run: sudo gem install coveralls-lcov
       - run: go get github.com/mattn/goveralls
-      # ruby rvm repository
-      - run: sudo apt-add-repository -y ppa:rael-gc/rvm
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
+      # Install RVM for current user (see https://rvm.io/rvm/install)
+      - run:
+          name: Install RVM
+          command: |
+            gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+            curl -sSL https://get.rvm.io | bash -s stable
+            source ~/.rvm/scripts/rvm
+            rvm use system
 
       - restore_cache:
           keys:
@@ -124,14 +129,13 @@ jobs:
       # run only if CIRCLE_PR_NUMBER variable is not set (it's not pull request and COVERALLS_TOKEN will be set via circleCI for non-PR build) and COVERALLS_TOKEN is set
       # we should calculate coverage for gothemis and send report before sending coverage of main C part
       - run: '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/go/src/$GOTHEMIS_IMPORT && $HOME/go/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
-      - run: sudo /sbin/ldconfig    
+      - run: sudo /sbin/ldconfig
       - run: make test
       - run: make clean_themispp_test && CFLAGS="-std=c++03" make themispp_test && make test_cpp
       - run: make clean_themispp_test && CFLAGS="-std=c++11" make themispp_test && make test_cpp
       - run: make test_python
       - run: sudo make test_js
-      # it's important to set version of ruby precisely.
-      - run: source /etc/profile.d/rvm.sh && rvm use system && make test_ruby
+      - run: make test_ruby
       - run: make test_go
       - run: make test_rust
       - run: source "$HOME/emsdk/emsdk_env.sh"; emmake make BUILD_PATH=build-wasm test
@@ -176,11 +180,16 @@ jobs:
       # nodejs
       - run: sudo DEBIAN_FRONTEND=noninteractive apt-get -y install nodejs npm
       - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
-      # ruby rvm repository
-      - run: sudo apt-add-repository -y ppa:rael-gc/rvm
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
+      # Install RVM for current user (see https://rvm.io/rvm/install)
+      - run:
+          name: Install RVM
+          command: |
+            gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+            curl -sSL https://get.rvm.io | bash -s stable
+            source ~/.rvm/scripts/rvm
+            rvm use system
       # php7
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php7.0-dev php7.0-xml php7.0-mbstring 
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php7.0-dev php7.0-xml php7.0-mbstring
       # Rust stable (see https://rustup.rs)
       - run: curl https://sh.rustup.rs -sSf | sh -s -- -y && cat ~/.cargo/env >> $BASH_ENV && source ~/.cargo/env && cargo --version && rustc --version
 
