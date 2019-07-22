@@ -46,9 +46,8 @@ jobs:
       NO_NIST_STS: 1
       WITH_FATAL_WARNINGS: yes
     steps:
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev nodejs npm lcov libc6-dbg rsync software-properties-common pkg-config clang afl
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common pkg-config clang afl
       - run: sudo ln -sf /usr/bin/gcov-5 /usr/bin/gcov
-      - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
       - run: sudo gem install coveralls-lcov
       - run: go get github.com/mattn/goveralls
       # Install RVM for current user (see https://rvm.io/rvm/install)
@@ -131,7 +130,6 @@ jobs:
       - run: sudo make themispp_install
       - run: sudo make pythemis_install
       - run: sudo make rbthemis_install
-      - run: sudo make jsthemis_install
       - run: make ENGINE=boringssl BUILD_PATH=build_with_boringssl prepare_tests_basic
       - run: make BUILD_PATH=cover_build COVERAGE=y prepare_tests_basic
       - run: make prepare_tests_all
@@ -146,7 +144,6 @@ jobs:
       - run: make clean_themispp_test && CFLAGS="-std=c++03" make themispp_test && make test_cpp
       - run: make clean_themispp_test && CFLAGS="-std=c++11" make themispp_test && make test_cpp
       - run: make test_python
-      - run: sudo make test_js
       - run: make test_ruby
       - run: make test_go
       - run: make test_rust
@@ -177,6 +174,99 @@ jobs:
             - ~/.emscripten
             - ~/.emscripten_cache
             - ~/.emscripten_cache.lock
+
+  jsthemis:
+    docker:
+      - image: cossacklabs/android-build:2019.01
+    environment:
+      NO_NIST_STS: 1
+      WITH_FATAL_WARNINGS: yes
+    steps:
+      - run:
+          name: Install Node.js from repositories
+          command: |
+            export DEBIAN_FRONTEND=noninteractive
+            sudo apt-get update
+            # Also pull in some Themis dependencies
+            sudo apt-get -y install libssl-dev nodejs npm
+            # Make sure ancient Node.js available as "node"
+            sudo ln -sf /usr/bin/nodejs /usr/bin/node
+      - run:
+          name: Install Node.js via NVM
+          command: |
+            # Install latest NVM as descrbed in documentation:
+            # https://github.com/nvm-sh/nvm
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+            # Activate NVM for the current shell and make sure it's activated in next ones
+            # (CircleCI jobs have their 'specifics' in ignoring .bash_profile et al.)
+            echo 'source $HOME/.nvm/nvm.sh' >> $BASH_ENV
+            source $HOME/.nvm/nvm.sh
+            # Install old LTS, current LTS, current stable versions
+            nvm install v8
+            nvm install v10
+            nvm install v12
+      - checkout
+      - run:
+          name: Sync submodules
+          command: git reset HEAD && git submodule sync && git submodule update --init
+      - run:
+          name: Install Themis Core
+          command: |
+            make
+            sudo make install
+            make prepare_tests_all
+      - run:
+          name: Test JsThemis with Node.js from repositories
+          when: always
+          command: |
+            # Activate Node.js from repositories
+            nvm deactivate
+            echo "node --version: $(node --version)"
+            echo "npm --version:  $(npm --version)"
+            # Install JsThemis locally
+            rm -rf node_modules package-lock.json
+            make jsthemis_install
+            # Run JsThemis tests
+            make test_js
+      - run:
+          name: Test JsThemis with Node.js v8 (maintenance)
+          when: always
+          command: |
+            # Activate Node.js v8
+            nvm use v8
+            echo "node --version: $(node --version)"
+            echo "npm --version:  $(npm --version)"
+            # Install JsThemis locally
+            rm -rf node_modules package-lock.json
+            make jsthemis_install
+            # Run JsThemis tests
+            make test_js
+      - run:
+          name: Test JsThemis with Node.js v10 (LTS)
+          when: always
+          command: |
+            # Activate Node.js v10
+            nvm use v10
+            echo "node --version: $(node --version)"
+            echo "npm --version:  $(npm --version)"
+            # Install JsThemis locally
+            rm -rf node_modules package-lock.json
+            make jsthemis_install
+            # Run JsThemis tests
+            make test_js
+      - run:
+          name: Test JsThemis with Node.js v12 (stable)
+          when: always
+          command: |
+            # Activate Node.js v12
+            nvm use v12
+            echo "node --version: $(node --version)"
+            echo "npm --version:  $(npm --version)"
+            # Install JsThemis locally
+            rm -rf node_modules package-lock.json
+            make jsthemis_install
+            # Run JsThemis tests
+            make test_js
 
   integration_tests:
     docker:
@@ -283,6 +373,7 @@ workflows:
       # Broken build temporarily disabled (see T1133, 2019-07-03)
       # - android
       - x86_64
+      - jsthemis
       - php5
       - php70
       - php71
