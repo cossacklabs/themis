@@ -27,7 +27,7 @@ namespace jsthemis
 class SecureCellSeal : public Nan::ObjectWrap
 {
 public:
-    static void Init(v8::Handle<v8::Object> exports);
+    static void Init(v8::Local<v8::Object> exports);
 
 private:
     explicit SecureCellSeal(const std::vector<uint8_t>& key);

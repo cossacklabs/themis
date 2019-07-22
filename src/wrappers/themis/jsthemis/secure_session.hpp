@@ -29,7 +29,7 @@ namespace jsthemis
 class SecureSession : public Nan::ObjectWrap
 {
 public:
-    static void Init(v8::Handle<v8::Object> exports);
+    static void Init(v8::Local<v8::Object> exports);
 
 private:
     explicit SecureSession(const std::vector<uint8_t>& id,

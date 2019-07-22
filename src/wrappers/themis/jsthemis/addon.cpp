@@ -25,7 +25,7 @@
 #include "secure_message.hpp"
 #include "secure_session.hpp"
 
-void InitAll(v8::Handle<v8::Object> exports)
+void InitAll(v8::Local<v8::Object> exports)
 {
     jsthemis::Errors::Init(exports);
     jsthemis::SecureMessage::Init(exports);
