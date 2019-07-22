@@ -50,9 +50,14 @@ jobs:
       - run: sudo ln -sf /usr/bin/gcov-5 /usr/bin/gcov
       - run: sudo gem install coveralls-lcov
       - run: go get github.com/mattn/goveralls
-      # ruby rvm repository
-      - run: sudo apt-add-repository -y ppa:rael-gc/rvm
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
+      # Install RVM for current user (see https://rvm.io/rvm/install)
+      - run:
+          name: Install RVM
+          command: |
+            gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+            curl -sSL https://get.rvm.io | bash -s stable
+            source ~/.rvm/scripts/rvm
+            rvm use system
 
       - restore_cache:
           keys:
@@ -112,7 +117,7 @@ jobs:
       - run: sudo make install
       - run: sudo make themispp_install
       - run: sudo make pythemis_install
-      - run: sudo make rubythemis_install
+      - run: sudo make rbthemis_install
       - run: make ENGINE=boringssl BUILD_PATH=build_with_boringssl prepare_tests_basic
       - run: make BUILD_PATH=cover_build COVERAGE=y prepare_tests_basic
       - run: make prepare_tests_all
@@ -127,8 +132,7 @@ jobs:
       - run: make clean_themispp_test && CFLAGS="-std=c++03" make themispp_test && make test_cpp
       - run: make clean_themispp_test && CFLAGS="-std=c++11" make themispp_test && make test_cpp
       - run: make test_python
-      # it's important to set version of ruby precisely.
-      - run: source /etc/profile.d/rvm.sh && rvm use system && make test_ruby
+      - run: make test_ruby
       - run: make test_go
       - run: make test_rust
       - run: source "$HOME/emsdk/emsdk_env.sh"; emmake make BUILD_PATH=build-wasm test
@@ -266,9 +270,14 @@ jobs:
       # nodejs
       - run: sudo DEBIAN_FRONTEND=noninteractive apt-get -y install nodejs npm
       - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
-      # ruby rvm repository
-      - run: sudo apt-add-repository -y ppa:rael-gc/rvm
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
+      # Install RVM for current user (see https://rvm.io/rvm/install)
+      - run:
+          name: Install RVM
+          command: |
+            gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+            curl -sSL https://get.rvm.io | bash -s stable
+            source ~/.rvm/scripts/rvm
+            rvm use system
       # php7
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php7.0-dev php7.0-xml php7.0-mbstring
       # Rust stable (see https://rustup.rs)
@@ -281,7 +290,7 @@ jobs:
       - run: sudo make install
       - run: sudo make themispp_install
       - run: sudo make pythemis_install
-      - run: sudo make rubythemis_install
+      - run: sudo make rbthemis_install
       - run: sudo make phpthemis_install
       - run: sudo bash -c 'echo "extension=phpthemis.so" > /etc/php/7.0/cli/conf.d/20-phpthemis.ini'
       - run: sudo make jsthemis_install
