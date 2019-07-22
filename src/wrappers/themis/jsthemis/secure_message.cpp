@@ -39,19 +39,22 @@ SecureMessage::~SecureMessage()
 {
 }
 
-void SecureMessage::Init(v8::Handle<v8::Object> exports)
+void SecureMessage::Init(v8::Local<v8::Object> exports)
 {
+    v8::Local<v8::String> className = Nan::New("SecureMessage").ToLocalChecked();
     // Prepare constructor template
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SecureMessage::New);
-    tpl->SetClassName(Nan::New("SecureMessage").ToLocalChecked());
+    tpl->SetClassName(className);
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
     // Prototype
     Nan::SetPrototypeMethod(tpl, "encrypt", SecureMessage::encrypt);
     Nan::SetPrototypeMethod(tpl, "decrypt", SecureMessage::decrypt);
     Nan::SetPrototypeMethod(tpl, "sign", SecureMessage::sign);
     Nan::SetPrototypeMethod(tpl, "verify", SecureMessage::verify);
-    constructor.Reset(tpl->GetFunction());
-    exports->Set(Nan::New("SecureMessage").ToLocalChecked(), tpl->GetFunction());
+    // Export constructor
+    v8::Local<v8::Function> function = Nan::GetFunction(tpl).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(exports, className, function);
 }
 
 void SecureMessage::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
