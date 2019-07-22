@@ -112,6 +112,10 @@ soter_status_t soter_verify_cleanup_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx)
     if (!ctx) {
         return SOTER_INVALID_PARAMETER;
     }
+    if (ctx->md_ctx) {
+        EVP_MD_CTX_destroy(ctx->md_ctx);
+        ctx->md_ctx = NULL;
+    }
     if (ctx->pkey_ctx) {
         EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
         if (pkey) {
@@ -119,10 +123,6 @@ soter_status_t soter_verify_cleanup_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx)
         }
         EVP_PKEY_CTX_free(ctx->pkey_ctx);
         ctx->pkey_ctx = NULL;
-    }
-    if (ctx->md_ctx) {
-        EVP_MD_CTX_destroy(ctx->md_ctx);
-        ctx->md_ctx = NULL;
     }
     return SOTER_SUCCESS;
 }
