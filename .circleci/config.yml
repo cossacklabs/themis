@@ -54,7 +54,19 @@ jobs:
       - run:
           name: Install RVM
           command: |
-            gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+            # Import keys used by RVM maintainers from recommended key server pools
+            # See https://rvm.io/rvm/security
+            for key in 409B6B1796C275462A1703113804BB82D39DC0E3 \
+                       7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+            do
+                for server in pgp.mit.edu keyserver.pgp.com ha.pool.sks-keyservers.net
+                do
+                    if gpg --keyserver $server --recv-keys $key
+                    then
+                        break
+                    fi
+                done
+            done
             curl -sSL https://get.rvm.io | bash -s stable
             source ~/.rvm/scripts/rvm
             rvm use system
@@ -274,7 +286,19 @@ jobs:
       - run:
           name: Install RVM
           command: |
-            gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+            # Import keys used by RVM maintainers from recommended key server pools
+            # See https://rvm.io/rvm/security
+            for key in 409B6B1796C275462A1703113804BB82D39DC0E3 \
+                       7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+            do
+                for server in pgp.mit.edu keyserver.pgp.com ha.pool.sks-keyservers.net
+                do
+                    if gpg --keyserver $server --recv-keys $key
+                    then
+                        break
+                    fi
+                done
+            done
             curl -sSL https://get.rvm.io | bash -s stable
             source ~/.rvm/scripts/rvm
             rvm use system
