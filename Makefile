@@ -472,13 +472,6 @@ ifdef RUBY_GEM_VERSION
 	@$(BUILD_CMD_)
 endif
 
-rubythemis_uninstall_deprecation_warning:
-	@printf "The rubythemis gem is deprecated. Please use rbthemis_uninstall$(WARN_STRING)\n"
-	@printf "target instead of rubythemis_uninstall.$(WARN_STRING)\n"
-
-rubythemis_uninstall: rubythemis_uninstall_deprecation_warning rbthemis_uninstall
-
-
 jsthemis_uninstall: CMD = rm -rf build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz && npm uninstall jsthemis
 jsthemis_uninstall:
 ifdef NPM_VERSION
@@ -517,12 +510,6 @@ else
 	@echo "Error: ruby gem not found"
 	@exit 1
 endif
-
-rubythemis_install_deprecation_warning:
-	@printf "The rubythemis gem is deprecated. Please use rbthemis_install$(WARN_STRING)\n"
-	@printf "target instead of rubythemis_install.$(WARN_STRING)\n"
-
-rubythemis_install: rubythemis_install_deprecation_warning rbthemis_install
 
 jsthemis_install: CMD = cd src/wrappers/themis/jsthemis && npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd - && npm install nan && npm install ./build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz
 jsthemis_install:
