@@ -33,6 +33,13 @@ describe('wasm-themis', function() {
         () => new Uint8Array([27, 18, 28, 18, 28]),
         { value: [3, 14, 15, 92, 6] }
     ]
+    describe('initialization', function() {
+        it('resolves "initialized" promise', function(done) {
+            themis.initialized.then(function() {
+                done()
+            })
+        })
+    })
     describe('KeyPair', function() {
         it('generates EC key pairs', function() {
             let pair = new themis.KeyPair()
