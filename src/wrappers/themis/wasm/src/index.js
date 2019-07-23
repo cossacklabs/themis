@@ -17,6 +17,8 @@
  * WasmThemis module entry point.
  */
 
+const libthemis = require('./libthemis.js')
+
 Object.assign(module.exports
   , require('./secure_cell.js')
   , require('./secure_comparator.js')
@@ -25,3 +27,19 @@ Object.assign(module.exports
   , require('./secure_session.js')
   , require('./themis_error.js')
 )
+
+let resolveInitialization
+let initializationPromise = new Promise(function(resolve) {
+    resolveInitialization = resolve
+})
+
+/**
+ * Themis initialization promise.
+ *
+ * Resolved when Themis is loaded and ready to use.
+ */
+module.exports.initialized = initializationPromise
+
+libthemis["onRuntimeInitialized"] = function() {
+    resolveInitialization()
+}

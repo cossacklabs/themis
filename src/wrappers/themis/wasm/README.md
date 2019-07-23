@@ -35,6 +35,16 @@ Then import it into your project:
 const themis = require('wasm-themis')
 ```
 
+Finally, wait for WebAssembly code to be loaded:
+
+```javascript
+themis.initialized.then(function() {
+    //
+    // Now you can use "themis" functions
+    //
+})
+```
+
 ([_Browserify_ your code][browserify] to use WasmThemis in web apps.)
 
 [browserify]: http://browserify.org
