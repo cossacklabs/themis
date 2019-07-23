@@ -574,10 +574,14 @@ LICENSE_NAME = "Apache License Version 2.0"
 DEB_CODENAME := $(shell lsb_release -cs 2> /dev/null)
 DEB_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
 DEB_DEPENDENCIES := --depends openssl
-DEB_DEPENDENCIES_DEV := $(DEB_DEPENDENCIES) --depends libssl-dev
+DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
+DEB_DEPENDENCIES_DEV += --depends libssl-dev
+DEB_DEPENDENCIES_THEMISPP = --depends "$(DEB_DEV_PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
 
 RPM_DEPENDENCIES = --depends openssl
-RPM_DEPENDENCIES_DEV := $(RPM_DEPENDENCIES) --depends openssl-devel
+RPM_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
+RPM_DEPENDENCIES_DEV += --depends openssl-devel
+RPM_DEPENDENCIES_THEMISPP = --depends "$(RPM_DEV_PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_RELEASE_NUM = 1
 
 ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
@@ -597,6 +601,11 @@ else
 endif
 
 PACKAGE_NAME = libthemis
+DEB_DEV_PACKAGE_NAME = libthemis-dev
+RPM_DEV_PACKAGE_NAME = libthemis-devel
+DEB_THEMISPP_PACKAGE_NAME = libthemispp-dev
+RPM_THEMISPP_PACKAGE_NAME = libthemispp-devel
+
 PACKAGE_CATEGORY = security
 SHORT_DESCRIPTION = Data security library for network communication and data storage
 RPM_SUMMARY = Data security library for network communication and data storage. \
@@ -609,7 +618,8 @@ RPM_SUMMARY = Data security library for network communication and data storage. 
 POST_INSTALL_SCRIPT := $(BIN_PATH)/post_install.sh
 POST_UNINSTALL_SCRIPT := $(BIN_PATH)/post_uninstall.sh
 
-DEV_PACKAGE_FILES += $(includedir)/
+DEV_PACKAGE_FILES += $(includedir)/soter/
+DEV_PACKAGE_FILES += $(includedir)/themis/
 DEV_PACKAGE_FILES += $(pkgconfigdir)/
 
 LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_A)
@@ -619,10 +629,12 @@ LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_A)
 LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_SO)
 LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_LINK)
 
+THEMISPP_PACKAGE_FILES += $(includedir)/themispp/
+
 deb: DESTDIR = $(BIN_PATH)/deb/root
 deb: PREFIX = /usr
 
-deb: install
+deb: install themispp_install
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
 	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
 
@@ -630,15 +642,15 @@ deb: install
 
 	@fpm --input-type dir \
 		 --output-type deb \
-		 --name $(PACKAGE_NAME)-dev \
+		 --name $(DEB_DEV_PACKAGE_NAME) \
 		 --license $(LICENSE_NAME) \
 		 --url '$(COSSACKLABS_URL)' \
 		 --description '$(SHORT_DESCRIPTION)' \
 		 --maintainer $(MAINTAINER) \
-		 --package $(BIN_PATH)/deb/$(PACKAGE_NAME)-dev_$(NAME_SUFFIX) \
+		 --package $(BIN_PATH)/deb/$(DEB_DEV_PACKAGE_NAME)_$(NAME_SUFFIX) \
 		 --architecture $(DEB_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
-		 $(DEB_DEPENDENCIES_DEV) --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)" \
+		 $(DEB_DEPENDENCIES_DEV) \
 		 --deb-priority optional \
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
@@ -662,12 +674,29 @@ deb: install
 		 --category $(PACKAGE_CATEGORY) \
 		 $(foreach file,$(LIB_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
+	@fpm --input-type dir \
+		 --output-type deb \
+		 --name $(DEB_THEMISPP_PACKAGE_NAME) \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --maintainer $(MAINTAINER) \
+		 --package $(BIN_PATH)/deb/$(DEB_THEMISPP_PACKAGE_NAME)_$(NAME_SUFFIX) \
+		 --architecture $(DEB_ARCHITECTURE) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 $(DEB_DEPENDENCIES_THEMISPP) \
+		 --deb-priority optional \
+		 --after-install $(POST_INSTALL_SCRIPT) \
+		 --after-remove $(POST_UNINSTALL_SCRIPT) \
+		 --category $(PACKAGE_CATEGORY) \
+		 $(foreach file,$(THEMISPP_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
+
 	@find $(BIN_PATH) -name \*.deb
 
 rpm: DESTDIR = $(BIN_PATH)/rpm/root
 rpm: PREFIX = /usr
 
-rpm: install
+rpm: install themispp_install
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
 	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
 
@@ -675,16 +704,16 @@ rpm: install
 
 	@fpm --input-type dir \
          --output-type rpm \
-         --name $(PACKAGE_NAME)-devel \
+         --name $(RPM_DEV_PACKAGE_NAME) \
          --license $(LICENSE_NAME) \
          --url '$(COSSACKLABS_URL)' \
          --description '$(SHORT_DESCRIPTION)' \
          --rpm-summary '$(RPM_SUMMARY)' \
-         $(RPM_DEPENDENCIES_DEV) --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)" \
+         $(RPM_DEPENDENCIES_DEV) \
          --maintainer $(MAINTAINER) \
          --after-install $(POST_INSTALL_SCRIPT) \
          --after-remove $(POST_UNINSTALL_SCRIPT) \
-         --package $(BIN_PATH)/rpm/$(PACKAGE_NAME)-devel-$(NAME_SUFFIX) \
+         --package $(BIN_PATH)/rpm/$(RPM_DEV_PACKAGE_NAME)-$(NAME_SUFFIX) \
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
          $(foreach file,$(DEV_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
@@ -704,6 +733,22 @@ rpm: install
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
          $(foreach file,$(LIB_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
+
+	@fpm --input-type dir \
+         --output-type rpm \
+         --name $(RPM_THEMISPP_PACKAGE_NAME) \
+         --license $(LICENSE_NAME) \
+         --url '$(COSSACKLABS_URL)' \
+         --description '$(SHORT_DESCRIPTION)' \
+         --rpm-summary '$(RPM_SUMMARY)' \
+         --maintainer $(MAINTAINER) \
+         --after-install $(POST_INSTALL_SCRIPT) \
+         --after-remove $(POST_UNINSTALL_SCRIPT) \
+         $(RPM_DEPENDENCIES_THEMISPP) \
+         --package $(BIN_PATH)/rpm/$(RPM_THEMISPP_PACKAGE_NAME)-$(NAME_SUFFIX) \
+         --version $(RPM_VERSION) \
+         --category $(PACKAGE_CATEGORY) \
+         $(foreach file,$(THEMISPP_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
 	@find $(BIN_PATH) -name \*.rpm
 
