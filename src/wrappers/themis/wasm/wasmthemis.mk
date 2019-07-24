@@ -19,13 +19,16 @@ WASM_PATH = src/wrappers/themis/wasm
 WASM_SRC += $(WASM_PATH)/package.json
 WASM_SRC += $(wildcard $(WASM_PATH)/src/*.js)
 
-WASM_RUNTIME = $(abspath $(WASM_PATH)/runtime_exports.json)
+WASM_RUNTIME = $(abspath $(WASM_PATH)/emscripten/runtime_exports.json)
+WASM_PRE_JS  = $(abspath $(WASM_PATH)/emscripten/pre.js)
 
-$(BIN_PATH)/libthemis.js: LDFLAGS += -s EXTRA_EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME) -s RESERVED_FUNCTION_POINTERS=1
+$(BIN_PATH)/libthemis.js: LDFLAGS += -s EXTRA_EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME)
+$(BIN_PATH)/libthemis.js: LDFLAGS += -s RESERVED_FUNCTION_POINTERS=1
+$(BIN_PATH)/libthemis.js: LDFLAGS += --pre-js $(WASM_PRE_JS)
 
 $(BIN_PATH)/libthemis.js: CMD = $(CC) -o $@ $(filter %.o %a, $^) $(LDFLAGS)
 
-$(BIN_PATH)/libthemis.js: $(THEMIS_STATIC) $(WASM_RUNTIME)
+$(BIN_PATH)/libthemis.js: $(THEMIS_STATIC) $(WASM_RUNTIME) $(WASM_PRE_JS)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
