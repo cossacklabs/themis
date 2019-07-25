@@ -22,6 +22,8 @@ WASM_SRC += $(wildcard $(WASM_PATH)/src/*.js)
 WASM_RUNTIME = $(abspath $(WASM_PATH)/emscripten/runtime_exports.json)
 WASM_PRE_JS  = $(abspath $(WASM_PATH)/emscripten/pre.js)
 
+WASM_PACKAGE = $(BIN_PATH)/wasm-themis.tgz
+
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s EXTRA_EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME)
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s RESERVED_FUNCTION_POINTERS=1
 $(BIN_PATH)/libthemis.js: LDFLAGS += --pre-js $(WASM_PRE_JS)
@@ -33,15 +35,15 @@ $(BIN_PATH)/libthemis.js: $(THEMIS_STATIC) $(WASM_RUNTIME) $(WASM_PRE_JS)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-$(BIN_PATH)/wasm-themis.tgz: $(BIN_PATH)/libthemis.js $(WASM_SRC)
+$(WASM_PACKAGE): $(BIN_PATH)/libthemis.js $(WASM_SRC)
 	@mkdir -p $(@D)
 	@echo -n "pack $@ "
 	@cp $(BIN_PATH)/libthemis.{js,wasm} $(WASM_PATH)/src
 	@cd $(WASM_PATH) && npm pack >/dev/null
-	@mv $(WASM_PATH)/wasm-themis-*.tgz $(BIN_PATH)/wasm-themis.tgz
+	@mv $(WASM_PATH)/wasm-themis-*.tgz $(WASM_PACKAGE)
 	@$(PRINT_OK_)
 
-wasm_themis: check_emscripten $(BIN_PATH)/wasm-themis.tgz
+wasmthemis: check_emscripten $(WASM_PACKAGE)
 
 check_emscripten:
 ifndef IS_EMSCRIPTEN
@@ -73,4 +75,21 @@ ifndef IS_EMSCRIPTEN
 	     echo ; \
 	 fi
 	@exit 1
+endif
+
+wasmthemis_install: CMD = npm install $(abspath $(WASM_PACKAGE))
+wasmthemis_install:
+ifdef NPM_VERSION
+	@echo -n "wasm-themis install "
+	@$(BUILD_CMD_)
+else
+	@echo "Error: npm not found"
+	@exit 1
+endif
+
+wasmthemis_uninstall: CMD = rm -f $(WASM_PACKAGE) && npm uninstall wasm-themis
+wasmthemis_uninstall:
+ifdef NPM_VERSION
+	@echo -n "wasm-themis uninstall "
+	@$(BUILD_CMD_)
 endif

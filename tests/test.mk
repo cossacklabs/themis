@@ -181,7 +181,7 @@ ifdef RUST_VERSION
 	@echo "------------------------------------------------------------"
 endif
 
-test_wasm: wasm_themis
+test_wasm:
 ifdef NPM_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running wasm-themis tests."

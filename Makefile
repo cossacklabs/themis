@@ -479,7 +479,7 @@ ifdef NPM_VERSION
 	@$(BUILD_CMD_)
 endif
 
-uninstall: phpthemis_uninstall rbthemis_uninstall themispp_uninstall jsthemis_uninstall uninstall_themis uninstall_soter
+uninstall: phpthemis_uninstall rbthemis_uninstall themispp_uninstall jsthemis_uninstall wasmthemis_uninstall uninstall_themis uninstall_soter
 	@echo -n "Themis uninstalled from $(PREFIX) "
 	@$(BUILD_CMD_)
 
