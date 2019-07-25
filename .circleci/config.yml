@@ -279,9 +279,18 @@ jobs:
     steps:
       # dependencies
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common pkg-config clang
-      # nodejs
-      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get -y install nodejs npm
-      - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
+      - run:
+          name: Install Node.js via NVM
+          command: |
+            # Install latest NVM as descrbed in documentation:
+            # https://github.com/nvm-sh/nvm
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+            # Activate NVM for the current shell and make sure it's activated in next ones
+            # (CircleCI jobs have their 'specifics' in ignoring .bash_profile et al.)
+            echo 'source $HOME/.nvm/nvm.sh' >> $BASH_ENV
+            source $HOME/.nvm/nvm.sh
+            # Install current LTS version
+            nvm install v10
       # Install RVM for current user (see https://rvm.io/rvm/install)
       - run:
           name: Install RVM
@@ -306,9 +315,28 @@ jobs:
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php7.0-dev php7.0-xml php7.0-mbstring
       # Rust stable (see https://rustup.rs)
       - run: curl https://sh.rustup.rs -sSf | sh -s -- -y && cat ~/.cargo/env >> $BASH_ENV && source ~/.cargo/env && cargo --version && rustc --version
+      # Install Emscripten toolchain for Wasm support
+      # See https://emscripten.org/docs/getting_started/downloads.html
+      - restore_cache:
+          keys:
+            - emscripten
+      - run:
+          name: Install Emscripten
+          command: |
+            if [ ! -d $HOME/emsdk ]
+            then
+                cd $HOME
+                git clone https://github.com/emscripten-core/emsdk.git
+            fi
+            cd $HOME/emsdk
+            git reset --hard
+            git pull
+            ./emsdk install latest
+            ./emsdk activate latest
 
       # themis
       - checkout
+      - run: git reset HEAD && git submodule sync && git submodule update --init
       - run: make
       - run: make JAVA_HOME=/usr/lib/jvm/default-java themis_jni
       - run: sudo make install
@@ -317,7 +345,16 @@ jobs:
       - run: sudo make rbthemis_install
       - run: sudo make phpthemis_install
       - run: sudo bash -c 'echo "extension=phpthemis.so" > /etc/php/7.0/cli/conf.d/20-phpthemis.ini'
-      - run: sudo make jsthemis_install
+      - run: make jsthemis_install
+      - run:
+          name: emmake make wasmthemis_install
+          command: |
+            # Let Emscripten use it's own Node.js, then activate v10 back for running
+            nvm deactivate
+            source "$HOME/emsdk/emsdk_env.sh"
+            emmake make wasmthemis  BUILD_PATH=build-wasm
+            make wasmthemis_install BUILD_PATH=build-wasm
+            nvm use v10
       - run: make rustthemis_integration_tools
       - run: mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
       - run: rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT/
@@ -328,6 +365,13 @@ jobs:
       - run: bash tests/_integration/integration_total.sh
       - run: bash tests/tools/check_keygen.sh
 
+      - save_cache:
+          key: emscripten
+          paths:
+            - $HOME/emsdk
+            - $HOME/.emscripten
+            - $HOME/.emscripten_cache
+            - $HOME/.emscripten_cache.lock
 
   # using this php5 image until we ensure tests are working for php7
   php5:
