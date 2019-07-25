@@ -575,9 +575,11 @@ ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
 #0.9.4-153-g9915004+jessie_amd64.deb.
 	NAME_SUFFIX = $(VERSION)+$(DEB_CODENAME)_$(DEB_ARCHITECTURE).deb
 	OS_CODENAME = $(shell lsb_release -cs)
+	DEB_LIBDIR := /lib/$(shell $(CC) -dumpmachine)
 else ifeq ($(shell lsb_release -is 2> /dev/null),Ubuntu)
 	NAME_SUFFIX = $(VERSION)+$(DEB_CODENAME)_$(DEB_ARCHITECTURE).deb
 	OS_CODENAME = $(shell lsb_release -cs)
+	DEB_LIBDIR := /lib/$(shell $(CC) -dumpmachine)
 else
 # centos/rpm
 	OS_NAME = $(shell cat /etc/os-release | grep -e "^ID=\".*\"" | cut -d'"' -f2)
@@ -585,6 +587,7 @@ else
 	ARCHITECTURE = $(shell arch)
 	RPM_VERSION = $(shell echo -n "$(VERSION)"|sed s/-/_/g)
 	NAME_SUFFIX = $(RPM_VERSION).$(OS_NAME)$(OS_VERSION).$(ARCHITECTURE).rpm
+	RPM_LIBDIR := $(shell [ $$(arch) == "x86_64" ] && echo "/lib64" || echo "/lib")
 endif
 
 PACKAGE_NAME = libthemis
@@ -620,6 +623,7 @@ THEMISPP_PACKAGE_FILES += $(includedir)/themispp/
 
 deb: DESTDIR = $(BIN_PATH)/deb/root
 deb: PREFIX = /usr
+deb: libdir = $(PREFIX)/$(DEB_LIBDIR)
 
 deb: install themispp_install
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
@@ -682,6 +686,7 @@ deb: install themispp_install
 
 rpm: DESTDIR = $(BIN_PATH)/rpm/root
 rpm: PREFIX = /usr
+rpm: libdir = $(PREFIX)/$(RPM_LIBDIR)
 
 rpm: install themispp_install
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
