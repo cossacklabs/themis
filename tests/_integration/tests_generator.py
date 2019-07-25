@@ -13,7 +13,7 @@ LanguageSetting = namedtuple(
 languages = [
     LanguageSetting(name='ruby', command='ruby', script_path='./tools/ruby', extension='rb'),
     LanguageSetting(name='python', command='python', script_path='./tools/python', extension='py'),
-    LanguageSetting(name='node', command='node', script_path='./tools/js', extension='js'),
+    LanguageSetting(name='node', command='node', script_path='./tools/js/jsthemis', extension='js'),
     LanguageSetting(name='go', command='go run', script_path='./tools/go', extension='go'),
     LanguageSetting(name='php', command='php -f', script_path='./tools/php', extension='php'),
     LanguageSetting(name='rust', command='env', script_path='./tools/rust', extension='rust'),
