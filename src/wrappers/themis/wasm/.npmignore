@@ -1,5 +1,5 @@
 # Themis build system
-runtime_exports.json
+emscripten/
 wasmthemis.mk
 
 # Results of local "npm pack"
