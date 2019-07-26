@@ -69,7 +69,8 @@ endif
 
 $(BIN_PATH)/libthemis.pc:
 	@mkdir -p $(BIN_PATH)
-	@sed -e "s!%prefix%!$(PREFIX)!" \
+	@sed -e "s!%libdir%!$(libdir)!" \
+	     -e "s!%includedir%!$(includedir)!" \
 	     -e "s!%version%!$(VERSION)!" \
 	    $(SRC_PATH)/themis/libthemis.pc.in > $(BIN_PATH)/libthemis.pc
 

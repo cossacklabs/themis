@@ -78,7 +78,8 @@ endif
 
 $(BIN_PATH)/libsoter.pc:
 	@mkdir -p $(BIN_PATH)
-	@sed -e "s!%prefix%!$(PREFIX)!" \
+	@sed -e "s!%libdir%!$(libdir)!" \
+	     -e "s!%includedir%!$(includedir)!" \
 	     -e "s!%version%!$(VERSION)!" \
 	     -e "s!%crypto-libs%!$(CRYPTO_ENGINE_LDFLAGS)!" \
 	    $(SRC_PATH)/soter/libsoter.pc.in > $(BIN_PATH)/libsoter.pc
