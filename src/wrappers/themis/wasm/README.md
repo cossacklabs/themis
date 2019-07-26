@@ -45,10 +45,6 @@ themis.initialized.then(function() {
 })
 ```
 
-([_Browserify_ your code][browserify] to use WasmThemis in web apps.)
-
-[browserify]: http://browserify.org
-
 ### Documentation
 
 Read the following resources to learn more:
