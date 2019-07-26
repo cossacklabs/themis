@@ -790,11 +790,13 @@ describe('wasm-themis', function() {
             let keys = makeKeyMaterial()
             let client = new themis.SecureSession(randomID, keys.client.privateKey, keys.clientCallback)
             let server = new themis.SecureSession(serverID, keys.server.privateKey, function(id) {
-                throw "a ball"
+                throw Error('something')
             })
 
             let request = client.connectionRequest()
-            assert.throws(() => server.negotiateReply(request), "a ball")
+            assert.throws(() => server.negotiateReply(request), function(error) {
+                return (error instanceof Error) && (error.message == 'something')
+            })
 
             client.destroy()
             server.destroy()
