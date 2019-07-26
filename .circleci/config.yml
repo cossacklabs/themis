@@ -96,32 +96,6 @@ jobs:
           paths:
             - ~/valgrind
 
-      # Install Emscripten toolchain for Wasm support
-      # See https://emscripten.org/docs/getting_started/downloads.html
-
-      - restore_cache:
-          keys:
-            - emscripten
-
-      - run:
-          name: Update Emscripten
-          command: |
-            if [ ! -d $HOME/emsdk ]
-            then
-                cd $HOME
-                git clone https://github.com/emscripten-core/emsdk.git
-            fi
-            cd $HOME/emsdk
-            git reset --hard
-            git pull
-
-      - run:
-          name: Install and activate Emscripten
-          command: |
-            cd $HOME/emsdk
-            ./emsdk install latest
-            ./emsdk activate latest
-
       - checkout
       - run: git reset HEAD && git submodule sync && git submodule update --init
       - run: make
@@ -147,8 +121,6 @@ jobs:
       - run: make test_ruby
       - run: make test_go
       - run: make test_rust
-      - run: source "$HOME/emsdk/emsdk_env.sh"; emmake make BUILD_PATH=build-wasm test
-      - run: source "$HOME/emsdk/emsdk_env.sh"; emmake make BUILD_PATH=build-wasm test_wasm
       - run: make fuzz
       - run: $HOME/valgrind/bin/valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: $HOME/valgrind/bin/valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
@@ -167,14 +139,6 @@ jobs:
             - ~/.cargo
             - ~/.rustup
 
-      - save_cache:
-          key: emscripten
-          paths:
-            - ~/emsdk
-            - ~/.emscripten
-            - ~/.emscripten_cache
-            - ~/.emscripten_cache.lock
-
   jsthemis:
     docker:
       - image: cossacklabs/android-build:2019.01
@@ -188,7 +152,7 @@ jobs:
             export DEBIAN_FRONTEND=noninteractive
             sudo apt-get update
             # Also pull in some Themis dependencies
-            sudo apt-get -y install libssl-dev nodejs npm
+            sudo apt-get -y install libssl-dev nodejs npm python
             # Make sure ancient Node.js available as "node"
             sudo ln -sf /usr/bin/nodejs /usr/bin/node
       - run:
@@ -205,6 +169,24 @@ jobs:
             nvm install v8
             nvm install v10
             nvm install v12
+      # Install Emscripten toolchain for Wasm support
+      # See https://emscripten.org/docs/getting_started/downloads.html
+      - restore_cache:
+          keys:
+            - emscripten
+      - run:
+          name: Install and activate Emscripten
+          command: |
+            if [ ! -d $HOME/emsdk ]
+            then
+                cd $HOME
+                git clone https://github.com/emscripten-core/emsdk.git
+            fi
+            cd $HOME/emsdk
+            git reset --hard
+            git pull
+            ./emsdk install latest
+            ./emsdk activate latest
       - checkout
       - run:
           name: Sync submodules
@@ -216,7 +198,16 @@ jobs:
             sudo make install
             make prepare_tests_all
       - run:
-          name: Test JsThemis with Node.js from repositories
+          name: Compile WasmThemis
+          command: |
+            # Let Emscripten use it's own Node.js
+            nvm deactivate
+            source "$HOME/emsdk/emsdk_env.sh"
+            export BUILD_PATH=build-wasm
+            emmake make wasm_themis
+            emmake make test
+      - run:
+          name: Test with Node.js from repositories
           when: always
           command: |
             # Activate Node.js from repositories
@@ -229,7 +220,7 @@ jobs:
             # Run JsThemis tests
             make test_js
       - run:
-          name: Test JsThemis with Node.js v8 (maintenance)
+          name: Test with Node.js v8 (maintenance)
           when: always
           command: |
             # Activate Node.js v8
@@ -241,8 +232,10 @@ jobs:
             make jsthemis_install
             # Run JsThemis tests
             make test_js
+            # Run WasmThemis tests
+            make BUILD_PATH=build-wasm test_wasm
       - run:
-          name: Test JsThemis with Node.js v10 (LTS)
+          name: Test with Node.js v10 (LTS)
           when: always
           command: |
             # Activate Node.js v10
@@ -254,8 +247,10 @@ jobs:
             make jsthemis_install
             # Run JsThemis tests
             make test_js
+            # Run WasmThemis tests
+            make BUILD_PATH=build-wasm test_wasm
       - run:
-          name: Test JsThemis with Node.js v12 (stable)
+          name: Test with Node.js v12 (stable)
           when: always
           command: |
             # Activate Node.js v12
@@ -267,6 +262,15 @@ jobs:
             make jsthemis_install
             # Run JsThemis tests
             make test_js
+            # Run WasmThemis tests
+            make BUILD_PATH=build-wasm test_wasm
+      - save_cache:
+          key: emscripten
+          paths:
+            - ~/emsdk
+            - ~/.emscripten
+            - ~/.emscripten_cache
+            - ~/.emscripten_cache.lock
 
   integration_tests:
     docker:
