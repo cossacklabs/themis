@@ -20,7 +20,8 @@ test_keygen () {
 }
 
 test_keygen python tools/python/keygen.py
-test_keygen node tools/js/keygen.js
+test_keygen node tools/js/jsthemis/keygen.js
+test_keygen node tools/js/wasm-themis/keygen.js
 test_keygen "php -f" tools/php/keygen.php
 test_keygen ruby tools/ruby/keygen.rb
 test_keygen "go run" tools/go/keygen.go
