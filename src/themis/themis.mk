@@ -57,7 +57,7 @@ $(BIN_PATH)/$(LIBTHEMIS_A): $(THEMIS_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-$(BIN_PATH)/$(LIBTHEMIS_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS) -L$(BIN_PATH) -lsoter $(LIBTHEMIS_SO_LDFLAGS)
+$(BIN_PATH)/$(LIBTHEMIS_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS) -lsoter $(LIBTHEMIS_SO_LDFLAGS)
 
 $(BIN_PATH)/$(LIBTHEMIS_SO): $(BIN_PATH)/$(LIBSOTER_SO) $(THEMIS_OBJ)
 	@mkdir -p $(@D)

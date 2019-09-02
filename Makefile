@@ -41,7 +41,7 @@ TEST_SRC_PATH = tests
 TEST_BIN_PATH = $(BIN_PATH)/tests
 
 CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC $(CRYPTO_ENGINE_CFLAGS)
-LDFLAGS += -L/usr/local/lib
+LDFLAGS += -L$(BIN_PATH) -L/usr/local/lib
 
 unexport CFLAGS LDFLAGS
 
