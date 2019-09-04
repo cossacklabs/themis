@@ -308,7 +308,9 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
                                                     soter_engine_specific_rsa_key_t** engine_key)
 {
     int rsa_mod_size;
-    RSA* rsa;
+    RSA* rsa = NULL;
+    BIGNUM* rsa_n = NULL;
+    BIGNUM* rsa_e = NULL;
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
     const uint32_t* pub_exp;
 
@@ -360,24 +362,30 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
         return SOTER_NO_MEMORY;
     }
 
-    rsa->e = BN_new();
-    if (!(rsa->e)) {
+    rsa_e = BN_new();
+    if (!(rsa_e)) {
         RSA_free(rsa);
         return SOTER_NO_MEMORY;
     }
 
-    if (!BN_set_word(rsa->e, be32toh(*pub_exp))) {
+    if (!BN_set_word(rsa_e, be32toh(*pub_exp))) {
         RSA_free(rsa);
         return SOTER_FAIL;
     }
 
-    rsa->n = BN_new();
-    if (!(rsa->n)) {
+    rsa_n = BN_new();
+    if (!(rsa_n)) {
         RSA_free(rsa);
         return SOTER_NO_MEMORY;
     }
 
-    if (!BN_bin2bn((const unsigned char*)(key + 1), rsa_mod_size, rsa->n)) {
+    if (!BN_bin2bn((const unsigned char*)(key + 1), rsa_mod_size, rsa_n)) {
+        RSA_free(rsa);
+        return SOTER_FAIL;
+    }
+
+    /* RSA_set0_key() transfers ownership over exponents to "rsa" */
+    if (!RSA_set0_key(rsa, rsa_n, rsa_e, NULL)) {
         RSA_free(rsa);
         return SOTER_FAIL;
     }
@@ -396,7 +404,15 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
                                                      soter_engine_specific_rsa_key_t** engine_key)
 {
     int rsa_mod_size;
-    RSA* rsa;
+    RSA* rsa = NULL;
+    BIGNUM* rsa_e = NULL;
+    BIGNUM* rsa_d = NULL;
+    BIGNUM* rsa_p = NULL;
+    BIGNUM* rsa_q = NULL;
+    BIGNUM* rsa_dmp1 = NULL;
+    BIGNUM* rsa_dmq1 = NULL;
+    BIGNUM* rsa_iqmp = NULL;
+    BIGNUM* rsa_n = NULL;
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
     const uint32_t* pub_exp;
     const unsigned char* curr_bn = (const unsigned char*)(key + 1);
@@ -450,124 +466,138 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
         return SOTER_NO_MEMORY;
     }
 
-    rsa->e = BN_new();
-    if (!(rsa->e)) {
+    rsa_e = BN_new();
+    if (!(rsa_e)) {
         RSA_free(rsa);
         return SOTER_NO_MEMORY;
     }
 
-    if (!BN_set_word(rsa->e, be32toh(*pub_exp))) {
+    if (!BN_set_word(rsa_e, be32toh(*pub_exp))) {
         RSA_free(rsa);
         return SOTER_FAIL;
     }
 
     /* Private exponent */
-    rsa->d = BN_new();
-    if (!(rsa->d)) {
+    rsa_d = BN_new();
+    if (!(rsa_d)) {
         RSA_free(rsa);
         return SOTER_NO_MEMORY;
     }
 
-    if (!BN_bin2bn(curr_bn, rsa_mod_size, rsa->d)) {
+    if (!BN_bin2bn(curr_bn, rsa_mod_size, rsa_d)) {
         RSA_free(rsa);
         return SOTER_FAIL;
     }
     curr_bn += rsa_mod_size;
 
     /* p */
-    rsa->p = BN_new();
-    if (!(rsa->p)) {
+    rsa_p = BN_new();
+    if (!(rsa_p)) {
         RSA_free(rsa);
         return SOTER_NO_MEMORY;
     }
 
-    if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa->p)) {
+    if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa_p)) {
         RSA_free(rsa);
         return SOTER_FAIL;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* q */
-    rsa->q = BN_new();
-    if (!(rsa->q)) {
+    rsa_q = BN_new();
+    if (!(rsa_q)) {
         RSA_free(rsa);
         return SOTER_NO_MEMORY;
     }
 
-    if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa->q)) {
+    if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa_q)) {
         RSA_free(rsa);
         return SOTER_FAIL;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* dp */
-    rsa->dmp1 = BN_new();
-    if (!(rsa->dmp1)) {
+    rsa_dmp1 = BN_new();
+    if (!(rsa_dmp1)) {
         RSA_free(rsa);
         return SOTER_NO_MEMORY;
     }
 
-    if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa->dmp1)) {
+    if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa_dmp1)) {
         RSA_free(rsa);
         return SOTER_FAIL;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* dq */
-    rsa->dmq1 = BN_new();
-    if (!(rsa->dmq1)) {
+    rsa_dmq1 = BN_new();
+    if (!(rsa_dmq1)) {
         RSA_free(rsa);
         return SOTER_NO_MEMORY;
     }
 
-    if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa->dmq1)) {
+    if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa_dmq1)) {
         RSA_free(rsa);
         return SOTER_FAIL;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* qp */
-    rsa->iqmp = BN_new();
-    if (!(rsa->iqmp)) {
+    rsa_iqmp = BN_new();
+    if (!(rsa_iqmp)) {
         RSA_free(rsa);
         return SOTER_NO_MEMORY;
     }
 
-    if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa->iqmp)) {
+    if (!BN_bin2bn(curr_bn, rsa_mod_size / 2, rsa_iqmp)) {
         RSA_free(rsa);
         return SOTER_FAIL;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* modulus */
-    rsa->n = BN_new();
-    if (!(rsa->n)) {
+    rsa_n = BN_new();
+    if (!(rsa_n)) {
         RSA_free(rsa);
         return SOTER_NO_MEMORY;
     }
 
-    if (!BN_bin2bn(curr_bn, rsa_mod_size, rsa->n)) {
+    if (!BN_bin2bn(curr_bn, rsa_mod_size, rsa_n)) {
         RSA_free(rsa);
         return SOTER_FAIL;
     }
 
     /* If at least one CRT parameter is zero, free them */
-    if (BN_is_zero(rsa->p) || BN_is_zero(rsa->q) || BN_is_zero(rsa->dmp1) || BN_is_zero(rsa->dmq1)
-        || BN_is_zero(rsa->iqmp)) {
-        BN_free(rsa->p);
-        rsa->p = NULL;
+    if (BN_is_zero(rsa_p) || BN_is_zero(rsa_q) || BN_is_zero(rsa_dmp1) || BN_is_zero(rsa_dmq1)
+        || BN_is_zero(rsa_iqmp)) {
+        BN_free(rsa_p);
+        rsa_p = NULL;
 
-        BN_free(rsa->q);
-        rsa->q = NULL;
+        BN_free(rsa_q);
+        rsa_q = NULL;
 
-        BN_free(rsa->dmp1);
-        rsa->dmp1 = NULL;
+        BN_free(rsa_dmp1);
+        rsa_dmp1 = NULL;
 
-        BN_free(rsa->dmq1);
-        rsa->dmq1 = NULL;
+        BN_free(rsa_dmq1);
+        rsa_dmq1 = NULL;
 
-        BN_free(rsa->iqmp);
-        rsa->iqmp = NULL;
+        BN_free(rsa_iqmp);
+        rsa_iqmp = NULL;
+    }
+
+    /* RSA_set0_*() functions transfer ownership over bignums to "rsa" */
+    if (!RSA_set0_key(rsa, rsa_n, rsa_e, rsa_d)) {
+        RSA_free(rsa);
+        return SOTER_FAIL;
+    }
+    if (!RSA_set0_factors(rsa, rsa_p, rsa_q)) {
+        RSA_free(rsa);
+        return SOTER_FAIL;
+    }
+    if (!RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp)) {
+        RSA_free(rsa);
+        return SOTER_FAIL;
     }
 
     if (!EVP_PKEY_assign_RSA(pkey, rsa)) {
