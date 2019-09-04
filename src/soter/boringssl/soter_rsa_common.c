@@ -74,7 +74,7 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx, const unsigned key_leng
     /* Override default key size for RSA key. Currently OpenSSL has default key size of 1024.
      * LibreSSL has 2048. We will put 2048 explicitly */
     SOTER_IF_FAIL((1 <= EVP_PKEY_CTX_set_rsa_keygen_bits(pkey_ctx, rsa_key_length(key_length))),
-                  (BN_free(pub_exp), EVP_PKEY_CTX_free(pkey_ctx)));
+                  (EVP_PKEY_CTX_free(pkey_ctx)));
 
     if (!EVP_PKEY_keygen(pkey_ctx, &pkey)) {
         return SOTER_FAIL;
