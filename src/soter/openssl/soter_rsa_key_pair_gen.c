@@ -76,9 +76,8 @@ soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, const 
                                           EVP_PKEY_CTRL_RSA_KEYGEN_BITS,
                                           rsa_key_length(key_length),
                                           NULL)),
-                  (BN_free(pub_exp), EVP_PKEY_CTX_free(ctx->pkey_ctx)));
-    SOTER_IF_FAIL(EVP_PKEY_keygen(ctx->pkey_ctx, &pkey),
-                  (BN_free(pub_exp), EVP_PKEY_CTX_free(ctx->pkey_ctx)));
+                  (EVP_PKEY_CTX_free(ctx->pkey_ctx)));
+    SOTER_IF_FAIL(EVP_PKEY_keygen(ctx->pkey_ctx, &pkey), (EVP_PKEY_CTX_free(ctx->pkey_ctx)));
     return SOTER_SUCCESS;
 }
 
