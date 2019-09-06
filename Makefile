@@ -14,9 +14,6 @@
 # limitations under the License.
 #
 
-# Make sure that "all" is the default target no matter what
-all:
-
 ########################################################################
 
 # Increment VERSION when making a new release of Themis.
@@ -318,6 +315,8 @@ ifeq ($(NO_SCELL_COMPAT),)
 	CFLAGS += -DSCELL_COMPAT
 endif
 
+########################################################################
+
 include src/soter/soter.mk
 include src/themis/themis.mk
 ifndef CARGO
@@ -325,19 +324,48 @@ include src/wrappers/themis/jsthemis/jsthemis.mk
 include src/wrappers/themis/themispp/themispp.mk
 include src/wrappers/themis/wasm/wasmthemis.mk
 include jni/themis_jni.mk
+include tests/test.mk
+include tools/afl/fuzzy.mk
 endif
+
+########################################################################
+#
+# Principal Makefile targets
+#
+
+.DEFAULT_GOAL := all
 
 all: themis_static soter_static themis_shared soter_shared themis_pkgconfig soter_pkgconfig
 	@echo $(VERSION)
 
 soter_static:  $(BIN_PATH)/$(LIBSOTER_A)
 soter_shared:  $(BIN_PATH)/$(LIBSOTER_SO)
-soter_pkgconfig: $(BIN_PATH)/libsoter.pc
 themis_static: $(BIN_PATH)/$(LIBTHEMIS_A)
 themis_shared: $(BIN_PATH)/$(LIBTHEMIS_SO)
-themis_pkgconfig: $(BIN_PATH)/libthemis.pc
 themis_jni:    $(BIN_PATH)/$(LIBTHEMISJNI_SO)
 
+soter_pkgconfig:  $(BIN_PATH)/libsoter.pc
+themis_pkgconfig: $(BIN_PATH)/libthemis.pc
+
+fmt: $(FMT_FIXUP)
+fmt_check: $(FMT_CHECK)
+
+clean: CMD = rm -rf $(BIN_PATH)
+clean: nist_rng_test_suite_clean clean_rust
+	@$(BUILD_CMD)
+
+clean_rust:
+ifdef RUST_VERSION
+	@cargo clean
+	@rm -f tools/rust/*.rust
+endif
+
+get_version:
+	@echo $(VERSION)
+
+for-audit: $(SOTER_AUD) $(THEMIS_AUD)
+
+########################################################################
 #
 # Common build rules
 #
@@ -380,25 +408,6 @@ $(AUD_PATH)/%: $(SRC_PATH)/%
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
-ifndef CARGO
-include tests/test.mk
-include tools/afl/fuzzy.mk
-endif
-
-fmt: $(FMT_FIXUP)
-fmt_check: $(FMT_CHECK)
-
-clean: CMD = rm -rf $(BIN_PATH)
-
-clean: nist_rng_test_suite_clean clean_rust
-	@$(BUILD_CMD)
-
-clean_rust:
-ifdef RUST_VERSION
-	@cargo clean
-	@rm -f tools/rust/*.rust
-endif
-
 install: all install_soter install_themis
 	@echo -n "Themis installed to $(PREFIX)"
 	@$(PRINT_OK_)
@@ -424,9 +433,6 @@ endif
 	     echo ""; \
 	 fi
 
-get_version:
-	@echo $(VERSION)
-
 THEMIS_DIST_FILENAME = $(VERSION).tar.gz
 
 dist:
@@ -448,9 +454,6 @@ dist:
 	rsync -avz VERSION $(VERSION)
 	tar -zcvf $(THEMIS_DIST_FILENAME) $(VERSION)
 	rm -rf $(VERSION)
-
-for-audit: $(SOTER_AUD) $(THEMIS_AUD)
-
 
 phpthemis_uninstall: CMD = if [ -e src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
 phpthemis_uninstall:
