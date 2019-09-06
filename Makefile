@@ -17,6 +17,17 @@
 # Make sure that "all" is the default target no matter what
 all:
 
+########################################################################
+
+# Increment VERSION when making a new release of Themis.
+#
+# If you make breaking (backwards-incompatible) changes to API or ABI
+# then increment LIBRARY_SO_VERSION as well, and update package names.
+VERSION := $(shell test -d .git && git describe --tags || cat VERSION)
+LIBRARY_SO_VERSION = 0
+
+########################################################################
+
 #CC = clang
 
 CMAKE = cmake
@@ -185,13 +196,6 @@ endif
 ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
-
-# Increment VERSION when making a new release of Themis.
-#
-# If you make breaking (backwards-incompatible) changes to API or ABI
-# then increment LIBRARY_SO_VERSION as well, and update package names.
-VERSION := $(shell test -d .git && git describe --tags || cat VERSION)
-LIBRARY_SO_VERSION = 0
 
 PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
 RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
