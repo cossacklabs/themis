@@ -59,7 +59,7 @@ includedir   = $(prefix)/include
 libdir       = $(exec_prefix)/lib
 pkgconfigdir = $(libdir)/pkgconfig
 
-CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -fPIC $(CRYPTO_ENGINE_CFLAGS)
+CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -fPIC
 LDFLAGS += -L$(BIN_PATH)
 
 unexport CFLAGS LDFLAGS
@@ -181,52 +181,44 @@ LDFLAGS += -Wl,--no-undefined
 endif
 
 ########################################################################
+#
+# Select and configure cryptographic engine
+#
 
-# default cryptographic engine
 ifdef IS_EMSCRIPTEN
 ENGINE ?= boringssl
 else
 ENGINE ?= libressl
 endif
 
-#engine selection block
-ifneq ($(ENGINE),)
 ifeq ($(ENGINE),openssl)
-	CRYPTO_ENGINE_DEF = OPENSSL
-	CRYPTO_ENGINE_PATH=openssl
+	CRYPTO_ENGINE_DEF  = OPENSSL
+	CRYPTO_ENGINE_PATH = openssl
 else ifeq ($(ENGINE),libressl)
-	CRYPTO_ENGINE_DEF = LIBRESSL
-	CRYPTO_ENGINE_PATH=openssl
-else ifeq ($(ENGINE), boringssl)
-	CRYPTO_ENGINE_DEF = BORINGSSL
-	CRYPTO_ENGINE_PATH=boringssl
+	CRYPTO_ENGINE_DEF  = LIBRESSL
+	CRYPTO_ENGINE_PATH = openssl
+else ifeq ($(ENGINE),boringssl)
+	CRYPTO_ENGINE_DEF  = BORINGSSL
+	CRYPTO_ENGINE_PATH = boringssl
 else
-	ERROR = $(error error: engine $(ENGINE) unsupported...)
-endif
-endif
-#end of engine selection block
-
-
-# search for OpenSSL headers for MacOS
-ifdef IS_MACOS
-	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
-
-		# if brew is installed, if openssl is installed
-		PACKAGELIST = $(shell brew list | grep -om1 '^openssl')
-		ifeq ($(PACKAGELIST),openssl)
-
-		 	# path to openssl (usually "/usr/local/opt/openssl")
-			OPENSSL_PATH := $(shell brew --prefix openssl)
-			ifneq ($(OPENSSL_PATH),)
-				CRYPTO_ENGINE_INCLUDE_PATH = $(OPENSSL_PATH)/include
-				CRYPTO_ENGINE_LIB_PATH = $(OPENSSL_PATH)/lib
-			endif
-		endif
-	endif
+$(error engine $(ENGINE) is not supported)
 endif
 
 CRYPTO_ENGINE = $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)
 CFLAGS += -D$(CRYPTO_ENGINE_DEF) -DCRYPTO_ENGINE_PATH=$(CRYPTO_ENGINE_PATH)
+CFLAGS += $(CRYPTO_ENGINE_CFLAGS)
+
+# If we're building for macOS and there's Homebrew installed then prefer
+# Homebrew's OpenSSL instead of the system one by default.
+ifdef IS_MACOS
+	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
+		OPENSSL_PATH := $(shell brew --prefix openssl)
+		ifneq ($(OPENSSL_PATH),)
+			CRYPTO_ENGINE_INCLUDE_PATH = $(OPENSSL_PATH)/include
+			CRYPTO_ENGINE_LIB_PATH = $(OPENSSL_PATH)/lib
+		endif
+	endif
+endif
 
 ifneq ($(ENGINE_INCLUDE_PATH),)
 	CRYPTO_ENGINE_INCLUDE_PATH = $(ENGINE_INCLUDE_PATH)
@@ -234,6 +226,7 @@ endif
 ifneq ($(ENGINE_LIB_PATH),)
 	CRYPTO_ENGINE_LIB_PATH = $(ENGINE_LIB_PATH)
 endif
+
 ifneq ($(AUTH_SYM_ALG),)
 	CFLAGS += -D$(AUTH_SYM_ALG)
 endif
@@ -244,15 +237,12 @@ endif
 ifeq ($(RSA_KEY_LENGTH),1024)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_1024
 endif
-
 ifeq ($(RSA_KEY_LENGTH),2048)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_2048
 endif
-
 ifeq ($(RSA_KEY_LENGTH),4096)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_4096
 endif
-
 ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
@@ -334,7 +324,6 @@ ifeq ($(NO_SCELL_COMPAT),)
 	CFLAGS += -DSCELL_COMPAT
 endif
 
-ifndef ERROR
 include src/soter/soter.mk
 include src/themis/themis.mk
 ifndef CARGO
@@ -343,9 +332,8 @@ include src/wrappers/themis/themispp/themispp.mk
 include src/wrappers/themis/wasm/wasmthemis.mk
 include jni/themis_jni.mk
 endif
-endif
 
-all: err themis_static soter_static themis_shared soter_shared themis_pkgconfig soter_pkgconfig
+all: themis_static soter_static themis_shared soter_shared themis_pkgconfig soter_pkgconfig
 	@echo $(VERSION)
 
 soter_static:  $(BIN_PATH)/$(LIBSOTER_A)
@@ -402,8 +390,6 @@ ifndef CARGO
 include tests/test.mk
 include tools/afl/fuzzy.mk
 endif
-
-err: ; $(ERROR)
 
 fmt: $(FMT_FIXUP)
 fmt_check: $(FMT_CHECK)
