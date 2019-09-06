@@ -62,8 +62,6 @@ pkgconfigdir = $(libdir)/pkgconfig
 CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -fPIC
 LDFLAGS += -L$(BIN_PATH)
 
-unexport CFLAGS LDFLAGS
-
 ########################################################################
 #
 # Pretty-printing utilities
@@ -171,16 +169,6 @@ JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
   | tr -d '[[:space:]]')
 
 ########################################################################
-
-# Detect early if we have undefined symbols due to missing exports
-ifdef IS_MACOS
-LDFLAGS += -Wl,-undefined,error
-endif
-ifdef IS_LINUX
-LDFLAGS += -Wl,--no-undefined
-endif
-
-########################################################################
 #
 # Select and configure cryptographic engine
 #
@@ -247,13 +235,28 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
 
+########################################################################
+#
+# Compilation flags for C/C++ code
+#
+
+# Some build systems may call C compilers themselves. We don't want to leak
+# our compilation flags there, so do not export these variables.
+unexport CFLAGS LDFLAGS
+
+ifdef IS_MACOS
+LDFLAGS += -Wl,-undefined,error
+endif
+ifdef IS_LINUX
+LDFLAGS += -Wl,--no-undefined
+endif
+
 ifdef COVERAGE
 	CFLAGS += -g -O0 --coverage
 	LDFLAGS += --coverage
 endif
 
 ifdef DEBUG
-# Making debug build for now
 	CFLAGS += -DDEBUG -g
 endif
 
@@ -265,15 +268,14 @@ define supported =
 $(shell if echo "int main(void){}" | $(if $(2),$(2),$(CC)) -x c -fsyntax-only -Werror $(1) - >/dev/null 2>&1; then echo "yes"; fi)
 endef
 
-# Treat warnings as errors if requested
 ifeq (yes,$(WITH_FATAL_WARNINGS))
 CFLAGS += -Werror
 endif
 
-# We are security-oriented so we use a pretty paranoid set of flags
-# by default. For starters, enable default set of warnings.
+# We are security-oriented so we use a pretty paranoid^W comprehensive set
+# of compiler flags. Some of them are not available for all compilers, so
+# we have to check if we can use them first.
 CFLAGS += -Wall -Wextra
-# Various security-related diagnostics for printf/scanf family
 CFLAGS += -Wformat
 CFLAGS += -Wformat-nonliteral
 ifeq (yes,$(call supported,-Wformat-overflow))
@@ -286,7 +288,6 @@ endif
 ifeq (yes,$(call supported,-Wformat-truncation))
 CFLAGS += -Wformat-truncation
 endif
-# Warn about possible undefined behavior
 ifeq (yes,$(call supported,-Wnull-dereference))
 CFLAGS += -Wnull-dereference
 endif
@@ -297,14 +298,11 @@ ifeq (yes,$(call supported,-Wshift-negative-value))
 CFLAGS += -Wshift-negative-value
 endif
 CFLAGS += -Wstrict-overflow
-# Ensure full coverage of switch-case branches
 CFLAGS += -Wswitch
-# Forbid alloca() and variable-length arrays
 ifeq (yes,$(call supported,-Walloca))
 CFLAGS += -Walloca
 endif
 CFLAGS += -Wvla
-# Forbid pointer arithmetic with "void*" type
 CFLAGS += -Wpointer-arith
 # Forbid old-style C function prototypes
 # (skip for C++ files as older g++ complains about it)
@@ -312,13 +310,9 @@ ifeq (yes,$(call supported,-Wstrict-prototypes))
 CFLAGS += $(if $(findstring .cpp,$(suffix $<)),,-Wstrict-prototypes)
 endif
 
-# strict checks for docs
-#CFLAGS += -Wdocumentation -Wno-error=documentation
-
-# Explicitly list all exports
 CFLAGS += -fvisibility=hidden
 
-# fixing compatibility between x64 0.9.6 and x64 0.10.0
+# Binary format compatibility with Themis 0.9.6 on x86_64 architecture.
 # https://github.com/cossacklabs/themis/pull/279
 ifeq ($(NO_SCELL_COMPAT),)
 	CFLAGS += -DSCELL_COMPAT
