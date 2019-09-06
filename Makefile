@@ -152,18 +152,6 @@ NPM_VERSION := $(shell npm --version 2>/dev/null)
 PIP_VERSION := $(shell pip --version 2>/dev/null)
 PYTHON2_VERSION := $(shell which python2 >/dev/null 2>&1 && python2 --version 2>&1)
 PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
-ifdef PIP_VERSION
-PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
-endif
-ifneq ("$(wildcard src/wrappers/themis/php/Makefile)","")
-PHP_THEMIS_INSTALL = 1
-endif
-JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
-  | grep version \
-  | head -1 \
-  | awk -F: '{ print $$2 }' \
-  | sed 's/[",]//g' \
-  | tr -d '[[:space:]]')
 
 ########################################################################
 #
@@ -408,6 +396,11 @@ $(AUD_PATH)/%: $(SRC_PATH)/%
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
+########################################################################
+#
+# Themis Core installation
+#
+
 install: all install_soter install_themis
 	@echo -n "Themis installed to $(PREFIX)"
 	@$(PRINT_OK_)
@@ -433,6 +426,36 @@ endif
 	     echo ""; \
 	 fi
 
+uninstall: uninstall_themis uninstall_soter
+	@echo -n "Themis uninstalled from $(PREFIX) "
+	@$(PRINT_OK_)
+
+nsis_installer: $(BIN_PATH)/InstallThemis.exe
+
+$(BIN_PATH)/InstallThemis.exe: FORCE
+ifdef IS_MSYS
+	@$(MAKE) install PREFIX=/ DESTDIR="$(BIN_PATH)/install"
+	@ldd "$(BIN_PATH)/install/bin"/*.dll | \
+	 awk '$$3 ~ "^/usr/bin" { print $$3}' | sort --uniq | \
+	 xargs -I % cp % "$(BIN_PATH)/install/bin"
+	@makensis Themis.nsi
+	@rm -r "$(BIN_PATH)/install"
+else
+	@echo "NSIS installers can only be build in MSYS environment on Windows."
+	@echo
+	@echo "Please make sure that you are using MSYS terminal session which"
+	@echo "is usually available as 'MSYS2 MSYS' shortcut in the MSYS group"
+	@echo "of the Start menu."
+	@exit 1
+endif
+
+FORCE:
+
+########################################################################
+#
+# Themis distribution tarball
+#
+
 THEMIS_DIST_FILENAME = $(VERSION).tar.gz
 
 dist:
@@ -455,30 +478,15 @@ dist:
 	tar -zcvf $(THEMIS_DIST_FILENAME) $(VERSION)
 	rm -rf $(VERSION)
 
-phpthemis_uninstall: CMD = if [ -e src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
-phpthemis_uninstall:
-ifdef PHP_THEMIS_INSTALL
-	@echo -n "phpthemis uninstall "
-	@$(BUILD_CMD_)
-endif
+unpack_dist:
+	@tar -xf $(THEMIS_DIST_FILENAME)
 
-rbthemis_uninstall: CMD = gem uninstall themis
-rbthemis_uninstall:
-ifdef RUBY_GEM_VERSION
-	@echo -n "rbthemis uninstall "
-	@$(BUILD_CMD_)
-endif
+########################################################################
+#
+# Themis wrapper installation
+#
 
-jsthemis_uninstall: CMD = rm -rf build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz && npm uninstall jsthemis
-jsthemis_uninstall:
-ifdef NPM_VERSION
-	@echo -n "jsthemis uninstall "
-	@$(BUILD_CMD_)
-endif
-
-uninstall: phpthemis_uninstall rbthemis_uninstall themispp_uninstall jsthemis_uninstall wasmthemis_uninstall uninstall_themis uninstall_soter
-	@echo -n "Themis uninstalled from $(PREFIX) "
-	@$(BUILD_CMD_)
+## PHP #########################
 
 ifeq ($(PHP_VERSION),5)
     PHP_FOLDER = php
@@ -487,7 +495,6 @@ else
 endif
 
 phpthemis_install: CMD = cd src/wrappers/themis/$(PHP_FOLDER) && phpize && ./configure && make install
-
 phpthemis_install:
 ifdef PHP_VERSION
 	@echo -n "phpthemis install "
@@ -497,8 +504,22 @@ else
 	@exit 1
 endif
 
-rbthemis_install: CMD = cd src/wrappers/themis/ruby && gem build rbthemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
+ifneq ("$(wildcard src/wrappers/themis/php/Makefile)","")
+PHP_THEMIS_INSTALL = 1
+endif
 
+phpthemis_uninstall: CMD = if [ -e src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
+phpthemis_uninstall:
+ifdef PHP_THEMIS_INSTALL
+	@echo -n "phpthemis uninstall "
+	@$(BUILD_CMD_)
+endif
+
+uninstall: phpthemis_uninstall
+
+## Ruby ########################
+
+rbthemis_install: CMD = cd src/wrappers/themis/ruby && gem build rbthemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
 rbthemis_install:
 ifdef RUBY_GEM_VERSION
 	@echo -n "rbthemis install "
@@ -507,6 +528,24 @@ else
 	@echo "Error: ruby gem not found"
 	@exit 1
 endif
+
+rbthemis_uninstall: CMD = gem uninstall themis
+rbthemis_uninstall:
+ifdef RUBY_GEM_VERSION
+	@echo -n "rbthemis uninstall "
+	@$(BUILD_CMD_)
+endif
+
+uninstall: rbthemis_uninstall
+
+## Node.js #####################
+
+JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
+  | grep version \
+  | head -1 \
+  | awk -F: '{ print $$2 }' \
+  | sed 's/[",]//g' \
+  | tr -d '[[:space:]]')
 
 jsthemis_install: CMD = cd src/wrappers/themis/jsthemis && npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd - && npm install nan && npm install ./build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz
 jsthemis_install:
@@ -518,6 +557,21 @@ else
 	@exit 1
 endif
 
+jsthemis_uninstall: CMD = rm -rf build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz && npm uninstall jsthemis
+jsthemis_uninstall:
+ifdef NPM_VERSION
+	@echo -n "jsthemis uninstall "
+	@$(BUILD_CMD_)
+endif
+
+uninstall: jsthemis_uninstall
+
+## Python ######################
+
+ifdef PIP_VERSION
+PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
+endif
+
 pythemis_install: CMD = cd src/wrappers/themis/python/ && python2 setup.py install --record files.txt;  python3 setup.py install --record files3.txt
 pythemis_install:
 ifeq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
@@ -526,30 +580,6 @@ ifeq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
 endif
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
-
-unpack_dist:
-	@tar -xf $(THEMIS_DIST_FILENAME)
-
-nsis_installer: $(BIN_PATH)/InstallThemis.exe
-
-$(BIN_PATH)/InstallThemis.exe: FORCE
-ifdef IS_MSYS
-	@$(MAKE) install PREFIX=/ DESTDIR="$(BIN_PATH)/install"
-	@ldd "$(BIN_PATH)/install/bin"/*.dll | \
-	 awk '$$3 ~ "^/usr/bin" { print $$3}' | sort --uniq | \
-	 xargs -I % cp % "$(BIN_PATH)/install/bin"
-	@makensis Themis.nsi
-	@rm -r "$(BIN_PATH)/install"
-else
-	@echo "NSIS installers can only be build in MSYS environment on Windows."
-	@echo
-	@echo "Please make sure that you are using MSYS terminal session which"
-	@echo "is usually available as 'MSYS2 MSYS' shortcut in the MSYS group"
-	@echo "of the Start menu."
-	@exit 1
-endif
-
-FORCE:
 
 COSSACKLABS_URL = https://www.cossacklabs.com
 MAINTAINER = "Cossack Labs Limited <dev@cossacklabs.com>"
