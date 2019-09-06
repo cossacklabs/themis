@@ -59,8 +59,8 @@ includedir   = $(prefix)/include
 libdir       = $(exec_prefix)/lib
 pkgconfigdir = $(libdir)/pkgconfig
 
-CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC $(CRYPTO_ENGINE_CFLAGS)
-LDFLAGS += -L$(BIN_PATH) -L/usr/local/lib
+CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -fPIC $(CRYPTO_ENGINE_CFLAGS)
+LDFLAGS += -L$(BIN_PATH)
 
 unexport CFLAGS LDFLAGS
 
@@ -90,6 +90,11 @@ PRINT_WARNING_ = printf "$(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
 BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
 BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
 
+########################################################################
+#
+# Platform detection macros and default tweaks
+#
+
 UNAME := $(shell uname)
 
 ifeq ($(UNAME),Darwin)
@@ -103,6 +108,69 @@ endif
 ifneq ($(shell $(CC) --version 2>&1 | grep -oi "Emscripten"),)
 	IS_EMSCRIPTEN := true
 endif
+ifneq ($(shell $(CC) --version 2>&1 | grep -E -i -c "clang version"),0)
+	IS_CLANG_COMPILER := true
+endif
+
+SHARED_EXT = so
+
+ifdef IS_MACOS
+SHARED_EXT = dylib
+ifneq ($(SDK),)
+SDK_PLATFORM_VERSION=$(shell xcrun --sdk $(SDK) --show-sdk-platform-version)
+XCODE_BASE=$(shell xcode-select --print-path)
+CC=$(XCODE_BASE)/usr/bin/gcc
+BASE=$(shell xcrun --sdk $(SDK) --show-sdk-platform-path)
+SDK_BASE=$(shell xcrun --sdk $(SDK) --show-sdk-path)
+FRAMEWORKS=$(SDK_BASE)/System/Library/Frameworks/
+SDK_INCLUDES=$(SDK_BASE)/usr/include
+CFLAGS += -isysroot $(SDK_BASE)
+endif
+ifneq ($(ARCH),)
+CFLAGS += -arch $(ARCH)
+endif
+endif
+
+ifdef IS_MSYS
+SHARED_EXT = dll
+endif
+
+ifdef IS_EMSCRIPTEN
+CMAKE = emconfigure cmake
+endif
+
+# Not all platforms include /usr/local into default search path
+CFLAGS  += -I/usr/local/include
+LDFLAGS += -L/usr/local/lib
+
+########################################################################
+#
+# Detecting installed language runtimes and their versions
+#
+
+PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
+RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
+RUST_VERSION := $(shell rustc --version 2>/dev/null)
+GO_VERSION := $(shell which go >/dev/null 2>&1 && go version 2>&1)
+NODE_VERSION := $(shell node --version 2>/dev/null)
+NPM_VERSION := $(shell npm --version 2>/dev/null)
+PIP_VERSION := $(shell pip --version 2>/dev/null)
+PYTHON2_VERSION := $(shell which python2 >/dev/null 2>&1 && python2 --version 2>&1)
+PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
+ifdef PIP_VERSION
+PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
+endif
+ifneq ("$(wildcard src/wrappers/themis/php/Makefile)","")
+PHP_THEMIS_INSTALL = 1
+endif
+JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
+  | grep version \
+  | head -1 \
+  | awk -F: '{ print $$2 }' \
+  | sed 's/[",]//g' \
+  | tr -d '[[:space:]]')
+
+########################################################################
 
 # Detect early if we have undefined symbols due to missing exports
 ifdef IS_MACOS
@@ -112,15 +180,7 @@ ifdef IS_LINUX
 LDFLAGS += -Wl,--no-undefined
 endif
 
-ifdef IS_EMSCRIPTEN
-CMAKE = emconfigure cmake
-endif
-
-define themisecho
-      @tput setaf 6
-      @echo $1
-      @tput sgr0
-endef
+########################################################################
 
 # default cryptographic engine
 ifdef IS_EMSCRIPTEN
@@ -195,49 +255,6 @@ endif
 
 ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
-endif
-
-PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
-RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
-RUST_VERSION := $(shell rustc --version 2>/dev/null)
-GO_VERSION := $(shell which go >/dev/null 2>&1 && go version 2>&1)
-NODE_VERSION := $(shell node --version 2>/dev/null)
-NPM_VERSION := $(shell npm --version 2>/dev/null)
-PIP_VERSION := $(shell pip --version 2>/dev/null)
-PYTHON2_VERSION := $(shell which python2 >/dev/null 2>&1 && python2 --version 2>&1)
-PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
-ifdef PIP_VERSION
-PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
-endif
-ifneq ("$(wildcard src/wrappers/themis/php/Makefile)","")
-PHP_THEMIS_INSTALL = 1
-endif
-
-SHARED_EXT = so
-
-ifdef IS_MACOS
-SHARED_EXT = dylib
-ifneq ($(SDK),)
-SDK_PLATFORM_VERSION=$(shell xcrun --sdk $(SDK) --show-sdk-platform-version)
-XCODE_BASE=$(shell xcode-select --print-path)
-CC=$(XCODE_BASE)/usr/bin/gcc
-BASE=$(shell xcrun --sdk $(SDK) --show-sdk-platform-path)
-SDK_BASE=$(shell xcrun --sdk $(SDK) --show-sdk-path)
-FRAMEWORKS=$(SDK_BASE)/System/Library/Frameworks/
-SDK_INCLUDES=$(SDK_BASE)/usr/include
-CFLAFS += -isysroot $(SDK_BASE)
-endif
-ifneq ($(ARCH),)
-CFLAFS += -arch $(ARCH)
-endif
-endif
-
-ifdef IS_MSYS
-SHARED_EXT = dll
-endif
-
-ifneq ($(shell $(CC) --version 2>&1 | grep -E -i -c "clang version"),0)
-	IS_CLANG_COMPILER := true
 endif
 
 ifdef COVERAGE
@@ -327,13 +344,6 @@ include src/wrappers/themis/wasm/wasmthemis.mk
 include jni/themis_jni.mk
 endif
 endif
-
-JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
-  | grep version \
-  | head -1 \
-  | awk -F: '{ print $$2 }' \
-  | sed 's/[",]//g' \
-  | tr -d '[[:space:]]')
 
 all: err themis_static soter_static themis_shared soter_shared themis_pkgconfig soter_pkgconfig
 	@echo $(VERSION)
