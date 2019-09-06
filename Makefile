@@ -27,34 +27,47 @@ VERSION := $(shell test -d .git && git describe --tags || cat VERSION)
 LIBRARY_SO_VERSION = 0
 
 ########################################################################
-
-#CC = clang
+#
+# Overridable default paths to applications and build/install directories
+#
 
 CMAKE = cmake
+SHELL = /bin/bash
 
 CLANG_FORMAT ?= clang-format
 CLANG_TIDY   ?= clang-tidy
-SHELL = /bin/bash
 
 INSTALL = install
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA    = $(INSTALL) -m 644
 
+BUILD_PATH ?= build
+
 SRC_PATH = src
-ifneq ($(BUILD_PATH),)
-	BIN_PATH = $(BUILD_PATH)
-else
-	BIN_PATH = build
-endif
+BIN_PATH = $(BUILD_PATH)
 OBJ_PATH = $(BIN_PATH)/obj
 AUD_PATH = $(BIN_PATH)/for_audit
 TEST_SRC_PATH = tests
 TEST_BIN_PATH = $(BIN_PATH)/tests
 
+PREFIX ?= /usr/local
+
+prefix       = $(PREFIX)
+exec_prefix  = $(prefix)
+bindir       = $(prefix)/bin
+includedir   = $(prefix)/include
+libdir       = $(exec_prefix)/lib
+pkgconfigdir = $(libdir)/pkgconfig
+
 CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC $(CRYPTO_ENGINE_CFLAGS)
 LDFLAGS += -L$(BIN_PATH) -L/usr/local/lib
 
 unexport CFLAGS LDFLAGS
+
+########################################################################
+#
+# Pretty-printing utilities
+#
 
 NO_COLOR=\033[0m
 OK_COLOR=\033[32;01m
@@ -76,8 +89,6 @@ PRINT_WARNING = printf "$@ $(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
 PRINT_WARNING_ = printf "$(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
 BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
 BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
-
-PKGINFO_PATH = PKGINFO
 
 UNAME := $(shell uname)
 
@@ -111,23 +122,12 @@ define themisecho
       @tput sgr0
 endef
 
-# default installation prefix
-PREFIX ?= /usr/local
-
 # default cryptographic engine
 ifdef IS_EMSCRIPTEN
 ENGINE ?= boringssl
 else
 ENGINE ?= libressl
 endif
-
-# default installation paths
-prefix          = $(PREFIX)
-exec_prefix     = $(prefix)
-bindir          = $(prefix)/bin
-includedir      = $(prefix)/include
-libdir          = $(exec_prefix)/lib
-pkgconfigdir    = $(libdir)/pkgconfig
 
 #engine selection block
 ifneq ($(ENGINE),)
@@ -758,6 +758,9 @@ LICENSE=$(LICENSE_NAME)
 DESCRIPTION="$(SHORT_DESCRIPTION)"
 endef
 export PKGINFO
+
+PKGINFO_PATH = PKGINFO
+
 pkginfo:
 	@echo "$$PKGINFO" > $(PKGINFO_PATH)
 
