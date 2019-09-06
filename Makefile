@@ -430,27 +430,6 @@ uninstall: uninstall_themis uninstall_soter
 	@echo -n "Themis uninstalled from $(PREFIX) "
 	@$(PRINT_OK_)
 
-nsis_installer: $(BIN_PATH)/InstallThemis.exe
-
-$(BIN_PATH)/InstallThemis.exe: FORCE
-ifdef IS_MSYS
-	@$(MAKE) install PREFIX=/ DESTDIR="$(BIN_PATH)/install"
-	@ldd "$(BIN_PATH)/install/bin"/*.dll | \
-	 awk '$$3 ~ "^/usr/bin" { print $$3}' | sort --uniq | \
-	 xargs -I % cp % "$(BIN_PATH)/install/bin"
-	@makensis Themis.nsi
-	@rm -r "$(BIN_PATH)/install"
-else
-	@echo "NSIS installers can only be build in MSYS environment on Windows."
-	@echo
-	@echo "Please make sure that you are using MSYS terminal session which"
-	@echo "is usually available as 'MSYS2 MSYS' shortcut in the MSYS group"
-	@echo "of the Start menu."
-	@exit 1
-endif
-
-FORCE:
-
 ########################################################################
 #
 # Themis distribution tarball
@@ -580,6 +559,11 @@ ifeq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
 endif
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
+
+########################################################################
+#
+# Packaging Themis Core: Linux distributions
+#
 
 COSSACKLABS_URL = https://www.cossacklabs.com
 MAINTAINER = "Cossack Labs Limited <dev@cossacklabs.com>"
@@ -770,6 +754,37 @@ rpm: install themispp_install
          $(foreach file,$(THEMISPP_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
 	@find $(BIN_PATH) -name \*.rpm
+
+########################################################################
+#
+# Packaging Themis Core: Windows (NSIS)
+#
+
+nsis_installer: $(BIN_PATH)/InstallThemis.exe
+
+$(BIN_PATH)/InstallThemis.exe: FORCE
+ifdef IS_MSYS
+	@$(MAKE) install PREFIX=/ DESTDIR="$(BIN_PATH)/install"
+	@ldd "$(BIN_PATH)/install/bin"/*.dll | \
+	 awk '$$3 ~ "^/usr/bin" { print $$3}' | sort --uniq | \
+	 xargs -I % cp % "$(BIN_PATH)/install/bin"
+	@makensis Themis.nsi
+	@rm -r "$(BIN_PATH)/install"
+else
+	@echo "NSIS installers can only be build in MSYS environment on Windows."
+	@echo
+	@echo "Please make sure that you are using MSYS terminal session which"
+	@echo "is usually available as 'MSYS2 MSYS' shortcut in the MSYS group"
+	@echo "of the Start menu."
+	@exit 1
+endif
+
+FORCE:
+
+########################################################################
+#
+# Packaging PHP Themis: Linux distributions
+#
 
 define PKGINFO
 PACKAGE=$(PACKAGE_NAME)
