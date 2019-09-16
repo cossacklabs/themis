@@ -42,7 +42,7 @@ rustthemis_integration_tools:
 
 prepare_tests_basic: soter_test themis_test
 
-prepare_tests_all: err prepare_tests_basic themispp_test
+prepare_tests_all: prepare_tests_basic themispp_test
 ifdef PHP_VERSION
 	@echo -n "make tests for phpthemis "
 	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/phpthemis_test.sh

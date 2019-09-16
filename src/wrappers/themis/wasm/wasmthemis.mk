@@ -93,3 +93,5 @@ ifdef NPM_VERSION
 	@echo -n "wasm-themis uninstall "
 	@$(BUILD_CMD_)
 endif
+
+uninstall: wasmthemis_uninstall

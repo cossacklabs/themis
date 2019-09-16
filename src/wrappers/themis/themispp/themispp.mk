@@ -29,3 +29,5 @@ themispp_uninstall:
 	@echo -n "uninstall ThemisPP "
 	@rm -rf $(DESTDIR)/$(includedir)/themispp
 	@$(PRINT_OK_)
+
+uninstall: themispp_uninstall

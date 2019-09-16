@@ -84,7 +84,7 @@ $(BIN_PATH)/libsoter.pc:
 	     -e "s!%crypto-libs%!$(CRYPTO_ENGINE_LDFLAGS)!" \
 	    $(SRC_PATH)/soter/libsoter.pc.in > $(BIN_PATH)/libsoter.pc
 
-install_soter: err $(BIN_PATH)/$(LIBSOTER_A) $(BIN_PATH)/$(LIBSOTER_SO) $(BIN_PATH)/libsoter.pc
+install_soter: $(BIN_PATH)/$(LIBSOTER_A) $(BIN_PATH)/$(LIBSOTER_SO) $(BIN_PATH)/libsoter.pc
 	@echo -n "install Soter "
 	@mkdir -p $(DESTDIR)$(includedir)/soter
 	@mkdir -p $(DESTDIR)$(pkgconfigdir)

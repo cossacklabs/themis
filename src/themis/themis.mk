@@ -74,7 +74,7 @@ $(BIN_PATH)/libthemis.pc:
 	     -e "s!%version%!$(VERSION)!" \
 	    $(SRC_PATH)/themis/libthemis.pc.in > $(BIN_PATH)/libthemis.pc
 
-install_themis: err $(BIN_PATH)/$(LIBTHEMIS_A) $(BIN_PATH)/$(LIBTHEMIS_SO) $(BIN_PATH)/libthemis.pc
+install_themis: $(BIN_PATH)/$(LIBTHEMIS_A) $(BIN_PATH)/$(LIBTHEMIS_SO) $(BIN_PATH)/libthemis.pc
 	@echo -n "install Themis "
 	@mkdir -p $(DESTDIR)$(includedir)/themis
 	@mkdir -p $(DESTDIR)$(pkgconfigdir)

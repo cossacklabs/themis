@@ -14,36 +14,55 @@
 # limitations under the License.
 #
 
-# Make sure that "all" is the default target no matter what
-all:
+########################################################################
 
-#CC = clang
+# Increment VERSION when making a new release of Themis.
+#
+# If you make breaking (backwards-incompatible) changes to API or ABI
+# then increment LIBRARY_SO_VERSION as well, and update package names.
+VERSION := $(shell test -d .git && git describe --tags || cat VERSION)
+LIBRARY_SO_VERSION = 0
+
+########################################################################
+#
+# Overridable default paths to applications and build/install directories
+#
 
 CMAKE = cmake
+SHELL = /bin/bash
 
 CLANG_FORMAT ?= clang-format
 CLANG_TIDY   ?= clang-tidy
-SHELL = /bin/bash
 
 INSTALL = install
 INSTALL_PROGRAM = $(INSTALL)
 INSTALL_DATA    = $(INSTALL) -m 644
 
+BUILD_PATH ?= build
+
 SRC_PATH = src
-ifneq ($(BUILD_PATH),)
-	BIN_PATH = $(BUILD_PATH)
-else
-	BIN_PATH = build
-endif
+BIN_PATH = $(BUILD_PATH)
 OBJ_PATH = $(BIN_PATH)/obj
 AUD_PATH = $(BIN_PATH)/for_audit
 TEST_SRC_PATH = tests
 TEST_BIN_PATH = $(BIN_PATH)/tests
 
-CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -I/usr/local/include -fPIC $(CRYPTO_ENGINE_CFLAGS)
-LDFLAGS += -L$(BIN_PATH) -L/usr/local/lib
+PREFIX ?= /usr/local
 
-unexport CFLAGS LDFLAGS
+prefix       = $(PREFIX)
+exec_prefix  = $(prefix)
+bindir       = $(prefix)/bin
+includedir   = $(prefix)/include
+libdir       = $(exec_prefix)/lib
+pkgconfigdir = $(libdir)/pkgconfig
+
+CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -fPIC
+LDFLAGS += -L$(BIN_PATH)
+
+########################################################################
+#
+# Pretty-printing utilities
+#
 
 NO_COLOR=\033[0m
 OK_COLOR=\033[32;01m
@@ -66,7 +85,10 @@ PRINT_WARNING_ = printf "$(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
 BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
 BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
 
-PKGINFO_PATH = PKGINFO
+########################################################################
+#
+# Platform detection macros and default tweaks
+#
 
 UNAME := $(shell uname)
 
@@ -81,132 +103,8 @@ endif
 ifneq ($(shell $(CC) --version 2>&1 | grep -oi "Emscripten"),)
 	IS_EMSCRIPTEN := true
 endif
-
-# Detect early if we have undefined symbols due to missing exports
-ifdef IS_MACOS
-LDFLAGS += -Wl,-undefined,error
-endif
-ifdef IS_LINUX
-LDFLAGS += -Wl,--no-undefined
-endif
-
-ifdef IS_EMSCRIPTEN
-CMAKE = emconfigure cmake
-endif
-
-define themisecho
-      @tput setaf 6
-      @echo $1
-      @tput sgr0
-endef
-
-# default installation prefix
-PREFIX ?= /usr/local
-
-# default cryptographic engine
-ifdef IS_EMSCRIPTEN
-ENGINE ?= boringssl
-else
-ENGINE ?= libressl
-endif
-
-# default installation paths
-prefix          = $(PREFIX)
-exec_prefix     = $(prefix)
-bindir          = $(prefix)/bin
-includedir      = $(prefix)/include
-libdir          = $(exec_prefix)/lib
-pkgconfigdir    = $(libdir)/pkgconfig
-
-#engine selection block
-ifneq ($(ENGINE),)
-ifeq ($(ENGINE),openssl)
-	CRYPTO_ENGINE_DEF = OPENSSL
-	CRYPTO_ENGINE_PATH=openssl
-else ifeq ($(ENGINE),libressl)
-	CRYPTO_ENGINE_DEF = LIBRESSL
-	CRYPTO_ENGINE_PATH=openssl
-else ifeq ($(ENGINE), boringssl)
-	CRYPTO_ENGINE_DEF = BORINGSSL
-	CRYPTO_ENGINE_PATH=boringssl
-else
-	ERROR = $(error error: engine $(ENGINE) unsupported...)
-endif
-endif
-#end of engine selection block
-
-
-# search for OpenSSL headers for MacOS
-ifdef IS_MACOS
-	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
-
-		# if brew is installed, if openssl is installed
-		PACKAGELIST = $(shell brew list | grep -om1 '^openssl')
-		ifeq ($(PACKAGELIST),openssl)
-
-		 	# path to openssl (usually "/usr/local/opt/openssl")
-			OPENSSL_PATH := $(shell brew --prefix openssl)
-			ifneq ($(OPENSSL_PATH),)
-				CRYPTO_ENGINE_INCLUDE_PATH = $(OPENSSL_PATH)/include
-				CRYPTO_ENGINE_LIB_PATH = $(OPENSSL_PATH)/lib
-			endif
-		endif
-	endif
-endif
-
-CRYPTO_ENGINE = $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)
-CFLAGS += -D$(CRYPTO_ENGINE_DEF) -DCRYPTO_ENGINE_PATH=$(CRYPTO_ENGINE_PATH)
-
-ifneq ($(ENGINE_INCLUDE_PATH),)
-	CRYPTO_ENGINE_INCLUDE_PATH = $(ENGINE_INCLUDE_PATH)
-endif
-ifneq ($(ENGINE_LIB_PATH),)
-	CRYPTO_ENGINE_LIB_PATH = $(ENGINE_LIB_PATH)
-endif
-ifneq ($(AUTH_SYM_ALG),)
-	CFLAGS += -D$(AUTH_SYM_ALG)
-endif
-ifneq ($(SYM_ALG),)
-	CFLAGS += -D$(SYM_ALG)
-endif
-
-ifeq ($(RSA_KEY_LENGTH),1024)
-	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_1024
-endif
-
-ifeq ($(RSA_KEY_LENGTH),2048)
-	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_2048
-endif
-
-ifeq ($(RSA_KEY_LENGTH),4096)
-	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_4096
-endif
-
-ifeq ($(RSA_KEY_LENGTH),8192)
-	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
-endif
-
-# Increment VERSION when making a new release of Themis.
-#
-# If you make breaking (backwards-incompatible) changes to API or ABI
-# then increment LIBRARY_SO_VERSION as well, and update package names.
-VERSION := $(shell test -d .git && git describe --tags || cat VERSION)
-LIBRARY_SO_VERSION = 0
-
-PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
-RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
-RUST_VERSION := $(shell rustc --version 2>/dev/null)
-GO_VERSION := $(shell which go >/dev/null 2>&1 && go version 2>&1)
-NODE_VERSION := $(shell node --version 2>/dev/null)
-NPM_VERSION := $(shell npm --version 2>/dev/null)
-PIP_VERSION := $(shell pip --version 2>/dev/null)
-PYTHON2_VERSION := $(shell which python2 >/dev/null 2>&1 && python2 --version 2>&1)
-PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
-ifdef PIP_VERSION
-PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
-endif
-ifneq ("$(wildcard src/wrappers/themis/php/Makefile)","")
-PHP_THEMIS_INSTALL = 1
+ifneq ($(shell $(CC) --version 2>&1 | grep -E -i -c "clang version"),0)
+	IS_CLANG_COMPILER := true
 endif
 
 SHARED_EXT = so
@@ -221,10 +119,10 @@ BASE=$(shell xcrun --sdk $(SDK) --show-sdk-platform-path)
 SDK_BASE=$(shell xcrun --sdk $(SDK) --show-sdk-path)
 FRAMEWORKS=$(SDK_BASE)/System/Library/Frameworks/
 SDK_INCLUDES=$(SDK_BASE)/usr/include
-CFLAFS += -isysroot $(SDK_BASE)
+CFLAGS += -isysroot $(SDK_BASE)
 endif
 ifneq ($(ARCH),)
-CFLAFS += -arch $(ARCH)
+CFLAGS += -arch $(ARCH)
 endif
 endif
 
@@ -232,8 +130,110 @@ ifdef IS_MSYS
 SHARED_EXT = dll
 endif
 
-ifneq ($(shell $(CC) --version 2>&1 | grep -E -i -c "clang version"),0)
-	IS_CLANG_COMPILER := true
+ifdef IS_EMSCRIPTEN
+CMAKE = emconfigure cmake
+endif
+
+# Not all platforms include /usr/local into default search path
+CFLAGS  += -I/usr/local/include
+LDFLAGS += -L/usr/local/lib
+
+########################################################################
+#
+# Detecting installed language runtimes and their versions
+#
+
+PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
+RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
+RUST_VERSION := $(shell rustc --version 2>/dev/null)
+GO_VERSION := $(shell which go >/dev/null 2>&1 && go version 2>&1)
+NODE_VERSION := $(shell node --version 2>/dev/null)
+NPM_VERSION := $(shell npm --version 2>/dev/null)
+PIP_VERSION := $(shell pip --version 2>/dev/null)
+PYTHON2_VERSION := $(shell which python2 >/dev/null 2>&1 && python2 --version 2>&1)
+PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
+
+########################################################################
+#
+# Select and configure cryptographic engine
+#
+
+ifdef IS_EMSCRIPTEN
+ENGINE ?= boringssl
+else
+ENGINE ?= libressl
+endif
+
+ifeq ($(ENGINE),openssl)
+	CRYPTO_ENGINE_DEF  = OPENSSL
+	CRYPTO_ENGINE_PATH = openssl
+else ifeq ($(ENGINE),libressl)
+	CRYPTO_ENGINE_DEF  = LIBRESSL
+	CRYPTO_ENGINE_PATH = openssl
+else ifeq ($(ENGINE),boringssl)
+	CRYPTO_ENGINE_DEF  = BORINGSSL
+	CRYPTO_ENGINE_PATH = boringssl
+else
+$(error engine $(ENGINE) is not supported)
+endif
+
+CRYPTO_ENGINE = $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)
+CFLAGS += -D$(CRYPTO_ENGINE_DEF) -DCRYPTO_ENGINE_PATH=$(CRYPTO_ENGINE_PATH)
+CFLAGS += $(CRYPTO_ENGINE_CFLAGS)
+
+# If we're building for macOS and there's Homebrew installed then prefer
+# Homebrew's OpenSSL instead of the system one by default.
+ifdef IS_MACOS
+	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
+		OPENSSL_PATH := $(shell brew --prefix openssl)
+		ifneq ($(OPENSSL_PATH),)
+			CRYPTO_ENGINE_INCLUDE_PATH = $(OPENSSL_PATH)/include
+			CRYPTO_ENGINE_LIB_PATH = $(OPENSSL_PATH)/lib
+		endif
+	endif
+endif
+
+ifneq ($(ENGINE_INCLUDE_PATH),)
+	CRYPTO_ENGINE_INCLUDE_PATH = $(ENGINE_INCLUDE_PATH)
+endif
+ifneq ($(ENGINE_LIB_PATH),)
+	CRYPTO_ENGINE_LIB_PATH = $(ENGINE_LIB_PATH)
+endif
+
+ifneq ($(AUTH_SYM_ALG),)
+	CFLAGS += -D$(AUTH_SYM_ALG)
+endif
+ifneq ($(SYM_ALG),)
+	CFLAGS += -D$(SYM_ALG)
+endif
+
+ifeq ($(RSA_KEY_LENGTH),1024)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_1024
+endif
+ifeq ($(RSA_KEY_LENGTH),2048)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_2048
+endif
+ifeq ($(RSA_KEY_LENGTH),4096)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_4096
+endif
+ifeq ($(RSA_KEY_LENGTH),8192)
+	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
+endif
+
+########################################################################
+#
+# Compilation flags for C/C++ code
+#
+
+# Some build systems may call C compilers themselves. We don't want to leak
+# our compilation flags there, so do not export these variables.
+unexport CFLAGS LDFLAGS
+
+ifdef IS_MACOS
+LDFLAGS += -Wl,-undefined,error
+endif
+ifdef IS_LINUX
+LDFLAGS += -Wl,--no-undefined
 endif
 
 ifdef COVERAGE
@@ -242,7 +242,6 @@ ifdef COVERAGE
 endif
 
 ifdef DEBUG
-# Making debug build for now
 	CFLAGS += -DDEBUG -g
 endif
 
@@ -254,15 +253,14 @@ define supported =
 $(shell if echo "int main(void){}" | $(if $(2),$(2),$(CC)) -x c -fsyntax-only -Werror $(1) - >/dev/null 2>&1; then echo "yes"; fi)
 endef
 
-# Treat warnings as errors if requested
 ifeq (yes,$(WITH_FATAL_WARNINGS))
 CFLAGS += -Werror
 endif
 
-# We are security-oriented so we use a pretty paranoid set of flags
-# by default. For starters, enable default set of warnings.
+# We are security-oriented so we use a pretty paranoid^W comprehensive set
+# of compiler flags. Some of them are not available for all compilers, so
+# we have to check if we can use them first.
 CFLAGS += -Wall -Wextra
-# Various security-related diagnostics for printf/scanf family
 CFLAGS += -Wformat
 CFLAGS += -Wformat-nonliteral
 ifeq (yes,$(call supported,-Wformat-overflow))
@@ -275,7 +273,6 @@ endif
 ifeq (yes,$(call supported,-Wformat-truncation))
 CFLAGS += -Wformat-truncation
 endif
-# Warn about possible undefined behavior
 ifeq (yes,$(call supported,-Wnull-dereference))
 CFLAGS += -Wnull-dereference
 endif
@@ -286,14 +283,11 @@ ifeq (yes,$(call supported,-Wshift-negative-value))
 CFLAGS += -Wshift-negative-value
 endif
 CFLAGS += -Wstrict-overflow
-# Ensure full coverage of switch-case branches
 CFLAGS += -Wswitch
-# Forbid alloca() and variable-length arrays
 ifeq (yes,$(call supported,-Walloca))
 CFLAGS += -Walloca
 endif
 CFLAGS += -Wvla
-# Forbid pointer arithmetic with "void*" type
 CFLAGS += -Wpointer-arith
 # Forbid old-style C function prototypes
 # (skip for C++ files as older g++ complains about it)
@@ -301,19 +295,16 @@ ifeq (yes,$(call supported,-Wstrict-prototypes))
 CFLAGS += $(if $(findstring .cpp,$(suffix $<)),,-Wstrict-prototypes)
 endif
 
-# strict checks for docs
-#CFLAGS += -Wdocumentation -Wno-error=documentation
-
-# Explicitly list all exports
 CFLAGS += -fvisibility=hidden
 
-# fixing compatibility between x64 0.9.6 and x64 0.10.0
+# Binary format compatibility with Themis 0.9.6 on x86_64 architecture.
 # https://github.com/cossacklabs/themis/pull/279
 ifeq ($(NO_SCELL_COMPAT),)
 	CFLAGS += -DSCELL_COMPAT
 endif
 
-ifndef ERROR
+########################################################################
+
 include src/soter/soter.mk
 include src/themis/themis.mk
 ifndef CARGO
@@ -321,27 +312,48 @@ include src/wrappers/themis/jsthemis/jsthemis.mk
 include src/wrappers/themis/themispp/themispp.mk
 include src/wrappers/themis/wasm/wasmthemis.mk
 include jni/themis_jni.mk
-endif
+include tests/test.mk
+include tools/afl/fuzzy.mk
 endif
 
-JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
-  | grep version \
-  | head -1 \
-  | awk -F: '{ print $$2 }' \
-  | sed 's/[",]//g' \
-  | tr -d '[[:space:]]')
+########################################################################
+#
+# Principal Makefile targets
+#
 
-all: err themis_static soter_static themis_shared soter_shared themis_pkgconfig soter_pkgconfig
+.DEFAULT_GOAL := all
+
+all: themis_static soter_static themis_shared soter_shared themis_pkgconfig soter_pkgconfig
 	@echo $(VERSION)
 
 soter_static:  $(BIN_PATH)/$(LIBSOTER_A)
 soter_shared:  $(BIN_PATH)/$(LIBSOTER_SO)
-soter_pkgconfig: $(BIN_PATH)/libsoter.pc
 themis_static: $(BIN_PATH)/$(LIBTHEMIS_A)
 themis_shared: $(BIN_PATH)/$(LIBTHEMIS_SO)
-themis_pkgconfig: $(BIN_PATH)/libthemis.pc
 themis_jni:    $(BIN_PATH)/$(LIBTHEMISJNI_SO)
 
+soter_pkgconfig:  $(BIN_PATH)/libsoter.pc
+themis_pkgconfig: $(BIN_PATH)/libthemis.pc
+
+fmt: $(FMT_FIXUP)
+fmt_check: $(FMT_CHECK)
+
+clean: CMD = rm -rf $(BIN_PATH)
+clean: nist_rng_test_suite_clean clean_rust
+	@$(BUILD_CMD)
+
+clean_rust:
+ifdef RUST_VERSION
+	@cargo clean
+	@rm -f tools/rust/*.rust
+endif
+
+get_version:
+	@echo $(VERSION)
+
+for-audit: $(SOTER_AUD) $(THEMIS_AUD)
+
+########################################################################
 #
 # Common build rules
 #
@@ -384,26 +396,10 @@ $(AUD_PATH)/%: $(SRC_PATH)/%
 	@echo -n "compile "
 	@$(BUILD_CMD)
 
-ifndef CARGO
-include tests/test.mk
-include tools/afl/fuzzy.mk
-endif
-
-err: ; $(ERROR)
-
-fmt: $(FMT_FIXUP)
-fmt_check: $(FMT_CHECK)
-
-clean: CMD = rm -rf $(BIN_PATH)
-
-clean: nist_rng_test_suite_clean clean_rust
-	@$(BUILD_CMD)
-
-clean_rust:
-ifdef RUST_VERSION
-	@cargo clean
-	@rm -f tools/rust/*.rust
-endif
+########################################################################
+#
+# Themis Core installation
+#
 
 install: all install_soter install_themis
 	@echo -n "Themis installed to $(PREFIX)"
@@ -430,8 +426,14 @@ endif
 	     echo ""; \
 	 fi
 
-get_version:
-	@echo $(VERSION)
+uninstall: uninstall_themis uninstall_soter
+	@echo -n "Themis uninstalled from $(PREFIX) "
+	@$(PRINT_OK_)
+
+########################################################################
+#
+# Themis distribution tarball
+#
 
 THEMIS_DIST_FILENAME = $(VERSION).tar.gz
 
@@ -455,33 +457,15 @@ dist:
 	tar -zcvf $(THEMIS_DIST_FILENAME) $(VERSION)
 	rm -rf $(VERSION)
 
-for-audit: $(SOTER_AUD) $(THEMIS_AUD)
+unpack_dist:
+	@tar -xf $(THEMIS_DIST_FILENAME)
 
+########################################################################
+#
+# Themis wrapper installation
+#
 
-phpthemis_uninstall: CMD = if [ -e src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
-phpthemis_uninstall:
-ifdef PHP_THEMIS_INSTALL
-	@echo -n "phpthemis uninstall "
-	@$(BUILD_CMD_)
-endif
-
-rbthemis_uninstall: CMD = gem uninstall themis
-rbthemis_uninstall:
-ifdef RUBY_GEM_VERSION
-	@echo -n "rbthemis uninstall "
-	@$(BUILD_CMD_)
-endif
-
-jsthemis_uninstall: CMD = rm -rf build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz && npm uninstall jsthemis
-jsthemis_uninstall:
-ifdef NPM_VERSION
-	@echo -n "jsthemis uninstall "
-	@$(BUILD_CMD_)
-endif
-
-uninstall: phpthemis_uninstall rbthemis_uninstall themispp_uninstall jsthemis_uninstall wasmthemis_uninstall uninstall_themis uninstall_soter
-	@echo -n "Themis uninstalled from $(PREFIX) "
-	@$(BUILD_CMD_)
+## PHP #########################
 
 ifeq ($(PHP_VERSION),5)
     PHP_FOLDER = php
@@ -490,7 +474,6 @@ else
 endif
 
 phpthemis_install: CMD = cd src/wrappers/themis/$(PHP_FOLDER) && phpize && ./configure && make install
-
 phpthemis_install:
 ifdef PHP_VERSION
 	@echo -n "phpthemis install "
@@ -500,8 +483,22 @@ else
 	@exit 1
 endif
 
-rbthemis_install: CMD = cd src/wrappers/themis/ruby && gem build rbthemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
+ifneq ("$(wildcard src/wrappers/themis/php/Makefile)","")
+PHP_THEMIS_INSTALL = 1
+endif
 
+phpthemis_uninstall: CMD = if [ -e src/wrappers/themis/php/Makefile ]; then cd src/wrappers/themis/php && make distclean ; fi;
+phpthemis_uninstall:
+ifdef PHP_THEMIS_INSTALL
+	@echo -n "phpthemis uninstall "
+	@$(BUILD_CMD_)
+endif
+
+uninstall: phpthemis_uninstall
+
+## Ruby ########################
+
+rbthemis_install: CMD = cd src/wrappers/themis/ruby && gem build rbthemis.gemspec && gem install ./*.gem $(_GEM_INSTALL_OPTIONS)
 rbthemis_install:
 ifdef RUBY_GEM_VERSION
 	@echo -n "rbthemis install "
@@ -510,6 +507,24 @@ else
 	@echo "Error: ruby gem not found"
 	@exit 1
 endif
+
+rbthemis_uninstall: CMD = gem uninstall themis
+rbthemis_uninstall:
+ifdef RUBY_GEM_VERSION
+	@echo -n "rbthemis uninstall "
+	@$(BUILD_CMD_)
+endif
+
+uninstall: rbthemis_uninstall
+
+## Node.js #####################
+
+JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
+  | grep version \
+  | head -1 \
+  | awk -F: '{ print $$2 }' \
+  | sed 's/[",]//g' \
+  | tr -d '[[:space:]]')
 
 jsthemis_install: CMD = cd src/wrappers/themis/jsthemis && npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd - && npm install nan && npm install ./build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz
 jsthemis_install:
@@ -521,6 +536,21 @@ else
 	@exit 1
 endif
 
+jsthemis_uninstall: CMD = rm -rf build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz && npm uninstall jsthemis
+jsthemis_uninstall:
+ifdef NPM_VERSION
+	@echo -n "jsthemis uninstall "
+	@$(BUILD_CMD_)
+endif
+
+uninstall: jsthemis_uninstall
+
+## Python ######################
+
+ifdef PIP_VERSION
+PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
+endif
+
 pythemis_install: CMD = cd src/wrappers/themis/python/ && python2 setup.py install --record files.txt;  python3 setup.py install --record files3.txt
 pythemis_install:
 ifeq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
@@ -530,29 +560,10 @@ endif
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
 
-unpack_dist:
-	@tar -xf $(THEMIS_DIST_FILENAME)
-
-nsis_installer: $(BIN_PATH)/InstallThemis.exe
-
-$(BIN_PATH)/InstallThemis.exe: FORCE
-ifdef IS_MSYS
-	@$(MAKE) install PREFIX=/ DESTDIR="$(BIN_PATH)/install"
-	@ldd "$(BIN_PATH)/install/bin"/*.dll | \
-	 awk '$$3 ~ "^/usr/bin" { print $$3}' | sort --uniq | \
-	 xargs -I % cp % "$(BIN_PATH)/install/bin"
-	@makensis Themis.nsi
-	@rm -r "$(BIN_PATH)/install"
-else
-	@echo "NSIS installers can only be build in MSYS environment on Windows."
-	@echo
-	@echo "Please make sure that you are using MSYS terminal session which"
-	@echo "is usually available as 'MSYS2 MSYS' shortcut in the MSYS group"
-	@echo "of the Start menu."
-	@exit 1
-endif
-
-FORCE:
+########################################################################
+#
+# Packaging Themis Core: Linux distributions
+#
 
 COSSACKLABS_URL = https://www.cossacklabs.com
 MAINTAINER = "Cossack Labs Limited <dev@cossacklabs.com>"
@@ -744,6 +755,37 @@ rpm: install themispp_install
 
 	@find $(BIN_PATH) -name \*.rpm
 
+########################################################################
+#
+# Packaging Themis Core: Windows (NSIS)
+#
+
+nsis_installer: $(BIN_PATH)/InstallThemis.exe
+
+$(BIN_PATH)/InstallThemis.exe: FORCE
+ifdef IS_MSYS
+	@$(MAKE) install PREFIX=/ DESTDIR="$(BIN_PATH)/install"
+	@ldd "$(BIN_PATH)/install/bin"/*.dll | \
+	 awk '$$3 ~ "^/usr/bin" { print $$3}' | sort --uniq | \
+	 xargs -I % cp % "$(BIN_PATH)/install/bin"
+	@makensis Themis.nsi
+	@rm -r "$(BIN_PATH)/install"
+else
+	@echo "NSIS installers can only be build in MSYS environment on Windows."
+	@echo
+	@echo "Please make sure that you are using MSYS terminal session which"
+	@echo "is usually available as 'MSYS2 MSYS' shortcut in the MSYS group"
+	@echo "of the Start menu."
+	@exit 1
+endif
+
+FORCE:
+
+########################################################################
+#
+# Packaging PHP Themis: Linux distributions
+#
+
 define PKGINFO
 PACKAGE=$(PACKAGE_NAME)
 SECTION=$(PACKAGE_CATEGORY)
@@ -754,6 +796,9 @@ LICENSE=$(LICENSE_NAME)
 DESCRIPTION="$(SHORT_DESCRIPTION)"
 endef
 export PKGINFO
+
+PKGINFO_PATH = PKGINFO
+
 pkginfo:
 	@echo "$$PKGINFO" > $(PKGINFO_PATH)
 
