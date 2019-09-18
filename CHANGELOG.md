@@ -9,7 +9,7 @@ additional safety checks and tricky bug fixes.
 
 **Breaking changes:**
 
-- Default installation path has been changed from `/usr` to `/usr/local`.
+- Default installation path of Themis core library on Linux has been changed from `/usr` to `/usr/local`.
 - Some of GoThemis APIs have been renamed to comply with Go naming convention (old API are marked as deprecated).
 - Deprecated `rubythemis` gem has been completely removed in favor to `rbthemis`.
 
@@ -18,6 +18,8 @@ _Code:_
 - **Core**
 
   - **Soter** (low-level security core used by Themis)
+
+    Improved security and code quality, better handling of secrets and memory management.
 
     - Introduced new internal function: `soter_wipe()`.
       It can be used to securely wipe sensitive data from memory after it's no longer necessary.
@@ -39,7 +41,7 @@ _Code:_
     - Improved key validity checks across all Themis cryptosystems.
       ([#486](https://github.com/cossacklabs/themis/pull/486))
 
-    - EC key generator could produce an invalid public key without returning an error.
+    - Improved error handling for EC key generator that could produce an invalid public key without returning an error.
       Thanks to [**@vixentael**](https://github.com/vixentael) for finding this issue.
       ([#500](https://github.com/cossacklabs/themis/pull/500))
 
@@ -49,7 +51,7 @@ _Code:_
       ([#496](https://github.com/cossacklabs/themis/pull/496),
        [#497](https://github.com/cossacklabs/themis/pull/497))
 
-    - Minor performance improvements in encryption/decryption code path.
+    - Improved performance of Secure Cell's encryption/decryption.
       ([#496](https://github.com/cossacklabs/themis/pull/496))
 
   - **Library ABI**
@@ -90,7 +92,7 @@ _Code:_
       ([#453](https://github.com/cossacklabs/themis/pull/453),
        [#455](https://github.com/cossacklabs/themis/pull/455))
 
-    - Accurate dependencies for development packages make sure you don't have to install anything manually after installing Themis from package repositories.
+    - Made dependencies of development packages more accurate to make sure you don't have to install anything manually after installing Themis from package repositories.
       ([#446](https://github.com/cossacklabs/themis/pull/446))
 
     - NSIS installer is now available for Windows.
