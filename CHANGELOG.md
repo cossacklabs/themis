@@ -10,8 +10,8 @@ additional safety checks and tricky bug fixes.
 **Breaking changes:**
 
 - Default installation path has been changed from `/usr` to `/usr/local`.
-- Some API of GoThemis have been renamed (old API is considered deprecated).
-- Deprecated `rubythemis` gem has been completely removed.
+- Some of GoThemis APIs have been renamed to comply with Go naming convention (old API are marked as deprecated).
+- Deprecated `rubythemis` gem has been completely removed in favor to `rbthemis`.
 
 _Code:_
 
@@ -19,16 +19,16 @@ _Code:_
 
   - **Soter** (low-level security core used by Themis)
 
-    - New function: `soter_wipe()`.
+    - Introduced new internal function: `soter_wipe()`.
       It can be used to securely wipe sensitive data from memory after it's no longer necessary.
       All Themis cryptosystems now make use of this new API.
       ([#488](https://github.com/cossacklabs/themis/pull/488))
 
-    - Non-cryptographically secure PRNG could be used if the backend does not provide a cryptographically secure one.
+    - Improved usage and error handling of OpenSSL/BoringSSL PRNGs.
       Thanks to [**@veorq**](https://github.com/veorq) for finding this issue.
       ([#485](https://github.com/cossacklabs/themis/pull/485))
 
-    - Multiple memory safety fixes in OpenSSL/BoringSSL usage.
+    - Improved memory safety and fixed potential corner-case issues in OpenSSL/BoringSSL usage.
       Thanks to [**@outspace**](https://github.com/outspace) for identifying these issues.
       ([#501](https://github.com/cossacklabs/themis/pull/501),
        [#524](https://github.com/cossacklabs/themis/pull/524),
@@ -58,7 +58,7 @@ _Code:_
       This ensures that no compatibility issues arise if we ever need to introduce breaking changes in ABI.
       ([#454](https://github.com/cossacklabs/themis/pull/454))
 
-    - Remove private symbols from public export lists.
+    - Removed private symbols from public export lists.
       Themis has been accidentally exporting various private utility functions.
       Private functions not intended for public use are now kept hidden.
       ([#458](https://github.com/cossacklabs/themis/pull/458),
@@ -86,7 +86,7 @@ _Code:_
       Multiarch enables parallel installation of 32-bit and 64-bit versions of the library.
       This is particularly important on CentOS where some tools like _pkg-config_ failed to locate Themis due to non-standard installation path.
 
-    - Makefile now supports a number of [standard GNU variables](https://www.gnu.org/prep/standards/html_node/Directory-Variables.html) like `libdir`.
+    - Updated Makefile to support a number of [standard GNU variables](https://www.gnu.org/prep/standards/html_node/Directory-Variables.html) like `libdir`.
       ([#453](https://github.com/cossacklabs/themis/pull/453),
        [#455](https://github.com/cossacklabs/themis/pull/455))
 
