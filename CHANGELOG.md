@@ -4,6 +4,7 @@
 
 **TL;DR:**
 Added WasmThemis to support WebAssembly,
+added support for MSYS2 builds and NSIS installer for Windows,
 improved packaging and platform compatibility,
 additional safety checks and tricky bug fixes.
 
