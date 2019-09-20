@@ -35,7 +35,9 @@ static int soter_alg_to_curve_nid(soter_asym_ka_alg_t alg)
 SOTER_PRIVATE_API
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_alg_t alg)
 {
-    EVP_PKEY* pkey;
+    soter_status_t err = SOTER_FAIL;
+    EVP_PKEY* pkey = NULL;
+    EC_KEY* ec = NULL;
     int nid = soter_alg_to_curve_nid(alg);
 
     if ((!asym_ka_ctx) || (0 == nid)) {
@@ -48,28 +50,36 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_al
     }
 
     if (!EVP_PKEY_set_type(pkey, EVP_PKEY_EC)) {
-        EVP_PKEY_free(pkey);
-        return SOTER_FAIL;
+        goto free_pkey;
     }
 
     asym_ka_ctx->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
     if (!(asym_ka_ctx->pkey_ctx)) {
-        EVP_PKEY_free(pkey);
-        return SOTER_FAIL;
+        err = SOTER_NO_MEMORY;
+        goto free_pkey;
     }
-    EC_KEY* ec = EC_KEY_new_by_curve_name(nid);
+
+    ec = EC_KEY_new_by_curve_name(nid);
     if (!ec) {
-        EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
-        return SOTER_FAIL;
+        goto free_pkey_ctx;
     }
 
     if (1 != EVP_PKEY_set1_EC_KEY(pkey, ec)) {
-        EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
-        EC_KEY_free(ec);
-        return SOTER_FAIL;
+        goto free_ec_key;
     }
+
     EC_KEY_free(ec);
+    EVP_PKEY_free(pkey);
     return SOTER_SUCCESS;
+
+free_ec_key:
+    EC_KEY_free(ec);
+free_pkey_ctx:
+    EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
+    asym_ka_ctx->pkey_ctx = NULL;
+free_pkey:
+    EVP_PKEY_free(pkey);
+    return err;
 }
 
 SOTER_PRIVATE_API
@@ -79,11 +89,8 @@ soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
         return SOTER_INVALID_PARAMETER;
     }
     if (asym_ka_ctx->pkey_ctx) {
-        EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
-        if (pkey) {
-            EVP_PKEY_free(pkey);
-        }
         EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
+        asym_ka_ctx->pkey_ctx = NULL;
     }
     return SOTER_SUCCESS;
 }
