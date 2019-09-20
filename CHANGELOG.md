@@ -35,7 +35,8 @@ _Code:_
       Thanks to [**@outspace**](https://github.com/outspace) for identifying these issues.
       ([#501](https://github.com/cossacklabs/themis/pull/501),
        [#524](https://github.com/cossacklabs/themis/pull/524),
-       [#525](https://github.com/cossacklabs/themis/pull/525))
+       [#525](https://github.com/cossacklabs/themis/pull/525),
+       [#535](https://github.com/cossacklabs/themis/pull/535))
 
   - **Key generation**
 
