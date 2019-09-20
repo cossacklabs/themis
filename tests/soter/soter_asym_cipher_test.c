@@ -160,10 +160,11 @@ void test_api(int key_length)
     testsuite_fail_unless(SOTER_INVALID_PARAMETER
                               == soter_asym_cipher_init(NULL, key_data, key_data_length, SOTER_ASYM_CIPHER_OAEP),
                           "soter_asym_cipher_init: invalid context");
-    testsuite_fail_unless(SOTER_FAIL
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
                               == soter_asym_cipher_init(&ctx, NULL, key_data_length, SOTER_ASYM_CIPHER_OAEP),
                           "soter_asym_cipher_init: invalid key");
-    testsuite_fail_unless(SOTER_FAIL == soter_asym_cipher_init(&ctx, key_data, 0, SOTER_ASYM_CIPHER_OAEP),
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
+                              == soter_asym_cipher_init(&ctx, key_data, 0, SOTER_ASYM_CIPHER_OAEP),
                           "soter_asym_cipher_init: invalid key length");
     testsuite_fail_unless(SOTER_INVALID_PARAMETER
                               == soter_asym_cipher_init(&ctx,
@@ -237,10 +238,10 @@ void test_api(int key_length)
     testsuite_fail_unless(SOTER_INVALID_PARAMETER
                               == soter_asym_cipher_init(NULL, key_data, key_data_length, SOTER_ASYM_CIPHER_OAEP),
                           "soter_asym_cipher_init: invalid context");
-    testsuite_fail_unless(SOTER_FAIL
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
                               == soter_asym_cipher_init(&decrypt_ctx, NULL, key_data_length, SOTER_ASYM_CIPHER_OAEP),
                           "soter_asym_cipher_init: invalid key");
-    testsuite_fail_unless(SOTER_FAIL
+    testsuite_fail_unless(SOTER_INVALID_PARAMETER
                               == soter_asym_cipher_init(&decrypt_ctx, key_data, 0, SOTER_ASYM_CIPHER_OAEP),
                           "soter_asym_cipher_init: invalid key length");
     testsuite_fail_unless(SOTER_INVALID_PARAMETER
