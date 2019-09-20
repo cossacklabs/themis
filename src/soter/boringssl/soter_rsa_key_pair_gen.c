@@ -35,27 +35,47 @@ soter_rsa_key_pair_gen_t* soter_rsa_key_pair_gen_create(const unsigned key_lengt
 
 soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, const unsigned key_length)
 {
-    EVP_PKEY* pkey;
+    soter_status_t err = SOTER_FAIL;
+    EVP_PKEY* pkey = NULL;
+
     pkey = EVP_PKEY_new();
-    SOTER_CHECK(pkey);
+    if (!pkey) {
+        return SOTER_NO_MEMORY;
+    }
+
     /* Only RSA supports asymmetric encryption */
-    SOTER_IF_FAIL(EVP_PKEY_set_type(pkey, EVP_PKEY_RSA), EVP_PKEY_free(pkey));
+    if (EVP_PKEY_set_type(pkey, EVP_PKEY_RSA) != 1) {
+        goto free_pkey;
+    }
+
     ctx->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
-    SOTER_IF_FAIL(ctx->pkey_ctx, EVP_PKEY_free(pkey));
-    SOTER_IF_FAIL(soter_rsa_gen_key(ctx->pkey_ctx, key_length) == SOTER_SUCCESS,
-                  EVP_PKEY_CTX_free(ctx->pkey_ctx));
+    if (!ctx->pkey_ctx) {
+        err = SOTER_NO_MEMORY;
+        goto free_pkey;
+    }
+
+    err = soter_rsa_gen_key(ctx->pkey_ctx, key_length);
+    if (err != SOTER_SUCCESS) {
+        goto free_pkey_ctx;
+    }
+
+    EVP_PKEY_free(pkey);
     return SOTER_SUCCESS;
+
+free_pkey_ctx:
+    EVP_PKEY_CTX_free(ctx->pkey_ctx);
+    ctx->pkey_ctx = NULL;
+free_pkey:
+    EVP_PKEY_free(pkey);
+    return err;
 }
 
 soter_status_t soter_rsa_key_pair_gen_cleanup(soter_rsa_key_pair_gen_t* ctx)
 {
     SOTER_CHECK_PARAM(ctx);
     if (ctx->pkey_ctx) {
-        EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
-        if (pkey) {
-            EVP_PKEY_free(pkey);
-        }
         EVP_PKEY_CTX_free(ctx->pkey_ctx);
+        ctx->pkey_ctx = NULL;
     }
     return SOTER_SUCCESS;
 }
