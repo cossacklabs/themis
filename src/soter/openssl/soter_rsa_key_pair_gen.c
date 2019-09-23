@@ -48,48 +48,102 @@ soter_rsa_key_pair_gen_t* soter_rsa_key_pair_gen_create(const unsigned key_lengt
     SOTER_IF_FAIL_(soter_rsa_key_pair_gen_init(ctx, key_length) == SOTER_SUCCESS, free(ctx));
     return ctx;
 }
+
+static soter_status_t soter_set_default_rsa_pub_exp(EVP_PKEY_CTX* pkey_ctx)
+{
+    BIGNUM* pub_exp;
+
+    pub_exp = BN_new();
+    if (!pub_exp) {
+        return SOTER_NO_MEMORY;
+    }
+
+    if (BN_set_word(pub_exp, RSA_F4) != 1) {
+        BN_free(pub_exp);
+        return SOTER_FAIL;
+    }
+
+    if (EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_PUBEXP, 0, pub_exp) <= 0) {
+        BN_free(pub_exp);
+        return SOTER_FAIL;
+    }
+    /* pub_exp is now owned by pkey_ctx */
+
+    return SOTER_SUCCESS;
+}
+
+static soter_status_t soter_set_rsa_key_length(EVP_PKEY_CTX* pkey_ctx, unsigned length)
+{
+    if (EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_BITS, length, NULL) != 1) {
+        return SOTER_FAIL;
+    }
+    return SOTER_SUCCESS;
+}
+
 soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, const unsigned key_length)
 {
-    EVP_PKEY* pkey;
+    soter_status_t err = SOTER_FAIL;
+    EVP_PKEY* pkey = NULL;
+
     pkey = EVP_PKEY_new();
-    SOTER_CHECK(pkey);
+    if (!pkey) {
+        return SOTER_NO_MEMORY;
+    }
+
     /* Only RSA supports asymmetric encryption */
-    SOTER_IF_FAIL(EVP_PKEY_set_type(pkey, EVP_PKEY_RSA), EVP_PKEY_free(pkey));
+    if (EVP_PKEY_set_type(pkey, EVP_PKEY_RSA) != 1) {
+        goto free_pkey;
+    }
+
     ctx->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
-    SOTER_IF_FAIL(ctx->pkey_ctx, EVP_PKEY_free(pkey));
-    BIGNUM* pub_exp;
-    SOTER_IF_FAIL(EVP_PKEY_keygen_init(ctx->pkey_ctx), EVP_PKEY_CTX_free(ctx->pkey_ctx));
+    if (!ctx->pkey_ctx) {
+        err = SOTER_NO_MEMORY;
+        goto free_pkey;
+    }
 
-    /* Although it seems that OpenSSL/LibreSSL use 0x10001 as default public exponent, we will set
-     * it explicitly just in case */
-    pub_exp = BN_new();
-    SOTER_CHECK(pub_exp);
-    SOTER_IF_FAIL(BN_set_word(pub_exp, RSA_F4), (BN_free(pub_exp), EVP_PKEY_CTX_free(ctx->pkey_ctx)));
+    if (EVP_PKEY_keygen_init(ctx->pkey_ctx) != 1) {
+        goto free_pkey_ctx;
+    }
 
-    SOTER_IF_FAIL(1 <= EVP_PKEY_CTX_ctrl(ctx->pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_PUBEXP, 0, pub_exp),
-                  (BN_free(pub_exp), EVP_PKEY_CTX_free(ctx->pkey_ctx)));
-    /* Override default key size for RSA key. Currently OpenSSL has default key size of 1024.
-     * LibreSSL has 2048. We will put 2048 explicitly */
-    SOTER_IF_FAIL((1 <= EVP_PKEY_CTX_ctrl(ctx->pkey_ctx,
-                                          -1,
-                                          -1,
-                                          EVP_PKEY_CTRL_RSA_KEYGEN_BITS,
-                                          rsa_key_length(key_length),
-                                          NULL)),
-                  (EVP_PKEY_CTX_free(ctx->pkey_ctx)));
-    SOTER_IF_FAIL(EVP_PKEY_keygen(ctx->pkey_ctx, &pkey), (EVP_PKEY_CTX_free(ctx->pkey_ctx)));
+    /*
+     * Although it seems that OpenSSL/LibreSSL use 0x10001 as default public exponent,
+     * we will set it explicitly just in case.
+     */
+    err = soter_set_default_rsa_pub_exp(ctx->pkey_ctx);
+    if (err != SOTER_SUCCESS) {
+        goto free_pkey_ctx;
+    }
+
+    /*
+     * Override default key length for RSA key. Currently OpenSSL has default
+     * key length of 1024. LibreSSL has 2048. We will set length explicitly.
+     */
+    err = soter_set_rsa_key_length(ctx->pkey_ctx, rsa_key_length(key_length));
+    if (err != SOTER_SUCCESS) {
+        goto free_pkey_ctx;
+    }
+
+    if (EVP_PKEY_keygen(ctx->pkey_ctx, &pkey) != 1) {
+        goto free_pkey_ctx;
+    }
+
+    EVP_PKEY_free(pkey);
     return SOTER_SUCCESS;
+
+free_pkey_ctx:
+    EVP_PKEY_CTX_free(ctx->pkey_ctx);
+    ctx->pkey_ctx = NULL;
+free_pkey:
+    EVP_PKEY_free(pkey);
+    return err;
 }
 
 soter_status_t soter_rsa_key_pair_gen_cleanup(soter_rsa_key_pair_gen_t* ctx)
 {
     SOTER_CHECK_PARAM(ctx);
     if (ctx->pkey_ctx) {
-        EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
         EVP_PKEY_CTX_free(ctx->pkey_ctx);
-        if (pkey) {
-            EVP_PKEY_free(pkey);
-        }
+        ctx->pkey_ctx = NULL;
     }
     return SOTER_SUCCESS;
 }
