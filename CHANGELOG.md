@@ -76,7 +76,7 @@ _Code:_
 
     - Updated Makefile to support a number of [standard GNU variables](https://www.gnu.org/prep/standards/html_node/Directory-Variables.html) like `libdir` ([#453](https://github.com/cossacklabs/themis/pull/453), [#455](https://github.com/cossacklabs/themis/pull/455)).
 
-    - Improved accuracy of development packages to make sure you don't have to install anything manually after installing Themis from package repositories ([#446](https://github.com/cossacklabs/themis/pull/446)).
+    - Improved accuracy of package dependencies to make sure you don't have to install anything manually after installing Themis from package repositories ([#446](https://github.com/cossacklabs/themis/pull/446)).
 
     - NSIS installer is now available for Windows.
       It can be built with `make nsis_installer` command in MSYS2 environment.
@@ -114,7 +114,7 @@ _Code:_
     - Some APIs have been renamed to conform with the Go naming conventions ([#424](https://github.com/cossacklabs/themis/pull/424)).
 
       The old names are now deprecated and scheduled for removal in the next release.
-      Please start using the new names when you upgrade.
+      Please migrate to using the new names when you upgrade.
 
       | Old API                                | New API                    |
       | -------------------------------------- | -------------------------- |
