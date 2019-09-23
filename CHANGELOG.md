@@ -136,7 +136,7 @@ _Code:_
 
 - **Java**
 
-  - JNI wrapper for desktop Java does not require separate installation of Themis Core from now on ([#450](https://github.com/cossacklabs/themis/pull/450)).
+  - JNI wrapper for desktop Java does not require a separate installation of Themis Core from now on ([#450](https://github.com/cossacklabs/themis/pull/450)).
 
 - **Node.js**
 
@@ -174,14 +174,14 @@ _Code:_
     and the How-To guide is available [on the documentation server](https://docs.cossacklabs.com/pages/js-wasm-howto/) ([#457](https://github.com/cossacklabs/themis/pull/457), [#461](https://github.com/cossacklabs/themis/pull/461), [#462](https://github.com/cossacklabs/themis/pull/462), [#473](https://github.com/cossacklabs/themis/pull/473), [#482](https://github.com/cossacklabs/themis/pull/482), [#489](https://github.com/cossacklabs/themis/pull/489), [#490](https://github.com/cossacklabs/themis/pull/490), [#491](https://github.com/cossacklabs/themis/pull/491), [#492](https://github.com/cossacklabs/themis/pull/492),[#494](https://github.com/cossacklabs/themis/pull/494), [#495](https://github.com/cossacklabs/themis/pull/495), [#498](https://github.com/cossacklabs/themis/pull/498), [#507](https://github.com/cossacklabs/themis/pull/507), [#513](https://github.com/cossacklabs/themis/pull/513)).
 
   - WasmThemis is tested with current Node.js LTS versions, popular Web browsers, and Electron framework.
-    Obviously, it is also tested for compatibility with other Themis wrappers ([#509](https://github.com/cossacklabs/themis/pull/509), [#510](https://github.com/cossacklabs/themis/pull/510), [#511](https://github.com/cossacklabs/themis/pull/511)).
+    It is also tested for compatibility with other Themis wrappers ([#509](https://github.com/cossacklabs/themis/pull/509), [#510](https://github.com/cossacklabs/themis/pull/510), [#511](https://github.com/cossacklabs/themis/pull/511)).
 
 - **Windows**
 
   - It is now possible to compile Themis Core for Windows using MSYS2 environment.
     See the instructions [here](https://github.com/cossacklabs/themis/issues/522#issuecomment-527519113) ([#469](https://github.com/cossacklabs/themis/pull/469)).
 
-  - NSIS installer is now provided for distribution of Themis on Windows.
+  - NSIS installer is now provided for the distribution of Themis on Windows.
     It's compatible with the new MSYS2 builds ([#474](https://github.com/cossacklabs/themis/pull/474)).
 
   - It is now possible to compile JsThemis on Windows, given that Themis Core is installed ([#475](https://github.com/cossacklabs/themis/pull/475)).
@@ -208,7 +208,7 @@ _Infrastructure:_
   - `make all` can be run in MSYS2 environment on Windows now ([#469](https://github.com/cossacklabs/themis/pull/469));
   - `make nsis_installer` builds NSIS installer for Windows binaries ([#474](https://github.com/cossacklabs/themis/pull/474));
   - `make deb` and `make rpm` now build ThemisPP packages, too ([#506](https://github.com/cossacklabs/themis/pull/506));
-  - `NO_NIST_STS` environment variable can be used to disable long-running NIST statistical test suite when doing `make test` ([#456](https://github.com/cossacklabs/themis/pull/456)).
+  - `NO_NIST_STS` environment variable can be used to disable the long-running NIST statistical test suite when doing `make test` ([#456](https://github.com/cossacklabs/themis/pull/456)).
 
 - Removed Makefile targets:
 
@@ -239,7 +239,7 @@ _Code:_
 
 _Infrastructure:_
 
-- Minor fixes in packaging process ([#442](https://github.com/cossacklabs/themis/pull/442)).
+- Minor fixes in the packaging process ([#442](https://github.com/cossacklabs/themis/pull/442)).
 
 
 ## [0.11.0](https://github.com/cossacklabs/themis/releases/tag/0.11.0), March 28th 2019
