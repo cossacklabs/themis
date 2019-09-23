@@ -64,11 +64,10 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_al
         goto free_pkey_ctx;
     }
 
-    if (1 != EVP_PKEY_set1_EC_KEY(pkey, ec)) {
+    if (EVP_PKEY_assign_EC_KEY(pkey, ec) != 1) {
         goto free_ec_key;
     }
 
-    EC_KEY_free(ec);
     EVP_PKEY_free(pkey);
     return SOTER_SUCCESS;
 
