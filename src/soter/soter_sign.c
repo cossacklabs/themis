@@ -17,15 +17,8 @@
 #include "soter/soter_sign_ecdsa.h"
 #include "soter/soter_sign_rsa.h"
 
-#ifdef CRYPTO_ENGINE_PATH
-#define CEP <soter/CRYPTO_ENGINE_PATH/soter_engine.h>
-#include CEP
-#undef CEP
-#else
-#include <soter/openssl/soter_engine.h>
-#endif
-
 #include "soter/soter_api.h"
+#include "soter/soter_t.h"
 
 SOTER_PRIVATE_API
 soter_status_t soter_sign_init(soter_sign_ctx_t* ctx,
