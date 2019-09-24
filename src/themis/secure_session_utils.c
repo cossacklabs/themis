@@ -196,7 +196,7 @@ themis_status_t verify_mac(const void* key,
         return THEMIS_INVALID_PARAMETER;
     }
 
-    if (memcmp(mac, computed_mac, mac_length)) {
+    if (memcmp(mac, computed_mac, mac_length) != 0) {
         return THEMIS_INVALID_SIGNATURE;
     }
 

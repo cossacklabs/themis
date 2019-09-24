@@ -188,7 +188,7 @@ static themis_status_t ed_verify(uint8_t pos, const ge_p3* point, const uint8_t*
 
     sc_reduce(k);
 
-    if (memcmp(k, signature, ED25519_GE_LENGTH)) {
+    if (memcmp(k, signature, ED25519_GE_LENGTH) != 0) {
         return THEMIS_INVALID_SIGNATURE;
     }
 
@@ -322,7 +322,7 @@ static themis_status_t ed_dbl_base_verify(uint8_t pos,
 
     sc_reduce(k);
 
-    if (memcmp(k, signature, ED25519_GE_LENGTH)) {
+    if (memcmp(k, signature, ED25519_GE_LENGTH) != 0) {
         return THEMIS_INVALID_SIGNATURE;
     }
 
@@ -449,7 +449,7 @@ static themis_status_t ed_point_verify(uint8_t pos,
 
     sc_reduce(k);
 
-    if (memcmp(k, signature, ED25519_GE_LENGTH)) {
+    if (memcmp(k, signature, ED25519_GE_LENGTH) != 0) {
         return THEMIS_INVALID_SIGNATURE;
     }
 
