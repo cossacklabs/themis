@@ -141,7 +141,7 @@ public:
         return secure_cell_t::decrypt(data_begin, data_end, context);
     }
 
-    const data_t& decrypt(const data_t data)
+    const data_t& decrypt(const data_t& data)
     {
         return decrypt(data.begin(), data.end());
     }
