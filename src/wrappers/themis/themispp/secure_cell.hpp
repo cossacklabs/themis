@@ -105,8 +105,8 @@ public:
     }
 
 protected:
-    data_t _password;
-    data_t _res;
+    data_t _password; // NOLINT: keep inheritance-based interface (for now)
+    data_t _res;      // NOLINT
 };
 
 class secure_cell_optional_context_t : public secure_cell_t
@@ -362,7 +362,7 @@ public:
     }
 
 protected:
-    data_t _token;
+    data_t _token; // NOLINT: keep inheritance-based interface (for now)
 };
 
 class secure_cell_context_imprint_t : public secure_cell_t
