@@ -76,7 +76,7 @@ public:
     }
 };
 
-void secure_session_invalid_arguments()
+static void secure_session_invalid_arguments()
 {
     std::string client_id("client");
     std::vector<uint8_t> empty;
@@ -106,7 +106,7 @@ void secure_session_invalid_arguments()
     }
 }
 
-void secure_session_test()
+static void secure_session_test()
 {
     std::string mes("the test message");
     callback client_callbacks;
@@ -145,7 +145,7 @@ void secure_session_test()
     sput_fail_unless(strcmp(mes.c_str(), (const char*)(&msg4[0])) == 0, "client get message", __LINE__);
 }
 
-void secure_session_uninitialized()
+static void secure_session_uninitialized()
 {
     themispp::secure_session_t client;
 
@@ -159,7 +159,7 @@ void secure_session_uninitialized()
 }
 
 #if __cplusplus >= 201103L
-void secure_session_moved()
+static void secure_session_moved()
 {
     callback client_callbacks;
     std::string client_id("client");
@@ -188,7 +188,7 @@ void secure_session_moved()
     sput_fail_if(client.is_established(), "using moved session again", __LINE__);
 }
 
-void secure_session_ownership()
+static void secure_session_ownership()
 {
     std::string client_id("client");
 
@@ -228,18 +228,18 @@ void secure_session_ownership()
     sput_fail_unless(unique_throws, "using unique session after move", __LINE__);
 }
 #else
-void secure_session_moved()
+static void secure_session_moved()
 {
     sput_fail_if(false, "move semantics (disabled for C++03)", __LINE__);
 }
 
-void secure_session_ownership()
+static void secure_session_ownership()
 {
     sput_fail_if(false, "ownership transfer (disabled for C++03)", __LINE__);
 }
 #endif
 
-int run_secure_session_test()
+inline int run_secure_session_test()
 {
     sput_enter_suite("ThemisPP secure session test");
     sput_run_test(secure_session_invalid_arguments, "secure_session_invalid_arguments", __FILE__);

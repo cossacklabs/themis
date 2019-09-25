@@ -32,7 +32,7 @@ static std::string message1 = "this is test message1 for Secure Message test";
 static std::string message2 = "this is test message2 for Secure Message test";
 
 template <asym_algs alg_t_p>
-int secure_message_test_()
+static int secure_message_test_()
 {
     try {
         themispp::secure_key_pair_generator_t<alg_t_p> g;
@@ -67,17 +67,19 @@ int secure_message_test_()
     }
     return 0;
 }
-int secure_message_test_rsa()
+
+static int secure_message_test_rsa()
 {
     return secure_message_test_<themispp::RSA>();
 }
-int secure_message_test_ec()
+
+static int secure_message_test_ec()
 {
     return secure_message_test_<themispp::EC>();
 }
 
 template <asym_algs alg_t_p>
-int secure_message_sign_verify_test()
+static int secure_message_sign_verify_test()
 {
     try {
         themispp::secure_key_pair_generator_t<alg_t_p> g;
@@ -114,17 +116,17 @@ int secure_message_sign_verify_test()
     return 0;
 }
 
-int secure_message_sign_verify_test_rsa()
+static int secure_message_sign_verify_test_rsa()
 {
     return secure_message_sign_verify_test<themispp::RSA>();
 }
 
-int secure_message_sign_verify_test_ec()
+static int secure_message_sign_verify_test_ec()
 {
     return secure_message_sign_verify_test<themispp::EC>();
 }
 
-int secure_message_test_key_mismatch()
+static int secure_message_test_key_mismatch()
 {
     themispp::secure_key_pair_generator_t<themispp::EC> gen_ec;
     std::vector<uint8_t> private_key(gen_ec.get_priv());
@@ -138,7 +140,7 @@ int secure_message_test_key_mismatch()
     return 0;
 }
 
-void run_secure_message_test()
+inline void run_secure_message_test()
 {
     sput_enter_suite("ThemisPP secure message test");
     sput_run_test(secure_message_test_rsa, "secure_message_test_rsa", __FILE__);

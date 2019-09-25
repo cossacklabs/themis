@@ -288,7 +288,7 @@ static void secure_cell_context_imprint_test()
     }
 }
 
-void run_secure_cell_test()
+inline void run_secure_cell_test()
 {
     sput_enter_suite("ThemisPP secure cell seal mode test:");
     sput_run_test(secure_cell_construction_test, "secure_cell_construction_test", __FILE__);

@@ -30,7 +30,7 @@ namespace themispp
 namespace secure_session_test
 {
 
-void secure_comparator_test()
+static void secure_comparator_test()
 {
     std::string shared_secret_a("shared_secret");
     std::string shared_secret_b("shared_secret");
@@ -65,7 +65,7 @@ void secure_comparator_test()
     sput_fail_unless(!(d.get()), "d ready", __LINE__);
 }
 
-int run_secure_comparator_test()
+inline int run_secure_comparator_test()
 {
     sput_enter_suite("ThemisPP secure comparator test");
     sput_run_test(secure_comparator_test, "secure_comparator_test", __FILE__);
