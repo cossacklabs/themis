@@ -1,6 +1,6 @@
 # Themis ChangeLog
 
-## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 23rd 2019
+## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 26th 2019
 
 **TL;DR:**
 - Added WasmThemis to support WebAssembly;    
