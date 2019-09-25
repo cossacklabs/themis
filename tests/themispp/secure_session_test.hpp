@@ -107,7 +107,7 @@ static const std::vector<uint8_t> client_public_key = as_bytes(client_pub);
 class callback : public themispp::secure_session_callback_interface_t
 {
 public:
-    const std::vector<uint8_t> get_pub_key_by_id(const std::vector<uint8_t>& id)
+    std::vector<uint8_t> get_pub_key_by_id(const std::vector<uint8_t>& id)
     {
         if (id == client_id) {
             return client_public_key;

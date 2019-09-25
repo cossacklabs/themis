@@ -35,7 +35,7 @@ class secure_session_callback_interface_t
 {
 public:
     typedef std::vector<uint8_t> data_t;
-    virtual const data_t get_pub_key_by_id(const data_t& id) = 0;
+    virtual data_t get_pub_key_by_id(const data_t& id) = 0;
     virtual void send(const data_t& data)
     {
         UNUSED(data);
