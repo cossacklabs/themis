@@ -150,7 +150,7 @@ public:
     secure_session_t(const secure_session_t&) = delete;
     secure_session_t& operator=(const secure_session_t&) = delete;
 
-    secure_session_t(secure_session_t&& other)
+    secure_session_t(secure_session_t&& other) noexcept
     {
         _session = other._session;
         _callback = other._callback;
@@ -160,7 +160,7 @@ public:
         other._callback = nullptr;
     }
 
-    secure_session_t& operator=(secure_session_t&& other)
+    secure_session_t& operator=(secure_session_t&& other) noexcept
     {
         if (this != &other) {
             if (_session) {
