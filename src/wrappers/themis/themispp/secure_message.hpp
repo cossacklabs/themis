@@ -67,9 +67,13 @@ public:
         validate_keys();
     }
 
+#if __cplusplus >= 201103L
+    virtual ~secure_message_t() = default;
+#else
     virtual ~secure_message_t()
     {
     }
+#endif
 
     const data_t& encrypt(data_t::const_iterator data_begin, data_t::const_iterator data_end)
     {
@@ -242,9 +246,6 @@ private:
     data_t res_;
 
 private:
-    secure_message_t(const secure_message_t&);
-    secure_message_t& operator=(const secure_message_t&);
-
     void validate_keys()
     {
         if (!private_key_.empty()) {

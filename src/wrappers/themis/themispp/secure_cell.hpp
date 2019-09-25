@@ -49,6 +49,14 @@ public:
         }
     }
 
+#if __cplusplus >= 201103L
+    virtual ~secure_cell_t() = default;
+#else
+    virtual ~secure_cell_t()
+    {
+    }
+#endif
+
     virtual const data_t& encrypt(data_t::const_iterator data_begin,
                                   data_t::const_iterator data_end,
                                   data_t::const_iterator context_begin,

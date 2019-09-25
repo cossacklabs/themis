@@ -47,6 +47,13 @@ public:
     {
         throw themispp::exception_t("Secure Session failed receiving, receive callback not set");
     }
+#if __cplusplus >= 201103L
+    virtual ~secure_session_callback_interface_t() = default;
+#else
+    virtual ~secure_session_callback_interface_t()
+    {
+    }
+#endif
 };
 
 inline ssize_t send_callback(const uint8_t* data, size_t data_length, void* user_data)
