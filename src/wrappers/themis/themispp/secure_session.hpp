@@ -28,8 +28,6 @@
 
 #include "exception.hpp"
 
-#define THEMISPP_SECURE_SESSION_MAX_MESSAGE_SIZE 2048
-
 namespace themispp
 {
 
@@ -270,10 +268,11 @@ public:
 
     const data_t& receive()
     {
+        static const size_t max_message_size = 2048;
         if (!_session) {
             throw themispp::exception_t("uninitialized Secure Session");
         }
-        _res.resize(THEMISPP_SECURE_SESSION_MAX_MESSAGE_SIZE);
+        _res.resize(max_message_size);
         ssize_t recv_size = secure_session_receive(_session, &_res[0], _res.size());
         if (recv_size <= 0) {
             throw themispp::exception_t("Secure Session failed to receive message",

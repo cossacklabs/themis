@@ -24,7 +24,6 @@
 
 #include "exception.hpp"
 
-#define THEMISPP_SECURE_SESSION_MAX_MESSAGE_SIZE 2048
 namespace themispp
 {
 
