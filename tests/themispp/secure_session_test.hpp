@@ -174,6 +174,7 @@ static void secure_session_moved()
 
     bool init_throws = false;
     try {
+        // NOLINTNEXTLINE: intentional use-after-move
         client.init();
     } catch (const themispp::exception_t&) {
         init_throws = true;
@@ -215,11 +216,13 @@ static void secure_session_ownership()
     bool shared_throws = false;
     bool unique_throws = false;
     try {
+        // NOLINTNEXTLINE: intentional use-after-move
         client_shared.is_established();
     } catch (const themispp::exception_t&) {
         shared_throws = true;
     }
     try {
+        // NOLINTNEXTLINE: intentional use-after-move
         client_unique.is_established();
     } catch (const themispp::exception_t&) {
         unique_throws = true;
