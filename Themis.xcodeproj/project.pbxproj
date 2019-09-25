@@ -196,14 +196,10 @@
 		9F4A2620223ABEF2005CB63A /* secure_session_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A242E223A74AF005CB63A /* secure_session_utils.c */; };
 		9F4A2621223ABEF2005CB63A /* secure_session.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2438223A74AF005CB63A /* secure_session.c */; };
 		9F4A2622223ABEF2005CB63A /* sym_enc_message.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2431223A74AF005CB63A /* sym_enc_message.c */; };
-		9F5391F12293F2D90051DA66 /* portable_endian.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F5391F02293F2D90051DA66 /* portable_endian.h */; };
-		9F5391F22293F2D90051DA66 /* portable_endian.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F5391F02293F2D90051DA66 /* portable_endian.h */; };
 		9F874AB322CCB0D100E8DECA /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB122CCB0D100E8DECA /* soter_ec_key.c */; };
 		9F874AB422CCB0D100E8DECA /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB122CCB0D100E8DECA /* soter_ec_key.c */; };
 		9F874AB522CCB0D100E8DECA /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */; };
 		9F874AB622CCB0D100E8DECA /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */; };
-		9F98F32522CCEA5D008E14E6 /* soter_wipe.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F98F32422CCEA5D008E14E6 /* soter_wipe.h */; };
-		9F98F32622CCEA5D008E14E6 /* soter_wipe.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F98F32422CCEA5D008E14E6 /* soter_wipe.h */; };
 		9F98F32822CCEB0E008E14E6 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F98F32722CCEB0E008E14E6 /* soter_wipe.c */; };
 		9F98F32922CCEB0E008E14E6 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F98F32722CCEB0E008E14E6 /* soter_wipe.c */; };
 		9FBD853D223BFB5E009EAEB3 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBD853C223BFB5E009EAEB3 /* openssl.framework */; };
@@ -361,7 +357,6 @@
 		9F4A2420223A74AE005CB63A /* secure_message_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_message_wrapper.h; path = src/themis/secure_message_wrapper.h; sourceTree = "<group>"; };
 		9F4A2421223A74AE005CB63A /* secure_message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_message.h; path = src/themis/secure_message.h; sourceTree = "<group>"; };
 		9F4A2422223A74AE005CB63A /* secure_message_wrapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_message_wrapper.c; path = src/themis/secure_message_wrapper.c; sourceTree = "<group>"; };
-		9F4A2423223A74AE005CB63A /* portable_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = portable_endian.h; path = src/themis/portable_endian.h; sourceTree = "<group>"; };
 		9F4A2424223A74AE005CB63A /* secure_keygen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_keygen.h; path = src/themis/secure_keygen.h; sourceTree = "<group>"; };
 		9F4A2425223A74AE005CB63A /* secure_session_serialize.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_session_serialize.c; path = src/themis/secure_session_serialize.c; sourceTree = "<group>"; };
 		9F4A2426223A74AE005CB63A /* secure_session_t.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_session_t.h; path = src/themis/secure_session_t.h; sourceTree = "<group>"; };
@@ -407,11 +402,12 @@
 		9F4A24C1223A8FA8005CB63A /* skeygen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = skeygen.h; path = "src/wrappers/themis/Obj-C/objcthemis/skeygen.h"; sourceTree = "<group>"; };
 		9F4A24C2223A8FA8005CB63A /* smessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = smessage.h; path = "src/wrappers/themis/Obj-C/objcthemis/smessage.h"; sourceTree = "<group>"; };
 		9F4A24C3223A8FA8005CB63A /* scell_token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = scell_token.h; path = "src/wrappers/themis/Obj-C/objcthemis/scell_token.h"; sourceTree = "<group>"; };
-		9F5391F02293F2D90051DA66 /* portable_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = portable_endian.h; path = src/soter/portable_endian.h; sourceTree = "<group>"; };
 		9F874AB122CCB0D100E8DECA /* soter_ec_key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_ec_key.c; path = src/soter/soter_ec_key.c; sourceTree = "<group>"; };
 		9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_rsa_key.c; path = src/soter/soter_rsa_key.c; sourceTree = "<group>"; };
 		9F98F32422CCEA5D008E14E6 /* soter_wipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_wipe.h; path = src/soter/soter_wipe.h; sourceTree = "<group>"; };
 		9F98F32722CCEB0E008E14E6 /* soter_wipe.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_wipe.c; path = src/soter/openssl/soter_wipe.c; sourceTree = "<group>"; };
+		9FB1BC9A233BEC9900930861 /* themis_portable_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = themis_portable_endian.h; path = src/themis/themis_portable_endian.h; sourceTree = "<group>"; };
+		9FB1BC9D233BECB900930861 /* soter_portable_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_portable_endian.h; path = src/soter/soter_portable_endian.h; sourceTree = "<group>"; };
 		9FBD853C223BFB5E009EAEB3 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Carthage/Build/iOS/openssl.framework; sourceTree = "<group>"; };
 		9FD4C3522260D41700132A88 /* soter_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_api.h; path = src/soter/soter_api.h; sourceTree = "<group>"; };
 		9FD4C3532260D43B00132A88 /* themis_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = themis_api.h; path = src/themis/themis_api.h; sourceTree = "<group>"; };
@@ -460,7 +456,6 @@
 			children = (
 				9F4A23A6223A742F005CB63A /* ed25519 */,
 				9F4A2383223A740E005CB63A /* openssl */,
-				9F5391F02293F2D90051DA66 /* portable_endian.h */,
 				9FD4C3522260D41700132A88 /* soter_api.h */,
 				9F4A2343223A73B0005CB63A /* soter_asym_cipher.h */,
 				9F4A234B223A73B0005CB63A /* soter_asym_ka.h */,
@@ -477,6 +472,7 @@
 				9F4A2349223A73B0005CB63A /* soter_hmac.h */,
 				9F4A2357223A73B1005CB63A /* soter_kdf.c */,
 				9F4A234F223A73B1005CB63A /* soter_kdf.h */,
+				9FB1BC9D233BECB900930861 /* soter_portable_endian.h */,
 				9F4A2354223A73B1005CB63A /* soter_rand.h */,
 				9F4A234A223A73B0005CB63A /* soter_rsa_key_pair_gen.h */,
 				9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */,
@@ -588,7 +584,6 @@
 			children = (
 				9F4A242A223A74AF005CB63A /* message.c */,
 				9F4A2436223A74AF005CB63A /* message.h */,
-				9F4A2423223A74AE005CB63A /* portable_endian.h */,
 				9F4A2430223A74AF005CB63A /* secure_cell_alg.h */,
 				9F4A241E223A74AE005CB63A /* secure_cell.c */,
 				9F4A242C223A74AF005CB63A /* secure_cell.h */,
@@ -614,6 +609,7 @@
 				9F4A242B223A74AF005CB63A /* sym_enc_message.h */,
 				9FD4C3532260D43B00132A88 /* themis_api.h */,
 				9F4A242F223A74AF005CB63A /* themis_error.h */,
+				9FB1BC9A233BEC9900930861 /* themis_portable_endian.h */,
 				9F4A2433223A74AF005CB63A /* themis.h */,
 			);
 			name = themis;
@@ -674,8 +670,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F5391F22293F2D90051DA66 /* portable_endian.h in Headers */,
-				9F98F32622CCEA5D008E14E6 /* soter_wipe.h in Headers */,
 				9F00E8E0223C19E000EC1EF3 /* themis.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -684,8 +678,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F5391F12293F2D90051DA66 /* portable_endian.h in Headers */,
-				9F98F32522CCEA5D008E14E6 /* soter_wipe.h in Headers */,
 				9F00E8DF223C19D900EC1EF3 /* themis.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

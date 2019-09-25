@@ -20,9 +20,9 @@
 #include "soter/soter_rsa_key.h"
 #include "soter/soter_t.h"
 
-#include "themis/portable_endian.h"
 #include "themis/secure_session.h"
 #include "themis/secure_session_t.h"
+#include "themis/themis_portable_endian.h"
 
 #define MAX_HMAC_SIZE 64 /* For HMAC-SHA512 */
 

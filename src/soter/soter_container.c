@@ -18,7 +18,7 @@
 
 #include <limits.h>
 
-#include "soter/portable_endian.h"
+#include "soter/soter_portable_endian.h"
 #include "soter/soter_crc32.h"
 
 soter_status_t soter_update_container_checksum(soter_container_hdr_t* hdr)

@@ -19,10 +19,10 @@
 
 #include "soter/soter_container.h"
 
-#include "themis/portable_endian.h"
 #include "themis/secure_session.h"
 #include "themis/secure_session_t.h"
 #include "themis/secure_session_utils.h"
+#include "themis/themis_portable_endian.h"
 
 #define THEMIS_SESSION_WRAP_TAG "TSWM"
 

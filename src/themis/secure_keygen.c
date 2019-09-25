@@ -24,7 +24,7 @@
 #include "soter/soter_rsa_key_pair_gen.h"
 #include "soter/soter_t.h"
 
-#include "themis/portable_endian.h"
+#include "themis/themis_portable_endian.h"
 
 #ifndef THEMIS_RSA_KEY_LENGTH
 #define THEMIS_RSA_KEY_LENGTH RSA_KEY_LENGTH_2048
