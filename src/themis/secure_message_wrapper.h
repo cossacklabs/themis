@@ -28,14 +28,14 @@
 #define THEMIS_SECURE_MESSAGE_EC_SIGNED (THEMIS_SECURE_MESSAGE_SIGNED ^ 0x00000020)
 
 #define IS_THEMIS_SECURE_MESSAGE_SIGNED(tag) \
-    ((tag & 0xffffff00) == THEMIS_SECURE_MESSAGE_SIGNED ? true : false)
+    (((tag)&0xffffff00) == THEMIS_SECURE_MESSAGE_SIGNED ? true : false)
 
 #define THEMIS_SECURE_MESSAGE_ENCRYPTED (THEMIS_SECURE_MESSAGE ^ 0x00002700)
 #define THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED (THEMIS_SECURE_MESSAGE_ENCRYPTED ^ 0x00000010)
 #define THEMIS_SECURE_MESSAGE_EC_ENCRYPTED (THEMIS_SECURE_MESSAGE_ENCRYPTED ^ 0x00000020)
 
 #define IS_THEMIS_SECURE_MESSAGE_ENCRYPTED(tag) \
-    ((tag & 0xffffff00) == THEMIS_SECURE_MESSAGE_ENCRYPTED ? true : false)
+    (((tag)&0xffffff00) == THEMIS_SECURE_MESSAGE_ENCRYPTED ? true : false)
 
 struct themis_secure_message_hdr_type {
     uint32_t message_type;
@@ -43,7 +43,7 @@ struct themis_secure_message_hdr_type {
 };
 typedef struct themis_secure_message_hdr_type themis_secure_message_hdr_t;
 
-#define THEMIS_SECURE_MESSAGE_LENGTH(hdr) (hdr->message_length)
+#define THEMIS_SECURE_MESSAGE_LENGTH(hdr) ((hdr)->message_length)
 
 struct themis_secure_signed_message_hdr_type {
     themis_secure_message_hdr_t message_hdr;

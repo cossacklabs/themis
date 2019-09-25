@@ -68,7 +68,7 @@ themis_status_t secure_session_derive_message_keys(secure_session_t* session_ctx
 /* Message size + session id + iv + length + sequence number + timestamp + MAC */
 #define WRAP_AUX_DATA (4 + CIPHER_MAX_BLOCK_SIZE + 4 + 4 + 8 + CIPHER_AUTH_TAG_SIZE)
 
-#define WRAPPED_SIZE(_SIZE_) (_SIZE_ + WRAP_AUX_DATA)
-#define UNWRAPPED_SIZE(_WRAP_SIZE_) (_WRAP_SIZE_ - WRAP_AUX_DATA)
+#define WRAPPED_SIZE(_SIZE_) ((_SIZE_) + WRAP_AUX_DATA)
+#define UNWRAPPED_SIZE(_WRAP_SIZE_) ((_WRAP_SIZE_)-WRAP_AUX_DATA)
 
 #endif /* THEMIS_SECURE_SESSION_UTILS_H */
