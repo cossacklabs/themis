@@ -29,7 +29,7 @@ namespace jsthemis
 
 Nan::Persistent<v8::Function> SecureSession::constructor;
 
-int get_public_key_for_id_callback(
+int SecureSession::get_public_key_for_id_callback(
     const void* id, size_t id_length, void* key_buffer, size_t key_buffer_length, void* user_data)
 {
     if (!key_buffer || !key_buffer_length) {
@@ -60,7 +60,7 @@ SecureSession::SecureSession(const std::vector<uint8_t>& id,
     : session_(NULL)
     , id_to_pub_key_callback_(get_pub_by_id_callback)
 {
-    callback_.get_public_key_for_id = jsthemis::get_public_key_for_id_callback;
+    callback_.get_public_key_for_id = SecureSession::get_public_key_for_id_callback;
     callback_.send_data = NULL;
     callback_.receive_data = NULL;
     callback_.state_changed = NULL;
