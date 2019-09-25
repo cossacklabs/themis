@@ -23,9 +23,9 @@
 #include "soter/soter_t.h"
 #include "soter/soter_wipe.h"
 
-#include "themis/portable_endian.h"
 #include "themis/secure_session_t.h"
 #include "themis/secure_session_utils.h"
+#include "themis/themis_portable_endian.h"
 
 #define SESSION_ID_GENERATION_LABEL "Themis secure session unique identifier"
 #define SESSION_MASTER_KEY_GENERATION_LABEL "Themis secure session master key"

@@ -17,6 +17,6 @@
 #ifndef THEMIS_PORTABLE_ENDIAN_H
 #define THEMIS_PORTABLE_ENDIAN_H
 
-#include <soter/portable_endian.h>
+#include <soter/soter_portable_endian.h>
 
 #endif /* THEMIS_PORTABLE_ENDIAN_H */

@@ -22,7 +22,7 @@
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
-#include "soter/portable_endian.h"
+#include "soter/soter_portable_endian.h"
 
 static size_t rsa_pub_key_size(int mod_size)
 {

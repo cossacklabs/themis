@@ -21,7 +21,7 @@
 #include <openssl/ec.h>
 #include <openssl/evp.h>
 
-#include "soter/portable_endian.h"
+#include "soter/soter_portable_endian.h"
 
 static bool is_curve_supported(int curve)
 {
