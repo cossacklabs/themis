@@ -319,6 +319,7 @@ private:
         if (!callbacks) {
             throw themispp::exception_t("Secure Session construction failed: callbacks must be non-NULL");
         }
+        // NOLINTNEXTLINE(cppcoreguidelines-owning-memory): C++03 compatibility
         _callback = new secure_session_user_callbacks_t();
         _callback->get_public_key_for_id = themispp::get_public_key_for_id_callback;
         _callback->send_data = themispp::send_callback;
