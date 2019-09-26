@@ -1,18 +1,20 @@
 # Themis ChangeLog
 
-## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 26th 2019
+## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 27th 2019
 
 **TL;DR:**
-- Added WasmThemis to support WebAssembly;    
-- added support for MSYS2 builds and NSIS installer for Windows;    
-- improved packaging and platform compatibility;   
-- added extra safety checks and tricky bug fixes.     
+- Added WasmThemis to support WebAssembly (works with Electron and Node.js);
+- added experimental support for Windows (using MSYS2 compiler and NSIS installer);
+- added support of Go Modules;
+- added package for ThemisPP;
+- added support for Node.js v12 LTS (in addition to v10 and v8) in jsThemis;
+- added extra safety checks and tricky bug fixes.
 
 **Breaking changes:**
 
-- Default installation path of Themis core library on Linux has been changed from `/usr` to `/usr/local`.
-- Some of GoThemis APIs have been renamed to comply with Go naming convention (old API are marked as deprecated).
-- Deprecated `rubythemis` gem has been completely removed in favour of `rbthemis`.
+- **Linux:** when building from sources, the default installation path of Themis Core library has been changed from `/usr` to `/usr/local`. If you’re affected, read below how to make a clean upgrade.
+- **Go:** some of GoThemis APIs have been renamed to comply with Go naming convention (old API are marked as deprecated and will be removed in the next release). If you’re using Go – please switch to new functions.
+- **Ruby:** deprecated `rubythemis` gem has been completely removed in favour of `rbthemis`.
 
 _Code:_
 
@@ -20,7 +22,7 @@ _Code:_
 
   - **Soter** (low-level security core used by Themis)
 
-    Improved security and code quality, implemented better handling of secrets and memory management.
+    Improved security and code quality, implemented better handling of secrets and memory management. These changes decrease the chance of potential memory leaks.
 
     - Introduced new internal function: `soter_wipe()`.
       It can be used to securely wipe sensitive data from memory after it's no longer needed.
@@ -34,7 +36,7 @@ _Code:_
 
   - **Key generation**
 
-    - Improved key validity checks across all Themis cryptosystems ([#486](https://github.com/cossacklabs/themis/pull/486)).
+    - Improved key validity checks across all Themis cryptosystems. Now it’s harder to use wrong keys or misuse them ([#486](https://github.com/cossacklabs/themis/pull/486)).
 
     - Improved error handling for EC key generator that could produce an invalid public key without returning an error.
       Thanks, [**@vixentael**](https://github.com/vixentael) for finding this issue ([#500](https://github.com/cossacklabs/themis/pull/500)).
@@ -56,7 +58,7 @@ _Code:_
 
   - <a id="0.12.0-packaging-updates">**Installation & packaging**</a>
 
-    - Themis now installs to `/usr/local` by default when building from source ([#448](https://github.com/cossacklabs/themis/pull/448)).
+    - Themis now installs to `/usr/local` by default when building from source on Linux ([#448](https://github.com/cossacklabs/themis/pull/448)).
 
       This _may_ be a **breaking change** if your system has non-standard precedence rules.
       If you install Themis from source code directly, please do a clean upgrade the following way:
@@ -78,17 +80,16 @@ _Code:_
 
     - Improved accuracy of package dependencies to make sure you don't have to install anything manually after installing Themis from package repositories ([#446](https://github.com/cossacklabs/themis/pull/446)).
 
-    - NSIS installer is now available for Windows.
-      It can be built with `make nsis_installer` command in MSYS2 environment.
+    - NSIS installer is now available for Windows. To build NSIS installer use `make nsis_installer` command in MSYS2 environment.
       You can read more about MSYS2 target [here](https://github.com/cossacklabs/themis/pull/469) ([#474](https://github.com/cossacklabs/themis/pull/474)).
 
   - **Dependency updates**
 
     - Embedded BoringSSL submodule has been updated to the latest upstream version ([#528](https://github.com/cossacklabs/themis/pull/528)).
 
-  - **Other changes**
-
     - Only the necessary parts of embedded BoringSSL are now built, leading to 2x build speedup ([#447](https://github.com/cossacklabs/themis/pull/447)).
+
+  - **Other changes**
 
     - Miscellaneous improvements and cleanups in the Makefile ([#450](https://github.com/cossacklabs/themis/pull/450), [#451](https://github.com/cossacklabs/themis/pull/451), [#452](https://github.com/cossacklabs/themis/pull/452), [#459](https://github.com/cossacklabs/themis/pull/459), [#523](https://github.com/cossacklabs/themis/pull/523), [#527](https://github.com/cossacklabs/themis/pull/527)).
 
@@ -102,8 +103,9 @@ _Code:_
 
 - **C++**
 
-  - ThemisPP is now available as a system package through [CossackLabs repositories](https://docs.cossacklabs.com/pages/documentation-themis/#installing-themis-from-repositories) ([#506](https://github.com/cossacklabs/themis/pull/506)).
+  - ThemisPP is now available as a system package through [Cossack Labs repositories](https://docs.cossacklabs.com/pages/documentation-themis/#installing-themis-from-repositories) ([#506](https://github.com/cossacklabs/themis/pull/506)).
 
+    Use
       - `libthemispp-dev` for Debian and Ubuntu,     
       - `libthemispp-devel` for CentOS.             
 
@@ -198,7 +200,6 @@ _Docs:_
 
 - Improved and updated installation guides for numerous languages and platforms.
 
-<!-- TODO: Anything else? -->
 
 _Infrastructure:_
 
@@ -218,12 +219,13 @@ _Infrastructure:_
 - Multiple updates in the way Themis is installed and packaged.
   The most significant are switch to `/usr/local` for installation from source code and added support for multiarch installation packages ([Read more](#0.12.0-packaging-updates)).
 
-- JsThemis and WasmThemis are now tested on all current LTS verions of Node.js ([#502](https://github.com/cossacklabs/themis/pull/502),
+- JsThemis and WasmThemis are now tested on all current LTS versions of Node.js ([#502](https://github.com/cossacklabs/themis/pull/502),
    [#510](https://github.com/cossacklabs/themis/pull/510)).
 
 - Integration tests are getting stronger with WebAssembly platform being added to the suite ([#511](https://github.com/cossacklabs/themis/pull/511)).
 
 - CI servers are now using the latest RVM for testing RubyThemis ([#503](https://github.com/cossacklabs/themis/pull/503), [#504](https://github.com/cossacklabs/themis/pull/504)).
+
 
 ## [0.11.1](https://github.com/cossacklabs/themis/releases/tag/0.11.1), April 1st 2019
 
