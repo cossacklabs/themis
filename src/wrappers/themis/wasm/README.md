@@ -58,7 +58,7 @@ TODO: refer to simulators, code samples, and tests here
 
 -->
 
-[language-guide]: https://docs.cossacklabs.com/pages/wasm-howto/
+[language-guide]: https://docs.cossacklabs.com/pages/js-wasm-howto/
 [docserver]: https://docs.cossacklabs.com/products/themis/
 
 ## Licensing
