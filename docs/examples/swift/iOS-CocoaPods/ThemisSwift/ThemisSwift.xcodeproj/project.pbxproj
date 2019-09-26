@@ -238,23 +238,19 @@
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
-				"${SRCROOT}/../Pods/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift-frameworks.sh",
 				"${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework",
 				"${BUILT_PRODUCTS_DIR}/themis/themis.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/themis.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/../Pods/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		73688AFE1CC4504F00D3C430 /* ShellScript */ = {
