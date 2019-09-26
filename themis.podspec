@@ -1,12 +1,14 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.12.1"
+    s.version = "0.12.2"
     s.summary = "Data security library for network communication and data storage for iOS and mac OS"
     s.description = "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern development practices, with high level OOP wrappers for iOS / macOS, node,js, Go, Ruby, Python, PHP and Java / Android. It is designed with ease of use in mind, high security and cross-platform availability."
     s.homepage = "https://cossacklabs.com"
     s.license = { :type => 'Apache 2.0'}
 
-    s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
+    # TODO: use tag version, current update is just a dependency hotfix (26 sept 2019) 
+    #s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" } # <-- this is good
+    s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "0.12.1" }        # <-- this is bad and temp
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
     s.module_name = 'themis'
@@ -22,7 +24,15 @@ Pod::Spec.new do |s|
         # Enable bitcode for openssl only, unfortunately boringssl with bitcode not available at the moment
         so.ios.pod_target_xcconfig = {'ENABLE_BITCODE' => 'YES' }
 
-        so.dependency 'GRKOpenSSLFramework', '~> 1.0.1'
+        # TODO: due to error in symbols in GRKOpenSSLFramework 219 release, we've manually switched to 218
+        # which doesn't sound like a good decision, so when GRKOpenSSLFramework will be updated – 
+        # please bring back correct dependency version
+        # https://github.com/cossacklabs/themis/issues/538
+        # 26 sept 2019
+        #so.dependency 'GRKOpenSSLFramework', '~> 1.0.1' # <-- this is good
+
+        so.dependency 'GRKOpenSSLFramework', '1.0.2.18'  # <-- this is bad and temp
+
 
         so.ios.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL', 'USE_HEADERMAP' => 'NO',
         'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }

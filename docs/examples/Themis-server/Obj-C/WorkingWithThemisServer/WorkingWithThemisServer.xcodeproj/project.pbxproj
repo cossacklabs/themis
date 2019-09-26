@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		07D532CC346E0B14B4065C30 /* Pods_WorkingWithThemisServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65A98E649DF5797B62EB85FC /* Pods_WorkingWithThemisServer.framework */; };
 		733BD9BC1BDBF58500C6DA2F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9BB1BDBF58500C6DA2F /* main.m */; };
 		733BD9BF1BDBF58600C6DA2F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9BE1BDBF58600C6DA2F /* AppDelegate.m */; };
 		733BD9C21BDBF58600C6DA2F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9C11BDBF58600C6DA2F /* ViewController.m */; };
@@ -18,6 +17,7 @@
 		733BD9E01BDBF58600C6DA2F /* WorkingWithThemisServerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9DF1BDBF58600C6DA2F /* WorkingWithThemisServerUITests.m */; };
 		733BD9F11BDBF77700C6DA2F /* SMessageClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9EE1BDBF77700C6DA2F /* SMessageClient.m */; };
 		733BD9F21BDBF77700C6DA2F /* SSessionClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 733BD9F01BDBF77700C6DA2F /* SSessionClient.m */; };
+		7998249C920B85674F0E45A1 /* Pods_WorkingWithThemisServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3BD9C37918C5180D2FE1C214 /* Pods_WorkingWithThemisServer.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,9 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2D48D85E6AB3EEEC756A7FFD /* Pods-WorkingWithThemisServer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkingWithThemisServer.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-WorkingWithThemisServer/Pods-WorkingWithThemisServer.debug.xcconfig"; sourceTree = "<group>"; };
-		3AF51B8253F0D19EE58D064B /* Pods-WorkingWithThemisServer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkingWithThemisServer.release.xcconfig"; path = "../Pods/Target Support Files/Pods-WorkingWithThemisServer/Pods-WorkingWithThemisServer.release.xcconfig"; sourceTree = "<group>"; };
-		65A98E649DF5797B62EB85FC /* Pods_WorkingWithThemisServer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WorkingWithThemisServer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BD9C37918C5180D2FE1C214 /* Pods_WorkingWithThemisServer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WorkingWithThemisServer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		637B5EF9224970C82C7F3374 /* Pods-WorkingWithThemisServer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkingWithThemisServer.release.xcconfig"; path = "Target Support Files/Pods-WorkingWithThemisServer/Pods-WorkingWithThemisServer.release.xcconfig"; sourceTree = "<group>"; };
 		733BD9B71BDBF58500C6DA2F /* WorkingWithThemisServer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorkingWithThemisServer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		733BD9BB1BDBF58500C6DA2F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		733BD9BD1BDBF58500C6DA2F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -61,6 +60,7 @@
 		733BD9EE1BDBF77700C6DA2F /* SMessageClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SMessageClient.m; sourceTree = "<group>"; };
 		733BD9EF1BDBF77700C6DA2F /* SSessionClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSessionClient.h; sourceTree = "<group>"; };
 		733BD9F01BDBF77700C6DA2F /* SSessionClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSessionClient.m; sourceTree = "<group>"; };
+		ECA699EAF10A7BD78E4A632F /* Pods-WorkingWithThemisServer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WorkingWithThemisServer.debug.xcconfig"; path = "Target Support Files/Pods-WorkingWithThemisServer/Pods-WorkingWithThemisServer.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,7 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				07D532CC346E0B14B4065C30 /* Pods_WorkingWithThemisServer.framework in Frameworks */,
+				7998249C920B85674F0E45A1 /* Pods_WorkingWithThemisServer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,21 +89,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3E6B84F1B30DD14444ADF575 /* Frameworks */ = {
+		151F262E3786B50F4687253C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				65A98E649DF5797B62EB85FC /* Pods_WorkingWithThemisServer.framework */,
+				3BD9C37918C5180D2FE1C214 /* Pods_WorkingWithThemisServer.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		5B4EAB849BFA9ADC914D265A /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				2D48D85E6AB3EEEC756A7FFD /* Pods-WorkingWithThemisServer.debug.xcconfig */,
-				3AF51B8253F0D19EE58D064B /* Pods-WorkingWithThemisServer.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 		733BD9AE1BDBF58500C6DA2F = {
@@ -113,8 +104,8 @@
 				733BD9D31BDBF58600C6DA2F /* WorkingWithThemisServerTests */,
 				733BD9DE1BDBF58600C6DA2F /* WorkingWithThemisServerUITests */,
 				733BD9B81BDBF58500C6DA2F /* Products */,
-				5B4EAB849BFA9ADC914D265A /* Pods */,
-				3E6B84F1B30DD14444ADF575 /* Frameworks */,
+				EA3E136DA0759FB8D7EC2D56 /* Pods */,
+				151F262E3786B50F4687253C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -174,6 +165,16 @@
 			path = WorkingWithThemisServerUITests;
 			sourceTree = "<group>";
 		};
+		EA3E136DA0759FB8D7EC2D56 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				ECA699EAF10A7BD78E4A632F /* Pods-WorkingWithThemisServer.debug.xcconfig */,
+				637B5EF9224970C82C7F3374 /* Pods-WorkingWithThemisServer.release.xcconfig */,
+			);
+			name = Pods;
+			path = ../Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -181,11 +182,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 733BD9E41BDBF58600C6DA2F /* Build configuration list for PBXNativeTarget "WorkingWithThemisServer" */;
 			buildPhases = (
-				A6B983AC75AC02909E5FDEF7 /* [CP] Check Pods Manifest.lock */,
+				DA2836CA6159D28F16C1F8E5 /* [CP] Check Pods Manifest.lock */,
 				733BD9B31BDBF58500C6DA2F /* Sources */,
 				733BD9B41BDBF58500C6DA2F /* Frameworks */,
 				733BD9B51BDBF58500C6DA2F /* Resources */,
-				D38B884232238A14E74428AF /* [CP] Embed Pods Frameworks */,
+				9A2445949129AD9A4B1A8A0B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -243,6 +244,7 @@
 				TargetAttributes = {
 					733BD9B61BDBF58500C6DA2F = {
 						CreatedOnToolsVersion = 7.1;
+						DevelopmentTeam = X6X7AHQ2D4;
 					};
 					733BD9CF1BDBF58600C6DA2F = {
 						CreatedOnToolsVersion = 7.1;
@@ -302,7 +304,27 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		A6B983AC75AC02909E5FDEF7 /* [CP] Check Pods Manifest.lock */ = {
+		9A2445949129AD9A4B1A8A0B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-WorkingWithThemisServer/Pods-WorkingWithThemisServer-frameworks.sh",
+				"${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework",
+				"${BUILT_PRODUCTS_DIR}/themis/themis.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/themis.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WorkingWithThemisServer/Pods-WorkingWithThemisServer-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DA2836CA6159D28F16C1F8E5 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -322,26 +344,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D38B884232238A14E74428AF /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-WorkingWithThemisServer/Pods-WorkingWithThemisServer-frameworks.sh",
-				"${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework",
-				"${BUILT_PRODUCTS_DIR}/themis/themis.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/themis.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-WorkingWithThemisServer/Pods-WorkingWithThemisServer-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -514,9 +516,10 @@
 		};
 		733BD9E51BDBF58600C6DA2F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2D48D85E6AB3EEEC756A7FFD /* Pods-WorkingWithThemisServer.debug.xcconfig */;
+			baseConfigurationReference = ECA699EAF10A7BD78E4A632F /* Pods-WorkingWithThemisServer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = X6X7AHQ2D4;
 				INFOPLIST_FILE = WorkingWithThemisServer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.stanfy.WorkingWithThemisServer;
@@ -526,9 +529,10 @@
 		};
 		733BD9E61BDBF58600C6DA2F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3AF51B8253F0D19EE58D064B /* Pods-WorkingWithThemisServer.release.xcconfig */;
+			baseConfigurationReference = 637B5EF9224970C82C7F3374 /* Pods-WorkingWithThemisServer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = X6X7AHQ2D4;
 				INFOPLIST_FILE = WorkingWithThemisServer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.stanfy.WorkingWithThemisServer;
