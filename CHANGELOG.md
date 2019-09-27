@@ -133,8 +133,7 @@ _Code:_
 
   - Example code and projects for Objective-C and Swift are now up-to-date, cleaned up, and modernised ([#463](https://github.com/cossacklabs/themis/pull/463), [#467](https://github.com/cossacklabs/themis/pull/467))
 
-  - OpenSSL version is pinned to 1.0.2.17 for Carthage package to work around a compilation issue with the latest version ([#484](https://github.com/cossacklabs/themis/pull/484)).
-    <!-- TODO: Isn't this scheduled for a fix in 0.12? -->
+  - OpenSSL version is pinned to 1.0.2.17 for Carthage package and to 1.0.2.18 to CocoaPods package to work around a compilation issue with the latest versions ([#539](https://github.com/cossacklabs/themis/pull/539), [#484](https://github.com/cossacklabs/themis/pull/484)).
 
 - **Java**
 
