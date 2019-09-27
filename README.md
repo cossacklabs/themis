@@ -12,12 +12,13 @@
   <a href="https://github.com/cossacklabs/themis/releases"><img src="https://img.shields.io/github/release/cossacklabs/themis.svg" alt="GitHub release"></a>
   <a href="https://circleci.com/gh/cossacklabs/themis"><img src="https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield" alt="Circle CI"></a>
   <a href="https://app.bitrise.io/app/69a1d5c9d42fa60f"><img src="https://app.bitrise.io/app/69a1d5c9d42fa60f/status.svg?token=Fp_06Ema5PgzBbZQyQy1bA&branch=master" alt="Bitrise"></a>
-  <a href="https://github.com/cossacklabs/themis/releases/latest"><img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Linux%20%7C%20Java-green.svg" alt="Platforms"></a>
+  <a href="https://github.com/cossacklabs/themis/releases/latest"><img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Linux%20%7C%20Java%20%7C%20WASM-green.svg" alt="Platforms"></a>
   <a href='https://coveralls.io/github/cossacklabs/themis'><img src='https://coveralls.io/repos/github/cossacklabs/themis/badge.svg?branch=master' alt='Coverage Status' /></a>
   <a href='https://goreportcard.com/report/github.com/cossacklabs/themis'><img class="badge" tag="github.com/cossacklabs/themis" src="https://goreportcard.com/badge/github.com/cossacklabs/themis"></a>
 </p>
 
-<h4 align="center">General purpose cryptographic library for storage and messaging for Swift, Obj-C, Android, desktop Java, С++, Node.js, Python, Ruby, PHP, Go, Rust. Hides cryptographic details. Made by cryptographers for developers 🧡</h4>
+<h4 align="center">General purpose cryptographic library for storage and messaging for iOS (Swift, Obj-C), Android, desktop Java, С++, Node.js, Python, Ruby, PHP, Go, Rust, WASM.</h4>
+<h4 align="center">Perfect fit for multi-platform apps. Hides cryptographic details. Made by cryptographers for developers 🧡</h4>
 
 ### Crypto systems
 
@@ -50,9 +51,9 @@ Themis relies on [the best available](https://github.com/cossacklabs/themis/wiki
 
 The easiest way to install Themis is [to use package repositories for your OS and language](https://github.com/cossacklabs/themis/wiki/Installing-Themis). Package repositories contain stable versions of Themis, prebuilt and packaged for the most widely-used systems.     
 
-Installation for server-side platforms (like Linux, Debian, Ubuntu, macOS) consists of two parts: installing Themis Core library into the system and installing Themis language wrapper to use from your application. Refer to [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#installing-themis-wrappers).
+Installation for server-side platforms (like Debian, Ubuntu, CentOS, macOS) consists of two parts: installing Themis Core library into the system and installing Themis language wrapper to use from your application. Refer to [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#installing-themis-wrappers).
 
-Installation for mobile platforms (iOS, Android) is easier: just use package manager popular at this platform. Refer to [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#swift-and-objective-c).
+Installation for mobile platforms (iOS, Android) and WebAssembly is easier: just use package manager popular on this platform. Refer to [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#installing-themis-wrappers).
 
 ## Install from sources
 
@@ -73,6 +74,7 @@ Themis is available for the following languages/platforms:
 | 🐘 PHP | [PHP Howto](https://github.com/cossacklabs/themis/wiki/PHP-Howto) | [docs/examples/php](https://github.com/cossacklabs/themis/tree/master/docs/examples/php) | |
 | ➕ C++ | [CPP Howto](https://github.com/cossacklabs/themis/wiki/CPP-Howto) | [docs/examples/c++](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) ||
 | 🍭 Node.js | [Node.js Howto](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto) | [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/jsthemis.svg)](https://www.npmjs.com/package/jsthemis) |
+| 🖥 WebAssembly | [WASM Howto](https://docs.cossacklabs.com/pages/js-wasm-howto/)| [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/wasm-themis.svg)](https://www.npmjs.com/package/wasm-themis) |
 | 🐹 Go | [Go Howto](https://github.com/cossacklabs/themis/wiki/Go-HowTo)| [docs/examples/go](https://github.com/cossacklabs/themis/tree/master/docs/examples/go) ||
 | 🦀 Rust | [Rust Howto](https://github.com/cossacklabs/themis/wiki/Rust-Howto)| [docs/examples/rust](https://github.com/cossacklabs/themis/wiki/Rust-Howto) | [![crates](https://img.shields.io/crates/v/themis.svg)](https://crates.io/crates/themis)|
 | 🕸 С++ PNaCl for Google Chrome||[WebThemis project](https://github.com/cossacklabs/webthemis)|
@@ -92,16 +94,19 @@ Themis supports the following architectures: x86/x64, armv*, various Android arc
 
 It is checked to compile on the latest stable versions of:
 
-* Debian (8, 9), CentOS 7, Ubuntu (14.04, 16.04, 18.04),
-* macOS (10.12, 10.13, 10.14),
-* Android (4 - 9) / CyanogenMod 11+,
-* iOS (9 - 12).
+* Debian (8, 9), CentOS 7, Ubuntu (16.04, 18.04),
+* macOS (10.12 – 10.15),
+* Android (4 - 10) / CyanogenMod 11+,
+* iOS (9 - 13),
+* Windows (MSYS2, experimental feature).
 
 We plan to expand this list with a broader set of platforms. If you'd like to help improve or bring Themis to your favourite platform / language — [get in touch](dev@cossacklabs.com).
 
 # Tutorials
 
 As long as it remains feasible, we'll be accumulating the list of all our tutorials on how to use Themis in different cases here:
+
+* [Building end-to-end encrypted notes in Bear app](https://www.cossacklabs.com/blog/end-to-end-encryption-in-bear-app.html): real-world story on helping Bear.app to implement note encryption for their vast existing user base.
 
 * [Building end-to-end encrypted Firebase-based application](https://github.com/vixentael/zka-example) for note sharing: build a bullet-proof application for when using backend-as-a-service which can't be fully trusted.
 
@@ -144,7 +149,7 @@ If you’re using Themis as your means of encryption within your iOS/macOS app t
 
 Themis is a free cryptographic library that builds on the existing, community-tested cryptographic instruments (OpenSSL, LibreSSL, BoringSSL, depending on the target platform). It is open source and Apache 2-licensed, with its full source code publicly available online on GitHub. 
 
-This means you should indicate that you’re using encryption and only submit annual self-classification reports. Read more about [Apple regulations on cryptography](https://medium.com/@cossacklabs/apple-export-regulations-on-crypto-6306380682e1).
+This means that you should indicate that you’re using encryption and only submit annual self-classification reports (use [this handy table](https://help.apple.com/app-store-connect/#/devc3f64248f) to self-check). Read more about [Apple regulations on cryptography](https://medium.com/@cossacklabs/apple-export-regulations-on-crypto-6306380682e1) and [check Apple docs](https://developer.apple.com/documentation/security/complying_with_encryption_export_regulations?language=objc).
 
 # Security
 
