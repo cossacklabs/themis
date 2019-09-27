@@ -22,6 +22,7 @@
 #ifndef THEMIS_SECURE_MESSAGE_H
 #define THEMIS_SECURE_MESSAGE_H
 
+#include <themis/themis_api.h>
 #include <themis/themis_error.h>
 
 #ifdef __cplusplus
@@ -54,6 +55,7 @@ extern "C" {
  * encrypted message then THEMIS_BUFFER_TOO_SMALL will be returned and encrypted_message_length will
  * contain the length of the buffer needed to store the encrypted message.
  */
+THEMIS_API
 themis_status_t themis_secure_message_encrypt(const uint8_t* private_key,
                                               size_t private_key_length,
                                               const uint8_t* public_key,
@@ -80,6 +82,7 @@ themis_status_t themis_secure_message_encrypt(const uint8_t* private_key,
  *       then THEMIS_BUFFER_TOO_SMALL will be returned and message_length will contain
  *       the length of the buffer needed to store the encrypted message.
  */
+THEMIS_API
 themis_status_t themis_secure_message_decrypt(const uint8_t* private_key,
                                               size_t private_key_length,
                                               const uint8_t* public_key,
@@ -104,6 +107,7 @@ themis_status_t themis_secure_message_decrypt(const uint8_t* private_key,
  * message then THEMIS_BUFFER_TOO_SMALL will be returned and signed_message_length will contain the
  * length of the buffer needed to store the signed message.
  */
+THEMIS_API
 themis_status_t themis_secure_message_sign(const uint8_t* private_key,
                                            size_t private_key_length,
                                            const uint8_t* message,
@@ -126,6 +130,7 @@ themis_status_t themis_secure_message_sign(const uint8_t* private_key,
  *       then THEMIS_BUFFER_TOO_SMALL will be returned and message_length will contain
  *       the length of the buffer needed to store the original message.
  */
+THEMIS_API
 themis_status_t themis_secure_message_verify(const uint8_t* public_key,
                                              size_t public_key_length,
                                              const uint8_t* signed_message,
@@ -151,6 +156,7 @@ themis_status_t themis_secure_message_verify(const uint8_t* public_key,
  */
 DEPRECATED("use 'themis_secure_message_encrypt' with private and public keys to encrypt message, "
            "or 'themis_secure_message_sign' with private key to sign message")
+THEMIS_API
 themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
                                            size_t private_key_length,
                                            const uint8_t* public_key,
@@ -178,6 +184,7 @@ themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
  */
 DEPRECATED("use 'themis_secure_message_decrypt' with private and public key to decrypt message or "
            "'themis_secure_message_verify' with public key to verify signed message")
+THEMIS_API
 themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
                                              size_t private_key_length,
                                              const uint8_t* public_key,

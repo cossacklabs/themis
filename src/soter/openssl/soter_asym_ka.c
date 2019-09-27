@@ -19,6 +19,7 @@
 #include <openssl/ec.h>
 
 #include "soter/openssl/soter_engine.h"
+#include "soter/soter_api.h"
 #include "soter/soter_ec_key.h"
 
 static int soter_alg_to_curve_nid(soter_asym_ka_alg_t alg)
@@ -31,9 +32,11 @@ static int soter_alg_to_curve_nid(soter_asym_ka_alg_t alg)
     }
 }
 
+SOTER_PRIVATE_API
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_alg_t alg)
 {
-    EVP_PKEY* pkey;
+    soter_status_t err = SOTER_FAIL;
+    EVP_PKEY* pkey = NULL;
     int nid = soter_alg_to_curve_nid(alg);
 
     if ((!asym_ka_ctx) || (0 == nid)) {
@@ -46,51 +49,45 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_al
     }
 
     if (!EVP_PKEY_set_type(pkey, EVP_PKEY_EC)) {
-        EVP_PKEY_free(pkey);
-        return SOTER_FAIL;
+        goto free_pkey;
     }
 
     asym_ka_ctx->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
     if (!(asym_ka_ctx->pkey_ctx)) {
-        EVP_PKEY_free(pkey);
-        return SOTER_FAIL;
+        err = SOTER_NO_MEMORY;
+        goto free_pkey;
     }
+
     if (1 != EVP_PKEY_paramgen_init(asym_ka_ctx->pkey_ctx)) {
-        EVP_PKEY_free(pkey);
-        return SOTER_FAIL;
+        goto free_pkey_ctx;
     }
-
     if (1 != EVP_PKEY_CTX_set_ec_paramgen_curve_nid(asym_ka_ctx->pkey_ctx, nid)) {
-        EVP_PKEY_free(pkey);
-        return SOTER_FAIL;
+        goto free_pkey_ctx;
     }
-
     if (1 != EVP_PKEY_paramgen(asym_ka_ctx->pkey_ctx, &pkey)) {
-        EVP_PKEY_free(pkey);
-        return SOTER_FAIL;
+        goto free_pkey_ctx;
     }
 
-    /*if (1 != EVP_PKEY_CTX_ctrl(asym_ka_ctx->pkey_ctx, EVP_PKEY_EC, -1,
-    EVP_PKEY_CTRL_EC_PARAMGEN_CURVE_NID, nid, NULL))
-    {
-            EVP_PKEY_free(pkey);
-            return SOTER_FAIL;
-    }*/
-
+    EVP_PKEY_free(pkey);
     return SOTER_SUCCESS;
+
+free_pkey_ctx:
+    EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
+    asym_ka_ctx->pkey_ctx = NULL;
+free_pkey:
+    EVP_PKEY_free(pkey);
+    return err;
 }
 
+SOTER_PRIVATE_API
 soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
 {
     if (!asym_ka_ctx) {
         return SOTER_INVALID_PARAMETER;
     }
     if (asym_ka_ctx->pkey_ctx) {
-        EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
         EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
-        if (pkey) {
-            EVP_PKEY_free(pkey);
-        }
+        asym_ka_ctx->pkey_ctx = NULL;
     }
     return SOTER_SUCCESS;
 }

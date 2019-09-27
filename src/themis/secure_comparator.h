@@ -17,6 +17,7 @@
 #ifndef THEMIS_SECURE_COMPARATOR_H
 #define THEMIS_SECURE_COMPARATOR_H
 
+#include <themis/themis_api.h>
 #include <themis/themis_error.h>
 
 #define THEMIS_SCOMPARE_MATCH 21
@@ -29,22 +30,30 @@ extern "C" {
 
 typedef struct secure_comparator_type secure_comparator_t;
 
+THEMIS_API
 secure_comparator_t* secure_comparator_create(void);
+
+THEMIS_API
 themis_status_t secure_comparator_destroy(secure_comparator_t* comp_ctx);
 
+THEMIS_API
 themis_status_t secure_comparator_append_secret(secure_comparator_t* comp_ctx,
                                                 const void* secret_data,
                                                 size_t secret_data_length);
 
+THEMIS_API
 themis_status_t secure_comparator_begin_compare(secure_comparator_t* comp_ctx,
                                                 void* compare_data,
                                                 size_t* compare_data_length);
+
+THEMIS_API
 themis_status_t secure_comparator_proceed_compare(secure_comparator_t* comp_ctx,
                                                   const void* peer_compare_data,
                                                   size_t peer_compare_data_length,
                                                   void* compare_data,
                                                   size_t* compare_data_length);
 
+THEMIS_API
 themis_status_t secure_comparator_get_result(const secure_comparator_t* comp_ctx);
 
 #ifdef __cplusplus

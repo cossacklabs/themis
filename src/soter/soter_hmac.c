@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "soter/soter_t.h"
+#include "soter/soter_wipe.h"
 
 static size_t hash_block_size(soter_hash_algo_t algo)
 {
@@ -97,7 +98,7 @@ soter_status_t soter_hmac_init(soter_hmac_ctx_t* hmac_ctx,
         return res;
     }
 
-    memset(i_key_pad, 0, sizeof(i_key_pad));
+    soter_wipe(i_key_pad, sizeof(i_key_pad));
 
     for (i = 0; i < block_size; i++) {
         hmac_ctx->o_key_pad[i] ^= 0x5c;

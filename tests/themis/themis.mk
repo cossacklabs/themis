@@ -14,12 +14,42 @@
 # limitations under the License.
 #
 
+THEMIS_TEST_BIN = $(TEST_BIN_PATH)/themis_test
+ifdef IS_EMSCRIPTEN
+THEMIS_TEST_BIN = $(TEST_BIN_PATH)/themis_test.js
+endif
+ifdef IS_MSYS
+THEMIS_TEST_BIN = $(BIN_PATH)/themis_test
+endif
+
 THEMIS_TEST_SOURCES = $(wildcard tests/themis/*.c)
 THEMIS_TEST_HEADERS = $(wildcard tests/themis/*.h)
 
-THEMIS_TEST_SRC = $(THEMIS_TEST_SOURCES)
-THEMIS_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.c,$(TEST_OBJ_PATH)/%.o, $(THEMIS_TEST_SRC))
+THEMIS_TEST_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(THEMIS_TEST_SOURCES))
 
-THEMIS_TEST_FMT_SRC = $(THEMIS_TEST_SOURCES) $(THEMIS_TEST_HEADERS)
-THEMIS_TEST_FMT_FIXUP = $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_fixup, $(THEMIS_TEST_FMT_SRC))
-THEMIS_TEST_FMT_CHECK = $(patsubst $(TEST_SRC_PATH)/%,$(TEST_OBJ_PATH)/%.fmt_check, $(THEMIS_TEST_FMT_SRC))
+THEMIS_TEST_FMT = $(THEMIS_TEST_SOURCES) $(THEMIS_TEST_HEADERS)
+
+FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(THEMIS_TEST_FMT))
+FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(THEMIS_TEST_FMT))
+
+ifdef IS_EMSCRIPTEN
+# Emscripten does not support dynamic linkage, do a static build for it.
+THEMIS_TEST_LDFLAGS += -s SINGLE_FILE=1
+$(THEMIS_TEST_BIN): $(THEMIS_STATIC)
+else
+# Link dynamically against the Themis library in the build directory,
+# not the one in the standard system paths (if any).
+# We also need to link against Soter explicitly because of private imports.
+THEMIS_TEST_LDFLAGS += -L$(BIN_PATH) -lthemis -lsoter
+ifdef IS_LINUX
+THEMIS_TEST_LDFLAGS += -Wl,-rpath,$(abspath $(BIN_PATH))
+endif
+$(THEMIS_TEST_BIN): $(BIN_PATH)/$(LIBTHEMIS_SO)
+endif
+
+$(THEMIS_TEST_BIN): CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(THEMIS_TEST_LDFLAGS)
+
+$(THEMIS_TEST_BIN): $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ)
+	@mkdir -p $(@D)
+	@echo -n "link "
+	@$(BUILD_CMD)

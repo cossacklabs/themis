@@ -19,18 +19,27 @@
 #ifndef GE_UTILS_H
 #define GE_UTILS_H
 
+#include <soter/soter_api.h>
+
 #include "ge.h"
 
 #define ED25519_GE_LENGTH 32
 
 /* Generates valid ed25519 private key. r should be 32 bytes */
+SOTER_PRIVATE_API
 extern void generate_random_32(unsigned char *r);
+SOTER_PRIVATE_API
 extern void clip_random_32(unsigned char *r);
 
+SOTER_PRIVATE_API
 extern int ge_frombytes_vartime(ge_p3 *h, const unsigned char *s);
+SOTER_PRIVATE_API
 extern void ge_p2_to_p3(ge_p3 *r, const ge_p2 *p);
+SOTER_PRIVATE_API
 extern void ge_p3_sub(ge_p3 *r, const ge_p3 *p, const ge_p3 *q);
+SOTER_PRIVATE_API
 extern void ge_scalarmult_blinded(ge_p3 *r, const unsigned char *a, const ge_p3 *A);
+SOTER_PRIVATE_API
 extern int ge_cmp(const ge_p3 *a, const ge_p3 *b);
 
 int crypto_verify_32(const unsigned char *x,const unsigned char *y);

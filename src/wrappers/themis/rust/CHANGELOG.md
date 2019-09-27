@@ -3,6 +3,12 @@
 
 The version currently in development.
 
+Version 0.12.0 - 2019-09-26
+===========================
+
+Multiple updates in Themis Core make the unsafe part of the library
+a safer place. Read more [here](https://github.com/cossacklabs/themis/blob/master/CHANGELOG.md#0120-september-26th-2019).
+
 Version 0.11.1 - 2019-04-01
 ===========================
 

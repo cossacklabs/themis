@@ -1506,8 +1506,17 @@ static void key_validation_test(void)
     testsuite_fail_unless(THEMIS_INVALID_PARAMETER == themis_is_valid_asym_key(NULL, 0),
                           "themis_is_valid_asym_key: invalid arguments");
     testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_is_valid_asym_key(rsa_public_key, rsa_public_key_length - 1),
+                          "themis_is_valid_asym_key: truncated RSA buffer");
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
                               == themis_is_valid_asym_key(ec_private_key, ec_private_key_length - 1),
-                          "themis_is_valid_asym_key: truncated buffer");
+                          "themis_is_valid_asym_key: truncated EC buffer");
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_is_valid_asym_key(rsa_private_key, rsa_private_key_length + 1),
+                          "themis_is_valid_asym_key: extended RSA buffer");
+    testsuite_fail_unless(THEMIS_INVALID_PARAMETER
+                              == themis_is_valid_asym_key(ec_public_key, ec_public_key_length + 1),
+                          "themis_is_valid_asym_key: extended EC buffer");
 
     testsuite_fail_unless(THEMIS_KEY_INVALID == themis_get_asym_key_kind(NULL, 0),
                           "themis_get_asym_key_kind: invalid arguments");
@@ -1523,6 +1532,40 @@ static void key_validation_test(void)
                           "themis_get_asym_key_kind: garbage input");
 }
 
+static void keygen_parameters_ec(void)
+{
+    themis_status_t status;
+    uint8_t ec_private_key[MAX_KEY_SIZE] = {0};
+    uint8_t ec_public_key[MAX_KEY_SIZE] = {0};
+    size_t ec_private_key_length = sizeof(ec_private_key);
+    size_t ec_public_key_length = sizeof(ec_public_key);
+
+    status = themis_gen_ec_key_pair(ec_private_key, &ec_private_key_length, NULL, NULL);
+    testsuite_fail_unless(status == THEMIS_INVALID_PARAMETER,
+                          "themis_gen_ec_key_pair: only private key requested");
+
+    status = themis_gen_ec_key_pair(NULL, NULL, ec_public_key, &ec_public_key_length);
+    testsuite_fail_unless(status == THEMIS_INVALID_PARAMETER,
+                          "themis_gen_ec_key_pair: only public key requested");
+}
+
+static void keygen_parameters_rsa(void)
+{
+    themis_status_t status;
+    uint8_t rsa_private_key[MAX_KEY_SIZE] = {0};
+    uint8_t rsa_public_key[MAX_KEY_SIZE] = {0};
+    size_t rsa_private_key_length = sizeof(rsa_private_key);
+    size_t rsa_public_key_length = sizeof(rsa_public_key);
+
+    status = themis_gen_rsa_key_pair(rsa_private_key, &rsa_private_key_length, NULL, NULL);
+    testsuite_fail_unless(status == THEMIS_INVALID_PARAMETER,
+                          "themis_gen_rsa_key_pair: only private key requested");
+
+    status = themis_gen_rsa_key_pair(NULL, NULL, rsa_public_key, &rsa_public_key_length);
+    testsuite_fail_unless(status == THEMIS_INVALID_PARAMETER,
+                          "themis_gen_rsa_key_pair: only public key requested");
+}
+
 void run_secure_message_test(void)
 {
     testsuite_enter_suite("generic secure message");
@@ -1535,4 +1578,6 @@ void run_secure_message_test(void)
 
     testsuite_enter_suite("key generation and validation");
     testsuite_run_test(key_validation_test);
+    testsuite_run_test(keygen_parameters_ec);
+    testsuite_run_test(keygen_parameters_rsa);
 }

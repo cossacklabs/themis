@@ -19,6 +19,7 @@
 #include <openssl/evp.h>
 
 #include "soter/boringssl/soter_engine.h"
+#include "soter/soter_api.h"
 
 static const EVP_MD* soter_algo_to_evp_md(soter_hash_algo_t algo)
 {
@@ -32,6 +33,7 @@ static const EVP_MD* soter_algo_to_evp_md(soter_hash_algo_t algo)
     }
 }
 
+SOTER_PRIVATE_API
 soter_status_t soter_hash_init(soter_hash_ctx_t* hash_ctx, soter_hash_algo_t algo)
 {
     const EVP_MD* md = soter_algo_to_evp_md(algo);

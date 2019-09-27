@@ -27,7 +27,7 @@ namespace jsthemis
 namespace Errors
 {
 
-void Init(v8::Handle<v8::Object> exports);
+void Init(v8::Local<v8::Object> exports);
 
 } // namespace Errors
 

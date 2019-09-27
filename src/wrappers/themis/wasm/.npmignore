@@ -1,0 +1,6 @@
+# Themis build system
+emscripten/
+wasmthemis.mk
+
+# Results of local "npm pack"
+*.tgz

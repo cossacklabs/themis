@@ -1,0 +1,7 @@
+[ "getValue"
+, "setValue"
+, "allocate"
+, "ALLOC_STACK"
+, "writeArrayToMemory"
+, "addFunction"
+]

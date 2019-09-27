@@ -22,10 +22,25 @@
 #ifndef THEMIS_SECURE_SESSION_H
 #define THEMIS_SECURE_SESSION_H
 
+/*
+ * ssize_t is POSIX-specific (as is <sys/types.h>).
+ * Explicitly define ssize_t as signed counterpart of size_t on Windows.
+ */
+#if _WIN32
+#include <stddef.h>
+#include <stdint.h>
+#ifdef _WIN64
+typedef signed __int64 ssize_t;
+#else
+typedef signed int ssize_t;
+#endif
+#else
 #include <sys/types.h>
+#endif
 
 #include <soter/soter.h>
 
+#include <themis/themis_api.h>
 #include <themis/themis_error.h>
 
 #ifdef __cplusplus
@@ -137,23 +152,32 @@ themis_status_t secure_session_init(secure_session_t *session_ctx, const void *i
 const void *sign_key, size_t sign_key_length, const secure_session_user_callbacks_t
 *user_callbacks); themis_status_t secure_session_cleanup(secure_session_t *session_ctx);
 */
+THEMIS_API
 secure_session_t* secure_session_create(const void* id,
                                         size_t id_length,
                                         const void* sign_key,
                                         size_t sign_key_length,
                                         const secure_session_user_callbacks_t* user_callbacks);
+
+THEMIS_API
 themis_status_t secure_session_destroy(secure_session_t* session_ctx);
 
+THEMIS_API
 themis_status_t secure_session_connect(secure_session_t* session_ctx);
+
+THEMIS_API
 themis_status_t secure_session_generate_connect_request(secure_session_t* session_ctx,
                                                         void* output,
                                                         size_t* output_length);
 
+THEMIS_API
 themis_status_t secure_session_wrap(secure_session_t* session_ctx,
                                     const void* message,
                                     size_t message_length,
                                     void* wrapped_message,
                                     size_t* wrapped_message_length);
+
+THEMIS_API
 themis_status_t secure_session_unwrap(secure_session_t* session_ctx,
                                       const void* wrapped_message,
                                       size_t wrapped_message_length,
@@ -161,16 +185,25 @@ themis_status_t secure_session_unwrap(secure_session_t* session_ctx,
                                       size_t* message_length);
 
 /* Trying to mimic socket functions */
+THEMIS_API
 ssize_t secure_session_send(secure_session_t* session_ctx, const void* message, size_t message_length);
+
+THEMIS_API
 ssize_t secure_session_receive(secure_session_t* session_ctx, void* message, size_t message_length);
 
+THEMIS_API
 themis_status_t secure_session_save(const secure_session_t* session_ctx, void* out, size_t* out_length);
+
+THEMIS_API
 themis_status_t secure_session_load(secure_session_t* session_ctx,
                                     const void* in,
                                     size_t in_length,
                                     const secure_session_user_callbacks_t* user_callbacks);
 
+THEMIS_API
 bool secure_session_is_established(const secure_session_t* session_ctx);
+
+THEMIS_API
 themis_status_t secure_session_get_remote_id(const secure_session_t* session_ctx,
                                              uint8_t* id,
                                              size_t* id_length);

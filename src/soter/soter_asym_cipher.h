@@ -21,6 +21,7 @@
 #ifndef SOTER_ASYM_CIPHER_H
 #define SOTER_ASYM_CIPHER_H
 
+#include <soter/soter_api.h>
 #include <soter/soter_error.h>
 
 /**
@@ -53,6 +54,7 @@ typedef struct soter_asym_cipher_type soter_asym_cipher_t;
  * @param [in] pad padding algorithm to be used. See @ref soter_asym_cipher_padding_type
  * @return pointer to created asymmetric encription/decription context on success or NULL on failure
  */
+SOTER_API
 soter_asym_cipher_t* soter_asym_cipher_create(const void* key,
                                               size_t key_length,
                                               soter_asym_cipher_padding_t pad);
@@ -71,6 +73,7 @@ soter_asym_cipher_t* soter_asym_cipher_create(const void* key,
  * SOTER_BUFFER_TOO_SMALL will return and cipher_data_length will contain length of buffer thet need
  * to store cipher data.
  */
+SOTER_API
 soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher_ctx,
                                          const void* plain_data,
                                          size_t plain_data_length,
@@ -91,6 +94,7 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher_ctx,
  * SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer thet need
  * to store plain data.
  */
+SOTER_API
 soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher_ctx,
                                          const void* cipher_data,
                                          size_t cipher_data_length,
@@ -114,6 +118,7 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher_ctx,
  * created by soter_asym_cipher_create
  * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
  */
+SOTER_API
 soter_status_t soter_asym_cipher_destroy(soter_asym_cipher_t* asym_cipher_ctx);
 
 /** @} */

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-#include <arpa/inet.h>
 #include <string.h>
 
 #include "soter/soter_container.h"
@@ -22,6 +21,7 @@
 #include "themis/secure_session.h"
 #include "themis/secure_session_t.h"
 #include "themis/secure_session_utils.h"
+#include "themis/themis_portable_endian.h"
 
 #define THEMIS_SESSION_CONTEXT_TAG "TSSC"
 
@@ -59,11 +59,11 @@ themis_status_t secure_session_save(const secure_session_t* session_ctx, void* o
     curr = (uint32_t*)soter_container_data(hdr);
 
     /* session_id */
-    *curr = htonl(session_ctx->session_id);
+    *curr = htobe32(session_ctx->session_id);
     curr++;
 
     /* is_client */
-    *curr = htonl(session_ctx->is_client);
+    *curr = htobe32(session_ctx->is_client);
     curr++;
 
     /* master_key */
@@ -71,11 +71,11 @@ themis_status_t secure_session_save(const secure_session_t* session_ctx, void* o
     curr += sizeof(session_ctx->session_master_key) / sizeof(uint32_t);
 
     /* out_seq */
-    *curr = htonl(session_ctx->out_seq);
+    *curr = htobe32(session_ctx->out_seq);
     curr++;
 
     /* in_seq */
-    *curr = htonl(session_ctx->in_seq);
+    *curr = htobe32(session_ctx->in_seq);
 
     soter_update_container_checksum(hdr);
 
@@ -112,10 +112,10 @@ themis_status_t secure_session_load(secure_session_t* session_ctx,
     memset(session_ctx, 0, sizeof(secure_session_t)); //Правильно ли
     curr = (const uint32_t*)soter_container_const_data(hdr);
 
-    session_ctx->session_id = ntohl(*curr);
+    session_ctx->session_id = be32toh(*curr);
     curr++;
 
-    session_ctx->is_client = ntohl(*curr);
+    session_ctx->is_client = be32toh(*curr);
     curr++;
 
     memcpy(session_ctx->session_master_key, curr, sizeof(session_ctx->session_master_key));
@@ -128,10 +128,10 @@ themis_status_t secure_session_load(secure_session_t* session_ctx,
         return res;
     }
 
-    session_ctx->out_seq = ntohl(*curr);
+    session_ctx->out_seq = be32toh(*curr);
     curr++;
 
-    session_ctx->in_seq = ntohl(*curr);
+    session_ctx->in_seq = be32toh(*curr);
 
     session_ctx->user_callbacks = user_callbacks;
 

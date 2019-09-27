@@ -42,17 +42,34 @@ jobs:
       - image: cossacklabs/android-build:2019.01
     environment:
       GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
-      CFLAGS: "-DCIRICLE_TEST"
+      # NIST STS tests tend to fail in Docker environment
+      NO_NIST_STS: 1
       WITH_FATAL_WARNINGS: yes
     steps:
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev nodejs npm lcov libc6-dbg rsync software-properties-common pkg-config clang afl
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common pkg-config clang afl
       - run: sudo ln -sf /usr/bin/gcov-5 /usr/bin/gcov
-      - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
       - run: sudo gem install coveralls-lcov
       - run: go get github.com/mattn/goveralls
-      # ruby rvm repository
-      - run: sudo apt-add-repository -y ppa:rael-gc/rvm
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
+      # Install RVM for current user (see https://rvm.io/rvm/install)
+      - run:
+          name: Install RVM
+          command: |
+            # Import keys used by RVM maintainers from recommended key server pools
+            # See https://rvm.io/rvm/security
+            for key in 409B6B1796C275462A1703113804BB82D39DC0E3 \
+                       7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+            do
+                for server in pgp.mit.edu keyserver.pgp.com ha.pool.sks-keyservers.net
+                do
+                    if gpg --keyserver $server --recv-keys $key
+                    then
+                        break
+                    fi
+                done
+            done
+            curl -sSL https://get.rvm.io | bash -s stable
+            source ~/.rvm/scripts/rvm
+            rvm use system
 
       - restore_cache:
           keys:
@@ -86,8 +103,7 @@ jobs:
       - run: sudo make install
       - run: sudo make themispp_install
       - run: sudo make pythemis_install
-      - run: sudo make rubythemis_install
-      - run: sudo make jsthemis_install
+      - run: sudo make rbthemis_install
       - run: make ENGINE=boringssl BUILD_PATH=build_with_boringssl prepare_tests_basic
       - run: make BUILD_PATH=cover_build COVERAGE=y prepare_tests_basic
       - run: make prepare_tests_all
@@ -97,14 +113,12 @@ jobs:
       # run only if CIRCLE_PR_NUMBER variable is not set (it's not pull request and COVERALLS_TOKEN will be set via circleCI for non-PR build) and COVERALLS_TOKEN is set
       # we should calculate coverage for gothemis and send report before sending coverage of main C part
       - run: '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/go/src/$GOTHEMIS_IMPORT && $HOME/go/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
-      - run: sudo /sbin/ldconfig    
+      - run: sudo /sbin/ldconfig
       - run: make test
       - run: make clean_themispp_test && CFLAGS="-std=c++03" make themispp_test && make test_cpp
       - run: make clean_themispp_test && CFLAGS="-std=c++11" make themispp_test && make test_cpp
       - run: make test_python
-      - run: sudo make test_js
-      # it's important to set version of ruby precisely.
-      - run: source /etc/profile.d/rvm.sh && rvm use system && make test_ruby
+      - run: make test_ruby
       - run: make test_go
       - run: make test_rust
       - run: make fuzz
@@ -125,38 +139,226 @@ jobs:
             - ~/.cargo
             - ~/.rustup
 
+  jsthemis:
+    docker:
+      - image: cossacklabs/android-build:2019.01
+    environment:
+      NO_NIST_STS: 1
+      WITH_FATAL_WARNINGS: yes
+    steps:
+      - run:
+          name: Install Node.js from repositories
+          command: |
+            export DEBIAN_FRONTEND=noninteractive
+            sudo apt-get update
+            # Also pull in some Themis dependencies
+            sudo apt-get -y install libssl-dev nodejs npm python
+            # Make sure ancient Node.js available as "node"
+            sudo ln -sf /usr/bin/nodejs /usr/bin/node
+      - run:
+          name: Install Node.js via NVM
+          command: |
+            # Install latest NVM as descrbed in documentation:
+            # https://github.com/nvm-sh/nvm
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+            # Activate NVM for the current shell and make sure it's activated in next ones
+            # (CircleCI jobs have their 'specifics' in ignoring .bash_profile et al.)
+            echo 'source $HOME/.nvm/nvm.sh' >> $BASH_ENV
+            source $HOME/.nvm/nvm.sh
+            # Install old LTS, current LTS, current stable versions
+            nvm install v8
+            nvm install v10
+            nvm install v12
+      # Install Emscripten toolchain for Wasm support
+      # See https://emscripten.org/docs/getting_started/downloads.html
+      - restore_cache:
+          keys:
+            - emscripten
+      - run:
+          name: Install and activate Emscripten
+          command: |
+            if [ ! -d $HOME/emsdk ]
+            then
+                cd $HOME
+                git clone https://github.com/emscripten-core/emsdk.git
+            fi
+            cd $HOME/emsdk
+            git reset --hard
+            git pull
+            ./emsdk install latest
+            ./emsdk activate latest
+      - checkout
+      - run:
+          name: Sync submodules
+          command: git reset HEAD && git submodule sync && git submodule update --init
+      - run:
+          name: Install Themis Core
+          command: |
+            make
+            sudo make install
+            make prepare_tests_all
+      - run:
+          name: Compile WasmThemis
+          command: |
+            # Let Emscripten use it's own Node.js
+            nvm deactivate
+            source "$HOME/emsdk/emsdk_env.sh"
+            export BUILD_PATH=build-wasm
+            emmake make wasmthemis
+            emmake make test
+      - run:
+          name: Test with Node.js from repositories
+          when: always
+          command: |
+            # Activate Node.js from repositories
+            nvm deactivate
+            echo "node --version: $(node --version)"
+            echo "npm --version:  $(npm --version)"
+            # Install JsThemis locally
+            rm -rf node_modules package-lock.json
+            make jsthemis_install
+            # Run JsThemis tests
+            make test_js
+      - run:
+          name: Test with Node.js v8 (maintenance)
+          when: always
+          command: |
+            # Activate Node.js v8
+            nvm use v8
+            echo "node --version: $(node --version)"
+            echo "npm --version:  $(npm --version)"
+            # Install JsThemis locally
+            rm -rf node_modules package-lock.json
+            make jsthemis_install
+            # Run JsThemis tests
+            make test_js
+            # Run WasmThemis tests
+            make BUILD_PATH=build-wasm test_wasm
+      - run:
+          name: Test with Node.js v10 (LTS)
+          when: always
+          command: |
+            # Activate Node.js v10
+            nvm use v10
+            echo "node --version: $(node --version)"
+            echo "npm --version:  $(npm --version)"
+            # Install JsThemis locally
+            rm -rf node_modules package-lock.json
+            make jsthemis_install
+            # Run JsThemis tests
+            make test_js
+            # Run WasmThemis tests
+            make BUILD_PATH=build-wasm test_wasm
+      - run:
+          name: Test with Node.js v12 (stable)
+          when: always
+          command: |
+            # Activate Node.js v12
+            nvm use v12
+            echo "node --version: $(node --version)"
+            echo "npm --version:  $(npm --version)"
+            # Install JsThemis locally
+            rm -rf node_modules package-lock.json
+            make jsthemis_install
+            # Run JsThemis tests
+            make test_js
+            # Run WasmThemis tests
+            make BUILD_PATH=build-wasm test_wasm
+      - save_cache:
+          key: emscripten
+          paths:
+            - ~/emsdk
+            - ~/.emscripten
+            - ~/.emscripten_cache
+            - ~/.emscripten_cache.lock
+
   integration_tests:
     docker:
       - image: cossacklabs/android-build:2019.01
     environment:
       GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
-      CFLAGS: "-DCIRICLE_TEST"
+      # NIST STS tests tend to fail in Docker environment
+      NO_NIST_STS: 1
       WITH_FATAL_WARNINGS: yes
     steps:
       # dependencies
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install libssl-dev python python-setuptools python3 python3-setuptools ruby-dev lcov libc6-dbg rsync software-properties-common pkg-config clang
-      # nodejs
-      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get -y install nodejs npm
-      - run: sudo ln -sf /usr/bin/nodejs /usr/bin/node
-      # ruby rvm repository
-      - run: sudo apt-add-repository -y ppa:rael-gc/rvm
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install rvm
+      - run:
+          name: Install Node.js via NVM
+          command: |
+            # Install latest NVM as descrbed in documentation:
+            # https://github.com/nvm-sh/nvm
+            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+            # Activate NVM for the current shell and make sure it's activated in next ones
+            # (CircleCI jobs have their 'specifics' in ignoring .bash_profile et al.)
+            echo 'source $HOME/.nvm/nvm.sh' >> $BASH_ENV
+            source $HOME/.nvm/nvm.sh
+            # Install current LTS version
+            nvm install v10
+      # Install RVM for current user (see https://rvm.io/rvm/install)
+      - run:
+          name: Install RVM
+          command: |
+            # Import keys used by RVM maintainers from recommended key server pools
+            # See https://rvm.io/rvm/security
+            for key in 409B6B1796C275462A1703113804BB82D39DC0E3 \
+                       7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+            do
+                for server in pgp.mit.edu keyserver.pgp.com ha.pool.sks-keyservers.net
+                do
+                    if gpg --keyserver $server --recv-keys $key
+                    then
+                        break
+                    fi
+                done
+            done
+            curl -sSL https://get.rvm.io | bash -s stable
+            source ~/.rvm/scripts/rvm
+            rvm use system
       # php7
-      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php7.0-dev php7.0-xml php7.0-mbstring 
+      - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install php7.0-dev php7.0-xml php7.0-mbstring
       # Rust stable (see https://rustup.rs)
       - run: curl https://sh.rustup.rs -sSf | sh -s -- -y && cat ~/.cargo/env >> $BASH_ENV && source ~/.cargo/env && cargo --version && rustc --version
+      # Install Emscripten toolchain for Wasm support
+      # See https://emscripten.org/docs/getting_started/downloads.html
+      - restore_cache:
+          keys:
+            - emscripten
+      - run:
+          name: Install Emscripten
+          command: |
+            if [ ! -d $HOME/emsdk ]
+            then
+                cd $HOME
+                git clone https://github.com/emscripten-core/emsdk.git
+            fi
+            cd $HOME/emsdk
+            git reset --hard
+            git pull
+            ./emsdk install latest
+            ./emsdk activate latest
 
       # themis
       - checkout
+      - run: git reset HEAD && git submodule sync && git submodule update --init
       - run: make
       - run: make JAVA_HOME=/usr/lib/jvm/default-java themis_jni
       - run: sudo make install
       - run: sudo make themispp_install
       - run: sudo make pythemis_install
-      - run: sudo make rubythemis_install
+      - run: sudo make rbthemis_install
       - run: sudo make phpthemis_install
       - run: sudo bash -c 'echo "extension=phpthemis.so" > /etc/php/7.0/cli/conf.d/20-phpthemis.ini'
-      - run: sudo make jsthemis_install
+      - run: make jsthemis_install
+      - run:
+          name: emmake make wasmthemis_install
+          command: |
+            # Let Emscripten use it's own Node.js, then activate v10 back for running
+            nvm deactivate
+            source "$HOME/emsdk/emsdk_env.sh"
+            emmake make wasmthemis  BUILD_PATH=build-wasm
+            make wasmthemis_install BUILD_PATH=build-wasm
+            nvm use v10
       - run: make rustthemis_integration_tools
       - run: mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
       - run: rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT/
@@ -167,6 +369,13 @@ jobs:
       - run: bash tests/_integration/integration_total.sh
       - run: bash tests/tools/check_keygen.sh
 
+      - save_cache:
+          key: emscripten
+          paths:
+            - $HOME/emsdk
+            - $HOME/.emscripten
+            - $HOME/.emscripten_cache
+            - $HOME/.emscripten_cache.lock
 
   # using this php5 image until we ensure tests are working for php7
   php5:
@@ -209,8 +418,10 @@ workflows:
   tests:
     jobs:
       - analyze
-      - android
+      # Broken build temporarily disabled (see T1133, 2019-07-03)
+      # - android
       - x86_64
+      - jsthemis
       - php5
       - php70
       - php71

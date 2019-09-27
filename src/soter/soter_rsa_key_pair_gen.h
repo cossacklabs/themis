@@ -17,14 +17,22 @@
 #ifndef SOTER_RSA_KEY_PAIR_GEN_H
 #define SOTER_RSA_KEY_PAIR_GEN_H
 
+#include <soter/soter_api.h>
 #include <soter/soter_error.h>
 #include <soter/soter_rsa_key.h>
 
 typedef struct soter_rsa_key_pair_gen_type soter_rsa_key_pair_gen_t;
 
+SOTER_API
 soter_rsa_key_pair_gen_t* soter_rsa_key_pair_gen_create(unsigned key_length);
+
+SOTER_API
 soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, unsigned key_length);
+
+SOTER_API
 soter_status_t soter_rsa_key_pair_gen_destroy(soter_rsa_key_pair_gen_t* ctx);
+
+SOTER_API
 soter_status_t soter_rsa_key_pair_gen_export_key(soter_rsa_key_pair_gen_t* ctx,
                                                  void* key,
                                                  size_t* key_length,

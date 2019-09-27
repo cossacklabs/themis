@@ -15,9 +15,7 @@
 #
 
 COMMON_TEST_SRC = $(wildcard tests/common/*.c)
-COMMON_TEST_OBJ = $(patsubst $(TEST_SRC_PATH)/%.c,$(TEST_OBJ_PATH)/%.o, $(COMMON_TEST_SRC))
-
-NIST_STS_DIR = tests/soter/nist-sts
+COMMON_TEST_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(COMMON_TEST_SRC))
 
 GOTHEMIS_IMPORT = github.com/cossacklabs/themis/gothemis
 
@@ -26,69 +24,14 @@ include tests/tools/tools.mk
 include tests/themis/themis.mk
 include tests/themispp/themispp.mk
 
-$(TEST_OBJ_PATH)/%.o: CMD = $(CC) $(CFLAGS) -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_DIR)) -I$(TEST_SRC_PATH) -c $< -o $@
+soter_test:    $(SOTER_TEST_BIN)
+themis_test:   $(THEMIS_TEST_BIN)
+themispp_test: $(TEST_BIN_PATH)/themispp_test
 
-$(TEST_OBJ_PATH)/%.o: $(TEST_SRC_PATH)/%.c
-	@mkdir -p $(@D)
-	@echo -n "compile "
-	@$(BUILD_CMD)
-
-$(TEST_OBJ_PATH)/%.opp: CMD = $(CXX) $(CFLAGS) -I$(TEST_SRC_PATH) -c $< -o $@
-
-$(TEST_OBJ_PATH)/%.opp: $(TEST_SRC_PATH)/%.cpp
-	@mkdir -p $(@D)
-	@echo -n "compile "
-	@$(BUILD_CMD)
-
-FMT_FIXUP += $(THEMIS_TEST_FMT_FIXUP) $(SOTER_TEST_FMT_FIXUP)
-FMT_CHECK += $(THEMIS_TEST_FMT_CHECK) $(SOTER_TEST_FMT_CHECK)
-
-$(TEST_OBJ_PATH)/%.c.fmt_fixup   $(TEST_OBJ_PATH)/%.h.fmt_fixup \
-$(TEST_OBJ_PATH)/%.cpp.fmt_fixup $(TEST_OBJ_PATH)/%.hpp.fmt_fixup: \
-    CMD = $(CLANG_TIDY) -fix $< -- $(CFLAGS) -I$(TEST_SRC_PATH) 2>/dev/null && $(CLANG_FORMAT) -i $< && touch $@
-
-$(TEST_OBJ_PATH)/%.c.fmt_check   $(TEST_OBJ_PATH)/%.h.fmt_check \
-$(TEST_OBJ_PATH)/%.cpp.fmt_check $(TEST_OBJ_PATH)/%.hpp.fmt_check: \
-    CMD = $(CLANG_FORMAT) $< | diff -u $< - && $(CLANG_TIDY) $< -- $(CFLAGS) -I$(TEST_SRC_PATH) 2>/dev/null && touch $@
-
-$(TEST_OBJ_PATH)/%.fmt_fixup: $(TEST_SRC_PATH)/%
-	@mkdir -p $(@D)
-	@echo -n "fixup $< "
-	@$(BUILD_CMD_)
-
-$(TEST_OBJ_PATH)/%.fmt_check: $(TEST_SRC_PATH)/%
-	@mkdir -p $(@D)
-	@echo -n "check $< "
-	@$(BUILD_CMD_)
+$(OBJ_PATH)/tests/%: CFLAGS += -I$(TEST_SRC_PATH)
 
 PYTHON2_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis2_test.sh
 PYTHON3_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis3_test.sh
-
-nist_rng_test_suite:
-	@mkdir -p $(NIST_STS_DIR)/obj
-	@cd $(NIST_STS_DIR)/experiments && ./create-dir-script
-	@$(MAKE) --quiet -C $(NIST_STS_DIR)
-
-nist_rng_test_suite_clean:
-	@$(MAKE) --quiet -C $(NIST_STS_DIR) clean
-
-soter_test: CMD = $(CC) -o $(TEST_BIN_PATH)/soter_test $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ) -L$(BIN_PATH) -lsoter $(LDFLAGS) $(COVERLDFLAGS)
-
-soter_test: nist_rng_test_suite soter_static $(SOTER_ENGINE_DEPS) $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ)
-	@echo -n "link "
-	@$(BUILD_CMD)
-
-themis_test: CMD = $(CC) -o $(TEST_BIN_PATH)/themis_test $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ) $(CFLAGS) -L$(BIN_PATH) -lthemis -lsoter $(LDFLAGS) $(COVERLDFLAGS)
-
-themis_test: themis_static $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ)
-	@echo -n "link "
-	@$(BUILD_CMD)
-
-themispp_test: CMD = $(CXX) -o $(TEST_BIN_PATH)/themispp_test $(THEMISPP_TEST_OBJ) -L$(BIN_PATH) -lthemis -lsoter -lstdc++ $(LDFLAGS) $(COVERLDFLAGS)
-
-themispp_test: $(THEMISPP_TEST_OBJ)
-	@echo -n "link "
-	@$(BUILD_CMD)
 
 rustthemis_integration_tools:
 	@echo "make integration tools for rust-themis..."
@@ -99,7 +42,7 @@ rustthemis_integration_tools:
 
 prepare_tests_basic: soter_test themis_test
 
-prepare_tests_all: err prepare_tests_basic themispp_test
+prepare_tests_all: prepare_tests_basic themispp_test
 ifdef PHP_VERSION
 	@echo -n "make tests for phpthemis "
 	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/phpthemis_test.sh
@@ -140,13 +83,26 @@ ifdef NPM_VERSION
 endif
 
 
+ifdef IS_EMSCRIPTEN
+RUN_TEST = node
+endif
 
 test: prepare_tests_basic
+ifdef IS_EMSCRIPTEN
+ifeq ($(NODE_VERSION),)
+	@echo 2>&1 "------------------------------------------------------------"
+	@echo 2>&1 "Node.js is not installed. Cannot run tests in Emscripten environment."
+	@echo 2>&1 ""
+	@echo 2>&1 "Please make sure you have \"node\" binary available in PATH and try again."
+	@echo 2>&1 "------------------------------------------------------------"
+	@exit 1
+endif
+endif
 	@echo "------------------------------------------------------------"
 	@echo "Running themis-core basic tests."
-	$(TEST_BIN_PATH)/soter_test
+	$(RUN_TEST) $(SOTER_TEST_BIN)
 	@echo "------------------------------------------------------------"
-	$(TEST_BIN_PATH)/themis_test
+	$(RUN_TEST) $(THEMIS_TEST_BIN)
 	@echo "------------------------------------------------------------"
 
 # require all dependencies to be installed
@@ -222,6 +178,15 @@ ifdef RUST_VERSION
 	@echo "In case of errors please see https://github.com/cossacklabs/themis/wiki/Rust-HowTo"
 	@echo "------------------------------------------------------------"
 	$(TEST_SRC_PATH)/rust/run_tests.sh
+	@echo "------------------------------------------------------------"
+endif
+
+test_wasm:
+ifdef NPM_VERSION
+	@echo "------------------------------------------------------------"
+	@echo "Running wasm-themis tests."
+	@echo "------------------------------------------------------------"
+	cd $(WASM_PATH) && npm install && npm test
 	@echo "------------------------------------------------------------"
 endif
 

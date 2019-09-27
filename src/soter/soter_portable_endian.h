@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef THEMIS_PORTABLE_ENDIAN_H
-#define THEMIS_PORTABLE_ENDIAN_H
+#ifndef SOTER_PORTABLE_ENDIAN_H
+#define SOTER_PORTABLE_ENDIAN_H
 
 #if (defined(_WIN16) || defined(_WIN32) || defined(_WIN64)) && !defined(__WINDOWS__)
 
@@ -23,7 +23,7 @@
 
 #endif
 
-#if defined(__linux__) || defined(__CYGWIN__)
+#if defined(__linux__) || defined(__CYGWIN__) || defined(__EMSCRIPTEN__)
 
 #include <endian.h>
 
@@ -74,7 +74,6 @@
 
 #elif defined(__WINDOWS__)
 
-#include <sys/param.h>
 #include <winsock2.h>
 
 #if BYTE_ORDER == LITTLE_ENDIAN
@@ -125,4 +124,4 @@
 
 #endif
 
-#endif /* THEMIS_PORTABLE_ENDIAN_H */
+#endif /* SOTER_PORTABLE_ENDIAN_H */

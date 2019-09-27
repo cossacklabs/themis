@@ -9,6 +9,7 @@ Preconditions:
    |f| bounded by 1.1*2^26,1.1*2^25,1.1*2^26,1.1*2^25,etc.
 */
 
+SOTER_PRIVATE_API
 int crypto_verify_32(const unsigned char *x,const unsigned char *y)
 {
   unsigned int differentbits = 0;

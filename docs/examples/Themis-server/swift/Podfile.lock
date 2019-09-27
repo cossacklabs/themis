@@ -1,29 +1,29 @@
 PODS:
-  - GRKOpenSSLFramework (1.0.2.16)
-  - themis (0.11.0):
-    - themis/themis-openssl (= 0.11.0)
-  - themis/themis-openssl (0.11.0):
-    - GRKOpenSSLFramework (~> 1.0.1)
-    - themis/themis-openssl/core (= 0.11.0)
-    - themis/themis-openssl/objcwrapper (= 0.11.0)
-  - themis/themis-openssl/core (0.11.0):
-    - GRKOpenSSLFramework (~> 1.0.1)
-  - themis/themis-openssl/objcwrapper (0.11.0):
-    - GRKOpenSSLFramework (~> 1.0.1)
+  - GRKOpenSSLFramework (1.0.2.18)
+  - themis (0.12.2):
+    - themis/themis-openssl (= 0.12.2)
+  - themis/themis-openssl (0.12.2):
+    - GRKOpenSSLFramework (= 1.0.2.18)
+    - themis/themis-openssl/core (= 0.12.2)
+    - themis/themis-openssl/objcwrapper (= 0.12.2)
+  - themis/themis-openssl/core (0.12.2):
+    - GRKOpenSSLFramework (= 1.0.2.18)
+  - themis/themis-openssl/objcwrapper (0.12.2):
+    - GRKOpenSSLFramework (= 1.0.2.18)
     - themis/themis-openssl/core
 
 DEPENDENCIES:
-  - themis (= 0.11)
+  - themis (= 0.12.2)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - GRKOpenSSLFramework
     - themis
 
 SPEC CHECKSUMS:
-  GRKOpenSSLFramework: 35944e317e6336b2944ad70b059d84db6b2d8532
-  themis: a588aef3fef2d20c798b5b1bab94188e703bf861
+  GRKOpenSSLFramework: 1d65e55d569af7b23074373041a92cc8bc768a92
+  themis: f4ef6d942670146ad08dca8cc99a34ae040878c0
 
-PODFILE CHECKSUM: 47c88e6455c3bdcfd82e8a98dfda026516705074
+PODFILE CHECKSUM: d7dae54b949059d61e288647dc393da42fb7eeec
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.8.0

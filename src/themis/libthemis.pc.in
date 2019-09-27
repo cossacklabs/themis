@@ -1,7 +1,5 @@
-prefix=%prefix%
-exec_prefix=${prefix}
-includedir=${prefix}/include
-libdir=${exec_prefix}/lib
+includedir=%includedir%
+libdir=%libdir%
 
 Name: Themis
 Description: High-level cryptographic services

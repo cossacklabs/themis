@@ -20,14 +20,18 @@
 
 soter_status_t soter_rand(uint8_t* buffer, size_t length)
 {
-    if ((!buffer) || (!length)) {
+    int result;
+
+    if (!buffer || !length) {
         return SOTER_INVALID_PARAMETER;
     }
 
-    if (RAND_bytes(buffer, (int)length)) {
-        return SOTER_SUCCESS;
+    /* BoringSSL's RAND_bytes() accepts size_t, no need to cast */
+    result = RAND_bytes(buffer, length);
+
+    if (result < 0) {
+        return SOTER_NOT_SUPPORTED;
     }
 
-    /* For some reason OpenSSL generator failed */
-    return SOTER_FAIL;
+    return (result == 1) ? SOTER_SUCCESS : SOTER_FAIL;
 }

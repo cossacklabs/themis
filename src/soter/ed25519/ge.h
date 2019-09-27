@@ -15,6 +15,8 @@ Representations:
   ge_precomp (Duif): (y+x,y-x,2dxy)
 */
 
+#include <soter/soter_api.h>
+
 #include "fe.h"
 
 typedef struct {
@@ -71,7 +73,9 @@ typedef struct {
 #define ge_scalarmult_base crypto_sign_ed25519_ref10_ge_scalarmult_base
 #define ge_double_scalarmult_vartime crypto_sign_ed25519_ref10_ge_double_scalarmult_vartime
 
+SOTER_PRIVATE_API
 extern void ge_tobytes(unsigned char *,const ge_p2 *);
+SOTER_PRIVATE_API
 extern void ge_p3_tobytes(unsigned char *,const ge_p3 *);
 extern int ge_frombytes_negate_vartime(ge_p3 *,const unsigned char *);
 
@@ -89,7 +93,9 @@ extern void ge_madd(ge_p1p1 *,const ge_p3 *,const ge_precomp *);
 extern void ge_msub(ge_p1p1 *,const ge_p3 *,const ge_precomp *);
 extern void ge_add(ge_p1p1 *,const ge_p3 *,const ge_cached *);
 extern void ge_sub(ge_p1p1 *,const ge_p3 *,const ge_cached *);
+SOTER_PRIVATE_API
 extern void ge_scalarmult_base(ge_p3 *,const unsigned char *);
+SOTER_PRIVATE_API
 extern void ge_double_scalarmult_vartime(ge_p2 *,const unsigned char *,const ge_p3 *,const unsigned char *);
 
 #endif

@@ -20,6 +20,7 @@
 #include <openssl/rsa.h>
 
 #include "soter/openssl/soter_engine.h"
+#include "soter/soter_api.h"
 #include "soter/soter_rsa_key.h"
 
 /* We use only SHA1 for now */
@@ -71,12 +72,14 @@ soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx
 
 /* Padding is ignored. We use OAEP by default. Parameter is to support more paddings in the future
  */
+SOTER_PRIVATE_API
 soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher,
                                       const void* key,
                                       const size_t key_length,
                                       soter_asym_cipher_padding_t pad)
 {
-    EVP_PKEY* pkey;
+    soter_status_t err = SOTER_FAIL;
+    EVP_PKEY* pkey = NULL;
 
     if ((!asym_cipher) || (SOTER_ASYM_CIPHER_OAEP != pad)) {
         return SOTER_INVALID_PARAMETER;
@@ -89,23 +92,32 @@ soter_status_t soter_asym_cipher_init(soter_asym_cipher_t* asym_cipher,
 
     /* Only RSA supports asymmetric encryption */
     if (!EVP_PKEY_set_type(pkey, EVP_PKEY_RSA)) {
-        EVP_PKEY_free(pkey);
-        return SOTER_FAIL;
+        goto free_pkey;
     }
 
     asym_cipher->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
     if (!(asym_cipher->pkey_ctx)) {
-        EVP_PKEY_free(pkey);
-        return SOTER_FAIL;
+        err = SOTER_NO_MEMORY;
+        goto free_pkey;
     }
-    SOTER_IF_FAIL(soter_asym_cipher_import_key(asym_cipher, key, key_length) == SOTER_SUCCESS,
-                  (EVP_PKEY_free(pkey),
-                   EVP_PKEY_CTX_free(asym_cipher->pkey_ctx),
-                   asym_cipher->pkey_ctx = NULL));
+
+    err = soter_asym_cipher_import_key(asym_cipher, key, key_length);
+    if (err != SOTER_SUCCESS) {
+        goto free_pkey_ctx;
+    }
+
     EVP_PKEY_free(pkey);
     return SOTER_SUCCESS;
+
+free_pkey_ctx:
+    EVP_PKEY_CTX_free(asym_cipher->pkey_ctx);
+    asym_cipher->pkey_ctx = NULL;
+free_pkey:
+    EVP_PKEY_free(pkey);
+    return err;
 }
 
+SOTER_PRIVATE_API
 soter_status_t soter_asym_cipher_cleanup(soter_asym_cipher_t* asym_cipher)
 {
     if (!asym_cipher) {

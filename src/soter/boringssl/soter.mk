@@ -33,11 +33,15 @@ else
 endif
 CRYPTO_ENGINE_LDFLAGS += -lcrypto -ldecrepit -lpthread
 
-CFLAGS += $(CRYPTO_ENGINE_CFLAGS)
-LDFLAGS += $(CRYPTO_ENGINE_LDFLAGS)
+SOTER_ENGINE_CMAKE_FLAGS += -DCMAKE_BUILD_TYPE=Release
+SOTER_ENGINE_CMAKE_FLAGS += -DCMAKE_C_FLAGS="-fpic"
+
+ifdef IS_EMSCRIPTEN
+SOTER_ENGINE_CMAKE_FLAGS += -DOPENSSL_NO_ASM=1
+endif
 
 $(BIN_PATH)/boringssl/crypto/libcrypto.a $(BIN_PATH)/boringssl/decrepit/libdecrepit.a:
 	@echo "building embedded BoringSSL..."
 	@mkdir -p $(BIN_PATH)/boringssl
-	@cd $(BIN_PATH)/boringssl && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS="-fpic" ../../third_party/boringssl/src
-	@$(MAKE) -C $(BIN_PATH)/boringssl
+	@cd $(BIN_PATH)/boringssl && $(CMAKE) $(SOTER_ENGINE_CMAKE_FLAGS) $(abspath third_party/boringssl/src)
+	@$(MAKE) -C $(BIN_PATH)/boringssl crypto decrepit

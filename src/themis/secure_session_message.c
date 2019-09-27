@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-#include <arpa/inet.h>
 #include <string.h>
 #include <time.h>
 
 #include "soter/soter_container.h"
 
-#include "themis/portable_endian.h"
 #include "themis/secure_session.h"
 #include "themis/secure_session_t.h"
 #include "themis/secure_session_utils.h"
+#include "themis/themis_portable_endian.h"
 
 #define THEMIS_SESSION_WRAP_TAG "TSWM"
 
@@ -68,8 +67,8 @@ themis_status_t secure_session_wrap(secure_session_t* session_ctx,
     *wrapped_message_length = WRAPPED_SIZE(message_length);
     memmove(ts + 8, message, message_length);
 
-    *seq = htonl(session_ctx->out_seq);
-    *length = htonl(message_length + sizeof(uint32_t) + sizeof(uint64_t));
+    *seq = htobe32(session_ctx->out_seq);
+    *length = htobe32(message_length + sizeof(uint32_t) + sizeof(uint64_t));
 
     res = soter_rand(iv, CIPHER_MAX_BLOCK_SIZE);
     if (THEMIS_SUCCESS != res) {
@@ -89,7 +88,7 @@ themis_status_t secure_session_wrap(secure_session_t* session_ctx,
         return res;
     }
 
-    *session_id = htonl(session_ctx->session_id);
+    *session_id = htobe32(session_ctx->session_id);
     session_ctx->out_seq++;
 
     return THEMIS_SUCCESS;
@@ -146,7 +145,7 @@ themis_status_t secure_session_unwrap(secure_session_t* session_ctx,
         return THEMIS_FAIL;
     }
 
-    if (ntohl(*session_id) != session_ctx->session_id) {
+    if (be32toh(*session_id) != session_ctx->session_id) {
         return THEMIS_INVALID_PARAMETER;
     }
 
@@ -170,8 +169,8 @@ themis_status_t secure_session_unwrap(secure_session_t* session_ctx,
                     message_header[i] = iv[CIPHER_MAX_BLOCK_SIZE + i] ^ 0xff;
             }
 
-            length = ntohl(*((uint32_t *)message_header));
-            seq = ntohl(*((uint32_t *)(message_header + sizeof(uint32_t))));
+            length = be32toh(*((uint32_t *)message_header));
+            seq = be32toh(*((uint32_t *)(message_header + sizeof(uint32_t))));
             ts = be64toh(*((time_t *)(message_header + sizeof(uint32_t) + sizeof(uint32_t))));
     }*/
 
@@ -189,8 +188,8 @@ themis_status_t secure_session_unwrap(secure_session_t* session_ctx,
         goto err;
     }
 
-    length = ntohl(*((uint32_t*)message_header));
-    seq = ntohl(*((uint32_t*)(message_header + sizeof(uint32_t))));
+    length = be32toh(*((uint32_t*)message_header));
+    seq = be32toh(*((uint32_t*)(message_header + sizeof(uint32_t))));
     ts = be64toh(*((uint64_t*)(message_header + sizeof(uint32_t) + sizeof(uint32_t))));
 
     if (length > (UNWRAPPED_SIZE(wrapped_message_length) + sizeof(uint32_t) + 8)) {

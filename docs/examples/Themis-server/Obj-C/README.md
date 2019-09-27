@@ -47,7 +47,7 @@ static NSString * kClientPublicKey = @"VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHR
 The idea is to let server know client public key, and let client know server id and public key.
 
  
-9. Open https://themis.cossacklabs.com/interactive-simulator/setup/
+9. Open https://docs.cossacklabs.com/simulator/interactive/
 
 - Copy User ID from server interface to `kUserId` in code.
 - Copy Server ID from server interface to `kServerId` in code.
@@ -86,4 +86,4 @@ Do the same steps as described above, but for `SMessageClient.m` file :) Run ser
 ## Read more!
 
 Read How Themis Server Simulator works:
-https://github.com/cossacklabs/themis/wiki/Using-Themis-Server
+https://docs.cossacklabs.com/pages/documentation-themis/#interactive-simulator-themis-server
