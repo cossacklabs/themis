@@ -53,7 +53,7 @@ The easiest way to install Themis is [to use package repositories for your OS an
 
 Installation for server-side platforms (like Debian, Ubuntu, CentOS, macOS) consists of two parts: installing Themis Core library into the system and installing Themis language wrapper to use from your application. Refer to [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#installing-themis-wrappers).
 
-Installation for mobile platforms (iOS, Android) and WebAssembly is easier: just use package manager popular at this platform. Refer to [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#installing-themis-wrappers).
+Installation for mobile platforms (iOS, Android) and WebAssembly is easier: just use package manager popular on this platform. Refer to [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#installing-themis-wrappers).
 
 ## Install from sources
 
@@ -149,7 +149,7 @@ If you’re using Themis as your means of encryption within your iOS/macOS app t
 
 Themis is a free cryptographic library that builds on the existing, community-tested cryptographic instruments (OpenSSL, LibreSSL, BoringSSL, depending on the target platform). It is open source and Apache 2-licensed, with its full source code publicly available online on GitHub. 
 
-This means you should indicate that you’re using encryption and only submit annual self-classification reports (use [this handy table](https://help.apple.com/app-store-connect/#/devc3f64248f) to self-check). Read more about [Apple regulations on cryptography](https://medium.com/@cossacklabs/apple-export-regulations-on-crypto-6306380682e1) and [check Apple docs](https://developer.apple.com/documentation/security/complying_with_encryption_export_regulations?language=objc).
+This means that you should indicate that you’re using encryption and only submit annual self-classification reports (use [this handy table](https://help.apple.com/app-store-connect/#/devc3f64248f) to self-check). Read more about [Apple regulations on cryptography](https://medium.com/@cossacklabs/apple-export-regulations-on-crypto-6306380682e1) and [check Apple docs](https://developer.apple.com/documentation/security/complying_with_encryption_export_regulations?language=objc).
 
 # Security
 
