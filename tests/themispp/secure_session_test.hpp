@@ -35,7 +35,8 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
 
-// Thank you, STL, for providing this out-of-the-box. It's really convenient.
+// We need to specialize std::hash for std::vector in order to use it with
+// std::unordered_map later. Use boost::hash_combine to combine hash values.
 #if __cplusplus >= 201103L
 namespace
 {
@@ -45,6 +46,7 @@ inline void hash_combine(std::size_t& seed, T const& v)
     seed ^= std::hash<T>()(v) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 }
 } // anonymous namespace
+
 namespace std
 {
 template <typename T>
