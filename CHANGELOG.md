@@ -8,11 +8,11 @@
 - added support of Go Modules;
 - added package for ThemisPP;
 - added support for Node.js v12 LTS (in addition to v10 and v8) in jsThemis;
-- added extra safety checks and tricky bug fixes.
+- added extra safety checks and fixes for tricky bugs.
 
 **Breaking changes:**
 
-- **Linux:** when building from sources, the default installation path of Themis Core library has been changed from `/usr` to `/usr/local`. If you’re affected, read below how to make a clean upgrade.
+- **Linux:** when building from sources, the default installation path of Themis Core library has been changed from `/usr` to `/usr/local`. If you’re affected, read the instructions on how to make a clean upgrade below.
 - **Go:** some of GoThemis APIs have been renamed to comply with Go naming convention (old API are marked as deprecated and will be removed in the next release). If you’re using Go – please switch to new functions.
 - **Ruby:** deprecated `rubythemis` gem has been completely removed in favour of `rbthemis`.
 
@@ -80,7 +80,7 @@ _Code:_
 
     - Improved accuracy of package dependencies to make sure you don't have to install anything manually after installing Themis from package repositories ([#446](https://github.com/cossacklabs/themis/pull/446)).
 
-    - NSIS installer is now available for Windows. To build NSIS installer use `make nsis_installer` command in MSYS2 environment.
+    - NSIS installer is now available for Windows. To build NSIS installer, use `make nsis_installer` command in MSYS2 environment.
       You can read more about MSYS2 target [here](https://github.com/cossacklabs/themis/pull/469) ([#474](https://github.com/cossacklabs/themis/pull/474)).
 
   - **Dependency updates**
@@ -133,7 +133,7 @@ _Code:_
 
   - Example code and projects for Objective-C and Swift are now up-to-date, cleaned up, and modernised ([#463](https://github.com/cossacklabs/themis/pull/463), [#467](https://github.com/cossacklabs/themis/pull/467))
 
-  - OpenSSL version is pinned to 1.0.2.17 for Carthage package and to 1.0.2.18 to CocoaPods package to work around a compilation issue with the latest versions ([#539](https://github.com/cossacklabs/themis/pull/539), [#484](https://github.com/cossacklabs/themis/pull/484)).
+  - OpenSSL version is pinned to 1.0.2.17 for Carthage package and to 1.0.2.18 to CocoaPods package as a workaround for a compilation issue with the latest versions ([#539](https://github.com/cossacklabs/themis/pull/539), [#484](https://github.com/cossacklabs/themis/pull/484)).
 
 - **Java**
 
