@@ -442,15 +442,11 @@ DIST_FILES += docs src tests Makefile VERSION
 DIST_FILES += README.md CHANGELOG.md LICENSE
 DIST_FILES += PKGBUILD.MSYS2 Themis.nsi
 # Supporting files for language wrappers
-DIST_FILES += build.gradle settings.gradle gradle gradlew gradlew.bat
 DIST_FILES += Cargo.toml
-DIST_FILES += Cartfile Cartfile.resolved
 DIST_FILES += CMakeLists.txt
 DIST_FILES += gothemis
 DIST_FILES += jni
 DIST_FILES += scripts tools
-DIST_FILES += themis.podspec
-DIST_FILES += Themis.xcodeproj
 
 dist:
 	@mkdir -p $(DIST_DIR)
