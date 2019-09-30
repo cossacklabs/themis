@@ -24,7 +24,7 @@
 
 #include "soter/soter_portable_endian.h"
 
-static size_t rsa_pub_key_size(int mod_size)
+static size_t rsa_pub_key_size(unsigned mod_size)
 {
     switch (mod_size) {
     case 128: /* 1024 */
@@ -40,7 +40,7 @@ static size_t rsa_pub_key_size(int mod_size)
     }
 }
 
-static size_t rsa_priv_key_size(int mod_size)
+static size_t rsa_priv_key_size(unsigned mod_size)
 {
     switch (mod_size) {
     case 128: /* 1024 */
@@ -56,7 +56,7 @@ static size_t rsa_priv_key_size(int mod_size)
     }
 }
 
-static char* rsa_pub_key_tag(int mod_size)
+static char* rsa_pub_key_tag(unsigned mod_size)
 {
     switch (mod_size) {
     case 128: /* 1024 */
@@ -72,7 +72,7 @@ static char* rsa_pub_key_tag(int mod_size)
     }
 }
 
-static char* rsa_priv_key_tag(int mod_size)
+static char* rsa_priv_key_tag(unsigned mod_size)
 {
     switch (mod_size) {
     case 128: /* 1024 */
@@ -88,7 +88,7 @@ static char* rsa_priv_key_tag(int mod_size)
     }
 }
 
-static bool is_mod_size_supported(int mod_size)
+static bool is_mod_size_supported(unsigned mod_size)
 {
     switch (mod_size) {
     case 128:
@@ -128,7 +128,7 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
     RSA* rsa;
     soter_status_t res;
-    int rsa_mod_size;
+    unsigned rsa_mod_size;
     size_t output_length;
     uint32_t* pub_exp;
 
@@ -193,7 +193,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
     RSA* rsa;
     soter_status_t res;
-    int rsa_mod_size;
+    unsigned rsa_mod_size;
     size_t output_length;
     uint32_t* pub_exp;
     unsigned char* curr_bn = (unsigned char*)(key + 1);
@@ -320,7 +320,7 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
     }
 
     /* Validate tag */
-    if (memcmp(key->tag, RSA_PUB_KEY_PREF, strlen(RSA_PUB_KEY_PREF))) {
+    if (memcmp(key->tag, RSA_PUB_KEY_PREF, strlen(RSA_PUB_KEY_PREF)) != 0) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -418,7 +418,7 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
     }
 
     /* Validate tag */
-    if (memcmp(key->tag, RSA_PRIV_KEY_PREF, strlen(RSA_PRIV_KEY_PREF))) {
+    if (memcmp(key->tag, RSA_PRIV_KEY_PREF, strlen(RSA_PRIV_KEY_PREF)) != 0) {
         return SOTER_INVALID_PARAMETER;
     }
 

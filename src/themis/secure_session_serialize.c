@@ -25,9 +25,9 @@
 
 #define THEMIS_SESSION_CONTEXT_TAG "TSSC"
 
-#define SESSION_CTX_SERIZALIZED_SIZE(_CTX_)                                                   \
-    (sizeof(_CTX_->session_id) + sizeof(_CTX_->is_client) + sizeof(_CTX_->session_master_key) \
-     + sizeof(_CTX_->out_seq) + sizeof(_CTX_->in_seq))
+#define SESSION_CTX_SERIZALIZED_SIZE(ctx)                                                     \
+    (sizeof((ctx)->session_id) + sizeof((ctx)->is_client) + sizeof((ctx)->session_master_key) \
+     + sizeof((ctx)->out_seq) + sizeof((ctx)->in_seq))
 
 themis_status_t secure_session_save(const secure_session_t* session_ctx, void* out, size_t* out_length)
 {

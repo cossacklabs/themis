@@ -22,7 +22,7 @@
 #include "soter/soter_wipe.h"
 
 #define MAX_HMAC_SIZE 64 /* For HMAC-SHA512 */
-#define MIN_VAL(_X_, _Y_) ((_X_ < _Y_) ? (_X_) : (_Y_))
+#define MIN_VAL(_X_, _Y_) (((_X_) < (_Y_)) ? (_X_) : (_Y_))
 
 /* RFC 6189 p 4.5.1 */
 soter_status_t soter_kdf(const void* key,

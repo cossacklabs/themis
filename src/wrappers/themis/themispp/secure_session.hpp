@@ -28,8 +28,6 @@
 
 #include "exception.hpp"
 
-#define THEMISPP_SECURE_SESSION_MAX_MESSAGE_SIZE 2048
-
 namespace themispp
 {
 
@@ -37,7 +35,7 @@ class secure_session_callback_interface_t
 {
 public:
     typedef std::vector<uint8_t> data_t;
-    virtual const data_t get_pub_key_by_id(const data_t& id) = 0;
+    virtual data_t get_pub_key_by_id(const data_t& id) = 0;
     virtual void send(const data_t& data)
     {
         UNUSED(data);
@@ -47,13 +45,26 @@ public:
     {
         throw themispp::exception_t("Secure Session failed receiving, receive callback not set");
     }
+#if __cplusplus >= 201103L
+    virtual ~secure_session_callback_interface_t() = default;
+#else
+    virtual ~secure_session_callback_interface_t()
+    {
+    }
+#endif
 };
+
+static inline secure_session_callback_interface_t* as_callback_interface(void* user_data)
+{
+    return static_cast<secure_session_callback_interface_t*>(user_data);
+}
 
 inline ssize_t send_callback(const uint8_t* data, size_t data_length, void* user_data)
 {
     try {
-        ((secure_session_callback_interface_t*)user_data)
-            ->send(std::vector<uint8_t>((uint8_t*)data, (uint8_t*)data + data_length));
+        secure_session_callback_interface_t* callbacks = as_callback_interface(user_data);
+        std::vector<uint8_t> data_vec(data, data + data_length); // NOLINT
+        callbacks->send(data_vec);
     } catch (...) {
         return -1;
     }
@@ -63,7 +74,8 @@ inline ssize_t send_callback(const uint8_t* data, size_t data_length, void* user
 inline ssize_t receive_callback(uint8_t* data, size_t data_length, void* user_data)
 {
     try {
-        std::vector<uint8_t> received_data = ((secure_session_callback_interface_t*)user_data)->receive();
+        secure_session_callback_interface_t* callbacks = as_callback_interface(user_data);
+        std::vector<uint8_t> received_data = callbacks->receive();
         if (received_data.empty() || received_data.size() > data_length) {
             return -1;
         }
@@ -77,10 +89,10 @@ inline ssize_t receive_callback(uint8_t* data, size_t data_length, void* user_da
 inline int get_public_key_for_id_callback(
     const void* id, size_t id_length, void* key_buffer, size_t key_buffer_length, void* user_data)
 {
-    std::vector<uint8_t> pubk =
-        ((secure_session_callback_interface_t*)user_data)
-            ->get_pub_key_by_id(std::vector<uint8_t>(static_cast<const uint8_t*>(id),
-                                                     static_cast<const uint8_t*>(id) + id_length));
+    secure_session_callback_interface_t* callbacks = as_callback_interface(user_data);
+    std::vector<uint8_t> client_id(static_cast<const uint8_t*>(id),
+                                   static_cast<const uint8_t*>(id) + id_length); // NOLINT
+    std::vector<uint8_t> pubk = callbacks->get_pub_key_by_id(client_id);
     if (pubk.empty()) {
         return THEMIS_FAIL;
     }
@@ -138,7 +150,7 @@ public:
     secure_session_t(const secure_session_t&) = delete;
     secure_session_t& operator=(const secure_session_t&) = delete;
 
-    secure_session_t(secure_session_t&& other)
+    secure_session_t(secure_session_t&& other) noexcept
     {
         _session = other._session;
         _callback = other._callback;
@@ -148,7 +160,7 @@ public:
         other._callback = nullptr;
     }
 
-    secure_session_t& operator=(secure_session_t&& other)
+    secure_session_t& operator=(secure_session_t&& other) noexcept
     {
         if (this != &other) {
             if (_session) {
@@ -263,10 +275,11 @@ public:
 
     const data_t& receive()
     {
+        static const size_t max_message_size = 2048;
         if (!_session) {
             throw themispp::exception_t("uninitialized Secure Session");
         }
-        _res.resize(THEMISPP_SECURE_SESSION_MAX_MESSAGE_SIZE);
+        _res.resize(max_message_size);
         ssize_t recv_size = secure_session_receive(_session, &_res[0], _res.size());
         if (recv_size <= 0) {
             throw themispp::exception_t("Secure Session failed to receive message",
@@ -306,6 +319,7 @@ private:
         if (!callbacks) {
             throw themispp::exception_t("Secure Session construction failed: callbacks must be non-NULL");
         }
+        // NOLINTNEXTLINE(cppcoreguidelines-owning-memory): C++03 compatibility
         _callback = new secure_session_user_callbacks_t();
         _callback->get_public_key_for_id = themispp::get_public_key_for_id_callback;
         _callback->send_data = themispp::send_callback;

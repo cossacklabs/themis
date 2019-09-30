@@ -23,20 +23,17 @@
 
 #include <themispp/secure_comparator.hpp>
 
-#define STR_2_VEC(x) std::vector<uint8_t>(x.c_str(), x.c_str() + x.length())
+#include "utils.hpp"
 
 namespace themispp
 {
 namespace secure_session_test
 {
 
-void secure_comparator_test()
+static void secure_comparator_test()
 {
-    std::string shared_secret_a("shared_secret");
-    std::string shared_secret_b("shared_secret");
-
-    themispp::secure_comparator_t a(STR_2_VEC(shared_secret_a));
-    themispp::secure_comparator_t b(STR_2_VEC(shared_secret_b));
+    themispp::secure_comparator_t a(as_bytes("shared_secret"));
+    themispp::secure_comparator_t b(as_bytes("shared_secret"));
 
     std::vector<uint8_t> buf;
 
@@ -49,11 +46,8 @@ void secure_comparator_test()
     sput_fail_unless(a.get(), "a ready", __LINE__);
     sput_fail_unless(b.get(), "b ready", __LINE__);
 
-    std::string shared_secret_c("shared_secret_c");
-    std::string shared_secret_d("shared_secret_d");
-
-    themispp::secure_comparator_t c(STR_2_VEC(shared_secret_c));
-    themispp::secure_comparator_t d(STR_2_VEC(shared_secret_d));
+    themispp::secure_comparator_t c(as_bytes("shared_secret_c"));
+    themispp::secure_comparator_t d(as_bytes("shared_secret_d"));
 
     buf = c.init();
     buf = d.proceed(buf);
@@ -65,7 +59,7 @@ void secure_comparator_test()
     sput_fail_unless(!(d.get()), "d ready", __LINE__);
 }
 
-int run_secure_comparator_test()
+inline int run_secure_comparator_test()
 {
     sput_enter_suite("ThemisPP secure comparator test");
     sput_run_test(secure_comparator_test, "secure_comparator_test", __FILE__);

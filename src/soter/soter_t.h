@@ -25,6 +25,7 @@
 #include <soter/soter_hmac.h>
 
 #ifdef CRYPTO_ENGINE_PATH
+// NOLINTNEXTLINE(bugprone-macro-parentheses): preprocessor wizardry
 #define CEP <soter/CRYPTO_ENGINE_PATH/soter_engine.h>
 #include CEP
 #undef CEP

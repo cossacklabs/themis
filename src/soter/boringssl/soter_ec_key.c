@@ -95,8 +95,8 @@ static char* ec_priv_key_tag(int curve)
 
 static size_t bn_encode(const BIGNUM* bn, uint8_t* buffer, size_t length)
 {
-    int bn_size = BN_num_bytes(bn);
-    if (length < (size_t)bn_size) {
+    unsigned bn_size = BN_num_bytes(bn);
+    if (length < bn_size) {
         return 0;
     }
     memset(buffer, 0, length - bn_size);
@@ -266,7 +266,7 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
     }
 
     /* Validate tag */
-    if (memcmp(key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF))) {
+    if (memcmp(key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)) != 0) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -363,7 +363,7 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
     }
 
     /* Validate tag */
-    if (memcmp(key->tag, EC_PRIV_KEY_PREF, strlen(EC_PRIV_KEY_PREF))) {
+    if (memcmp(key->tag, EC_PRIV_KEY_PREF, strlen(EC_PRIV_KEY_PREF)) != 0) {
         return SOTER_INVALID_PARAMETER;
     }
 

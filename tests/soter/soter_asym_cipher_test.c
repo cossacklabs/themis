@@ -327,7 +327,7 @@ void test_api(int key_length)
     }
 
     testsuite_fail_if((sizeof(test_data) != decrypted_data_length)
-                          || (memcmp(test_data, decrypted_data, sizeof(test_data))),
+                          || (memcmp(test_data, decrypted_data, sizeof(test_data)) != 0),
                       "soter_asym_cipher: normal value");
 
     testsuite_fail_unless(SOTER_INVALID_PARAMETER == soter_asym_cipher_cleanup(NULL),

@@ -28,7 +28,7 @@ void secure_comparator_security_test(void);
 /* return codes for scheduler */
 #define TEST_CONTINUE 1
 #define TEST_STOP_SUCCESS 0
-#define TEST_STOP_ERROR -1
+#define TEST_STOP_ERROR (-1)
 
 static uint8_t secret[MAX_SECRET_SIZE];
 static size_t secret_length = sizeof(secret);

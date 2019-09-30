@@ -24,14 +24,14 @@
 
 #include "exception.hpp"
 
-#define MAX_KEY_LENGTH 10 * 1024
-
 namespace themispp
 {
 
 enum asym_algs { EC, RSA };
 
-template <asym_algs alg_t_p, size_t max_key_length_t_p = MAX_KEY_LENGTH>
+static const size_t max_key_length = 10 * 1024;
+
+template <asym_algs alg_t_p, size_t max_key_length_t_p = max_key_length>
 class secure_key_pair_generator_t
 {
 public:

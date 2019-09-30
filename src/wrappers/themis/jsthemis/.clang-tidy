@@ -1,0 +1,4 @@
+---
+Checks: 'bugprone-*,clang-analyzer-*,misc-*,performance-*,portability-*,readability-*,-readability-implicit-bool-conversion,-readability-isolate-declaration,-cppcoreguidelines-*,-modernize-*'
+FormatStyle: none
+...

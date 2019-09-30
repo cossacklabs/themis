@@ -25,10 +25,10 @@ jobs:
     docker:
       - image: cossacklabs/build:ubuntu-bionic
     environment:
-      CC: clang-7
-      CXX: clang-7
-      CLANG_FORMAT: clang-format-7
-      CLANG_TIDY: clang-tidy-7
+      CC: clang-8
+      CXX: clang++-8
+      CLANG_FORMAT: clang-format-8
+      CLANG_TIDY: clang-tidy-8
       WITH_FATAL_WARNINGS: yes
     steps:
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install default-jdk nodejs npm

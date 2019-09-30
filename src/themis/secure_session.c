@@ -329,7 +329,7 @@ static themis_status_t secure_session_accept(secure_session_t* session_ctx,
         return THEMIS_INVALID_PARAMETER;
     }
 
-    if (memcmp(proto_message->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH)) {
+    if (memcmp(proto_message->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH) != 0) {
         return THEMIS_INVALID_PARAMETER;
     }
 
@@ -344,7 +344,7 @@ static themis_status_t secure_session_accept(secure_session_t* session_ctx,
 
     peer_id = (const soter_container_hdr_t*)soter_container_const_data(proto_message);
 
-    if (memcmp(peer_id->tag, THEMIS_SESSION_ID_TAG, SOTER_CONTAINER_TAG_LENGTH)) {
+    if (memcmp(peer_id->tag, THEMIS_SESSION_ID_TAG, SOTER_CONTAINER_TAG_LENGTH) != 0) {
         return THEMIS_INVALID_PARAMETER;
     }
 
@@ -355,7 +355,7 @@ static themis_status_t secure_session_accept(secure_session_t* session_ctx,
     peer_ecdh_key = (const soter_container_hdr_t*)(soter_container_const_data(peer_id)
                                                    + soter_container_data_size(peer_id));
 
-    if (memcmp(peer_ecdh_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF))) {
+    if (memcmp(peer_ecdh_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)) != 0) {
         return THEMIS_INVALID_PARAMETER;
     }
 
@@ -374,7 +374,7 @@ static themis_status_t secure_session_accept(secure_session_t* session_ctx,
 
     peer_sign_key = (const soter_container_hdr_t*)sign_key;
 
-    if (memcmp(peer_sign_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF))) {
+    if (memcmp(peer_sign_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)) != 0) {
         return THEMIS_INVALID_PARAMETER;
     }
 
@@ -535,7 +535,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
         return THEMIS_INVALID_PARAMETER;
     }
 
-    if (memcmp(proto_message->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH)) {
+    if (memcmp(proto_message->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH) != 0) {
         return THEMIS_INVALID_PARAMETER;
     }
 
@@ -549,7 +549,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
 
     peer_id = (const soter_container_hdr_t*)soter_container_const_data(proto_message);
 
-    if (memcmp(peer_id->tag, THEMIS_SESSION_ID_TAG, SOTER_CONTAINER_TAG_LENGTH)) {
+    if (memcmp(peer_id->tag, THEMIS_SESSION_ID_TAG, SOTER_CONTAINER_TAG_LENGTH) != 0) {
         return THEMIS_INVALID_PARAMETER;
     }
 
@@ -560,7 +560,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
     peer_ecdh_key = (const soter_container_hdr_t*)(soter_container_const_data(peer_id)
                                                    + soter_container_data_size(peer_id));
 
-    if (memcmp(peer_ecdh_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF))) {
+    if (memcmp(peer_ecdh_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)) != 0) {
         return THEMIS_INVALID_PARAMETER;
     }
 
@@ -579,7 +579,7 @@ static themis_status_t secure_session_proceed_client(secure_session_t* session_c
 
     peer_sign_key = (const soter_container_hdr_t*)sign_key;
 
-    if (memcmp(peer_sign_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF))) {
+    if (memcmp(peer_sign_key->tag, EC_PUB_KEY_PREF, strlen(EC_PUB_KEY_PREF)) != 0) {
         return THEMIS_INVALID_PARAMETER;
     }
 
@@ -783,7 +783,7 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
         return THEMIS_INVALID_PARAMETER;
     }
 
-    if (memcmp(proto_message->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH)) {
+    if (memcmp(proto_message->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH) != 0) {
         return THEMIS_INVALID_PARAMETER;
     }
 

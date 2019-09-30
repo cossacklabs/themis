@@ -31,7 +31,7 @@
 #define test_check(function_call, success_res, msg) \
     {                                               \
         themis_status_t res = function_call;        \
-        if (res != success_res) {                   \
+        if (res != (success_res)) {                 \
             testsuite_fail_if(true, msg);           \
             return -1;                              \
         }                                           \
@@ -40,7 +40,7 @@
 #define test_check_free(function_call, success_res, msg, free_condition) \
     {                                                                    \
         themis_status_t res = function_call;                             \
-        if (res != success_res) {                                        \
+        if (res != (success_res)) {                                      \
             testsuite_fail_if(true, msg);                                \
             free_condition;                                              \
             return -1;                                                   \

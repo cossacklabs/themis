@@ -24,15 +24,18 @@
 #include <themispp/secure_keygen.hpp>
 #include <themispp/secure_message.hpp>
 
+#include "utils.hpp"
+
 namespace themispp
 {
 namespace secure_message_test
 {
-static std::string message1 = "this is test message1 for Secure Message test";
-static std::string message2 = "this is test message2 for Secure Message test";
+
+static const std::vector<uint8_t> message1 = as_bytes("this is test message1 for Secure Message test");
+static const std::vector<uint8_t> message2 = as_bytes("this is test message2 for Secure Message test");
 
 template <asym_algs alg_t_p>
-int secure_message_test_()
+static int secure_message_test_()
 {
     try {
         themispp::secure_key_pair_generator_t<alg_t_p> g;
@@ -49,13 +52,9 @@ int secure_message_test_()
         themispp::secure_message_t c(intruder_private_key, public_key);
 
         sput_fail_unless(private_key != peer_private_key, "generate two identical key pairs", __LINE__);
-        std::vector<uint8_t> encrypted_message = a.encrypt(
-            std::vector<uint8_t>(message1.c_str(), message1.c_str() + message1.length()));
+        std::vector<uint8_t> encrypted_message = a.encrypt(message1);
         std::vector<uint8_t> decrypted_message = b.decrypt(encrypted_message);
-        sput_fail_unless(!message1.compare(
-                             std::string(decrypted_message.begin(), decrypted_message.end())),
-                         "decryption fail",
-                         __LINE__);
+        sput_fail_unless(message1 == decrypted_message, "decryption fail", __LINE__);
         try {
             decrypted_message = c.decrypt(encrypted_message);
             sput_fail_unless(false, "decryption fail", __LINE__);
@@ -67,17 +66,19 @@ int secure_message_test_()
     }
     return 0;
 }
-int secure_message_test_rsa()
+
+static int secure_message_test_rsa()
 {
     return secure_message_test_<themispp::RSA>();
 }
-int secure_message_test_ec()
+
+static int secure_message_test_ec()
 {
     return secure_message_test_<themispp::EC>();
 }
 
 template <asym_algs alg_t_p>
-int secure_message_sign_verify_test()
+static int secure_message_sign_verify_test()
 {
     try {
         themispp::secure_key_pair_generator_t<alg_t_p> g;
@@ -94,12 +95,9 @@ int secure_message_sign_verify_test()
         themispp::secure_message_t c(intruder_private_key, public_key);
 
         sput_fail_unless(private_key != peer_private_key, "generate two identical key pairs", __LINE__);
-        std::vector<uint8_t> a_signed_message = a.sign(
-            std::vector<uint8_t>(message1.c_str(), message1.c_str() + message1.length()));
+        std::vector<uint8_t> a_signed_message = a.sign(message1);
         std::vector<uint8_t> verified_message = b.verify(a_signed_message);
-        sput_fail_unless(!message1.compare(std::string(verified_message.begin(), verified_message.end())),
-                         "verification fail",
-                         __LINE__);
+        sput_fail_unless(message1 == verified_message, "verification fail", __LINE__);
         // corrupt one byte
         a_signed_message[2]++;
         try {
@@ -114,17 +112,17 @@ int secure_message_sign_verify_test()
     return 0;
 }
 
-int secure_message_sign_verify_test_rsa()
+static int secure_message_sign_verify_test_rsa()
 {
     return secure_message_sign_verify_test<themispp::RSA>();
 }
 
-int secure_message_sign_verify_test_ec()
+static int secure_message_sign_verify_test_ec()
 {
     return secure_message_sign_verify_test<themispp::EC>();
 }
 
-int secure_message_test_key_mismatch()
+static int secure_message_test_key_mismatch()
 {
     themispp::secure_key_pair_generator_t<themispp::EC> gen_ec;
     std::vector<uint8_t> private_key(gen_ec.get_priv());
@@ -138,7 +136,7 @@ int secure_message_test_key_mismatch()
     return 0;
 }
 
-void run_secure_message_test()
+inline void run_secure_message_test()
 {
     sput_enter_suite("ThemisPP secure message test");
     sput_run_test(secure_message_test_rsa, "secure_message_test_rsa", __FILE__);

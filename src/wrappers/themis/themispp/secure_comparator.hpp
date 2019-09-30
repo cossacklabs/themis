@@ -24,7 +24,6 @@
 
 #include "exception.hpp"
 
-#define THEMISPP_SECURE_SESSION_MAX_MESSAGE_SIZE 2048
 namespace themispp
 {
 
@@ -54,7 +53,10 @@ public:
 
     virtual ~secure_comparator_t()
     {
-        secure_comparator_destroy(comparator_);
+        if (comparator_) {
+            secure_comparator_destroy(comparator_);
+            comparator_ = NULL;
+        }
     }
 
     const data_t& init()
@@ -97,6 +99,35 @@ public:
     {
         return THEMIS_SCOMPARE_MATCH == secure_comparator_get_result(comparator_);
     }
+
+#if __cplusplus >= 201103L
+    secure_comparator_t(const secure_comparator_t&) = delete;
+    secure_comparator_t& operator=(const secure_comparator_t&) = delete;
+
+    secure_comparator_t(secure_comparator_t&& other) noexcept
+    {
+        comparator_ = other.comparator_;
+        other.comparator_ = nullptr;
+        res_ = std::move(other.res_);
+    }
+
+    secure_comparator_t& operator=(secure_comparator_t&& other) noexcept
+    {
+        if (this != &other) {
+            if (comparator_) {
+                secure_comparator_destroy(comparator_);
+            }
+            comparator_ = other.comparator_;
+            other.comparator_ = nullptr;
+            res_ = std::move(other.res_);
+        }
+        return *this;
+    }
+#else
+private:
+    secure_comparator_t(const secure_comparator_t&);
+    secure_comparator_t& operator=(const secure_comparator_t&);
+#endif
 
 private:
     ::secure_comparator_t* comparator_;
