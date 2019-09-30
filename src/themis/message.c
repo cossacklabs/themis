@@ -79,6 +79,5 @@ themis_status_t themis_message_destroy(themis_message_t* ctx)
         free(ctx->data);
     }
     free(ctx);
-    ctx = NULL;
     return THEMIS_SUCCESS;
 }

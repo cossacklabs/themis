@@ -55,7 +55,6 @@ themis_secure_message_signer_t* themis_secure_message_signer_init(const uint8_t*
     if (!ctx) {
         return NULL;
     }
-    ctx->sign_ctx = NULL;
     ctx->sign_ctx = soter_sign_create(get_alg_id(key, key_length), NULL, 0, key, key_length);
     if (!(ctx->sign_ctx)) {
         free(ctx);
@@ -117,7 +116,6 @@ themis_status_t themis_secure_message_signer_proceed(themis_secure_message_signe
 themis_status_t themis_secure_message_signer_destroy(themis_secure_message_signer_t* ctx)
 {
     soter_sign_destroy(ctx->sign_ctx);
-    ctx->sign_ctx = NULL;
     free(ctx);
     return THEMIS_SUCCESS;
 }
