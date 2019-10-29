@@ -24,10 +24,11 @@ A clear and concise description of what you expected to happen.
 
 **Environment (please complete the following information):**
 - OS: [OS name and version, e.g. iOS 13]
+- Device: [for mobile, e.g. iPhone X]
 - Themis version: [e.g. 0.12.0]
 - Installation way:
    - [ ] via package manager
    - [ ] built from source
 
 **Additional context**
-Add any other context about the problem here. Example project, if you can make and share it. 
+Add any other context about the problem here. Example project, if you can make and share it.
