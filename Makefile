@@ -54,6 +54,7 @@ exec_prefix  = $(prefix)
 bindir       = $(prefix)/bin
 includedir   = $(prefix)/include
 libdir       = $(exec_prefix)/lib
+jnidir       = $(libdir)
 pkgconfigdir = $(libdir)/pkgconfig
 
 CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -fPIC

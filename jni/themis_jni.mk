@@ -41,7 +41,20 @@ $(BIN_PATH)/$(LIBTHEMISJNI_SO): $(THEMIS_JNI_OBJ) $(THEMIS_STATIC)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
+
+themis_jni_install: $(BIN_PATH)/$(LIBTHEMISJNI_SO)
+	@echo -n "install Themis JNI "
+	@mkdir -p $(DESTDIR)$(jnidir)
+	@$(INSTALL_PROGRAM) $(BIN_PATH)/$(LIBTHEMISJNI_SO) $(DESTDIR)$(jnidir)
 ifdef IS_MACOS
-	@install_name_tool -id "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
-	@install_name_tool -change "$(BIN_PATH)/$(notdir $@)" "$(PREFIX)/lib/$(notdir $@)" $(BIN_PATH)/$(notdir $@)
+	@install_name_tool -id "$(jnidir)/$(LIBTHEMISJNI_SO)" "$(DESTDIR)$(jnidir)/$(LIBTHEMISJNI_SO)"
+	@install_name_tool -change "$(BIN_PATH)/$(LIBTHEMIS_SO)" "$(libdir)/$(LIBTHEMIS_SO)" "$(DESTDIR)$(jnidir)/$(LIBTHEMISJNI_SO)"
 endif
+	@$(PRINT_OK_)
+
+themis_jni_uninstall:
+	@echo -n "uninstall Themis JNI "
+	@rm  -f $(DESTDIR)$(jnidir)/$(LIBTHEMISJNI_SO)
+	@$(PRINT_OK_)
+
+uninstall: themis_jni_uninstall
