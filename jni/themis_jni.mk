@@ -35,9 +35,9 @@ endif
 
 $(OBJ_PATH)/jni/%: CFLAGS += $(jvm_includes)
 
-$(BIN_PATH)/$(LIBTHEMISJNI_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
+$(BIN_PATH)/$(LIBTHEMISJNI_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS) -lthemis
 
-$(BIN_PATH)/$(LIBTHEMISJNI_SO): $(THEMIS_JNI_OBJ) $(THEMIS_STATIC)
+$(BIN_PATH)/$(LIBTHEMISJNI_SO): $(THEMIS_JNI_OBJ) $(BIN_PATH)/$(LIBTHEMIS_SO)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
