@@ -1,5 +1,15 @@
 # Themis ChangeLog
 
+## Unreleased
+
+Changes that are currently in development and have not been released yet.
+
+_Code:_
+
+- **Java**
+
+  - JNI libraries are now available as `libthemis-jni` packages for supported Linux systems ([#552](https://github.com/cossacklabs/themis/pull/552), [#553](https://github.com/cossacklabs/themis/pull/553)).
+
 ## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 27th 2019
 
 **TL;DR:**
