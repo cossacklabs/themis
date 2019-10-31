@@ -51,6 +51,31 @@ ifdef IS_MACOS
 	@install_name_tool -change "$(BIN_PATH)/$(LIBTHEMIS_SO)" "$(libdir)/$(LIBTHEMIS_SO)" "$(DESTDIR)$(jnidir)/$(LIBTHEMISJNI_SO)"
 endif
 	@$(PRINT_OK_)
+	@java_library_path=$$(\
+	    java -XshowSettings:properties -version 2>&1 \
+	    | sed -E 's/^ +[^=]+ =/_&/' \
+	    | awk -v prop=java.library.path \
+	      'BEGIN { RS = "_"; IFS = " = " } \
+	       { if($$1 ~ prop) { \
+	           for (i = 3; i <= NF; i++) { \
+	             print $$i \
+	           } \
+	         } \
+	       }' \
+	 ) && \
+	 if echo "$$java_library_path" | grep -vq '^$(jnidir)$$'; \
+	 then \
+	     echo ''; \
+	     echo 'Your Java installation does not seem to have "$(jnidir)" in its'; \
+	     echo 'search path for JNI libraries:'; \
+	     echo ''; \
+	     echo "$$java_library_path" | sed 's/^/    /'; \
+	     echo ''; \
+	     echo 'You will need to either add it to the "java.library.path" property'; \
+	     echo 'on application startup, or to move $(LIBTHEMISJNI_SO) manually'; \
+	     echo 'to one of these locations so that Java could find it.'; \
+	     echo ''; \
+	 fi
 
 themis_jni_uninstall:
 	@echo -n "uninstall Themis JNI "
