@@ -35,4 +35,10 @@
 #define THEMIS_API EMSCRIPTEN_KEEPALIVE
 #endif
 
+/*
+ * Marks API that needs to be exported for technical reasons, but otherwise
+ * is not intended for user consumption.
+ */
+#define THEMIS_PRIVATE_API THEMIS_API
+
 #endif /* THEMIS_API_H */
