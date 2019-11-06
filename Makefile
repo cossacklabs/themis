@@ -353,11 +353,6 @@ SANITIZERS += -fsanitize=nullability
 else
 $(warning -fsanitize=nullability not supported by $(CC), skipping...)
 endif
-ifeq (yes,$(call supported,-fsanitize-blacklist=src/soter/blacklist-ubsan.txt))
-SANITIZERS += -fsanitize-blacklist=src/soter/blacklist-ubsan.txt
-else
-$(warning -fsanitize-blacklist not supported by $(CC), skipping...)
-endif
 endif
 
 ifeq (yes,$(WITH_FATAL_SANITIZERS))
