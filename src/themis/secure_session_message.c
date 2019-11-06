@@ -62,7 +62,8 @@ themis_status_t secure_session_wrap(secure_session_t* session_ctx,
         return THEMIS_FAIL;
     }
 
-    *((uint64_t*)ts) = htobe64(curr_time);
+    curr_time = htobe64(curr_time);
+    memmove(ts, &curr_time, sizeof(curr_time));
 
     *wrapped_message_length = WRAPPED_SIZE(message_length);
     memmove(ts + 8, message, message_length);
