@@ -63,7 +63,7 @@ static uint32_t crc_c[256] = {
 
 soter_crc32_t soter_crc32_create(void)
 {
-    return ~0L;
+    return 0xFFFFFFFF;
 }
 
 void soter_crc32_update(soter_crc32_t* crc, const void* buf, size_t len)
