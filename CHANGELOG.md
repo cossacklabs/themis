@@ -1,5 +1,15 @@
 # Themis ChangeLog
 
+## Unreleased
+
+Changes that are currently in development and have not been released yet.
+
+_Code:_
+
+- **Python**
+
+  - Fixed compatibility issues on 32-bit platforms ([#555](https://github.com/cossacklabs/themis/pull/555)).
+
 ## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 27th 2019
 
 **TL;DR:**
