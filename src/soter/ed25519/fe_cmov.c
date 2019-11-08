@@ -9,6 +9,7 @@ replace (f,g) with (f,g) if b == 0.
 Preconditions: b in {0,1}.
 */
 
+SOTER_ED25519_NO_UBSAN
 void fe_cmov(fe f,const fe g,unsigned int b)
 {
   crypto_int32 f0 = f[0];

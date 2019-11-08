@@ -16,6 +16,7 @@ Postconditions:
 See fe_mul.c for discussion of implementation strategy.
 */
 
+SOTER_ED25519_NO_UBSAN
 void fe_sq2(fe h,const fe f)
 {
   crypto_int32 f0 = f[0];
