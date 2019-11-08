@@ -1,5 +1,15 @@
 # Themis ChangeLog
 
+## Unreleased
+
+Changes that are currently in development and have not been released yet.
+
+_Code:_
+
+- **Java**
+
+  - JDK location is now detected automatically in most cases, you should not need to set JAVA_HOME or JDK_INCLUDE_PATH manually ([#551](https://github.com/cossacklabs/themis/pull/551)).
+
 ## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 27th 2019
 
 **TL;DR:**
