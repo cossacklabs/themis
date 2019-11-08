@@ -505,30 +505,28 @@ uninstall: uninstall_themis uninstall_soter
 # Themis distribution tarball
 #
 
-THEMIS_DIST_FILENAME = $(VERSION).tar.gz
+DIST_DIR = themis_$(VERSION)
+
+# Themis Core source code, tests, docs
+DIST_FILES += docs src tests Makefile VERSION
+DIST_FILES += README.md CHANGELOG.md LICENSE
+DIST_FILES += PKGBUILD.MSYS2 Themis.nsi
+# Supporting files for language wrappers
+DIST_FILES += Cargo.toml
+DIST_FILES += CMakeLists.txt
+DIST_FILES += gothemis
+DIST_FILES += jni
+DIST_FILES += scripts tools
 
 dist:
-	mkdir -p $(VERSION)
-	rsync -avz src $(VERSION)
-	rsync -avz docs $(VERSION)
-	rsync -avz gothemis $(VERSION)
-	rsync -avz gradle $(VERSION)
-	rsync -avz jni $(VERSION)
-	rsync -avz --exclude 'tests/soter/nist-sts/assess' tests $(VERSION)
-	rsync -avz tools $(VERSION)
-	rsync -avz CHANGELOG.md $(VERSION)
-	rsync -avz LICENSE $(VERSION)
-	rsync -avz Makefile $(VERSION)
-	rsync -avz README.md $(VERSION)
-	rsync -avz build.gradle $(VERSION)
-	rsync -avz gradlew $(VERSION)
-	rsync -avz themis.podspec $(VERSION)
-	rsync -avz VERSION $(VERSION)
-	tar -zcvf $(THEMIS_DIST_FILENAME) $(VERSION)
-	rm -rf $(VERSION)
+	@mkdir -p $(DIST_DIR)
+	@rsync -a $(DIST_FILES) $(DIST_DIR)
+	@tar czf $(DIST_DIR).tar.gz $(DIST_DIR)
+	@rm -rf $(DIST_DIR)
+	@echo $(DIST_DIR).tar.gz
 
 unpack_dist:
-	@tar -xf $(THEMIS_DIST_FILENAME)
+	@tar -xf $(DIST_DIR).tar.gz
 
 ########################################################################
 #
