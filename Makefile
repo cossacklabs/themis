@@ -435,7 +435,7 @@ uninstall: uninstall_themis uninstall_soter
 # Themis distribution tarball
 #
 
-DIST_DIR = themis-$(VERSION)
+DIST_DIR = themis_$(VERSION)
 
 # Themis Core source code, tests, docs
 DIST_FILES += docs src tests Makefile VERSION
