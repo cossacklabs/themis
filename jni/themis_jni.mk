@@ -28,16 +28,27 @@ JAVA_DEFAULTS=/usr/share/java/java_defaults.mk
 ifeq ($(JDK_INCLUDE_PATH),)
 	ifneq ("$(wildcard $(JAVA_DEFAULTS))","")
 		include $(JAVA_DEFAULTS)
+	else
+		ifndef JAVA_HOME
+			JAVA_HOME := $(shell java -XshowSettings:properties -version 2>&1 | sed -n '/java.home/s/.*java.home = //p')
+		endif
+		jvm_includes += -I$(JAVA_HOME)/include
+		ifdef IS_LINUX
+			jvm_includes += -I$(JAVA_HOME)/include/linux
+		endif
+		ifdef IS_MACOS
+			jvm_includes += -I$(JAVA_HOME)/include/darwin
+		endif
 	endif
 else
-	jvm_includes=$(JAVA_HOME)/include
+	jvm_includes += $(addprefix -I,$(JDK_INCLUDE_PATH))
 endif
 
 $(OBJ_PATH)/jni/%: CFLAGS += $(jvm_includes)
 
-$(BIN_PATH)/$(LIBTHEMISJNI_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
+$(BIN_PATH)/$(LIBTHEMISJNI_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS) -lthemis
 
-$(BIN_PATH)/$(LIBTHEMISJNI_SO): $(THEMIS_JNI_OBJ) $(THEMIS_STATIC)
+$(BIN_PATH)/$(LIBTHEMISJNI_SO): $(THEMIS_JNI_OBJ) $(BIN_PATH)/$(LIBTHEMIS_SO)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)

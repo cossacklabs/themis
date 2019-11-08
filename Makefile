@@ -230,11 +230,21 @@ endif
 # our compilation flags there, so do not export these variables.
 unexport CFLAGS LDFLAGS
 
+# Prevent undefined symbols in produced binaries, but allow them for sanitizers
+# which expect the libraries linked into the main executable to be underlinked.
+ifndef WITH_ASAN
+ifndef WITH_MSAN
+ifndef WITH_TSAN
+ifndef WITH_UBSAN
 ifdef IS_MACOS
 LDFLAGS += -Wl,-undefined,error
 endif
 ifdef IS_LINUX
 LDFLAGS += -Wl,--no-undefined
+endif
+endif
+endif
+endif
 endif
 
 CFLAGS += -O2 -fno-omit-frame-pointer -g
@@ -299,6 +309,64 @@ CFLAGS += $(if $(findstring .cpp,$(suffix $<)),,-Wstrict-prototypes)
 endif
 
 CFLAGS += -fvisibility=hidden
+
+#
+# Enable code sanitizers on demand and if supported by compiler
+#
+
+ifdef WITH_ASAN
+ifeq (yes,$(call supported,-fsanitize=address))
+SANITIZERS += -fsanitize=address
+else
+$(error -fsanitize=address requested but $(CC) does not seem to support it)
+endif
+endif
+
+ifdef WITH_MSAN
+ifeq (yes,$(call supported,-fsanitize=memory))
+SANITIZERS += -fsanitize=memory -fsanitize-memory-track-origins=2
+else
+$(error -fsanitize=memory requested but $(CC) does not seem to support it)
+endif
+endif
+
+ifdef WITH_TSAN
+ifeq (yes,$(call supported,-fsanitize=thread))
+SANITIZERS += -fsanitize=thread
+else
+$(error -fsanitize=thread requested but $(CC) does not seem to support it)
+endif
+endif
+
+ifdef WITH_UBSAN
+ifeq (yes,$(call supported,-fsanitize=undefined))
+SANITIZERS += -fsanitize=undefined
+else
+$(error -fsanitize=undefined requested but $(CC) does not seem to support it)
+endif
+ifeq (yes,$(call supported,-fsanitize=integer))
+SANITIZERS += -fsanitize=integer
+else
+$(warning -fsanitize=integer not supported by $(CC), skipping...)
+endif
+ifeq (yes,$(call supported,-fsanitize=nullability))
+SANITIZERS += -fsanitize=nullability
+else
+$(warning -fsanitize=nullability not supported by $(CC), skipping...)
+endif
+ifeq (yes,$(call supported,-fsanitize-blacklist=src/soter/blacklist-ubsan.txt))
+SANITIZERS += -fsanitize-blacklist=src/soter/blacklist-ubsan.txt
+else
+$(warning -fsanitize-blacklist not supported by $(CC), skipping...)
+endif
+endif
+
+ifeq (yes,$(WITH_FATAL_SANITIZERS))
+SANITIZERS += -fno-sanitize-recover=all
+endif
+
+CFLAGS  += $(SANITIZERS)
+LDFLAGS += $(SANITIZERS)
 
 # Binary format compatibility with Themis 0.9.6 on x86_64 architecture.
 # https://github.com/cossacklabs/themis/pull/279
@@ -438,30 +506,28 @@ uninstall: uninstall_themis uninstall_soter
 # Themis distribution tarball
 #
 
-THEMIS_DIST_FILENAME = $(VERSION).tar.gz
+DIST_DIR = themis_$(VERSION)
+
+# Themis Core source code, tests, docs
+DIST_FILES += docs src tests Makefile VERSION
+DIST_FILES += README.md CHANGELOG.md LICENSE
+DIST_FILES += PKGBUILD.MSYS2 Themis.nsi
+# Supporting files for language wrappers
+DIST_FILES += Cargo.toml
+DIST_FILES += CMakeLists.txt
+DIST_FILES += gothemis
+DIST_FILES += jni
+DIST_FILES += scripts tools
 
 dist:
-	mkdir -p $(VERSION)
-	rsync -avz src $(VERSION)
-	rsync -avz docs $(VERSION)
-	rsync -avz gothemis $(VERSION)
-	rsync -avz gradle $(VERSION)
-	rsync -avz jni $(VERSION)
-	rsync -avz --exclude 'tests/soter/nist-sts/assess' tests $(VERSION)
-	rsync -avz tools $(VERSION)
-	rsync -avz CHANGELOG.md $(VERSION)
-	rsync -avz LICENSE $(VERSION)
-	rsync -avz Makefile $(VERSION)
-	rsync -avz README.md $(VERSION)
-	rsync -avz build.gradle $(VERSION)
-	rsync -avz gradlew $(VERSION)
-	rsync -avz themis.podspec $(VERSION)
-	rsync -avz VERSION $(VERSION)
-	tar -zcvf $(THEMIS_DIST_FILENAME) $(VERSION)
-	rm -rf $(VERSION)
+	@mkdir -p $(DIST_DIR)
+	@rsync -a $(DIST_FILES) $(DIST_DIR)
+	@tar czf $(DIST_DIR).tar.gz $(DIST_DIR)
+	@rm -rf $(DIST_DIR)
+	@echo $(DIST_DIR).tar.gz
 
 unpack_dist:
-	@tar -xf $(THEMIS_DIST_FILENAME)
+	@tar -xf $(DIST_DIR).tar.gz
 
 ########################################################################
 #
