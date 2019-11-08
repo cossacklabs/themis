@@ -314,6 +314,7 @@ CFLAGS += -fvisibility=hidden
 #
 
 ifdef WITH_ASAN
+CFLAGS += -DWITH_ASAN
 ifeq (yes,$(call supported,-fsanitize=address))
 SANITIZERS += -fsanitize=address
 else
@@ -322,6 +323,7 @@ endif
 endif
 
 ifdef WITH_MSAN
+CFLAGS += -DWITH_MSAN
 ifeq (yes,$(call supported,-fsanitize=memory))
 SANITIZERS += -fsanitize=memory -fsanitize-memory-track-origins=2
 else
@@ -330,6 +332,7 @@ endif
 endif
 
 ifdef WITH_TSAN
+CFLAGS += -DWITH_TSAN
 ifeq (yes,$(call supported,-fsanitize=thread))
 SANITIZERS += -fsanitize=thread
 else
@@ -338,6 +341,7 @@ endif
 endif
 
 ifdef WITH_UBSAN
+CFLAGS += -DWITH_UBSAN
 ifeq (yes,$(call supported,-fsanitize=undefined))
 SANITIZERS += -fsanitize=undefined
 else
