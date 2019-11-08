@@ -29,13 +29,26 @@ jobs:
       CXX: clang++-8
       CLANG_FORMAT: clang-format-8
       CLANG_TIDY: clang-tidy-8
+      NO_NIST_STS: 1
       WITH_FATAL_WARNINGS: yes
+      WITH_FATAL_SANITIZERS: yes
     steps:
       - run: sudo apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get -y install default-jdk nodejs npm
       - checkout
       - run: git reset HEAD && git submodule sync && git submodule update --init
       - run: make fmt_check ENGINE=boringssl
       - run: make fmt_check ENGINE=openssl
+      - run: make clean && make test CC=gcc-8   WITH_ASAN=1
+      - run: make clean && make test CC=gcc-8   WITH_TSAN=1
+      # Currently the code has quite a few UBSAN violations and GCC does not provide a convenient
+      # way to silence individual warnings. Disable UBSAN runs for GCC for now.
+#     - run: make clean && make test CC=gcc-8   WITH_UBSAN=1
+      - run: make clean && make test CC=clang-8 WITH_ASAN=1
+      # MSAN is currently supported only by Clang. However, it produces a lot of false positives
+      # due to OpenSSL not being instrumented and intentionally using uninitialized memory.
+#     - run: make clean && make test CC=clang-8 WITH_MSAN=1
+      - run: make clean && make test CC=clang-8 WITH_TSAN=1
+      - run: make clean && make test CC=clang-8 WITH_UBSAN=1
 
   x86_64:
     docker:
@@ -185,8 +198,9 @@ jobs:
             cd $HOME/emsdk
             git reset --hard
             git pull
-            ./emsdk install latest
-            ./emsdk activate latest
+            # TODO (T1373): roll back to using "latest" when Emscripten regression is resolved
+            ./emsdk install 1.38.48
+            ./emsdk activate 1.38.48
       - checkout
       - run:
           name: Sync submodules
@@ -335,8 +349,9 @@ jobs:
             cd $HOME/emsdk
             git reset --hard
             git pull
-            ./emsdk install latest
-            ./emsdk activate latest
+            # TODO (T1373): roll back to using "latest" when Emscripten regression is resolved
+            ./emsdk install 1.38.48
+            ./emsdk activate 1.38.48
 
       # themis
       - checkout

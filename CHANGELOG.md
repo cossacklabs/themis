@@ -106,8 +106,8 @@ _Code:_
   - ThemisPP is now available as a system package through [Cossack Labs repositories](https://docs.cossacklabs.com/pages/documentation-themis/#installing-themis-from-repositories) ([#506](https://github.com/cossacklabs/themis/pull/506)).
 
     Use
-      - `libthemispp-dev` for Debian and Ubuntu,     
-      - `libthemispp-devel` for CentOS.             
+      - `libthemispp-dev` for Debian and Ubuntu,
+      - `libthemispp-devel` for CentOS.
 
 - **Go**
 
@@ -163,7 +163,7 @@ _Code:_
 
   - Minor internal code style modernizations ([#466](https://github.com/cossacklabs/themis/pull/466)).
 
-- **WebAssembly**    
+- **WebAssembly**
 
   - **WasmThemis** brings Themis to Web using [_WebAssembly_](https://webassembly.org).
     Thank you to [**@ilammy**](https://github.com/ilammy) for adding it.
@@ -193,7 +193,7 @@ _Code:_
 _Docs:_
 
 - [Themis GitHub Wiki](https://github.com/cossacklabs/themis/wiki) is being deprecated.
-  Please find the latest documentation for Themis on [Cossack Labs Documentation Server](https://docs.cossacklabs.com/products/themis/). If you're used to using the [Themis Wiki](https://github.com/cossacklabs/themis/wiki) or have bookmarked a few pages for further use, don't worry - its pages and table of contents stay where they were, but each will now link to its corresponding [Cossack Labs Documentation Server](https://docs.cossacklabs.com/products/themis/) counterpart.    
+  Please find the latest documentation for Themis on [Cossack Labs Documentation Server](https://docs.cossacklabs.com/products/themis/). If you're used to using the [Themis Wiki](https://github.com/cossacklabs/themis/wiki) or have bookmarked a few pages for further use, don't worry - its pages and table of contents stay where they were, but each will now link to its corresponding [Cossack Labs Documentation Server](https://docs.cossacklabs.com/products/themis/) counterpart.
 
 - [Code of Conduct](https://github.com/cossacklabs/themis/blob/master/CODE_OF_CONDUCT.md) has been introduced to make sure that Themis project has a welcoming environment ([#518](https://github.com/cossacklabs/themis/pull/518)).
 

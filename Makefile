@@ -229,20 +229,32 @@ endif
 # our compilation flags there, so do not export these variables.
 unexport CFLAGS LDFLAGS
 
+# Prevent undefined symbols in produced binaries, but allow them for sanitizers
+# which expect the libraries linked into the main executable to be underlinked.
+ifndef WITH_ASAN
+ifndef WITH_MSAN
+ifndef WITH_TSAN
+ifndef WITH_UBSAN
 ifdef IS_MACOS
 LDFLAGS += -Wl,-undefined,error
 endif
 ifdef IS_LINUX
 LDFLAGS += -Wl,--no-undefined
 endif
+endif
+endif
+endif
+endif
+
+CFLAGS += -O2 -fno-omit-frame-pointer -g
 
 ifdef COVERAGE
-	CFLAGS += -g -O0 --coverage
+	CFLAGS += -O0 --coverage
 	LDFLAGS += --coverage
 endif
 
 ifdef DEBUG
-	CFLAGS += -DDEBUG -g
+	CFLAGS += -O0 -DDEBUG
 endif
 
 ifneq ($(GEM_INSTALL_OPTIONS),)
@@ -296,6 +308,64 @@ CFLAGS += $(if $(findstring .cpp,$(suffix $<)),,-Wstrict-prototypes)
 endif
 
 CFLAGS += -fvisibility=hidden
+
+#
+# Enable code sanitizers on demand and if supported by compiler
+#
+
+ifdef WITH_ASAN
+ifeq (yes,$(call supported,-fsanitize=address))
+SANITIZERS += -fsanitize=address
+else
+$(error -fsanitize=address requested but $(CC) does not seem to support it)
+endif
+endif
+
+ifdef WITH_MSAN
+ifeq (yes,$(call supported,-fsanitize=memory))
+SANITIZERS += -fsanitize=memory -fsanitize-memory-track-origins=2
+else
+$(error -fsanitize=memory requested but $(CC) does not seem to support it)
+endif
+endif
+
+ifdef WITH_TSAN
+ifeq (yes,$(call supported,-fsanitize=thread))
+SANITIZERS += -fsanitize=thread
+else
+$(error -fsanitize=thread requested but $(CC) does not seem to support it)
+endif
+endif
+
+ifdef WITH_UBSAN
+ifeq (yes,$(call supported,-fsanitize=undefined))
+SANITIZERS += -fsanitize=undefined
+else
+$(error -fsanitize=undefined requested but $(CC) does not seem to support it)
+endif
+ifeq (yes,$(call supported,-fsanitize=integer))
+SANITIZERS += -fsanitize=integer
+else
+$(warning -fsanitize=integer not supported by $(CC), skipping...)
+endif
+ifeq (yes,$(call supported,-fsanitize=nullability))
+SANITIZERS += -fsanitize=nullability
+else
+$(warning -fsanitize=nullability not supported by $(CC), skipping...)
+endif
+ifeq (yes,$(call supported,-fsanitize-blacklist=src/soter/blacklist-ubsan.txt))
+SANITIZERS += -fsanitize-blacklist=src/soter/blacklist-ubsan.txt
+else
+$(warning -fsanitize-blacklist not supported by $(CC), skipping...)
+endif
+endif
+
+ifeq (yes,$(WITH_FATAL_SANITIZERS))
+SANITIZERS += -fno-sanitize-recover=all
+endif
+
+CFLAGS  += $(SANITIZERS)
+LDFLAGS += $(SANITIZERS)
 
 # Binary format compatibility with Themis 0.9.6 on x86_64 architecture.
 # https://github.com/cossacklabs/themis/pull/279
