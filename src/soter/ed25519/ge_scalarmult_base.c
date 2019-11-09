@@ -1,6 +1,7 @@
 #include "ge.h"
 /* #include "crypto_uint32.h" */
 
+SOTER_ED25519_NO_UBSAN
 static unsigned char equal(signed char b,signed char c)
 {
   unsigned char ub = b;
@@ -12,6 +13,7 @@ static unsigned char equal(signed char b,signed char c)
   return y;
 }
 
+SOTER_ED25519_NO_UBSAN
 static unsigned char negative(signed char b)
 {
   unsigned long long x = b; /* 18446744073709551361..18446744073709551615: yes; 0..255: no */
@@ -31,6 +33,7 @@ static ge_precomp base[32][8] = {
 #include "base.h"
 } ;
 
+SOTER_ED25519_NO_UBSAN
 static void select(ge_precomp *t,int pos,signed char b)
 {
   ge_precomp minust;
@@ -61,6 +64,7 @@ Preconditions:
   a[31] <= 127
 */
 
+SOTER_ED25519_NO_UBSAN
 void ge_scalarmult_base(ge_p3 *h,const unsigned char *a)
 {
   signed char e[64];

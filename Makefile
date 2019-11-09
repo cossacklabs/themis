@@ -54,6 +54,7 @@ exec_prefix  = $(prefix)
 bindir       = $(prefix)/bin
 includedir   = $(prefix)/include
 libdir       = $(exec_prefix)/lib
+jnidir       = $(libdir)
 pkgconfigdir = $(libdir)/pkgconfig
 
 CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -fPIC
@@ -353,11 +354,6 @@ SANITIZERS += -fsanitize=nullability
 else
 $(warning -fsanitize=nullability not supported by $(CC), skipping...)
 endif
-ifeq (yes,$(call supported,-fsanitize-blacklist=src/soter/blacklist-ubsan.txt))
-SANITIZERS += -fsanitize-blacklist=src/soter/blacklist-ubsan.txt
-else
-$(warning -fsanitize-blacklist not supported by $(CC), skipping...)
-endif
 endif
 
 ifeq (yes,$(WITH_FATAL_SANITIZERS))
@@ -505,30 +501,28 @@ uninstall: uninstall_themis uninstall_soter
 # Themis distribution tarball
 #
 
-THEMIS_DIST_FILENAME = $(VERSION).tar.gz
+DIST_DIR = themis_$(VERSION)
+
+# Themis Core source code, tests, docs
+DIST_FILES += docs src tests Makefile VERSION
+DIST_FILES += README.md CHANGELOG.md LICENSE
+DIST_FILES += PKGBUILD.MSYS2 Themis.nsi
+# Supporting files for language wrappers
+DIST_FILES += Cargo.toml
+DIST_FILES += CMakeLists.txt
+DIST_FILES += gothemis
+DIST_FILES += jni
+DIST_FILES += scripts tools
 
 dist:
-	mkdir -p $(VERSION)
-	rsync -avz src $(VERSION)
-	rsync -avz docs $(VERSION)
-	rsync -avz gothemis $(VERSION)
-	rsync -avz gradle $(VERSION)
-	rsync -avz jni $(VERSION)
-	rsync -avz --exclude 'tests/soter/nist-sts/assess' tests $(VERSION)
-	rsync -avz tools $(VERSION)
-	rsync -avz CHANGELOG.md $(VERSION)
-	rsync -avz LICENSE $(VERSION)
-	rsync -avz Makefile $(VERSION)
-	rsync -avz README.md $(VERSION)
-	rsync -avz build.gradle $(VERSION)
-	rsync -avz gradlew $(VERSION)
-	rsync -avz themis.podspec $(VERSION)
-	rsync -avz VERSION $(VERSION)
-	tar -zcvf $(THEMIS_DIST_FILENAME) $(VERSION)
-	rm -rf $(VERSION)
+	@mkdir -p $(DIST_DIR)
+	@rsync -a $(DIST_FILES) $(DIST_DIR)
+	@tar czf $(DIST_DIR).tar.gz $(DIST_DIR)
+	@rm -rf $(DIST_DIR)
+	@echo $(DIST_DIR).tar.gz
 
 unpack_dist:
-	@tar -xf $(THEMIS_DIST_FILENAME)
+	@tar -xf $(DIST_DIR).tar.gz
 
 ########################################################################
 #
@@ -645,11 +639,13 @@ DEB_DEPENDENCIES := --depends openssl
 DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
 DEB_DEPENDENCIES_DEV += --depends libssl-dev
 DEB_DEPENDENCIES_THEMISPP = --depends "$(DEB_DEV_PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
+DEB_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) >= $(VERSION)+$(OS_CODENAME)"
 
 RPM_DEPENDENCIES = --depends openssl
 RPM_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_DEPENDENCIES_DEV += --depends openssl-devel
 RPM_DEPENDENCIES_THEMISPP = --depends "$(RPM_DEV_PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
+RPM_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) >= $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_RELEASE_NUM = 1
 
 ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
@@ -676,6 +672,7 @@ DEB_DEV_PACKAGE_NAME = libthemis-dev
 RPM_DEV_PACKAGE_NAME = libthemis-devel
 DEB_THEMISPP_PACKAGE_NAME = libthemispp-dev
 RPM_THEMISPP_PACKAGE_NAME = libthemispp-devel
+JNI_PACKAGE_NAME = libthemis-jni
 
 PACKAGE_CATEGORY = security
 SHORT_DESCRIPTION = Data security library for network communication and data storage
@@ -702,11 +699,14 @@ LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_LINK)
 
 THEMISPP_PACKAGE_FILES += $(includedir)/themispp/
 
+JNI_PACKAGE_FILES += $(jnidir)/$(LIBTHEMISJNI_SO)
+
 deb: DESTDIR = $(BIN_PATH)/deb/root
 deb: PREFIX = /usr
 deb: libdir = $(PREFIX)/$(DEB_LIBDIR)
+deb: jnidir = $(PREFIX)/$(DEB_LIBDIR)/jni
 
-deb: install themispp_install
+deb: install themispp_install themis_jni_install
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
 	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
 
@@ -763,13 +763,30 @@ deb: install themispp_install
 		 --category $(PACKAGE_CATEGORY) \
 		 $(foreach file,$(THEMISPP_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
+	@fpm --input-type dir \
+		 --output-type deb \
+		 --name $(JNI_PACKAGE_NAME) \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --maintainer $(MAINTAINER) \
+		 --package $(BIN_PATH)/deb/$(JNI_PACKAGE_NAME)_$(NAME_SUFFIX) \
+		 --architecture $(DEB_ARCHITECTURE) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 $(DEB_DEPENDENCIES_JNI) \
+		 --after-install $(POST_INSTALL_SCRIPT) \
+		 --after-remove $(POST_UNINSTALL_SCRIPT) \
+		 --deb-priority optional \
+		 --category $(PACKAGE_CATEGORY) \
+		 $(foreach file,$(JNI_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
+
 	@find $(BIN_PATH) -name \*.deb
 
 rpm: DESTDIR = $(BIN_PATH)/rpm/root
 rpm: PREFIX = /usr
 rpm: libdir = $(PREFIX)/$(RPM_LIBDIR)
 
-rpm: install themispp_install
+rpm: install themispp_install themis_jni_install
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
 	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
 
@@ -822,6 +839,22 @@ rpm: install themispp_install
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
          $(foreach file,$(THEMISPP_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
+
+	@fpm --input-type dir \
+         --output-type rpm \
+         --name $(JNI_PACKAGE_NAME) \
+         --license $(LICENSE_NAME) \
+         --url '$(COSSACKLABS_URL)' \
+         --description '$(SHORT_DESCRIPTION)' \
+         --rpm-summary '$(RPM_SUMMARY)' \
+         --maintainer $(MAINTAINER) \
+         --after-install $(POST_INSTALL_SCRIPT) \
+         --after-remove $(POST_UNINSTALL_SCRIPT) \
+         $(RPM_DEPENDENCIES_JNI) \
+         --package $(BIN_PATH)/rpm/$(JNI_PACKAGE_NAME)-$(NAME_SUFFIX) \
+         --version $(RPM_VERSION) \
+         --category $(PACKAGE_CATEGORY) \
+         $(foreach file,$(JNI_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
 	@find $(BIN_PATH) -name \*.rpm
 

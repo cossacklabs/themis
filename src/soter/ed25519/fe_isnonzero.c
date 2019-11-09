@@ -10,6 +10,7 @@ Preconditions:
 */
 
 SOTER_PRIVATE_API
+SOTER_ED25519_NO_UBSAN
 int crypto_verify_32(const unsigned char *x,const unsigned char *y)
 {
   unsigned int differentbits = 0;
