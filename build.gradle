@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.2.1'
 
         // Two necessary plugins for uploading .aar to bintray
         // from: https://android.jlelse.eu/how-to-distribute-android-library-in-a-convenient-way-d43fb68304a7
@@ -16,17 +16,29 @@ buildscript {
     }
 }
 
+repositories {
+    google()
+    jcenter()
+}
+
 dependencies {
     implementation project(":boringssl")
+    // Instrumentation tests
+    androidTestImplementation 'androidx.test:runner:1.1.0'
+    androidTestImplementation 'androidx.test:rules:1.1.0'
 }
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
+    // BoringSSL requires at least API 21. Google Play as of August 2019 requires
+    // to target at least API 28 (but we can still support lower versions).
     defaultConfig {
-    	minSdkVersion 16
-        targetSdkVersion 16
+        minSdkVersion 21
+        targetSdkVersion 28
+        // Our tests are written in JUnit, set default runner appropriately
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     sourceSets {
@@ -40,6 +52,11 @@ android {
         androidTest.manifest.srcFile 'tests/themis/wrappers/android/AndroidManifest.xml'
 
 	}
+
+    // Dependencies for instrumentation tests
+    useLibrary 'android.test.runner'
+    useLibrary 'android.test.base'
+    useLibrary 'android.test.mock'
 
     // ensure we execute boringssl tasks first
     // tasks.whenTaskAdded({Task task -> task.dependsOn('boringssl:' + task.name)})
