@@ -26,11 +26,12 @@ import com.cossacklabs.themis.NullArgumentException;
 import com.cossacklabs.themis.SecureMessage;
 import com.cossacklabs.themis.SecureMessageWrapException;
 
-import android.test.AndroidTestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class SecureMessageTest extends AndroidTestCase {
+public class SecureMessageTest {
 	
-	@Override
+	@Test
 	public void runTest() {
 		
 		Keypair aPair = null;

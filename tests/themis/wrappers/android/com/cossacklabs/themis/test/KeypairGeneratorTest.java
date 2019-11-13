@@ -20,11 +20,12 @@ import com.cossacklabs.themis.Keypair;
 import com.cossacklabs.themis.KeypairGenerator;
 import com.cossacklabs.themis.KeyGenerationException;
 
-import android.test.AndroidTestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class KeypairGeneratorTest extends AndroidTestCase {
+public class KeypairGeneratorTest {
 	
-	@Override
+	@Test
 	public void runTest() {
 		
 		Keypair pair = null;
