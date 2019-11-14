@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
@@ -51,13 +52,13 @@ public class SecureSocket extends Socket {
 	}
 	
 	public SecureSocket(InetAddress dstAddress, int dstPort, byte[] id, PrivateKey signPrivateKey, ISessionCallbacks callbacks) throws IOException {
-		super(dstAddress, dstPort);
-		
+		super();
+
 		this.id = id;
 		this.signPrivateKey = signPrivateKey;
 		this.callbacks = callbacks;
-		
-		runClientProtocol();
+
+		connect(new InetSocketAddress(dstAddress, dstPort));
 	}
 	
 	static final byte[] HDR_TAG = {0x54, 0x53, 0x50, 0x4d}; // TSPM
