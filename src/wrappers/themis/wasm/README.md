@@ -6,10 +6,8 @@
 
 _WebAssembly_ wrapper for [**Themis** crypto library][themis].
 
-Themis is an open-source high-level cryptographic services library
-that provides secure data exchange, authentication, and storage protection.
-Themis provides ready-made building components,
-which simplify usage of core cryptographic security operations.
+Themis is an open-source high-level cryptographic services library that provides secure data exchange, authentication, and storage protection.
+Themis provides ready-made building components, which simplifies the usage of core cryptographic security operations.
 
 [themis]: https://github.com/cossacklabs/themis
 [npm]: https://www.npmjs.com/package/wasm-themis
@@ -23,19 +21,19 @@ which simplify usage of core cryptographic security operations.
 
 ### Installation
 
-First, install the latest version of WasmThemis:
+Start by installing the latest version of WasmThemis:
 
 ```
 npm install wasm-themis
 ```
 
-Then import it into your project:
+Import it into your project:
 
 ```javascript
 const themis = require('wasm-themis')
 ```
 
-Finally, wait for WebAssembly code to be loaded:
+Wait for WebAssembly code to load:
 
 ```javascript
 themis.initialized.then(function() {
@@ -44,13 +42,14 @@ themis.initialized.then(function() {
     //
 })
 ```
+Success!
 
 ### Documentation
 
 Read the following resources to learn more:
 
-  - [How to use WasmThemis with JavaScript][language-guide]
-  - [General documentation for Themis library][docserver]
+  - [How to use WasmThemis with JavaScript][language-guide].
+  - [General documentation for Themis library on Cossack Labs Documentation Server][docserver].
 
 <!--
 
