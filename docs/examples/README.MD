@@ -2,7 +2,7 @@
 
 - **[Themis-Server](https://github.com/cossacklabs/themis/tree/master/docs/examples/Themis-server)**: examples for Secure Session and Secure Message, specifically tailored to talk to interactive [Themis Server](https://docs.cossacklabs.com/simulator/interactive/), available for most languages.
 
-- **Language-specific examples**: illustrate using Themis [Secure Cell](https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/), [Secure Message](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/), [Secure Session](https://docs.cossacklabs.com/pages/secure-session-cryptosystem/).
+- **Language-specific examples**: illustrate usage of Themis [Secure Cell](https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/), [Secure Message](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/), [Secure Session](https://docs.cossacklabs.com/pages/secure-session-cryptosystem/), [Secure Comparator](https://docs.cossacklabs.com/pages/secure-comparator-cryptosystem/).
 
 ## On Themis Server (Interactive Simulator)    
 
