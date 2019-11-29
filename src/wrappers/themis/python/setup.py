@@ -26,8 +26,8 @@ setup(
     version='0.12.0',
 
     description='',
-    long_description=open("README.rst").read(),
-    long_description_content_type='text/x-rst',
+    long_description=open("README.md").read(),
+    long_description_content_type='text/markdown',
     license='Apache 2.0',
     url='https://cossacklabs.com',
 
