@@ -12,7 +12,7 @@ Themis provides ready-made building components, which simplifies the usage of co
 PyThemis requires a native Themis library.
 Please refer to the [Quickstart guide] for the installation instructions.
 
-In-depth documentation can be found on our Documentation Server][Documentation Server].     
+In-depth documentation can be found on our [Documentation Server].     
 Make sure to check out the [Examples].
 <!--
 
