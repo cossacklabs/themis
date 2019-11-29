@@ -27,4 +27,6 @@ TODO: refer to simulators, code samples, and tests here
 
 ## Licensing
 
-The code is distributed under Apache 2.0 license.
+The code is distributed under [Apache 2.0 license].
+
+[Apache 2.0 license]: /src/wrappers/themis/python/LICENSE
