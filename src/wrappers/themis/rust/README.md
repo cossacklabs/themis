@@ -22,9 +22,8 @@ Themis provides ready-made building components, which simplifies the usage of co
 Rust-Themis requires a native Themis library.
 Please refer to the [Quickstart guide] for the installation instructions.
 
-Documentation may be found here:
-
- - [General documentation in Themis Wiki][Wiki],    
+See also:
+   
  - [In-depth documentation on our Documentation Server][Documentation Server],     
  - [Rust API documentation on Docs.rs][Docs.rs],     
  - [Changelog on GitHub][CHANGELOG].
