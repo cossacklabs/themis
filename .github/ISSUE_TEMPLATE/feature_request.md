@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **Is your feature request related to a problem? Please describe.**
-A clear and concise description of the problem, i.e.:"I'm always frustrated when [...]."
+A clear and concise description of the problem, e.g.: “I’m always frustrated when [...].”
 
 **Describe the solution you'd like to see**
 A clear and concise description of what you want to happen.
