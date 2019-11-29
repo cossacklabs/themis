@@ -38,7 +38,6 @@ Note that the arguments are passed after `--`.
 ## keygen
 
 This tool can be used to generate key files usable for other examples.
-Themis supports RSA keys for some use-cases, but most features expect ECDSA keys.
 
 
 ## secure_cell
