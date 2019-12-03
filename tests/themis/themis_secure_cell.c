@@ -32,6 +32,35 @@ static char passwd[] = "password";
 static char message[] = "secure cell test message by Mnatsakanov Andrey from Cossack Labs";
 static char user_context[] = "secure cell user context";
 
+static void secure_cell_key_generation(void)
+{
+    themis_status_t res;
+    uint8_t master_key[MAX_KEY_SIZE];
+    size_t master_key_length = 0;
+
+    res = themis_gen_sym_key(NULL, &master_key_length);
+    testsuite_fail_unless(res == THEMIS_BUFFER_TOO_SMALL, "keygen: query key size");
+
+    res = themis_gen_sym_key(master_key, &master_key_length);
+    testsuite_fail_unless(res == THEMIS_SUCCESS, "keygen: generate new key");
+    testsuite_fail_unless(master_key_length > 0, "keygen: key length returned");
+
+    res = themis_gen_sym_key(NULL, NULL);
+    testsuite_fail_unless(res == THEMIS_INVALID_PARAMETER, "keygen: missing key length");
+
+    res = themis_gen_sym_key(master_key, NULL);
+    testsuite_fail_unless(res == THEMIS_INVALID_PARAMETER, "keygen: missing key length");
+
+    master_key_length = 0;
+    res = themis_gen_sym_key(master_key, &master_key_length);
+    testsuite_fail_unless(res == THEMIS_INVALID_PARAMETER, "keygen: invalid key length");
+
+    master_key_length = 8;
+    res = themis_gen_sym_key(master_key, &master_key_length);
+    testsuite_fail_unless(res == THEMIS_SUCCESS, "keygen: custom key length");
+    testsuite_fail_unless(master_key_length == 8, "keygen: key length unchanged");
+}
+
 static int secure_cell_seal(void)
 {
     uint8_t* encrypted_message;
@@ -1363,6 +1392,9 @@ static void secure_cell_context_corruption(void)
 
 void run_secure_cell_test(void)
 {
+    testsuite_enter_suite("secure cell: key generation");
+    testsuite_run_test(secure_cell_key_generation);
+
     testsuite_enter_suite("secure cell: basic flow");
     testsuite_run_test(secure_cell_test);
     testsuite_run_test(secure_cell_test_lengths);

@@ -20,6 +20,7 @@
 
 #include "soter/soter_container.h"
 #include "soter/soter_ec_key.h"
+#include "soter/soter_rand.h"
 #include "soter/soter_rsa_key.h"
 #include "soter/soter_rsa_key_pair_gen.h"
 #include "soter/soter_t.h"
@@ -29,6 +30,14 @@
 #ifndef THEMIS_RSA_KEY_LENGTH
 #define THEMIS_RSA_KEY_LENGTH RSA_KEY_LENGTH_2048
 #endif
+
+/*
+ * This is the default key length recommended for use with Secure Cell.
+ * It will have enough randomness for AES-256 (normally used by Themis)
+ * and is consistent with NIST recommendations for the next ten years,
+ * as of 2020. See: https://www.keylength.com/en/4/
+ */
+#define THEMIS_SYM_KEY_LENGTH 32
 
 themis_status_t themis_gen_key_pair(soter_sign_alg_t alg,
                                     uint8_t* private_key,
@@ -157,4 +166,22 @@ themis_status_t themis_is_valid_asym_key(const uint8_t* key, size_t length)
     }
 
     return THEMIS_INVALID_PARAMETER;
+}
+
+themis_status_t themis_gen_sym_key(uint8_t* key, size_t* key_length)
+{
+    if (key_length == NULL) {
+        return THEMIS_INVALID_PARAMETER;
+    }
+    if (key != NULL && *key_length == 0) {
+        return THEMIS_INVALID_PARAMETER;
+    }
+
+    if (key == NULL) {
+        *key_length = THEMIS_SYM_KEY_LENGTH;
+        return THEMIS_BUFFER_TOO_SMALL;
+    }
+
+    /* Soter error codes have the same value as Themis ones */
+    return soter_rand(key, *key_length);
 }

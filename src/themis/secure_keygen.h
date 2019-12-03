@@ -15,7 +15,7 @@
  */
 
 /**
- * Securely generating random asymmetric key pairs.
+ * Securely generating random keys.
  * @file themis/secure_keygen.h
  */
 
@@ -33,9 +33,52 @@ extern "C" {
  * @addtogroup THEMIS
  * @{
  * @defgroup THEMIS_KEYS Secure key generation
- * Securely generating random asymmetric key pairs.
+ * Securely generating random symmetric keys and asymmetric key pairs.
  * @{
  */
+
+/**
+ * Generates a symmetric key.
+ *
+ * @param [out]     key         buffer for generated key
+ * @param [in,out]  key_length  length of generated key in bytes
+ *
+ * New symmetric key is generated and written into `key` buffer which
+ * must have at least `key_length` bytes available. Note that length
+ * parameter is a _pointer_ to actual length value.
+ *
+ * You can pass NULL for `key` in order to determine appropriate buffer
+ * length. In this case the length is written into provided location,
+ * no key data is generated, and THEMIS_BUFFER_TOO_SMALL is returned.
+ *
+ * @returns THEMIS_SUCCESS if the key has been generated successfully
+ * and written into `key`.
+ *
+ * @returns THEMIS_BUFFER_TOO_SMALL if the key length has been written
+ * to `key_length`.
+ *
+ * @exception THEMIS_INVALID_PARAM if `key_length` is NULL.
+ *
+ * @exception THEMIS_INVALID_PARAM if `key` is not NULL,
+ * but `key_length` is zero.
+ *
+ * @exception THEMIS_INVALID_PARAM if `key_length` is too big
+ * for cryptographic backend to handle.
+ *
+ * @exception THEMIS_BUFFER_TOO_SMALL if `key` is not NULL, but
+ * `key_length` is not sufficient to hold a generated key.
+ *
+ * @exception THEMIS_FAIL if cryptographic backend was unable
+ * to generate enough randomness to fill the entire buffer.
+ *
+ * @exception THEMIS_NOT_SUPPORTED if cryptographic backend
+ * does not support strong random number generation.
+ *
+ * @note Some backends might abort the process instead of returning
+ * error codes if they are unable to generate random data.
+ */
+THEMIS_API
+themis_status_t themis_gen_sym_key(uint8_t* key, size_t* key_length);
 
 /**
  * Generates an RSA key pair.
