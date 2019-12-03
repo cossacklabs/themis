@@ -160,6 +160,56 @@ function generateECKeyPair() {
     }
 }
 
+class SymmetricKey extends Uint8Array {
+    constructor(array) {
+        if (arguments.length == 0) {
+            array = generateSymmetricKey()
+        } else {
+            array = utils.coerceToBytes(array)
+            if (array.length == 0) {
+                throw new ThemisError('SymmetricKey', ThemisErrorCode.INVALID_PARAMETER,
+                    'key must not be empty')
+            }
+        }
+        super(array)
+    }
+}
+
+function generateSymmetricKey() {
+    var err
+
+    // C API uses "size_t" for lengths, it's defined as "i32" on Emscripten
+    let key_len_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+
+    err = libthemis._themis_gen_sym_key(null, key_len_ptr)
+    if (err != ThemisErrorCode.BUFFER_TOO_SMALL) {
+        throw new ThemisError('SymmetricKey', err, 'failed to query symmetric key size')
+    }
+
+    let key_len = libthemis.getValue(key_len_ptr, 'i32')
+
+    let key_ptr = utils.heapAlloc(key_len)
+
+    try {
+        if (!key_ptr) {
+            throw new ThemisError('SymmetricKey', ThemisErrorCode.NO_MEMORY)
+        }
+
+        err = libthemis._themis_gen_sym_key(key_ptr, key_len_ptr)
+        if (err != ThemisErrorCode.SUCCESS) {
+            throw new ThemisError('SymmetricKey', err, 'failed to generate symmetric key')
+        }
+
+        let key_len = libthemis.getValue(key_len_ptr, 'i32')
+
+        return utils.heapGetArray(key_ptr, key_len)
+    }
+    finally {
+        utils.heapFree(key_ptr, key_len)
+    }
+}
+
 module.exports.KeyPair = KeyPair
 module.exports.PrivateKey = PrivateKey
 module.exports.PublicKey = PublicKey
+module.exports.SymmetricKey = SymmetricKey
