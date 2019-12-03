@@ -22,7 +22,7 @@ describe("jsthemis", function(){
 	decrypter = new addon.SecureMessage(peer_keypair.private(), keypair.public());
 	intruder_decrypter = new addon.SecureMessage(intruder_keypair.private(), keypair.public());
 	message = new Buffer("Test Message");
-	it("encrypt/decrypt", function(){	    
+	it("encrypt/decrypt", function(){
 	    encrypted_message = encrypter.encrypt(message);
 	    assert.equal(message.toString(), decrypter.decrypt(encrypted_message).toString());
 	    assert.throws(function(){intruder_decrypter.decrypt(encrypted_message);}, expect_code(addon.FAIL));
@@ -86,7 +86,7 @@ describe("jsthemis", function(){
 	    server_keypair = new addon.KeyPair();
 	    client_id = new Buffer("client");
 	    client_keypair = new addon.KeyPair();
-	    
+
 	    server_session = new addon.SecureSession(server_id, server_keypair.private(), function(id){
 		if(id.toString()=="server")
 		    return server_keypair.public();
@@ -175,6 +175,21 @@ describe("jsthemis", function(){
 
 describe("jsthemis", function(){
     describe("secure cell", function(){
+        describe("key generation", function(){
+            it("generates new key buffer", function(){
+                var masterKey = new addon.SymmetricKey()
+                assert.notEqual(masterKey.length, 0)
+            })
+            it("is able to restore SymmetricKey from bytes", function(){
+                var bytes = Buffer.from("MDRwUzB0NG1aN2pvTEEwdVljRFJ5", "base64")
+                var masterKey = new addon.SymmetricKey(bytes)
+                assert.equal(masterKey.length, 21)
+            })
+            it("throws on empty buffer", function(){
+                assert.throws(() => new addon.SymmetricKey(Buffer.from("")),
+                    expect_code(addon.INVALID_PARAMETER))
+            })
+        })
 	message=new Buffer("This is test message");
 	password=new Buffer("This is test password");
 	context=new Buffer("This is test context");
@@ -217,7 +232,7 @@ describe("jsthemis", function(){
 	    context_imprint_intruder_decrypter = new addon.SecureCellContextImprint(new Buffer("This is test password1"));
 	    assert.throws(function(){new addon.SecureCellContextImprint(empty_message)});
 	    context_imprint_enc_data = context_imprint_encrypter.encrypt(message, context);
-	    assert.equal(message.length, context_imprint_enc_data.length);	    
+	    assert.equal(message.length, context_imprint_enc_data.length);
 	    context_imprint_dec_data = context_imprint_decrypter.decrypt(context_imprint_enc_data, context);
 	    assert.equal(message.toString(), context_imprint_dec_data.toString());
 	    context_imprint_dec_data = context_imprint_intruder_decrypter.decrypt(context_imprint_enc_data, context);
