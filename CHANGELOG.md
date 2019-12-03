@@ -34,6 +34,10 @@ _Code:_
   - Fixed a NullPointerException bug in `SecureSocket` initialisation ([#557](https://github.com/cossacklabs/themis/pull/557)).
   - Some Themis exceptions have been converted from checked `Exception` to _unchecked_ `RuntimeException`, relaxing requirements for `throws` specifiers ([#563](https://github.com/cossacklabs/themis/pull/563)).
 
+- **PHP**
+
+  - New function `phpthemis_gen_sym_key()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+
 - **Python**
 
   - Fixed compatibility issues on 32-bit platforms ([#555](https://github.com/cossacklabs/themis/pull/555)).

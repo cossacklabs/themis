@@ -21,6 +21,11 @@ use PHPUnit\Framework\TestCase;
 
 class ScellTest extends TestCase {
 
+    public function testKeyGeneration() {
+        $key = phpthemis_gen_sym_key();
+        $this->assertTrue(strlen($key) > 0, 'generated key must be not empty');
+    }
+
     /**
      * @dataProvider SealWithContextProvider
      */

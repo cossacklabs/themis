@@ -66,3 +66,22 @@ ZEND_FUNCTION(phpthemis_gen_ec_key_pair){
     add_assoc_stringl(return_value, "private_key", private_key, private_key_length);
     add_assoc_stringl(return_value, "public_key", public_key, public_key_length);
 }
+
+ZEND_FUNCTION(phpthemis_gen_sym_key){
+    size_t key_length;
+    if(themis_gen_sym_key(NULL, &key_length)!=THEMIS_BUFFER_TOO_SMALL){
+        zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_gen_sym_key: invalid parameters.", 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+    uint8_t* key=emalloc(key_length);
+    if(key==NULL){
+        zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_gen_sym_key: not enough memory.", 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+    if(themis_gen_sym_key(key, &key_length)!=THEMIS_SUCCESS){
+        zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_gen_sym_key: generation failed.", 0 TSRMLS_CC);
+        RETURN_NULL();
+    }
+    ZVAL_STRINGL(return_value, key, (int)key_length);
+    return;
+}
