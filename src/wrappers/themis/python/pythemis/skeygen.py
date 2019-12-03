@@ -63,3 +63,18 @@ class themis_gen_key_pair(GenerateKeyPair):
         warnings.warn("themis_gen_key_pair is deprecated in favor of "
                       "GenerateKeyPair.")
         super(themis_gen_key_pair, self).__init__(*args, **kwargs)
+
+
+def GenerateSymmetricKey():
+    """Returns a byte string with newly generated key."""
+    key_length = c_int(0)
+    res = themis.themis_gen_sym_key(None, byref(key_length))
+    if res != THEMIS_CODES.BUFFER_TOO_SMALL:
+        raise ThemisError(res, "Themis failed to get symmetric key size")
+
+    key = create_string_buffer(key_length.value)
+    res = themis.themis_gen_sym_key(key, byref(key_length))
+    if res != THEMIS_CODES.SUCCESS:
+        raise ThemisError(res, "Themis failed to generate symmetric key")
+
+    return string_at(key, key_length.value)
