@@ -23,6 +23,10 @@ _Code:_
 
   - New function `keys.NewSymmetricKey()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
 
+- **iOS and macOS**
+
+  - New function `TSGenerateSymmetricKey()` (available in Objective-C and Swift) can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+
 - **Java**
 
   - JDK location is now detected automatically in most cases, you should not need to set JAVA_HOME or JDK_INCLUDE_PATH manually ([#551](https://github.com/cossacklabs/themis/pull/551)).

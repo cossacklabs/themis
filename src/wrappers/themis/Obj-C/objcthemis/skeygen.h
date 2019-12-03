@@ -56,6 +56,15 @@ typedef NS_ENUM(NSInteger, TSKeyGenAsymmetricAlgorithm) {
 
 @end
 
+/**
+ * Generates new symmetric master key.
+ *
+ * Securely generate a new master key suitable for Secure Cell.
+ *
+ * @returns a newly allocated key of default size.
+ */
+NSData* __nullable TSGenerateSymmetricKey();
+
 NS_ASSUME_NONNULL_END
 
 /** @} */

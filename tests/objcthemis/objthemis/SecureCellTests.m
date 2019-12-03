@@ -30,6 +30,15 @@
     return masterKeyData;
 }
 
+#pragma mark - Key generation
+
+- (void)testKeyGeneration
+{
+    NSData *masterKey = TSGenerateSymmetricKey();
+
+    XCTAssertNotNil(masterKey, "TSGenerateSymmetricKey() should not fail");
+    XCTAssertGreaterThan(masterKey.length, 0, "generated key must be not empty");
+}
 
 #pragma MARK - Seal Mode -
 
