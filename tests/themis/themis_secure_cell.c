@@ -16,6 +16,7 @@
 
 #include "themis/themis_test.h"
 
+#include <stdbool.h>
 #include <string.h>
 
 #include <soter/soter_rand.h>
@@ -32,33 +33,92 @@ static char passwd[] = "password";
 static char message[] = "secure cell test message by Mnatsakanov Andrey from Cossack Labs";
 static char user_context[] = "secure cell user context";
 
+static bool non_zero_buffer(const uint8_t* buffer, size_t length)
+{
+    for (size_t i = 0; i < length; i++) {
+        if (buffer[i] != 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool different_buffers(const uint8_t* buffer1, size_t length1, const uint8_t* buffer2, size_t length2)
+{
+    size_t min = (length1 < length2) ? length1 : length2;
+    if (memcmp(buffer1, buffer2, min) != 0) {
+        return true;
+    }
+    return length1 != length2;
+}
+
 static void secure_cell_key_generation(void)
 {
     themis_status_t res;
-    uint8_t master_key[MAX_KEY_SIZE];
-    size_t master_key_length = 0;
+    uint8_t master_key_1[MAX_KEY_SIZE];
+    uint8_t master_key_2[MAX_KEY_SIZE];
+    size_t master_key_1_length = 0;
+    size_t master_key_2_length = 0;
 
-    res = themis_gen_sym_key(NULL, &master_key_length);
+    /*
+     * Normal usage of key generation API.
+     */
+
+    res = themis_gen_sym_key(NULL, &master_key_1_length);
     testsuite_fail_unless(res == THEMIS_BUFFER_TOO_SMALL, "keygen: query key size");
+    testsuite_fail_unless(master_key_1_length > 0, "keygen: recommends non-empty key");
 
-    res = themis_gen_sym_key(master_key, &master_key_length);
-    testsuite_fail_unless(res == THEMIS_SUCCESS, "keygen: generate new key");
-    testsuite_fail_unless(master_key_length > 0, "keygen: key length returned");
+    size_t old_value = master_key_1_length;
+    res = themis_gen_sym_key(master_key_1, &master_key_1_length);
+    testsuite_fail_unless(res == THEMIS_SUCCESS, "keygen: generate recommended key");
+    testsuite_fail_unless(master_key_1_length == old_value, "keygen: key length unchanged");
+
+    master_key_1_length = MAX_KEY_SIZE;
+    res = themis_gen_sym_key(master_key_1, &master_key_1_length);
+    testsuite_fail_unless(res == THEMIS_SUCCESS, "keygen: generate extra-big key");
+    testsuite_fail_unless(master_key_1_length == MAX_KEY_SIZE, "keygen: key length unchanged");
+
+    master_key_1_length = 8;
+    res = themis_gen_sym_key(master_key_1, &master_key_1_length);
+    testsuite_fail_unless(res == THEMIS_SUCCESS, "keygen: generate small key");
+    testsuite_fail_unless(master_key_1_length == 8, "keygen: key length unchanged");
+
+    /*
+     * Verify that key generation is not bogus and returns new keys.
+     */
+
+    memset(master_key_1, 0, sizeof(master_key_1));
+    memset(master_key_2, 0, sizeof(master_key_2));
+
+    master_key_1_length = MAX_KEY_SIZE;
+    master_key_2_length = MAX_KEY_SIZE;
+
+    res = themis_gen_sym_key(master_key_1, &master_key_1_length);
+    testsuite_fail_unless(res == THEMIS_SUCCESS, "keygen: generates key 1");
+    res = themis_gen_sym_key(master_key_2, &master_key_2_length);
+    testsuite_fail_unless(res == THEMIS_SUCCESS, "keygen: generates key 2");
+
+    testsuite_fail_unless(non_zero_buffer(master_key_1, master_key_1_length),
+                          "keygen: returns nonzero key 1");
+    testsuite_fail_unless(non_zero_buffer(master_key_2, master_key_2_length),
+                          "keygen: returns nonzero key 2");
+
+    testsuite_fail_unless(different_buffers(master_key_1, master_key_1_length, master_key_2, master_key_2_length),
+                          "keygen: generates different keys");
+
+    /*
+     * Verify invalid input handling and error conditions.
+     */
 
     res = themis_gen_sym_key(NULL, NULL);
     testsuite_fail_unless(res == THEMIS_INVALID_PARAMETER, "keygen: missing key length");
 
-    res = themis_gen_sym_key(master_key, NULL);
+    res = themis_gen_sym_key(master_key_1, NULL);
     testsuite_fail_unless(res == THEMIS_INVALID_PARAMETER, "keygen: missing key length");
 
-    master_key_length = 0;
-    res = themis_gen_sym_key(master_key, &master_key_length);
+    master_key_1_length = 0;
+    res = themis_gen_sym_key(master_key_1, &master_key_1_length);
     testsuite_fail_unless(res == THEMIS_INVALID_PARAMETER, "keygen: invalid key length");
-
-    master_key_length = 8;
-    res = themis_gen_sym_key(master_key, &master_key_length);
-    testsuite_fail_unless(res == THEMIS_SUCCESS, "keygen: custom key length");
-    testsuite_fail_unless(master_key_length == 8, "keygen: key length unchanged");
 }
 
 static int secure_cell_seal(void)
