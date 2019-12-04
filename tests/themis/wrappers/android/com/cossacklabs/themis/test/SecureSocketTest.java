@@ -37,9 +37,11 @@ import com.cossacklabs.themis.SecureServerSocket;
 import com.cossacklabs.themis.SecureSession;
 import com.cossacklabs.themis.SecureSocket;
 
-import android.test.AndroidTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
-public class SecureSocketTest extends AndroidTestCase {
+public class SecureSocketTest {
 	
 	ISessionCallbacks callbacks = new ISessionCallbacks() {
 
@@ -88,7 +90,7 @@ public class SecureSocketTest extends AndroidTestCase {
 	Keypair clientPair;
 	Keypair serverPair;
 	
-	@Override
+	@Before
 	public void setUp() {
 		try {
 			clientPair = KeypairGenerator.generateKeypair();
@@ -130,7 +132,7 @@ public class SecureSocketTest extends AndroidTestCase {
 		return false;
 	}
 	
-	@Override
+	@Test
 	public void runTest() {
 		
 		try {
