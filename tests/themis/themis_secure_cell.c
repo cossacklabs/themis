@@ -29,6 +29,8 @@
 /* Keep it under 2^31 to support 32-bit systems. */
 #define CORRUPTED_LENGTH 0x5AFE
 
+#define DEFAULT_SYM_KEY_LENGTH 32
+
 static char passwd[] = "password";
 static char message[] = "secure cell test message by Mnatsakanov Andrey from Cossack Labs";
 static char user_context[] = "secure cell user context";
@@ -66,12 +68,14 @@ static void secure_cell_key_generation(void)
 
     res = themis_gen_sym_key(NULL, &master_key_1_length);
     testsuite_fail_unless(res == THEMIS_BUFFER_TOO_SMALL, "keygen: query key size");
-    testsuite_fail_unless(master_key_1_length > 0, "keygen: recommends non-empty key");
+    testsuite_fail_unless(master_key_1_length == DEFAULT_SYM_KEY_LENGTH,
+                          "keygen: recommends default key size");
 
     master_key_1_length = 0;
     res = themis_gen_sym_key(master_key_1, &master_key_1_length);
     testsuite_fail_unless(res == THEMIS_BUFFER_TOO_SMALL, "keygen: query key size (with buffer)");
-    testsuite_fail_unless(master_key_1_length > 0, "keygen: recommends non-empty key");
+    testsuite_fail_unless(master_key_1_length == DEFAULT_SYM_KEY_LENGTH,
+                          "keygen: recommends default key size");
 
     size_t old_value = master_key_1_length;
     res = themis_gen_sym_key(master_key_1, &master_key_1_length);
