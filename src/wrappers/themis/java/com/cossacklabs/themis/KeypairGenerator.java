@@ -40,7 +40,7 @@ public abstract class KeypairGenerator {
 		try {
 			return generateKeypair(AsymmetricKey.KEYTYPE_EC);
 		} catch (InvalidArgumentException e) {
-			throw new KeyGenerationException();
+			throw new KeyGenerationException("failed to generate keypair", e);
 		}
 	}
 	
@@ -60,7 +60,7 @@ public abstract class KeypairGenerator {
 		byte[][] keys = generateKeys(keyType);
 		
 		if (null == keys) {
-			throw new KeyGenerationException();
+			throw new KeyGenerationException("failed to generate keypair");
 		}
 		
 		return new Keypair(new PrivateKey(keys[0]), new PublicKey(keys[1]));

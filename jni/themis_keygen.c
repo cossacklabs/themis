@@ -113,3 +113,44 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_gene
 
     return keys;
 }
+
+JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SymmetricKey_generateSymmetricKey(JNIEnv* env,
+                                                                                           jobject thiz)
+{
+    themis_status_t res;
+    jbyteArray key = NULL;
+    jbyte* key_buffer = NULL;
+    size_t key_length = 0;
+
+    UNUSED(thiz);
+
+    res = themis_gen_sym_key(NULL, &key_length);
+    if (res != THEMIS_BUFFER_TOO_SMALL) {
+        goto error;
+    }
+
+    key = (*env)->NewByteArray(env, key_length);
+    if (!key) {
+        goto error;
+    }
+
+    key_buffer = (*env)->GetByteArrayElements(env, key, NULL);
+    if (!key_buffer) {
+        goto error;
+    }
+
+    res = themis_gen_sym_key((uint8_t*)key_buffer, &key_length);
+    if (res != THEMIS_SUCCESS) {
+        goto error_release_key;
+    }
+
+    (*env)->ReleaseByteArrayElements(env, key, key_buffer, 0);
+
+    return key;
+
+error_release_key:
+    (*env)->ReleaseByteArrayElements(env, key, key_buffer, JNI_ABORT);
+
+error:
+    return NULL;
+}
