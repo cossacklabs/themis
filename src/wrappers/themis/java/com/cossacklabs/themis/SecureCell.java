@@ -16,6 +16,9 @@
 
 package com.cossacklabs.themis;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 /**
  * Themis secure cell
  */
@@ -61,26 +64,26 @@ public class SecureCell {
 	/**
 	 * Creates new SecureCell with default master password in SEAL mode
 	 * @param default master password
-	 * @throws RuntimeException when UTF-16 decoding is not supported
 	 */
 	public SecureCell(String password) {
-		this(Utils.getUTF16Bytes(password));
+		this(password.getBytes(CHARSET));
 	}
 	
 	/**
 	 * Creates new SecureCell with default master password in specified mode
 	 * @param default master password
 	 * @param SecureCell mode
-	 * @throws RuntimeException when UTF-16 decoding is not supported
 	 * @throws InvalidArgumentException when unsupported mode is specified
 	 */
 	public SecureCell(String password, int mode) {
 		this(mode);
-		this.key = Utils.getUTF16Bytes(password);
+		this.key = password.getBytes(CHARSET);
 	}
 	
 	int mode = MODE_SEAL;
 	byte[] key;
+	
+	static final Charset CHARSET = StandardCharsets.UTF_16;
 	
 	public static final int MODE_SEAL = 0;
 	public static final int MODE_TOKEN_PROTECT = 1;
@@ -183,10 +186,9 @@ public class SecureCell {
 	 * @return SecureCellData with protected data
 	 * @throws NullArgumentException when key or data is null
 	 * @throws SecureCellException when cannot protect the data
-	 * @throws RuntimeException when UTF-16 decoding is not supported
 	 */
 	public SecureCellData protect(String password, String context, byte[] data) throws SecureCellException {
-		return this.protect(Utils.getUTF16Bytes(password), Utils.getUTF16Bytes(context), data);
+		return this.protect(password.getBytes(CHARSET), context.getBytes(CHARSET), data);
 	}
 	
 	/**
@@ -196,10 +198,9 @@ public class SecureCell {
 	 * @return SecureCellData with protected data
 	 * @throws NullArgumentException when key or data is null
 	 * @throws SecureCellException when cannot protect the data
-	 * @throws RuntimeException when UTF-16 decoding is not supported
 	 */
 	public SecureCellData protect(String context, byte[] data) throws SecureCellException {
-		return this.protect(this.key, Utils.getUTF16Bytes(context), data);
+		return this.protect(this.key, context.getBytes(CHARSET), data);
 	}
 	
 	/**
@@ -238,10 +239,9 @@ public class SecureCell {
 	 * @throws NullArgumentException when key or protectedData is null
 	 * @throws SecureCellException when cannot decrypt protectedData
 	 * @throws InvalidArgumentException when protectedData is incorrect
-	 * @throws RuntimeException when UTF-16 decoding is not supported
 	 */
 	public byte[] unprotect(String password, String context, SecureCellData protectedData) throws SecureCellException {
-		return this.unprotect(Utils.getUTF16Bytes(password), Utils.getUTF16Bytes(context), protectedData);
+		return this.unprotect(password.getBytes(CHARSET), context.getBytes(CHARSET), protectedData);
 	}
 	
 	/**
@@ -252,9 +252,8 @@ public class SecureCell {
 	 * @throws NullArgumentException when key or protectedData is null
 	 * @throws SecureCellException when cannot decrypt protectedData
 	 * @throws InvalidArgumentException when protectedData is incorrect
-	 * @throws RuntimeException when UTF-16 decoding is not supported
 	 */
 	public byte[] unprotect(String context, SecureCellData protectedData) throws SecureCellException {
-		return this.unprotect(this.key, Utils.getUTF16Bytes(context), protectedData);
+		return this.unprotect(this.key, context.getBytes(CHARSET), protectedData);
 	}
 }

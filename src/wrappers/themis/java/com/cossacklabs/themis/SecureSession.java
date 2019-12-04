@@ -18,6 +18,8 @@ package com.cossacklabs.themis;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Themis secure session
@@ -85,6 +87,8 @@ public class SecureSession {
 		}
 	}
 	
+	static final Charset CHARSET = StandardCharsets.UTF_16;
+	
 	protected ISessionCallbacks callbacks;
 	private long sessionPtr;
 	private State sessionState = State.IDLE;
@@ -133,10 +137,9 @@ public class SecureSession {
 	 * @throws NullArgumentException if `id` is null
 	 * @throws InvalidArgumentException if `id` is empty
 	 * @throws RuntimeException when cannot create session
-	 * @throws RuntimeException when UTF-16 decoding is not supported
 	 */
 	public SecureSession(String id, PrivateKey signPrivateKey, ISessionCallbacks callbacks) {
-		this(Utils.getUTF16Bytes(id), signPrivateKey, callbacks);
+		this(id.getBytes(CHARSET), signPrivateKey, callbacks);
 	}
 	
 	private SecureSession() {

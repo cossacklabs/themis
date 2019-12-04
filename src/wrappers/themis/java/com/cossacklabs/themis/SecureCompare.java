@@ -1,6 +1,8 @@
 package com.cossacklabs.themis;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class SecureCompare {
 	
@@ -18,6 +20,8 @@ public class SecureCompare {
 		NO_OUTPUT,
 		SEND_TO_PEER
 	}
+	
+	static final Charset CHARSET = StandardCharsets.UTF_16;
 	
 	private long nativeCtx = 0;
 	
@@ -41,7 +45,7 @@ public class SecureCompare {
 	}
 
 	public SecureCompare(String password) {
-		this(Utils.getUTF16Bytes(password));
+		this(password.getBytes(CHARSET));
 	}
 	
 	public void close() {
