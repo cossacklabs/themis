@@ -154,8 +154,7 @@ themis_status_t themis_secure_message_verify(const uint8_t* public_key,
  * storage then THEMIS_BUFFER_TOO_SMALL will return and wrapped_message_length will store length of
  * buffer needed for wrapped message store
  */
-DEPRECATED("use 'themis_secure_message_encrypt' with private and public keys to encrypt message, "
-           "or 'themis_secure_message_sign' with private key to sign message")
+DEPRECATED("use 'themis_secure_message_encrypt' with private and public keys to encrypt message, or 'themis_secure_message_sign' with private key to sign message")
 THEMIS_API
 themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
                                            size_t private_key_length,
@@ -182,8 +181,7 @@ themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
  * THEMIS_BUFFER_TOO_SMALL will return and message_length will store length of buffer needed for
  * plain message store
  */
-DEPRECATED("use 'themis_secure_message_decrypt' with private and public key to decrypt message or "
-           "'themis_secure_message_verify' with public key to verify signed message")
+DEPRECATED("use 'themis_secure_message_decrypt' with private and public key to decrypt message or 'themis_secure_message_verify' with public key to verify signed message")
 THEMIS_API
 themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
                                              size_t private_key_length,
