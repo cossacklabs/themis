@@ -20,15 +20,15 @@ import java.io.UnsupportedEncodingException;
 
 public class SecureTransportSession extends SecureSession {
 
-	public SecureTransportSession(byte[] id, PrivateKey signPrivateKey, ITransportSessionCallbacks callbacks) throws SecureSessionException {
+	public SecureTransportSession(byte[] id, PrivateKey signPrivateKey, ITransportSessionCallbacks callbacks) {
 		super(id, signPrivateKey, callbacks);
 	}
 
-	public SecureTransportSession(String id, PrivateKey signPrivateKey, ITransportSessionCallbacks callbacks) throws SecureSessionException, UnsupportedEncodingException {
+	public SecureTransportSession(String id, PrivateKey signPrivateKey, ITransportSessionCallbacks callbacks) throws UnsupportedEncodingException {
 		super(id, signPrivateKey, callbacks);
 	}
-	
-	public void connect() throws SecureSessionException {
+
+	public void connect() {
 		((ITransportSessionCallbacks)this.callbacks).write(this.generateConnectRequest());
 	}
 

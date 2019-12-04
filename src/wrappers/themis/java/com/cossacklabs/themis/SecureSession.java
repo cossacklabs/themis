@@ -41,7 +41,7 @@ public class SecureSession {
 		NO_DATA, /** < no output data */
 		PROTOCOL_DATA, /** < output is an internal protocol message. Needs to be sent to your peer.*/
 		USER_DATA; /** < output is decrypted user data. It should be handled according to your application flow.*/
-		
+
 		public static SessionDataType fromByte(byte src) throws SecureSessionException {
 			switch (src) {
 			case 0:
@@ -106,14 +106,22 @@ public class SecureSession {
 	 * @param your id
 	 * @param your sign PrivateKey
 	 * @param callbacks implementation
-	 * @throws SecureSessionException when cannot create session
+	 * @throws NullArgumentException if `id` is null
+	 * @throws InvalidArgumentException if `id` is empty
+	 * @throws RuntimeException when cannot create session
 	 */
-	public SecureSession(byte[] id, PrivateKey signPrivateKey, ISessionCallbacks callbacks) throws SecureSessionException {
-		
+	public SecureSession(byte[] id, PrivateKey signPrivateKey, ISessionCallbacks callbacks) {
+		if (id == null) {
+			throw new NullArgumentException("peer ID cannot be null");
+		}
+		if (id.length == 0) {
+			throw new InvalidArgumentException("peer ID cannot be empty");
+		}
+
 		sessionPtr = create(id, signPrivateKey.toByteArray());
 		
 		if (0 == sessionPtr) {
-			throw new SecureSessionException();
+			throw new RuntimeException("failed to create Secure Session", new SecureSessionException());
 		}
 		
 		this.callbacks = callbacks;
@@ -124,9 +132,11 @@ public class SecureSession {
 	 * @param your id
 	 * @param your sign PrivateKey
 	 * @param callbacks implementation
-	 * @throws SecureSessionException when cannot create session
+	 * @throws NullArgumentException if `id` is null
+	 * @throws InvalidArgumentException if `id` is empty
+	 * @throws RuntimeException when cannot create session
 	 */
-	public SecureSession(String id, PrivateKey signPrivateKey, ISessionCallbacks callbacks) throws UnsupportedEncodingException, SecureSessionException {
+	public SecureSession(String id, PrivateKey signPrivateKey, ISessionCallbacks callbacks) throws UnsupportedEncodingException {
 		this(id.getBytes(CHARSET), signPrivateKey, callbacks);
 	}
 	
@@ -137,18 +147,19 @@ public class SecureSession {
 	/**
 	 * Starts secure session negotiation in client mode
 	 * @return opaque connect request. Should be sent to your peer
-	 * @throws SecureSessionException when cannot generate request
+	 * @throws IllegalStateException is the session is already closed
+	 * @throws RuntimeException when cannot generate request
 	 */
-	public synchronized byte[] generateConnectRequest() throws SecureSessionException {
-		
+	public synchronized byte[] generateConnectRequest() {
+
 		if (0 == sessionPtr) {
-			throw new SecureSessionException("session is closed");
+			throw new IllegalStateException("Secure Session is closed");
 		}
 		
 		byte[] request = jniGenerateConntect();
 		
 		if (null == request) {
-			throw new SecureSessionException();
+			throw new RuntimeException("Secure Session cannot generate connection request", new SecureSessionException());
 		}
 		
 		return request;
@@ -158,13 +169,14 @@ public class SecureSession {
 	 * Wraps outgoing data
 	 * @param data to wrap
 	 * @return wrapped data
+	 * @throws IllegalStateException is the session is already closed
 	 * @throws SecureSessionException when cannot wrap data
 	 * @throws NullArgumentException when data is null
 	 */
 	public synchronized byte[] wrap(byte[] data) throws SecureSessionException {
 
 		if (0 == sessionPtr) {
-			throw new SecureSessionException("session is closed");
+			throw new IllegalStateException("Secure Session is closed");
 		}
 		
 		if (null == data) {
@@ -173,7 +185,7 @@ public class SecureSession {
 		
 		byte[] wrappedData = jniWrap(data);
 		if (null == wrappedData) {
-			throw new SecureSessionException();
+			throw new SecureSessionException("Secure Session failed to wrap data");
 		}
 		
 		return wrappedData;
@@ -183,13 +195,14 @@ public class SecureSession {
 	 * Unwraps incoming data
 	 * @param wrapped data
 	 * @return unwrapped data
+	 * @throws IllegalStateException is the session is already closed
 	 * @throws SecureSessionException when cannot unwrap data
 	 * @throws NullArgumentException when wrappedData is null
 	 */
 	public synchronized UnwrapResult unwrap(byte[] wrappedData) throws SecureSessionException {
 
 		if (0 == sessionPtr) {
-			throw new SecureSessionException("session is closed");
+			throw new IllegalStateException("Secure Session is closed");
 		}
 		
 		if (null == wrappedData) {
@@ -198,7 +211,7 @@ public class SecureSession {
 		
 		byte[][] result = jniUnwrap(wrappedData);
 		if (null == result) {
-			throw new SecureSessionException();
+			throw new SecureSessionException("Secure Session failed to unwrap data");
 		}
 		
 		SessionDataType dataType = SessionDataType.fromByte(result[0][0]);
@@ -216,6 +229,7 @@ public class SecureSession {
 		if (0 != sessionPtr) {
 			destroy();
 		}
+		sessionPtr = 0;
 	}
 	
 	@Override
@@ -251,11 +265,11 @@ public class SecureSession {
 	/**
 	 * Checks whether session is already established (can wrap/unwrap data)
 	 * @return true if session is already established
-	 * @throws SecureSessionException when internal error happens
+	 * @throws IllegalStateException is the session is already closed
 	 */
-	public synchronized boolean isEstablished() throws SecureSessionException {
+	public synchronized boolean isEstablished() {
 		if (0 == sessionPtr) {
-			throw new SecureSessionException("session is closed");
+			throw new IllegalStateException("Secure Session is closed");
 		}
 		
 		return jniIsEstablished();
@@ -264,16 +278,17 @@ public class SecureSession {
 	/**
 	 * Saves (serializes) this session state (session must be established)
 	 * @return session state
-	 * @throws SecureSessionException when cannot serialize session
+	 * @throws IllegalStateException is the session is already closed
+	 * @throws RuntimeException when cannot serialize session, e.g. if session is not established
 	 */
-	public synchronized byte[] save() throws SecureSessionException {
+	public synchronized byte[] save() {
 		if (0 == sessionPtr) {
-			throw new SecureSessionException("session is closed");
+			throw new IllegalStateException("Secure Session is closed");
 		}
 		
 		byte[] state = jniSave();
 		if (null == state) {
-			throw new SecureSessionException();
+			throw new RuntimeException(new SecureSessionException("failed to serialize Secure Session"));
 		}
 		
 		return state;
@@ -291,7 +306,7 @@ public class SecureSession {
 		
 		session.sessionPtr = jniLoad(state);
 		if (0 == session.sessionPtr) {
-			throw new SecureSessionException();
+			throw new SecureSessionException("failed to restore Secure Session");
 		}
 		
 		session.callbacks = callbacks;
