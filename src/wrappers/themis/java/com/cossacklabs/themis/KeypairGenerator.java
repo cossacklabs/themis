@@ -36,7 +36,7 @@ public abstract class KeypairGenerator {
 	 * @return new EC Keypair
 	 * @throws KeyGenerationException when cannot generate a keypair
 	 */
-	public static Keypair generateKeypair() throws KeyGenerationException {
+	public static Keypair generateKeypair() {
 		try {
 			return generateKeypair(AsymmetricKey.KEYTYPE_EC);
 		} catch (InvalidArgumentException e) {
@@ -51,8 +51,8 @@ public abstract class KeypairGenerator {
 	 * @throws KeyGenerationException when cannot generate a keypair
 	 * @throws InvalidArgumentException when keyType is invalid
 	 */
-	public static Keypair generateKeypair(int keyType) throws KeyGenerationException, InvalidArgumentException {
-		
+	public static Keypair generateKeypair(int keyType) {
+
 		if ((keyType != AsymmetricKey.KEYTYPE_EC) && (keyType != AsymmetricKey.KEYTYPE_RSA)) {
 			throw new InvalidArgumentException("keyType is invalid");
 		}

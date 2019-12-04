@@ -161,8 +161,8 @@ public class SecureSession {
 	 * @throws SecureSessionException when cannot wrap data
 	 * @throws NullArgumentException when data is null
 	 */
-	public synchronized byte[] wrap(byte[] data) throws SecureSessionException, NullArgumentException {
-		
+	public synchronized byte[] wrap(byte[] data) throws SecureSessionException {
+
 		if (0 == sessionPtr) {
 			throw new SecureSessionException("session is closed");
 		}
@@ -186,8 +186,8 @@ public class SecureSession {
 	 * @throws SecureSessionException when cannot unwrap data
 	 * @throws NullArgumentException when wrappedData is null
 	 */
-	public synchronized UnwrapResult unwrap(byte[] wrappedData) throws SecureSessionException, NullArgumentException {
-		
+	public synchronized UnwrapResult unwrap(byte[] wrappedData) throws SecureSessionException {
+
 		if (0 == sessionPtr) {
 			throw new SecureSessionException("session is closed");
 		}

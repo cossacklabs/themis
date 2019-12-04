@@ -31,12 +31,12 @@ public class SecureTransportSession extends SecureSession {
 	public void connect() throws SecureSessionException {
 		((ITransportSessionCallbacks)this.callbacks).write(this.generateConnectRequest());
 	}
-	
-	public void write(byte[] data) throws SecureSessionException, NullArgumentException {
+
+	public void write(byte[] data) throws SecureSessionException {
 		((ITransportSessionCallbacks)this.callbacks).write(this.wrap(data));
 	}
-	
-	public byte[] read() throws SecureSessionException, NullArgumentException {
+
+	public byte[] read() throws SecureSessionException {
 		byte[] wrappedData = ((ITransportSessionCallbacks)this.callbacks).read();
 		
 		UnwrapResult result = this.unwrap(wrappedData);

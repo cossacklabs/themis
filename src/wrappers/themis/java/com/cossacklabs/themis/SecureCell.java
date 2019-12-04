@@ -32,8 +32,8 @@ public class SecureCell {
 	 * @param SecureCell mode
 	 * @throws InvalidArgumentException when unsupported mode is specified
 	 */
-	public SecureCell(int mode) throws InvalidArgumentException {
-		
+	public SecureCell(int mode) {
+
 		if (mode < MODE_SEAL || mode > MODE_CONTEXT_IMPRINT) {
 			throw new InvalidArgumentException("invalid mode");
 		}
@@ -55,7 +55,7 @@ public class SecureCell {
 	 * @param SecureCell mode
 	 * @throws InvalidArgumentException when unsupported mode is specified
 	 */
-	public SecureCell(byte[] key, int mode) throws InvalidArgumentException {
+	public SecureCell(byte[] key, int mode) {
 		this(mode);
 		this.key = key;
 	}
@@ -76,7 +76,7 @@ public class SecureCell {
 	 * @throws UnsupportedEncodingException when UTF-16 decoding is not supported
 	 * @throws InvalidArgumentException when unsupported mode is specified
 	 */
-	public SecureCell(String password, int mode) throws UnsupportedEncodingException, InvalidArgumentException {
+	public SecureCell(String password, int mode) throws UnsupportedEncodingException {
 		this(mode);
 		this.key = password.getBytes(CHARSET);
 	}
@@ -92,9 +92,9 @@ public class SecureCell {
 	
 	static native byte[][] encrypt(byte[] key, byte[] context, byte[] data, int mode);
 	static native byte[] decrypt(byte[] key, byte[] context, byte[][] protectedData, int mode);
-	
-	static SecureCellData protect(byte[] key, byte[] context, byte[] data, int mode) throws NullArgumentException, SecureCellException {
-		
+
+	static SecureCellData protect(byte[] key, byte[] context, byte[] data, int mode) throws SecureCellException {
+
 		if (null == key) {
 			throw new NullArgumentException("Master key was not provided");
 		}
@@ -118,9 +118,9 @@ public class SecureCell {
 		
 		return new SecureCellData(protectedData[0], protectedData[1]);
 	}
-	
-	static byte[] unprotect(byte[] key, byte[] context, SecureCellData protectedData, int mode) throws NullArgumentException, SecureCellException, InvalidArgumentException {
-		
+
+	static byte[] unprotect(byte[] key, byte[] context, SecureCellData protectedData, int mode) throws SecureCellException {
+
 		if (null == key) {
 			throw new NullArgumentException("Master key was not provided");
 		}
@@ -163,7 +163,7 @@ public class SecureCell {
 	 * @throws NullArgumentException when key or data is null
 	 * @throws SecureCellException when cannot protect the data
 	 */
-	public SecureCellData protect(byte[] key, byte[] context, byte[] data) throws NullArgumentException, SecureCellException {
+	public SecureCellData protect(byte[] key, byte[] context, byte[] data) throws SecureCellException {
 		return protect(key, context, data, this.mode);
 	}
 	
@@ -175,7 +175,7 @@ public class SecureCell {
 	 * @throws NullArgumentException when default master key or data is null
 	 * @throws SecureCellException when cannot protect the data
 	 */
-	public SecureCellData protect(byte[] context, byte[] data) throws NullArgumentException, SecureCellException {
+	public SecureCellData protect(byte[] context, byte[] data) throws SecureCellException {
 		return this.protect(this.key, context, data);
 	}
 	
@@ -189,7 +189,7 @@ public class SecureCell {
 	 * @throws SecureCellException when cannot protect the data
 	 * @throws UnsupportedEncodingException when UTF-16 decoding is not supported
 	 */
-	public SecureCellData protect(String password, String context, byte[] data) throws UnsupportedEncodingException, NullArgumentException, SecureCellException {
+	public SecureCellData protect(String password, String context, byte[] data) throws UnsupportedEncodingException, SecureCellException {
 		return this.protect(password.getBytes(CHARSET), context.getBytes(CHARSET), data);
 	}
 	
@@ -202,7 +202,7 @@ public class SecureCell {
 	 * @throws SecureCellException when cannot protect the data
 	 * @throws UnsupportedEncodingException when UTF-16 decoding is not supported
 	 */
-	public SecureCellData protect(String context, byte[] data) throws UnsupportedEncodingException, NullArgumentException, SecureCellException {
+	public SecureCellData protect(String context, byte[] data) throws UnsupportedEncodingException, SecureCellException {
 		return this.protect(this.key, context.getBytes(CHARSET), data);
 	}
 	
@@ -216,7 +216,7 @@ public class SecureCell {
 	 * @throws SecureCellException when cannot decrypt protectedData
 	 * @throws InvalidArgumentException when protectedData is incorrect
 	 */
-	public byte[] unprotect(byte[] key, byte[] context, SecureCellData protectedData) throws NullArgumentException, SecureCellException, InvalidArgumentException {
+	public byte[] unprotect(byte[] key, byte[] context, SecureCellData protectedData) throws SecureCellException {
 		return unprotect(key, context, protectedData, this.mode);
 	}
 	
@@ -229,7 +229,7 @@ public class SecureCell {
 	 * @throws SecureCellException when cannot decrypt protectedData
 	 * @throws InvalidArgumentException when protectedData is incorrect
 	 */
-	public byte[] unprotect(byte[] context, SecureCellData protectedData) throws NullArgumentException, SecureCellException, InvalidArgumentException {
+	public byte[] unprotect(byte[] context, SecureCellData protectedData) throws SecureCellException {
 		return this.unprotect(this.key, context, protectedData);
 	}
 	
@@ -244,7 +244,7 @@ public class SecureCell {
 	 * @throws InvalidArgumentException when protectedData is incorrect
 	 * @throws UnsupportedEncodingException when UTF-16 decoding is not supported
 	 */
-	public byte[] unprotect(String password, String context, SecureCellData protectedData) throws UnsupportedEncodingException, NullArgumentException, SecureCellException, InvalidArgumentException {
+	public byte[] unprotect(String password, String context, SecureCellData protectedData) throws UnsupportedEncodingException, SecureCellException {
 		return this.unprotect(password.getBytes(CHARSET), context.getBytes(CHARSET), protectedData);
 	}
 	
@@ -258,7 +258,7 @@ public class SecureCell {
 	 * @throws InvalidArgumentException when protectedData is incorrect
 	 * @throws UnsupportedEncodingException when UTF-16 decoding is not supported
 	 */
-	public byte[] unprotect(String context, SecureCellData protectedData) throws UnsupportedEncodingException, NullArgumentException, SecureCellException, InvalidArgumentException {
+	public byte[] unprotect(String context, SecureCellData protectedData) throws UnsupportedEncodingException, SecureCellException {
 		return this.unprotect(this.key, context.getBytes(CHARSET), protectedData);
 	}
 }
