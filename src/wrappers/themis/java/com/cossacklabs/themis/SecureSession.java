@@ -85,8 +85,6 @@ public class SecureSession {
 		}
 	}
 	
-	static final String CHARSET = "UTF-16";
-	
 	protected ISessionCallbacks callbacks;
 	private long sessionPtr;
 	private State sessionState = State.IDLE;
@@ -135,9 +133,10 @@ public class SecureSession {
 	 * @throws NullArgumentException if `id` is null
 	 * @throws InvalidArgumentException if `id` is empty
 	 * @throws RuntimeException when cannot create session
+	 * @throws RuntimeException when UTF-16 decoding is not supported
 	 */
-	public SecureSession(String id, PrivateKey signPrivateKey, ISessionCallbacks callbacks) throws UnsupportedEncodingException {
-		this(id.getBytes(CHARSET), signPrivateKey, callbacks);
+	public SecureSession(String id, PrivateKey signPrivateKey, ISessionCallbacks callbacks) {
+		this(Utils.getUTF16Bytes(id), signPrivateKey, callbacks);
 	}
 	
 	private SecureSession() {

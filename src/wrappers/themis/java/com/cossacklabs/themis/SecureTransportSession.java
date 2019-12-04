@@ -16,15 +16,13 @@
 
 package com.cossacklabs.themis;
 
-import java.io.UnsupportedEncodingException;
-
 public class SecureTransportSession extends SecureSession {
 
 	public SecureTransportSession(byte[] id, PrivateKey signPrivateKey, ITransportSessionCallbacks callbacks) {
 		super(id, signPrivateKey, callbacks);
 	}
 
-	public SecureTransportSession(String id, PrivateKey signPrivateKey, ITransportSessionCallbacks callbacks) throws UnsupportedEncodingException {
+	public SecureTransportSession(String id, PrivateKey signPrivateKey, ITransportSessionCallbacks callbacks) {
 		super(id, signPrivateKey, callbacks);
 	}
 

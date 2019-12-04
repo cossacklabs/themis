@@ -19,8 +19,6 @@ public class SecureCompare {
 		SEND_TO_PEER
 	}
 	
-	static final String CHARSET = "UTF-16";
-	
 	private long nativeCtx = 0;
 	
 	native long create();
@@ -42,8 +40,8 @@ public class SecureCompare {
 		
 	}
 
-	public SecureCompare(String password) throws UnsupportedEncodingException {
-		this(password.getBytes(CHARSET));
+	public SecureCompare(String password) {
+		this(Utils.getUTF16Bytes(password));
 	}
 	
 	public void close() {
