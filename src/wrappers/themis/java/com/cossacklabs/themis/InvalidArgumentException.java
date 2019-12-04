@@ -16,8 +16,8 @@
 
 package com.cossacklabs.themis;
 
-public class InvalidArgumentException extends Exception {
-	
+public class InvalidArgumentException extends IllegalArgumentException {
+
 	public InvalidArgumentException(String message) {
 		super("Invalid argument: " + message);
 	}
