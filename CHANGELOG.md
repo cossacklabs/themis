@@ -47,6 +47,10 @@ _Code:_
 
   - New function `Themis::gen_sym_key()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
 
+- **Rust**
+
+  - New object `themis::keys::SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+
 - **WebAssembly**
 
   - New class `SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
