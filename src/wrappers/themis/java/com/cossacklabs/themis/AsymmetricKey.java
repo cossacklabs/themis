@@ -19,26 +19,20 @@ package com.cossacklabs.themis;
 /**
  * Base class for Themis asymmetric keys
  */
-public abstract class AsymmetricKey {
-	
+public abstract class AsymmetricKey extends KeyBytes {
+
 	public static final int KEYTYPE_EC = 0;
 	public static final int KEYTYPE_RSA = 1;
-	
-	byte[] key;
 
 	/**
-	 * Creates asymmetric key from byte array
-	 * @param [in] key
+	 * Creates asymmetric key from byte array.
+	 *
+	 * @param key byte array
+	 *
+	 * @throws NullArgumentException if `key` is null.
+	 * @throws InvalidArgumentException if `key` is empty.
 	 */
 	public AsymmetricKey(byte[] key) {
-		this.key = key;
-	}
-	
-	/**
-	 * Serializes this key to a byte array
-	 * @return key as byte array
-	 */
-	public byte[] toByteArray() {
-		return key.clone();
+		super(key);
 	}
 }
