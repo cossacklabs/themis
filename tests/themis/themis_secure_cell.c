@@ -68,6 +68,11 @@ static void secure_cell_key_generation(void)
     testsuite_fail_unless(res == THEMIS_BUFFER_TOO_SMALL, "keygen: query key size");
     testsuite_fail_unless(master_key_1_length > 0, "keygen: recommends non-empty key");
 
+    master_key_1_length = 0;
+    res = themis_gen_sym_key(master_key_1, &master_key_1_length);
+    testsuite_fail_unless(res == THEMIS_BUFFER_TOO_SMALL, "keygen: query key size (with buffer)");
+    testsuite_fail_unless(master_key_1_length > 0, "keygen: recommends non-empty key");
+
     size_t old_value = master_key_1_length;
     res = themis_gen_sym_key(master_key_1, &master_key_1_length);
     testsuite_fail_unless(res == THEMIS_SUCCESS, "keygen: generate recommended key");
@@ -115,10 +120,6 @@ static void secure_cell_key_generation(void)
 
     res = themis_gen_sym_key(master_key_1, NULL);
     testsuite_fail_unless(res == THEMIS_INVALID_PARAMETER, "keygen: missing key length");
-
-    master_key_1_length = 0;
-    res = themis_gen_sym_key(master_key_1, &master_key_1_length);
-    testsuite_fail_unless(res == THEMIS_INVALID_PARAMETER, "keygen: invalid key length");
 }
 
 static int secure_cell_seal(void)

@@ -173,11 +173,8 @@ themis_status_t themis_gen_sym_key(uint8_t* key, size_t* key_length)
     if (key_length == NULL) {
         return THEMIS_INVALID_PARAMETER;
     }
-    if (key != NULL && *key_length == 0) {
-        return THEMIS_INVALID_PARAMETER;
-    }
 
-    if (key == NULL) {
+    if (key == NULL || *key_length == 0) {
         *key_length = THEMIS_SYM_KEY_LENGTH;
         return THEMIS_BUFFER_TOO_SMALL;
     }

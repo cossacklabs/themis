@@ -59,14 +59,11 @@ extern "C" {
  *
  * @exception THEMIS_INVALID_PARAM if `key_length` is NULL.
  *
- * @exception THEMIS_INVALID_PARAM if `key` is not NULL,
- * but `key_length` is zero.
- *
  * @exception THEMIS_INVALID_PARAM if `key_length` is too big
  * for cryptographic backend to handle.
  *
- * @exception THEMIS_BUFFER_TOO_SMALL if `key` is not NULL, but
- * `key_length` is not sufficient to hold a generated key.
+ * @exception THEMIS_BUFFER_TOO_SMALL if `key_length` is too small
+ * to hold a generated key.
  *
  * @exception THEMIS_FAIL if cryptographic backend was unable
  * to generate enough randomness to fill the entire buffer.
