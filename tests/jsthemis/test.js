@@ -193,7 +193,7 @@ describe("jsthemis", function(){
                 assert.deepEqual(key3, key2)
                 assert.notEqual(key3, key2)
                 assert.notDeepEqual(key3, key1)
-                assert.noEqual(key3, key1)
+                assert.notEqual(key3, key1)
             })
             it("is able to restore SymmetricKey from bytes", function(){
                 var bytes = Buffer.from("MDRwUzB0NG1aN2pvTEEwdVljRFJ5", "base64")
