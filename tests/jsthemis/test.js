@@ -181,6 +181,20 @@ describe("jsthemis", function(){
                 var masterKey = new addon.SymmetricKey()
                 assert.equal(masterKey.length, defaultLength)
             })
+            it("generates new instances", function(){
+                // Check that we don't reuse the same object
+                var key1 = new addon.SymmetricKey()
+                var key2 = new addon.SymmetricKey()
+                assert.notDeepEqual(key1, key2)
+                assert.notEqual(key1, key2)
+                // A copy should have the same content,
+                // but it's a distint object
+                var key3 = new addon.SymmetricKey(key2)
+                assert.deepEqual(key3, key2)
+                assert.notEqual(key3, key2)
+                assert.notDeepEqual(key3, key1)
+                assert.noEqual(key3, key1)
+            })
             it("is able to restore SymmetricKey from bytes", function(){
                 var bytes = Buffer.from("MDRwUzB0NG1aN2pvTEEwdVljRFJ5", "base64")
                 var masterKey = new addon.SymmetricKey(bytes)
