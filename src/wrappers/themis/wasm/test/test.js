@@ -122,6 +122,13 @@ describe('wasm-themis', function() {
                     expectError(ThemisErrorCode.INVALID_PARAMETER)
                 )
             })
+            it('fails with invalid types', function() {
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new themis.SymmetricKey(invalid),
+                        TypeError
+                    )
+                })
+            })
         })
         let masterKey1 = new Uint8Array([1, 2, 3, 4])
         let masterKey2 = new Uint8Array([5, 6, 7, 8, 9])
