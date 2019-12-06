@@ -79,6 +79,14 @@ typedef int32_t soter_status_t;
 #endif
 #endif
 
+#if __cplusplus >= 201402L
+#define SOTER_MUST_USE [[nodiscard]]
+#elif defined(__GNUC__) || defined(__clang__)
+#define SOTER_MUST_USE __attribute__((warn_unused_result))
+#else
+#define SOTER_MUST_USE
+#endif
+
 /**@}*/
 
 /**

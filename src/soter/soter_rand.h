@@ -50,6 +50,7 @@ extern "C" {
  * to fill the entire buffer. Please try again later.
  */
 SOTER_API
+SOTER_MUST_USE
 soter_status_t soter_rand(uint8_t* buffer, size_t length);
 
 #ifdef __cplusplus
