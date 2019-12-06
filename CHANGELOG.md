@@ -4,7 +4,16 @@
 
 Changes that are currently in development and have not been released yet.
 
+**TL;DR:**
+- Added API for generating symmetric keys for use with Secure Cell;
+
 _Code:_
+
+- **Core**
+
+  - **Key generation**
+
+    - New function `themis_gen_sym_key()` can be used to securely generate symmetric keys for Secure Cell ([#560](https://github.com/cossacklabs/themis/pull/560)).
 
 - **Java**
 
