@@ -38,7 +38,9 @@ abstract class KeyBytes implements IKey {
         if (key.length == 0) {
             throw new InvalidArgumentException("key cannot be empty");
         }
-        this.key = key;
+        // Copy the key so that changes in the original array do not
+        // affect this key.
+        this.key = key.clone();
     }
 
     @Override
