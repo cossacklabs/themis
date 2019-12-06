@@ -67,7 +67,10 @@ size_t rand_int(size_t max_val)
 
 	do
 	{
-		soter_rand((uint8_t*)(&res), sizeof(size_t));
+		if (soter_rand((uint8_t*)(&res), sizeof(res)) != SOTER_SUCCESS)
+		{
+			exit(1);
+		}
 		res %= max_val;
 	} while (!res);
 
