@@ -176,14 +176,15 @@ describe("jsthemis", function(){
 describe("jsthemis", function(){
     describe("secure cell", function(){
         describe("key generation", function(){
+            const defaultLength = 32
             it("generates new key buffer", function(){
                 var masterKey = new addon.SymmetricKey()
-                assert.notEqual(masterKey.length, 0)
+                assert.equal(masterKey.length, defaultLength)
             })
             it("is able to restore SymmetricKey from bytes", function(){
                 var bytes = Buffer.from("MDRwUzB0NG1aN2pvTEEwdVljRFJ5", "base64")
                 var masterKey = new addon.SymmetricKey(bytes)
-                assert.equal(masterKey.length, 21)
+                assert.equal(masterKey.length, bytes.length)
             })
             it("throws on empty buffer", function(){
                 assert.throws(() => new addon.SymmetricKey(Buffer.from("")),
