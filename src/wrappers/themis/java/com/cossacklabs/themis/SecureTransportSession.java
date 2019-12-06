@@ -16,27 +16,25 @@
 
 package com.cossacklabs.themis;
 
-import java.io.UnsupportedEncodingException;
-
 public class SecureTransportSession extends SecureSession {
 
-	public SecureTransportSession(byte[] id, PrivateKey signPrivateKey, ITransportSessionCallbacks callbacks) throws SecureSessionException {
+	public SecureTransportSession(byte[] id, PrivateKey signPrivateKey, ITransportSessionCallbacks callbacks) {
 		super(id, signPrivateKey, callbacks);
 	}
 
-	public SecureTransportSession(String id, PrivateKey signPrivateKey, ITransportSessionCallbacks callbacks) throws SecureSessionException, UnsupportedEncodingException {
+	public SecureTransportSession(String id, PrivateKey signPrivateKey, ITransportSessionCallbacks callbacks) {
 		super(id, signPrivateKey, callbacks);
 	}
-	
-	public void connect() throws SecureSessionException {
+
+	public void connect() {
 		((ITransportSessionCallbacks)this.callbacks).write(this.generateConnectRequest());
 	}
-	
-	public void write(byte[] data) throws SecureSessionException, NullArgumentException {
+
+	public void write(byte[] data) throws SecureSessionException {
 		((ITransportSessionCallbacks)this.callbacks).write(this.wrap(data));
 	}
-	
-	public byte[] read() throws SecureSessionException, NullArgumentException {
+
+	public byte[] read() throws SecureSessionException {
 		byte[] wrappedData = ((ITransportSessionCallbacks)this.callbacks).read();
 		
 		UnwrapResult result = this.unwrap(wrappedData);

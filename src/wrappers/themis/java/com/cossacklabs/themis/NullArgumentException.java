@@ -16,8 +16,8 @@
 
 package com.cossacklabs.themis;
 
-public class NullArgumentException extends Exception {
-	
+public class NullArgumentException extends NullPointerException {
+
 	public NullArgumentException() {
 		super();
 	}
