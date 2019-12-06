@@ -107,9 +107,10 @@ describe('wasm-themis', function() {
     })
     describe('SecureCell', function() {
         describe('key generation', function() {
+            const defaultLength = 32
             it('generates new keys', function() {
                 let key = new themis.SymmetricKey()
-                assert(key.length > 0)
+                assert,equal(key.length, defaultLength)
             })
             it('wraps existing keys', function() {
                 let buffer = new Uint8Array([1, 2, 3, 4])

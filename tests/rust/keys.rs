@@ -87,8 +87,9 @@ fn join_mismatching_keys() {
 
 #[test]
 fn generate_symmetric_keys() {
+    let default_size = 32;
     let key = SymmetricKey::new();
-    assert!(!key.as_ref().is_empty());
+    assert_eq!(key.as_ref().len(), default_size);
 }
 
 #[test]

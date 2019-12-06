@@ -28,9 +28,10 @@ class TestScell < Test::Unit::TestCase
   end
 
   def test_keygen
+    default_length = 32
     key = Themis::gen_sym_key()
     assert_not_nil(key)
-    assert(key.length > 0)
+    assert_equal(key.length, default_length)
   end
 
   def test_seal

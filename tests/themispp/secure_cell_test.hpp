@@ -44,9 +44,11 @@ static const std::vector<uint8_t> context2 = as_bytes("secure cell test context2
 
 static void secure_cell_keygen_test()
 {
+    static const size_t default_size = 32;
+
     try {
         std::vector<uint8_t> key = themispp::gen_sym_key();
-        sput_fail_unless(!key.empty(), "key generation (default)", __LINE__);
+        sput_fail_unless(key.size() == default_size, "key generation (default)", __LINE__);
     } catch (const themispp::exception_t&) {
         sput_fail_unless(false, "key generation (default)", __LINE__);
     }
@@ -54,7 +56,7 @@ static void secure_cell_keygen_test()
     try {
         std::vector<uint8_t> key;
         themispp::gen_sym_key(key);
-        sput_fail_unless(!key.empty(), "key generation (in-place)", __LINE__);
+        sput_fail_unless(key.size() == default_size, "key generation (in-place)", __LINE__);
     } catch (const themispp::exception_t&) {
         sput_fail_unless(false, "key generation (in-place)", __LINE__);
     }

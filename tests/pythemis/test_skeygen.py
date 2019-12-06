@@ -27,5 +27,6 @@ class GenerateKeyPairTest(unittest.TestCase):
 
 class GenerateSymmetricKeyTest(unittest.TestCase):
     def test_generator(self):
+        default_length = 32
         key = GenerateSymmetricKey()
-        self.assertTrue(len(key) > 0)
+        self.assertEqual(len(key), default_length)

@@ -19,11 +19,13 @@ class SecureCellTestsSwift: XCTestCase {
 
     // MARK: - Key generation
 
+    let defaultKeyLength = 32
+
     func testKeyGeneration() {
         let masterKey = TSGenerateSymmetricKey()
 
         XCTAssertNotNil(masterKey, "TSGenerateSymmetricKey() should not fail")
-        XCTAssertFalse(masterKey!.isEmpty, "generated key must be not empty")
+        XCTAssertEqual(masterKey!.count, defaultKeyLength, "generated key must be not empty")
     }
 
     // MARK: - Seal

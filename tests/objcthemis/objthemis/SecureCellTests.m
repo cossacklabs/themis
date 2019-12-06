@@ -32,12 +32,14 @@
 
 #pragma mark - Key generation
 
+static const size_t defaultLength = 32;
+
 - (void)testKeyGeneration
 {
     NSData *masterKey = TSGenerateSymmetricKey();
 
     XCTAssertNotNil(masterKey, "TSGenerateSymmetricKey() should not fail");
-    XCTAssertGreaterThan(masterKey.length, 0, "generated key must be not empty");
+    XCTAssertEqual(masterKey.length, defaultLength, "generated key must be not empty");
 }
 
 #pragma MARK - Seal Mode -
