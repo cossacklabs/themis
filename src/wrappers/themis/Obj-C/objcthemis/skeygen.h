@@ -63,7 +63,7 @@ typedef NS_ENUM(NSInteger, TSKeyGenAsymmetricAlgorithm) {
  *
  * @returns a newly allocated key of default size.
  */
-NSData* __nullable TSGenerateSymmetricKey();
+NSData* __nullable TSGenerateSymmetricKey(void);
 
 NS_ASSUME_NONNULL_END
 

@@ -81,7 +81,7 @@
 
 @end
 
-NSData* __nullable TSGenerateSymmetricKey()
+NSData* __nullable TSGenerateSymmetricKey(void)
 {
     TSErrorType result;
     NSMutableData *key;
