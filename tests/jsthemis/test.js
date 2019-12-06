@@ -189,6 +189,12 @@ describe("jsthemis", function(){
             it("throws on empty buffer", function(){
                 assert.throws(() => new addon.SymmetricKey(Buffer.from("")),
                     expect_code(addon.INVALID_PARAMETER))
+                assert.throws(() => new addon.SymmetricKey(""),
+                    expect_code(addon.INVALID_PARAMETER))
+                assert.throws(() => new addon.SymmetricKey(null),
+                    expect_code(addon.INVALID_PARAMETER))
+                assert.throws(() => new addon.SymmetricKey(undefined),
+                    expect_code(addon.INVALID_PARAMETER))
             })
         })
 	message=new Buffer("This is test message");
