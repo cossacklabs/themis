@@ -24,6 +24,7 @@
 #include "soter/soter_rsa_key.h"
 #include "soter/soter_rsa_key_pair_gen.h"
 #include "soter/soter_t.h"
+#include "soter/soter_wipe.h"
 
 #include "themis/themis_portable_endian.h"
 
@@ -48,6 +49,13 @@ static themis_status_t combine_key_generation_results(uint8_t* private_key,
 {
     if (private_result == THEMIS_SUCCESS && public_result == THEMIS_SUCCESS) {
         return THEMIS_SUCCESS;
+    }
+
+    if (private_result != THEMIS_BUFFER_TOO_SMALL) {
+        soter_wipe(private_key, *private_key_length);
+    }
+    if (public_result != THEMIS_BUFFER_TOO_SMALL) {
+        soter_wipe(public_key, *public_key_length);
     }
 
     if (private_result == THEMIS_BUFFER_TOO_SMALL || public_result == THEMIS_BUFFER_TOO_SMALL) {
@@ -203,6 +211,6 @@ themis_status_t themis_gen_sym_key(uint8_t* key, size_t* key_length)
         return THEMIS_BUFFER_TOO_SMALL;
     }
 
-    /* Soter error codes have the same value as Themis ones */
+    /* soter_rand() wipes the key on failure, soter_wipe() not needed */
     return soter_rand(key, *key_length);
 }
