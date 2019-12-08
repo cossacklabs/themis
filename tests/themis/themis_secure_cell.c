@@ -1971,6 +1971,150 @@ static void scell_seal_passphrase_stability(void)
     }
 }
 
+static void secure_cell_0_9_6_compatibility(void)
+{
+    static const uint8_t master_key[] = {
+        0x08, 0xBC, 0xFB, 0xF3, 0x8D, 0xB4, 0xD3, 0xD9, 0x0B, 0x21, 0x73,
+        0x88, 0x5C, 0xC2, 0xD9, 0xA3, 0x9D, 0xA9, 0x46, 0x4E, 0x03, 0xE0,
+        0x78, 0x49, 0x56, 0x94, 0x15, 0xB8, 0xD5, 0xC0, 0xCA, 0x8C,
+    };
+    static const uint8_t context[] = {
+        0xAA,
+        0x5F,
+        0x14,
+        0x62,
+        0x49,
+        0x5C,
+        0x59,
+        0xEB,
+    };
+    /* "message encrypted with Themis 0.9.6" */
+    static const uint8_t message[] = {
+        0x6D, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x20, 0x65, 0x6E, 0x63, 0x72,
+        0x79, 0x70, 0x74, 0x65, 0x64, 0x20, 0x77, 0x69, 0x74, 0x68, 0x20, 0x54,
+        0x68, 0x65, 0x6D, 0x69, 0x73, 0x20, 0x30, 0x2E, 0x39, 0x2E, 0x36,
+    };
+    static const uint8_t encrypted_seal[] = {
+        0x00, 0x01, 0x01, 0x40, 0x0C, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x23, 0x00,
+        0x00, 0x00, 0xF6, 0x3B, 0xAB, 0x8D, 0xB8, 0x97, 0xFA, 0x1E, 0xB1, 0x2C, 0x5A, 0x89,
+        0x8C, 0x1A, 0x86, 0x62, 0xAB, 0xDD, 0xEE, 0x56, 0xE8, 0xBF, 0xAE, 0xCD, 0xCE, 0xBF,
+        0xC0, 0x12, 0x53, 0x7A, 0x0E, 0xB7, 0x1A, 0x50, 0x9A, 0x8A, 0x81, 0xE9, 0xD6, 0x96,
+        0xEA, 0x5C, 0xA7, 0xF9, 0x35, 0x00, 0x5F, 0x2D, 0x78, 0x46, 0xF9, 0xD0, 0x86, 0xB7,
+        0x42, 0xF0, 0x76, 0xCE, 0xC7, 0x56, 0x51, 0xC0, 0xE9,
+    };
+    static const uint8_t encrypted_token_message[] = {
+        0x0D, 0x8C, 0x96, 0xFF, 0x8A, 0x67, 0xF5, 0x4B, 0xBF, 0xDD, 0x20, 0x16,
+        0xD8, 0x8C, 0x07, 0x49, 0xD9, 0x4A, 0x06, 0xA0, 0x7E, 0xDD, 0x90, 0xEB,
+        0x1A, 0x39, 0x40, 0xF7, 0x92, 0x14, 0x1F, 0x45, 0x91, 0x13, 0x6F,
+    };
+    static const uint8_t encrypted_token_authdata[] = {
+        0x00, 0x01, 0x01, 0x40, 0x0C, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x23, 0x00, 0x00,
+        0x00, 0xDB, 0x29, 0x1F, 0x5F, 0x25, 0xF0, 0xF2, 0x10, 0x5C, 0x0C, 0x27, 0xB4, 0x98, 0x9C,
+        0x5F, 0x0B, 0xCC, 0x3F, 0x9B, 0x29, 0x71, 0xD0, 0xBA, 0xB0, 0x6F, 0xAF, 0x75, 0x47,
+    };
+    static const uint8_t encrypted_imprint[] = {
+        0x51, 0xF9, 0xA3, 0x5E, 0x9A, 0xA2, 0xAF, 0x69, 0x58, 0xB1, 0xCA, 0x3E,
+        0x77, 0x2B, 0x52, 0x12, 0x50, 0x09, 0x40, 0x07, 0x0F, 0x99, 0x84, 0xE8,
+        0x30, 0x71, 0x3E, 0xB1, 0xA4, 0xC8, 0x2A, 0x71, 0x0B, 0xBE, 0x26,
+    };
+
+    themis_status_t res = THEMIS_FAIL;
+    uint8_t output[MAX_MESSAGE_SIZE] = {0};
+    size_t output_length = 0;
+
+    res = themis_secure_cell_decrypt_seal(master_key,
+                                          sizeof(master_key),
+                                          context,
+                                          sizeof(context),
+                                          encrypted_seal,
+                                          sizeof(encrypted_seal),
+                                          NULL,
+                                          &output_length);
+
+    testsuite_fail_if(res != THEMIS_BUFFER_TOO_SMALL, "Seal: measured output size");
+    testsuite_fail_if(output_length != sizeof(message), "Seal: expected output size");
+
+    res = themis_secure_cell_decrypt_seal(master_key,
+                                          sizeof(master_key),
+                                          context,
+                                          sizeof(context),
+                                          encrypted_seal,
+                                          sizeof(encrypted_seal),
+                                          output,
+                                          &output_length);
+
+#if SCELL_COMPAT
+    testsuite_fail_if(res != THEMIS_SUCCESS, "Seal: decrypted message ok");
+    testsuite_fail_if(memcmp(output, message, output_length) != 0, "Seal: message content same");
+#else
+    testsuite_fail_if(res != THEMIS_FAIL, "Seal: decryption failure");
+#endif
+
+    res = themis_secure_cell_decrypt_token_protect(master_key,
+                                                   sizeof(master_key),
+                                                   context,
+                                                   sizeof(context),
+                                                   encrypted_token_message,
+                                                   sizeof(encrypted_token_message),
+                                                   encrypted_token_authdata,
+                                                   sizeof(encrypted_token_authdata),
+                                                   NULL,
+                                                   &output_length);
+
+    testsuite_fail_if(res != THEMIS_BUFFER_TOO_SMALL, "Token: measured output size");
+    testsuite_fail_if(output_length != sizeof(message), "Token: expected output size");
+
+    res = themis_secure_cell_decrypt_token_protect(master_key,
+                                                   sizeof(master_key),
+                                                   context,
+                                                   sizeof(context),
+                                                   encrypted_token_message,
+                                                   sizeof(encrypted_token_message),
+                                                   encrypted_token_authdata,
+                                                   sizeof(encrypted_token_authdata),
+                                                   output,
+                                                   &output_length);
+
+#if SCELL_COMPAT
+    testsuite_fail_if(res != THEMIS_SUCCESS, "Token: decrypted message ok");
+    testsuite_fail_if(memcmp(output, message, output_length) != 0, "Token: message content same");
+#else
+    testsuite_fail_if(res != THEMIS_FAIL, "Token: decryption failure");
+#endif
+
+    res = themis_secure_cell_decrypt_context_imprint(master_key,
+                                                     sizeof(master_key),
+                                                     encrypted_imprint,
+                                                     sizeof(encrypted_imprint),
+                                                     context,
+                                                     sizeof(context),
+                                                     NULL,
+                                                     &output_length);
+
+    testsuite_fail_if(res != THEMIS_BUFFER_TOO_SMALL, "Imprint: measured output size");
+    testsuite_fail_if(output_length != sizeof(message), "Imprint: expected output size");
+
+    res = themis_secure_cell_decrypt_context_imprint(master_key,
+                                                     sizeof(master_key),
+                                                     encrypted_imprint,
+                                                     sizeof(encrypted_imprint),
+                                                     context,
+                                                     sizeof(context),
+                                                     output,
+                                                     &output_length);
+
+    testsuite_fail_if(res != THEMIS_SUCCESS, "Imprint: decrypted message ok");
+    /*
+     * Unfortunately, Context Imprint mode is not fully compatible as Themis
+     * is unable to verify correctness of decryption and thus does not use
+     * the compatibility path unless a serious failure occurs. There is no
+     * API to get the old behavior as it was deemed acceptable loss [1].
+     * Thus we do not check the output content, it's most likely incorrect.
+     *
+     * [1]: https://github.com/cossacklabs/themis/pull/279
+     */
+}
+
 void run_secure_cell_test(void)
 {
     testsuite_enter_suite("secure cell: key generation");
@@ -1991,4 +2135,7 @@ void run_secure_cell_test(void)
     testsuite_run_test(scell_seal_passphrase_parameters);
     testsuite_run_test(scell_seal_passphrase_compatibility);
     testsuite_run_test(scell_seal_passphrase_stability);
+
+    testsuite_enter_suite("secure cell: compatibility with Themis 0.9.6");
+    testsuite_run_test(secure_cell_0_9_6_compatibility);
 }
