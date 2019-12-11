@@ -22,13 +22,15 @@ package com.cossacklabs.themis;
 public class PrivateKey extends AsymmetricKey {
 
 	/**
-	 * Creates new private key from byte array
+	 * Creates private key from byte array.
+	 *
 	 * @param key byte array
+	 *
+	 * @throws NullArgumentException if `key` is null.
+	 * @throws InvalidArgumentException if `key` is empty.
 	 */
 	public PrivateKey(byte[] key) {
-		
 		super(key);
-		
 	}
 
 }

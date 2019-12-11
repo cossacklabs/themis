@@ -21,6 +21,7 @@ _Code:_
   - JNI libraries are now available as `libthemis-jni` packages for supported Linux systems ([#552](https://github.com/cossacklabs/themis/pull/552), [#553](https://github.com/cossacklabs/themis/pull/553)).
   - Fixed a NullPointerException bug in `SecureSocket` initialisation ([#557](https://github.com/cossacklabs/themis/pull/557)).
   - Some Themis exceptions have been converted from checked `Exception` to _unchecked_ `RuntimeException`, relaxing requirements for `throws` specifiers ([#563](https://github.com/cossacklabs/themis/pull/563)).
+  - Introduced `IKey` interface with accessors to raw key data ([#564](https://github.com/cossacklabs/themis/pull/564)).
 
 - **Node.js**
 
