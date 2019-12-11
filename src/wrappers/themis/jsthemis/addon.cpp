@@ -30,6 +30,7 @@ void InitAll(v8::Local<v8::Object> exports)
     jsthemis::Errors::Init(exports);
     jsthemis::SecureMessage::Init(exports);
     jsthemis::KeyPair::Init(exports);
+    jsthemis::SymmetricKey::Init(exports);
     jsthemis::SecureSession::Init(exports);
     jsthemis::SecureCellSeal::Init(exports);
     jsthemis::SecureCellContextImprint::Init(exports);
