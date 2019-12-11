@@ -1,6 +1,7 @@
 # coding: utf-8
 import unittest
 from pythemis.skeygen import GenerateKeyPair, KEY_PAIR_TYPE
+from pythemis.skeygen import GenerateSymmetricKey
 from pythemis.exception import ThemisError
 
 
@@ -22,3 +23,10 @@ class GenerateKeyPairTest(unittest.TestCase):
 
         with self.assertRaises(ThemisError):
             GenerateKeyPair("incorrect algorithm")
+
+
+class GenerateSymmetricKeyTest(unittest.TestCase):
+    def test_generator(self):
+        default_length = 32
+        key = GenerateSymmetricKey()
+        self.assertEqual(len(key), default_length)

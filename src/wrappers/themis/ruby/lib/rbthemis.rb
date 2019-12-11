@@ -73,6 +73,8 @@ module ThemisImport
                   [:pointer, :pointer, :pointer, :pointer], :int
   attach_function :themis_gen_ec_key_pair,
                   [:pointer, :pointer, :pointer, :pointer], :int
+  attach_function :themis_gen_sym_key,
+                  [:pointer, :pointer], :int
 
   THEMIS_KEY_INVALID = 0
   THEMIS_KEY_RSA_PRIVATE = 1
@@ -476,6 +478,24 @@ module Themis
     unwrapped_message.get_bytes(0, unwrapped_message_length.read_uint)
   end
 
+  def gen_sym_key
+    key_length = FFI::MemoryPointer.new(:uint)
+
+    res = themis_gen_sym_key(nil, key_length)
+    if res != BUFFER_TOO_SMALL
+      raise ThemisError, "failed to get symmetric key size: #{res}"
+    end
+
+    key = FFI::MemoryPointer.new(:char, key_length.read_uint)
+
+    res = themis_gen_sym_key(key, key_length)
+    if res != SUCCESS
+      raise ThemisError, "failed to generate symmetric key: #{res}"
+    end
+
+    return key.get_bytes(0, key_length.read_uint)
+  end
+
   class Scell
     include ThemisCommon
     include ThemisImport
@@ -702,4 +722,5 @@ module Themis
   module_function :Sverify
   module_function :s_sign
   module_function :s_verify
+  module_function :gen_sym_key
 end

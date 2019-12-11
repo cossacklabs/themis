@@ -25,4 +25,6 @@
 ZEND_FUNCTION(phpthemis_gen_rsa_key_pair);
 ZEND_FUNCTION(phpthemis_gen_ec_key_pair);
 
+ZEND_FUNCTION(phpthemis_gen_sym_key);
+
 #endif //THEMIS_KEY_GENERATOR_H

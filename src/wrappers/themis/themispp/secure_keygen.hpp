@@ -130,6 +130,48 @@ inline bool is_public_key(const std::vector<uint8_t>& key)
     return false;
 }
 
+/**
+ * Generates new symmetric master key in-place.
+ *
+ * Securely generate a new key suitable for Secure Cell.
+ *
+ * @param [out] key a vector to be filled with the key data
+ *
+ * If the vector does not have enough space for a good key then
+ * it will be resized. Otherwise no reallocations are performed.
+ */
+void gen_sym_key(std::vector<uint8_t>& key)
+{
+    if (key.empty()) {
+        size_t key_length = 0;
+        themis_status_t status = themis_gen_sym_key(NULL, &key_length);
+        if (status != THEMIS_BUFFER_TOO_SMALL) {
+            throw themispp::exception_t("Themis failed to query key size", status);
+        }
+        key.resize(key_length);
+    }
+
+    size_t key_length = key.size();
+    themis_status_t status = themis_gen_sym_key(&key.front(), &key_length);
+    if (status != THEMIS_SUCCESS) {
+        throw themispp::exception_t("Themis failed to generate symmetric key", status);
+    }
+}
+
+/**
+ * Generates new symmetric key.
+ *
+ * Securely generate a new key suitable for Secure Cell.
+ *
+ * @returns a newly allocated key of default size.
+ */
+std::vector<uint8_t> gen_sym_key()
+{
+    std::vector<uint8_t> key;
+    gen_sym_key(key);
+    return key;
+}
+
 } // namespace themispp
 
 #endif

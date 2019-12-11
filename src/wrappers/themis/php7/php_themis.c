@@ -31,6 +31,7 @@ static zend_function_entry php_themis_functions[] = {
   ZEND_FE(phpthemis_secure_message_unwrap, NULL)
   ZEND_FE(phpthemis_gen_rsa_key_pair, NULL)
   ZEND_FE(phpthemis_gen_ec_key_pair, NULL)
+  ZEND_FE(phpthemis_gen_sym_key, NULL)
   ZEND_FE(phpthemis_scell_seal_encrypt, NULL)
   ZEND_FE(phpthemis_scell_seal_decrypt, NULL)
   ZEND_FE(phpthemis_scell_token_protect_encrypt, NULL)

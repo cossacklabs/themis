@@ -24,6 +24,7 @@
 #include <common/sput.h>
 
 #include <themispp/secure_cell.hpp>
+#include <themispp/secure_keygen.hpp>
 
 #include "utils.hpp"
 
@@ -40,6 +41,34 @@ static const std::vector<uint8_t> message2 = as_bytes("secure cell test message2
 
 static const std::vector<uint8_t> context1 = as_bytes("secure cell test context1 message");
 static const std::vector<uint8_t> context2 = as_bytes("secure cell test context2 message");
+
+static void secure_cell_keygen_test()
+{
+    static const size_t default_size = 32;
+
+    try {
+        std::vector<uint8_t> key = themispp::gen_sym_key();
+        sput_fail_unless(key.size() == default_size, "key generation (default)", __LINE__);
+    } catch (const themispp::exception_t&) {
+        sput_fail_unless(false, "key generation (default)", __LINE__);
+    }
+
+    try {
+        std::vector<uint8_t> key;
+        themispp::gen_sym_key(key);
+        sput_fail_unless(key.size() == default_size, "key generation (in-place)", __LINE__);
+    } catch (const themispp::exception_t&) {
+        sput_fail_unless(false, "key generation (in-place)", __LINE__);
+    }
+
+    try {
+        std::vector<uint8_t> key(8);
+        themispp::gen_sym_key(key);
+        sput_fail_unless(key.size() == 8, "key generation (custom)", __LINE__);
+    } catch (const themispp::exception_t&) {
+        sput_fail_unless(false, "key generation (custom)", __LINE__);
+    }
+}
 
 static void secure_cell_construction_test()
 {
@@ -261,6 +290,7 @@ static void secure_cell_context_imprint_test()
 inline void run_secure_cell_test()
 {
     sput_enter_suite("ThemisPP secure cell seal mode test:");
+    sput_run_test(secure_cell_keygen_test, "secure_cell_keygen_test", __FILE__);
     sput_run_test(secure_cell_construction_test, "secure_cell_construction_test", __FILE__);
     sput_run_test(secure_cell_seal_test, "secure_cell_seal_test", __FILE__);
     sput_run_test(secure_cell_seal_context_test, "secure_cell_seal_context_test", __FILE__);

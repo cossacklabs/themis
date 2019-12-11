@@ -25,6 +25,7 @@ PHP_FUNCTION(phpthemis_secure_message_unwrap);
 PHP_FUNCTION(phpthemis_gen_rsa_key_pair);
 PHP_FUNCTION(phpthemis_gen_ec_key_pair);
 
+PHP_FUNCTION(phpthemis_gen_sym_key);
 PHP_FUNCTION(phpthemis_scell_seal_encrypt);
 PHP_FUNCTION(phpthemis_scell_seal_decrypt);
 PHP_FUNCTION(phpthemis_scell_token_protect_encrypt);

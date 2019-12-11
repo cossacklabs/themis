@@ -21,6 +21,22 @@ use PHPUnit\Framework\TestCase;
 
 class ScellTest extends TestCase {
 
+    public function testKeyGeneration() {
+        $defaultLength = 32;
+        $key = phpthemis_gen_sym_key();
+        $this->assertEquals(strlen($key), $defaultLength);
+    }
+
+    public function testKeyInstances() {
+        // Make sure that wrapper code generates distinct PHP objects
+        // and does not do anything silly like reusing memory buffers.
+        $key1 = phpthemis_gen_sym_key();
+        $key2 = phpthemis_gen_sym_key();
+        $this->assertNotEquals($key1, $key2);
+        $this->assertNotSame($key1, $key2);
+        $this->assertTrue($key1 !== $key2);
+    }
+
     /**
      * @dataProvider SealWithContextProvider
      */

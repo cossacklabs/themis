@@ -16,7 +16,20 @@ class SecureCellTestsSwift: XCTestCase {
         
         self.masterKeyData = generateMasterKey()
     }
-    
+
+    // MARK: - Key generation
+
+    let defaultKeyLength = 32
+
+    func testKeyGeneration() {
+        let masterKey = TSGenerateSymmetricKey()
+
+        XCTAssertNotNil(masterKey, "TSGenerateSymmetricKey() should not fail")
+        XCTAssertEqual(masterKey!.count, defaultKeyLength, "generated key must be not empty")
+    }
+
+    // MARK: - Seal
+
     func generateMasterKey() -> Data {
         let masterKeyString: String = "UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg"
         let masterKeyData: Data = Data(base64Encoded: masterKeyString, options: .ignoreUnknownCharacters)!

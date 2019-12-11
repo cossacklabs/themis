@@ -3,6 +3,12 @@
 
 The version currently in development.
 
+## New features
+
+- New `SymmetricKey` objects can be used as master keys for `SecureCell`. ([#561])
+
+[#561]: https://github.com/cossacklabs/themis/pull/561
+
 Version 0.12.0 - 2019-09-26
 ===========================
 

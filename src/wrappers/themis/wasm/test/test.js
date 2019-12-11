@@ -106,6 +106,30 @@ describe('wasm-themis', function() {
         })
     })
     describe('SecureCell', function() {
+        describe('key generation', function() {
+            const defaultLength = 32
+            it('generates new keys', function() {
+                let key = new themis.SymmetricKey()
+                assert.equal(key.length, defaultLength)
+            })
+            it('wraps existing keys', function() {
+                let buffer = new Uint8Array([1, 2, 3, 4])
+                let key = new themis.SymmetricKey(buffer)
+                assert.deepEqual(key, buffer)
+            })
+            it('fails with empty buffer', function() {
+                assert.throws(() => new themis.SymmetricKey(new Uint8Array()),
+                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                )
+            })
+            it('fails with invalid types', function() {
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new themis.SymmetricKey(invalid),
+                        TypeError
+                    )
+                })
+            })
+        })
         let masterKey1 = new Uint8Array([1, 2, 3, 4])
         let masterKey2 = new Uint8Array([5, 6, 7, 8, 9])
         let emptyArray = new Uint8Array()

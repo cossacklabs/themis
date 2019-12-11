@@ -27,6 +27,13 @@ class TestScell < Test::Unit::TestCase
     @message = 'This is test message'
   end
 
+  def test_keygen
+    default_length = 32
+    key = Themis::gen_sym_key()
+    assert_not_nil(key)
+    assert_equal(key.length, default_length)
+  end
+
   def test_seal
     assert_raise(NoMethodError) do
       seal = Themis::Scell.new(nil, Themis::Scell::SEAL_MODE)
