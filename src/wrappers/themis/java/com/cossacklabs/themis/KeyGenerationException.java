@@ -18,4 +18,12 @@ package com.cossacklabs.themis;
 
 public class KeyGenerationException extends RuntimeException {
 
+    KeyGenerationException(String message) {
+        super(message);
+    }
+
+    KeyGenerationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }
