@@ -19,11 +19,13 @@ WASM_PATH = src/wrappers/themis/wasm
 WASM_SRC += $(WASM_PATH)/package.json
 WASM_SRC += $(wildcard $(WASM_PATH)/src/*.js)
 
+WASM_EXPORTED = $(abspath $(WASM_PATH)/emscripten/exported_functions.json)
 WASM_RUNTIME = $(abspath $(WASM_PATH)/emscripten/runtime_exports.json)
 WASM_PRE_JS  = $(abspath $(WASM_PATH)/emscripten/pre.js)
 
 WASM_PACKAGE = $(BIN_PATH)/wasm-themis.tgz
 
+$(BIN_PATH)/libthemis.js: LDFLAGS += -s EXPORTED_FUNCTIONS=@$(WASM_EXPORTED)
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s EXTRA_EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME)
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s RESERVED_FUNCTION_POINTERS=1
 $(BIN_PATH)/libthemis.js: LDFLAGS += --pre-js $(WASM_PRE_JS)

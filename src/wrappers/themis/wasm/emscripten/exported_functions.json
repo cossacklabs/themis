@@ -1,0 +1,8 @@
+[ "_memset"
+, "_secure_comparator_create"
+, "_secure_session_create"
+, "_themis_gen_ec_key_pair"
+, "_themis_secure_cell_encrypt_seal"
+, "_themis_secure_message_encrypt"
+]
+    
