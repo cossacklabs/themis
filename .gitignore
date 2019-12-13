@@ -76,3 +76,6 @@ docs/examples/objc/iOS-Carthage/Carthage
 **/*.rs.bk
 Cargo.lock
 
+# vscode
+.settings
+.project
