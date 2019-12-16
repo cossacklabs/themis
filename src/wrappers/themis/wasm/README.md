@@ -49,6 +49,7 @@ Success!
 Read the following resources to learn more:
 
   - [How to use WasmThemis with JavaScript][language-guide].
+  - [How to build WasmThemis from source code][build-instructions].
   - [General documentation for Themis library on Cossack Labs Documentation Server][docserver].
 
 <!--
@@ -58,6 +59,7 @@ TODO: refer to simulators, code samples, and tests here
 -->
 
 [language-guide]: https://docs.cossacklabs.com/pages/js-wasm-howto/
+[build-instructions]: https://docs.cossacklabs.com/pages/documentation-themis/#webassembly-wrapper-installation
 [docserver]: https://docs.cossacklabs.com/products/themis/
 
 ## Licensing
