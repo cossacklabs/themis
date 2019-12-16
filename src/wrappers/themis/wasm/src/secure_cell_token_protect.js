@@ -72,7 +72,7 @@ module.exports = class SecureCellTokenProtect {
                 context_ptr, context.length,
                 message_ptr, message.length,
                 null, token_length_ptr,
-                null, result_length_ptr,
+                null, result_length_ptr
             )
             if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
                 throw new ThemisError(cryptosystem_name, status)
@@ -91,7 +91,7 @@ module.exports = class SecureCellTokenProtect {
                 context_ptr, context.length,
                 message_ptr, message.length,
                 token_ptr, token_length_ptr,
-                result_ptr, result_length_ptr,
+                result_ptr, result_length_ptr
             )
             if (status != ThemisErrorCode.SUCCESS) {
                 throw new ThemisError(cryptosystem_name, status)
