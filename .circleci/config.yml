@@ -225,9 +225,8 @@ jobs:
             cd $HOME/emsdk
             git reset --hard
             git pull
-            # TODO (T1373): roll back to using "latest" when Emscripten regression is resolved
-            ./emsdk install 1.38.48
-            ./emsdk activate 1.38.48
+            ./emsdk install  latest-fastcomp
+            ./emsdk activate latest-fastcomp
       - checkout
       - run:
           name: Sync submodules
@@ -376,9 +375,8 @@ jobs:
             cd $HOME/emsdk
             git reset --hard
             git pull
-            # TODO (T1373): roll back to using "latest" when Emscripten regression is resolved
-            ./emsdk install 1.38.48
-            ./emsdk activate 1.38.48
+            ./emsdk install  latest-fastcomp
+            ./emsdk activate latest-fastcomp
 
       # themis
       - checkout
