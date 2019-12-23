@@ -157,6 +157,8 @@ jobs:
       - run: make test
       - run: make clean_themispp_test && CFLAGS="-std=c++03" make themispp_test && make test_cpp
       - run: make clean_themispp_test && CFLAGS="-std=c++11" make themispp_test && make test_cpp
+      - run: make clean_themispp_test && CFLAGS="-std=c++14" make themispp_test && make test_cpp
+      - run: make clean_themispp_test && CFLAGS="-std=c++17" make themispp_test && make test_cpp
       - run: make test_python
       - run: make test_ruby
       - run: make test_go
