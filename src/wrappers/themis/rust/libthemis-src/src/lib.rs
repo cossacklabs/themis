@@ -34,14 +34,12 @@
 //! Typical usage from a `*-sys` crate looks like this:
 //!
 //! ```no_run
-//! fn main() {
-//!     #[cfg(feature = "vendored")]
-//!     libthemis_src::make();
+//! #[cfg(feature = "vendored")]
+//! libthemis_src::make();
 //!
-//!     // Go on with your usual build.rs business, pkg_config crate
-//!     // should be able to locate the local installation of Themis.
-//!     // You'll probably need to use the static library.
-//! }
+//! // Go on with your usual build.rs business, pkg_config crate
+//! // should be able to locate the local installation of Themis.
+//! // You'll probably need to use the static library.
 //! ```
 
 use std::env;
