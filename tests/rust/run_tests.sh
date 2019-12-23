@@ -31,8 +31,13 @@ cargo test --all -- --test-threads 1
 echo
 echo "Checking documentation..."
 echo
-cargo clean --doc && cargo doc --no-deps
-cargo clean --doc && cargo doc --no-deps --features "vendored"
+# Cargo does not allow "--features" to be used with virtual crate in workspace.
+# Jump into RustThemis subdirectory to make Cargo happy and use "--workspace"
+# to still document all crates in the workspace.
+cd src/wrappers/themis/rust
+cargo clean --doc && cargo doc --workspace --no-deps
+cargo clean --doc && cargo doc --workspace --no-deps --features "vendored"
+cd -
 
 echo
 echo "Rust tests OK!"
