@@ -472,3 +472,23 @@ workflows:
       - php70
       - php71
       - integration_tests
+  nightly:
+    # Apparently CircleCI does not have a "push" or "pull request" trigger
+    # so we have to have a separate workflow with the same job list.
+    triggers:
+      - schedule:
+          cron: "0 5 * * *"
+          filters:
+            branches:
+              only:
+                - master
+                - stable
+    jobs:
+      - analyze
+      - android
+      - x86_64
+      - jsthemis
+      - php5
+      - php70
+      - php71
+      - integration_tests
