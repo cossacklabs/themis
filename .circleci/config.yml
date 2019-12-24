@@ -155,8 +155,15 @@ jobs:
       - run: '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/go/src/$GOTHEMIS_IMPORT && $HOME/go/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
       - run: sudo /sbin/ldconfig
       - run: make test
-      - run: make clean_themispp_test && CFLAGS="-std=c++03" make themispp_test && make test_cpp
-      - run: make clean_themispp_test && CFLAGS="-std=c++11" make themispp_test && make test_cpp
+      - run: make clean_themispp_test && CXX="g++"     CFLAGS="-std=c++03" make themispp_test && make test_cpp
+      - run: make clean_themispp_test && CXX="g++"     CFLAGS="-std=c++11" make themispp_test && make test_cpp
+      - run: make clean_themispp_test && CXX="g++"     CFLAGS="-std=c++14" make themispp_test && make test_cpp
+      - run: make clean_themispp_test && CXX="g++"     CFLAGS="-std=c++17" make themispp_test && make test_cpp
+      - run: make clean_themispp_test && CXX="clang++" CFLAGS="-std=c++03" make themispp_test && make test_cpp
+      - run: make clean_themispp_test && CXX="clang++" CFLAGS="-std=c++11" make themispp_test && make test_cpp
+      - run: make clean_themispp_test && CXX="clang++" CFLAGS="-std=c++14" make themispp_test && make test_cpp
+      # Clang 3.8 that we have here does not support C++17 yet
+#     - run: make clean_themispp_test && CXX="clang++" CFLAGS="-std=c++17" make themispp_test && make test_cpp
       - run: make test_python
       - run: make test_ruby
       - run: make test_go
@@ -456,6 +463,26 @@ jobs:
 workflows:
   version: 2
   tests:
+    jobs:
+      - analyze
+      - android
+      - x86_64
+      - jsthemis
+      - php5
+      - php70
+      - php71
+      - integration_tests
+  nightly:
+    # Apparently CircleCI does not have a "push" or "pull request" trigger
+    # so we have to have a separate workflow with the same job list.
+    triggers:
+      - schedule:
+          cron: "0 5 * * *"
+          filters:
+            branches:
+              only:
+                - master
+                - stable
     jobs:
       - analyze
       - android
