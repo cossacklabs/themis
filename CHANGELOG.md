@@ -18,6 +18,7 @@ _Code:_
 - **C++**
 
   - New function `themispp::gen_sym_key()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Updated test suite to test C++14 and C++17 (in addition to C++11 and C++03) ([#572](https://github.com/cossacklabs/themis/pull/572)).
 
 - **Go**
 
