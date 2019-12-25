@@ -57,6 +57,49 @@ soter_status_t soter_kdf(const void* key,
                          size_t context_count,
                          void* output,
                          size_t output_length);
+
+/**
+ * Computes PKCS#5 PBKDF2 HMAC-SHA-256 for a passphrase.
+ *
+ * @param [in]  passphrase          passphrase used for derivation, may be NULL
+ * @param [in]  passphrase_length   length of `passphrase` in bytes
+ * @param [in]  salt                additional salt for derivation, may be NULL
+ * @param [in]  salt_length         length of `salt` in bytes
+ * @param [in]  iterations          PBKDF2 iteration count
+ * @param [out] key                 output key buffer
+ * @param [in]  key_length          length of `key` in bytes
+ *
+ * This function derives a key from a passphrase using a salt and iteration
+ * count as specified in RFC 8018. It uses HMAC-SHA-256 as the hash function.
+ *
+ * The iteration count must be a positive number. The bigger it is, the slower
+ * the derivation, and the harder it gets for an attacker to perform a brute
+ * force attack with candidate passphrases. RFC 8018 suggests at least 1000.
+ * We suggest using at least 100,000. Generally, you experiment with values,
+ * use the biggest one that you can tolerate at the moment, and periodically
+ * reevaluate your decision and increase the count as machines get faster.
+ *
+ * Note that input parameters are optional, but usually you do not want to have
+ * both passphrase and salt set to NULL.
+ *
+ * @returns SOTER_SUCCESS on successful key derivation.
+ *
+ * @exception SOTER_FAIL on critical backend failure.
+ *
+ * @exception SOTER_INVALID_PARAM if `passphrase` is NULL but `passphrase_length` is not zero.
+ * @exception SOTER_INVALID_PARAM if `salt` is NULL but `salt_length` is not zero.
+ * @exception SOTER_INVALID_PARAM if `iterations` count is zero.
+ * @exception SOTER_INVALID_PARAM if `key` is NULL or `key_length` is zero.
+ */
+SOTER_API
+soter_status_t soter_pbkdf2_sha256(const uint8_t* passphrase,
+                                   size_t passphrase_length,
+                                   const uint8_t* salt,
+                                   size_t salt_length,
+                                   size_t iterations,
+                                   uint8_t* key,
+                                   size_t key_length);
+
 /** @} */
 /** @} */
 
