@@ -47,6 +47,10 @@ $(OBJ_PATH)/tests/soter/%: CFLAGS += -DNIST_STS_EXE_PATH=$(realpath $(NIST_STS_D
 $(SOTER_TEST_BIN): nist_rng_test_suite
 endif
 
+ifeq ($(SOTER_KDF_RUN_LONG_TESTS),yes)
+$(OBJ_PATH)/tests/soter/%: CFLAGS += -DSOTER_KDF_RUN_LONG_TESTS=1
+endif
+
 ifdef IS_EMSCRIPTEN
 # Emscripten does not support dynamic linkage, do a static build for it.
 SOTER_TEST_LDFLAGS += -s SINGLE_FILE=1

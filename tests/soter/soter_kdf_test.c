@@ -76,6 +76,12 @@ static const struct kdf_test_vector pbkdf2_sha256_test_vectors[] = {
     {"pass\0word", 9, "sa\0lt", 5, 4096, "\x89\xb6\x9d\x05\x16\xf8\x29\x89\x3c\x69\x62\x26\x65\x0a\x86\x87", 16},
 };
 
+#if SOTER_KDF_RUN_LONG_TESTS
+static const size_t pbkdf2_iteration_limit = SIZE_MAX;
+#else
+static const size_t pbkdf2_iteration_limit = 2000000;
+#endif
+
 static void test_pbkdf2_sha256(void)
 {
     soter_status_t res;
@@ -85,6 +91,12 @@ static void test_pbkdf2_sha256(void)
 
     for (i = 0; i < ARRAY_SIZE(pbkdf2_sha256_test_vectors); i++) {
         const struct kdf_test_vector* v = &pbkdf2_sha256_test_vectors[i];
+
+        if (v->iterations >= pbkdf2_iteration_limit) {
+            snprintf(name_buffer, sizeof(name_buffer), "test vector #%zu (skipped)", i + 1);
+            testsuite_fail_unless(true, name_buffer);
+            continue;
+        }
 
         snprintf(name_buffer, sizeof(name_buffer), "test vector #%zu", i + 1);
 
