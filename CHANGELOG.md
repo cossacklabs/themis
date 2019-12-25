@@ -11,6 +11,10 @@ _Code:_
 
 - **Core**
 
+  - **Soter** (low-level security core used by Themis)
+
+    - New function `soter_pbkdf2_sha256()` can be used to derive encryption keys from passphrases with PBKDF2 algorithm ([#574](https://github.com/cossacklabs/themis/pull/574)).
+
   - **Key generation**
 
     - New function `themis_gen_sym_key()` can be used to securely generate symmetric keys for Secure Cell ([#560](https://github.com/cossacklabs/themis/pull/560)).
