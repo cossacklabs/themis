@@ -117,23 +117,28 @@ static void test_pbkdf2_sha256_api(void)
 {
     soter_status_t res;
     uint8_t key_buffer[256];
+    uint8_t passphrase[] = {'p', 'a', 's', 's', 'w', 'o', 'r', 'd'};
+    uint8_t salt[] = {'s', 'a', 'l', 't'};
 
-    res = soter_pbkdf2_sha256(NULL, 0, NULL, 0, 1, key_buffer, 1);
-    testsuite_fail_unless(res == SOTER_SUCCESS, "null params, zero length");
+    res = soter_pbkdf2_sha256(NULL, 0, salt, sizeof(salt), 1, key_buffer, 1);
+    testsuite_fail_unless(res == SOTER_INVALID_PARAMETER, "null passphrase, zero length");
 
-    res = soter_pbkdf2_sha256(NULL, 1, NULL, 0, 1, key_buffer, 1);
+    res = soter_pbkdf2_sha256(NULL, 1, salt, sizeof(salt), 1, key_buffer, 1);
     testsuite_fail_unless(res == SOTER_INVALID_PARAMETER, "null passphrase, non-zero length");
 
-    res = soter_pbkdf2_sha256(NULL, 0, NULL, 1, 1, key_buffer, 1);
+    res = soter_pbkdf2_sha256(passphrase, sizeof(passphrase), NULL, 0, 1, key_buffer, 1);
+    testsuite_fail_unless(res == SOTER_SUCCESS, "null salt, zero length");
+
+    res = soter_pbkdf2_sha256(passphrase, sizeof(passphrase), NULL, 1, 1, key_buffer, 1);
     testsuite_fail_unless(res == SOTER_INVALID_PARAMETER, "null salt, non-zero length");
 
-    res = soter_pbkdf2_sha256(NULL, 0, NULL, 0, 0, key_buffer, 1);
+    res = soter_pbkdf2_sha256(passphrase, sizeof(passphrase), salt, sizeof(salt), 0, key_buffer, 1);
     testsuite_fail_unless(res == SOTER_INVALID_PARAMETER, "zero iterations");
 
-    res = soter_pbkdf2_sha256(NULL, 0, NULL, 0, 1, NULL, 0);
+    res = soter_pbkdf2_sha256(passphrase, sizeof(passphrase), salt, sizeof(salt), 1, NULL, 0);
     testsuite_fail_unless(res == SOTER_INVALID_PARAMETER, "null key");
 
-    res = soter_pbkdf2_sha256(NULL, 0, NULL, 0, 1, key_buffer, 0);
+    res = soter_pbkdf2_sha256(passphrase, sizeof(passphrase), salt, sizeof(salt), 1, key_buffer, 0);
     testsuite_fail_unless(res == SOTER_INVALID_PARAMETER, "zero key length");
 }
 

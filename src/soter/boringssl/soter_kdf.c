@@ -30,9 +30,8 @@ soter_status_t soter_pbkdf2_sha256(const uint8_t* passphrase,
 {
     int res;
 
-    if (!passphrase) {
-        SOTER_CHECK_PARAM(passphrase_length == 0);
-    }
+    SOTER_CHECK_PARAM(passphrase != NULL);
+    SOTER_CHECK_PARAM(passphrase_length > 0);
     if (!salt) {
         SOTER_CHECK_PARAM(salt_length == 0);
     }

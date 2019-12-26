@@ -61,7 +61,7 @@ soter_status_t soter_kdf(const void* key,
 /**
  * Computes PKCS#5 PBKDF2 HMAC-SHA-256 for a passphrase.
  *
- * @param [in]  passphrase          passphrase used for derivation, may be NULL
+ * @param [in]  passphrase          passphrase used for derivation
  * @param [in]  passphrase_length   length of `passphrase` in bytes
  * @param [in]  salt                additional salt for derivation, may be NULL
  * @param [in]  salt_length         length of `salt` in bytes
@@ -79,14 +79,11 @@ soter_status_t soter_kdf(const void* key,
  * use the biggest one that you can tolerate at the moment, and periodically
  * reevaluate your decision and increase the count as machines get faster.
  *
- * Note that input parameters are optional, but usually you do not want to have
- * both passphrase and salt set to NULL.
- *
  * @returns SOTER_SUCCESS on successful key derivation.
  *
  * @exception SOTER_FAIL on critical backend failure.
  *
- * @exception SOTER_INVALID_PARAM if `passphrase` is NULL but `passphrase_length` is not zero.
+ * @exception SOTER_INVALID_PARAM if `passphrase` is NULL or `passphrase_length` is zero.
  * @exception SOTER_INVALID_PARAM if `salt` is NULL but `salt_length` is not zero.
  * @exception SOTER_INVALID_PARAM if `iterations` count is zero.
  * @exception SOTER_INVALID_PARAM if `key` is NULL or `key_length` is zero.
