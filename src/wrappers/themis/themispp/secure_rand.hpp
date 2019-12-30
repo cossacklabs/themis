@@ -37,7 +37,10 @@ public:
 
     std::vector<uint8_t>& get()
     {
-        soter_rand(&n_[0], block_length_t_p);
+        soter_status_t res = soter_rand(&n_[0], block_length_t_p);
+        if (res != SOTER_SUCCESS) {
+            throw exception_t("failed to generate random bytes", res);
+        }
         return n_;
     }
 
