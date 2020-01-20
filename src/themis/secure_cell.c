@@ -101,6 +101,30 @@ themis_status_t themis_secure_cell_decrypt_seal(const uint8_t* master_key,
                                            plain_message_length);
 }
 
+themis_status_t themis_secure_cell_encrypt_seal_with_passphrase(const uint8_t* passphrase,
+                                                                size_t passphrase_length,
+                                                                const uint8_t* user_context,
+                                                                size_t user_context_length,
+                                                                const uint8_t* message,
+                                                                size_t message_length,
+                                                                uint8_t* encrypted_message,
+                                                                size_t* encrypted_message_length)
+{
+    return THEMIS_NOT_SUPPORTED;
+}
+
+themis_status_t themis_secure_cell_decrypt_seal_with_passphrase(const uint8_t* passphrase,
+                                                                size_t passphrase_length,
+                                                                const uint8_t* user_context,
+                                                                size_t user_context_length,
+                                                                const uint8_t* encrypted_message,
+                                                                size_t encrypted_message_length,
+                                                                uint8_t* plain_message,
+                                                                size_t* plain_message_length)
+{
+    return THEMIS_NOT_SUPPORTED;
+}
+
 themis_status_t themis_secure_cell_encrypt_token_protect(const uint8_t* master_key,
                                                          const size_t master_key_length,
                                                          const uint8_t* user_context,
