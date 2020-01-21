@@ -256,6 +256,7 @@
 		9F00E8D7223C197900EC1EF3 /* themis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = themis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F00E940223C1AFA00EC1EF3 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Carthage/Build/Mac/openssl.framework; sourceTree = "<group>"; };
 		9F33485723B38D9B00368291 /* soter_kdf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_kdf.c; path = src/soter/openssl/soter_kdf.c; sourceTree = "<group>"; };
+		9F34EA3023D9CA0A0079A1D7 /* secure_cell_seal_passphrase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = secure_cell_seal_passphrase.h; path = src/themis/secure_cell_seal_passphrase.h; sourceTree = "<group>"; };
 		9F4A2342223A73B0005CB63A /* soter_hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_hash.h; path = src/soter/soter_hash.h; sourceTree = "<group>"; };
 		9F4A2343223A73B0005CB63A /* soter_asym_cipher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_asym_cipher.h; path = src/soter/soter_asym_cipher.h; sourceTree = "<group>"; };
 		9F4A2344223A73B0005CB63A /* soter_sign_rsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_sign_rsa.h; path = src/soter/soter_sign_rsa.h; sourceTree = "<group>"; };
@@ -591,6 +592,7 @@
 				9F4A2430223A74AF005CB63A /* secure_cell_alg.h */,
 				9F4A241E223A74AE005CB63A /* secure_cell.c */,
 				9F4A242C223A74AF005CB63A /* secure_cell.h */,
+				9F34EA3023D9CA0A0079A1D7 /* secure_cell_seal_passphrase.h */,
 				9F4A241F223A74AE005CB63A /* secure_comparator_t.h */,
 				9F4A2432223A74AF005CB63A /* secure_comparator.c */,
 				9F4A2434223A74AF005CB63A /* secure_comparator.h */,
