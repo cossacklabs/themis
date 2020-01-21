@@ -266,4 +266,26 @@ static inline themis_status_t themis_read_scell_pbkdf2_context(
     return THEMIS_SUCCESS;
 }
 
+themis_status_t themis_auth_sym_encrypt_message_with_passphrase(const uint8_t* passphrase,
+                                                                size_t passphrase_length,
+                                                                const uint8_t* message,
+                                                                size_t message_length,
+                                                                const uint8_t* user_context,
+                                                                size_t user_context_length,
+                                                                uint8_t* auth_token,
+                                                                size_t* auth_token_length,
+                                                                uint8_t* encrypted_message,
+                                                                size_t* encrypted_message_length);
+
+themis_status_t themis_auth_sym_decrypt_message_with_passphrase(const uint8_t* passphrase,
+                                                                size_t passphrase_length,
+                                                                const uint8_t* user_context,
+                                                                size_t user_context_length,
+                                                                const uint8_t* auth_token,
+                                                                size_t auth_token_length,
+                                                                const uint8_t* encrypted_message,
+                                                                size_t encrypted_message_length,
+                                                                uint8_t* message,
+                                                                size_t* message_length);
+
 #endif /* THEMIS_SECURE_CELL_SEAL_PASSPHRASE_H */

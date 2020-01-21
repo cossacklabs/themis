@@ -19,6 +19,34 @@
 
 #include <themis/themis_error.h>
 
+themis_status_t themis_auth_sym_plain_encrypt(uint32_t alg,
+                                              const uint8_t* key,
+                                              size_t key_length,
+                                              const uint8_t* iv,
+                                              size_t iv_length,
+                                              const uint8_t* aad,
+                                              size_t aad_length,
+                                              const uint8_t* message,
+                                              size_t message_length,
+                                              uint8_t* encrypted_message,
+                                              size_t* encrypted_message_length,
+                                              uint8_t* auth_tag,
+                                              size_t* auth_tag_length);
+
+themis_status_t themis_auth_sym_plain_decrypt(uint32_t alg,
+                                              const uint8_t* key,
+                                              size_t key_length,
+                                              const uint8_t* iv,
+                                              size_t iv_length,
+                                              const uint8_t* aad,
+                                              size_t aad_length,
+                                              const uint8_t* encrypted_message,
+                                              size_t encrypted_message_length,
+                                              uint8_t* message,
+                                              size_t* message_length,
+                                              const uint8_t* auth_tag,
+                                              size_t auth_tag_length);
+
 themis_status_t themis_auth_sym_encrypt_message(const uint8_t* key,
                                                 size_t key_length,
                                                 const uint8_t* message,
