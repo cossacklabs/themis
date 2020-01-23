@@ -76,8 +76,12 @@ soter_status_t soter_kdf(const void* key,
  * the derivation, and the harder it gets for an attacker to perform a brute
  * force attack with candidate passphrases. RFC 8018 suggests at least 1000.
  * We suggest using at least 100,000. Generally, you experiment with values,
- * use the biggest one that you can tolerate at the moment, and periodically
- * reevaluate your decision and increase the count as machines get faster.
+ * use the biggest one that you can tolerate.
+ *
+ * It is a good idea to periodically reevaluate your decision and increase
+ * the iteration count as machines get faster. However, doing this results
+ * in a different key being derived so you'd need to reencrypt data protected
+ * by the previous key.
  *
  * @returns SOTER_SUCCESS on successful key derivation.
  *
