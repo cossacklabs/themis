@@ -29,5 +29,6 @@ void run_soter_sym_test(void);
 void run_soter_sign_test(void);
 void run_soter_rand_tests(void);
 void run_soter_hmac_tests(void);
+void run_soter_kdf_tests(void);
 
 #endif /* SOTER_TEST_H */
