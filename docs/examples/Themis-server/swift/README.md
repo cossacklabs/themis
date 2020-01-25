@@ -2,13 +2,13 @@
 
 0. [Install Pods](https://docs.cossacklabs.com/pages/swift-howto/#installing-stable-version-from-cocoapods)
 1. Run the app (yes, it crashes on asserts – this is fine :)
-2. Open `AppDelegate` and choose a client example for either SMessage ([Secure Message](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/)) or SSession ([Secure Session](https://docs.cossacklabs.com/pages/secure-session-cryptosystem/)). Uncomment the necessary mode to start.     
+2. Open `AppDelegate` and choose a Client example for either SMessage ([Secure Message](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/)) or SSession ([Secure Session](https://docs.cossacklabs.com/pages/secure-session-cryptosystem/)). Uncomment the necessary mode to start.     
 
 
 ![appdelegate](pics/appdelegate.png)
 
 
-## SecureSession mode   
+## Secure Session mode   
 
 Let's assume, you want to play with [Secure Session](https://docs.cossacklabs.com/pages/secure-session-cryptosystem/).
 
@@ -27,7 +27,7 @@ Let's assume, you want to play with [Secure Session](https://docs.cossacklabs.co
         
 // ---------------------- END KEY GENERATION -----------------------------------
 ```
-5. Uncomment key generation and run the example. The output in the console will look something like this:
+5. Uncomment key generation and run the example. The console output will look something like this:
 
 ```swift
  ------------ running SSession Client example 
@@ -36,7 +36,7 @@ EC publicKey = VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHRJ2lt/w4e4tdzablr/WS
 ```
 
 6. Copy the keys to a text file.  
-7. Comment the lines of the key generation function (`generateClientKeys()`), we no longer need them.   
+7. Comment the lines of the key generation function (`generateClientKeys()`), you no longer need it.   
 8. Find the constants of the Client keys in the code and paste the generated keys:
 
 ```swift 
@@ -46,7 +46,7 @@ let kClientPublicKey: String = "VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHRJ2lt/w4
     
 ### Server key generation   
 
-The idea is to let the server know the client's public key, and let the client know the server ID and the public key.
+The idea is to let the Server know the Client's public key, and let the Client know the Server ID and the public key.
 
  
 9. Open [Themis Server](https://docs.cossacklabs.com/simulator/interactive/).  
@@ -74,7 +74,7 @@ let kClientPrivateKey: String = "UkVDMgAAAC0lV2hOAKFJZyAOLFkzavGzxP8v0Byrs9r5N4u
 let kClientPublicKey: String = "VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHRJ2lt/w4e4tdzablr/WS"
 ```
 
-### Launch everything!   
+### Launching everything   
 
 12. Start Themis Server in Secure Session mode (press the corresponding button).
 13. Run the app in Secure Session mode.
@@ -86,7 +86,7 @@ let kClientPublicKey: String = "VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHRJ2lt/w4
 
 ## Secure Message mode   
 
-Follow the same steps as described above, but do it for `SMessageClient` file :) Run the Themis Server in Secure Message mode.
+Follow the same steps as described above, but do it for `SMessageClient` file :) Run Themis Server in Secure Message mode.
 
 
 ## Useful reading  
