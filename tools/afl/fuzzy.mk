@@ -50,6 +50,9 @@ ifeq ($(AFL_USE_ASAN),1)
 CFLAGS  += -m32
 LDFLAGS += -m32
 endif
+# afl-gcc uses AFL_CC environment variable itself. Do not export it to avoid silly
+# infinite loops of afl-gcc calling afl-gcc. (afl-clang is fine though.)
+unexport AFL_CC
 
 # We don't really track dependencies of $(FUZZ_THEMIS_LIB) here,
 # so ask our make to rebuild it every time. The recursively called
