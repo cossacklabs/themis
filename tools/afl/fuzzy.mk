@@ -35,6 +35,22 @@ FUZZ_UTILS = $(filter-out $(addsuffix .o,$(FUZZ_TOOLS)),$(FUZZ_OBJS))
 $(FUZZ_OBJS): CFLAGS += -I$(FUZZ_SRC_PATH)
 $(FUZZ_TOOLS): LDFLAGS += $(FUZZ_THEMIS_LIB) $(FUZZ_SOTER_LIB) $(CRYPTO_ENGINE_LDFLAGS)
 
+# afl-clang is partially configured via environment variables. For one, it likes to
+# talk on stdout so tell it to pipe down a bit. Additionally, address sanitizer builds
+# are usually 32-bit (to keep virtual memory at bay, read AFL docs to learn more).
+AFL_CC_ENV += AFL_QUIET=1
+ifdef WITH_ASAN
+AFL_CC_ENV += AFL_USE_ASAN=1
+CFLAGS  += -m32
+LDFLAGS += -m32
+endif
+# We do not pass CFLAGS or LDFLAGS to child processes, add the flags again for them
+# to be used during recursive make invocation for building Themis.
+ifeq ($(AFL_USE_ASAN),1)
+CFLAGS  += -m32
+LDFLAGS += -m32
+endif
+
 # We don't really track dependencies of $(FUZZ_THEMIS_LIB) here,
 # so ask our make to rebuild it every time. The recursively called
 # make will figure out what needs to be updated (if anything).
@@ -63,17 +79,17 @@ endif
 $(FUZZ_BIN_PATH)/%.o: $(FUZZ_SRC_PATH)/%.c
 	@mkdir -p $(@D)
 	@echo -n "compile "
-	@AFL_QUIET=1 $(AFL_CC) $(CFLAGS) -c -o $@ $<
+	@$(AFL_CC_ENV) $(AFL_CC) $(CFLAGS) -c -o $@ $<
 	@$(PRINT_OK)
 
 $(FUZZ_BIN_PATH)/%: $(FUZZ_BIN_PATH)/%.o $(FUZZ_UTILS) $(FUZZ_THEMIS_LIB)
 	@mkdir -p $(@D)
 	@echo -n "link "
-	@AFL_QUIET=1 $(AFL_CC) -o $@ $< $(FUZZ_UTILS) $(LDFLAGS)
+	@$(AFL_CC_ENV) $(AFL_CC) -o $@ $< $(FUZZ_UTILS) $(LDFLAGS)
 	@$(PRINT_OK)
 
 $(FUZZ_THEMIS_LIB): $(SOTER_ENGINE_DEPS)
-	@AFL_QUIET=1 $(MAKE) themis_static soter_static CC=$(AFL_CC) BUILD_PATH=$(FUZZ_THEMIS_PATH)
+	@$(AFL_CC_ENV) $(MAKE) themis_static soter_static CC=$(AFL_CC) BUILD_PATH=$(FUZZ_THEMIS_PATH)
 
 FMT_FIXUP += $(patsubst $(FUZZ_SRC_PATH)/%,$(FUZZ_BIN_PATH)/%.fmt_fixup,$(FUZZ_SOURCES) $(FUZZ_HEADERS))
 FMT_CHECK += $(patsubst $(FUZZ_SRC_PATH)/%,$(FUZZ_BIN_PATH)/%.fmt_check,$(FUZZ_SOURCES) $(FUZZ_HEADERS))
