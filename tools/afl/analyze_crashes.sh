@@ -221,6 +221,7 @@ EOF
 #
 
 print_banner=no
+have_failures=no
 
 for tool in $(ls "$FUZZ_BIN_PATH" 2>/dev/null)
 do
@@ -261,12 +262,14 @@ do
             echo
 
             analyze_crash "$FUZZ_BIN_PATH/$tool" "$FUZZ_OUTPUT_PATH/$tool/$run/crashes/$crash"
+
+            have_failures=yes
         done
     done
 done
 
 # Exit with non-zero status if we have printed a crash report
-if [ "$print_banner" = "yes" ] && [ "$INTERACTIVE" = "no" ]
+if [ "$have_failures" = "yes" ] && [ "$INTERACTIVE" = "no" ]
 then
     exit 1
 fi
