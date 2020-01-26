@@ -126,7 +126,7 @@ jobs:
             echo
             echo Analyzing results...
             echo
-            ./tools/afl/analyze_crashes.sh
+            ./tools/afl/analyze_crashes.sh --no-debugger
             make clean
       - run:
           name: Fuzzing with Undefined Behavior Sanitizer
@@ -144,7 +144,7 @@ jobs:
             echo
             echo Analyzing results...
             echo
-            ./tools/afl/analyze_crashes.sh
+            ./tools/afl/analyze_crashes.sh --no-debugger
             make clean
       # TODO: 32-bit builds WITH_UBSAN=1
 
