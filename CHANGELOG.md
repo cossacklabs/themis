@@ -66,6 +66,10 @@ _Code:_
 
   - New class `SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
 
+_Infrastructure:_
+
+- Automated benchmarking harness is now tracking Themis performance. See [`benches`](https://github.com/cossacklabs/themis/tree/master/benches/) ([#580](https://github.com/cossacklabs/themis/pull/580)).
+
 ## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 27th 2019
 
 **TL;DR:**
