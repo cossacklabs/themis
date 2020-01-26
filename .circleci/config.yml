@@ -77,6 +77,77 @@ jobs:
       - run: make clean && make test CC=clang-8 WITH_TSAN=1
       - run: make clean && make test CC=clang-8 WITH_UBSAN=1
 
+  fuzz:
+    docker:
+      - image: cossacklabs/build:ubuntu-bionic
+    environment:
+      FUZZ_TIMEOUT: 30s
+      WITH_FATAL_WARNINGS: yes
+      WITH_FATAL_SANITIZERS: yes
+    steps:
+      - run:
+          name: Install AFL and 32-bit toolchain for ASAN builds
+          command: |
+            sudo dpkg --add-architecture i386
+            sudo apt update
+            sudo DEBIAN_FRONTEND=noninteractive apt install --yes \
+               afl gcc-multilib libc6-dev:i386 \
+               libssl-dev:amd64 libssl-dev:i386
+      - checkout
+      - run:
+          name: Pull BoringSSL submodule
+          command: |
+            git reset HEAD
+            git submodule sync
+            git submodule update --init
+      - run:
+          name: Check "make fuzz" builds
+          command: |
+            make fuzz AFL_CC=afl-clang
+            make clean
+            make fuzz AFL_CC=afl-gcc
+            make clean
+      # Don't run them for too long, we aim for low-hanging fruit here.
+      # Ideally we'd like to wait for AFL to make one cycle and stop.
+      - run:
+          name: Fuzzing with Address Sanitizer
+          when: always
+          command: |
+            make clean
+            make fuzz AFL_CC=afl-gcc WITH_ASAN=1
+            for tool in tools/afl/input/*
+            do
+                timeout -s INT "$FUZZ_TIMEOUT" \
+                  make fuzz AFL_CC=afl-gcc WITH_ASAN=1 \
+                    AFL_FUZZ="afl-fuzz -m 1024" \
+                    FUZZ_BIN=$(basename $tool) \
+                | cat -u || true
+            done
+            echo
+            echo Analyzing results...
+            echo
+            ./tools/afl/analyze_crashes.sh
+            make clean
+      - run:
+          name: Fuzzing with Undefined Behavior Sanitizer
+          when: always
+          command: |
+            make clean
+            make fuzz AFL_CC=afl-clang WITH_UBSAN=1
+            for tool in tools/afl/input/*
+            do
+                timeout -s INT "$FUZZ_TIMEOUT" \
+                  make fuzz AFL_CC=afl-clang WITH_UBSAN=1 \
+                    FUZZ_BIN=$(basename $tool) \
+                | cat -u || true
+            done
+            echo
+            echo Analyzing results...
+            echo
+            ./tools/afl/analyze_crashes.sh
+            make clean
+      # TODO: 32-bit builds WITH_UBSAN=1
+
   x86_64:
     docker:
       - image: cossacklabs/android-build:2019.01
@@ -169,7 +240,6 @@ jobs:
       - run: make test_ruby
       - run: make test_go
       - run: make test_rust
-      - run: make fuzz
       - run: $HOME/valgrind/bin/valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: $HOME/valgrind/bin/valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: cover_build/tests/soter_test
@@ -466,6 +536,7 @@ workflows:
   tests:
     jobs:
       - analyze
+      - fuzz
       - android
       - x86_64
       - jsthemis
@@ -486,6 +557,7 @@ workflows:
                 - stable
     jobs:
       - analyze
+      - fuzz
       - android
       - x86_64
       - jsthemis
