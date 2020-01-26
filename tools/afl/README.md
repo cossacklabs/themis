@@ -108,6 +108,42 @@ and prints a report with results and backtraces,
 formatted as Markdown.
 Run the tool with `--help` to learn more.
 
+## Caveats
+
+### Fuzzing with sanitizers
+
+Make sure to run `WITH_FATAL_SANITIZERS=yes`
+so that sanitizers call abort() on errors instead of just printing messages.
+AFL reacts to abnormal process terminations, not stderr traffic.
+
+When building `WITH_ASAN`, we produce and test 32-bit binaries.
+You will need to have 32-bit support installed
+(e.g., `gcc-multilib`, `libc6-dev:i386`, `libssl-dev:i386` on Debian).
+AFL cannot reliably work with address-sanitized 64-bit binaries
+because ASAN allocates (but does not use) terabytes of virtual memory.
+Unfortunately, AFL cannot distinguish that behavior from an allocation bug.
+If you have to test 64-bit binaries, there are workarounds (like using cgroups on Linux).
+Read AFL documentation to learn more
+(`notes_for_asan.txt`, [mirror](https://github.com/mirrorer/afl/blob/master/docs/notes_for_asan.txt)).
+
+Please note that glibc 2.25⁓2.27 has a bug that prevents ASAN from working with 32-bit binaries
+[[1](https://github.com/google/sanitizers/issues/914),
+ [2](https://github.com/google/sanitizers/issues/954),
+ [3](https://sourceware.org/ml/libc-alpha/2018-02/msg00567.html),
+ [4](https://gcc.gnu.org/bugzilla/show_bug.cgi?id=84761)].
+Currently, Clang does not have fixes applied so make sure to set `AFL_CC=afl-gcc`.
+
+You may also need to bump the memory limit up a bit.
+If AFL screams at you
+```
+[-] Whoops, the target binary crashed suddenly, before receiving any input
+    from the fuzzer! Since it seems to be built with ASAN and you have a
+    restrictive memory limit configured, this is expected; please read
+    /usr/share/doc/afl-doc/docs/notes_for_asan.txt for help.
+```
+then try setting `AFL_FUZZ="afl-fuzz -m 1024"` to increase the limit to 1 GB,
+that should be enough in most cases.
+
 ## Developing fuzzing tests
 
 ### Directory layout
