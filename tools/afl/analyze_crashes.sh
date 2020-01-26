@@ -154,6 +154,18 @@ Run:
 
     $tool $file
 
+Input (base64):
+
+EOF
+    # BSD and GNU have an ongoing feud over flag names...
+    if base64 --wrap 64 </dev/null >/dev/null 2>/dev/null
+    then
+        cat "$file" | base64 --wrap 64
+    else
+        cat "$file" | base64 --break 64
+    fi
+    cat <<EOF
+
 Debugger output:
 
 EOF
