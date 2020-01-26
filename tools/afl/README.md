@@ -69,10 +69,6 @@ by tweaking the following environment variables:
     path to the fuzzer instrumentation compiler
     (`afl-clang` from $PATH by default)
 
-  - `AFL_CFLAGS` and `AFL_LDFLAGS` —
-    additional flags for compiler and linker
-    if you need them
-
 ### Analyzing results
 
 Fuzzing results are placed into the build directory.
