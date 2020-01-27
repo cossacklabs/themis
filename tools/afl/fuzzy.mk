@@ -41,8 +41,8 @@ $(FUZZ_TOOLS): LDFLAGS += $(FUZZ_THEMIS_LIB) $(FUZZ_SOTER_LIB) $(CRYPTO_ENGINE_L
 AFL_CC_ENV += AFL_QUIET=1
 ifdef WITH_ASAN
 AFL_CC_ENV += AFL_USE_ASAN=1
-CFLAGS  += -m32
-LDFLAGS += -m32
+$(FUZZ_OBJS): CFLAGS += -m32
+$(FUZZ_TOOLS): LDFLAGS += -m32
 endif
 # We do not pass CFLAGS or LDFLAGS to child processes, add the flags again for them
 # to be used during recursive make invocation for building Themis.
