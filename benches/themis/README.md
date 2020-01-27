@@ -85,7 +85,7 @@ You will need Rust toolchain installed to run benchmarks.
 
 ## Benchmark results
 
-TODO: describe urrent benchmark results here
+TODO: describe current benchmark results here
 
 -->
 
