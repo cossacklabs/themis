@@ -152,7 +152,6 @@ jobs:
             echo Analyzing results...
             echo
             ./tools/afl/analyze_crashes.sh --no-debugger
-            make clean
       - store_artifacts:
           path: build/afl/results-ubsan.zip
       # TODO: 32-bit builds WITH_UBSAN=1
