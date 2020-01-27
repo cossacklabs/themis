@@ -140,7 +140,7 @@ inline bool is_public_key(const std::vector<uint8_t>& key)
  * If the vector does not have enough space for a good key then
  * it will be resized. Otherwise no reallocations are performed.
  */
-void gen_sym_key(std::vector<uint8_t>& key)
+inline void gen_sym_key(std::vector<uint8_t>& key)
 {
     if (key.empty()) {
         size_t key_length = 0;
@@ -165,7 +165,7 @@ void gen_sym_key(std::vector<uint8_t>& key)
  *
  * @returns a newly allocated key of default size.
  */
-std::vector<uint8_t> gen_sym_key()
+inline std::vector<uint8_t> gen_sym_key()
 {
     std::vector<uint8_t> key;
     gen_sym_key(key);
