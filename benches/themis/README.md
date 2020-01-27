@@ -62,7 +62,7 @@ You will need Rust toolchain installed to run benchmarks.
 
 |                   | Master keys   | Passphrases   |
 | ----------------- | ------------- | ------------- |
-| Seal              | ✅ complete   | 🛠 WIP        |
+| Seal              | ✅ complete   | ✅ complete   |
 | Token Protect     | 💭 soon       | 🛠 WIP        |
 | Context Imprint   | 💭 soon       | ➖ N/A        |
 

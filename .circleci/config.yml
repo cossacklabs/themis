@@ -125,6 +125,12 @@ jobs:
             cd benches/themis
             cargo bench -- 'Secure Cell .* master key/4 KB'
       - run:
+          name: Themis Core - run benchmarks - Secure Cell (passphrase)
+          command: |
+            cd benches/themis
+            # These are awfully slow due to KDF
+            cargo bench -- 'Secure Cell .* passphrase/4 KB' --sample-size 10
+      - run:
           name: Pack benchmark report
           command: |
             cd benches/themis/target
