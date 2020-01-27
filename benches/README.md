@@ -8,6 +8,4 @@ These are the main benchmarks for Themis.
 They establish a baseline for perfomance:
 high-level language wrappers generally add overhead to Core.
 
-Core benchmarks are written in Rust, use `cargo bench` to run them.
-
 See [`themis`](themis) directory for details.
