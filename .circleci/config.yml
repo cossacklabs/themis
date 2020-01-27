@@ -91,7 +91,7 @@ jobs:
             sudo dpkg --add-architecture i386
             sudo apt update
             sudo DEBIAN_FRONTEND=noninteractive apt install --yes \
-               afl gcc-multilib libc6-dev:i386 \
+               afl zip gcc-multilib libc6-dev:i386 \
                libssl-dev:amd64 libssl-dev:i386
       - checkout
       - run:
@@ -123,11 +123,15 @@ jobs:
                     FUZZ_BIN=$(basename $tool) \
                 | cat -u || true
             done
+            cd build/afl
+            zip -r results-asan.zip output
+            cd -
             echo
             echo Analyzing results...
             echo
             ./tools/afl/analyze_crashes.sh --no-debugger
-            make clean
+      - store_artifacts:
+          path: build/afl/results-asan.zip
       - run:
           name: Fuzzing with Undefined Behavior Sanitizer
           when: always
@@ -141,11 +145,16 @@ jobs:
                     FUZZ_BIN=$(basename $tool) \
                 | cat -u || true
             done
+            cd build/afl
+            zip -r results-ubsan.zip output
+            cd -
             echo
             echo Analyzing results...
             echo
             ./tools/afl/analyze_crashes.sh --no-debugger
             make clean
+      - store_artifacts:
+          path: build/afl/results-ubsan.zip
       # TODO: 32-bit builds WITH_UBSAN=1
 
   x86_64:
