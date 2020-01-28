@@ -31,7 +31,7 @@
 
 #define DEFAULT_SYM_KEY_LENGTH 32
 
-static char passwd[] = "password";
+static uint8_t master_key[] = "\x43\x68\x75\x75\x30\x65\x6a\x6f\x68\x63\x68\x65\x65\x66\x61\x69\x39\x61\x69\x74\x33\x56\x6f\x68\x78\x65\x77\x36\x78\x6f\x68\x54";
 static char message[] = "secure cell test message by Mnatsakanov Andrey from Cossack Labs";
 static char user_context[] = "secure cell user context";
 
@@ -130,8 +130,8 @@ static int secure_cell_seal(void)
 {
     uint8_t* encrypted_message;
     size_t encrypted_message_length = 0;
-    if (themis_secure_cell_encrypt_seal((uint8_t*)passwd,
-                                        sizeof(passwd),
+    if (themis_secure_cell_encrypt_seal(master_key,
+                                        sizeof(master_key),
                                         NULL,
                                         0,
                                         (uint8_t*)message,
@@ -149,8 +149,8 @@ static int secure_cell_seal(void)
         testsuite_fail_if(true, "encrypted_message malloc fail");
         return -2;
     }
-    if (themis_secure_cell_encrypt_seal((uint8_t*)passwd,
-                                        sizeof(passwd),
+    if (themis_secure_cell_encrypt_seal(master_key,
+                                        sizeof(master_key),
                                         NULL,
                                         0,
                                         (uint8_t*)message,
@@ -166,8 +166,8 @@ static int secure_cell_seal(void)
     uint8_t* decrypted_message;
     size_t decrypted_message_length = 0;
 
-    if (themis_secure_cell_decrypt_seal((uint8_t*)passwd,
-                                        sizeof(passwd),
+    if (themis_secure_cell_decrypt_seal(master_key,
+                                        sizeof(master_key),
                                         NULL,
                                         0,
                                         encrypted_message,
@@ -187,8 +187,8 @@ static int secure_cell_seal(void)
         free(encrypted_message);
         return -5;
     }
-    if (themis_secure_cell_decrypt_seal((uint8_t*)passwd,
-                                        sizeof(passwd),
+    if (themis_secure_cell_decrypt_seal(master_key,
+                                        sizeof(master_key),
                                         NULL,
                                         0,
                                         encrypted_message,
@@ -221,8 +221,8 @@ static int secure_cell_token_protect(void)
     uint8_t* context;
     size_t context_length = 0;
 
-    if (themis_secure_cell_encrypt_token_protect((uint8_t*)passwd,
-                                                 sizeof(passwd),
+    if (themis_secure_cell_encrypt_token_protect(master_key,
+                                                 sizeof(master_key),
                                                  NULL,
                                                  0,
                                                  (uint8_t*)message,
@@ -256,8 +256,8 @@ static int secure_cell_token_protect(void)
         return -2;
     }
 
-    if (themis_secure_cell_encrypt_token_protect((uint8_t*)passwd,
-                                                 sizeof(passwd),
+    if (themis_secure_cell_encrypt_token_protect(master_key,
+                                                 sizeof(master_key),
                                                  NULL,
                                                  0,
                                                  (uint8_t*)message,
@@ -283,8 +283,8 @@ static int secure_cell_token_protect(void)
     uint8_t* decrypted_message;
     size_t decrypted_message_length = 0;
 
-    if (themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
-                                                 sizeof(passwd),
+    if (themis_secure_cell_decrypt_token_protect(master_key,
+                                                 sizeof(master_key),
                                                  NULL,
                                                  0,
                                                  encrypted_message,
@@ -309,8 +309,8 @@ static int secure_cell_token_protect(void)
         free(context);
         return -5;
     }
-    if (themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
-                                                 sizeof(passwd),
+    if (themis_secure_cell_decrypt_token_protect(master_key,
+                                                 sizeof(master_key),
                                                  NULL,
                                                  0,
                                                  encrypted_message,
@@ -346,8 +346,8 @@ static int secure_cell_context_imprint(void)
     uint8_t* encrypted_message;
     size_t encrypted_message_length = 0;
 
-    if (themis_secure_cell_encrypt_context_imprint((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    if (themis_secure_cell_encrypt_context_imprint(master_key,
+                                                   sizeof(master_key),
                                                    (uint8_t*)message,
                                                    sizeof(message),
                                                    (uint8_t*)user_context,
@@ -367,8 +367,8 @@ static int secure_cell_context_imprint(void)
         return -2;
     }
 
-    if (themis_secure_cell_encrypt_context_imprint((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    if (themis_secure_cell_encrypt_context_imprint(master_key,
+                                                   sizeof(master_key),
                                                    (uint8_t*)message,
                                                    sizeof(message),
                                                    (uint8_t*)user_context,
@@ -384,8 +384,8 @@ static int secure_cell_context_imprint(void)
     uint8_t* decrypted_message;
     size_t decrypted_message_length = 0;
 
-    if (themis_secure_cell_decrypt_context_imprint((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    if (themis_secure_cell_decrypt_context_imprint(master_key,
+                                                   sizeof(master_key),
                                                    encrypted_message,
                                                    encrypted_message_length,
                                                    (uint8_t*)user_context,
@@ -406,8 +406,8 @@ static int secure_cell_context_imprint(void)
         free(encrypted_message);
         return -5;
     }
-    if (themis_secure_cell_encrypt_context_imprint((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    if (themis_secure_cell_encrypt_context_imprint(master_key,
+                                                   sizeof(master_key),
                                                    encrypted_message,
                                                    encrypted_message_length,
                                                    (uint8_t*)user_context,
@@ -1071,8 +1071,8 @@ static themis_status_t encrypt_seal(uint8_t** encrypted_message, size_t* encrypt
 {
     themis_status_t res = THEMIS_SUCCESS;
 
-    res = themis_secure_cell_encrypt_seal((uint8_t*)passwd,
-                                          sizeof(passwd),
+    res = themis_secure_cell_encrypt_seal(master_key,
+                                          sizeof(master_key),
                                           NULL,
                                           0,
                                           (uint8_t*)message,
@@ -1092,8 +1092,8 @@ static themis_status_t encrypt_seal(uint8_t** encrypted_message, size_t* encrypt
         return THEMIS_NO_MEMORY;
     }
 
-    res = themis_secure_cell_encrypt_seal((uint8_t*)passwd,
-                                          sizeof(passwd),
+    res = themis_secure_cell_encrypt_seal(master_key,
+                                          sizeof(master_key),
                                           NULL,
                                           0,
                                           (uint8_t*)message,
@@ -1117,8 +1117,8 @@ static themis_status_t prepare_decrypt_seal(uint8_t* encrypted_message,
 {
     themis_status_t res = THEMIS_SUCCESS;
 
-    res = themis_secure_cell_decrypt_seal((uint8_t*)passwd,
-                                          sizeof(passwd),
+    res = themis_secure_cell_decrypt_seal(master_key,
+                                          sizeof(master_key),
                                           NULL,
                                           0,
                                           encrypted_message,
@@ -1169,8 +1169,8 @@ static void secure_cell_context_corruption_seal(void)
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_seal((uint8_t*)passwd,
-                                              sizeof(passwd),
+        res = themis_secure_cell_decrypt_seal(master_key,
+                                              sizeof(master_key),
                                               NULL,
                                               0,
                                               encrypted_message,
@@ -1196,8 +1196,8 @@ static void secure_cell_context_corruption_seal(void)
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_seal((uint8_t*)passwd,
-                                              sizeof(passwd),
+        res = themis_secure_cell_decrypt_seal(master_key,
+                                              sizeof(master_key),
                                               NULL,
                                               0,
                                               encrypted_message,
@@ -1215,8 +1215,8 @@ static void secure_cell_context_corruption_seal(void)
     old_value = get_context_message_length(encrypted_message);
     set_context_message_length(encrypted_message, CORRUPTED_LENGTH);
     {
-        res = themis_secure_cell_decrypt_seal((uint8_t*)passwd,
-                                              sizeof(passwd),
+        res = themis_secure_cell_decrypt_seal(master_key,
+                                              sizeof(master_key),
                                               NULL,
                                               0,
                                               encrypted_message,
@@ -1239,8 +1239,8 @@ static themis_status_t encrypt_token_protect(uint8_t** encrypted_message,
 {
     themis_status_t res = THEMIS_SUCCESS;
 
-    res = themis_secure_cell_encrypt_token_protect((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    res = themis_secure_cell_encrypt_token_protect(master_key,
+                                                   sizeof(master_key),
                                                    NULL,
                                                    0,
                                                    (uint8_t*)message,
@@ -1273,8 +1273,8 @@ static themis_status_t encrypt_token_protect(uint8_t** encrypted_message,
         return res;
     }
 
-    res = themis_secure_cell_encrypt_token_protect((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    res = themis_secure_cell_encrypt_token_protect(master_key,
+                                                   sizeof(master_key),
                                                    NULL,
                                                    0,
                                                    (uint8_t*)message,
@@ -1304,8 +1304,8 @@ static themis_status_t prepare_decrypt_token_protect(uint8_t* encrypted_message,
 {
     themis_status_t res = THEMIS_SUCCESS;
 
-    res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    res = themis_secure_cell_decrypt_token_protect(master_key,
+                                                   sizeof(master_key),
                                                    NULL,
                                                    0,
                                                    encrypted_message,
@@ -1364,8 +1364,8 @@ static void secure_cell_context_corruption_token_protect(void)
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
-                                                       sizeof(passwd),
+        res = themis_secure_cell_decrypt_token_protect(master_key,
+                                                       sizeof(master_key),
                                                        NULL,
                                                        0,
                                                        encrypted_message,
@@ -1395,8 +1395,8 @@ static void secure_cell_context_corruption_token_protect(void)
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
-                                                       sizeof(passwd),
+        res = themis_secure_cell_decrypt_token_protect(master_key,
+                                                       sizeof(master_key),
                                                        NULL,
                                                        0,
                                                        encrypted_message,
@@ -1426,8 +1426,8 @@ static void secure_cell_context_corruption_token_protect(void)
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
-                                                       sizeof(passwd),
+        res = themis_secure_cell_decrypt_token_protect(master_key,
+                                                       sizeof(master_key),
                                                        NULL,
                                                        0,
                                                        encrypted_message,
