@@ -94,7 +94,7 @@ static themis_status_t themis_auth_sym_derive_encryption_key_pbkdf2(
 
     /* KDF pointer is ignored but size is important */
     hdr->kdf_context = NULL;
-    hdr->kdf_context_length = (uint32_t)themis_scell_pbkdf2_context_size(&kdf);
+    hdr->kdf_context_length = themis_scell_pbkdf2_context_size(&kdf);
 
     res = themis_write_scell_pbkdf2_context(hdr, &kdf, auth_token, *auth_token_length);
     if (res != THEMIS_SUCCESS) {

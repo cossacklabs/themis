@@ -128,17 +128,21 @@ struct themis_scell_auth_token_passphrase {
     uint32_t kdf_context_length;
 };
 
-static const size_t themis_scell_auth_token_passphrase_min_size = 5 * sizeof(uint32_t);
+static const uint64_t themis_scell_auth_token_passphrase_min_size = 5 * sizeof(uint32_t);
 
-static inline size_t themis_scell_auth_token_passphrase_size(
+static inline uint64_t themis_scell_auth_token_passphrase_size(
     const struct themis_scell_auth_token_passphrase* hdr)
 {
-    size_t total_size = 0;
+    uint64_t total_size = 0;
+    /* Add separately to avoid overflows in intermediade calculations */
     total_size += sizeof(hdr->alg);
-    total_size += sizeof(hdr->iv_length) + hdr->iv_length;
-    total_size += sizeof(hdr->auth_tag_length) + hdr->auth_tag_length;
+    total_size += sizeof(hdr->iv_length);
+    total_size += hdr->iv_length;
+    total_size += sizeof(hdr->auth_tag_length);
+    total_size += hdr->auth_tag_length;
     total_size += sizeof(hdr->message_length);
-    total_size += sizeof(hdr->kdf_context_length) + hdr->kdf_context_length;
+    total_size += sizeof(hdr->kdf_context_length);
+    total_size += hdr->kdf_context_length;
     return total_size;
 }
 
@@ -170,7 +174,7 @@ static inline themis_status_t themis_write_scell_auth_token_passphrase(
 static inline themis_status_t themis_read_scell_auth_token_passphrase(
     const uint8_t* buffer, size_t buffer_length, struct themis_scell_auth_token_passphrase* hdr)
 {
-    size_t need_length = themis_scell_auth_token_passphrase_min_size;
+    uint64_t need_length = themis_scell_auth_token_passphrase_min_size;
     if (buffer_length < need_length) {
         return THEMIS_FAIL;
     }
@@ -179,7 +183,10 @@ static inline themis_status_t themis_read_scell_auth_token_passphrase(
     buffer = stream_read_uint32LE(buffer, &hdr->auth_tag_length);
     buffer = stream_read_uint32LE(buffer, &hdr->message_length);
     buffer = stream_read_uint32LE(buffer, &hdr->kdf_context_length);
-    need_length += hdr->iv_length + hdr->auth_tag_length + hdr->kdf_context_length;
+    /* Add separately to avoid overflows in intermediade calculations */
+    need_length += hdr->iv_length;
+    need_length += hdr->auth_tag_length;
+    need_length += hdr->kdf_context_length;
     if (buffer_length < need_length) {
         return THEMIS_FAIL;
     }
@@ -214,13 +221,15 @@ struct themis_scell_pbkdf2_context {
     uint16_t salt_length;
 };
 
-static const size_t themis_scell_pbkdf2_context_min_size = sizeof(uint32_t) + sizeof(uint16_t);
+static const uint32_t themis_scell_pbkdf2_context_min_size = sizeof(uint32_t) + sizeof(uint16_t);
 
-static inline size_t themis_scell_pbkdf2_context_size(const struct themis_scell_pbkdf2_context* ctx)
+static inline uint32_t themis_scell_pbkdf2_context_size(const struct themis_scell_pbkdf2_context* ctx)
 {
-    size_t total_size = 0;
+    uint32_t total_size = 0;
+    /* Add separately to avoid overflows in intermediade calculations */
     total_size += sizeof(ctx->iteration_count);
-    total_size += sizeof(ctx->salt_length) + ctx->salt_length;
+    total_size += sizeof(ctx->salt_length);
+    total_size += ctx->salt_length;
     return total_size;
 }
 
@@ -236,9 +245,12 @@ static inline themis_status_t themis_write_scell_pbkdf2_context(
     if (hdr->kdf_context_length != themis_scell_pbkdf2_context_size(ctx)) {
         return THEMIS_FAIL;
     }
+    /* Add separately to avoid overflows in intermediade calculations */
     buffer += sizeof(hdr->alg);
-    buffer += sizeof(hdr->iv_length) + hdr->iv_length;
-    buffer += sizeof(hdr->auth_tag_length) + hdr->auth_tag_length;
+    buffer += sizeof(hdr->iv_length);
+    buffer += hdr->iv_length;
+    buffer += sizeof(hdr->auth_tag_length);
+    buffer += hdr->auth_tag_length;
     buffer += sizeof(hdr->message_length);
     buffer += sizeof(hdr->kdf_context_length);
     buffer = stream_write_uint32LE(buffer, ctx->iteration_count);
