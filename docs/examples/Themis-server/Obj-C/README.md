@@ -38,8 +38,8 @@ client public key "VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHRJ2lt/w4e4tdzablr/WS"
 8. Find client keys constants in code and paste generated keys, like this:
 
 ```objc 
-static NSString * kClientPrivateKey = @"UkVDMgAAAC0lV2hOAKFJZyAOLFkzavGzxP8v0Byrs9r5N4u1rm4qYSTLqf+2"
-static NSString * kClientPublicKey = @"VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHRJ2lt/w4e4tdzablr/WS"
+static NSString* kClientPrivateKey = @"UkVDMgAAAC0lV2hOAKFJZyAOLFkzavGzxP8v0Byrs9r5N4u1rm4qYSTLqf+2";
+static NSString* kClientPublicKey = @"VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHRJ2lt/w4e4tdzablr/WS";
 ```
     
 ### Server key generation
@@ -64,12 +64,12 @@ The idea is to let the Server know the Client's public key, and let the Client k
 The code will now look something like this:  
 
 ```objc
-static NSString * kUserId = @"gUOosYEgpqbGXJf";
-static NSString * kServerId = @"shfVaKYXvlbAMoD";
-static NSString * kServerPublicKey = @"VUVDMgAAAC2TKF6QAyMjQXtKmAAfNOSeW6D1BeXKx6XIX8bWFG3Tfjo74ldm";
+static NSString* kUserId = @"gUOosYEgpqbGXJf";
+static NSString* kServerId = @"shfVaKYXvlbAMoD";
+static NSString* kServerPublicKey = @"VUVDMgAAAC2TKF6QAyMjQXtKmAAfNOSeW6D1BeXKx6XIX8bWFG3Tfjo74ldm";
 
-static NSString * kClientPrivateKey = @"UkVDMgAAAC0lV2hOAKFJZyAOLFkzavGzxP8v0Byrs9r5N4u1rm4qYSTLqf+2"
-static NSString * kClientPublicKey = @"VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHRJ2lt/w4e4tdzablr/WS"
+static NSString* kClientPrivateKey = @"UkVDMgAAAC0lV2hOAKFJZyAOLFkzavGzxP8v0Byrs9r5N4u1rm4qYSTLqf+2";
+static NSString* kClientPublicKey = @"VUVDMgAAAC1hdEZpAlxrxhaWHW23X9ILnXgeZRNHRJ2lt/w4e4tdzablr/WS";
 ```
 
 ### Launching everything
