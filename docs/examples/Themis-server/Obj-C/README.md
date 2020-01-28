@@ -1,4 +1,4 @@
-0. [Install Pods](https://docs.cossacklabs.com/pages/swift-howto/#installing-stable-version-from-cocoapods)
+0. [Install Pods](https://docs.cossacklabs.com/pages/objective-c-howto/#installing-stable-version-from-cocoapods)
 1. Run the app (yes, it crashes on asserts – this is fine :)
 2. Open `AppDelegate` and choose a Client example for either SMessage ([Secure Message](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/)) or SSession ([Secure Session](https://docs.cossacklabs.com/pages/secure-session-cryptosystem/)). Uncomment the necessary mode to start. 
 
@@ -14,7 +14,7 @@ Let's assume, you want to play with [Secure Session](https://docs.cossacklabs.co
 
 ### Client key generation
 
-4. Find Find the following lines:  
+4. Find the following lines:
 
 ```objc
 // ---------------------- KEY GENERATION ---------------------------------------
