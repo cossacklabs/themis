@@ -77,6 +77,66 @@ jobs:
       - run: make clean && make test CC=clang-8 WITH_TSAN=1
       - run: make clean && make test CC=clang-8 WITH_UBSAN=1
 
+  benchmark:
+    docker:
+      - image: cossacklabs/build:ubuntu-bionic
+    environment:
+      WITH_FATAL_WARNINGS: yes
+    steps:
+      - run:
+          name: Install native dependencies
+          command: |
+            sudo apt update
+            sudo apt install --yes \
+              gnuplot zip
+      - restore_cache:
+          keys:
+            - rust
+      - run:
+          name: Install Rust toolchain (stable)
+          command: |
+            # Instructions from https://rustup.rs
+            curl https://sh.rustup.rs -sSf | sh -s -- -y
+            cat ~/.cargo/env >> $BASH_ENV
+            source ~/.cargo/env
+            cargo --version
+            rustc --version
+      - checkout
+      - run:
+          name: Pull BoringSSL submodule
+          command: |
+            git reset --hard HEAD
+            git submodule sync
+            git submodule update --init
+      - run:
+          name: Themis Core - install
+          command: |
+            make
+            sudo make install
+      - run:
+          name: Themis Core - prepare benchmarks
+          command: |
+            cd benches/themis
+            cargo bench --no-run
+      # TODO: if building a pull request, compare base with updates
+      - run:
+          name: Themis Core - run benchmarks - Secure Cell (master key)
+          command: |
+            cd benches/themis
+            cargo bench -- 'Secure Cell .* master key/4 KB'
+      - run:
+          name: Pack benchmark report
+          command: |
+            cd benches/themis/target
+            zip -r ../report.zip criterion
+      - store_artifacts:
+          path: benches/themis/report.zip
+      - save_cache:
+          key: rust
+          paths:
+            - ~/.cargo
+            - ~/.rustup
+
   x86_64:
     docker:
       - image: cossacklabs/android-build:2019.01
@@ -466,6 +526,7 @@ workflows:
   tests:
     jobs:
       - analyze
+      - benchmark
       - android
       - x86_64
       - jsthemis
@@ -486,6 +547,7 @@ workflows:
                 - stable
     jobs:
       - analyze
+      - benchmark
       - android
       - x86_64
       - jsthemis
