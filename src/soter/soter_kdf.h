@@ -26,28 +26,86 @@
 
 /** @addtogroup SOTER
  * @{
- * @defgroup SOTER_KDF key derivation function
- * @brief key derivation function
+ * @defgroup SOTER_KDF Key derivation functions
+ *
+ * Key derivation functions (KDF).
+ *
+ * This module defines key derivation functions provided by Soter.
+ *
+ * *Key derivation functions* may be used to derive a set of new keys from
+ * an existing secret key. They are also commonly used to _key stretching_ --
+ * to transform a key in one format into another one with different length.
+ * Soter provides the following key-based key derivation functions:
+ *
+ * - ZRTP KDF: soter_kdf()
+ *
+ * *Password hashing functions* may be used to derive a key from passwords
+ * and passphrases which are less random than secret keys. These functions
+ * typically require additional salt for security and are computationally
+ * expensive. Soter provides the following password hashing functions:
+ *
+ * - PBKDF2: soter_pbkdf2_sha256()
+ *
  * @{
  */
 
-/** @brief context buffer type */
+/**
+ * KDF context buffer.
+ *
+ * Context buffers used for key derivation. `data` is input buffer which has
+ * `length` bytes in it. If `data` is NULL then it is skipped by processing.
+ *
+ * @see soter_kdf
+ */
 struct soter_kdf_context_buf_type {
     const uint8_t* data;
     size_t length;
 };
-
-/** @brief context buffer typedef */
 typedef struct soter_kdf_context_buf_type soter_kdf_context_buf_t;
 
-/** @brief derive
- * @param [in] key master key
- * @param [in] key_length length of key
- * @param [in] context pointer to array of context buffers
- * @param [in] context_count count of context buffers in context
- * @param [out] output buffer for derived data store
- * @param [in] output_length length of data to derive
- * @return SOTER_SUCCESS on success or SOTER_FAIL on failure
+/**
+ * Derives a key using ZRTP KDF.
+ *
+ * @param [in]  key             base secret key, may be NULL
+ * @param [in]  key_length      length of `key` in bytes
+ * @param [in]  label           purpose of the key, may be empty
+ * @param [in]  context         an array of context data, may be NULL
+ * @param [in]  context_count   number of elements in `context` array
+ * @param [out] output          output key buffer
+ * @param [in]  output_length   length of `output` in bytes (1..32)
+ *
+ * This function derives a new key from another key using additional context
+ * as specified in RFC 6189 4.5.1. It uses HMAC-SHA-256 as the hash function.
+ *
+ * `key` of `key_length` is a key that you already have and want to generate
+ * a new key of possibly different length from. This is a secret parameter
+ * which should not be know by third-parties, but known by the receiver.
+ *
+ * @note you may omit the `key` parameter, in which case it will be derived
+ * in non-standard way from provided non-secret data. Keys derived in this
+ * way are **insecure** and must not be used to exchange any secret data.
+ *
+ * `label` is a null-terminated C string that describes the purpose of the
+ * derived key. You may leave it empty, but it is recommended to fill it.
+ * This is a public parameter.
+ *
+ * `context` array provides a list of buffers with nonce information. They
+ * are concatenated and mixed into the computation. This data is usually
+ * transmitted with the message in plaintext, or is otherwise public too.
+ *
+ * `output` is the output buffer for resulting key. It should have at least
+ * `output_length` bytes available. `output_length` must not exceed 32 bytes
+ * -- the length of HMAC-SHA-256 output.
+ *
+ * @returns SOTER_SUCCESS on successful key derivation.
+ *
+ * @exception SOTER_FAIL on critical backend failure.
+ *
+ * @exception SOTER_INVALID_PARAMETER if `key` is NULL, but `key_length` is not 0.
+ * @exception SOTER_INVALID_PARAMETER if `label` is NULL.
+ * @exception SOTER_INVALID_PARAMETER if `context` is NULL, but `context_count` is not 0.
+ * @exception SOTER_INVALID_PARAMETER if `output` is NULL.
+ * @exception SOTER_INVALID_PARAMETER if `output_length` is not in [1, 32] range.
  */
 SOTER_API
 soter_status_t soter_kdf(const void* key,
