@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+A clear and concise description of the bug.
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -31,4 +31,4 @@ A clear and concise description of what you expected to happen.
    - [ ] built from source
 
 **Additional context**
-Add any other context about the problem here. Example project, if you can make and share it.
+Add any other relevant context for the problem here. Share an example project, if you can.
