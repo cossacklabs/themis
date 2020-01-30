@@ -247,7 +247,23 @@ endif
 endif
 endif
 
-CFLAGS += -O2 -fno-omit-frame-pointer -g
+CFLAGS += -O2 -g
+# Get better runtime backtraces by preserving the frame pointer. This eats
+# one of seven precious registers on x86, but our functions are quite large
+# so they almost always use stack and need the frame pointer anyway.
+CFLAGS += -fno-omit-frame-pointer
+# Enable runtime stack canaries for functions to guard for buffer overflows.
+ifeq (yes,$(call supported,-fstack-protector-strong))
+CFLAGS += -fstack-protector-strong
+else
+CFLAGS += -fstack-protector
+endif
+# Enable miscellaneous compile-time checks in standard library usage.
+CFLAGS += -D_FORTIFY_SOURCE=2
+# Prevent global offset table overwrite attacks.
+ifdef IS_LINUX
+LDFLAGS += -Wl,-z,relro -Wl,-z,now
+endif
 
 ifdef COVERAGE
 	CFLAGS += -O0 --coverage
