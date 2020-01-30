@@ -25,7 +25,6 @@
 #define MAX_HMAC_SIZE 64 /* For HMAC-SHA512 */
 #define MIN_VAL(_X_, _Y_) (((_X_) < (_Y_)) ? (_X_) : (_Y_))
 
-/* RFC 6189 p 4.5.1 */
 soter_status_t soter_kdf(const void* key,
                          size_t key_length,
                          const char* label,
@@ -57,8 +56,13 @@ soter_status_t soter_kdf(const void* key,
 
     label_length = strlen(label);
 
-    /* If key is not specified, we will generate it from other information (useful for using this
-     * kdf for generating data from non-secret parameters such as session_id) */
+    /*
+     * If key is not specified, we will generate it from other information
+     * (useful for using Soter KDF for generating data from non-secret
+     * parameters such as Session ID).
+     *
+     * This behavior is an extension of Soter KDF not specified by RFC 6189.
+     */
     if (!key) {
         memset(implicit_key, 0, sizeof(implicit_key));
 
@@ -108,6 +112,11 @@ soter_status_t soter_kdf(const void* key,
             }
         }
     }
+
+    /*
+     * Here RFC 6189 also appends "out_length" as big-endian 32-bit integer.
+     * Soter KDF historically did not do this.
+     */
 
     res = soter_hmac_final(hmac_ctx, out, &out_length);
     if (SOTER_SUCCESS != res) {

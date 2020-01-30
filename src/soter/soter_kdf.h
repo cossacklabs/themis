@@ -37,7 +37,7 @@
  * to transform a key in one format into another one with different length.
  * Soter provides the following key-based key derivation functions:
  *
- * - ZRTP KDF: soter_kdf()
+ * - Soter KDF: soter_kdf()
  *
  * *Password hashing functions* may be used to derive a key from passwords
  * and passphrases which are less random than secret keys. These functions
@@ -64,7 +64,7 @@ struct soter_kdf_context_buf_type {
 typedef struct soter_kdf_context_buf_type soter_kdf_context_buf_t;
 
 /**
- * Derives a key using ZRTP KDF.
+ * Derives a key using Soter KDF.
  *
  * @param [in]  key             base secret key, may be NULL
  * @param [in]  key_length      length of `key` in bytes
@@ -75,7 +75,8 @@ typedef struct soter_kdf_context_buf_type soter_kdf_context_buf_t;
  * @param [in]  output_length   length of `output` in bytes (1..32)
  *
  * This function derives a new key from another key using additional context
- * as specified in RFC 6189 4.5.1. It uses HMAC-SHA-256 as the hash function.
+ * similar to ZRTP KDF defined by RFC 6189 4.5.1. It uses HMAC-SHA-256 for
+ * the hash function.
  *
  * `key` of `key_length` is a key that you already have and want to generate
  * a new key of possibly different length from. This is a secret parameter
