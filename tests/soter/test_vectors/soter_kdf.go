@@ -14,6 +14,15 @@
 
 package main
 
+// Test vector generator for Soter KDF (soter_kdf())
+//
+// Run this tool directly:
+//
+//     go run tests/soter/test_vectors/soter_kdf.go
+//
+// Test vectors are computed and printed on stdout.
+// Paste them into tests/soter/soter_kdf_test.c
+
 import (
 	"crypto/hmac"
 	"crypto/sha256"
