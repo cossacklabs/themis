@@ -42,8 +42,12 @@ namespace themispp
 namespace secure_cell_test
 {
 
-static const std::vector<uint8_t> password1 = as_bytes("password1");
-static const std::vector<uint8_t> password2 = as_bytes("password2");
+static const std::vector<uint8_t> key1 = as_bytes(
+    "\x68\x69\x65\x37\x68\x6f\x68\x33\x43\x65\x73\x75\x69\x79\x61\x65"
+    "\x35\x7a\x65\x69\x4a\x65\x69\x42\x61\x69\x63\x65\x65\x6c\x65\x72");
+static const std::vector<uint8_t> key2 = as_bytes(
+    "\x6f\x65\x62\x39\x79\x61\x30\x61\x61\x43\x61\x79\x69\x30\x6f\x70"
+    "\x68\x32\x6f\x69\x76\x33\x67\x69\x75\x7a\x65\x65\x77\x65\x6f\x35");
 
 static const std::vector<uint8_t> message1 = as_bytes("secure cell test message1 (c)Cossacklabs");
 static const std::vector<uint8_t> message2 = as_bytes("secure cell test message2 (c)Cossacklabs");
@@ -85,32 +89,32 @@ static void secure_cell_construction_test()
 
     try {
         themispp::secure_cell_seal_t seal(empty);
-        sput_fail_unless(false, "empty password (seal)", __LINE__);
+        sput_fail_unless(false, "empty key (seal)", __LINE__);
     } catch (const themispp::exception_t&) {
-        sput_fail_unless(true, "empty password (seal)", __LINE__);
+        sput_fail_unless(true, "empty key (seal)", __LINE__);
     }
 
     try {
         themispp::secure_cell_token_protect_t seal(empty);
-        sput_fail_unless(false, "empty password (token protect)", __LINE__);
+        sput_fail_unless(false, "empty key (token protect)", __LINE__);
     } catch (const themispp::exception_t&) {
-        sput_fail_unless(true, "empty password (token protect)", __LINE__);
+        sput_fail_unless(true, "empty key (token protect)", __LINE__);
     }
 
     try {
         themispp::secure_cell_context_imprint_t seal(empty);
-        sput_fail_unless(false, "empty password (context imprint)", __LINE__);
+        sput_fail_unless(false, "empty key (context imprint)", __LINE__);
     } catch (const themispp::exception_t&) {
-        sput_fail_unless(true, "empty password (context imprint)", __LINE__);
+        sput_fail_unless(true, "empty key (context imprint)", __LINE__);
     }
 }
 
 static void secure_cell_seal_test()
 {
     // construction
-    themispp::secure_cell_seal_t a1(password1.begin(), password1.end());
-    themispp::secure_cell_seal_t a2(password1);
-    themispp::secure_cell_seal_t b1(password2);
+    themispp::secure_cell_seal_t a1(key1.begin(), key1.end());
+    themispp::secure_cell_seal_t a2(key1);
+    themispp::secure_cell_seal_t b1(key2);
 
     sput_fail_unless(a1.encrypt(message1) != a2.encrypt(message1),
                      "two different seal encryption with same keys can't be the same",
@@ -137,9 +141,9 @@ static void secure_cell_seal_test()
 static void secure_cell_seal_context_test()
 {
     // construction
-    themispp::secure_cell_seal_t a1(password1.begin(), password1.end());
-    themispp::secure_cell_seal_t a2(password1);
-    themispp::secure_cell_seal_t b1(password2);
+    themispp::secure_cell_seal_t a1(key1.begin(), key1.end());
+    themispp::secure_cell_seal_t a2(key1);
+    themispp::secure_cell_seal_t b1(key2);
 
     sput_fail_unless(a1.encrypt(message1, context1) != a2.encrypt(message1, context1),
                      "two different seal encryption with same keys and contexts can't be the same",
@@ -172,9 +176,9 @@ static void secure_cell_seal_context_test()
 
 static void secure_cell_token_protect_test()
 {
-    themispp::secure_cell_token_protect_t encrypter1(password1.begin(), password1.end());
-    themispp::secure_cell_token_protect_t encrypter2(password1);
-    themispp::secure_cell_token_protect_t encrypter3(password2);
+    themispp::secure_cell_token_protect_t encrypter1(key1.begin(), key1.end());
+    themispp::secure_cell_token_protect_t encrypter2(key1);
+    themispp::secure_cell_token_protect_t encrypter3(key2);
 
     sput_fail_unless(encrypter1.encrypt(message1) != encrypter2.encrypt(message1),
                      "two different encryption with same keys can't be the same",
@@ -215,9 +219,9 @@ static void secure_cell_token_protect_test()
 
 static void secure_cell_token_protect_context_test()
 {
-    themispp::secure_cell_token_protect_t encrypter1(password1.begin(), password1.end());
-    themispp::secure_cell_token_protect_t encrypter2(password1);
-    themispp::secure_cell_token_protect_t encrypter3(password2);
+    themispp::secure_cell_token_protect_t encrypter1(key1.begin(), key1.end());
+    themispp::secure_cell_token_protect_t encrypter2(key1);
+    themispp::secure_cell_token_protect_t encrypter3(key2);
 
     sput_fail_unless(encrypter1.encrypt(message1, context1) != encrypter2.encrypt(message1, context1),
                      "two different encryption with same keys can't be the same",
@@ -264,9 +268,9 @@ static void secure_cell_token_protect_context_test()
 static void secure_cell_context_imprint_test()
 {
     // construction
-    themispp::secure_cell_context_imprint_t encrypter1(password1);
-    themispp::secure_cell_context_imprint_t encrypter2(password1);
-    themispp::secure_cell_context_imprint_t encrypter3(password2);
+    themispp::secure_cell_context_imprint_t encrypter1(key1);
+    themispp::secure_cell_context_imprint_t encrypter2(key1);
+    themispp::secure_cell_context_imprint_t encrypter3(key2);
 
     sput_fail_unless(encrypter1.encrypt(message1, context1) == encrypter2.encrypt(message1, context1),
                      "two different encryption with same keys and context must be the same",
