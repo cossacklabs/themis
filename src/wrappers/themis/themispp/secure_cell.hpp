@@ -22,6 +22,7 @@
 #include <themis/themis.h>
 
 #include "exception.hpp"
+#include "secure_cell_context_imprint.hpp"
 #include "secure_cell_seal.hpp"
 
 namespace themispp
