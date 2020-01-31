@@ -19,6 +19,9 @@
 
 #include <stdint.h>
 #include <string>
+#if __cplusplus >= 201103L
+#include <tuple>
+#endif
 #include <vector>
 
 #include <common/sput.h>
@@ -479,6 +482,208 @@ static inline void passphrase_in_depth()
 
 } // namespace seal
 
+namespace token_protect
+{
+
+template <typename SecureCell, typename Secret>
+static inline void miscommunication(Secret secretA, Secret secretB)
+{
+    SecureCell alice_cell(secretA);
+    SecureCell bob_cell(secretB);
+
+    uint8_t message[] = "[redacted]";           // NOLINT(cppcoreguidelines-avoid-c-arrays)
+    uint8_t contextA[] = "prison break plans";  // NOLINT(cppcoreguidelines-avoid-c-arrays)
+    uint8_t contextB[] = "newspaper interview"; // NOLINT(cppcoreguidelines-avoid-c-arrays)
+
+    typename SecureCell::output_pair result = alice_cell.encrypt(message, contextA);
+    const std::vector<uint8_t>& encrypted = result.encrypted();
+    const std::vector<uint8_t>& token = result.token();
+
+    try {
+        bob_cell.decrypt(encrypted, token, contextA);
+        sput_fail_unless(false, "decrypt with different secret", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(true, "decrypt with different secret", __LINE__);
+    }
+
+    SecureCell bob_cell_2(secretA); // same as Alice has
+
+    try {
+        std::vector<uint8_t> tokenB = alice_cell.encrypt(message, contextA).token();
+        bob_cell_2.decrypt(encrypted, tokenB, contextA);
+        sput_fail_unless(false, "decrypt with different token", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(true, "decrypt with different token", __LINE__);
+    }
+
+    try {
+        bob_cell_2.decrypt(encrypted, token, contextB);
+        sput_fail_unless(false, "decrypt with different context", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(true, "decrypt with different context", __LINE__);
+    }
+
+    std::vector<uint8_t> decrypted = bob_cell_2.decrypt(encrypted, token, contextA);
+    sput_fail_unless(decrypted == message, "matching secret and context", __LINE__);
+}
+
+template <typename SecureCell, typename Secret>
+static inline void silly_arguments(Secret empty_secret, Secret ok_secret)
+{
+    try {
+        SecureCell cell(empty_secret);
+        sput_fail_unless(false, "empty secret not allowed", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(true, "empty secret not allowed", __LINE__);
+    }
+
+    SecureCell cell(ok_secret);
+
+    try {
+        cell.encrypt(std::vector<uint8_t>());
+        sput_fail_unless(false, "encrypt: empty plaintext not allowed", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(true, "encrypt: empty plaintext not allowed", __LINE__);
+    }
+
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays)
+    uint8_t message[] = "important message";
+    std::vector<uint8_t> context;
+
+    typename SecureCell::output_pair result = cell.encrypt(message, context);
+    const std::vector<uint8_t>& encrypted = result.encrypted();
+    const std::vector<uint8_t>& token = result.token();
+
+    try {
+        cell.decrypt(std::vector<uint8_t>(), token);
+        sput_fail_unless(false, "decrypt: empty ciphertext not allowed", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(true, "decrypt: empty ciphertext not allowed", __LINE__);
+    }
+    try {
+        cell.decrypt(encrypted, std::vector<uint8_t>());
+        sput_fail_unless(false, "decrypt: empty token not allowed", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(true, "decrypt: empty token not allowed", __LINE__);
+    }
+
+    std::vector<uint8_t> decrypted = cell.decrypt(encrypted, token);
+    sput_fail_unless(decrypted == message, "empty context is no context", __LINE__);
+}
+
+template <typename SecureCell, typename Secret>
+static inline void loss_of_patience(Secret secret)
+{
+    SecureCell cell(secret);
+
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays)
+    uint8_t message[] = "important message";
+
+    typename SecureCell::output_pair result = cell.encrypt(message);
+    const std::vector<uint8_t>& encrypted = result.encrypted();
+    const std::vector<uint8_t>& token = result.token();
+
+    try {
+        std::vector<uint8_t> truncated = encrypted;
+        truncated.resize(truncated.size() - 1);
+        cell.decrypt(truncated, token);
+        sput_fail_unless(false, "fails to decrypt truncated message", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(true, "fails to decrypt truncated message", __LINE__);
+    }
+
+    try {
+        std::vector<uint8_t> extended = encrypted;
+        extended.resize(extended.size() + 1);
+        cell.decrypt(extended, token);
+        sput_fail_unless(false, "fails to decrypt extended message", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(true, "fails to decrypt extended message", __LINE__);
+    }
+
+    try {
+        std::vector<uint8_t> truncated = token;
+        truncated.resize(truncated.size() - 1);
+        cell.decrypt(encrypted, truncated);
+        sput_fail_unless(false, "fails to decrypt truncated token", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(true, "fails to decrypt truncated token", __LINE__);
+    }
+
+    // Token Protect mode currently allows token buffer to be overlong
+    try {
+        std::vector<uint8_t> extended = token;
+        extended.resize(extended.size() + 1);
+        std::vector<uint8_t> decrypted = cell.decrypt(encrypted, extended);
+        sput_fail_unless(message == decrypted, "extended token allowed", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(false, "extended token allowed", __LINE__);
+    }
+
+    try {
+        std::vector<uint8_t> corrupted = encrypted;
+        // Dunno, flip every odd byte? That should do it
+        for (size_t i = 0; i < corrupted.size(); i++) {
+            corrupted[i] ^= (i % 2) ? 0xFF : 0x00;
+        }
+        cell.decrypt(corrupted, token);
+        sput_fail_unless(false, "fails to decrypt corrupted message", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(true, "fails to decrypt corrupted message", __LINE__);
+    }
+
+    try {
+        std::vector<uint8_t> corrupted = token;
+        // Dunno, flip every even byte? That should do it
+        // TODO: fix Themis Core which segfaults if *odd* bytes are flipped
+        for (size_t i = 0; i < corrupted.size(); i++) {
+            corrupted[i] ^= (i % 2) ? 0x00 : 0xFF;
+        }
+        cell.decrypt(encrypted, corrupted);
+        sput_fail_unless(false, "fails to decrypt corrupted token", __LINE__);
+    } catch (const themispp::exception_t& e) {
+        sput_fail_unless(true, "fails to decrypt corrupted token", __LINE__);
+    }
+}
+
+static inline void master_key_showcase()
+{
+    std::vector<uint8_t> master_key = themispp::gen_sym_key();
+    themispp::secure_cell_token_protect_with_key cell(master_key);
+
+    // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays)
+    uint8_t message[] = "important message";
+
+#if __cplusplus >= 201703L
+    auto [encrypted, token] = cell.encrypt(message);
+#elif __cplusplus >= 201103L
+    std::vector<uint8_t> encrypted;
+    std::vector<uint8_t> token;
+    std::tie(encrypted, token) = cell.encrypt(message);
+#else
+    themispp::secure_cell_token_protect_with_key::output_pair result = cell.encrypt(message);
+    const std::vector<uint8_t>& encrypted = result.encrypted();
+    const std::vector<uint8_t>& token = result.token();
+#endif
+    std::vector<uint8_t> decrypted = cell.decrypt(encrypted, token);
+
+    sput_fail_unless(encrypted.size() == sizeof(message), "message keeps same size", __LINE__);
+    sput_fail_unless(!token.empty(), "non-empty token is produced", __LINE__);
+    sput_fail_unless(decrypted == message, "message decrypts into original data", __LINE__);
+}
+
+static inline void master_key_in_depth()
+{
+    std::vector<uint8_t> empty_key;
+    std::vector<uint8_t> master_key_1 = themispp::gen_sym_key();
+    std::vector<uint8_t> master_key_2 = themispp::gen_sym_key();
+    miscommunication<secure_cell_token_protect_with_key>(master_key_1, master_key_2);
+    silly_arguments<secure_cell_token_protect_with_key>(empty_key, master_key_1);
+    loss_of_patience<secure_cell_token_protect_with_key>(master_key_2);
+}
+
+} // namespace token_protect
+
 namespace context_imprint
 {
 
@@ -633,6 +838,10 @@ inline void run_secure_cell_test()
     sput_enter_suite("Secure Cell, Seal mode, passphrase API");
     sput_run_test(seal::passphrase_showcase, "happy path", __FILE__);
     sput_run_test(seal::passphrase_in_depth, "error handling", __FILE__);
+
+    sput_enter_suite("Secure Cell, Token Protect mode, master key API");
+    sput_run_test(token_protect::master_key_showcase, "happy path", __FILE__);
+    sput_run_test(token_protect::master_key_in_depth, "error handling", __FILE__);
 
     sput_enter_suite("Secure Cell, Context Imprint mode");
     sput_run_test(context_imprint::showcase, "happy path", __FILE__);

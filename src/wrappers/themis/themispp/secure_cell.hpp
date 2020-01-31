@@ -24,6 +24,7 @@
 #include "exception.hpp"
 #include "secure_cell_context_imprint.hpp"
 #include "secure_cell_seal.hpp"
+#include "secure_cell_token_protect.hpp"
 
 namespace themispp
 {
