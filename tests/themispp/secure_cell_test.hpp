@@ -31,6 +31,12 @@
 
 #include "utils.hpp"
 
+// Allow usage of deprecated Secure Cell API for testing
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 namespace themispp
 {
 namespace secure_cell_test
@@ -850,5 +856,9 @@ inline void run_secure_cell_test()
 
 } // namespace secure_cell_test
 } // namespace themispp
+
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 #endif
