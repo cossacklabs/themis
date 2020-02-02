@@ -36,7 +36,7 @@ That’s it.
 You don’t have to compile and install Themis,
 we’ll do it for you, in a special way.
 
-[build]: https://github.com/cossacklabs/themis/wiki/Building-and-installing
+[build]: https://docs.cossacklabs.com/pages/documentation-themis/#building-and-installing
 
 ### Running fuzzing tests
 
