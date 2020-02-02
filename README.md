@@ -26,10 +26,10 @@ Themis is an open-source high-level cryptographic services library for mobile an
 
 Themis provides 4 important cryptographic services:
 
-* **[Secure Cell](https://github.com/cossacklabs/themis/wiki/Secure-Cell-cryptosystem)**: a multi-mode cryptographic container suitable for **storing anything** from encrypted files to database records and format-preserved strings. Secure Cell is built around AES-256 in GCM (Token and Seal modes) and CTR (Context imprint mode).
-* **[Secure Message](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem)**: a simple **encrypted messaging** solution for the widest scope of applications. Exchange the keys between the parties and you're good to go. Two pairs of underlying cryptosystems: ECC + ECDSA / RSA + PSS + PKCS#7. 
-* **[Secure Session](https://github.com/cossacklabs/themis/wiki/Secure-Session-cryptosystem)**: **session-oriented encrypted data exchange** with forward secrecy for better security guarantees and more demanding infrastructures. Secure Session can perfectly function as socket encryption, session security, or a high-level messaging primitive (with some additional infrastructure like PKI). ECDH key agreement, ECC & AES encryption.
-* **[Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem)**: Zero knowledge-based cryptographic protocol for **authentication** and comparing secrets.
+* **[Secure Cell](https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/)**: a multi-mode cryptographic container suitable for **storing anything** from encrypted files to database records and format-preserved strings. Secure Cell is built around AES-256 in GCM (Token and Seal modes) and CTR (Context imprint mode).
+* **[Secure Message](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/)**: a simple **encrypted messaging** solution for the widest scope of applications. Exchange the keys between the parties and you're good to go. Two pairs of underlying cryptosystems: ECC + ECDSA / RSA + PSS + PKCS#7. 
+* **[Secure Session](https://docs.cossacklabs.com/pages/secure-session-cryptosystem/)**: **session-oriented encrypted data exchange** with forward secrecy for better security guarantees and more demanding infrastructures. Secure Session can perfectly function as socket encryption, session security, or a high-level messaging primitive (with some additional infrastructure like PKI). ECDH key agreement, ECC & AES encryption.
+* **[Secure Comparator](https://docs.cossacklabs.com/pages/secure-comparator-cryptosystem/)**: Zero knowledge-based cryptographic protocol for **authentication** and comparing secrets.
 
 We created Themis to build other products on top of it - i.e. [Acra](https://github.com/cossacklabs/acra) and [Hermes](https://github.com/cossacklabs/hermes-core).
 
@@ -43,21 +43,21 @@ Themis was designed to provide complicated cryptosystems in an easy-to-use infra
 * **DO YOUR THING**: Themis allows developers to focus on the main thing: developing their applications. 
 * **BEST PRACTICE**: Themis is based on the best modern practices in implementing complicated security systems.
 
-Themis relies on [the best available](https://github.com/cossacklabs/themis/wiki/Cryptographic-donors) open-source implementations of cryptographic primitives (ciphers).
+Themis relies on [the best available](https://docs.cossacklabs.com/pages/themis-cryptographic-donors/) open-source implementations of cryptographic primitives (ciphers).
 
 # Quickstart
 
 ## Install from package managers
 
-The easiest way to install Themis is [to use package repositories for your OS and language](https://github.com/cossacklabs/themis/wiki/Installing-Themis). Package repositories contain stable versions of Themis, prebuilt and packaged for the most widely-used systems.     
+The easiest way to install Themis is [to use package repositories for your OS and language](https://docs.cossacklabs.com/pages/documentation-themis/#installing-themis-from-repositories). Package repositories contain stable versions of Themis, prebuilt and packaged for the most widely-used systems.     
 
-Installation for server-side platforms (like Debian, Ubuntu, CentOS, macOS) consists of two parts: installing Themis Core library into the system and installing Themis language wrapper to use from your application. Refer to [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#installing-themis-wrappers).
+Installation for server-side platforms consists of two parts: installing Themis Core library into the system and installing Themis language wrapper to use from your application. Refer to the Installation guides for [Debian/Ubuntu](https://docs.cossacklabs.com/pages/documentation-themis/#debian-ubuntu), [CentOS/RHEL/OEL](https://docs.cossacklabs.com/pages/documentation-themis/#centos-rhel-oel), [macOS](https://docs.cossacklabs.com/pages/documentation-themis/#macos).
 
-Installation for mobile platforms (iOS, Android) and WebAssembly is easier: just use package manager popular on this platform. Refer to [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#installing-themis-wrappers).
+Installation for mobile platforms (iOS, Android) and WebAssembly is easier: just use package manager popular on this platform. Refer to [the Installation guide](https://docs.cossacklabs.com/pages/documentation-themis/#installing-themis-wrappers).
 
 ## Install from sources
 
-If you need the latest development version of Themis or your system is not supported yet, you can [build and install Themis from GitHub source code](https://github.com/cossacklabs/themis/wiki/Building-and-Installing).
+If you need the latest development version of Themis or your system is not supported yet, you can [build and install Themis from GitHub source code](https://docs.cossacklabs.com/pages/documentation-themis/#building-and-installing).
 
 # Languages
 
@@ -65,18 +65,18 @@ Themis is available for the following languages/platforms:
 
 | Platform | Documentation | Examples | Version |
 | :----- | :----- | :------ | :--- |
-| 🔶 Swift (iOS, macOS) | [Swift Howto](https://github.com/cossacklabs/themis/wiki/Swift-Howto) | [docs/examples/swift](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) | [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
-| 📱 Objective-C (iOS, macOS) | [Objective-C Howto](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) | [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)| [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
-| ☕️ Java (Desktop) | [Java & Android Howto](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) | [Java projects](https://github.com/cossacklabs/themis-java-examples) | |
-| ☎️ Java (Android) | [Java & Android Howto](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) | [Android projects](https://github.com/cossacklabs/themis-java-examples) | [![maven](https://api.bintray.com/packages/cossacklabs/maven/themis/images/download.svg)](https://bintray.com/cossacklabs/maven/themis/_latestVersion) |
-| ♦️ Ruby | [Ruby Howto](https://github.com/cossacklabs/themis/wiki/Ruby-Howto) | [docs/examples/ruby](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby) | [![Gem](https://img.shields.io/gem/v/rbthemis.svg)](https://rubygems.org/gems/rbthemis) |
-| 🐍 Python | [Python Howto](https://github.com/cossacklabs/themis/wiki/Python-Howto) | [docs/examples/python](https://github.com/cossacklabs/themis/tree/master/docs/examples/python) | [![PyPI](https://img.shields.io/pypi/v/pythemis.svg)](https://pypi.python.org/pypi?%3Aaction=search&term=pythemis&submit=search) |
-| 🐘 PHP | [PHP Howto](https://github.com/cossacklabs/themis/wiki/PHP-Howto) | [docs/examples/php](https://github.com/cossacklabs/themis/tree/master/docs/examples/php) | |
-| ➕ C++ | [CPP Howto](https://github.com/cossacklabs/themis/wiki/CPP-Howto) | [docs/examples/c++](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) ||
-| 🍭 Node.js | [Node.js Howto](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto) | [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/jsthemis.svg)](https://www.npmjs.com/package/jsthemis) |
+| 🔶 Swift (iOS, macOS) | [Swift Howto](https://docs.cossacklabs.com/pages/swift-howto/) | [docs/examples/swift](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) | [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
+| 📱 Objective-C (iOS, macOS) | [Objective-C Howto](https://docs.cossacklabs.com/pages/objective-c-howto/) | [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)| [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
+| ☕️ Java (Desktop) | [Java & Android Howto](https://docs.cossacklabs.com/pages/java-and-android-howto/) | [Java projects](https://github.com/cossacklabs/themis-java-examples) | |
+| ☎️ Java (Android) | [Java & Android Howto](https://docs.cossacklabs.com/pages/java-and-android-howto/) | [Android projects](https://github.com/cossacklabs/themis-java-examples) | [![maven](https://api.bintray.com/packages/cossacklabs/maven/themis/images/download.svg)](https://bintray.com/cossacklabs/maven/themis/_latestVersion) |
+| ♦️ Ruby | [Ruby Howto](https://docs.cossacklabs.com/pages/ruby-howto/) | [docs/examples/ruby](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby) | [![Gem](https://img.shields.io/gem/v/rbthemis.svg)](https://rubygems.org/gems/rbthemis) |
+| 🐍 Python | [Python Howto](https://docs.cossacklabs.com/pages/python-howto/) | [docs/examples/python](https://github.com/cossacklabs/themis/tree/master/docs/examples/python) | [![PyPI](https://img.shields.io/pypi/v/pythemis.svg)](https://pypi.python.org/pypi?%3Aaction=search&term=pythemis&submit=search) |
+| 🐘 PHP | [PHP Howto](https://docs.cossacklabs.com/pages/php-howto/) | [docs/examples/php](https://github.com/cossacklabs/themis/tree/master/docs/examples/php) | |
+| ➕ C++ | [CPP Howto](https://docs.cossacklabs.com/pages/cpp-howto/) | [docs/examples/c++](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) ||
+| 🍭 Node.js | [Node.js Howto](https://docs.cossacklabs.com/pages/nodejs-howto/) | [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/jsthemis.svg)](https://www.npmjs.com/package/jsthemis) |
 | 🖥 WebAssembly | [WASM Howto](https://docs.cossacklabs.com/pages/js-wasm-howto/)| [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/wasm-themis.svg)](https://www.npmjs.com/package/wasm-themis) |
-| 🐹 Go | [Go Howto](https://github.com/cossacklabs/themis/wiki/Go-HowTo)| [docs/examples/go](https://github.com/cossacklabs/themis/tree/master/docs/examples/go) ||
-| 🦀 Rust | [Rust Howto](https://github.com/cossacklabs/themis/wiki/Rust-Howto)| [docs/examples/rust](https://github.com/cossacklabs/themis/wiki/Rust-Howto) | [![crates](https://img.shields.io/crates/v/themis.svg)](https://crates.io/crates/themis)|
+| 🐹 Go | [Go Howto](https://docs.cossacklabs.com/pages/go-howto/)| [docs/examples/go](https://github.com/cossacklabs/themis/tree/master/docs/examples/go) ||
+| 🦀 Rust | [Rust Howto](https://docs.cossacklabs.com/pages/rust-howto/)| [docs/examples/rust](https://github.com/cossacklabs/themis/tree/master/docs/examples/rust) | [![crates](https://img.shields.io/crates/v/themis.svg)](https://crates.io/crates/themis)|
 | 🕸 С++ PNaCl for Google Chrome||[WebThemis project](https://github.com/cossacklabs/webthemis)|
 
 Want to jump straight to the documentation? [Please head over here](https://docs.cossacklabs.com/pages/documentation-themis/#start-here).
@@ -171,7 +171,7 @@ Want to be featured on our blog and on the list of contributors, too? [Write us]
 
 # Contributing to us
 
-If you're looking for something to contribute to and gain eternal respect, just pick the things in the [list of issues](https://github.com/cossacklabs/themis/issues). Head over to our [Contribution guidelines](https://github.com/cossacklabs/themis/wiki/Contribute) as your starting point.
+If you're looking for something to contribute to and gain eternal respect, just pick the things in the [list of issues](https://github.com/cossacklabs/themis/issues). Head over to our [Contribution guidelines](https://docs.cossacklabs.com/pages/documentation-themis/#contributing-contacts-assistance) as your starting point.
 
 Supporting Themis for all these numerous platforms is hard work, but we try to do our best to make using Themis convenient for everyone. Most issues that our users encounter are connected with the installation process and dependency management. If you face any challenges, please [let us know](https://github.com/cossacklabs/themis/issues).
 
