@@ -4,7 +4,7 @@
 [![CircleCI][circle-ci-badge]][circle-ci]
 [![License][license-badge]][license]
 
-_WebAssembly_ wrapper for [**Themis** crypto library][themis].
+_WebAssembly_ wrapper for [Themis crypto library][themis].
 
 Themis is an open-source high-level cryptographic services library that provides secure data exchange, authentication, and storage protection.
 Themis provides ready-made building components, which simplifies the usage of core cryptographic security operations.
