@@ -52,10 +52,12 @@ Read the following resources to learn more:
   - [How to build WasmThemis from source code][build-instructions].
   - [General documentation for Themis library on Cossack Labs Documentation Server][docserver].
 
+### Additional resources  
+  - To get a better understanding of how to use Themis, try playing around with [Interactive Themis Server Simulator](https://docs.cossacklabs.com/simulator/interactive/).
+  - If Node.js wrapper would be a better match for your project, see [Node.js Themis](https://github.com/cossacklabs/themis/tree/master/src/wrappers/themis/jsthemis).
+
 <!--
-
-TODO: refer to simulators, code samples, and tests here
-
+TODO: refer code samples and tests here
 -->
 
 [language-guide]: https://docs.cossacklabs.com/pages/js-wasm-howto/
