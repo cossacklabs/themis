@@ -23,7 +23,7 @@
 
 #include "soter/openssl/soter_engine.h"
 
-static unsigned rsa_key_length(const int size)
+static int rsa_key_length(unsigned size)
 {
     switch (size) {
     case RSA_KEY_LENGTH_1024:
@@ -72,7 +72,7 @@ static soter_status_t soter_set_default_rsa_pub_exp(EVP_PKEY_CTX* pkey_ctx)
     return SOTER_SUCCESS;
 }
 
-static soter_status_t soter_set_rsa_key_length(EVP_PKEY_CTX* pkey_ctx, unsigned length)
+static soter_status_t soter_set_rsa_key_length(EVP_PKEY_CTX* pkey_ctx, int length)
 {
     if (EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_BITS, length, NULL) != 1) {
         return SOTER_FAIL;
