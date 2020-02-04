@@ -6,8 +6,7 @@
 
 _WebAssembly_ wrapper for [Themis crypto library][themis].
 
-Themis is an open-source high-level cryptographic services library that provides secure data exchange, authentication, and storage protection.
-Themis provides ready-made building components, which simplifies the usage of core cryptographic security operations.
+Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis is aimed at modern development practices and has a unified API across 12 platforms, including WebAssembly, Node.js, Python, iOS/macOS, and Java/Android.
 
 [themis]: https://github.com/cossacklabs/themis
 [npm]: https://www.npmjs.com/package/wasm-themis
