@@ -6,12 +6,12 @@
   "scripts": {
     "preuninstall": "rm -rf build/*"
   },
-    "keywords": {
+    "keywords": [
     "security",
     "encryption",
     "cryptography",
     "themis"
-    },
+    ],
   "author": {
     "name": "Cossack Labs",
     "email": "dev@cossacklabs.com",
