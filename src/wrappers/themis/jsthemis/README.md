@@ -31,9 +31,9 @@ That's it!
 
 Read the following resources to learn more:
 
-  - (How to use JsThemis with JavaScript)[https://docs.cossacklabs.com/pages/nodejs-howto/].
-  - (How to build JsThemis from source code)[https://docs.cossacklabs.com/pages/documentation-themis/#node-js-wrapper-installation].
-  - (General documentation for Themis library on Cossack Labs Documentation Server)[https://docs.cossacklabs.com/products/themis/].
+  - [How to use JsThemis with JavaScript](https://docs.cossacklabs.com/pages/nodejs-howto/).
+  - [How to build JsThemis from source code](https://docs.cossacklabs.com/pages/documentation-themis/#node-js-wrapper-installation).
+  - [General documentation for Themis library on Cossack Labs Documentation Server](https://docs.cossacklabs.com/products/themis/).
 
 ### Additional resources  
   - To get a better understanding of how to use Themis, try playing around with [Interactive Themis Server Simulator](https://docs.cossacklabs.com/simulator/interactive/).
