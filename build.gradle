@@ -102,7 +102,7 @@ bintray {
         name = 'themis'
         userOrg = 'cossacklabs'
         licenses = ['Apache-2.0']
-        desc = 'Easy to use cryptographic framework for data protection: secure messaging with forward secrecy and secure data storage. Has unified APIs across ten platforms.'
+        desc = 'Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis has a unified API across 12 platforms, including Python, JavaScript, iOS/macOS, and Java/Android.'
         websiteUrl = "https://cossacklabs.com/themis/"
         vcsUrl = 'https://github.com/cossacklabs/themis.git'
         publish = true
