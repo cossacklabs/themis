@@ -1,7 +1,7 @@
 {
   "name": "wasm-themis",
   "version": "0.12.1",
-  "description": "Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis is aimed at modern development practices and has a unified API across 12 platforms, including WebAssembly, Node.js, Python, iOS/macOS, and Java/Android.",
+  "description": "Themis is a convenient cryptographic library for data protection.",
   "main": "src/index.js",
   "scripts": {
     "test": "mocha"
