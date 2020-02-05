@@ -146,7 +146,7 @@ which will be available to all the tools.
 
 ### Adding new test tools
 
-Here id what you need to do
+Here is what you need to do
 in order to add a `${new_tool}` to fuzz test suite.
 
  1. Create `src/${new_tool}.c` file.
