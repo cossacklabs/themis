@@ -196,7 +196,7 @@ in order to add a `${new_tool}` to fuzz test suite.
 
   - Test data should be fairly small (less than 1 KB or so).
 
-    AFL will try to minimize the input size
+    AFL will try to minimise the input size
     so large examples will not win you anything.
     Use small inputs
     unless larger ones trigger a different behavior.
