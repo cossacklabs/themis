@@ -31,7 +31,7 @@ themis_status_t themis_auth_sym_plain_encrypt(uint32_t alg,
                                               uint8_t* encrypted_message,
                                               size_t* encrypted_message_length,
                                               uint8_t* auth_tag,
-                                              size_t* auth_tag_length);
+                                              uint32_t* auth_tag_length);
 
 themis_status_t themis_auth_sym_plain_decrypt(uint32_t alg,
                                               const uint8_t* key,

@@ -70,7 +70,6 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase_(const uint8_t* 
     uint8_t derived_key[THEMIS_AUTH_SYM_KEY_LENGTH / 8] = {0};
     struct themis_scell_auth_token_passphrase hdr = {0};
     struct themis_scell_pbkdf2_context kdf = {0};
-    size_t auth_tag_length = 0;
 
     /* Message length is currently stored as 32-bit integer, sorry */
     if (message_length > UINT32_MAX) {
@@ -113,7 +112,6 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase_(const uint8_t* 
     }
 
     /* We are doing KDF ourselves, ask Soter to not interfere */
-    auth_tag_length = hdr.auth_tag_length;
     res = themis_auth_sym_plain_encrypt(soter_alg_without_kdf(hdr.alg),
                                         derived_key,
                                         sizeof(derived_key),
@@ -125,17 +123,9 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase_(const uint8_t* 
                                         message_length,
                                         encrypted_message,
                                         encrypted_message_length,
-                                        auth_tag,
-                                        &auth_tag_length);
+                                        &auth_tag[0],
+                                        &hdr.auth_tag_length);
     if (res != THEMIS_SUCCESS) {
-        goto error;
-    }
-    /*
-     * We should have allocated just the right amount here, but if our guess
-     * was off then the header is not usable due to bothched data offsets.
-     */
-    if (auth_tag_length != hdr.auth_tag_length) {
-        res = THEMIS_FAIL;
         goto error;
     }
 
