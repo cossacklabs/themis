@@ -152,13 +152,13 @@ static inline themis_status_t themis_write_scell_auth_token_passphrase(
     if (buffer_length < themis_scell_auth_token_passphrase_size(hdr)) {
         return THEMIS_BUFFER_TOO_SMALL;
     }
-    buffer = write_uint32LE(buffer, hdr->alg);
-    buffer = write_uint32LE(buffer, hdr->iv_length);
-    buffer = write_uint32LE(buffer, hdr->auth_tag_length);
-    buffer = write_uint32LE(buffer, hdr->message_length);
-    buffer = write_uint32LE(buffer, hdr->kdf_context_length);
-    buffer = write_bytes(buffer, hdr->iv, hdr->iv_length);
-    buffer = write_bytes(buffer, hdr->auth_tag, hdr->auth_tag_length);
+    buffer = stream_write_uint32LE(buffer, hdr->alg);
+    buffer = stream_write_uint32LE(buffer, hdr->iv_length);
+    buffer = stream_write_uint32LE(buffer, hdr->auth_tag_length);
+    buffer = stream_write_uint32LE(buffer, hdr->message_length);
+    buffer = stream_write_uint32LE(buffer, hdr->kdf_context_length);
+    buffer = stream_write_bytes(buffer, hdr->iv, hdr->iv_length);
+    buffer = stream_write_bytes(buffer, hdr->auth_tag, hdr->auth_tag_length);
     /* KDF context is written separately */
     return THEMIS_SUCCESS;
 }
@@ -174,18 +174,18 @@ static inline themis_status_t themis_read_scell_auth_token_passphrase(
     if (buffer_length < need_length) {
         return THEMIS_FAIL;
     }
-    hdr->alg = read_uint32LE(&buffer);
-    hdr->iv_length = read_uint32LE(&buffer);
-    hdr->auth_tag_length = read_uint32LE(&buffer);
-    hdr->message_length = read_uint32LE(&buffer);
-    hdr->kdf_context_length = read_uint32LE(&buffer);
+    buffer = stream_read_uint32LE(buffer, &hdr->alg);
+    buffer = stream_read_uint32LE(buffer, &hdr->iv_length);
+    buffer = stream_read_uint32LE(buffer, &hdr->auth_tag_length);
+    buffer = stream_read_uint32LE(buffer, &hdr->message_length);
+    buffer = stream_read_uint32LE(buffer, &hdr->kdf_context_length);
     need_length += hdr->iv_length + hdr->auth_tag_length + hdr->kdf_context_length;
     if (buffer_length < need_length) {
         return THEMIS_FAIL;
     }
-    hdr->iv = read_bytes(&buffer, hdr->iv_length);
-    hdr->auth_tag = read_bytes(&buffer, hdr->auth_tag_length);
-    hdr->kdf_context = read_bytes(&buffer, hdr->kdf_context_length);
+    buffer = stream_read_bytes(buffer, &hdr->iv, hdr->iv_length);
+    buffer = stream_read_bytes(buffer, &hdr->auth_tag, hdr->auth_tag_length);
+    buffer = stream_read_bytes(buffer, &hdr->kdf_context, hdr->kdf_context_length);
     return THEMIS_SUCCESS;
 }
 
@@ -198,7 +198,7 @@ static inline themis_status_t themis_scell_auth_token_message_size(const uint8_t
         return THEMIS_FAIL;
     }
     const uint8_t* message_length_ptr = auth_token + 3 * sizeof(uint32_t);
-    *message_length = read_uint32LE(&message_length_ptr);
+    stream_read_uint32LE(message_length_ptr, message_length);
     return THEMIS_SUCCESS;
 }
 
@@ -241,9 +241,9 @@ static inline themis_status_t themis_write_scell_pbkdf2_context(
     buffer += sizeof(hdr->auth_tag_length) + hdr->auth_tag_length;
     buffer += sizeof(hdr->message_length);
     buffer += sizeof(hdr->kdf_context_length);
-    buffer = write_uint32LE(buffer, ctx->iteration_count);
-    buffer = write_uint16LE(buffer, ctx->salt_length);
-    buffer = write_bytes(buffer, ctx->salt, ctx->salt_length);
+    buffer = stream_write_uint32LE(buffer, ctx->iteration_count);
+    buffer = stream_write_uint16LE(buffer, ctx->salt_length);
+    buffer = stream_write_bytes(buffer, ctx->salt, ctx->salt_length);
     return THEMIS_SUCCESS;
 }
 
@@ -256,13 +256,13 @@ static inline themis_status_t themis_read_scell_pbkdf2_context(
     if (buffer_length < need_length) {
         return THEMIS_FAIL;
     }
-    ctx->iteration_count = read_uint32LE(&buffer);
-    ctx->salt_length = read_uint16LE(&buffer);
+    buffer = stream_read_uint32LE(buffer, &ctx->iteration_count);
+    buffer = stream_read_uint16LE(buffer, &ctx->salt_length);
     need_length += ctx->salt_length;
     if (buffer_length < need_length) {
         return THEMIS_FAIL;
     }
-    ctx->salt = read_bytes(&buffer, ctx->salt_length);
+    buffer = stream_read_bytes(buffer, &ctx->salt, ctx->salt_length);
     return THEMIS_SUCCESS;
 }
 
