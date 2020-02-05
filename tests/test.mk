@@ -93,7 +93,7 @@ ifeq ($(NODE_VERSION),)
 	@echo 2>&1 "------------------------------------------------------------"
 	@echo 2>&1 "Node.js is not installed. Cannot run tests in Emscripten environment."
 	@echo 2>&1 ""
-	@echo 2>&1 "Please make sure you have \"node\" binary available in PATH and try again."
+	@echo 2>&1 "Make sure you have \"node\" binary available in PATH and try again."
 	@echo 2>&1 "------------------------------------------------------------"
 	@exit 1
 endif
@@ -109,7 +109,7 @@ endif
 test_cpp:
 	@echo "------------------------------------------------------------"
 	@echo "Running themissp tests."
-	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/CPP-Howto"
+	@echo "In case of errors, see https://docs.cossacklabs.com/pages/cpp-howto/"
 	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/themispp_test
 	@echo "------------------------------------------------------------"
@@ -118,7 +118,7 @@ test_php:
 ifdef PHP_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running phpthemis tests."
-	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/PHP-Howto"
+	@echo "In case of errors, see https://docs.cossacklabs.com/pages/php-howto/"
 	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/phpthemis_test.sh
 	@echo "------------------------------------------------------------"
@@ -129,7 +129,7 @@ test_python:
 ifneq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
 	@echo "------------------------------------------------------------"
 	@echo "Running pythemis tests."
-	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/Python-Howto"
+	@echo "In case of errors, see https://docs.cossacklabs.com/pages/python-howto/"
 	@echo "------------------------------------------------------------"
 ifneq ($(PYTHON2_VERSION),)
 	$(PYTHON2_TEST_SCRIPT)
@@ -147,7 +147,7 @@ test_ruby:
 ifdef RUBY_GEM_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running rbthemis tests."
-	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/Ruby-Howto"
+	@echo "In case of errors, see https://docs.cossacklabs.com/pages/ruby-howto/"
 	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/rbthemis_test.sh
 	@echo "------------------------------------------------------------"
@@ -157,7 +157,7 @@ test_js:
 ifdef NPM_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running jsthemis tests."
-	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/NodeJS-Howto"
+	@echo "In case of errors, see https://docs.cossacklabs.com/pages/nodejs-howto/"
 	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/jsthemis_test.sh
 endif
@@ -166,7 +166,7 @@ test_go:
 ifdef GO_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running gothemis tests."
-	@echo "If any error, check https://github.com/cossacklabs/themis/wiki/Go-HowTo"
+	@echo "In case of errors, see https://docs.cossacklabs.com/pages/go-howto/"
 	@echo "------------------------------------------------------------"
 	@go test -v $(GOTHEMIS_IMPORT)/...
 endif
@@ -175,7 +175,7 @@ test_rust:
 ifdef RUST_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running rust-themis tests."
-	@echo "In case of errors please see https://github.com/cossacklabs/themis/wiki/Rust-HowTo"
+	@echo "In case of errors, see https://docs.cossacklabs.com/pages/rust-howto/"
 	@echo "------------------------------------------------------------"
 	$(TEST_SRC_PATH)/rust/run_tests.sh
 	@echo "------------------------------------------------------------"
