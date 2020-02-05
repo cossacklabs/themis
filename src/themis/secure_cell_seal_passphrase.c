@@ -176,10 +176,8 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase(const uint8_t* p
 {
     THEMIS_CHECK_PARAM(passphrase != NULL && passphrase_length != 0);
     THEMIS_CHECK_PARAM(message != NULL && message_length != 0);
-    if (user_context != NULL) {
-        THEMIS_CHECK_PARAM(user_context_length != 0);
-    } else {
-        THEMIS_CHECK_PARAM(user_context_length == 0);
+    if (user_context_length != 0) {
+        THEMIS_CHECK_PARAM(user_context != NULL);
     }
     THEMIS_CHECK_PARAM(auth_token_length != NULL);
     THEMIS_CHECK_PARAM(encrypted_message_length != NULL);
@@ -307,10 +305,8 @@ themis_status_t themis_auth_sym_decrypt_message_with_passphrase(const uint8_t* p
     uint32_t expected_message_length = 0;
 
     THEMIS_CHECK_PARAM(passphrase != NULL && passphrase_length != 0);
-    if (user_context != NULL) {
-        THEMIS_CHECK_PARAM(user_context_length != 0);
-    } else {
-        THEMIS_CHECK_PARAM(user_context_length == 0);
+    if (user_context_length != 0) {
+        THEMIS_CHECK_PARAM(user_context != NULL);
     }
     THEMIS_CHECK_PARAM(auth_token != NULL && auth_token_length != 0);
     THEMIS_CHECK_PARAM(message_length != NULL);
