@@ -191,6 +191,62 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase(const uint8_t* p
                                                             encrypted_message_length);
 }
 
+static themis_status_t themis_auth_sym_derive_decryption_key_pbkdf2(
+    const struct themis_scell_auth_token_passphrase* hdr,
+    const uint8_t* passphrase,
+    size_t passphrase_length,
+    uint8_t* derived_key,
+    size_t derived_key_length)
+{
+    themis_status_t res = THEMIS_FAIL;
+    struct themis_scell_pbkdf2_context kdf = {0};
+
+    res = themis_read_scell_pbkdf2_context(hdr, &kdf);
+    if (res != THEMIS_SUCCESS) {
+        return res;
+    }
+
+    res = soter_pbkdf2_sha256(passphrase,
+                              passphrase_length,
+                              kdf.salt,
+                              kdf.salt_length,
+                              kdf.iteration_count,
+                              derived_key,
+                              derived_key_length);
+    return res;
+}
+
+static themis_status_t themis_auth_sym_derive_decryption_key(
+    const struct themis_scell_auth_token_passphrase* hdr,
+    const uint8_t* passphrase,
+    size_t passphrase_length,
+    uint8_t* derived_key,
+    size_t* derived_key_length)
+{
+    size_t required_length = soter_alg_key_length(hdr->alg);
+    /*
+     * This is our internal buffer so it cannot be too small. If it is, either
+     * the data is corrupted, or THEMIS_AUTH_SYM_MAX_KEY_LENGTH is incorrect.
+     */
+    if (*derived_key_length < required_length) {
+        return THEMIS_FAIL;
+    }
+    *derived_key_length = required_length;
+
+    switch (hdr->alg & SOTER_SYM_KDF_MASK) {
+    case SOTER_SYM_PBKDF2:
+        return themis_auth_sym_derive_decryption_key_pbkdf2(hdr,
+                                                            passphrase,
+                                                            passphrase_length,
+                                                            derived_key,
+                                                            required_length);
+    case SOTER_SYM_NOKDF:
+        return THEMIS_FAIL;
+    default:
+        return THEMIS_FAIL;
+    }
+}
+
 themis_status_t themis_auth_sym_decrypt_message_with_passphrase_(const uint8_t* passphrase,
                                                                  size_t passphrase_length,
                                                                  const uint8_t* user_context,
@@ -204,10 +260,9 @@ themis_status_t themis_auth_sym_decrypt_message_with_passphrase_(const uint8_t* 
 {
     themis_status_t res = THEMIS_FAIL;
     struct themis_scell_auth_token_passphrase hdr = {0};
-    struct themis_scell_pbkdf2_context kdf = {0};
     /* Use maximum possible length, not the default one */
     uint8_t derived_key[THEMIS_AUTH_SYM_MAX_KEY_LENGTH / 8] = {0};
-    size_t derived_key_length = 0;
+    size_t derived_key_length = sizeof(derived_key);
 
     res = themis_read_scell_auth_token_passphrase(auth_token, auth_token_length, &hdr);
     if (res != THEMIS_SUCCESS) {
@@ -218,40 +273,18 @@ themis_status_t themis_auth_sym_decrypt_message_with_passphrase_(const uint8_t* 
     if (hdr.message_length != encrypted_message_length) {
         return THEMIS_FAIL;
     }
-
-    /*
-     * Verify that algorithm contains a KDF function we support. In particular,
-     * it must not contain SOTER_SYM_NOKDF which is used by master key API.
-     */
-    switch (hdr.alg & SOTER_SYM_KDF_MASK) {
-    case SOTER_SYM_PBKDF2:
-        break;
-    case SOTER_SYM_NOKDF:
-        return THEMIS_FAIL;
-    default:
-        return THEMIS_FAIL;
-    }
-    /* The algorithm also defines length of the derived key we need */
-    derived_key_length = soter_alg_key_length(hdr.alg);
     /* Algorithm field contains unused bits that must be set to zero */
     if (!soter_alg_reserved_bits_valid(hdr.alg)) {
         return THEMIS_FAIL;
     }
 
-    res = themis_read_scell_pbkdf2_context(&hdr, &kdf);
+    res = themis_auth_sym_derive_decryption_key(&hdr,
+                                                passphrase,
+                                                passphrase_length,
+                                                &derived_key[0],
+                                                &derived_key_length);
     if (res != THEMIS_SUCCESS) {
         return res;
-    }
-
-    res = soter_pbkdf2_sha256(passphrase,
-                              passphrase_length,
-                              kdf.salt,
-                              kdf.salt_length,
-                              kdf.iteration_count,
-                              derived_key,
-                              derived_key_length);
-    if (res != THEMIS_SUCCESS) {
-        goto error;
     }
 
     /* We are doing KDF ourselves, ask Soter to not interfere */
