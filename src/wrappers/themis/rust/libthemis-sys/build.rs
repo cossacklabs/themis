@@ -53,12 +53,10 @@ fn get_themis() -> Library {
     pkg_config.statik(true);
 
     match pkg_config.probe("libthemis") {
-        Ok(library) => {
-            return Library {
-                include_paths: library.include_paths,
-                link_paths: library.link_paths,
-            };
-        }
+        Ok(library) => Library {
+            include_paths: library.include_paths,
+            link_paths: library.link_paths,
+        },
         Err(error) => {
             eprintln!(
                 "
