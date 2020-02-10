@@ -76,6 +76,10 @@ _Code:_
 
   - New class `SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
 
+_Infrastructure:_
+
+- Automated benchmarking harness is now tracking Themis performance. See [`benches`](https://github.com/cossacklabs/themis/tree/master/benches/) ([#580](https://github.com/cossacklabs/themis/pull/580)).
+
 ## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 27th 2019
 
 **TL;DR:**
@@ -248,7 +252,7 @@ _Code:_
     Secure Cell, Secure Message, Secure Session, and Secure Comparator.
     WasmThemis package is [available via npm](https://www.npmjs.com/package/wasm-themis) as `wasm-themis`,
     sample code can be found in [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js),
-    and the How-To guide is available [on the documentation server](https://docs.cossacklabs.com/pages/js-wasm-howto/) ([#457](https://github.com/cossacklabs/themis/pull/457), [#461](https://github.com/cossacklabs/themis/pull/461), [#462](https://github.com/cossacklabs/themis/pull/462), [#473](https://github.com/cossacklabs/themis/pull/473), [#482](https://github.com/cossacklabs/themis/pull/482), [#489](https://github.com/cossacklabs/themis/pull/489), [#490](https://github.com/cossacklabs/themis/pull/490), [#491](https://github.com/cossacklabs/themis/pull/491), [#492](https://github.com/cossacklabs/themis/pull/492),[#494](https://github.com/cossacklabs/themis/pull/494), [#495](https://github.com/cossacklabs/themis/pull/495), [#498](https://github.com/cossacklabs/themis/pull/498), [#507](https://github.com/cossacklabs/themis/pull/507), [#513](https://github.com/cossacklabs/themis/pull/513)).
+    and the HowTo guide is available [on the documentation server](https://docs.cossacklabs.com/pages/js-wasm-howto/) ([#457](https://github.com/cossacklabs/themis/pull/457), [#461](https://github.com/cossacklabs/themis/pull/461), [#462](https://github.com/cossacklabs/themis/pull/462), [#473](https://github.com/cossacklabs/themis/pull/473), [#482](https://github.com/cossacklabs/themis/pull/482), [#489](https://github.com/cossacklabs/themis/pull/489), [#490](https://github.com/cossacklabs/themis/pull/490), [#491](https://github.com/cossacklabs/themis/pull/491), [#492](https://github.com/cossacklabs/themis/pull/492),[#494](https://github.com/cossacklabs/themis/pull/494), [#495](https://github.com/cossacklabs/themis/pull/495), [#498](https://github.com/cossacklabs/themis/pull/498), [#507](https://github.com/cossacklabs/themis/pull/507), [#513](https://github.com/cossacklabs/themis/pull/513)).
 
   - WasmThemis is tested with current Node.js LTS versions, popular Web browsers, and Electron framework.
     It is also tested for compatibility with other Themis wrappers ([#509](https://github.com/cossacklabs/themis/pull/509), [#510](https://github.com/cossacklabs/themis/pull/510), [#511](https://github.com/cossacklabs/themis/pull/511)).
@@ -349,7 +353,7 @@ _Code:_
 
     - Added additional safety tests for Secure Session: return error if clientID is empty (thanks [@deszip](https://github.com/deszip) for asking tough questions and mis-using clientID) ([#386](https://github.com/cossacklabs/themis/pull/386)).
 
-    - Described [thread safety code practices](https://github.com/cossacklabs/themis/wiki/Thread-Safety) when using Secure Session.
+    - Described [thread safety code practices](https://docs.cossacklabs.com/pages/thread-safety-themis/) when using Secure Session.
 
   - **Secure Message**
 
@@ -359,7 +363,7 @@ _Code:_
 
       This change doesn't affect the language wrappers you are using, so no code changes are required from you.
 
-      Documentation for the new API calls is available [in the Wiki documentation](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem#implementation-details) and for each language separately (in their Howtos) ([#389](https://github.com/cossacklabs/themis/pull/389)).
+      Documentation for the new API calls is available [in the Wiki documentation](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/#implementation-details) and for each language separately (in their HowTos) ([#389](https://github.com/cossacklabs/themis/pull/389)).
 
     - Fixed a potential memory leak in Secure Message encryption and decryption ([#398](https://github.com/cossacklabs/themis/pull/398)).
 
@@ -381,13 +385,13 @@ _Code:_
 
   - Introduced Rust Themis wrapper, all work done by brilliant [@ilammy](https://github.com/ilammy)!
 
-    Rust Themis supports the same functionality as other Themis wrappers: Secure Cell, Secure Message, Secure Session, and Secure Comparator. Rust Themis package is available through [crates.io](https://crates.io/crates/themis), examples are stored in [docs/examples/rust](https://github.com/cossacklabs/themis/tree/master/docs/examples/rust), the HowTo guide is available [in Wiki](https://github.com/cossacklabs/themis/wiki/Rust-Howto) ([#419](https://github.com/cossacklabs/themis/pull/419), [#405](https://github.com/cossacklabs/themis/pull/405), [#403](https://github.com/cossacklabs/themis/pull/403), [#390](https://github.com/cossacklabs/themis/pull/390), [#383](https://github.com/cossacklabs/themis/pull/383), [#382](https://github.com/cossacklabs/themis/pull/382), [#381](https://github.com/cossacklabs/themis/pull/381), [#380](https://github.com/cossacklabs/themis/pull/380), [#376](https://github.com/cossacklabs/themis/pull/376), [#375](https://github.com/cossacklabs/themis/pull/375), [#374](https://github.com/cossacklabs/themis/pull/374), [#373](https://github.com/cossacklabs/themis/pull/373), [#372](https://github.com/cossacklabs/themis/pull/372), [#365](https://github.com/cossacklabs/themis/pull/365), [#363](https://github.com/cossacklabs/themis/pull/363), [#362](https://github.com/cossacklabs/themis/pull/362), [#358](https://github.com/cossacklabs/themis/pull/358), [#357](https://github.com/cossacklabs/themis/pull/357), [#356](https://github.com/cossacklabs/themis/pull/356), [#353](https://github.com/cossacklabs/themis/pull/353), [#349](https://github.com/cossacklabs/themis/pull/349), [#340](https://github.com/cossacklabs/themis/pull/340)).
+    Rust Themis supports the same functionality as other Themis wrappers: Secure Cell, Secure Message, Secure Session, and Secure Comparator. Rust Themis package is available through [crates.io](https://crates.io/crates/themis), examples are stored in [docs/examples/rust](https://github.com/cossacklabs/themis/tree/master/docs/examples/rust), the HowTo guide is available [in Wiki](https://docs.cossacklabs.com/pages/rust-howto/) ([#419](https://github.com/cossacklabs/themis/pull/419), [#405](https://github.com/cossacklabs/themis/pull/405), [#403](https://github.com/cossacklabs/themis/pull/403), [#390](https://github.com/cossacklabs/themis/pull/390), [#383](https://github.com/cossacklabs/themis/pull/383), [#382](https://github.com/cossacklabs/themis/pull/382), [#381](https://github.com/cossacklabs/themis/pull/381), [#380](https://github.com/cossacklabs/themis/pull/380), [#376](https://github.com/cossacklabs/themis/pull/376), [#375](https://github.com/cossacklabs/themis/pull/375), [#374](https://github.com/cossacklabs/themis/pull/374), [#373](https://github.com/cossacklabs/themis/pull/373), [#372](https://github.com/cossacklabs/themis/pull/372), [#365](https://github.com/cossacklabs/themis/pull/365), [#363](https://github.com/cossacklabs/themis/pull/363), [#362](https://github.com/cossacklabs/themis/pull/362), [#358](https://github.com/cossacklabs/themis/pull/358), [#357](https://github.com/cossacklabs/themis/pull/357), [#356](https://github.com/cossacklabs/themis/pull/356), [#353](https://github.com/cossacklabs/themis/pull/353), [#349](https://github.com/cossacklabs/themis/pull/349), [#340](https://github.com/cossacklabs/themis/pull/340)).
 
 - **iOS and macOS**
 
   - Added Carthage support. Now users can add Themis to their Cartfile using `github "cossacklabs/themis"`.
 
-    More details available in [Objective-C Howto](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) and [Swift Howto](https://github.com/cossacklabs/themis/wiki/Swift-Howto) on wiki. Example projects available in [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc) and [docs/examples/swift/](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) folders ([#432](https://github.com/cossacklabs/themis/pull/432), [#430](https://github.com/cossacklabs/themis/pull/430), [#428](https://github.com/cossacklabs/themis/pull/428), [#427](https://github.com/cossacklabs/themis/pull/427)).
+    More details available in [Objective-C HowTo](https://docs.cossacklabs.com/pages/objective-c-howto/) and [Swift HowTo](https://docs.cossacklabs.com/pages/swift-howto/). Example projects available in [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc) and [docs/examples/swift/](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) folders ([#432](https://github.com/cossacklabs/themis/pull/432), [#430](https://github.com/cossacklabs/themis/pull/430), [#428](https://github.com/cossacklabs/themis/pull/428), [#427](https://github.com/cossacklabs/themis/pull/427)).
 
   - Added BoringSSL support, now users can select which crypto-engine they want to include. This change affects only Themis CocoaPod: users can add Themis based on BoringSSL to their Podfile using `pod 'themis/themis-boringssl'` ([#351](https://github.com/cossacklabs/themis/pull/351), [#331](https://github.com/cossacklabs/themis/pull/331), [#330](https://github.com/cossacklabs/themis/pull/330), [#329](https://github.com/cossacklabs/themis/pull/329)).
 
@@ -407,13 +411,13 @@ _Code:_
 
   - Added Homebrew support for Themis Core. Now users can install Themis Core library using `brew tap cossacklabs/tap && brew update && brew install libthemis`. This is useful when you're developing on macOS.
 
-  More details can be found in [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#macos).
+  More details can be found in [the Installation guide](https://docs.cossacklabs.com/pages/documentation-themis/#macos).
 
 - **C++**
 
   - Improved Secure Session memory behavior (now users can move and copy Secure Session objects and callbacks) ([#370](https://github.com/cossacklabs/themis/pull/370), [#369](https://github.com/cossacklabs/themis/pull/369)).
 
-  - Allowed to link ThemisPP as header-only library by adding "inline" functions – thanks [@deszip](https://github.com/deszip) for pushing us. Check for detailed instructions in [C++ wiki](https://github.com/cossacklabs/themis/wiki/CPP-Howto) ([#371](https://github.com/cossacklabs/themis/pull/371)).
+  - Allowed to link ThemisPP as header-only library by adding "inline" functions – thanks [@deszip](https://github.com/deszip) for pushing us. Check for detailed instructions in [C++ HowTo](https://docs.cossacklabs.com/pages/cpp-howto/) ([#371](https://github.com/cossacklabs/themis/pull/371)).
 
   - Added support of smart pointer constructors for Secure Session, now users should use `std::shared_ptr<secure_session_callback_interface_t>` constructor ([#378](https://github.com/cossacklabs/themis/pull/378)).
 
@@ -438,7 +442,7 @@ _Code:_
   - Added Maven distribution ([#361](https://github.com/cossacklabs/themis/pull/361)).
 
     The new installation process requires adding only two lines to the Maven app configuration (instead of manually re-compiling the whole Themis library)!
-    See the updated [HowTo guide](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) in Wiki.
+    See the updated [HowTo guide](https://docs.cossacklabs.com/pages/java-and-android-howto/) in Wiki.
 
   - Significantly improved [Themis usage examples for Android](https://github.com/cossacklabs/themis-java-examples) - thanks to [@Dimdron](https://github.com/Dimdron) [#3](https://github.com/cossacklabs/themis-java-examples/pull/3).
 
@@ -491,18 +495,18 @@ _Code:_
 
 _Docs:_
 
-- Described the new [Secure Message API](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem#implementation-details): how we divided the `wrap` function into `encrypt` and `sign`, and the `unwrap` function — into `decrypt` and `verify` to make it more obvious for the users.
+- Described the new [Secure Message API](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/#implementation-details): how we divided the `wrap` function into `encrypt` and `sign`, and the `unwrap` function — into `decrypt` and `verify` to make it more obvious for the users.
 
-- Described [thread safety code practices](https://github.com/cossacklabs/themis/wiki/Thread-Safety) when using Secure Session.
+- Described [thread safety code practices](https://docs.cossacklabs.com/pages/thread-safety-themis/) when using Secure Session.
 
 - Improved installation guides for numerous languages.
 
 
 _Infrastructure:_
 
-- Added Homebrew support for Themis Core. Now users can install Themis Core libraby using `brew tap cossacklabs/tap && brew update && brew install libthemis`. This is useful when you're developing on macOS. More details can be found in [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#macos).
+- Added Homebrew support for Themis Core. Now users can install Themis Core libraby using `brew tap cossacklabs/tap && brew update && brew install libthemis`. This is useful when you're developing on macOS. More details can be found in [the Installation guide](https://docs.cossacklabs.com/pages/documentation-themis/#macos).
 
-- Added [installation guide on using Docker container](https://github.com/cossacklabs/themis/wiki/Building-and-Installing#docker) as a building environment for Themis: if you can't download Themis Core from packages, feel free to use Docker container for this.
+- Added [installation guide on using Docker container](https://docs.cossacklabs.com/pages/documentation-themis/#themis-with-docker) as a building environment for Themis: if you can't download Themis Core from packages, feel free to use Docker container for this.
 
 
 ## [0.10.0](https://github.com/cossacklabs/themis/releases/tag/0.10.0), February 6th 2018
@@ -515,19 +519,19 @@ _Infrastructure:_
 
 - Rubythemis has breaking changes for Secure Cell Token Protect mode ([#281](https://github.com/cossacklabs/themis/pull/281)). We added checks for other language wrappers to make sure this won't happen again ([#282](https://github.com/cossacklabs/themis/pull/282), [#283](https://github.com/cossacklabs/themis/pull/283)).
 
-Check the [Migration Guide](https://github.com/cossacklabs/themis/wiki/Migration-guide) for more details.
+Check the [Migration Guide](https://docs.cossacklabs.com/pages/migration-guide-themis-v096-themis-0100/) for more details.
 
 _Docs:_
 
-- Updated the descriptions of [Crypto systems](https://github.com/cossacklabs/themis/wiki/Cryptosystems), added more usage examples and code samples.
-- Refreshed code samples in language tutorials, made them more readable.<br/>[Obj-C](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) | [Swift](https://github.com/cossacklabs/themis/wiki/Swift-Howto) | [Java and Android](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) | [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto) | [PHP](https://github.com/cossacklabs/themis/wiki/PHP-Howto) | [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto) | [C++](https://github.com/cossacklabs/themis/wiki/CPP-Howto) | [Go](https://github.com/cossacklabs/themis/wiki/Go-HowTo) | [Node js](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto).
-- Added human-friendly description of [Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem) and supplied usage examples for all languages with the exception of PHP.
+- Updated the descriptions of [Crypto systems](https://docs.cossacklabs.com/pages/cryptosystems/), added more usage examples and code samples.
+- Refreshed code samples in language tutorials, made them more readable.<br/>[Obj-C](https://docs.cossacklabs.com/pages/objective-c-howto/) | [Swift](https://docs.cossacklabs.com/pages/swift-howto/) | [Java and Android](https://docs.cossacklabs.com/pages/java-and-android-howto/) | [Python](https://docs.cossacklabs.com/pages/python-howto/) | [PHP](https://docs.cossacklabs.com/pages/php-howto/) | [Ruby](https://docs.cossacklabs.com/pages/ruby-howto/) | [C++](https://docs.cossacklabs.com/pages/cpp-howto/) | [Go](https://docs.cossacklabs.com/pages/go-howto/) | [Node.js](https://docs.cossacklabs.com/pages/nodejs-howto/).
+- Added human-friendly description of [Secure Comparator](https://docs.cossacklabs.com/pages/secure-comparator-cryptosystem/) and supplied usage examples for all languages with the exception of PHP.
 
 _Infrastructure:_
 
 - Added support of _Ubuntu 17.10_.
 - Removed support of _Ubuntu 16.10_ and _Ubuntu 17.04_ (no more compiled binaries for these OSs now).
-- Added CLI utils for easy testing of Secure Cell, Secure Message, and Key generation on local machine. Available for Python, Ruby, Go, NodeJS, and PHP. Check the [Console Utils](https://github.com/cossacklabs/themis/wiki/Encrypt-Decrypt-Console-Utils) guide for more details and usage description/guide.
+- Added CLI utils for easy testing of Secure Cell, Secure Message, and Key generation on local machine. Available for Python, Ruby, Go, NodeJS, and PHP. Check the [Console Utils](https://docs.cossacklabs.com/pages/documentation-themis/#encrypt-decrypt-console-utils) guide for more details and usage description/guide.
 - Added [Integration test suit](https://github.com/cossacklabs/themis/tree/master/tests/_integration) for the majority of the available language wrappers, which was the catalyst for many fixes in this release.
 - Added support of CircleCI 2.0 with multiple workflows. This allows testing each language wrapper and integrations between them easily and quickly ([#295](https://github.com/cossacklabs/themis/pull/295), [#299](https://github.com/cossacklabs/themis/pull/299)).
 
@@ -546,22 +550,22 @@ _Code:_
   - Updated Secure Comparator definitions and provided code samples ([#287](https://github.com/cossacklabs/themis/pull/287), [#288](https://github.com/cossacklabs/themis/pull/288)).
 - **GoThemis:**
   - Added `get_remote_id` function, which is making SecureSession easier to use ([#272](https://github.com/cossacklabs/themis/pull/272));
-  - Added [CLI utils](https://github.com/cossacklabs/themis/wiki/Encrypt-Decrypt-Console-Utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
+  - Added [CLI utils](https://docs.cossacklabs.com/pages/documentation-themis/#encrypt-decrypt-console-utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
 - **JSThemis:**
   - Added a separate installation step in Makefile. Now you can install jsthemis via `make jsthemis_install` ([#302](https://github.com/cossacklabs/themis/pull/302));
-  - Added [CLI utils](https://github.com/cossacklabs/themis/wiki/Encrypt-Decrypt-Console-Utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
+  - Added [CLI utils](https://docs.cossacklabs.com/pages/documentation-themis/#encrypt-decrypt-console-utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
 - **RubyThemis:**
-  - Fixed arguments' order for Secure Cell in the Token Protect mode, which caused incompatibility with older versions of rubythemis ([#281](https://github.com/cossacklabs/themis/pull/281)). Please check the [migration guide](https://github.com/cossacklabs/themis/wiki/Migration-guide) for the details;
-  - Added [CLI utils](https://github.com/cossacklabs/themis/wiki/Encrypt-Decrypt-Console-Utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306))
+  - Fixed arguments' order for Secure Cell in the Token Protect mode, which caused incompatibility with older versions of rubythemis ([#281](https://github.com/cossacklabs/themis/pull/281)). Please check the [migration guide](https://docs.cossacklabs.com/pages/migration-guide-themis-v096-themis-0100/) for the details;
+  - Added [CLI utils](https://docs.cossacklabs.com/pages/documentation-themis/#encrypt-decrypt-console-utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306))
 - **PyThemis:**
   - Improved the installation process via Makefile for python3 users ([#300](https://github.com/cossacklabs/themis/pull/300));
-  - Added [CLI utils](https://github.com/cossacklabs/themis/wiki/Encrypt-Decrypt-Console-Utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
+  - Added [CLI utils](https://docs.cossacklabs.com/pages/documentation-themis/#encrypt-decrypt-console-utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
 - **PHPThemis:**
   - Added support of PHP 7.0, 7.1, 7.2 ([#278](https://github.com/cossacklabs/themis/pull/278), [#280](https://github.com/cossacklabs/themis/pull/280));
-  - Added a package for `phpthemis`. Now you don't need to compile it from sources. See the installation [PHP guide](https://github.com/cossacklabs/themis/wiki/PHP-Howto#installing-from-packages) for more details;
-  - Improved [unit tests](https://github.com/cossacklabs/themis/wiki/PHP-Howto#installing-phpthemis). Now it's easy to run tests because all the dependencies are handled by a php-composer ([#284](https://github.com/cossacklabs/themis/pull/284), [#285](https://github.com/cossacklabs/themis/pull/285), [#303](https://github.com/cossacklabs/themis/pull/303));
+  - Added a package for `phpthemis`. Now you don't need to compile it from sources. See the installation [PHP guide](https://docs.cossacklabs.com/pages/php-howto/#installing-stable-version-from-packages) for more details;
+  - Improved [unit tests](https://docs.cossacklabs.com/pages/php-howto/#installing-stable-version-from-packages). Now it's easy to run tests because all the dependencies are handled by a php-composer ([#284](https://github.com/cossacklabs/themis/pull/284), [#285](https://github.com/cossacklabs/themis/pull/285), [#303](https://github.com/cossacklabs/themis/pull/303));
   - Added a memory test suit, which allows us to keep a closer eye on PHPThemis' memory usage ([#298](https://github.com/cossacklabs/themis/pull/298));
-  - Added [CLI utils](https://github.com/cossacklabs/themis/wiki/Encrypt-Decrypt-Console-Utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
+  - Added [CLI utils](https://docs.cossacklabs.com/pages/documentation-themis/#encrypt-decrypt-console-utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
 
 
 ## [0.9.6](https://github.com/cossacklabs/themis/releases/tag/0.9.6), December 14th 2017
@@ -570,7 +574,7 @@ _Code:_
 
 _Docs:_
 
-- Significant update of the [Contributing section](https://github.com/cossacklabs/themis/wiki/Contribute) in Wiki.
+- Significant update of the [Contributing section](https://docs.cossacklabs.com/pages/documentation-themis/#contributing-to-themis).
 
 _Infrastructure:_
 
@@ -652,7 +656,7 @@ Updating podspec to be compatible with CocoaPods 1.0
 
 _Infrastructure_:
 * Lots of new high-level language wrappers
-* Enhanced **[documentation](https://github.com/cossacklabs/themis/wiki)**
+* Enhanced **[documentation](https://docs.cossacklabs.com/products/themis/)**
 * Lots of various demo projects
 * Updated **[Themis Server](https://themis.cossacklabs.com)**
 * Better **make** system verbosity (now you can actually see what succeeded and what didn't)
@@ -660,11 +664,11 @@ _Infrastructure_:
 
 _Code_:
 * **iOS wrapper** now has umbrella header.
-* We added **Swift** language [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) and [howto](https://github.com/cossacklabs/themis/wiki/Swift-Howto).
-* Themis wrapper for **Go** language: [howto](https://github.com/cossacklabs/themis/wiki/Go-HowTo) (examples coming soon).
-* Themis wrapper for **NodeJS**: [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/nodejs) and [howto](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto).
+* We added **Swift** language [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) and [howto](https://docs.cossacklabs.com/pages/swift-howto/).
+* Themis wrapper for **Go** language: [howto](https://docs.cossacklabs.com/pages/go-howto/) (examples coming soon).
+* Themis wrapper for **NodeJS**: [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/nodejs) and [howto](https://docs.cossacklabs.com/pages/nodejs-howto/).
 * Google Chrome-friendly spin-off called [WebThemis](https://github.com/cossacklabs/webthemis) was released.
-* Themis wrapper for **C++**: [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) and [howto](https://github.com/cossacklabs/themis/wiki/CPP-Howto).
+* Themis wrapper for **C++**: [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) and [HowTo](https://docs.cossacklabs.com/pages/cpp-howto/).
 * **[Secure Comparator](https://www.cossacklabs.com/files/secure-comparator-paper-rev12.pdf)** got [serious updates](https://cossacklabs.com/fixing-secure-comparator.html) to eliminate possible security drawbacks pointed out by cryptographic community.
 
 
