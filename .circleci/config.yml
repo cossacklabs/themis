@@ -604,11 +604,8 @@ workflows:
   tests:
     jobs:
       - analyze
-<<<<<<< HEAD
       - fuzz
-=======
       - benchmark
->>>>>>> master
       - android
       - x86_64
       - jsthemis
@@ -629,11 +626,8 @@ workflows:
                 - stable
     jobs:
       - analyze
-<<<<<<< HEAD
       - fuzz
-=======
       - benchmark
->>>>>>> master
       - android
       - x86_64
       - jsthemis
