@@ -1,6 +1,6 @@
 # libthemis-sys
 
-A customary `*-sys` crate that contains raw FFI bindings to **libthemis**.
+This is a customary `*-sys` crate that contains raw FFI bindings to **libthemis**.
 It is not expected to be used directly.
 
 ## Licensing

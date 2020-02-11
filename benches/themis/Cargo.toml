@@ -1,0 +1,16 @@
+[package]
+name = "themis-core-bench"
+version = "0.0.0"
+edition = "2018"
+publish = false
+
+[dependencies]
+themis = { version = "0.12", path = "../../src/wrappers/themis/rust" }
+libthemis-sys = { version = "0.12", path = "../../src/wrappers/themis/rust/libthemis-sys" }
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "secure_cell_seal_master_key"
+harness = false

@@ -24,6 +24,7 @@
 #include "soter/soter_rsa_key.h"
 #include "soter/soter_rsa_key_pair_gen.h"
 #include "soter/soter_t.h"
+#include "soter/soter_wipe.h"
 
 #include "themis/themis_portable_endian.h"
 
@@ -39,32 +40,61 @@
  */
 #define THEMIS_SYM_KEY_LENGTH 32
 
+static themis_status_t combine_key_generation_results(uint8_t* private_key,
+                                                      const size_t* private_key_length,
+                                                      themis_status_t private_result,
+                                                      uint8_t* public_key,
+                                                      const size_t* public_key_length,
+                                                      themis_status_t public_result)
+{
+    if (private_result == THEMIS_SUCCESS && public_result == THEMIS_SUCCESS) {
+        return THEMIS_SUCCESS;
+    }
+
+    if (private_result != THEMIS_BUFFER_TOO_SMALL) {
+        soter_wipe(private_key, *private_key_length);
+    }
+    if (public_result != THEMIS_BUFFER_TOO_SMALL) {
+        soter_wipe(public_key, *public_key_length);
+    }
+
+    if (private_result == THEMIS_BUFFER_TOO_SMALL || public_result == THEMIS_BUFFER_TOO_SMALL) {
+        return THEMIS_BUFFER_TOO_SMALL;
+    }
+
+    return (private_result != THEMIS_SUCCESS) ? private_result : public_result;
+}
+
 themis_status_t themis_gen_key_pair(soter_sign_alg_t alg,
                                     uint8_t* private_key,
                                     size_t* private_key_length,
                                     uint8_t* public_key,
                                     size_t* public_key_length)
 {
-    soter_sign_ctx_t* ctx = soter_sign_create(alg, NULL, 0, NULL, 0);
-    THEMIS_CHECK(ctx != NULL);
+    themis_status_t private_result = THEMIS_FAIL;
+    themis_status_t public_result = THEMIS_FAIL;
+    soter_sign_ctx_t* ctx = NULL;
 
-    soter_status_t res_private = soter_sign_export_key(ctx, private_key, private_key_length, true);
-    if (res_private != THEMIS_SUCCESS && res_private != THEMIS_BUFFER_TOO_SMALL) {
-        soter_sign_destroy(ctx);
-        return res_private;
+    if (!private_key_length || !public_key_length) {
+        return THEMIS_INVALID_PARAMETER;
     }
 
-    soter_status_t res_public = soter_sign_export_key(ctx, public_key, public_key_length, false);
-    if (res_public != THEMIS_SUCCESS && res_public != THEMIS_BUFFER_TOO_SMALL) {
-        soter_sign_destroy(ctx);
-        return res_public;
+    ctx = soter_sign_create(alg, NULL, 0, NULL, 0);
+    if (!ctx) {
+        return THEMIS_FAIL;
     }
+
+    private_result = soter_sign_export_key(ctx, private_key, private_key_length, true);
+    public_result = soter_sign_export_key(ctx, public_key, public_key_length, false);
 
     soter_sign_destroy(ctx);
-    if (res_private == THEMIS_BUFFER_TOO_SMALL || res_public == THEMIS_BUFFER_TOO_SMALL) {
-        return THEMIS_BUFFER_TOO_SMALL;
-    }
-    return THEMIS_SUCCESS;
+
+    return combine_key_generation_results(private_key,
+                                          private_key_length,
+                                          private_result,
+                                          public_key,
+                                          public_key_length,
+                                          public_result);
 }
 
 themis_status_t themis_gen_rsa_key_pair(uint8_t* private_key,
@@ -72,28 +102,30 @@ themis_status_t themis_gen_rsa_key_pair(uint8_t* private_key,
                                         uint8_t* public_key,
                                         size_t* public_key_length)
 {
-    soter_rsa_key_pair_gen_t* key_pair_ctx = soter_rsa_key_pair_gen_create(THEMIS_RSA_KEY_LENGTH);
-    THEMIS_CHECK(key_pair_ctx != NULL);
+    themis_status_t private_result = THEMIS_FAIL;
+    themis_status_t public_result = THEMIS_FAIL;
+    soter_rsa_key_pair_gen_t* ctx = NULL;
 
-    soter_status_t res_private =
-        soter_rsa_key_pair_gen_export_key(key_pair_ctx, private_key, private_key_length, true);
-    if (res_private != THEMIS_SUCCESS && res_private != THEMIS_BUFFER_TOO_SMALL) {
-        soter_rsa_key_pair_gen_destroy(key_pair_ctx);
-        return res_private;
+    if (!private_key_length || !public_key_length) {
+        return THEMIS_INVALID_PARAMETER;
     }
 
-    soter_status_t res_public =
-        soter_rsa_key_pair_gen_export_key(key_pair_ctx, public_key, public_key_length, false);
-    if (res_public != THEMIS_SUCCESS && res_public != THEMIS_BUFFER_TOO_SMALL) {
-        soter_rsa_key_pair_gen_destroy(key_pair_ctx);
-        return res_public;
+    ctx = soter_rsa_key_pair_gen_create(THEMIS_RSA_KEY_LENGTH);
+    if (!ctx) {
+        return THEMIS_FAIL;
     }
 
-    soter_rsa_key_pair_gen_destroy(key_pair_ctx);
-    if (res_private == THEMIS_BUFFER_TOO_SMALL || res_public == THEMIS_BUFFER_TOO_SMALL) {
-        return THEMIS_BUFFER_TOO_SMALL;
-    }
-    return THEMIS_SUCCESS;
+    private_result = soter_rsa_key_pair_gen_export_key(ctx, private_key, private_key_length, true);
+    public_result = soter_rsa_key_pair_gen_export_key(ctx, public_key, public_key_length, false);
+
+    soter_rsa_key_pair_gen_destroy(ctx);
+
+    return combine_key_generation_results(private_key,
+                                          private_key_length,
+                                          private_result,
+                                          public_key,
+                                          public_key_length,
+                                          public_result);
 }
 
 themis_status_t themis_gen_ec_key_pair(uint8_t* private_key,
@@ -179,6 +211,6 @@ themis_status_t themis_gen_sym_key(uint8_t* key, size_t* key_length)
         return THEMIS_BUFFER_TOO_SMALL;
     }
 
-    /* Soter error codes have the same value as Themis ones */
+    /* soter_rand() wipes the key on failure, soter_wipe() not needed */
     return soter_rand(key, *key_length);
 }
