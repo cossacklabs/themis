@@ -22,6 +22,13 @@
 
 #include <soter/soter_portable_endian.h>
 
+static inline uint8_t* stream_write_uint64LE(uint8_t* buffer, uint64_t value)
+{
+    uint64_t encoded = htole64(value);
+    memmove(buffer, &encoded, sizeof(encoded));
+    return buffer + sizeof(encoded);
+}
+
 static inline uint8_t* stream_write_uint32LE(uint8_t* buffer, uint32_t value)
 {
     uint32_t encoded = htole32(value);

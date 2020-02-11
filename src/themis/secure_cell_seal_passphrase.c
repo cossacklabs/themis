@@ -47,18 +47,6 @@ static inline size_t soter_alg_kdf_context_length(uint32_t alg)
     }
 }
 
-static inline size_t soter_alg_key_length(uint32_t alg)
-{
-    return (alg & SOTER_SYM_KEY_LENGTH_MASK) / 8;
-}
-
-static inline bool soter_alg_reserved_bits_valid(uint32_t alg)
-{
-    static const uint32_t used_bits = SOTER_SYM_KEY_LENGTH_MASK | SOTER_SYM_PADDING_MASK
-                                      | SOTER_SYM_KDF_MASK | SOTER_SYM_ALG_MASK;
-    return (alg & ~used_bits) == 0;
-}
-
 static inline size_t default_auth_token_size(void)
 {
     return themis_scell_auth_token_passphrase_min_size + THEMIS_AUTH_SYM_IV_LENGTH
