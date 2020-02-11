@@ -177,17 +177,6 @@ themis_status_t themis_sym_plain_decrypt(uint32_t alg,
     return THEMIS_SUCCESS;
 }
 
-typedef struct themis_auth_sym_message_hdr_type {
-    uint32_t alg;
-    uint32_t iv_length;
-    uint32_t auth_tag_length;
-    uint32_t message_length;
-} themis_auth_sym_message_hdr_t;
-
-static const size_t auth_sym_context_length = sizeof(themis_auth_sym_message_hdr_t)
-                                              + THEMIS_AUTH_SYM_IV_LENGTH
-                                              + THEMIS_AUTH_SYM_AUTH_TAG_LENGTH;
-
 static inline size_t default_auth_token_size(void)
 {
     return themis_scell_auth_token_key_min_size + THEMIS_AUTH_SYM_IV_LENGTH
