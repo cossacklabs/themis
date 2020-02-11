@@ -17,7 +17,152 @@
 #ifndef THEMIS_SYM_ENC_MESSAGE_H
 #define THEMIS_SYM_ENC_MESSAGE_H
 
+/**
+ * @internal
+ * @file sym_enc_message.h
+ * @brief Secure Cell data layout (Seal and Token Protect, with passphrase)
+ *
+ * @warning Structures and functions declared in this file are considered
+ * implementation details and may change without notice.
+ */
+
 #include <themis/themis_error.h>
+#include <themis/themis_portable_endian.h>
+
+/**
+ * @internal
+ * @page secure-cell-data-formats
+ * @ingroup THEMIS_SECURE_CELL
+ * @subsection seal-master-key Authentication Token for master keys
+ *
+ * Secure Cell uses the same header format in Seal and Token Protect mode.
+ * The difference is that in Seal mode the header is prepended to encrypted
+ * message data while in Token Protect mode the header is given to the user
+ * as an _authentication token_ that can be stored and transmitted separately
+ * from encrypted message data (which has the same length as the plaintext).
+ *
+ * You can compare master key header to passphrase header. The difference
+ * is that master key API uses fixed KDF parameters and thus does not use
+ * additional KDF context data.
+ *
+ * Data layout of the header looks like this:
+ *
+ * ```
+ *     0        1        2        3        4        5        6        7
+ * +--------+--------+--------+--------+--------+--------+--------+--------+
+ * |           algorithm ID            |             IV length             |
+ * +--------+--------+--------+--------+--------+--------+--------+--------+
+ * |          auth tag length          |          message length           |
+ * +--------+--------+--------+--------+--------+--------+--------+--------+
+ *
+ *  Initialization Vector data (12 bytes)
+ * +--------+--------+--------+--------+--------+--------+--------+--------+
+ * |                                                                       |
+ * + - - - -+ - - - -+ - - - -+ - - - -+--------+--------+--------+--------+
+ * |                                   |
+ * +--------+--------+--------+--------+
+ *
+ *  Authentication Tag data (16 bytes)
+ *                                     +--------+--------+--------+--------+
+ *                                     |                                   |
+ * +--------+--------+--------+--------+ - - - -+ - - - -+ - - - -+ - - - -+
+ * |                                                                       |
+ * + - - - -+ - - - -+ - - - -+ - - - -+--------+--------+--------+--------+
+ * |                                   |
+ * +--------+--------+--------+--------+
+ *
+ * - - - - >8 - - - - cut here to get Token Protect mode - - - - >8 - - - -
+ *
+ *  Message data (arbitrary, up to 4 GB)
+ * +--------+--------+--------+--------+--------+--------+--------+--------+
+ * |                                                                       |
+ * + - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+
+ * |                                                                       |
+ * + - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+
+ * |                                                                       |
+ * +--------+--------+--------+--------+--------+--------+--------+--------+
+ * ```
+ *
+ * All numerical fields are unsigned integers encoded in little-endian format.
+ *
+ * @see Themis RFC 2 contains detailed reference on data formats.
+ */
+
+/**
+ * Authentication token used by Seal and Token Protect modes with master key.
+ *
+ * This struct provides only API.
+ * It does **not** represent actual in-memory data layout.
+ */
+struct themis_scell_auth_token_key {
+    uint32_t alg;
+    const uint8_t* iv;
+    uint32_t iv_length;
+    const uint8_t* auth_tag;
+    uint32_t auth_tag_length;
+    uint32_t message_length;
+};
+
+static const size_t themis_scell_auth_token_key_min_size = 4 * sizeof(uint32_t);
+
+static inline size_t themis_scell_auth_token_key_size(const struct themis_scell_auth_token_key* hdr)
+{
+    size_t total_size = 0;
+    total_size += sizeof(hdr->alg);
+    total_size += sizeof(hdr->iv_length) + hdr->iv_length;
+    total_size += sizeof(hdr->auth_tag_length) + hdr->auth_tag_length;
+    total_size += sizeof(hdr->message_length);
+    return total_size;
+}
+
+static inline themis_status_t themis_write_scell_auth_token_key(
+    const struct themis_scell_auth_token_key* hdr, uint8_t* buffer, size_t buffer_length)
+{
+    if (buffer_length < themis_scell_auth_token_key_size(hdr)) {
+        return THEMIS_BUFFER_TOO_SMALL;
+    }
+    buffer = stream_write_uint32LE(buffer, hdr->alg);
+    buffer = stream_write_uint32LE(buffer, hdr->iv_length);
+    buffer = stream_write_uint32LE(buffer, hdr->auth_tag_length);
+    buffer = stream_write_uint32LE(buffer, hdr->message_length);
+    buffer = stream_write_bytes(buffer, hdr->iv, hdr->iv_length);
+    buffer = stream_write_bytes(buffer, hdr->auth_tag, hdr->auth_tag_length);
+    return THEMIS_SUCCESS;
+}
+
+static inline themis_status_t themis_read_scell_auth_token_key(const uint8_t* buffer,
+                                                               size_t buffer_length,
+                                                               struct themis_scell_auth_token_key* hdr)
+{
+    size_t need_length = themis_scell_auth_token_key_min_size;
+    if (buffer_length < need_length) {
+        return THEMIS_FAIL;
+    }
+    buffer = stream_read_uint32LE(buffer, &hdr->alg);
+    buffer = stream_read_uint32LE(buffer, &hdr->iv_length);
+    buffer = stream_read_uint32LE(buffer, &hdr->auth_tag_length);
+    buffer = stream_read_uint32LE(buffer, &hdr->message_length);
+    need_length += hdr->iv_length + hdr->auth_tag_length;
+    if (buffer_length < need_length) {
+        return THEMIS_FAIL;
+    }
+    buffer = stream_read_bytes(buffer, &hdr->iv, hdr->iv_length);
+    buffer = stream_read_bytes(buffer, &hdr->auth_tag, hdr->auth_tag_length);
+    return THEMIS_SUCCESS;
+}
+
+static inline themis_status_t themis_scell_auth_token_key_message_size(const uint8_t* auth_token,
+                                                                       size_t auth_token_length,
+                                                                       uint32_t* message_length)
+{
+    THEMIS_CHECK_PARAM(message_length != NULL);
+    if (auth_token_length < themis_scell_auth_token_key_min_size) {
+        return THEMIS_FAIL;
+    }
+    const uint8_t* message_length_ptr = auth_token + 3 * sizeof(uint32_t);
+    stream_read_uint32LE(message_length_ptr, message_length);
+    return THEMIS_SUCCESS;
+}
 
 themis_status_t themis_auth_sym_plain_encrypt(uint32_t alg,
                                               const uint8_t* key,
