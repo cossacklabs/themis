@@ -80,7 +80,7 @@ themis_status_t themis_auth_sym_plain_encrypt(uint32_t alg,
                    return THEMIS_FAIL);
     soter_sym_aead_encrypt_destroy(ctx);
     if (auth_tag_length_ > UINT32_MAX) {
-        THEMIS_INVALID_PARAMETER;
+        return THEMIS_INVALID_PARAMETER;
     }
     *auth_tag_length = (uint32_t)auth_tag_length_;
     return THEMIS_SUCCESS;
