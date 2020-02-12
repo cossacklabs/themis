@@ -14,3 +14,7 @@ criterion = "0.3"
 [[bench]]
 name = "secure_cell_seal_master_key"
 harness = false
+
+[[bench]]
+name = "secure_cell_seal_passphrase"
+harness = false
