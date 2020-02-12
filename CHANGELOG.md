@@ -5,7 +5,8 @@
 Changes that are currently in development and have not been released yet.
 
 **TL;DR:**
-- Added API for generating symmetric keys for use with Secure Cell;
+- Added API for generating symmetric keys for use with Secure Cell
+- Added API for Secure Cell encryption with human-readable passphrases
 
 _Code:_
 
@@ -18,6 +19,15 @@ _Code:_
   - **Key generation**
 
     - New function `themis_gen_sym_key()` can be used to securely generate symmetric keys for Secure Cell ([#560](https://github.com/cossacklabs/themis/pull/560)).
+
+  - **Secure Cell**
+
+    - New functions:
+
+      - `themis_secure_cell_encrypt_seal_with_passphrase()`
+      - `themis_secure_cell_decrypt_seal_with_passphrase()`
+
+      provide Seal mode API that is safe to use with passphrases ([#577](https://github.com/cossacklabs/themis/pull/577)).
 
 - **C++**
 

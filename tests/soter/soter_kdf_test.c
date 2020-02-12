@@ -29,8 +29,6 @@ struct kdf_test_vector {
     size_t key_length;
 };
 
-#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
-
 /*
  * Unfortunately, there is no RFC with test vectors for PBKDF2 with HMAC-SHA2
  * family, so here's the best substitute available.

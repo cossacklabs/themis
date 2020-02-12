@@ -31,7 +31,8 @@
 
 #define DEFAULT_SYM_KEY_LENGTH 32
 
-static char passwd[] = "password";
+static uint8_t master_key[] =
+    "\x43\x68\x75\x75\x30\x65\x6a\x6f\x68\x63\x68\x65\x65\x66\x61\x69\x39\x61\x69\x74\x33\x56\x6f\x68\x78\x65\x77\x36\x78\x6f\x68\x54";
 static char message[] = "secure cell test message by Mnatsakanov Andrey from Cossack Labs";
 static char user_context[] = "secure cell user context";
 
@@ -130,8 +131,8 @@ static int secure_cell_seal(void)
 {
     uint8_t* encrypted_message;
     size_t encrypted_message_length = 0;
-    if (themis_secure_cell_encrypt_seal((uint8_t*)passwd,
-                                        sizeof(passwd),
+    if (themis_secure_cell_encrypt_seal(master_key,
+                                        sizeof(master_key),
                                         NULL,
                                         0,
                                         (uint8_t*)message,
@@ -149,8 +150,8 @@ static int secure_cell_seal(void)
         testsuite_fail_if(true, "encrypted_message malloc fail");
         return -2;
     }
-    if (themis_secure_cell_encrypt_seal((uint8_t*)passwd,
-                                        sizeof(passwd),
+    if (themis_secure_cell_encrypt_seal(master_key,
+                                        sizeof(master_key),
                                         NULL,
                                         0,
                                         (uint8_t*)message,
@@ -166,8 +167,8 @@ static int secure_cell_seal(void)
     uint8_t* decrypted_message;
     size_t decrypted_message_length = 0;
 
-    if (themis_secure_cell_decrypt_seal((uint8_t*)passwd,
-                                        sizeof(passwd),
+    if (themis_secure_cell_decrypt_seal(master_key,
+                                        sizeof(master_key),
                                         NULL,
                                         0,
                                         encrypted_message,
@@ -187,8 +188,8 @@ static int secure_cell_seal(void)
         free(encrypted_message);
         return -5;
     }
-    if (themis_secure_cell_decrypt_seal((uint8_t*)passwd,
-                                        sizeof(passwd),
+    if (themis_secure_cell_decrypt_seal(master_key,
+                                        sizeof(master_key),
                                         NULL,
                                         0,
                                         encrypted_message,
@@ -221,8 +222,8 @@ static int secure_cell_token_protect(void)
     uint8_t* context;
     size_t context_length = 0;
 
-    if (themis_secure_cell_encrypt_token_protect((uint8_t*)passwd,
-                                                 sizeof(passwd),
+    if (themis_secure_cell_encrypt_token_protect(master_key,
+                                                 sizeof(master_key),
                                                  NULL,
                                                  0,
                                                  (uint8_t*)message,
@@ -256,8 +257,8 @@ static int secure_cell_token_protect(void)
         return -2;
     }
 
-    if (themis_secure_cell_encrypt_token_protect((uint8_t*)passwd,
-                                                 sizeof(passwd),
+    if (themis_secure_cell_encrypt_token_protect(master_key,
+                                                 sizeof(master_key),
                                                  NULL,
                                                  0,
                                                  (uint8_t*)message,
@@ -283,8 +284,8 @@ static int secure_cell_token_protect(void)
     uint8_t* decrypted_message;
     size_t decrypted_message_length = 0;
 
-    if (themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
-                                                 sizeof(passwd),
+    if (themis_secure_cell_decrypt_token_protect(master_key,
+                                                 sizeof(master_key),
                                                  NULL,
                                                  0,
                                                  encrypted_message,
@@ -309,8 +310,8 @@ static int secure_cell_token_protect(void)
         free(context);
         return -5;
     }
-    if (themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
-                                                 sizeof(passwd),
+    if (themis_secure_cell_decrypt_token_protect(master_key,
+                                                 sizeof(master_key),
                                                  NULL,
                                                  0,
                                                  encrypted_message,
@@ -346,8 +347,8 @@ static int secure_cell_context_imprint(void)
     uint8_t* encrypted_message;
     size_t encrypted_message_length = 0;
 
-    if (themis_secure_cell_encrypt_context_imprint((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    if (themis_secure_cell_encrypt_context_imprint(master_key,
+                                                   sizeof(master_key),
                                                    (uint8_t*)message,
                                                    sizeof(message),
                                                    (uint8_t*)user_context,
@@ -367,8 +368,8 @@ static int secure_cell_context_imprint(void)
         return -2;
     }
 
-    if (themis_secure_cell_encrypt_context_imprint((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    if (themis_secure_cell_encrypt_context_imprint(master_key,
+                                                   sizeof(master_key),
                                                    (uint8_t*)message,
                                                    sizeof(message),
                                                    (uint8_t*)user_context,
@@ -384,8 +385,8 @@ static int secure_cell_context_imprint(void)
     uint8_t* decrypted_message;
     size_t decrypted_message_length = 0;
 
-    if (themis_secure_cell_decrypt_context_imprint((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    if (themis_secure_cell_decrypt_context_imprint(master_key,
+                                                   sizeof(master_key),
                                                    encrypted_message,
                                                    encrypted_message_length,
                                                    (uint8_t*)user_context,
@@ -406,8 +407,8 @@ static int secure_cell_context_imprint(void)
         free(encrypted_message);
         return -5;
     }
-    if (themis_secure_cell_encrypt_context_imprint((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    if (themis_secure_cell_encrypt_context_imprint(master_key,
+                                                   sizeof(master_key),
                                                    encrypted_message,
                                                    encrypted_message_length,
                                                    (uint8_t*)user_context,
@@ -1071,8 +1072,8 @@ static themis_status_t encrypt_seal(uint8_t** encrypted_message, size_t* encrypt
 {
     themis_status_t res = THEMIS_SUCCESS;
 
-    res = themis_secure_cell_encrypt_seal((uint8_t*)passwd,
-                                          sizeof(passwd),
+    res = themis_secure_cell_encrypt_seal(master_key,
+                                          sizeof(master_key),
                                           NULL,
                                           0,
                                           (uint8_t*)message,
@@ -1092,8 +1093,8 @@ static themis_status_t encrypt_seal(uint8_t** encrypted_message, size_t* encrypt
         return THEMIS_NO_MEMORY;
     }
 
-    res = themis_secure_cell_encrypt_seal((uint8_t*)passwd,
-                                          sizeof(passwd),
+    res = themis_secure_cell_encrypt_seal(master_key,
+                                          sizeof(master_key),
                                           NULL,
                                           0,
                                           (uint8_t*)message,
@@ -1117,8 +1118,8 @@ static themis_status_t prepare_decrypt_seal(uint8_t* encrypted_message,
 {
     themis_status_t res = THEMIS_SUCCESS;
 
-    res = themis_secure_cell_decrypt_seal((uint8_t*)passwd,
-                                          sizeof(passwd),
+    res = themis_secure_cell_decrypt_seal(master_key,
+                                          sizeof(master_key),
                                           NULL,
                                           0,
                                           encrypted_message,
@@ -1169,8 +1170,8 @@ static void secure_cell_context_corruption_seal(void)
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_seal((uint8_t*)passwd,
-                                              sizeof(passwd),
+        res = themis_secure_cell_decrypt_seal(master_key,
+                                              sizeof(master_key),
                                               NULL,
                                               0,
                                               encrypted_message,
@@ -1196,8 +1197,8 @@ static void secure_cell_context_corruption_seal(void)
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_seal((uint8_t*)passwd,
-                                              sizeof(passwd),
+        res = themis_secure_cell_decrypt_seal(master_key,
+                                              sizeof(master_key),
                                               NULL,
                                               0,
                                               encrypted_message,
@@ -1215,8 +1216,8 @@ static void secure_cell_context_corruption_seal(void)
     old_value = get_context_message_length(encrypted_message);
     set_context_message_length(encrypted_message, CORRUPTED_LENGTH);
     {
-        res = themis_secure_cell_decrypt_seal((uint8_t*)passwd,
-                                              sizeof(passwd),
+        res = themis_secure_cell_decrypt_seal(master_key,
+                                              sizeof(master_key),
                                               NULL,
                                               0,
                                               encrypted_message,
@@ -1239,8 +1240,8 @@ static themis_status_t encrypt_token_protect(uint8_t** encrypted_message,
 {
     themis_status_t res = THEMIS_SUCCESS;
 
-    res = themis_secure_cell_encrypt_token_protect((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    res = themis_secure_cell_encrypt_token_protect(master_key,
+                                                   sizeof(master_key),
                                                    NULL,
                                                    0,
                                                    (uint8_t*)message,
@@ -1273,8 +1274,8 @@ static themis_status_t encrypt_token_protect(uint8_t** encrypted_message,
         return res;
     }
 
-    res = themis_secure_cell_encrypt_token_protect((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    res = themis_secure_cell_encrypt_token_protect(master_key,
+                                                   sizeof(master_key),
                                                    NULL,
                                                    0,
                                                    (uint8_t*)message,
@@ -1304,8 +1305,8 @@ static themis_status_t prepare_decrypt_token_protect(uint8_t* encrypted_message,
 {
     themis_status_t res = THEMIS_SUCCESS;
 
-    res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
-                                                   sizeof(passwd),
+    res = themis_secure_cell_decrypt_token_protect(master_key,
+                                                   sizeof(master_key),
                                                    NULL,
                                                    0,
                                                    encrypted_message,
@@ -1364,8 +1365,8 @@ static void secure_cell_context_corruption_token_protect(void)
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
-                                                       sizeof(passwd),
+        res = themis_secure_cell_decrypt_token_protect(master_key,
+                                                       sizeof(master_key),
                                                        NULL,
                                                        0,
                                                        encrypted_message,
@@ -1395,8 +1396,8 @@ static void secure_cell_context_corruption_token_protect(void)
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
-                                                       sizeof(passwd),
+        res = themis_secure_cell_decrypt_token_protect(master_key,
+                                                       sizeof(master_key),
                                                        NULL,
                                                        0,
                                                        encrypted_message,
@@ -1426,8 +1427,8 @@ static void secure_cell_context_corruption_token_protect(void)
             goto out;
         }
 
-        res = themis_secure_cell_decrypt_token_protect((uint8_t*)passwd,
-                                                       sizeof(passwd),
+        res = themis_secure_cell_decrypt_token_protect(master_key,
+                                                       sizeof(master_key),
                                                        NULL,
                                                        0,
                                                        encrypted_message,
@@ -1455,6 +1456,521 @@ static void secure_cell_context_corruption(void)
     secure_cell_context_corruption_token_protect();
 }
 
+static void scell_seal_passphrase_operation(void)
+{
+    themis_status_t res = THEMIS_FAIL;
+    const uint8_t passphrase[] = "secrets are scary";
+    const uint8_t message[] = "crypto is fun";
+    const uint8_t context[] = "you are carrying too much to be able to run";
+    uint8_t* encrypted = NULL;
+    uint8_t* decrypted = NULL;
+    size_t encrypted_length = 0;
+    size_t decrypted_length = 0;
+
+    encrypted_length = 0;
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          message,
+                                                          sizeof(message),
+                                                          NULL,
+                                                          &encrypted_length);
+    testsuite_fail_if(res != THEMIS_BUFFER_TOO_SMALL, "encrypt: compute output length");
+
+    encrypted = malloc(encrypted_length);
+    if (!encrypted) {
+        testsuite_fail_if(true, "encrypt: *** failed to allocate output buffer");
+        goto error;
+    }
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          message,
+                                                          sizeof(message),
+                                                          encrypted,
+                                                          &encrypted_length);
+    testsuite_fail_if(res != THEMIS_SUCCESS, "encrypt: process message");
+    testsuite_fail_unless(encrypted_length > sizeof(message),
+                          "encrypt: produces message with embedded auth token");
+
+    decrypted_length = 0;
+    res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          encrypted,
+                                                          encrypted_length,
+                                                          NULL,
+                                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_BUFFER_TOO_SMALL, "decrypt: compute output length");
+
+    decrypted = malloc(decrypted_length);
+    if (!decrypted) {
+        testsuite_fail_if(true, "decrypt: *** failed to allocate output buffer");
+        goto error;
+    }
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          encrypted,
+                                                          encrypted_length,
+                                                          decrypted,
+                                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_SUCCESS, "decrypt: process message");
+
+    testsuite_fail_unless(decrypted_length == sizeof(message), "validate: message length");
+    testsuite_fail_unless(!memcmp(message, decrypted, decrypted_length), "validate: message content");
+
+error:
+    free(encrypted);
+    free(decrypted);
+}
+
+static void scell_seal_passphrase_parameters_encrypt(void)
+{
+    themis_status_t res = THEMIS_FAIL;
+    const uint8_t passphrase[] = "roses are red";
+    const uint8_t message[] = "violets are blue";
+    const uint8_t context[] = "cats are definitely superior";
+    uint8_t encrypted[MAX_MESSAGE_SIZE];
+    size_t encrypted_length = sizeof(encrypted);
+
+    /* encrypt: passphrase is required and must be non-empty */
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(NULL,
+                                                          0,
+                                                          context,
+                                                          sizeof(context),
+                                                          message,
+                                                          sizeof(message),
+                                                          NULL,
+                                                          &encrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "encrypt: no passphrase (1)");
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(NULL,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          message,
+                                                          sizeof(message),
+                                                          NULL,
+                                                          &encrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "encrypt: no passphrase (2)");
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          0,
+                                                          context,
+                                                          sizeof(context),
+                                                          message,
+                                                          sizeof(message),
+                                                          NULL,
+                                                          &encrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "encrypt: no passphrase (3)");
+
+    /* encrypt: context is optional, but must be non-NULL if used */
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          NULL,
+                                                          0,
+                                                          message,
+                                                          sizeof(message),
+                                                          NULL,
+                                                          &encrypted_length);
+    testsuite_fail_if(res != THEMIS_BUFFER_TOO_SMALL, "encrypt: no context (1.1)");
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          NULL,
+                                                          0,
+                                                          message,
+                                                          sizeof(message),
+                                                          encrypted,
+                                                          &encrypted_length);
+    testsuite_fail_if(res != THEMIS_SUCCESS, "encrypt: no context (1.2)");
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          NULL,
+                                                          sizeof(context),
+                                                          message,
+                                                          sizeof(message),
+                                                          NULL,
+                                                          &encrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "encrypt: no context (2)");
+
+    /* encrypt: message is required and must be non-empty */
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          NULL,
+                                                          sizeof(message),
+                                                          NULL,
+                                                          &encrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "encrypt: no message (1)");
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          NULL,
+                                                          0,
+                                                          NULL,
+                                                          &encrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "encrypt: no message (2)");
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          message,
+                                                          0,
+                                                          NULL,
+                                                          &encrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "encrypt: no message (3)");
+
+    /* encrypt: output length is required */
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          message,
+                                                          sizeof(message),
+                                                          NULL,
+                                                          NULL);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "encrypt: no output length");
+}
+
+static void scell_seal_passphrase_parameters_decrypt(void)
+{
+    themis_status_t res = THEMIS_FAIL;
+    const uint8_t passphrase[] = "maigo-no maigo-no koneko-chan";
+    const uint8_t message[] = "anata-no o-uchi wa doko desu ka?";
+    const uint8_t context[] = "o-uchi wo kiite mo wakaranai";
+    uint8_t encrypted[MAX_MESSAGE_SIZE];
+    uint8_t decrypted[MAX_MESSAGE_SIZE];
+    size_t encrypted_length = sizeof(encrypted);
+    size_t decrypted_length = sizeof(decrypted);
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          message,
+                                                          sizeof(message),
+                                                          encrypted,
+                                                          &encrypted_length);
+    if (res != THEMIS_SUCCESS) {
+        testsuite_fail_if(true, "decrypt: *** failed to encrypt valid message");
+        return;
+    }
+
+    /* decrypt: passphrase is required and must be non-empty */
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(NULL,
+                                                          0,
+                                                          context,
+                                                          sizeof(context),
+                                                          encrypted,
+                                                          encrypted_length,
+                                                          decrypted,
+                                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "decrypt: no passphrase (1)");
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(NULL,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          encrypted,
+                                                          encrypted_length,
+                                                          decrypted,
+                                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "decrypt: no passphrase (2)");
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                          0,
+                                                          context,
+                                                          sizeof(context),
+                                                          encrypted,
+                                                          encrypted_length,
+                                                          decrypted,
+                                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "decrypt: no passphrase (3)");
+
+    /* decrypt: context is optional, but must be non-NULL if used */
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          NULL,
+                                                          0,
+                                                          encrypted,
+                                                          encrypted_length,
+                                                          decrypted,
+                                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_FAIL, "decrypt: no context (1)");
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          NULL,
+                                                          sizeof(context),
+                                                          encrypted,
+                                                          encrypted_length,
+                                                          decrypted,
+                                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "decrypt: no context (2)");
+
+    /* decrypt: message is required and must be non-empty */
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          NULL,
+                                                          encrypted_length,
+                                                          decrypted,
+                                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "decrypt: no message (1)");
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          NULL,
+                                                          0,
+                                                          decrypted,
+                                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "decrypt: no message (2)");
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          encrypted,
+                                                          0,
+                                                          decrypted,
+                                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "decrypt: no message (3)");
+
+    /* decrypt: output length is required */
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          encrypted,
+                                                          encrypted_length,
+                                                          decrypted,
+                                                          NULL);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "decrypt: no output length (1)");
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          encrypted,
+                                                          encrypted_length,
+                                                          NULL,
+                                                          NULL);
+    testsuite_fail_if(res != THEMIS_INVALID_PARAMETER, "decrypt: no output length (2)");
+}
+
+static void scell_seal_passphrase_parameters(void)
+{
+    scell_seal_passphrase_parameters_encrypt();
+    scell_seal_passphrase_parameters_decrypt();
+}
+
+static void scell_seal_passphrase_compatibility_passphrase_to_master_key(void)
+{
+    themis_status_t res = THEMIS_FAIL;
+    const uint8_t passphrase[] = "look to the sky, way up on high";
+    const uint8_t message[] = "there in the night stars are now right";
+    const uint8_t context[] = "eons have passed: now then at last";
+    uint8_t encrypted[MAX_MESSAGE_SIZE];
+    uint8_t decrypted[MAX_MESSAGE_SIZE];
+    size_t encrypted_length = sizeof(encrypted);
+    size_t decrypted_length = sizeof(decrypted);
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          message,
+                                                          sizeof(message),
+                                                          NULL,
+                                                          &encrypted_length);
+    if (res != THEMIS_BUFFER_TOO_SMALL) {
+        testsuite_fail_if(true, "encrypt(passphrase): *** failed to compute output length");
+        return;
+    }
+    res = themis_secure_cell_encrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          message,
+                                                          sizeof(message),
+                                                          encrypted,
+                                                          &encrypted_length);
+    if (res != THEMIS_SUCCESS) {
+        testsuite_fail_if(true, "encrypt(passphrase): *** failed to process message");
+        return;
+    }
+
+    res = themis_secure_cell_decrypt_seal(passphrase,
+                                          sizeof(passphrase),
+                                          context,
+                                          sizeof(context),
+                                          encrypted,
+                                          encrypted_length,
+                                          NULL,
+                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_BUFFER_TOO_SMALL, "decrypt(master key): compute output length");
+
+    res = themis_secure_cell_decrypt_seal(passphrase,
+                                          sizeof(passphrase),
+                                          context,
+                                          sizeof(context),
+                                          encrypted,
+                                          encrypted_length,
+                                          decrypted,
+                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_FAIL, "decrypt(master key): cannot decrypt passphrase");
+}
+
+static void scell_seal_passphrase_compatibility_master_key_to_passphrase(void)
+{
+    themis_status_t res = THEMIS_FAIL;
+    const uint8_t passphrase[] = "prison walls break, old ones awake!";
+    const uint8_t message[] = "they will return, mankind will learn";
+    const uint8_t context[] = "new kinds of fear when they are here";
+    uint8_t encrypted[MAX_MESSAGE_SIZE];
+    uint8_t decrypted[MAX_MESSAGE_SIZE];
+    size_t encrypted_length = sizeof(encrypted);
+    size_t decrypted_length = sizeof(decrypted);
+
+    res = themis_secure_cell_encrypt_seal(passphrase,
+                                          sizeof(passphrase),
+                                          context,
+                                          sizeof(context),
+                                          message,
+                                          sizeof(message),
+                                          NULL,
+                                          &encrypted_length);
+    if (res != THEMIS_BUFFER_TOO_SMALL) {
+        testsuite_fail_if(true, "encrypt(master key): *** failed to compute output length");
+        return;
+    }
+    res = themis_secure_cell_encrypt_seal(passphrase,
+                                          sizeof(passphrase),
+                                          context,
+                                          sizeof(context),
+                                          message,
+                                          sizeof(message),
+                                          encrypted,
+                                          &encrypted_length);
+    if (res != THEMIS_SUCCESS) {
+        testsuite_fail_if(true, "encrypt(master key): *** failed to process message");
+        return;
+    }
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          encrypted,
+                                                          encrypted_length,
+                                                          NULL,
+                                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_BUFFER_TOO_SMALL, "decrypt(passphrase): compute output length");
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                          sizeof(passphrase),
+                                                          context,
+                                                          sizeof(context),
+                                                          encrypted,
+                                                          encrypted_length,
+                                                          decrypted,
+                                                          &decrypted_length);
+    testsuite_fail_if(res != THEMIS_FAIL, "decrypt(passphrase): cannot decrypt master key");
+}
+
+static void scell_seal_passphrase_compatibility(void)
+{
+    scell_seal_passphrase_compatibility_passphrase_to_master_key();
+    scell_seal_passphrase_compatibility_master_key_to_passphrase();
+}
+
+static void scell_seal_passphrase_stability(void)
+{
+    themis_status_t res = THEMIS_FAIL;
+    const uint8_t passphrase[] = "never gonna give you up";
+    const uint8_t message[] = "never gonna let you down";
+    const uint8_t context[] = "never gonna run around and desert you";
+    struct test_data {
+        const char* label;
+        size_t length;
+        const uint8_t* data;
+    };
+    const struct test_data encrypted_data[] = {
+        {"Themis 0.13: AES-256",
+         95,
+         (const uint8_t*)"\x00\x01\x01\x41\x0C\x00\x00\x00\x10\x00\x00\x00\x19\x00\x00\x00\x16\x00\x00\x00\xAE\x92\x0A\x3D\x40\xF6\x62\x39\xB5\xD8\x8B\x39\x3D\x12\x38\xDB\xF0\x07\xA7\x38\xCE\x8E\xAC\x1B\x26\x42\x64\x01\x40\x0D\x03\x00\x10\x00\x4C\xC6\xC5\x69\xB1\x25\xD7\xA1\x24\x57\x17\x54\xA0\xE2\x08\xDA\xB5\xEE\xFF\xC8\x21\x47\xDE\xBD\x30\xBE\x44\xE3\x2B\x01\xE7\x73\x54\x2A\x0F\xE9\x75\x4C\x66\x71\x0B"},
+        {"Themis 0.13: AES-192",
+         95,
+         (const uint8_t*)"\xC0\x00\x01\x41\x0C\x00\x00\x00\x10\x00\x00\x00\x19\x00\x00\x00\x16\x00\x00\x00\x6C\x78\xED\x9F\xFB\x8F\x60\x21\xDC\xA8\xD1\xD5\x5F\x8D\x90\x53\x97\x56\xB8\x50\xB2\xD9\x71\x24\xE3\x7C\x35\x73\x40\x0D\x03\x00\x10\x00\x07\x86\xCA\xAF\x50\x96\x38\xBD\x16\xB6\x50\xE6\x70\x34\xF7\xFB\xD0\x64\xE1\xFA\x99\x52\x60\x5E\x63\x59\x8B\x5C\xF7\xF2\x68\x28\x3A\x25\x47\xCD\x61\xBB\xDE\xFC\x95"},
+        {"Themis 0.13: AES-128",
+         95,
+         (const uint8_t*)"\x80\x00\x01\x41\x0C\x00\x00\x00\x10\x00\x00\x00\x19\x00\x00\x00\x16\x00\x00\x00\x2C\x09\xD9\x09\x7A\xF6\x51\x6F\xBA\x1A\x7B\x65\x1D\x53\x3B\x1B\xC3\x7A\x5E\xFF\xD1\x96\x5E\xA9\x19\x47\x64\x3F\x40\x0D\x03\x00\x10\x00\x16\x40\x5E\x4F\xC6\x22\x30\xE8\xAF\xF8\xB2\x23\xD6\x6C\x82\x02\x9D\xDE\x21\x8F\x46\xB0\x44\x30\x81\xA8\x7F\x92\x4E\x78\x05\xA8\xA6\x25\x16\x6F\x8E\xC1\x24\x53\x8A"},
+    };
+
+    for (size_t i = 0; i < ARRAY_SIZE(encrypted_data); i++) {
+        uint8_t* decrypted = NULL;
+        size_t decrypted_length = 0;
+
+        res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                              sizeof(passphrase),
+                                                              context,
+                                                              sizeof(context),
+                                                              encrypted_data[i].data,
+                                                              encrypted_data[i].length,
+                                                              NULL,
+                                                              &decrypted_length);
+        testsuite_fail_if(res != THEMIS_BUFFER_TOO_SMALL, "decrypt: compute output length");
+
+        decrypted = malloc(decrypted_length);
+        if (!decrypted) {
+            testsuite_fail_if(true, "decrypt: *** failed to allocate output buffer");
+            return;
+        }
+
+        res = themis_secure_cell_decrypt_seal_with_passphrase(passphrase,
+                                                              sizeof(passphrase),
+                                                              context,
+                                                              sizeof(context),
+                                                              encrypted_data[i].data,
+                                                              encrypted_data[i].length,
+                                                              decrypted,
+                                                              &decrypted_length);
+        testsuite_fail_if(res != THEMIS_SUCCESS, "decrypt: process message");
+
+        testsuite_fail_unless(decrypted_length == sizeof(message), "validate: message length");
+        testsuite_fail_unless(!memcmp(message, decrypted, decrypted_length),
+                              "validate: message content");
+
+        testsuite_fail_if(false, encrypted_data[i].label);
+
+        free(decrypted);
+    }
+}
+
 void run_secure_cell_test(void)
 {
     testsuite_enter_suite("secure cell: key generation");
@@ -1469,4 +1985,10 @@ void run_secure_cell_test(void)
 
     testsuite_enter_suite("secure cell: context corruption");
     testsuite_run_test(secure_cell_context_corruption);
+
+    testsuite_enter_suite("secure cell: seal mode: passphrases");
+    testsuite_run_test(scell_seal_passphrase_operation);
+    testsuite_run_test(scell_seal_passphrase_parameters);
+    testsuite_run_test(scell_seal_passphrase_compatibility);
+    testsuite_run_test(scell_seal_passphrase_stability);
 }
