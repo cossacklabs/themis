@@ -192,6 +192,14 @@ static themis_status_t themis_auth_sym_derive_encryption_key(const struct themis
                                                              size_t* derived_key_length)
 {
     size_t required_length = soter_alg_key_length(hdr->alg);
+    switch (required_length) {
+    case SOTER_SYM_256_KEY_LENGTH / 8:
+    case SOTER_SYM_192_KEY_LENGTH / 8:
+    case SOTER_SYM_128_KEY_LENGTH / 8:
+        break;
+    default:
+        return THEMIS_FAIL;
+    }
     /* Internal buffer must have suitable size */
     if (*derived_key_length < required_length) {
         return THEMIS_FAIL;
@@ -231,6 +239,14 @@ static themis_status_t themis_auth_sym_derive_encryption_key_compat(
     size_t* derived_key_length)
 {
     size_t required_length = soter_alg_key_length(hdr->alg);
+    switch (required_length) {
+    case SOTER_SYM_256_KEY_LENGTH / 8:
+    case SOTER_SYM_192_KEY_LENGTH / 8:
+    case SOTER_SYM_128_KEY_LENGTH / 8:
+        break;
+    default:
+        return THEMIS_FAIL;
+    }
     /* Internal buffer must have suitable size */
     if (*derived_key_length < required_length) {
         return THEMIS_FAIL;
