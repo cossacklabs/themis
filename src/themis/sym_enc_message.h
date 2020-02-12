@@ -103,14 +103,17 @@ struct themis_scell_auth_token_key {
     uint32_t message_length;
 };
 
-static const size_t themis_scell_auth_token_key_min_size = 4 * sizeof(uint32_t);
+static const uint64_t themis_scell_auth_token_key_min_size = 4 * sizeof(uint32_t);
 
-static inline size_t themis_scell_auth_token_key_size(const struct themis_scell_auth_token_key* hdr)
+static inline uint64_t themis_scell_auth_token_key_size(const struct themis_scell_auth_token_key* hdr)
 {
-    size_t total_size = 0;
+    uint64_t total_size = 0;
+    /* Add separately to avoid overflows in intermediade calculations */
     total_size += sizeof(hdr->alg);
-    total_size += sizeof(hdr->iv_length) + hdr->iv_length;
-    total_size += sizeof(hdr->auth_tag_length) + hdr->auth_tag_length;
+    total_size += sizeof(hdr->iv_length);
+    total_size += hdr->iv_length;
+    total_size += sizeof(hdr->auth_tag_length);
+    total_size += hdr->auth_tag_length;
     total_size += sizeof(hdr->message_length);
     return total_size;
 }
@@ -134,7 +137,7 @@ static inline themis_status_t themis_read_scell_auth_token_key(const uint8_t* bu
                                                                size_t buffer_length,
                                                                struct themis_scell_auth_token_key* hdr)
 {
-    size_t need_length = themis_scell_auth_token_key_min_size;
+    uint64_t need_length = themis_scell_auth_token_key_min_size;
     if (buffer_length < need_length) {
         return THEMIS_FAIL;
     }
@@ -142,7 +145,9 @@ static inline themis_status_t themis_read_scell_auth_token_key(const uint8_t* bu
     buffer = stream_read_uint32LE(buffer, &hdr->iv_length);
     buffer = stream_read_uint32LE(buffer, &hdr->auth_tag_length);
     buffer = stream_read_uint32LE(buffer, &hdr->message_length);
-    need_length += hdr->iv_length + hdr->auth_tag_length;
+    /* Add separately to avoid overflows in intermediade calculations */
+    need_length += hdr->iv_length;
+    need_length += hdr->auth_tag_length;
     if (buffer_length < need_length) {
         return THEMIS_FAIL;
     }
