@@ -53,6 +53,7 @@ class Transport(object):
 
 
 conn = socket.socket()
+conn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 conn.bind(("127.0.0.1", 26260))
 conn.listen(1)
 accepted, addr = conn.accept()

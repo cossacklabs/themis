@@ -33,11 +33,11 @@ session = ssession.SSession(
     ssession.SimpleMemoryTransport(b'client', client_public))
 
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='172.17.0.3'))
+    pika.ConnectionParameters(host='localhost'))
 
 channel = connection.channel()
 
-channel.queue_declare(queue='ssession_queue')
+channel.queue_declare(queue='ssession_queue_server')
 
 
 def on_request(ch, method, props, body):
@@ -62,6 +62,6 @@ def on_request(ch, method, props, body):
 
 
 channel.basic_qos(prefetch_count=1)
-channel.basic_consume(on_request, queue='ssession_queue')
+channel.basic_consume('ssession_queue_server', on_request)
 
 channel.start_consuming()

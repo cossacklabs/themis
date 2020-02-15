@@ -31,10 +31,9 @@ class SsessionRpcClient(object):
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host='localhost'))
         self.channel = self.connection.channel()
-        result = self.channel.queue_declare(exclusive=True)
+        result = self.channel.queue_declare('smessage_queue_client', exclusive=True)
         self.callback_queue = result.method.queue
-        self.channel.basic_consume(self.on_response, no_ack=True,
-                                   queue=self.callback_queue)
+        self.channel.basic_consume(self.callback_queue, self.on_response, auto_ack=False)
 
     def on_response(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
@@ -45,7 +44,7 @@ class SsessionRpcClient(object):
         self.response = None
         self.corr_id = str(uuid.uuid4())
         self.channel.basic_publish(
-            exchange='', routing_key='smessage_queue',
+            exchange='', routing_key='smessage_queue_server',
             properties=pika.BasicProperties(
                 reply_to=self.callback_queue,
                 correlation_id=self.corr_id),

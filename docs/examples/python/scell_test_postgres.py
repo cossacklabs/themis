@@ -100,7 +100,7 @@ def get_record(connection, id):
 
 if __name__ == '__main__':
     dsn = ("dbname=scell_token_protect_test user=postgres password=postgres "
-           "host=172.17.0.2")
+           "host=localhost")
     with psycopg2.connect(dsn) as connection:
         init_table(connection)
         row_id = add_record(connection, "First record", "Second record")
