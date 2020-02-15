@@ -44,6 +44,7 @@ static ssize_t on_send(const uint8_t *data, size_t data_length, void *user_data)
 	{
 		printf("%d: %d\n", __LINE__, (int)bytes_sent);
 	}
+	return bytes_sent;
 }
 
 static ssize_t on_receive(uint8_t *data, size_t data_length, void *user_data)

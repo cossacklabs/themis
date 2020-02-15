@@ -17,6 +17,7 @@
 #ifndef COMMON_H_
 #define COMMON_H_
 
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
