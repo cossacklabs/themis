@@ -1,0 +1,90 @@
+name: WasmThemis
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-wasm.yaml'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/wasm/**'
+      - 'tests/common/**'
+      - 'tests/soter/**'
+      - 'tests/themis/**'
+      - 'third_party/boringssl/src/**'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+  # RNG tests tend to fail in virtualized environment due to /dev/random
+  # not behaving properly. Disable them to avoid spurious failures.
+  NO_NIST_STS: 1
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev
+      - name: Install Node.js via NVM
+        run: |
+          # Install latest NVM as described in documentation:
+          # https://github.com/nvm-sh/nvm
+          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
+          source $HOME/.nvm/nvm.sh
+          nvm install v8  # old LTS
+          nvm install v10 # current LTS
+          nvm install v12 # current stable
+      - name: Install Emscripten
+        run: |
+          # Install Emscripten toolchain as described in documentation:
+          # https://emscripten.org/docs/getting_started/downloads.html
+          cd $HOME
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd $HOME/emsdk
+          # "upstream" flavor using LLVM compiler is still unstable for us
+          ./emsdk install  latest-fastcomp
+          ./emsdk activate latest-fastcomp
+      - name: Check out code
+        uses: actions/checkout@v1
+        with:
+          submodules: true
+      - name: Build WasmThemis
+        run: |
+          source "$HOME/emsdk/emsdk_env.sh"
+          emmake make wasmthemis
+      - name: Run test suite (Themis Core)
+        if: always()
+        run: |
+          source "$HOME/emsdk/emsdk_env.sh"
+          emmake make test
+      - name: Run test suite (Node.js v8, maintenance)
+        if: always()
+        run: |
+          source $HOME/.nvm/nvm.sh
+          nvm use v8
+          make test_wasm
+      - name: Run test suite (Node.js v10, LTS)
+        if: always()
+        run: |
+          source $HOME/.nvm/nvm.sh
+          nvm use v10
+          make test_wasm
+      - name: Run test suite (Node.js v12, stable)
+        if: always()
+        run: |
+          source $HOME/.nvm/nvm.sh
+          nvm use v12
+          make test_wasm
