@@ -18,6 +18,9 @@ Pod::Spec.new do |s|
     s.osx.deployment_target = '10.9'
     s.ios.frameworks = 'UIKit', 'Foundation'
 
+    # TODO(ilammy, 2020-03-02): resolve "pod spec lint" warnings due to dependencies
+    # If you update dependencies, please check whether we can remove "--allow-warnings"
+    # from podspec validation in .github/workflows/test-objc.yaml
 
     # use `themis/themis-openssl` as separate target to use Themis with OpenSSL
     s.subspec 'themis-openssl' do |so|
