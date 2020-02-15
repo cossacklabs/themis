@@ -14,86 +14,135 @@
  * limitations under the License.
  */
 
-
-
-#include <cstdlib>
 #include <iostream>
-#include <boost/bind.hpp>
-#include <boost/smart_ptr.hpp>
+#include <memory>
+
 #include <boost/asio.hpp>
-#include <boost/thread.hpp>
-#include <string.h>
+
 #include <themispp/secure_session.hpp>
 
-const uint8_t client_priv[]={0x52, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2d, 0x00, 0xb2, 0x7f, 0x81, 0x00, 0x60, 0x9d, 0xe7, 0x7a, 0x39, 0x93, 0x68, 0xfc, 0x25, 0xd1, 0x79, 0x88, 0x6d, 0xfb, 0xf6, 0x19, 0x35, 0x53, 0x74, 0x10, 0xfc, 0x5b, 0x44, 0xe1, 0xf6, 0xf4, 0x4e, 0x59, 0x8d, 0x94, 0x99, 0x4f};
-const uint8_t client_pub[]={0x55, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2d, 0x10, 0xf4, 0x68, 0x8c, 0x02, 0x1c, 0xd0, 0x3b, 0x20, 0x84, 0xf2, 0x7a, 0x38, 0xbc, 0xf6, 0x39, 0x74, 0xbf, 0xc3, 0x13, 0xae, 0xb1, 0x00, 0x26, 0x78, 0x07, 0xe1, 0x7f, 0x63, 0xce, 0xe0, 0xb8, 0xac, 0x02, 0x10, 0x40, 0x10};
+#include "shared_keys.hpp"
 
-const uint8_t server_priv[]={0x52, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2d, 0xd0, 0xfd, 0x93, 0xc6, 0x00, 0xae, 0x83, 0xb3, 0xef, 0xef, 0x06, 0x2c, 0x9d, 0x76, 0x63, 0xf2, 0x50, 0xd8, 0xac, 0x32, 0x6e, 0x73, 0x96, 0x60, 0x53, 0x77, 0x51, 0xe4, 0x34, 0x26, 0x7c, 0xf2, 0x9f, 0xb6, 0x96, 0xeb, 0xd8};
-const uint8_t server_pub[]={0x55, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2d, 0xa5, 0xb3, 0x9b, 0x9d, 0x03, 0xcd, 0x34, 0xc5, 0xc1, 0x95, 0x6a, 0xb2, 0x50, 0x43, 0xf1, 0x4f, 0xe5, 0x88, 0x3a, 0x0f, 0xb1, 0x11, 0x8c, 0x35, 0x81, 0x82, 0xe6, 0x9e, 0x5c, 0x5a, 0x3e, 0x14, 0x06, 0xc5, 0xb3, 0x7d, 0xdd};
 using boost::asio::ip::tcp;
 
-class callback: public themispp::secure_session_callback_interface_t{
+// You need to define a "callback object" like this which will identify
+// peers and provide their public keys. Typically you read public keys
+// from some persistent storage (e.g., from a file or database).
+// Here for the sake of example we use pre-shared fixed keys.
+class session_callbacks : public themispp::secure_session_callback_interface_t {
 public:
-  const std::vector<uint8_t> get_pub_key_by_id(const std::vector<uint8_t>& id){
-    std::string id_str(&id[0], &id[0]+id.size());
-    if(id_str=="client")
-      return std::vector<uint8_t>(client_pub, client_pub+sizeof(client_pub));
-    else if(id_str=="server")
-      return std::vector<uint8_t>(server_pub, server_pub+sizeof(server_pub));
-    return std::vector<uint8_t>(0);
-  }
+    std::vector<uint8_t> get_pub_key_by_id(const std::vector<uint8_t>& id)
+    {
+        if (id == client_id) {
+            return client_public_key;
+        }
+        if (id == server_id) {
+            return server_public_key;
+        }
+        // Return an empty key if you don't recognise the peer.
+        // This will cause Secure Session to abort.
+        return std::vector<uint8_t>();
+    }
 };
 
-
-enum { max_length = 1024 };
+const size_t max_length = 1024;
 
 int main(int argc, char* argv[])
 {
-  try
-  {
-    if (argc != 3)
-    {
-      std::cerr << "Usage: secure_session_echo_client <host> <port>\n";
-      return 1;
+    if (argc != 3) {
+        std::cout << "usage:" << std::endl
+                  << "     " << argv[0] << " <host> <port>" << std::endl;
+        return 1;
     }
+    const char* host = argv[1];
+    const char* port = argv[2];
+
     boost::asio::io_service io_service;
+    boost::system::error_code error;
+
+    // Resolve server's address
     tcp::resolver resolver(io_service);
-    tcp::resolver::query query(tcp::v4(), argv[1], argv[2]);
-    tcp::resolver::iterator iterator = resolver.resolve(query);
-
-    tcp::socket s(io_service);
-    s.connect(*iterator);
-
-    std::string client_id("client");
-    callback callbacks;
-    themispp::secure_session_t session(std::vector<uint8_t>(client_id.c_str(), client_id.c_str()+client_id.length()), std::vector<uint8_t>(client_priv, client_priv+sizeof(client_priv)), &callbacks);
-    std::vector<uint8_t> data=session.init();
-    std::cout<<data.size()<<std::endl;
-    while(!session.is_established()){
-      boost::asio::write(s, boost::asio::buffer(&data[0], data.size()));
-      char reply[max_length];
-      size_t reply_length = s.read_some(boost::asio::buffer(reply, reply_length));
-      data=session.unwrap(std::vector<uint8_t>(reply, reply+reply_length));
+    tcp::resolver::query query(host, port);
+    tcp::resolver::iterator address_end;
+    tcp::resolver::iterator address = resolver.resolve(query, error);
+    if (error) {
+        std::cerr << "failed to resolve " << host << ":" << port << std::endl;
+        return 1;
     }
 
-    using namespace std; // For strlen.
-    std::cout << "Enter message: ";
-    char request[max_length];
-    std::cin.getline(request, max_length);
-    size_t request_length = strlen(request);
-    std::vector<uint8_t> d=session.wrap(std::vector<uint8_t>(request, request+request_length));
-    boost::asio::write(s, boost::asio::buffer(&d[0], d.size()));
-    char reply[max_length];
-    size_t reply_length = s.read_some(boost::asio::buffer(reply, max_length));
-    std::vector<uint8_t> d2=session.unwrap(std::vector<uint8_t>(reply, reply+reply_length));
-    std::cout << "Reply is: ";
-    std::cout.write((const char*)(&d2[0]), d2.size());
-    std::cout << "\n";
-  }
-  catch (std::exception& e)
-  {
-    std::cerr << "Exception: " << e.what() << "\n";
-  }
+    // Connect to the server
+    tcp::socket socket(io_service);
+    while (address != address_end) {
+        socket.connect(*address++, error);
+        if (!error) {
+            break;
+        }
+    }
+    if (!socket.is_open()) {
+        std::cerr << "failed to connect to " << host << ":" << port << std::endl;
+        return 1;
+    }
 
-  return 0;
+    // Initialise Secure Session for the client
+#if __cplusplus >= 201103L
+    themispp::secure_session_t session(client_id, client_private_key,
+                                       std::make_shared<session_callbacks>());
+#else
+    session_callbacks callbacks;
+    themispp::secure_session_t session(client_id, client_private_key, &callbacks);
+#endif
+
+    // Negotiate Secure Session until the connection is established.
+    // The client initiates connection and sends the first message.
+    std::vector<uint8_t> negotiation_data = session.init();
+    while (!session.is_established()) {
+        // Send negotiation message to the server
+        boost::asio::write(socket, boost::asio::buffer(negotiation_data), error);
+        if (error) {
+            throw boost::system::system_error(error);
+        }
+
+        // Receive negotiation reply from the server
+        negotiation_data.resize(max_length);
+        size_t reply_length = socket.read_some(boost::asio::buffer(negotiation_data), error);
+        if (error) {
+            throw boost::system::system_error(error);
+        }
+        negotiation_data.resize(reply_length);
+
+        // Pass the reply to Secure Session, get back reply to that reply
+        negotiation_data = session.unwrap(negotiation_data);
+    }
+    // The session is established now and we may exchange messages with the server
+
+    // Read message from the user
+    std::cout << "Enter message:" << std::endl;
+    std::string request;
+    std::getline(std::cin, request);
+
+    // Encrypt the message for sending with Secure Session
+    std::vector<uint8_t> request_bytes(request.begin(), request.end());
+    std::vector<uint8_t> request_message = session.wrap(request_bytes);
+
+    // Send encrypted message to the server
+    boost::asio::write(socket, boost::asio::buffer(request_message), error);
+    if (error) {
+        throw boost::system::system_error(error);
+    }
+
+    // Receive encrypted reply from the server
+    std::vector<uint8_t> reply_message(max_length);
+    size_t reply_length = socket.read_some(boost::asio::buffer(reply_message), error);
+    if (error) {
+        throw boost::system::system_error(error);
+    }
+    reply_message.resize(reply_length);
+
+    // Decrypt reply
+    std::vector<uint8_t> reply_bytes = session.unwrap(reply_message);
+    std::string reply(reply_bytes.begin(), reply_bytes.end());
+
+    std::cout << "Client received a reply: " << reply << std::endl;
+
+    return 0;
 }
