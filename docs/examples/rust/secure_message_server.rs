@@ -47,10 +47,6 @@ fn main() {
         }
 
         for peer in &peers {
-            // Avoid relaying the message to the original sender.
-            if *peer == sender {
-                continue;
-            }
             socket.send_to(&message, peer)?;
         }
 
