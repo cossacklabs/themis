@@ -159,6 +159,15 @@ We use a lot of automated security testing, i.e. static code analysers, fuzzing 
 
 If you believe that you've found a security-related issue, please drop us an email to [dev@cossacklabs.com](mailto:dev@cossacklabs.com). Bug bounty program may apply.
 
+# GDPR, HIPAA, CCPA  
+
+As a cryptographic services library for mobile and server platforms, Themis is a ["state of the art"](https://gdpr-info.eu/art-32-gdpr/) encryption tool, which provides secure data exchange and storage. Using Themis, you can reach better compliance with the current data privacy regulations, such as:     
+* [General Data Protection Regulation (GDPR)](https://gdpr-info.eu/)   
+* [HIPAA (Health Insurance Portability and Accountability Act)](https://en.wikipedia.org/wiki/Health_Insurance_Portability_and_Accountability_Act)        
+* [DPA (Data Protection Act)](http://www.legislation.gov.uk/ukpga/2018/12/contents/enacted)     
+* [CCPA (California Consumer Privacy Act)](https://en.wikipedia.org/wiki/California_Consumer_Privacy_Act)      
+
+
 # Community
 
 Themis is [recommended by OWASP](https://github.com/OWASP/owasp-mstg/blob/1.1.0/Document/0x06e-Testing-Cryptography.md#third-party-libraries) as data encryption library for mobile platforms.
