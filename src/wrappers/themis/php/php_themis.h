@@ -28,6 +28,8 @@ PHP_FUNCTION(phpthemis_gen_ec_key_pair);
 PHP_FUNCTION(phpthemis_gen_sym_key);
 PHP_FUNCTION(phpthemis_scell_seal_encrypt);
 PHP_FUNCTION(phpthemis_scell_seal_decrypt);
+PHP_FUNCTION(phpthemis_scell_seal_encrypt_with_passphrase);
+PHP_FUNCTION(phpthemis_scell_seal_decrypt_with_passphrase);
 PHP_FUNCTION(phpthemis_scell_token_protect_encrypt);
 PHP_FUNCTION(phpthemis_scell_token_protect_decrypt);
 PHP_FUNCTION(phpthemis_scell_context_imprint_encrypt);
