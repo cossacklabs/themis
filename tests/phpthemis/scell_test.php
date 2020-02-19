@@ -235,16 +235,17 @@ class ScellTest extends TestCase {
     }
 
     public function SealWithContextProvider() {
+        $master_key = phpthemis_gen_sym_key();
         return array(
             array(NULL, NULL, NULL, false),
             array("", "", "", false),
             array(NULL, "This is test message", NULL, false),
             array("", "This is test message", "This is test context", false),
-            array("This is test key", NULL, NULL, false),
-            array("This is test key", "", "This is test context", false),
-            array("This is test key", "This is test message", "", true),
-            array("This is test key", "This is test message", NULL, true),
-            array("This is test key", "This is test message", "This is test context", true)
+            array($master_key, NULL, NULL, false),
+            array($master_key, "", "This is test context", false),
+            array($master_key, "This is test message", "", true),
+            array($master_key, "This is test message", NULL, true),
+            array($master_key, "This is test message", "This is test context", true)
         );
     }
 
@@ -261,16 +262,17 @@ class ScellTest extends TestCase {
     }
 
     public function SealWithContextProviderNoDecrypt() {
+        $master_key = phpthemis_gen_sym_key();
         return array(
             array(NULL, NULL, NULL, false),
             array("", "", "", false),
             array(NULL, "This is test message", NULL, false),
             array("", "This is test message", "This is test context", false),
-            array("This is test key", NULL, NULL, false),
-            array("This is test key", "", "This is test context", false),
-            array("This is test key", "This is test message", "", false),
-            array("This is test key", "This is test message", NULL, false),
-            array("This is test key", "This is test message", "This is test context", false)
+            array($master_key, NULL, NULL, false),
+            array($master_key, "", "This is test context", false),
+            array($master_key, "This is test message", "", false),
+            array($master_key, "This is test message", NULL, false),
+            array($master_key, "This is test message", "This is test context", false)
         );
     }
 
@@ -287,14 +289,15 @@ class ScellTest extends TestCase {
     }
 
     public function SealWithoutContextProvider() {
+        $master_key = phpthemis_gen_sym_key();
         return array(
             array(NULL, NULL, false),
             array("", "", false),
             array(NULL, "This is test message", false),
             array("", "This is test message", false),
-            array("This is test key", NULL, false),
-            array("This is test key", "", false),
-            array("This is test key", "This is test message", true)
+            array($master_key, NULL, false),
+            array($master_key, "", false),
+            array($master_key, "This is test message", true)
         );
     }
 
@@ -311,16 +314,17 @@ class ScellTest extends TestCase {
     }
 
     public function TokenProtectWithContextProvider() {
+        $master_key = phpthemis_gen_sym_key();
         return array(
             array(NULL, NULL, NULL, false),
             array("", "", "", false),
             array(NULL, "This is test message", NULL, false),
             array("", "This is test message", "This is test context", false),
-            array("This is test key", NULL, NULL, false),
-            array("This is test key", "", "This is test context", false),
-            array("This is test key", "This is test message", "", true),
-            array("This is test key", "This is test message", NULL, true),
-            array("This is test key", "This is test message", "This is test context", true)
+            array($master_key, NULL, NULL, false),
+            array($master_key, "", "This is test context", false),
+            array($master_key, "This is test message", "", true),
+            array($master_key, "This is test message", NULL, true),
+            array($master_key, "This is test message", "This is test context", true)
         );
     }
 
@@ -337,10 +341,11 @@ class ScellTest extends TestCase {
     }
 
     public function TokenProtectWithContextProviderNoDecrypt() {
+        $master_key = phpthemis_gen_sym_key();
         return array(
-            array("This is test key", "This is test message", "", false),
-            array("This is test key", "This is test message", NULL, false),
-            array("This is test key", "This is test message", "This is test context", false)
+            array($master_key, "This is test message", "", false),
+            array($master_key, "This is test message", NULL, false),
+            array($master_key, "This is test message", "This is test context", false)
         );
     }
 
@@ -357,10 +362,11 @@ class ScellTest extends TestCase {
     }
 
     public function TokenProtectWithContextProviderNoToken() {
+        $master_key = phpthemis_gen_sym_key();
         return array(
-            array("This is test key", "This is test message", "", false),
-            array("This is test key", "This is test message", NULL, false),
-            array("This is test key", "This is test message", "This is test context", false)
+            array($master_key, "This is test message", "", false),
+            array($master_key, "This is test message", NULL, false),
+            array($master_key, "This is test message", "This is test context", false)
         );
     }
 
@@ -377,14 +383,15 @@ class ScellTest extends TestCase {
     }
 
     public function TokenProtectWithoutContextProvider() {
+        $master_key = phpthemis_gen_sym_key();
         return array(
             array(NULL, NULL, false),
             array("", "", false),
             array(NULL, "This is test message", false),
             array("", "This is test message", false),
-            array("This is test key", NULL, false),
-            array("This is test key", "", false),
-            array("This is test key", "This is test message", true)
+            array($master_key, NULL, false),
+            array($master_key, "", false),
+            array($master_key, "This is test message", true)
         );
     }
 
@@ -401,16 +408,17 @@ class ScellTest extends TestCase {
     }
 
     public function ContextImprintProvider() {
+        $master_key = phpthemis_gen_sym_key();
         return array(
             array(NULL, NULL, NULL, false),
             array("", "", "", false),
             array(NULL, "This is test message", NULL, false),
             array("", "This is test message", "This is test context", false),
-            array("This is test key", NULL, NULL, false),
-            array("This is test key", "", "This is test context", false),
-            array("This is test key", "This is test message", "", false),
-            array("This is test key", "This is test message", NULL, false),
-            array("This is test key", "This is test message", "This is test context", true)
+            array($master_key, NULL, NULL, false),
+            array($master_key, "", "This is test context", false),
+            array($master_key, "This is test message", "", false),
+            array($master_key, "This is test message", NULL, false),
+            array($master_key, "This is test message", "This is test context", true)
         );
     }
 
@@ -431,14 +439,15 @@ class ScellTest extends TestCase {
     }
 
     public function WrongInputSealWithoutContextProvider() {
+        $master_key = phpthemis_gen_sym_key();
         return array(
             array(NULL, NULL),
             array("", ""),
             array(NULL, "This is test message"),
             array("", "This is test message", false),
-            array("This is test key", NULL),
-            array("This is test key", ""),
-            array("This is test key", "Short message"),
+            array($master_key, NULL),
+            array($master_key, ""),
+            array($master_key, "Short message"),
             # todo: next is skipped because of 'Out of memory' failure
             # array("This is test key", "This is test very loooongggg message. This is test very loooongggg message. This is test very loooongggg message. This is test very loooongggg message. This is test very loooongggg message. This is test very loooongggg message. This is test very loooongggg message. This is test very loooongggg message.")
         );
