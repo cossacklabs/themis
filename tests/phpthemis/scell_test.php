@@ -37,6 +37,191 @@ class ScellTest extends TestCase {
         $this->assertTrue($key1 !== $key2);
     }
 
+    public function InvalidValues() {
+        return array(
+            array(NULL),
+            array(''),
+            array(array('something')),
+            array(array('key' => 'value')),
+            array(function(){})
+        );
+    }
+
+    // Secure Cell - Seal - master key
+
+    public function testSealMasterKey() {
+        $master_key = phpthemis_gen_sym_key();
+        $message = 'precious message';
+        $context = 'unit testing now';
+
+        $encrypted = phpthemis_scell_seal_encrypt($master_key, $message, $context);
+        $this->assertGreaterThan(strlen($message), strlen($encrypted));
+        $decrypted = phpthemis_scell_seal_decrypt($master_key, $encrypted, $context);
+        $this->assertEquals($decrypted, $message);
+    }
+
+    public function testSealMasterKeyIncorrectKey() {
+        $master_key_alice = phpthemis_gen_sym_key();
+        $master_key_bob = phpthemis_gen_sym_key();
+        $message = 'precious message';
+        $context = 'unit testing now';
+
+        $encrypted = phpthemis_scell_seal_encrypt($master_key_alice, $message, $context);
+        $this->expectException(Exception::class);
+        $decrypted = phpthemis_scell_seal_decrypt($master_key_bob, $encrypted, $context);
+    }
+
+    public function testSealMasterKeyInvalidMessage() {
+        $master_key = phpthemis_gen_sym_key();
+        $message = 'precious message';
+        $context = 'unit testing now';
+
+        $encrypted = phpthemis_scell_seal_encrypt($master_key, $message, $context);
+        $this->expectException(Exception::class);
+        $decrypted = phpthemis_scell_seal_decrypt($master_key, $encrypted.'X', $context);
+    }
+
+    public function testSealMasterKeyIncorrectContext() {
+        $master_key = phpthemis_gen_sym_key();
+        $message = 'precious message';
+        $context_alice = 'secure cell';
+        $context_bob = 'peanut butter';
+
+        $encrypted = phpthemis_scell_seal_encrypt($master_key, $message, $context_alice);
+        $this->expectException(Exception::class);
+        $decrypted = phpthemis_scell_seal_decrypt($master_key, $encrypted, $context_bob);
+    }
+
+    public function testSealMasterKeyNoContext() {
+        $master_key = phpthemis_gen_sym_key();
+        $message = 'precious message';
+        $context = 'unit testing now';
+
+        // Omitted context is the same as null or empty context
+        $encrypted  = phpthemis_scell_seal_encrypt($master_key, $message);
+        $decrypted1 = phpthemis_scell_seal_decrypt($master_key, $encrypted, NULL);
+        $decrypted2 = phpthemis_scell_seal_decrypt($master_key, $encrypted, '');
+
+        $this->assertEquals($decrypted1, $message);
+        $this->assertEquals($decrypted2, $message);
+    }
+
+    /** @dataProvider InvalidValues */
+    public function testSealMasterKeyNoKeyEncrypt($empty) {
+        $this->expectException(Exception::class);
+        $encrypted = phpthemis_scell_seal_encrypt($empty, 'precious message');
+    }
+
+    /** @dataProvider InvalidValues */
+    public function testSealMasterKeyNoMessageEncrypt($empty) {
+        $master_key = phpthemis_gen_sym_key();
+        $this->expectException(Exception::class);
+        $encrypted = phpthemis_scell_seal_encrypt($master_key, $empty);
+    }
+
+    /** @dataProvider InvalidValues */
+    public function testSealMasterKeyNoKeyDecrypt($empty) {
+        $master_key = phpthemis_gen_sym_key();
+        $encrypted = phpthemis_scell_seal_encrypt($master_key, 'precious message');
+        $this->expectException(Exception::class);
+        $decrypted = phpthemis_scell_seal_decrypt($empty, $encrypted);
+    }
+
+    /** @dataProvider InvalidValues */
+    public function testSealMasterKeyNoMessageDecrypt($empty) {
+        $master_key = phpthemis_gen_sym_key();
+        $encrypted = phpthemis_scell_seal_encrypt($master_key, 'precious message');
+        $this->expectException(Exception::class);
+        $decrypted = phpthemis_scell_seal_decrypt($master_key, $empty);
+    }
+
+    // Secure Cell - Seal - passphrase
+
+    public function testSealPassphrase() {
+        $passphrase = 'my secret key';
+        $message = 'precious message';
+        $context = 'unit testing now';
+
+        $encrypted = phpthemis_scell_seal_encrypt_with_passphrase($passphrase, $message, $context);
+        $this->assertGreaterThan(strlen($message), strlen($encrypted));
+        $decrypted = phpthemis_scell_seal_decrypt_with_passphrase($passphrase, $encrypted, $context);
+        $this->assertEquals($decrypted, $message);
+    }
+
+    public function testSealPassphraseIncorrectPassphrase() {
+        $passphrase_alice = 'eclair twiddling expel eggplant';
+        $passphrase_bob = 'drove valuables mortality faceplate';
+        $message = 'precious message';
+        $context = 'unit testing now';
+
+        $encrypted = phpthemis_scell_seal_encrypt_with_passphrase($passphrase_alice, $message, $context);
+        $this->expectException(Exception::class);
+        $decrypted = phpthemis_scell_seal_decrypt_with_passphrase($passphrase_bob, $encrypted, $context);
+    }
+
+    public function testSealPassphraseInvalidMessage() {
+        $passphrase = 'my secret key';
+        $message = 'precious message';
+        $context = 'unit testing now';
+
+        $encrypted = phpthemis_scell_seal_encrypt_with_passphrase($passphrase, $message, $context);
+        $this->expectException(Exception::class);
+        $decrypted = phpthemis_scell_seal_decrypt_with_passphrase($passphrase, $encrypted.'X', $context);
+    }
+
+    public function testSealPassphraseIncorrectContext() {
+        $passphrase = 'my secret key';
+        $message = 'precious message';
+        $context_alice = 'secure cell';
+        $context_bob = 'peanut butter';
+
+        $encrypted = phpthemis_scell_seal_encrypt_with_passphrase($passphrase, $message, $context_alice);
+        $this->expectException(Exception::class);
+        $decrypted = phpthemis_scell_seal_decrypt_with_passphrase($passphrase, $encrypted, $context_bob);
+    }
+
+    public function testSealPassphraseNoContext() {
+        $passphrase = 'my secret key';
+        $message = 'precious message';
+        $context = 'unit testing now';
+
+        // Omitted context is the same as null or empty context
+        $encrypted  = phpthemis_scell_seal_encrypt_with_passphrase($passphrase, $message);
+        $decrypted1 = phpthemis_scell_seal_decrypt_with_passphrase($passphrase, $encrypted, NULL);
+        $decrypted2 = phpthemis_scell_seal_decrypt_with_passphrase($passphrase, $encrypted, '');
+
+        $this->assertEquals($decrypted1, $message);
+        $this->assertEquals($decrypted2, $message);
+    }
+
+    /** @dataProvider InvalidValues */
+    public function testSealPassphraseNoKeyEncrypt($empty) {
+        $this->expectException(Exception::class);
+        $encrypted = phpthemis_scell_seal_encrypt_with_passphrase($empty, 'precious message');
+    }
+
+    /** @dataProvider InvalidValues */
+    public function testSealPassphraseNoMessageEncrypt($empty) {
+        $master_key = phpthemis_gen_sym_key();
+        $this->expectException(Exception::class);
+        $encrypted = phpthemis_scell_seal_encrypt_with_passphrase('passphrase', $empty);
+    }
+
+    /** @dataProvider InvalidValues */
+    public function testSealPassphraseNoKeyDecrypt($empty) {
+        $master_key = phpthemis_gen_sym_key();
+        $encrypted = phpthemis_scell_seal_encrypt_with_passphrase('passphrase', 'precious message');
+        $this->expectException(Exception::class);
+        $decrypted = phpthemis_scell_seal_decrypt_with_passphrase($empty, $encrypted);
+    }
+
+    /** @dataProvider InvalidValues */
+    public function testSealPassphraseNoMessageDecrypt($empty) {
+        $encrypted = phpthemis_scell_seal_encrypt_with_passphrase('passphrase', 'precious message');
+        $this->expectException(Exception::class);
+        $decrypted = phpthemis_scell_seal_decrypt_with_passphrase('passphrase', $empty);
+    }
+
     /**
      * @dataProvider SealWithContextProvider
      */
