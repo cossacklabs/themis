@@ -16,11 +16,11 @@
 #
 
 if (!extension_loaded('phpthemis')) {
-    die("phpthemis extention not loaded!\n");
+    die("phpthemis extension not loaded!\n");
 }
 
 if (count($argv) < 3 || count($argv) > 5) {
-    die("usage: {enc|dec} <passphrase> <message> [context]>\n");
+    die("usage: {enc|dec} <passphrase> <message> [context]\n");
 }
 
 $command = $argv[1];
