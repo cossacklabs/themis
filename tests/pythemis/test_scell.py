@@ -16,7 +16,9 @@
 
 import unittest
 
-from pythemis.scell import SCellTokenProtect, SCellSeal, SCellContextImprint
+from pythemis.scell import SCellSeal, SCellSealPassphrase
+from pythemis.scell import SCellTokenProtect, SCellContextImprint
+from pythemis.skeygen import GenerateSymmetricKey
 from pythemis.exception import ThemisError
 
 
@@ -24,18 +26,24 @@ class BaseSCellTestMixin(unittest.TestCase):
     def setUp(self):
         self.context = b'some context'
         self.incorrect_context = b'another context'
-        self.key = b'some key'
-        self.incorrect_key = b'another key'
+        self.passphrase = u'pretty please with a cherry on top'
+        self.incorrect_passphrase = u'this passphrase is incorrect'
+        self.key = GenerateSymmetricKey()
+        self.incorrect_key = GenerateSymmetricKey()
         self.data = b'some data'
         # zero length
         self.incorrect_data = b''
         super(BaseSCellTestMixin, self).setUp()
 
 
-class SCellSealTest(BaseSCellTestMixin):
+class SCellSealMasterKeyTest(BaseSCellTestMixin):
     def test_init(self):
         with self.assertRaises(ThemisError):
             SCellSeal(None)
+        with self.assertRaises(ThemisError):
+            SCellSeal(b'')
+        with self.assertRaises(ThemisError):
+            SCellSeal(u'passphrase')
 
     def test_encrypt_decrypt(self):
         scell1 = SCellSeal(self.key)
@@ -51,6 +59,7 @@ class SCellSealTest(BaseSCellTestMixin):
     def test_encrypt_decrypt_context(self):
         scell1 = SCellSeal(self.key)
         scell2 = SCellSeal(self.key)
+        scell3 = SCellSeal(self.incorrect_key)
         self.assertEqual(
             self.data,
             scell2.decrypt(scell1.encrypt(self.data, self.context),
@@ -64,13 +73,87 @@ class SCellSealTest(BaseSCellTestMixin):
             scell1.encrypt(self.incorrect_data, self.context)
 
         with self.assertRaises(ThemisError):
-            SCellSeal(self.incorrect_key).decrypt(encrypted, self.context)
+            scell3.decrypt(encrypted, self.context)
 
+    def api_compatibility(self):
+        # Make sure positional API uses keys, not passphrases
+        scell_old = SCellSeal(self.key)
+        scell_new = SCellSeal(key=self.key)
+
+        encrypted = scell_old.encrypt(self.data)
+        decrypted = scell_new.decrypt(encrypted)
+
+        self.assertEqual(self.data, decrypted)
+
+
+class SCellSealPassphraseTest(BaseSCellTestMixin):
+    def test_init(self):
+        with self.assertRaises(ThemisError):
+            SCellSeal(passphrase=None)
+        with self.assertRaises(ThemisError):
+            SCellSeal(passphrase=b'')
+        with self.assertRaises(ThemisError):
+            SCellSeal(passphrase=u'')
+        # Both Unicode and encoded bytes are okay
+        SCellSeal(passphrase=u'passphrase')
+        SCellSeal(passphrase=u'passphrase'.encode('UTF-16'))
+
+    def test_init_weird(self):
+        # You can't use key and passphrase simultaneously
+        with self.assertRaises(ThemisError):
+            SCellSeal(key=self.key, passphrase=u'secrets')
+        # You can't omit both of them too
+        with self.assertRaises(ThemisError):
+            SCellSeal()
+
+    def test_encrypt_decrypt(self):
+        scell1 = SCellSeal(passphrase=self.passphrase)
+        scell2 = SCellSeal(passphrase=self.passphrase)
+        scell3 = SCellSeal(passphrase=self.incorrect_passphrase)
+        self.assertEqual(self.data, scell2.decrypt(scell1.encrypt(self.data)))
+        with self.assertRaises(ThemisError):
+            scell3.decrypt(scell1.encrypt(self.data))
+
+        with self.assertRaises(ThemisError):
+            scell1.encrypt(self.incorrect_data)
+
+    def test_encrypt_decrypt_context(self):
+        scell1 = SCellSeal(passphrase=self.passphrase)
+        scell2 = SCellSeal(passphrase=self.passphrase)
+        scell3 = SCellSeal(passphrase=self.incorrect_passphrase)
+        self.assertEqual(
+            self.data,
+            scell2.decrypt(scell1.encrypt(self.data, self.context),
+                           self.context))
+
+        encrypted = scell1.encrypt(self.data, self.context)
+        with self.assertRaises(ThemisError):
+            scell2.decrypt(encrypted, self.incorrect_context)
+
+        with self.assertRaises(ThemisError):
+            scell1.encrypt(self.incorrect_data, self.context)
+
+        with self.assertRaises(ThemisError):
+            scell3.decrypt(encrypted, self.context)
+
+    def api_compatibility(self):
+        # Make sure positional API uses passphrases
+        scell_old = SCellSealPassphrase(self.passphrase)
+        scell_new = SCellSeal(passphrase=self.passphrase)
+
+        encrypted = scell_old.encrypt(self.data)
+        decrypted = scell_new.decrypt(encrypted)
+
+        self.assertEqual(self.data, decrypted)
 
 class SCellContextImprintTest(BaseSCellTestMixin):
     def test_init(self):
         with self.assertRaises(ThemisError):
             SCellContextImprint(None)
+        with self.assertRaises(ThemisError):
+            SCellContextImprint(b'')
+        with self.assertRaises(ThemisError):
+            SCellContextImprint(u'passphrase')
 
     def test_encrypt_decrypt(self):
         scell1 = SCellContextImprint(self.key)
@@ -90,11 +173,25 @@ class SCellContextImprintTest(BaseSCellTestMixin):
         with self.assertRaises(ThemisError):
             scell1.encrypt(self.incorrect_data, self.context)
 
+    def api_compatibility(self):
+        # Make sure positional API uses keys, not passphrases
+        scell_old = SCellContextImprint(self.key)
+        scell_new = SCellContextImprint(key=self.key)
+
+        encrypted = scell_old.encrypt(self.data)
+        decrypted = scell_new.decrypt(encrypted)
+
+        self.assertEqual(self.data, decrypted)
+
 
 class SCellTokenProtectTest(BaseSCellTestMixin):
     def test_init(self):
         with self.assertRaises(ThemisError):
             SCellTokenProtect(None)
+        with self.assertRaises(ThemisError):
+            SCellTokenProtect(b'')
+        with self.assertRaises(ThemisError):
+            SCellTokenProtect(u'passphrase')
 
     def test_encrypt_decrypt(self):
         scell1 = SCellTokenProtect(self.key)
@@ -128,6 +225,16 @@ class SCellTokenProtectTest(BaseSCellTestMixin):
 
         with self.assertRaises(ThemisError):
             scell1.encrypt(self.incorrect_data, self.context)
+
+    def api_compatibility(self):
+        # Make sure positional API uses keys, not passphrases
+        scell_old = SCellTokenProtect(self.key)
+        scell_new = SCellTokenProtect(key=self.key)
+
+        encrypted, token = scell_old.encrypt(self.data)
+        decrypted = scell_new.decrypt(encrypted, token)
+
+        self.assertEqual(self.data, decrypted)
 
 
 if __name__ == '__main__':
