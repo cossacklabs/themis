@@ -5,58 +5,68 @@ from pythemis.scell import SCellSeal
 from pythemis.scell import SCellContextImprint
 
 message = "i'm plain text message"
-passwrd = b"pass"
 context = b"somecontext"
+master_key = base64.b64decode("bm8sIHRoaXMgaXMgbm90IGEgdmFsaWQgbWFzdGVyIGtleQ==")
+passphrase = b"secret passphrase"
 
 
-print("running secure cell in seal mode...")
+print("# Secure Cell in Seal mode\n")
 
-scell = SCellSeal(passwrd)
+print("## Master key API\n")
 
-print("encrypting...")
-encrypted_message = scell.encrypt(message.encode('utf-8'))
-encrypted_message_string = base64.b64encode(encrypted_message)
-print(encrypted_message_string)
+scellMK = SCellSeal(key=master_key)
 
-print("decrypting from binary... --> ")
-decrypted_message = scell.decrypt(encrypted_message).decode('utf-8')
-print(decrypted_message)
+encrypted_message = scellMK.encrypt(message.encode('utf-8'))
+print("Encrypted: " + base64.b64encode(encrypted_message).decode('ascii'))
 
+decrypted_message = scellMK.decrypt(encrypted_message).decode('utf-8')
+print("Decrypted: " + decrypted_message)
 
-print("decrypting from string... --> ")
-# check https://themis.cossacklabs.com/data-simulator/cell/
-encrypted_message_string = "AAEBQAwAAAAQAAAADQAAACoEM9MbJzEu2RDuRoGzcQgN4jchys0q+LLcsbfUDV3M2eg/FhygH1ns"
+# Visit https://docs.cossacklabs.com/simulator/data-cell/
+print("")
+encrypted_message_string = "AAEBQAwAAAAQAAAAEQAAAC0fCd2mOIxlDUORXz8+qCKuHCXcDii4bMF8OjOCOqsKEdV4+Ga2xTHPMupFvg=="
 decrypted_message_from_string = base64.b64decode(encrypted_message_string)
-decrypted_message = scell.decrypt(decrypted_message_from_string).decode('utf-8')
-print(decrypted_message)
+decrypted_message = scellMK.decrypt(decrypted_message_from_string).decode('utf-8')
+print("Decrypted (simulator): " + decrypted_message)
+
+print("")
 
 
-print("----------------------")
-print("running secure cell in token protect mode...")
+print("## Passphrase API\n")
 
-scellTP = SCellTokenProtect(passwrd)
+scellPW = SCellSeal(passphrase=passphrase)
 
-print("encrypting...")
-encrypted_message, additional_auth_data = scellTP.encrypt(message.encode('utf-8'))
-encrypted_message_string = base64.b64encode(encrypted_message)
-print(encrypted_message_string)
+encrypted_message = scellPW.encrypt(message.encode('utf-8'))
+print("Encrypted: " + base64.b64encode(encrypted_message).decode('ascii'))
 
-print("decrypting from binary... --> ")
-decrypted_message = scellTP.decrypt(encrypted_message, additional_auth_data).decode('utf-8')
-print(decrypted_message)
+decrypted_message = scellPW.decrypt(encrypted_message).decode('utf-8')
+print("Decrypted: " + decrypted_message)
+
+print("")
 
 
-print("----------------------")
-print("running secure cell in context imprint mode...")
+print("# Secure Cell in Token Protect mode\n")
+
+scellTP = SCellTokenProtect(key=master_key)
+
+encrypted_message, auth_token = scellTP.encrypt(message.encode('utf-8'))
+print("Encrypted:  " + base64.b64encode(encrypted_message).decode('ascii'))
+print("Auth token: " + base64.b64encode(auth_token).decode('ascii'))
+
+decrypted_message = scellTP.decrypt(encrypted_message, auth_token).decode('utf-8')
+print("Decrypted:  " + decrypted_message)
+
+print("")
 
 
-scellCI = SCellContextImprint(passwrd)
+print("# Secure Cell in Context Imprint mode\n")
 
-print("encrypting...")
+scellCI = SCellContextImprint(key=master_key)
+
 encrypted_message = scellCI.encrypt(message.encode('utf-8'), context)
-encrypted_message_string = base64.b64encode(encrypted_message)
-print(encrypted_message_string)
+print("Encrypted: " + base64.b64encode(encrypted_message).decode('ascii'))
 
-print("decrypting from binary... --> ")
 decrypted_message = scellCI.decrypt(encrypted_message, context).decode('utf-8')
-print(decrypted_message)
+print("Decrypted: " + decrypted_message)
+
+print("")

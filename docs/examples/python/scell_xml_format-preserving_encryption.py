@@ -22,7 +22,7 @@ import xml.etree.ElementTree as ET
 import base64
 from pythemis import scell
 
-password = b"password"
+master_key = base64.b64decode(b'c2NlbGxfeG1sX2Zvcm1hdC1wcmVzZXJ2aW5nX2VuY3J5cHRpb24ucHk=')
 
 
 def encrypt_children(node, context):
@@ -52,7 +52,7 @@ def decrypt_children(node, context):
 # encoding file 'example_data/test.xml' and save result to encoded_data.xml
 tree = ET.parse('example_data/test.xml')
 root = tree.getroot()
-encryptor = scell.SCellSeal(password)
+encryptor = scell.SCellSeal(master_key)
 encrypt_children(root, "")
 tree.write("encoded_data.xml")
 
