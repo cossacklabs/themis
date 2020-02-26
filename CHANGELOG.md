@@ -37,6 +37,7 @@ _Code:_
 - **Go**
 
   - New function `keys.NewSymmetricKey()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Worked around a bug in CGo 1.11 and earlier causing panics when `bytes.Buffer` is passed to GoThemis methods ([#595](https://github.com/cossacklabs/themis/pull/595)).
 
 - **iOS and macOS**
 
