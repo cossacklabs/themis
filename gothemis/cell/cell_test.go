@@ -5,6 +5,8 @@ import (
 	"crypto/rand"
 	"math/big"
 	"testing"
+
+	"github.com/cossacklabs/themis/gothemis/keys"
 )
 
 func testProtect(mode int, context []byte, t *testing.T) {
@@ -95,4 +97,25 @@ func TestProtect(t *testing.T) {
 	testProtect(ModeTokenProtect, context, t)
 
 	testProtect(ModeContextImprint, context, t)
+}
+
+// Regression test for cgo false positive, resolved in go 1.12:
+// https://github.com/golang/go/issues/14210
+func TestBufferGo111(t *testing.T) {
+	key, err := keys.NewSymmetricKey()
+	if err != nil {
+		t.Fatalf("cannot generate master key: %v", err)
+	}
+	sc := New(key.Value, ModeSeal)
+
+	data := []byte("some data to encrypt")
+
+	b := new(bytes.Buffer)
+	b.WriteString("context in bytes.Buffer")
+	context := b.Bytes()
+
+	_, _, err = sc.Protect(data, context)
+	if err != nil {
+		t.Errorf("Protect() failed: %v", err)
+	}
 }
