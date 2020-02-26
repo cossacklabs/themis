@@ -126,8 +126,10 @@ static bool decrypt(const void *key, size_t key_len, const void *prot, size_t pr
 */
 import "C"
 import (
-	"github.com/cossacklabs/themis/gothemis/errors"
 	"unsafe"
+
+	"github.com/cossacklabs/themis/gothemis/errors"
+	"github.com/cossacklabs/themis/gothemis/utils"
 )
 
 // Secure Cell operation mode.
@@ -155,7 +157,7 @@ type SecureCell struct {
 
 // New makes a new Secure Cell with master key and specified mode.
 func New(key []byte, mode int) *SecureCell {
-	return &SecureCell{key, mode}
+	return &SecureCell{utils.SanitizeBuffer(key), mode}
 }
 
 func missing(data []byte) bool {
@@ -181,6 +183,9 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 			return nil, nil, errors.New("Context is mandatory for context imprint mode")
 		}
 	}
+
+	data = utils.SanitizeBuffer(data)
+	context = utils.SanitizeBuffer(context)
 
 	var ctx unsafe.Pointer
 	var ctxLen C.size_t
@@ -255,6 +260,10 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 			return nil, errors.New("Additional data is mandatory for token protect mode")
 		}
 	}
+
+	protectedData = utils.SanitizeBuffer(protectedData)
+	additionalData = utils.SanitizeBuffer(additionalData)
+	context = utils.SanitizeBuffer(context)
 
 	var add, ctx unsafe.Pointer = nil, nil
 	var addLen, ctxLen C.size_t = 0, 0

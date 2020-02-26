@@ -53,9 +53,11 @@ static int compare_result(void *ctx)
 */
 import "C"
 import (
-	"github.com/cossacklabs/themis/gothemis/errors"
 	"runtime"
 	"unsafe"
+
+	"github.com/cossacklabs/themis/gothemis/errors"
+	"github.com/cossacklabs/themis/gothemis/utils"
 )
 
 // Secure comparison result.
@@ -115,6 +117,7 @@ func (sc *SecureCompare) Append(secret []byte) error {
 	if nil == secret || 0 == len(secret) {
 		return errors.New("Secret was not provided")
 	}
+	secret = utils.SanitizeBuffer(secret)
 	if !bool(C.compare_append(sc.ctx, unsafe.Pointer(&secret[0]), C.size_t(len(secret)))) {
 		return errors.New("Failed to append secret")
 	}
@@ -147,6 +150,7 @@ func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 	if nil == data || 0 == len(data) {
 		return nil, errors.New("Data was not provided")
 	}
+	data = utils.SanitizeBuffer(data)
 
 	if !bool(C.compare_proceed_size(sc.ctx, unsafe.Pointer(&data[0]), C.size_t(len(data)), &outLen)) {
 		return nil, errors.New("Failed to get output size")
