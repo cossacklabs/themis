@@ -3,9 +3,10 @@ package message
 import (
 	"bytes"
 	"crypto/rand"
-	"github.com/cossacklabs/themis/gothemis/keys"
 	"math/big"
 	"testing"
+
+	"github.com/cossacklabs/themis/gothemis/keys"
 )
 
 func testWrap(keytype int, t *testing.T) {
@@ -123,4 +124,180 @@ func TestMessageWrap(t *testing.T) {
 func TestMessageSign(t *testing.T) {
 	testSign(keys.TypeEC, t)
 	testSign(keys.TypeRSA, t)
+}
+
+func BenchmarkSMessageEncryptRSA(b *testing.B) {
+	keyPair, err := keys.New(keys.TypeRSA)
+	if err != nil {
+		b.Errorf("failed to generate key pair: %v", err)
+	}
+	plaintext := make([]byte, 1024)
+	_, err = rand.Read(plaintext)
+	if err != nil {
+		b.Errorf("failed to generate plaintext: %v", err)
+	}
+	smessage := New(keyPair.Private, keyPair.Public)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := smessage.Wrap(plaintext)
+		if err != nil {
+			b.Errorf("encryption failed: %v", err)
+		}
+	}
+}
+
+func BenchmarkSMessageEncryptEC(b *testing.B) {
+	keyPair, err := keys.New(keys.TypeEC)
+	if err != nil {
+		b.Errorf("failed to generate key pair: %v", err)
+	}
+	plaintext := make([]byte, 1024)
+	_, err = rand.Read(plaintext)
+	if err != nil {
+		b.Errorf("failed to generate plaintext: %v", err)
+	}
+	smessage := New(keyPair.Private, keyPair.Public)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := smessage.Wrap(plaintext)
+		if err != nil {
+			b.Errorf("encryption failed: %v", err)
+		}
+	}
+}
+
+func BenchmarkSMessageDecryptRSA(b *testing.B) {
+	keyPair, err := keys.New(keys.TypeRSA)
+	if err != nil {
+		b.Errorf("failed to generate key pair: %v", err)
+	}
+	plaintext := make([]byte, 1024)
+	_, err = rand.Read(plaintext)
+	if err != nil {
+		b.Errorf("failed to generate plaintext: %v", err)
+	}
+	smessage := New(keyPair.Private, keyPair.Public)
+	encrypted, err := smessage.Wrap(plaintext)
+	if err != nil {
+		b.Errorf("failed to encrypt message: %v", err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := smessage.Unwrap(encrypted)
+		if err != nil {
+			b.Errorf("decryption failed: %v", err)
+		}
+	}
+}
+
+func BenchmarkSMessageDecryptEC(b *testing.B) {
+	keyPair, err := keys.New(keys.TypeEC)
+	if err != nil {
+		b.Errorf("failed to generate key pair: %v", err)
+	}
+	plaintext := make([]byte, 1024)
+	_, err = rand.Read(plaintext)
+	if err != nil {
+		b.Errorf("failed to generate plaintext: %v", err)
+	}
+	smessage := New(keyPair.Private, keyPair.Public)
+	encrypted, err := smessage.Wrap(plaintext)
+	if err != nil {
+		b.Errorf("failed to encrypt message: %v", err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := smessage.Unwrap(encrypted)
+		if err != nil {
+			b.Errorf("decryption failed: %v", err)
+		}
+	}
+}
+
+func BenchmarkSMessageSignRSA(b *testing.B) {
+	keyPair, err := keys.New(keys.TypeRSA)
+	if err != nil {
+		b.Errorf("failed to generate key pair: %v", err)
+	}
+	plaintext := make([]byte, 1024)
+	_, err = rand.Read(plaintext)
+	if err != nil {
+		b.Errorf("failed to generate plaintext: %v", err)
+	}
+	smessage := New(keyPair.Private, keyPair.Public)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := smessage.Sign(plaintext)
+		if err != nil {
+			b.Errorf("signing failed: %v", err)
+		}
+	}
+}
+
+func BenchmarkSMessageSignEC(b *testing.B) {
+	keyPair, err := keys.New(keys.TypeEC)
+	if err != nil {
+		b.Errorf("failed to generate key pair: %v", err)
+	}
+	plaintext := make([]byte, 1024)
+	_, err = rand.Read(plaintext)
+	if err != nil {
+		b.Errorf("failed to generate plaintext: %v", err)
+	}
+	smessage := New(keyPair.Private, keyPair.Public)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := smessage.Sign(plaintext)
+		if err != nil {
+			b.Errorf("signing failed: %v", err)
+		}
+	}
+}
+
+func BenchmarkSMessageVerifyRSA(b *testing.B) {
+	keyPair, err := keys.New(keys.TypeRSA)
+	if err != nil {
+		b.Errorf("failed to generate key pair: %v", err)
+	}
+	plaintext := make([]byte, 1024)
+	_, err = rand.Read(plaintext)
+	if err != nil {
+		b.Errorf("failed to generate plaintext: %v", err)
+	}
+	smessage := New(keyPair.Private, keyPair.Public)
+	encrypted, err := smessage.Sign(plaintext)
+	if err != nil {
+		b.Errorf("failed to sign message: %v", err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := smessage.Verify(encrypted)
+		if err != nil {
+			b.Errorf("verification failed: %v", err)
+		}
+	}
+}
+
+func BenchmarkSMessageVerifyEC(b *testing.B) {
+	keyPair, err := keys.New(keys.TypeEC)
+	if err != nil {
+		b.Errorf("failed to generate key pair: %v", err)
+	}
+	plaintext := make([]byte, 1024)
+	_, err = rand.Read(plaintext)
+	if err != nil {
+		b.Errorf("failed to generate plaintext: %v", err)
+	}
+	smessage := New(keyPair.Private, keyPair.Public)
+	encrypted, err := smessage.Sign(plaintext)
+	if err != nil {
+		b.Errorf("failed to sign message: %v", err)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, err := smessage.Verify(encrypted)
+		if err != nil {
+			b.Errorf("verification failed: %v", err)
+		}
+	}
 }
