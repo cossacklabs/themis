@@ -16,6 +16,8 @@
 
 #include <common/sput.h>
 
+#include "input_buffer_test.hpp"
+#include "secret_bytes_test.hpp"
 #include "secure_cell_test.hpp"
 #include "secure_comparator_test.hpp"
 #include "secure_message_test.hpp"
@@ -31,6 +33,8 @@ int main()
         themispp::secure_session_test::run_secure_session_test();
         themispp::secure_session_test::run_secure_comparator_test();
         themispp::secure_rand_test::run_secure_rand_test();
+        themispp::input_buffer_test::run_input_buffer_test();
+        themispp::secret_bytes_test::run_secret_bytes_test();
         sput_finish_testing();
         return sput_get_return_value();
     } catch (const std::exception& e) {

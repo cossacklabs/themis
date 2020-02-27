@@ -42,6 +42,7 @@ PenaltyReturnTypeOnItsOwnLine: 10000
 PenaltyExcessCharacter: 4
 PointerAlignment: Left
 ReflowComments: false
+Standard: Auto
 TabWidth: 8
 UseTab: Never
 ...
