@@ -11,13 +11,11 @@ extern const int GOTHEMIS_SSESSION_SEND_OUTPUT_TO_PEER;
 */
 import "C"
 import (
+	"github.com/cossacklabs/themis/gothemis/errors"
+	"github.com/cossacklabs/themis/gothemis/keys"
 	"reflect"
 	"runtime"
 	"unsafe"
-
-	"github.com/cossacklabs/themis/gothemis/errors"
-	"github.com/cossacklabs/themis/gothemis/keys"
-	"github.com/cossacklabs/themis/gothemis/utils"
 )
 
 // Secure Session states.
@@ -62,17 +60,15 @@ func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*Secu
 	if nil == id || 0 == len(id) {
 		return nil, errors.New("Failed to creating secure session object with empty id")
 	}
-	id = utils.SanitizeBuffer(id)
 
 	if nil == signKey || 0 == len(signKey.Value) {
 		return nil, errors.New("Failed to creating secure session object with empty sign key")
 	}
-	signKeyValue := utils.SanitizeBuffer(signKey.Value)
 
 	ss.ctx = C.session_init(unsafe.Pointer(&id[0]),
 		C.size_t(len(id)),
-		unsafe.Pointer(&signKeyValue[0]),
-		C.size_t(len(signKeyValue)))
+		unsafe.Pointer(&signKey.Value[0]),
+		C.size_t(len(signKey.Value)))
 
 	if ss.ctx == nil {
 		return nil, errors.New("Failed to create secure session object")
@@ -155,7 +151,6 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 	if nil == data || 0 == len(data) {
 		return nil, errors.New("Data was not provided")
 	}
-	data = utils.SanitizeBuffer(data)
 
 	if !bool(C.session_wrap_size(&ss.ctx,
 		unsafe.Pointer(&data[0]),
@@ -184,7 +179,6 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	if nil == data || 0 == len(data) {
 		return nil, false, errors.New("Data was not provided")
 	}
-	data = utils.SanitizeBuffer(data)
 
 	res := C.session_unwrap_size(&ss.ctx,
 		unsafe.Pointer(&data[0]),

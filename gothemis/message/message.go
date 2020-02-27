@@ -63,11 +63,9 @@ static bool process(const void *priv, size_t priv_len, const void *public, size_
 */
 import "C"
 import (
-	"unsafe"
-
 	"github.com/cossacklabs/themis/gothemis/errors"
 	"github.com/cossacklabs/themis/gothemis/keys"
-	"github.com/cossacklabs/themis/gothemis/utils"
+	"unsafe"
 )
 
 const (
@@ -94,9 +92,7 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 	if nil == message || 0 == len(message) {
 		return nil, errors.New("No message was provided")
 	}
-	message = utils.SanitizeBuffer(message)
 
-	var privateValue, peerPublicValue []byte
 	var priv, pub unsafe.Pointer
 	var privLen, pubLen C.size_t
 	priv = nil
@@ -104,20 +100,14 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 	privLen = 0
 	pubLen = 0
 
-	if private != nil {
-		privateValue = utils.SanitizeBuffer(private.Value)
-	}
-	if len(privateValue) != 0 {
-		priv = unsafe.Pointer(&privateValue[0])
-		privLen = C.size_t(len(privateValue))
+	if nil != private && 0 < len(private.Value) {
+		priv = unsafe.Pointer(&private.Value[0])
+		privLen = C.size_t(len(private.Value))
 	}
 
-	if peerPublic != nil {
-		peerPublicValue = utils.SanitizeBuffer(peerPublic.Value)
-	}
-	if len(peerPublicValue) != 0 {
-		pub = unsafe.Pointer(&peerPublicValue[0])
-		pubLen = C.size_t(len(peerPublicValue))
+	if nil != peerPublic && 0 < len(peerPublic.Value) {
+		pub = unsafe.Pointer(&peerPublic.Value[0])
+		pubLen = C.size_t(len(peerPublic.Value))
 	}
 
 	var outputLength C.size_t
