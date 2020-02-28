@@ -14,7 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+import six
 import warnings
+
 from ctypes import cdll, c_int, byref, create_string_buffer, string_at
 from ctypes.util import find_library
 
@@ -58,7 +61,7 @@ class SCellSeal(object):
         if not key:
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Seal) failed creating")
-        if not isinstance(key, type(b'')):
+        if not isinstance(key, six.binary_type):
             raise SecureCellError('master key must be "bytes"')
         self.key = key
 
@@ -118,9 +121,9 @@ class SCellSealPassphrase(SCellSeal):
         """
         if not passphrase:
             raise SecureCellError('passphrase cannot be empty')
-        if isinstance(passphrase, type(u'')):
+        if isinstance(passphrase, six.text_type):
             passphrase = passphrase.encode(encoding)
-        elif isinstance(passphrase, type(b'')):
+        elif isinstance(passphrase, six.binary_type):
             pass
         else:
             raise SecureCellError('passphrase must be either "unicode" or "bytes"')
@@ -192,7 +195,7 @@ class SCellTokenProtect(object):
         if not key:
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Token Protect) failed creating")
-        if not isinstance(key, type(b'')):
+        if not isinstance(key, six.binary_type):
             raise SecureCellError('master key must be "bytes"')
         self.key = key
 
@@ -243,7 +246,7 @@ class SCellContextImprint(object):
         if not key:
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Context Imprint) failed creating")
-        if not isinstance(key, type(b'')):
+        if not isinstance(key, six.binary_type):
             raise SecureCellError('master key must be "bytes"')
         self.key = key
 
