@@ -31,7 +31,7 @@ class SecureCellError(ThemisError):
 
 
 class SCellSeal(object):
-    def __new__(cls, key=None, passphrase=None):
+    def __new__(cls, key=None, passphrase=None, **kwargs):
         """
         Make a new Secure Cell in Seal mode.
 
@@ -102,7 +102,7 @@ class SCellSeal(object):
 
 
 class SCellSealPassphrase(SCellSeal):
-    def __new__(cls, passphrase):
+    def __new__(cls, passphrase, **kwargs):
         """
         Make a new Secure Cell in Seal mode with a passphrase.
 
@@ -110,7 +110,7 @@ class SCellSealPassphrase(SCellSeal):
         """
         return object.__new__(SCellSealPassphrase)
 
-    def __init__(self, passphrase):
+    def __init__(self, passphrase, encoding='utf-8'):
         """
         Make a new Secure Cell in Seal mode with a passphrase.
 
@@ -119,7 +119,7 @@ class SCellSealPassphrase(SCellSeal):
         if not passphrase:
             raise SecureCellError('passphrase cannot be empty')
         if isinstance(passphrase, type(u'')):
-            passphrase = passphrase.encode('UTF-8')
+            passphrase = passphrase.encode(encoding)
         elif isinstance(passphrase, type(b'')):
             pass
         else:

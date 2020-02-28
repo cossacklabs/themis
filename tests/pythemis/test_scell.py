@@ -94,9 +94,16 @@ class SCellSealPassphraseTest(BaseSCellTestMixin):
             SCellSeal(passphrase=b'')
         with self.assertRaises(ThemisError):
             SCellSeal(passphrase=u'')
-        # Both Unicode and encoded bytes are okay
-        SCellSeal(passphrase=u'passphrase')
-        SCellSeal(passphrase=u'passphrase'.encode('UTF-16'))
+
+    def test_encoding(self):
+        scell1 = SCellSeal(passphrase=u'passphrase'.encode('utf-16'))
+        scell2 = SCellSeal(passphrase=u'passphrase', encoding='utf-16')
+
+        data12 = scell1.decrypt(scell2.encrypt(self.data))
+        data21 = scell2.decrypt(scell1.encrypt(self.data))
+
+        self.assertEqual(self.data, data12)
+        self.assertEqual(self.data, data21)
 
     def test_init_weird(self):
         # You can't use key and passphrase simultaneously
@@ -145,6 +152,7 @@ class SCellSealPassphraseTest(BaseSCellTestMixin):
         decrypted = scell_new.decrypt(encrypted)
 
         self.assertEqual(self.data, decrypted)
+
 
 class SCellContextImprintTest(BaseSCellTestMixin):
     def test_init(self):
