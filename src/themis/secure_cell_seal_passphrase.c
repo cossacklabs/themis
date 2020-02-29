@@ -77,8 +77,9 @@ static themis_status_t themis_auth_sym_derive_encryption_key_pbkdf2(
 {
     themis_status_t res = THEMIS_FAIL;
     uint8_t salt[THEMIS_AUTH_SYM_PBKDF2_SALT_LENGTH] = {0};
-    struct themis_scell_pbkdf2_context kdf = {0};
+    struct themis_scell_pbkdf2_context kdf;
 
+    memset(&kdf, 0, sizeof(kdf));
     kdf.iteration_count = THEMIS_AUTH_SYM_PBKDF2_ITERATIONS;
     kdf.salt = salt;
     kdf.salt_length = sizeof(salt);
@@ -169,13 +170,14 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase_(const uint8_t* 
     uint8_t auth_tag[THEMIS_AUTH_SYM_AUTH_TAG_LENGTH] = {0};
     uint8_t derived_key[THEMIS_AUTH_SYM_KEY_LENGTH / 8] = {0};
     size_t derived_key_length = sizeof(derived_key);
-    struct themis_scell_auth_token_passphrase hdr = {0};
+    struct themis_scell_auth_token_passphrase hdr;
 
     /* Message length is currently stored as 32-bit integer, sorry */
     if (message_length > UINT32_MAX) {
         return THEMIS_INVALID_PARAMETER;
     }
 
+    memset(&hdr, 0, sizeof(hdr));
     hdr.alg = THEMIS_AUTH_SYM_PASSPHRASE_ALG;
     hdr.iv = iv;
     hdr.iv_length = sizeof(iv);
@@ -283,8 +285,9 @@ static themis_status_t themis_auth_sym_derive_decryption_key_pbkdf2(
     size_t derived_key_length)
 {
     themis_status_t res = THEMIS_FAIL;
-    struct themis_scell_pbkdf2_context kdf = {0};
+    struct themis_scell_pbkdf2_context kdf;
 
+    memset(&kdf, 0, sizeof(kdf));
     res = themis_read_scell_pbkdf2_context(hdr, &kdf);
     if (res != THEMIS_SUCCESS) {
         return res;
@@ -343,11 +346,12 @@ themis_status_t themis_auth_sym_decrypt_message_with_passphrase_(const uint8_t* 
                                                                  size_t* message_length)
 {
     themis_status_t res = THEMIS_FAIL;
-    struct themis_scell_auth_token_passphrase hdr = {0};
+    struct themis_scell_auth_token_passphrase hdr;
     /* Use maximum possible length, not the default one */
     uint8_t derived_key[THEMIS_AUTH_SYM_MAX_KEY_LENGTH / 8] = {0};
     size_t derived_key_length = sizeof(derived_key);
 
+    memset(&hdr, 0, sizeof(hdr));
     res = themis_read_scell_auth_token_passphrase(auth_token, auth_token_length, &hdr);
     if (res != THEMIS_SUCCESS) {
         return res;
