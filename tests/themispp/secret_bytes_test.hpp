@@ -61,10 +61,15 @@ static inline void test_secret_bytes()
     other_vector.push_back(9);
     secret_bytes move_vector(std::move(other_vector));
     sput_fail_unless(move_vector.size() == 2, "move std::vector", __LINE__);
+    // GCC says "potential null pointer dereference" but that's false positive:
+    // "move_vector.data()" is never null because "move_vector.size() == 2".
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnull-dereference"
     // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-pointer-arithmetic)
     sput_fail_unless(move_vector.data()[0] == 8 && move_vector.data()[1] == 9,
                      "move std::vector: data",
                      __LINE__);
+#pragma GCC diagnostic pop
     // NOLINTNEXTLINE(bugprone-use-after-move)
     sput_fail_unless(other_vector.empty(), "move std::vector: moved", __LINE__);
 #endif
