@@ -18,6 +18,8 @@
 
 ZEND_FUNCTION(phpthemis_scell_seal_encrypt);
 ZEND_FUNCTION(phpthemis_scell_seal_decrypt);
+ZEND_FUNCTION(phpthemis_scell_seal_encrypt_with_passphrase);
+ZEND_FUNCTION(phpthemis_scell_seal_decrypt_with_passphrase);
 ZEND_FUNCTION(phpthemis_scell_token_protect_encrypt);
 ZEND_FUNCTION(phpthemis_scell_token_protect_decrypt);
 ZEND_FUNCTION(phpthemis_scell_context_imprint_encrypt);
