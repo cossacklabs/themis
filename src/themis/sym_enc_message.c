@@ -183,9 +183,44 @@ static inline size_t default_auth_token_size(void)
            + THEMIS_AUTH_SYM_AUTH_TAG_LENGTH;
 }
 
+#define THEMIS_AUTH_SYM_MAX_KDF_CONTEXT_LENGTH sizeof(uint64_t)
+
+static themis_status_t themis_auth_sym_kdf_context(uint32_t message_length,
+                                                   uint8_t* kdf_context,
+                                                   size_t* kdf_context_length)
+{
+    if (*kdf_context_length < sizeof(uint32_t)) {
+        *kdf_context_length = sizeof(uint32_t);
+        return THEMIS_BUFFER_TOO_SMALL;
+    }
+    stream_write_uint32LE(kdf_context, message_length);
+    *kdf_context_length = sizeof(uint32_t);
+    return THEMIS_SUCCESS;
+}
+
+#ifdef SCELL_COMPAT
+/*
+ * Themis 0.9.6 incorrectly used 64-bit message length for this field.
+ */
+static themis_status_t themis_auth_sym_kdf_context_compat(uint32_t message_length,
+                                                          uint8_t* kdf_context,
+                                                          size_t* kdf_context_length)
+{
+    if (*kdf_context_length < sizeof(uint64_t)) {
+        *kdf_context_length = sizeof(uint64_t);
+        return THEMIS_BUFFER_TOO_SMALL;
+    }
+    stream_write_uint64LE(kdf_context, message_length);
+    *kdf_context_length = sizeof(uint64_t);
+    return THEMIS_SUCCESS;
+}
+#endif
+
 static themis_status_t themis_auth_sym_derive_encryption_key(const struct themis_scell_auth_token_key* hdr,
                                                              const uint8_t* key,
                                                              size_t key_length,
+                                                             const uint8_t* kdf_context,
+                                                             size_t kdf_context_length,
                                                              const uint8_t* user_context,
                                                              size_t user_context_length,
                                                              uint8_t* derived_key,
@@ -211,13 +246,11 @@ static themis_status_t themis_auth_sym_derive_encryption_key(const struct themis
      */
     switch (soter_alg_kdf(hdr->alg)) {
     case SOTER_SYM_NOKDF: {
-        uint8_t message_length_label[sizeof(uint32_t)] = {0};
-        stream_write_uint32LE(message_length_label, hdr->message_length);
         return themis_sym_kdf(key,
                               key_length,
                               THEMIS_SYM_KDF_KEY_LABEL,
-                              message_length_label,
-                              sizeof(message_length_label),
+                              kdf_context,
+                              kdf_context_length,
                               user_context,
                               user_context_length,
                               derived_key,
@@ -227,57 +260,6 @@ static themis_status_t themis_auth_sym_derive_encryption_key(const struct themis
         return THEMIS_FAIL;
     }
 }
-
-#ifdef SCELL_COMPAT
-static themis_status_t themis_auth_sym_derive_encryption_key_compat(
-    const struct themis_scell_auth_token_key* hdr,
-    const uint8_t* key,
-    size_t key_length,
-    const uint8_t* user_context,
-    size_t user_context_length,
-    uint8_t* derived_key,
-    size_t* derived_key_length)
-{
-    size_t required_length = soter_alg_key_length(hdr->alg);
-    switch (required_length) {
-    case SOTER_SYM_256_KEY_LENGTH / 8:
-    case SOTER_SYM_192_KEY_LENGTH / 8:
-    case SOTER_SYM_128_KEY_LENGTH / 8:
-        break;
-    default:
-        return THEMIS_FAIL;
-    }
-    /* Internal buffer must have suitable size */
-    if (*derived_key_length < required_length) {
-        return THEMIS_FAIL;
-    }
-    *derived_key_length = required_length;
-    /*
-     * SOTER_SYM_NOKDF means Soter KDF in this context.
-     * This is the only KDF allowed for master key API.
-     */
-    switch (soter_alg_kdf(hdr->alg)) {
-    case SOTER_SYM_NOKDF: {
-        /*
-         * Themis 0.9.6 incorrectly used 64-bit size_t (as uint64_) for this field.
-         */
-        uint8_t message_length_label[sizeof(uint64_t)] = {0};
-        stream_write_uint64LE(message_length_label, hdr->message_length);
-        return themis_sym_kdf(key,
-                              key_length,
-                              THEMIS_SYM_KDF_KEY_LABEL,
-                              message_length_label,
-                              sizeof(message_length_label),
-                              user_context,
-                              user_context_length,
-                              derived_key,
-                              *derived_key_length);
-    }
-    default:
-        return THEMIS_FAIL;
-    }
-}
-#endif
 
 themis_status_t themis_auth_sym_encrypt_message_(const uint8_t* key,
                                                  size_t key_length,
@@ -291,9 +273,11 @@ themis_status_t themis_auth_sym_encrypt_message_(const uint8_t* key,
                                                  size_t* encrypted_message_length)
 {
     themis_status_t res = THEMIS_FAIL;
+    uint8_t kdf_context[THEMIS_AUTH_SYM_MAX_KDF_CONTEXT_LENGTH] = {0};
     uint8_t iv[THEMIS_AUTH_SYM_IV_LENGTH] = {0};
     uint8_t auth_tag[THEMIS_AUTH_SYM_AUTH_TAG_LENGTH] = {0};
     uint8_t derived_key[THEMIS_AUTH_SYM_KEY_LENGTH / 8] = {0};
+    size_t kdf_context_length = sizeof(kdf_context);
     size_t derived_key_length = sizeof(derived_key);
     struct themis_scell_auth_token_key hdr = {0};
 
@@ -309,9 +293,15 @@ themis_status_t themis_auth_sym_encrypt_message_(const uint8_t* key,
     hdr.auth_tag_length = sizeof(auth_tag);
     hdr.message_length = (uint32_t)message_length;
 
+    res = themis_auth_sym_kdf_context(hdr.message_length, kdf_context, &kdf_context_length);
+    if (res != THEMIS_SUCCESS) {
+        goto error;
+    }
     res = themis_auth_sym_derive_encryption_key(&hdr,
                                                 key,
                                                 key_length,
+                                                kdf_context,
+                                                kdf_context_length,
                                                 user_context,
                                                 user_context_length,
                                                 derived_key,
@@ -414,7 +404,9 @@ themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
     themis_status_t res = THEMIS_FAIL;
     struct themis_scell_auth_token_key hdr = {0};
     /* Use maximum possible length, not the default one */
+    uint8_t kdf_context[THEMIS_AUTH_SYM_MAX_KDF_CONTEXT_LENGTH] = {0};
     uint8_t derived_key[THEMIS_AUTH_SYM_MAX_KEY_LENGTH / 8] = {0};
+    size_t kdf_context_length = sizeof(kdf_context);
     size_t derived_key_length = sizeof(derived_key);
 
     res = themis_read_scell_auth_token_key(auth_token, auth_token_length, &hdr);
@@ -430,9 +422,15 @@ themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
         return THEMIS_FAIL;
     }
 
+    res = themis_auth_sym_kdf_context(hdr.message_length, kdf_context, &kdf_context_length);
+    if (res != THEMIS_SUCCESS) {
+        goto error;
+    }
     res = themis_auth_sym_derive_encryption_key(&hdr,
                                                 key,
                                                 key_length,
+                                                kdf_context,
+                                                kdf_context_length,
                                                 user_context,
                                                 user_context_length,
                                                 derived_key,
@@ -460,13 +458,20 @@ themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
      */
 #ifdef SCELL_COMPAT
     if (res != THEMIS_SUCCESS && res != THEMIS_BUFFER_TOO_SMALL && sizeof(size_t) == sizeof(uint64_t)) {
-        res = themis_auth_sym_derive_encryption_key_compat(&hdr,
-                                                           key,
-                                                           key_length,
-                                                           user_context,
-                                                           user_context_length,
-                                                           derived_key,
-                                                           &derived_key_length);
+        kdf_context_length = sizeof(kdf_context);
+        res = themis_auth_sym_kdf_context_compat(hdr.message_length, kdf_context, &kdf_context_length);
+        if (res != THEMIS_SUCCESS) {
+            goto error;
+        }
+        res = themis_auth_sym_derive_encryption_key(&hdr,
+                                                    key,
+                                                    key_length,
+                                                    kdf_context,
+                                                    kdf_context_length,
+                                                    user_context,
+                                                    user_context_length,
+                                                    derived_key,
+                                                    &derived_key_length);
         if (res != THEMIS_SUCCESS) {
             goto error;
         }
