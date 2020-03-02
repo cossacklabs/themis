@@ -106,6 +106,15 @@ class ScellTest extends TestCase {
         $this->assertEquals($decrypted2, $message);
     }
 
+    public function testSealMasterKeyIsNotPassphrase() {
+        $master_key = phpthemis_gen_sym_key();
+        $message = 'precious message';
+
+        $encrypted = phpthemis_scell_seal_encrypt($master_key, $message);
+        $this->expectException(Exception::class);
+        $decrypted = phpthemis_scell_seal_decrypt_with_passphrase($master_key, $encrypted);
+    }
+
     /** @dataProvider InvalidValues */
     public function testSealMasterKeyNoKeyEncrypt($empty) {
         $this->expectException(Exception::class);
@@ -192,6 +201,15 @@ class ScellTest extends TestCase {
 
         $this->assertEquals($decrypted1, $message);
         $this->assertEquals($decrypted2, $message);
+    }
+
+    public function testSealPassphraseIsNotMasterKey() {
+        $passphrase = 'my secret key';
+        $message = 'precious message';
+
+        $encrypted = phpthemis_scell_seal_encrypt_with_passphrase($passphrase, $message);
+        $this->expectException(Exception::class);
+        $decrypted = phpthemis_scell_seal_decrypt($passphrase, $encrypted);
     }
 
     /** @dataProvider InvalidValues */
