@@ -6,9 +6,7 @@ Pod::Spec.new do |s|
     s.homepage = "https://cossacklabs.com"
     s.license = { :type => 'Apache 2.0'}
 
-    # TODO: use tag version, current update is just a dependency hotfix (26 sept 2019) 
-    #s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" } # <-- this is good
-    s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "0.12.1" }        # <-- this is bad and temp
+    s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
     s.module_name = 'themis'
