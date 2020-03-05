@@ -37,7 +37,7 @@ static inline uint32_t soter_alg_without_kdf(uint32_t alg)
 
 static inline size_t soter_alg_kdf_context_length(uint32_t alg)
 {
-    switch (alg & SOTER_SYM_KDF_MASK) {
+    switch (soter_alg_kdf(alg)) {
     case SOTER_SYM_PBKDF2:
         return themis_scell_pbkdf2_context_min_size + THEMIS_AUTH_SYM_PBKDF2_SALT_LENGTH;
     case SOTER_SYM_NOKDF:
@@ -45,18 +45,6 @@ static inline size_t soter_alg_kdf_context_length(uint32_t alg)
     default:
         return 0;
     }
-}
-
-static inline size_t soter_alg_key_length(uint32_t alg)
-{
-    return (alg & SOTER_SYM_KEY_LENGTH_MASK) / 8;
-}
-
-static inline bool soter_alg_reserved_bits_valid(uint32_t alg)
-{
-    static const uint32_t used_bits = SOTER_SYM_KEY_LENGTH_MASK | SOTER_SYM_PADDING_MASK
-                                      | SOTER_SYM_KDF_MASK | SOTER_SYM_ALG_MASK;
-    return (alg & ~used_bits) == 0;
 }
 
 static inline size_t default_auth_token_size(void)
@@ -137,7 +125,7 @@ static themis_status_t themis_auth_sym_derive_encryption_key(struct themis_scell
     }
     *derived_key_length = required_length;
 
-    switch (hdr->alg & SOTER_SYM_KDF_MASK) {
+    switch (soter_alg_kdf(hdr->alg)) {
     case SOTER_SYM_PBKDF2:
         return themis_auth_sym_derive_encryption_key_pbkdf2(hdr,
                                                             passphrase,
@@ -317,7 +305,7 @@ static themis_status_t themis_auth_sym_derive_decryption_key(
     }
     *derived_key_length = required_length;
 
-    switch (hdr->alg & SOTER_SYM_KDF_MASK) {
+    switch (soter_alg_kdf(hdr->alg)) {
     case SOTER_SYM_PBKDF2:
         return themis_auth_sym_derive_decryption_key_pbkdf2(hdr,
                                                             passphrase,

@@ -103,7 +103,7 @@ _Code:_
 - **PHP**
 
   - New function `phpthemis_gen_sym_key()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
-  - PHPThemis now supports _passphrase API_ of Secure Cell in Seal mode ([#594](https://github.com/cossacklabs/themis/pull/594)).
+  - PHPThemis now supports _passphrase API_ of Secure Cell in Seal mode ([#594](https://github.com/cossacklabs/themis/pull/594), [#601](https://github.com/cossacklabs/themis/pull/601)).
 
     ```php
     $encrypted = phpthemis_scell_seal_encrypt_with_passphrase('passphrase', 'message');
