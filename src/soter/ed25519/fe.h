@@ -13,14 +13,14 @@ typedef uint64_t crypto_uint64;
 
 typedef crypto_int32 fe[10];
 
-#if defined(WITH_UBSAN) && defined(__clang__)
+#if defined(WITH_UBSAN) && (defined(__clang__) && !defined(__AFL_COMPILER))
 #define SOTER_ED25519_NO_UBSAN __attribute__((no_sanitize( \
     "shift", \
     "unsigned-integer-overflow", \
     "implicit-integer-sign-change", \
     "implicit-unsigned-integer-truncation", \
     "implicit-signed-integer-truncation")))
-#elif defined(WITH_UBSAN) && defined(__GNUC__)
+#elif defined(WITH_UBSAN) && (defined(__clang__) || defined(__GNUC__))
 #define SOTER_ED25519_NO_UBSAN __attribute__((no_sanitize("undefined")))
 #else
 #define SOTER_ED25519_NO_UBSAN
