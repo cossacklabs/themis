@@ -186,17 +186,85 @@ jobs:
   fuzzing:
     name: AFL fuzzing
     runs-on: ubuntu-latest
+    env:
+      FUZZ_TIMEOUT: 30s
+      WITH_FATAL_SANITIZERS: yes
     steps:
       - name: Install system dependencies
         run: |
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          # 32-bit toolchain is required to run AFL with some sanitizers
+          sudo dpkg --add-architecture i386
           sudo apt update
-          sudo apt install --yes gcc make libssl-dev afl
+          sudo apt install --yes gcc make zip \
+              afl gcc-multilib libc6-dev:i386 \
+              libssl-dev:amd64 libssl-dev:i386
+          # AFL needs proper core dumps to be available, write them to files
+          sudo sh -c 'echo core > /proc/sys/kernel/core_pattern'
       - name: Check out code
         uses: actions/checkout@v1
-      - name: Build fuzzying framework
-        run: make fuzz
-      # TODO: actually run fuzzers for limited time, not just build them
+      - name: Build fuzzing framework (Clang)
+        if: always()
+        run: make clean fuzz AFL_CC=afl-clang
+      - name: Build fuzzing framework (GCC)
+        if: always()
+        run: make clean fuzz AFL_CC=afl-gcc
+      # Don't run them for too long, we aim for low-hanging fruit here.
+      # Ideally we'd like to wait for AFL to make one cycle and stop.
+      - name: Fuzzing with Address Sanitizer
+        if: always()
+        run: |
+          make clean fuzz AFL_CC=afl-gcc WITH_ASAN=1
+          for tool in tools/afl/input/*
+          do
+            timeout -s INT "$FUZZ_TIMEOUT" \
+              make fuzz AFL_CC=afl-gcc WITH_ASAN=1 \
+                AFL_FUZZ="afl-fuzz -m 1024" \
+                FUZZ_BIN=$(basename $tool) \
+            | cat -u || true
+          done
+          # actions/upload-artifact cannot handle ":" in paths used by AFL,
+          # archive the report manually to prevent massive stalls
+          cd build/afl
+          zip -r results-asan.zip output
+          cd -
+          echo
+          echo Analyzing results...
+          echo
+          ./tools/afl/analyze_crashes.sh --no-debugger
+      - name: Upload ASan results
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: Core fuzzer report (ASan)
+          path: build/afl/results-asan.zip
+      - name: Fuzzing with Undefined Behavior Sanitizer
+        if: always()
+        run: |
+          make clean fuzz AFL_CC=afl-clang WITH_UBSAN=1
+          for tool in tools/afl/input/*
+          do
+            timeout -s INT "$FUZZ_TIMEOUT" \
+              make fuzz AFL_CC=afl-clang WITH_UBSAN=1 \
+                FUZZ_BIN=$(basename $tool) \
+            | cat -u || true
+          done
+          # actions/upload-artifact cannot handle ":" in paths used by AFL,
+          # archive the report manually to prevent massive stalls
+          cd build/afl
+          zip -r results-ubsan.zip output
+          cd -
+          echo
+          echo Analyzing results...
+          echo
+          ./tools/afl/analyze_crashes.sh --no-debugger
+      - name: Upload UBSan results
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: Core fuzzer report (UBSan)
+          path: build/afl/results-ubsan.zip
+      # TODO: 32-bit builds WITH_UBSAN=1
 
   leak-check:
     name: Memory leaks
