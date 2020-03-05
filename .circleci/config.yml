@@ -125,6 +125,12 @@ jobs:
             cd benches/themis
             cargo bench -- 'Secure Cell .* master key/4 KB'
       - run:
+          name: Themis Core - run benchmarks - Secure Cell (passphrase)
+          command: |
+            cd benches/themis
+            # These are awfully slow due to KDF
+            cargo bench -- 'Secure Cell .* passphrase/4 KB' --sample-size 10
+      - run:
           name: Pack benchmark report
           command: |
             cd benches/themis/target
@@ -220,7 +226,6 @@ jobs:
     docker:
       - image: cossacklabs/android-build:2019.01
     environment:
-      GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
       # NIST STS tests tend to fail in Docker environment
       NO_NIST_STS: 1
       WITH_FATAL_WARNINGS: yes
@@ -287,8 +292,6 @@ jobs:
       - run: make ENGINE=boringssl BUILD_PATH=build_with_boringssl prepare_tests_basic
       - run: make BUILD_PATH=cover_build COVERAGE=y prepare_tests_basic
       - run: make prepare_tests_all
-      - run: mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
-      - run: rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT/
       - run: lcov --directory . --zerocounters
       # run only if CIRCLE_PR_NUMBER variable is not set (it's not pull request and COVERALLS_TOKEN will be set via circleCI for non-PR build) and COVERALLS_TOKEN is set
       # we should calculate coverage for gothemis and send report before sending coverage of main C part
@@ -306,7 +309,6 @@ jobs:
 #     - run: make clean_themispp_test && CXX="clang++" CFLAGS="-std=c++17" make themispp_test && make test_cpp
       - run: make test_python
       - run: make test_ruby
-      - run: make test_go
       - run: make test_rust
       - run: $HOME/valgrind/bin/valgrind build/tests/soter_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
       - run: $HOME/valgrind/bin/valgrind build/tests/themis_test 2>&1 | grep "ERROR SUMMARY\|definitely lost\|indirectly lost\|possibly lost" | awk '{sum += $4} END {print $0; if ( sum > 0 ) { exit 1 } }'
@@ -324,6 +326,102 @@ jobs:
           paths:
             - ~/.cargo
             - ~/.rustup
+
+  gothemis:
+    docker:
+      - image: cossacklabs/build:ubuntu-bionic
+    environment:
+      GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
+      WITH_FATAL_WARNINGS: yes
+    steps:
+      - run:
+          name: Install Go versions
+          command: |
+            # These is not much difference between fetching these binaries from
+            # CircleCI cache and downloading them from scratch: both take around
+            # 30 seconds. But CircleCI caches are immutable and tricky to update.
+            #
+            # You can find latest versions and their hashes here:
+            #     https://golang.org/dl/
+            # We support latest stable releases (as declared by Go team)
+            # as well as some historical versions on best-effort basis
+            go_versions=(
+              "1.14 1.14    https://dl.google.com/go/go1.14.linux-amd64.tar.gz    08df79b46b0adf498ea9f320a0f23d6ec59e9003660b4c9c1ce8e5e2c6f823ca"
+              "1.13 1.13.8  https://dl.google.com/go/go1.13.8.linux-amd64.tar.gz  0567734d558aef19112f2b2873caa0c600f1b4a5827930eb5a7f35235219e9d8"
+              "1.12 1.12.17 https://dl.google.com/go/go1.12.17.linux-amd64.tar.gz a53dd476129d496047487bfd53d021dd17e0c96895865a0e7d0469ce3db8c8d2"
+              "1.11 1.11.13 https://dl.google.com/go/go1.11.13.linux-amd64.tar.gz 50fe8e13592f8cf22304b9c4adfc11849a2c3d281b1d7e09c924ae24874c6daa"
+            )
+            mkdir -p "$HOME/go-install"
+            for v in "${go_versions[@]}"
+            do
+                set -- $v
+                install_name="$HOME/go-install/go-$1"
+                tarball_name="$HOME/go-install/go-$2.tar.gz"
+                tarball_url="$3"
+                expect_hash="$4"
+                # Download the tarball only if we do not have it already installed
+                if [[ ! -e "$install_name" ]]
+                then
+                    wget -O "$tarball_name" "$tarball_url"
+                    actual_hash=$(sha256sum "$tarball_name" | awk '{print $1}')
+                    if [[ "$actual_hash" != "$expect_hash" ]]
+                    then
+                        echo 1>&2 "Go distribution checksum mismatch!"
+                        echo 1>&2 "  actual: $actual_hash"
+                        echo 1>&2 "  expect: $expect_hash"
+                        exit 1
+                    fi
+                    # Go tarball already contains a "go" directory, but we want
+                    # it to be named differently to allow parallel installs
+                    echo "Unpacking $tarball_name into $install_name..."
+                    tar -C "$HOME/go-install" -xzf "$tarball_name"
+                    mv "$HOME/go-install/go" "$install_name"
+                fi
+            done
+      - checkout
+      - run:
+          name: Init submodules
+          command: |
+            git reset --hard HEAD
+            git submodule sync
+            git submodule update --init
+      - run:
+          name: Install Themis Core
+          command: |
+            make
+            sudo make install
+      - run:
+          name: Prepare tests
+          command: make prepare_tests_all
+      - run:
+          name: Install GoThemis
+          command: |
+            mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
+            cp -ar gothemis/* $HOME/go/src/$GOTHEMIS_IMPORT
+      - run:
+          name: GoThemis unit tests (Go 1.14)
+          command: |
+            export PATH="$HOME/go-install/go-1.14/bin:$PATH"
+            go version
+            make test_go
+      - run:
+          name: GoThemis unit tests (Go 1.13)
+          command: |
+            export PATH="$HOME/go-install/go-1.13/bin:$PATH"
+            go version
+            make test_go
+      - run:
+          name: GoThemis unit tests (Go 1.12)
+          command: |
+            export PATH="$HOME/go-install/go-1.12/bin:$PATH"
+            go version
+            make test_go
+      - run:
+          name: GoThemis unit tests (Go 1.11)
+          command: |
+            export PATH="$HOME/go-install/go-1.11/bin:$PATH"
+            go version
+            make test_go
 
   jsthemis:
     docker:
@@ -608,6 +706,7 @@ workflows:
       - benchmark
       - android
       - x86_64
+      - gothemis
       - jsthemis
       - php5
       - php70
@@ -630,6 +729,7 @@ workflows:
       - benchmark
       - android
       - x86_64
+      - gothemis
       - jsthemis
       - php5
       - php70

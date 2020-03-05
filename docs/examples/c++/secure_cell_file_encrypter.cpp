@@ -46,7 +46,7 @@ int main(int argc, char* argv[]){
 
   std::vector<uint8_t> data(length);
   in.read((char*)(&data[0]), length);
-  themispp::secure_cell_seal_t sc(std::vector<uint8_t>(argv[2], argv[2]+strlen(argv[2])));
+  themispp::secure_cell_seal_with_passphrase sc(argv[2]);
   if(std::string(argv[1]) == "d"){
     //decrypt_file;
     try{

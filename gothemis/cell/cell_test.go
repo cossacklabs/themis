@@ -4,7 +4,12 @@ import (
 	"bytes"
 	"crypto/rand"
 	"math/big"
+	"runtime"
+	"strconv"
+	"strings"
 	"testing"
+
+	"github.com/cossacklabs/themis/gothemis/keys"
 )
 
 func testProtect(mode int, context []byte, t *testing.T) {
@@ -95,4 +100,51 @@ func TestProtect(t *testing.T) {
 	testProtect(ModeTokenProtect, context, t)
 
 	testProtect(ModeContextImprint, context, t)
+}
+
+// Regression test for cgo false positive, resolved in go 1.12:
+// https://github.com/golang/go/issues/14210
+func TestBufferGo111(t *testing.T) {
+	key, err := keys.NewSymmetricKey()
+	if err != nil {
+		t.Fatalf("cannot generate master key: %v", err)
+	}
+	sc := New(key.Value, ModeSeal)
+
+	data := []byte("some data to encrypt")
+
+	b := new(bytes.Buffer)
+	b.WriteString("context in bytes.Buffer")
+	context := b.Bytes()
+
+	// Code that follows panics before Go 1.12
+	defer func() {
+		if msg := recover(); msg != nil {
+			major, minor, _ := goVersion()
+			if major >= 1 && minor >= 12 {
+				t.Errorf("Protect() panicked: %v", msg)
+			}
+		}
+	}()
+	_, _, err = sc.Protect(data, context)
+	if err != nil {
+		t.Errorf("Protect() failed: %v", err)
+	}
+}
+
+func goVersion() (int, int, int) {
+	version := runtime.Version()
+	version = strings.TrimPrefix(version, "go")
+	components := strings.Split(version, ".")
+	var major, minor, patch int
+	if len(components) >= 1 {
+		major, _ = strconv.Atoi(components[0])
+	}
+	if len(components) >= 2 {
+		minor, _ = strconv.Atoi(components[1])
+	}
+	if len(components) >= 3 {
+		patch, _ = strconv.Atoi(components[2])
+	}
+	return major, minor, patch
 }

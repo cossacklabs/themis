@@ -309,7 +309,7 @@ describe('wasm-themis', function() {
                 let result = cell.encrypt(testInput)
                 result.token[8] = 256 - result.token[8]
                 assert.throws(() => cell.decrypt(result.data, result.token),
-                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                    expectError(ThemisErrorCode.FAIL)
                 )
             })
             it('handles type mismatches', function() {
