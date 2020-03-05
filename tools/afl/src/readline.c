@@ -19,8 +19,6 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#define MAX_SANE_LENGTH (50 * 1024 * 1024)
-
 int read_line_binary(FILE* input, uint8_t** out_bytes, size_t* out_size)
 {
     uint8_t length_bytes[4] = {0};

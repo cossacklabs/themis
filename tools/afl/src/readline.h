@@ -21,6 +21,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#define MAX_SANE_LENGTH (50 * 1024 * 1024)
+
 /**
  * Read a byte string for a file, prefixed with 4-byte length (big-endian).
  *

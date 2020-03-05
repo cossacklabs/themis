@@ -65,13 +65,16 @@ int main(int argc, char** argv)
     /*
      * 32-bit systems normally do not support more than 2 GB of virtual memory
      * and allocations for more than 2 GB are always failing. However, builds
-     * with enabled Address Sanitizer usually abort when trying to allocate
-     * more that 2 GB. We would like to avoid false positives.
+     * with enabled Address Sanitizer on 32-bit systems usually abort when
+     * trying to allocate even modest 100 MB. Avoid such false positives.
      */
 
     if (sizeof(size_t) == sizeof(uint32_t)) {
-        if (passphrase_size > INT32_MAX || user_context_size > INT32_MAX || message_size > INT32_MAX) {
-            fprintf(stderr, "cannot allocate over 2 GB on 32-bit system\n");
+        bool insane_passphrase = (passphrase_size > MAX_SANE_LENGTH);
+        bool insane_context = (user_context_size > MAX_SANE_LENGTH);
+        bool insane_message = (message_size > MAX_SANE_LENGTH);
+        if (insane_passphrase || insane_context || insane_message) {
+            fprintf(stderr, "cannot allocate too much on 32-bit system\n");
             return 1;
         }
     }
