@@ -279,13 +279,14 @@ themis_status_t themis_auth_sym_encrypt_message_(const uint8_t* key,
     uint8_t derived_key[THEMIS_AUTH_SYM_KEY_LENGTH / 8] = {0};
     size_t kdf_context_length = sizeof(kdf_context);
     size_t derived_key_length = sizeof(derived_key);
-    struct themis_scell_auth_token_key hdr = {0};
+    struct themis_scell_auth_token_key hdr;
 
     /* Message length is currently stored as 32-bit integer, sorry */
     if (message_length > UINT32_MAX) {
         return THEMIS_INVALID_PARAMETER;
     }
 
+    memset(&hdr, 0, sizeof(hdr));
     hdr.alg = THEMIS_AUTH_SYM_ALG;
     hdr.iv = iv;
     hdr.iv_length = sizeof(iv);
@@ -402,13 +403,14 @@ themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
                                                  size_t* message_length)
 {
     themis_status_t res = THEMIS_FAIL;
-    struct themis_scell_auth_token_key hdr = {0};
+    struct themis_scell_auth_token_key hdr;
     /* Use maximum possible length, not the default one */
     uint8_t kdf_context[THEMIS_AUTH_SYM_MAX_KDF_CONTEXT_LENGTH] = {0};
     uint8_t derived_key[THEMIS_AUTH_SYM_MAX_KEY_LENGTH / 8] = {0};
     size_t kdf_context_length = sizeof(kdf_context);
     size_t derived_key_length = sizeof(derived_key);
 
+    memset(&hdr, 0, sizeof(hdr));
     res = themis_read_scell_auth_token_key(auth_token, auth_token_length, &hdr);
     if (res != THEMIS_SUCCESS) {
         return res;
