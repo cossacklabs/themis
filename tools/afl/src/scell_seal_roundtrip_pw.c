@@ -63,9 +63,22 @@ int main(int argc, char** argv)
     fclose(input);
 
     /*
-     * Allocate memory. This might fail on 32-bit systems and we won't find
-     * anything interesting. We're not particuarly interested in content of
-     * those messages so use all zeros (predicatable and forces allocation).
+     * 32-bit systems normally do not support more than 2 GB of virtual memory
+     * and allocations for more than 2 GB are always failing. However, builds
+     * with enabled Address Sanitizer usually abort when trying to allocate
+     * more that 2 GB. We would like to avoid false positives.
+     */
+
+    if (sizeof(size_t) == sizeof(uint32_t)) {
+        if (passphrase_size > INT32_MAX || user_context_size > INT32_MAX || message_size > INT32_MAX) {
+            fprintf(stderr, "cannot allocate over 2 GB on 32-bit system\n");
+            return 1;
+        }
+    }
+
+    /*
+     * Allocate memory. We're not particuarly interested in content of those
+     * messages so use all zeros (predicatable and forces allocation).
      */
 
     uint8_t* passphrase_bytes = NULL;
