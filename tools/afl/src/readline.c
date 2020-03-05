@@ -16,7 +16,10 @@
 
 #include "readline.h"
 
+#include <errno.h>
 #include <stdlib.h>
+
+#define MAX_SANE_LENGTH (50 * 1024 * 1024)
 
 int read_line_binary(FILE* input, uint8_t** out_bytes, size_t* out_size)
 {
@@ -24,6 +27,7 @@ int read_line_binary(FILE* input, uint8_t** out_bytes, size_t* out_size)
     uint32_t length = 0;
 
     if (!input || !out_bytes || !out_size) {
+        errno = EINVAL;
         return -1;
     }
 
@@ -31,6 +35,9 @@ int read_line_binary(FILE* input, uint8_t** out_bytes, size_t* out_size)
     *out_size = 0;
 
     if (fread(length_bytes, 1, 4, input) != 4) {
+        if (!errno) {
+            errno = EFAULT;
+        }
         return -1;
     }
 
@@ -39,14 +46,28 @@ int read_line_binary(FILE* input, uint8_t** out_bytes, size_t* out_size)
     length = (length << 8) | length_bytes[2];
     length = (length << 8) | length_bytes[3];
 
+    /*
+     * We use correct buffer lengths in our input data, but don't let AFL
+     * mess with that by tricking us into allocating gigabytes before we
+     * even started using Themis. This fails with ASAN on 32-bit archs.
+     */
+    if (length > MAX_SANE_LENGTH) {
+        errno = ERANGE;
+        return -1;
+    }
+
     *out_bytes = malloc(length);
     if (!*out_bytes) {
+        errno = ENOMEM;
         return -1;
     }
 
     if (fread(*out_bytes, 1, length, input) != length) {
         free(*out_bytes);
         *out_bytes = NULL;
+        if (!errno) {
+            errno = EIO;
+        }
         return -1;
     }
 

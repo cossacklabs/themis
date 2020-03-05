@@ -32,6 +32,7 @@ options:
                         instead of quietly producing an automated report
     -d, --debugger <path>
                         set the debugger to use, we support GDB and LLDB
+        --no-debugger   disable backtrace printing, just check for failures
 EOF
 }
 
@@ -59,6 +60,11 @@ do
         fi
         DEBUGGER="$2"
         shift 2
+        ;;
+
+      --no-debugger)
+        DEBUGGER=/dev/null
+        shift
         ;;
 
       *)
@@ -99,7 +105,10 @@ fi
 DEBUGGER_TYPE=
 
 check_debugger() {
-    if "$DEBUGGER" --version 2>/dev/null | grep --quiet lldb
+    if [ "$DEBUGGER" = "/dev/null" ]
+    then
+        DEBUGGER_TYPE=none
+    elif "$DEBUGGER" --version 2>/dev/null | grep --quiet lldb
     then
         DEBUGGER_TYPE=lldb
     elif "$DEBUGGER" --version 2>/dev/null | grep --quiet gdb
@@ -145,6 +154,18 @@ Run:
 
     $tool $file
 
+Input (base64):
+
+EOF
+    # BSD and GNU have an ongoing feud over flag names...
+    if base64 --wrap 64 </dev/null >/dev/null 2>/dev/null
+    then
+        cat "$file" | base64 --wrap 64
+    else
+        cat "$file" | base64 --break 64
+    fi
+    cat <<EOF
+
 Debugger output:
 
 EOF
@@ -188,7 +209,7 @@ EOF
         ;;
 
       *)
-        "$tool" "$file"
+        "$tool" "$file" || true
         ;;
     esac
 
@@ -200,6 +221,7 @@ EOF
 #
 
 print_banner=no
+have_failures=no
 
 for tool in $(ls "$FUZZ_BIN_PATH" 2>/dev/null)
 do
@@ -240,12 +262,14 @@ do
             echo
 
             analyze_crash "$FUZZ_BIN_PATH/$tool" "$FUZZ_OUTPUT_PATH/$tool/$run/crashes/$crash"
+
+            have_failures=yes
         done
     done
 done
 
 # Exit with non-zero status if we have printed a crash report
-if [ "$print_banner" = "yes" ] && [ "$INTERACTIVE" = "no" ]
+if [ "$have_failures" = "yes" ] && [ "$INTERACTIVE" = "no" ]
 then
     exit 1
 fi

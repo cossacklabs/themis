@@ -21,6 +21,7 @@ FUZZ_PATH = tools/afl
 FUZZ_BIN_PATH = $(BIN_PATH)/afl
 FUZZ_SRC_PATH = $(FUZZ_PATH)/src
 FUZZ_THEMIS_PATH = $(BIN_PATH)/afl-themis
+FUZZ_SOTER_LIB  = $(FUZZ_THEMIS_PATH)/$(LIBSOTER_A)
 FUZZ_THEMIS_LIB = $(FUZZ_THEMIS_PATH)/$(LIBTHEMIS_A)
 
 FUZZ_SOURCES = $(wildcard $(FUZZ_SRC_PATH)/*.c)
@@ -30,13 +31,28 @@ FUZZ_TOOLS = $(addprefix $(FUZZ_BIN_PATH)/,$(notdir $(wildcard $(FUZZ_PATH)/inpu
 FUZZ_OBJS  = $(patsubst $(FUZZ_SRC_PATH)/%.c,$(FUZZ_BIN_PATH)/%.o,$(FUZZ_SOURCES))
 FUZZ_UTILS = $(filter-out $(addsuffix .o,$(FUZZ_TOOLS)),$(FUZZ_OBJS))
 
-AFL_CFLAGS  += -I$(FUZZ_SRC_PATH)
-AFL_LDFLAGS += -L$(FUZZ_THEMIS_PATH) -lthemis -lsoter
+# Build sources with access to fuzzing headers and link tools to $(FUZZ_THEMIS_LIB).
+$(FUZZ_OBJS): CFLAGS += -I$(FUZZ_SRC_PATH)
+$(FUZZ_TOOLS): LDFLAGS += $(FUZZ_THEMIS_LIB) $(FUZZ_SOTER_LIB) $(CRYPTO_ENGINE_LDFLAGS)
 
-# We would like to use all other compilation flags as well, but some of them
-# (like warnings) might be supported by CC but not AFL_CC. Filter them out.
-AFL_CFLAGS  := $(AFL_CFLAGS)  $(foreach flag,$(CFLAGS),$(if $(call supported,$(flag),$(AFL_CC)),$(flag),))
-AFL_LDFLAGS := $(AFL_LDFLAGS) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS)
+# afl-clang is partially configured via environment variables. For one, it likes to
+# talk on stdout so tell it to pipe down a bit. Additionally, address sanitizer builds
+# are usually 32-bit (to keep virtual memory at bay, read AFL docs to learn more).
+AFL_CC_ENV += AFL_QUIET=1
+ifdef WITH_ASAN
+AFL_CC_ENV += AFL_USE_ASAN=1
+$(FUZZ_OBJS): CFLAGS += -m32
+$(FUZZ_TOOLS): LDFLAGS += -m32
+endif
+# We do not pass CFLAGS or LDFLAGS to child processes, add the flags again for them
+# to be used during recursive make invocation for building Themis.
+ifeq ($(AFL_USE_ASAN),1)
+CFLAGS  += -m32
+LDFLAGS += -m32
+endif
+# afl-gcc uses AFL_CC environment variable itself. Do not export it to avoid silly
+# infinite loops of afl-gcc calling afl-gcc. (afl-clang is fine though.)
+unexport AFL_CC
 
 # We don't really track dependencies of $(FUZZ_THEMIS_LIB) here,
 # so ask our make to rebuild it every time. The recursively called
@@ -66,17 +82,17 @@ endif
 $(FUZZ_BIN_PATH)/%.o: $(FUZZ_SRC_PATH)/%.c
 	@mkdir -p $(@D)
 	@echo -n "compile "
-	@AFL_QUIET=1 $(AFL_CC) $(AFL_CFLAGS) -c -o $@ $<
+	@$(AFL_CC_ENV) $(AFL_CC) $(CFLAGS) -c -o $@ $<
 	@$(PRINT_OK)
 
 $(FUZZ_BIN_PATH)/%: $(FUZZ_BIN_PATH)/%.o $(FUZZ_UTILS) $(FUZZ_THEMIS_LIB)
 	@mkdir -p $(@D)
 	@echo -n "link "
-	@AFL_QUIET=1 $(AFL_CC) -o $@ $< $(FUZZ_UTILS) $(AFL_LDFLAGS)
+	@$(AFL_CC_ENV) $(AFL_CC) -o $@ $< $(FUZZ_UTILS) $(LDFLAGS)
 	@$(PRINT_OK)
 
-$(FUZZ_THEMIS_LIB):
-	@AFL_QUIET=1 $(MAKE) themis_static soter_static CC=$(AFL_CC) BUILD_PATH=$(FUZZ_THEMIS_PATH)
+$(FUZZ_THEMIS_LIB): $(SOTER_ENGINE_DEPS)
+	@$(AFL_CC_ENV) $(MAKE) themis_static soter_static CC=$(AFL_CC) BUILD_PATH=$(FUZZ_THEMIS_PATH)
 
 FMT_FIXUP += $(patsubst $(FUZZ_SRC_PATH)/%,$(FUZZ_BIN_PATH)/%.fmt_fixup,$(FUZZ_SOURCES) $(FUZZ_HEADERS))
 FMT_CHECK += $(patsubst $(FUZZ_SRC_PATH)/%,$(FUZZ_BIN_PATH)/%.fmt_check,$(FUZZ_SOURCES) $(FUZZ_HEADERS))
