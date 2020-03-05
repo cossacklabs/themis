@@ -19,8 +19,6 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#define MAX_SANE_LENGTH (50 * 1024 * 1024)
-
 int read_line_binary(FILE* input, uint8_t** out_bytes, size_t* out_size)
 {
     uint8_t length_bytes[4] = {0};
@@ -72,6 +70,31 @@ int read_line_binary(FILE* input, uint8_t** out_bytes, size_t* out_size)
     }
 
     *out_size = length;
+
+    return 0;
+}
+
+int read_u32be(FILE* input, uint32_t* out_value)
+{
+    uint8_t value_bytes[4] = {0};
+
+    if (!input || !out_value) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (fread(value_bytes, 1, 4, input) != 4) {
+        if (!errno) {
+            errno = EFAULT;
+        }
+        return -1;
+    }
+
+    *out_value = 0;
+    *out_value = (*out_value << 8) | value_bytes[0];
+    *out_value = (*out_value << 8) | value_bytes[1];
+    *out_value = (*out_value << 8) | value_bytes[2];
+    *out_value = (*out_value << 8) | value_bytes[3];
 
     return 0;
 }
