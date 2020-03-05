@@ -95,7 +95,7 @@ static themis_status_t themis_auth_sym_derive_encryption_key_pbkdf2(
 
     /* KDF pointer is ignored but size is important */
     hdr->kdf_context = NULL;
-    hdr->kdf_context_length = (uint32_t)themis_scell_pbkdf2_context_size(&kdf);
+    hdr->kdf_context_length = themis_scell_pbkdf2_context_size(&kdf);
 
     res = themis_write_scell_pbkdf2_context(hdr, &kdf, auth_token, *auth_token_length);
     if (res != THEMIS_SUCCESS) {
@@ -299,6 +299,19 @@ static themis_status_t themis_auth_sym_derive_decryption_key(
     size_t* derived_key_length)
 {
     size_t required_length = soter_alg_key_length(hdr->alg);
+    /*
+     * Accept only expected values that we know that we can handle. Robustness
+     * is more important here than future-proofing. AES is unlikely to support
+     * more key lengths anyway.
+     */
+    switch (required_length) {
+    case SOTER_SYM_256_KEY_LENGTH / 8:
+    case SOTER_SYM_192_KEY_LENGTH / 8:
+    case SOTER_SYM_128_KEY_LENGTH / 8:
+        break;
+    default:
+        return THEMIS_FAIL;
+    }
     /*
      * This is our internal buffer so it cannot be too small. If it is, either
      * the data is corrupted, or THEMIS_AUTH_SYM_MAX_KEY_LENGTH is incorrect.

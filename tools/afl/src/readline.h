@@ -21,6 +21,8 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#define MAX_SANE_LENGTH (50 * 1024 * 1024)
+
 /**
  * Read a byte string for a file, prefixed with 4-byte length (big-endian).
  *
@@ -33,5 +35,16 @@
  * @returns zero on success, negative value on error.
  */
 int read_line_binary(FILE* input, uint8_t** out_bytes, size_t* out_size);
+
+/**
+ * Read a big-endian unsinged 32-bit integer for a file.
+ *
+ * @param [in]  input      file to read, must be non-NULL
+ * @param [out] out_value  resulting host-endian value will be put here,
+ *                         must be non-NULL
+ *
+ * @returns zero on success, negative value on error.
+ */
+int read_u32be(FILE* input, uint32_t* out_value);
 
 #endif /* READ_LINE_H */
