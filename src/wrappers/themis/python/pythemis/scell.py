@@ -62,7 +62,8 @@ class SCellSeal(object):
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Seal) failed creating")
         if not isinstance(key, six.binary_type):
-            raise SecureCellError('master key must be "bytes"')
+            warnings.warn('master key should be "bytes", '
+                          'consider using "passphrase=" API with strings')
         self.key = key
 
     def encrypt(self, message, context=None):
@@ -196,7 +197,8 @@ class SCellTokenProtect(object):
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Token Protect) failed creating")
         if not isinstance(key, six.binary_type):
-            raise SecureCellError('master key must be "bytes"')
+            warnings.warn('master key should be "bytes", '
+                          'consider using skeygen.GenerateSymmetricKey()')
         self.key = key
 
     def encrypt(self, message, context=None):
@@ -247,7 +249,8 @@ class SCellContextImprint(object):
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Context Imprint) failed creating")
         if not isinstance(key, six.binary_type):
-            raise SecureCellError('master key must be "bytes"')
+            warnings.warn('master key should be "bytes", '
+                          'consider using skeygen.GenerateSymmetricKey()')
         self.key = key
 
     def encrypt(self, message, context):

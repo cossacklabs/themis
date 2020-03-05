@@ -15,6 +15,7 @@
 #
 
 import unittest
+import warnings
 
 from pythemis.scell import SCellSeal, SCellSealPassphrase
 from pythemis.scell import SCellTokenProtect, SCellContextImprint
@@ -42,8 +43,10 @@ class SCellSealMasterKeyTest(BaseSCellTestMixin):
             SCellSeal(None)
         with self.assertRaises(ThemisError):
             SCellSeal(b'')
-        with self.assertRaises(ThemisError):
+        with warnings.catch_warnings(record=True) as w:
             SCellSeal(u'passphrase')
+            self.assertEqual(len(w), 1)
+            self.assertTrue('master key should be "bytes"' in str(w[-1].message))
 
     def test_encrypt_decrypt(self):
         scell1 = SCellSeal(self.key)
@@ -160,8 +163,10 @@ class SCellContextImprintTest(BaseSCellTestMixin):
             SCellContextImprint(None)
         with self.assertRaises(ThemisError):
             SCellContextImprint(b'')
-        with self.assertRaises(ThemisError):
+        with warnings.catch_warnings(record=True) as w:
             SCellContextImprint(u'passphrase')
+            self.assertEqual(len(w), 1)
+            self.assertTrue('master key should be "bytes"' in str(w[-1].message))
 
     def test_encrypt_decrypt(self):
         scell1 = SCellContextImprint(self.key)
@@ -198,8 +203,10 @@ class SCellTokenProtectTest(BaseSCellTestMixin):
             SCellTokenProtect(None)
         with self.assertRaises(ThemisError):
             SCellTokenProtect(b'')
-        with self.assertRaises(ThemisError):
+        with warnings.catch_warnings(record=True) as w:
             SCellTokenProtect(u'passphrase')
+            self.assertEqual(len(w), 1)
+            self.assertTrue('master key should be "bytes"' in str(w[-1].message))
 
     def test_encrypt_decrypt(self):
         scell1 = SCellTokenProtect(self.key)
