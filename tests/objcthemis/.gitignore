@@ -24,3 +24,6 @@ DerivedData
 # http://guides.cocoapods.org/using/using-cocoapods.html#should-i-ignore-the-pods-directory-in-source-control
 #
 Pods/
+# Unit-tests should compile against the latest versions of everything,
+# so pinning versions via lockfile is pointless. Prevent accidents.
+Podfile.lock

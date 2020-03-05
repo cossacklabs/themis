@@ -37,7 +37,7 @@ static inline uint32_t soter_alg_without_kdf(uint32_t alg)
 
 static inline size_t soter_alg_kdf_context_length(uint32_t alg)
 {
-    switch (alg & SOTER_SYM_KDF_MASK) {
+    switch (soter_alg_kdf(alg)) {
     case SOTER_SYM_PBKDF2:
         return themis_scell_pbkdf2_context_min_size + THEMIS_AUTH_SYM_PBKDF2_SALT_LENGTH;
     case SOTER_SYM_NOKDF:
@@ -45,18 +45,6 @@ static inline size_t soter_alg_kdf_context_length(uint32_t alg)
     default:
         return 0;
     }
-}
-
-static inline size_t soter_alg_key_length(uint32_t alg)
-{
-    return (alg & SOTER_SYM_KEY_LENGTH_MASK) / 8;
-}
-
-static inline bool soter_alg_reserved_bits_valid(uint32_t alg)
-{
-    static const uint32_t used_bits = SOTER_SYM_KEY_LENGTH_MASK | SOTER_SYM_PADDING_MASK
-                                      | SOTER_SYM_KDF_MASK | SOTER_SYM_ALG_MASK;
-    return (alg & ~used_bits) == 0;
 }
 
 static inline size_t default_auth_token_size(void)
@@ -77,8 +65,9 @@ static themis_status_t themis_auth_sym_derive_encryption_key_pbkdf2(
 {
     themis_status_t res = THEMIS_FAIL;
     uint8_t salt[THEMIS_AUTH_SYM_PBKDF2_SALT_LENGTH] = {0};
-    struct themis_scell_pbkdf2_context kdf = {0};
+    struct themis_scell_pbkdf2_context kdf;
 
+    memset(&kdf, 0, sizeof(kdf));
     kdf.iteration_count = THEMIS_AUTH_SYM_PBKDF2_ITERATIONS;
     kdf.salt = salt;
     kdf.salt_length = sizeof(salt);
@@ -137,7 +126,7 @@ static themis_status_t themis_auth_sym_derive_encryption_key(struct themis_scell
     }
     *derived_key_length = required_length;
 
-    switch (hdr->alg & SOTER_SYM_KDF_MASK) {
+    switch (soter_alg_kdf(hdr->alg)) {
     case SOTER_SYM_PBKDF2:
         return themis_auth_sym_derive_encryption_key_pbkdf2(hdr,
                                                             passphrase,
@@ -169,13 +158,14 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase_(const uint8_t* 
     uint8_t auth_tag[THEMIS_AUTH_SYM_AUTH_TAG_LENGTH] = {0};
     uint8_t derived_key[THEMIS_AUTH_SYM_KEY_LENGTH / 8] = {0};
     size_t derived_key_length = sizeof(derived_key);
-    struct themis_scell_auth_token_passphrase hdr = {0};
+    struct themis_scell_auth_token_passphrase hdr;
 
     /* Message length is currently stored as 32-bit integer, sorry */
     if (message_length > UINT32_MAX) {
         return THEMIS_INVALID_PARAMETER;
     }
 
+    memset(&hdr, 0, sizeof(hdr));
     hdr.alg = THEMIS_AUTH_SYM_PASSPHRASE_ALG;
     hdr.iv = iv;
     hdr.iv_length = sizeof(iv);
@@ -283,8 +273,9 @@ static themis_status_t themis_auth_sym_derive_decryption_key_pbkdf2(
     size_t derived_key_length)
 {
     themis_status_t res = THEMIS_FAIL;
-    struct themis_scell_pbkdf2_context kdf = {0};
+    struct themis_scell_pbkdf2_context kdf;
 
+    memset(&kdf, 0, sizeof(kdf));
     res = themis_read_scell_pbkdf2_context(hdr, &kdf);
     if (res != THEMIS_SUCCESS) {
         return res;
@@ -317,7 +308,7 @@ static themis_status_t themis_auth_sym_derive_decryption_key(
     }
     *derived_key_length = required_length;
 
-    switch (hdr->alg & SOTER_SYM_KDF_MASK) {
+    switch (soter_alg_kdf(hdr->alg)) {
     case SOTER_SYM_PBKDF2:
         return themis_auth_sym_derive_decryption_key_pbkdf2(hdr,
                                                             passphrase,
@@ -343,11 +334,12 @@ themis_status_t themis_auth_sym_decrypt_message_with_passphrase_(const uint8_t* 
                                                                  size_t* message_length)
 {
     themis_status_t res = THEMIS_FAIL;
-    struct themis_scell_auth_token_passphrase hdr = {0};
+    struct themis_scell_auth_token_passphrase hdr;
     /* Use maximum possible length, not the default one */
     uint8_t derived_key[THEMIS_AUTH_SYM_MAX_KEY_LENGTH / 8] = {0};
     size_t derived_key_length = sizeof(derived_key);
 
+    memset(&hdr, 0, sizeof(hdr));
     res = themis_read_scell_auth_token_passphrase(auth_token, auth_token_length, &hdr);
     if (res != THEMIS_SUCCESS) {
         return res;

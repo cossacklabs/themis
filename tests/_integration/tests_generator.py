@@ -25,6 +25,7 @@ templates = {
     'smessage_encryption': './tests/_integration/integration_smessage_encryption.template',
     'scell_token_protect': './tests/_integration/integration_scell_token_protect.template',
     'scell_seal': './tests/_integration/integration_scell_seal.template',
+    'scell_seal_pw': './tests/_integration/integration_scell_seal_pw.template',
     'scell_context_imprint': './tests/_integration/integration_scell_context_imprint.template',
 }
 

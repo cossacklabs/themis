@@ -85,10 +85,6 @@ static inline void input_buffer_bytes()
         std::vector<uint8_t> vector(5, 0);
         themispp::impl::input_buffer buf1 = themispp::impl::input_bytes(vector.begin(), vector.end());
         sput_fail_unless(buf1.data() == &vector[0] && buf1.size() == 5, "std::vector (iterators)", __LINE__);
-        themispp::impl::input_buffer buf2 = themispp::impl::input_bytes(vector.end(), vector.begin());
-        sput_fail_unless(buf2.data() == &vector[0] && buf2.size() == 5,
-                         "std::vector (iterators, flip)",
-                         __LINE__);
     }
     {
         uint8_t array[] = {1, 2, 3}; // NOLINT(cppcoreguidelines-avoid-c-arrays)

@@ -1,0 +1,30 @@
+script1="${script_path1}/scell_seal_string_echo_pw.${script1_extension}"
+script2="${script_path2}/scell_seal_string_echo_pw.${script2_extension}"
+
+if [ -e "$$script1" ] && [ -e "$$script2" ] ; then
+
+## ${language_name1} -> ${language_name2}
+echo ".. testing Secure Cell, Seal mode, passphrase API: ${language_name1} --> ${language_name2}"
+plaintext="${language_name1} -> ${language_name2} test"
+encrypted="$$(${command1} $$script1 "enc" "secret passphrase" "$$plaintext")"
+check_result_zero
+decrypted="$$(${command2} $$script2 "dec" "secret passphrase" "$$encrypted")"
+check_result_zero
+if [[ "$decrypted" != "$plaintext" ]]; then
+    status=1
+fi
+
+## with context
+echo ".. testing Secure Cell, Seal mode + context, passphrase API: ${language_name1} --> ${language_name2}"
+plaintext="${language_name1} -> ${language_name2} test with context"
+encrypted="$$(${command1} $$script1 "enc" "secret passphrase" "$$plaintext" "and context")"
+check_result_zero
+decrypted="$$(${command2} $$script2 "dec" "secret passphrase" "$$encrypted" "and context")"
+check_result_zero
+if [[ "$decrypted" != "$plaintext" ]]; then
+    status=1
+fi
+
+else
+    echo ".. testing Secure Cell, Seal mode, passphrase API: ${language_name1} --> ${language_name2} (SKIPPED)"
+fi

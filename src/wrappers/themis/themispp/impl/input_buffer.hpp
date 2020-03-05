@@ -117,13 +117,10 @@ inline input_buffer input_bytes(Iterator begin, Iterator end) noexcept
     // are indeed contiguous, so we trust the application code with that.
     // The behavior is undefined (i.e., we'll crash) if memory between
     // begin and end is not addressable.
-    if (begin < end) {
-        return input_buffer(&*begin, end - begin);
-    }
     if (begin == end) {
         return input_buffer();
     }
-    return input_buffer(&*end, begin - end);
+    return input_buffer(&*begin, end - begin);
 }
 
 // STL-compatible contiguous containers

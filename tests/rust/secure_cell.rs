@@ -139,7 +139,7 @@ mod seal {
         ciphertext[10] = !ciphertext[10];
         let error = seal.decrypt(&ciphertext).unwrap_err();
 
-        assert_eq!(error.kind(), ErrorKind::InvalidParameter);
+        assert_eq!(error.kind(), ErrorKind::Fail);
     }
 }
 
@@ -217,6 +217,6 @@ mod token_protect {
         token[10] = !token[10];
         let error = cell.decrypt(&ciphertext, &token).unwrap_err();
 
-        assert_eq!(error.kind(), ErrorKind::InvalidParameter);
+        assert_eq!(error.kind(), ErrorKind::Fail);
     }
 }
