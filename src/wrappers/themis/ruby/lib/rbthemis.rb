@@ -129,9 +129,20 @@ module Themis
   BUFFER_TOO_SMALL = 14
   SUCCESS = 0
   FAIL = 11
+  INVALID_ARGUMENT = 12
   SEND_AS_IS = 1
 
-  ThemisError = Class.new(StandardError)
+  # Common class of errors caused by Themis functions.
+  # You can access the numerical value via "error_code" attribute.
+  # Human-readable message is accessible via "message" attribute.
+  class ThemisError < StandardError
+    attr_reader :error_code
+
+    def initialize(error_code = INVALID_ARGUMENT)
+      super
+      @error_code = error_code
+    end
+  end
 
   class Callbacks
     def get_pub_key_by_id(id)
