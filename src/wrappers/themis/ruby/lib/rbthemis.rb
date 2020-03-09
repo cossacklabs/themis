@@ -520,6 +520,8 @@ module Themis
     return key.get_bytes(0, key_length.read_uint)
   end
 
+  # Scell base class is retained for compatibility.
+  # New code should use ScellSeal, ScellTokenProtect, or ScellContextImprint.
   class Scell
     include ThemisCommon
     include ThemisImport
@@ -529,150 +531,34 @@ module Themis
     CONTEXT_IMPRINT_MODE = 2
 
     def initialize(key, mode)
-      @key, @key_length = string_to_pointer_size(key)
-      @mode = mode
+      # We could have replaced this with "self.new" but it's not possible
+      # to override new *and* keep Scell as superclass of ScellSeal et al.
+      # So we keep an instance of appropriate class here and never call
+      # superclass initialize in subclasses.
+      case mode
+      when SEAL_MODE
+        @cell = ScellSeal.new(key)
+      when TOKEN_PROTECT_MODE
+        @cell = ScellTokenProtect.new(key)
+      when CONTEXT_IMPRINT_MODE
+        @cell = ScellContextImprint.new(key)
+      else
+        raise ThemisError, "unknown Secure Cell mode: #{mode}"
+      end
+      warn "NOTE: #{self.class.name} is deprecated; use #{@cell.class.name} instead."
     end
 
     def encrypt(message, context = nil)
-      message_, message_length_ = string_to_pointer_size(message)
-      context_, context_length_ =
-        context.nil? ? [nil, 0] : string_to_pointer_size(context)
-      encrypted_message_length = FFI::MemoryPointer.new(:uint)
-      enccontext_length = FFI::MemoryPointer.new(:uint)
-      case @mode
-      when SEAL_MODE
-        res = themis_secure_cell_encrypt_seal(
-          @key, @key_length, context_, context_length_, message_,
-          message_length_, nil, encrypted_message_length)
-        if res != BUFFER_TOO_SMALL
-          raise ThemisError, "Secure Cell (Seal) failed encrypting: #{res}"
-        end
-        encrypted_message = FFI::MemoryPointer.new(
-          :char, encrypted_message_length.read_uint)
-        res = themis_secure_cell_encrypt_seal(
-          @key, @key_length, context_, context_length_, message_,
-          message_length_, encrypted_message, encrypted_message_length)
-        if res != SUCCESS
-          raise ThemisError, "Secure Cell (Seal) failed encrypting: #{res}"
-        end
-        encrypted_message.get_bytes(0, encrypted_message_length.read_uint)
-      when TOKEN_PROTECT_MODE
-        res = themis_secure_cell_encrypt_token_protect(
-          @key, @key_length, context_, context_length_, message_,
-          message_length_, nil, enccontext_length, nil,
-          encrypted_message_length)
-        if res != BUFFER_TOO_SMALL
-          raise(ThemisError,
-                "Secure Cell (Token protect) failed encrypting: #{res}")
-        end
-        encrypted_message = FFI::MemoryPointer.new(
-          :char, encrypted_message_length.read_uint)
-        enccontext = FFI::MemoryPointer.new(:char, enccontext_length.read_uint)
-        res = themis_secure_cell_encrypt_token_protect(
-          @key, @key_length, context_, context_length_, message_,
-          message_length_, enccontext, enccontext_length, encrypted_message,
-          encrypted_message_length)
-        if res != SUCCESS
-          raise(ThemisError,
-                "Secure Cell (Token Protect) failed encrypting: #{res}")
-        end
-        [encrypted_message.get_bytes(0, encrypted_message_length.read_uint),
-         enccontext.get_bytes(0, enccontext_length.read_uint),]
-      when CONTEXT_IMPRINT_MODE
-        res = themis_secure_cell_encrypt_context_imprint(
-          @key, @key_length, message_, message_length_, context_,
-          context_length_, nil, encrypted_message_length)
-        if res != BUFFER_TOO_SMALL
-          raise(ThemisError,
-                "Secure Cell (Context Imprint) failed encrypting: #{res}")
-        end
-        encrypted_message = FFI::MemoryPointer.new(
-          :char, encrypted_message_length.read_uint)
-        res = themis_secure_cell_encrypt_context_imprint(
-          @key, @key_length, message_, message_length_, context_,
-          context_length_, encrypted_message, encrypted_message_length)
-        if res != SUCCESS
-          raise(ThemisError,
-                "Secure Cell (Context Imprint) failed encrypting: #{res}")
-        end
-        encrypted_message.get_bytes(0, encrypted_message_length.read_uint)
-      else
-        raise ThemisError, 'Secure Cell failed encrypting, undefined mode'
-      end
+      @cell.encrypt(message, context)
     end
 
     def decrypt(message, context = nil)
-      context_, context_length_ =
-        context.nil? ? [nil, 0] : string_to_pointer_size(context)
-      decrypted_message_length = FFI::MemoryPointer.new(:uint)
-      case @mode
-      when SEAL_MODE
-        message_, message_length_ = string_to_pointer_size(message)
-        res = themis_secure_cell_decrypt_seal(
-          @key, @key_length, context_, context_length_, message_,
-          message_length_, nil, decrypted_message_length)
-        if res != BUFFER_TOO_SMALL
-          raise ThemisError, "Secure Cell (Seal) failed decrypting: #{res}"
-        end
-        decrypted_message = FFI::MemoryPointer.new(
-          :char, decrypted_message_length.read_uint)
-        res = themis_secure_cell_decrypt_seal(
-          @key, @key_length, context_, context_length_, message_,
-          message_length_, decrypted_message, decrypted_message_length)
-        if res != SUCCESS
-          raise ThemisError, "Secure Cell (Seal) failed decrypting: #{res}"
-        end
-        decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
-      when TOKEN_PROTECT_MODE
-        message_, enccontext = message
-        message__, message_length__ = string_to_pointer_size(message_)
-        enccontext_, enccontext_length = string_to_pointer_size(enccontext)
-        res = themis_secure_cell_decrypt_token_protect(
-          @key, @key_length, context_, context_length_, message__,
-          message_length__, enccontext_, enccontext_length, nil,
-          decrypted_message_length)
-        if res != BUFFER_TOO_SMALL
-          raise(ThemisError,
-                "Secure Cell (Token Protect) failed decrypting: #{res}")
-        end
-        decrypted_message = FFI::MemoryPointer.new(
-          :char, decrypted_message_length.read_uint)
-        res = themis_secure_cell_decrypt_token_protect(
-          @key, @key_length, context_, context_length_, message__,
-          message_length__, enccontext_, enccontext_length,
-          decrypted_message, decrypted_message_length)
-        if res != SUCCESS
-          raise(ThemisError,
-                "Secure Cell (Token Protect) failed decrypting: #{res}")
-        end
-        decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
-      when CONTEXT_IMPRINT_MODE
-        message_, message_length_ = string_to_pointer_size(message)
-        res = themis_secure_cell_decrypt_context_imprint(
-          @key, @key_length, message_, message_length_, context_,
-          context_length_, nil, decrypted_message_length)
-        if res != BUFFER_TOO_SMALL
-          raise(ThemisError,
-                "Secure Cell (Context Imprint) failed decrypting: #{res}")
-        end
-        decrypted_message = FFI::MemoryPointer.new(
-          :char, decrypted_message_length.read_uint)
-        res = themis_secure_cell_decrypt_context_imprint(@key, @key_length,
-          message_, message_length_, context_, context_length_,
-          decrypted_message, decrypted_message_length)
-        if res != SUCCESS
-          raise(ThemisError,
-                "Secure Cell (Context Imprint) failed decrypting: #{res}")
-        end
-        decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
-      else
-        raise ThemisError, 'Secure Cell failed encrypting, undefined mode'
-      end
+      @cell.decrypt(message, context)
     end
   end
 
   # Secure Cell in Seal mode.
-  class ScellSeal
+  class ScellSeal < Scell
     include ThemisCommon
     include ThemisImport
 
@@ -840,7 +726,7 @@ module Themis
   end
 
   # Secure Cell in Token Protect mode.
-  class ScellTokenProtect
+  class ScellTokenProtect < Scell
     include ThemisCommon
     include ThemisImport
 
@@ -941,7 +827,7 @@ module Themis
   end
 
   # Secure Cell in Context Imprint mode.
-  class ScellContextImprint
+  class ScellContextImprint < Scell
     include ThemisCommon
     include ThemisImport
 

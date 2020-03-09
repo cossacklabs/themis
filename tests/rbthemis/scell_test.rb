@@ -21,6 +21,14 @@ require 'rubygems'
 require 'rbthemis'
 require 'test/unit'
 
+def suppress_warnings
+  original = $VERBOSE
+  $VERBOSE = nil
+  yield
+ensure
+  $VERBOSE = original
+end
+
 class TestScell < Test::Unit::TestCase
   def setup
     @master_key = Base64.decode64('b0gyNlM4LTFKRDI5anFIRGJ4SmQyLGE7MXN5YWUzR2U=')
@@ -34,6 +42,12 @@ class TestScell < Test::Unit::TestCase
     key = Themis::gen_sym_key()
     assert_not_nil(key)
     assert_equal(key.length, default_length)
+  end
+
+  def test_hierarchy
+    assert_kind_of Themis::Scell, Themis::ScellSeal.new(@master_key)
+    assert_kind_of Themis::Scell, Themis::ScellTokenProtect.new(@master_key)
+    assert_kind_of Themis::Scell, Themis::ScellContextImprint.new(@master_key)
   end
 
   #
@@ -105,7 +119,9 @@ class TestScell < Test::Unit::TestCase
   end
 
   def test_seal_old_api
-    seal_old = Themis::Scell.new(@master_key, Themis::Scell::SEAL_MODE)
+    seal_old = suppress_warnings {
+      Themis::Scell.new(@master_key, Themis::Scell::SEAL_MODE)
+    }
     seal_new = Themis::ScellSeal.new(@master_key)
 
     encrypted = seal_old.encrypt(@message, @context)
@@ -295,7 +311,9 @@ class TestScell < Test::Unit::TestCase
   end
 
   def test_token_protect_old_api
-    token_protect_old = Themis::Scell.new(@master_key, Themis::Scell::TOKEN_PROTECT_MODE)
+    token_protect_old = suppress_warnings {
+      Themis::Scell.new(@master_key, Themis::Scell::TOKEN_PROTECT_MODE)
+    }
     token_protect_new = Themis::ScellTokenProtect.new(@master_key)
 
     encrypted, token = token_protect_old.encrypt(@message, @context)
@@ -394,7 +412,9 @@ class TestScell < Test::Unit::TestCase
   end
 
   def test_context_imprint_old_api
-    context_imprint_old = Themis::Scell.new(@master_key, Themis::Scell::CONTEXT_IMPRINT_MODE)
+    context_imprint_old = suppress_warnings {
+      Themis::Scell.new(@master_key, Themis::Scell::CONTEXT_IMPRINT_MODE)
+    }
     context_imprint_new = Themis::ScellContextImprint.new(@master_key)
 
     encrypted = context_imprint_old.encrypt(@message, @context)
