@@ -17,14 +17,14 @@
 //! Themis supports two kinds of asymmetric cryptography keys: Elliptic Curve (ECDSA) and RSA.
 //! These keys are used by [`SecureMessage`] and [`SecureSession`] objects.
 //!
-//! This module contains functions for securely generating random key pairs. Note that managing
-//! resulting keys is _your_ responsibility. You have to make sure that private keys are kept
-//! private when distributed to your users, and that public keys that you use come from trusted
-//! sources. You can consult [our guidelines][key-management] for some advice on key management.
+//! This module contains functions for secure generation of random keypairs. Note that managing
+//! the resulting keys is _your_ responsibility. You have to make sure that the private keys stay
+//! private when distributing them to your users and that the public keys that you use come from
+//! thrusted sources. You can consult [our guidelines][key-management] for some advice on key management.
 //!
 //! [`SecureMessage`]: ../secure_message/index.html
 //! [`SecureSession`]: ../secure_session/index.html
-//! [key-management]: https://github.com/cossacklabs/themis/wiki/Key-management
+//! [key-management]: https://docs.cossacklabs.com/pages/documentation-themis/#key-management
 //!
 //! # Examples
 //!
