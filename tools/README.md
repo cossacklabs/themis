@@ -1,6 +1,10 @@
-Here we keep tools for automated testing of Themis
+# Automated tests for Themis
+
+Here we keep the tools for automated testing of Themis
 across the supported platforms.
 The tools are accessible to humans, too :).
+
+## Available tools
 
 - **keygen_tool** —
   a tool for generating ECDSA keys 
@@ -35,17 +39,17 @@ ARGS:
 ```
 
 
-## keygen_tool
+### keygen_tool
 
-This tool can be used to generate key files usable by other tools.
+A tool for generating key files usable for other tools.
 
 Themis supports RSA keys for some use cases,
 but most features expect ECDSA keys.
 
 
-## scell_*_string_echo
+### scell_*_string_echo
 
-This is a family of command-line tools used for testing Secure Cell.
+A family of command-line tools used for testing Secure Cell.
 
 All of them accept plaintext input and produce base64-encoded encrypted output
 (or vice versa for decryption).
@@ -64,9 +68,9 @@ input
 ```
 
 
-## smessage_encryption
+### smessage_encryption
 
-This is a universal tool used for testing Secure Message.
+A universal tool for testing Secure Message.
 
 The first argument determines the action to perform:
 
