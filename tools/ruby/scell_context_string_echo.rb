@@ -32,7 +32,7 @@ key = input_args[1].dup
 message = input_args[2].dup
 context = input_args[3].dup
 
-scell = Themis::Scell.new(key, Themis::Scell::CONTEXT_IMPRINT_MODE)
+scell = Themis::ScellContextImprint.new(key)
 
 if command == "enc"
 	encr_message = scell.encrypt(message, context)
