@@ -14,21 +14,21 @@
 
 //! # Themis Library
 //!
-//! **Themis** is a high-level cryptographic library.
+//! **Themis** is a high-level cryptographic library for data protection.
 //!
 //! Themis allows you to protect data at rest (in your database, files, or wherever you store it
-//! in your application) and data in motion (i.e. travelling between client and server, server
-//! and server, application and application, a smart coffee machine and a smart vacuum cleaner).
+//! in your application) and data in motion (e.g. travelling between client and server, server
+//! and server, application and application, a smart coffee machine and a smart vacuum cleaner, etc.).
 //!
 //! Themis is a portable, cross-platform implementation of several cryptosystems:
 //!
-//!   - **[Secure Message]:** general purpose cryptographic system aimed at securing
+//!   - **[Secure Message]:** general-purpose cryptographic system aimed at securing
 //!     communication between two parties;
 //!
 //!   - **[Secure Session]:** cryptographic system aimed at maintaining a messaging
-//!     session between two peers, with the session-wise protection of their data exchange;
+//!     session between two peers, with the session-wise protection of the data exchange;
 //!
-//!   - **[Secure Cell]:** cryptographic system aimed at storing data encrypted with
+//!   - **[Secure Cell]:** cryptographic system aimed at storing data encrypted using
 //!     a symmetric key, with additional security guarantees;
 //!
 //!   - **[Secure Comparator]:** Zero-Knowledge Proof-based protocol built around SMP
