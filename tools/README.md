@@ -1,21 +1,38 @@
-# Automated tests for Themis
+# Integration tests for Themis (automated)
 
 Here we keep the tools for automated testing of Themis
 across the supported platforms.
 The tools are accessible to humans, too :).
 
+To run these tools:
+1. Make sure you've [installed the wrapper](https://docs.cossacklabs.com/pages/documentation-themis/#installing-themis-wrappers) for the language you want to use (if that language is not Rust or Go - in that case, there is nothing you need to additionally install).  
+2. Run the test tool with the specific command for
+your language.
+
+| Wrapper    | How to run a test tool                |
+| ---------- | ------------------------------------- |
+| GoThemis   | `go run tools/go/keygen.go`           |
+| JsThemis   | `node tools/js/jsthemis/keygen.js`    |
+| PHPThemis  | `php -f tools/php/keygen.php`         |
+| PyThemis   | `python tools/python/keygen.py`       |
+| RbThemis   | `ruby tools/ruby/keygen.rb`           |
+| RustThemis | `cargo run --example keygen_tool --`  |
+| WasmThemis | `node tools/js/wasm-themis/keygen.js` |
+
 ## Available tools
 
 - **keygen_tool** —
   a tool for generating ECDSA keys 
-- <b>scell_*_string_echo</b> —
+- <b>scell_*</b> —
   encrypt or decrypt a string using Secure Cell
   - **scell_context_string_echo** —
-    sealing mode
+    context mode
   - **scell_token_string_echo** —
     token protect mode
   - **scell_context_string_echo** —
     context imprint mode
+  - **scell_seal_string_echo_pw** — 
+    sealing mode with passphrase
 - **smessage_encryption** —
   encrypt, decrypt, sign, and verify a string using Secure Message
 
