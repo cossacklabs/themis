@@ -141,6 +141,21 @@ class TestScell < Test::Unit::TestCase
     end
   end
 
+  def test_seal_message_encoding
+    message = @message.dup.encode(Encoding::UTF_16BE)
+    scell = Themis::ScellSeal.new(@master_key)
+
+    encrypted = scell.encrypt(message, @context)
+    decrypted = scell.decrypt(encrypted, @context)
+
+    assert_equal(message.encoding, Encoding::UTF_16BE)
+    assert_equal(decrypted.encoding, Encoding::BINARY)
+    assert_equal(decrypted.b, message.b)
+
+    decrypted.force_encoding(Encoding::UTF_16BE)
+    assert_equal(decrypted, message)
+  end
+
   #
   # Seal Mode (passphrase)
   #
@@ -229,6 +244,21 @@ class TestScell < Test::Unit::TestCase
     decrypted = seal_2.decrypt(encrypted, @context)
 
     assert_equal(@message, decrypted)
+  end
+
+  def test_seal_pw_message_encoding
+    message = @message.dup.encode(Encoding::UTF_16BE)
+    scell = Themis::ScellSealPassphrase.new(@passphrase)
+
+    encrypted = scell.encrypt(message, @context)
+    decrypted = scell.decrypt(encrypted, @context)
+
+    assert_equal(message.encoding, Encoding::UTF_16BE)
+    assert_equal(decrypted.encoding, Encoding::BINARY)
+    assert_equal(decrypted.b, message.b)
+
+    decrypted.force_encoding(Encoding::UTF_16BE)
+    assert_equal(decrypted, message)
   end
 
   #
@@ -330,6 +360,21 @@ class TestScell < Test::Unit::TestCase
     assert_equal(@message, decrypted)
   end
 
+  def test_token_protect_message_encoding
+    message = @message.dup.encode(Encoding::UTF_16BE)
+    scell = Themis::ScellTokenProtect.new(@master_key)
+
+    encrypted, token = scell.encrypt(message, @context)
+    decrypted = scell.decrypt(encrypted, token, @context)
+
+    assert_equal(message.encoding, Encoding::UTF_16BE)
+    assert_equal(decrypted.encoding, Encoding::BINARY)
+    assert_equal(decrypted.b, message.b)
+
+    decrypted.force_encoding(Encoding::UTF_16BE)
+    assert_equal(decrypted, message)
+  end
+
   #
   # Context Imprint mode (master key)
   #
@@ -421,6 +466,21 @@ class TestScell < Test::Unit::TestCase
     decrypted = context_imprint_new.decrypt(encrypted, @context)
 
     assert_equal(@message, decrypted)
+  end
+
+  def test_context_imprint_message_encoding
+    message = @message.dup.encode(Encoding::UTF_16BE)
+    scell = Themis::ScellContextImprint.new(@master_key)
+
+    encrypted = scell.encrypt(message, @context)
+    decrypted = scell.decrypt(encrypted, @context)
+
+    assert_equal(message.encoding, Encoding::UTF_16BE)
+    assert_equal(decrypted.encoding, Encoding::BINARY)
+    assert_equal(decrypted.b, message.b)
+
+    decrypted.force_encoding(Encoding::UTF_16BE)
+    assert_equal(decrypted, message)
   end
 
 end

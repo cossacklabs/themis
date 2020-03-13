@@ -18,11 +18,8 @@ require 'ffi'
 
 module ThemisCommon
   def string_to_pointer_size(string)
-    string_buf = FFI::MemoryPointer.new(
-      :char, string.force_encoding('BINARY').size)
-    string_buf.put_bytes(0, string.force_encoding('BINARY'),
-                         0, string.force_encoding('BINARY').size)
-    [string_buf, string.force_encoding('BINARY').size]
+    string_buf = FFI::MemoryPointer.from_string(string)
+    [string_buf, string.bytesize]
   end
 
   def empty?(value)
