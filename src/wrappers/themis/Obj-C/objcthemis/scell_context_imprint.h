@@ -47,28 +47,91 @@ NS_ASSUME_NONNULL_BEGIN
 @interface TSCellContextImprint : TSCell
 
 /**
-* @brief Initialize Secure cell object in context imprint mode
-* @param [in] key master key
-*/
+ * Initialise Secure Cell in Context Imprint mode with a master key.
+ *
+ * @param [in] key  non-empty master key
+ *
+ * @returns @c nil if key is empty.
+ */
 - (nullable instancetype)initWithKey:(NSData *)key;
 
 /**
-* @brief Wrap message with context
-* @param [in] message message to wrap
-* @param [in] context user context
-* @param [in] error pointer to Error on failure
-* @return Wrapped message as NSData object on success or nil on failure
-*/
-- (nullable NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error;
+ * Encrypt data.
+ *
+ * @param [in]  message data to encrypt, must not be empty
+ * @param [in]  context associated context, must not be empty
+ * @param [out] error   optional error output
+ *
+ * Data is encrypted and context is cryptographically mixed with the data, but not included
+ * into the resulting encrypted message. You will have to provide the same context again
+ * during decryption. Usually this is some plaintext data associated with encrypted data,
+ * such as database row number, protocol message ID, etc.
+ *
+ * @returns Encrypted data has the same length as input and cannot be authenticated.
+ *
+ * @returns @c nil will be returned on failure, such as if @c message or @c context is empty
+ * or in case of some internal failure in cryptographic backend.
+ *
+ * @returns If @c error is not @c nil, it will describe the reason of failure.
+ */
+- (nullable NSData *)encrypt:(NSData *)message
+                     context:(NSData *)context
+                       error:(NSError **)error;
 
 /**
-* @brief Unwrap message with context
-* @param [in] message message to unwrap
-* @param [in] context user context
-* @param [in] error pointer to Error on failure
-* @return Unwrapped message as NSData object on success or nil on failure
-*/
-- (nullable NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error;
+ * Encrypt data.
+ * @see encrypt:context:error:
+ */
+- (nullable NSData *)encrypt:(NSData *)message context:(NSData *)context
+    NS_SWIFT_UNAVAILABLE("use throwing encrypt(_:,context:)");
+
+/**
+ * Encrypt data.
+ * @deprecated since Themis 0.13
+ * @see encrypt:context:error:
+ */
+- (nullable NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error
+    __deprecated_msg("use 'encrypt:context:error:' instead");
+
+/**
+ * Decrypt data.
+ *
+ * @param [in]  message data to decrypt, cannot be empty
+ * @param [in]  context associated context, cannot be empty
+ * @param [out] error   optional error output
+ *
+ * Secure Cell validates association with the context data and decrypts the message.
+ * You need to provide the same context as it was used during encryption.
+ *
+ * @returns Decrypted data is returned if everything goes well.
+ *
+ * @returns Note that data integrity is not verified by Context Imprint mode:
+ * garbage in — garbage out. If data has been corrupted or context is incorrect
+ * then Secure Cell will most likely successfully return corrupted output.
+ *
+ * @returns @c nil will be returned on failure, such as if @c message or @c context
+ * is empty, or in case of some internal failure in cryptographic backend.
+ *
+ * @returns If @c error is not @c nil, it will describe the reason of failure.
+ */
+- (nullable NSData *)decrypt:(NSData *)message
+                     context:(NSData *)context
+                       error:(NSError **)error;
+
+/**
+ * Decrypt data.
+ * @see decrypt:context:error:
+ */
+- (nullable NSData *)decrypt:(NSData *)message context:(NSData *)context
+    NS_SWIFT_UNAVAILABLE("use throwing decrypt(_:,context:)");
+
+/**
+ * Decrypt data.
+ * @deprecated since Themis 0.13
+ * @see decrypt:context:error:
+ */
+- (nullable NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error
+    __deprecated_msg("use 'decrypt:context:error:' instead");
 
 @end
 
