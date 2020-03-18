@@ -36,7 +36,7 @@ if input_args.length == 4
 	context = input_args[3].dup
 end
 
-scell = Themis::Scell.new(key, Themis::Scell::TOKEN_PROTECT_MODE)
+scell = Themis::ScellTokenProtect.new(key)
 
 if command == "enc"
 	encr_message, token = scell.encrypt(message, context)
