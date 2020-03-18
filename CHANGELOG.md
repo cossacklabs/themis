@@ -87,6 +87,88 @@ _Code:_
 
   - New function `TSGenerateSymmetricKey()` (available in Objective-C and Swift) can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
 
+  - Secure Cell API updates ([#606](https://github.com/cossacklabs/themis/pull/606)).
+
+    - New encryption/decryption API with consistent naming: `encrypt` and `decrypt`.
+
+    - Improved Token Protect API:
+      - Encryption results use `NSData` now which bridges with Swift `Data` directly.
+      - Decryption no longer requires an intermediate `TSCellTokenEncryptedData` object.
+
+  - **Deprecated API**
+
+    - Secure Cell wrapData/unwrapData renamed into encrypt/decrypt ([#606](https://github.com/cossacklabs/themis/pull/606)).
+
+      As a result, the following methods are deprecated. There are no plans for their removal.
+
+      <details>
+      <summary>Swift</summary>
+      <table>
+        <tr><th>Mode</th><th>Deprecation</th><th>Replacement</th></tr>
+        <tr>
+          <td rowspan=2><code>TSCellSeal</code></td>
+          <td><code>wrap(_:, context:)</code><br/><code>wrap</code></td>
+          <td><code>encrypt(_:, context:)</code><br/><code>encrypt</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData(_:, context:)</code><br/><code>unwrapData</code></td>
+          <td><code>decrypt(_:, context:)</code><br/><code>decrypt</code></td>
+        </tr>
+        <tr>
+          <td rowspan=2><code>TSCellToken</code></td>
+          <td><code>wrap(_:, context:)</code><br/><code>wrap</code></td>
+          <td><code>encrypt(_:, context:)</code><br/><code>encrypt</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData(_:, context:)</code><br/><code>unwrapData</code></td>
+          <td><code>decrypt(_:, token:, context:)</code><br/><code>decrypt(_:, token:)</code></td>
+        </tr>
+        <tr>
+          <td rowspan=2><code>TSCellContextImprint</code></td>
+          <td><code>wrap(_:, context:)</code><br/><code>wrap</code></td>
+          <td><code>encrypt(_:, context:)</code><br/><code>encrypt</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData(_:, context:)</code><br/><code>unwrapData</code></td>
+          <td><code>decrypt(_:, context:)</code><br/><code>decrypt</code></td>
+        </tr>
+      </table>
+      </details>
+
+      <details>
+      <summary>Objective-C</summary>
+      <table>
+        <tr><th>Mode</th><th>Deprecation</th><th>Replacement</th></tr>
+        <tr>
+          <td rowspan=2><code>TSCellSeal</code></td>
+          <td><code>wrapData:context:error:</code><br><code>wrapData:error:</code></td>
+          <td><code>encrypt:context:error:</code><br><code>encrypt:error:</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData:context:error:</code><br><code>unwrapData:error:</code></td>
+          <td><code>decrypt:context:error:</code><br><code>decrypt:error:</code></td>
+        </tr>
+        <tr>
+          <td rowspan=2><code>TSCellToken</code></td>
+          <td><code>wrapData:context:error:</code><br><code>wrapData:error:</code></td>
+          <td><code>encrypt:context:error:</code><br><code>encrypt:error:</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData:context:error:</code><br><code>unwrapData:error:</code></td>
+          <td><code>decrypt:token:context:error:</code><br><code>decrypt:token:error:</code></td>
+        </tr>
+        <tr>
+          <td rowspan=2><code>TSCellContextImprint</code></td>
+          <td><code>wrapData:context:error:</code><br><code>wrapData:error:</code></td>
+          <td><code>encrypt:context:error:</code><br><code>encrypt:error:</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData:context:error:</code><br><code>unwrapData:error:</code></td>
+          <td><code>decrypt:context:error:</code><br><code>decrypt:error:</code></td>
+        </tr>
+      </table>
+      </details>
+
 - **Java**
 
   - JDK location is now detected automatically in most cases, you should not need to set JAVA_HOME or JDK_INCLUDE_PATH manually ([#551](https://github.com/cossacklabs/themis/pull/551)).
