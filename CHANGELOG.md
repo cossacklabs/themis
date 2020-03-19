@@ -114,6 +114,7 @@ _Code:_
         - update `#import` statements in code (for Objective-C only)
 
         - link against `objcthemis.framework` in Xcode project
+        - remove link to `themis.framework` in Xcode project
 
       Use the new syntax to import ObjCThemis in Objective-C projects:
 
