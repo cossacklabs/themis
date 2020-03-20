@@ -61,20 +61,32 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/** @brief Secure Cell Context Token Protect interface
-*
-* This object mode is designed for cases when underlying storage constraints do not allow the size of the data to grow
-* (so @ref TSCellSeal "Secure cell seal" cannot be used), however the user has access to a different storage location
-* (ex. another table in the database) where he can store needed security parameters.
-* The Secure Cell object puts authentication tag and other auxiliary information (aka data token) to a separate buffer,
-* so user can store it elsewhere, while keeping the original encrypted data size.
-* The same token has to be provided along with the correct secret for data to be decrypted successfully.
-* Since the same security parameters are used (just stored in a different location) this object mode has same security
-* level as @ref TSCellSeal "Secure cell seal" but requires slightly more effort from the user.
-* Also, user has the ability to bind the data to its context as before.
-* @image html scell-token_protect.png "Secure Cell Token protect mode"
-*/
 
+/**
+ * Secure Cell in Token Protect mode.
+ *
+ * Token Protect mode is designed for cases when underlying storage constraints
+ * do not allow the size of the data to grow (so @c TSCellSeal cannot be used).
+ * However, if you have access to a different storage location (e.g., another
+ * table in the database) where additional security parameters can be stored
+ * then Token Protect mode can be used instead of Seal mode.
+ *
+ * Token Protect mode produces authentication tag and other auxiliary data
+ * (aka "authentication token") in a detached buffer. This keeps the original
+ * size of the encrypted data while enabling separate storage of security
+ * information. Note that the same token must be provided along with the
+ * correct secret and matching associated context in order for the data
+ * to be decrypted successfully.
+ *
+ * Since @c TSCellToken uses the same security parameters as @c TSCellSeal
+ * (just stored in a different location), these modes have the same highest
+ * security level. Token Protect mode only requires slightly more effort
+ * in exchange for preserving the original data size.
+ *
+ * @note Read more about Token Protect mode:
+ *
+ * https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#token-protect-mode
+ */
 @interface TSCellToken : TSCell
 
 /**

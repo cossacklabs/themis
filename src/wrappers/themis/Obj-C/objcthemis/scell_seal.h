@@ -29,21 +29,34 @@
 * @{
 */
 
-/** @brief Secure Cell Seal mode interface
-*
-* This is the most secure and easy way to protect stored data. All one have to do is to provide some secret
-* (password, secret key etc) to the API and the data itself.
-* The data will be encrypted and an authentication tag will be appended to the data, so the size of the encrypted data
-* will be larger than original. Also, users of this object mode can bind the data to some context
-* (for example, database row number), so decryption of the data with incorrect context will fail
-* (even if the secret will be correct). This allows establishing cryptographically secure associations between
-* protected data and its context. In example with database row numbers, it will prevent encrypted data from tampering
-* by attacker (for example, forcing the system to accept wrong hash to check credentials by displacing
-* row numbers or primary key values).
-* @image html scell-seal.png "Secure Cell Seal mode"
-*/
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Secure Cell in Seal mode.
+ *
+ * This is the most secure and easy way to protect stored data. You provide
+ * some secret (a master key) and the data then receive encrypted data back.
+ *
+ * Secure Cell in Seal mode will encrypt the data and append an "authentication
+ * tag" to it with auxiliary security information. This means that that size
+ * of the encrypted data will be larger than the original input.
+ *
+ * Additionally, it is possible to bind the encrypted data to some "associated
+ * context" (for example, database row number). In this case decryption of the
+ * data with incorrect context will fail (even if the secret is correct and
+ * the data has not been tampered). This establishes cryptographically secure
+ * association between the protected data and the context in which it is used.
+ * With database row numbers, for example, this prevents the attacker from
+ * swapping encrypted password hashes in the database so the system will not
+ * accept credentials of a different user.
+ *
+ * @note Use @c TSGenerateSymmetricKey() to generate master keys suitable
+ * for Secure Cell.
+ *
+ * Read more about Seal mode:
+ *
+ * https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#seal-mode
+ */
 @interface TSCellSeal : TSCell
 
 /**

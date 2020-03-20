@@ -29,21 +29,27 @@
  * @{
  */
 
-/** @brief Secure Cell Context Imprint mode interface
-*
-* This object mode is for environments where storage constraints do not allow the size of the data to grow and
-* there is no auxiliary storage available. Secure Cell context imprint relies on the user to provide the data context
-* along with the secret to protect the information. Also, no authentication tag is computed or verified.
-* This means the integrity of the data is not enforced, so the overall security level is slightly lower than preceding
-* two cases.
-*
-* @image html scell-context_imprint.png Secure Cell Context imprint mode
-* @note To ensure highest security level possible user has to supply different context for each encryption invocation
-* of the object for the same secret.
-*/
-
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Secure Cell in Context Imprint mode.
+ *
+ * Context Imprint mode is intended for environments where storage constraints
+ * do not allow the size of the data to grow and there is no auxiliary storage
+ * available. Context Imprint mode requires an additional "associated context"
+ * to be provided along with the secret in order to protect the data.
+ *
+ * In Context Imprint mode no authentication token is computed or verified.
+ * This means the integrity of the data is not enforced, so the overall
+ * security level is slightly lower than in Seal or Token Protect modes.
+ *
+ * @note To ensure highest security level possible, supply a different
+ * associated context for each encryption invocation with the same secret.
+ *
+ * Read more about Context Imprint mode:
+ *
+ * https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#context-imprint-mode
+ */
 @interface TSCellContextImprint : TSCell
 
 /**
