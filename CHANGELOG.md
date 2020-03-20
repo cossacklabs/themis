@@ -8,9 +8,10 @@ Changes that are currently in development and have not been released yet.
 - Added API for generating symmetric keys for use with Secure Cell
 - Added API for Secure Cell encryption with human-readable passphrases
 
-**Deprecations:**
+**Breaking changes and deprecations:**
 
 - Many languages received Secure Cell API overhaul with parts of the old API becoming deprecated. Refer to individual language sections for details.
+- ObjCThemis installed via Carthage is now called `objcthemis` instead of just `themis` ([read more](#0.13.0-objcthemis-rename)).
 
 _Code:_
 
@@ -87,6 +88,151 @@ _Code:_
 
   - New function `TSGenerateSymmetricKey()` (available in Objective-C and Swift) can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
 
+  - Secure Cell API updates ([#606](https://github.com/cossacklabs/themis/pull/606)).
+
+    - New encryption/decryption API with consistent naming: `encrypt` and `decrypt`.
+
+    - Improved Token Protect API:
+      - Encryption results use `NSData` now which bridges with Swift `Data` directly.
+      - Decryption no longer requires an intermediate `TSCellTokenEncryptedData` object.
+
+  - **Deprecated API**
+
+    - Secure Cell wrapData/unwrapData renamed into encrypt/decrypt ([#606](https://github.com/cossacklabs/themis/pull/606)).
+
+      As a result, the following methods are deprecated. There are no plans for their removal.
+
+      <details>
+      <summary>Swift</summary>
+      <table>
+        <tr><th>Mode</th><th>Deprecation</th><th>Replacement</th></tr>
+        <tr>
+          <td rowspan=2><code>TSCellSeal</code></td>
+          <td><code>wrap(_:, context:)</code><br/><code>wrap</code></td>
+          <td><code>encrypt(_:, context:)</code><br/><code>encrypt</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData(_:, context:)</code><br/><code>unwrapData</code></td>
+          <td><code>decrypt(_:, context:)</code><br/><code>decrypt</code></td>
+        </tr>
+        <tr>
+          <td rowspan=2><code>TSCellToken</code></td>
+          <td><code>wrap(_:, context:)</code><br/><code>wrap</code></td>
+          <td><code>encrypt(_:, context:)</code><br/><code>encrypt</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData(_:, context:)</code><br/><code>unwrapData</code></td>
+          <td><code>decrypt(_:, token:, context:)</code><br/><code>decrypt(_:, token:)</code></td>
+        </tr>
+        <tr>
+          <td rowspan=2><code>TSCellContextImprint</code></td>
+          <td><code>wrap(_:, context:)</code><br/><code>wrap</code></td>
+          <td><code>encrypt(_:, context:)</code><br/><code>encrypt</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData(_:, context:)</code><br/><code>unwrapData</code></td>
+          <td><code>decrypt(_:, context:)</code><br/><code>decrypt</code></td>
+        </tr>
+      </table>
+      </details>
+
+      <details>
+      <summary>Objective-C</summary>
+      <table>
+        <tr><th>Mode</th><th>Deprecation</th><th>Replacement</th></tr>
+        <tr>
+          <td rowspan=2><code>TSCellSeal</code></td>
+          <td><code>wrapData:context:error:</code><br><code>wrapData:error:</code></td>
+          <td><code>encrypt:context:error:</code><br><code>encrypt:error:</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData:context:error:</code><br><code>unwrapData:error:</code></td>
+          <td><code>decrypt:context:error:</code><br><code>decrypt:error:</code></td>
+        </tr>
+        <tr>
+          <td rowspan=2><code>TSCellToken</code></td>
+          <td><code>wrapData:context:error:</code><br><code>wrapData:error:</code></td>
+          <td><code>encrypt:context:error:</code><br><code>encrypt:error:</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData:context:error:</code><br><code>unwrapData:error:</code></td>
+          <td><code>decrypt:token:context:error:</code><br><code>decrypt:token:error:</code></td>
+        </tr>
+        <tr>
+          <td rowspan=2><code>TSCellContextImprint</code></td>
+          <td><code>wrapData:context:error:</code><br><code>wrapData:error:</code></td>
+          <td><code>encrypt:context:error:</code><br><code>encrypt:error:</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData:context:error:</code><br><code>unwrapData:error:</code></td>
+          <td><code>decrypt:context:error:</code><br><code>decrypt:error:</code></td>
+        </tr>
+      </table>
+      </details>
+
+  - **Breaking changes**
+
+    - <a id="0.13.0-objcthemis-rename">ObjCThemis framework built by Carthage is now called `objcthemis.framework`</a> ([#604](https://github.com/cossacklabs/themis/pull/604)).
+
+      We have renamed the Carthage framework from `themis.framework` to `objcthemis.framework` in order to improve compatibility with CocoaPods and avoid possible import conflicts with Themis Core.
+
+      > ⚠️ Please migrate to `objcthemis.framework` in a timely manner. `themis.framework` is *deprecated* since Themis 0.13 and will be **removed** in the next release due to maintainability issues.
+      >
+      > ℹ️ Installations via CocoaPods are *not affected*. If you get Themis via CocoaPods then no action is necessary.
+
+      <details>
+      <summary>Migration instructions (click to reveal)</summary>
+
+      After upgrading to Themis 0.13 and running `carthage update` you will notice that _two_ Themis projects have been built:
+
+      ```
+      *** Building scheme "OpenSSL (iOS)" in OpenSSL.xcodeproj
+      *** Building scheme "ObjCThemis (iOS)" in ObjCThemis.xcodeproj
+      *** Building scheme "Themis (iOS)" in Themis.xcodeproj
+      ```
+
+      Your project is currently using “Themis”. In order to migrate to “ObjCThemis” you need to do the following:
+
+        - update `#import` statements in code (for Objective-C only)
+
+        - link against `objcthemis.framework` in Xcode project
+        - remove link to `themis.framework` in Xcode project
+
+      Use the new syntax to import ObjCThemis in Objective-C projects:
+
+      ```objective-c
+      // NEW:
+      #import <objcthemis/objcthemis.h>
+
+      // old and deprecated:
+      #import <themis/themis.h>
+      ```
+
+      The new syntax is now the same as used by CocoaPods.
+
+      If you are using Swift, the import syntax is unchanged:
+
+      ```swift
+      import themis
+      ```
+
+      After updating imports you *also* need to link against the new framework (regardless of the language).
+
+      1. Add `objcthemis.framework` to your project (can be found in `Carthage/Build/iOS` or `Mac`).
+      2. For each Xcode target:
+
+         1. Open **General** tab, **Frameworks and Libraries** section
+         2. Drag `objcthemis.framework` there. Select _Embed & Sign_ if necessary.
+         3. Remove `themis.framework` from dependencies.
+
+      3. Finally, remove `themis.framework` reference from the project.
+
+      Migration is complete, your project should build successfully now.
+
+      We are sorry for the inconvenience.
+
+      </details>
+
 - **Java**
 
   - JDK location is now detected automatically in most cases, you should not need to set JAVA_HOME or JDK_INCLUDE_PATH manually ([#551](https://github.com/cossacklabs/themis/pull/551)).
@@ -118,10 +264,60 @@ _Code:_
 
   - Fixed compatibility issues on 32-bit platforms ([#555](https://github.com/cossacklabs/themis/pull/555)).
   - New function `skeygen.GenerateSymmetricKey()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - PyThemis now supports _passphrase API_ of Secure Cell in Seal mode ([#596](https://github.com/cossacklabs/themis/pull/596)).
+
+    ```python
+    from pythemis.scell import SCellSeal
+
+    cell = SCellSeal(passphrase='my passphrase')
+
+    encrypted = cell.encrypt(b'message data')
+    decrypted = cell.decrypt(encrypted)
+    ```
+
+    You can safely and securely use human-readable passphrases as strings with this new API.
+
+    Existing master key API (`SCellSeal(key=...)`) does not support passphrases. You should use it with symmetric encryption keys, such as generated by `GenerateSymmetricKey()` ([#561](https://github.com/cossacklabs/themis/pull/561)).
 
 - **Ruby**
 
   - New function `Themis::gen_sym_key()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Secure Cell API updates ([#603](https://github.com/cossacklabs/themis/pull/603)).
+
+    - RbThemis now supports _passphrase API_ of Secure Cell in Seal mode:
+
+      ```ruby
+      require 'rbthemis'
+
+      cell = Themis::ScellSealPassphrase.new('secret string')
+
+      encrypted = cell.encrypt('message data')
+      decrypted = cell.decrypt(encrypted)
+      ```
+
+      You can safely and securely use human-readable passphrases as text strings with this new API.
+
+      Existing master key API (`Themis::Scell...`) is not secure when used with passphrases. You should use it with symmetric encryption keys, such as generated by `Themis::gen_sym_key` ([#561](https://github.com/cossacklabs/themis/pull/561)).
+
+    - Secure Cell mode can now be selected by instantiating an appropriate subclass:
+
+      | New API | Old API |
+      | ------- | ------- |
+      | `Themis::ScellSeal.new(key)`                  | `Themis::Scell.new(key, Themis::Scell::SEAL_MODE)`            |
+      | `Themis::ScellSealPassphrase.new(passphrase)` | _not available_                                               |
+      | `Themis::ScellTokenProtect.new(key)`          | `Themis::Scell.new(key, Themis::Scell::TOKEN_PROTECT_MODE)`   |
+      | `Themis::ScellContextImprint.new(key`         | `Themis::Scell.new(key, Themis::Scell::CONTEXT_IMPRINT_MODE)` |
+
+      `Themis::Scell` class is **deprecated** and should be replaced with new API.
+
+    - Token Protect mode now accepts encrypted data and token as separate arguments instead of requiring an array:
+
+      ```ruby
+      decrypted = cell.decrypt([encrypted, token], context) # old
+      decrypted = cell.decrypt(encrypted, token, context)   # new
+      ```
+
+      (Arrays are still accepted for compatibility but this API is deprecated.)
 
 - **Rust**
 

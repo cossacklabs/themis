@@ -25,8 +25,12 @@
     return self;
 }
 
+#pragma mark - Encryption
 
-- (nullable NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
+- (nullable NSData *)encrypt:(NSData *)message
+                     context:(NSData *)context
+                       error:(NSError **)error
+{
     size_t wrappedMessageLength = 0;
 
     TSErrorType encryptionResult = (TSErrorType) themis_secure_cell_encrypt_context_imprint([self.key bytes], [self.key length],
@@ -55,8 +59,22 @@
     return [NSData dataWithBytesNoCopy:wrappedMessage length:wrappedMessageLength];
 }
 
+- (nullable NSData *)encrypt:(NSData *)message context:(NSData *)context
+{
+    return [self encrypt:message context:context error:nil];
+}
 
-- (nullable NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error {
+- (nullable NSData *)wrapData:(NSData *)message context:(NSData *)context error:(NSError **)error
+{
+    return [self encrypt:message context:context error:error];
+}
+
+#pragma mark - Decryption
+
+- (nullable NSData *)decrypt:(NSData *)message
+                     context:(NSData *)context
+                       error:(NSError **)error
+{
     size_t unwrappedMessageLength = 0;
 
     int decryptionResult = themis_secure_cell_decrypt_context_imprint([self.key bytes], [self.key length],
@@ -83,6 +101,16 @@
     }
 
     return [NSData dataWithBytesNoCopy:unwrappedMessage length:unwrappedMessageLength];
+}
+
+- (nullable NSData *)decrypt:(NSData *)message context:(NSData *)context
+{
+    return [self decrypt:message context:context error:nil];
+}
+
+- (nullable NSData *)unwrapData:(NSData *)message context:(NSData *)context error:(NSError **)error
+{
+    return [self decrypt:message context:context error:error];
 }
 
 @end

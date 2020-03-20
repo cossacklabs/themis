@@ -8,29 +8,21 @@
 #import <XCTest/XCTest.h>
 #import <objcthemis/objcthemis.h>
 
-@interface SecureCellTests : XCTestCase
-
-@property(nonatomic, strong) NSData *masterKeyData;
-
+@interface SecureCellKeygen : XCTestCase
 @end
 
+@interface SecureCellSeal : XCTestCase
+@end
 
-@implementation SecureCellTests
+@interface SecureCellTokenProtect : XCTestCase
+@end
 
-- (void)setUp {
-    [super setUp];
-
-    self.masterKeyData = [self generateMasterKey];
-}
-
-- (NSData *)generateMasterKey {
-    NSString *masterKeyString = @"UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg";
-    NSData *masterKeyData = [[NSData alloc] initWithBase64EncodedString:masterKeyString
-                                                                options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    return masterKeyData;
-}
+@interface SecureCellContextImprint : XCTestCase
+@end
 
 #pragma mark - Key generation
+
+@implementation SecureCellKeygen
 
 static const size_t defaultLength = 32;
 
@@ -42,369 +34,942 @@ static const size_t defaultLength = 32;
     XCTAssertEqual(masterKey.length, defaultLength, "generated key must be not empty");
 }
 
-#pragma MARK - Seal Mode -
+@end
 
-- (void)testSecureCellSealModeInit {
-    TSCellSeal *cellSeal = [[TSCellSeal alloc] initWithKey:[NSData new]];
-    XCTAssertNil(cellSeal, "secure cell encrypter (seal mode) should not be created without key");
+#pragma mark - Seal Mode
 
-    cellSeal = [[TSCellSeal alloc] initWithKey:self.masterKeyData];
-    XCTAssertNotNil(cellSeal, @"secure cell encrypter (seal mode) creation error");
+@implementation SecureCellSeal
+
+- (void)testInitWithGenerated
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:TSGenerateSymmetricKey()];
+    XCTAssertNotNil(cell);
 }
 
+- (void)testInitWithFixed
+{
+    NSString *masterKeyString = @"UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg";
+    NSData *masterKeyData = [[NSData alloc] initWithBase64EncodedString:masterKeyString
+                                                                options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
-- (void)testSecureCellSealModeWithContext {
-    TSCellSeal *cellSeal = [[TSCellSeal alloc] initWithKey:self.masterKeyData];
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:masterKeyData];
+    XCTAssertNotNil(cell);
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+- (void)testInitWithEmpty
+{
+    XCTAssertNil([[TSCellSeal alloc] initWithKey:nil]);
+    XCTAssertNil([[TSCellSeal alloc] initWithKey:[NSData new]]);
+}
+#pragma clang diagnostic pop
+
+- (void)testRoundtrip
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:TSGenerateSymmetricKey()];
     NSString *message = @"All your base are belong to us!";
     NSString *context = @"For great justice";
-    NSError *themisError;
+    NSError *error;
 
-    NSData *encryptedMessage = [cellSeal wrapData:nil
-                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                            error:&themisError];
-    XCTAssertNotNil(themisError, @"encryption without data-to-encrypt should populate error");
-    XCTAssertNil(encryptedMessage, @"encryption without data-to-encrypt should return nil data");
+    NSData *encrypted = [cell encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                              context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                error:&error];
+    XCTAssertNotNil(encrypted);
+    XCTAssertNil(error);
 
-    encryptedMessage = [cellSeal wrapData:[NSData new]
-                                  context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                    error:&themisError];
-    XCTAssertNotNil(themisError, @"encryption with empty data-to-encrypt should populate error");
-    XCTAssertNil(encryptedMessage, @"encryption with empty data-to-encrypt should return nil data");
+    NSData *decrypted = [cell decrypt:encrypted
+                              context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
 
-    
-    themisError = nil;
-    encryptedMessage = [cellSeal wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                  context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                    error:&themisError];
-    XCTAssertNil(themisError, @"encryption with data and context should be successful");
-    XCTAssertNotNil(encryptedMessage, @"encryption with data and context should be successful");
+    NSString *decryptedMessage = [[NSString alloc] initWithData:decrypted
+                                                       encoding:NSUTF8StringEncoding];
 
-    NSData *decryptedMessage = [cellSeal unwrapData:encryptedMessage
-                                            context:nil
-                                              error:&themisError];
-    XCTAssertNotNil(themisError, @"decryption without context should populate error");
-    XCTAssertNil(decryptedMessage, @"decryption without context should return nil data");
-
-    themisError = nil;
-    decryptedMessage = [cellSeal unwrapData:encryptedMessage
-                                    context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                      error:&themisError];
-    XCTAssertNil(themisError, @"decryption with data and context should be successful");
-    XCTAssertNotNil(decryptedMessage, @"decryption with data and context should be successful");
-
-    NSString *resultString = [[NSString alloc] initWithData:decryptedMessage
-                                                   encoding:NSUTF8StringEncoding];
-    XCTAssertTrue([message isEqualToString:resultString], @"initial string and decrypted string should be the same");
+    XCTAssert([decryptedMessage isEqualToString:message]);
 }
 
-- (void)testSecureCellSealModeWithoutContext {
-    TSCellSeal *cellSeal = [[TSCellSeal alloc] initWithKey:self.masterKeyData];
+- (void)testDataLengthExtension
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:TSGenerateSymmetricKey()];
     NSString *message = @"All your base are belong to us!";
-    NSString *context = @"For great justice";
-    NSError *themisError;
+    NSData *data = [message dataUsingEncoding:NSUTF8StringEncoding];
 
-    NSData *encryptedMessageNoContext = [cellSeal wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                                   context:nil
-                                                     error:&themisError];
-    XCTAssertNil(themisError, @"encryption with data and without context should be successful");
-    XCTAssertNotNil(encryptedMessageNoContext, @"encryption with data and without context should return data");
+    NSData *encrypted = [cell encrypt:data];
 
-    NSData *decryptedMessageNoContext = [cellSeal unwrapData:encryptedMessageNoContext
-                                                     context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                       error:&themisError];
-    XCTAssertNotNil(themisError, @"decrypt data with context that was encypted without context should populate error");
-    XCTAssertNil(decryptedMessageNoContext, @"decrypt data with context that was encypted without context should return nil data");
-
-    themisError = nil;
-    decryptedMessageNoContext = [cellSeal unwrapData:encryptedMessageNoContext
-                                             context:nil
-                                               error:&themisError];
-    XCTAssertNil(themisError, @"decryption without context should be successful");
-    XCTAssertNotNil(decryptedMessageNoContext, @"decryption without context should be successful");
-
-    NSString *resultString = [[NSString alloc] initWithData:decryptedMessageNoContext encoding:NSUTF8StringEncoding];
-    XCTAssertTrue([message isEqualToString:resultString], @"initial string and decrypted string should be the same");
+    XCTAssertGreaterThan(encrypted.length, data.length);
 }
 
-- (void)testSecureCellSealModeEncryptionDecryptionMixed {
-    TSCellSeal *cellSeal = [[TSCellSeal alloc] initWithKey:self.masterKeyData];
+- (void)testContextInclusion
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:TSGenerateSymmetricKey()];
     NSString *message = @"All your base are belong to us!";
-    NSString *context = @"For great justice";
-    NSError *themisError;
+    NSString *shortContext = @".";
+    NSString *longContext = @"You have no chance to survive make your time. Ha ha ha ha ...";
 
-    NSData *encryptedMessage = [cellSeal wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                            error:&themisError];
+    NSData *encryptedShort = [cell encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                   context:[shortContext dataUsingEncoding:NSUTF8StringEncoding]];
 
-    NSData *encryptedMessageNoContext = [cellSeal wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                                   context:nil
-                                                     error:&themisError];
+    NSData *encryptedLong = [cell encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                  context:[longContext dataUsingEncoding:NSUTF8StringEncoding]];
 
-    XCTAssertFalse([encryptedMessage isEqualToData:encryptedMessageNoContext],
-            @"secure cell encrypter (seal mode) encryption result with and without context can`t be equal");
+    // Context is not (directly) included into encrypted message.
+    XCTAssertEqual(encryptedShort.length, encryptedLong.length);
 }
 
-- (void)testSecureCellSealModeWrongContext {
-    TSCellSeal *cellSeal = [[TSCellSeal alloc] initWithKey:self.masterKeyData];
-    NSString *message = @"All your base are belong to us!";
-    NSString *context = @"For great justice";
-    NSString *wrongContext = @"Or not";
-    NSError *themisError;
+- (void)testWithoutContext
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
 
-    NSData *encryptedMessage = [cellSeal wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                            error:&themisError];
+    // Absent, empty, or nil context are all the same.
+    NSData *encrypted1 = [cell encrypt:message];
+    NSData *encrypted2 = [cell encrypt:message context:nil];
+    NSData *encrypted3 = [cell encrypt:message context:[NSData new]];
 
-    themisError = nil;
-    NSData *decryptedMessageWrongContext = [cellSeal unwrapData:encryptedMessage
-                                                        context:[wrongContext dataUsingEncoding:NSUTF8StringEncoding]
-                                                          error:&themisError];
-    XCTAssertNotNil(themisError, @"decrypt data with wrong context should populate error");
-    XCTAssertNil(decryptedMessageWrongContext, @"decrypt data with wrong context should return nil data");
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted1]]);
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted2]]);
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted3]]);
+
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted1 context:nil]]);
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted2 context:nil]]);
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted3 context:nil]]);
+
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted1 context:[NSData new]]]);
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted2 context:[NSData new]]]);
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted3 context:[NSData new]]]);
 }
 
+- (void)testContextSignificance
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *correctContext = [@"We are CATS" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *incorrectContext = [@"Captain !!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
 
-#pragma MARK - Token Protect -
+    NSData *encrypted = [cell encrypt:message context:correctContext];
 
-- (void)testSecureCellTokenProtectModeInit {
-    TSCellToken *cellToken = [[TSCellToken alloc] initWithKey:[NSData new]];
-    XCTAssertNil(cellToken, "secure cell encrypter (token protect mode) should not be created without key");
+    // You cannot use a different context to decrypt data.
+    NSData *decrypted = [cell decrypt:encrypted context:incorrectContext error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, TSErrorTypeFail);
 
-    cellToken = [[TSCellToken alloc] initWithKey:self.masterKeyData];
-    XCTAssertNotNil(cellToken, @"secure cell encrypter (token protect mode) creation error");
+    // Only the original context will work.
+    error = nil;
+    decrypted = [cell decrypt:encrypted context:correctContext error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
 }
 
+- (void)testDetectCorruptedData
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
 
-- (void)testSecureCellTokenProtectModeWithContext {
-    TSCellToken *cellToken = [[TSCellToken alloc] initWithKey:self.masterKeyData];
+    NSData *encrypted = [cell encrypt:message];
+
+    NSMutableData *corrupted = [NSMutableData dataWithData:encrypted];
+    // Invert every odd byte, this will surely break the message.
+    uint8_t *bytes = corrupted.mutableBytes;
+    for (NSUInteger i = 1; i < corrupted.length; i += 2) {
+        bytes[i] = ~bytes[i];
+    }
+
+    NSData *decrypted = [cell decrypt:corrupted error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+}
+
+- (void)testDetectTruncatedData
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell encrypt:message];
+
+    NSMutableData *truncated = [NSMutableData dataWithData:encrypted];
+    [truncated setLength:truncated.length - 1];
+
+    NSData *decrypted = [cell decrypt:truncated error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+}
+
+- (void)testDetectExtendedData
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell encrypt:message];
+
+    NSMutableData *extended = [NSMutableData dataWithData:encrypted];
+    [extended setLength:extended.length + 1];
+
+    NSData *decrypted = [cell decrypt:extended error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+- (void)testEmptyMessage
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSError *error;
+
+    error = nil;
+    XCTAssertNil([cell encrypt:nil error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell encrypt:[NSData new] error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell decrypt:nil error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell decrypt:[NSData new] error:&error]);
+    XCTAssertNotNil(error);
+}
+#pragma clang diagnostic pop
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated"
+- (void)testOldAPI
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *context = [@"For great justice" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell wrapData:message context:context error:&error];
+    XCTAssertNotNil(encrypted);
+    XCTAssertNil(error);
+
+    NSData *decrypted = [cell decrypt:encrypted context:context error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+
+    encrypted = [cell encrypt:message context:context error:&error];
+    XCTAssertNotNil(encrypted);
+    XCTAssertNil(error);
+
+    decrypted = [cell unwrapData:encrypted context:context error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+}
+#pragma clang diagnostic pop
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated"
+- (void)testOldAPIWithoutContext
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell wrapData:message error:&error];
+    XCTAssertNotNil(encrypted);
+    XCTAssertNil(error);
+
+    NSData *decrypted = [cell decrypt:encrypted error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+
+    encrypted = [cell encrypt:message error:&error];
+    XCTAssertNotNil(encrypted);
+    XCTAssertNil(error);
+
+    decrypted = [cell unwrapData:encrypted error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+}
+#pragma clang diagnostic pop
+
+@end
+
+#pragma mark - Token Protect
+
+@implementation SecureCellTokenProtect
+
+- (void)testInitWithGenerated
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    XCTAssertNotNil(cell);
+}
+
+- (void)testInitWithFixed
+{
+    NSString *masterKeyString = @"UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg";
+    NSData *masterKeyData = [[NSData alloc] initWithBase64EncodedString:masterKeyString
+                                                                options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:masterKeyData];
+    XCTAssertNotNil(cell);
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+- (void)testInitWithEmpty
+{
+    XCTAssertNil([[TSCellToken alloc] initWithKey:nil]);
+    XCTAssertNil([[TSCellToken alloc] initWithKey:[NSData new]]);
+}
+#pragma clang diagnostic pop
+
+- (void)testRoundtrip
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
     NSString *message = @"Roses are grey. Violets are grey.";
     NSString *context = @"I'm a dog";
-    NSError *themisError;
+    NSError *error;
 
-    TSCellTokenEncryptedData *encryptedMessage = [cellToken wrapData:nil
-                                                             context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                               error:&themisError];
-    XCTAssertNotNil(themisError, @"encryption without data-to-encrypt should populate error");
-    XCTAssertNil(encryptedMessage, @"encryption without data-to-encrypt should return nil data");
+    TSCellTokenEncryptedResult *result =
+        [cell encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+              context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                error:&error];
+    XCTAssertNotNil(result);
+    XCTAssertNotNil(result.encrypted);
+    XCTAssertNotNil(result.token);
+    XCTAssertNil(error);
 
-    themisError = nil;
-    encryptedMessage = [cellToken wrapData:nil
-                                   context:nil
-                                     error:&themisError];
-    XCTAssertNotNil(themisError, @"encryption without data-to-encrypt, without context should populate error");
-    XCTAssertNil(encryptedMessage, @"encryption without data-to-encrypt, without context should return nil data");
+    NSData *decrypted = [cell decrypt:result.encrypted
+                                token:result.token
+                              context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
 
-    themisError = nil;
-    NSData * messageData = [message dataUsingEncoding:NSUTF8StringEncoding];
-    encryptedMessage = [cellToken wrapData:messageData
-                                   context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                     error:&themisError];
-    XCTAssertNil(themisError, @"encryption with data and context should be successful");
-    XCTAssertNotNil(encryptedMessage, @"encryption with data and context should be successful");
-    XCTAssertEqual([messageData length], [encryptedMessage.cipherText length], @"encrypted data length should be the same as message length");
+    NSString *decryptedMessage = [[NSString alloc] initWithData:decrypted
+                                                       encoding:NSUTF8StringEncoding];
 
-    themisError = nil;
-    NSData *decryptedMessage = [cellToken unwrapData:encryptedMessage
-                                             context:nil error:&themisError];
-    XCTAssertNotNil(themisError, @"decryption without context should populate error");
-    XCTAssertNil(decryptedMessage, @"decryption without context should return nil data");
-
-    themisError = nil;
-    decryptedMessage = [cellToken unwrapData:encryptedMessage
-                                     context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                       error:&themisError];
-    XCTAssertNil(themisError, @"decryption with context should be successful");
-    XCTAssertNotNil(decryptedMessage, @"decryption with context should be successful");
-
-
-    NSString *resultString = [[NSString alloc] initWithData:decryptedMessage
-                                                   encoding:NSUTF8StringEncoding];
-    XCTAssertTrue([message isEqualToString:resultString], @"initial string and decrypted string should be the same");
+    XCTAssert([decryptedMessage isEqualToString:message]);
 }
 
-
-- (void)testSecureCellTokenProtectModeWithoutContext {
-    TSCellToken *cellToken = [[TSCellToken alloc] initWithKey:self.masterKeyData];
+- (void)testDataLengthPreservation
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
     NSString *message = @"Roses are grey. Violets are grey.";
-    NSString *context = @"I'm a dog";
-    NSError *themisError;
-    NSData *messageData = [message dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *data = [message dataUsingEncoding:NSUTF8StringEncoding];
 
-    TSCellTokenEncryptedData *encryptedMessageNoContext = [cellToken
-            wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-             context:nil
-               error:&themisError];
-    XCTAssertNil(themisError, @"encryption without data-to-encrypt, without context should be successful");
-    XCTAssertNotNil(encryptedMessageNoContext, @"encryption without data-to-encrypt, without context should be successful");
-    XCTAssertEqual([messageData length], [encryptedMessageNoContext.cipherText length], @"encrypted data length should be the same as message length");
+    TSCellTokenEncryptedResult *result = [cell encrypt:data];
 
-    themisError = nil;
-    NSData *decryptedMessageNoContext = [cellToken unwrapData:encryptedMessageNoContext
-                                                      context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                        error:&themisError];
-    XCTAssertNotNil(themisError, @"decrypt data with context that was encypted without context should populate error");
-    XCTAssertNil(decryptedMessageNoContext, @"decrypt data with context that was encypted without context should return nil data");
-
-    themisError = nil;
-    decryptedMessageNoContext = [cellToken unwrapData:encryptedMessageNoContext
-                                              context:nil
-                                                error:&themisError];
-    XCTAssertNil(themisError, @"decryption without context should be successful");
-    XCTAssertNotNil(decryptedMessageNoContext, @"decryption without context should be successful");
-
-    NSString *resultString = [[NSString alloc] initWithData:decryptedMessageNoContext encoding:NSUTF8StringEncoding];
-    XCTAssertTrue([message isEqualToString:resultString], @"initial string and decrypted string should be the same");
+    XCTAssertEqual(result.encrypted.length, data.length);
+    XCTAssert(result.token.length > 0);
 }
 
-- (void)testSecureCellTokenProtectModeIncorrectContext {
-    TSCellToken *cellToken = [[TSCellToken alloc] initWithKey:self.masterKeyData];
+- (void)testContextInclusion
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
     NSString *message = @"Roses are grey. Violets are grey.";
-    NSString *context = @"I'm a dog";
-    NSString *wrongContext = @"I'm a cat";
-    NSError *themisError;
+    NSString *shortContext = @"I'm a dog";
+    NSString *longContext = @"This is why cats are ultimately superior creatures.";
 
-    TSCellTokenEncryptedData *encryptedMessage = [cellToken
-            wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-             context:[context dataUsingEncoding:NSUTF8StringEncoding]
-               error:&themisError];
+    TSCellTokenEncryptedResult *resultShort =
+        [cell encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+              context:[shortContext dataUsingEncoding:NSUTF8StringEncoding]];
 
-    themisError = nil;
-    NSData *decryptedMessageWrongContext = [cellToken
-            unwrapData:encryptedMessage
-               context:[wrongContext dataUsingEncoding:NSUTF8StringEncoding]
-                 error:&themisError];
-    XCTAssertNotNil(themisError, @"decrypt data with wrong context should populate error");
-    XCTAssertNil(decryptedMessageWrongContext, @"decrypt data with wrong context should return nil data");
+    TSCellTokenEncryptedResult *resultLong =
+        [cell encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+              context:[longContext dataUsingEncoding:NSUTF8StringEncoding]];
+
+    // Context is not (directly) included into encrypted message.
+    XCTAssertEqual(resultShort.encrypted.length, resultLong.encrypted.length);
+    XCTAssertEqual(resultShort.token.length, resultLong.token.length);
 }
 
+- (void)testWithoutContext
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"Roses are grey. Violets are grey." dataUsingEncoding:NSUTF8StringEncoding];
 
-#pragma MARK - Imprint -
+    // Absent, empty, or nil context are all the same.
+    TSCellTokenEncryptedResult *result1 = [cell encrypt:message];
+    TSCellTokenEncryptedResult *result2 = [cell encrypt:message context:nil];
+    TSCellTokenEncryptedResult *result3 = [cell encrypt:message context:[NSData new]];
 
-- (void)testSecureCellTokenImprintInit {
-    TSCellContextImprint *contextImprint = [[TSCellContextImprint alloc] initWithKey:nil];
-    XCTAssertNil(contextImprint, "secure cell encrypter (token imprint mode) should not be created without key");
+    XCTAssert([message isEqualToData:[cell decrypt:result1.encrypted token:result1.token]]);
+    XCTAssert([message isEqualToData:[cell decrypt:result2.encrypted token:result2.token]]);
+    XCTAssert([message isEqualToData:[cell decrypt:result3.encrypted token:result3.token]]);
 
-    contextImprint = [[TSCellContextImprint alloc] initWithKey:self.masterKeyData];
-    XCTAssertNotNil(contextImprint, @"secure cell encrypter (token imprint mode) creation error");
+    XCTAssert([message isEqualToData:[cell decrypt:result1.encrypted token:result1.token context:nil]]);
+    XCTAssert([message isEqualToData:[cell decrypt:result2.encrypted token:result2.token context:nil]]);
+    XCTAssert([message isEqualToData:[cell decrypt:result3.encrypted token:result3.token context:nil]]);
+
+    XCTAssert([message isEqualToData:[cell decrypt:result1.encrypted token:result1.token context:[NSData new]]]);
+    XCTAssert([message isEqualToData:[cell decrypt:result2.encrypted token:result2.token context:[NSData new]]]);
+    XCTAssert([message isEqualToData:[cell decrypt:result3.encrypted token:result3.token context:[NSData new]]]);
 }
 
-- (void)testSecureCellTokenImprintContext {
-    TSCellContextImprint *contextImprint = [[TSCellContextImprint alloc] initWithKey:self.masterKeyData];
-    NSString *message = @"Roses are red. My name is Dave. This poem have no sense";
-    NSString *context = @"Microwave";
-    NSError *themisError;
+- (void)testContextSignificance
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"Roses are grey. Violets are grey." dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *correctContext = [@"I'm a dog" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *incorrectContext = [@"Volcano eruption" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
 
-    NSData *encryptedMessage = [contextImprint wrapData:nil
-                                                context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                  error:&themisError];
-    XCTAssertNotNil(themisError, @"encryption without data-to-encrypt should populate error");
-    XCTAssertNil(encryptedMessage, @"encryption without data-to-encrypt should return nil data");
+    TSCellTokenEncryptedResult *result = [cell encrypt:message context:correctContext];
 
-    themisError = nil;
-    encryptedMessage = [contextImprint wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                        context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                          error:&themisError];
-    XCTAssertNil(themisError, @"encryption with data and context should be successful");
-    XCTAssertNotNil(encryptedMessage, @"encryption with data and context should be successful");
+    // You cannot use a different context to decrypt data.
+    NSData *decrypted = [cell decrypt:result.encrypted
+                                token:result.token
+                              context:incorrectContext
+                                error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, TSErrorTypeFail);
 
-    themisError = nil;
-    NSData *decryptedMessage = [contextImprint unwrapData:encryptedMessage
-                                                  context:nil
-                                                    error:&themisError];
-    XCTAssertNotNil(themisError, @"decryption without context should populate error");
-    XCTAssertNil(decryptedMessage, @"decryption without context should return nil data");
-
-    themisError = nil;
-    decryptedMessage = [contextImprint unwrapData:encryptedMessage
-                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                            error:&themisError];
-    XCTAssertNil(themisError, @"decryption with context should be successful");
-    XCTAssertNotNil(decryptedMessage, @"decryption with context should be successful");
-
-
-    NSString *resultString = [[NSString alloc] initWithData:decryptedMessage
-                                                   encoding:NSUTF8StringEncoding];
-    XCTAssertTrue([message isEqualToString:resultString], @"initial string and decrypted string should be the same");
+    // Only the original context will work.
+    error = nil;
+    decrypted = [cell decrypt:result.encrypted
+                        token:result.token
+                      context:correctContext
+                        error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
 }
 
+- (void)testTokenSignificance
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"Roses are grey. Violets are grey." dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *decrypted;
+    NSError *error;
 
-- (void)testSecureCellTokenImprintWithoutContext {
-    TSCellContextImprint *contextImprint = [[TSCellContextImprint alloc] initWithKey:self.masterKeyData];
-    NSString *message = @"Roses are red. My name is Dave. This poem have no sense";
-    NSString *context = @"Microwave";
-    NSError *themisError;
+    TSCellTokenEncryptedResult *result1 = [cell encrypt:message];
+    TSCellTokenEncryptedResult *result2 = [cell encrypt:message];
 
-    NSData *encryptedMessageNoContext = [contextImprint
-                                         wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                         context:nil
-                                         error:&themisError];
-    XCTAssertNotNil(themisError, @"encryption without data-to-encrypt, without context should populate error");
-    XCTAssertNil(encryptedMessageNoContext, @"encryption without data-to-encrypt, without context should return nil");
+    // You cannot use a different token to decrypt data.
+    error = nil;
+    decrypted = [cell decrypt:result1.encrypted
+                        token:result2.token
+                        error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, TSErrorTypeFail);
 
-    encryptedMessageNoContext = [contextImprint
-                                     wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                     context:[NSData new]
-                                     error:&themisError];
-    XCTAssertNotNil(themisError, @"encryption without data-to-encrypt, with empty context should populate error");
-    XCTAssertNil(encryptedMessageNoContext, @"encryption without data-to-encrypt, with empty context should return nil");
-    
-    themisError = nil;
-    encryptedMessageNoContext = [contextImprint wrapData:nil
-                                                 context:nil
-                                                   error:&themisError];
-    XCTAssertNotNil(themisError, @"encryption without data-to-encrypt, without context should populate error");
-    XCTAssertNil(encryptedMessageNoContext, @"encryption without data-to-encrypt, without context should return nil data");
+    error = nil;
+    decrypted = [cell decrypt:result2.encrypted
+                        token:result1.token
+                        error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, TSErrorTypeFail);
 
-    encryptedMessageNoContext = [contextImprint wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                                 context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                   error:&themisError];
+    // Only the corresponding token will work.
+    error = nil;
+    decrypted = [cell decrypt:result1.encrypted
+                        token:result1.token
+                        error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
 
-    themisError = nil;
-    NSData *decryptedMessageNoContext = [contextImprint unwrapData:encryptedMessageNoContext
-                                                           context:nil
-                                                             error:&themisError];
-    XCTAssertNotNil(themisError, @"decryption without context should be successful");
-    XCTAssertNil(decryptedMessageNoContext, @"decryption without context should be successful");
-
-    themisError = nil;
-    decryptedMessageNoContext = [contextImprint unwrapData:encryptedMessageNoContext
-                                                   context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                     error:&themisError];
-    XCTAssertNil(themisError, @"decrypt data with context that was encypted without context should populate error");
-    XCTAssertNotNil(decryptedMessageNoContext, @"decrypt data with context that was encypted without context should return nil data");
-
-    NSString *resultString = [[NSString alloc] initWithData:decryptedMessageNoContext encoding:NSUTF8StringEncoding];
-    XCTAssertTrue([message isEqualToString:resultString], @"initial string and decrypted string should be the same");
+    error = nil;
+    decrypted = [cell decrypt:result2.encrypted
+                        token:result2.token
+                        error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
 }
 
+- (void)testDetectCorruptedData
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"Roses are grey. Violets are grey." dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
 
-- (void)testSecureCellTokenImprintIncorrectContext {
-    TSCellContextImprint *contextImprint = [[TSCellContextImprint alloc] initWithKey:self.masterKeyData];
-    NSString *message = @"Roses are red. My name is Dave. This poem have no sense";
-    NSString *context = @"Microwave";
-    NSString *wrongContext = @"Oven";
-    NSError *themisError;
+    TSCellTokenEncryptedResult *encryptedData = [cell encrypt:message];
 
-    NSData *encryptedMessage = [contextImprint
-            wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-             context:[context dataUsingEncoding:NSUTF8StringEncoding]
-               error:&themisError];
+    NSMutableData *corrupted = [NSMutableData dataWithData:encryptedData.encrypted];
+    // Invert every odd byte, this will surely break the message.
+    uint8_t *bytes = corrupted.mutableBytes;
+    for (NSUInteger i = 1; i < corrupted.length; i += 2) {
+        bytes[i] = ~bytes[i];
+    }
 
-    themisError = nil;
-    NSData *decryptedMessageWrongContext = [contextImprint
-            unwrapData:encryptedMessage
-               context:[wrongContext dataUsingEncoding:NSUTF8StringEncoding]
-                 error:&themisError];
-    XCTAssertNil(themisError, @"decrypt data with wrong context should ignore context");
-    XCTAssertNotNil(decryptedMessageWrongContext, @"decrypt data with wrong context should ignore context");
-    
-    themisError = nil;
-    NSData *decryptedMessageEmptyContext = [contextImprint
-                                            unwrapData:encryptedMessage
-                                            context:[NSData new]
-                                            error:&themisError];
-    XCTAssertNotNil(themisError, @"decrypt data with empty context should populate error");
-    XCTAssertNil(decryptedMessageEmptyContext, @"decrypt data with empty context should return nil");
+    NSData *decrypted = [cell decrypt:corrupted token:encryptedData.token error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
 }
+
+- (void)testDetectTruncatedData
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"Roses are grey. Violets are grey." dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    TSCellTokenEncryptedResult *encryptedData = [cell encrypt:message];
+
+    NSMutableData *truncated = [NSMutableData dataWithData:encryptedData.encrypted];
+    [truncated setLength:truncated.length - 1];
+
+    NSData *decrypted = [cell decrypt:truncated token:encryptedData.token error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+}
+
+- (void)testDetectExtendedData
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"Roses are grey. Violets are grey." dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    TSCellTokenEncryptedResult *encryptedData = [cell encrypt:message];
+
+    NSMutableData *extended = [NSMutableData dataWithData:encryptedData.encrypted];
+    [extended setLength:extended.length + 1];
+
+    NSData *decrypted = [cell decrypt:extended token:encryptedData.token error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+}
+
+- (void)testDetectCorruptedToken
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"Roses are grey. Violets are grey." dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    TSCellTokenEncryptedResult *encryptedData = [cell encrypt:message];
+
+    NSMutableData *corruptedToken = [NSMutableData dataWithData:encryptedData.token];
+    // Invert every odd byte, this will surely break the token.
+    uint8_t *bytes = corruptedToken.mutableBytes;
+    for (NSUInteger i = 1; i < corruptedToken.length; i += 2) {
+        bytes[i] = ~bytes[i];
+    }
+
+    NSData *decrypted = [cell decrypt:encryptedData.encrypted token:corruptedToken error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+}
+
+- (void)testDetectTruncatedToken
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"Roses are grey. Violets are grey." dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    TSCellTokenEncryptedResult *encryptedData = [cell encrypt:message];
+
+    NSMutableData *truncatedToken = [NSMutableData dataWithData:encryptedData.token];
+    [truncatedToken setLength:truncatedToken.length - 1];
+
+    NSData *decrypted = [cell decrypt:encryptedData.encrypted token:truncatedToken error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+}
+
+- (void)testDetectExtendedToken
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"Roses are grey. Violets are grey." dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    TSCellTokenEncryptedResult *encryptedData = [cell encrypt:message];
+
+    NSMutableData *extendedToken = [NSMutableData dataWithData:encryptedData.token];
+    [extendedToken setLength:extendedToken.length + 1];
+
+    // Current implementation of Secure Cell allows the token to be overlong.
+    // Extra data is simply ignored.
+    NSData *decrypted = [cell decrypt:encryptedData.encrypted token:extendedToken error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+}
+
+- (void)testSwapTokenAndData
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"Roses are grey. Violets are grey." dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    TSCellTokenEncryptedResult *encryptedData = [cell encrypt:message];
+
+    NSData *decrypted = [cell decrypt:encryptedData.token
+                                token:encryptedData.encrypted
+                                error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+- (void)testEmptyMessageOrToken
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSError *error;
+
+    error = nil;
+    XCTAssertNil([cell encrypt:nil error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell encrypt:[NSData new] error:&error]);
+    XCTAssertNotNil(error);
+
+    TSCellTokenEncryptedResult *encryptedData = [cell encrypt:TSGenerateSymmetricKey()];
+
+    error = nil;
+    XCTAssertNil([cell decrypt:nil token:encryptedData.token error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell decrypt:[NSData new] token:encryptedData.token error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell decrypt:encryptedData.encrypted token:nil error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell decrypt:encryptedData.encrypted token:[NSData new] error:&error]);
+    XCTAssertNotNil(error);
+}
+#pragma clang diagnostic pop
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated"
+- (void)testOldAPI
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"Roses are grey. Violets are grey." dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *context = [@"I'm a dog" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    TSCellTokenEncryptedData *encrypted = [cell wrapData:message
+                                                 context:context
+                                                   error:&error];
+    XCTAssertNotNil(encrypted);
+    XCTAssertNotNil(encrypted.cipherText);
+    XCTAssertNotNil(encrypted.token);
+    XCTAssertNil(error);
+
+    NSData *decrypted = [cell decrypt:encrypted.cipherText
+                                token:encrypted.token
+                              context:context
+                                error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+
+    TSCellTokenEncryptedResult *result = [cell encrypt:message context:context error:&error];
+    XCTAssertNotNil(result);
+    XCTAssertNotNil(result.cipherText);
+    XCTAssertNotNil(result.encrypted);
+    XCTAssertNotNil(result.token);
+    XCTAssertNil(error);
+    XCTAssert([result.cipherText isEqualToData:result.encrypted]);
+
+    encrypted.cipherText = [NSMutableData dataWithData:result.cipherText];
+    encrypted.token = [NSMutableData dataWithData:result.token];
+    decrypted = [cell unwrapData:encrypted context:context error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+}
+#pragma clang diagnostic pop
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated"
+- (void)testOldAPIWithoutContext
+{
+    TSCellToken *cell = [[TSCellToken alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"Roses are grey. Violets are grey." dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    TSCellTokenEncryptedData *encrypted = [cell wrapData:message error:&error];
+    XCTAssertNotNil(encrypted);
+    XCTAssertNotNil(encrypted.cipherText);
+    XCTAssertNotNil(encrypted.token);
+    XCTAssertNil(error);
+
+    NSData *decrypted = [cell decrypt:encrypted.cipherText token:encrypted.token error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+
+    TSCellTokenEncryptedResult *result = [cell encrypt:message error:&error];
+    XCTAssertNotNil(result);
+    XCTAssertNotNil(result.cipherText);
+    XCTAssertNotNil(result.encrypted);
+    XCTAssertNotNil(result.token);
+    XCTAssertNil(error);
+    XCTAssert([result.cipherText isEqualToData:result.encrypted]);
+
+    encrypted.cipherText = [NSMutableData dataWithData:result.cipherText];
+    encrypted.token = [NSMutableData dataWithData:result.token];
+    decrypted = [cell unwrapData:encrypted error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+}
+#pragma clang diagnostic pop
+
+@end
+
+#pragma mark - Context Imprint
+
+@implementation SecureCellContextImprint
+
+- (void)testInitWithGenerated
+{
+    TSCellContextImprint *cell = [[TSCellContextImprint alloc] initWithKey:TSGenerateSymmetricKey()];
+    XCTAssertNotNil(cell);
+}
+
+- (void)testInitWithFixed
+{
+    NSString *masterKeyString = @"UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg";
+    NSData *masterKeyData = [[NSData alloc] initWithBase64EncodedString:masterKeyString
+                                                                options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+    TSCellContextImprint *cell = [[TSCellContextImprint alloc] initWithKey:masterKeyData];
+    XCTAssertNotNil(cell);
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+- (void)testInitWithEmpty
+{
+    XCTAssertNil([[TSCellContextImprint alloc] initWithKey:nil]);
+    XCTAssertNil([[TSCellContextImprint alloc] initWithKey:[NSData new]]);
+}
+#pragma clang diagnostic pop
+
+- (void)testRoundtrip
+{
+    TSCellContextImprint *cell = [[TSCellContextImprint alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSString *message = @"All your base are belong to us!";
+    NSString *context = @"For great justice";
+    NSError *error;
+
+    NSData *encrypted = [cell encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                              context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                error:&error];
+    XCTAssertNotNil(encrypted);
+    XCTAssertNil(error);
+
+    NSData *decrypted = [cell decrypt:encrypted
+                              context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+
+    NSString *decryptedMessage = [[NSString alloc] initWithData:decrypted
+                                                       encoding:NSUTF8StringEncoding];
+
+    XCTAssert([decryptedMessage isEqualToString:message]);
+}
+
+- (void)testDataLengthPreservation
+{
+    TSCellContextImprint *cell = [[TSCellContextImprint alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSString *message = @"All your base are belong to us!";
+    NSData *data = [message dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *context = [@"For great justice" dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSData *encrypted = [cell encrypt:data context:context];
+
+    XCTAssertEqual(encrypted.length, data.length);
+}
+
+- (void)testContextInclusion
+{
+    TSCellContextImprint *cell = [[TSCellContextImprint alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSString *message = @"All your base are belong to us!";
+    NSString *shortContext = @".";
+    NSString *longContext = @"You have no chance to survive make your time. Ha ha ha ha ...";
+
+    NSData *encryptedShort = [cell encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                   context:[shortContext dataUsingEncoding:NSUTF8StringEncoding]];
+
+    NSData *encryptedLong = [cell encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                  context:[longContext dataUsingEncoding:NSUTF8StringEncoding]];
+
+    // Context is not (directly) included into encrypted message.
+    XCTAssertEqual(encryptedShort.length, encryptedLong.length);
+}
+
+- (void)testContextSignificance
+{
+    TSCellContextImprint *cell = [[TSCellContextImprint alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *correctContext = [@"We are CATS" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *incorrectContext = [@"Captain !!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell encrypt:message context:correctContext];
+
+    // You can use a different context to decrypt data, but you'll get garbage.
+    NSData *decrypted = [cell decrypt:encrypted context:incorrectContext error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssertFalse([decrypted isEqualToData:message]);
+    XCTAssertEqual(decrypted.length, message.length);
+
+    // Only the original context will work.
+    error = nil;
+    decrypted = [cell decrypt:encrypted context:correctContext error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+}
+
+- (void)testNoDetectCorruptedData
+{
+    TSCellContextImprint *cell = [[TSCellContextImprint alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *context = [@"For great justice" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell encrypt:message context:context];
+
+    NSMutableData *corrupted = [NSMutableData dataWithData:encrypted];
+    // Invert every odd byte, this will surely break the message.
+    uint8_t *bytes = corrupted.mutableBytes;
+    for (NSUInteger i = 1; i < corrupted.length; i += 2) {
+        bytes[i] = ~bytes[i];
+    }
+
+    NSData *decrypted = [cell decrypt:corrupted context:context error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+
+    // Decrypts successfully but the content is garbage.
+    XCTAssertFalse([decrypted isEqualToData:message]);
+}
+
+- (void)testNoDetectTruncatedData
+{
+    TSCellContextImprint *cell = [[TSCellContextImprint alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *context = [@"For great justice" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell encrypt:message context:context];
+
+    NSMutableData *truncated = [NSMutableData dataWithData:encrypted];
+    [truncated setLength:truncated.length - 1];
+
+    NSData *decrypted = [cell decrypt:truncated context:context error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+
+    // Decrypts successfully but the content is garbage.
+    XCTAssertFalse([decrypted isEqualToData:message]);
+    XCTAssertNotEqual(decrypted.length, message.length);
+}
+
+- (void)testDetectExtendedData
+{
+    TSCellContextImprint *cell = [[TSCellContextImprint alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *context = [@"For great justice" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell encrypt:message context:context];
+
+    NSMutableData *extended = [NSMutableData dataWithData:encrypted];
+    [extended setLength:extended.length + 1];
+
+    NSData *decrypted = [cell decrypt:extended context:context error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+
+    // Decrypts successfully but the content is garbage.
+    XCTAssertFalse([decrypted isEqualToData:message]);
+    XCTAssertNotEqual(decrypted.length, message.length);
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+- (void)testRequiredMessageAndContext
+{
+    TSCellContextImprint *cell = [[TSCellContextImprint alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *context = [@"For great justice" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    error = nil;
+    XCTAssertNil([cell encrypt:nil context:context error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell encrypt:[NSData new] context:context error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell encrypt:message context:nil error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell encrypt:message context:[NSData new] error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell decrypt:nil context:context error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell decrypt:[NSData new] context:context error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell decrypt:message context:nil error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell decrypt:message context:[NSData new] error:&error]);
+    XCTAssertNotNil(error);
+}
+#pragma clang diagnostic pop
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated"
+- (void)testOldAPI
+{
+    TSCellContextImprint *cell = [[TSCellContextImprint alloc] initWithKey:TSGenerateSymmetricKey()];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *context = [@"For great justice" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell wrapData:message context:context error:&error];
+    XCTAssertNotNil(encrypted);
+    XCTAssertNil(error);
+
+    NSData *decrypted = [cell decrypt:encrypted context:context error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+
+    encrypted = [cell encrypt:message context:context error:&error];
+    XCTAssertNotNil(encrypted);
+    XCTAssertNil(error);
+
+    decrypted = [cell unwrapData:encrypted context:context error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+}
+#pragma clang diagnostic pop
 
 @end

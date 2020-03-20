@@ -132,7 +132,13 @@ SHARED_EXT = dll
 endif
 
 ifdef IS_EMSCRIPTEN
+# Recent versions of Emscripten toolchain provide new "emcmake" utility
+# specifically for CMake. Older versions rely on generic "emconfigure".
+ifeq ($(shell which emcmake >/dev/null 2>&1 && echo yes),yes)
+CMAKE = emcmake cmake
+else
 CMAKE = emconfigure cmake
+endif
 endif
 
 # Not all platforms include /usr/local into default search path
