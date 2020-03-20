@@ -109,22 +109,8 @@ jobs:
         uses: actions/checkout@v1
       - name: Pull Carthage dependencies
         run: carthage bootstrap
-      - name: Build Themis (macOS)
-        if: always()
-        run: |
-          rm -rf DerivedData
-          xcodebuild \
-            -derivedDataPath DerivedData \
-            -scheme "Themis (macOS)" \
-            build
-      - name: Build Themis (iOS)
-        if: always()
-        run: |
-          rm -rf DerivedData
-          xcodebuild \
-            -derivedDataPath DerivedData \
-            -scheme "Themis (iOS)" \
-            build
+      - name: Build Carthage projects
+        run: carthage build --no-skip-current
 
   project-cocoapods:
     name: CocoaPods project
