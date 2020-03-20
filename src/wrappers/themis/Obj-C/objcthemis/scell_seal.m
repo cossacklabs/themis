@@ -25,18 +25,12 @@
     return self;
 }
 
+#pragma mark - Encryption
 
-- (nullable NSData *)wrapData:(NSData *)message error:(NSError *__autoreleasing *)error {
-    return [self wrapData:message context:nil error:error];
-}
-
-
-- (nullable NSData *)unwrapData:(NSData *)message error:(NSError *__autoreleasing *)error {
-    return [self unwrapData:message context:nil error:error];
-}
-
-
-- (nullable NSData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError *__autoreleasing *)error {
+- (nullable NSData *)encrypt:(NSData *)message
+                     context:(nullable NSData *)context
+                       error:(NSError **)error
+{
     size_t wrappedMessageLength = 0;
 
     const void *contextData = [context bytes];
@@ -73,7 +67,37 @@
     return [NSData dataWithBytesNoCopy:wrappedMessage length:wrappedMessageLength];
 }
 
-- (nullable NSData *)unwrapData:(NSData *)message context:(nullable NSData *)context error:(NSError *__autoreleasing *)error {
+- (nullable NSData *)encrypt:(NSData *)message context:(nullable NSData *)context
+{
+    return [self encrypt:message context:context error:nil];
+}
+
+- (nullable NSData *)encrypt:(NSData *)message error:(NSError **)error
+{
+    return [self encrypt:message context:nil error:error];
+}
+
+- (nullable NSData *)encrypt:(NSData *)message
+{
+    return [self encrypt:message context:nil error:nil];
+}
+
+- (nullable NSData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError **) error
+{
+    return [self encrypt:message context:context error:error];
+}
+
+- (nullable NSData *)wrapData:(NSData *)message error:(NSError **)error
+{
+    return [self encrypt:message context:nil error:error];
+}
+
+#pragma mark - Decryption
+
+- (nullable NSData *)decrypt:(NSData *)message
+                     context:(nullable NSData *)context
+                       error:(NSError **)error
+{
     size_t unwrappedMessageLength = 0;
 
     const void *contextData = [context bytes];
@@ -109,6 +133,31 @@
     }
 
     return [NSData dataWithBytesNoCopy:unwrappedMessage length:unwrappedMessageLength];
+}
+
+- (nullable NSData *)decrypt:(NSData *)message context:(nullable NSData *)context
+{
+    return [self decrypt:message context:context error:nil];
+}
+
+- (nullable NSData *)decrypt:(NSData *)message error:(NSError **)error
+{
+    return [self decrypt:message context:nil error:error];
+}
+
+- (nullable NSData *)decrypt:(NSData *)message
+{
+    return [self decrypt:message context:nil error:nil];
+}
+
+- (nullable NSData *)unwrapData:(NSData *)message context:(nullable NSData *)context error:(NSError **)error
+{
+    return [self decrypt:message context:context error:error];
+}
+
+- (nullable NSData *)unwrapData:(NSData *)message error:(NSError **)error
+{
+    return [self decrypt:message context:nil error:error];
 }
 
 @end

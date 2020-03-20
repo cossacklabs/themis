@@ -20,8 +20,40 @@
 
 @implementation TSCellTokenEncryptedData
 
++ (instancetype)withResult:(TSCellTokenEncryptedResult *)result
+{
+    TSCellTokenEncryptedData *data = [TSCellTokenEncryptedData new];
+    data.cipherText = [NSMutableData dataWithData:result.encrypted];
+    data.token = [NSMutableData dataWithData:result.token];
+    return data;
+}
+
 @end
 
+@interface TSCellTokenEncryptedResult ()
+
+// Make these properties read-write in this file
+@property (nonatomic) NSData *encrypted;
+@property (nonatomic) NSData *token;
+
+@end
+
+@implementation TSCellTokenEncryptedResult
+
++ (instancetype)withEncrypted:(NSData *)message andToken:(NSData *)token
+{
+    TSCellTokenEncryptedResult *result = [TSCellTokenEncryptedResult new];
+    result.encrypted = message;
+    result.token = token;
+    return result;
+}
+
+- (NSData*)cipherText
+{
+    return self.encrypted;
+}
+
+@end
 
 @implementation TSCellToken
 
@@ -30,25 +62,18 @@
     return self;
 }
 
+#pragma mark - Encryption
 
-- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message error:(NSError *__autoreleasing *)error {
-    return [self wrapData:message context:nil error:error];
-}
-
-
-- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message error:(NSError *__autoreleasing *)error {
-    return [self unwrapData:message context:nil error:error];
-}
-
-
-- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError *__autoreleasing *)error {
+- (nullable TSCellTokenEncryptedResult *)encrypt:(NSData *)message
+                                         context:(nullable NSData *)context
+                                           error:(NSError **)error
+{
     size_t wrappedMessageLength = 0;
     size_t tokenLength = 0;
 
     const void *contextData = [context bytes];
     size_t contextLength = [context length];
 
-    TSCellTokenEncryptedData *encryptedMessage = [[TSCellTokenEncryptedData alloc] init];
     TSErrorType result = (TSErrorType) themis_secure_cell_encrypt_token_protect([self.key bytes], [self.key length],
             contextData, contextLength, [message bytes], [message length], NULL, &tokenLength,
             NULL, &wrappedMessageLength);
@@ -60,12 +85,12 @@
         return nil;
     }
 
-    encryptedMessage.cipherText = [[NSMutableData alloc] initWithLength:wrappedMessageLength];
-    encryptedMessage.token = [[NSMutableData alloc] initWithLength:tokenLength];
+    NSMutableData *cipherText = [[NSMutableData alloc] initWithLength:wrappedMessageLength];
+    NSMutableData *token = [[NSMutableData alloc] initWithLength:tokenLength];
 
     result = (TSErrorType) themis_secure_cell_encrypt_token_protect([self.key bytes], [self.key length], contextData, contextLength,
-            [message bytes], [message length], [encryptedMessage.token mutableBytes], &tokenLength,
-            [encryptedMessage.cipherText mutableBytes], &wrappedMessageLength);
+            [message bytes], [message length], [token mutableBytes], &tokenLength,
+            [cipherText mutableBytes], &wrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
         if (error) {
@@ -73,17 +98,50 @@
         }
         return nil;
     }
-    return encryptedMessage;
+
+    [cipherText setLength:wrappedMessageLength];
+    [token setLength:tokenLength];
+    return [TSCellTokenEncryptedResult withEncrypted:cipherText andToken:token];
 }
 
+- (nullable TSCellTokenEncryptedResult *)encrypt:(NSData *)message context:(nullable NSData *)context
+{
+    return [self encrypt:message context:context error:nil];
+}
 
-- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(nullable NSData *)context error:(NSError *__autoreleasing *)error {
+- (nullable TSCellTokenEncryptedResult *)encrypt:(NSData *)message error:(NSError **)error
+{
+    return [self encrypt:message context:nil error:error];
+}
+
+- (nullable TSCellTokenEncryptedResult *)encrypt:(NSData *)message
+{
+    return [self encrypt:message context:nil error:nil];
+}
+
+- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message context:(nullable NSData *)context error:(NSError **)error
+{
+    return [TSCellTokenEncryptedData withResult:[self encrypt:message context:context error:error]];
+}
+
+- (nullable TSCellTokenEncryptedData *)wrapData:(NSData *)message error:(NSError **)error
+{
+    return [TSCellTokenEncryptedData withResult:[self encrypt:message context:nil error:error]];
+}
+
+#pragma mark - Decryption
+
+- (nullable NSData *)decrypt:(NSData *)message
+                       token:(NSData *)token
+                     context:(nullable NSData *)context
+                       error:(NSError **)error
+{
     size_t unwrappedMessageLength = 0;
     const void *contextData = [context bytes];
     size_t contextLength = [context length];
 
     TSErrorType result = (TSErrorType) themis_secure_cell_decrypt_token_protect([self.key bytes], [self.key length], contextData, contextLength,
-            [message.cipherText bytes], [message.cipherText length], [message.token bytes], [message.token length],
+            [message bytes], [message length], [token bytes], [token length],
             NULL, &unwrappedMessageLength);
 
     if (result != TSErrorTypeBufferTooSmall) {
@@ -95,7 +153,7 @@
 
     NSMutableData *unwrapped_message = [[NSMutableData alloc] initWithLength:unwrappedMessageLength];
     result = (TSErrorType) themis_secure_cell_decrypt_token_protect([self.key bytes], [self.key length], contextData, contextLength,
-            [message.cipherText bytes], [message.cipherText length], [message.token bytes], [message.token length],
+            [message bytes], [message length], [token bytes], [token length],
             [unwrapped_message mutableBytes], &unwrappedMessageLength);
 
     if (result != TSErrorTypeSuccess) {
@@ -105,6 +163,31 @@
         return nil;
     }
     return [unwrapped_message copy];
+}
+
+- (nullable NSData *)decrypt:(NSData *)message token:(NSData *)token context:(nullable NSData *)context
+{
+    return [self decrypt:message token:token context:context error:nil];
+}
+
+- (nullable NSData *)decrypt:(NSData *)message token:(NSData *)token error:(NSError **)error
+{
+    return [self decrypt:message token:token context:nil error:error];
+}
+
+- (nullable NSData *)decrypt:(NSData *)message token:(NSData *)token
+{
+    return [self decrypt:message token:token context:nil error:nil];
+}
+
+- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message context:(nullable NSData *)context error:(NSError **)error
+{
+    return [self decrypt:message.cipherText token:message.token context:context error:error];
+}
+
+- (nullable NSData *)unwrapData:(TSCellTokenEncryptedData *)message error:(NSError **)error
+{
+    return [self decrypt:message.cipherText token:message.token context:nil error:error];
 }
 
 @end
