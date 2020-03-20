@@ -8,9 +8,10 @@ Changes that are currently in development and have not been released yet.
 - Added API for generating symmetric keys for use with Secure Cell
 - Added API for Secure Cell encryption with human-readable passphrases
 
-**Deprecations:**
+**Breaking changes and deprecations:**
 
 - Many languages received Secure Cell API overhaul with parts of the old API becoming deprecated. Refer to individual language sections for details.
+- ObjCThemis installed via Carthage is now called `objcthemis` instead of just `themis` ([read more](#0.13.0-objcthemis-rename)).
 
 _Code:_
 
@@ -86,6 +87,69 @@ _Code:_
 - **iOS and macOS**
 
   - New function `TSGenerateSymmetricKey()` (available in Objective-C and Swift) can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+
+  - **Breaking changes**
+
+    - <a id="0.13.0-objcthemis-rename">ObjCThemis framework built by Carthage is now called `objcthemis.framework`</a> ([#604](https://github.com/cossacklabs/themis/pull/604)).
+
+      We have renamed the Carthage framework from `themis.framework` to `objcthemis.framework` in order to improve compatibility with CocoaPods and avoid possible import conflicts with Themis Core.
+
+      > ⚠️ Please migrate to `objcthemis.framework` in a timely manner. `themis.framework` is *deprecated* since Themis 0.13 and will be **removed** in the next release due to maintainability issues.
+      >
+      > ℹ️ Installations via CocoaPods are *not affected*. If you get Themis via CocoaPods then no action is necessary.
+
+      <details>
+      <summary>Migration instructions (click to reveal)</summary>
+
+      After upgrading to Themis 0.13 and running `carthage update` you will notice that _two_ Themis projects have been built:
+
+      ```
+      *** Building scheme "OpenSSL (iOS)" in OpenSSL.xcodeproj
+      *** Building scheme "ObjCThemis (iOS)" in ObjCThemis.xcodeproj
+      *** Building scheme "Themis (iOS)" in Themis.xcodeproj
+      ```
+
+      Your project is currently using “Themis”. In order to migrate to “ObjCThemis” you need to do the following:
+
+        - update `#import` statements in code (for Objective-C only)
+
+        - link against `objcthemis.framework` in Xcode project
+        - remove link to `themis.framework` in Xcode project
+
+      Use the new syntax to import ObjCThemis in Objective-C projects:
+
+      ```objective-c
+      // NEW:
+      #import <objcthemis/objcthemis.h>
+
+      // old and deprecated:
+      #import <themis/themis.h>
+      ```
+
+      The new syntax is now the same as used by CocoaPods.
+
+      If you are using Swift, the import syntax is unchanged:
+
+      ```swift
+      import themis
+      ```
+
+      After updating imports you *also* need to link against the new framework (regardless of the language).
+
+      1. Add `objcthemis.framework` to your project (can be found in `Carthage/Build/iOS` or `Mac`).
+      2. For each Xcode target:
+
+         1. Open **General** tab, **Frameworks and Libraries** section
+         2. Drag `objcthemis.framework` there. Select _Embed & Sign_ if necessary.
+         3. Remove `themis.framework` from dependencies.
+
+      3. Finally, remove `themis.framework` reference from the project.
+
+      Migration is complete, your project should build successfully now.
+
+      We are sorry for the inconvenience.
+
+      </details>
 
 - **Java**
 
