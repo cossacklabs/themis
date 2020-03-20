@@ -53,8 +53,8 @@ env:
     }}
 
 jobs:
-  unit-tests:
-    name: Unit tests
+  unit-tests-cocoapods:
+    name: Unit tests (CocoaPods)
     runs-on: macos-latest
     steps:
       - name: Check out code
@@ -97,6 +97,55 @@ jobs:
             -derivedDataPath DerivedData \
             -workspace objcthemis.xcworkspace \
             -scheme "objthemis_boring" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            test
+
+  unit-tests-carthage:
+    name: Unit tests (Carthage)
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v1
+      - name: Pull Carthage dependencies
+        run: carthage bootstrap
+      - name: Run unit tests (Swift 4, macOS)
+        if: always()
+        run: |
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData  \
+            -project ObjCThemis.xcodeproj \
+            -scheme "Test Themis (Swift 4, macOS)" \
+            test
+      - name: Run unit tests (Swift 5, macOS)
+        if: always()
+        run: |
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData  \
+            -project ObjCThemis.xcodeproj \
+            -scheme "Test Themis (Swift 5, macOS)" \
+            test
+      - name: Run unit tests (Swift 4, iOS Simulator)
+        if: always()
+        run: |
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData  \
+            -project ObjCThemis.xcodeproj \
+            -scheme "Test Themis (Swift 4, iOS)" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            test
+      - name: Run unit tests (Swift 5, iOS Simulator)
+        if: always()
+        run: |
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData  \
+            -project ObjCThemis.xcodeproj \
+            -scheme "Test Themis (Swift 5, iOS)" \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
             test
