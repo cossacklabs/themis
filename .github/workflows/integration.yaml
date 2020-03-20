@@ -64,15 +64,10 @@ jobs:
         with:
           toolchain: stable
           profile: minimal
-      - name: Install Node.js via NVM
-        run: |
-          # Install latest NVM as described in documentation:
-          # https://github.com/nvm-sh/nvm
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-          source $HOME/.nvm/nvm.sh
-          # Install and use current LTS as recommended by Node.js
-          nvm install v10
-          nvm use v10
+      - name: Install Node.js 10.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
       - name: Install Emscripten
         run: |
           # Install Emscripten toolchain as described in documentation:

@@ -27,21 +27,22 @@ jobs:
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - 8.x   # old LTS
+          - 10.x  # current LTS
+          - 12.x  # current stable
     steps:
       - name: Install system dependencies
         run: |
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev
-      - name: Install Node.js via NVM
-        run: |
-          # Install latest NVM as described in documentation:
-          # https://github.com/nvm-sh/nvm
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-          source $HOME/.nvm/nvm.sh
-          nvm install v8  # old LTS
-          nvm install v10 # current LTS
-          nvm install v12 # current stable
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
       - name: Check out code
         uses: actions/checkout@v1
       - name: Install Themis Core
@@ -49,29 +50,14 @@ jobs:
           make
           sudo make install
           make prepare_tests_all
-      - name: Run test suite (Node.js v8, maintenance)
-        if: always()
+      - name: Install JsThemis
         run: |
-          source $HOME/.nvm/nvm.sh
-          nvm use v8
+          echo Node.js: $(node --version)
+          echo npm: $(npm --version)
           rm -rf node_modules package-lock.json
           make jsthemis_install
-          make test_js
-      - name: Run test suite (Node.js v10, LTS)
-        if: always()
+      - name: Run test suite
         run: |
-          source $HOME/.nvm/nvm.sh
-          nvm use v10
-          rm -rf node_modules package-lock.json
-          make jsthemis_install
-          make test_js
-      - name: Run test suite (Node.js v12, stable)
-        if: always()
-        run: |
-          source $HOME/.nvm/nvm.sh
-          nvm use v12
-          rm -rf node_modules package-lock.json
-          make jsthemis_install
           make test_js
 
   examples:
@@ -83,30 +69,25 @@ jobs:
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev
-      - name: Install Node.js via NVM
-        run: |
-          # Install latest NVM as described in documentation:
-          # https://github.com/nvm-sh/nvm
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-          source $HOME/.nvm/nvm.sh
-          nvm install v10 # current LTS
-          nvm use v10
+      - name: Install Node.js 10.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
       - name: Check out code
         uses: actions/checkout@v1
       - name: Install Themis Core
         run: |
           make
           sudo make install
-      - name: Install JsThemis (Node.js v10, LTS)
+      - name: Install JsThemis
         run: |
-          source $HOME/.nvm/nvm.sh
-          # Install JsThemis
+          echo Node.js: $(node --version)
+          echo npm: $(npm --version)
           rm -rf node_modules package-lock.json
           make jsthemis_install
       - name: Test examples (Secure Cell)
         if: always()
         run: |
-          source $HOME/.nvm/nvm.sh
           cd $GITHUB_WORKSPACE/docs/examples/js
           echo "Test Secure Cell..."
           enc=$(node secure_cell.js enc password message)
@@ -116,7 +97,6 @@ jobs:
       - name: Test examples (Secure Message)
         if: always()
         run: |
-          source $HOME/.nvm/nvm.sh
           cd $GITHUB_WORKSPACE/docs/examples/js
           echo "Test Secure Message..."
           alice=($(node secure_keygen.js | cut -c 15-))
@@ -128,7 +108,6 @@ jobs:
       - name: Test examples (Secure Session)
         if: always()
         run: |
-          source $HOME/.nvm/nvm.sh
           cd $GITHUB_WORKSPACE/docs/examples/js
           echo "Test Secure Session..."
           node secure_session_server.js &
@@ -140,7 +119,6 @@ jobs:
       - name: Test examples (Secure Comparator)
         if: always()
         run: |
-          source $HOME/.nvm/nvm.sh
           cd $GITHUB_WORKSPACE/docs/examples/js
           echo "Test Secure Comparator..."
           node secure_comparator_server.js &

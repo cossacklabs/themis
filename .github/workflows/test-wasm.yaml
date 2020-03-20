@@ -32,21 +32,22 @@ jobs:
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - 8.x   # old LTS
+          - 10.x  # current LTS
+          - 12.x  # current stable
     steps:
       - name: Install system dependencies
         run: |
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev
-      - name: Install Node.js via NVM
-        run: |
-          # Install latest NVM as described in documentation:
-          # https://github.com/nvm-sh/nvm
-          curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash
-          source $HOME/.nvm/nvm.sh
-          nvm install v8  # old LTS
-          nvm install v10 # current LTS
-          nvm install v12 # current stable
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
       - name: Install Emscripten
         run: |
           # Install Emscripten toolchain as described in documentation:
@@ -66,25 +67,8 @@ jobs:
           source "$HOME/emsdk/emsdk_env.sh"
           emmake make wasmthemis
       - name: Run test suite (Themis Core)
-        if: always()
         run: |
           source "$HOME/emsdk/emsdk_env.sh"
           emmake make test
-      - name: Run test suite (Node.js v8, maintenance)
-        if: always()
-        run: |
-          source $HOME/.nvm/nvm.sh
-          nvm use v8
-          make test_wasm
-      - name: Run test suite (Node.js v10, LTS)
-        if: always()
-        run: |
-          source $HOME/.nvm/nvm.sh
-          nvm use v10
-          make test_wasm
-      - name: Run test suite (Node.js v12, stable)
-        if: always()
-        run: |
-          source $HOME/.nvm/nvm.sh
-          nvm use v12
-          make test_wasm
+      - name: Run test suite (WasmThemis)
+        run: make test_wasm
