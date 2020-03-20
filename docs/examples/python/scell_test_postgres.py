@@ -22,6 +22,7 @@ for store additional encryption data we will use separate table "scell_data_auth
 stored object is represented by two independent string value
 """
 
+import base64
 import sys
 import psycopg2
 import psycopg2.extras
