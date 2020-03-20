@@ -129,12 +129,19 @@ jobs:
       - name: Install RustThemis (test tools)
         run: make rustthemis_integration_tools
       - name: Install JsThemis
-        run: sudo make jsthemis_install
+        run: |
+          echo Node.js: $(node --version)
+          echo npm: $(npm --version)
+          # FIXME(ilammy, 2020-03-20): don't run previous installers as root
+          # This makes "build" owned by root and JsThemis cannot move there.
+          # We should not have a reason to build stuff as root.
+          sudo chown $(id -u):$(id -g) build
+          make jsthemis_install
       - name: Install WasmThemis
         run: |
           source "$HOME/emsdk/emsdk_env.sh"
           emmake make wasmthemis BUILD_PATH=build-wasm
-          sudo make wasmthemis_install BUILD_PATH=build-wasm
+          make wasmthemis_install BUILD_PATH=build-wasm
       - name: Install PHPThemis
         run: |
           sudo make phpthemis_install
