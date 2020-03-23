@@ -32,7 +32,7 @@ connection = pika.BlockingConnection(
 
 channel = connection.channel()
 
-channel.queue_declare(queue='smessage_queue')
+channel.queue_declare('smessage_queue_server')
 
 
 def on_request(ch, method, props, body):
@@ -48,6 +48,6 @@ def on_request(ch, method, props, body):
 
 
 channel.basic_qos(prefetch_count=1)
-channel.basic_consume(on_request, queue='smessage_queue')
+channel.basic_consume('smessage_queue_server', on_request)
 
 channel.start_consuming()

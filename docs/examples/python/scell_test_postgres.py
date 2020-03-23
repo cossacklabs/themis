@@ -22,6 +22,7 @@ for store additional encryption data we will use separate table "scell_data_auth
 stored object is represented by two independent string value
 """
 
+import base64
 import sys
 import psycopg2
 import psycopg2.extras
@@ -100,7 +101,7 @@ def get_record(connection, id):
 
 if __name__ == '__main__':
     dsn = ("dbname=scell_token_protect_test user=postgres password=postgres "
-           "host=172.17.0.2")
+           "host=localhost")
     with psycopg2.connect(dsn) as connection:
         init_table(connection)
         row_id = add_record(connection, "First record", "Second record")

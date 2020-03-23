@@ -1,0 +1,74 @@
+name: WasmThemis
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-wasm.yaml'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/wasm/**'
+      - 'tests/common/**'
+      - 'tests/soter/**'
+      - 'tests/themis/**'
+      - 'third_party/boringssl/src/**'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+  # RNG tests tend to fail in virtualized environment due to /dev/random
+  # not behaving properly. Disable them to avoid spurious failures.
+  NO_NIST_STS: 1
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - 8.x   # old LTS
+          - 10.x  # current LTS
+          - 12.x  # current stable
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Emscripten
+        run: |
+          # Install Emscripten toolchain as described in documentation:
+          # https://emscripten.org/docs/getting_started/downloads.html
+          cd $HOME
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd $HOME/emsdk
+          # "upstream" flavor using LLVM compiler is still unstable for us
+          ./emsdk install  latest-fastcomp
+          ./emsdk activate latest-fastcomp
+      - name: Check out code
+        uses: actions/checkout@v1
+        with:
+          submodules: true
+      - name: Build WasmThemis
+        run: |
+          source "$HOME/emsdk/emsdk_env.sh"
+          emmake make wasmthemis
+      - name: Run test suite (Themis Core)
+        run: |
+          source "$HOME/emsdk/emsdk_env.sh"
+          emmake make test
+      - name: Run test suite (WasmThemis)
+        run: make test_wasm

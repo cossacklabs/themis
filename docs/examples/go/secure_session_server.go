@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"net"
+	"os"
+
 	"github.com/cossacklabs/themis/gothemis/keys"
 	"github.com/cossacklabs/themis/gothemis/session"
-	"net"
 )
 
 type callbacks struct {
@@ -27,19 +29,19 @@ func connectionHandler(c net.Conn, serverID string, serverPrivateKey *keys.Priva
 	ss, err := session.New([]byte(serverID), serverPrivateKey, &callbacks{})
 	if err != nil {
 		fmt.Println("error creating secure session object")
-		return
+		os.Exit(1)
 	}
 	for {
 		buf := make([]byte, 10240)
 		readBytes, err := c.Read(buf)
 		if err != nil {
 			fmt.Println("error reading bytes from socket")
-			return
+			os.Exit(1)
 		}
 		buf, sendPeer, err := ss.Unwrap(buf[:readBytes])
 		if nil != err {
 			fmt.Println("error unwraping message")
-			return
+			os.Exit(1)
 		}
 		if !sendPeer {
 			if "finish" == string(buf[:]) {
@@ -49,13 +51,13 @@ func connectionHandler(c net.Conn, serverID string, serverPrivateKey *keys.Priva
 			buf, err = ss.Wrap(buf)
 			if nil != err {
 				fmt.Println("error unwraping message")
-				return
+				os.Exit(1)
 			}
 		}
 		_, err = c.Write(buf)
 		if err != nil {
 			fmt.Println("error writing bytes from socket")
-			return
+			os.Exit(1)
 		}
 	}
 }
@@ -64,18 +66,18 @@ func main() {
 	l, err := net.Listen("tcp", ":8080")
 	if err != nil {
 		fmt.Println("listen error")
-		return
+		os.Exit(1)
 	}
 	serverKeyPair, err := keys.New(keys.TypeEC)
 	if err != nil {
 		fmt.Println("error generating key pair")
-		return
+		os.Exit(1)
 	}
 	for {
 		conn, err := l.Accept()
 		if err != nil {
 			fmt.Println("accepting error")
-			return
+			os.Exit(1)
 		}
 
 		go connectionHandler(conn, base64.StdEncoding.EncodeToString(serverKeyPair.Public.Value), serverKeyPair.Private)

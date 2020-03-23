@@ -22,6 +22,7 @@ import socket
 from pythemis import scomparator
 
 server_socket = socket.socket()
+server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server_socket.bind(("127.0.0.1", 26260))
 try:
     server_socket.listen(1)

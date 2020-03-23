@@ -31,11 +31,13 @@ module ComparationClient
     case @comparator.result
     when Themis::Scomparator::NOT_READY
       send_data mes
+      return
     when Themis::Scomparator::MATCH
       puts 'match'
     else
       puts 'does not match'
     end
+    EventMachine.stop_event_loop
   end
 
   def unbind

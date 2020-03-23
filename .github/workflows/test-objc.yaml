@@ -1,0 +1,341 @@
+name: ObjCThemis
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-objc.yaml'
+      - 'docs/examples/objc/**'
+      - 'docs/examples/swift/**'
+      - 'docs/examples/Themis-server/Obj-C/**'
+      - 'docs/examples/Themis-server/swift/**'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/Obj-C/**'
+      - 'tests/objcthemis/**'
+      - 'third_party/boringssl/src/**'
+      - '**/Carthage*'
+      - '**/Podfile*'
+      - '**/*.podspec'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+  # See here for what devices are available:
+  # https://github.com/actions/virtual-environments/blob/master/images/macos/
+  TEST_DEVICE: iPhone 8
+  # Most of our tests and examples are actually Xcode projects which integrate
+  # Themis via a dependency manager (Carthage, CocoaPods). This means that they
+  # depend on the current stable version, and that's what they will pull in.
+  #
+  # However, most of the time we want to build against the HEAD being tested.
+  # Pristine source should be built only for stable release branches.
+  #
+  # Each job has a "Hack dependencies" step which will retarget dependencies
+  # to the current git HEAD. These steps are enabled if HACK_DEPENDENCIES is
+  # set to "true". Note that you need to perform the check in a silly way:
+  #
+  #     if: contains(env.HACK_DEPENDENCIES, 'true')
+  #
+  # because JavaScript^W of how substitutions in GitHub Actions work.
+  HACK_DEPENDENCIES: >
+    ${{
+      github.event_name != 'release'
+      && github.ref != 'refs/heads/stable'
+      && !startsWith(github.ref, 'refs/heads/release/')
+      && !startsWith(github.ref, 'refs/tags/')
+    }}
+
+jobs:
+  unit-tests-cocoapods:
+    name: Unit tests (CocoaPods)
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v1
+      - name: Hack dependencies
+        if: contains(env.HACK_DEPENDENCIES, 'true')
+        run: |
+          # CocoaPods
+          find tests/objcthemis -type f -name Podfile.lock -delete
+          find tests/objcthemis -type f -name Podfile -print0 | xargs -0 \
+            sed -E -i '' \
+                -e "s|(pod 'themis.*').*|\1, :git => \"https://github.com/${GITHUB_REPOSITORY}.git\", :commit => \"$GITHUB_SHA\"|"
+      - name: CocoaPods cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.cocoapods
+          key: ${{ runner.os }}-cocoapods-common
+      - name: Install Themis via CocoaPods
+        run: |
+          cd $GITHUB_WORKSPACE/tests/objcthemis
+          pod install
+      - name: Run unit tests (iOS Simulator, OpenSSL)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/tests/objcthemis
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData \
+            -workspace objcthemis.xcworkspace \
+            -scheme "objthemis" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            test
+      - name: Run unit tests (iOS Simulator, BoringSSL)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/tests/objcthemis
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData \
+            -workspace objcthemis.xcworkspace \
+            -scheme "objthemis_boring" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            test
+
+  unit-tests-carthage:
+    name: Unit tests (Carthage)
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v1
+      - name: Pull Carthage dependencies
+        run: carthage bootstrap
+      - name: Run unit tests (Swift 4, macOS)
+        if: always()
+        run: |
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData  \
+            -project ObjCThemis.xcodeproj \
+            -scheme "Test Themis (Swift 4, macOS)" \
+            test
+      - name: Run unit tests (Swift 5, macOS)
+        if: always()
+        run: |
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData  \
+            -project ObjCThemis.xcodeproj \
+            -scheme "Test Themis (Swift 5, macOS)" \
+            test
+      - name: Run unit tests (Swift 4, iOS Simulator)
+        if: always()
+        run: |
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData  \
+            -project ObjCThemis.xcodeproj \
+            -scheme "Test Themis (Swift 4, iOS)" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            test
+      - name: Run unit tests (Swift 5, iOS Simulator)
+        if: always()
+        run: |
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData  \
+            -project ObjCThemis.xcodeproj \
+            -scheme "Test Themis (Swift 5, iOS)" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            test
+
+  project-carthage:
+    name: Carthage project
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v1
+      - name: Pull Carthage dependencies
+        run: carthage bootstrap
+      - name: Build Carthage projects
+        run: carthage build --no-skip-current
+
+  project-cocoapods:
+    name: CocoaPods project
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v1
+      - name: Hack dependencies
+        if: contains(env.HACK_DEPENDENCIES, 'true')
+        run: |
+          # CocoaPods: podspec
+          sed -E -i '' \
+              -e "s|^(\s*s\.source = ).*$|\1{ :git => \"https://github.com/${GITHUB_REPOSITORY}.git\", :commit => \"$GITHUB_SHA\" }|" \
+              themis.podspec
+          # Note that CocoaPods is *really* strict with versioning, does not
+          # allow modified podspec to be published, and issues a warning
+          # if the source is anything but a release tag. For regular builds
+          # we allow warnings with this extra flag:
+          echo "::set-env name=ALLOW_WARNINGS::--allow-warnings"
+      - name: Syntax check
+        run: pod spec lint $ALLOW_WARNINGS --quick
+      - name: Lint podspec
+        env:
+          # Always allow warnings in podspec, even for pristine release one.
+          # This is due to silly warnings produced by our glorious dependencies:
+          #
+          #   - WARN  | [themis/themis-openssl, themis/themis-openssl/core, themis/themis-openssl/objcwrapper, and more...] xcodebuild:  GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework/Headers/ecdsa.h:295:14: warning: parameter 'flags' not found in the function declaration [-Wdocumentation]
+          #   - NOTE  | [themis/themis-openssl, themis/themis-openssl/core, themis/themis-openssl/objcwrapper, and more...] xcodebuild:  GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework/Headers/ecdsa.h:295:14: note: did you mean 'name'?
+          #   - WARN  | [themis/themis-openssl, themis/themis-openssl/core, themis/themis-openssl/objcwrapper, and more...] xcodebuild:  GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework/Headers/ecdsa.h:301:14: warning: parameter 'ecdsa_method' not found in the function declaration [-Wdocumentation]
+          #   - WARN  | [themis/themis-openssl, themis/themis-openssl/core, themis/themis-openssl/objcwrapper, and more...] xcodebuild:  GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework/Headers/ecdsa.h:302:14: warning: parameter 'name' not found in the function declaration [-Wdocumentation]
+          #   - WARN  | [themis/themis-openssl, themis/themis-openssl/core, themis/themis-openssl/objcwrapper, and more...] xcodebuild:  GRKOpenSSLFramework/OpenSSL-macOS/bin/openssl.framework/Headers/ecdsa.h:295:14: warning: parameter 'flags' not found in the function declaration [-Wdocumentation]
+          #   - NOTE  | [themis/themis-openssl, themis/themis-openssl/core, themis/themis-openssl/objcwrapper, and more...] xcodebuild:  GRKOpenSSLFramework/OpenSSL-macOS/bin/openssl.framework/Headers/ecdsa.h:295:14: note: did you mean 'name'?
+          #   - WARN  | [themis/themis-openssl, themis/themis-openssl/core, themis/themis-openssl/objcwrapper, and more...] xcodebuild:  GRKOpenSSLFramework/OpenSSL-macOS/bin/openssl.framework/Headers/ecdsa.h:301:14: warning: parameter 'ecdsa_method' not found in the function declaration [-Wdocumentation]
+          #   - WARN  | [themis/themis-openssl, themis/themis-openssl/core, themis/themis-openssl/objcwrapper, and more...] xcodebuild:  GRKOpenSSLFramework/OpenSSL-macOS/bin/openssl.framework/Headers/ecdsa.h:302:14: warning: parameter 'name' not found in the function declaration [-Wdocumentation]
+          #   - WARN  | [themis/themis-boringssl, themis/themis-boringssl/core, themis/themis-boringssl/objcwrapper, and more...] xcodebuild:  <module-includes>:1:1: warning: umbrella header for module 'openssl' does not include header '/third_party/fiat/internal.h' [-Wincomplete-umbrella]
+          #   - WARN  | [themis/themis-boringssl, themis/themis-boringssl/core, themis/themis-boringssl/objcwrapper, and more...] xcodebuild:  <module-includes>:1:1: warning: umbrella header for module 'openssl' does not include header '/third_party/fiat/curve25519_tables.h' [-Wincomplete-umbrella]
+          #
+          # While -Wdocumentation is definitely not going to break anything,
+          # I wonder if -Wincomplete-umbrella for BoringSSL is risky. Though,
+          # we are not be exporting {Open,Boring}SSL API from Themis, so it's
+          # probably fine.
+          ALLOW_WARNINGS: --allow-warnings
+        run: pod spec lint $ALLOW_WARNINGS --verbose --fail-fast
+
+  examples:
+    name: Code examples
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v1
+      - name: Hack dependencies
+        if: contains(env.HACK_DEPENDENCIES, 'true')
+        run: |
+          # Carthage
+          find docs/examples -type f -name Cartfile.resolved -delete
+          find docs/examples -type f -name Cartfile -print0 | xargs -0 \
+            sed -E -i '' \
+                -e "s|github \"cossacklabs/themis\".*|github \"$GITHUB_REPOSITORY\" \"$GITHUB_SHA\"|"
+          # CocoaPods
+          find docs/examples -type f -name Podfile.lock -delete
+          find docs/examples -type f -name Podfile -print0 | xargs -0 \
+            sed -E -i '' \
+                -e "s|(pod 'themis(/[a-z-]*)*').*|\1, :git => \"https://github.com/${GITHUB_REPOSITORY}.git\", :commit => \"$GITHUB_SHA\"|"
+      - name: CocoaPods cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.cocoapods
+          key: ${{ runner.os }}-cocoapods-common
+      # Since all code examples are macOS/iOS applications, not command-line
+      # utilities, we only verify that they build. This is fine.
+      #
+      # App samples: Objective-C
+      #
+      - name: Build sample app (Objective-C, Carthage, iOS)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/objc/iOS-Carthage
+          carthage bootstrap --platform iOS
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData \
+            -project ThemisTest.xcodeproj \
+            -scheme "ThemisTest" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            build
+      - name: Build sample app (Objective-C, Carthage, macOS)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/objc/macOS-Carthage
+          carthage bootstrap --platform macOS
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData \
+            -project ThemisTest.xcodeproj \
+            -scheme "ThemisTest" \
+            build
+      - name: Build sample app (Objective-C, CocoaPods, iOS)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/objc/iOS-CocoaPods
+          pod install
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData \
+            -workspace ThemisTest.xcworkspace \
+            -scheme "ThemisTest" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            build
+      #
+      # App samples: Swift
+      #
+      - name: Build sample app (Swift, Carthage, iOS)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/swift/iOS-Carthage
+          carthage bootstrap --platform iOS
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData \
+            -project ThemisTest.xcodeproj \
+            -scheme "ThemisTest" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            build
+      - name: Build sample app (Swift, Carthage, macOS)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/swift/macOS-Carthage
+          carthage bootstrap --platform macOS
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData \
+            -project ThemisTest.xcodeproj \
+            -scheme "ThemisTest" \
+            build
+      - name: Build sample app (Swift, CocoaPods, iOS)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/swift/iOS-CocoaPods
+          pod install
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData \
+            -workspace ThemisSwift.xcworkspace \
+            -scheme "ThemisSwift" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            build
+      #
+      # Themis server clients
+      #
+      - name: Build client for Themis Server (Objective-C)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/Themis-server/Obj-C
+          pod install
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData \
+            -workspace WorkingWithThemisServer.xcworkspace \
+            -scheme "WorkingWithThemisServer" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            build
+      - name: Build client for Themis Server (Swift)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/Themis-server/swift
+          pod install
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData \
+            -workspace SwiftThemisServerExample.xcworkspace \
+            -scheme "SwiftThemisServerExample" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            build

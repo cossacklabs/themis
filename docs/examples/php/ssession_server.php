@@ -59,7 +59,8 @@ try{
     } while (true);
 }
 catch (Exception $e){
-    echo $e->getMessage();
+	echo $e->getMessage();
+	exit(1);
 }
 socket_close($sock);
 ?>
