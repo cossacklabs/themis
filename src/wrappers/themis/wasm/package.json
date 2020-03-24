@@ -23,6 +23,6 @@
   },
   "homepage": "https://www.cossacklabs.com/themis/",
   "devDependencies": {
-    "mocha": "^6.1.4"
+    "mocha": "^7.1.1"
   }
 }
