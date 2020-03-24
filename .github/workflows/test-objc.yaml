@@ -13,7 +13,7 @@ on:
       - 'src/wrappers/themis/Obj-C/**'
       - 'tests/objcthemis/**'
       - 'third_party/boringssl/src/**'
-      - '**/Carthage*'
+      - '**/Cartfile*'
       - '**/Podfile*'
       - '**/*.podspec'
       - '!**/README*'
@@ -51,6 +51,11 @@ env:
       && !startsWith(github.ref, 'refs/heads/release/')
       && !startsWith(github.ref, 'refs/tags/')
     }}
+  # When building pull requests GitHub uses an internal ref in the *base repo*,
+  # making it inaccessible to dumb tools. Use these variables that point to PRs
+  # head, not the result of merge with base.
+  HACK_REPOSITORY: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
+  HACK_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 
 jobs:
   unit-tests-cocoapods:
@@ -66,7 +71,7 @@ jobs:
           find tests/objcthemis -type f -name Podfile.lock -delete
           find tests/objcthemis -type f -name Podfile -print0 | xargs -0 \
             sed -E -i '' \
-                -e "s|(pod 'themis.*').*|\1, :git => \"https://github.com/${GITHUB_REPOSITORY}.git\", :commit => \"$GITHUB_SHA\"|"
+                -e "s|(pod 'themis.*').*|\1, :git => \"https://github.com/${HACK_REPOSITORY}.git\", :commit => \"$HACK_SHA\"|"
       - name: CocoaPods cache
         uses: actions/cache@v1
         with:
@@ -172,7 +177,7 @@ jobs:
         run: |
           # CocoaPods: podspec
           sed -E -i '' \
-              -e "s|^(\s*s\.source = ).*$|\1{ :git => \"https://github.com/${GITHUB_REPOSITORY}.git\", :commit => \"$GITHUB_SHA\" }|" \
+              -e "s|^(\s*s\.source = ).*$|\1{ :git => \"https://github.com/${HACK_REPOSITORY}.git\", :commit => \"$HACK_SHA\" }|" \
               themis.podspec
           # Note that CocoaPods is *really* strict with versioning, does not
           # allow modified podspec to be published, and issues a warning
@@ -217,12 +222,12 @@ jobs:
           find docs/examples -type f -name Cartfile.resolved -delete
           find docs/examples -type f -name Cartfile -print0 | xargs -0 \
             sed -E -i '' \
-                -e "s|github \"cossacklabs/themis\".*|github \"$GITHUB_REPOSITORY\" \"$GITHUB_SHA\"|"
+                -e "s|github \"cossacklabs/themis\".*|github \"$HACK_REPOSITORY\" \"$HACK_SHA\"|"
           # CocoaPods
           find docs/examples -type f -name Podfile.lock -delete
           find docs/examples -type f -name Podfile -print0 | xargs -0 \
             sed -E -i '' \
-                -e "s|(pod 'themis(/[a-z-]*)*').*|\1, :git => \"https://github.com/${GITHUB_REPOSITORY}.git\", :commit => \"$GITHUB_SHA\"|"
+                -e "s|(pod 'themis(/[a-z-]*)*').*|\1, :git => \"https://github.com/${HACK_REPOSITORY}.git\", :commit => \"$HACK_SHA\"|"
       - name: CocoaPods cache
         uses: actions/cache@v1
         with:
