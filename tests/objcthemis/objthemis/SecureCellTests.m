@@ -540,13 +540,15 @@ static const size_t defaultLength = 32;
 
 - (void)testEncodingSpecific
 {
-    TSCellSeal *cellA = [[TSCellSeal alloc] initWithPassphrase:@"secret"
-                                                 usingEncoding:NSUTF16BigEndianStringEncoding];
-    TSCellSeal *cellB = [[TSCellSeal alloc] initWithPassphraseData:[@"secret" dataUsingEncoding:NSUTF16BigEndianStringEncoding]];
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphraseData:[@"secret" dataUsingEncoding:NSUTF16BigEndianStringEncoding]];
     NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
 
-    NSData *encrypted = [cellA encrypt:message];
-    NSData *decrypted = [cellB decrypt:encrypted];
+    // Message encrypted by PyThemis
+    NSString *encryptedString = @"AAEBQQwAAAAQAAAAHwAAABYAAAA0a7ZiM/EN7xyQSzZ3qD5YWpYMuAOIzi2PRR/mQA0DABAAWBZ+KWU/77jobUZZRM8syUPdwmga46Wdas7QeD9jFgU0Z9nCwgqN06DHer2VH+E=";
+    NSData *encrypted = [[NSData alloc] initWithBase64EncodedString:encryptedString
+                                                            options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+    NSData *decrypted = [cell decrypt:encrypted];
 
     XCTAssert([decrypted isEqualToData:message]);
 }

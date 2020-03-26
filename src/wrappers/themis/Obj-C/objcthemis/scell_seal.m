@@ -30,17 +30,8 @@
 
 - (nullable instancetype)initWithPassphrase:(NSString *)passphrase
 {
-    return [self initWithPassphrase:passphrase usingEncoding:NSUTF8StringEncoding];
-}
-
-- (nullable instancetype)initWithPassphrase:(NSString *)passphrase
-                              usingEncoding:(NSStringEncoding)encoding
-{
-    NSData *encoded = [passphrase dataUsingEncoding:encoding];
-    if (!encoded) {
-        return nil;
-    }
-    return [self initWithPassphraseData:encoded];
+    NSData *passphraseUTF8 = [passphrase dataUsingEncoding:NSUTF8StringEncoding];
+    return [self initWithPassphraseData:passphraseUTF8];
 }
 
 - (nullable instancetype)initWithPassphraseData:(NSData *)passphrase
