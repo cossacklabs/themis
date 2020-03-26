@@ -605,6 +605,21 @@ static themis_status_t themis_sym_derive_encryption_key_compat(const uint8_t* ke
 }
 #endif
 
+static themis_status_t themis_sym_derive_encryption_iv(const uint8_t* key,
+                                                       size_t key_length,
+                                                       const uint8_t* context,
+                                                       size_t context_length,
+                                                       uint8_t* iv,
+                                                       size_t iv_length)
+{
+    /*
+     * Yes, you are reading it correct. We do derive IV with a KDF.
+     * Context Imprint mode needs to be completely deterministic.
+     * That's why it has lower security than Seal or Token Protect.
+     */
+    return themis_sym_kdf(key, key_length, THEMIS_SYM_KDF_IV_LABEL, context, context_length, NULL, 0, iv, iv_length);
+}
+
 themis_status_t themis_sym_encrypt_message_u_(const uint8_t* key,
                                               const size_t key_length,
                                               const uint8_t* message,
@@ -614,35 +629,34 @@ themis_status_t themis_sym_encrypt_message_u_(const uint8_t* key,
                                               uint8_t* encrypted_message,
                                               size_t* encrypted_message_length)
 {
+    themis_status_t res = THEMIS_FAIL;
+    uint8_t iv[THEMIS_SYM_IV_LENGTH];
+
     THEMIS_CHECK_PARAM(message != NULL && message_length != 0);
     THEMIS_CHECK_PARAM(context != NULL && context_length != 0);
+
     if ((*encrypted_message_length) < message_length) {
         (*encrypted_message_length) = message_length;
         return THEMIS_BUFFER_TOO_SMALL;
     }
     (*encrypted_message_length) = message_length;
-    uint8_t iv[THEMIS_SYM_IV_LENGTH];
-    THEMIS_STATUS_CHECK(themis_sym_kdf(key,
-                                       key_length,
-                                       THEMIS_SYM_KDF_IV_LABEL,
-                                       context,
-                                       context_length,
-                                       NULL,
-                                       0,
-                                       iv,
-                                       THEMIS_SYM_IV_LENGTH),
-                        THEMIS_SUCCESS);
-    THEMIS_STATUS_CHECK(themis_sym_plain_encrypt(THEMIS_SYM_ALG,
-                                                 key,
-                                                 key_length,
-                                                 iv,
-                                                 THEMIS_SYM_IV_LENGTH,
-                                                 message,
-                                                 message_length,
-                                                 encrypted_message,
-                                                 encrypted_message_length),
-                        THEMIS_SUCCESS);
-    return THEMIS_SUCCESS;
+
+    res = themis_sym_derive_encryption_iv(key, key_length, context, context_length, iv, sizeof(iv));
+    if (res != THEMIS_SUCCESS) {
+        return res;
+    }
+
+    res = themis_sym_plain_encrypt(THEMIS_SYM_ALG,
+                                   key,
+                                   key_length,
+                                   iv,
+                                   sizeof(iv),
+                                   message,
+                                   message_length,
+                                   encrypted_message,
+                                   encrypted_message_length);
+    soter_wipe(iv, sizeof(iv));
+    return res;
 }
 
 themis_status_t themis_sym_encrypt_message_u(const uint8_t* key,
@@ -685,35 +699,34 @@ themis_status_t themis_sym_decrypt_message_u_(const uint8_t* key,
                                               uint8_t* message,
                                               size_t* message_length)
 {
+    themis_status_t res = THEMIS_FAIL;
+    uint8_t iv[THEMIS_SYM_IV_LENGTH];
+
     THEMIS_CHECK_PARAM(encrypted_message != NULL && encrypted_message_length != 0);
     THEMIS_CHECK_PARAM(context != NULL && context_length != 0);
+
     if ((*message_length) < encrypted_message_length) {
         (*message_length) = encrypted_message_length;
         return THEMIS_BUFFER_TOO_SMALL;
     }
     (*message_length) = encrypted_message_length;
-    uint8_t iv[THEMIS_SYM_IV_LENGTH];
-    THEMIS_STATUS_CHECK(themis_sym_kdf(key,
-                                       key_length,
-                                       THEMIS_SYM_KDF_IV_LABEL,
-                                       context,
-                                       context_length,
-                                       NULL,
-                                       0,
-                                       iv,
-                                       THEMIS_SYM_IV_LENGTH),
-                        THEMIS_SUCCESS);
-    THEMIS_STATUS_CHECK(themis_sym_plain_decrypt(THEMIS_SYM_ALG,
-                                                 key,
-                                                 key_length,
-                                                 iv,
-                                                 THEMIS_SYM_IV_LENGTH,
-                                                 encrypted_message,
-                                                 encrypted_message_length,
-                                                 message,
-                                                 message_length),
-                        THEMIS_SUCCESS);
-    return THEMIS_SUCCESS;
+
+    res = themis_sym_derive_encryption_iv(key, key_length, context, context_length, iv, sizeof(iv));
+    if (res != THEMIS_SUCCESS) {
+        return res;
+    }
+
+    res = themis_sym_plain_decrypt(THEMIS_SYM_ALG,
+                                   key,
+                                   key_length,
+                                   iv,
+                                   sizeof(iv),
+                                   encrypted_message,
+                                   encrypted_message_length,
+                                   message,
+                                   message_length);
+    soter_wipe(iv, sizeof(iv));
+    return res;
 }
 
 themis_status_t themis_sym_decrypt_message_u(const uint8_t* key,
