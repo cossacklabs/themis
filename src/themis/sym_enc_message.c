@@ -551,12 +551,6 @@ themis_status_t themis_auth_sym_decrypt_message(const uint8_t* key,
                                             message_length);
 }
 
-typedef struct themis_sym_message_hdr_type {
-    uint32_t alg;
-    uint32_t iv_length;
-    uint32_t message_length;
-} themis_sym_message_hdr_t;
-
 static themis_status_t themis_sym_derive_encryption_key(const uint8_t* key,
                                                         size_t key_length,
                                                         size_t message_length,
