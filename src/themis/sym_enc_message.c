@@ -456,7 +456,7 @@ themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
      * Themis 0.9.6 used slightly different KDF. If decryption fails,
      * maybe it was encrypted with that incorrect key. Try it out.
      */
-    if (res != THEMIS_SUCCESS && res != THEMIS_BUFFER_TOO_SMALL && sizeof(size_t) == sizeof(uint64_t)) {
+    if (res != THEMIS_SUCCESS && res != THEMIS_BUFFER_TOO_SMALL) {
         kdf_context_length = sizeof(kdf_context);
         res = themis_auth_sym_kdf_context_compat(hdr.message_length, kdf_context, &kdf_context_length);
         if (res != THEMIS_SUCCESS) {
@@ -750,25 +750,23 @@ themis_status_t themis_sym_decrypt_message_u(const uint8_t* key,
      * Themis 0.9.6 used slightly different KDF. If decryption fails,
      * maybe it was encrypted with that incorrect key. Try it out.
      */
-    if (sizeof(size_t) == sizeof(uint64_t)) {
-        if (res != THEMIS_SUCCESS && res != THEMIS_BUFFER_TOO_SMALL) {
-            res = themis_sym_derive_encryption_key_compat(key,
-                                                          key_length,
-                                                          encrypted_message_length,
-                                                          derived_key,
-                                                          sizeof(derived_key));
-            if (res != THEMIS_SUCCESS) {
-                goto error;
-            }
-            res = themis_sym_decrypt_message_u_(derived_key,
-                                                sizeof(derived_key),
-                                                context,
-                                                context_length,
-                                                encrypted_message,
-                                                encrypted_message_length,
-                                                message,
-                                                message_length);
+    if (res != THEMIS_SUCCESS && res != THEMIS_BUFFER_TOO_SMALL) {
+        res = themis_sym_derive_encryption_key_compat(key,
+                                                      key_length,
+                                                      encrypted_message_length,
+                                                      derived_key,
+                                                      sizeof(derived_key));
+        if (res != THEMIS_SUCCESS) {
+            goto error;
         }
+        res = themis_sym_decrypt_message_u_(derived_key,
+                                            sizeof(derived_key),
+                                            context,
+                                            context_length,
+                                            encrypted_message,
+                                            encrypted_message_length,
+                                            message,
+                                            message_length);
     }
 
 error:
