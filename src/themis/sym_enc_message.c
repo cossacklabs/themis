@@ -198,7 +198,6 @@ static themis_status_t themis_auth_sym_kdf_context(uint32_t message_length,
     return THEMIS_SUCCESS;
 }
 
-#ifdef SCELL_COMPAT
 /*
  * Themis 0.9.6 incorrectly used 64-bit message length for this field.
  */
@@ -214,7 +213,6 @@ static themis_status_t themis_auth_sym_kdf_context_compat(uint32_t message_lengt
     *kdf_context_length = sizeof(uint64_t);
     return THEMIS_SUCCESS;
 }
-#endif
 
 static themis_status_t themis_auth_sym_derive_encryption_key(const struct themis_scell_auth_token_key* hdr,
                                                              const uint8_t* key,
@@ -458,7 +456,6 @@ themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
      * Themis 0.9.6 used slightly different KDF. If decryption fails,
      * maybe it was encrypted with that incorrect key. Try it out.
      */
-#ifdef SCELL_COMPAT
     if (res != THEMIS_SUCCESS && res != THEMIS_BUFFER_TOO_SMALL && sizeof(size_t) == sizeof(uint64_t)) {
         kdf_context_length = sizeof(kdf_context);
         res = themis_auth_sym_kdf_context_compat(hdr.message_length, kdf_context, &kdf_context_length);
@@ -491,7 +488,6 @@ themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
                                             hdr.auth_tag,
                                             hdr.auth_tag_length);
     }
-#endif
 
     /* Sanity check of resulting message length */
     if (*message_length != encrypted_message_length) {
@@ -575,7 +571,6 @@ static themis_status_t themis_sym_derive_encryption_key(const uint8_t* key,
                           derived_key_length);
 }
 
-#ifdef SCELL_COMPAT
 /*
  * Themis 0.9.6 used 64-bit message length in computations, so here we go.
  */
@@ -597,7 +592,6 @@ static themis_status_t themis_sym_derive_encryption_key_compat(const uint8_t* ke
                           derived_key,
                           derived_key_length);
 }
-#endif
 
 static themis_status_t themis_sym_derive_encryption_iv(const uint8_t* key,
                                                        size_t key_length,
@@ -756,7 +750,6 @@ themis_status_t themis_sym_decrypt_message_u(const uint8_t* key,
      * Themis 0.9.6 used slightly different KDF. If decryption fails,
      * maybe it was encrypted with that incorrect key. Try it out.
      */
-#ifdef SCELL_COMPAT
     if (sizeof(size_t) == sizeof(uint64_t)) {
         if (res != THEMIS_SUCCESS && res != THEMIS_BUFFER_TOO_SMALL) {
             res = themis_sym_derive_encryption_key_compat(key,
@@ -777,7 +770,6 @@ themis_status_t themis_sym_decrypt_message_u(const uint8_t* key,
                                                 message_length);
         }
     }
-#endif
 
 error:
     soter_wipe(derived_key, sizeof(derived_key));
