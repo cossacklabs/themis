@@ -47,7 +47,7 @@ jobs:
             nodejs npm libssl1.0-dev \
             default-jdk
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           submodules: true
       - name: Check code formatting
