@@ -557,6 +557,54 @@ typedef struct themis_sym_message_hdr_type {
     uint32_t message_length;
 } themis_sym_message_hdr_t;
 
+static themis_status_t themis_sym_derive_encryption_key(const uint8_t* key,
+                                                        size_t key_length,
+                                                        size_t message_length,
+                                                        uint8_t* derived_key,
+                                                        size_t derived_key_length)
+{
+    uint8_t kdf_context[sizeof(uint32_t)];
+    /*
+     * Note that we use only the least significant 32 bits of size_t here.
+     * If message_length is longer that 4 GB then the context value gets
+     * truncated here. (And on 16-bit platforms it will be zero-padded.)
+     */
+    stream_write_uint32LE(kdf_context, (uint32_t)message_length);
+    return themis_sym_kdf(key,
+                          key_length,
+                          THEMIS_SYM_KDF_KEY_LABEL,
+                          kdf_context,
+                          sizeof(kdf_context),
+                          NULL,
+                          0,
+                          derived_key,
+                          derived_key_length);
+}
+
+#ifdef SCELL_COMPAT
+/*
+ * Themis 0.9.6 used 64-bit message length in computations, so here we go.
+ */
+static themis_status_t themis_sym_derive_encryption_key_compat(const uint8_t* key,
+                                                               size_t key_length,
+                                                               size_t message_length,
+                                                               uint8_t* derived_key,
+                                                               size_t derived_key_length)
+{
+    uint8_t kdf_context[sizeof(uint64_t)];
+    stream_write_uint64LE(kdf_context, (uint64_t)message_length);
+    return themis_sym_kdf(key,
+                          key_length,
+                          THEMIS_SYM_KDF_KEY_LABEL,
+                          kdf_context,
+                          sizeof(kdf_context),
+                          NULL,
+                          0,
+                          derived_key,
+                          derived_key_length);
+}
+#endif
+
 themis_status_t themis_sym_encrypt_message_u_(const uint8_t* key,
                                               const size_t key_length,
                                               const uint8_t* message,
@@ -606,28 +654,26 @@ themis_status_t themis_sym_encrypt_message_u(const uint8_t* key,
                                              uint8_t* encrypted_message,
                                              size_t* encrypted_message_length)
 {
-    uint8_t key_[THEMIS_SYM_KEY_LENGTH / 8];
+    themis_status_t res = THEMIS_FAIL;
+    uint8_t derived_key[THEMIS_SYM_KEY_LENGTH / 8];
 
-    // TODO: TYPE WARNING Should update `sizeof(uint32_t)` to `sizeof(message_length)` after
-    // changing encrypted_message_length type to uint32_t
-    THEMIS_STATUS_CHECK(themis_sym_kdf(key,
-                                       key_length,
-                                       THEMIS_SYM_KDF_KEY_LABEL,
-                                       (uint8_t*)(&message_length),
-                                       sizeof(uint32_t),
-                                       NULL,
-                                       0,
-                                       key_,
-                                       sizeof(key_)),
-                        THEMIS_SUCCESS);
-    return themis_sym_encrypt_message_u_(key_,
-                                         sizeof(key_),
-                                         message,
-                                         message_length,
-                                         context,
-                                         context_length,
-                                         encrypted_message,
-                                         encrypted_message_length);
+    res = themis_sym_derive_encryption_key(key, key_length, message_length, derived_key, sizeof(derived_key));
+    if (res != THEMIS_SUCCESS) {
+        return res;
+    }
+
+    res = themis_sym_encrypt_message_u_(derived_key,
+                                        sizeof(derived_key),
+                                        message,
+                                        message_length,
+                                        context,
+                                        context_length,
+                                        encrypted_message,
+                                        encrypted_message_length);
+
+    soter_wipe(derived_key, sizeof(derived_key));
+
+    return res;
 }
 
 themis_status_t themis_sym_decrypt_message_u_(const uint8_t* key,
@@ -679,56 +725,55 @@ themis_status_t themis_sym_decrypt_message_u(const uint8_t* key,
                                              uint8_t* message,
                                              size_t* message_length)
 {
-    uint8_t key_[THEMIS_SYM_KEY_LENGTH / 8];
+    themis_status_t res = THEMIS_FAIL;
+    uint8_t derived_key[THEMIS_SYM_KEY_LENGTH / 8];
 
-    // TODO: TYPE WARNING Should update `sizeof(uint32_t)` to `sizeof(encrypted_message_length)`
-    // after changing encrypted_message_length type to uint32_t
-    THEMIS_STATUS_CHECK(themis_sym_kdf(key,
-                                       key_length,
-                                       THEMIS_SYM_KDF_KEY_LABEL,
-                                       (uint8_t*)(&encrypted_message_length),
-                                       sizeof(uint32_t),
-                                       NULL,
-                                       0,
-                                       key_,
-                                       sizeof(key_)),
-                        THEMIS_SUCCESS);
-    themis_status_t decryption_result = themis_sym_decrypt_message_u_(key_,
-                                                                      sizeof(key_),
-                                                                      context,
-                                                                      context_length,
-                                                                      encrypted_message,
-                                                                      encrypted_message_length,
-                                                                      message,
-                                                                      message_length);
+    res = themis_sym_derive_encryption_key(key,
+                                           key_length,
+                                           encrypted_message_length,
+                                           derived_key,
+                                           sizeof(derived_key));
+    if (res != THEMIS_SUCCESS) {
+        return res;
+    }
 
+    res = themis_sym_decrypt_message_u_(derived_key,
+                                        sizeof(derived_key),
+                                        context,
+                                        context_length,
+                                        encrypted_message,
+                                        encrypted_message_length,
+                                        message,
+                                        message_length);
+    /*
+     * Themis 0.9.6 used slightly different KDF. If decryption fails,
+     * maybe it was encrypted with that incorrect key. Try it out.
+     */
 #ifdef SCELL_COMPAT
-
-    // we are on x64, should sizeof(uin64_t) for backwards compatibility with themis 0.9.6 x64
     if (sizeof(size_t) == sizeof(uint64_t)) {
-        if (decryption_result != THEMIS_SUCCESS && decryption_result != THEMIS_BUFFER_TOO_SMALL) {
-            // TODO: TYPE WARNING `sizeof(uint64_t)`. Fix that on next versions
-            THEMIS_STATUS_CHECK(themis_sym_kdf(key,
-                                               key_length,
-                                               THEMIS_SYM_KDF_KEY_LABEL,
-                                               (uint8_t*)(&encrypted_message_length),
-                                               sizeof(uint64_t),
-                                               NULL,
-                                               0,
-                                               key_,
-                                               sizeof(key_)),
-                                THEMIS_SUCCESS);
-            decryption_result = themis_sym_decrypt_message_u_(key_,
-                                                              sizeof(key_),
-                                                              context,
-                                                              context_length,
-                                                              encrypted_message,
-                                                              encrypted_message_length,
-                                                              message,
-                                                              message_length);
+        if (res != THEMIS_SUCCESS && res != THEMIS_BUFFER_TOO_SMALL) {
+            res = themis_sym_derive_encryption_key_compat(key,
+                                                          key_length,
+                                                          encrypted_message_length,
+                                                          derived_key,
+                                                          sizeof(derived_key));
+            if (res != THEMIS_SUCCESS) {
+                goto error;
+            }
+            res = themis_sym_decrypt_message_u_(derived_key,
+                                                sizeof(derived_key),
+                                                context,
+                                                context_length,
+                                                encrypted_message,
+                                                encrypted_message_length,
+                                                message,
+                                                message_length);
         }
     }
 #endif
 
-    return decryption_result;
+error:
+    soter_wipe(derived_key, sizeof(derived_key));
+
+    return res;
 }
