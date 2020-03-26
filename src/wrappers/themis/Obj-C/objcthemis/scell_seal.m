@@ -45,6 +45,8 @@
 
 - (nullable instancetype)initWithPassphraseData:(NSData *)passphrase
 {
+    // Avoid a warning about "Convenience initializer missing a 'self' call
+    // to another initializer" by assigning the new instance to self first.
     self = [TSCellSealWithPassphrase alloc];
     self = [self initWithPassphraseData:passphrase];
     return self;
