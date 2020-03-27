@@ -2043,8 +2043,12 @@ static void secure_cell_0_9_6_compatibility(void)
                                           output,
                                           &output_length);
 
+#if SCELL_COMPAT
     testsuite_fail_if(res != THEMIS_SUCCESS, "Seal: decrypted message ok");
     testsuite_fail_if(memcmp(output, message, output_length) != 0, "Seal: message content same");
+#else
+    testsuite_fail_if(res != THEMIS_FAIL, "Seal: decryption failure");
+#endif
 
     res = themis_secure_cell_decrypt_token_protect(master_key,
                                                    sizeof(master_key),
@@ -2071,8 +2075,12 @@ static void secure_cell_0_9_6_compatibility(void)
                                                    output,
                                                    &output_length);
 
+#if SCELL_COMPAT
     testsuite_fail_if(res != THEMIS_SUCCESS, "Token: decrypted message ok");
     testsuite_fail_if(memcmp(output, message, output_length) != 0, "Token: message content same");
+#else
+    testsuite_fail_if(res != THEMIS_FAIL, "Token: decryption failure");
+#endif
 
     res = themis_secure_cell_decrypt_context_imprint(master_key,
                                                      sizeof(master_key),
