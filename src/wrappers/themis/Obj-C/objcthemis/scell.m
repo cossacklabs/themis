@@ -16,18 +16,9 @@
 
 #import <objcthemis/scell.h>
 
-
-@interface TSCell ()
-
-
-/** @brief store master key, rewrite
-*/
-@property(nonatomic, readwrite) NSData *key;
-
-@end
-
-
-@implementation TSCell
+@implementation TSCell {
+    NSMutableData *_key;
+}
 
 - (nullable instancetype)initWithKey:(NSData *)key {
     self = [super init];
@@ -35,9 +26,17 @@
         if (!key || [key length] == 0) {
             return nil;
         }
-        self.key = [[NSData alloc] initWithData:key];
+        _key = [[NSMutableData alloc] initWithData:key];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    // Wipe the sensitive encryption key from memory when Secure Cell
+    // is deallocated and can no longer be used.
+    [_key resetBytesInRange:NSMakeRange(0, _key.length)];
+    [_key setLength:0];
 }
 
 @end

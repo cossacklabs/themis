@@ -208,6 +208,24 @@ class SecureCellSealSwift: XCTestCase {
         XCTAssertNotNil(decrypted)
         XCTAssertEqual(decrypted, message)
     }
+
+    func testKeyNotWipedOnDestruction() {
+        let key = TSGenerateSymmetricKey()!
+        do {
+            let cellKey: Data
+            do {
+                let cell = TSCellSeal(key: key)!
+
+                cellKey = cell.key
+
+                XCTAssertNotEqual(cellKey.count, 0)
+                XCTAssertEqual(cellKey, key)
+            }
+            // In Swift "Data" is a value type so "cellKey" is a copy of the key
+            // which is not wiped by Secure Cell.
+            XCTAssertEqual(cellKey, key)
+        }
+    }
 }
 
 // MARK: - Seal Mode (passphrase)
@@ -675,6 +693,24 @@ class SecureCellTokenProtectSwift: XCTestCase {
         XCTAssertNotNil(decrypted)
         XCTAssertEqual(decrypted, message)
     }
+
+    func testKeyNotWipedOnDestruction() {
+        let key = TSGenerateSymmetricKey()!
+        do {
+            let cellKey: Data
+            do {
+                let cell = TSCellToken(key: key)!
+
+                cellKey = cell.key
+
+                XCTAssertNotEqual(cellKey.count, 0)
+                XCTAssertEqual(cellKey, key)
+            }
+            // In Swift "Data" is a value type so "cellKey" is a copy of the key
+            // which is not wiped by Secure Cell.
+            XCTAssertEqual(cellKey, key)
+        }
+    }
 }
 
 // MARK: - Context Imprint
@@ -845,5 +881,23 @@ class SecureCellContextImprintSwift: XCTestCase {
         decrypted = try? cell.unwrapData(encrypted!, context: context)
         XCTAssertNotNil(decrypted)
         XCTAssertEqual(decrypted, message)
+    }
+
+    func testKeyNotWipedOnDestruction() {
+        let key = TSGenerateSymmetricKey()!
+        do {
+            let cellKey: Data
+            do {
+                let cell = TSCellContextImprint(key: key)!
+
+                cellKey = cell.key
+
+                XCTAssertNotEqual(cellKey.count, 0)
+                XCTAssertEqual(cellKey, key)
+            }
+            // In Swift "Data" is a value type so "cellKey" is a copy of the key
+            // which is not wiped by Secure Cell.
+            XCTAssertEqual(cellKey, key)
+        }
     }
 }

@@ -302,6 +302,28 @@ static const size_t defaultLength = 32;
 }
 #pragma clang diagnostic pop
 
+- (void)testKeyWipedOnDealloc
+{
+    NSData *key = TSGenerateSymmetricKey();
+    {
+        NSData *cellKey;
+        {
+            TSCellSeal *cell = [[TSCellSeal alloc] initWithKey:key];
+
+            cellKey = cell.key;
+
+            XCTAssertNotNil(cellKey);
+            XCTAssertNotEqual(cellKey.length, 0);
+            XCTAssertNotEqual(cellKey, key, @"Secure Cell makes a copy of the key");
+            XCTAssert([cellKey isEqualToData:key]);
+        }
+        // The key is wiped after the cell has left the scope and has been deallocated.
+        XCTAssertNotNil(cellKey);
+        XCTAssertEqual(cellKey.length, 0);
+        XCTAssertFalse([cellKey isEqualToData:key]);
+    }
+}
+
 @end
 
 #pragma mark - Seal Mode (passphrase)
@@ -978,6 +1000,28 @@ static const size_t defaultLength = 32;
 }
 #pragma clang diagnostic pop
 
+- (void)testKeyWipedOnDealloc
+{
+    NSData *key = TSGenerateSymmetricKey();
+    {
+        NSData *cellKey;
+        {
+            TSCellToken *cell = [[TSCellToken alloc] initWithKey:key];
+
+            cellKey = cell.key;
+
+            XCTAssertNotNil(cellKey);
+            XCTAssertNotEqual(cellKey.length, 0);
+            XCTAssertNotEqual(cellKey, key, @"Secure Cell makes a copy of the key");
+            XCTAssert([cellKey isEqualToData:key]);
+        }
+        // The key is wiped after the cell has left the scope and has been deallocated.
+        XCTAssertNotNil(cellKey);
+        XCTAssertEqual(cellKey.length, 0);
+        XCTAssertFalse([cellKey isEqualToData:key]);
+    }
+}
+
 @end
 
 #pragma mark - Context Imprint
@@ -1225,5 +1269,27 @@ static const size_t defaultLength = 32;
     XCTAssert([decrypted isEqualToData:message]);
 }
 #pragma clang diagnostic pop
+
+- (void)testKeyWipedOnDealloc
+{
+    NSData *key = TSGenerateSymmetricKey();
+    {
+        NSData *cellKey;
+        {
+            TSCellContextImprint *cell = [[TSCellContextImprint alloc] initWithKey:key];
+
+            cellKey = cell.key;
+
+            XCTAssertNotNil(cellKey);
+            XCTAssertNotEqual(cellKey.length, 0);
+            XCTAssertNotEqual(cellKey, key, @"Secure Cell makes a copy of the key");
+            XCTAssert([cellKey isEqualToData:key]);
+        }
+        // The key is wiped after the cell has left the scope and has been deallocated.
+        XCTAssertNotNil(cellKey);
+        XCTAssertEqual(cellKey.length, 0);
+        XCTAssertFalse([cellKey isEqualToData:key]);
+    }
+}
 
 @end
