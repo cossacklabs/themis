@@ -285,6 +285,7 @@ jobs:
       - checkout
       - run: git reset HEAD && git submodule sync && git submodule update --init
       - run: make
+      - run: make BUILD_PATH=build_compat WITH_SCELL_COMPAT=yes
       - run: make JAVA_HOME=/usr/lib/jvm/default-java themis_jni
       - run: sudo make install
       - run: sudo make themispp_install
@@ -292,6 +293,7 @@ jobs:
       - run: sudo make rbthemis_install
       - run: make ENGINE=boringssl BUILD_PATH=build_with_boringssl prepare_tests_basic
       - run: make BUILD_PATH=cover_build COVERAGE=y prepare_tests_basic
+      - run: make prepare_tests_basic BUILD_PATH=build_compat WITH_SCELL_COMPAT=yes
       - run: make prepare_tests_all
       - run: lcov --directory . --zerocounters
       # run only if CIRCLE_PR_NUMBER variable is not set (it's not pull request and COVERALLS_TOKEN will be set via circleCI for non-PR build) and COVERALLS_TOKEN is set
@@ -299,6 +301,7 @@ jobs:
       - run: '[ -z "$CIRCLE_PR_NUMBER" ] && ! [ -z "$COVERALLS_TOKEN" ] && cd $HOME/go/src/$GOTHEMIS_IMPORT && $HOME/go/bin/goveralls -v -service=circle-ci -repotoken=$COVERALLS_TOKEN || true'
       - run: sudo /sbin/ldconfig
       - run: make test
+      - run: make test BUILD_PATH=build_compat
       - run: make clean_themispp_test && CXX="g++"     CFLAGS="-std=c++03" make themispp_test && make test_cpp
       - run: make clean_themispp_test && CXX="g++"     CFLAGS="-std=c++11" make themispp_test && make test_cpp
       - run: make clean_themispp_test && CXX="g++"     CFLAGS="-std=c++14" make themispp_test && make test_cpp
