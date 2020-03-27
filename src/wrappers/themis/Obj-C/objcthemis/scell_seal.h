@@ -66,7 +66,28 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @returns @c nil if key is empty.
  */
-- (nullable instancetype)initWithKey:(NSData *)key;
+- (nullable instancetype)initWithKey:(NSData *)key
+    NS_DESIGNATED_INITIALIZER;
+
+/**
+ * Initialise Secure Cell in Seal mode with a passphrase.
+ *
+ * @param [in] passphrase   non-empty passphrase to use
+ *
+ * The passphrase string will be encoded in UTF-8.
+ *
+ * @returns @c nil if passphrase is empty.
+ */
+- (nullable instancetype)initWithPassphrase:(NSString *)passphrase;
+
+/**
+ * Initialise Secure Cell in Seal mode with raw passphrase data.
+ *
+ * @param [in] passphrase   non-empty passphrase to use
+ *
+ * @returns @c nil if passphrase is empty.
+ */
+- (nullable instancetype)initWithPassphraseData:(NSData *)passphrase;
 
 /**
  * Encrypt data.

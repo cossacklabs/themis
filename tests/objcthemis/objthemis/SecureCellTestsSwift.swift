@@ -210,6 +210,188 @@ class SecureCellSealSwift: XCTestCase {
     }
 }
 
+// MARK: - Seal Mode (passphrase)
+
+class SecureCellSealPassphraseSwift: XCTestCase {
+
+    func testInitWithFixed() {
+        let cell = TSCellSeal(passphrase: "secret")
+        XCTAssertNotNil(cell)
+    }
+
+    func testInitWithRawData() {
+        let cell = TSCellSeal(passphraseData: "secret".data(using: .ascii)!)
+        XCTAssertNotNil(cell)
+    }
+
+    func testInitWithEmpty() {
+        XCTAssertNil(TSCellSeal(passphrase: ""))
+        XCTAssertNil(TSCellSeal(passphraseData: Data()))
+    }
+
+    func testRoundtrip() {
+        let cell = TSCellSeal(passphrase: "secret")!
+        let message = "All your base are belong to us!"
+        let context = "For great justice"
+
+        let encrypted = try? cell.encrypt(message.data(using: .utf8)!,
+                                          context: context.data(using: .utf8)!)
+        XCTAssertNotNil(encrypted)
+
+        let decrypted = try? cell.decrypt(encrypted!,
+                                          context: context.data(using: .utf8)!)
+        XCTAssertNotNil(decrypted)
+
+        let decryptedMessage = String(data: decrypted!, encoding: .utf8)
+        XCTAssertNotNil(decryptedMessage)
+
+        XCTAssertEqual(decryptedMessage, message)
+    }
+
+    func testDataLengthExtension() {
+        let cell = TSCellSeal(passphrase: "secret")!
+        let message = "All your base are belong to us!".data(using: .utf8)!
+
+        let encrypted = try! cell.encrypt(message)
+
+        XCTAssertGreaterThan(encrypted.count, message.count)
+    }
+
+    func testContextInclusion() {
+        let cell = TSCellSeal(passphrase: "secret")!
+        let message = "All your base are belong to us!".data(using: .utf8)!
+        let shortContext = ".".data(using: .utf8)!
+        let longContext = "You have no chance to survive make your time. Ha ha ha ha ...".data(using: .utf8)!
+
+        let encryptedShort = try! cell.encrypt(message, context: shortContext)
+        let encryptedLong = try! cell.encrypt(message, context: longContext)
+
+        // Context is not (directly) included into encrypted message.
+        XCTAssertEqual(encryptedShort.count, encryptedLong.count)
+    }
+
+    func testWithoutContext() {
+        let cell = TSCellSeal(passphrase: "secret")!
+        let message = "All your base are belong to us!".data(using: .utf8)!
+
+        // Absent, empty, or nil context are all the same.
+        let encrypted1 = try! cell.encrypt(message)
+        let encrypted2 = try! cell.encrypt(message, context: nil)
+        let encrypted3 = try! cell.encrypt(message, context: Data())
+
+        XCTAssertEqual(message, try! cell.decrypt(encrypted1))
+        XCTAssertEqual(message, try! cell.decrypt(encrypted2))
+        XCTAssertEqual(message, try! cell.decrypt(encrypted3))
+
+        XCTAssertEqual(message, try! cell.decrypt(encrypted1, context:nil))
+        XCTAssertEqual(message, try! cell.decrypt(encrypted2, context:nil))
+        XCTAssertEqual(message, try! cell.decrypt(encrypted3, context:nil))
+
+        XCTAssertEqual(message, try! cell.decrypt(encrypted1, context:Data()))
+        XCTAssertEqual(message, try! cell.decrypt(encrypted2, context:Data()))
+        XCTAssertEqual(message, try! cell.decrypt(encrypted3, context:Data()))
+    }
+
+    func testContextSignificance() {
+        let cell = TSCellSeal(passphrase: "secret")!
+        let message = "All your base are belong to us!".data(using: .utf8)!
+        let correctContext = "We are CATS".data(using: .utf8)!
+        let incorrectContext = "Captain !!".data(using: .utf8)!
+
+        let encrypted = try! cell.encrypt(message, context: correctContext)
+
+        // You cannot use a different context to decrypt data.
+        XCTAssertThrowsError(try cell.decrypt(encrypted, context: incorrectContext))
+
+        // Only the original context will work.
+        let decrypted = try! cell.decrypt(encrypted, context: correctContext)
+        XCTAssertEqual(decrypted, message)
+    }
+
+    func testDetectCorruptedData() {
+        let cell = TSCellSeal(passphrase: "secret")!
+        let message = "All your base are belong to us!".data(using: .utf8)!
+
+        let encrypted = try! cell.encrypt(message)
+
+        var corrupted = Data(encrypted)
+        // Invert every odd byte, this will surely break the message.
+        for i in corrupted.indices where i % 2 == 1 {
+            corrupted[i] = ~corrupted[i]
+        }
+
+        XCTAssertThrowsError(try cell.decrypt(corrupted))
+    }
+
+    func testDetectTruncatedData() {
+        let cell = TSCellSeal(passphrase: "secret")!
+        let message = "All your base are belong to us!".data(using: .utf8)!
+
+        let encrypted = try! cell.encrypt(message)
+
+        let truncated = encrypted.dropLast(1)
+
+        XCTAssertThrowsError(try cell.decrypt(truncated))
+    }
+
+    func testDetectExtendedData() {
+        let cell = TSCellSeal(passphrase: "secret")!
+        let message = "All your base are belong to us!".data(using: .utf8)!
+
+        let encrypted = try! cell.encrypt(message)
+
+        var extended = Data(encrypted)
+        extended.append(0)
+
+        XCTAssertThrowsError(try cell.decrypt(extended))
+    }
+
+    func testEmptyMessage() {
+        let cell = TSCellSeal(passphrase: "secret")!
+
+        XCTAssertThrowsError(try cell.encrypt(Data()))
+        XCTAssertThrowsError(try cell.decrypt(Data()))
+    }
+
+    func testKeyIncompatibility() {
+        // Passphrases are not keys. Keys are not passphrases.
+        let secret = TSGenerateSymmetricKey()!
+        let cellMK = TSCellSeal(key: secret)!
+        let cellPW = TSCellSeal(passphraseData: secret)!
+        let message = "All your base are belong to us!".data(using: .utf8)!
+
+        let encrypted = try! cellMK.encrypt(message)
+        let decrypted = try? cellPW.decrypt(encrypted)
+
+        XCTAssertNil(decrypted)
+    }
+
+    func testEncodingDefault() {
+        // Passphrases are encoded in UTF-8 by default.
+        let secret = "暗号"
+        let cellA = TSCellSeal(passphrase: secret)!
+        let cellB = TSCellSeal(passphraseData: secret.data(using: .utf8)!)!
+        let message = "All your base are belong to us!".data(using: .utf8)!
+
+        let encrypted = try! cellA.encrypt(message)
+        let decrypted = try! cellB.decrypt(encrypted)
+
+        XCTAssertEqual(decrypted, message)
+    }
+
+    func testEncodingSpecific() {
+        let cell = TSCellSeal(passphraseData: "secret".data(using: .utf16BigEndian)!)!
+        let message = "All your base are belong to us!".data(using: .utf8)!
+
+        // Message encrypted by PyThemis
+        let encrypted = Data(base64Encoded: "AAEBQQwAAAAQAAAAHwAAABYAAAA0a7ZiM/EN7xyQSzZ3qD5YWpYMuAOIzi2PRR/mQA0DABAAWBZ+KWU/77jobUZZRM8syUPdwmga46Wdas7QeD9jFgU0Z9nCwgqN06DHer2VH+E=")!
+
+        let decrypted = try! cell.decrypt(encrypted)
+
+        XCTAssertEqual(decrypted, message)
+    }
+}
+
 // MARK: - Token Protect
 
 class SecureCellTokenProtectSwift: XCTestCase {

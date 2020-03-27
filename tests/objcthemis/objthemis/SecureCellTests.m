@@ -14,6 +14,9 @@
 @interface SecureCellSeal : XCTestCase
 @end
 
+@interface SecureCellSealPassphrase : XCTestCase
+@end
+
 @interface SecureCellTokenProtect : XCTestCase
 @end
 
@@ -298,6 +301,257 @@ static const size_t defaultLength = 32;
     XCTAssert([decrypted isEqualToData:message]);
 }
 #pragma clang diagnostic pop
+
+@end
+
+#pragma mark - Seal Mode (passphrase)
+
+@implementation SecureCellSealPassphrase
+
+- (void)testInitWithFixed
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphrase:@"secret"];
+    XCTAssertNotNil(cell);
+}
+
+- (void)testInitWithRawData
+{
+    NSData *data = [@"secret" dataUsingEncoding:NSASCIIStringEncoding];
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphraseData:data];
+    XCTAssertNotNil(cell);
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+- (void)testInitWithEmpty
+{
+    XCTAssertNil([[TSCellSeal alloc] initWithPassphrase:nil]);
+    XCTAssertNil([[TSCellSeal alloc] initWithPassphrase:@""]);
+    XCTAssertNil([[TSCellSeal alloc] initWithPassphraseData:nil]);
+    XCTAssertNil([[TSCellSeal alloc] initWithPassphraseData:[NSData new]]);
+}
+#pragma clang diagnostic pop
+
+- (void)testRoundtrip
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphrase:@"secret"];
+    NSString *message = @"All your base are belong to us!";
+    NSString *context = @"For great justice";
+    NSError *error;
+
+    NSData *encrypted = [cell encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                              context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                error:&error];
+    XCTAssertNotNil(encrypted);
+    XCTAssertNil(error);
+
+    NSData *decrypted = [cell decrypt:encrypted
+                              context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+
+    NSString *decryptedMessage = [[NSString alloc] initWithData:decrypted
+                                                       encoding:NSUTF8StringEncoding];
+
+    XCTAssert([decryptedMessage isEqualToString:message]);
+}
+
+- (void)testDataLengthExtension
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphrase:@"secret"];
+    NSString *message = @"All your base are belong to us!";
+    NSData *data = [message dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSData *encrypted = [cell encrypt:data];
+
+    XCTAssertGreaterThan(encrypted.length, data.length);
+}
+
+- (void)testContextInclusion
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphrase:@"secret"];
+    NSString *message = @"All your base are belong to us!";
+    NSString *shortContext = @".";
+    NSString *longContext = @"You have no chance to survive make your time. Ha ha ha ha ...";
+
+    NSData *encryptedShort = [cell encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                   context:[shortContext dataUsingEncoding:NSUTF8StringEncoding]];
+
+    NSData *encryptedLong = [cell encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                  context:[longContext dataUsingEncoding:NSUTF8StringEncoding]];
+
+    // Context is not (directly) included into encrypted message.
+    XCTAssertEqual(encryptedShort.length, encryptedLong.length);
+}
+
+- (void)testWithoutContext
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphrase:@"secret"];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+
+    // Absent, empty, or nil context are all the same.
+    NSData *encrypted1 = [cell encrypt:message];
+    NSData *encrypted2 = [cell encrypt:message context:nil];
+    NSData *encrypted3 = [cell encrypt:message context:[NSData new]];
+
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted1]]);
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted2]]);
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted3]]);
+
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted1 context:nil]]);
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted2 context:nil]]);
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted3 context:nil]]);
+
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted1 context:[NSData new]]]);
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted2 context:[NSData new]]]);
+    XCTAssert([message isEqualToData:[cell decrypt:encrypted3 context:[NSData new]]]);
+}
+
+- (void)testContextSignificance
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphrase:@"secret"];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *correctContext = [@"We are CATS" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *incorrectContext = [@"Captain !!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell encrypt:message context:correctContext];
+
+    // You cannot use a different context to decrypt data.
+    NSData *decrypted = [cell decrypt:encrypted context:incorrectContext error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, TSErrorTypeFail);
+
+    // Only the original context will work.
+    error = nil;
+    decrypted = [cell decrypt:encrypted context:correctContext error:&error];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(error);
+    XCTAssert([decrypted isEqualToData:message]);
+}
+
+- (void)testDetectCorruptedData
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphrase:@"secret"];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell encrypt:message];
+
+    NSMutableData *corrupted = [NSMutableData dataWithData:encrypted];
+    // Invert every odd byte, this will surely break the message.
+    uint8_t *bytes = corrupted.mutableBytes;
+    for (NSUInteger i = 1; i < corrupted.length; i += 2) {
+        bytes[i] = ~bytes[i];
+    }
+
+    NSData *decrypted = [cell decrypt:corrupted error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+}
+
+- (void)testDetectTruncatedData
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphrase:@"secret"];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell encrypt:message];
+
+    NSMutableData *truncated = [NSMutableData dataWithData:encrypted];
+    [truncated setLength:truncated.length - 1];
+
+    NSData *decrypted = [cell decrypt:truncated error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+}
+
+- (void)testDetectExtendedData
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphrase:@"secret"];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *error;
+
+    NSData *encrypted = [cell encrypt:message];
+
+    NSMutableData *extended = [NSMutableData dataWithData:encrypted];
+    [extended setLength:extended.length + 1];
+
+    NSData *decrypted = [cell decrypt:extended error:&error];
+    XCTAssertNil(decrypted);
+    XCTAssertNotNil(error);
+}
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wnonnull"
+- (void)testEmptyMessage
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphrase:@"secret"];
+    NSError *error;
+
+    error = nil;
+    XCTAssertNil([cell encrypt:nil error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell encrypt:[NSData new] error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell decrypt:nil error:&error]);
+    XCTAssertNotNil(error);
+
+    error = nil;
+    XCTAssertNil([cell decrypt:[NSData new] error:&error]);
+    XCTAssertNotNil(error);
+}
+#pragma clang diagnostic pop
+
+- (void)testKeyIncompatibility
+{
+    // Passphrases are not keys. Keys are not passphrases.
+    NSData *secret = TSGenerateSymmetricKey();
+    TSCellSeal *cellMK = [[TSCellSeal alloc] initWithKey:secret];
+    TSCellSeal *cellPW = [[TSCellSeal alloc] initWithPassphraseData:secret];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSData *encrypted = [cellMK encrypt:message];
+    NSData *decrypted = [cellPW decrypt:encrypted];
+
+    XCTAssertNil(decrypted);
+}
+
+- (void)testEncodingDefault
+{
+    // Passphrases are encoded in UTF-8 by default.
+    NSString *secret = @"暗号";
+    NSData *secretUTF8 = [secret dataUsingEncoding:NSUTF8StringEncoding];
+    TSCellSeal *cellA = [[TSCellSeal alloc] initWithPassphrase:secret];
+    TSCellSeal *cellB = [[TSCellSeal alloc] initWithPassphraseData:secretUTF8];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSData *encrypted = [cellA encrypt:message];
+    NSData *decrypted = [cellB decrypt:encrypted];
+
+    XCTAssert([decrypted isEqualToData:message]);
+}
+
+- (void)testEncodingSpecific
+{
+    TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphraseData:[@"secret" dataUsingEncoding:NSUTF16BigEndianStringEncoding]];
+    NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
+
+    // Message encrypted by PyThemis
+    NSString *encryptedString = @"AAEBQQwAAAAQAAAAHwAAABYAAAA0a7ZiM/EN7xyQSzZ3qD5YWpYMuAOIzi2PRR/mQA0DABAAWBZ+KWU/77jobUZZRM8syUPdwmga46Wdas7QeD9jFgU0Z9nCwgqN06DHer2VH+E=";
+    NSData *encrypted = [[NSData alloc] initWithBase64EncodedString:encryptedString
+                                                            options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+    NSData *decrypted = [cell decrypt:encrypted];
+
+    XCTAssert([decrypted isEqualToData:message]);
+}
 
 @end
 
