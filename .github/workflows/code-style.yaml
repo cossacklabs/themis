@@ -45,7 +45,7 @@ jobs:
           # System nodejs requires old OpenSSL libraries, not modern ones :(
           apt install --yes make clang-8 clang-format-8 clang-tidy-8 libstdc++-8-dev \
             nodejs npm libssl1.0-dev \
-            default-jdk
+            default-jdk git
       - name: Check out code
         uses: actions/checkout@v2
         with:
