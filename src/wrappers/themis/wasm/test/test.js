@@ -94,7 +94,7 @@ describe('wasm-themis', function() {
             })
             it('detect data corruption', function() {
                 let key = new themis.KeyPair().privateKey
-                key[20] = 256 - key[20]
+                key[20] = ~key[20]
                 assert.throws(() => new themis.PrivateKey(key))
             })
             it('handles type mismatches', function() {
@@ -197,7 +197,7 @@ describe('wasm-themis', function() {
             it('detects corrupted data', function() {
                 let cell = new themis.SecureCellSeal(masterKey1)
                 let encrypted = cell.encrypt(testInput)
-                encrypted[20] = 256 - encrypted[20]
+                encrypted[20] = ~encrypted[20]
                 assert.throws(() => cell.decrypt(encrypted),
                     expectError(ThemisErrorCode.FAIL)
                 )
@@ -299,7 +299,7 @@ describe('wasm-themis', function() {
             it('detects corrupted data', function() {
                 let cell = new themis.SecureCellTokenProtect(masterKey1)
                 let result = cell.encrypt(testInput)
-                result.data[5] = 256 - result.data[5]
+                result.data[5] = ~result.data[5]
                 assert.throws(() => cell.decrypt(result.data, result.token),
                     expectError(ThemisErrorCode.FAIL)
                 )
@@ -307,7 +307,7 @@ describe('wasm-themis', function() {
             it('detects corrupted token', function() {
                 let cell = new themis.SecureCellTokenProtect(masterKey1)
                 let result = cell.encrypt(testInput)
-                result.token[8] = 256 - result.token[8]
+                result.token[8] = ~result.token[8]
                 assert.throws(() => cell.decrypt(result.data, result.token),
                     expectError(ThemisErrorCode.FAIL)
                 )
@@ -380,7 +380,7 @@ describe('wasm-themis', function() {
             it('does not detect corrupted data', function() {
                 let cell = new themis.SecureCellContextImprint(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
-                encrypted[5] = 256 - encrypted[5]
+                encrypted[5] = ~encrypted[5]
                 let decrypted = cell.decrypt(encrypted, testContext)
                 assert.notDeepStrictEqual(testInput, decrypted)
             })
@@ -446,7 +446,7 @@ describe('wasm-themis', function() {
             it('detects corrupted data', function() {
                 let secureMessage = new themis.SecureMessage(new themis.KeyPair())
                 let encrypted = secureMessage.encrypt(testInput)
-                encrypted[10] = 256 - encrypted[10]
+                encrypted[10] = ~encrypted[10]
                 assert.throws(() => secureMessage.decrypt(encrypted),
                     expectError(ThemisErrorCode.FAIL)
                 )
@@ -532,7 +532,7 @@ describe('wasm-themis', function() {
                 let signer = new themis.SecureMessageSign(keyPair.privateKey)
                 let verifier = new themis.SecureMessageVerify(keyPair.publicKey)
                 let signed = signer.sign(testInput)
-                signed[12] = 256 - signed[12]
+                signed[12] = ~signed[12]
                 assert.throws(() => verifier.verify(signed),
                     expectError(ThemisErrorCode.FAIL)
                 )

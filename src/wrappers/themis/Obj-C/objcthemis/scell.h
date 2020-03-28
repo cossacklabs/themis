@@ -26,33 +26,56 @@
  * @{
  */
 
-/** @brief Base Secure cell interface
-*
-* Secure Сell is a high-level cryptographic service, aimed to protect arbitrary data being stored in various types of
-* storages (like databases, filesystem files, document archives, cloud storage etc).
-* It provides a simple way to secure your data using strong encryption and data authentication mechanisms,
-* with easy-to-use interfaces for broad range of use-cases.
-*
-*  Implementing secure storage is often constrained by various practical matters - ability to store keys,
-* existence of length-sensitive code bound to database structure, requirements to preserve structure.
-* To cover a broader range of usage scenarios and provide highest security level for systems with such constraints,
-* we've designed several types of interfaces and implementations of secure data container, Secure Cell.
-* They slightly differ in overall security level and ease of use: more complicated and slightly less secure ones can
-* cover more constrained environments though. Interfaces below are prioritized by our preference,
-* which takes only security and ease of use into account.
-*/
-
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Themis Secure Cell.
+ *
+ * Secure Сell is a high-level cryptographic service, aimed to protect arbitrary
+ * data being stored in various types of storages (like databases, filesystem
+ * files, document archives, cloud storage etc). It provides a simple way to
+ * secure your data using strong encryption and data authentication mechanisms,
+ * with easy-to-use interfaces for broad range of use-cases.
+ *
+ * Implementing secure storage is often constrained by various practical
+ * matters - ability to store keys, existence of length-sensitive code
+ * bound to database structure, requirements to preserve structure. To cover
+ * a broader range of usage scenarios and provide highest security level for
+ * systems with such constraints, we've designed several types of interfaces
+ * and implementations of secure data container, Secure Cell. They slightly
+ * differ in overall security level and ease of use: more complicated and
+ * slightly less secure ones can cover more constrained environments though.
+ * Interfaces below are prioritized by our preference, which takes only
+ * security and ease of use into account.
+ *
+ * - @c TSCellSeal is the most secure and the easiest one to use.
+ *
+ * - @c TSCellToken is able to preserve the encrypted data length
+ *   but requires separate data storage to be available.
+ *
+ * - @c TSCellContextImprint preserves encrypted data length too,
+ *   but at a cost of slightly lower security and more involved
+ *   interface.
+ *
+ * @note This @c TSCell is a base class of Secure Cells. You need to select
+ * one of the subclasses implementing a particular mode.
+ *
+ * Read more about Secure Cell modes:
+ *
+ * https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/
+ */
 @interface TSCell : NSObject
 
-/** @brief store master key
-*/
-@property(nonatomic, readonly) NSData *key;
+/** Encryption key. */
+@property (nonatomic, readonly) NSData *key;
 
-/** @brief Initialize Secure Cell object
-* @param [in] key master key
-*/
+/**
+ * Store Secure Cell encryption key.
+ *
+ * @param [in] key non-empty master key
+ *
+ * @returns @c nil if key is empty.
+ */
 - (nullable instancetype)initWithKey:(NSData *)key;
 
 @end

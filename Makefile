@@ -14,7 +14,30 @@
 # limitations under the License.
 #
 
-########################################################################
+#===== Early setup =============================================================
+
+# Set default goal for "make"
+.DEFAULT_GOAL := all
+
+# Set shell for target commands
+SHELL = /bin/bash
+
+# Disable built-in rules
+MAKEFLAGS += --no-builtin-rules
+.SUFFIXES:
+
+## build directory
+BUILD_PATH ?= build
+
+# Include system configuration file, creating it if necessary
+-include $(BUILD_PATH)/configure.mk
+
+$(BUILD_PATH)/configure.mk:
+	@./configure
+
+#===== Variables ===============================================================
+
+#----- Versioning --------------------------------------------------------------
 
 # Increment VERSION when making a new release of Themis.
 #
@@ -23,42 +46,51 @@
 VERSION := $(shell test -d .git && git describe --tags || cat VERSION)
 LIBRARY_SO_VERSION = 0
 
-########################################################################
-#
-# Overridable default paths to applications and build/install directories
-#
+#----- Toolchain ---------------------------------------------------------------
 
-CMAKE = cmake
-SHELL = /bin/bash
+CMAKE ?= cmake
 
 CLANG_FORMAT ?= clang-format
 CLANG_TIDY   ?= clang-tidy
 
-INSTALL = install
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA    = $(INSTALL) -m 644
+INSTALL         ?= install
+INSTALL_PROGRAM ?= $(INSTALL)
+INSTALL_DATA    ?= $(INSTALL) -m 644
 
-BUILD_PATH ?= build
+#----- Build directories -------------------------------------------------------
 
 SRC_PATH = src
 BIN_PATH = $(BUILD_PATH)
 OBJ_PATH = $(BIN_PATH)/obj
 AUD_PATH = $(BIN_PATH)/for_audit
+
 TEST_SRC_PATH = tests
 TEST_BIN_PATH = $(BIN_PATH)/tests
 
+#----- Installation paths ------------------------------------------------------
+
+## installation prefix
 PREFIX ?= /usr/local
 
-prefix       = $(PREFIX)
-exec_prefix  = $(prefix)
-bindir       = $(prefix)/bin
-includedir   = $(prefix)/include
-libdir       = $(exec_prefix)/lib
-jnidir       = $(libdir)
-pkgconfigdir = $(libdir)/pkgconfig
+# Advanced variables for fine-tuning installation paths
+prefix       ?= $(PREFIX)
+exec_prefix  ?= $(prefix)
+bindir       ?= $(prefix)/bin
+includedir   ?= $(prefix)/include
+libdir       ?= $(exec_prefix)/lib
+jnidir       ?= $(libdir)
+pkgconfigdir ?= $(libdir)/pkgconfig
 
-CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -fPIC
+#----- Basic compiler flags ----------------------------------------------------
+
+# Add Themis source directory to search paths
+CFLAGS  += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/
 LDFLAGS += -L$(BIN_PATH)
+# Not all platforms include /usr/local in default search path
+CFLAGS  += -I/usr/local/include
+LDFLAGS += -L/usr/local/lib
+# Build shared libraries
+CFLAGS  += -fPIC
 
 ########################################################################
 #
@@ -85,80 +117,6 @@ PRINT_WARNING = printf "$@ $(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
 PRINT_WARNING_ = printf "$(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
 BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
 BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
-
-########################################################################
-#
-# Platform detection macros and default tweaks
-#
-
-UNAME := $(shell uname)
-
-ifeq ($(UNAME),Darwin)
-	IS_MACOS := true
-else ifeq ($(UNAME),Linux)
-	IS_LINUX := true
-else ifeq ($(shell uname -o),Msys)
-	IS_MSYS := true
-endif
-
-ifneq ($(shell $(CC) --version 2>&1 | grep -oi "Emscripten"),)
-	IS_EMSCRIPTEN := true
-endif
-ifneq ($(shell $(CC) --version 2>&1 | grep -E -i -c "clang version"),0)
-	IS_CLANG_COMPILER := true
-endif
-
-SHARED_EXT = so
-
-ifdef IS_MACOS
-SHARED_EXT = dylib
-ifneq ($(SDK),)
-SDK_PLATFORM_VERSION=$(shell xcrun --sdk $(SDK) --show-sdk-platform-version)
-XCODE_BASE=$(shell xcode-select --print-path)
-CC=$(XCODE_BASE)/usr/bin/gcc
-BASE=$(shell xcrun --sdk $(SDK) --show-sdk-platform-path)
-SDK_BASE=$(shell xcrun --sdk $(SDK) --show-sdk-path)
-FRAMEWORKS=$(SDK_BASE)/System/Library/Frameworks/
-SDK_INCLUDES=$(SDK_BASE)/usr/include
-CFLAGS += -isysroot $(SDK_BASE)
-endif
-ifneq ($(ARCH),)
-CFLAGS += -arch $(ARCH)
-endif
-endif
-
-ifdef IS_MSYS
-SHARED_EXT = dll
-endif
-
-ifdef IS_EMSCRIPTEN
-# Recent versions of Emscripten toolchain provide new "emcmake" utility
-# specifically for CMake. Older versions rely on generic "emconfigure".
-ifeq ($(shell which emcmake >/dev/null 2>&1 && echo yes),yes)
-CMAKE = emcmake cmake
-else
-CMAKE = emconfigure cmake
-endif
-endif
-
-# Not all platforms include /usr/local into default search path
-CFLAGS  += -I/usr/local/include
-LDFLAGS += -L/usr/local/lib
-
-########################################################################
-#
-# Detecting installed language runtimes and their versions
-#
-
-PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
-RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
-RUST_VERSION := $(shell rustc --version 2>/dev/null)
-GO_VERSION := $(shell which go >/dev/null 2>&1 && go version 2>&1)
-NODE_VERSION := $(shell node --version 2>/dev/null)
-NPM_VERSION := $(shell npm --version 2>/dev/null)
-PIP_VERSION := $(shell pip --version 2>/dev/null)
-PYTHON2_VERSION := $(shell which python2 >/dev/null 2>&1 && python2 --version 2>&1)
-PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
 
 ########################################################################
 #
@@ -192,10 +150,9 @@ CFLAGS += $(CRYPTO_ENGINE_CFLAGS)
 # Homebrew's OpenSSL instead of the system one by default.
 ifdef IS_MACOS
 	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
-		OPENSSL_PATH := $(shell brew --prefix openssl)
-		ifneq ($(OPENSSL_PATH),)
-			CRYPTO_ENGINE_INCLUDE_PATH = $(OPENSSL_PATH)/include
-			CRYPTO_ENGINE_LIB_PATH = $(OPENSSL_PATH)/lib
+		ifneq ($(HOMEBREW_OPENSSL_PATH),)
+			CRYPTO_ENGINE_INCLUDE_PATH = $(HOMEBREW_OPENSSL_PATH)/include
+			CRYPTO_ENGINE_LIB_PATH = $(HOMEBREW_OPENSSL_PATH)/lib
 		endif
 	endif
 endif
@@ -413,8 +370,6 @@ endif
 #
 # Principal Makefile targets
 #
-
-.DEFAULT_GOAL := all
 
 all: themis_static soter_static themis_shared soter_shared themis_pkgconfig soter_pkgconfig
 	@echo $(VERSION)
