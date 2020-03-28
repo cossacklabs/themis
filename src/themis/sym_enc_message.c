@@ -775,9 +775,9 @@ themis_status_t themis_sym_decrypt_message_u(const uint8_t* key,
                                             message,
                                             message_length);
     }
-#endif
 
 error:
+#endif
     soter_wipe(derived_key, sizeof(derived_key));
 
     return res;
