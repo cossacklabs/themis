@@ -1,7 +1,7 @@
 # Integration tests for Themis (automated)
 
 Here we keep the tools for automated testing of Themis
-across the supported platforms.
+across the supported platforms.  
 The tools are accessible to humans, too :).
 
 To run these tools:
@@ -36,33 +36,19 @@ your language.
 - **smessage_encryption** —
   encrypt, decrypt, sign, and verify a string using Secure Message
 
-A short reference for using particular tools:
-
-```
-$ run --example keygen_tool -- --help
-keygen_tool 0.0.3
-Generating ECDSA key pairs.
-
-USAGE:
-    keygen_tool [ARGS]
-
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
-
-ARGS:
-    <private>    Private key file (default: key)
-    <public>     Public key file (default: key.pub)
-```
-
 
 ### keygen_tool
 
-A tool for generating key files usable for other tools.
+A tool for generating key files usable for other tools.  
+Remember that the sender key — is always a private key while the recipient key is always public.
 
-Themis supports RSA keys for some use cases,
-but most features expect ECDSA keys.
+Themis supports  for some use cases,
+Most Themis features expect ECDSA keys (in some cases, RSA keys are supported, too, but there is no built-in "switch" to alternate between ECDSA keys and RSA keys).
 
+Usage:  
+    `run tool [<private-key-file> <public-key-file>]`  
+If paths to key files are not specified then keys will be placed into
+"key" and "key.pub" in the current directory.
 
 ### scell_*_string_echo
 
@@ -74,6 +60,13 @@ The _user context_ can be provided as an optional last argument.
 
 Token protect mode produces and accepts _two_ strings separated by a comma:
 the encrypted data followed by the authentication token. 
+
+Usage:  
+    `run tool {enc|dec} <key> <message> [<context>]`  
+Commands:    
+- `enc` - encrypt
+- `dec` - decrypt
+
 Example:
 
 ```
@@ -89,12 +82,12 @@ input
 
 A universal tool for testing Secure Message.
 
-The first argument determines the action to perform:
+The first argument determines the action to perform. Commands:  
 
-- `enc`: encrypt message
-- `dec`: encrypt message
-- `sign`: sign message
-- `verify`: verify signature
+- `enc`: encrypt message  
+- `dec`: decrypt message  
+- `sign`: sign message  
+- `verify`: verify signature  
 
 It needs to be followed by the paths to files with a pair of private and public keys.
 Suitable keys can be generated using the **keygen_tool**.
