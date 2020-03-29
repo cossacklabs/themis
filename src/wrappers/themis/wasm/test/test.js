@@ -14,6 +14,7 @@
 
 const themis = require('..')
 const assert = require('assert')
+const { performance } = require('perf_hooks')
 
 const ThemisErrorCode = themis.ThemisErrorCode
 
@@ -24,6 +25,13 @@ function expectError(errorCode) {
         }
         return false
     }
+}
+
+function measureTime(thunk) {
+    let t1 = performance.now()
+    thunk()
+    let t2 = performance.now()
+    return t2 - t1
 }
 
 describe('wasm-themis', function() {
@@ -225,6 +233,11 @@ describe('wasm-themis', function() {
             })
         })
         describe('Seal mode (passphrase)', function() {
+            // Passphrase API uses KDF so it can be quite slow.
+            // Mocha uses default threshold of 75 ms which is not enough.
+            this.slow(1500) // milliseconds
+            const bottomLimit = 200
+
             it('encrypts without context', function() {
                 let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
                 let encrypted = cell.encrypt(testInput)
@@ -323,6 +336,17 @@ describe('wasm-themis', function() {
                         assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
                     }
                 })
+            })
+            it('takes its time to process data', function() {
+                // KDF deliberately slows down encryption and decryption.
+                // Make sure WebAssembly keeps it slow enough but not too slow.
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                var encrypted, decrypted
+                let timeEncrypt = measureTime(() => encrypted = cell.encrypt(testInput))
+                let timeDecrypt = measureTime(() => decrypted = cell.decrypt(encrypted))
+                assert.deepStrictEqual(decrypted, testInput)
+                assert(timeEncrypt >= bottomLimit)
+                assert(timeDecrypt >= bottomLimit)
             })
         })
         describe('Token Protect mode', function() {
