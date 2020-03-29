@@ -39,8 +39,7 @@ ARGS:
 
 This tool can be used to generate key files usable by other tools.
 
-Themis supports RSA keys for some use-cases,
-but most of the features expect ECDSA keys.
+Most Themis features expect ECDSA keys (in some cases, RSA keys are supported, too, but there is no built-in "switch" to alternate between ECDSA keys and RSA keys).
 
 
 ## scell_*_string_echo
@@ -70,7 +69,7 @@ This is a universal tool used for testing Secure Message.
 The first argument determines the action to perform:
 
 - `enc`: encrypt message
-- `dec`: encrypt message
+- `dec`: decrypt message
 - `sign`: sign message
 - `verify`: verify signature
 
