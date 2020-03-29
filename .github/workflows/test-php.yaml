@@ -59,6 +59,7 @@ jobs:
           sudo update-alternatives --set php-config /usr/bin/php-config5.6
           sudo update-alternatives --set phpize     /usr/bin/phpize5.6
           sudo git clean -fxd src
+          ./configure
           sudo make phpthemis_install
           make test_php
       - name: Run test suite (PHP 7.0)
@@ -68,6 +69,7 @@ jobs:
           sudo update-alternatives --set php-config /usr/bin/php-config7.0
           sudo update-alternatives --set phpize     /usr/bin/phpize7.0
           sudo git clean -fxd src
+          ./configure
           sudo make phpthemis_install
           make test_php
       - name: Run test suite (PHP 7.1)
@@ -77,6 +79,7 @@ jobs:
           sudo update-alternatives --set php-config /usr/bin/php-config7.1
           sudo update-alternatives --set phpize     /usr/bin/phpize7.1
           sudo git clean -fxd src
+          ./configure
           sudo make phpthemis_install
           make test_php
       - name: Run test suite (PHP 7.2)
@@ -86,6 +89,7 @@ jobs:
           sudo update-alternatives --set php-config /usr/bin/php-config7.2
           sudo update-alternatives --set phpize     /usr/bin/phpize7.2
           sudo git clean -fxd src
+          ./configure
           sudo make phpthemis_install
           make test_php
       - name: Run test suite (PHP 7.3)
@@ -95,6 +99,7 @@ jobs:
           sudo update-alternatives --set php-config /usr/bin/php-config7.3
           sudo update-alternatives --set phpize     /usr/bin/phpize7.3
           sudo git clean -fxd src
+          ./configure
           sudo make phpthemis_install
           make test_php
       - name: Run test suite (PHP 7.4)
@@ -104,6 +109,7 @@ jobs:
           sudo update-alternatives --set php-config /usr/bin/php-config7.4
           sudo update-alternatives --set phpize     /usr/bin/phpize7.4
           sudo git clean -fxd src
+          ./configure
           sudo make phpthemis_install
           make test_php
 

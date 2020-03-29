@@ -18,10 +18,28 @@
 #import <objcthemis/serror.h>
 #import <themis/themis.h>
 
+@interface TSCellSealWithPassphrase : TSCellSeal
+@end
+
 @implementation TSCellSeal
 
 - (nullable instancetype)initWithKey:(NSData *)key {
     self = [super initWithKey:key];
+    return self;
+}
+
+- (nullable instancetype)initWithPassphrase:(NSString *)passphrase
+{
+    NSData *passphraseUTF8 = [passphrase dataUsingEncoding:NSUTF8StringEncoding];
+    return [self initWithPassphraseData:passphraseUTF8];
+}
+
+- (nullable instancetype)initWithPassphraseData:(NSData *)passphrase
+{
+    // Avoid a warning about "Convenience initializer missing a 'self' call
+    // to another initializer" by assigning the new instance to self first.
+    self = [TSCellSealWithPassphrase alloc];
+    self = [self initWithPassphraseData:passphrase];
     return self;
 }
 
@@ -158,6 +176,103 @@
 - (nullable NSData *)unwrapData:(NSData *)message error:(NSError **)error
 {
     return [self decrypt:message context:nil error:error];
+}
+
+@end
+
+@implementation TSCellSealWithPassphrase
+
+- (nullable instancetype)initWithPassphraseData:(NSData *)passphrase
+{
+    // Call grandparent TSCell initializer. We store the passphrase as a "key".
+    self = [super initWithKey:passphrase];
+    return self;
+}
+
+- (nullable NSData *)encrypt:(NSData *)data
+                     context:(nullable NSData *)context
+                       error:(NSError **)error
+{
+    themis_status_t res = THEMIS_FAIL;
+
+    size_t encryptedLength = 0;
+    res = themis_secure_cell_encrypt_seal_with_passphrase(self.key.bytes,
+                                                          self.key.length,
+                                                          context.bytes,
+                                                          context.length,
+                                                          data.bytes,
+                                                          data.length,
+                                                          NULL,
+                                                          &encryptedLength);
+    if (res != THEMIS_BUFFER_TOO_SMALL) {
+        if (error) {
+            *error = SCERROR(res, @"Secure Cell encryption failed");
+        }
+        return nil;
+    }
+
+    NSMutableData *encryptedData = [NSMutableData dataWithLength:encryptedLength];
+
+    res = themis_secure_cell_encrypt_seal_with_passphrase(self.key.bytes,
+                                                          self.key.length,
+                                                          context.bytes,
+                                                          context.length,
+                                                          data.bytes,
+                                                          data.length,
+                                                          encryptedData.mutableBytes,
+                                                          &encryptedLength);
+    if (res != THEMIS_SUCCESS) {
+        if (error) {
+            *error = SCERROR(res, @"Secure Cell encryption failed");
+        }
+        return nil;
+    }
+
+    [encryptedData setLength:encryptedLength];
+    return encryptedData;
+}
+
+- (nullable NSData *)decrypt:(NSData *)data
+                     context:(nullable NSData *)context
+                       error:(NSError **)error
+{
+    themis_status_t res = THEMIS_FAIL;
+
+    size_t decryptedLength = 0;
+    res = themis_secure_cell_decrypt_seal_with_passphrase(self.key.bytes,
+                                                          self.key.length,
+                                                          context.bytes,
+                                                          context.length,
+                                                          data.bytes,
+                                                          data.length,
+                                                          NULL,
+                                                          &decryptedLength);
+    if (res != THEMIS_BUFFER_TOO_SMALL) {
+        if (error) {
+            *error = SCERROR(res, @"Secure Cell decryption failed");
+        }
+        return nil;
+    }
+
+    NSMutableData *decryptedData = [NSMutableData dataWithLength:decryptedLength];
+
+    res = themis_secure_cell_decrypt_seal_with_passphrase(self.key.bytes,
+                                                          self.key.length,
+                                                          context.bytes,
+                                                          context.length,
+                                                          data.bytes,
+                                                          data.length,
+                                                          decryptedData.mutableBytes,
+                                                          &decryptedLength);
+    if (res != THEMIS_SUCCESS) {
+        if (error) {
+            *error = SCERROR(res, @"Secure Cell decryption failed");
+        }
+        return nil;
+    }
+
+    [decryptedData setLength:decryptedLength];
+    return decryptedData;
 }
 
 @end
