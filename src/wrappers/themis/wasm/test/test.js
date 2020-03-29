@@ -132,6 +132,8 @@ describe('wasm-themis', function() {
         })
         let masterKey1 = new Uint8Array([1, 2, 3, 4])
         let masterKey2 = new Uint8Array([5, 6, 7, 8, 9])
+        let passphrase1 = 'open sesame'
+        let passphrase2 = 'pretty please'
         let emptyArray = new Uint8Array()
         let testInput = new Uint8Array([1, 1, 2, 3, 5, 8, 13])
         let testContext = new Uint8Array([42])
@@ -220,6 +222,107 @@ describe('wasm-themis', function() {
                 let encrypted = cellA.encrypt(testInput)
                 let decrypted = cellB.decrypt(encrypted)
                 assert.deepStrictEqual(decrypted, testInput)
+            })
+        })
+        describe('Seal mode (passphrase)', function() {
+            it('encrypts without context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('encrypts with context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                let decrypted = cell.decrypt(encrypted, testContext)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('produces extended results', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
+                assert(encrypted.length > testInput.length)
+            })
+            it('forbids empty inputs', function() {
+                assert.throws(() => themis.SecureCellSeal.withPassphrase(''),
+                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                )
+                assert.throws(() => themis.SecureCellSeal.withPassphrase(emptyArray),
+                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                )
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                assert.throws(() => cell.encrypt(emptyArray),
+                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                )
+            })
+            it('empty context == no context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted, emptyArray)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('null context == no context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput, null)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('detects invalid passphrase', function() {
+                let cell1 = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let cell2 = themis.SecureCellSeal.withPassphrase(passphrase2)
+                let encrypted = cell1.encrypt(testInput)
+                assert.throws(() => cell2.decrypt(encrypted),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('detects invalid context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                assert.throws(() => cell.decrypt(encrypted, testInput),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('detects corrupted data', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
+                encrypted[20] = ~encrypted[20]
+                assert.throws(() => cell.decrypt(encrypted),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('accepts byte arrays', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('passphrase is not master key', function() {
+                let cellMK = themis.SecureCellSeal.withKey(masterKey1)
+                let cellPW = themis.SecureCellSeal.withPassphrase(masterKey1)
+                let encryptedMK = cellMK.encrypt(testInput)
+                assert.throws(() => cellPW.decrypt(encryptedMK),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+                let encryptedPW = cellPW.encrypt(testInput)
+                assert.throws(() => cellMK.decrypt(encryptedPW),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('handles type mismatches', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    // strings are okay (only) for passphrase API
+                    if (typeof invalid !== 'string') {
+                        assert.throws(() => themis.SecureCellSeal.withPassphrase(invalid), TypeError)
+                    }
+                    assert.throws(() => cell.encrypt(invalid), TypeError)
+                    assert.throws(() => cell.decrypt(invalid), TypeError)
+                    // null context is okay, it should not throw
+                    if (invalid !== null) {
+                        assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
+                        assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
+                    }
+                })
             })
         })
         describe('Token Protect mode', function() {
