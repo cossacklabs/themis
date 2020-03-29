@@ -42,7 +42,6 @@ your language.
 A tool for generating key files usable for other tools.  
 Remember that the sender key — is always a private key while the recipient key is always public.
 
-Themis supports  for some use cases,
 Most Themis features expect ECDSA keys (in some cases, RSA keys are supported, too, but there is no built-in "switch" to alternate between ECDSA keys and RSA keys).
 
 Usage:  
