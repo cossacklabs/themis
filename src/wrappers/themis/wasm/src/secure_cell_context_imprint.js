@@ -36,6 +36,20 @@ module.exports = class SecureCellContextImprint {
         this.masterKey = masterKey
     }
 
+    /**
+     * Makes a new Secure Cell in Context Imprint mode with given master key.
+     *
+     * @param masterKey     non-empty array of master key bytes (Buffer or Uint8Array)
+     *
+     * @returns a new instance of SecureCellContextImprint.
+     *
+     * @throws TypeError if the master key is not a byte buffer.
+     * @throws ThemisError if the master key is empty.
+     */
+    static withKey(masterKey) {
+        return new SecureCellContextImprint(masterKey)
+    }
+
     encrypt(message, context) {
         message = utils.coerceToBytes(message)
         if (message.length == 0) {
