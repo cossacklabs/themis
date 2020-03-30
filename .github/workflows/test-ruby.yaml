@@ -48,7 +48,7 @@ jobs:
           sudo usermod -a -G rvm $(id -nu)
           echo "::add-path::/usr/share/rvm/bin"
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Prepare Themis Core
         run: |
           make
@@ -75,7 +75,7 @@ jobs:
         run: |
           sudo gem install eventmachine
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Install Themis Core
         run: sudo make install
       - name: Install RubyThemis

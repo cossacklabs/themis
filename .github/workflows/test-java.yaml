@@ -44,7 +44,7 @@ jobs:
             sudo apt install --yes gcc make libssl-dev default-jdk
           fi
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Install Themis Core with JNI
         run: |
           make all themis_jni
@@ -127,7 +127,7 @@ jobs:
           echo "::add-path::$ANDROID_HOME/tools/bin"
           echo "::add-path::$ANDROID_HOME/platform-tools"
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           submodules: true
       # Gradle likes to download half of the Internet during builds, cache that

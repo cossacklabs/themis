@@ -59,7 +59,7 @@ jobs:
           ./emsdk install  latest-fastcomp
           ./emsdk activate latest-fastcomp
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           submodules: true
       - name: Build WasmThemis

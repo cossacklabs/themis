@@ -46,7 +46,7 @@ jobs:
             php7.0 php7.0-fpm- php7.0-dev php7.0-xml php7.0-mbstring \
             php5.6 php5.6-fpm- php5.6-dev php5.6-xml php5.6-mbstring
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Prepare Themis Core
         run: |
           make
@@ -133,7 +133,7 @@ jobs:
           sudo update-alternatives --set php-config /usr/bin/php-config7.2
           sudo update-alternatives --set phpize     /usr/bin/phpize7.2
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Install Themis Core
         run: |
           make

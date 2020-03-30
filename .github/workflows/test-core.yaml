@@ -49,7 +49,7 @@ jobs:
             sudo apt install --yes gcc make libssl-dev cmake ninja-build
           fi
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           submodules: true
       - name: Build Themis Core (OpenSSL)
@@ -75,7 +75,7 @@ jobs:
           sudo apt update
           sudo apt install --yes gcc make libssl-dev
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Install Themis Core
         run: sudo make install
       - name: Run examples
@@ -102,7 +102,7 @@ jobs:
           sudo apt update
           sudo apt install --yes gcc-8 clang-8 make libssl-dev
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       # We test only OpenSSL flavor to not expand the testing matrix too much
       # (rebuilding BoringSSL is not fun and takes much time)
       - name: Check with GCC (ASan)
@@ -139,7 +139,7 @@ jobs:
           toolchain: stable
           profile: minimal
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Install Themis Core
         run: sudo make install
       # Cargo pulls in quite a few stuff from the Internet and Rust always
@@ -203,7 +203,7 @@ jobs:
           # AFL needs proper core dumps to be available, write them to files
           sudo sh -c 'echo core > /proc/sys/kernel/core_pattern'
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Build fuzzing framework (Clang)
         if: always()
         run: make clean fuzz AFL_CC=afl-clang
@@ -277,7 +277,7 @@ jobs:
           sudo apt update
           sudo apt install --yes gcc make libssl-dev valgrind
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           submodules: true
       - name: Build Themis Core
