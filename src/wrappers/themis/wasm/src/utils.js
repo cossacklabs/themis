@@ -18,6 +18,7 @@
  */
 
 const libthemis = require('./libthemis.js')
+const {TextEncoder} = require('fastestsmallesttextencoderdecoder')
 
 /**
  * Convert an object into a byte buffer.
