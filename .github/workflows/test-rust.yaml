@@ -41,7 +41,7 @@ jobs:
           profile: minimal
           components: rustfmt, clippy
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Install Themis Core
         run: sudo make install
       # Cargo pulls in quite a few stuff from the Internet and Rust always
@@ -84,7 +84,7 @@ jobs:
           toolchain: stable
           profile: minimal
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Install Themis Core
         run: sudo make install
       # Cargo pulls in quite a few stuff from the Internet and Rust always

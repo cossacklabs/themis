@@ -35,19 +35,18 @@ jobs:
     runs-on: ubuntu-latest
     # GitHub's host contains way too much crap in /etc/apt/sources.list
     # which causes package conflicts in clang-format-8 and clang-tidy-8
-    # installation. Run this job in a pristine Ubuntu 18.04 container.
-    container: ubuntu:18.04
+    # installation. Run this job in a pristine Ubuntu 19.10 container.
+    container: ubuntu:19.10
     steps:
       - name: Install system dependencies
         run: |
           export DEBIAN_FRONTEND=noninteractive
           apt update
-          # System nodejs requires old OpenSSL libraries, not modern ones :(
           apt install --yes make clang-8 clang-format-8 clang-tidy-8 libstdc++-8-dev \
-            nodejs npm libssl1.0-dev \
-            default-jdk
+            nodejs npm libssl-dev \
+            default-jdk git
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           submodules: true
       - name: Check code formatting

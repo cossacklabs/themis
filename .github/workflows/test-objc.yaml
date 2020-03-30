@@ -63,7 +63,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Hack dependencies
         if: contains(env.HACK_DEPENDENCIES, 'true')
         run: |
@@ -111,7 +111,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Pull Carthage dependencies
         run: carthage bootstrap
       - name: Run unit tests (Swift 4, macOS)
@@ -160,7 +160,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Pull Carthage dependencies
         run: carthage bootstrap
       - name: Build Carthage projects
@@ -171,7 +171,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Hack dependencies
         if: contains(env.HACK_DEPENDENCIES, 'true')
         run: |
@@ -214,7 +214,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Hack dependencies
         if: contains(env.HACK_DEPENDENCIES, 'true')
         run: |

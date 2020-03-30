@@ -44,7 +44,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Install Themis Core
         run: |
           make
@@ -74,7 +74,7 @@ jobs:
         with:
           node-version: 10.x
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
       - name: Install Themis Core
         run: |
           make
