@@ -37,6 +37,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
+      fail-fast: false
     steps:
       - name: Install system dependencies
         run: |
