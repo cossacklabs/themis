@@ -58,12 +58,18 @@ jobs:
       - name: Build Themis Core (BoringSSL)
         if: always()
         run: make prepare_tests_basic ENGINE=boringssl BUILD_PATH=build-boringssl
+      - name: Build Themis Core (WITH_SCELL_COMPAT)
+        if: always()
+        run: make prepare_tests_basic WITH_SCELL_COMPAT=yes BUILD_PATH=build-compat
       - name: Run test suite (OpenSSL)
         if: always()
         run: make test BUILD_PATH=build-openssl
       - name: Run test suite (BoringSSL)
         if: always()
         run: make test BUILD_PATH=build-boringssl
+      - name: Run test suite (WITH_SCELL_COMPAT)
+        if: always()
+        run: make test BUILD_PATH=build-compat
 
   examples:
     name: Code examples

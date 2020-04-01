@@ -348,7 +348,8 @@ LDFLAGS += $(SANITIZERS)
 
 # Binary format compatibility with Themis 0.9.6 on x86_64 architecture.
 # https://github.com/cossacklabs/themis/pull/279
-ifeq ($(NO_SCELL_COMPAT),)
+# Themis 0.9.6 is going EOL on 2020-12-13 so it can be removed after that.
+ifneq ($(WITH_SCELL_COMPAT),)
 	CFLAGS += -DSCELL_COMPAT
 endif
 
