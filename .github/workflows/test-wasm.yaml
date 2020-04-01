@@ -38,6 +38,7 @@ jobs:
           - 8.x   # old LTS
           - 10.x  # current LTS
           - 12.x  # current stable
+      fail-fast: false
     steps:
       - name: Install system dependencies
         run: |

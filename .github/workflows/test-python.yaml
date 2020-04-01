@@ -54,6 +54,7 @@ jobs:
     strategy:
       matrix:
         python: [python2, python3]
+      fail-fast: false
     env:
       PYTHON: ${{ matrix.python }}
     services:
