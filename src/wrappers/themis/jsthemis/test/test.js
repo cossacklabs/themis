@@ -462,63 +462,63 @@ describe("jsthemis", function(){
         let testContext = new Uint8Array([42])
         describe('Seal mode', function() {
             it('does not accept strings', function() {
-                assert.throws(() => new addon.SecureCellSeal('master key'), TypeError)
+                assert.throws(() => addon.SecureCellSeal.withKey('master key'), TypeError)
             })
             it('encrypts without context', function() {
-                let cell = new addon.SecureCellSeal(masterKey1)
+                let cell = addon.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput)
                 let decrypted = cell.decrypt(encrypted)
                 assert.deepEqual(decrypted, testInput)
             })
             it('encrypts with context', function() {
-                let cell = new addon.SecureCellSeal(masterKey1)
+                let cell = addon.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
                 let decrypted = cell.decrypt(encrypted, testContext)
                 assert.deepEqual(decrypted, testInput)
             })
             it('produces extended results', function() {
-                let cell = new addon.SecureCellSeal(masterKey1)
+                let cell = addon.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput)
                 assert(encrypted.length > testInput.length)
             })
             it('forbits empty inputs', function() {
-                assert.throws(() => new addon.SecureCellSeal(emptyArray),
+                assert.throws(() => addon.SecureCellSeal.withKey(emptyArray),
                     expect_code(addon.INVALID_PARAMETER)
                 )
-                let cell = new addon.SecureCellSeal(masterKey1)
+                let cell = addon.SecureCellSeal.withKey(masterKey1)
                 assert.throws(() => cell.encrypt(emptyArray),
                     expect_code(addon.INVALID_PARAMETER)
                 )
             })
             it('empty context == no context', function() {
-                let cell = new addon.SecureCellSeal(masterKey1)
+                let cell = addon.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput)
                 let decrypted = cell.decrypt(encrypted, emptyArray)
                 assert.deepEqual(decrypted, testInput)
             })
             it('null context == no context', function() {
-                let cell = new addon.SecureCellSeal(masterKey1)
+                let cell = addon.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, null)
                 let decrypted = cell.decrypt(encrypted)
                 assert.deepEqual(decrypted, testInput)
             })
             it('detects invalid master key', function() {
-                let cell1 = new addon.SecureCellSeal(masterKey1)
-                let cell2 = new addon.SecureCellSeal(masterKey2)
+                let cell1 = addon.SecureCellSeal.withKey(masterKey1)
+                let cell2 = addon.SecureCellSeal.withKey(masterKey2)
                 let encrypted = cell1.encrypt(testInput)
                 assert.throws(() => cell2.decrypt(encrypted),
                     expect_code(addon.FAIL)
                 )
             })
             it('detects invalid context', function() {
-                let cell = new addon.SecureCellSeal(masterKey1)
+                let cell = addon.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
                 assert.throws(() => cell.decrypt(encrypted, testInput),
                     expect_code(addon.FAIL)
                 )
             })
             it('detects corrupted data', function() {
-                let cell = new addon.SecureCellSeal(masterKey1)
+                let cell = addon.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput)
                 encrypted[20] = ~encrypted[20]
                 assert.throws(() => cell.decrypt(encrypted),
@@ -526,10 +526,10 @@ describe("jsthemis", function(){
                 )
             })
             it('handles type mismatches', function() {
-                let cell = new addon.SecureCellSeal(masterKey1)
+                let cell = addon.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput)
                 generallyInvalidArguments.forEach(function(invalid) {
-                    assert.throws(() => new addon.SecureCellSeal(invalid), TypeError)
+                    assert.throws(() => addon.SecureCellSeal.withKey(invalid), TypeError)
                     assert.throws(() => cell.encrypt(invalid), TypeError)
                     assert.throws(() => cell.decrypt(invalid), TypeError)
                     // null context is okay, it should not throw
@@ -539,34 +539,54 @@ describe("jsthemis", function(){
                     }
                 })
             })
+            it('can be constructed with "new"', function() {
+                // Pre-0.13 syntax:
+                let cellOld = new addon.SecureCellSeal(masterKey1)
+                let cellNew = addon.SecureCellSeal.withKey(masterKey1)
+
+                let encrypted = cellOld.encrypt(testInput)
+                let decrypted = cellNew.decrypt(encrypted)
+
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('can be constructed with bare constructor', function() {
+                // Historically allowed compatibility syntax:
+                let cellOld = addon.SecureCellSeal(masterKey1)
+                let cellNew = addon.SecureCellSeal.withKey(masterKey1)
+
+                let encrypted = cellOld.encrypt(testInput)
+                let decrypted = cellNew.decrypt(encrypted)
+
+                assert.deepEqual(decrypted, testInput)
+            })
         })
         describe('Token Protect mode', function() {
             it('does not accept strings', function() {
-                assert.throws(() => new addon.SecureCellTokenProtect('master key'), TypeError)
+                assert.throws(() => addon.SecureCellTokenProtect.withKey('master key'), TypeError)
             })
             it('encrypts without context', function() {
-                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let cell = addon.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput)
                 let decrypted = cell.decrypt(result.data, result.token)
                 assert.deepEqual(decrypted, testInput)
             })
             it('encrypts with context', function() {
-                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let cell = addon.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput, testContext)
                 let decrypted = cell.decrypt(result.data, result.token, testContext)
                 assert.deepEqual(decrypted, testInput)
             })
             it('does not change encrypted data length', function() {
-                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let cell = addon.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput)
                 assert.equal(result.data.length, testInput.length)
                 assert(result.token.length > 0)
             })
             it('forbids empty inputs', function() {
-                assert.throws(() => new addon.SecureCellTokenProtect(emptyArray),
+                assert.throws(() => addon.SecureCellTokenProtect.withKey(emptyArray),
                     expect_code(addon.INVALID_PARAMETER)
                 )
-                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let cell = addon.SecureCellTokenProtect.withKey(masterKey1)
                 assert.throws(() => cell.encrypt(emptyArray),
                     expect_code(addon.INVALID_PARAMETER)
                 )
@@ -579,28 +599,28 @@ describe("jsthemis", function(){
                 )
             })
             it('empty context == no context', function() {
-                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let cell = addon.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput, emptyArray)
                 let decrypted = cell.decrypt(result.data, result.token)
                 assert.deepEqual(decrypted, testInput)
             })
             it('null context == no context', function() {
-                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let cell = addon.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput)
                 let decrypted = cell.decrypt(result.data, result.token, null)
                 assert.deepEqual(decrypted, testInput)
             })
             it('detects incorrect master key', function() {
-                let cell1 = new addon.SecureCellTokenProtect(masterKey1)
-                let cell2 = new addon.SecureCellTokenProtect(masterKey2)
+                let cell1 = addon.SecureCellTokenProtect.withKey(masterKey1)
+                let cell2 = addon.SecureCellTokenProtect.withKey(masterKey2)
                 let result = cell1.encrypt(testInput)
                 assert.throws(() => cell2.decrypt(result.data, result.token),
                     expect_code(addon.FAIL)
                 )
             })
             it('detects incorrect token', function() {
-                let cell1 = new addon.SecureCellTokenProtect(masterKey1)
-                let cell2 = new addon.SecureCellTokenProtect(masterKey2)
+                let cell1 = addon.SecureCellTokenProtect.withKey(masterKey1)
+                let cell2 = addon.SecureCellTokenProtect.withKey(masterKey2)
                 let result1 = cell1.encrypt(testInput)
                 let result2 = cell2.encrypt(testInput)
                 assert.throws(() => cell1.decrypt(result1.data, result2.token),
@@ -611,14 +631,14 @@ describe("jsthemis", function(){
                 )
             })
             it('detects incorrect context', function() {
-                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let cell = addon.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput, testContext)
                 assert.throws(() => cell.decrypt(result.data, result.token, testInput),
                     expect_code(addon.FAIL)
                 )
             })
             it('detects corrupted data', function() {
-                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let cell = addon.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput)
                 result.data[5] = ~result.data[5]
                 assert.throws(() => cell.decrypt(result.data, result.token),
@@ -626,7 +646,7 @@ describe("jsthemis", function(){
                 )
             })
             it('detects corrupted token', function() {
-                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let cell = addon.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput)
                 result.token[8] = ~result.token[8]
                 assert.throws(() => cell.decrypt(result.data, result.token),
@@ -634,10 +654,10 @@ describe("jsthemis", function(){
                 )
             })
             it('handles type mismatches', function() {
-                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let cell = addon.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput)
                 generallyInvalidArguments.forEach(function(invalid) {
-                    assert.throws(() => new addon.SecureCellTokenProtect(invalid), TypeError)
+                    assert.throws(() => addon.SecureCellTokenProtect.withKey(invalid), TypeError)
                     assert.throws(() => cell.encrypt(invalid), TypeError)
                     assert.throws(() => cell.decrypt(result.data, invalid), TypeError)
                     assert.throws(() => cell.decrypt(invalid, result.token), TypeError)
@@ -648,28 +668,48 @@ describe("jsthemis", function(){
                     }
                 })
             })
+            it('can be constructed with "new"', function() {
+                // Pre-0.13 syntax:
+                let cellOld = new addon.SecureCellTokenProtect(masterKey1)
+                let cellNew = addon.SecureCellTokenProtect.withKey(masterKey1)
+
+                let result = cellOld.encrypt(testInput)
+                let decrypted = cellNew.decrypt(result.data, result.token)
+
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('can be constructed with bare constructor', function() {
+                // Historically allowed compatibility syntax:
+                let cellOld = addon.SecureCellTokenProtect(masterKey1)
+                let cellNew = addon.SecureCellTokenProtect.withKey(masterKey1)
+
+                let result = cellOld.encrypt(testInput)
+                let decrypted = cellNew.decrypt(result.data, result.token)
+
+                assert.deepEqual(decrypted, testInput)
+            })
         })
         describe('Context Imprint mode', function() {
             it('does not accept strings', function() {
-                assert.throws(() => new addon.SecureCellContextImprint('master key'), TypeError)
+                assert.throws(() => addon.SecureCellContextImprint.withKey('master key'), TypeError)
             })
             it('encrypts only with context', function() {
-                let cell = new addon.SecureCellContextImprint(masterKey1)
+                let cell = addon.SecureCellContextImprint.withKey(masterKey1)
                 assert.throws(() => cell.encrypt(testInput))
                 let encrypted = cell.encrypt(testInput, testContext)
                 let decrypted = cell.decrypt(encrypted, testContext)
                 assert.deepEqual(decrypted, testInput)
             })
             it('encryption does not change data length', function() {
-                let cell = new addon.SecureCellContextImprint(masterKey1)
+                let cell = addon.SecureCellContextImprint.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
                 assert.equal(encrypted.length, testInput.length)
             })
             it('forbids empty message and context', function() {
-                assert.throws(() => new addon.SecureCellContextImprint(emptyArray),
+                assert.throws(() => addon.SecureCellContextImprint.withKey(emptyArray),
                     expect_code(addon.INVALID_PARAMETER)
                 )
-                let cell = new addon.SecureCellContextImprint(masterKey1)
+                let cell = addon.SecureCellContextImprint.withKey(masterKey1)
                 assert.throws(() => cell.encrypt(emptyArray, testContext))
                 assert.throws(() => cell.encrypt(null,       testContext))
                 assert.throws(() => cell.encrypt(testInput,  emptyArray))
@@ -684,36 +724,57 @@ describe("jsthemis", function(){
                 assert.throws(() => cell.decrypt(null,       null))
             })
             it('does not detect incorrect master key', function() {
-                let cell1 = new addon.SecureCellContextImprint(masterKey1)
-                let cell2 = new addon.SecureCellContextImprint(masterKey2)
+                let cell1 = addon.SecureCellContextImprint.withKey(masterKey1)
+                let cell2 = addon.SecureCellContextImprint.withKey(masterKey2)
                 let encrypted = cell1.encrypt(testInput, testContext)
                 let decrypted = cell2.decrypt(encrypted, testContext)
                 assert.notDeepEqual(testInput, decrypted)
             })
             it('does not detect incorrect context', function() {
-                let cell = new addon.SecureCellContextImprint(masterKey1)
+                let cell = addon.SecureCellContextImprint.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
                 let decrypted = cell.decrypt(encrypted, testInput)
                 assert.notDeepEqual(testInput, decrypted)
             })
             it('does not detect corrupted data', function() {
-                let cell = new addon.SecureCellContextImprint(masterKey1)
+                let cell = addon.SecureCellContextImprint.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
                 encrypted[5] = ~encrypted[5]
                 let decrypted = cell.decrypt(encrypted, testContext)
                 assert.notDeepEqual(testInput, decrypted)
             })
             it('handles type mismatches', function() {
-                let cell = new addon.SecureCellContextImprint(masterKey1)
+                let cell = addon.SecureCellContextImprint.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
                 generallyInvalidArguments.forEach(function(invalid) {
-                    assert.throws(() => new addon.SecureCellContextImprint(invalid), TypeError)
+                    assert.throws(() => addon.SecureCellContextImprint.withKey(invalid), TypeError)
                     assert.throws(() => cell.encrypt(invalid, testContext), TypeError)
                     assert.throws(() => cell.decrypt(invalid, testContext), TypeError)
                     assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
                     assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
                 })
             })
+            it('can be constructed with "new"', function() {
+                // Pre-0.13 syntax:
+                let cellOld = new addon.SecureCellContextImprint(masterKey1)
+                let cellNew = addon.SecureCellContextImprint.withKey(masterKey1)
+
+                let encrypted = cellOld.encrypt(testInput, testContext)
+                let decrypted = cellNew.decrypt(encrypted, testContext)
+
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('can be constructed with bare constructor', function() {
+                // Historically allowed compatibility syntax:
+                let cellOld = addon.SecureCellContextImprint(masterKey1)
+                let cellNew = addon.SecureCellContextImprint.withKey(masterKey1)
+
+                let encrypted = cellOld.encrypt(testInput, testContext)
+                let decrypted = cellNew.decrypt(encrypted, testContext)
+
+                assert.deepEqual(decrypted, testInput)
+            })
+
         })
     })
 })

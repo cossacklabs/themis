@@ -34,6 +34,8 @@ private:
     ~SecureCellTokenProtect();
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void WithKey(const Nan::FunctionCallbackInfo<v8::Value>& args);
+
     static void encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args);
     static void decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args);
 

@@ -43,6 +43,8 @@ void SecureCellContextImprint::Init(v8::Local<v8::Object> exports)
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SecureCellContextImprint::New);
     tpl->SetClassName(className);
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    // Static methods
+    Nan::SetMethod(tpl, "withKey", WithKey);
     // Prototype
     Nan::SetPrototypeMethod(tpl, "encrypt", encrypt);
     Nan::SetPrototypeMethod(tpl, "decrypt", decrypt);
@@ -77,10 +79,24 @@ void SecureCellContextImprint::New(const Nan::FunctionCallbackInfo<v8::Value>& a
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
     } else {
-        const int argc = 1;
-        v8::Local<v8::Value> argv[argc] = {args[0]};
-        v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
-        args.GetReturnValue().Set(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
+        WithKey(args);
+    }
+}
+
+void SecureCellContextImprint::WithKey(const Nan::FunctionCallbackInfo<v8::Value>& args)
+{
+    if (args.Length() != 1) {
+        ThrowParameterError("SecureCellContextImprint",
+                            "incorrect argument count, expected symmetric key");
+        args.GetReturnValue().SetUndefined();
+        return;
+    }
+    const int argc = 1;
+    v8::Local<v8::Value> argv[argc] = {args[0]};
+    v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
+    Nan::MaybeLocal<v8::Object> cell = Nan::NewInstance(cons, argc, argv);
+    if (!cell.IsEmpty()) {
+        args.GetReturnValue().Set(cell.ToLocalChecked());
     }
 }
 
