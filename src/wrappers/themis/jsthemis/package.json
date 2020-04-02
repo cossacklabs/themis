@@ -6,6 +6,10 @@
   "scripts": {
     "preuninstall": "rm -rf build/*"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cossacklabs/themis.git"
+  },
   "keywords": [
     "security",
     "encryption",
@@ -17,9 +21,16 @@
     "email": "dev@cossacklabs.com",
     "url": "https://www.cossacklabs.com/"
   },
-  "dependencies": {
-    "nan": "^2.8.0"
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/cossacklabs/themis/issues"
   },
-  "license": " Apache-2.0",
+  "homepage": "https://www.cossacklabs.com/themis/",
+  "dependencies": {
+    "nan": "^2.14.0"
+  },
+  "devDependencies": {
+    "mocha": "^7.1.1"
+  },
   "gypfile": true
 }

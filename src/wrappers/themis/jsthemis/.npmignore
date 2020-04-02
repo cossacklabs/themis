@@ -1,0 +1,5 @@
+# Themis build system
+jsthemis.mk
+
+# Results of local "npm pack"
+*.tgz
