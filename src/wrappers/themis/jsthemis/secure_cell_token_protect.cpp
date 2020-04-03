@@ -110,7 +110,7 @@ void SecureCellTokenProtect::encrypt(const Nan::FunctionCallbackInfo<v8::Value>&
     size_t token_length = 0;
     const uint8_t* context = NULL;
     size_t context_length = 0;
-    if (args.Length() == 2) {
+    if (args.Length() == 2 && !args[1]->IsNull()) {
         if (!args[1]->IsUint8Array()) {
             ThrowTypeError("SecureCellTokenProtect",
                            "context is not a byte buffer, use ByteBuffer or Uint8Array");
@@ -199,7 +199,7 @@ void SecureCellTokenProtect::decrypt(const Nan::FunctionCallbackInfo<v8::Value>&
     size_t length = 0;
     const uint8_t* context = NULL;
     size_t context_length = 0;
-    if (args.Length() == 3) {
+    if (args.Length() == 3 && !args[2]->IsNull()) {
         if (!args[2]->IsUint8Array()) {
             ThrowTypeError("SecureCellTokenProtect",
                            "context is not a byte buffer, use ByteBuffer or Uint8Array");
