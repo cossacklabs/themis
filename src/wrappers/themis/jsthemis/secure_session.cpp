@@ -104,8 +104,8 @@ void SecureSession::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             return;
         }
         if (!args[0]->IsUint8Array()) {
-            ThrowParameterError("Secure Session constructor",
-                                "client ID is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureSession",
+                           "client ID is not a byte buffer, use ByteBuffer or Uint8Array");
             args.GetReturnValue().SetUndefined();
             return;
         }
@@ -115,8 +115,8 @@ void SecureSession::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             return;
         }
         if (!args[1]->IsUint8Array()) {
-            ThrowParameterError("Secure Session constructor",
-                                "private key is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureSession",
+                           "private key is not a byte buffer, use ByteBuffer or Uint8Array");
             args.GetReturnValue().SetUndefined();
             return;
         }
@@ -179,8 +179,8 @@ void SecureSession::wrap(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Session failed to encrypt",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureSession",
+                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -226,8 +226,8 @@ void SecureSession::unwrap(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Session failed to decrypt",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureSession",
+                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }

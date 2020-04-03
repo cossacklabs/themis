@@ -67,14 +67,14 @@ void SecureMessage::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             return;
         }
         if (!args[0]->IsUint8Array()) {
-            ThrowParameterError("Secure Message constructor",
-                                "private key is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureMessage",
+                           "private key is not a byte buffer, use ByteBuffer or Uint8Array");
             args.GetReturnValue().SetUndefined();
             return;
         }
         if (!args[1]->IsUint8Array()) {
-            ThrowParameterError("Secure Message constructor",
-                                "public key is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureMessage",
+                           "public key is not a byte buffer, use ByteBuffer or Uint8Array");
             args.GetReturnValue().SetUndefined();
             return;
         }
@@ -146,8 +146,8 @@ void SecureMessage::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Message failed to encrypt message",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureMessage",
+                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -209,8 +209,8 @@ void SecureMessage::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Message failed to decrypt message",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureMessage",
+                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -267,8 +267,8 @@ void SecureMessage::sign(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Message failed to sign message",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureMessage",
+                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -321,8 +321,8 @@ void SecureMessage::verify(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Message failed to verify signature",
-                            "message is not byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureMessage",
+                       "message is not byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }

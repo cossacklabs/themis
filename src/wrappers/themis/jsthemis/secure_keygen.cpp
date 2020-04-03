@@ -59,8 +59,8 @@ void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
     if (args.IsConstructCall()) {
         if (args.Length() == 2) {
             if (!args[0]->IsUint8Array()) {
-                ThrowParameterError("Key Pair constructor",
-                                    "private key is not a byte buffer, use ByteBuffer or Uint8Array");
+                ThrowTypeError("KeyPair",
+                               "private key is not a byte buffer, use ByteBuffer or Uint8Array");
                 return;
             }
             if (node::Buffer::Length(args[0]) == 0) {
@@ -68,8 +68,8 @@ void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
                 return;
             }
             if (!args[1]->IsUint8Array()) {
-                ThrowParameterError("Key Pair constructor",
-                                    "public key is not a byte buffer, use ByteBuffer or Uint8Array");
+                ThrowTypeError("KeyPair",
+                               "public key is not a byte buffer, use ByteBuffer or Uint8Array");
                 return;
             }
             if (node::Buffer::Length(args[1]) == 0) {
@@ -228,8 +228,8 @@ void SymmetricKey::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
     // a byte buffer that we copy.
     v8::Local<v8::Value> value = args[0];
     if (!value->IsUint8Array()) {
-        ThrowParameterError("Themis SymmetricKey",
-                            "key is not a byte buffer (use Buffer or Uint8Array)");
+        ThrowTypeError("SymmetricKey",
+                       "key is not a byte buffer (use Buffer or Uint8Array)");
         args.GetReturnValue().SetUndefined();
         return;
     }
