@@ -502,10 +502,8 @@ jobs:
             nvm deactivate
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
-            # Install JsThemis locally
-            rm -rf node_modules package-lock.json
-            make jsthemis_install
             # Run JsThemis tests
+            rm -rf src/wrappers/themis/jsthemis/node_modules
             make test_js
       - run:
           name: Test with Node.js v8 (maintenance)
@@ -515,10 +513,8 @@ jobs:
             nvm use v8
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
-            # Install JsThemis locally
-            rm -rf node_modules package-lock.json
-            make jsthemis_install
             # Run JsThemis tests
+            rm -rf src/wrappers/themis/jsthemis/node_modules
             make test_js
             # Run WasmThemis tests
             make BUILD_PATH=build-wasm test_wasm
@@ -530,10 +526,8 @@ jobs:
             nvm use v10
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
-            # Install JsThemis locally
-            rm -rf node_modules package-lock.json
-            make jsthemis_install
             # Run JsThemis tests
+            rm -rf src/wrappers/themis/jsthemis/node_modules
             make test_js
             # Run WasmThemis tests
             make BUILD_PATH=build-wasm test_wasm
@@ -545,10 +539,8 @@ jobs:
             nvm use v12
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
-            # Install JsThemis locally
-            rm -rf node_modules package-lock.json
-            make jsthemis_install
             # Run JsThemis tests
+            rm -rf src/wrappers/themis/jsthemis/node_modules
             make test_js
             # Run WasmThemis tests
             make BUILD_PATH=build-wasm test_wasm

@@ -50,15 +50,10 @@ jobs:
         run: |
           make
           sudo make install
-          make prepare_tests_all
-      - name: Install JsThemis
+      - name: Run test suite
         run: |
           echo Node.js: $(node --version)
           echo npm: $(npm --version)
-          rm -rf node_modules package-lock.json
-          make jsthemis_install
-      - name: Run test suite
-        run: |
           make test_js
 
   examples:

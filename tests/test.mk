@@ -73,15 +73,6 @@ ifdef PYTHON3_VERSION
 	@chmod a+x ./$(PYTHON3_TEST_SCRIPT)
 	@$(PRINT_OK_)
 endif
-ifdef NPM_VERSION
-	@echo -n "make tests for jsthemis "
-	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/jsthemis_test.sh
-	@echo "npm install mocha@^5.2.0" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
-	@echo "$(shell npm root)/mocha/bin/mocha ./tests/jsthemis" >> ./$(BIN_PATH)/tests/jsthemis_test.sh
-	@chmod a+x ./$(BIN_PATH)/tests/jsthemis_test.sh
-	@$(PRINT_OK_)
-endif
-
 
 ifdef IS_EMSCRIPTEN
 RUN_TEST = node
@@ -159,7 +150,8 @@ ifdef NPM_VERSION
 	@echo "Running jsthemis tests."
 	@echo "In case of errors, see https://docs.cossacklabs.com/pages/nodejs-howto/"
 	@echo "------------------------------------------------------------"
-	$(TEST_BIN_PATH)/jsthemis_test.sh
+	cd $(JSTHEMIS_SRC) && npm install && npm test
+	@echo "------------------------------------------------------------"
 endif
 
 test_go:
