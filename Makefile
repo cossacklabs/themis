@@ -563,34 +563,6 @@ endif
 
 uninstall: rbthemis_uninstall
 
-## Node.js #####################
-
-JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
-  | grep version \
-  | head -1 \
-  | awk -F: '{ print $$2 }' \
-  | sed 's/[",]//g' \
-  | tr -d '[[:space:]]')
-
-jsthemis_install: CMD = cd src/wrappers/themis/jsthemis && npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd - && npm install nan && npm install ./build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz
-jsthemis_install:
-ifdef NPM_VERSION
-	@echo -n "jsthemis install "
-	@$(BUILD_CMD_)
-else
-	@echo "Error: npm not found"
-	@exit 1
-endif
-
-jsthemis_uninstall: CMD = rm -rf build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz && npm uninstall jsthemis
-jsthemis_uninstall:
-ifdef NPM_VERSION
-	@echo -n "jsthemis uninstall "
-	@$(BUILD_CMD_)
-endif
-
-uninstall: jsthemis_uninstall
-
 ## Python ######################
 
 ifdef PIP_VERSION
