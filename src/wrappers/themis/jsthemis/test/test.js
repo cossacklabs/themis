@@ -13,6 +13,13 @@ function expect_message(message) {
   }
 }
 
+let generallyInvalidArguments = [
+	null, undefined, 'string',
+	new Int16Array([1, 2, 3]), [4, 5, 6],
+	() => new Uint8Array([27, 18, 28, 18, 28]),
+	{ value: [3, 14, 15, 92, 6] }
+]
+
 describe("jsthemis", function(){
     describe("secure message", function(){
 	keypair = new addon.KeyPair();
@@ -174,12 +181,12 @@ describe("jsthemis", function(){
 })
 
 describe("jsthemis", function(){
-    describe("secure cell", function(){
-        describe("key generation", function(){
+    describe('Secure Cell', function() {
+        describe('key generation', function() {
             const defaultLength = 32
-            it("generates new key buffer", function(){
-                var masterKey = new addon.SymmetricKey()
-                assert.equal(masterKey.length, defaultLength)
+            it('generates new keys', function() {
+                let key = new addon.SymmetricKey()
+                assert.equal(key.length, defaultLength)
             })
             it("generates new instances", function(){
                 // Check that we don't reuse the same object
@@ -195,94 +202,288 @@ describe("jsthemis", function(){
                 assert.notDeepEqual(key3, key1)
                 assert.notEqual(key3, key1)
             })
-            it("is able to restore SymmetricKey from bytes", function(){
-                var bytes = Buffer.from("MDRwUzB0NG1aN2pvTEEwdVljRFJ5", "base64")
-                var masterKey = new addon.SymmetricKey(bytes)
-                assert.equal(masterKey.length, bytes.length)
+            it('wraps existing keys', function() {
+                let buffer = Buffer.from("MDRwUzB0NG1aN2pvTEEwdVljRFJ5", "base64")
+                let key = new addon.SymmetricKey(buffer)
+                assert.deepEqual(key, buffer)
             })
-            it("throws on empty buffer", function(){
+            it('fails with empty buffer', function() {
                 assert.throws(() => new addon.SymmetricKey(Buffer.from("")),
                     expect_code(addon.INVALID_PARAMETER))
-                assert.throws(() => new addon.SymmetricKey(""),
+                assert.throws(() => new addon.SymmetricKey(new Uint8Array()),
                     expect_code(addon.INVALID_PARAMETER))
-                assert.throws(() => new addon.SymmetricKey(null),
-                    expect_code(addon.INVALID_PARAMETER))
-                assert.throws(() => new addon.SymmetricKey(undefined),
-                    expect_code(addon.INVALID_PARAMETER))
+                assert.throws(() => new addon.SymmetricKey(""), TypeError)
+                assert.throws(() => new addon.SymmetricKey(null), TypeError)
+                assert.throws(() => new addon.SymmetricKey(undefined), TypeError)
+            })
+            it('fails with invalid types', function() {
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new addon.SymmetricKey(invalid),
+                        TypeError
+                    )
+                })
             })
         })
-	message=new Buffer("This is test message");
-	password=new Buffer("This is test password");
-	context=new Buffer("This is test context");
-	empty_message=new Buffer("");
-	it("seal (with context)", function(){
-	    seal_encrypter = new addon.SecureCellSeal(password);
-	    seal_decrypter = new addon.SecureCellSeal(password);
-	    seal_intruder_decrypter = new addon.SecureCellSeal(new Buffer("This is test password1"));
-	    assert.throws(function(){new addon.SecureCellSeal(empty_message)}, expect_code(addon.INVALID_PARAMETER));
-	    enc_data = seal_encrypter.encrypt(message, context);
-	    dec_data = seal_decrypter.decrypt(enc_data, context);
-	    assert.equal(message.toString(), dec_data.toString());
-	    assert.throws(function(){seal_intruder_decrypter.decrypt(enc_data, context);});
-	    assert.throws(function(){seal_decrypter.decrypt(enc_data);});
-	    enc_data[2]++;
-	    assert.throws(function(){seal_decrypter.decrypt(enc_data, context);});
-	    enc_data[2]--;
-	    dec_data = seal_decrypter.decrypt(enc_data, context);
-	    assert.throws(function(){seal_encrypter.encrypt(empty_message, context)}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){seal_decrypter.decrypt(empty_message, context)}, expect_code(addon.INVALID_PARAMETER));
-	});
-	it("seal (without context)", function(){
-	    seal_encrypter = new addon.SecureCellSeal(password);
-	    seal_decrypter = new addon.SecureCellSeal(password);
-	    seal_intruder_decrypter = new addon.SecureCellSeal(new Buffer("This is test password1"));
-	    enc_data = seal_encrypter.encrypt(message);
-	    dec_data = seal_decrypter.decrypt(enc_data);
-	    assert.equal(message.toString(), dec_data.toString());
-	    assert.throws(function(){seal_intruder_decrypter.decrypt(enc_data);});
-	    enc_data[2]++;
-	    assert.throws(function(){seal_decrypter.decrypt(enc_data);});
-	    enc_data[2]--;
-	    dec_data = seal_decrypter.decrypt(enc_data);
-	    assert.throws(function(){seal_encrypter.encrypt(empty_message)}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){seal_decrypter.decrypt(empty_message)}, expect_code(addon.INVALID_PARAMETER));
-	});
-	it("context imprint", function(){
-	    context_imprint_encrypter = new addon.SecureCellContextImprint(password);
-	    context_imprint_decrypter = new addon.SecureCellContextImprint(password);
-	    context_imprint_intruder_decrypter = new addon.SecureCellContextImprint(new Buffer("This is test password1"));
-	    assert.throws(function(){new addon.SecureCellContextImprint(empty_message)});
-	    context_imprint_enc_data = context_imprint_encrypter.encrypt(message, context);
-	    assert.equal(message.length, context_imprint_enc_data.length);
-	    context_imprint_dec_data = context_imprint_decrypter.decrypt(context_imprint_enc_data, context);
-	    assert.equal(message.toString(), context_imprint_dec_data.toString());
-	    context_imprint_dec_data = context_imprint_intruder_decrypter.decrypt(context_imprint_enc_data, context);
-	    assert.notEqual(message.toString(), context_imprint_dec_data.toString());
-	    assert.throws(function(){context_imprint_encrypter.encrypt(empty_message, context)}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){context_imprint_encrypter.encrypt(message, empty_message)}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){context_imprint_decrypter.decrypt(empty_message, context)}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){context_imprint_decrypter.decrypt(context_imprint_enc_data, empty_message)}, expect_code(addon.INVALID_PARAMETER));
-	    context_imprint_enc_data[2]++;
-	    context_imprint_dec_data = context_imprint_decrypter.decrypt(context_imprint_enc_data, context);
-	    assert.notEqual(message.toString(), context_imprint_dec_data.toString());
-	});
-	it("token protect", function(){
-	    encrypter = new addon.SecureCellTokenProtect(password);
-	    decrypter = new addon.SecureCellTokenProtect(password);
-	    intruder_decrypter = new addon.SecureCellTokenProtect(new Buffer("This is test password1"));
-	    assert.throws(function(){new addon.SecureCellTokenProtect(empty_message)});
-	    enc_data = encrypter.encrypt(message, context);
-	    assert.equal(message.length, enc_data.data.length);
-	    dec_data = decrypter.decrypt(enc_data.data, enc_data.token, context);
-	    assert.equal(message.toString(), dec_data.toString());
-	    assert.throws(function(){intruder_decrypter.decrypt(enc_data.data, enc_data.token)});
-	    assert.throws(function(){encrypter.encrypt(empty_message)}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){encrypter.encrypt(empty_message, context)}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){decrypter.decrypt(empty_message, enc_data.token, context)}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){decrypter.decrypt(enc_data.data, empty_message, context)}, expect_code(addon.INVALID_PARAMETER));
-	    enc_data.data[2]++;
-	    assert.throws(function(){decrypter.decrypt(enc_data.data, enc_data.token, context)});
-	})
+        let masterKey1 = new Uint8Array([1, 2, 3, 4])
+        let masterKey2 = new Uint8Array([5, 6, 7, 8, 9])
+        let emptyArray = new Uint8Array()
+        let testInput = new Uint8Array([1, 1, 2, 3, 5, 8, 13])
+        let testContext = new Uint8Array([42])
+        describe('Seal mode', function() {
+            it('does not accept strings', function() {
+                assert.throws(() => new addon.SecureCellSeal('master key'), TypeError)
+            })
+            it('encrypts without context', function() {
+                let cell = new addon.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('encrypts with context', function() {
+                let cell = new addon.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                let decrypted = cell.decrypt(encrypted, testContext)
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('produces extended results', function() {
+                let cell = new addon.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                assert(encrypted.length > testInput.length)
+            })
+            it('forbits empty inputs', function() {
+                assert.throws(() => new addon.SecureCellSeal(emptyArray),
+                    expect_code(addon.INVALID_PARAMETER)
+                )
+                let cell = new addon.SecureCellSeal(masterKey1)
+                assert.throws(() => cell.encrypt(emptyArray),
+                    expect_code(addon.INVALID_PARAMETER)
+                )
+            })
+            it('empty context == no context', function() {
+                let cell = new addon.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted, emptyArray)
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('null context == no context', function() {
+                let cell = new addon.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput, null)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('detects invalid master key', function() {
+                let cell1 = new addon.SecureCellSeal(masterKey1)
+                let cell2 = new addon.SecureCellSeal(masterKey2)
+                let encrypted = cell1.encrypt(testInput)
+                assert.throws(() => cell2.decrypt(encrypted),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('detects invalid context', function() {
+                let cell = new addon.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                assert.throws(() => cell.decrypt(encrypted, testInput),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('detects corrupted data', function() {
+                let cell = new addon.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                encrypted[20] = ~encrypted[20]
+                assert.throws(() => cell.decrypt(encrypted),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('handles type mismatches', function() {
+                let cell = new addon.SecureCellSeal(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new addon.SecureCellSeal(invalid), TypeError)
+                    assert.throws(() => cell.encrypt(invalid), TypeError)
+                    assert.throws(() => cell.decrypt(invalid), TypeError)
+                    // null context is okay, it should not throw
+                    if (invalid !== null) {
+                        assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
+                        assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
+                    }
+                })
+            })
+        })
+        describe('Token Protect mode', function() {
+            it('does not accept strings', function() {
+                assert.throws(() => new addon.SecureCellTokenProtect('master key'), TypeError)
+            })
+            it('encrypts without context', function() {
+                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let result = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(result.data, result.token)
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('encrypts with context', function() {
+                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let result = cell.encrypt(testInput, testContext)
+                let decrypted = cell.decrypt(result.data, result.token, testContext)
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('does not change encrypted data length', function() {
+                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let result = cell.encrypt(testInput)
+                assert.equal(result.data.length, testInput.length)
+                assert(result.token.length > 0)
+            })
+            it('forbids empty inputs', function() {
+                assert.throws(() => new addon.SecureCellTokenProtect(emptyArray),
+                    expect_code(addon.INVALID_PARAMETER)
+                )
+                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                assert.throws(() => cell.encrypt(emptyArray),
+                    expect_code(addon.INVALID_PARAMETER)
+                )
+                let result = cell.encrypt(testInput)
+                assert.throws(() => cell.decrypt(emptyArray, result.token),
+                    expect_code(addon.INVALID_PARAMETER)
+                )
+                assert.throws(() => cell.decrypt(result.data, emptyArray),
+                    expect_code(addon.INVALID_PARAMETER)
+                )
+            })
+            it('empty context == no context', function() {
+                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let result = cell.encrypt(testInput, emptyArray)
+                let decrypted = cell.decrypt(result.data, result.token)
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('null context == no context', function() {
+                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let result = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(result.data, result.token, null)
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('detects incorrect master key', function() {
+                let cell1 = new addon.SecureCellTokenProtect(masterKey1)
+                let cell2 = new addon.SecureCellTokenProtect(masterKey2)
+                let result = cell1.encrypt(testInput)
+                assert.throws(() => cell2.decrypt(result.data, result.token),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('detects incorrect token', function() {
+                let cell1 = new addon.SecureCellTokenProtect(masterKey1)
+                let cell2 = new addon.SecureCellTokenProtect(masterKey2)
+                let result1 = cell1.encrypt(testInput)
+                let result2 = cell2.encrypt(testInput)
+                assert.throws(() => cell1.decrypt(result1.data, result2.token),
+                    expect_code(addon.FAIL)
+                )
+                assert.throws(() => cell2.decrypt(result2.data, result1.token),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('detects incorrect context', function() {
+                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let result = cell.encrypt(testInput, testContext)
+                assert.throws(() => cell.decrypt(result.data, result.token, testInput),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('detects corrupted data', function() {
+                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let result = cell.encrypt(testInput)
+                result.data[5] = ~result.data[5]
+                assert.throws(() => cell.decrypt(result.data, result.token),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('detects corrupted token', function() {
+                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let result = cell.encrypt(testInput)
+                result.token[8] = ~result.token[8]
+                assert.throws(() => cell.decrypt(result.data, result.token),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('handles type mismatches', function() {
+                let cell = new addon.SecureCellTokenProtect(masterKey1)
+                let result = cell.encrypt(testInput)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new addon.SecureCellTokenProtect(invalid), TypeError)
+                    assert.throws(() => cell.encrypt(invalid), TypeError)
+                    assert.throws(() => cell.decrypt(result.data, invalid), TypeError)
+                    assert.throws(() => cell.decrypt(invalid, result.token), TypeError)
+                    // null context is okay, it should not throw
+                    if (invalid !== null) {
+                        assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
+                        assert.throws(() => cell.decrypt(result.data, result.token, invalid), TypeError)
+                    }
+                })
+            })
+        })
+        describe('Context Imprint mode', function() {
+            it('does not accept strings', function() {
+                assert.throws(() => new addon.SecureCellContextImprint('master key'), TypeError)
+            })
+            it('encrypts only with context', function() {
+                let cell = new addon.SecureCellContextImprint(masterKey1)
+                assert.throws(() => cell.encrypt(testInput))
+                let encrypted = cell.encrypt(testInput, testContext)
+                let decrypted = cell.decrypt(encrypted, testContext)
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('encryption does not change data length', function() {
+                let cell = new addon.SecureCellContextImprint(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                assert.equal(encrypted.length, testInput.length)
+            })
+            it('forbids empty message and context', function() {
+                assert.throws(() => new addon.SecureCellContextImprint(emptyArray),
+                    expect_code(addon.INVALID_PARAMETER)
+                )
+                let cell = new addon.SecureCellContextImprint(masterKey1)
+                assert.throws(() => cell.encrypt(emptyArray, testContext))
+                assert.throws(() => cell.encrypt(null,       testContext))
+                assert.throws(() => cell.encrypt(testInput,  emptyArray))
+                assert.throws(() => cell.encrypt(testInput,  null))
+                assert.throws(() => cell.encrypt(emptyArray, emptyArray))
+                assert.throws(() => cell.encrypt(null,       null))
+                assert.throws(() => cell.decrypt(emptyArray, testContext))
+                assert.throws(() => cell.decrypt(null,       testContext))
+                assert.throws(() => cell.decrypt(testInput,  emptyArray))
+                assert.throws(() => cell.decrypt(testInput,  null))
+                assert.throws(() => cell.decrypt(emptyArray, emptyArray))
+                assert.throws(() => cell.decrypt(null,       null))
+            })
+            it('does not detect incorrect master key', function() {
+                let cell1 = new addon.SecureCellContextImprint(masterKey1)
+                let cell2 = new addon.SecureCellContextImprint(masterKey2)
+                let encrypted = cell1.encrypt(testInput, testContext)
+                let decrypted = cell2.decrypt(encrypted, testContext)
+                assert.notDeepEqual(testInput, decrypted)
+            })
+            it('does not detect incorrect context', function() {
+                let cell = new addon.SecureCellContextImprint(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                let decrypted = cell.decrypt(encrypted, testInput)
+                assert.notDeepEqual(testInput, decrypted)
+            })
+            it('does not detect corrupted data', function() {
+                let cell = new addon.SecureCellContextImprint(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                encrypted[5] = ~encrypted[5]
+                let decrypted = cell.decrypt(encrypted, testContext)
+                assert.notDeepEqual(testInput, decrypted)
+            })
+            it('handles type mismatches', function() {
+                let cell = new addon.SecureCellContextImprint(masterKey1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new addon.SecureCellContextImprint(invalid), TypeError)
+                    assert.throws(() => cell.encrypt(invalid, testContext), TypeError)
+                    assert.throws(() => cell.decrypt(invalid, testContext), TypeError)
+                    assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
+                    assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
+                })
+            })
+        })
     })
 })
 
@@ -358,22 +559,25 @@ describe("jsthemis", function(){
 	    assert.equal(client_comparator.isMatch(), false);
 	    assert.equal(server_comparator.isMatch(), false);
 	})
-	it("invalid parameters", function(){
-	    empty_secret = new Buffer("");
-	    assert.throws(function(){new addon.SecureComparator(empty_secret)}, expect_code(addon.INVALID_PARAMETER));
-	    server_comparator = new addon.SecureComparator(server_secret);
-	    assert.throws(function(){server_comparator.proceedCompare(empty_message)}, expect_code(addon.INVALID_PARAMETER));
-	})
+        it("invalid parameters", function() {
+            let empty = Buffer.from('')
+            assert.throws(() => new addon.SecureComparator(empty),
+                expect_code(addon.INVALID_PARAMETER))
+            server_comparator = new addon.SecureComparator(server_secret)
+            assert.throws(() => server_comparator.proceedCompare(empty),
+                expect_code(addon.INVALID_PARAMETER))
+        })
     })
 })
 
 describe("jsthemis", function(){
     describe("key generation", function(){
+        let empty_message = Buffer.from('')
         it("generates and joins", function(){
             pair = new addon.KeyPair()
             new_pair = new addon.KeyPair(pair.private(), pair.public())
-            assert.deepStrictEqual(pair.private(), new_pair.private())
-            assert.deepStrictEqual(pair.public(), new_pair.public())
+            assert.deepEqual(pair.private(), new_pair.private())
+            assert.deepEqual(pair.public(), new_pair.public())
             assert.throws(function(){new addon.KeyPair(empty_message, empty_message)}, expect_code(addon.INVALID_PARAMETER));
         })
     })
