@@ -63,8 +63,11 @@ $(JSTHEMIS_OBJ)/warning_check:
 endif # ifdef NPM_VERSION
 
 $(BUILD_PATH)/jsthemis.tgz: $(JSTHEMIS_SOURCES) $(JSTHEMIS_HEADERS) $(JSTHEMIS_PACKAGE)
-	@cd $(BUILD_PATH) && npm pack $(abspath $(JSTHEMIS_SRC))
+	@cd $(BUILD_PATH) && npm pack $(abspath $(JSTHEMIS_SRC)) > /dev/null
 	@mv $(BUILD_PATH)/jsthemis-*.tgz $(BUILD_PATH)/jsthemis.tgz
+	@echo $(BUILD_PATH)/jsthemis.tgz
+
+jsthemis: $(BUILD_PATH)/jsthemis.tgz
 
 jsthemis_install: CMD = npm install $(abspath $(BUILD_PATH)/jsthemis.tgz)
 jsthemis_install: $(BUILD_PATH)/jsthemis.tgz

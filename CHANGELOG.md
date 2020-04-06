@@ -282,6 +282,7 @@ _Code:_
 - **Node.js**
 
   - New class `SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#562](https://github.com/cossacklabs/themis/pull/562)).
+  - New makefile target `make jsthemis` can be used to build JsThemis from source ([#618](https://github.com/cossacklabs/themis/pull/618)).
 
 - **PHP**
 
@@ -369,6 +370,8 @@ _Infrastructure:_
 - Automated benchmarking harness is now tracking Themis performance. See [`benches`](https://github.com/cossacklabs/themis/tree/master/benches/) ([#580](https://github.com/cossacklabs/themis/pull/580)).
 - Added automated tests for all code samples in documentation, ensuring they are always up-to-date ([#600](https://github.com/cossacklabs/themis/pull/600)).
 - All 13 supported platforms are verified on GitHub Actions, along with existing CircleCI and Bitrise tests ([#600](https://github.com/cossacklabs/themis/pull/600)).
+- New Makefile targets:
+  - `make jsthemis` builds JsThemis from source ([#618](https://github.com/cossacklabs/themis/pull/618)).
 
 ## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 27th 2019
 
