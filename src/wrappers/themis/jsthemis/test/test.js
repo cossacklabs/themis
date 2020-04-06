@@ -1,4 +1,4 @@
-var addon = require('jsthemis');
+var addon = require('..');
 var assert = require('assert');
 
 function expect_code(code) {

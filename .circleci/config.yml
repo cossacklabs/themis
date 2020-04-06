@@ -503,7 +503,6 @@ jobs:
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
             # Run JsThemis tests
-            rm -rf src/wrappers/themis/jsthemis/node_modules
             make test_js
       - run:
           name: Test with Node.js v8 (maintenance)
@@ -514,7 +513,6 @@ jobs:
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
             # Run JsThemis tests
-            rm -rf src/wrappers/themis/jsthemis/node_modules
             make test_js
             # Run WasmThemis tests
             make BUILD_PATH=build-wasm test_wasm
@@ -527,7 +525,6 @@ jobs:
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
             # Run JsThemis tests
-            rm -rf src/wrappers/themis/jsthemis/node_modules
             make test_js
             # Run WasmThemis tests
             make BUILD_PATH=build-wasm test_wasm
@@ -540,7 +537,6 @@ jobs:
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
             # Run JsThemis tests
-            rm -rf src/wrappers/themis/jsthemis/node_modules
             make test_js
             # Run WasmThemis tests
             make BUILD_PATH=build-wasm test_wasm
