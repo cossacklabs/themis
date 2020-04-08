@@ -288,6 +288,7 @@ _Code:_
   - New class `SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#562](https://github.com/cossacklabs/themis/pull/562)).
   - New makefile target `make jsthemis` can be used to build JsThemis from source ([#618](https://github.com/cossacklabs/themis/pull/618)).
   - `SecureCell` now allows `null` to explicitly specify omitted encryption context ([#620](https://github.com/cossacklabs/themis/pull/620)).
+  - `SecureMessage` now allows `null` for omitted keys in sign/verify mode ([#620](https://github.com/cossacklabs/themis/pull/620)).
 
 - **PHP**
 

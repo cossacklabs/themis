@@ -57,6 +57,13 @@ void SecureMessage::Init(v8::Local<v8::Object> exports)
     Nan::Set(exports, className, function);
 }
 
+static inline void assign_buffer_to_vector(std::vector<uint8_t> &vector, const v8::Local<v8::Value> &buffer)
+{
+    const uint8_t *data = reinterpret_cast<const uint8_t*>(node::Buffer::Data(buffer));
+    size_t length = node::Buffer::Length(buffer);
+    vector.assign(data, data + length);
+}
+
 void SecureMessage::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
 {
     if (args.IsConstructCall()) {
@@ -66,24 +73,26 @@ void SecureMessage::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             args.GetReturnValue().SetUndefined();
             return;
         }
-        if (!args[0]->IsUint8Array()) {
-            ThrowTypeError("SecureMessage",
-                           "private key is not a byte buffer, use ByteBuffer or Uint8Array");
-            args.GetReturnValue().SetUndefined();
-            return;
+        std::vector<uint8_t> private_key;
+        if (!args[0]->IsNull()) {
+            if (!args[0]->IsUint8Array()) {
+                ThrowTypeError("SecureMessage",
+                            "private key is not a byte buffer, use ByteBuffer or Uint8Array");
+                args.GetReturnValue().SetUndefined();
+                return;
+            }
+            assign_buffer_to_vector(private_key, args[0]);
         }
-        if (!args[1]->IsUint8Array()) {
-            ThrowTypeError("SecureMessage",
-                           "public key is not a byte buffer, use ByteBuffer or Uint8Array");
-            args.GetReturnValue().SetUndefined();
-            return;
+        std::vector<uint8_t> public_key;
+        if (!args[1]->IsNull()) {
+            if (!args[1]->IsUint8Array()) {
+                ThrowTypeError("SecureMessage",
+                            "public key is not a byte buffer, use ByteBuffer or Uint8Array");
+                args.GetReturnValue().SetUndefined();
+                return;
+            }
+            assign_buffer_to_vector(public_key, args[1]);
         }
-        std::vector<uint8_t> private_key((uint8_t*)(node::Buffer::Data(args[0])),
-                                         (uint8_t*)(node::Buffer::Data(args[0])
-                                                    + node::Buffer::Length(args[0])));
-        std::vector<uint8_t> public_key((uint8_t*)(node::Buffer::Data(args[1])),
-                                        (uint8_t*)(node::Buffer::Data(args[1])
-                                                   + node::Buffer::Length(args[1])));
         if (!ValidateKeys(private_key, public_key)) {
             args.GetReturnValue().SetUndefined();
             return;
