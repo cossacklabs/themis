@@ -21,67 +21,208 @@ let generallyInvalidArguments = [
 ]
 
 describe("jsthemis", function(){
-    describe("secure message", function(){
-	keypair = new addon.KeyPair();
-	peer_keypair = new addon.KeyPair();
-	intruder_keypair = new addon.KeyPair();
-	encrypter = new addon.SecureMessage(keypair.private(), peer_keypair.public());
-	decrypter = new addon.SecureMessage(peer_keypair.private(), keypair.public());
-	intruder_decrypter = new addon.SecureMessage(intruder_keypair.private(), keypair.public());
-	message = new Buffer("Test Message");
-	it("encrypt/decrypt", function(){
-	    encrypted_message = encrypter.encrypt(message);
-	    assert.equal(message.toString(), decrypter.decrypt(encrypted_message).toString());
-	    assert.throws(function(){intruder_decrypter.decrypt(encrypted_message);}, expect_code(addon.FAIL));
-	});
-	it("sign/verify", function(){
-	    signed_message=encrypter.sign(message);
-	    assert.equal(message.toString(), decrypter.verify(signed_message).toString());
-	    assert.equal(message.toString(), intruder_decrypter.verify(signed_message).toString());
-	    signed_message[2]++;
-	    assert.throws(function(){decrypter.verify(signed_message);}, expect_code(addon.INVALID_PARAMETER));
-	})
-	it("empty keys", function(){
-	    encrypted_message = encrypter.encrypt(message);
-	    signed_message = encrypter.sign(message);
+    describe('Secure Message', function() {
+        let emptyArray = new Uint8Array()
+        let testInput = new Uint8Array([1, 1, 2, 3, 5, 8, 13])
+        let keyPairA = new addon.KeyPair()
+        let keyPairB = new addon.KeyPair()
+        let privateKeyA = keyPairA.private()
+        let privateKeyB = keyPairB.private()
+        let publicKeyA = keyPairA.public()
+        let publicKeyB = keyPairB.public()
+        describe('encrypt/decrypt mode', function() {
+            it('requires valid keys', function() {
+                let keyPair = new addon.KeyPair()
+                let privateKey = keyPair.private()
+                let publicKey = keyPair.public()
+                // You should provide a private and public key
+                new addon.SecureMessage(privateKey, publicKey)
+                // But they must be private *and* public (in this order)
+                assert.throws(() => new addon.SecureMessage(publicKey, publicKey))
+                assert.throws(() => new addon.SecureMessage(publicKey, privateKey))
+                assert.throws(() => new addon.SecureMessage(privateKey, privateKey))
+                // Both must be specified, you can't skip arguments
+                assert.throws(() => new addon.SecureMessage(privateKey))
+                assert.throws(() => new addon.SecureMessage(publicKey))
+                // And these really need to be keys
+                assert.throws(() => new addon.SecureMessage(privateKey, Buffer.from('nope')))
+                assert.throws(() => new addon.SecureMessage(Buffer.from('not a key'), publicKey))
+            })
+            it('encrypts and decrypts', function() {
+                let secureMessageAlice = new addon.SecureMessage(privateKeyA, publicKeyB)
+                let secureMessageBob = new addon.SecureMessage(privateKeyB, publicKeyA)
 
-	    // check codes and messages when SM is empty
-	    empty_secure_message = new addon.SecureMessage(new Buffer(""), new Buffer(""));
-	    assert.throws(function(){empty_secure_message.encrypt(message);}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){empty_secure_message.encrypt(message);}, expect_message("private key is empty"));
+                let encrypted = secureMessageAlice.encrypt(testInput)
+                let decrypted = secureMessageBob.decrypt(encrypted)
 
-	    assert.throws(function(){empty_secure_message.decrypt(encrypted_message);}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){empty_secure_message.decrypt(encrypted_message);}, expect_message("private key is empty"));
+                assert.deepEqual(testInput, decrypted)
+            })
+            it('does not allow empty messages', function() {
+                let secureMessage = new addon.SecureMessage(privateKeyA, publicKeyB)
 
-	    assert.throws(function(){empty_secure_message.sign(message);}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){empty_secure_message.sign(message);}, expect_message("private key is empty"));
+                assert.throws(() => secureMessage.encrypt(emptyArray))
+            })
+            it('cannot decrypt with a different key', function() {
+                let secureMessageAlice = new addon.SecureMessage(privateKeyA, publicKeyB)
+                let privateKeyE = new addon.KeyPair().private()
+                let secureMessageEveA = new addon.SecureMessage(privateKeyE, publicKeyA)
+                let secureMessageEveB = new addon.SecureMessage(privateKeyE, publicKeyB)
 
-	    assert.throws(function(){empty_secure_message.verify(signed_message);}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){empty_secure_message.verify(signed_message);}, expect_message("public key is empty"));
+                let encrypted = secureMessageAlice.encrypt(testInput)
 
-	    // check codes and messages when SM has no public key
-	    secure_message_no_public = new addon.SecureMessage(keypair.private(), new Buffer(""));
-	    assert.throws(function(){secure_message_no_public.encrypt(message);}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){secure_message_no_public.encrypt(message);}, expect_message("public key is empty"));
+                assert.throws(() => secureMessageEveA.decrypt(encrypted),
+                    expect_code(addon.FAIL)
+                )
+                assert.throws(() => secureMessageEveB.decrypt(encrypted),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('detects corrupted data', function() {
+                let secureMessageAlice = new addon.SecureMessage(privateKeyA, publicKeyB)
+                let secureMessageBob = new addon.SecureMessage(privateKeyB, publicKeyA)
 
-	    assert.throws(function(){secure_message_no_public.decrypt(encrypted_message);}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){secure_message_no_public.decrypt(encrypted_message);}, expect_message("public key is empty"));
-	})
-	it("sign/verify with single key", function() {
-	    signer = new addon.SecureMessage(keypair.private(), new Buffer(""));
-	    verifier = new addon.SecureMessage(new Buffer(""), keypair.public());
-	    signed_message = signer.sign(message);
-	    verified_message = verifier.verify(signed_message);
-	    assert.equal(message.toString(), verified_message.toString());
-	    assert.throws(function(){signer.verify(signed_message);}, expect_code(addon.INVALID_PARAMETER));
-	})
-	it("mismatched keys", function(){
-	    assert.throws(function(){new addon.SecureMessage(keypair.public(), keypair.private())}, expect_code(addon.INVALID_PARAMETER));
-	})
-	it("keys misuse", function(){
-	    assert.throws(function(){new addon.SecureMessage(new Buffer("i am not a real private key"), new Buffer(""))}, expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){new addon.SecureMessage(new Buffer(""), new Buffer("i am not a real public key"))}, expect_code(addon.INVALID_PARAMETER));
-	})
+                let encrypted = secureMessageAlice.encrypt(testInput)
+                encrypted[10] = ~encrypted[10]
+
+                assert.throws(() => secureMessageBob.decrypt(encrypted),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('handles type mismatches', function() {
+                let secureMessage = new addon.SecureMessage(privateKeyA, publicKeyB)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    // null values are okay (sign/verify mode)
+                    if (invalid !== null) {
+                        assert.throws(() => new addon.SecureMessage(privateKeyA, invalid), TypeError)
+                        assert.throws(() => new addon.SecureMessage(invalid, publicKeyB), TypeError)
+                    }
+                    assert.throws(() => secureMessage.encrypt(invalid), TypeError)
+                    assert.throws(() => secureMessage.decrypt(invalid), TypeError)
+                })
+            })
+        })
+        describe('sign/verify mode', function() {
+            it('requires valid keys', function() {
+                let keyPair = new addon.KeyPair()
+                let privateKey = keyPair.private()
+                let publicKey = keyPair.public()
+                // You can omit either private or public key, but not both
+                new addon.SecureMessage(null, publicKey)
+                new addon.SecureMessage(privateKey, null)
+                assert.throws(() => new addon.SecureMessage(null, null))
+                assert.throws(() => new addon.SecureMessage(null))
+                // Empty buffers are okay too
+                new addon.SecureMessage(Buffer.from(''), publicKey)
+                new addon.SecureMessage(privateKey, Buffer.from(''))
+                // But they need to be keys
+                assert.throws(() => new addon.SecureMessage(null, Buffer.from('nope')))
+                assert.throws(() => new addon.SecureMessage(Buffer.from('not a key'), null))
+            })
+            it('signs and verifies', function() {
+                let signer = new addon.SecureMessage(privateKeyA, null)
+                let verifier = new addon.SecureMessage(null, publicKeyA)
+
+                let signed = signer.sign(testInput)
+                let verified = verifier.verify(signed)
+
+                assert.deepEqual(testInput, verified)
+            })
+            it('does not allow empty messages', function() {
+                let signer = new addon.SecureMessage(privateKeyA, null)
+                let verifier = new addon.SecureMessage(null, publicKeyA)
+
+                assert.throws(() => signer.sign(emptyArray))
+                assert.throws(() => verifier.verify(emptyArray))
+            })
+            it('leaves signed data in plaintext', function() {
+                let signer = new addon.SecureMessage(privateKeyA, null)
+                let signed = signer.sign(testInput)
+                // TODO: there has to be more idiomatic way for this check...
+                for (var i = 0; i < signed.length - testInput.length; i++) {
+                    let slice = signed.slice(i, i + testInput.length)
+                    var allEqual = true
+                    for (var j = 0; j < testInput.length; j++){
+                        if (slice[j] != testInput[j]) {
+                            allEqual = false
+                            break
+                        }
+                    }
+                    if (allEqual) {
+                        return
+                    }
+                }
+                assert.fail('plaintext not found in signed message')
+            })
+            it('cannot verify with a different key', function() {
+                let signer = new addon.SecureMessage(privateKeyA, null)
+                let verifier = new addon.SecureMessage(null, publicKeyB)
+
+                let signed = signer.sign(testInput)
+
+                assert.throws(() => verifier.verify(signed),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('detects corrupted data', function() {
+                let signer = new addon.SecureMessage(privateKeyA, null)
+                let verifier = new addon.SecureMessage(null, publicKeyA)
+
+                let signed = signer.sign(testInput)
+                signed[12] = ~signed[12]
+
+                assert.throws(() => verifier.verify(signed),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('handles type mismatches', function() {
+                let signer = new addon.SecureMessage(privateKeyA, null)
+                let verifier = new addon.SecureMessage(null, publicKeyA)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    // Null keys are handled specially
+                    if (invalid !== null) {
+                        assert.throws(() => new addon.SecureMessage(invalid, null), TypeError)
+                        assert.throws(() => new addon.SecureMessage(null, invalid), TypeError)
+                    }
+                    assert.throws(() => signer.sign(invalid), TypeError)
+                    assert.throws(() => verifier.verify(invalid), TypeError)
+                })
+            })
+            it('can sign with keys present', function() {
+                // ...though the public key does not matter for signatures,
+                // and private key is ignored for verification.
+                let keyPairE = new addon.KeyPair()
+                let signer = new addon.SecureMessage(privateKeyA, keyPairE.public())
+                let verifier = new addon.SecureMessage(privateKeyB, publicKeyA)
+
+                let signed = signer.sign(testInput)
+                let verified = verifier.verify(signed)
+
+                assert.deepEqual(testInput, verified)
+            })
+            it('cannot be used for encryption', function() {
+                let signer = new addon.SecureMessage(privateKeyA, null)
+                let verifier = new addon.SecureMessage(null, publicKeyA)
+                let encryptor = new addon.SecureMessage(privateKeyA, publicKeyA)
+
+                let encrypted = encryptor.encrypt(testInput)
+
+                // You need both keys to encrypt or decrypt data.
+                assert.throws(() => signer.encrypt(testInput), expect_code(addon.INVALID_PARAMETER))
+                assert.throws(() => signer.decrypt(encrypted), expect_code(addon.INVALID_PARAMETER))
+                assert.throws(() => verifier.encrypt(testInput), expect_code(addon.INVALID_PARAMETER))
+                assert.throws(() => verifier.decrypt(encrypted), expect_code(addon.INVALID_PARAMETER))
+            })
+            it('is not compatible with encryption', function() {
+                let encryptor = new addon.SecureMessage(privateKeyA, publicKeyA)
+
+                let encrypted = encryptor.encrypt(testInput)
+                let signed = encryptor.sign(testInput)
+
+                // Encrypted data cannot be verified, and signed data cannot be decrypted
+                assert.throws(() => encryptor.verify(encrypted), expect_code(addon.INVALID_PARAMETER))
+                assert.throws(() => encryptor.decrypt(signed), expect_code(addon.INVALID_PARAMETER))
+            })
+        })
     })
 })
 
