@@ -227,95 +227,183 @@ describe("jsthemis", function(){
 })
 
 describe("jsthemis", function(){
-    describe("secure session", function(){
-	it("wrap/unwrap", function(){
-	    message = new Buffer("This is test message");
-	    server_id=new Buffer("server");
-	    server_keypair = new addon.KeyPair();
-	    client_id = new Buffer("client");
-	    client_keypair = new addon.KeyPair();
+    describe('Secure Session', function() {
+        let emptyArray = Buffer.from('')
+        let randomID = Buffer.from('random')
+        let clientID = Buffer.from('client')
+        let serverID = Buffer.from('server')
+        let messageA = Buffer.from('testing, testing')
+        let messageB = Buffer.from('everything seems to be in order')
 
-	    server_session = new addon.SecureSession(server_id, server_keypair.private(), function(id){
-		if(id.toString()=="server")
-		    return server_keypair.public();
-		else if(id.toString=="client".toString())
-		    return client_keypair.public();
-		return client_keypair.public();
-	    });
+        function makeKeyMaterial() {
+            let keys = {}
+            keys.client = new addon.KeyPair()
+            keys.server = new addon.KeyPair()
+            keys.clientCallback = function(id) {
+                if (id.equals(serverID)) {
+                    return keys.server.public()
+                }
+                return null
+            }
+            keys.serverCallback = function(id) {
+                if (id.equals(clientID)) {
+                    return keys.client.public()
+                }
+                return null
+            }
+            return keys
+        }
 
-	    client_session = new addon.SecureSession(client_id, client_keypair.private(), function(id){
-		if(id.toString()=="server")
-		    return server_keypair.public();
-		else if(id.toString=="client")
-		    return client_keypair.public();
-	    });
+        it('establishes communication', function() {
+            let keys = makeKeyMaterial()
+            let client = new addon.SecureSession(clientID, keys.client.private(), keys.clientCallback)
+            let server = new addon.SecureSession(serverID, keys.server.private(), keys.serverCallback)
 
-	    data = client_session.connectRequest();
-	    data = server_session.unwrap(data);
-	    data = client_session.unwrap(data);
-	    data = server_session.unwrap(data);
-	    assert.equal(client_session.isEstablished(), false);
-	    data = client_session.unwrap(data);
-	    assert.equal(data,undefined);
-	    assert.equal(server_session.isEstablished(), true);
-	    assert.equal(client_session.isEstablished(), true);
-	    data=client_session.wrap(message);
-	    rm=server_session.unwrap(data);
-	    assert.equal(message.toString(), rm.toString());
-
-	    data=server_session.wrap(message);
-	    rm=client_session.unwrap(data);
-	    assert.equal(message.toString(), rm.toString());
-	})
-	it("invalid parameters", function(){
-	    valid_id = new Buffer("client");
-	    empty_id = new Buffer("");
-	    keypair = new addon.KeyPair();
-	    assert.throws(function(){new addon.SecureSession(empty_id, keypair.private(), function(){return null})},
-	                  expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){new addon.SecureSession(valid_id, empty_id, function(){return null})},
-	    	          expect_code(addon.INVALID_PARAMETER));
-	    assert.throws(function(){new addon.SecureSession(valid_id, keypair.private(), null)},
-	    	          expect_code(addon.INVALID_PARAMETER));
-	    server_session = new addon.SecureSession(valid_id, keypair.private(), function(){return null});
-	    assert.throws(function(){server_session.unwrap(empty_id)}, expect_code(addon.INVALID_PARAMETER));
-	})
-        it("callback behavior", function(){
-            message = new Buffer("This is test message")
-            server_id = new Buffer("server")
-            server_keypair = new addon.KeyPair()
-            client_id = new Buffer("client")
-            client_keypair = new addon.KeyPair()
-            broken_id = new Buffer("broken")
-            missing_id = new Buffer("missing")
-            unknown_id = new Buffer("unknown")
-
-            new_server_session = function() {
-                return new addon.SecureSession(server_id, server_keypair.private(), function(id){
-                    if(id.toString() == client_id.toString())
-                        return client_keypair.public()
-                    else if(id.toString() == missing_id.toString())
-                        return null
-                    else if(id.toString() == broken_id.toString())
-                        return 42
-                })
+            let data = client.connectRequest()
+            let peer = server
+            while (!(client.isEstablished() && server.isEstablished())) {
+                data = peer.unwrap(data)
+                if (peer == server) {
+                    peer = client
+                } else {
+                    peer = server
+                }
             }
 
-            server_callback = function(id){
-                if(id.toString() == server_id.toString())
-                    return server_keypair.public()
+            let wrappedMessageA = client.wrap(messageA)
+            let unwrappedMessageA = server.unwrap(wrappedMessageA)
+            assert.deepEqual(unwrappedMessageA, messageA)
+
+            let wrappedMessageB = server.wrap(messageB)
+            let unwrappedMessageB = client.unwrap(wrappedMessageB)
+            assert.deepEqual(unwrappedMessageB, messageB)
+        })
+        it('handles unknown clients', function() {
+            let keys = makeKeyMaterial()
+            let client = new addon.SecureSession(randomID, keys.client.private(), keys.clientCallback)
+            let server = new addon.SecureSession(serverID, keys.server.private(), keys.serverCallback)
+
+            let request = client.connectRequest()
+            assert.throws(() => server.unwrap(request),
+                expect_code(addon.SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR)
+            )
+        })
+        it('handles unknown servers', function() {
+            let keys = makeKeyMaterial()
+            let client = new addon.SecureSession(clientID, keys.client.private(), keys.clientCallback)
+            let server = new addon.SecureSession(randomID, keys.server.private(), keys.serverCallback)
+
+            let request = client.connectRequest()
+            let reply = server.unwrap(request)
+            assert.throws(() => client.unwrap(reply),
+                expect_code(addon.SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR)
+            )
+        })
+        it('does not allow empty client ID', function() {
+            let keyPair = new addon.KeyPair()
+            assert.throws(() => new addon.SecureSession(emptyArray, keyPair.private(), function(){}),
+                expect_code(addon.INVALID_PARAMETER)
+            )
+        })
+        it('does not allow empty message', function() {
+            let keys = makeKeyMaterial()
+            let client = new addon.SecureSession(clientID, keys.client.private(), keys.clientCallback)
+            let server = new addon.SecureSession(serverID, keys.server.private(), keys.serverCallback)
+
+            let data = client.connectRequest()
+            let peer = server
+            while (!(client.isEstablished() && server.isEstablished())) {
+                data = peer.unwrap(data)
+                if (peer == server) {
+                    peer = client
+                } else {
+                    peer = server
+                }
             }
-            client_sessions = []
-            client_sessions.push(new addon.SecureSession(broken_id, client_keypair.private(), server_callback))
-            client_sessions.push(new addon.SecureSession(missing_id, client_keypair.private(), server_callback))
-            client_sessions.push(new addon.SecureSession(unknown_id, client_keypair.private(), server_callback))
 
-            client_sessions.forEach(function(client_session){
-                var server_session = new_server_session()
-                var data
+            assert.throws(() => server.wrap(emptyArray),
+                expect_code(addon.INVALID_PARAMETER)
+            )
+        })
+        it('does not allow public keys in constructor', function() {
+            let keyPair = new addon.KeyPair()
+            assert.throws(() => new addon.SecureSession(clientID, keyPair.public(), function(){}),
+                expect_code(addon.INVALID_PARAMETER)
+            )
+        })
+        it('does not allow private keys in callback', function() {
+            let keys = makeKeyMaterial()
+            let client = new addon.SecureSession(clientID, keys.client.private(), function(id) {
+                if (id.equals(serverID)) {
+                    return keys.server.private()
+                }
+            })
+            let server = new addon.SecureSession(serverID, keys.server.private(), keys.serverCallback)
 
-                data = client_session.connectRequest();
-                assert.throws(function(){server_session.unwrap(data)}, expect_code(addon.SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR));
+            let request = client.connectRequest()
+            let reply = server.unwrap(request)
+            assert.throws(() => client.unwrap(reply),
+                expect_code(addon.INVALID_PARAMETER)
+            )
+        })
+        it('handles exception in callback', function() {
+            let keys = makeKeyMaterial()
+            let client = new addon.SecureSession(randomID, keys.client.private(), keys.clientCallback)
+            let server = new addon.SecureSession(serverID, keys.server.private(), function(id) {
+                throw Error('something')
+            })
+
+            let request = client.connectRequest()
+            assert.throws(() => server.unwrap(request),
+                expect_code(addon.SSESSION_GET_PUB_FOR_ID_CALLBACK_ERROR)
+            )
+        })
+        it('handles type mismatches', function() {
+            function isFunction(obj) {
+                return !!(obj && obj.constructor && obj.call && obj.apply)
+            }
+
+            let keys = makeKeyMaterial()
+            let client = new addon.SecureSession(clientID, keys.client.private(), keys.clientCallback)
+            let server = new addon.SecureSession(serverID, keys.server.private(), keys.serverCallback)
+
+            generallyInvalidArguments.forEach(function(invalid) {
+                assert.throws(
+                    () => new addon.SecureSession(invalid, keys.client.private(), keys.clientCallback),
+                    TypeError
+                )
+                assert.throws(
+                    () => new addon.SecureSession(clientID, invalid, keys.clientCallback),
+                    TypeError
+                )
+                // Functions are actually okay for callbacks
+                if (!isFunction(invalid)) {
+                    assert.throws(
+                        () => new addon.SecureSession(clientID, keys.client.private(), invalid),
+                        expect_code(addon.INVALID_PARAMETER)
+                    )
+                }
+
+                assert.throws(() => client.unwrap(invalid), TypeError)
+                assert.throws(() => server.unwrap(invalid), TypeError)
+            })
+
+            let data = client.connectRequest()
+            let peer = server
+            while (!(client.isEstablished() && server.isEstablished())) {
+                data = peer.unwrap(data)
+                if (peer == server) {
+                    peer = client
+                } else {
+                    peer = server
+                }
+            }
+
+            generallyInvalidArguments.forEach(function(invalid) {
+                assert.throws(() => client.wrap(invalid), TypeError)
+                assert.throws(() => client.unwrap(invalid), TypeError)
+                assert.throws(() => server.wrap(invalid), TypeError)
+                assert.throws(() => server.unwrap(invalid), TypeError)
             })
         })
     })
