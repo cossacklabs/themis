@@ -37,8 +37,11 @@ int SecureSession::get_public_key_for_id_callback(
         return THEMIS_BUFFER_TOO_SMALL;
     }
     v8::Local<v8::Value> argv[1] = {Nan::CopyBuffer((char*)id, id_length).ToLocalChecked()};
-    v8::Local<v8::Value> a =
-        Nan::Call(((SecureSession*)(user_data))->id_to_pub_key_callback_, 1, argv).ToLocalChecked();
+    Nan::MaybeLocal<v8::Value> result = Nan::Call(reinterpret_cast<SecureSession*>(user_data)->id_to_pub_key_callback_, 1, argv);
+    if (result.IsEmpty()) {
+        return THEMIS_FAIL;
+    }
+    v8::Local<v8::Value> a = result.ToLocalChecked();
     if (a->IsUint8Array()) {
         v8::Local<v8::Object> buffer = a.As<v8::Object>();
         if (key_buffer_length < node::Buffer::Length(buffer)) {
