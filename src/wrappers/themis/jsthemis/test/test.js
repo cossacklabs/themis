@@ -629,84 +629,79 @@ describe("jsthemis", function(){
 })
 
 describe("jsthemis", function(){
-    describe("secure comparator", function(){
-	it("match", function(){
-	    server_secret = new Buffer("Secret");
-	    client_secret = new Buffer("Secret");
-	    server_comparator = new addon.SecureComparator(server_secret);
-	    client_comparator = new addon.SecureComparator(client_secret);
-	    assert.equal(client_comparator.isCompareComplete(), false);
-	    assert.equal(server_comparator.isCompareComplete(), false);
-	    assert.throws(function(){client_comparator.isMatch()})
-	    assert.throws(function(){server_comparator.isMatch()})
-	    data = client_comparator.beginCompare();
-	    assert.equal(client_comparator.isCompareComplete(), false);
-	    assert.equal(server_comparator.isCompareComplete(), false);
-	    assert.throws(function(){client_comparator.isMatch()})
-	    assert.throws(function(){server_comparator.isMatch()})
-	    data = server_comparator.proceedCompare(data);
-	    assert.equal(client_comparator.isCompareComplete(), false);
-	    assert.equal(server_comparator.isCompareComplete(), false);
-	    assert.throws(function(){client_comparator.isMatch()})
-	    assert.throws(function(){server_comparator.isMatch()})
-	    data = client_comparator.proceedCompare(data);
-	    assert.equal(client_comparator.isCompareComplete(), false);
-	    assert.equal(server_comparator.isCompareComplete(), false);
-	    assert.throws(function(){client_comparator.isMatch()})
-	    assert.throws(function(){server_comparator.isMatch()})
-	    data = server_comparator.proceedCompare(data);
-	    assert.equal(client_comparator.isCompareComplete(), false);
-	    assert.equal(server_comparator.isCompareComplete(), true);
-	    assert.throws(function(){client_comparator.isMatch()})
-	    assert.equal(server_comparator.isMatch(), true);
-	    data = client_comparator.proceedCompare(data);
-	    assert.equal(client_comparator.isCompareComplete(), true);
-	    assert.equal(server_comparator.isCompareComplete(), true);
-	    assert.equal(client_comparator.isMatch(), true);
-	    assert.equal(server_comparator.isMatch(), true);
-	});
-	it("not match", function(){
-	    server_secret = new Buffer("Secret1");
-	    client_secret = new Buffer("Secret2");
-	    server_comparator = new addon.SecureComparator(server_secret);
-	    client_comparator = new addon.SecureComparator(client_secret);
-	    assert.equal(client_comparator.isCompareComplete(), false);
-	    assert.equal(server_comparator.isCompareComplete(), false);
-	    assert.throws(function(){client_comparator.isMatch()})
-	    assert.throws(function(){server_comparator.isMatch()})
-	    data = client_comparator.beginCompare();
-	    assert.equal(client_comparator.isCompareComplete(), false);
-	    assert.equal(server_comparator.isCompareComplete(), false);
-	    assert.throws(function(){client_comparator.isMatch()})
-	    assert.throws(function(){server_comparator.isMatch()})
-	    data = server_comparator.proceedCompare(data);
-	    assert.equal(client_comparator.isCompareComplete(), false);
-	    assert.equal(server_comparator.isCompareComplete(), false);
-	    assert.throws(function(){client_comparator.isMatch()})
-	    assert.throws(function(){server_comparator.isMatch()})
-	    data = client_comparator.proceedCompare(data);
-	    assert.equal(client_comparator.isCompareComplete(), false);
-	    assert.equal(server_comparator.isCompareComplete(), false);
-	    assert.throws(function(){client_comparator.isMatch()})
-	    assert.throws(function(){server_comparator.isMatch()})
-	    data = server_comparator.proceedCompare(data);
-	    assert.equal(client_comparator.isCompareComplete(), false);
-	    assert.equal(server_comparator.isCompareComplete(), true);
-	    assert.throws(function(){client_comparator.isMatch()})
-	    assert.equal(server_comparator.isMatch(), false);
-	    data = client_comparator.proceedCompare(data);
-	    assert.equal(client_comparator.isCompareComplete(), true);
-	    assert.equal(server_comparator.isCompareComplete(), true);
-	    assert.equal(client_comparator.isMatch(), false);
-	    assert.equal(server_comparator.isMatch(), false);
-	})
-        it("invalid parameters", function() {
-            let empty = Buffer.from('')
-            assert.throws(() => new addon.SecureComparator(empty),
-                expect_code(addon.INVALID_PARAMETER))
-            server_comparator = new addon.SecureComparator(server_secret)
-            assert.throws(() => server_comparator.proceedCompare(empty),
-                expect_code(addon.INVALID_PARAMETER))
+    describe('Secure Comparator', function() {
+        let secretBytes = Buffer.from('secret')
+        let randomBytes = Buffer.from('random')
+        it('confirms matching data', function() {
+            let comparison1 = new addon.SecureComparator(secretBytes)
+            let comparison2 = new addon.SecureComparator(secretBytes)
+
+            let data = comparison1.beginCompare()
+            while (!comparison1.isCompareComplete() && !comparison2.isCompareComplete()) {
+                data = comparison2.proceedCompare(data)
+                data = comparison1.proceedCompare(data)
+            }
+
+            assert(comparison1.isMatch())
+            assert(comparison2.isMatch())
+        })
+        it('notices different data', function() {
+            let comparison1 = new addon.SecureComparator(secretBytes)
+            let comparison2 = new addon.SecureComparator(randomBytes)
+
+            let data = comparison1.beginCompare()
+            while (!comparison1.isCompareComplete() && !comparison2.isCompareComplete()) {
+                data = comparison2.proceedCompare(data)
+                data = comparison1.proceedCompare(data)
+            }
+
+            assert(!comparison1.isMatch())
+            assert(!comparison2.isMatch())
+        })
+        it('handles simultaneous start', function() {
+            let comparison1 = new addon.SecureComparator(secretBytes)
+            let comparison2 = new addon.SecureComparator(secretBytes)
+
+            let data1 = comparison1.beginCompare()
+            let data2 = comparison2.beginCompare()
+
+            assert.throws(() => comparison1.proceedCompare(data2))
+            assert.throws(() => comparison2.proceedCompare(data1))
+            assert(!comparison1.isCompareComplete())
+            assert(!comparison2.isCompareComplete())
+        })
+        it('does not allow reusing', function() {
+            let comparison1 = new addon.SecureComparator(secretBytes)
+            let comparison2 = new addon.SecureComparator(secretBytes)
+
+            let data = comparison1.beginCompare()
+            while (!comparison1.isCompareComplete() && !comparison2.isCompareComplete()) {
+                data = comparison2.proceedCompare(data)
+                data = comparison1.proceedCompare(data)
+            }
+
+            // Cannot restart comparison again after starting it
+            assert.throws(() => comparison1.beginCompare())
+        })
+        it('does not allow strings', function() {
+            // Technically, it is possible to allow strings (e.g., decode them as UTF-8)
+            // but for consistency with other wrappers we allow only byte arrays for now.
+            assert.throws(() => new addon.SecureComparator('secret'))
+        })
+        it('does not allow empty data', function() {
+            assert.throws(() => new addon.SecureComparator())
+            assert.throws(() => new addon.SecureComparator(Buffer.from('')))
+            let comparison = new addon.SecureComparator(secretBytes)
+            assert.throws(() => comparison.proceedCompare(Buffer.from('')))
+        })
+        it('handles type mismatches', function() {
+            generallyInvalidArguments.forEach(function(invalid) {
+                assert.throws(() =>  new addon.SecureComparator(invalid), TypeError)
+            })
+            let comparison = new addon.SecureComparator(secretBytes)
+            generallyInvalidArguments.forEach(function(invalid) {
+                assert.throws(() => comparison.proceedCompare(invalid), TypeError)
+            })
         })
     })
 })
