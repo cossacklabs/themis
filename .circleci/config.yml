@@ -502,9 +502,6 @@ jobs:
             nvm deactivate
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
-            # Install JsThemis locally
-            rm -rf node_modules package-lock.json
-            make jsthemis_install
             # Run JsThemis tests
             make test_js
       - run:
@@ -515,9 +512,6 @@ jobs:
             nvm use v8
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
-            # Install JsThemis locally
-            rm -rf node_modules package-lock.json
-            make jsthemis_install
             # Run JsThemis tests
             make test_js
             # Run WasmThemis tests
@@ -530,9 +524,6 @@ jobs:
             nvm use v10
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
-            # Install JsThemis locally
-            rm -rf node_modules package-lock.json
-            make jsthemis_install
             # Run JsThemis tests
             make test_js
             # Run WasmThemis tests
@@ -545,9 +536,6 @@ jobs:
             nvm use v12
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
-            # Install JsThemis locally
-            rm -rf node_modules package-lock.json
-            make jsthemis_install
             # Run JsThemis tests
             make test_js
             # Run WasmThemis tests
