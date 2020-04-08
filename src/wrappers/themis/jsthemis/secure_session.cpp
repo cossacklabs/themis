@@ -22,6 +22,7 @@
 
 #include <themis/themis.h>
 
+#include "secure_keygen.hpp"
 #include "errors.hpp"
 
 namespace jsthemis
@@ -135,6 +136,11 @@ void SecureSession::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
         std::vector<uint8_t> private_key((uint8_t*)(node::Buffer::Data(args[1])),
                                          (uint8_t*)(node::Buffer::Data(args[1])
                                                     + node::Buffer::Length(args[1])));
+        if (!IsPrivateKey(private_key)) {
+            ThrowParameterError("SecureSession", "invalid private key");
+            args.GetReturnValue().SetUndefined();
+            return;
+        }
         SecureSession* obj = new SecureSession(id, private_key, v8::Local<v8::Function>::Cast(args[2]));
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
