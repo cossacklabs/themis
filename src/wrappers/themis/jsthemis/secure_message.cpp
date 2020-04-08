@@ -111,6 +111,10 @@ void SecureMessage::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
 bool SecureMessage::ValidateKeys(const std::vector<uint8_t>& private_key,
                                  const std::vector<uint8_t>& public_key)
 {
+    if (private_key.empty() && public_key.empty()) {
+        ThrowParameterError("SecureMessage", "private and public key cannot be both empty");
+        return false;
+    }
     if (!private_key.empty()) {
         if (!IsValidKey(private_key)) {
             ThrowParameterError("Secure Message constructor", "invalid private key");
