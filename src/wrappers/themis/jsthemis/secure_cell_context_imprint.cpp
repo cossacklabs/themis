@@ -62,8 +62,7 @@ void SecureCellContextImprint::New(const Nan::FunctionCallbackInfo<v8::Value>& a
             return;
         }
         if (!args[0]->IsUint8Array()) {
-            ThrowParameterError("Secure Cell (Context Imprint) constructor",
-                                "master key is not a byte buffer");
+            ThrowTypeError("SecureCellContextImprint", "master key is not a byte buffer");
             args.GetReturnValue().SetUndefined();
             return;
         }
@@ -96,8 +95,8 @@ void SecureCellContextImprint::encrypt(const Nan::FunctionCallbackInfo<v8::Value
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Context Imprint) failed to encrypt",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellContextImprint",
+                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -107,8 +106,8 @@ void SecureCellContextImprint::encrypt(const Nan::FunctionCallbackInfo<v8::Value
         return;
     }
     if (!args[1]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Context Imprint) failed to encrypt",
-                            "context is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellContextImprint",
+                       "context is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -162,8 +161,8 @@ void SecureCellContextImprint::decrypt(const Nan::FunctionCallbackInfo<v8::Value
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Context Imprint) failed to decrypt",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellContextImprint",
+                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -173,8 +172,8 @@ void SecureCellContextImprint::decrypt(const Nan::FunctionCallbackInfo<v8::Value
         return;
     }
     if (!args[1]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Context Imprint) failed to decrypt",
-                            "context is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellContextImprint",
+                       "context is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }

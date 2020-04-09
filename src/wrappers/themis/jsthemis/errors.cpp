@@ -119,6 +119,16 @@ void ThrowError(const char* domain, themis_status_t status)
     Nan::ThrowError(WithStatus(Nan::Error(message.c_str()), status));
 }
 
+void ThrowTypeError(const char* domain, const char* description)
+{
+    std::string message;
+    message += "themis.";
+    message += domain;
+    message += ": ";
+    message += description;
+    Nan::ThrowError(Nan::TypeError(message.c_str()));
+}
+
 void ThrowParameterError(const char* domain, const char* description)
 {
     std::string message;

@@ -23,6 +23,7 @@
 #include <themis/themis.h>
 
 #include "errors.hpp"
+#include "secure_keygen.hpp"
 
 namespace jsthemis
 {
@@ -36,8 +37,12 @@ int SecureSession::get_public_key_for_id_callback(
         return THEMIS_BUFFER_TOO_SMALL;
     }
     v8::Local<v8::Value> argv[1] = {Nan::CopyBuffer((char*)id, id_length).ToLocalChecked()};
-    v8::Local<v8::Value> a =
-        Nan::Call(((SecureSession*)(user_data))->id_to_pub_key_callback_, 1, argv).ToLocalChecked();
+    Nan::MaybeLocal<v8::Value> result =
+        Nan::Call(reinterpret_cast<SecureSession*>(user_data)->id_to_pub_key_callback_, 1, argv);
+    if (result.IsEmpty()) {
+        return THEMIS_FAIL;
+    }
+    v8::Local<v8::Value> a = result.ToLocalChecked();
     if (a->IsUint8Array()) {
         v8::Local<v8::Object> buffer = a.As<v8::Object>();
         if (key_buffer_length < node::Buffer::Length(buffer)) {
@@ -104,8 +109,8 @@ void SecureSession::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             return;
         }
         if (!args[0]->IsUint8Array()) {
-            ThrowParameterError("Secure Session constructor",
-                                "client ID is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureSession",
+                           "client ID is not a byte buffer, use ByteBuffer or Uint8Array");
             args.GetReturnValue().SetUndefined();
             return;
         }
@@ -115,8 +120,8 @@ void SecureSession::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             return;
         }
         if (!args[1]->IsUint8Array()) {
-            ThrowParameterError("Secure Session constructor",
-                                "private key is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureSession",
+                           "private key is not a byte buffer, use ByteBuffer or Uint8Array");
             args.GetReturnValue().SetUndefined();
             return;
         }
@@ -135,6 +140,11 @@ void SecureSession::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
         std::vector<uint8_t> private_key((uint8_t*)(node::Buffer::Data(args[1])),
                                          (uint8_t*)(node::Buffer::Data(args[1])
                                                     + node::Buffer::Length(args[1])));
+        if (!IsPrivateKey(private_key)) {
+            ThrowParameterError("SecureSession", "invalid private key");
+            args.GetReturnValue().SetUndefined();
+            return;
+        }
         SecureSession* obj = new SecureSession(id, private_key, v8::Local<v8::Function>::Cast(args[2]));
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
@@ -179,8 +189,7 @@ void SecureSession::wrap(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Session failed to encrypt",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureSession", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -226,8 +235,7 @@ void SecureSession::unwrap(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Session failed to decrypt",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureSession", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }

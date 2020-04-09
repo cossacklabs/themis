@@ -62,8 +62,8 @@ void SecureCellSeal::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             return;
         }
         if (!args[0]->IsUint8Array()) {
-            ThrowParameterError("Secure Cell (Seal) constructor",
-                                "master key is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureCellSeal",
+                           "master key is not a byte buffer, use ByteBuffer or Uint8Array");
             args.GetReturnValue().SetUndefined();
             return;
         }
@@ -96,8 +96,7 @@ void SecureCellSeal::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Seal) failed to encrypt",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellSeal", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -109,10 +108,10 @@ void SecureCellSeal::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
     size_t length = 0;
     const uint8_t* context = NULL;
     size_t context_length = 0;
-    if (args.Length() == 2) {
+    if (args.Length() == 2 && !args[1]->IsNull()) {
         if (!args[1]->IsUint8Array()) {
-            ThrowParameterError("Secure Cell (Seal) failed to encrypt",
-                                "context is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureCellSeal",
+                           "context is not a byte buffer, use ByteBuffer or Uint8Array");
             args.GetReturnValue().SetUndefined();
             return;
         }
@@ -161,8 +160,7 @@ void SecureCellSeal::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Seal) failed to decrypt",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellSeal", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -174,10 +172,10 @@ void SecureCellSeal::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
     size_t length = 0;
     const uint8_t* context = NULL;
     size_t context_length = 0;
-    if (args.Length() == 2) {
+    if (args.Length() == 2 && !args[1]->IsNull()) {
         if (!args[1]->IsUint8Array()) {
-            ThrowParameterError("Secure Cell (Seal) failed to decrypt",
-                                "context is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureCellSeal",
+                           "context is not a byte buffer, use ByteBuffer or Uint8Array");
             args.GetReturnValue().SetUndefined();
             return;
         }

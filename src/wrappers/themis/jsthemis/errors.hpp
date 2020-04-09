@@ -33,6 +33,8 @@ void Init(v8::Local<v8::Object> exports);
 
 void ThrowError(const char* domain, themis_status_t status);
 
+void ThrowTypeError(const char* domain, const char* description);
+
 void ThrowParameterError(const char* domain, const char* description);
 
 void ThrowSecureSessionError(const char* domain, themis_status_t status);
