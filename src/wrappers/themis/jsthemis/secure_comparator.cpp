@@ -133,8 +133,7 @@ void SecureComparator::proceedCompare(const Nan::FunctionCallbackInfo<v8::Value>
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowTypeError("SecureComparator",
-                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureComparator", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         return;
     }
     if (node::Buffer::Length(args[0]) == 0) {

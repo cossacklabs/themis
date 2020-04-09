@@ -22,8 +22,8 @@
 
 #include <themis/themis.h>
 
-#include "secure_keygen.hpp"
 #include "errors.hpp"
+#include "secure_keygen.hpp"
 
 namespace jsthemis
 {
@@ -37,7 +37,8 @@ int SecureSession::get_public_key_for_id_callback(
         return THEMIS_BUFFER_TOO_SMALL;
     }
     v8::Local<v8::Value> argv[1] = {Nan::CopyBuffer((char*)id, id_length).ToLocalChecked()};
-    Nan::MaybeLocal<v8::Value> result = Nan::Call(reinterpret_cast<SecureSession*>(user_data)->id_to_pub_key_callback_, 1, argv);
+    Nan::MaybeLocal<v8::Value> result =
+        Nan::Call(reinterpret_cast<SecureSession*>(user_data)->id_to_pub_key_callback_, 1, argv);
     if (result.IsEmpty()) {
         return THEMIS_FAIL;
     }
@@ -188,8 +189,7 @@ void SecureSession::wrap(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowTypeError("SecureSession",
-                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureSession", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -235,8 +235,7 @@ void SecureSession::unwrap(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowTypeError("SecureSession",
-                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureSession", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }

@@ -228,8 +228,7 @@ void SymmetricKey::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
     // a byte buffer that we copy.
     v8::Local<v8::Value> value = args[0];
     if (!value->IsUint8Array()) {
-        ThrowTypeError("SymmetricKey",
-                       "key is not a byte buffer (use Buffer or Uint8Array)");
+        ThrowTypeError("SymmetricKey", "key is not a byte buffer (use Buffer or Uint8Array)");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -240,7 +239,6 @@ void SymmetricKey::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
     }
 
     args.GetReturnValue().Set(CopyIntoBuffer(value));
-    return;
 }
 
 // TODO: return properly inherited instances of SymmetricKey

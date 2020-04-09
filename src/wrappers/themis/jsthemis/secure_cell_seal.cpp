@@ -96,8 +96,7 @@ void SecureCellSeal::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowTypeError("SecureCellSeal",
-                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellSeal", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -161,8 +160,7 @@ void SecureCellSeal::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowTypeError("SecureCellSeal",
-                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellSeal", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }

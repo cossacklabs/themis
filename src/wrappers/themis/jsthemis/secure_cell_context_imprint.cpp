@@ -62,8 +62,7 @@ void SecureCellContextImprint::New(const Nan::FunctionCallbackInfo<v8::Value>& a
             return;
         }
         if (!args[0]->IsUint8Array()) {
-            ThrowTypeError("SecureCellContextImprint",
-                           "master key is not a byte buffer");
+            ThrowTypeError("SecureCellContextImprint", "master key is not a byte buffer");
             args.GetReturnValue().SetUndefined();
             return;
         }
