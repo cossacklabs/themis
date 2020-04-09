@@ -457,6 +457,8 @@ describe("jsthemis", function(){
         })
         let masterKey1 = new Uint8Array([1, 2, 3, 4])
         let masterKey2 = new Uint8Array([5, 6, 7, 8, 9])
+        let passphrase1 = "I don't always use a passphrase..."
+        let passphrase2 = "but when I do, I make sure it's not a meme"
         let emptyArray = new Uint8Array()
         let testInput = new Uint8Array([1, 1, 2, 3, 5, 8, 13])
         let testContext = new Uint8Array([42])
@@ -558,6 +560,141 @@ describe("jsthemis", function(){
                 let decrypted = cellNew.decrypt(encrypted)
 
                 assert.deepEqual(decrypted, testInput)
+            })
+        })
+        describe('Seal mode (passphrase)', function() {
+            // Passphrase API uses KDF so it can be quite slow.
+            // Mocha uses default threshold of 75 ms which is not enough.
+            this.slow(400) // milliseconds
+
+            it('encrypts without context', function() {
+                let cell = addon.SecureCellSeal.withPassphrase(passphrase1)
+
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted)
+
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('encrypts with context', function() {
+                let cell = addon.SecureCellSeal.withPassphrase(passphrase1)
+
+                let encrypted = cell.encrypt(testInput, testContext)
+                let decrypted = cell.decrypt(encrypted, testContext)
+
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('produces extended results', function() {
+                let cell = addon.SecureCellSeal.withPassphrase(passphrase1)
+
+                let encrypted = cell.encrypt(testInput)
+
+                assert(encrypted.length > testInput.length)
+            })
+            it('forbids empty inputs', function() {
+                assert.throws(() => addon.SecureCellSeal.withPassphrase(''),
+                    expect_code(addon.INVALID_PARAMETER)
+                )
+                assert.throws(() => addon.SecureCellSeal.withPassphrase(emptyArray),
+                    expect_code(addon.INVALID_PARAMETER)
+                )
+                let cell = addon.SecureCellSeal.withPassphrase(passphrase1)
+                assert.throws(() => cell.encrypt(emptyArray),
+                    expect_code(addon.INVALID_PARAMETER)
+                )
+            })
+            it('empty context == no context', function() {
+                let cell = addon.SecureCellSeal.withPassphrase(passphrase1)
+
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted, emptyArray)
+
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('null context == no context', function() {
+                let cell = addon.SecureCellSeal.withPassphrase(passphrase1)
+
+                let encrypted = cell.encrypt(testInput, null)
+                let decrypted = cell.decrypt(encrypted)
+
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('detects invalid passphrase', function() {
+                let cell1 = addon.SecureCellSeal.withPassphrase(passphrase1)
+                let cell2 = addon.SecureCellSeal.withPassphrase(passphrase2)
+
+                let encrypted = cell1.encrypt(testInput)
+
+                assert.throws(() => cell2.decrypt(encrypted),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('detects invalid context', function() {
+                let cell = addon.SecureCellSeal.withPassphrase(passphrase1)
+
+                let encrypted = cell.encrypt(testInput, testContext)
+
+                assert.throws(() => cell.decrypt(encrypted, testInput),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('detects corrupted data', function() {
+                let cell = addon.SecureCellSeal.withPassphrase(passphrase1)
+
+                let encrypted = cell.encrypt(testInput)
+                encrypted[20] = ~encrypted[20]
+
+                assert.throws(() => cell.decrypt(encrypted),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('accepts byte arrays', function() {
+                let cell = addon.SecureCellSeal.withPassphrase(masterKey1)
+
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted)
+
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('passphrase is not master key', function() {
+                let cellMK = addon.SecureCellSeal.withKey(masterKey1)
+                let cellPW = addon.SecureCellSeal.withPassphrase(masterKey1)
+
+                let encryptedMK = cellMK.encrypt(testInput)
+
+                assert.throws(() => cellPW.decrypt(encryptedMK),
+                    expect_code(addon.FAIL)
+                )
+                let encryptedPW = cellPW.encrypt(testInput)
+                assert.throws(() => cellMK.decrypt(encryptedPW),
+                    expect_code(addon.FAIL)
+                )
+            })
+            it('encodes passphrase in UTF-8', function() {
+                let passphrase = 'нікому не кажи цей пароль'
+                let cell1 = addon.SecureCellSeal.withPassphrase(passphrase)
+                let cell2 = addon.SecureCellSeal.withPassphrase(Buffer.from(passphrase, 'UTF-8'))
+
+                let encrypted = cell1.encrypt(testInput)
+                let decrypted = cell2.decrypt(encrypted)
+
+                assert.deepEqual(decrypted, testInput)
+            })
+            it('handles type mismatches', function() {
+                let cell = addon.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    // strings are okay (only) for passphrase API
+                    if (typeof invalid !== 'string') {
+                        assert.throws(() => addon.SecureCellSeal.withPassphrase(invalid), TypeError)
+                    }
+                    assert.throws(() => cell.encrypt(invalid), TypeError)
+                    assert.throws(() => cell.decrypt(invalid), TypeError)
+                    // null context is okay, it should not throw
+                    if (invalid !== null) {
+                        assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
+                        assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
+                    }
+                })
             })
         })
         describe('Token Protect mode', function() {
