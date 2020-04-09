@@ -86,9 +86,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/js
           echo "Test Secure Cell..."
-          enc=$(node secure_cell.js enc password message)
-          dec=$(node secure_cell.js dec password "$enc")
-          test "$dec" = "message"
+          node secure_cell.js
           echo "ok"
       - name: Test examples (Secure Message)
         if: always()
