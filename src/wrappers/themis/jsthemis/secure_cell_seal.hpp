@@ -32,7 +32,7 @@ public:
 private:
     friend class SecureCellSealWithPassphrase;
 
-    explicit SecureCellSeal(const std::vector<uint8_t>& key);
+    explicit SecureCellSeal(std::vector<uint8_t>&& key);
     ~SecureCellSeal();
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);
@@ -57,7 +57,7 @@ public:
 private:
     friend class SecureCellSeal;
 
-    explicit SecureCellSealWithPassphrase(const std::vector<uint8_t>& passphrase);
+    explicit SecureCellSealWithPassphrase(std::vector<uint8_t>&& passphrase);
     ~SecureCellSealWithPassphrase();
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);

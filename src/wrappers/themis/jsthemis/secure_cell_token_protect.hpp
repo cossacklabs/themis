@@ -30,7 +30,7 @@ public:
     static void Init(v8::Local<v8::Object> exports);
 
 private:
-    explicit SecureCellTokenProtect(const std::vector<uint8_t>& key);
+    explicit SecureCellTokenProtect(std::vector<uint8_t>&& key);
     ~SecureCellTokenProtect();
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);

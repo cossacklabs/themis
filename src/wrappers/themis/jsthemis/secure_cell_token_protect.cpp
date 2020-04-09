@@ -16,8 +16,11 @@
 
 #include "secure_cell_token_protect.hpp"
 
+#include <utility>
+
 #include <node_buffer.h>
 
+#include <soter/soter.h>
 #include <themis/themis.h>
 
 #include "errors.hpp"
@@ -27,13 +30,14 @@ namespace jsthemis
 
 Nan::Persistent<v8::Function> SecureCellTokenProtect::constructor;
 
-SecureCellTokenProtect::SecureCellTokenProtect(const std::vector<uint8_t>& key)
-    : key_(key)
+SecureCellTokenProtect::SecureCellTokenProtect(std::vector<uint8_t>&& key)
+    : key_(std::move(key))
 {
 }
 
 SecureCellTokenProtect::~SecureCellTokenProtect()
 {
+    soter_wipe(key_.data(), key_.size());
 }
 
 void SecureCellTokenProtect::Init(v8::Local<v8::Object> exports)
@@ -76,7 +80,7 @@ void SecureCellTokenProtect::New(const Nan::FunctionCallbackInfo<v8::Value>& arg
         }
         std::vector<uint8_t> key((uint8_t*)(node::Buffer::Data(args[0])),
                                  (uint8_t*)(node::Buffer::Data(args[0]) + node::Buffer::Length(args[0])));
-        SecureCellTokenProtect* obj = new SecureCellTokenProtect(key);
+        SecureCellTokenProtect* obj = new SecureCellTokenProtect(std::move(key));
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
     } else {

@@ -16,8 +16,11 @@
 
 #include "secure_cell_seal.hpp"
 
+#include <utility>
+
 #include <node_buffer.h>
 
+#include <soter/soter.h>
 #include <themis/themis.h>
 
 #include "common.hpp"
@@ -29,13 +32,14 @@ namespace jsthemis
 Nan::Persistent<v8::Function> SecureCellSeal::constructor;
 Nan::Persistent<v8::FunctionTemplate> SecureCellSeal::klass;
 
-SecureCellSeal::SecureCellSeal(const std::vector<uint8_t>& key)
-    : key_(key)
+SecureCellSeal::SecureCellSeal(std::vector<uint8_t>&& key)
+    : key_(std::move(key))
 {
 }
 
 SecureCellSeal::~SecureCellSeal()
 {
+    soter_wipe(key_.data(), key_.size());
 }
 
 void SecureCellSeal::Init(v8::Local<v8::Object> exports)
@@ -80,7 +84,7 @@ void SecureCellSeal::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
         }
         std::vector<uint8_t> key((uint8_t*)(node::Buffer::Data(args[0])),
                                  (uint8_t*)(node::Buffer::Data(args[0]) + node::Buffer::Length(args[0])));
-        SecureCellSeal* obj = new SecureCellSeal(key);
+        SecureCellSeal* obj = new SecureCellSeal(std::move(key));
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
     } else {
@@ -250,13 +254,14 @@ void SecureCellSeal::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
 
 Nan::Persistent<v8::Function> SecureCellSealWithPassphrase::constructor;
 
-SecureCellSealWithPassphrase::SecureCellSealWithPassphrase(const std::vector<uint8_t>& passphrase)
-    : m_passphrase(passphrase)
+SecureCellSealWithPassphrase::SecureCellSealWithPassphrase(std::vector<uint8_t>&& passphrase)
+    : m_passphrase(std::move(passphrase))
 {
 }
 
 SecureCellSealWithPassphrase::~SecureCellSealWithPassphrase()
 {
+    soter_wipe(m_passphrase.data(), m_passphrase.size());
 }
 
 void SecureCellSealWithPassphrase::Init(v8::Local<v8::Object> /*exports*/)
@@ -313,7 +318,7 @@ void SecureCellSealWithPassphrase::New(const Nan::FunctionCallbackInfo<v8::Value
         return;
     }
 
-    SecureCellSealWithPassphrase* object = new SecureCellSealWithPassphrase(passphrase);
+    SecureCellSealWithPassphrase* object = new SecureCellSealWithPassphrase(std::move(passphrase));
     object->Wrap(args.This());
     args.GetReturnValue().Set(args.This());
 }
