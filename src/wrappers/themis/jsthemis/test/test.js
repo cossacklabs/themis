@@ -150,22 +150,10 @@ describe("jsthemis", function(){
             })
             it('leaves signed data in plaintext', function() {
                 let signer = new addon.SecureMessage(privateKeyA, null)
+
                 let signed = signer.sign(testInput)
-                // TODO: there has to be more idiomatic way for this check...
-                for (var i = 0; i < signed.length - testInput.length; i++) {
-                    let slice = signed.slice(i, i + testInput.length)
-                    var allEqual = true
-                    for (var j = 0; j < testInput.length; j++){
-                        if (slice[j] != testInput[j]) {
-                            allEqual = false
-                            break
-                        }
-                    }
-                    if (allEqual) {
-                        return
-                    }
-                }
-                assert.fail('plaintext not found in signed message')
+
+                assert.ok(signed.includes(testInput))
             })
             it('cannot verify with a different key', function() {
                 let signer = new addon.SecureMessage(privateKeyA, null)
