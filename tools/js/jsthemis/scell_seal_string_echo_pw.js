@@ -1,19 +1,19 @@
 const themis = require('jsthemis')
 
-let command, key, message, context
+let command, passphrase, message, context
 if (5 <= process.argv.length && process.argv.length <= 6) {
     command = process.argv[2]
-    key     = process.argv[3]
+    passphrase = process.argv[3]
     message = process.argv[4]
     if (process.argv.length == 6) {
         context = process.argv[5]
     }
 } else {
-    console.log('usage: node scell_token_string_echo.js {enc|dec} <key> <message[,token]> [<context>]')
+    console.log('usage: node scell_seal_string_echo.js {enc|dec} <passphrase> <message> [<context>]')
     process.exit(1);
 }
 
-let cell = themis.SecureCellTokenProtect.withKey(Buffer.from(key))
+let cell = themis.SecureCellSeal.withPassphrase(passphrase)
 let result
 switch (command) {
     case 'enc':
@@ -22,18 +22,13 @@ switch (command) {
         } else {
             result = cell.encrypt(Buffer.from(message))
         }
-        console.log(Buffer.from(result.data).toString('base64') + ','
-                    + Buffer.from(result.token).toString('base64'))
+        console.log(Buffer.from(result).toString('base64'))
         break
     case 'dec':
-        let [the_message, token] = message.split(',')
         if (context) {
-            result = cell.decrypt(Buffer.from(the_message, 'base64'),
-                                  Buffer.from(token, 'base64'),
-                                  Buffer.from(context))
+            result = cell.decrypt(Buffer.from(message, 'base64'), Buffer.from(context))
         } else {
-            result = cell.decrypt(Buffer.from(the_message, 'base64'),
-                                  Buffer.from(token, 'base64'))
+            result = cell.decrypt(Buffer.from(message, 'base64'))
         }
         console.log(Buffer.from(result).toString('utf-8'))
         break

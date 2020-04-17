@@ -20,6 +20,7 @@
 
 #include <themis/themis.h>
 
+#include "common.hpp"
 #include "errors.hpp"
 #include "secure_keygen.hpp"
 
@@ -55,14 +56,6 @@ void SecureMessage::Init(v8::Local<v8::Object> exports)
     v8::Local<v8::Function> function = Nan::GetFunction(tpl).ToLocalChecked();
     constructor.Reset(function);
     Nan::Set(exports, className, function);
-}
-
-static inline void assign_buffer_to_vector(std::vector<uint8_t>& vector,
-                                           const v8::Local<v8::Value>& buffer)
-{
-    const uint8_t* data = reinterpret_cast<const uint8_t*>(node::Buffer::Data(buffer));
-    size_t length = node::Buffer::Length(buffer);
-    vector.assign(data, data + length);
 }
 
 void SecureMessage::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
