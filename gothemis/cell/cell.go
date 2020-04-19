@@ -130,6 +130,15 @@ import (
 	"unsafe"
 )
 
+// Errors returned by Secure Cell.
+var (
+	ErrInvalidMode    = errors.NewWithCode(errors.InvalidParameter, "invalid Secure Cell mode specified")
+	ErrMissingKey     = errors.NewWithCode(errors.InvalidParameter, "empty symmetric key for Secure Cell")
+	ErrMissingMessage = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
+	ErrMissingToken   = errors.NewWithCode(errors.InvalidParameter, "authentication token is required in Token Protect mode")
+	ErrMissingContext = errors.NewWithCode(errors.InvalidParameter, "associated context is required in Context Imprint mode")
+)
+
 // Secure Cell operation mode.
 const (
 	ModeSeal = iota
@@ -165,20 +174,20 @@ func missing(data []byte) bool {
 // Protect encrypts or signs data with optional user context (depending on the Cell mode).
 func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, error) {
 	if (sc.mode < ModeSeal) || (sc.mode > ModeContextImprint) {
-		return nil, nil, errors.New("Invalid mode specified")
+		return nil, nil, ErrInvalidMode
 	}
 
 	if missing(sc.key) {
-		return nil, nil, errors.New("Master key was not provided")
+		return nil, nil, ErrMissingKey
 	}
 
 	if missing(data) {
-		return nil, nil, errors.New("Data was not provided")
+		return nil, nil, ErrMissingMessage
 	}
 
 	if ModeContextImprint == sc.mode {
 		if missing(context) {
-			return nil, nil, errors.New("Context is mandatory for context imprint mode")
+			return nil, nil, ErrMissingContext
 		}
 	}
 
@@ -233,26 +242,26 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 // Unprotect decrypts or verify data with optional user context (depending on the Cell mode).
 func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, context []byte) ([]byte, error) {
 	if (sc.mode < ModeSeal) || (sc.mode > ModeContextImprint) {
-		return nil, errors.New("Invalid mode specified")
+		return nil, ErrInvalidMode
 	}
 
 	if missing(sc.key) {
-		return nil, errors.New("Master key was not provided")
+		return nil, ErrMissingKey
 	}
 
 	if missing(protectedData) {
-		return nil, errors.New("Data was not provided")
+		return nil, ErrMissingMessage
 	}
 
 	if ModeContextImprint == sc.mode {
 		if missing(context) {
-			return nil, errors.New("Context is mandatory for context imprint mode")
+			return nil, ErrMissingContext
 		}
 	}
 
 	if ModeTokenProtect == sc.mode {
 		if missing(additionalData) {
-			return nil, errors.New("Additional data is mandatory for token protect mode")
+			return nil, ErrMissingToken
 		}
 	}
 

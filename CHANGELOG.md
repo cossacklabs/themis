@@ -98,6 +98,7 @@ _Code:_
 - **Go**
 
   - New function `keys.NewSymmetricKey()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Improved `ThemisError` introspection: added error constants, numeric error codes ([#622](https://github.com/cossacklabs/themis/pull/622)).
 
 - **iOS and macOS**
 

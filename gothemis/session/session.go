@@ -34,6 +34,13 @@ const (
 	STATE_ESTABLISHED = StateEstablished
 )
 
+// Errors returned by Secure Session.
+var (
+	ErrMissingClientID   = errors.NewWithCode(errors.InvalidParameter, "empty client ID for Secure Session")
+	ErrMissingPrivateKey = errors.NewWithCode(errors.InvalidParameter, "empty client private key for Secure Session")
+	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Session")
+)
+
 // SessionCallbacks implements a delegate for SecureSession.
 type SessionCallbacks interface {
 	GetPublicKeyForId(ss *SecureSession, id []byte) *keys.PublicKey
@@ -58,11 +65,11 @@ func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*Secu
 	ss := &SecureSession{clb: callbacks}
 
 	if nil == id || 0 == len(id) {
-		return nil, errors.New("Failed to creating secure session object with empty id")
+		return nil, ErrMissingClientID
 	}
 
 	if nil == signKey || 0 == len(signKey.Value) {
-		return nil, errors.New("Failed to creating secure session object with empty sign key")
+		return nil, ErrMissingPrivateKey
 	}
 
 	ss.ctx = C.session_init(unsafe.Pointer(&id[0]),
@@ -149,7 +156,7 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 	var outLen C.size_t
 
 	if nil == data || 0 == len(data) {
-		return nil, errors.New("Data was not provided")
+		return nil, ErrMissingMessage
 	}
 
 	if !bool(C.session_wrap_size(&ss.ctx,
@@ -177,7 +184,7 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	var outLen C.size_t
 
 	if nil == data || 0 == len(data) {
-		return nil, false, errors.New("Data was not provided")
+		return nil, false, ErrMissingMessage
 	}
 
 	res := C.session_unwrap_size(&ss.ctx,
