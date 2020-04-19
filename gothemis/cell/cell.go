@@ -137,6 +137,7 @@ var (
 	ErrMissingMessage = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
 	ErrMissingToken   = errors.NewWithCode(errors.InvalidParameter, "authentication token is required in Token Protect mode")
 	ErrMissingContext = errors.NewWithCode(errors.InvalidParameter, "associated context is required in Context Imprint mode")
+	ErrManyContexts   = errors.NewWithCode(errors.InvalidParameter, "multiple context values are not allowed")
 )
 
 // Secure Cell operation mode.
@@ -308,4 +309,15 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 	}
 
 	return decData, nil
+}
+
+func bytesData(b []byte) *C.uint8_t {
+	if len(b) == 0 {
+		return nil
+	}
+	return (*C.uint8_t)(unsafe.Pointer(&b[0]))
+}
+
+func bytesSize(b []byte) C.size_t {
+	return C.size_t(len(b))
 }
