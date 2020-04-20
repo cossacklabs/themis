@@ -13,6 +13,7 @@ Changes that are currently in development and have not been released yet.
 - Many languages received Secure Cell API overhaul with parts of the old API becoming deprecated. Refer to individual language sections for details.
 - ObjCThemis installed via Carthage is now called `objcthemis` instead of just `themis` ([read more](#0.13.0-objcthemis-rename)).
 - Themis 0.9.6 compatibility is now disabled by default ([read more](#0.13.0-drop-0.9.6-compat)).
+- Themis is known to be broken on big-endian architectures ([read more](#0.13.0-big-endian)).
 
 _Code:_
 
@@ -46,6 +47,16 @@ _Code:_
       Since Themis 0.13 the workaround for Themis 0.9.6 compatibility is *disabled* by default (as it has performance implications). It can be enabled if needed by compling with `WITH_SCELL_COMPAT`.
 
       We are planning to **remove** the workaround completely after Themis 0.9.6 reaches end-of-life in December 2020. Please use this time to migrate existing data if you have been using Themis 0.9.6. To migrate the data, decrypt it and encrypt it back with the latest Themis version.
+
+    - <a id="0.13.0-big-endian">Themis is known to be broken on big-endian architectures</a> ([#623](https://github.com/cossacklabs/themis/pull/623), [#592](https://github.com/cossacklabs/themis/pull/592)).
+
+      Themis has never committed to supporting machines with big-endian architectures.
+      However, it was expected to accidentally work to some degree on such machines,
+      with certain compatibility restrictions on interaction with little-endian machines.
+
+      Recent changes in Themis Core are known to introduce compatibility issues on big-endian architectures.
+      If you believe you are affected by this change, please reach out to us via
+      [dev@cossacklabs.com](mailto:dev@cossacklabs.com).
 
 - **C++**
 
