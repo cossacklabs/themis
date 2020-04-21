@@ -188,6 +188,8 @@ var (
 )
 
 // Secure Cell operation mode.
+//
+// Deprecated: Since 0.13. Use SealWithKey(), TokenProtectWithKey(), ContextImprintWithKey() constructutors instead.
 const (
 	ModeSeal = iota
 	ModeTokenProtect
@@ -196,7 +198,7 @@ const (
 
 // Secure Cell operation mode.
 //
-// Deprecated: Since 0.11. Use "cell.Mode..." constants instead.
+// Deprecated: Since 0.13. Use SealWithKey(), TokenProtectWithKey(), ContextImprintWithKey() constructutors instead.
 const (
 	CELL_MODE_SEAL            = ModeSeal
 	CELL_MODE_TOKEN_PROTECT   = ModeTokenProtect
@@ -205,12 +207,16 @@ const (
 
 // SecureCell is a high-level cryptographic service aimed at protecting arbitrary data
 // stored in various types of storage
+//
+// Deprecated: Since 0.13. Use SecureCellSeal, SecureCellTokenProtect, SecureCellContextImprint instead.
 type SecureCell struct {
 	key  []byte
 	mode int
 }
 
 // New makes a new Secure Cell with master key and specified mode.
+//
+// Deprecated: Since 0.13. Use SealWithKey(), TokenProtectWithKey(), ContextImprintWithKey() constructutors instead.
 func New(key []byte, mode int) *SecureCell {
 	return &SecureCell{key, mode}
 }
