@@ -17,6 +17,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/base64"
 	"fmt"
 	"os"
@@ -56,6 +57,10 @@ func main() {
 		fmt.Fprintf(os.Stderr, "failed to decrypt message: %v\n", err)
 		os.Exit(1)
 	}
+	if !bytes.Equal(decrypted, message) {
+		fmt.Fprintf(os.Stderr, "decrypted content does not match: %s\n", string(decrypted))
+		os.Exit(1)
+	}
 	fmt.Printf("Encoded:   %s\n", base64.StdEncoding.EncodeToString([]byte(message)))
 	fmt.Printf("Encrypted: %s\n", base64.StdEncoding.EncodeToString(encrypted))
 	fmt.Printf("Decrypted: %s\n", string(decrypted))
@@ -78,6 +83,10 @@ func main() {
 	decrypted, err = scellTP.Decrypt(encrypted, token, context)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to decrypt message: %v\n", err)
+		os.Exit(1)
+	}
+	if !bytes.Equal(decrypted, message) {
+		fmt.Fprintf(os.Stderr, "decrypted content does not match: %s\n", string(decrypted))
 		os.Exit(1)
 	}
 	fmt.Printf("Encoded:   %s\n", base64.StdEncoding.EncodeToString([]byte(message)))
@@ -104,6 +113,10 @@ func main() {
 	decrypted, err = scellCI.Decrypt(encrypted, context)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to decrypt message: %v\n", err)
+		os.Exit(1)
+	}
+	if !bytes.Equal(decrypted, message) {
+		fmt.Fprintf(os.Stderr, "decrypted content does not match: %s\n", string(decrypted))
 		os.Exit(1)
 	}
 	fmt.Printf("Encoded:   %s\n", base64.StdEncoding.EncodeToString([]byte(message)))
