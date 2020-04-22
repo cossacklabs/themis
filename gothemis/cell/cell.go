@@ -184,7 +184,6 @@ var (
 	ErrMissingMessage = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
 	ErrMissingToken   = errors.NewWithCode(errors.InvalidParameter, "authentication token is required in Token Protect mode")
 	ErrMissingContext = errors.NewWithCode(errors.InvalidParameter, "associated context is required in Context Imprint mode")
-	ErrManyContexts   = errors.NewWithCode(errors.InvalidParameter, "multiple context values are not allowed")
 )
 
 // Secure Cell operation mode.

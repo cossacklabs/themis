@@ -72,30 +72,23 @@ func SealWithKey(key *keys.SymmetricKey) (*SecureCellSeal, error) {
 // You will have to provide the same context again during decryption.
 // Usually this is some plaintext data associated with encrypted data,
 // such as database row number, protocol message ID, etc.
-// Omitted, empty, and nil contexts are identical.
+// Empty and nil contexts are identical.
 //
 // Encrypted data is returned as a single byte slice.
 //
 // An error is returned on failure, such as if the message is empty,
 // or in case of some internal failure in cryptographic backend.
-func (sc *SecureCellSeal) Encrypt(message []byte, context ...[]byte) ([]byte, error) {
+func (sc *SecureCellSeal) Encrypt(message, context []byte) ([]byte, error) {
 	if len(message) == 0 {
 		return nil, ErrMissingMessage
 	}
-	var userContext []byte
-	if len(context) == 1 {
-		userContext = context[0]
-	}
-	if len(context) > 1 {
-		return nil, ErrManyContexts
-	}
 
-	length, err := encryptSeal(sc.key.Value, message, userContext, nil)
+	length, err := encryptSeal(sc.key.Value, message, context, nil)
 	if err != errors.BufferTooSmall {
 		return nil, errors.NewWithCode(err, "Secure Cell failed to encrypt")
 	}
 	encrypted := make([]byte, length)
-	length, err = encryptSeal(sc.key.Value, message, userContext, encrypted)
+	length, err = encryptSeal(sc.key.Value, message, context, encrypted)
 	if err != errors.Success {
 		return nil, errors.NewWithCode(err, "Secure Cell failed to encrypt")
 	}
@@ -108,31 +101,24 @@ func (sc *SecureCellSeal) Encrypt(message []byte, context ...[]byte) ([]byte, er
 // and verifies its integrity using authentication data embedded into the message.
 //
 // You need to provide the same context as used during encryption.
-// (If there was no context you can omit the argument, use empty or nil value).
+// (If there was no context you can use empty or nil value).
 //
 // Non-empty decrypted data is returned if everything goes well.
 //
 // An error will be returned on failure, such as if the message is empty,
 // or if the data has been tampered with,
 // or if the secret or associated context do not match the ones used for encryption.
-func (sc *SecureCellSeal) Decrypt(encrypted []byte, context ...[]byte) ([]byte, error) {
+func (sc *SecureCellSeal) Decrypt(encrypted, context []byte) ([]byte, error) {
 	if len(encrypted) == 0 {
 		return nil, ErrMissingMessage
 	}
-	var userContext []byte
-	if len(context) == 1 {
-		userContext = context[0]
-	}
-	if len(context) > 1 {
-		return nil, ErrManyContexts
-	}
 
-	length, err := decryptSeal(sc.key.Value, encrypted, userContext, nil)
+	length, err := decryptSeal(sc.key.Value, encrypted, context, nil)
 	if err != errors.BufferTooSmall {
 		return nil, errors.NewWithCode(err, "Secure Cell failed to decrypt")
 	}
 	decrypted := make([]byte, length)
-	length, err = decryptSeal(sc.key.Value, encrypted, userContext, decrypted)
+	length, err = decryptSeal(sc.key.Value, encrypted, context, decrypted)
 	if err != errors.Success {
 		return nil, errors.NewWithCode(err, "Secure Cell failed to decrypt")
 	}

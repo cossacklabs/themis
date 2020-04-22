@@ -76,31 +76,24 @@ func TokenProtectWithKey(key *keys.SymmetricKey) (*SecureCellTokenProtect, error
 // You will have to provide the same context again during decryption.
 // Usually this is some plaintext data associated with encrypted data,
 // such as database row number, protocol message ID, etc.
-// Omitted, empty, and nil contexts are identical.
+// Empty, and nil contexts are identical.
 //
 // Encrypted data and authentication token are returned as byte slices.
 //
 // An error is returned on failure, such as if the message is empty,
 // or in case of some internal failure in cryptographic backend.
-func (sc *SecureCellTokenProtect) Encrypt(message []byte, context ...[]byte) (encrypted, token []byte, e error) {
+func (sc *SecureCellTokenProtect) Encrypt(message, context []byte) (encrypted, token []byte, e error) {
 	if len(message) == 0 {
 		return nil, nil, ErrMissingMessage
 	}
-	var userContext []byte
-	if len(context) == 1 {
-		userContext = context[0]
-	}
-	if len(context) > 1 {
-		return nil, nil, ErrManyContexts
-	}
 
-	encryptedLength, tokenLength, err := encryptTokenProtect(sc.key.Value, message, userContext, nil, nil)
+	encryptedLength, tokenLength, err := encryptTokenProtect(sc.key.Value, message, context, nil, nil)
 	if err != errors.BufferTooSmall {
 		return nil, nil, errors.NewWithCode(err, "Secure Cell failed to encrypt")
 	}
 	encrypted = make([]byte, encryptedLength)
 	token = make([]byte, tokenLength)
-	encryptedLength, tokenLength, err = encryptTokenProtect(sc.key.Value, message, userContext, encrypted, token)
+	encryptedLength, tokenLength, err = encryptTokenProtect(sc.key.Value, message, context, encrypted, token)
 	if err != errors.Success {
 		return nil, nil, errors.NewWithCode(err, "Secure Cell failed to encrypt")
 	}
@@ -113,34 +106,27 @@ func (sc *SecureCellTokenProtect) Encrypt(message []byte, context ...[]byte) (en
 // and verifies data integrity using the provided authentication token.
 //
 // You need to provide the same context as used during encryption.
-// (If there was no context you can omit the argument, use empty, or nil value).
+// (If there was no context you can use empty or nil value).
 //
 // Non-empty decrypted data is returned if everything goes well.
 //
 // An error will be returned on failure, such as if the message or token is empty,
 // or if the data has been tampered with,
 // or if the secret or associated context do not match the ones used for encryption.
-func (sc *SecureCellTokenProtect) Decrypt(encrypted, token []byte, context ...[]byte) ([]byte, error) {
+func (sc *SecureCellTokenProtect) Decrypt(encrypted, token, context []byte) ([]byte, error) {
 	if len(encrypted) == 0 {
 		return nil, ErrMissingMessage
 	}
 	if len(token) == 0 {
 		return nil, ErrMissingToken
 	}
-	var userContext []byte
-	if len(context) == 1 {
-		userContext = context[0]
-	}
-	if len(context) > 1 {
-		return nil, ErrManyContexts
-	}
 
-	length, err := decryptTokenProtect(sc.key.Value, encrypted, token, userContext, nil)
+	length, err := decryptTokenProtect(sc.key.Value, encrypted, token, context, nil)
 	if err != errors.BufferTooSmall {
 		return nil, errors.NewWithCode(err, "Secure Cell failed to decrypt")
 	}
 	decrypted := make([]byte, length)
-	length, err = decryptTokenProtect(sc.key.Value, encrypted, token, userContext, decrypted)
+	length, err = decryptTokenProtect(sc.key.Value, encrypted, token, context, decrypted)
 	if err != errors.Success {
 		return nil, errors.NewWithCode(err, "Secure Cell failed to decrypt")
 	}

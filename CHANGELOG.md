@@ -117,12 +117,12 @@ _Code:_
 
       ```go
       func SealWithKey(key *keys.SymmetricKey) (*SecureCellSeal, error)
-          func (sc *SecureCellSeal) Encrypt(plaintext []byte, context ...[]byte) ([]byte, error)
-          func (sc *SecureCellSeal) Decrypt(encrypted []byte, context ...[]byte) ([]byte, error)
+          func (sc *SecureCellSeal) Encrypt(plaintext, context []byte) ([]byte, error)
+          func (sc *SecureCellSeal) Decrypt(encrypted, context []byte) ([]byte, error)
 
       func TokenProtectWithKey(key *keys.SymmetricKey) (*SecureCellTokenProtect, error)
-          func (sc *SecureCellTokenProtect) Encrypt(plaintext []byte, context ...[]byte) (encrypted, token []byte, error)
-          func (sc *SecureCellTokenProtect) Decrypt(encrypted, token []byte, context ...[]byte) ([]byte, error)
+          func (sc *SecureCellTokenProtect) Encrypt(plaintext, context []byte) (encrypted, token []byte, error)
+          func (sc *SecureCellTokenProtect) Decrypt(encrypted, token, context []byte) ([]byte, error)
 
       func ContextImprintWithKey(key *keys.SymmetricKey) (*SecureCellContextImprint, error)
           func (sc *SecureCellContextImprint) Encrypt(plaintext, context []byte) ([]byte, error)

@@ -102,7 +102,7 @@ func TestSealDataLengthExtension(t *testing.T) {
 
 	message := []byte("The corpse. Did you bury it properly?")
 
-	encrypted, err := cell.Encrypt(message)
+	encrypted, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
@@ -153,42 +153,16 @@ func TestSealWithoutContext(t *testing.T) {
 	message := []byte("The corpse. Did you bury it properly?")
 
 	// Absent, empty, or nil context are all the same.
-	encrypted1, err := cell.Encrypt(message)
+	encrypted1, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
-	encrypted2, err := cell.Encrypt(message, nil)
-	if err != nil {
-		t.Fatal("failed to encrypt message", err)
-	}
-	encrypted3, err := cell.Encrypt(message, []byte{})
+	encrypted2, err := cell.Encrypt(message, []byte{})
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
 
 	var decrypted []byte
-
-	decrypted, err = cell.Decrypt(encrypted1)
-	if err != nil {
-		t.Error("failed to decrypt message", err)
-	}
-	if !bytes.Equal(decrypted, message) {
-		t.Error("decrypted result is incorrect")
-	}
-	decrypted, err = cell.Decrypt(encrypted2)
-	if err != nil {
-		t.Error("failed to decrypt message", err)
-	}
-	if !bytes.Equal(decrypted, message) {
-		t.Error("decrypted result is incorrect")
-	}
-	decrypted, err = cell.Decrypt(encrypted3)
-	if err != nil {
-		t.Error("failed to decrypt message", err)
-	}
-	if !bytes.Equal(decrypted, message) {
-		t.Error("decrypted result is incorrect")
-	}
 
 	decrypted, err = cell.Decrypt(encrypted1, nil)
 	if err != nil {
@@ -198,13 +172,6 @@ func TestSealWithoutContext(t *testing.T) {
 		t.Error("decrypted result is incorrect")
 	}
 	decrypted, err = cell.Decrypt(encrypted2, nil)
-	if err != nil {
-		t.Error("failed to decrypt message", err)
-	}
-	if !bytes.Equal(decrypted, message) {
-		t.Error("decrypted result is incorrect")
-	}
-	decrypted, err = cell.Decrypt(encrypted3, nil)
 	if err != nil {
 		t.Error("failed to decrypt message", err)
 	}
@@ -225,33 +192,6 @@ func TestSealWithoutContext(t *testing.T) {
 	}
 	if !bytes.Equal(decrypted, message) {
 		t.Error("decrypted result is incorrect")
-	}
-	decrypted, err = cell.Decrypt(encrypted3, []byte{})
-	if err != nil {
-		t.Error("failed to decrypt message", err)
-	}
-	if !bytes.Equal(decrypted, message) {
-		t.Error("decrypted result is incorrect")
-	}
-}
-
-func TestSealDoesNotAllowMultipleContexts(t *testing.T) {
-	key, err := keys.NewSymmetricKey()
-	if err != nil {
-		t.Fatal("cannot generate symmetric key", err)
-	}
-	cell, err := SealWithKey(key)
-	if err != nil {
-		t.Fatal("failed to create Secure Cell", err)
-	}
-
-	_, err = cell.Encrypt([]byte("message"), []byte("the"), []byte("context"))
-	if err != ErrManyContexts {
-		t.Error("more than one context is not allowed", err)
-	}
-	_, err = cell.Decrypt([]byte("message"), []byte("the"), []byte("context"))
-	if err != ErrManyContexts {
-		t.Error("more than one context is not allowed", err)
 	}
 }
 
@@ -300,7 +240,7 @@ func TestSealDetectCorruptedData(t *testing.T) {
 
 	message := []byte("The corpse. Did you bury it properly?")
 
-	encrypted, err := cell.Encrypt(message)
+	encrypted, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
@@ -312,7 +252,7 @@ func TestSealDetectCorruptedData(t *testing.T) {
 		}
 	}
 
-	_, err = cell.Decrypt(encrypted)
+	_, err = cell.Decrypt(encrypted, nil)
 	if err == nil {
 		t.Error("Secure Cell will detect corrupted messages")
 	}
@@ -330,12 +270,12 @@ func TestSealDetectTruncatedData(t *testing.T) {
 
 	message := []byte("The corpse. Did you bury it properly?")
 
-	encrypted, err := cell.Encrypt(message)
+	encrypted, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
 
-	_, err = cell.Decrypt(encrypted[:len(encrypted)-1])
+	_, err = cell.Decrypt(encrypted[:len(encrypted)-1], nil)
 	if err == nil {
 		t.Error("Secure Cell will detect truncated messages")
 	}
@@ -353,14 +293,14 @@ func TestSealDetectExtendedData(t *testing.T) {
 
 	message := []byte("The corpse. Did you bury it properly?")
 
-	encrypted, err := cell.Encrypt(message)
+	encrypted, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
 
 	encrypted = append(encrypted, 0)
 
-	_, err = cell.Decrypt(encrypted)
+	_, err = cell.Decrypt(encrypted, nil)
 	if err == nil {
 		t.Error("Secure Cell will detect extended messages")
 	}
@@ -376,20 +316,20 @@ func TestSealEmptyMessages(t *testing.T) {
 		t.Fatal("failed to create Secure Cell", err)
 	}
 
-	_, err = cell.Encrypt(nil)
+	_, err = cell.Encrypt(nil, nil)
 	if err != ErrMissingMessage {
 		t.Error("empty messages cannot be encrypted", err)
 	}
-	_, err = cell.Encrypt([]byte{})
+	_, err = cell.Encrypt([]byte{}, nil)
 	if err != ErrMissingMessage {
 		t.Error("empty messages cannot be encrypted", err)
 	}
 
-	_, err = cell.Decrypt(nil)
+	_, err = cell.Decrypt(nil, nil)
 	if err != ErrMissingMessage {
 		t.Error("empty messages cannot be decrypted", err)
 	}
-	_, err = cell.Decrypt([]byte{})
+	_, err = cell.Decrypt([]byte{}, nil)
 	if err != ErrMissingMessage {
 		t.Error("empty messages cannot be decrypted", err)
 	}

@@ -102,7 +102,7 @@ func TestTokenProtectDataLengthPreserved(t *testing.T) {
 
 	message := []byte("Should we speak in my car?")
 
-	encrypted, token, err := cell.Encrypt(message)
+	encrypted, token, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
@@ -159,42 +159,16 @@ func TestTokenProtectWithoutContext(t *testing.T) {
 	message := []byte("Should we speak in my car?")
 
 	// Absent, empty, or nil context are all the same.
-	encrypted1, token1, err := cell.Encrypt(message)
+	encrypted1, token1, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
-	encrypted2, token2, err := cell.Encrypt(message, nil)
-	if err != nil {
-		t.Fatal("failed to encrypt message", err)
-	}
-	encrypted3, token3, err := cell.Encrypt(message, []byte{})
+	encrypted2, token2, err := cell.Encrypt(message, []byte{})
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
 
 	var decrypted []byte
-
-	decrypted, err = cell.Decrypt(encrypted1, token1)
-	if err != nil {
-		t.Error("failed to decrypt message", err)
-	}
-	if !bytes.Equal(decrypted, message) {
-		t.Error("decrypted result is incorrect")
-	}
-	decrypted, err = cell.Decrypt(encrypted2, token2)
-	if err != nil {
-		t.Error("failed to decrypt message", err)
-	}
-	if !bytes.Equal(decrypted, message) {
-		t.Error("decrypted result is incorrect")
-	}
-	decrypted, err = cell.Decrypt(encrypted3, token3)
-	if err != nil {
-		t.Error("failed to decrypt message", err)
-	}
-	if !bytes.Equal(decrypted, message) {
-		t.Error("decrypted result is incorrect")
-	}
 
 	decrypted, err = cell.Decrypt(encrypted1, token1, nil)
 	if err != nil {
@@ -204,13 +178,6 @@ func TestTokenProtectWithoutContext(t *testing.T) {
 		t.Error("decrypted result is incorrect")
 	}
 	decrypted, err = cell.Decrypt(encrypted2, token2, nil)
-	if err != nil {
-		t.Error("failed to decrypt message", err)
-	}
-	if !bytes.Equal(decrypted, message) {
-		t.Error("decrypted result is incorrect")
-	}
-	decrypted, err = cell.Decrypt(encrypted3, token3, nil)
 	if err != nil {
 		t.Error("failed to decrypt message", err)
 	}
@@ -231,33 +198,6 @@ func TestTokenProtectWithoutContext(t *testing.T) {
 	}
 	if !bytes.Equal(decrypted, message) {
 		t.Error("decrypted result is incorrect")
-	}
-	decrypted, err = cell.Decrypt(encrypted3, token3, []byte{})
-	if err != nil {
-		t.Error("failed to decrypt message", err)
-	}
-	if !bytes.Equal(decrypted, message) {
-		t.Error("decrypted result is incorrect")
-	}
-}
-
-func TestTokenProtectDoesNotAllowMultipleContexts(t *testing.T) {
-	key, err := keys.NewSymmetricKey()
-	if err != nil {
-		t.Fatal("cannot generate symmetric key", err)
-	}
-	cell, err := TokenProtectWithKey(key)
-	if err != nil {
-		t.Fatal("failed to create Secure Cell", err)
-	}
-
-	_, _, err = cell.Encrypt([]byte("message"), []byte("the"), []byte("context"))
-	if err != ErrManyContexts {
-		t.Error("more than one context is not allowed", err)
-	}
-	_, err = cell.Decrypt([]byte("message"), []byte("token"), []byte("the"), []byte("context"))
-	if err != ErrManyContexts {
-		t.Error("more than one context is not allowed", err)
 	}
 }
 
@@ -306,32 +246,32 @@ func TestTokenProtectTokenSignificance(t *testing.T) {
 
 	message := []byte("Should we speak in my car?")
 
-	encrypted1, token1, err := cell.Encrypt(message)
+	encrypted1, token1, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
-	encrypted2, token2, err := cell.Encrypt(message)
+	encrypted2, token2, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
 
-	_, err = cell.Decrypt(encrypted1, token2)
+	_, err = cell.Decrypt(encrypted1, token2, nil)
 	if err == nil {
 		t.Error("message should not be decrypted with incorrect token")
 	}
-	_, err = cell.Decrypt(encrypted1, token2)
+	_, err = cell.Decrypt(encrypted1, token2, nil)
 	if err == nil {
 		t.Error("message should not be decrypted with incorrect token")
 	}
 
-	decrypted, err := cell.Decrypt(encrypted1, token1)
+	decrypted, err := cell.Decrypt(encrypted1, token1, nil)
 	if err != nil {
 		t.Error("correct token should allow decryption", err)
 	}
 	if !bytes.Equal(decrypted, message) {
 		t.Error("original message is returned with correct token")
 	}
-	decrypted, err = cell.Decrypt(encrypted2, token2)
+	decrypted, err = cell.Decrypt(encrypted2, token2, nil)
 	if err != nil {
 		t.Error("correct token should allow decryption", err)
 	}
@@ -352,7 +292,7 @@ func TestTokenProtectDetectCorruptedData(t *testing.T) {
 
 	message := []byte("Should we speak in my car?")
 
-	encrypted, token, err := cell.Encrypt(message)
+	encrypted, token, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
@@ -364,7 +304,7 @@ func TestTokenProtectDetectCorruptedData(t *testing.T) {
 		}
 	}
 
-	_, err = cell.Decrypt(encrypted, token)
+	_, err = cell.Decrypt(encrypted, token, nil)
 	if err == nil {
 		t.Error("Secure Cell will detect corrupted messages")
 	}
@@ -382,12 +322,12 @@ func TestTokenProtectDetectTruncatedData(t *testing.T) {
 
 	message := []byte("Should we speak in my car?")
 
-	encrypted, token, err := cell.Encrypt(message)
+	encrypted, token, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
 
-	_, err = cell.Decrypt(encrypted[:len(encrypted)-1], token)
+	_, err = cell.Decrypt(encrypted[:len(encrypted)-1], token, nil)
 	if err == nil {
 		t.Error("Secure Cell will detect truncated messages")
 	}
@@ -405,14 +345,14 @@ func TestTokenProtectDetectExtendedData(t *testing.T) {
 
 	message := []byte("Should we speak in my car?")
 
-	encrypted, token, err := cell.Encrypt(message)
+	encrypted, token, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
 
 	encrypted = append(encrypted, 0)
 
-	_, err = cell.Decrypt(encrypted, token)
+	_, err = cell.Decrypt(encrypted, token, nil)
 	if err == nil {
 		t.Error("Secure Cell will detect extended messages")
 	}
@@ -430,7 +370,7 @@ func TestTokenProtectDetectCorruptedToken(t *testing.T) {
 
 	message := []byte("Should we speak in my car?")
 
-	encrypted, token, err := cell.Encrypt(message)
+	encrypted, token, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
@@ -442,7 +382,7 @@ func TestTokenProtectDetectCorruptedToken(t *testing.T) {
 		}
 	}
 
-	_, err = cell.Decrypt(encrypted, token)
+	_, err = cell.Decrypt(encrypted, token, nil)
 	if err == nil {
 		t.Error("Secure Cell will detect corrupted tokens")
 	}
@@ -460,12 +400,12 @@ func TestTokenProtectDetectTruncatedToken(t *testing.T) {
 
 	message := []byte("Should we speak in my car?")
 
-	encrypted, token, err := cell.Encrypt(message)
+	encrypted, token, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
 
-	_, err = cell.Decrypt(encrypted, token[:len(token)-1])
+	_, err = cell.Decrypt(encrypted, token[:len(token)-1], nil)
 	if err == nil {
 		t.Error("Secure Cell will detect truncated tokens")
 	}
@@ -483,7 +423,7 @@ func TestTokenProtectDetectExtendedToken(t *testing.T) {
 
 	message := []byte("Should we speak in my car?")
 
-	encrypted, token, err := cell.Encrypt(message)
+	encrypted, token, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
@@ -492,7 +432,7 @@ func TestTokenProtectDetectExtendedToken(t *testing.T) {
 
 	// Current implementation of Secure Cell allows the token to be overlong.
 	// Extra data is simply ignored.
-	decrypted, err := cell.Decrypt(encrypted, token)
+	decrypted, err := cell.Decrypt(encrypted, token, nil)
 	if err != nil {
 		t.Error("Secure Cell does not detect extended tokens")
 	}
@@ -513,12 +453,12 @@ func TestTokenProtectSwapDataAndToken(t *testing.T) {
 
 	message := []byte("Should we speak in my car?")
 
-	encrypted, token, err := cell.Encrypt(message)
+	encrypted, token, err := cell.Encrypt(message, nil)
 	if err != nil {
 		t.Fatal("failed to encrypt message", err)
 	}
 
-	_, err = cell.Decrypt(token, encrypted)
+	_, err = cell.Decrypt(token, encrypted, nil)
 	if err == nil {
 		t.Error("Secure Cell will detect if token and message are swappeds")
 	}
@@ -534,33 +474,33 @@ func TestTokenProtectEmptyMessages(t *testing.T) {
 		t.Fatal("failed to create Secure Cell", err)
 	}
 
-	_, _, err = cell.Encrypt(nil)
+	_, _, err = cell.Encrypt(nil, nil)
 	if err != ErrMissingMessage {
 		t.Error("empty messages cannot be encrypted", err)
 	}
-	_, _, err = cell.Encrypt([]byte{})
+	_, _, err = cell.Encrypt([]byte{}, nil)
 	if err != ErrMissingMessage {
 		t.Error("empty messages cannot be encrypted", err)
 	}
 
-	encrypted, token, err := cell.Encrypt([]byte("."))
+	encrypted, token, err := cell.Encrypt([]byte("."), nil)
 	if err != nil {
 		t.Fatal("cannot encrypt message", err)
 	}
 
-	_, err = cell.Decrypt(nil, token)
+	_, err = cell.Decrypt(nil, token, nil)
 	if err != ErrMissingMessage {
 		t.Error("empty messages cannot be decrypted", err)
 	}
-	_, err = cell.Decrypt([]byte{}, token)
+	_, err = cell.Decrypt([]byte{}, token, nil)
 	if err != ErrMissingMessage {
 		t.Error("empty messages cannot be decrypted", err)
 	}
-	_, err = cell.Decrypt(encrypted, nil)
+	_, err = cell.Decrypt(encrypted, nil, nil)
 	if err != ErrMissingToken {
 		t.Error("empty messages cannot be decrypted", err)
 	}
-	_, err = cell.Decrypt(encrypted, []byte{})
+	_, err = cell.Decrypt(encrypted, []byte{}, nil)
 	if err != ErrMissingToken {
 		t.Error("empty messages cannot be decrypted", err)
 	}
