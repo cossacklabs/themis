@@ -111,6 +111,36 @@ _Code:_
   - New function `keys.NewSymmetricKey()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
   - Improved `ThemisError` introspection: added error constants, numeric error codes ([#622](https://github.com/cossacklabs/themis/pull/622)).
 
+  - Secure Cell API updates:
+
+    - New API with improved usability and consistent naming ([#624](https://github.com/cossacklabs/themis/pull/624)).
+
+      ```go
+      func SealWithKey(key *keys.SymmetricKey) (*SecureCellSeal, error)
+          func (sc *SecureCellSeal) Encrypt(plaintext, context []byte) ([]byte, error)
+          func (sc *SecureCellSeal) Decrypt(encrypted, context []byte) ([]byte, error)
+
+      func TokenProtectWithKey(key *keys.SymmetricKey) (*SecureCellTokenProtect, error)
+          func (sc *SecureCellTokenProtect) Encrypt(plaintext, context []byte) (encrypted, token []byte, error)
+          func (sc *SecureCellTokenProtect) Decrypt(encrypted, token, context []byte) ([]byte, error)
+
+      func ContextImprintWithKey(key *keys.SymmetricKey) (*SecureCellContextImprint, error)
+          func (sc *SecureCellContextImprint) Encrypt(plaintext, context []byte) ([]byte, error)
+          func (sc *SecureCellContextImprint) Decrypt(encrypted, context []byte) ([]byte, error)
+      ```
+
+      This API is less ambiguous and more convenient to use.
+
+  - **Deprecated API**
+
+    - Run-time mode-setting for Secure Cell is deprecated ([#624](https://github.com/cossacklabs/themis/pull/624)).
+
+      Please use new constructors `cell.SealWithKey()` instead of `cell.New()` and `cell.ModeSeal...` constants.
+      Encryption is now performed with `Encrypt()` method instead of `Protect()`.
+      For decryption use `Decrypt()` instead of `Unprotect()`.
+
+      Old API is retained for compatibility.
+
 - **iOS and macOS**
 
   - New function `TSGenerateSymmetricKey()` (available in Objective-C and Swift) can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).

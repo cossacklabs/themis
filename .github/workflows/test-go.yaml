@@ -76,15 +76,7 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/go
           echo "Testing Secure Cell..."
-          enc=$(go run secure_cell_context_imprint.go enc password message context)
-          dec=$(go run secure_cell_context_imprint.go dec password "$enc" context)
-          test "$dec" = "message"
-          enc=$(go run secure_cell_seal.go enc password message)
-          dec=$(go run secure_cell_seal.go dec password "$enc")
-          test "$dec" = "message"
-          out=($(go run secure_cell_token_protect.go enc password message))
-          dec=$(go run secure_cell_token_protect.go dec password "${out[0]}" "${out[1]}")
-          test "$dec" = "message"
+          go run secure_cell.go
           echo "ok"
       - name: Test examples (Secure Message)
         run: |
