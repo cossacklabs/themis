@@ -26,7 +26,7 @@ fn main() {
         Ok(_) => {
             // pkg_config has already printed instructions for cargo.
             // We're done here.
-        },
+        }
         Err(error) => {
             eprintln!(
                 "
@@ -75,7 +75,7 @@ fn try_system_themis() -> bool {
     build.flag("-lthemis");
 
     let result = build.try_compile("dummy");
-    if result.is_ok(){
+    if result.is_ok() {
         println!("cargo:rustc-link-lib=dylib=themis");
     }
     return result.is_ok();
