@@ -28,6 +28,7 @@ import (
 
 func main() {
 	// Cryptographic parameters. Keep them secret.
+	passphrase := "broccoli"
 	key, err := keys.NewSymmetricKey()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "cannot generate symmetric key: %v\n", err)
@@ -53,6 +54,33 @@ func main() {
 		os.Exit(1)
 	}
 	decrypted, err := scellMK.Decrypt(encrypted, context)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to decrypt message: %v\n", err)
+		os.Exit(1)
+	}
+	if !bytes.Equal(decrypted, message) {
+		fmt.Fprintf(os.Stderr, "decrypted content does not match: %s\n", string(decrypted))
+		os.Exit(1)
+	}
+	fmt.Printf("Encoded:   %s\n", base64.StdEncoding.EncodeToString([]byte(message)))
+	fmt.Printf("Encrypted: %s\n", base64.StdEncoding.EncodeToString(encrypted))
+	fmt.Printf("Decrypted: %s\n", string(decrypted))
+	fmt.Printf("\n")
+
+	fmt.Println("Secure Cell - Seal mode (passphrase)")
+	// This is the easiest mode to use if you need to keep the secret in your head.
+
+	scellPW, err := cell.SealWithPassphrase(passphrase)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "cannot construct Secure Cell: %v\n", err)
+		os.Exit(1)
+	}
+	encrypted, err = scellPW.Encrypt(message, context)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to encrypt message: %v\n", err)
+		os.Exit(1)
+	}
+	decrypted, err = scellPW.Decrypt(encrypted, context)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to decrypt message: %v\n", err)
 		os.Exit(1)
