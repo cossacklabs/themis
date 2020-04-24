@@ -18,7 +18,7 @@
 #
 # Suitable LLVM can usually be installed from your system's repositories.
 
-set -e
+set -e -o pipefail
 
 # This is a pattern for what we export from libthemis-sys.
 # Bindgen sees Soter as well as some system libraries, we don't need that.
