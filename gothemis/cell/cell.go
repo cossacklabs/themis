@@ -179,11 +179,12 @@ import (
 
 // Errors returned by Secure Cell.
 var (
-	ErrInvalidMode    = errors.NewWithCode(errors.InvalidParameter, "invalid Secure Cell mode specified")
-	ErrMissingKey     = errors.NewWithCode(errors.InvalidParameter, "empty symmetric key for Secure Cell")
-	ErrMissingMessage = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
-	ErrMissingToken   = errors.NewWithCode(errors.InvalidParameter, "authentication token is required in Token Protect mode")
-	ErrMissingContext = errors.NewWithCode(errors.InvalidParameter, "associated context is required in Context Imprint mode")
+	ErrInvalidMode       = errors.NewWithCode(errors.InvalidParameter, "invalid Secure Cell mode specified")
+	ErrMissingKey        = errors.NewWithCode(errors.InvalidParameter, "empty symmetric key for Secure Cell")
+	ErrMissingPassphrase = errors.NewWithCode(errors.InvalidParameter, "empty passphrase for Secure Cell")
+	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
+	ErrMissingToken      = errors.NewWithCode(errors.InvalidParameter, "authentication token is required in Token Protect mode")
+	ErrMissingContext    = errors.NewWithCode(errors.InvalidParameter, "associated context is required in Context Imprint mode")
 )
 
 // Secure Cell operation mode.

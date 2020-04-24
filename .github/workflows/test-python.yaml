@@ -87,7 +87,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: Install Themis Core
-        run: sudo make install
+        run: |
+          make
+          sudo make install
       - name: Install PyThemis
         run: sudo make pythemis_install
 

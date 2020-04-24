@@ -4,6 +4,7 @@ For **Themis core library**:
 ```
 git clone https://github.com/cossacklabs/themis.git
 cd themis
+make
 sudo make install
 ```
 
