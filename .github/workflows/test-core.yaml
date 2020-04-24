@@ -84,7 +84,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: Install Themis Core
-        run: sudo make install
+        run: |
+          make
+          sudo make install
       - name: Run examples
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/c/session_buffer_test
@@ -148,7 +150,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: Install Themis Core
-        run: sudo make install
+        run: |
+          make
+          sudo make install
       # Cargo pulls in quite a few stuff from the Internet and Rust always
       # (slowly) recompiles dependencies, so make heavy use of caching
       - name: Cache Cargo registry
