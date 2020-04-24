@@ -83,7 +83,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: Install Themis Core, ThemisPP
-        run: sudo make install themispp_install
+        run: |
+          make
+          sudo make install themispp_install
       - name: Test examples (Secure Cell)
         if: always()
         run: |

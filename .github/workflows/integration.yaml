@@ -93,7 +93,9 @@ jobs:
         with:
           submodules: true
       - name: Install Themis Core
-        run: sudo make install
+        run: |
+          make
+          sudo make install
       - name: Install ThemisPP
         run: sudo make themispp_install
       - name: Install PyThemis
