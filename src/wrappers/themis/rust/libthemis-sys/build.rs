@@ -78,5 +78,5 @@ fn try_system_themis() -> bool {
     if result.is_ok() {
         println!("cargo:rustc-link-lib=dylib=themis");
     }
-    return result.is_ok();
+    result.is_ok()
 }
