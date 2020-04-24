@@ -88,8 +88,9 @@ use std::ptr;
 
 use bindings::{
     themis_secure_cell_decrypt_context_imprint, themis_secure_cell_decrypt_seal,
-    themis_secure_cell_decrypt_token_protect, themis_secure_cell_encrypt_context_imprint,
-    themis_secure_cell_encrypt_seal, themis_secure_cell_encrypt_token_protect,
+    themis_secure_cell_decrypt_seal_with_passphrase, themis_secure_cell_decrypt_token_protect,
+    themis_secure_cell_encrypt_context_imprint, themis_secure_cell_encrypt_seal,
+    themis_secure_cell_encrypt_seal_with_passphrase, themis_secure_cell_encrypt_token_protect,
 };
 
 use crate::error::{Error, ErrorKind, Result};
@@ -98,11 +99,32 @@ use crate::utils::into_raw_parts;
 
 /// Basic Secure Cell.
 ///
-/// This is modeless, basic cell. First you provide the master key to a new `SecureCell` object
-/// then you select the desired operation mode and your Secure Cell is ready to go.
+/// This is modeless, basic cell contructed by [`SecureCell::with_key`] given a symmetric key.
+/// After that you need to select the desired operation mode:
+/// [`seal`], [`token_protect`], or [`context_imprint`].
+///
+/// You can also use passphrases instead of keys with [`SecureCell::with_passphrase`].
+///
+/// [`SecureCell::with_key`]: struct.SecureCell.html#method.with_key
+/// [`SecureCell::with_passphrase`]: struct.SecureCell.html#method.with_passphrase
+/// [`seal`]: struct.SecureCell.html#method.seal
+/// [`token_protect`]: struct.SecureCell.html#method.token_protect
+/// [`context_imprint`]: struct.SecureCell.html#method.context_imprint
 #[derive(Debug)]
 pub struct SecureCell {
     master_key: KeyBytes,
+}
+
+/// Basic Secure Cell with a passphrase.
+///
+/// This is modeless, basic cell contructed by [`SecureCell::with_passphrase`] given a passphrase.
+/// Currently only Seal mode supports passphrases, it can be selected with [`seal`].
+///
+/// [`SecureCell::with_passphrase`]: struct.SecureCell.html#method.with_passphrase
+/// [`seal`]: struct.SecureCellWithPassphrase.html#method.seal
+#[derive(Debug)]
+pub struct SecureCellWithPassphrase {
+    passphrase: KeyBytes,
 }
 
 impl SecureCell {
@@ -135,6 +157,43 @@ impl SecureCell {
         })
     }
 
+    /// Constructs a new cell secured with a passphrase.
+    ///
+    /// You can safely use short, human-readable passhrases here.
+    /// If you have a binary key, consider [`SecureCell::with_key`] instead.
+    ///
+    /// [`SecureCell::with_key`]: struct.SecureCell.html#method.with_key
+    ///
+    /// # Examples
+    ///
+    /// The passphrase is usually provided as a UTF-8 string (`&str` or `String`)
+    /// for compatibility with other platforms.
+    /// However, if you must use a different encoding,
+    /// anything convertible into a byte slice is also accepted.
+    ///
+    /// ```
+    /// use themis::secure_cell::SecureCell;
+    ///
+    /// assert!(SecureCell::with_passphrase("open sesame").is_ok());
+    /// assert!(SecureCell::with_passphrase(format!("pretty please 🥺")).is_ok());
+    ///
+    /// // पासवर्ड in UTF-16BE
+    /// let utf16_bytes = b"\x09\x2A\x09\x3E\x09\x38\x09\x35\x09\x30\x09\x4D\x09\x21";
+    /// assert!(SecureCell::with_passphrase(utf16_bytes).is_ok());
+    /// ```
+    ///
+    /// The passphrase cannot be empty.
+    ///
+    /// ```
+    /// # use themis::secure_cell::SecureCell;
+    /// assert!(SecureCell::with_passphrase("").is_err());
+    /// ```
+    pub fn with_passphrase(passphrase: impl AsRef<[u8]>) -> Result<SecureCellWithPassphrase> {
+        Ok(SecureCellWithPassphrase {
+            passphrase: KeyBytes::copy_slice(passphrase.as_ref())?,
+        })
+    }
+
     /// Switches this Secure Cell to the _sealing_ operation mode.
     pub fn seal(self) -> SecureCellSeal {
         SecureCellSeal(self)
@@ -148,6 +207,13 @@ impl SecureCell {
     /// Switches this Secure Cell to the _context imprint_ operation mode.
     pub fn context_imprint(self) -> SecureCellContextImprint {
         SecureCellContextImprint(self)
+    }
+}
+
+impl SecureCellWithPassphrase {
+    /// Switches this Secure Cell into the _Seal_ operation mode.
+    pub fn seal(self) -> SecureCellSealWithPassphrase {
+        SecureCellSealWithPassphrase(self)
     }
 }
 
@@ -370,6 +436,321 @@ impl SecureCellSeal {
     }
 }
 
+/// Secure Cell in _Seal_ operation mode.
+///
+/// This is the most secure and easy way to protect stored data.
+/// You can safely use short, human-readable passphrase strings in this mode.
+///
+/// Secure Cell in Seal mode will encrypt the data and append an “authentication tag”
+/// with auxiliary security information, forming a single sealed container.
+/// This means that the encrypted data will be larger than the original input.
+///
+/// Additionally, it is possible to bind the encrypted data to some “associated context”
+/// (for example, database row number).
+/// In this case decryption of the data with incorrect context will fail
+/// (even if the passphrase is correct and the data has not been tampered).
+/// This establishes a cryptographically secure association between the protected data
+/// and the context in which it is used.
+/// With database row numbers this prevents the attacker from swapping encrypted password hashes
+/// in the database so the system will not accept credentials of a different user.
+///
+/// Passphrase operation mode uses a _key derivation function_ (KDF) for security
+/// and because of that it is quite slow (10,000+ times slower than using keys directly).
+/// If you don’t have to memorize the secret or when performance is important,
+/// consider using symmetric key API:
+/// [`SecureCell::with_key`] and [`SecureCellSeal`].
+///
+/// You can read more about Seal mode [in documentation][1].
+///
+/// [`SecureCell::with_key`]: struct.SecureCell.html#method.with_key
+/// [`SecureCellSeal`]: struct.SecureCellSeal.html
+/// [1]: https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#seal-mode
+///
+/// # Examples
+///
+/// Note that the resulting sealed cell takes more space than the input data:
+///
+/// ```
+/// # fn main() -> Result<(), themis::Error> {
+/// use themis::secure_cell::SecureCell;
+///
+/// let cell = SecureCell::with_passphrase("open sesame")?.seal();
+///
+/// let plaintext = b"O frabjous day! Callooh! Callay!";
+/// let encrypted = cell.encrypt(&plaintext)?;
+/// let decrypted = cell.decrypt(&encrypted)?;
+///
+/// assert!(encrypted.len() > plaintext.len());
+/// assert_eq!(decrypted, plaintext);
+/// # Ok(())
+/// # }
+/// ```
+#[derive(Debug)]
+pub struct SecureCellSealWithPassphrase(SecureCellWithPassphrase);
+
+impl SecureCellSealWithPassphrase {
+    /// Encrypts the provided message.
+    ///
+    /// Data is encrypted and authentication token is appended to form a single sealed buffer.
+    /// Use [`decrypt`] to decrypt the result later.
+    ///
+    /// This call is equivalent to [`encrypt_with_context`] with an empty associated context.
+    ///
+    /// [`decrypt`]: struct.SecureCellSealWithPassphrase.html#method.decrypt
+    /// [`encrypt_with_context`]: struct.SecureCellSealWithPassphrase.html#method.encrypt_with_context
+    ///
+    /// # Examples
+    ///
+    /// You can use anything convertible into a byte slice as a message:
+    /// a byte slice or an array, a `Vec<u8>`, or a `String`, etc.
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// use themis::secure_cell::SecureCell;
+    ///
+    /// let cell = SecureCell::with_passphrase("open sesame")?.seal();
+    ///
+    /// assert!(cell.encrypt(b"byte string").is_ok());
+    /// assert!(cell.encrypt(&[1, 2, 3, 4, 5]).is_ok());
+    /// assert!(cell.encrypt(vec![6, 7, 8, 9]).is_ok());
+    /// assert!(cell.encrypt(format!("owned string")).is_ok());
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// However, the message must not be empty:
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// # use themis::secure_cell::SecureCell;
+    /// #
+    /// # let cell = SecureCell::with_passphrase("open sesame")?.seal();
+    /// #
+    /// assert!(cell.encrypt(&[]).is_err());
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn encrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
+        self.encrypt_with_context(message, &[])
+    }
+
+    /// Encrypts the provided message with associated context.
+    ///
+    /// Data is encrypted and authentication token is appended to form a single sealed buffer.
+    /// Use [`decrypt_with_context`] to decrypt the result later.
+    ///
+    /// The context is cryptographically mixed with the data
+    /// but not included into the resulting encrypted message.
+    /// You will have to provide the same context again during decryption.
+    /// Usually this is some plaintext data associated with encrypted data,
+    /// such as database row number, protocol message ID, etc.
+    ///
+    /// [`decrypt_with_context`]: struct.SecureCellSealWithPassphrase.html#method.decrypt_with_context
+    ///
+    /// # Examples
+    ///
+    /// You can use anything convertible into a byte slice as a message and context:
+    /// a byte slice or an array, a `Vec<u8>`, or a `String`, etc.
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// use themis::secure_cell::SecureCell;
+    ///
+    /// let cell = SecureCell::with_passphrase("open sesame")?.seal();
+    ///
+    /// assert!(cell.encrypt_with_context(b"byte string", format!("owned string")).is_ok());
+    /// assert!(cell.encrypt_with_context(&[1, 2, 3, 4, 5], vec![6, 7, 8, 9, 10]).is_ok());
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// The context may be empty (in which case this call is equivalent to [`encrypt`]).
+    /// However, the message must not be empty.
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// # use themis::secure_cell::SecureCell;
+    /// #
+    /// # let cell = SecureCell::with_passphrase("open sesame")?.seal();
+    /// #
+    /// assert!(cell.encrypt_with_context(b"message", &[]).is_ok());
+    /// assert!(cell.encrypt_with_context(&[], b"context").is_err());
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// [`encrypt`]: struct.SecureCellSealWithPassphrase.html#method.encrypt
+    pub fn encrypt_with_context(
+        &self,
+        message: impl AsRef<[u8]>,
+        context: impl AsRef<[u8]>,
+    ) -> Result<Vec<u8>> {
+        encrypt_seal_with_passphrase(
+            self.0.passphrase.as_bytes(),
+            context.as_ref(),
+            message.as_ref(),
+        )
+    }
+
+    /// Decrypts the provided message.
+    ///
+    /// Secure Cell decrypts the message and verifies its integrity
+    /// using authentication data embedded into the message.
+    ///
+    /// Use this method to decrypted data encrypted with [`encrypt`].
+    /// If you use associated context, call [`decrypt_with_context`] instead.
+    ///
+    /// [`encrypt`]: struct.SecureCellSealWithPassphrase.html#method.encrypt
+    /// [`decrypt_with_context`]: struct.SecureCellSealWithPassphrase.html#method.decrypt_with_context
+    ///
+    /// # Examples
+    ///
+    /// Obviously, the passphrase must be the same for decryption to succeed:
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// use themis::secure_cell::SecureCell;
+    ///
+    /// let cell = SecureCell::with_passphrase("open sesame")?.seal();
+    ///
+    /// let message = b"All mimsy were the borogoves";
+    /// let encrypted = cell.encrypt(&message)?;
+    /// let decrypted = cell.decrypt(&encrypted)?;
+    /// assert_eq!(decrypted, message);
+    ///
+    /// let other_cell = SecureCell::with_passphrase("swordfish")?.seal();
+    /// assert!(other_cell.decrypt(&encrypted).is_err());
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// You also cannot use this method when data was encrypted with associated context.
+    /// Use [`decrypt_with_context`] in that case.
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// # use themis::secure_cell::SecureCell;
+    /// #
+    /// # let cell = SecureCell::with_passphrase("open sesame")?.seal();
+    /// # let message = b"All mimsy were the borogoves";
+    /// let context = b"And the mome raths outgrabe";
+    /// let encrypted = cell.encrypt_with_context(&message, &context)?;
+    ///
+    /// assert!(cell.decrypt(&encrypted).is_err());
+    ///
+    /// let decrypted = cell.decrypt_with_context(&encrypted, &context)?;
+    ///
+    /// assert_eq!(decrypted, b"All mimsy were the borogoves");
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// Secure Cell in Seal mode verifies data integrity and can see if the data was corrupted,
+    /// returning an error on decryption attempts:
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// # use themis::secure_cell::SecureCell;
+    /// #
+    /// # let cell = SecureCell::with_passphrase("open sesame")?.seal();
+    /// # let encrypted = cell.encrypt(b"All mimsy were the borogoves")?;
+    /// #
+    /// // Let's flip some bits somewhere...
+    /// let mut corrupted = encrypted.clone();
+    /// corrupted[20] = !corrupted[20];
+    ///
+    /// assert!(cell.decrypt(&corrupted).is_err());
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn decrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
+        self.decrypt_with_context(message, &[])
+    }
+
+    /// Decrypts the provided message with associated context.
+    ///
+    /// Secure Cell validates association with the context data, decrypts the message,
+    /// and verifies its integrity using authentication data embedded into the message.
+    ///
+    /// You need to provide the same context data as provided to [`encrypt_with_context`].
+    /// You can also decrypt data encrypted with [`encrypt`] by using an empty context.
+    ///
+    /// [`encrypt_with_context`]: struct.SecureCellSealWithPassphrase.html#method.encrypt_with_context
+    /// [`encrypt`]: struct.SecureCellSealWithPassphrase.html#method.encrypt
+    ///
+    /// # Examples
+    ///
+    /// Obviously, the passphrase must be the same for decryption to succeed:
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// use themis::secure_cell::SecureCell;
+    ///
+    /// let cell = SecureCell::with_passphrase("open sesame")?.seal();
+    ///
+    /// let message = b"All mimsy were the borogoves";
+    /// let context = b"And the mome raths outgrabe";
+    /// let encrypted = cell.encrypt_with_context(&message, &context)?;
+    /// let decrypted = cell.decrypt_with_context(&encrypted, &context)?;
+    /// assert_eq!(decrypted, message);
+    ///
+    /// let other_cell = SecureCell::with_passphrase(b"swordfish")?.seal();
+    /// assert!(other_cell.decrypt_with_context(&encrypted, &context).is_err());
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// The context must match as well for decryption to succeed:
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// # use themis::secure_cell::SecureCell;
+    /// #
+    /// # let cell = SecureCell::with_passphrase("open sesame")?.seal();
+    /// # let message = b"All mimsy were the borogoves";
+    /// # let context = b"And the mome raths outgrabe";
+    /// # let encrypted = cell.encrypt_with_context(&message, &context)?;
+    /// #
+    /// assert!(cell.decrypt_with_context(&encrypted, b"incorrect context").is_err());
+    /// let decrypted = cell.decrypt_with_context(&encrypted, &context)?;
+    /// assert_eq!(decrypted, b"All mimsy were the borogoves");
+    /// # Ok(())
+    /// # }
+    /// ```
+    ///
+    /// Secure Cell in Seal mode verifies data integrity and can see if the data was corrupted,
+    /// returning an error on decryption attempts:
+    ///
+    /// ```
+    /// # fn main() -> Result<(), themis::Error> {
+    /// # use themis::secure_cell::SecureCell;
+    /// #
+    /// # let cell = SecureCell::with_passphrase("open sesame")?.seal();
+    /// # let message = b"All mimsy were the borogoves";
+    /// # let context = b"And the mome raths outgrabe";
+    /// # let encrypted = cell.encrypt_with_context(&message, &context)?;
+    /// #
+    /// // Let's flip some bits somewhere...
+    /// let mut corrupted = encrypted.clone();
+    /// corrupted[20] = !corrupted[20];
+    ///
+    /// assert!(cell.decrypt_with_context(&corrupted, &context).is_err());
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn decrypt_with_context(
+        &self,
+        message: impl AsRef<[u8]>,
+        context: impl AsRef<[u8]>,
+    ) -> Result<Vec<u8>> {
+        decrypt_seal_with_passphrase(
+            self.0.passphrase.as_bytes(),
+            context.as_ref(),
+            message.as_ref(),
+        )
+    }
+}
+
 /// Encrypts `message` with `master_key` including optional `user_context` for verification.
 fn encrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Result<Vec<u8>> {
     let (master_key_ptr, master_key_len) = into_raw_parts(master_key);
@@ -454,6 +835,114 @@ fn decrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Resul
             master_key_len,
             user_context_ptr,
             user_context_len,
+            message_ptr,
+            message_len,
+            decrypted_message.as_mut_ptr(),
+            &mut decrypted_message_len,
+        );
+        let error = Error::from_themis_status(status);
+        if error.kind() != ErrorKind::Success {
+            return Err(error);
+        }
+        debug_assert!(decrypted_message_len <= decrypted_message.capacity());
+        decrypted_message.set_len(decrypted_message_len as usize);
+    }
+
+    Ok(decrypted_message)
+}
+
+/// Encrypts `message` with `passphrase` including optional `context` for verification.
+fn encrypt_seal_with_passphrase(
+    passphrase: &[u8],
+    context: &[u8],
+    message: &[u8],
+) -> Result<Vec<u8>> {
+    let (passphrase_ptr, passphrase_len) = into_raw_parts(passphrase);
+    let (context_ptr, context_len) = into_raw_parts(context);
+    let (message_ptr, message_len) = into_raw_parts(message);
+
+    let mut encrypted_message = Vec::new();
+    let mut encrypted_message_len = 0;
+
+    unsafe {
+        let status = themis_secure_cell_encrypt_seal_with_passphrase(
+            passphrase_ptr,
+            passphrase_len,
+            context_ptr,
+            context_len,
+            message_ptr,
+            message_len,
+            ptr::null_mut(),
+            &mut encrypted_message_len,
+        );
+        let error = Error::from_themis_status(status);
+        if error.kind() != ErrorKind::BufferTooSmall {
+            return Err(error);
+        }
+    }
+
+    encrypted_message.reserve(encrypted_message_len as usize);
+
+    unsafe {
+        let status = themis_secure_cell_encrypt_seal_with_passphrase(
+            passphrase_ptr,
+            passphrase_len,
+            context_ptr,
+            context_len,
+            message_ptr,
+            message_len,
+            encrypted_message.as_mut_ptr(),
+            &mut encrypted_message_len,
+        );
+        let error = Error::from_themis_status(status);
+        if error.kind() != ErrorKind::Success {
+            return Err(error);
+        }
+        debug_assert!(encrypted_message_len <= encrypted_message.capacity());
+        encrypted_message.set_len(encrypted_message_len as usize);
+    }
+
+    Ok(encrypted_message)
+}
+
+/// Decrypts `message` with `passphrase` and verifies authenticity of `context`.
+fn decrypt_seal_with_passphrase(
+    passphrase: &[u8],
+    context: &[u8],
+    message: &[u8],
+) -> Result<Vec<u8>> {
+    let (passphrase_ptr, passphrase_len) = into_raw_parts(passphrase);
+    let (context_ptr, context_len) = into_raw_parts(context);
+    let (message_ptr, message_len) = into_raw_parts(message);
+
+    let mut decrypted_message = Vec::new();
+    let mut decrypted_message_len = 0;
+
+    unsafe {
+        let status = themis_secure_cell_decrypt_seal_with_passphrase(
+            passphrase_ptr,
+            passphrase_len,
+            context_ptr,
+            context_len,
+            message_ptr,
+            message_len,
+            ptr::null_mut(),
+            &mut decrypted_message_len,
+        );
+        let error = Error::from_themis_status(status);
+        if error.kind() != ErrorKind::BufferTooSmall {
+            return Err(error);
+        }
+    }
+
+    decrypted_message.reserve(decrypted_message_len as usize);
+
+    unsafe {
+        let status = themis_secure_cell_decrypt_seal_with_passphrase(
+            passphrase_ptr,
+            passphrase_len,
+            context_ptr,
+            context_len,
             message_ptr,
             message_len,
             decrypted_message.as_mut_ptr(),
