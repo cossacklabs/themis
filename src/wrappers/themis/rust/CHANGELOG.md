@@ -9,6 +9,11 @@ The version currently in development.
 
 [#561]: https://github.com/cossacklabs/themis/pull/561
 
+## Internal improvements
+
+- Significantly reduced compilation time by removing `bindgen` crate from dependencies.
+  ([#626](https://github.com/cossacklabs/themis/pull/626))
+
 Version 0.12.0 - 2019-09-26
 ===========================
 

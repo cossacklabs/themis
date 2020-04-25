@@ -478,6 +478,7 @@ _Code:_
 - **Rust**
 
   - New object `themis::keys::SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Significantly reduced compilation time by removing `bindgen` crate from dependencies ([#626](https://github.com/cossacklabs/themis/pull/626)).
 
 - **WebAssembly**
 

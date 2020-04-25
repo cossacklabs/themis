@@ -168,3 +168,63 @@ jobs:
           sleep 1
           test "$(cat server.txt)" = "[-] no match"
           test "$(cat client.txt)" = "[-] no match"
+
+  bindgen:
+    name: libthemis-sys bindings
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes libssl-dev llvm
+      - name: Install stable Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          components: rustfmt
+      # Cargo pulls in quite a few stuff from the Internet and Rust always
+      # (slowly) recompiles dependencies, so make heavy use of caching
+      - name: Cache Cargo registry
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-registry-
+      - name: Cache Cargo index
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-index-
+      - name: Cache Cargo build
+        uses: actions/cache@v1
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-unit-tests-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-build-target-unit-tests-
+            ${{ runner.os }}-cargo-build-target-
+      - name: Install Bindgen
+        run: cargo install bindgen
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Check bindgen.sh output
+        run: |
+          cd src/wrappers/themis/rust/libthemis-sys
+          mv src/lib.rs src/lib.rs.old
+          ./bindgen.sh
+          mv src/lib.rs src/lib.rs.new
+          if ! diff -u src/lib.rs.old src/lib.rs.new
+          then
+              echo
+              echo "Something has changed in exported definitions (see above)."
+              echo "You may need to do"
+              echo
+              echo "    cd src/wrappers/themis/rust/libthemis-sys"
+              echo "    ./bindgen.sh"
+              echo
+              echo "to refresh src/lib.rs content."
+              exit 1
+          fi
