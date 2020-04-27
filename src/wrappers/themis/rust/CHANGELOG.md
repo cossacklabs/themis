@@ -8,7 +8,7 @@ The version currently in development.
 - New `SymmetricKey` objects can be used as master keys for `SecureCell`.
   ([#561](https://github.com/cossacklabs/themis/pull/561))
 - Safe passphrase API of Secure Cell: `SecureCell::with_passphrase`.
-  ([#627](https://github.com/cossacklabs/themis/pull/627))
+  ([#630](https://github.com/cossacklabs/themis/pull/630))
 
 ## Internal improvements
 
