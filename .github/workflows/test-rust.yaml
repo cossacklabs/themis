@@ -118,9 +118,7 @@ jobs:
       - name: Test examples (Secure Cell)
         if: always()
         run: |
-          cargo run --example secure_cell -- --encrypt --password "secret" README.md     README.md.enc
-          cargo run --example secure_cell -- --decrypt --password "secret" README.md.enc README.md.dec
-          diff -q README.md README.md.dec
+          cargo run --example secure_cell
       - name: Test examples (Secure Message)
         if: always()
         run: |
