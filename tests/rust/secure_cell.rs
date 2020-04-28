@@ -377,7 +377,7 @@ mod token_protect {
         let (encrypted, token) = cell.encrypt(&message).unwrap();
 
         assert_eq!(encrypted.len(), message.len());
-        assert!(token.len() > 0);
+        assert!(!token.is_empty());
     }
 
     #[test]
