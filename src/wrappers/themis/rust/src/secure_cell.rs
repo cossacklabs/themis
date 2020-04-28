@@ -99,7 +99,7 @@ use crate::utils::into_raw_parts;
 
 /// Basic Secure Cell.
 ///
-/// This is modeless, basic cell contructed by [`SecureCell::with_key`] given a symmetric key.
+/// This is modeless, basic cell constructed by [`SecureCell::with_key`] given a symmetric key.
 /// After that you need to select the desired operation mode:
 /// [`seal`], [`token_protect`], or [`context_imprint`].
 ///
@@ -117,7 +117,7 @@ pub struct SecureCell {
 
 /// Basic Secure Cell with a passphrase.
 ///
-/// This is modeless, basic cell contructed by [`SecureCell::with_passphrase`] given a passphrase.
+/// This is modeless, basic cell constructed by [`SecureCell::with_passphrase`] given a passphrase.
 /// Currently only Seal mode supports passphrases, it can be selected with [`seal`].
 ///
 /// [`SecureCell::with_passphrase`]: struct.SecureCell.html#method.with_passphrase
@@ -159,7 +159,7 @@ impl SecureCell {
 
     /// Constructs a new cell secured with a passphrase.
     ///
-    /// You can safely use short, human-readable passhrases here.
+    /// You can safely use short, human-readable passphrases here.
     /// If you have a binary key, consider [`SecureCell::with_key`] instead.
     ///
     /// [`SecureCell::with_key`]: struct.SecureCell.html#method.with_key
@@ -597,7 +597,7 @@ impl SecureCellSealWithPassphrase {
     /// Secure Cell decrypts the message and verifies its integrity
     /// using authentication data embedded into the message.
     ///
-    /// Use this method to decrypted data encrypted with [`encrypt`].
+    /// Use this method to decrypt data encrypted with [`encrypt`].
     /// If you use associated context, call [`decrypt_with_context`] instead.
     ///
     /// [`encrypt`]: struct.SecureCellSealWithPassphrase.html#method.encrypt
