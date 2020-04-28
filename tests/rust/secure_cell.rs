@@ -12,84 +12,180 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use themis::{secure_cell::SecureCell, ErrorKind};
-
-#[test]
-fn empty_master_key() {
-    assert!(SecureCell::with_key(b"").is_err());
-}
+use themis::keys::SymmetricKey;
+use themis::secure_cell::SecureCell;
 
 mod context_imprint {
     use super::*;
 
     #[test]
-    fn happy_path() {
-        let cell = SecureCell::with_key(b"deep secret")
-            .unwrap()
-            .context_imprint();
-
-        let plaintext = b"example plaintext";
-        let ciphertext = cell.encrypt_with_context(&plaintext, b"123").unwrap();
-        let recovered = cell.decrypt_with_context(&ciphertext, b"123").unwrap();
-
-        assert_eq!(recovered, plaintext);
-
-        assert_eq!(plaintext.len(), ciphertext.len());
+    fn initialization() {
+        assert!(SecureCell::with_key(SymmetricKey::new()).is_ok());
+        assert!(SecureCell::with_key(&[]).is_err());
     }
 
     #[test]
-    fn empty_context() {
-        let cell = SecureCell::with_key(b"deep secret")
+    fn roundtrip() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
             .unwrap()
             .context_imprint();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context = b"...and a toilet seat cover!".as_ref();
 
-        let plaintext = b"example plaintext";
-        let error = cell.encrypt_with_context(&plaintext, b"").unwrap_err();
+        let encrypted = cell.encrypt_with_context(&message, &context).unwrap();
+        let decrypted = cell.decrypt_with_context(&encrypted, &context).unwrap();
 
-        assert_eq!(error.kind(), ErrorKind::InvalidParameter);
+        assert_eq!(decrypted, message);
     }
 
     #[test]
-    fn invalid_key() {
-        let cell1 = SecureCell::with_key(b"deep secret")
+    fn data_length_preservation() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
             .unwrap()
             .context_imprint();
-        let cell2 = SecureCell::with_key(b"DEEP SECRET")
-            .unwrap()
-            .context_imprint();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context = b"...and a toilet seat cover!".as_ref();
 
-        let plaintext = b"example plaintext";
-        let ciphertext = cell1.encrypt_with_context(&plaintext, b"123").unwrap();
-        let recovered = cell2.decrypt_with_context(&ciphertext, b"123").unwrap();
+        let encrypted = cell.encrypt_with_context(&message, &context).unwrap();
 
-        assert_ne!(recovered, plaintext);
+        assert_eq!(encrypted.len(), message.len());
     }
 
     #[test]
-    fn invalid_context() {
-        let cell = SecureCell::with_key(b"deep secret")
+    fn context_not_included() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
             .unwrap()
             .context_imprint();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context_short = b"Shteko budlanula bokra".as_ref();
+        let context_long =
+            b"Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo".as_ref();
 
-        let plaintext = b"example plaintext";
-        let ciphertext = cell.encrypt_with_context(&plaintext, b"123").unwrap();
-        let recovered = cell.decrypt_with_context(&ciphertext, b"456").unwrap();
+        let encrypted_short = cell.encrypt_with_context(&message, &context_short).unwrap();
+        let encrypted_long = cell.encrypt_with_context(&message, &context_long).unwrap();
 
-        assert_ne!(recovered, plaintext);
+        // Context is not (directly) included into encrypted message.
+        assert_eq!(encrypted_short.len(), encrypted_long.len());
     }
 
     #[test]
-    fn corrupted_data() {
-        let cell = SecureCell::with_key(b"deep secret")
+    fn key_must_match() {
+        let cell_a = SecureCell::with_key(SymmetricKey::new())
             .unwrap()
             .context_imprint();
+        let cell_b = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .context_imprint();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context = b"...and a toilet seat cover!".as_ref();
 
-        let plaintext = b"example plaintext";
-        let mut ciphertext = cell.encrypt_with_context(&plaintext, b"123").unwrap();
-        ciphertext[10] = !ciphertext[10];
-        let recovered = cell.decrypt_with_context(&ciphertext, b"123").unwrap();
+        let encrypted = cell_a.encrypt_with_context(&message, &context).unwrap();
 
-        assert_ne!(recovered, plaintext);
+        // Context Imprint mode does not validate message data so using an incorrect key
+        // will successfully return garbage output.
+        let decrypted_incorrect = cell_b.decrypt_with_context(&encrypted, &context).unwrap();
+        assert_ne!(decrypted_incorrect, message);
+        assert_ne!(decrypted_incorrect, encrypted);
+
+        // Only the correct key will work.
+        let decrypted_correct = cell_a.decrypt_with_context(&encrypted, &context).unwrap();
+        assert_eq!(decrypted_correct, message);
+    }
+
+    #[test]
+    fn context_must_match() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .context_imprint();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context_a = b"The jaws that bite, the claws that catch!".as_ref();
+        let context_b = b"One, two! One, two! And through and through".as_ref();
+
+        let encrypted = cell.encrypt_with_context(&message, &context_a).unwrap();
+
+        // Context Imprint mode does not validate message data so using an incorrect context
+        // will successfully return garbage output.
+        let decrypted_incorrect = cell.decrypt_with_context(&encrypted, &context_b).unwrap();
+        assert_ne!(decrypted_incorrect, message);
+        assert_ne!(decrypted_incorrect, encrypted);
+
+        // Only the correct context will work.
+        let decrypted_correct = cell.decrypt_with_context(&encrypted, &context_a).unwrap();
+        assert_eq!(decrypted_correct, message);
+    }
+
+    #[test]
+    fn not_detects_corrupted_data() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .context_imprint();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context = b"...and a toilet seat cover!".as_ref();
+
+        let encrypted = cell.encrypt_with_context(&message, &context).unwrap();
+
+        // Invert every odd byte, this will surely break the message.
+        let mut corrupted = encrypted;
+        for (i, b) in corrupted.iter_mut().enumerate() {
+            if i % 2 == 1 {
+                *b = !*b
+            }
+        }
+
+        // Decrypts successfully but the content is garbage.
+        let decrypted = cell.decrypt_with_context(&corrupted, &context).unwrap();
+        assert_ne!(decrypted, message);
+    }
+
+    #[test]
+    fn not_detects_truncated_data() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .context_imprint();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context = b"...and a toilet seat cover!".as_ref();
+
+        let encrypted = cell.encrypt_with_context(&message, &context).unwrap();
+
+        let truncated = &encrypted[..encrypted.len() - 1];
+
+        // Decrypts successfully but the content is garbage.
+        let decrypted = cell.decrypt_with_context(&truncated, &context).unwrap();
+        assert_ne!(decrypted, message);
+    }
+
+    #[test]
+    fn detects_extended_data() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .context_imprint();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context = b"...and a toilet seat cover!".as_ref();
+
+        let encrypted = cell.encrypt_with_context(&message, &context).unwrap();
+
+        let mut extended = encrypted;
+        extended.push(0);
+
+        // Decrypts successfully but the content is garbage.
+        let decrypted = cell.decrypt_with_context(&extended, &context).unwrap();
+        assert_ne!(decrypted, message);
+    }
+
+    #[test]
+    fn empty_input_not_allowed() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .context_imprint();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context = b"...and a toilet seat cover!".as_ref();
+
+        // With Context Imprint the context cannot be empty.
+        assert!(cell.encrypt_with_context(&message, &[]).is_err());
+        assert!(cell.encrypt_with_context(&[], &context).is_err());
+
+        assert!(cell.decrypt_with_context(&message, &[]).is_err());
+        assert!(cell.decrypt_with_context(&[], &context).is_err());
     }
 }
 
@@ -97,49 +193,152 @@ mod seal {
     use super::*;
 
     #[test]
-    fn happy_path() {
-        let seal = SecureCell::with_key("deep secret").unwrap().seal();
-
-        let plaintext = b"example plaintext";
-        let ciphertext = seal.encrypt(&plaintext).unwrap();
-        let recovered = seal.decrypt(&ciphertext).unwrap();
-
-        assert_eq!(recovered, plaintext);
+    fn initialization() {
+        assert!(SecureCell::with_key(SymmetricKey::new()).is_ok());
+        assert!(SecureCell::with_key(&[]).is_err());
     }
 
     #[test]
-    fn invalid_key() {
-        let seal1 = SecureCell::with_key(b"deep secret").unwrap().seal();
-        let seal2 = SecureCell::with_key(b"DEEP SECRET").unwrap().seal();
+    fn roundtrip() {
+        let cell = SecureCell::with_key(SymmetricKey::new()).unwrap().seal();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context = b"...and a toilet seat cover!".as_ref();
 
-        let plaintext = b"example plaintext";
-        let ciphertext = seal1.encrypt(&plaintext).unwrap();
-        let error = seal2.decrypt(&ciphertext).unwrap_err();
+        let encrypted = cell.encrypt_with_context(&message, &context).unwrap();
+        let decrypted = cell.decrypt_with_context(&encrypted, &context).unwrap();
 
-        assert_eq!(error.kind(), ErrorKind::Fail);
+        assert_eq!(decrypted, message);
     }
 
     #[test]
-    fn invalid_context() {
-        let seal = SecureCell::with_key(b"deep secret").unwrap().seal();
+    fn data_length_extension() {
+        let cell = SecureCell::with_key(SymmetricKey::new()).unwrap().seal();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
 
-        let plaintext = b"example plaintext";
-        let ciphertext = seal.encrypt_with_context(&plaintext, b"ctx1").unwrap();
-        let error = seal.decrypt_with_context(&ciphertext, b"ctx2").unwrap_err();
+        let encrypted = cell.encrypt(&message).unwrap();
 
-        assert_eq!(error.kind(), ErrorKind::Fail);
+        assert!(encrypted.len() > message.len());
     }
 
     #[test]
-    fn corrupted_data() {
-        let seal = SecureCell::with_key(b"deep secret").unwrap().seal();
+    fn context_not_included() {
+        let cell = SecureCell::with_key(SymmetricKey::new()).unwrap().seal();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context_short = b"Shteko budlanula bokra".as_ref();
+        let context_long =
+            b"Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo".as_ref();
 
-        let plaintext = b"example plaintext";
-        let mut ciphertext = seal.encrypt(&plaintext).unwrap();
-        ciphertext[10] = !ciphertext[10];
-        let error = seal.decrypt(&ciphertext).unwrap_err();
+        let encrypted_short = cell.encrypt_with_context(&message, &context_short).unwrap();
+        let encrypted_long = cell.encrypt_with_context(&message, &context_long).unwrap();
 
-        assert_eq!(error.kind(), ErrorKind::Fail);
+        // Context is not (directly) included into encrypted message.
+        assert_eq!(encrypted_short.len(), encrypted_long.len());
+    }
+
+    #[test]
+    fn empty_context_handling() {
+        let cell = SecureCell::with_key(SymmetricKey::new()).unwrap().seal();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        // encrypt(...) is encrypt_with_context(..., &[])
+        let encrypted_1 = cell.encrypt(&message).unwrap();
+        let encrypted_2 = cell.encrypt_with_context(&message, &[]).unwrap();
+
+        assert_eq!(cell.decrypt(&encrypted_1), Ok(message.to_vec()));
+        assert_eq!(cell.decrypt(&encrypted_2), Ok(message.to_vec()));
+
+        assert_eq!(
+            cell.decrypt_with_context(&encrypted_1, &[]),
+            Ok(message.to_vec())
+        );
+        assert_eq!(
+            cell.decrypt_with_context(&encrypted_2, &[]),
+            Ok(message.to_vec())
+        );
+    }
+
+    #[test]
+    fn key_must_match() {
+        let cell_a = SecureCell::with_key(SymmetricKey::new()).unwrap().seal();
+        let cell_b = SecureCell::with_key(SymmetricKey::new()).unwrap().seal();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let encrypted = cell_a.encrypt(&message).unwrap();
+
+        // You cannot use a different key to decrypt data.
+        assert!(cell_b.decrypt(&encrypted).is_err());
+
+        // Only the correct key will work.
+        let decrypted = cell_a.decrypt(&encrypted).unwrap();
+        assert_eq!(decrypted, message);
+    }
+
+    #[test]
+    fn context_must_match() {
+        let cell = SecureCell::with_key(SymmetricKey::new()).unwrap().seal();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context_a = b"The jaws that bite, the claws that catch!".as_ref();
+        let context_b = b"One, two! One, two! And through and through".as_ref();
+
+        let encrypted = cell.encrypt_with_context(&message, &context_a).unwrap();
+
+        // You cannot use a different context to decrypt data.
+        assert!(cell.decrypt_with_context(&encrypted, &context_b).is_err());
+
+        // Only the correct context will work.
+        let decrypted = cell.decrypt_with_context(&encrypted, &context_a).unwrap();
+        assert_eq!(decrypted, message);
+    }
+
+    #[test]
+    fn detects_corrupted_data() {
+        let cell = SecureCell::with_key(SymmetricKey::new()).unwrap().seal();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let encrypted = cell.encrypt(&message).unwrap();
+
+        // Invert every odd byte, this will surely break the message.
+        let mut corrupted = encrypted;
+        for (i, b) in corrupted.iter_mut().enumerate() {
+            if i % 2 == 1 {
+                *b = !*b
+            }
+        }
+
+        assert!(cell.decrypt(&corrupted).is_err());
+    }
+
+    #[test]
+    fn detects_truncated_data() {
+        let cell = SecureCell::with_key(SymmetricKey::new()).unwrap().seal();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let encrypted = cell.encrypt(&message).unwrap();
+
+        let truncated = &encrypted[..encrypted.len() - 1];
+
+        assert!(cell.decrypt(truncated).is_err());
+    }
+
+    #[test]
+    fn detects_extended_data() {
+        let cell = SecureCell::with_key(SymmetricKey::new()).unwrap().seal();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let encrypted = cell.encrypt(&message).unwrap();
+
+        let mut extended = encrypted;
+        extended.push(0);
+
+        assert!(cell.decrypt(&extended).is_err());
+    }
+
+    #[test]
+    fn empty_messages_not_allowed() {
+        let cell = SecureCell::with_key(SymmetricKey::new()).unwrap().seal();
+
+        assert!(cell.encrypt(&[]).is_err());
+        assert!(cell.decrypt(&[]).is_err());
     }
 }
 
@@ -147,76 +346,273 @@ mod token_protect {
     use super::*;
 
     #[test]
-    fn happy_path() {
-        let cell = SecureCell::with_key(b"deep secret")
-            .unwrap()
-            .token_protect();
-
-        let plaintext = b"example plaintext";
-        let (ciphertext, token) = cell.encrypt(&plaintext).unwrap();
-        let recovered = cell.decrypt(&ciphertext, &token).unwrap();
-
-        assert_eq!(recovered, plaintext);
-
-        assert_eq!(plaintext.len(), ciphertext.len());
+    fn initialization() {
+        assert!(SecureCell::with_key(SymmetricKey::new()).is_ok());
+        assert!(SecureCell::with_key(&[]).is_err());
     }
 
     #[test]
-    fn invalid_key() {
-        let cell1 = SecureCell::with_key(b"deep secret")
+    fn roundtrip() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
             .unwrap()
             .token_protect();
-        let cell2 = SecureCell::with_key(b"DEEP SECRET")
-            .unwrap()
-            .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context = b"...and a toilet seat cover!".as_ref();
 
-        let plaintext = b"example plaintext";
-        let (ciphertext, token) = cell1.encrypt(plaintext).unwrap();
-        let error = cell2.decrypt(&ciphertext, &token).unwrap_err();
+        let (encrypted, token) = cell.encrypt_with_context(&message, &context).unwrap();
+        let decrypted = cell
+            .decrypt_with_context(&encrypted, &token, &context)
+            .unwrap();
 
-        assert_eq!(error.kind(), ErrorKind::Fail);
+        assert_eq!(decrypted, message);
     }
 
     #[test]
-    fn invalid_context() {
-        let cell = SecureCell::with_key(b"deep secret")
+    fn data_length_preservation() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
             .unwrap()
             .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
 
-        let plaintext = b"example plaintext";
-        let (ciphertext, token) = cell.encrypt_with_context(plaintext, b"123").unwrap();
-        let error = cell
-            .decrypt_with_context(&ciphertext, &token, b"456")
-            .unwrap_err();
+        let (encrypted, token) = cell.encrypt(&message).unwrap();
 
-        assert_eq!(error.kind(), ErrorKind::Fail);
+        assert_eq!(encrypted.len(), message.len());
+        assert!(token.len() > 0);
     }
 
     #[test]
-    fn corrupted_data() {
-        let cell = SecureCell::with_key(b"deep secret")
+    fn context_not_included() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
             .unwrap()
             .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context_short = b"Shteko budlanula bokra".as_ref();
+        let context_long =
+            b"Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo".as_ref();
 
-        let plaintext = b"example plaintext";
-        let (mut ciphertext, token) = cell.encrypt(&plaintext).unwrap();
-        ciphertext[10] = !ciphertext[10];
-        let error = cell.decrypt(&ciphertext, &token).unwrap_err();
+        let (encrypted_short, token_short) =
+            cell.encrypt_with_context(&message, &context_short).unwrap();
+        let (encrypted_long, token_long) =
+            cell.encrypt_with_context(&message, &context_long).unwrap();
 
-        assert_eq!(error.kind(), ErrorKind::Fail);
+        // Context is not (directly) included into encrypted message.
+        assert_eq!(encrypted_short.len(), encrypted_long.len());
+        assert_eq!(token_short.len(), token_long.len());
     }
 
     #[test]
-    fn corrupted_token() {
-        let cell = SecureCell::with_key(b"deep secret")
+    fn empty_context_handling() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        // encrypt(...) is encrypt_with_context(..., &[])
+        let (encrypted_1, token_1) = cell.encrypt(&message).unwrap();
+        let (encrypted_2, token_2) = cell.encrypt_with_context(&message, &[]).unwrap();
+
+        assert_eq!(cell.decrypt(&encrypted_1, &token_1), Ok(message.to_vec()));
+        assert_eq!(cell.decrypt(&encrypted_2, &token_2), Ok(message.to_vec()));
+
+        assert_eq!(
+            cell.decrypt_with_context(&encrypted_1, &token_1, &[]),
+            Ok(message.to_vec())
+        );
+        assert_eq!(
+            cell.decrypt_with_context(&encrypted_2, &token_2, &[]),
+            Ok(message.to_vec())
+        );
+    }
+
+    #[test]
+    fn key_must_match() {
+        let cell_a = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let cell_b = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let (encrypted, token) = cell_a.encrypt(&message).unwrap();
+
+        // You cannot use a different key to decrypt data.
+        assert!(cell_b.decrypt(&encrypted, &token).is_err());
+
+        // Only the correct key will work.
+        let decrypted = cell_a.decrypt(&encrypted, &token).unwrap();
+        assert_eq!(decrypted, message);
+    }
+
+    #[test]
+    fn token_must_match() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let (encrypted_1, token_1) = cell.encrypt(&message).unwrap();
+        let (encrypted_2, token_2) = cell.encrypt(&message).unwrap();
+
+        // You cannot use a different token to decrypt data, even the same original data.
+        assert!(cell.decrypt(&encrypted_1, &token_2).is_err());
+        assert!(cell.decrypt(&encrypted_2, &token_1).is_err());
+
+        // Only the matching token will work.
+        let decrypted_1 = cell.decrypt(&encrypted_1, &token_1).unwrap();
+        let decrypted_2 = cell.decrypt(&encrypted_2, &token_2).unwrap();
+        assert_eq!(decrypted_1, message);
+        assert_eq!(decrypted_2, message);
+    }
+
+    #[test]
+    fn context_must_match() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let context_a = b"The jaws that bite, the claws that catch!".as_ref();
+        let context_b = b"One, two! One, two! And through and through".as_ref();
+
+        let (encrypted, token) = cell.encrypt_with_context(&message, &context_a).unwrap();
+
+        // You cannot use a different context to decrypt data.
+        assert!(cell
+            .decrypt_with_context(&encrypted, &token, &context_b)
+            .is_err());
+
+        // Only the correct context will work.
+        let decrypted = cell
+            .decrypt_with_context(&encrypted, &token, &context_a)
+            .unwrap();
+        assert_eq!(decrypted, message);
+    }
+
+    #[test]
+    fn detects_corrupted_data() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let (encrypted, token) = cell.encrypt(&message).unwrap();
+
+        // Invert every odd byte, this will surely break the message.
+        let mut corrupted_data = encrypted;
+        for (i, b) in corrupted_data.iter_mut().enumerate() {
+            if i % 2 == 1 {
+                *b = !*b
+            }
+        }
+
+        assert!(cell.decrypt(&corrupted_data, &token).is_err());
+    }
+
+    #[test]
+    fn detects_truncated_data() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let (encrypted, token) = cell.encrypt(&message).unwrap();
+
+        let truncated_data = &encrypted[..encrypted.len() - 1];
+
+        assert!(cell.decrypt(&truncated_data, &token).is_err());
+    }
+
+    #[test]
+    fn detects_extended_data() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let (encrypted, token) = cell.encrypt(&message).unwrap();
+
+        let mut extended_data = encrypted;
+        extended_data.push(0);
+
+        assert!(cell.decrypt(&extended_data, &token).is_err());
+    }
+
+    #[test]
+    fn detects_corrupted_token() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let (encrypted, token) = cell.encrypt(&message).unwrap();
+
+        // Invert every odd byte, this will surely break the token.
+        let mut corrupted_token = token;
+        for (i, b) in corrupted_token.iter_mut().enumerate() {
+            if i % 2 == 1 {
+                *b = !*b
+            }
+        }
+
+        assert!(cell.decrypt(&encrypted, &corrupted_token).is_err());
+    }
+
+    #[test]
+    fn detects_truncated_token() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let (encrypted, token) = cell.encrypt(&message).unwrap();
+
+        let truncated_token = &token[..token.len() - 1];
+
+        assert!(cell.decrypt(&encrypted, &truncated_token).is_err());
+    }
+
+    #[test]
+    fn detects_extended_token() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let (encrypted, token) = cell.encrypt(&message).unwrap();
+
+        let mut extended_token = token;
+        extended_token.push(0);
+
+        // Current implementation of Secure Cell allows the token to be overlong.
+        // Extra data is simply ignored.
+        let decrypted = cell.decrypt(&encrypted, &extended_token).unwrap();
+        assert_eq!(decrypted, message);
+    }
+
+    #[test]
+    fn detects_data_token_swap() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+
+        let (encrypted, token) = cell.encrypt(&message).unwrap();
+
+        assert!(cell.decrypt(&token, &encrypted).is_err());
+    }
+
+    #[test]
+    fn empty_input_not_allowed() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
             .unwrap()
             .token_protect();
 
-        let plaintext = b"example plaintext";
-        let (ciphertext, mut token) = cell.encrypt(&plaintext).unwrap();
-        token[10] = !token[10];
-        let error = cell.decrypt(&ciphertext, &token).unwrap_err();
+        assert!(cell.encrypt(&[]).is_err());
 
-        assert_eq!(error.kind(), ErrorKind::Fail);
+        let message = b"Colorless green ideas sleep furiously".as_ref();
+        let (encrypted, token) = cell.encrypt(&message).unwrap();
+
+        assert!(cell.decrypt(&encrypted, &[]).is_err());
+        assert!(cell.decrypt(&[], &token).is_err());
     }
 }
