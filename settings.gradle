@@ -1,2 +1,5 @@
 include ':boringssl'
 project(':boringssl').projectDir = new File('third_party/boringssl')
+
+include ':android'
+project(':android').projectDir = new File('src/wrappers/themis/android')

@@ -58,6 +58,24 @@ _Code:_
       If you believe you are affected by this change, please reach out to us via
       [dev@cossacklabs.com](mailto:dev@cossacklabs.com).
 
+- **Android**
+
+  See also: [Java API updates](#0.13.0-java).
+
+  - **Deprecations**
+
+    - Unqualified Gradle targets are now deprecated ([#633](https://github.com/cossacklabs/themis/pull/633)).
+
+      To build Themis for Android, run
+
+          ./gradlew :android:assembleRelease
+
+      instead of
+
+          ./gradlew assembleRelease
+
+      The unqualified form still works for now, but may break in future releases.
+
 - **C++**
 
   - Secure Cell API updates ([#588](https://github.com/cossacklabs/themis/pull/588))
@@ -341,7 +359,7 @@ _Code:_
 
       </details>
 
-- **Java**
+- <a id="0.13.0-java">**Java**</a>
 
   - JDK location is now detected automatically in most cases, you should not need to set JAVA_HOME or JDK_INCLUDE_PATH manually ([#551](https://github.com/cossacklabs/themis/pull/551)).
   - JNI libraries are now available as `libthemis-jni` packages for supported Linux systems ([#552](https://github.com/cossacklabs/themis/pull/552), [#553](https://github.com/cossacklabs/themis/pull/553)).

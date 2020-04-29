@@ -140,7 +140,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Build Themis
-        run: ./gradlew --no-daemon assembleDebug
+        run: ./gradlew --no-daemon :android:assembleDebug
       - name: Prepare Android emulator
         run: |
           # Unfortunately, x86 and x86_64 emulators require KVM support which
@@ -172,7 +172,7 @@ jobs:
           # to come back to sense. Try running the tests regardless. Who knows,
           # maybe it's actually okay. I'm feeling lucky!
       - name: Run test suite
-        run: timeout 10m ./gradlew --no-daemon connectedAndroidTest
+        run: timeout 10m ./gradlew --no-daemon :android:connectedAndroidTest
       - name: Stop Android emulator
         if: always()
         run: kill $(cat $HOME/emulator.pid)
