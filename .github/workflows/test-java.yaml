@@ -50,6 +50,9 @@ jobs:
         run: |
           make all themis_jni
           sudo make install themis_jni_install
+      - name: Build JavaThemis
+        run: |
+          ./gradlew --no-daemon :desktop:build
       # TODO: run JavaThemis unit tests, once we have them,
       #       but for now we're only testing JNI build
       - name: Check JavaThemis loading
