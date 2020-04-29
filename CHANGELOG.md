@@ -14,6 +14,7 @@ Changes that are currently in development and have not been released yet.
 - ObjCThemis installed via Carthage is now called `objcthemis` instead of just `themis` ([read more](#0.13.0-objcthemis-rename)).
 - Themis 0.9.6 compatibility is now disabled by default ([read more](#0.13.0-drop-0.9.6-compat)).
 - Themis is known to be broken on big-endian architectures ([read more](#0.13.0-big-endian)).
+- Java 7 is no longer supported, breaking Android and Java builds on outdated systems ([read more](#0.13.0-drop-java-7))
 
 _Code:_
 
@@ -61,6 +62,13 @@ _Code:_
 - **Android**
 
   See also: [Java API updates](#0.13.0-java).
+
+  - **Breaking changes**
+
+    - Android build now uses Gradle 5.6 and requires Java 8 ([#633](https://github.com/cossacklabs/themis/pull/633)).
+
+      It is no longer possible to build AndroidThemis with Java 7.
+      Please upgrade to Java 8 or later version.
 
   - **Deprecations**
 
@@ -548,6 +556,17 @@ _Infrastructure:_
 - All 13 supported platforms are verified on GitHub Actions, along with existing CircleCI and Bitrise tests ([#600](https://github.com/cossacklabs/themis/pull/600)).
 - New Makefile targets:
   - `make jsthemis` builds JsThemis from source ([#618](https://github.com/cossacklabs/themis/pull/618)).
+
+- **Breaking changes**
+
+  - <a id="0.13.0-drop-java-7">Java 7 is no longer supported</a>
+    ([#633](https://github.com/cossacklabs/themis/pull/633)).
+
+    Updates in Gradle build infrastructure require Java 8.
+
+    Incidentally, systems that do not have Java 8 or later available are also not supported since Themis 0.13:
+
+      - Debian 8 (“jessie”)
 
 ## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 27th 2019
 
