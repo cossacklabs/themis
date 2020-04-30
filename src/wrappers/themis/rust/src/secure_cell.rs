@@ -196,7 +196,7 @@ impl SecureCell {
 ///
 /// Secure Cell in Seal mode will encrypt the data and append an “authentication tag”
 /// with auxiliary security information, forming a single sealed container.
-/// This means that the encrypted data will be larger than the original input.
+/// This means that the encrypted data will be longer than the original input.
 ///
 /// Additionally, it is possible to bind the encrypted data to some “associated context”
 /// (for example, database row number).
