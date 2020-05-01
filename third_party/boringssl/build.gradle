@@ -5,7 +5,9 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        // Using older version since 3.6.X has issues with NDK versioning:
+        // https://github.com/gradle/gradle/issues/12440
+        classpath 'com.android.tools.build:gradle:3.5.3'
     }
 }
 
