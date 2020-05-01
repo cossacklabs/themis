@@ -4,6 +4,20 @@ sourceSets {
     main {
         java.srcDirs = ['.']
     }
+    test {
+        java.srcDirs = ['../../../../tests/themis/wrappers/android']
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+}
+
+test {
+    useJUnit()
+
+    // Pass JVM options to the forked one used for test
+    systemProperty "java.library.path", System.getProperty("java.library.path")
 }
 
 // Tweak the resulting JAR name so it's not called "java".
