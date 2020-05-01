@@ -23,6 +23,10 @@ package com.cossacklabs.themis;
  */
 public class SymmetricKey extends KeyBytes {
 
+    static {
+        System.loadLibrary("themis_jni");
+    }
+
     /**
      * Generates a new symmetric key.
      */
