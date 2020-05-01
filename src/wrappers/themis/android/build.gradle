@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 
 buildscript {
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        classpath 'com.android.tools.build:gradle:3.6.3'
 
         // Two necessary plugins for uploading .aar to bintray
         // from: https://android.jlelse.eu/how-to-distribute-android-library-in-a-convenient-way-d43fb68304a7
@@ -14,8 +14,8 @@ buildscript {
 dependencies {
     implementation project(":boringssl")
     // Instrumentation tests
-    androidTestImplementation 'androidx.test:runner:1.1.0'
-    androidTestImplementation 'androidx.test:rules:1.1.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
 }
 
 android {
