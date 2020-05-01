@@ -4,7 +4,9 @@ buildscript {
     dependencies {
         // Using older version since 3.6.X has issues with NDK versioning:
         // https://github.com/gradle/gradle/issues/12440
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        // And 3.5.X fails to link ARM binaries correctly, so we're staying
+        // on this Gradle version until it breaks or we *need* an upgrade:
+        classpath 'com.android.tools.build:gradle:3.2.1'
 
         // Two necessary plugins for uploading .aar to bintray
         // from: https://android.jlelse.eu/how-to-distribute-android-library-in-a-convenient-way-d43fb68304a7
