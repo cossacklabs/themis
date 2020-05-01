@@ -22,7 +22,7 @@ test {
 
 // Tweak the resulting JAR name so it's not called "java".
 archivesBaseName = 'java-themis'
-version = '0.12'
+version = javaThemisVersion
 group = 'com.cossacklabs'
 
 // Compile for Java 8.

@@ -76,7 +76,7 @@ publishing {
             artifact("$buildDir/outputs/aar/projects-release.aar")
             groupId 'com.cossacklabs.com'
             artifactId 'themis'
-            version '0.12.0'
+            version androidThemisVersion
         }
     }
 }
@@ -96,7 +96,7 @@ bintray {
         vcsUrl = 'https://github.com/cossacklabs/themis.git'
         publish = true
         version {
-            name = '0.12.0'
+            name = androidThemisVersion
             released  = new Date()
             gpg {
                 sign = true
