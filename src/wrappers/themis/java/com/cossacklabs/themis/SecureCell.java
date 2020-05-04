@@ -222,6 +222,36 @@ public class SecureCell {
     }
 
     /**
+     * Makes a new Secure Cell in Seal mode secured by symmetric key.
+     *
+     * @param key symmetric key to use
+     *
+     * @return a new {@link SecureCell.Seal} instance
+     *
+     * @since JavaThemis 0.13
+     */
+    public static Seal SealWithKey(SymmetricKey key) {
+        if (key == null) {
+            throw new NullArgumentException("key cannot be null");
+        }
+        return new SecureCellSeal(key);
+    }
+
+    /**
+     * Makes a new Secure Cell in Seal mode secured by symmetric key.
+     *
+     * @param key symmetric key bytes to use
+     *
+     * @return a new {@link SecureCell.Seal} instance
+     * @throws InvalidArgumentException if {@code key} is empty
+     *
+     * @since JavaThemis 0.13
+     */
+    public static Seal SealWithKey(byte[] key) {
+        return new SecureCellSeal(new SymmetricKey(key));
+    }
+
+    /**
      * Secure Cell in <em>Token Protect</em> operation mode.
      * <p>
      * This is a modified Seal mode for constrained environments.
@@ -340,6 +370,36 @@ public class SecureCell {
     }
 
     /**
+     * Makes a new Secure Cell in Token Protect mode secured by symmetric key.
+     *
+     * @param key symmetric key to use
+     *
+     * @return a new {@link SecureCell.TokenProtect} instance
+     *
+     * @since JavaThemis 0.13
+     */
+    public static TokenProtect TokenProtectWithKey(SymmetricKey key) {
+        if (key == null) {
+            throw new NullArgumentException("key cannot be null");
+        }
+        return new SecureCellTokenProtect(key);
+    }
+
+    /**
+     * Makes a new Secure Cell in Token Protect mode secured by symmetric key.
+     *
+     * @param key symmetric key bytes to use
+     *
+     * @return a new {@link SecureCell.TokenProtect} instance
+     * @throws InvalidArgumentException if {@code key} is empty
+     *
+     * @since JavaThemis 0.13
+     */
+    public static TokenProtect TokenProtectWithKey(byte[] key) {
+        return new SecureCellTokenProtect(new SymmetricKey(key));
+    }
+
+    /**
      * Secure Cell in <em>Context Imprint</em> operation mode.
      * <p>
      * This is an advanced mode for constrained environments.
@@ -411,6 +471,36 @@ public class SecureCell {
          *         (with {@link SecureCellException} as its cause)
          */
         byte[] decrypt(byte[] data, byte[] context);
+    }
+
+    /**
+     * Makes a new Secure Cell in Context Imprint mode secured by symmetric key.
+     *
+     * @param key symmetric key to use
+     *
+     * @return a new {@link SecureCell.ContextImprint} instance
+     *
+     * @since JavaThemis 0.13
+     */
+    public static ContextImprint ContextImprintWithKey(SymmetricKey key) {
+        if (key == null) {
+            throw new NullArgumentException("key cannot be null");
+        }
+        return new SecureCellContextImprint(key);
+    }
+
+    /**
+     * Makes a new Secure Cell in Context Imprint mode secured by symmetric key.
+     *
+     * @param key symmetric key bytes to use
+     *
+     * @return a new {@link SecureCell.ContextImprint} instance
+     * @throws InvalidArgumentException if {@code key} is empty
+     *
+     * @since JavaThemis 0.13
+     */
+    public static ContextImprint ContextImprintWithKey(byte[] key) {
+        return new SecureCellContextImprint(new SymmetricKey(key));
     }
 
 	/**
