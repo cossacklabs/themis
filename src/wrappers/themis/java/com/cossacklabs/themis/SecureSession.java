@@ -235,6 +235,7 @@ public class SecureSession {
 	}
 	
 	@Override
+	@SuppressWarnings("deprecation")
 	protected void finalize() {
 		close();
 	}

@@ -55,6 +55,7 @@ public class SecureCompare {
 	}
 	
 	@Override
+	@SuppressWarnings("deprecation")
 	protected void finalize() {
 		close();
 	}

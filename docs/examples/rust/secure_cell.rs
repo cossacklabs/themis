@@ -12,57 +12,85 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use std::fs::File;
-use std::io::{self, Read, Write};
-
-use clap::clap_app;
+use themis::keys::SymmetricKey;
 use themis::secure_cell::SecureCell;
 
-fn main() {
-    let matches = clap_app!(secure_cell =>
-        (version: env!("CARGO_PKG_VERSION"))
-        (about: "Simple encryption with Secure Cell.")
-        (@group mode =>
-            (@arg encrypt: -e --encrypt "Encrypt the input [default]")
-            (@arg decrypt: -d --decrypt "Decrypt the input")
-        )
-        (@arg password: -p --password <string> "Password to use")
-        (@arg input:  +required "Input file")
-        (@arg output: +required "Output file")
-    )
-    .get_matches();
+fn main() -> themis::Result<()> {
+    let message = b"We must all play our assigned roles. Are you a pawn or a queen?".as_ref();
+    let context = b"Consider the prospect that you have been misled, Alice.".as_ref();
+    let key = SymmetricKey::new();
+    let passphrase = "Then ask, by whom?";
 
-    let encrypt = !matches.is_present("decrypt");
-    let password = matches.value_of("password").unwrap();
-    let input_path = matches.value_of("input").unwrap();
-    let output_path = matches.value_of("output").unwrap();
+    println!("# Secure Cell in Seal mode");
+    println!();
 
-    let cell = SecureCell::with_key(&password).unwrap().seal();
+    println!("## Master key API");
+    println!();
+    {
+        let scell_mk = SecureCell::with_key(&key)?.seal();
 
-    let input = read_file(&input_path).unwrap();
-    let output = if encrypt {
-        cell.encrypt(&input).unwrap()
-    } else {
-        cell.decrypt(&input).unwrap()
-    };
-    write_file(&output_path, &output).unwrap();
+        println!("Encoded:   {}", base64::encode(&message));
 
-    if encrypt {
-        eprintln!("encrypted {} as {}", input_path, output_path);
-    } else {
-        eprintln!("decrypted {} into {}", input_path, output_path);
+        let encrypted_message = scell_mk.encrypt(&message)?;
+        println!("Encrypted: {}", base64::encode(&encrypted_message));
+
+        let decrypted_message = scell_mk.decrypt(&encrypted_message)?;
+        println!("Decrypted: {}", as_str(&decrypted_message));
+        assert_eq!(decrypted_message, message);
     }
-}
+    println!();
 
-fn read_file(path: &str) -> Result<Vec<u8>, io::Error> {
-    let mut file = File::open(path)?;
-    let mut content = Vec::new();
-    file.read_to_end(&mut content)?;
-    Ok(content)
-}
+    println!("## Passphrase API");
+    {
+        let scell_pw = SecureCell::with_passphrase(&passphrase)?.seal();
 
-fn write_file(path: &str, data: &[u8]) -> Result<(), io::Error> {
-    let mut file = File::create(path)?;
-    file.write_all(data)?;
+        println!("Encoded:   {}", base64::encode(&message));
+
+        let encrypted_message = scell_pw.encrypt(&message)?;
+        println!("Encrypted: {}", base64::encode(&encrypted_message));
+
+        let decrypted_message = scell_pw.decrypt(&encrypted_message)?;
+        println!("Decrypted: {}", as_str(&decrypted_message));
+        assert_eq!(decrypted_message, message);
+    }
+    println!();
+
+    println!("# Secure Cell in Token Protect mode");
+    println!();
+    {
+        let scell_tp = SecureCell::with_key(&key)?.token_protect();
+
+        println!("Encoded:    {}", base64::encode(&message));
+
+        let (encrypted_message, auth_token) = scell_tp.encrypt(&message)?;
+        println!("Encrypted:  {}", base64::encode(&encrypted_message));
+        println!("Auth token: {}", base64::encode(&auth_token));
+
+        let decrypted_message = scell_tp.decrypt(encrypted_message, auth_token)?;
+        println!("Decrypted:  {}", as_str(&decrypted_message));
+        assert_eq!(decrypted_message, message);
+    }
+    println!();
+
+    println!("# Secure Cell in Context Imprint mode");
+    println!();
+    {
+        let scell_ci = SecureCell::with_key(&key)?.context_imprint();
+
+        println!("Encoded:   {}", base64::encode(&message));
+
+        let encrypted_message = scell_ci.encrypt_with_context(&message, &context)?;
+        println!("Encrypted: {}", base64::encode(&encrypted_message));
+
+        let decrypted_message = scell_ci.decrypt_with_context(&encrypted_message, &context)?;
+        println!("Decrypted: {}", as_str(&decrypted_message));
+        assert_eq!(decrypted_message, message);
+    }
+    println!();
+
     Ok(())
+}
+
+fn as_str(utf8_bytes: &[u8]) -> &str {
+    std::str::from_utf8(utf8_bytes).expect("valid UTF-8")
 }

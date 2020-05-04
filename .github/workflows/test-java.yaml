@@ -50,129 +50,28 @@ jobs:
         run: |
           make all themis_jni
           sudo make install themis_jni_install
-      # TODO: run JavaThemis unit tests, once we have them,
-      #       but for now we're only testing JNI build
-      - name: Check JavaThemis loading
+      - name: Build and test JavaThemis
+        # Set native library search path for Java explicitly since most
+        # distribution-provided JVMs do not look there by default.
         run: |
-          cat > Test.java <<EOF
-              public class Test {
-                  static {
-                      System.loadLibrary("themis_jni");
-                  }
-                  public static void main(String[] args) {
-                      System.out.println("themis_jni loaded!");
-                  }
-              }
-          EOF
-          javac Test.java
-          java -Djava.library.path=/usr/local/lib Test
+          ./gradlew --no-daemon -Djava.library.path=/usr/local/lib \
+            :desktop:build
 
   android-tests:
     name: Android emulator
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
-      - name: Install system dependencies
-        run: |
-          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
-          sudo apt update
-          # Note that we install Java 8. "default-jdk" installs 11 on Ubuntu 18.04,
-          # but Android SDK does not work with that.
-          sudo apt install --yes \
-            build-essential wget unzip openjdk-8-jdk
-          sudo update-java-alternatives -s java-1.8.0-openjdk-amd64
-      # These are huge, cache them. It does not reduce build time much,
-      # but at least it requires less outbound bandwidth.
-      - name: Cache Android SDK
-        id: cache-android-sdk
-        uses: actions/cache@v1
-        with:
-          path: ~/android-sdk
-          key: ${{ runner.os }}-android-sdk-4333796
-      - name: Install Android SDK and NDK
-        if: steps.cache-android-sdk.outputs.cache-hit != 'true'
-        run: |
-          export ANDROID_HOME=$HOME/android-sdk
-          export PATH=$PATH:$ANDROID_HOME/emulator
-          export PATH=$PATH:$ANDROID_HOME/tools/bin
-          export PATH=$PATH:$ANDROID_HOME/platform-tools
-          wget -nv -O ~/sdk-tools-linux.zip \
-            https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip
-          # If we're downloading stuff from the Internet, at least compare the checksum
-          # with the one from https://developer.android.com/studio#downloads
-          sha256_actual="$(sha256sum ~/sdk-tools-linux.zip | awk '{print $1}')"
-          sha256_expected="92ffee5a1d98d856634e8b71132e8a95d96c83a63fde1099be3d86df3106def9"
-          if [ "$sha256_actual" != "$sha256_expected" ]
-          then
-            echo 2>&1 "checksum mismatch: sdk-tools-linux.zip"
-            exit 1
-          fi
-          mkdir -p $ANDROID_HOME
-          unzip -q ~/sdk-tools-linux.zip -d $ANDROID_HOME
-          # Now accept the license, update cache, and install components we need
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
-          yes | sdkmanager --licenses
-          sdkmanager \
-            'build-tools;28.0.3' \
-            'cmake;3.6.4111459' \
-            'platforms;android-28' \
-            'platform-tools' \
-            'ndk-bundle' \
-            'emulator' \
-            'system-images;android-24;default;armeabi-v7a'
-      - name: Setup Android SDK path
-        run: |
-          export ANDROID_HOME=$HOME/android-sdk
-          echo "::set-env name=ANDROID_HOME::$ANDROID_HOME"
-          echo "::add-path::$ANDROID_HOME/emulator"
-          echo "::add-path::$ANDROID_HOME/tools/bin"
-          echo "::add-path::$ANDROID_HOME/platform-tools"
       - name: Check out code
         uses: actions/checkout@v2
         with:
           submodules: true
-      # Gradle likes to download half of the Internet during builds, cache that
-      - name: Cache Gradle files
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
       - name: Build Themis
-        run: ./gradlew --no-daemon assembleDebug
-      - name: Prepare Android emulator
-        run: |
-          # Unfortunately, x86 and x86_64 emulators require KVM support which
-          # is not enabled on GitHub runners. That's why we have to go with
-          # extremely slow ARM emulation. Recent system images do not even
-          # support it (only x86 and x86_64), so we have to go with API 24.
-          avdmanager create avd \
-            --name nexus --device "Nexus 5" \
-            --package 'system-images;android-24;default;armeabi-v7a'
-      - name: Launch Android emulator
-        run: |
-          # Launch emulator in background.
-          # Take care for it to be running when this step finishes via nohup.
-          #
-          # Do not disable GPU (-gpu off) since that upsets the emulator
-          # and it gets stuck in an infinite loop during the boot process.
-          nohup emulator -avd nexus -no-window -no-audio -verbose -qemu &
-          echo $! > $HOME/emulator.pid
-          # Eagerly wait for the emulator to boot up, normally 5-10 minutes.
-          timeout 15m /bin/bash -c \
-           'while true
-            do
-                adb wait-for-device logcat -b events -d \
-                | grep -i boot_progress_enable_screen && break
-                date
-                sleep 15
-            done' || echo "::warning::emulator timed out"
-          # Sometimes this [redacted] emulator goes to Narnia and never seems
-          # to come back to sense. Try running the tests regardless. Who knows,
-          # maybe it's actually okay. I'm feeling lucky!
+        run: ./gradlew --no-daemon :android:assembleDebug
+      # This works reliably only in macOS runners which have HAXM available.
+      # Ubuntu runners do not have KVM enabled, modern x86 emulators do not
+      # work without KVM, and ARM emulator is abysmally slow.
       - name: Run test suite
-        run: timeout 10m ./gradlew --no-daemon connectedAndroidTest
-      - name: Stop Android emulator
-        if: always()
-        run: kill $(cat $HOME/emulator.pid)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: ./gradlew --no-daemon :android:connectedAndroidTest

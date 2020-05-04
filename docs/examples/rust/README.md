@@ -2,10 +2,10 @@
 
 In this directory, we have some examples of Themis usage.
 
-* [**keygen**](keygen.rs) — a tool for generating ECDSA keys (usable by other examples).     
-* [**secure_cell**](secure_cell.rs) — simple file encryption/decryption based on [Secure Cell](https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/).    
+* [**keygen**](keygen.rs) — a tool for generating ECDSA keys (usable by other examples).
+* [**secure_cell**](secure_cell.rs) — showcase of [Secure Cell](https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/) API.
 * [**secure_compare**](secure_compare.rs) — zero-knowledge secret comparison based on [Secure Comparator](https://docs.cossacklabs.com/pages/secure-comparator-cryptosystem/).
-* <b>secure_message_*</b> — secure group chat implemented with [Secure Message](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/) 
+* <b>secure_message_*</b> — secure group chat implemented with [Secure Message](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/)
   * [**secure_message_server**](secure_message_server.rs) — simple relay server.
   * [**secure_message_client_encrypt**](secure_message_client_encrypt.rs) — chat client which encrypts messages.
   * [**secure_message_client_verify**](secure_message_client_verify.rs) — chat client which signs and verifies messages.
@@ -42,9 +42,8 @@ This tool can be used to generate key files usable for other examples.
 
 ## secure_cell
 
-This is a simple file encryption tool.
-It supports only the Seal mode of _Secure Cell_.
-
+This is a simple API demo, it has no command-line arguments.
+Note how encrypted message length depends on the mode being used.
 
 ## secure_compare
 

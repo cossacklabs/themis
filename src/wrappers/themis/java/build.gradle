@@ -1,0 +1,37 @@
+apply plugin: 'java-library'
+
+sourceSets {
+    main {
+        java.srcDirs = ['.']
+    }
+    test {
+        java.srcDirs = ['../../../../tests/themis/wrappers/android']
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13'
+}
+
+test {
+    useJUnit()
+
+    // Pass JVM options to the forked one used for test
+    systemProperty "java.library.path", System.getProperty("java.library.path")
+}
+
+// Tweak the resulting JAR name so it's not called "java".
+archivesBaseName = 'java-themis'
+version = javaThemisVersion
+group = 'com.cossacklabs'
+
+// Compile for Java 8.
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+// Tweak compiler options.
+compileJava {
+    options.deprecation = true // log deprecated API usage
+}
