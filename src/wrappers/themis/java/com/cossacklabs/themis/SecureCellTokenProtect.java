@@ -1,15 +1,22 @@
 package com.cossacklabs.themis;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 class SecureCellTokenProtect implements SecureCell.TokenProtect {
 
+    @NotNull
     private final SymmetricKey key;
 
-    SecureCellTokenProtect(SymmetricKey key) {
+    @Contract(pure = true)
+    SecureCellTokenProtect(@NotNull SymmetricKey key) {
         this.key = key;
     }
 
+    @NotNull
     @Override
-    public SecureCellData encrypt(byte[] data, byte[] context) {
+    public SecureCellData encrypt(byte[] data, @Nullable byte[] context) {
         if (data == null) {
             throw new NullArgumentException("data cannot be null");
         }
@@ -25,13 +32,15 @@ class SecureCellTokenProtect implements SecureCell.TokenProtect {
         return new SecureCellData(result[0], result[1]);
     }
 
+    @NotNull
     @Override
     public SecureCellData encrypt(byte[] data) {
         return encrypt(data, null);
     }
 
+    @NotNull
     @Override
-    public byte[] decrypt(byte[] data, byte[] token, byte[] context) throws SecureCellException {
+    public byte[] decrypt(byte[] data, byte[] token, @Nullable byte[] context) throws SecureCellException {
         if (data == null) {
             throw new NullArgumentException("data cannot be null");
         }
@@ -54,6 +63,7 @@ class SecureCellTokenProtect implements SecureCell.TokenProtect {
         return result;
     }
 
+    @NotNull
     @Override
     public byte[] decrypt(byte[] data, byte[] token) throws SecureCellException {
         return decrypt(data, token, null);

@@ -17,6 +17,8 @@ buildscript {
 
 dependencies {
     implementation project(":boringssl")
+    // Nullable annotations, etc.
+    implementation 'org.jetbrains:annotations:16.0.2'
     // Instrumentation tests
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'

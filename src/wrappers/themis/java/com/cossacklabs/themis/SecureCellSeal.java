@@ -1,15 +1,22 @@
 package com.cossacklabs.themis;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 class SecureCellSeal implements SecureCell.Seal {
 
+    @NotNull
     private final SymmetricKey key;
 
-    SecureCellSeal(SymmetricKey key) {
+    @Contract(pure = true)
+    SecureCellSeal(@NotNull SymmetricKey key) {
         this.key = key;
     }
 
+    @NotNull
     @Override
-    public byte[] encrypt(byte[] data, byte[] context) {
+    public byte[] encrypt(byte[] data, @Nullable byte[] context) {
         if (data == null) {
             throw new NullArgumentException("data cannot be null");
         }
@@ -25,13 +32,15 @@ class SecureCellSeal implements SecureCell.Seal {
         return result[0];
     }
 
+    @NotNull
     @Override
     public byte[] encrypt(byte[] data) {
         return encrypt(data, null);
     }
 
+    @NotNull
     @Override
-    public byte[] decrypt(byte[] data, byte[] context) throws SecureCellException {
+    public byte[] decrypt(byte[] data, @Nullable byte[] context) throws SecureCellException {
         if (data == null) {
             throw new NullArgumentException("data cannot be null");
         }
@@ -48,6 +57,7 @@ class SecureCellSeal implements SecureCell.Seal {
         return result;
     }
 
+    @NotNull
     @Override
     public byte[] decrypt(byte[] data) throws SecureCellException {
         return decrypt(data, null);

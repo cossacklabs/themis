@@ -1,13 +1,19 @@
 package com.cossacklabs.themis;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 class SecureCellContextImprint implements SecureCell.ContextImprint {
 
+    @NotNull
     private final SymmetricKey key;
 
-    SecureCellContextImprint(SymmetricKey key) {
+    @Contract(pure = true)
+    SecureCellContextImprint(@NotNull SymmetricKey key) {
         this.key = key;
     }
 
+    @NotNull
     @Override
     public byte[] encrypt(byte[] data, byte[] context) {
         if (data == null) {
@@ -31,6 +37,7 @@ class SecureCellContextImprint implements SecureCell.ContextImprint {
         return result[0];
     }
 
+    @NotNull
     @Override
     public byte[] decrypt(byte[] data, byte[] context) {
         if (data == null) {

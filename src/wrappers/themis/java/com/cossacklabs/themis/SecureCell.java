@@ -16,6 +16,10 @@
 
 package com.cossacklabs.themis;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -162,7 +166,9 @@ public class SecureCell {
          * @throws RuntimeException on internal encryption failure
          *         (with {@link SecureCellException} as its cause)
          */
-        byte[] encrypt(byte[] data, byte[] context);
+        @NotNull
+        @Contract(pure = true)
+        byte[] encrypt(byte[] data, @Nullable byte[] context);
 
         /**
          * Encrypts the provided message.
@@ -179,6 +185,8 @@ public class SecureCell {
          * @throws RuntimeException on internal encryption failure
          *         (with {@link SecureCellException} as its cause)
          */
+        @NotNull
+        @Contract(pure = true)
         byte[] encrypt(byte[] data);
 
         /**
@@ -199,7 +207,9 @@ public class SecureCell {
          *         or if the associated context does not match the one used to encrypt the data
          * @throws InvalidArgumentException if data is empty
          */
-        byte[] decrypt(byte[] data, byte[] context) throws SecureCellException;
+        @NotNull
+        @Contract(pure = true)
+        byte[] decrypt(byte[] data, @Nullable byte[] context) throws SecureCellException;
 
         /**
          * Decrypts the provided message with associated context.
@@ -218,6 +228,8 @@ public class SecureCell {
          *         or if the associated context does not match the one used to encrypt the data
          * @throws InvalidArgumentException if data is empty
          */
+        @NotNull
+        @Contract(pure = true)
         byte[] decrypt(byte[] data) throws SecureCellException;
     }
 
@@ -230,6 +242,8 @@ public class SecureCell {
      *
      * @since JavaThemis 0.13
      */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
     public static Seal SealWithKey(SymmetricKey key) {
         if (key == null) {
             throw new NullArgumentException("key cannot be null");
@@ -247,6 +261,8 @@ public class SecureCell {
      *
      * @since JavaThemis 0.13
      */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
     public static Seal SealWithKey(byte[] key) {
         return new SecureCellSeal(new SymmetricKey(key));
     }
@@ -307,7 +323,9 @@ public class SecureCell {
          * @throws RuntimeException on internal encryption failure
          *         (with {@link SecureCellException} as its cause)
          */
-        SecureCellData encrypt(byte[] data, byte[] context);
+        @NotNull
+        @Contract(pure = true)
+        SecureCellData encrypt(byte[] data, @Nullable byte[] context);
 
         /**
          * Encrypts the provided message with associated context.
@@ -325,6 +343,8 @@ public class SecureCell {
          * @throws RuntimeException on internal encryption failure
          *         (with {@link SecureCellException} as its cause)
          */
+        @NotNull
+        @Contract(pure = true)
         SecureCellData encrypt(byte[] data);
 
         /**
@@ -346,7 +366,9 @@ public class SecureCell {
          *         or if the associated context does not match the one used to encrypt the data
          * @throws InvalidArgumentException if data or token is empty
          */
-        byte[] decrypt(byte[] data, byte[] token, byte[] context) throws SecureCellException;
+        @NotNull
+        @Contract(pure = true)
+        byte[] decrypt(byte[] data, byte[] token, @Nullable  byte[] context) throws SecureCellException;
 
         /**
          * Decrypts the provided message with associated context.
@@ -366,6 +388,8 @@ public class SecureCell {
          *         or if the associated context does not match the one used to encrypt the data
          * @throws InvalidArgumentException if data or token is empty
          */
+        @NotNull
+        @Contract(pure = true)
         byte[] decrypt(byte[] data, byte[] token) throws SecureCellException;
     }
 
@@ -378,6 +402,8 @@ public class SecureCell {
      *
      * @since JavaThemis 0.13
      */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
     public static TokenProtect TokenProtectWithKey(SymmetricKey key) {
         if (key == null) {
             throw new NullArgumentException("key cannot be null");
@@ -395,6 +421,8 @@ public class SecureCell {
      *
      * @since JavaThemis 0.13
      */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
     public static TokenProtect TokenProtectWithKey(byte[] key) {
         return new SecureCellTokenProtect(new SymmetricKey(key));
     }
@@ -448,6 +476,8 @@ public class SecureCell {
          * @throws RuntimeException on internal encryption failure
          *         (with {@link SecureCellException} as its cause)
          */
+        @NotNull
+        @Contract(pure = true)
         byte[] encrypt(byte[] data, byte[] context);
 
         /**
@@ -470,6 +500,8 @@ public class SecureCell {
          * @throws RuntimeException on internal decryption failure
          *         (with {@link SecureCellException} as its cause)
          */
+        @NotNull
+        @Contract(pure = true)
         byte[] decrypt(byte[] data, byte[] context);
     }
 
@@ -482,6 +514,8 @@ public class SecureCell {
      *
      * @since JavaThemis 0.13
      */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
     public static ContextImprint ContextImprintWithKey(SymmetricKey key) {
         if (key == null) {
             throw new NullArgumentException("key cannot be null");
@@ -499,6 +533,8 @@ public class SecureCell {
      *
      * @since JavaThemis 0.13
      */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
     public static ContextImprint ContextImprintWithKey(byte[] key) {
         return new SecureCellContextImprint(new SymmetricKey(key));
     }
