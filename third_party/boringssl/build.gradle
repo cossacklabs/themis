@@ -5,6 +5,10 @@ buildscript {
     }
 
     dependencies {
+        // Using older version since 3.6.X has issues with NDK versioning:
+        // https://github.com/gradle/gradle/issues/12440
+        // And 3.5.X fails to link ARM binaries correctly, so we're staying
+        // on this Gradle version until it breaks or we *need* an upgrade:
         classpath 'com.android.tools.build:gradle:3.2.1'
     }
 }

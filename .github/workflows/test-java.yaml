@@ -50,22 +50,12 @@ jobs:
         run: |
           make all themis_jni
           sudo make install themis_jni_install
-      # TODO: run JavaThemis unit tests, once we have them,
-      #       but for now we're only testing JNI build
-      - name: Check JavaThemis loading
+      - name: Build and test JavaThemis
+        # Set native library search path for Java explicitly since most
+        # distribution-provided JVMs do not look there by default.
         run: |
-          cat > Test.java <<EOF
-              public class Test {
-                  static {
-                      System.loadLibrary("themis_jni");
-                  }
-                  public static void main(String[] args) {
-                      System.out.println("themis_jni loaded!");
-                  }
-              }
-          EOF
-          javac Test.java
-          java -Djava.library.path=/usr/local/lib Test
+          ./gradlew --no-daemon -Djava.library.path=/usr/local/lib \
+            :desktop:build
 
   android-tests:
     name: Android emulator
@@ -76,7 +66,7 @@ jobs:
         with:
           submodules: true
       - name: Build Themis
-        run: ./gradlew --no-daemon assembleDebug
+        run: ./gradlew --no-daemon :android:assembleDebug
       # This works reliably only in macOS runners which have HAXM available.
       # Ubuntu runners do not have KVM enabled, modern x86 emulators do not
       # work without KVM, and ARM emulator is abysmally slow.
@@ -84,4 +74,4 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          script: ./gradlew --no-daemon connectedAndroidTest
+          script: ./gradlew --no-daemon :android:connectedAndroidTest

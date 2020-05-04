@@ -14,7 +14,7 @@ jobs:
       - run:
           name: Build Themis
           command: |
-            ./gradlew --no-daemon assembleDebug
+            ./gradlew --no-daemon :android:assembleDebug
       - run:
           name: Prepare Android emulator
           command: |
@@ -48,7 +48,7 @@ jobs:
       - run:
           name: Run test suite
           command: |
-            ./gradlew --no-daemon connectedAndroidTest
+            ./gradlew --no-daemon :android:connectedAndroidTest
 
   analyze:
     docker:
