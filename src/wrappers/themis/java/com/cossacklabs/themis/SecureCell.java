@@ -599,6 +599,7 @@ public class SecureCell {
 	public static final int MODE_SEAL = 0;
 	public static final int MODE_TOKEN_PROTECT = 1;
 	public static final int MODE_CONTEXT_IMPRINT = 2;
+	static final int MODE_SEAL_PASSPHRASE = 3;
 	
 	static native byte[][] encrypt(byte[] key, byte[] context, byte[] data, int mode);
 	static native byte[] decrypt(byte[] key, byte[] context, byte[][] protectedData, int mode);

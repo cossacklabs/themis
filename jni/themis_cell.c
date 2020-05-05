@@ -22,6 +22,7 @@
 #define MODE_SEAL 0
 #define MODE_TOKEN_PROTECT 1
 #define MODE_CONTEXT_IMPRINT 2
+#define MODE_SEAL_PASSPHRASE 3
 
 JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(
     JNIEnv* env, jobject thiz, jbyteArray key, jbyteArray context, jbyteArray data, jint mode)
@@ -79,6 +80,17 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(
                                               data_length,
                                               NULL,
                                               &encrypted_data_length);
+        break;
+    case MODE_SEAL_PASSPHRASE:
+        /* Passphrase bytes passed as key */
+        res = themis_secure_cell_encrypt_seal_with_passphrase((uint8_t*)key_buf,
+                                                              key_length,
+                                                              (uint8_t*)context_buf,
+                                                              context_length,
+                                                              (uint8_t*)data_buf,
+                                                              data_length,
+                                                              NULL,
+                                                              &encrypted_data_length);
         break;
     case MODE_TOKEN_PROTECT:
         res = themis_secure_cell_encrypt_token_protect((uint8_t*)key_buf,
@@ -149,6 +161,17 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(
                                               data_length,
                                               (uint8_t*)encrypted_data_buf,
                                               &encrypted_data_length);
+        break;
+    case MODE_SEAL_PASSPHRASE:
+        /* Passphrase bytes passed as key */
+        res = themis_secure_cell_encrypt_seal_with_passphrase((uint8_t*)key_buf,
+                                                              key_length,
+                                                              (uint8_t*)context_buf,
+                                                              context_length,
+                                                              (uint8_t*)data_buf,
+                                                              data_length,
+                                                              (uint8_t*)encrypted_data_buf,
+                                                              &encrypted_data_length);
         break;
     case MODE_TOKEN_PROTECT:
         res = themis_secure_cell_encrypt_token_protect((uint8_t*)key_buf,
@@ -297,6 +320,17 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(
                                               NULL,
                                               &data_length);
         break;
+    case MODE_SEAL_PASSPHRASE:
+        /* Passphrase bytes passed as key */
+        res = themis_secure_cell_decrypt_seal_with_passphrase((uint8_t*)key_buf,
+                                                              key_length,
+                                                              (uint8_t*)context_buf,
+                                                              context_length,
+                                                              (uint8_t*)encrypted_data_buf,
+                                                              encrypted_data_length,
+                                                              NULL,
+                                                              &data_length);
+        break;
     case MODE_TOKEN_PROTECT:
         if (!additional_data_buf) {
             /* Additional data is mandatory for this mode */
@@ -357,6 +391,17 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(
                                               encrypted_data_length,
                                               (uint8_t*)data_buf,
                                               &data_length);
+        break;
+    case MODE_SEAL_PASSPHRASE:
+        /* Passphrase bytes passed as key */
+        res = themis_secure_cell_decrypt_seal_with_passphrase((uint8_t*)key_buf,
+                                                              key_length,
+                                                              (uint8_t*)context_buf,
+                                                              context_length,
+                                                              (uint8_t*)encrypted_data_buf,
+                                                              encrypted_data_length,
+                                                              (uint8_t*)data_buf,
+                                                              &data_length);
         break;
     case MODE_TOKEN_PROTECT:
         if (!additional_data_buf) {
