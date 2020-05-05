@@ -1,0 +1,390 @@
+/*
+ * Copyright (c) 2020 Cossack Labs Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.cossacklabs.themis.test;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.Base64;
+
+import com.cossacklabs.themis.InvalidArgumentException;
+import com.cossacklabs.themis.NullArgumentException;
+import com.cossacklabs.themis.SecureCell;
+import com.cossacklabs.themis.SecureCellData;
+import com.cossacklabs.themis.SecureCellException;
+import com.cossacklabs.themis.SymmetricKey;
+
+import static org.junit.Assert.*;
+import org.junit.Test;
+
+public class SecureCellTokenProtectTest {
+
+    @Test
+    public void initWithGenerated() {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+
+        assertNotNull(cell);
+    }
+
+    @Test
+    public void initWithFixed() {
+        String keyBase64 = "UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg";
+        byte[] keyBytes = Base64.getDecoder().decode(keyBase64);
+
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(keyBytes);
+
+        assertNotNull(cell);
+    }
+
+    @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void initWithEmpty() {
+        assertThrows(NullArgumentException.class, () -> SecureCell.TokenProtectWithKey((SymmetricKey)null));
+        assertThrows(NullArgumentException.class, () -> SecureCell.TokenProtectWithKey((byte[])null));
+        assertThrows(InvalidArgumentException.class, () -> SecureCell.TokenProtectWithKey(new byte[]{}));
+    }
+
+    @Test
+    public void roundtrip() throws SecureCellException {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+        byte[] context = "For great justice".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData result = cell.encrypt(message, context);
+        assertNotNull(result);
+        byte[] encrypted = result.getProtectedData();
+        byte[] authToken = result.getAdditionalData();
+        assertNotNull(encrypted);
+        assertNotNull(authToken);
+
+        byte[] decrypted = cell.decrypt(encrypted, authToken, context);
+        assertNotNull(decrypted);
+
+        assertArrayEquals(message, decrypted);
+    }
+
+    @Test
+    public void dataLengthPreservation() {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData result = cell.encrypt(message);
+
+        assertEquals(message.length, result.getProtectedData().length);
+        assertTrue(result.getAdditionalData().length > 0);
+    }
+
+    @Test
+    public void contextInclusion() {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+        byte[] shortContext = ".".getBytes(StandardCharsets.UTF_8);
+        byte[] longContext = "You have no chance to survive make your time. Ha ha ha ha ...".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData resultShort = cell.encrypt(message, shortContext);
+        SecureCellData resultLong = cell.encrypt(message, longContext);
+
+        // Context is not (directly) included into encrypted message.
+        assertEquals(resultShort.getProtectedData().length, resultLong.getProtectedData().length);
+        assertEquals(resultShort.getAdditionalData().length, resultLong.getAdditionalData().length);
+    }
+
+    @Test
+    public void withoutContext() throws SecureCellException {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+
+        // Absent, empty, or nil context are all the same.
+        SecureCellData result1 = cell.encrypt(message);
+        SecureCellData result2 = cell.encrypt(message, null);
+        SecureCellData result3 = cell.encrypt(message, new byte[]{});
+
+        assertArrayEquals(message, cell.decrypt(result1.getProtectedData(), result1.getAdditionalData()));
+        assertArrayEquals(message, cell.decrypt(result2.getProtectedData(), result2.getAdditionalData()));
+        assertArrayEquals(message, cell.decrypt(result3.getProtectedData(), result3.getAdditionalData()));
+
+        assertArrayEquals(message, cell.decrypt(result1.getProtectedData(), result1.getAdditionalData(), null));
+        assertArrayEquals(message, cell.decrypt(result2.getProtectedData(), result2.getAdditionalData(), null));
+        assertArrayEquals(message, cell.decrypt(result3.getProtectedData(), result3.getAdditionalData(), null));
+
+        assertArrayEquals(message, cell.decrypt(result1.getProtectedData(), result1.getAdditionalData(), new byte[]{}));
+        assertArrayEquals(message, cell.decrypt(result2.getProtectedData(), result2.getAdditionalData(), new byte[]{}));
+        assertArrayEquals(message, cell.decrypt(result3.getProtectedData(), result3.getAdditionalData(), new byte[]{}));
+    }
+
+    @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void contextSignificance() throws SecureCellException {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+        byte[] correctContext = "We are CATS".getBytes(StandardCharsets.UTF_8);
+        byte[] incorrectContext = "Captain !!".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData result = cell.encrypt(message, correctContext);
+        byte[] encrypted = result.getProtectedData();
+        byte[] authToken = result.getAdditionalData();
+
+        // You cannot use a different context to decrypt data.
+        assertThrows(SecureCellException.class, () -> cell.decrypt(encrypted, authToken, incorrectContext));
+
+        // Only the original context will work.
+        byte[] decrypted = cell.decrypt(encrypted, authToken, correctContext);
+
+        assertArrayEquals(message, decrypted);
+    }
+
+    @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void tokenSignificance() throws SecureCellException {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData result1 = cell.encrypt(message);
+        byte[] encrypted1 = result1.getProtectedData();
+        byte[] authToken1 = result1.getAdditionalData();
+
+        SecureCellData result2 = cell.encrypt(message);
+        byte[] encrypted2 = result2.getProtectedData();
+        byte[] authToken2 = result2.getAdditionalData();
+
+        // You cannot use a different token to decrypt data.
+        assertThrows(SecureCellException.class, () -> cell.decrypt(encrypted1, authToken2));
+        assertThrows(SecureCellException.class, () -> cell.decrypt(encrypted2, authToken1));
+
+        // Only the matching token will work.
+        assertArrayEquals(message, cell.decrypt(encrypted1, authToken1));
+        assertArrayEquals(message, cell.decrypt(encrypted2, authToken2));
+    }
+
+    @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void detectCorruptedData() {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData result = cell.encrypt(message);
+        byte[] encrypted = result.getProtectedData();
+        byte[] authToken = result.getAdditionalData();
+
+        // Invert every odd byte, this will surely break the message.
+        byte[] corrupted = Arrays.copyOf(encrypted, encrypted.length);
+        for (int i = 0; i < corrupted.length; i++) {
+            if (i % 2 == 1) {
+                corrupted[i] = (byte)~corrupted[i];
+            }
+        }
+
+        assertThrows(SecureCellException.class, () -> cell.decrypt(corrupted, authToken));
+    }
+
+    @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void detectTruncatedData() {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData result = cell.encrypt(message);
+        byte[] encrypted = result.getProtectedData();
+        byte[] authToken = result.getAdditionalData();
+
+        byte[] truncated = Arrays.copyOf(encrypted, encrypted.length - 1);
+
+        assertThrows(SecureCellException.class, () -> cell.decrypt(truncated, authToken));
+    }
+
+    @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void detectExtendedData() {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData result = cell.encrypt(message);
+        byte[] encrypted = result.getProtectedData();
+        byte[] authToken = result.getAdditionalData();
+
+        byte[] extended = Arrays.copyOf(encrypted, encrypted.length + 1);
+
+        assertThrows(SecureCellException.class, () -> cell.decrypt(extended, authToken));
+    }
+
+
+    @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void detectCorruptedToken() {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData result = cell.encrypt(message);
+        byte[] encrypted = result.getProtectedData();
+        byte[] authToken = result.getAdditionalData();
+
+        // Invert every odd byte, this will surely break the token.
+        byte[] corruptedToken = Arrays.copyOf(authToken, authToken.length);
+        for (int i = 0; i < corruptedToken.length; i++) {
+            if (i % 2 == 1) {
+                corruptedToken[i] = (byte)~corruptedToken[i];
+            }
+        }
+
+        // FIXME(ilammy, 2020-05-05): improve Themis Core robustness (T1604)
+        // Currently this call throws NegativeArraySizeException instead of SecureCellException
+        // because the Core library fails to detect corruption and returns negative buffer size
+        // which we cannot allocate, unfortunately.
+        // Expect "SecureCellException.class" here once the issue is resolved.
+        assertThrows(Throwable.class, () -> cell.decrypt(encrypted, corruptedToken));
+    }
+
+    @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void detectTruncatedToken() {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData result = cell.encrypt(message);
+        byte[] encrypted = result.getProtectedData();
+        byte[] authToken = result.getAdditionalData();
+
+        byte[] truncatedToken = Arrays.copyOf(authToken, authToken.length - 1);
+
+        assertThrows(SecureCellException.class, () -> cell.decrypt(encrypted, truncatedToken));
+    }
+
+    @Test
+    public void detectExtendedToken() throws SecureCellException {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData result = cell.encrypt(message);
+        byte[] encrypted = result.getProtectedData();
+        byte[] authToken = result.getAdditionalData();
+
+        byte[] extendedToken = Arrays.copyOf(authToken, authToken.length + 1);
+
+        // Current implementation of Secure Cell allows the token to be overlong.
+        // Extra data is simply ignored.
+        byte[] decrypted = cell.decrypt(encrypted, extendedToken);
+        assertArrayEquals(message, decrypted);
+    }
+
+    @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void swapTokenAndData() {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData result = cell.encrypt(message);
+        byte[] encrypted = result.getProtectedData();
+        byte[] authToken = result.getAdditionalData();
+
+        // FIXME(ilammy, 2020-05-05): improve Themis Core robustness (T1604)
+        // Currently this call throws OutOfMemoryError instead of SecureCellException
+        // because the Core library fails to detect corruption and returns incorrect buffer size
+        // which we cannot allocate, unfortunately.
+        // Expect "SecureCellException.class" here once the issue is resolved.
+        assertThrows(Throwable.class, () -> cell.decrypt(authToken, encrypted));
+    }
+
+    @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void swapContextAndToken() {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+        byte[] context = "We are CATS".getBytes(StandardCharsets.UTF_8);
+
+        SecureCellData result = cell.encrypt(message, context);
+        byte[] encrypted = result.getProtectedData();
+
+        assertThrows(SecureCellException.class, () -> cell.decrypt(encrypted, context));
+    }
+
+    @Test
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void emptyMessageOrToken() {
+        SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+
+        assertThrows(NullArgumentException.class, () -> cell.encrypt(null));
+        assertThrows(InvalidArgumentException.class, () -> cell.encrypt(new byte[]{}));
+
+        SecureCellData result = cell.encrypt(message);
+        byte[] encrypted = result.getProtectedData();
+        byte[] authToken = result.getAdditionalData();
+
+        assertThrows(NullArgumentException.class, () -> cell.decrypt(encrypted, null));
+        assertThrows(NullArgumentException.class, () -> cell.decrypt(null, authToken));
+        assertThrows(InvalidArgumentException.class, () -> cell.decrypt(encrypted, new byte[]{}));
+        assertThrows(InvalidArgumentException.class, () -> cell.decrypt(new byte[]{}, authToken));
+    }
+
+    @Test
+    public void oldAPI() throws SecureCellException {
+        SymmetricKey key = new SymmetricKey();
+        SecureCell.TokenProtect newCell = SecureCell.TokenProtectWithKey(key);
+        SecureCell oldCell = new SecureCell(key.toByteArray(), SecureCell.MODE_TOKEN_PROTECT);
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+        byte[] context = "We are CATS".getBytes(StandardCharsets.UTF_8);
+        byte[] encrypted, authToken, decrypted;
+
+        SecureCellData result = oldCell.protect(context, message);
+        assertNotNull(result);
+        encrypted = result.getProtectedData();
+        authToken = result.getAdditionalData();
+        assertNotNull(encrypted);
+        assertNotNull(authToken);
+
+        decrypted = newCell.decrypt(encrypted, authToken, context);
+        assertArrayEquals(message, decrypted);
+
+        result = newCell.encrypt(message, context);
+        assertNotNull(result);
+        encrypted = result.getProtectedData();
+        authToken = result.getAdditionalData();
+        assertNotNull(encrypted);
+        assertNotNull(authToken);
+
+        decrypted = oldCell.unprotect(context, new SecureCellData(encrypted, authToken));
+        assertArrayEquals(message, decrypted);
+    }
+
+    @Test
+    public void oldAPIWithoutContext() throws SecureCellException {
+        SymmetricKey key = new SymmetricKey();
+        SecureCell.TokenProtect newCell = SecureCell.TokenProtectWithKey(key);
+        SecureCell oldCell = new SecureCell(key.toByteArray(), SecureCell.MODE_TOKEN_PROTECT);
+        byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
+        byte[] encrypted, authToken, decrypted;
+
+        SecureCellData result = oldCell.protect((byte[])null, message);
+        assertNotNull(result);
+        encrypted = result.getProtectedData();
+        authToken = result.getAdditionalData();
+        assertNotNull(encrypted);
+        assertNotNull(authToken);
+
+        decrypted = newCell.decrypt(encrypted, authToken);
+        assertArrayEquals(message, decrypted);
+
+        result = newCell.encrypt(message);
+        assertNotNull(result);
+        encrypted = result.getProtectedData();
+        authToken = result.getAdditionalData();
+        assertNotNull(encrypted);
+        assertNotNull(authToken);
+
+        decrypted = oldCell.unprotect((byte[])null, new SecureCellData(encrypted, authToken));
+        assertArrayEquals(message, decrypted);
+    }
+}
