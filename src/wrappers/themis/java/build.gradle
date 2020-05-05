@@ -11,7 +11,8 @@ sourceSets {
 
 dependencies {
     // Nullable annotations, etc.
-    implementation 'org.jetbrains:annotations:16.0.2'
+    // Use a compatibility version to support Java 6.
+    implementation 'org.jetbrains:annotations-java5:16.0.2'
     // Unit tests
     testImplementation 'junit:junit:4.13'
 }
@@ -28,10 +29,10 @@ archivesBaseName = 'java-themis'
 version = javaThemisVersion
 group = 'com.cossacklabs'
 
-// Compile for Java 8.
+// Compile for Java 7.
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_1_7
+    targetCompatibility JavaVersion.VERSION_1_7
 }
 
 // Tweak compiler options.

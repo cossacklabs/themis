@@ -17,8 +17,8 @@ buildscript {
 
 dependencies {
     implementation project(":boringssl")
-    // Nullable annotations, etc.
-    implementation 'org.jetbrains:annotations:16.0.2'
+    // Use a compatibility version to support Java 6.
+    implementation 'org.jetbrains:annotations-java5:16.0.2'
     // Instrumentation tests
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
@@ -35,6 +35,12 @@ android {
         targetSdkVersion 28
         // Our tests are written in JUnit, set default runner appropriately
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // Compile for Java 7.
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 
     sourceSets {
