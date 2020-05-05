@@ -604,7 +604,16 @@ public class SecureCell {
 	 * Creates new SecureCell in specified mode
 	 * @param SecureCell mode
 	 * @throws InvalidArgumentException when unsupported mode is specified
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * Select the mode with an appropriate static factory method instead:
+	 * <ul>
+	 *   <li>{@link #SealWithKey(SymmetricKey)}
+	 *   <li>{@link #TokenProtectWithKey(SymmetricKey)}
+	 *   <li>{@link #ContextImprintWithKey(SymmetricKey)}
+	 * </ul>
 	 */
+	@Deprecated
 	public SecureCell(int mode) {
 
 		if (mode < MODE_SEAL || mode > MODE_CONTEXT_IMPRINT) {
@@ -617,7 +626,11 @@ public class SecureCell {
 	/**
 	 * Creates new SecureCell with default master key in SEAL mode
 	 * @param default master key
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * Use {@link #SealWithKey(byte[])} instead.
 	 */
+	@Deprecated
 	public SecureCell(byte[] key) {
 		this.key = key;
 	}
@@ -627,7 +640,16 @@ public class SecureCell {
 	 * @param default master key
 	 * @param SecureCell mode
 	 * @throws InvalidArgumentException when unsupported mode is specified
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * Use an appropriate static factory method instead:
+	 * <ul>
+	 *   <li>{@link #SealWithKey(byte[])}
+	 *   <li>{@link #TokenProtectWithKey(byte[])}
+	 *   <li>{@link #ContextImprintWithKey(byte[])}
+	 * </ul>
 	 */
+	@Deprecated
 	public SecureCell(byte[] key, int mode) {
 		this(mode);
 		this.key = key;
@@ -636,7 +658,18 @@ public class SecureCell {
 	/**
 	 * Creates new SecureCell with default master password in SEAL mode
 	 * @param default master password
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * This method is <strong>not secure</strong> when used with short passphrases or passwords.
+	 * Do not use it in new code.
+	 * <p>
+	 * If you need to use short passphrases, consider {@link #SealWithPassphrase(String)}.
+	 * Otherwise consider using symmetric keys: {@link #SealWithKey(SymmetricKey)}.
+	 * <p>
+	 * This method does not have direct counterpart in the new API.
+	 * It is equivalent to {@code SecureCell.SealWithKey(password.getBytes("UTF-16"))}.
 	 */
+	@Deprecated
 	public SecureCell(String password) {
 		this(password.getBytes(CHARSET));
 	}
@@ -646,7 +679,23 @@ public class SecureCell {
 	 * @param default master password
 	 * @param SecureCell mode
 	 * @throws InvalidArgumentException when unsupported mode is specified
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * This method is <strong>not secure</strong> when used with short passphrases or passwords.
+	 * Do not use it in new code.
+	 * <p>
+	 * If you need to use short passphrases, consider {@link #SealWithPassphrase(String)}.
+	 * Otherwise consider using symmetric keys:
+	 * <ul>
+	 *   <li>{@link #SealWithKey(byte[])}
+	 *   <li>{@link #TokenProtectWithKey(byte[])}
+	 *   <li>{@link #ContextImprintWithKey(byte[])}
+	 * </ul>
+	 * This method does not have direct counterpart in the new API.
+	 * It is equivalent to {@code SecureCell.SealWithKey(password.getBytes("UTF-16"))}
+	 * or corresponding other mode.
 	 */
+	@Deprecated
 	public SecureCell(String password, int mode) {
 		this(mode);
 		this.key = password.getBytes(CHARSET);
@@ -656,9 +705,15 @@ public class SecureCell {
 	byte[] key;
 	
 	static final Charset CHARSET = StandardCharsets.UTF_16;
-	
+
+	/** @deprecated since JavaThemis 0.13 */
+	@Deprecated
 	public static final int MODE_SEAL = 0;
+	/** @deprecated since JavaThemis 0.13 */
+	@Deprecated
 	public static final int MODE_TOKEN_PROTECT = 1;
+	/** @deprecated since JavaThemis 0.13 */
+	@Deprecated
 	public static final int MODE_CONTEXT_IMPRINT = 2;
 	static final int MODE_SEAL_PASSPHRASE = 3;
 	
@@ -734,7 +789,11 @@ public class SecureCell {
 	 * @return SecureCellData with protected data
 	 * @throws NullArgumentException when key or data is null
 	 * @throws SecureCellException when cannot protect the data
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * Use new construction API and {@code encrypt(byte[], byte[])} instead.
 	 */
+	@Deprecated
 	public SecureCellData protect(byte[] key, byte[] context, byte[] data) throws SecureCellException {
 		return protect(key, context, data, this.mode);
 	}
@@ -746,7 +805,11 @@ public class SecureCell {
 	 * @return SecureCellData with protected data
 	 * @throws NullArgumentException when default master key or data is null
 	 * @throws SecureCellException when cannot protect the data
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * Use new construction API and {@code encrypt(byte[], byte[])} instead.
 	 */
+	@Deprecated
 	public SecureCellData protect(byte[] context, byte[] data) throws SecureCellException {
 		return this.protect(this.key, context, data);
 	}
@@ -759,7 +822,14 @@ public class SecureCell {
 	 * @return SecureCellData with protected data
 	 * @throws NullArgumentException when key or data is null
 	 * @throws SecureCellException when cannot protect the data
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * This method is <strong>not secure</strong> when used with short passphrases or passwords.
+	 * Do not use it in new code.
+	 * <p>
+	 * Consider using new construction API with passphrases instead.
 	 */
+	@Deprecated
 	public SecureCellData protect(String password, String context, byte[] data) throws SecureCellException {
 		return this.protect(password.getBytes(CHARSET), context.getBytes(CHARSET), data);
 	}
@@ -771,7 +841,11 @@ public class SecureCell {
 	 * @return SecureCellData with protected data
 	 * @throws NullArgumentException when key or data is null
 	 * @throws SecureCellException when cannot protect the data
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * Use new construction API and {@code encrypt(byte[], byte[])} instead.
 	 */
+	@Deprecated
 	public SecureCellData protect(String context, byte[] data) throws SecureCellException {
 		return this.protect(this.key, context.getBytes(CHARSET), data);
 	}
@@ -785,7 +859,11 @@ public class SecureCell {
 	 * @throws NullArgumentException when key or protectedData is null
 	 * @throws SecureCellException when cannot decrypt protectedData
 	 * @throws InvalidArgumentException when protectedData is incorrect
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * Use new construction API and {@code decrypt(byte[], byte[])} instead.
 	 */
+	@Deprecated
 	public byte[] unprotect(byte[] key, byte[] context, SecureCellData protectedData) throws SecureCellException {
 		return unprotect(key, context, protectedData, this.mode);
 	}
@@ -798,7 +876,11 @@ public class SecureCell {
 	 * @throws NullArgumentException when key or protectedData is null
 	 * @throws SecureCellException when cannot decrypt protectedData
 	 * @throws InvalidArgumentException when protectedData is incorrect
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * Use new construction API and {@code decrypt(byte[], byte[])} instead.
 	 */
+	@Deprecated
 	public byte[] unprotect(byte[] context, SecureCellData protectedData) throws SecureCellException {
 		return this.unprotect(this.key, context, protectedData);
 	}
@@ -812,7 +894,14 @@ public class SecureCell {
 	 * @throws NullArgumentException when key or protectedData is null
 	 * @throws SecureCellException when cannot decrypt protectedData
 	 * @throws InvalidArgumentException when protectedData is incorrect
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * This method is <strong>not secure</strong> when used with short passphrases or passwords.
+	 * Do not use it in new code.
+	 * <p>
+	 * Consider using new construction API with passphrases instead.
 	 */
+	@Deprecated
 	public byte[] unprotect(String password, String context, SecureCellData protectedData) throws SecureCellException {
 		return this.unprotect(password.getBytes(CHARSET), context.getBytes(CHARSET), protectedData);
 	}
@@ -825,7 +914,11 @@ public class SecureCell {
 	 * @throws NullArgumentException when key or protectedData is null
 	 * @throws SecureCellException when cannot decrypt protectedData
 	 * @throws InvalidArgumentException when protectedData is incorrect
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * Use new construction API and {@code decrypt(byte[], byte[])} instead.
 	 */
+	@Deprecated
 	public byte[] unprotect(String context, SecureCellData protectedData) throws SecureCellException {
 		return this.unprotect(this.key, context.getBytes(CHARSET), protectedData);
 	}

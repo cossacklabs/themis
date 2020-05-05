@@ -308,7 +308,7 @@ public class SecureCellSealWithPassphraseTest {
     }
 
     @Test
-    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @SuppressWarnings({"ResultOfMethodCallIgnored", "deprecation"})
     public void passphrasesNotCompatibleWithOldAPI() throws SecureCellException {
         // Old 'passphrase-like' API is not passphrase API at all. Don't use it.
         SecureCell cellOld = new SecureCell("day 56 of the Q", SecureCell.MODE_SEAL);
@@ -331,6 +331,7 @@ public class SecureCellSealWithPassphraseTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void oldPassphraseAPIIsActuallyUTF16Key() throws SecureCellException {
         // Yes, it's so weird due to hysterical raisins. So don't use it, really.
         SecureCell cellOld = new SecureCell("day 56 of the Q", SecureCell.MODE_SEAL);

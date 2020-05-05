@@ -239,6 +239,7 @@ public class SecureCellSealTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void oldAPI() throws SecureCellException {
         SymmetricKey key = new SymmetricKey();
         SecureCell.Seal newCell = SecureCell.SealWithKey(key);
@@ -262,6 +263,7 @@ public class SecureCellSealTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void oldAPIWithoutContext() throws SecureCellException {
         SymmetricKey key = new SymmetricKey();
         SecureCell.Seal newCell = SecureCell.SealWithKey(key);

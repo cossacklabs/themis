@@ -25,6 +25,12 @@ import com.cossacklabs.themis.SecureCellData;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+/**
+ * These tests exercise old and deprecated API.
+ * See {@link SecureCellSealTest}, {@link SecureCellTokenProtectTest},
+ * {@link SecureCellContextImprintTest} for examples of new API.
+ */
+@SuppressWarnings("deprecation")
 public class SecureCellTest {
 	
 	static final int MAX_TEST_DATA = 1024;

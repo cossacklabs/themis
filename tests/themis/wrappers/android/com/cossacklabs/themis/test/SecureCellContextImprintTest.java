@@ -236,6 +236,7 @@ public class SecureCellContextImprintTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void oldAPI() throws SecureCellException {
         SymmetricKey key = new SymmetricKey();
         SecureCell.ContextImprint newCell = SecureCell.ContextImprintWithKey(key);

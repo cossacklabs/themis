@@ -40,6 +40,7 @@ class SecureCellTokenProtect implements SecureCell.TokenProtect {
             throw new InvalidArgumentException("data cannot be empty");
         }
         byte[] keyBytes = this.key.key;
+        @SuppressWarnings("deprecation")
         byte[][] result = SecureCell.encrypt(keyBytes, context, data, SecureCell.MODE_TOKEN_PROTECT);
         // TODO(ilammy, 2020-05-05): teach SecureCell#encrypt to throw SecureCellException (T1605)
         if (result == null) {
@@ -71,6 +72,7 @@ class SecureCellTokenProtect implements SecureCell.TokenProtect {
         }
         byte[] keyBytes = this.key.key;
         byte[][] encrypted = {data, token};
+        @SuppressWarnings("deprecation")
         byte[] result = SecureCell.decrypt(keyBytes, context, encrypted, SecureCell.MODE_TOKEN_PROTECT);
         // TODO(ilammy, 2020-05-05): teach SecureCell#encrypt to throw SecureCellException (T1605)
         if (result == null) {
