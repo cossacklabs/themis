@@ -52,9 +52,21 @@ public class SecureCellTokenProtectTest {
     @Test
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void initWithEmpty() {
-        assertThrows(NullArgumentException.class, () -> SecureCell.TokenProtectWithKey((SymmetricKey)null));
-        assertThrows(NullArgumentException.class, () -> SecureCell.TokenProtectWithKey((byte[])null));
-        assertThrows(InvalidArgumentException.class, () -> SecureCell.TokenProtectWithKey(new byte[]{}));
+        try {
+            SecureCell.TokenProtectWithKey((SymmetricKey)null);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            SecureCell.TokenProtectWithKey((byte[])null);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            SecureCell.TokenProtectWithKey(new byte[]{});
+            fail("expected InvalidArgumentException");
+        }
+        catch (InvalidArgumentException ignored) {}
     }
 
     @Test
@@ -138,7 +150,11 @@ public class SecureCellTokenProtectTest {
         byte[] authToken = result.getAdditionalData();
 
         // You cannot use a different context to decrypt data.
-        assertThrows(SecureCellException.class, () -> cell.decrypt(encrypted, authToken, incorrectContext));
+        try {
+            cell.decrypt(encrypted, authToken, incorrectContext);
+            fail("expected SecureCellException");
+        }
+        catch (SecureCellException ignored) {}
 
         // Only the original context will work.
         byte[] decrypted = cell.decrypt(encrypted, authToken, correctContext);
@@ -161,8 +177,16 @@ public class SecureCellTokenProtectTest {
         byte[] authToken2 = result2.getAdditionalData();
 
         // You cannot use a different token to decrypt data.
-        assertThrows(SecureCellException.class, () -> cell.decrypt(encrypted1, authToken2));
-        assertThrows(SecureCellException.class, () -> cell.decrypt(encrypted2, authToken1));
+        try {
+            cell.decrypt(encrypted1, authToken2);
+            fail("expected SecureCellException");
+        }
+        catch (SecureCellException ignored) {}
+        try {
+            cell.decrypt(encrypted2, authToken1);
+            fail("expected SecureCellException");
+        }
+        catch (SecureCellException ignored) {}
 
         // Only the matching token will work.
         assertArrayEquals(message, cell.decrypt(encrypted1, authToken1));
@@ -187,7 +211,11 @@ public class SecureCellTokenProtectTest {
             }
         }
 
-        assertThrows(SecureCellException.class, () -> cell.decrypt(corrupted, authToken));
+        try {
+            cell.decrypt(corrupted, authToken);
+            fail("expected SecureCellException");
+        }
+        catch (SecureCellException ignored) {}
     }
 
     @Test
@@ -202,7 +230,11 @@ public class SecureCellTokenProtectTest {
 
         byte[] truncated = Arrays.copyOf(encrypted, encrypted.length - 1);
 
-        assertThrows(SecureCellException.class, () -> cell.decrypt(truncated, authToken));
+        try {
+            cell.decrypt(truncated, authToken);
+            fail("expected SecureCellException");
+        }
+        catch (SecureCellException ignored) {}
     }
 
     @Test
@@ -217,7 +249,11 @@ public class SecureCellTokenProtectTest {
 
         byte[] extended = Arrays.copyOf(encrypted, encrypted.length + 1);
 
-        assertThrows(SecureCellException.class, () -> cell.decrypt(extended, authToken));
+        try {
+            cell.decrypt(extended, authToken);
+            fail("expected SecureCellException");
+        }
+        catch (SecureCellException ignored) {}
     }
 
 
@@ -244,7 +280,11 @@ public class SecureCellTokenProtectTest {
         // because the Core library fails to detect corruption and returns negative buffer size
         // which we cannot allocate, unfortunately.
         // Expect "SecureCellException.class" here once the issue is resolved.
-        assertThrows(Throwable.class, () -> cell.decrypt(encrypted, corruptedToken));
+        try {
+            cell.decrypt(encrypted, corruptedToken);
+            fail("expected SecureCellException");
+        }
+        catch (Throwable ignored) {}
     }
 
     @Test
@@ -259,7 +299,11 @@ public class SecureCellTokenProtectTest {
 
         byte[] truncatedToken = Arrays.copyOf(authToken, authToken.length - 1);
 
-        assertThrows(SecureCellException.class, () -> cell.decrypt(encrypted, truncatedToken));
+        try {
+            cell.decrypt(encrypted, truncatedToken);
+            fail("expected SecureCellException");
+        }
+        catch (SecureCellException ignored) {}
     }
 
     @Test
@@ -294,7 +338,11 @@ public class SecureCellTokenProtectTest {
         // because the Core library fails to detect corruption and returns incorrect buffer size
         // which we cannot allocate, unfortunately.
         // Expect "SecureCellException.class" here once the issue is resolved.
-        assertThrows(Throwable.class, () -> cell.decrypt(authToken, encrypted));
+        try {
+            cell.decrypt(authToken, encrypted);
+            fail("expected SecureCellException");
+        }
+        catch (Throwable ignored) {}
     }
 
     @Test
@@ -307,26 +355,54 @@ public class SecureCellTokenProtectTest {
         SecureCellData result = cell.encrypt(message, context);
         byte[] encrypted = result.getProtectedData();
 
-        assertThrows(SecureCellException.class, () -> cell.decrypt(encrypted, context));
+        try {
+            cell.decrypt(encrypted, context);
+            fail("expected SecureCellException");
+        }
+        catch (SecureCellException ignored) {}
     }
 
     @Test
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void emptyMessageOrToken() {
+    public void emptyMessageOrToken() throws SecureCellException {
         SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
         byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
 
-        assertThrows(NullArgumentException.class, () -> cell.encrypt(null));
-        assertThrows(InvalidArgumentException.class, () -> cell.encrypt(new byte[]{}));
+        try {
+            cell.encrypt(null);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            cell.encrypt(new byte[]{});
+            fail("expected InvalidArgumentException");
+        }
+        catch (InvalidArgumentException ignored) {}
 
         SecureCellData result = cell.encrypt(message);
         byte[] encrypted = result.getProtectedData();
         byte[] authToken = result.getAdditionalData();
 
-        assertThrows(NullArgumentException.class, () -> cell.decrypt(encrypted, null));
-        assertThrows(NullArgumentException.class, () -> cell.decrypt(null, authToken));
-        assertThrows(InvalidArgumentException.class, () -> cell.decrypt(encrypted, new byte[]{}));
-        assertThrows(InvalidArgumentException.class, () -> cell.decrypt(new byte[]{}, authToken));
+        try {
+            cell.decrypt(encrypted, null);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            cell.decrypt(null, authToken);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            cell.decrypt(encrypted, new byte[]{});
+            fail("expected InvalidArgumentException");
+        }
+        catch (InvalidArgumentException ignored) {}
+        try {
+            cell.decrypt(new byte[]{}, authToken);
+            fail("expected InvalidArgumentException");
+        }
+        catch (InvalidArgumentException ignored) {}
     }
 
     @Test

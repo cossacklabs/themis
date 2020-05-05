@@ -52,9 +52,21 @@ public class SecureCellSealTest {
     @Test
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void initWithEmpty() {
-        assertThrows(NullArgumentException.class, () -> SecureCell.SealWithKey((SymmetricKey)null));
-        assertThrows(NullArgumentException.class, () -> SecureCell.SealWithKey((byte[])null));
-        assertThrows(InvalidArgumentException.class, () -> SecureCell.SealWithKey(new byte[]{}));
+        try {
+            SecureCell.SealWithKey((SymmetricKey)null);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            SecureCell.SealWithKey((byte[])null);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            SecureCell.SealWithKey(new byte[]{});
+            fail("expected InvalidArgumentException");
+        }
+        catch (InvalidArgumentException ignored) {}
     }
 
     @Test
@@ -130,7 +142,11 @@ public class SecureCellSealTest {
         byte[] encrypted = cell.encrypt(message, correctContext);
 
         // You cannot use a different context to decrypt data.
-        assertThrows(SecureCellException.class, () -> cell.decrypt(encrypted, incorrectContext));
+        try {
+            cell.decrypt(encrypted, incorrectContext);
+            fail("expected SecureCellException");
+        }
+        catch (SecureCellException ignored) {}
 
         // Only the original context will work.
         byte[] decrypted = cell.decrypt(encrypted, correctContext);
@@ -154,7 +170,11 @@ public class SecureCellSealTest {
             }
         }
 
-        assertThrows(SecureCellException.class, () -> cell.decrypt(corrupted));
+        try {
+            cell.decrypt(corrupted);
+            fail("expected SecureCellException");
+        }
+        catch (SecureCellException ignored) {}
     }
 
     @Test
@@ -167,7 +187,12 @@ public class SecureCellSealTest {
 
         byte[] truncated = Arrays.copyOf(encrypted, encrypted.length - 1);
 
-        assertThrows(SecureCellException.class, () -> cell.decrypt(truncated));
+        try {
+            cell.decrypt(truncated);
+            fail("expected SecureCellException");
+        }
+        catch (SecureCellException ignored) {}
+
     }
 
     @Test
@@ -180,18 +205,38 @@ public class SecureCellSealTest {
 
         byte[] extended = Arrays.copyOf(encrypted, encrypted.length + 1);
 
-        assertThrows(SecureCellException.class, () -> cell.decrypt(extended));
+        try {
+            cell.decrypt(extended);
+            fail("expected SecureCellException");
+        }
+        catch (SecureCellException ignored) {}
     }
 
     @Test
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void emptyMessage() {
+    public void emptyMessage() throws SecureCellException {
         SecureCell.Seal cell = SecureCell.SealWithKey(new SymmetricKey());
 
-        assertThrows(NullArgumentException.class, () -> cell.encrypt(null));
-        assertThrows(NullArgumentException.class, () -> cell.decrypt(null));
-        assertThrows(InvalidArgumentException.class, () -> cell.encrypt(new byte[]{}));
-        assertThrows(InvalidArgumentException.class, () -> cell.decrypt(new byte[]{}));
+        try {
+            cell.encrypt(null);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            cell.decrypt(null);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            cell.encrypt(new byte[]{});
+            fail("expected InvalidArgumentException");
+        }
+        catch (InvalidArgumentException ignored) {}
+        try {
+            cell.decrypt(new byte[]{});
+            fail("expected InvalidArgumentException");
+        }
+        catch (InvalidArgumentException ignored) {}
     }
 
     @Test

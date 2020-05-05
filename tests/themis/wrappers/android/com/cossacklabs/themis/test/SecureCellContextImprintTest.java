@@ -52,9 +52,21 @@ public class SecureCellContextImprintTest {
     @Test
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void initWithEmpty() {
-        assertThrows(NullArgumentException.class, () -> SecureCell.ContextImprintWithKey((SymmetricKey)null));
-        assertThrows(NullArgumentException.class, () -> SecureCell.ContextImprintWithKey((byte[])null));
-        assertThrows(InvalidArgumentException.class, () -> SecureCell.ContextImprintWithKey(new byte[]{}));
+        try {
+            SecureCell.ContextImprintWithKey((SymmetricKey)null);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            SecureCell.ContextImprintWithKey((byte[])null);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            SecureCell.ContextImprintWithKey(new byte[]{});
+            fail("expected InvalidArgumentException");
+        }
+        catch (InvalidArgumentException ignored) {}
     }
 
     @Test
@@ -181,15 +193,47 @@ public class SecureCellContextImprintTest {
         byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
         byte[] context = "We are CATS".getBytes(StandardCharsets.UTF_8);
 
-        assertThrows(NullArgumentException.class, () -> cell.encrypt(message, null));
-        assertThrows(NullArgumentException.class, () -> cell.decrypt(message, null));
-        assertThrows(NullArgumentException.class, () -> cell.encrypt(null, context));
-        assertThrows(NullArgumentException.class, () -> cell.decrypt(null, context));
+        try {
+            cell.encrypt(message, null);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            cell.decrypt(message, null);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            cell.encrypt(null, context);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
+        try {
+            cell.decrypt(null, context);
+            fail("expected NullArgumentException");
+        }
+        catch (NullArgumentException ignored) {}
 
-        assertThrows(InvalidArgumentException.class, () -> cell.encrypt(message, new byte[]{}));
-        assertThrows(InvalidArgumentException.class, () -> cell.decrypt(message, new byte[]{}));
-        assertThrows(InvalidArgumentException.class, () -> cell.encrypt(new byte[]{}, context));
-        assertThrows(InvalidArgumentException.class, () -> cell.decrypt(new byte[]{}, context));
+        try {
+            cell.encrypt(message, new byte[]{});
+            fail("expected InvalidArgumentException");
+        }
+        catch (InvalidArgumentException ignored) {}
+        try {
+            cell.decrypt(message, new byte[]{});
+            fail("expected InvalidArgumentException");
+        }
+        catch (InvalidArgumentException ignored) {}
+        try {
+            cell.encrypt(new byte[]{}, context);
+            fail("expected InvalidArgumentException");
+        }
+        catch (InvalidArgumentException ignored) {}
+        try {
+            cell.decrypt(new byte[]{}, context);
+            fail("expected InvalidArgumentException");
+        }
+        catch (InvalidArgumentException ignored) {}
     }
 
     @Test
