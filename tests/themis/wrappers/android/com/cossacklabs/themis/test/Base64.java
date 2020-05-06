@@ -16,17 +16,15 @@
 
 package com.cossacklabs.themis.test;
 
-import javax.xml.bind.DatatypeConverter;
-
 // Java 8 and above has "java.utils.Base64", but it's not available on all Android API levels.
 // Android has its own "android.util.Base64" (with a different API) and it requires API 26+ too.
-// Of course we could pull Apache Commons or Guava, but that's an overkill for base64 decoding.
-// We provide our own polyfill using an obscure but standard JRE class instead.
+// Java also has an obscure "javax.xml.bind.DatatypeConverter" class which is not available on
+// Android, unfortunately. We provide our own polyfill for java.utils.Base64 using Apache Commons.
 
 final class Base64 {
     static final class Decoder {
         byte[] decode(String src) {
-            return DatatypeConverter.parseBase64Binary(src);
+            return org.apache.commons.codec.binary.Base64.decodeBase64(src);
         }
     }
 

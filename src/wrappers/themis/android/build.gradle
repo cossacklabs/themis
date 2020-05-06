@@ -22,6 +22,7 @@ dependencies {
     // Instrumentation tests
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'commons-codec:commons-codec:1.14'
 }
 
 android {

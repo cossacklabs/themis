@@ -15,6 +15,7 @@ dependencies {
     implementation 'org.jetbrains:annotations-java5:16.0.2'
     // Unit tests
     testImplementation 'junit:junit:4.13'
+    testImplementation 'commons-codec:commons-codec:1.14'
 }
 
 test {
