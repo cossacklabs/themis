@@ -15,7 +15,8 @@ dependencies {
     implementation 'org.jetbrains:annotations-java5:16.0.2'
     // Unit tests
     testImplementation 'junit:junit:4.13'
-    testImplementation 'commons-codec:commons-codec:1.14'
+    // Keep it at 1.2, see tests/themis/wrappers/android/com/cossacklabs/themis/test/Base64.java
+    testImplementation 'commons-codec:commons-codec:1.2'
 }
 
 test {

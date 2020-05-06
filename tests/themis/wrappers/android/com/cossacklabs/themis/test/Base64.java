@@ -16,15 +16,23 @@
 
 package com.cossacklabs.themis.test;
 
+import java.nio.charset.StandardCharsets;
+
 // Java 8 and above has "java.utils.Base64", but it's not available on all Android API levels.
 // Android has its own "android.util.Base64" (with a different API) and it requires API 26+ too.
 // Java also has an obscure "javax.xml.bind.DatatypeConverter" class which is not available on
 // Android, unfortunately. We provide our own polyfill for java.utils.Base64 using Apache Commons.
+//
+// Also note that some older Android systems already include an older version of Apache Commons
+// (version 1.2, it seems) loaded from "/system/framework/org.apache.http.legacy.boot.jar",
+// which overrides whatever is specified in Gradle dependencies. Use 1.2 API only.
 
 final class Base64 {
     static final class Decoder {
         byte[] decode(String src) {
-            return org.apache.commons.codec.binary.Base64.decodeBase64(src);
+            // Modern versions can accept String directly, but Android makes it hard.
+            byte[] base64bytes = src.getBytes(StandardCharsets.US_ASCII);
+            return org.apache.commons.codec.binary.Base64.decodeBase64(base64bytes);
         }
     }
 
