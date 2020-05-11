@@ -379,6 +379,21 @@ _Code:_
     Run `./gradlew :desktop:tasks` to learn more
     ([#633](https://github.com/cossacklabs/themis/pull/633)).
 
+  - Secure Cell API updates:
+
+    - New encryption/decryption API with consistent naming: `encrypt` and `decrypt`
+      ([#634](https://github.com/cossacklabs/themis/pull/634)).
+    - Improved Token Protect API
+      ([#634](https://github.com/cossacklabs/themis/pull/634)).
+      - Decryption no longer requires an intermediate `SecureCellData` object.
+    - Secure Cell mode can now be selected by instantiating an appropriate interface:
+
+      | New API | Old API |
+      | ------- | ------- |
+      | `SecureCell.SealWithKey(key)`                 | `new SecureCell(key, SecureCell.MODE_SEAL)` |
+      | `SecureCell.TokenProtectWithKey(key)`         | `new SecureCell(key, SecureCell.MODE_TOKEN_PROTECT)` |
+      | `SecureCell.ContextImprintWithKey(key)`       | `new SecureCell(key, SecureCell.MODE_CONTEXT_IMPRINT)` |
+
 - **Node.js**
 
   - New class `SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#562](https://github.com/cossacklabs/themis/pull/562)).

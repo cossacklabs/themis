@@ -16,18 +16,529 @@
 
 package com.cossacklabs.themis;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Themis secure cell
+ * Secure Cell for data storage.
+ * <p>
+ * <strong>Secure Сell</strong> is a high-level cryptographic service
+ * aimed at protecting arbitrary data stored in various types of storage
+ * (e.g., databases, filesystem files, document archives, cloud storage, etc.)
+ * It provides both strong symmetric encryption and data authentication mechanism.
+ * <p>
+ * The general approach is that given:
+ *
+ * <ul>
+ *   <li><em>input:</em> some source data to protect</li>
+ *   <li><em>secret:</em> symmetric key or a password</li>
+ *   <li><em>context:</em> and an optional “context information”</li>
+ * </ul>
+ *
+ * Secure Cell will produce:
+ *
+ * <ul>
+ *   <li><em>cell:</em> the encrypted data</li>
+ *   <li><em>authentication token:</em> some authentication data</li>
+ * </ul>
+ *
+ * <p>
+ * The purpose of the optional context information (e.g., a database row number or file name)
+ * is to establish a secure association between this context and the protected data.
+ * In short, even when the secret is known, if the context is incorrect then decryption will fail.
+ * <p>
+ * The purpose of the authentication data is to validate that given a correct key or passphrase
+ * (and context), the decrypted data is indeed the same as the original source data.
+ * <p>
+ * The authentication data must be stored somewhere. The most convenient way is to simply
+ * append it to the encrypted data, but this is not always possible due to the storage
+ * architecture of your application. Secure Cell offers variants that address this issue
+ * in different ways.
+ * <p>
+ * By default, Secure Cell uses AES-256 for encryption.
+ * Authentication data takes additional 44 bytes when symmetric keys are used
+ * and 70 bytes in case the data is secured with a passphrase.
+ * <p>
+ * Secure Cell supports 2 kinds of secrets:
+ *
+ * <ul>
+ *   <li>
+ *     <strong>Symmetric keys</strong> are convenient to store and efficient to use for machines.
+ *     However, they are relatively long and hard for humans to remember.
+ *     <p>
+ *     New symmetric keys can be generated with {@link SymmetricKey}.
+ *   <li>
+ *     <strong>Passphrases</strong>, in contrast, can be shorter and easier to remember.
+ *     <p>
+ *     However, passphrases are typically much less random than keys.
+ *     Secure Cell uses a <em>key derivation function</em> (KDF) to compensate for that
+ *     and achieves security comparable to keys with shorter passphrases.
+ *     This comes at a significant performance cost though.
+ * </ul>
+ *
+ * Use {@code ...WithKey} or {@code ...WithPassphrase} methods
+ * to construct a Secure Cell with a particular kind of secret in particular mode.
+ * <p>
+ * Secure Cell supports 3 operation modes:
+ *
+ * <ul>
+ *   <li>
+ *     {@link SecureCell.Seal} mode is the most secure and easy to use.
+ *     Your best choice most of the time.
+ *     This is also the only mode that supports passphrases at the moment.
+ *   <li>
+ *     {@link SecureCell.TokenProtect} mode is just as secure, but a bit harder to use.
+ *     This is your choice if you need to keep authentication data separate.
+ *   <li>
+ *     {@link SecureCell.ContextImprint} mode is a length-preserving version of Secure Cell
+ *     with no additional data stored. Should be used carefully.
+ * </ul>
+ *
+ * The operation mode is selected via an appropriate method of {@code SecureCell}.
+ * For example, {@link SecureCell#SealWithKey(SymmetricKey)} constructs Secure Cell in Seal mode
+ * using a symmetric key.
+ * <p>
+ * <a href="https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/">Here you can learn more</a>
+ * about the underlying considerations, limitations, and features of each mode.
+ *
+ * @since JavaThemis 0.9
  */
 public class SecureCell {
 	
 	static {
 		System.loadLibrary("themis_jni");
 	}
-	
+
+    /**
+     * Secure Cell in <em>Seal</em> operation mode.
+     * <p>
+     * This is the most secure and easy way to protect stored data.
+     * The data is protected by a symmetric key or a passphrase.
+     * <p>
+     * Secure Cell in Seal mode will encrypt the data and append an “authentication tag”
+     * with auxiliary security information, forming a single sealed container.
+     * This means that the encrypted data will be longer than the original input.
+     * <p>
+     * Additionally, it is possible to bind the encrypted data to some “associated context”
+     * (for example, database row number).
+     * In this case decryption of the data with incorrect context will fail
+     * (even if the correct key is known and the data has not been tampered).
+     * This establishes a cryptographically secure association between the protected data
+     * and the context in which it is used.
+     * With database row numbers this prevents the attacker from swapping encrypted password hashes
+     * in the database so the system will not accept credentials of a different user.
+     * <p>
+     * Security of symmetric key operation mode depends on the quality of the key,
+     * with short and incorrectly generated keys being easier to crack.
+     * You can use {@link SymmetricKey} to generate good random keys of sufficient length,
+     * then use {@link SecureCell#SealWithKey(SymmetricKey)} to construct a Secure Cell.
+     * <p>
+     * If you need to use a short and easy to remember passphrase,
+     * use passphrase API instead: {@link SecureCell#SealWithPassphrase(String)}.
+     * <p>
+     * You can read more about Seal mode
+     * <a href="https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#seal-mode">in documentation</a>.
+     *
+     * @since JavaThemis 0.13
+     */
+    public interface Seal {
+        /**
+         * Encrypts the provided message with associated context.
+         * <p>
+         * Data is encrypted and authentication token is appended to form a single sealed buffer.
+         * Use {@link #decrypt(byte[], byte[])} to decrypt the result later.
+         * <p>
+         * The context is cryptographically mixed with the data
+         * but not included into the resulting encrypted message.
+         * You will have to provide the same context again during decryption.
+         * Usually this is some plaintext data associated with encrypted data,
+         * such as database row number, protocol message ID, etc.
+         *
+         * @param data      data to encrypt, must not be empty
+         * @param context   associated context, may be empty or {@code null}
+         *
+         * @return encrypted data as a single buffer
+         * @throws InvalidArgumentException if data is empty
+         * @throws RuntimeException on internal encryption failure
+         *         (with {@link SecureCellException} as its cause)
+         */
+        @NotNull
+        @Contract(pure = true)
+        byte[] encrypt(byte[] data, @Nullable byte[] context);
+
+        /**
+         * Encrypts the provided message.
+         * <p>
+         * Data is encrypted and authentication token is appended to form a single sealed buffer.
+         * Use {@link #decrypt(byte[])} to decrypt the result later.
+         * <p>
+         * This call is equivalent to {@link #encrypt(byte[], byte[])} with an empty associated context.
+         *
+         * @param data  data to encrypt, must not be empty
+         *
+         * @return encrypted data as a single buffer
+         * @throws InvalidArgumentException if data is empty
+         * @throws RuntimeException on internal encryption failure
+         *         (with {@link SecureCellException} as its cause)
+         */
+        @NotNull
+        @Contract(pure = true)
+        byte[] encrypt(byte[] data);
+
+        /**
+         * Decrypts the provided message with associated context.
+         * <p>
+         * Secure Cell validates association with the context data, decrypts the message,
+         * and verifies its integrity using authentication data embedded into the message.
+         * <p>
+         * You need to provide the same context data as provided to {@link #encrypt(byte[], byte[])}.
+         * You can also decrypt data encrypted with {@link #encrypt(byte[])} by using an empty context.
+         *
+         * @param data      encrypted data, cannot be empty
+         * @param context   associated context, may be empty or {@code null}
+         *
+         * @return decrypted data if everything goes well
+         * @throws SecureCellException if decryption failed: for example,
+         *         if the data has been tampered with, if the secret is incorrect,
+         *         or if the associated context does not match the one used to encrypt the data
+         * @throws InvalidArgumentException if data is empty
+         */
+        @NotNull
+        @Contract(pure = true)
+        byte[] decrypt(byte[] data, @Nullable byte[] context) throws SecureCellException;
+
+        /**
+         * Decrypts the provided message with associated context.
+         * <p>
+         * Secure Cell decrypts the message and verifies its integrity
+         * using authentication data embedded into the message.
+         * <p>
+         * Use this method to decrypt data encrypted with {@link #encrypt(byte[])}.
+         * If you use associated context, call {@link #decrypt(byte[], byte[])} instead.
+         *
+         * @param data  encrypted data, cannot be empty
+         *
+         * @return decrypted data if everything goes well
+         * @throws SecureCellException if decryption failed: for example,
+         *         if the data has been tampered with, if the secret is incorrect,
+         *         or if the associated context does not match the one used to encrypt the data
+         * @throws InvalidArgumentException if data is empty
+         */
+        @NotNull
+        @Contract(pure = true)
+        byte[] decrypt(byte[] data) throws SecureCellException;
+    }
+
+    /**
+     * Makes a new Secure Cell in Seal mode secured by symmetric key.
+     *
+     * @param key symmetric key to use
+     *
+     * @return a new {@link SecureCell.Seal} instance
+     *
+     * @since JavaThemis 0.13
+     */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static Seal SealWithKey(SymmetricKey key) {
+        if (key == null) {
+            throw new NullArgumentException("key cannot be null");
+        }
+        return new SecureCellSeal(key);
+    }
+
+    /**
+     * Makes a new Secure Cell in Seal mode secured by symmetric key.
+     *
+     * @param key symmetric key bytes to use
+     *
+     * @return a new {@link SecureCell.Seal} instance
+     * @throws InvalidArgumentException if {@code key} is empty
+     *
+     * @since JavaThemis 0.13
+     */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static Seal SealWithKey(byte[] key) {
+        return new SecureCellSeal(new SymmetricKey(key));
+    }
+
+    /**
+     * Secure Cell in <em>Token Protect</em> operation mode.
+     * <p>
+     * This is a modified Seal mode for constrained environments.
+     * The data is protected by a symmetric key.
+     * <p>
+     * Token Protect mode is designed for cases when underlying storage constraints
+     * do not allow the size of the data to grow (so {@link SecureCell.Seal} cannot be used).
+     * However, if you have access to a different storage location
+     * (e.g., another table in the database) where additional security parameters can be stored
+     * then Token Protect mode can be used instead of Seal mode.
+     * <p>
+     * Token Protect mode produces authentication tag and other auxiliary data
+     * (aka “authentication token”) in a detached buffer.
+     * This keeps the original size of the encrypted data
+     * while enabling separate storage of security information.
+     * Note that the same token must be provided along with the correct secret
+     * and matching associated context in order for the data to be decrypted successfully.
+     * <p>
+     * Since {@link SecureCell.TokenProtect} uses the same security parameters as {@link SecureCell.Seal}
+     * (just stored in a different location), these modes have the same highest security level.
+     * Token Protect mode only requires slightly more programming effort
+     * in exchange for preserving the original data size.
+     * <p>
+     * Security of symmetric key operation mode depends on the quality of the key,
+     * with short and incorrectly generated keys being easier to crack.
+     * You can use {@link SymmetricKey} to generate good random keys of sufficient length,
+     * then use {@link SecureCell#TokenProtectWithKey(SymmetricKey)} to construct a Secure Cell.
+     * <p>
+     * You can read more about Token Protect mode
+     * <a href="https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#token-protect-mode">in documentation</a>.
+     *
+     * @since JavaThemis 0.13
+     */
+    public interface TokenProtect {
+        /**
+         * Encrypts the provided message with associated context.
+         * <p>
+         * Data is encrypted and authentication token is produced separately.
+         * Use {@link #decrypt(byte[], byte[], byte[])} to decrypt the result later,
+         * providing both encrypted data and corresponding token.
+         * <p>
+         * The context is cryptographically mixed with the data
+         * but not included into the resulting encrypted message.
+         * You will have to provide the same context again during decryption.
+         * Usually this is some plaintext data associated with encrypted data,
+         * such as database row number, protocol message ID, etc.
+         *
+         * @param data      data to encrypt, must not be empty
+         * @param context   associated context, may be empty or {@code null}
+         *
+         * @return an object containing encrypted data and authentication token
+         * @throws InvalidArgumentException if data is empty
+         * @throws RuntimeException on internal encryption failure
+         *         (with {@link SecureCellException} as its cause)
+         */
+        @NotNull
+        @Contract(pure = true)
+        SecureCellData encrypt(byte[] data, @Nullable byte[] context);
+
+        /**
+         * Encrypts the provided message with associated context.
+         * <p>
+         * Data is encrypted and authentication token is produced separately.
+         * Use {@link #decrypt(byte[], byte[])} to decrypt the result later,
+         * providing both encrypted data and corresponding token.
+         * <p>
+         * This call is equivalent to {@link #encrypt(byte[], byte[])} with an empty associated context.
+         *
+         * @param data  data to encrypt, must not be empty
+         *
+         * @return an object containing encrypted data and authentication token
+         * @throws InvalidArgumentException if data is empty
+         * @throws RuntimeException on internal encryption failure
+         *         (with {@link SecureCellException} as its cause)
+         */
+        @NotNull
+        @Contract(pure = true)
+        SecureCellData encrypt(byte[] data);
+
+        /**
+         * Decrypts the provided message with associated context.
+         * <p>
+         * Secure Cell validates association with the context data, decrypts the message,
+         * and verifies its integrity using the provided authentication token.
+         * <p>
+         * You need to provide the same context data as provided to {@link #encrypt(byte[], byte[])}.
+         * You can also decrypt data encrypted with {@link #encrypt(byte[])} by using an empty context.
+         *
+         * @param data      encrypted data, cannot be empty
+         * @param token     authentication token, cannot be empty
+         * @param context   associated context, may be empty or {@code null}
+         *
+         * @return decrypted data if everything goes well
+         * @throws SecureCellException if decryption failed: for example,
+         *         if the data has been tampered with, if the secret is incorrect,
+         *         or if the associated context does not match the one used to encrypt the data
+         * @throws InvalidArgumentException if data or token is empty
+         */
+        @NotNull
+        @Contract(pure = true)
+        byte[] decrypt(byte[] data, byte[] token, @Nullable  byte[] context) throws SecureCellException;
+
+        /**
+         * Decrypts the provided message with associated context.
+         * <p>
+         * Secure Cell decrypts the message and verifies its integrity
+         * using the provided authentication token.
+         * <p>
+         * Use this method to decrypt data encrypted with {@link #encrypt(byte[])}.
+         * If you use associated context, call {@link #decrypt(byte[], byte[], byte[])} instead.
+         *
+         * @param data  encrypted data, cannot be empty
+         * @param token authentication token, cannot be empty
+         *
+         * @return decrypted data if everything goes well
+         * @throws SecureCellException if decryption failed: for example,
+         *         if the data has been tampered with, if the secret is incorrect,
+         *         or if the associated context does not match the one used to encrypt the data
+         * @throws InvalidArgumentException if data or token is empty
+         */
+        @NotNull
+        @Contract(pure = true)
+        byte[] decrypt(byte[] data, byte[] token) throws SecureCellException;
+    }
+
+    /**
+     * Makes a new Secure Cell in Token Protect mode secured by symmetric key.
+     *
+     * @param key symmetric key to use
+     *
+     * @return a new {@link SecureCell.TokenProtect} instance
+     *
+     * @since JavaThemis 0.13
+     */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static TokenProtect TokenProtectWithKey(SymmetricKey key) {
+        if (key == null) {
+            throw new NullArgumentException("key cannot be null");
+        }
+        return new SecureCellTokenProtect(key);
+    }
+
+    /**
+     * Makes a new Secure Cell in Token Protect mode secured by symmetric key.
+     *
+     * @param key symmetric key bytes to use
+     *
+     * @return a new {@link SecureCell.TokenProtect} instance
+     * @throws InvalidArgumentException if {@code key} is empty
+     *
+     * @since JavaThemis 0.13
+     */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static TokenProtect TokenProtectWithKey(byte[] key) {
+        return new SecureCellTokenProtect(new SymmetricKey(key));
+    }
+
+    /**
+     * Secure Cell in <em>Context Imprint</em> operation mode.
+     * <p>
+     * This is an advanced mode for constrained environments.
+     * The data is protected by a symmetric key.
+     * <p>
+     * Context Imprint mode is intended for environments where storage constraints
+     * do not allow the size of the data to grow and there is no auxiliary storage available.
+     * Context Imprint mode requires an additional “associated context”
+     * to be provided along with the key in order to protect the data.
+     * <p>
+     * In Context Imprint mode no authentication token is computed or verified.
+     * This means that integrity of the data is not enforced,
+     * so the overall security level is slightly lower than in Seal or Token Protect modes.
+     * <p>
+     * Security of symmetric key operation mode depends on the quality of the key,
+     * with short and incorrectly generated keys being easier to crack.
+     * You can use {@link SymmetricKey} to generate good random keys of sufficient length.
+     * then use {@link SecureCell#ContextImprintWithKey(SymmetricKey)} to construct a Secure Cell.
+     * <p>
+     * To ensure the highest security level possible,
+     * supply a different associated context for each encryption invocation with the same key.
+     * <p>
+     * You can read more about Context Imprint mode
+     * <a href="https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#context-imprint-mode">in documentation</a>.
+     *
+     * @since JavaThemis 0.13
+     */
+    public interface ContextImprint {
+        /**
+         * Encrypts the provided message with associated context.
+         * <p>
+         * Data is encrypted and combined with the provided context.
+         * Use {@link #decrypt(byte[], byte[])} to decrypt the result later.
+         * <p>
+         * The context is cryptographically mixed with the data
+         * but not included into the resulting encrypted message.
+         * You will have to provide the same context again during decryption.
+         * Usually this is some plaintext data associated with encrypted data,
+         * such as database row number, protocol message ID, etc.
+         *
+         * @param data      data to encrypt, must not be empty
+         * @param context   associated context, must not be empty
+         *
+         * @return encrypted data of the same size as input
+         * @throws InvalidArgumentException if data or context is empty
+         * @throws RuntimeException on internal encryption failure
+         *         (with {@link SecureCellException} as its cause)
+         */
+        @NotNull
+        @Contract(pure = true)
+        byte[] encrypt(byte[] data, byte[] context);
+
+        /**
+         * Decrypts the provided message with associated context.
+         * <p>
+         * Secure Cell validates association with the context data and decrypts the message.
+         * You need to provide the same context data as provided to {@link #encrypt(byte[], byte[])}.
+         *
+         * @param data      encrypted data, cannot be empty
+         * @param context   associated context, cannot be empty
+         *
+         * @return decrypted data if everything goes well
+         * <p>
+         * Note that in Context Imprint mode messages do not include any authentication token
+         * for integrity validation.
+         * If data has been corrupted or the context is incorrect,
+         * Secure Cell will most likely successfully return corrupted non-empty output.
+         *
+         * @throws InvalidArgumentException if data or context is empty
+         * @throws RuntimeException on internal decryption failure
+         *         (with {@link SecureCellException} as its cause)
+         */
+        @NotNull
+        @Contract(pure = true)
+        byte[] decrypt(byte[] data, byte[] context);
+    }
+
+    /**
+     * Makes a new Secure Cell in Context Imprint mode secured by symmetric key.
+     *
+     * @param key symmetric key to use
+     *
+     * @return a new {@link SecureCell.ContextImprint} instance
+     *
+     * @since JavaThemis 0.13
+     */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static ContextImprint ContextImprintWithKey(SymmetricKey key) {
+        if (key == null) {
+            throw new NullArgumentException("key cannot be null");
+        }
+        return new SecureCellContextImprint(key);
+    }
+
+    /**
+     * Makes a new Secure Cell in Context Imprint mode secured by symmetric key.
+     *
+     * @param key symmetric key bytes to use
+     *
+     * @return a new {@link SecureCell.ContextImprint} instance
+     * @throws InvalidArgumentException if {@code key} is empty
+     *
+     * @since JavaThemis 0.13
+     */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static ContextImprint ContextImprintWithKey(byte[] key) {
+        return new SecureCellContextImprint(new SymmetricKey(key));
+    }
+
 	/**
 	 * Creates new SecureCell in specified mode
 	 * @param SecureCell mode

@@ -17,9 +17,13 @@ buildscript {
 
 dependencies {
     implementation project(":boringssl")
+    // Use a compatibility version to support Java 6.
+    implementation 'org.jetbrains:annotations-java5:16.0.2'
     // Instrumentation tests
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test:rules:1.2.0'
+    // Keep it at 1.2, see tests/themis/wrappers/android/com/cossacklabs/themis/test/Base64.java
+    androidTestImplementation 'commons-codec:commons-codec:1.2'
 }
 
 android {
@@ -33,6 +37,12 @@ android {
         targetSdkVersion 28
         // Our tests are written in JUnit, set default runner appropriately
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // Compile for Java 7.
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 
     sourceSets {
