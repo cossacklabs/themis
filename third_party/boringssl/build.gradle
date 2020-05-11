@@ -10,6 +10,9 @@ buildscript {
         // And 3.5.X fails to link ARM binaries correctly, so we're staying
         // on this Gradle version until it breaks or we *need* an upgrade:
         classpath 'com.android.tools.build:gradle:3.2.1'
+
+        // Kotlin plugin for Android
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -19,6 +22,7 @@ repositories {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 28
