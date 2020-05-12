@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -265,6 +266,66 @@ public class SecureCell {
     @Contract(value = "_ -> new", pure = true)
     public static Seal SealWithKey(byte[] key) {
         return new SecureCellSeal(new SymmetricKey(key));
+    }
+
+    /**
+     * Makes a new Secure Cell in Seal mode secured by passphrase.
+     * <p>
+     * The passphrase will be encoded in UTF-8 for compatibility with other platforms.
+     * Use {@link #SealWithPassphrase(String, Charset)} if you need other encoding.
+     *
+     * @param passphrase passphrase to use
+     *
+     * @return a new {@link SecureCell.Seal} instance
+     * @throws NullArgumentException if passphrase is null
+     * @throws InvalidArgumentException if passphrase is empty
+     *
+     * @since JavaThemis 0.13
+     */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static Seal SealWithPassphrase(String passphrase) {
+        return new SecureCellSealWithPassphrase(passphrase, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Makes a new Secure Cell in Seal mode secured by passphrase.
+     *
+     * @param passphrase passphrase to use
+     * @param charset    how to encode the passphrase
+     *
+     * @return a new {@link SecureCell.Seal} instance
+     * @throws NullArgumentException if passphrase is null
+     * @throws InvalidArgumentException if passphrase is empty
+     * @throws RuntimeException if passphrase cannot be encoded in given encoding
+     *         without data loss ({@link CharacterCodingException is the cause})
+     *
+     * @since JavaThemis 0.13
+     */
+    @NotNull
+    @Contract(value = "_, _ -> new", pure = true)
+    public static Seal SealWithPassphrase(String passphrase, Charset charset) {
+        return new SecureCellSealWithPassphrase(passphrase, charset);
+    }
+
+    /**
+     * Makes a new Secure Cell in Seal mode secured by passphrase.
+     * <p>
+     * Use this method if you need a custom encoding of the passphrase,
+     * already have it encoded, or use a binary passphrase.
+     *
+     * @param encodedPassphrase passphrase bytes to use
+     *
+     * @return a new {@link SecureCell.Seal} instance
+     * @throws NullArgumentException if passphrase is null
+     * @throws InvalidArgumentException if passphrase is empty
+     *
+     * @since JavaThemis 0.13
+     */
+    @NotNull
+    @Contract(value = "_ -> new", pure = true)
+    public static Seal SealWithPassphrase(byte[] encodedPassphrase) {
+        return new SecureCellSealWithPassphrase(encodedPassphrase);
     }
 
     /**
@@ -599,6 +660,7 @@ public class SecureCell {
 	public static final int MODE_SEAL = 0;
 	public static final int MODE_TOKEN_PROTECT = 1;
 	public static final int MODE_CONTEXT_IMPRINT = 2;
+	static final int MODE_SEAL_PASSPHRASE = 3;
 	
 	static native byte[][] encrypt(byte[] key, byte[] context, byte[] data, int mode);
 	static native byte[] decrypt(byte[] key, byte[] context, byte[][] protectedData, int mode);
