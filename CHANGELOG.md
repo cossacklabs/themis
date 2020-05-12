@@ -63,6 +63,9 @@ _Code:_
 
   See also: [Java API updates](#0.13.0-java).
 
+  - Kotlin is now officially supported language on Android
+    ([#637](https://github.com/cossacklabs/themis/pull/637).
+
   - **Breaking changes**
 
     - Android build now uses Gradle 5.6 and requires Java 8 ([#633](https://github.com/cossacklabs/themis/pull/633)).
@@ -378,6 +381,8 @@ _Code:_
   - It is now possible to build desktop Java with Gradle.
     Run `./gradlew :desktop:tasks` to learn more
     ([#633](https://github.com/cossacklabs/themis/pull/633)).
+  - Kotlin is now officially supported language for JavaThemis
+    ([#637](https://github.com/cossacklabs/themis/pull/637).
 
   - Secure Cell API updates:
 
@@ -629,6 +634,8 @@ _Infrastructure:_
 - Automated benchmarking harness is now tracking Themis performance. See [`benches`](https://github.com/cossacklabs/themis/tree/master/benches/) ([#580](https://github.com/cossacklabs/themis/pull/580)).
 - Added automated tests for all code samples in documentation, ensuring they are always up-to-date ([#600](https://github.com/cossacklabs/themis/pull/600)).
 - All 13 supported platforms are verified on GitHub Actions, along with existing CircleCI and Bitrise tests ([#600](https://github.com/cossacklabs/themis/pull/600)).
+- Kotlin API of JavaThemis is now verified by all CI platforms
+  ([#637](https://github.com/cossacklabs/themis/pull/637).
 - New Makefile targets:
   - `make jsthemis` builds JsThemis from source ([#618](https://github.com/cossacklabs/themis/pull/618)).
 
