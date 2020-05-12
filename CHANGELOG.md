@@ -447,16 +447,16 @@ _Code:_
           - `new SecureCell(int mode)`
           - `new SecureCell(byte[] key)`
           - `new SecureCell(byte[] key, int mode)`
-          - `new SecureCell(String password)` ⚠️ **not secure**
-          - `new SecureCell(String password, int mode)` ⚠️ **not secure**
+          - `new SecureCell(String password)` ⚠️ **not recommended, insecure**
+          - `new SecureCell(String password, int mode)` ⚠️ **not recommended, insecure**
         - Methods:
           - `protect(byte[] key, byte[] context, byte[] data)`
           - `protect(byte[] constext, byte[] data)`
-          - `protect(String password, String context, byte[] data)` ⚠️ **not secure**
+          - `protect(String password, String context, byte[] data)` ⚠️ **not recommended, insecure**
           - `protect(String context, byte[] data)`
           - `unprotect(byte[] key, byte[] context, SecureCellData protected)`
           - `unprotect(byte[] context, SecureCellData protected)`
-          - `unprotect(String password, String context, SecureCellData protected)` ⚠️ **not secure**
+          - `unprotect(String password, String context, SecureCellData protected)` ⚠️ **not recommended, insecure**
           - `unprotect(String context, SecureCellData protected)`
         - Constants:
           - `SecureCell.MODE_SEAL`
