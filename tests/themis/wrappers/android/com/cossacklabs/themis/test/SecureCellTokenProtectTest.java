@@ -411,6 +411,7 @@ public class SecureCellTokenProtectTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void oldAPI() throws SecureCellException {
         SymmetricKey key = new SymmetricKey();
         SecureCell.TokenProtect newCell = SecureCell.TokenProtectWithKey(key);
@@ -441,6 +442,7 @@ public class SecureCellTokenProtectTest {
     }
 
     @Test
+    @SuppressWarnings("deprecation")
     public void oldAPIWithoutContext() throws SecureCellException {
         SymmetricKey key = new SymmetricKey();
         SecureCell.TokenProtect newCell = SecureCell.TokenProtectWithKey(key);

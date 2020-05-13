@@ -45,6 +45,7 @@ class SecureCellContextImprint implements SecureCell.ContextImprint {
             throw new InvalidArgumentException("context cannot be empty");
         }
         byte[] keyBytes = this.key.key;
+        @SuppressWarnings("deprecation")
         byte[][] result = SecureCell.encrypt(keyBytes, context, data, SecureCell.MODE_CONTEXT_IMPRINT);
         // TODO(ilammy, 2020-05-05): teach SecureCell#encrypt to throw SecureCellException (T1605)
         if (result == null) {
@@ -70,6 +71,7 @@ class SecureCellContextImprint implements SecureCell.ContextImprint {
         }
         byte[] keyBytes = this.key.key;
         byte[][] encrypted = {data, null};
+        @SuppressWarnings("deprecation")
         byte[] result = SecureCell.decrypt(keyBytes, context, encrypted, SecureCell.MODE_CONTEXT_IMPRINT);
         // TODO(ilammy, 2020-05-05): teach SecureCell#decrypt to throw SecureCellException (T1605)
         if (result == null) {
