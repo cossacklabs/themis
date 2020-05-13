@@ -16,6 +16,8 @@
 
 package com.cossacklabs.themis;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents data protected by SecureCell
  */
@@ -58,4 +60,23 @@ public class SecureCellData {
 		return null != this.additionalData;
 	}
 
+	/**
+	 * Returns encrypted data for Token Protect mode.
+	 * <p>
+	 * This method is equivalent to {@link #getProtectedData()}.
+	 * You are not expected to use it directly, it exists for improved Kotlin API.
+	 */
+	public @NotNull byte[] component1() {
+		return this.protectedData;
+	}
+
+	/**
+	 * Returns authentication token for Token Protect mode.
+	 * <p>
+	 * This method is equivalent to {@link #getAdditionalData()}.
+	 * You are not expected to use it directly, it exists for improved Kotlin API.
+	 */
+	public @NotNull byte[] component2() {
+		return this.additionalData;
+	}
 }

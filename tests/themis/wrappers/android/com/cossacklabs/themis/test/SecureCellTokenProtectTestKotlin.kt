@@ -61,11 +61,7 @@ class SecureCellTokenProtectTestKotlin {
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
         val context = "For great justice".toByteArray(StandardCharsets.UTF_8)
 
-        val result = cell.encrypt(message, context)
-        assertNotNull(result)
-
-        val encrypted = result.protectedData
-        val authToken = result.additionalData
+        val (encrypted, authToken) = cell.encrypt(message, context)
         assertNotNull(encrypted)
         assertNotNull(authToken)
 
@@ -79,9 +75,10 @@ class SecureCellTokenProtectTestKotlin {
         val cell = SecureCell.TokenProtectWithKey(SymmetricKey())
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
-        val result = cell.encrypt(message)
-        assertEquals(message.size.toLong(), result.protectedData.size.toLong())
-        assertTrue(result.additionalData.isNotEmpty())
+        val (encrypted, authToken) = cell.encrypt(message)
+
+        assertEquals(message.size, encrypted.size)
+        assertTrue(authToken.isNotEmpty())
     }
 
     @Test
@@ -91,12 +88,12 @@ class SecureCellTokenProtectTestKotlin {
         val shortContext = ".".toByteArray(StandardCharsets.UTF_8)
         val longContext = "You have no chance to survive make your time. Ha ha ha ha ...".toByteArray(StandardCharsets.UTF_8)
 
-        val resultShort = cell.encrypt(message, shortContext)
-        val resultLong = cell.encrypt(message, longContext)
+        val (encryptedShort, authTokenShort) = cell.encrypt(message, shortContext)
+        val (encryptedLong, authTokenLong) = cell.encrypt(message, longContext)
 
         // Context is not (directly) included into encrypted message.
-        assertEquals(resultShort.protectedData.size.toLong(), resultLong.protectedData.size.toLong())
-        assertEquals(resultShort.additionalData.size.toLong(), resultLong.additionalData.size.toLong())
+        assertEquals(encryptedShort.size, encryptedLong.size)
+        assertEquals(authTokenShort.size, authTokenLong.size)
     }
 
     @Test
@@ -106,19 +103,19 @@ class SecureCellTokenProtectTestKotlin {
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
         // Absent, empty, or nil context are all the same.
-        val result1 = cell.encrypt(message)
-        val result2 = cell.encrypt(message, null)
-        val result3 = cell.encrypt(message, byteArrayOf())
+        val (encrypted1, authToken1) = cell.encrypt(message)
+        val (encrypted2, authToken2) = cell.encrypt(message, null)
+        val (encrypted3, authToken3) = cell.encrypt(message, byteArrayOf())
 
-        assertArrayEquals(message, cell.decrypt(result1.protectedData, result1.additionalData))
-        assertArrayEquals(message, cell.decrypt(result2.protectedData, result2.additionalData))
-        assertArrayEquals(message, cell.decrypt(result3.protectedData, result3.additionalData))
-        assertArrayEquals(message, cell.decrypt(result1.protectedData, result1.additionalData, null))
-        assertArrayEquals(message, cell.decrypt(result2.protectedData, result2.additionalData, null))
-        assertArrayEquals(message, cell.decrypt(result3.protectedData, result3.additionalData, null))
-        assertArrayEquals(message, cell.decrypt(result1.protectedData, result1.additionalData, byteArrayOf()))
-        assertArrayEquals(message, cell.decrypt(result2.protectedData, result2.additionalData, byteArrayOf()))
-        assertArrayEquals(message, cell.decrypt(result3.protectedData, result3.additionalData, byteArrayOf()))
+        assertArrayEquals(message, cell.decrypt(encrypted1, authToken1))
+        assertArrayEquals(message, cell.decrypt(encrypted2, authToken2))
+        assertArrayEquals(message, cell.decrypt(encrypted3, authToken3))
+        assertArrayEquals(message, cell.decrypt(encrypted1, authToken1, null))
+        assertArrayEquals(message, cell.decrypt(encrypted2, authToken2, null))
+        assertArrayEquals(message, cell.decrypt(encrypted3, authToken3, null))
+        assertArrayEquals(message, cell.decrypt(encrypted1, authToken1, byteArrayOf()))
+        assertArrayEquals(message, cell.decrypt(encrypted2, authToken2, byteArrayOf()))
+        assertArrayEquals(message, cell.decrypt(encrypted3, authToken3, byteArrayOf()))
     }
 
     @Test
@@ -129,9 +126,7 @@ class SecureCellTokenProtectTestKotlin {
         val correctContext = "We are CATS".toByteArray(StandardCharsets.UTF_8)
         val incorrectContext = "Captain !!".toByteArray(StandardCharsets.UTF_8)
 
-        val result = cell.encrypt(message, correctContext)
-        val encrypted = result.protectedData
-        val authToken = result.additionalData
+        val (encrypted, authToken) = cell.encrypt(message, correctContext)
 
         // You cannot use a different context to decrypt data.
         assertThrows(SecureCellException::class.java) {
@@ -149,13 +144,8 @@ class SecureCellTokenProtectTestKotlin {
         val cell = SecureCell.TokenProtectWithKey(SymmetricKey())
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
-        val result1 = cell.encrypt(message)
-        val encrypted1 = result1.protectedData
-        val authToken1 = result1.additionalData
-
-        val result2 = cell.encrypt(message)
-        val encrypted2 = result2.protectedData
-        val authToken2 = result2.additionalData
+        val (encrypted1, authToken1) = cell.encrypt(message)
+        val (encrypted2, authToken2) = cell.encrypt(message)
 
         // You cannot use a different token to decrypt data.
         assertThrows(SecureCellException::class.java) { cell.decrypt(encrypted1, authToken2) }
@@ -171,9 +161,7 @@ class SecureCellTokenProtectTestKotlin {
         val cell = SecureCell.TokenProtectWithKey(SymmetricKey())
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
-        val result = cell.encrypt(message)
-        val encrypted = result.protectedData
-        val authToken = result.additionalData
+        val (encrypted, authToken) = cell.encrypt(message)
 
         // Invert every odd byte, this will surely break the message.
         val corrupted = Arrays.copyOf(encrypted, encrypted.size)
@@ -193,9 +181,7 @@ class SecureCellTokenProtectTestKotlin {
         val cell = SecureCell.TokenProtectWithKey(SymmetricKey())
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
-        val result = cell.encrypt(message)
-        val encrypted = result.protectedData
-        val authToken = result.additionalData
+        val (encrypted, authToken) = cell.encrypt(message)
 
         val truncated = Arrays.copyOf(encrypted, encrypted.size - 1)
 
@@ -209,9 +195,7 @@ class SecureCellTokenProtectTestKotlin {
         val cell = SecureCell.TokenProtectWithKey(SymmetricKey())
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
-        val result = cell.encrypt(message)
-        val encrypted = result.protectedData
-        val authToken = result.additionalData
+        val (encrypted, authToken) = cell.encrypt(message)
 
         val extended = Arrays.copyOf(encrypted, encrypted.size + 1)
 
@@ -226,9 +210,7 @@ class SecureCellTokenProtectTestKotlin {
         val cell = SecureCell.TokenProtectWithKey(SymmetricKey())
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
-        val result = cell.encrypt(message)
-        val encrypted = result.protectedData
-        val authToken = result.additionalData
+        val (encrypted, authToken) = cell.encrypt(message)
 
         // Invert every odd byte, this will surely break the token.
         val corruptedToken = Arrays.copyOf(authToken, authToken.size)
@@ -253,9 +235,7 @@ class SecureCellTokenProtectTestKotlin {
         val cell = SecureCell.TokenProtectWithKey(SymmetricKey())
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
-        val result = cell.encrypt(message)
-        val encrypted = result.protectedData
-        val authToken = result.additionalData
+        val (encrypted, authToken) = cell.encrypt(message)
 
         val truncatedToken = Arrays.copyOf(authToken, authToken.size - 1)
 
@@ -270,9 +250,7 @@ class SecureCellTokenProtectTestKotlin {
         val cell = SecureCell.TokenProtectWithKey(SymmetricKey())
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
-        val result = cell.encrypt(message)
-        val encrypted = result.protectedData
-        val authToken = result.additionalData
+        val (encrypted, authToken) = cell.encrypt(message)
 
         val extendedToken = Arrays.copyOf(authToken, authToken.size + 1)
 
@@ -288,9 +266,7 @@ class SecureCellTokenProtectTestKotlin {
         val cell = SecureCell.TokenProtectWithKey(SymmetricKey())
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
-        val result = cell.encrypt(message)
-        val encrypted = result.protectedData
-        val authToken = result.additionalData
+        val (encrypted, authToken) = cell.encrypt(message)
 
         // FIXME(ilammy, 2020-05-05): improve Themis Core robustness (T1604)
         // Currently this call throws OutOfMemoryError instead of SecureCellException
@@ -308,8 +284,7 @@ class SecureCellTokenProtectTestKotlin {
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
         val context = "We are CATS".toByteArray(StandardCharsets.UTF_8)
 
-        val result = cell.encrypt(message, context)
-        val encrypted = result.protectedData
+        val (encrypted, _) = cell.encrypt(message, context)
 
         assertThrows(SecureCellException::class.java) {
             cell.decrypt(encrypted, context)
@@ -325,9 +300,7 @@ class SecureCellTokenProtectTestKotlin {
         assertThrows(NullArgumentException::class.java) { cell.encrypt(null) }
         assertThrows(InvalidArgumentException::class.java) { cell.encrypt(byteArrayOf()) }
 
-        val result = cell.encrypt(message)
-        val encrypted = result.protectedData
-        val authToken = result.additionalData
+        val (encrypted, authToken) = cell.encrypt(message)
 
         assertThrows(NullArgumentException::class.java) { cell.decrypt(encrypted, null) }
         assertThrows(NullArgumentException::class.java) { cell.decrypt(null, authToken) }
@@ -346,26 +319,20 @@ class SecureCellTokenProtectTestKotlin {
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
         val context = "We are CATS".toByteArray(StandardCharsets.UTF_8)
 
-        var encrypted: ByteArray
-        var authToken: ByteArray
-        var decrypted: ByteArray?
-        var result = oldCell.protect(context, message)
+        val result = oldCell.protect(context, message)
         assertNotNull(result)
-        encrypted = result.protectedData
-        authToken = result.additionalData
-        assertNotNull(encrypted)
-        assertNotNull(authToken)
-        decrypted = newCell.decrypt(encrypted, authToken, context)
-        assertArrayEquals(message, decrypted)
+        val encryptedOld = result.protectedData
+        val authTokenOld = result.additionalData
+        assertNotNull(encryptedOld)
+        assertNotNull(authTokenOld)
+        val decryptedOld = newCell.decrypt(encryptedOld, authTokenOld, context)
+        assertArrayEquals(message, decryptedOld)
 
-        result = newCell.encrypt(message, context)
-        assertNotNull(result)
-        encrypted = result.protectedData
-        authToken = result.additionalData
-        assertNotNull(encrypted)
-        assertNotNull(authToken)
-        decrypted = oldCell.unprotect(context, SecureCellData(encrypted, authToken))
-        assertArrayEquals(message, decrypted)
+        val (encryptedNew, authTokenNew) = newCell.encrypt(message, context)
+        assertNotNull(encryptedNew)
+        assertNotNull(authTokenNew)
+        val decryptedNew = oldCell.unprotect(context, SecureCellData(encryptedNew, authTokenNew))
+        assertArrayEquals(message, decryptedNew)
     }
 
     @Test
@@ -377,25 +344,19 @@ class SecureCellTokenProtectTestKotlin {
         val oldCell = SecureCell(key.toByteArray(), SecureCell.MODE_TOKEN_PROTECT)
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
-        var encrypted: ByteArray
-        var authToken: ByteArray
-        var decrypted: ByteArray?
-        var result = oldCell.protect(null as ByteArray?, message)
+        val result = oldCell.protect(null as ByteArray?, message)
         assertNotNull(result)
-        encrypted = result.protectedData
-        authToken = result.additionalData
-        assertNotNull(encrypted)
-        assertNotNull(authToken)
-        decrypted = newCell.decrypt(encrypted, authToken)
-        assertArrayEquals(message, decrypted)
+        val encryptedOld = result.protectedData
+        val authTokenOld = result.additionalData
+        assertNotNull(encryptedOld)
+        assertNotNull(authTokenOld)
+        val decryptedOld = newCell.decrypt(encryptedOld, authTokenOld)
+        assertArrayEquals(message, decryptedOld)
 
-        result = newCell.encrypt(message)
-        assertNotNull(result)
-        encrypted = result.protectedData
-        authToken = result.additionalData
-        assertNotNull(encrypted)
-        assertNotNull(authToken)
-        decrypted = oldCell.unprotect(null as ByteArray?, SecureCellData(encrypted, authToken))
-        assertArrayEquals(message, decrypted)
+        val (encryptedNew, authTokenNew) = newCell.encrypt(message)
+        assertNotNull(encryptedNew)
+        assertNotNull(authTokenNew)
+        val decryptedNew = oldCell.unprotect(null as ByteArray?, SecureCellData(encryptedNew, authTokenNew))
+        assertArrayEquals(message, decryptedNew)
     }
 }
