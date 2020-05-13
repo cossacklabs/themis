@@ -16,7 +16,6 @@
 package com.cossacklabs.themis.test
 
 import java.nio.charset.StandardCharsets
-import java.util.*
 import kotlin.experimental.inv
 
 import com.cossacklabs.themis.*
@@ -164,7 +163,7 @@ class SecureCellTokenProtectTestKotlin {
         val (encrypted, authToken) = cell.encrypt(message)
 
         // Invert every odd byte, this will surely break the message.
-        val corrupted = Arrays.copyOf(encrypted, encrypted.size)
+        val corrupted = encrypted.copyOf(encrypted.size)
         for (i in corrupted.indices) {
             if (i % 2 == 1) {
                 corrupted[i] = corrupted[i].inv()
@@ -183,7 +182,7 @@ class SecureCellTokenProtectTestKotlin {
 
         val (encrypted, authToken) = cell.encrypt(message)
 
-        val truncated = Arrays.copyOf(encrypted, encrypted.size - 1)
+        val truncated = encrypted.copyOf(encrypted.size - 1)
 
         assertThrows(SecureCellException::class.java) {
             cell.decrypt(truncated, authToken)
@@ -197,7 +196,7 @@ class SecureCellTokenProtectTestKotlin {
 
         val (encrypted, authToken) = cell.encrypt(message)
 
-        val extended = Arrays.copyOf(encrypted, encrypted.size + 1)
+        val extended = encrypted.copyOf(encrypted.size + 1)
 
         assertThrows(SecureCellException::class.java) {
             cell.decrypt(extended, authToken)
@@ -213,7 +212,7 @@ class SecureCellTokenProtectTestKotlin {
         val (encrypted, authToken) = cell.encrypt(message)
 
         // Invert every odd byte, this will surely break the token.
-        val corruptedToken = Arrays.copyOf(authToken, authToken.size)
+        val corruptedToken = authToken.copyOf(authToken.size)
         for (i in corruptedToken.indices) {
             if (i % 2 == 1) {
                 corruptedToken[i] = corruptedToken[i].inv()
@@ -237,7 +236,7 @@ class SecureCellTokenProtectTestKotlin {
 
         val (encrypted, authToken) = cell.encrypt(message)
 
-        val truncatedToken = Arrays.copyOf(authToken, authToken.size - 1)
+        val truncatedToken = authToken.copyOf(authToken.size - 1)
 
         assertThrows(SecureCellException::class.java) {
             cell.decrypt(encrypted, truncatedToken)
@@ -252,7 +251,7 @@ class SecureCellTokenProtectTestKotlin {
 
         val (encrypted, authToken) = cell.encrypt(message)
 
-        val extendedToken = Arrays.copyOf(authToken, authToken.size + 1)
+        val extendedToken = authToken.copyOf(authToken.size + 1)
 
         // Current implementation of Secure Cell allows the token to be overlong.
         // Extra data is simply ignored.
