@@ -5,11 +5,16 @@ allprojects {
         repositories {
             google()
             jcenter()
+            mavenCentral()
         }
+
+        // Set common Kotlin version that we are going to use.
+        ext.kotlin_version = '1.3.72'
     }
 
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
 }

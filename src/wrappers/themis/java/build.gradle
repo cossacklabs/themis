@@ -1,4 +1,12 @@
 apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+buildscript {
+    dependencies {
+        // Kotlin plugin for Java
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
 
 sourceSets {
     main {
@@ -17,6 +25,8 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     // Keep it at 1.2, see tests/themis/wrappers/android/com/cossacklabs/themis/test/Base64.java
     testImplementation 'commons-codec:commons-codec:1.2'
+    // Kotlin for unit tests
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 test {
