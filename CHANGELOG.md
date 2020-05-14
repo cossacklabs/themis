@@ -65,6 +65,8 @@ _Code:_
 
   - Kotlin is now officially supported language on Android
     ([#637](https://github.com/cossacklabs/themis/pull/637).
+  - Fixed a crash when decrypting corrupted Secure Cell data
+    ([#639](https://github.com/cossacklabs/themis/pull/639)).
 
   - **Breaking changes**
 
