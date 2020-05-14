@@ -285,9 +285,12 @@ class SecureCellTokenProtectTestKotlin {
         val encrypted = result.protectedData
         val authToken = result.additionalData
 
-        assertThrows(SecureCellException::class.java) {
+        // Depending on how lucky you are, Themis might or might not detect the error early enough.
+        // If it does not, it proceeds to allocate some weird buffer which might be too big.
+        val e = assertThrows(Throwable::class.java) {
             cell.decrypt(authToken, encrypted)
         }
+        assertTrue(e is SecureCellException || e is OutOfMemoryError)
     }
 
     @Test

@@ -333,7 +333,9 @@ public class SecureCellTokenProtectTest {
             cell.decrypt(authToken, encrypted);
             fail("expected SecureCellException");
         }
-        catch (SecureCellException ignored) {}
+        // Depending on how lucky you are, Themis might or might not detect the error early enough.
+        // If it does not, it proceeds to allocate some weird buffer which might be too big.
+        catch (SecureCellException | OutOfMemoryError ignored) {}
     }
 
     @Test
