@@ -277,7 +277,7 @@ public class SecureCellSealWithPassphraseTest {
         byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
 
         // Message encrypted by PyThemis
-        byte[] encrypted = Base64.getDecoder().decode("AAEBQQwAAAAQAAAAHwAAABYAAAA0a7ZiM/EN7xyQSzZ3qD5YWpYMuAOIzi2PRR/mQA0DABAAWBZ+KWU/77jobUZZRM8syUPdwmga46Wdas7QeD9jFgU0Z9nCwgqN06DHer2VH+E=");
+        byte[] encrypted = Base64.getDecoder().decode("AAEBQQwAAAAQAAAAHwAAABYAAAAZzELB2A0q/vzRB0FVP664QBPjKA/AER9v5oxAQA0DABAAuidXTI+22ukcDOfifuHCtP7PGu73GI7Ga7hlZfUrczMYrg9/LdV22vdRwfYbdIU=");
         byte[] decrypted = cell.decrypt(encrypted);
 
         assertArrayEquals(message, decrypted);

@@ -226,7 +226,7 @@ class SecureCellSealWithPassphraseTestKotlin {
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
         // Message encrypted by PyThemis
-        val encrypted = Base64.getDecoder().decode("AAEBQQwAAAAQAAAAHwAAABYAAAA0a7ZiM/EN7xyQSzZ3qD5YWpYMuAOIzi2PRR/mQA0DABAAWBZ+KWU/77jobUZZRM8syUPdwmga46Wdas7QeD9jFgU0Z9nCwgqN06DHer2VH+E=")
+        val encrypted = Base64.getDecoder().decode("AAEBQQwAAAAQAAAAHwAAABYAAADy+4zWeqGQjLNlN3EVreeo2dnnL9UyFSFCLeOmQA0DABAAtVl1a5G5CDLNxZ/kOxErxj6xgu+0f5m+HBLgzcdLvbgcvO93buExyghbOmGBXoA=")
         val decrypted = cell.decrypt(encrypted)
         assertArrayEquals(message, decrypted)
     }
