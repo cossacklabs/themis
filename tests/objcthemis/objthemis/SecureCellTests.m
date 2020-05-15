@@ -566,7 +566,7 @@ static const size_t defaultLength = 32;
     NSData *message = [@"All your base are belong to us!" dataUsingEncoding:NSUTF8StringEncoding];
 
     // Message encrypted by PyThemis
-    NSString *encryptedString = @"AAEBQQwAAAAQAAAAHwAAABYAAAA0a7ZiM/EN7xyQSzZ3qD5YWpYMuAOIzi2PRR/mQA0DABAAWBZ+KWU/77jobUZZRM8syUPdwmga46Wdas7QeD9jFgU0Z9nCwgqN06DHer2VH+E=";
+    NSString *encryptedString = @"AAEBQQwAAAAQAAAAHwAAABYAAADd7pTPG8qgEZEl+P44uql6d3bIIrVV8+OCTZOVQA0DABAAu+6OAvFZuj6nfd40hsLMyJiu+yObBmb5De7ZOsHL3j3SRZqKIoEGX0e1iAApBFQ=";
     NSData *encrypted = [[NSData alloc] initWithBase64EncodedString:encryptedString
                                                             options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
