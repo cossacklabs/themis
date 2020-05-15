@@ -59,7 +59,7 @@ static themis_status_t themis_auth_sym_derive_encryption_key_pbkdf2(
     const uint8_t* passphrase,
     size_t passphrase_length,
     uint8_t* derived_key,
-    size_t derived_key_length,
+    size_t* derived_key_length,
     uint8_t* auth_token,
     size_t* auth_token_length)
 {
@@ -88,7 +88,7 @@ static themis_status_t themis_auth_sym_derive_encryption_key_pbkdf2(
                               kdf.salt_length,
                               kdf.iteration_count,
                               derived_key,
-                              derived_key_length);
+                              *derived_key_length);
     if (res != THEMIS_SUCCESS) {
         goto error;
     }
@@ -117,23 +117,13 @@ static themis_status_t themis_auth_sym_derive_encryption_key_passphrase(
     uint8_t* auth_token,
     size_t* auth_token_length)
 {
-    size_t required_length = soter_alg_key_length(hdr->alg);
-    /*
-     * This is our internal buffer so it cannot be too small. If it is, either
-     * the data is corrupted, or THEMIS_AUTH_SYM_KEY_LENGTH is incorrect.
-     */
-    if (*derived_key_length < required_length) {
-        return THEMIS_FAIL;
-    }
-    *derived_key_length = required_length;
-
     switch (soter_alg_kdf(hdr->alg)) {
     case SOTER_SYM_PBKDF2:
         return themis_auth_sym_derive_encryption_key_pbkdf2(hdr,
                                                             passphrase,
                                                             passphrase_length,
                                                             derived_key,
-                                                            required_length,
+                                                            derived_key_length,
                                                             auth_token,
                                                             auth_token_length);
     case SOTER_SYM_NOKDF:
@@ -271,7 +261,7 @@ static themis_status_t themis_auth_sym_derive_decryption_key_pbkdf2(
     const uint8_t* passphrase,
     size_t passphrase_length,
     uint8_t* derived_key,
-    size_t derived_key_length)
+    size_t* derived_key_length)
 {
     themis_status_t res = THEMIS_FAIL;
     struct themis_scell_pbkdf2_context kdf;
@@ -288,7 +278,7 @@ static themis_status_t themis_auth_sym_derive_decryption_key_pbkdf2(
                               kdf.salt_length,
                               kdf.iteration_count,
                               derived_key,
-                              derived_key_length);
+                              *derived_key_length);
     return res;
 }
 
@@ -299,36 +289,13 @@ static themis_status_t themis_auth_sym_derive_decryption_key_passphrase(
     uint8_t* derived_key,
     size_t* derived_key_length)
 {
-    size_t required_length = soter_alg_key_length(hdr->alg);
-    /*
-     * Accept only expected values that we know that we can handle. Robustness
-     * is more important here than future-proofing. AES is unlikely to support
-     * more key lengths anyway.
-     */
-    switch (required_length) {
-    case SOTER_SYM_256_KEY_LENGTH / 8:
-    case SOTER_SYM_192_KEY_LENGTH / 8:
-    case SOTER_SYM_128_KEY_LENGTH / 8:
-        break;
-    default:
-        return THEMIS_FAIL;
-    }
-    /*
-     * This is our internal buffer so it cannot be too small. If it is, either
-     * the data is corrupted, or THEMIS_AUTH_SYM_MAX_KEY_LENGTH is incorrect.
-     */
-    if (*derived_key_length < required_length) {
-        return THEMIS_FAIL;
-    }
-    *derived_key_length = required_length;
-
     switch (soter_alg_kdf(hdr->alg)) {
     case SOTER_SYM_PBKDF2:
         return themis_auth_sym_derive_decryption_key_pbkdf2(hdr,
                                                             passphrase,
                                                             passphrase_length,
                                                             derived_key,
-                                                            required_length);
+                                                            derived_key_length);
     case SOTER_SYM_NOKDF:
         return THEMIS_FAIL;
     default:
