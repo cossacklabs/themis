@@ -203,8 +203,7 @@ class SecureCellTokenProtectTestKotlin {
         }
     }
 
-    @Test // FIXME(ilammy, 2020-05-05): resolve the bug in JNI code to unblock this test (T1607)
-    @Ignore("crashes on Android due to a bug in JNI code")
+    @Test
     fun detectCorruptedToken() {
         val cell = SecureCell.TokenProtectWithKey(SymmetricKey())
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
@@ -219,12 +218,7 @@ class SecureCellTokenProtectTestKotlin {
             }
         }
 
-        // FIXME(ilammy, 2020-05-05): improve Themis Core robustness (T1604)
-        // Currently this call throws NegativeArraySizeException instead of SecureCellException
-        // because the Core library fails to detect corruption and returns negative buffer size
-        // which we cannot allocate, unfortunately.
-        // Expect "SecureCellException.class" here once the issue is resolved.
-        assertThrows(Throwable::class.java) {
+        assertThrows(SecureCellException::class.java) {
             cell.decrypt(encrypted, corruptedToken)
         }
     }
@@ -259,22 +253,19 @@ class SecureCellTokenProtectTestKotlin {
         assertArrayEquals(message, decrypted)
     }
 
-    @Test // FIXME(ilammy, 2020-05-05): resolve the bug in JNI code to unblock this test (T1607)
-    @Ignore("crashes on Android due to a bug in JNI code")
+    @Test
     fun swapTokenAndData() {
         val cell = SecureCell.TokenProtectWithKey(SymmetricKey())
         val message = "All your base are belong to us!".toByteArray(StandardCharsets.UTF_8)
 
         val (encrypted, authToken) = cell.encrypt(message)
 
-        // FIXME(ilammy, 2020-05-05): improve Themis Core robustness (T1604)
-        // Currently this call throws OutOfMemoryError instead of SecureCellException
-        // because the Core library fails to detect corruption and returns incorrect buffer size
-        // which we cannot allocate, unfortunately.
-        // Expect "SecureCellException.class" here once the issue is resolved.
-        assertThrows(Throwable::class.java) {
+        // Depending on how lucky you are, Themis might or might not detect the error early enough.
+        // If it does not, it proceeds to allocate some weird buffer which might be too big.
+        val e = assertThrows(Throwable::class.java) {
             cell.decrypt(authToken, encrypted)
         }
+        assertTrue(e is SecureCellException || e is OutOfMemoryError)
     }
 
     @Test

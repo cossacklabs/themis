@@ -132,6 +132,14 @@ static int on_get_public_key_for_id(
         return THEMIS_FAIL;
     }
 
+    /*
+     * Normally peer IDs should not be this big, but just in case, avoid
+     * integer overflow here. JVM cannot allocate more than 2 GB in one chunk.
+     */
+    if (id_length > INT32_MAX) {
+        return THEMIS_NO_MEMORY;
+    }
+
     peer_id = (*(ctx->env))->NewByteArray(ctx->env, id_length);
     if (!peer_id) {
         return THEMIS_FAIL;
@@ -221,6 +229,15 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniSave(J
         return NULL;
     }
 
+    /*
+     * Normally serialized Secure Session should not be this big, but just in case,
+     * avoid integer overflow here. JVM cannot allocate more than 2 GB in one chunk.
+     */
+    if (state_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
+        return NULL;
+    }
+
     state = (*env)->NewByteArray(env, state_length);
     if (!state) {
         return NULL;
@@ -288,6 +305,15 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniWrap(J
 
     res = secure_session_wrap(&(ctx->session), data_buf, data_length, NULL, &wrapped_data_length);
     if (THEMIS_BUFFER_TOO_SMALL != res) {
+        goto err;
+    }
+
+    /*
+     * Secure Session protocol can handle messages up to 4 GB, but JVM does not
+     * support byte arrays bigger that 2 GB. We just cannot allocate that much.
+     */
+    if (wrapped_data_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
         goto err;
     }
 
@@ -379,6 +405,15 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniUnwr
         goto err;
     }
 
+    /*
+     * Secure Session protocol can handle messages up to 4 GB, but JVM does not
+     * support byte arrays bigger that 2 GB. We just cannot allocate that much.
+     */
+    if (data_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
+        goto err;
+    }
+
     data_array = (*env)->NewByteArray(env, data_length);
     if (!data_array) {
         goto err;
@@ -452,6 +487,15 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniGenera
 
     res = secure_session_generate_connect_request(&(ctx->session), NULL, &request_length);
     if (THEMIS_BUFFER_TOO_SMALL != res) {
+        goto err;
+    }
+
+    /*
+     * Normally the connection request should not be this big, but just in case,
+     * avoid integer overflow here. JVM cannot allocate more than 2 GB at once.
+     */
+    if (request_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
         goto err;
     }
 

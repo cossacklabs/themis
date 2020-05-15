@@ -259,8 +259,6 @@ public class SecureCellTokenProtectTest {
 
 
     @Test
-    // FIXME(ilammy, 2020-05-05): resolve the bug in JNI code to unblock this test (T1607)
-    @Ignore("crashes on Android due to a bug in JNI code")
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void detectCorruptedToken() {
         SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
@@ -278,16 +276,11 @@ public class SecureCellTokenProtectTest {
             }
         }
 
-        // FIXME(ilammy, 2020-05-05): improve Themis Core robustness (T1604)
-        // Currently this call throws NegativeArraySizeException instead of SecureCellException
-        // because the Core library fails to detect corruption and returns negative buffer size
-        // which we cannot allocate, unfortunately.
-        // Expect "SecureCellException.class" here once the issue is resolved.
         try {
             cell.decrypt(encrypted, corruptedToken);
             fail("expected SecureCellException");
         }
-        catch (Throwable ignored) {}
+        catch (SecureCellException ignored) {}
     }
 
     @Test
@@ -327,8 +320,6 @@ public class SecureCellTokenProtectTest {
     }
 
     @Test
-    // FIXME(ilammy, 2020-05-05): resolve the bug in JNI code to unblock this test (T1607)
-    @Ignore("crashes on Android due to a bug in JNI code")
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void swapTokenAndData() {
         SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(new SymmetricKey());
@@ -338,16 +329,13 @@ public class SecureCellTokenProtectTest {
         byte[] encrypted = result.getProtectedData();
         byte[] authToken = result.getAdditionalData();
 
-        // FIXME(ilammy, 2020-05-05): improve Themis Core robustness (T1604)
-        // Currently this call throws OutOfMemoryError instead of SecureCellException
-        // because the Core library fails to detect corruption and returns incorrect buffer size
-        // which we cannot allocate, unfortunately.
-        // Expect "SecureCellException.class" here once the issue is resolved.
         try {
             cell.decrypt(authToken, encrypted);
             fail("expected SecureCellException");
         }
-        catch (Throwable ignored) {}
+        // Depending on how lucky you are, Themis might or might not detect the error early enough.
+        // If it does not, it proceeds to allocate some weird buffer which might be too big.
+        catch (SecureCellException | OutOfMemoryError ignored) {}
     }
 
     @Test

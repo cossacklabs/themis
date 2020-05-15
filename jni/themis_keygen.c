@@ -56,6 +56,15 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_gene
         return NULL;
     }
 
+    /*
+     * Normally the keys should not be this big, but just in case, avoid
+     * integer overflow here. JVM cannot allocate more than 2 GB in one chunk.
+     */
+    if (private_key_length > INT32_MAX || public_key_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
+        return NULL;
+    }
+
     private_key = (*env)->NewByteArray(env, private_key_length);
     if (!private_key) {
         return NULL;
@@ -127,6 +136,15 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SymmetricKey_generateSy
     res = themis_gen_sym_key(NULL, &key_length);
     if (res != THEMIS_BUFFER_TOO_SMALL) {
         goto error;
+    }
+
+    /*
+     * Normally the key should not be this big, but just in case, avoid
+     * integer overflow here. JVM cannot allocate more than 2 GB in one chunk.
+     */
+    if (key_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
+        return NULL;
     }
 
     key = (*env)->NewByteArray(env, key_length);

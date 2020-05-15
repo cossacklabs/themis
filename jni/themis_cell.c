@@ -127,6 +127,15 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(
         goto err;
     }
 
+    /*
+     * Secure Cell can contain up to 4 GB of data but JVM does not support
+     * byte arrays bigger that 2 GB. We just cannot allocate that much.
+     */
+    if (encrypted_data_length > INT32_MAX || additional_data_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
+        goto err;
+    }
+
     encrypted_data = (*env)->NewByteArray(env, encrypted_data_length);
     if (!encrypted_data) {
         goto err;
@@ -368,6 +377,15 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(
     }
 
     if (THEMIS_BUFFER_TOO_SMALL != res) {
+        goto err;
+    }
+
+    /*
+     * Secure Cell can contain up to 4 GB of data but JVM does not support
+     * byte arrays bigger that 2 GB. We just cannot allocate that much.
+     */
+    if (data_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
         goto err;
     }
 
