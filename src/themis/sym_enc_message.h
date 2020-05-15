@@ -236,4 +236,21 @@ themis_status_t themis_sym_decrypt_message_u(const uint8_t* key,
                                              size_t encrypted_message_length,
                                              uint8_t* message,
                                              size_t* message_length);
+
+#define THEMIS_AUTH_SYM_MAX_KDF_CONTEXT_LENGTH sizeof(uint64_t)
+
+themis_status_t themis_auth_sym_kdf_context(uint32_t message_length,
+                                            uint8_t* kdf_context,
+                                            size_t* kdf_context_length);
+
+themis_status_t themis_auth_sym_derive_encryption_key(uint32_t soter_alg,
+                                                      const uint8_t* key,
+                                                      size_t key_length,
+                                                      const uint8_t* kdf_context,
+                                                      size_t kdf_context_length,
+                                                      const uint8_t* user_context,
+                                                      size_t user_context_length,
+                                                      uint8_t* derived_key,
+                                                      size_t* derived_key_length);
+
 #endif /* THEMIS_SYM_ENC_MESSAGE_H */

@@ -108,13 +108,14 @@ error:
     return res;
 }
 
-static themis_status_t themis_auth_sym_derive_encryption_key(struct themis_scell_auth_token_passphrase* hdr,
-                                                             const uint8_t* passphrase,
-                                                             size_t passphrase_length,
-                                                             uint8_t* derived_key,
-                                                             size_t* derived_key_length,
-                                                             uint8_t* auth_token,
-                                                             size_t* auth_token_length)
+static themis_status_t themis_auth_sym_derive_encryption_key_passphrase(
+    struct themis_scell_auth_token_passphrase* hdr,
+    const uint8_t* passphrase,
+    size_t passphrase_length,
+    uint8_t* derived_key,
+    size_t* derived_key_length,
+    uint8_t* auth_token,
+    size_t* auth_token_length)
 {
     size_t required_length = soter_alg_key_length(hdr->alg);
     /*
@@ -173,13 +174,13 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase_(const uint8_t* 
     hdr.auth_tag_length = sizeof(auth_tag);
     hdr.message_length = (uint32_t)message_length;
 
-    res = themis_auth_sym_derive_encryption_key(&hdr,
-                                                passphrase,
-                                                passphrase_length,
-                                                derived_key,
-                                                &derived_key_length,
-                                                auth_token,
-                                                auth_token_length);
+    res = themis_auth_sym_derive_encryption_key_passphrase(&hdr,
+                                                           passphrase,
+                                                           passphrase_length,
+                                                           derived_key,
+                                                           &derived_key_length,
+                                                           auth_token,
+                                                           auth_token_length);
     if (res != THEMIS_SUCCESS) {
         goto error;
     }
@@ -291,7 +292,7 @@ static themis_status_t themis_auth_sym_derive_decryption_key_pbkdf2(
     return res;
 }
 
-static themis_status_t themis_auth_sym_derive_decryption_key(
+static themis_status_t themis_auth_sym_derive_decryption_key_passphrase(
     const struct themis_scell_auth_token_passphrase* hdr,
     const uint8_t* passphrase,
     size_t passphrase_length,
@@ -367,11 +368,11 @@ themis_status_t themis_auth_sym_decrypt_message_with_passphrase_(const uint8_t* 
         return THEMIS_FAIL;
     }
 
-    res = themis_auth_sym_derive_decryption_key(&hdr,
-                                                passphrase,
-                                                passphrase_length,
-                                                &derived_key[0],
-                                                &derived_key_length);
+    res = themis_auth_sym_derive_decryption_key_passphrase(&hdr,
+                                                           passphrase,
+                                                           passphrase_length,
+                                                           &derived_key[0],
+                                                           &derived_key_length);
     if (res != THEMIS_SUCCESS) {
         return res;
     }
