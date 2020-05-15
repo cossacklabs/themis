@@ -391,6 +391,19 @@ _Code:_
     - Improved Token Protect API
       ([#634](https://github.com/cossacklabs/themis/pull/634)).
       - Decryption no longer requires an intermediate `SecureCellData` object.
+      - `SecureCellData` can now be destructured in Kotlin
+        ([#638](https://github.com/cossacklabs/themis/pull/638)).
+
+        ```kotlin
+        // You can now write like this:
+        val (encrypted, authToken) = cellTP.encrypt(message, context)
+
+        // Instead of having to spell it out like this:
+        val result = cellTP.protect(context, message)
+        val encrypted = result.protectedData
+        val authToken = result.additionalData
+        ```
+
     - Secure Cell mode can now be selected by instantiating an appropriate interface:
 
       | New API | Old API |
