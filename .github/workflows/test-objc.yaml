@@ -233,6 +233,34 @@ jobs:
         with:
           path: ~/.cocoapods
           key: ${{ runner.os }}-cocoapods-common
+      # Try building Themis for all iOS device architectures. We do it here
+      # because CocoaPods does not allow to check that directly but with
+      # example projects it's more or less possible.
+      - name: Build ObjCThemis for Generic Device (Carthage)
+        if: always()
+        run: |
+          carthage bootstrap --platform iOS
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData \
+            -project ObjCThemis.xcodeproj \
+            -scheme "ObjCThemis (iOS)" \
+            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
+            build
+      - name: Build ObjCThemis for Generic Device (CocoaPods)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/objc/iOS-CocoaPods
+          pod install
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData \
+            -workspace ThemisTest.xcworkspace \
+            -scheme "Pods-ThemisTest" \
+            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
+            build
       # Since all code examples are macOS/iOS applications, not command-line
       # utilities, we only verify that they build. This is fine.
       #
