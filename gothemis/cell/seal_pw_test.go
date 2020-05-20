@@ -331,8 +331,8 @@ func TestSealPWDefaultEncoding(t *testing.T) {
 
 	// Message encrypted by PyThemis
 	encrypted, _ := base64.StdEncoding.DecodeString(`
-AAEBQQwAAAAQAAAAHwAAABYAAADPf9HSto2OgUZx13XUu2aY1p/jxmurdlwFc7ORQA0DABAAeCKvbp
-8vyk69b0CXru2xUI4U0Fd8yo43RTOGXKgcb+8oVDO8xxgbnWOZIyc2ufU=`)
+AAEBQQwAAAAQAAAAHwAAABYAAABnwwTrIwAUgrvzeuBmgIXw8GaiYqD1yshnGbolQA0DABAA/5SaUH
+31a/xYUXiDzRj3W2Lv4hwcbSymrFpbVuIoG7+DDNbo1yh2p2slIwZnMPU=`)
 	message := []byte("Would you show me your... seal?")
 
 	decrypted, err := cell.Decrypt(encrypted, nil)
@@ -353,8 +353,8 @@ func TestSealPWCustomEncoding(t *testing.T) {
 
 	// Message encrypted by PyThemis
 	encrypted, _ := base64.StdEncoding.DecodeString(`
-AAEBQQwAAAAQAAAAHwAAABYAAAB2uIgM7jDcxOTuvhu9H3YyuR8VPE1ISns14xquQA0DABAAxPT6TR
-F9uhW1HoKKjVoI1nDt0Sw4oFMNYS1sl1mxz6XsTFzAAtDXo1wkIuM5/VA=`)
+AAEBQQwAAAAQAAAAHwAAABYAAABdqqUqnoJqMrmbZeG2Ga11qg8ilWPikSdfraNEQA0DABAAF5hJlG
+mZGcjxZUDmq1rMb6jnv8pk+6lc8MpMd84QCWv/WI/LcZ+murJrsZmTAsw=`)
 	message := []byte("Would you show me your... seal?")
 
 	decrypted, err := cell.Decrypt(encrypted, nil)

@@ -58,13 +58,19 @@ static themis_status_t themis_auth_sym_derive_encryption_key_pbkdf2(
     struct themis_scell_auth_token_passphrase* hdr,
     const uint8_t* passphrase,
     size_t passphrase_length,
+    const uint8_t* user_context,
+    size_t user_context_length,
+    size_t message_length,
     uint8_t* derived_key,
-    size_t derived_key_length,
+    size_t* derived_key_length,
     uint8_t* auth_token,
     size_t* auth_token_length)
 {
     themis_status_t res = THEMIS_FAIL;
     uint8_t salt[THEMIS_AUTH_SYM_PBKDF2_SALT_LENGTH] = {0};
+    uint8_t prekey[THEMIS_AUTH_SYM_MAX_KEY_LENGTH / 8] = {0};
+    uint8_t soter_kdf_context[THEMIS_AUTH_SYM_MAX_KDF_CONTEXT_LENGTH] = {0};
+    size_t soter_kdf_context_length = sizeof(soter_kdf_context);
     struct themis_scell_pbkdf2_context kdf;
 
     memset(&kdf, 0, sizeof(kdf));
@@ -87,8 +93,27 @@ static themis_status_t themis_auth_sym_derive_encryption_key_pbkdf2(
                               kdf.salt,
                               kdf.salt_length,
                               kdf.iteration_count,
-                              derived_key,
-                              derived_key_length);
+                              prekey,
+                              sizeof(prekey));
+    if (res != THEMIS_SUCCESS) {
+        goto error;
+    }
+
+    res = themis_auth_sym_kdf_context(message_length, soter_kdf_context, &soter_kdf_context_length);
+    if (res != THEMIS_SUCCESS) {
+        goto error;
+    }
+
+    /* Use Soter KDF to derive key from prekey */
+    res = themis_auth_sym_derive_encryption_key(soter_alg_without_kdf(hdr->alg),
+                                                prekey,
+                                                sizeof(prekey),
+                                                soter_kdf_context,
+                                                soter_kdf_context_length,
+                                                user_context,
+                                                user_context_length,
+                                                derived_key,
+                                                derived_key_length);
     if (res != THEMIS_SUCCESS) {
         goto error;
     }
@@ -104,35 +129,33 @@ static themis_status_t themis_auth_sym_derive_encryption_key_pbkdf2(
 
 error:
     soter_wipe(salt, sizeof(salt));
+    soter_wipe(prekey, sizeof(prekey));
 
     return res;
 }
 
-static themis_status_t themis_auth_sym_derive_encryption_key(struct themis_scell_auth_token_passphrase* hdr,
-                                                             const uint8_t* passphrase,
-                                                             size_t passphrase_length,
-                                                             uint8_t* derived_key,
-                                                             size_t* derived_key_length,
-                                                             uint8_t* auth_token,
-                                                             size_t* auth_token_length)
+static themis_status_t themis_auth_sym_derive_encryption_key_passphrase(
+    struct themis_scell_auth_token_passphrase* hdr,
+    const uint8_t* passphrase,
+    size_t passphrase_length,
+    const uint8_t* user_context,
+    size_t user_context_length,
+    size_t message_length,
+    uint8_t* derived_key,
+    size_t* derived_key_length,
+    uint8_t* auth_token,
+    size_t* auth_token_length)
 {
-    size_t required_length = soter_alg_key_length(hdr->alg);
-    /*
-     * This is our internal buffer so it cannot be too small. If it is, either
-     * the data is corrupted, or THEMIS_AUTH_SYM_KEY_LENGTH is incorrect.
-     */
-    if (*derived_key_length < required_length) {
-        return THEMIS_FAIL;
-    }
-    *derived_key_length = required_length;
-
     switch (soter_alg_kdf(hdr->alg)) {
     case SOTER_SYM_PBKDF2:
         return themis_auth_sym_derive_encryption_key_pbkdf2(hdr,
                                                             passphrase,
                                                             passphrase_length,
+                                                            user_context,
+                                                            user_context_length,
+                                                            message_length,
                                                             derived_key,
-                                                            required_length,
+                                                            derived_key_length,
                                                             auth_token,
                                                             auth_token_length);
     case SOTER_SYM_NOKDF:
@@ -173,13 +196,16 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase_(const uint8_t* 
     hdr.auth_tag_length = sizeof(auth_tag);
     hdr.message_length = (uint32_t)message_length;
 
-    res = themis_auth_sym_derive_encryption_key(&hdr,
-                                                passphrase,
-                                                passphrase_length,
-                                                derived_key,
-                                                &derived_key_length,
-                                                auth_token,
-                                                auth_token_length);
+    res = themis_auth_sym_derive_encryption_key_passphrase(&hdr,
+                                                           passphrase,
+                                                           passphrase_length,
+                                                           user_context,
+                                                           user_context_length,
+                                                           message_length,
+                                                           derived_key,
+                                                           &derived_key_length,
+                                                           auth_token,
+                                                           auth_token_length);
     if (res != THEMIS_SUCCESS) {
         goto error;
     }
@@ -269,10 +295,16 @@ static themis_status_t themis_auth_sym_derive_decryption_key_pbkdf2(
     const struct themis_scell_auth_token_passphrase* hdr,
     const uint8_t* passphrase,
     size_t passphrase_length,
+    const uint8_t* user_context,
+    size_t user_context_length,
+    size_t message_length,
     uint8_t* derived_key,
-    size_t derived_key_length)
+    size_t* derived_key_length)
 {
     themis_status_t res = THEMIS_FAIL;
+    uint8_t prekey[THEMIS_AUTH_SYM_MAX_KEY_LENGTH / 8] = {0};
+    uint8_t soter_kdf_context[THEMIS_AUTH_SYM_MAX_KDF_CONTEXT_LENGTH] = {0};
+    size_t soter_kdf_context_length = sizeof(soter_kdf_context);
     struct themis_scell_pbkdf2_context kdf;
 
     memset(&kdf, 0, sizeof(kdf));
@@ -286,48 +318,57 @@ static themis_status_t themis_auth_sym_derive_decryption_key_pbkdf2(
                               kdf.salt,
                               kdf.salt_length,
                               kdf.iteration_count,
-                              derived_key,
-                              derived_key_length);
+                              prekey,
+                              sizeof(prekey));
+    if (res != THEMIS_SUCCESS) {
+        goto error;
+    }
+
+    res = themis_auth_sym_kdf_context(message_length, soter_kdf_context, &soter_kdf_context_length);
+    if (res != THEMIS_SUCCESS) {
+        goto error;
+    }
+
+    /* Use Soter KDF to derive key from prekey */
+    res = themis_auth_sym_derive_encryption_key(soter_alg_without_kdf(hdr->alg),
+                                                prekey,
+                                                sizeof(prekey),
+                                                soter_kdf_context,
+                                                soter_kdf_context_length,
+                                                user_context,
+                                                user_context_length,
+                                                derived_key,
+                                                derived_key_length);
+    if (res != THEMIS_SUCCESS) {
+        goto error;
+    }
+
+error:
+    soter_wipe(prekey, sizeof(prekey));
+
     return res;
 }
 
-static themis_status_t themis_auth_sym_derive_decryption_key(
+static themis_status_t themis_auth_sym_derive_decryption_key_passphrase(
     const struct themis_scell_auth_token_passphrase* hdr,
     const uint8_t* passphrase,
     size_t passphrase_length,
+    const uint8_t* user_context,
+    size_t user_context_length,
+    size_t message_length,
     uint8_t* derived_key,
     size_t* derived_key_length)
 {
-    size_t required_length = soter_alg_key_length(hdr->alg);
-    /*
-     * Accept only expected values that we know that we can handle. Robustness
-     * is more important here than future-proofing. AES is unlikely to support
-     * more key lengths anyway.
-     */
-    switch (required_length) {
-    case SOTER_SYM_256_KEY_LENGTH / 8:
-    case SOTER_SYM_192_KEY_LENGTH / 8:
-    case SOTER_SYM_128_KEY_LENGTH / 8:
-        break;
-    default:
-        return THEMIS_FAIL;
-    }
-    /*
-     * This is our internal buffer so it cannot be too small. If it is, either
-     * the data is corrupted, or THEMIS_AUTH_SYM_MAX_KEY_LENGTH is incorrect.
-     */
-    if (*derived_key_length < required_length) {
-        return THEMIS_FAIL;
-    }
-    *derived_key_length = required_length;
-
     switch (soter_alg_kdf(hdr->alg)) {
     case SOTER_SYM_PBKDF2:
         return themis_auth_sym_derive_decryption_key_pbkdf2(hdr,
                                                             passphrase,
                                                             passphrase_length,
+                                                            user_context,
+                                                            user_context_length,
+                                                            message_length,
                                                             derived_key,
-                                                            required_length);
+                                                            derived_key_length);
     case SOTER_SYM_NOKDF:
         return THEMIS_FAIL;
     default:
@@ -367,11 +408,14 @@ themis_status_t themis_auth_sym_decrypt_message_with_passphrase_(const uint8_t* 
         return THEMIS_FAIL;
     }
 
-    res = themis_auth_sym_derive_decryption_key(&hdr,
-                                                passphrase,
-                                                passphrase_length,
-                                                &derived_key[0],
-                                                &derived_key_length);
+    res = themis_auth_sym_derive_decryption_key_passphrase(&hdr,
+                                                           passphrase,
+                                                           passphrase_length,
+                                                           user_context,
+                                                           user_context_length,
+                                                           encrypted_message_length,
+                                                           &derived_key[0],
+                                                           &derived_key_length);
     if (res != THEMIS_SUCCESS) {
         return res;
     }

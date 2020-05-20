@@ -183,11 +183,9 @@ static inline size_t default_auth_token_size(void)
            + THEMIS_AUTH_SYM_AUTH_TAG_LENGTH;
 }
 
-#define THEMIS_AUTH_SYM_MAX_KDF_CONTEXT_LENGTH sizeof(uint64_t)
-
-static themis_status_t themis_auth_sym_kdf_context(uint32_t message_length,
-                                                   uint8_t* kdf_context,
-                                                   size_t* kdf_context_length)
+themis_status_t themis_auth_sym_kdf_context(uint32_t message_length,
+                                            uint8_t* kdf_context,
+                                            size_t* kdf_context_length)
 {
     if (*kdf_context_length < sizeof(uint32_t)) {
         *kdf_context_length = sizeof(uint32_t);
@@ -216,17 +214,17 @@ static themis_status_t themis_auth_sym_kdf_context_compat(uint32_t message_lengt
 }
 #endif
 
-static themis_status_t themis_auth_sym_derive_encryption_key(const struct themis_scell_auth_token_key* hdr,
-                                                             const uint8_t* key,
-                                                             size_t key_length,
-                                                             const uint8_t* kdf_context,
-                                                             size_t kdf_context_length,
-                                                             const uint8_t* user_context,
-                                                             size_t user_context_length,
-                                                             uint8_t* derived_key,
-                                                             size_t* derived_key_length)
+themis_status_t themis_auth_sym_derive_encryption_key(uint32_t soter_alg,
+                                                      const uint8_t* key,
+                                                      size_t key_length,
+                                                      const uint8_t* kdf_context,
+                                                      size_t kdf_context_length,
+                                                      const uint8_t* user_context,
+                                                      size_t user_context_length,
+                                                      uint8_t* derived_key,
+                                                      size_t* derived_key_length)
 {
-    size_t required_length = soter_alg_key_length(hdr->alg);
+    size_t required_length = soter_alg_key_length(soter_alg);
     switch (required_length) {
     case SOTER_SYM_256_KEY_LENGTH / 8:
     case SOTER_SYM_192_KEY_LENGTH / 8:
@@ -244,7 +242,7 @@ static themis_status_t themis_auth_sym_derive_encryption_key(const struct themis
      * SOTER_SYM_NOKDF means Soter KDF in this context.
      * This is the only KDF allowed for master key API.
      */
-    switch (soter_alg_kdf(hdr->alg)) {
+    switch (soter_alg_kdf(soter_alg)) {
     case SOTER_SYM_NOKDF: {
         return themis_sym_kdf(key,
                               key_length,
@@ -298,7 +296,7 @@ themis_status_t themis_auth_sym_encrypt_message_(const uint8_t* key,
     if (res != THEMIS_SUCCESS) {
         goto error;
     }
-    res = themis_auth_sym_derive_encryption_key(&hdr,
+    res = themis_auth_sym_derive_encryption_key(hdr.alg,
                                                 key,
                                                 key_length,
                                                 kdf_context,
@@ -428,7 +426,7 @@ themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
     if (res != THEMIS_SUCCESS) {
         goto error;
     }
-    res = themis_auth_sym_derive_encryption_key(&hdr,
+    res = themis_auth_sym_derive_encryption_key(hdr.alg,
                                                 key,
                                                 key_length,
                                                 kdf_context,
@@ -465,7 +463,7 @@ themis_status_t themis_auth_sym_decrypt_message_(const uint8_t* key,
         if (res != THEMIS_SUCCESS) {
             goto error;
         }
-        res = themis_auth_sym_derive_encryption_key(&hdr,
+        res = themis_auth_sym_derive_encryption_key(hdr.alg,
                                                     key,
                                                     key_length,
                                                     kdf_context,

@@ -402,7 +402,7 @@ class SecureCellSealPassphraseSwift: XCTestCase {
         let message = "All your base are belong to us!".data(using: .utf8)!
 
         // Message encrypted by PyThemis
-        let encrypted = Data(base64Encoded: "AAEBQQwAAAAQAAAAHwAAABYAAAA0a7ZiM/EN7xyQSzZ3qD5YWpYMuAOIzi2PRR/mQA0DABAAWBZ+KWU/77jobUZZRM8syUPdwmga46Wdas7QeD9jFgU0Z9nCwgqN06DHer2VH+E=")!
+        let encrypted = Data(base64Encoded: "AAEBQQwAAAAQAAAAHwAAABYAAAB1n+2bNaaCXaILGSYz9+eYfr36pZ41ItCd3ShbQA0DABAAGEDx++sRQd2IQfIyiToDl7No5mPoKYigCL3HyQedivZ4tMYrFx3FyTZLExiqeJw=")!
 
         let decrypted = try! cell.decrypt(encrypted)
 
