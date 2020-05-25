@@ -29,7 +29,8 @@ env:
   WITH_FATAL_WARNINGS: yes
   # See here for what devices are available:
   # https://github.com/actions/virtual-environments/blob/master/images/macos/
-  TEST_DEVICE: iPhone 8
+  TEST_IPHONE: iPhone 8
+  TEST_IPAD: iPad Pro (9.7-inch)
   # Most of our tests and examples are actually Xcode projects which integrate
   # Themis via a dependency manager (Carthage, CocoaPods). This means that they
   # depend on the current stable version, and that's what they will pull in.
@@ -91,7 +92,7 @@ jobs:
             -workspace objcthemis.xcworkspace \
             -scheme "objthemis" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            -destination "platform=iOS Simulator,name=${TEST_IPHONE}" \
             test
       - name: Run unit tests (iOS Simulator, BoringSSL)
         if: always()
@@ -103,7 +104,7 @@ jobs:
             -workspace objcthemis.xcworkspace \
             -scheme "objthemis_boring" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            -destination "platform=iOS Simulator,name=${TEST_IPAD}" \
             test
 
   unit-tests-carthage:
@@ -141,7 +142,7 @@ jobs:
             -project ObjCThemis.xcodeproj \
             -scheme "Test Themis (Swift 4, iOS)" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            -destination "platform=iOS Simulator,name=${TEST_IPAD}" \
             test
       - name: Run unit tests (Swift 5, iOS Simulator)
         if: always()
@@ -152,7 +153,7 @@ jobs:
             -project ObjCThemis.xcodeproj \
             -scheme "Test Themis (Swift 5, iOS)" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            -destination "platform=iOS Simulator,name=${TEST_IPHONE}" \
             test
 
   project-carthage:
@@ -277,7 +278,7 @@ jobs:
             -project ThemisTest.xcodeproj \
             -scheme "ThemisTest" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            -destination "platform=iOS Simulator,name=${TEST_IPAD}" \
             build
       - name: Build sample app (Objective-C, Carthage, macOS)
         if: always()
@@ -301,7 +302,7 @@ jobs:
             -workspace ThemisTest.xcworkspace \
             -scheme "ThemisTest" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            -destination "platform=iOS Simulator,name=${TEST_IPHONE}" \
             build
       #
       # App samples: Swift
@@ -317,7 +318,7 @@ jobs:
             -project ThemisTest.xcodeproj \
             -scheme "ThemisTest" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            -destination "platform=iOS Simulator,name=${TEST_IPHONE}" \
             build
       - name: Build sample app (Swift, Carthage, macOS)
         if: always()
@@ -341,7 +342,7 @@ jobs:
             -workspace ThemisSwift.xcworkspace \
             -scheme "ThemisSwift" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            -destination "platform=iOS Simulator,name=${TEST_IPAD}" \
             build
       #
       # Themis server clients
@@ -357,7 +358,7 @@ jobs:
             -workspace WorkingWithThemisServer.xcworkspace \
             -scheme "WorkingWithThemisServer" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            -destination "platform=iOS Simulator,name=${TEST_IPHONE}" \
             build
       - name: Build client for Themis Server (Swift)
         if: always()
@@ -370,5 +371,5 @@ jobs:
             -workspace SwiftThemisServerExample.xcworkspace \
             -scheme "SwiftThemisServerExample" \
             -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=${TEST_DEVICE}" \
+            -destination "platform=iOS Simulator,name=${TEST_IPAD}" \
             build

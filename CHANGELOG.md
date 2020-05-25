@@ -200,6 +200,8 @@ _Code:_
 - **iOS and macOS**
 
   - New function `TSGenerateSymmetricKey()` (available in Objective-C and Swift) can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - iPadOS is now officially supported target for ObjCThemis
+    ([#641](https://github.com/cossacklabs/themis/pull/641)).
 
   - Secure Cell API updates:
 
@@ -683,6 +685,8 @@ _Infrastructure:_
 - Automated benchmarking harness is now tracking Themis performance. See [`benches`](https://github.com/cossacklabs/themis/tree/master/benches/) ([#580](https://github.com/cossacklabs/themis/pull/580)).
 - Added automated tests for all code samples in documentation, ensuring they are always up-to-date ([#600](https://github.com/cossacklabs/themis/pull/600)).
 - All 13 supported platforms are verified on GitHub Actions, along with existing CircleCI and Bitrise tests ([#600](https://github.com/cossacklabs/themis/pull/600)).
+- iPadOS is now officially supported target for ObjCThemis
+  ([#641](https://github.com/cossacklabs/themis/pull/641)).
 - Kotlin API of JavaThemis is now verified by all CI platforms
   ([#637](https://github.com/cossacklabs/themis/pull/637).
 - New Makefile targets:
