@@ -67,6 +67,8 @@ _Code:_
     ([#637](https://github.com/cossacklabs/themis/pull/637).
   - Fixed a crash when decrypting corrupted Secure Cell data
     ([#639](https://github.com/cossacklabs/themis/pull/639)).
+  - Updated embedded BoringSSL to the latest version
+    ([#643](https://github.com/cossacklabs/themis/pull/643)).
 
   - **Breaking changes**
 
@@ -641,6 +643,8 @@ _Code:_
 - **WebAssembly**
 
   - New class `SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Updated embedded BoringSSL to the latest version
+    ([#643](https://github.com/cossacklabs/themis/pull/643)).
 
   - Passphrase API support in Secure Cell ([#616](https://github.com/cossacklabs/themis/pull/616)).
 
