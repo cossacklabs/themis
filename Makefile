@@ -199,11 +199,14 @@ ifndef WITH_ASAN
 ifndef WITH_MSAN
 ifndef WITH_TSAN
 ifndef WITH_UBSAN
+# Not all Emscripten toolchains support these flags so leave them out as well.
+ifndef IS_EMSCRIPTEN
 ifdef IS_MACOS
 LDFLAGS += -Wl,-undefined,error
 endif
 ifdef IS_LINUX
 LDFLAGS += -Wl,--no-undefined
+endif
 endif
 endif
 endif
