@@ -81,10 +81,11 @@ endif
 	         } \
 	       }' \
 	 ) && \
-	 if echo "$$java_library_path" | grep -vq '^$(jnidir)$$'; \
+	 jnidir=$$(cd "$(jnidir)" && pwd) && \
+	 if ! echo "$$java_library_path" | grep -q "^$${jnidir}$$"; \
 	 then \
 	     echo ''; \
-	     echo 'Your Java installation does not seem to have "$(jnidir)" in its'; \
+	     echo "Your Java installation does not seem to have \"$${jnidir}\" in its"; \
 	     echo 'search path for JNI libraries:'; \
 	     echo ''; \
 	     echo "$$java_library_path" | sed 's/^/    /'; \
