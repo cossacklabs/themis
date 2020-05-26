@@ -639,7 +639,7 @@ else
 	ARCHITECTURE = $(shell arch)
 	RPM_VERSION = $(shell echo -n "$(VERSION)"|sed s/-/_/g)
 	NAME_SUFFIX = $(RPM_VERSION).$(OS_NAME)$(OS_VERSION).$(ARCHITECTURE).rpm
-	RPM_LIBDIR := $(shell [ $$(arch) == "x86_64" ] && echo "/lib64" || echo "/lib")
+	RPM_LIBDIR := $(shell [ $$(arch) == "x86_64" ] && echo "lib64" || echo "lib")
 endif
 
 PACKAGE_NAME = libthemis
