@@ -685,7 +685,7 @@ deb: install themispp_install themis_jni_install
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
 	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
 
-	@find $(DESTDIR) -name '*.$(SHARED_EXT)*' -exec strip -o {} {} \;
+	@find $(DESTDIR) -name '*.$(SHARED_EXT)*' -type f -exec strip -o {} {} \;
 
 	@fpm --input-type dir \
 		 --output-type deb \
@@ -765,7 +765,7 @@ rpm: install themispp_install themis_jni_install
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
 	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
 
-	@find $(DESTDIR) -name '*.$(SHARED_EXT)*' -exec strip -o {} {} \;
+	@find $(DESTDIR) -name '*.$(SHARED_EXT)*' -type f -exec strip -o {} {} \;
 
 	@fpm --input-type dir \
          --output-type rpm \
