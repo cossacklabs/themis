@@ -29,8 +29,12 @@ WHITELIST="(THEMIS|themis|secure_(comparator|session)|STATE)_.*"
 # thing to do is to split the generated code into different files for different
 # platforms (like themis_x86_64.rs, themis_arm64.rs, etc.) and conditionally
 # compile them depending on target.
+#
+# Though, we do disable layout tests which *are* architecture-specific and
+# we cannot include them without breaking either 32-bit or 64-bit machines.
 bindgen bindgen.h \
     --no-doc-comments \
+    --no-layout-tests \
     --rustified-enum "themis_key_kind" \
     --size_t-is-usize \
     --whitelist-function "$WHITELIST" \

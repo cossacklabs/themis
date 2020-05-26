@@ -38,7 +38,8 @@ static char user_context[] = "secure cell user context";
 
 static bool non_zero_buffer(const uint8_t* buffer, size_t length)
 {
-    for (size_t i = 0; i < length; i++) {
+    size_t i;
+    for (i = 0; i < length; i++) {
         if (buffer[i] != 0) {
             return true;
         }
@@ -1911,6 +1912,7 @@ static void scell_seal_passphrase_compatibility(void)
 static void scell_seal_passphrase_stability(void)
 {
     themis_status_t res = THEMIS_FAIL;
+    size_t i;
     const uint8_t passphrase[] = "never gonna give you up";
     const uint8_t message[] = "never gonna let you down";
     const uint8_t context[] = "never gonna run around and desert you";
@@ -1931,7 +1933,7 @@ static void scell_seal_passphrase_stability(void)
          (const uint8_t*)"\x80\x00\x01\x41\x0C\x00\x00\x00\x10\x00\x00\x00\x19\x00\x00\x00\x16\x00\x00\x00\x46\xAF\xD7\xFE\x56\xEE\x07\xD7\xA6\x40\x48\xA8\x00\xA9\xD6\x0C\x80\x67\x57\x65\xFF\xB6\x59\xD8\xC8\x77\xD8\x17\x40\x0D\x03\x00\x10\x00\xC3\xA1\x85\x9A\x13\x82\x7A\xEE\x1F\xDB\x9C\xB3\x31\x4E\xF9\x27\x3F\xAC\x61\x1C\xA5\x7D\xAA\x54\x43\xF3\x78\x19\x39\x7C\x5A\x9D\x71\x42\xA4\x6F\x87\x96\x1A\xBD\xDB"},
     };
 
-    for (size_t i = 0; i < ARRAY_SIZE(encrypted_data); i++) {
+    for (i = 0; i < ARRAY_SIZE(encrypted_data); i++) {
         uint8_t* decrypted = NULL;
         size_t decrypted_length = 0;
 
