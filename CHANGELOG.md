@@ -697,7 +697,7 @@ _Infrastructure:_
   - `make jsthemis` builds JsThemis from source ([#618](https://github.com/cossacklabs/themis/pull/618)).
 - Resolved issues with library search paths on CentOS
   when Themis Core is built from source and installed with `make install`
-  ([#637](https://github.com/cossacklabs/themis/pull/637).
+  ([#645](https://github.com/cossacklabs/themis/pull/645).
 
 - **Breaking changes**
 
