@@ -452,9 +452,23 @@ $(AUD_PATH)/%: $(SRC_PATH)/%
 # Themis Core installation
 #
 
+# Red Hat systems usually do not have "lsb_release" in their default setup
+# so we look into the release version files from "centos-release" package.
+ifdef IS_LINUX
+ifeq ($(shell . /etc/os-release; echo $$ID),centos)
+IS_CENTOS := true
+LD_SO_CONF = $(DESTDIR)/etc/ld.so.conf.d/themis.conf
+endif
+endif
+
 install: all install_soter install_themis
 	@echo -n "Themis installed to $(PREFIX)"
 	@$(PRINT_OK_)
+# CentOS does not have /usr/local/lib in the default search path, add it there.
+ifeq ($(IS_CENTOS),true)
+	-@mkdir -p "$$(dirname "$(LD_SO_CONF)")"
+	-@echo "$(libdir)" > "$(LD_SO_CONF)" && echo "Added $(libdir) to $(LD_SO_CONF)"
+endif
 ifdef IS_LINUX
 	-@ldconfig
 endif
@@ -480,6 +494,10 @@ endif
 uninstall: uninstall_themis uninstall_soter
 	@echo -n "Themis uninstalled from $(PREFIX) "
 	@$(PRINT_OK_)
+# Remove non-standard library search path created by "install" for CentOS.
+ifeq ($(IS_CENTOS),true)
+	@rm -f "$(LD_SO_CONF)"
+endif
 
 ########################################################################
 #
