@@ -35,6 +35,13 @@ ifeq ($(JDK_INCLUDE_PATH),)
 		jvm_includes += -I$(JAVA_HOME)/include
 		ifdef IS_LINUX
 			jvm_includes += -I$(JAVA_HOME)/include/linux
+			# On some systems (like CentOS) "java.home" value reported by Java
+			# points to "/usr/lib/jvm/${java_version}/jre" when the real Java
+			# home is located in "/usr/lib/jvm/${java_version}" and JDK headers
+			# are located in "/usr/lib/jvm/${java_version}/include". Workaround:
+			# look one directory above the apparent Java home too.
+			jvm_includes += -I$(JAVA_HOME)/../include
+			jvm_includes += -I$(JAVA_HOME)/../include/linux
 		endif
 		ifdef IS_MACOS
 			jvm_includes += -I$(JAVA_HOME)/include/darwin
@@ -74,10 +81,11 @@ endif
 	         } \
 	       }' \
 	 ) && \
-	 if echo "$$java_library_path" | grep -vq '^$(jnidir)$$'; \
+	 jnidir=$$(cd "$(jnidir)" && pwd) && \
+	 if ! echo "$$java_library_path" | grep -q "^$${jnidir}$$"; \
 	 then \
 	     echo ''; \
-	     echo 'Your Java installation does not seem to have "$(jnidir)" in its'; \
+	     echo "Your Java installation does not seem to have \"$${jnidir}\" in its"; \
 	     echo 'search path for JNI libraries:'; \
 	     echo ''; \
 	     echo "$$java_library_path" | sed 's/^/    /'; \
