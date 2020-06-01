@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [python2, python3]
+        python: [python3]
       fail-fast: false
     env:
       PYTHON: ${{ matrix.python }}
