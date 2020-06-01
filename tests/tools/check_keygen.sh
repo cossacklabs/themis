@@ -25,7 +25,7 @@ test_keygen () {
     check_result_zero
 }
 
-test_lang 'python' && test_keygen python tools/python/keygen.py
+test_lang 'python' && test_keygen python3 tools/python/keygen.py
 test_lang 'node' && test_keygen node tools/js/jsthemis/keygen.js
 test_lang 'js' && test_keygen node tools/js/wasm-themis/keygen.js
 test_lang 'php' && test_keygen "php -f" tools/php/keygen.php
