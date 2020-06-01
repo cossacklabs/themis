@@ -4,7 +4,7 @@ import os
 from collections import namedtuple
 
 generate_for_languages = os.environ.get(
-    'GENERATE_LANGUAGES', 'ruby,python,js,node,go,php,rust')
+    'THEMIS_TEST_LANGUAGES', 'ruby,python,js,node,go,php,rust')
 generate_for_languages = generate_for_languages.split(',')
 
 LanguageSetting = namedtuple(
