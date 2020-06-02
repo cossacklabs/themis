@@ -639,7 +639,7 @@ else
 	ARCHITECTURE = $(shell arch)
 	RPM_VERSION = $(shell echo -n "$(VERSION)"|sed s/-/_/g)
 	NAME_SUFFIX = $(RPM_VERSION).$(OS_NAME)$(OS_VERSION).$(ARCHITECTURE).rpm
-	RPM_LIBDIR := $(shell [ $$(arch) == "x86_64" ] && echo "lib64" || echo "lib")
+	RPM_LIBDIR := /$(shell [ $$(arch) == "x86_64" ] && echo "lib64" || echo "lib")
 endif
 
 PACKAGE_NAME = libthemis
@@ -761,7 +761,7 @@ deb: install themispp_install themis_jni_install
 rpm: MODE_PACKAGING = 1
 rpm: DESTDIR = $(BIN_PATH)/rpm/root
 rpm: PREFIX = /usr
-rpm: libdir = $(PREFIX)/$(RPM_LIBDIR)
+rpm: libdir = $(PREFIX)$(RPM_LIBDIR)
 
 rpm: install themispp_install themis_jni_install
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
