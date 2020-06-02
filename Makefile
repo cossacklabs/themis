@@ -676,10 +676,11 @@ THEMISPP_PACKAGE_FILES += $(includedir)/themispp/
 
 JNI_PACKAGE_FILES += $(jnidir)/$(LIBTHEMISJNI_SO)
 
+deb: MODE_PACKAGING = 1
 deb: DESTDIR = $(BIN_PATH)/deb/root
 deb: PREFIX = /usr
-deb: libdir = $(PREFIX)/$(DEB_LIBDIR)
-deb: jnidir = $(PREFIX)/$(DEB_LIBDIR)/jni
+deb: libdir = $(PREFIX)$(DEB_LIBDIR)
+deb: jnidir = $(PREFIX)$(DEB_LIBDIR)/jni
 
 deb: install themispp_install themis_jni_install
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
@@ -757,6 +758,7 @@ deb: install themispp_install themis_jni_install
 
 	@find $(BIN_PATH) -name \*.deb
 
+rpm: MODE_PACKAGING = 1
 rpm: DESTDIR = $(BIN_PATH)/rpm/root
 rpm: PREFIX = /usr
 rpm: libdir = $(PREFIX)/$(RPM_LIBDIR)
@@ -893,6 +895,7 @@ PHP_PRE_UNINSTALL_SCRIPT:=./scripts/phpthemis_preuninstall.sh
 PHP_API:=$(shell php -i 2>/dev/null|grep 'PHP API'|sed 's/PHP API => //')
 PHP_LIB_MAP:=./src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so=/usr/lib/php/$(PHP_API)/
 
+deb_php: MODE_PACKAGING = 1
 deb_php:
 	@mkdir -p $(BIN_PATH)/deb
 	@fpm --input-type dir \
