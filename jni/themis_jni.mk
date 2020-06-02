@@ -81,7 +81,7 @@ endif
 	         } \
 	       }' \
 	 ) && \
-	 jnidir=$$(cd "$(jnidir)" && pwd) && \
+	 jnidir=$$(cd "$(DESTDIR)$(jnidir)" && pwd) && \
 	 if ! echo "$$java_library_path" | grep -q "^$${jnidir}$$"; \
 	 then \
 	     echo ''; \
