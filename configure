@@ -245,7 +245,6 @@ detect_language_runtimes() {
     set_variable NODE_VERSION       "$(exec 2>/dev/null; which node    >/dev/null && node --version)"
     set_variable NPM_VERSION        "$(exec 2>/dev/null; which npm     >/dev/null && npm --version)"
     set_variable PIP_VERSION        "$(exec 2>/dev/null; which pip     >/dev/null && pip --version)"
-    set_variable PYTHON2_VERSION    "$(exec 2>/dev/null; which python2 >/dev/null && python2 --version)"
     set_variable PYTHON3_VERSION    "$(exec 2>/dev/null; which python3 >/dev/null && python3 --version)"
 }
 

@@ -60,12 +60,6 @@ ifdef RUBY_GEM_VERSION
 	@chmod a+x ./$(BIN_PATH)/tests/rbthemis_test.sh
 	@$(PRINT_OK_)
 endif
-ifdef PYTHON2_VERSION
-	@echo -n "make tests for pythemis with python 2 "
-	@echo "#!/bin/bash -e" > ./$(PYTHON2_TEST_SCRIPT)
-	@echo "python2 -m unittest discover -s tests/pythemis" >> ./$(PYTHON2_TEST_SCRIPT)
-	@chmod a+x ./$(PYTHON2_TEST_SCRIPT)
-endif
 ifdef PYTHON3_VERSION
 	@echo -n "make tests for pythemis with python3 "
 	@echo "#!/bin/bash -e" > ./$(PYTHON3_TEST_SCRIPT)
@@ -117,20 +111,15 @@ endif
 
 test_python:
 # run test if any of python version available
-ifneq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
+ifneq ($(PYTHON3_VERSION),)
 	@echo "------------------------------------------------------------"
 	@echo "Running pythemis tests."
 	@echo "In case of errors, see https://docs.cossacklabs.com/pages/python-howto/"
 	@echo "------------------------------------------------------------"
-ifneq ($(PYTHON2_VERSION),)
-	$(PYTHON2_TEST_SCRIPT)
-endif
-ifneq ($(PYTHON3_VERSION),)
 	$(PYTHON3_TEST_SCRIPT)
-endif
 	@echo "------------------------------------------------------------"
 else
-	@echo "python2 or python3 not found"
+	@echo "python3 not found"
 	@exit 1
 endif
 
