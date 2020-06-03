@@ -69,7 +69,7 @@ ifdef IS_MACOS
 	@install_name_tool -change "$(BIN_PATH)/$(LIBTHEMIS_SO)" "$(libdir)/$(LIBTHEMIS_SO)" "$(DESTDIR)$(jnidir)/$(LIBTHEMISJNI_SO)"
 endif
 	@$(PRINT_OK_)
-	@java_library_path=$$(\
+	@[ $(MODE_PACKAGING) -eq 1 ] || (java_library_path=$$(\
 	    java -XshowSettings:properties -version 2>&1 \
 	    | sed -E 's/^ +[^=]+ =/_&/' \
 	    | awk -v prop=java.library.path \
@@ -94,7 +94,7 @@ endif
 	     echo 'on application startup, or to move $(LIBTHEMISJNI_SO) manually'; \
 	     echo 'to one of these locations so that Java could find it.'; \
 	     echo ''; \
-	 fi
+	 fi)
 
 themis_jni_uninstall:
 	@echo -n "uninstall Themis JNI "
