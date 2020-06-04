@@ -18,5 +18,11 @@ THEMISPP_SIMPLE_TEST_SOURCES = $(wildcard $(TEST_SRC_PATH)/themispp_simple/*.cpp
 
 # Link dynamically against Themis library in the standard system paths.
 # We also need to link against Soter explicitly because of private imports.
-$(TEST_BIN_PATH)/themispp_test: CMD = $(CXX) -o $@ -lthemis -lsoter
+$(TEST_BIN_PATH)/themispp_simple_test: CMD = $(CXX) -o $@ $(THEMISPP_SIMPLE_TEST_SOURCES) -lthemis -lsoter
+$(TEST_BIN_PATH)/themispp_simple_test:
+	@mkdir -p $(@D)
+	@echo -n "build "
 	@$(BUILD_CMD)
+
+clean_themispp_simple_test:
+	@rm -f $(TEST_BIN_PATH)/themispp_simple_test

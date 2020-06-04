@@ -28,7 +28,6 @@ include tests/themispp_simple/themispp_simple.mk
 soter_test:    $(SOTER_TEST_BIN)
 themis_test:   $(THEMIS_TEST_BIN)
 themispp_test: $(TEST_BIN_PATH)/themispp_test
-themispp_simple_test: $(TEST_BIN_PATH)/themispp_simple_test
 
 $(OBJ_PATH)/tests/%: CFLAGS += -I$(TEST_SRC_PATH)
 
@@ -176,7 +175,7 @@ endif
 test_all: test prepare_tests_all test_cpp test_php test_python test_ruby test_js test_go test_rust
 
 # requires all dependencies to be installed in system paths
-test_cpp_simple:
+test_cpp_simple: $(TEST_BIN_PATH)/themispp_simple_test
 	@echo "------------------------------------------------------------"
 	@echo "Running themissp simple test."
 	@echo "------------------------------------------------------------"
