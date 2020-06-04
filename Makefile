@@ -627,11 +627,11 @@ ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
 #0.9.4-153-g9915004+jessie_amd64.deb.
 	NAME_SUFFIX = $(VERSION)+$(DEB_CODENAME)_$(DEB_ARCHITECTURE).deb
 	OS_CODENAME = $(shell lsb_release -cs)
-	DEB_LIBDIR := /lib/$(shell $(CC) -dumpmachine)
+	DEB_LIBDIR := /lib/$(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 else ifeq ($(shell lsb_release -is 2> /dev/null),Ubuntu)
 	NAME_SUFFIX = $(VERSION)+$(DEB_CODENAME)_$(DEB_ARCHITECTURE).deb
 	OS_CODENAME = $(shell lsb_release -cs)
-	DEB_LIBDIR := /lib/$(shell $(CC) -dumpmachine)
+	DEB_LIBDIR := /lib/$(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 else
 # centos/rpm
 	OS_NAME = $(shell cat /etc/os-release | grep -e "^ID=\".*\"" | cut -d'"' -f2)
