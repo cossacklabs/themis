@@ -623,17 +623,14 @@ RPM_DEPENDENCIES_THEMISPP = --depends "$(RPM_DEV_PACKAGE_NAME) = $(RPM_VERSION)-
 RPM_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) >= $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_RELEASE_NUM = 1
 
-ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
+OS_NAME := $(shell lsb_release -is 2>/dev/null || printf 'unknown')
+ifeq ($(OS_NAME),$(filter $(OS_NAME),Debian Ubuntu))
 #0.9.4-153-g9915004+jessie_amd64.deb.
 	NAME_SUFFIX = $(VERSION)+$(DEB_CODENAME)_$(DEB_ARCHITECTURE).deb
 	OS_CODENAME = $(shell lsb_release -cs)
-	DEB_LIBDIR := /lib/$(shell $(CC) -dumpmachine)
-else ifeq ($(shell lsb_release -is 2> /dev/null),Ubuntu)
-	NAME_SUFFIX = $(VERSION)+$(DEB_CODENAME)_$(DEB_ARCHITECTURE).deb
-	OS_CODENAME = $(shell lsb_release -cs)
-	DEB_LIBDIR := /lib/$(shell $(CC) -dumpmachine)
-else
-# centos/rpm
+	CC_DUMPMACHINE := $(shell $(CC) -dumpmachine)
+	DEB_LIBDIR := /lib/$(shell [ $(CC_DUMPMACHINE) == "i686-linux-gnu" ] && printf "i386-linux-gnu" || printf $(CC_DUMPMACHINE))
+else ifeq ($(OS_NAME),$(filter $(OS_NAME),RedHatEnterpriseServer CentOS))
 	OS_NAME = $(shell cat /etc/os-release | grep -e "^ID=\".*\"" | cut -d'"' -f2)
 	OS_VERSION = $(shell cat /etc/os-release | grep -i version_id|cut -d'"' -f2)
 	ARCHITECTURE = $(shell arch)
