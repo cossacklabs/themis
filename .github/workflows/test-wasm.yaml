@@ -56,9 +56,13 @@ jobs:
           cd $HOME
           git clone https://github.com/emscripten-core/emsdk.git
           cd $HOME/emsdk
-          # "upstream" flavor using LLVM compiler is still unstable for us
-          ./emsdk install  latest-fastcomp
-          ./emsdk activate latest-fastcomp
+          # FIXME(ilammy, 2020-06-07): migrate to "upstream" flavor
+          # LLVM flavor of Emscripten has some issues compiling our code,
+          # and latest versions of the fastcomp flavor started giving out
+          # compiler warnings (turned into errors by the build system).
+          # We need to migrate, but for the time being use the old version.
+          ./emsdk install  1.39.16-fastcomp
+          ./emsdk activate 1.39.16-fastcomp
       - name: Check out code
         uses: actions/checkout@v2
         with:
