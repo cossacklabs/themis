@@ -502,6 +502,8 @@ _Code:_
   - `SecureCell` now allows `null` to explicitly specify omitted encryption context ([#620](https://github.com/cossacklabs/themis/pull/620)).
   - `SecureMessage` now allows `null` for omitted keys in sign/verify mode ([#620](https://github.com/cossacklabs/themis/pull/620)).
   - Fixed a crash when an exception is thrown from `SecureSession` callback ([#620](https://github.com/cossacklabs/themis/pull/620)).
+  - Node.js v14 is now supported
+    ([#654](https://github.com/cossacklabs/themis/issues/654)).
 
   - Passphrase API support in Secure Cell ([#621](https://github.com/cossacklabs/themis/pull/621)).
 
@@ -652,6 +654,8 @@ _Code:_
   - New class `SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
   - Updated embedded BoringSSL to the latest version
     ([#643](https://github.com/cossacklabs/themis/pull/643)).
+  - Node.js v14 is now supported
+    ([#654](https://github.com/cossacklabs/themis/issues/654)).
 
   - Passphrase API support in Secure Cell ([#616](https://github.com/cossacklabs/themis/pull/616)).
 

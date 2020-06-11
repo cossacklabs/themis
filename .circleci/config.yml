@@ -457,6 +457,7 @@ jobs:
             nvm install v8
             nvm install v10
             nvm install v12
+            nvm install v14
       # Install Emscripten toolchain for Wasm support
       # See https://emscripten.org/docs/getting_started/downloads.html
       - restore_cache:
@@ -510,7 +511,7 @@ jobs:
             # Run JsThemis tests
             make test_js
       - run:
-          name: Test with Node.js v8 (maintenance)
+          name: Test with Node.js v8
           when: always
           command: |
             # Activate Node.js v8
@@ -522,7 +523,7 @@ jobs:
             # Run WasmThemis tests
             make BUILD_PATH=build-wasm test_wasm
       - run:
-          name: Test with Node.js v10 (LTS)
+          name: Test with Node.js v10
           when: always
           command: |
             # Activate Node.js v10
@@ -534,11 +535,23 @@ jobs:
             # Run WasmThemis tests
             make BUILD_PATH=build-wasm test_wasm
       - run:
-          name: Test with Node.js v12 (stable)
+          name: Test with Node.js v12
           when: always
           command: |
             # Activate Node.js v12
             nvm use v12
+            echo "node --version: $(node --version)"
+            echo "npm --version:  $(npm --version)"
+            # Run JsThemis tests
+            make test_js
+            # Run WasmThemis tests
+            make BUILD_PATH=build-wasm test_wasm
+      - run:
+          name: Test with Node.js v14
+          when: always
+          command: |
+            # Activate Node.js v14
+            nvm use v14
             echo "node --version: $(node --version)"
             echo "npm --version:  $(npm --version)"
             # Run JsThemis tests
