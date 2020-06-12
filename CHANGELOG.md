@@ -4,6 +4,8 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.13.0](https://github.com/cossacklabs/themis/releases/tag/0.13.0), July 8th 2020
+
 **TL;DR:**
 
 - Added API for generating symmetric keys for use with Secure Cell.

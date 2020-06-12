@@ -3,6 +3,9 @@
 
 The version currently in development.
 
+Version 0.13.0 - 2020-07-08
+===========================
+
 ## New features
 
 - New `SymmetricKey` objects can be used as master keys for `SecureCell`.
