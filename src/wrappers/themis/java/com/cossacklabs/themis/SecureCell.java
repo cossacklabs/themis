@@ -27,7 +27,7 @@ import java.nio.charset.StandardCharsets;
 /**
  * Secure Cell for data storage.
  * <p>
- * <strong>Secure Сell</strong> is a high-level cryptographic service
+ * <strong>Secure Cell</strong> is a high-level cryptographic service
  * aimed at protecting arbitrary data stored in various types of storage
  * (e.g., databases, filesystem files, document archives, cloud storage, etc.)
  * It provides both strong symmetric encryption and data authentication mechanism.
@@ -37,7 +37,7 @@ import java.nio.charset.StandardCharsets;
  * <ul>
  *   <li><em>input:</em> some source data to protect</li>
  *   <li><em>secret:</em> symmetric key or a password</li>
- *   <li><em>context:</em> and an optional “context information”</li>
+ *   <li><em>context:</em> and an optional "context information"</li>
  * </ul>
  *
  * Secure Cell will produce:
@@ -120,11 +120,11 @@ public class SecureCell {
      * This is the most secure and easy way to protect stored data.
      * The data is protected by a symmetric key or a passphrase.
      * <p>
-     * Secure Cell in Seal mode will encrypt the data and append an “authentication tag”
+     * Secure Cell in Seal mode will encrypt the data and append an "authentication tag"
      * with auxiliary security information, forming a single sealed container.
      * This means that the encrypted data will be longer than the original input.
      * <p>
-     * Additionally, it is possible to bind the encrypted data to some “associated context”
+     * Additionally, it is possible to bind the encrypted data to some "associated context"
      * (for example, database row number).
      * In this case decryption of the data with incorrect context will fail
      * (even if the correct key is known and the data has not been tampered).
@@ -341,7 +341,7 @@ public class SecureCell {
      * then Token Protect mode can be used instead of Seal mode.
      * <p>
      * Token Protect mode produces authentication tag and other auxiliary data
-     * (aka “authentication token”) in a detached buffer.
+     * (aka "authentication token") in a detached buffer.
      * This keeps the original size of the encrypted data
      * while enabling separate storage of security information.
      * Note that the same token must be provided along with the correct secret
@@ -496,7 +496,7 @@ public class SecureCell {
      * <p>
      * Context Imprint mode is intended for environments where storage constraints
      * do not allow the size of the data to grow and there is no auxiliary storage available.
-     * Context Imprint mode requires an additional “associated context”
+     * Context Imprint mode requires an additional "associated context"
      * to be provided along with the key in order to protect the data.
      * <p>
      * In Context Imprint mode no authentication token is computed or verified.
