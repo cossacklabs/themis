@@ -260,7 +260,7 @@ public class SecureCellSealWithPassphraseTest {
     @Test
     public void defaultEncoding() throws SecureCellException {
         // Passphrases are encoded in UTF-8 by default.
-        String passphrase = "暗号";
+        String passphrase = "\u6697\u53F7";
         SecureCell.Seal cellA = SecureCell.SealWithPassphrase(passphrase);
         SecureCell.Seal cellB = SecureCell.SealWithPassphrase(passphrase.getBytes(StandardCharsets.UTF_8));
         byte[] message = "All your base are belong to us!".getBytes(StandardCharsets.UTF_8);
@@ -354,7 +354,7 @@ public class SecureCellSealWithPassphraseTest {
         try {
             // It is an error if the passphrase cannot be represented in the requested charset
             // without data loss.
-            SecureCell.SealWithPassphrase("пароль", StandardCharsets.US_ASCII);
+            SecureCell.SealWithPassphrase("\u043F\u0430\u0440\u043E\u043B\u044C", StandardCharsets.US_ASCII);
             fail("expected RuntimeException(CharacterCodingException)");
         }
         catch (RuntimeException e) {

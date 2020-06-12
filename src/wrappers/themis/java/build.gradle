@@ -50,4 +50,9 @@ java {
 // Tweak compiler options.
 compileJava {
     options.deprecation = true // log deprecated API usage
+    options.encoding = "ASCII" // allow only ASCII in source code
+}
+compileTestJava {
+    options.deprecation = true // log deprecated API usage
+    options.encoding = "ASCII" // allow only ASCII in source code
 }
