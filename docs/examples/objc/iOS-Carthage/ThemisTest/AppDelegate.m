@@ -67,10 +67,10 @@
     NSError *themisError;
 
 
-    // context is optional parameter and may be ignored
-    NSData *encryptedMessage = [cellSeal wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                            error:&themisError];
+    // context is optional parameter and may be omitted
+    NSData *encryptedMessage = [cellSeal encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                         context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                           error:&themisError];
 
     if (themisError) {
         NSLog(@"%s Error occurred while enrypting %@", sel_getName(_cmd), themisError);
@@ -78,9 +78,9 @@
     }
     NSLog(@"encryptedMessage = %@", encryptedMessage);
 
-    NSData *decryptedMessage = [cellSeal unwrapData:encryptedMessage
-                                            context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                              error:&themisError];
+    NSData *decryptedMessage = [cellSeal decrypt:encryptedMessage
+                                         context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                           error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
         return;
@@ -105,18 +105,20 @@
     NSString *context = @"I'm a dog";
     NSError *themisError;
 
-    // context is optional parameter and may be ignored
-    TSCellTokenEncryptedData *encryptedMessage = [cellToken wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                                             context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                               error:&themisError];
+    // context is optional parameter and may be omitted
+    TSCellTokenEncryptedResult *encryptedMessage = [cellToken encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                                              context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                                                error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occurred while enrypting %@", sel_getName(_cmd), themisError);
         return;
     }
-    NSLog(@"%s\ncipher = %@:\ntoken = %@", sel_getName(_cmd), encryptedMessage.cipherText,encryptedMessage.token);
+    NSLog(@"%s\ncipher = %@:\ntoken = %@", sel_getName(_cmd), encryptedMessage.encrypted, encryptedMessage.token);
 
-    NSData *decryptedMessage = [cellToken unwrapData:encryptedMessage
-                                             context:[context dataUsingEncoding:NSUTF8StringEncoding] error:&themisError];
+    NSData *decryptedMessage = [cellToken decrypt:encryptedMessage.encrypted
+                                            token:encryptedMessage.token
+                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                            error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
         return;
@@ -142,9 +144,9 @@
     NSError *themisError;
 
     // context is not optional parameter here
-    NSData *encryptedMessage = [contextImprint wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                                context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                  error:&themisError];
+    NSData *encryptedMessage = [contextImprint encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                               context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                                 error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occurred while enrypting %@", sel_getName(_cmd), themisError);
         return;
@@ -152,9 +154,9 @@
     NSLog(@"%@", encryptedMessage);
 
     // context is not optional parameter here
-    NSData *decryptedMessage = [contextImprint unwrapData:encryptedMessage
-                                                  context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                    error:&themisError];
+    NSData *decryptedMessage = [contextImprint decrypt:encryptedMessage
+                                               context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                                 error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
         return;
