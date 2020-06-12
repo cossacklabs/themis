@@ -14,7 +14,7 @@
 
 #import "AppDelegate.h"
 
-#import <themis/themis.h>
+#import <objcthemis/objcthemis.h>
 
 @interface AppDelegate ()
 
