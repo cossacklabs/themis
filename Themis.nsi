@@ -7,10 +7,10 @@ VIAddVersionKey "ProductName"     "Themis"
 VIAddVersionKey "CompanyName"     "Cossack Labs Limited"
 VIAddVersionKey "LegalCopyright"  "(c) Cossack Labs Limited"
 VIAddVersionKey "FileDescription" "Themis library installer"
-VIAddVersionKey "FileVersion"     "0.12.0"
-VIAddVersionKey "ProductVersion"  "0.12.0"
-VIFileVersion    0.12.0.0
-VIProductVersion 0.12.0.0
+VIAddVersionKey "FileVersion"     "0.13.0"
+VIAddVersionKey "ProductVersion"  "0.13.0"
+VIFileVersion    0.13.0.0
+VIProductVersion 0.13.0.0
 
 Page license
 Page directory
