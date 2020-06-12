@@ -11,6 +11,7 @@ on:
       - 'tests/common/**'
       - 'tests/soter/**'
       - 'tests/themis/**'
+      - '!tests/themis/wrappers/android/**'
       - 'third_party/boringssl/src/**'
       - 'tools/afl/**'
       - '**/*.mk'
