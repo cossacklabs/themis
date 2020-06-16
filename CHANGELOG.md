@@ -16,6 +16,8 @@ Changes that are currently in development and have not been released yet.
 - Themis is known to be broken on big-endian architectures ([read more](#0.13.0-big-endian)).
 - Java 7 is no longer supported, breaking Android and Java builds on outdated systems ([read more](#0.13.0-drop-java-7)).
 - Python 2 is no longer supported ([read more](#0.13.0-drop-python-2)).
+- Serialisation of Secure Session state in JavaThemis is now deprecated
+  ([read more](#0.13.0-deprecate-session-save-restore)).
 
 _Code:_
 
@@ -494,6 +496,14 @@ _Code:_
       consider using them instead.
 
       Deprecated API is still supported, there are no plans for its removal.
+
+    - <a id="0.13.0-deprecate-session-save-restore"></a>
+      `SecureSession` methods `save` and `restore` are now deprecated
+      ([#659](https://github.com/cossacklabs/themis/pull/659)).
+
+      An improved API for serialisation might appear in some next version of JavaThemis.
+      For now, please refrain from using `SecureSession#save` and `SecureSession#restore`
+      which may be removed in the future.
 
 - **Node.js**
 

@@ -283,7 +283,11 @@ public class SecureSession {
 	 * @return session state
 	 * @throws IllegalStateException is the session is already closed
 	 * @throws RuntimeException when cannot serialize session, e.g. if session is not established
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * This method might be replaced in a next release, please do not use.
 	 */
+	@Deprecated
 	public synchronized byte[] save() {
 		if (0 == sessionPtr) {
 			throw new IllegalStateException("Secure Session is closed");
@@ -303,7 +307,11 @@ public class SecureSession {
 	 * @param callbacks implementation
 	 * @return restored SecureSession
 	 * @throws SecureSessionException when cannot restore session
+	 * @deprecated since JavaThemis 0.13
+	 * <p>
+	 * This method might be replaced in a next release, please do not use.
 	 */
+	@Deprecated
 	public static SecureSession restore(byte[] state, ISessionCallbacks callbacks) throws SecureSessionException {
 		SecureSession session = new SecureSession();
 		

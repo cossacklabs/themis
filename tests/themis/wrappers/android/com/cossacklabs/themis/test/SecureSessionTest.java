@@ -108,6 +108,8 @@ public class SecureSessionTest {
 		return data;
 	}
 	
+	// Allow deprecated #save and #restore methods.
+	@SuppressWarnings("deprecation")
 	@Test
 	public void runTest() {
 		
