@@ -38,6 +38,11 @@ _Code:_
 
       provide Seal mode API that is safe to use with passphrases ([#577](https://github.com/cossacklabs/themis/pull/577)).
 
+  - **Secure Session**
+
+    - Fixed serialization issue in `secure_session_save()` and `secure_session_load()` methods
+      ([#658](https://github.com/cossacklabs/themis/pull/658).
+
   - **Breaking changes**
 
     - <a id="0.13.0-drop-0.9.6-compat">Secure Cell compatibility with Themis 0.9.6 is now disabled by default ([#614](https://github.com/cossacklabs/themis/pull/614)).
@@ -70,6 +75,8 @@ _Code:_
     ([#639](https://github.com/cossacklabs/themis/pull/639)).
   - Updated embedded BoringSSL to the latest version
     ([#643](https://github.com/cossacklabs/themis/pull/643)).
+  - Fixed broken `SecureSession#save` and `SecureSession#restore` methods
+    ([#658](https://github.com/cossacklabs/themis/pull/658).
 
   - **Breaking changes**
 
@@ -390,6 +397,8 @@ _Code:_
     ([#633](https://github.com/cossacklabs/themis/pull/633)).
   - Kotlin is now officially supported language for JavaThemis
     ([#637](https://github.com/cossacklabs/themis/pull/637).
+  - Fixed broken `SecureSession#save` and `SecureSession#restore` methods
+    ([#658](https://github.com/cossacklabs/themis/pull/658).
 
   - Secure Cell API updates:
 
