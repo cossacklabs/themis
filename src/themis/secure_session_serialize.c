@@ -52,7 +52,7 @@
  * All values are unsigned and encoded as big-endian.
  */
 
-#define SESSION_CTX_SERIZALIZED_SIZE \
+#define SESSION_CTX_SERIALIZED_SIZE \
     (2 * sizeof(uint32_t) + SESSION_MASTER_KEY_LENGTH + 2 * sizeof(uint32_t))
 
 themis_status_t secure_session_save(const secure_session_t* session_ctx, void* out, size_t* out_length)
@@ -71,14 +71,14 @@ themis_status_t secure_session_save(const secure_session_t* session_ctx, void* o
 
     /* | session_id | is_client | master_key | out_seq | in_seq | */
 
-    if ((!out) || (*out_length < (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIZALIZED_SIZE))) {
-        *out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIZALIZED_SIZE);
+    if ((!out) || (*out_length < (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIALIZED_SIZE))) {
+        *out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIALIZED_SIZE);
         return THEMIS_BUFFER_TOO_SMALL;
     }
 
-    *out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIZALIZED_SIZE);
+    *out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIALIZED_SIZE);
 
-    soter_container_set_data_size(hdr, SESSION_CTX_SERIZALIZED_SIZE);
+    soter_container_set_data_size(hdr, SESSION_CTX_SERIALIZED_SIZE);
     memcpy(hdr->tag, THEMIS_SESSION_CONTEXT_TAG, SOTER_CONTAINER_TAG_LENGTH);
 
     curr = (uint32_t*)soter_container_data(hdr);
