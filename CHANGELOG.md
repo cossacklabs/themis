@@ -803,10 +803,6 @@ _Infrastructure:_
    [#583](https://github.com/cossacklabs/themis/pull/583)).
 - Added automated tests for all code samples in documentation, ensuring they are always up-to-date ([#600](https://github.com/cossacklabs/themis/pull/600)).
 - All 13 supported platforms are verified on GitHub Actions, along with existing CircleCI and Bitrise tests ([#600](https://github.com/cossacklabs/themis/pull/600)).
-- iPadOS is now officially supported target for ObjCThemis
-  ([#641](https://github.com/cossacklabs/themis/pull/641)).
-- Kotlin API of JavaThemis is now verified by all CI platforms
-  ([#637](https://github.com/cossacklabs/themis/pull/637)).
 - New Makefile targets:
   - `make jsthemis` builds JsThemis from source ([#618](https://github.com/cossacklabs/themis/pull/618)).
 - Resolved issues with library search paths on CentOS
@@ -834,6 +830,21 @@ _Infrastructure:_
    [#649](https://github.com/cossacklabs/themis/pull/649),
    [#656](https://github.com/cossacklabs/themis/pull/656)).
 
+- **New supported platforms**
+
+  - CentOS 8 is now fully fully supported.
+  - Ubuntu 20.04 “Focal Fossa” is now fully fully supported.
+  - GoThemis is now tested with Go 1.14
+    ([#595](https://github.com/cossacklabs/themis/pull/595)).
+  - SwiftThemis is now tested with Swift 5
+    ([#605](https://github.com/cossacklabs/themis/pull/605)).
+  - Kotlin API of JavaThemis is now verified by all CI platforms
+    ([#637](https://github.com/cossacklabs/themis/pull/637)).
+  - iPadOS is now officially supported target for ObjCThemis
+    ([#641](https://github.com/cossacklabs/themis/pull/641)).
+  - Node.js v14 is now supported for JsThemis and WasmThemis
+    ([#654](https://github.com/cossacklabs/themis/pull/654)).
+
 - **Breaking changes**
 
   - <a id="0.13.0-drop-java-7">Java 7 is no longer supported</a>
@@ -841,9 +852,17 @@ _Infrastructure:_
 
     Updates in Gradle build infrastructure require Java 8.
 
-    Incidentally, systems that do not have Java 8 or later available are also not supported since Themis 0.13:
+  - Debian 8 “Jessie” is no longer supported
+    ([#633](https://github.com/cossacklabs/themis/pull/633)).
 
-      - Debian 8 (“jessie”)
+    This version is no longer maintained by the Debian team and it lacks Java 8.
+    We no longer provide binary packages for this distribution.
+
+  - Python 2 is no longer supported
+    ([#648](https://github.com/cossacklabs/themis/pull/648)).
+
+    Python 2 had finally reached EOL on 2020-01-01.
+    PyThemis 0.13 is the last version guaranteed to be compatible with Python 2.
 
 ## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 27th 2019
 
