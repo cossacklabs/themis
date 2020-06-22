@@ -71,7 +71,7 @@ _Code:_
   - **Secure Session**
 
     - Fixed serialization issue in `secure_session_save()` and `secure_session_load()` methods
-      ([#658](https://github.com/cossacklabs/themis/pull/658).
+      ([#658](https://github.com/cossacklabs/themis/pull/658)).
 
   - **Breaking changes**
 
@@ -100,13 +100,13 @@ _Code:_
   See also: [Java API updates](#0.13.0-java).
 
   - Kotlin is now officially supported language on Android
-    ([#637](https://github.com/cossacklabs/themis/pull/637).
+    ([#637](https://github.com/cossacklabs/themis/pull/637)).
   - Fixed a crash when decrypting corrupted Secure Cell data
     ([#639](https://github.com/cossacklabs/themis/pull/639)).
   - Updated embedded BoringSSL to the latest version
     ([#643](https://github.com/cossacklabs/themis/pull/643)).
   - Fixed broken `SecureSession#save` and `SecureSession#restore` methods
-    ([#658](https://github.com/cossacklabs/themis/pull/658).
+    ([#658](https://github.com/cossacklabs/themis/pull/658)).
 
   - **Breaking changes**
 
@@ -172,7 +172,7 @@ _Code:_
       - `themispp::secure_cell_token_protect_t`
       - `themispp::secure_cell_context_imprint_t`
 
-      They should be replaced with their `_with_key` counterparts. In most cases migration should be a trivial renaming but there are caveats with Token Protect mode and iterator usage. Please see ([#588](https://github.com/cossacklabs/themis/pull/588)) for details.
+      They should be replaced with their `_with_key` counterparts. In most cases migration should be a trivial renaming but there are caveats with Token Protect mode and iterator usage. Please see [#588](https://github.com/cossacklabs/themis/pull/588) for details.
 
   - New function `themispp::gen_sym_key()` can be used to generate symmetric keys for Secure Cell
     ([#561](https://github.com/cossacklabs/themis/pull/561),
@@ -437,9 +437,9 @@ _Code:_
     Run `./gradlew :desktop:tasks` to learn more
     ([#633](https://github.com/cossacklabs/themis/pull/633)).
   - Kotlin is now officially supported language for JavaThemis
-    ([#637](https://github.com/cossacklabs/themis/pull/637).
+    ([#637](https://github.com/cossacklabs/themis/pull/637)).
   - Fixed broken `SecureSession#save` and `SecureSession#restore` methods
-    ([#658](https://github.com/cossacklabs/themis/pull/658).
+    ([#658](https://github.com/cossacklabs/themis/pull/658)).
   - Java source code is now ASCII-only for improved compatibility
     ([#655](https://github.com/cossacklabs/themis/pull/655)).
 
@@ -806,7 +806,7 @@ _Infrastructure:_
 - iPadOS is now officially supported target for ObjCThemis
   ([#641](https://github.com/cossacklabs/themis/pull/641)).
 - Kotlin API of JavaThemis is now verified by all CI platforms
-  ([#637](https://github.com/cossacklabs/themis/pull/637).
+  ([#637](https://github.com/cossacklabs/themis/pull/637)).
 - New Makefile targets:
   - `make jsthemis` builds JsThemis from source ([#618](https://github.com/cossacklabs/themis/pull/618)).
 - Resolved issues with library search paths on CentOS
