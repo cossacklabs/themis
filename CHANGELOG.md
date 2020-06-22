@@ -23,6 +23,31 @@ _Code:_
 
 - **Core**
 
+  - Added support for building with sanitizers like ASan and UBSan,
+    enabled by `WITH_ASAN=1` flags
+    ([#548](https://github.com/cossacklabs/themis/pull/548),
+     [#556](https://github.com/cossacklabs/themis/pull/556)).
+  - Fixed a number of possible use-after-free conditions
+    ([#546](https://github.com/cossacklabs/themis/pull/546)).
+  - Themis Core is now compiled with `-O2` optimizations enabled by default
+    ([#543](https://github.com/cossacklabs/themis/pull/543)).
+  - Themis Core is now compiled with even more paranoid compiler flags
+    ([#578](https://github.com/cossacklabs/themis/pull/578)).
+  - Fixed various edge-case correctness issues pointed out by sanitizers,
+    clang-tidy, and compiler warnings
+    ([#540](https://github.com/cossacklabs/themis/pull/540),
+     [#545](https://github.com/cossacklabs/themis/pull/545),
+     [#554](https://github.com/cossacklabs/themis/pull/554),
+     [#570](https://github.com/cossacklabs/themis/pull/570),
+     [#597](https://github.com/cossacklabs/themis/pull/597),
+     [#613](https://github.com/cossacklabs/themis/pull/613)).
+  - Improved memory wiping,
+    making sure that sensitive data doesn't stay in memory longer than absolutely necessary
+    ([#584](https://github.com/cossacklabs/themis/pull/584),
+     [#585](https://github.com/cossacklabs/themis/pull/585),
+     [#586](https://github.com/cossacklabs/themis/pull/586),
+     [#612](https://github.com/cossacklabs/themis/pull/612)).
+
   - **Soter** (low-level security core used by Themis)
 
     - New function `soter_pbkdf2_sha256()` can be used to derive encryption keys from passphrases with PBKDF2 algorithm ([#574](https://github.com/cossacklabs/themis/pull/574)).
@@ -38,7 +63,10 @@ _Code:_
       - `themis_secure_cell_encrypt_seal_with_passphrase()`
       - `themis_secure_cell_decrypt_seal_with_passphrase()`
 
-      provide Seal mode API that is safe to use with passphrases ([#577](https://github.com/cossacklabs/themis/pull/577)).
+      provide Seal mode API that is safe to use with passphrases
+      ([#577](https://github.com/cossacklabs/themis/pull/577),
+       [#582](https://github.com/cossacklabs/themis/pull/582),
+       [#640](https://github.com/cossacklabs/themis/pull/640)).
 
   - **Secure Session**
 
@@ -146,7 +174,9 @@ _Code:_
 
       They should be replaced with their `_with_key` counterparts. In most cases migration should be a trivial renaming but there are caveats with Token Protect mode and iterator usage. Please see ([#588](https://github.com/cossacklabs/themis/pull/588)) for details.
 
-  - New function `themispp::gen_sym_key()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - New function `themispp::gen_sym_key()` can be used to generate symmetric keys for Secure Cell
+    ([#561](https://github.com/cossacklabs/themis/pull/561),
+     [#576](https://github.com/cossacklabs/themis/pull/576)).
   - Updated test suite to test C++14 and C++17 (in addition to C++11 and C++03) ([#572](https://github.com/cossacklabs/themis/pull/572)).
 
 - **Go**
@@ -212,6 +242,15 @@ _Code:_
 - **iOS and macOS**
 
   - New function `TSGenerateSymmetricKey()` (available in Objective-C and Swift) can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Mac Catalyst is explicitly disabled
+    ([#598](https://github.com/cossacklabs/themis/pull/598)).
+  - Improved test coverage of platforms
+    ([#599](https://github.com/cossacklabs/themis/pull/599),
+     [#607](https://github.com/cossacklabs/themis/pull/607),
+     [#610](https://github.com/cossacklabs/themis/pull/610),
+     [#642](https://github.com/cossacklabs/themis/pull/642)).
+  - SwiftThemis is now tested with Swift 5
+    ([#605](https://github.com/cossacklabs/themis/pull/605)).
   - iPadOS is now officially supported target for ObjCThemis
     ([#641](https://github.com/cossacklabs/themis/pull/641)).
 
@@ -401,6 +440,8 @@ _Code:_
     ([#637](https://github.com/cossacklabs/themis/pull/637).
   - Fixed broken `SecureSession#save` and `SecureSession#restore` methods
     ([#658](https://github.com/cossacklabs/themis/pull/658).
+  - Java source code is now ASCII-only for improved compatibility
+    ([#655](https://github.com/cossacklabs/themis/pull/655)).
 
   - Secure Cell API updates:
 
@@ -522,7 +563,7 @@ _Code:_
   - `SecureMessage` now allows `null` for omitted keys in sign/verify mode ([#620](https://github.com/cossacklabs/themis/pull/620)).
   - Fixed a crash when an exception is thrown from `SecureSession` callback ([#620](https://github.com/cossacklabs/themis/pull/620)).
   - Node.js v14 is now supported
-    ([#654](https://github.com/cossacklabs/themis/issues/654)).
+    ([#654](https://github.com/cossacklabs/themis/pull/654)).
 
   - Passphrase API support in Secure Cell ([#621](https://github.com/cossacklabs/themis/pull/621)).
 
@@ -565,6 +606,9 @@ _Code:_
 - **PHP**
 
   - New function `phpthemis_gen_sym_key()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Resolved PHP Composer checksum issues once and for all
+    ([#566](https://github.com/cossacklabs/themis/pull/566),
+     [#567](https://github.com/cossacklabs/themis/pull/567)).
   - PHPThemis now supports _passphrase API_ of Secure Cell in Seal mode ([#594](https://github.com/cossacklabs/themis/pull/594), [#601](https://github.com/cossacklabs/themis/pull/601)).
 
     ```php
@@ -599,6 +643,8 @@ _Code:_
     Use master key API with symmetric encryption keys, such as generated by `GenerateSymmetricKey()` ([#561](https://github.com/cossacklabs/themis/pull/561)).
     Use passphrase API with human-readable passphrases.
   - <a id="0.13.0-drop-python-2">Python 2 is no longer supported</a>
+    ([#648](https://github.com/cossacklabs/themis/pull/648)).
+
     Python 2 had reached EOL on 2020-01-01.
 
     In fact, we are not making any changes in this release that break compatibility, but we no longer officially support it. This means that we do not run any CI tests for Python 2, and in the future we will develop code compatible only with Python 3+.
@@ -647,7 +693,9 @@ _Code:_
 
 - **Rust**
 
-  - New object `themis::keys::SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - New object `themis::keys::SymmetricKey` can be used to generate symmetric keys for Secure Cell
+    ([#561](https://github.com/cossacklabs/themis/pull/561),
+     [#631](https://github.com/cossacklabs/themis/pull/631)).
   - Significantly reduced compilation time by removing `bindgen` crate from dependencies ([#626](https://github.com/cossacklabs/themis/pull/626)).
   - Passphrase API support in Secure Cell ([#630](https://github.com/cossacklabs/themis/pull/630)).
 
@@ -668,13 +716,25 @@ _Code:_
     Use master key API with symmetric encryption keys, such as generated by `themis::keys::SymmetricKey` ([#561](https://github.com/cossacklabs/themis/pull/561)).
     Use passphrase API with human-readable passphrases.
 
+  - Miscellaneous minor improvements in code quality
+    ([#571](https://github.com/cossacklabs/themis/pull/571),
+     [#591](https://github.com/cossacklabs/themis/pull/591)).
+
 - **WebAssembly**
 
   - New class `SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
-  - Updated embedded BoringSSL to the latest version
-    ([#643](https://github.com/cossacklabs/themis/pull/643)).
+  - Fixed an issue with webpack Terser plugin
+    ([#568](https://github.com/cossacklabs/themis/pull/568)).
+  - Updated Emscripten toolchain to the latest version
+    ([#550](https://github.com/cossacklabs/themis/pull/550),
+     [#569](https://github.com/cossacklabs/themis/pull/569),
+     [#602](https://github.com/cossacklabs/themis/pull/602),
+     [#653](https://github.com/cossacklabs/themis/pull/653)).
+  - Updated embedded BoringSSL and other dependencies to the latest versions
+    ([#608](https://github.com/cossacklabs/themis/pull/608),
+     [#643](https://github.com/cossacklabs/themis/pull/643)).
   - Node.js v14 is now supported
-    ([#654](https://github.com/cossacklabs/themis/issues/654)).
+    ([#654](https://github.com/cossacklabs/themis/pull/654)).
 
   - Passphrase API support in Secure Cell ([#616](https://github.com/cossacklabs/themis/pull/616)).
 
@@ -712,9 +772,35 @@ _Code:_
 
       `new` constructors are not recommended for use but they are still supported and will always work with master keys, as they did before.
 
+_Docs:_
+
+- New improved design and structure of [Themis documentation](https://docs.cossacklabs.com/products/themis/).
+- Updated templates for GitHub issues and pull requests
+  ([#549](https://github.com/cossacklabs/themis/pull/549)).
+- Miscellaneous quality improvements in various pieces of documentation
+  ([#558](https://github.com/cossacklabs/themis/pull/558),
+   [#575](https://github.com/cossacklabs/themis/pull/575),
+   [#581](https://github.com/cossacklabs/themis/pull/581),
+   [#587](https://github.com/cossacklabs/themis/pull/587),
+   [#590](https://github.com/cossacklabs/themis/pull/590)).
+- Clarified information on data privacy regulations
+  ([#593](https://github.com/cossacklabs/themis/pull/593)).
+- Removed last surviving links to deprecated GitHub Wiki
+  ([#589](https://github.com/cossacklabs/themis/pull/589)).
+
 _Infrastructure:_
 
-- Automated benchmarking harness is now tracking Themis performance. See [`benches`](https://github.com/cossacklabs/themis/tree/master/benches/) ([#580](https://github.com/cossacklabs/themis/pull/580)).
+- Changed name of the tarball produced by `make dist` to `themis_X.Y.Z.tar.gz`
+  ([#544](https://github.com/cossacklabs/themis/pull/544)).
+- Fixed Doxygen support
+  ([#559](https://github.com/cossacklabs/themis/pull/559)).
+- Automated benchmarking harness is now tracking Themis performance.
+  See [`benches`](https://github.com/cossacklabs/themis/tree/master/benches/)
+  ([#580](https://github.com/cossacklabs/themis/pull/580),
+   [#582](https://github.com/cossacklabs/themis/pull/582)).
+- Automated regular fuzzing of the code with AFL
+  ([#579](https://github.com/cossacklabs/themis/pull/579),
+   [#583](https://github.com/cossacklabs/themis/pull/583)).
 - Added automated tests for all code samples in documentation, ensuring they are always up-to-date ([#600](https://github.com/cossacklabs/themis/pull/600)).
 - All 13 supported platforms are verified on GitHub Actions, along with existing CircleCI and Bitrise tests ([#600](https://github.com/cossacklabs/themis/pull/600)).
 - iPadOS is now officially supported target for ObjCThemis
@@ -726,6 +812,27 @@ _Infrastructure:_
 - Resolved issues with library search paths on CentOS
   when Themis Core is built from source and installed with `make install`
   ([#645](https://github.com/cossacklabs/themis/pull/645).
+- Resolved issues with library search paths on Debian
+  when Themis Core is installed from packages
+  ([#651](https://github.com/cossacklabs/themis/pull/651)).
+- Introduced `./configure` script to significantly improve rebuild performance
+  ([#611](https://github.com/cossacklabs/themis/pull/611),
+   [#628](https://github.com/cossacklabs/themis/pull/628)).
+- Improved package installation testing and platform coverage
+  ([#595](https://github.com/cossacklabs/themis/pull/595),
+   [#650](https://github.com/cossacklabs/themis/pull/650)).
+- Miscellaneous minor improvements and updates in the build system
+  ([#542](https://github.com/cossacklabs/themis/pull/542),
+   [#573](https://github.com/cossacklabs/themis/pull/573),
+   [#615](https://github.com/cossacklabs/themis/pull/615),
+   [#617](https://github.com/cossacklabs/themis/pull/617),
+   [#629](https://github.com/cossacklabs/themis/pull/629),
+   [#627](https://github.com/cossacklabs/themis/pull/627),
+   [#632](https://github.com/cossacklabs/themis/pull/632),
+   [#644](https://github.com/cossacklabs/themis/pull/644),
+   [#646](https://github.com/cossacklabs/themis/pull/646),
+   [#649](https://github.com/cossacklabs/themis/pull/649),
+   [#656](https://github.com/cossacklabs/themis/pull/656)).
 
 - **Breaking changes**
 
