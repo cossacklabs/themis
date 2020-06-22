@@ -5,8 +5,12 @@
 Changes that are currently in development and have not been released yet.
 
 **TL;DR:**
-- Added API for generating symmetric keys for use with Secure Cell
-- Added API for Secure Cell encryption with human-readable passphrases
+
+- Added API for generating symmetric keys for use with Secure Cell.
+- Added API for Secure Cell encryption with human-readable passphrases.
+- [New supported platforms: Kotlin, Swift 5, iPadOS](#0.13.0-new-platforms).
+- [Updated look-and-feel of the documentation](https://docs.cossacklabs.com/products/themis/).
+- Squished many tricky bugs and added whole lot of extra security checks.
 
 **Breaking changes and deprecations:**
 
@@ -830,7 +834,7 @@ _Infrastructure:_
    [#649](https://github.com/cossacklabs/themis/pull/649),
    [#656](https://github.com/cossacklabs/themis/pull/656)).
 
-- **New supported platforms**
+- <a id="0.13.0-new-platforms">**New supported platforms**</a>
 
   - CentOS 8 is now fully fully supported.
   - Ubuntu 20.04 “Focal Fossa” is now fully fully supported.
