@@ -649,6 +649,8 @@ _Code:_
 
   - New object `themis::keys::SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
   - Significantly reduced compilation time by removing `bindgen` crate from dependencies ([#626](https://github.com/cossacklabs/themis/pull/626)).
+  - Bindgen 0.54.1 or later is now required for RustThemis development
+    ([#664](https://github.com/cossacklabs/themis/pull/664)).
   - Passphrase API support in Secure Cell ([#630](https://github.com/cossacklabs/themis/pull/630)).
 
     RustThemis now supports _passphrase API_ of Secure Cell in Seal mode:
