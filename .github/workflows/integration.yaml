@@ -75,6 +75,9 @@ jobs:
           cd $HOME
           git clone https://github.com/emscripten-core/emsdk.git
           cd $HOME/emsdk
+          # FIXME(ilammy, 2020-07-07): unpin emsdk version [T1698]
+          # Latest HEAD has a regression, we roll back to last good version.
+          git checkout 92d512faa832b3ff5d6b8bc991b6801e31d8e372
           # FIXME(ilammy, 2020-06-07): migrate to "upstream" flavor
           # LLVM flavor of Emscripten has some issues compiling our code,
           # and latest versions of the fastcomp flavor started giving out
