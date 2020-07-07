@@ -7,6 +7,7 @@
   <br>
 </h3>
 ---
+
 <p align="center">
   <a href="https://github.com/cossacklabs/themis/releases"><img src="https://img.shields.io/github/release/cossacklabs/themis.svg" alt="GitHub release"></a>
   <a href="https://circleci.com/gh/cossacklabs/themis"><img src="https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield" alt="Circle CI"></a>
@@ -32,7 +33,7 @@ Themis helps to build both simple and complex cryptographic features easily, qui
 
 * **Encrypt sensitive data fields** before storing in database (_"application-side field-level encryption"_).
 
-* Support **searchable encryption**, data tokenisation (FPE) and data masking using Themis and [Acra](https://www.cossacklabs.com/acra/).
+* Support **searchable encryption**, data tokenisation *and* data masking using Themis and [Acra](https://www.cossacklabs.com/acra/).
 
 * Exchange secrets securely: **share sensitive data** between parties, build simple chat app between patients and doctors.
 
@@ -49,7 +50,7 @@ Themis helps to build both simple and complex cryptographic features easily, qui
 
 Themis provides ready-made building blocks *([“cryptosystems”](https://docs.cossacklabs.com/themis/#cryptosystems))* which simplify usage of core cryptographic security operations.
 
-Themis provides [4 important cryptographic services](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/):
+Themis provides 4 important cryptographic services:
 
 * **[Secure Cell](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/)**: a multi-mode cryptographic container suitable for **storing anything** from encrypted files to database records and format-preserved strings. Secure Cell is built around AES-256-GCM, AES-256-CTR.
 * **[Secure Message](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-message/)**: a simple **encrypted messaging** solution for the widest scope of applications. Exchange the keys between the parties and you're good to go. Two pairs of underlying cryptosystems: ECC + ECDSA / RSA + PSS + PKCS#7.
@@ -61,12 +62,12 @@ We created Themis to build other products on top of it - i.e. [Acra](https://www
 # Installation
 
 Refer to the [Installation](https://docs.cossacklabs.com/themis/installation/) page to install Themis for your mobile, web, desktop, or server-side application.
-We highly recommend [**installation packages**](https://docs.cossacklabs.com/themis/installation/installation-from-packages/) instead of building from source.
+We highly recommend [installation packages](https://docs.cossacklabs.com/themis/installation/installation-from-packages/) instead of building from source.
 
 
 # Languages
 
-Themis is available for the following languages/platforms, refer to [language howtos](https://docs.cossacklabs.com/themis/getting-started/#language-howtos) for each language/platform: 
+Themis is available for the following languages/platforms, refer to [language howtos](https://docs.cossacklabs.com/themis/getting-started/#language-howtos) for each: 
 
 | Platform | Documentation | Examples | Version |
 | :----- | :----- | :------ | :--- |
@@ -77,7 +78,7 @@ Themis is available for the following languages/platforms, refer to [language ho
 | 📞 Kotlin (Android) | [Java (Android) Howto](https://docs.cossacklabs.com/themis/languages/java/installation-android/) | [Android projects](https://github.com/cossacklabs/themis-java-examples) | [![maven](https://api.bintray.com/packages/cossacklabs/maven/themis/images/download.svg)](https://bintray.com/cossacklabs/maven/themis/_latestVersion) |
 | 🔻 Ruby | [Ruby Howto](https://docs.cossacklabs.com/themis/languages/ruby/) | [docs/examples/ruby](https://github.com/cossacklabs/themis/tree/master/docs/examples/ruby) | [![Gem](https://img.shields.io/gem/v/rbthemis.svg)](https://rubygems.org/gems/rbthemis) |
 | 🐍 Python | [Python Howto](https://docs.cossacklabs.com/themis/languages/python/) | [docs/examples/python](https://github.com/cossacklabs/themis/tree/master/docs/examples/python) | [![PyPI](https://img.shields.io/pypi/v/pythemis.svg)](https://pypi.python.org/pypi?%3Aaction=search&term=pythemis&submit=search) |
-| 🐘 PHP | [PHP Howto](https://docs.cossacklabs.com/themis/languages/php/](https://github.com/cossacklabs/themis/tree/master/docs/examples/php) | |
+| 🐘 PHP | [PHP Howto](https://docs.cossacklabs.com/themis/languages/php/) | [docs/examples/php](https://github.com/cossacklabs/themis/tree/master/docs/examples/php) | |
 | ➕ C++ | [CPP Howto](https://docs.cossacklabs.com/themis/languages/cpp/) | [docs/examples/c++](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) ||
 | 🍭 Node.js | [Javascript (Node.js) Howto](https://docs.cossacklabs.com/themis/languages/nodejs/) | [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/jsthemis.svg)](https://www.npmjs.com/package/jsthemis) |
 | 🖥 WebAssembly | [Javascript (WebAssembly) Howto](https://docs.cossacklabs.com/themis/languages/wasm/)| [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/wasm-themis.svg)](https://www.npmjs.com/package/wasm-themis) |
@@ -103,12 +104,12 @@ If you'd like to help improve or bring Themis to your favourite platform or lang
 
 # Documentation
 
-[Documentation Server for Themis](https://docs.cossacklabs.com/themis/) contains the ever-evolving official documentation, which covers everything from deployment guidelines to use cases, with brief explanations of cryptosystems and architecture behind the main Themis library. 
+[Documentation for Themis](https://docs.cossacklabs.com/themis/) contains the ever-evolving official docs, which covers everything from deployment guidelines to use cases, with brief explanations of cryptosystems and architecture behind the main Themis library. 
 
 Refer to the documentation to learn more about:
 - [cryptography in Themis](https://docs.cossacklabs.com/themis/crypto-theory/) ([Themis cryptosystems and attacks on them](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/), [cryptography donors](https://docs.cossacklabs.com/themis/crypto-theory/cryptography-donors/), [key management advice](https://docs.cossacklabs.com/themis/crypto-theory/key-management/), [FIPS 140-2 and GOST](https://docs.cossacklabs.com/themis/crypto-theory/fips-and-gost/)),
 - [debugging and troubleshooting Themis](https://docs.cossacklabs.com/themis/debugging/) ([command-line utilities](https://docs.cossacklabs.com/themis/debugging/cli-utilities/), [Themis Server interactive web simulator](https://docs.cossacklabs.com/themis/debugging/themis-server/), [thread safety](https://docs.cossacklabs.com/themis/debugging/thread-safety/), [migration guidelines between Themis versions](https://docs.cossacklabs.com/themis/debugging/migration-guides/)) ,
-- [community behind Themis](https://docs.cossacklabs.com/themis/community/) ([contributing guidelines](https://docs.cossacklabs.com/themis/community/contributing/), [credits and honorable mentions](https://docs.cossacklabs.com/themis/community/credits/),  [projects that use Themis](https://docs.cossacklabs.com/themis/community/projects-that-use-themis/), [tutorials](https://docs.cossacklabs.com/themis/community/tutorials-workshops-talks/), [workshops and talks](https://docs.cossacklabs.com/themis/community/tutorials-workshops-talks/),  
+- [community behind Themis](https://docs.cossacklabs.com/themis/community/) ([contributing guidelines](https://docs.cossacklabs.com/themis/community/contributing/), [credits and honorable mentions](https://docs.cossacklabs.com/themis/community/credits/),  [projects that use Themis](https://docs.cossacklabs.com/themis/community/projects-that-use-themis/), [tutorials](https://docs.cossacklabs.com/themis/community/tutorials-workshops-talks/), [workshops and talks](https://docs.cossacklabs.com/themis/community/tutorials-workshops-talks/)),  
 - [Themis architecture](https://docs.cossacklabs.com/themis/architecture/),
 - [Themis security](https://docs.cossacklabs.com/themis/security/) ([Themis and OWASP](https://docs.cossacklabs.com/themis/security/owasp/), [Themis development security practices](https://docs.cossacklabs.com/themis/security/dev-security-practices/)).
 
@@ -157,7 +158,7 @@ Themis is widely-used for both non-commercial and commercial projects, [some pub
 
 Want to be featured on our blog and on the list of contributors, too? [Write us](mailto:dev@cossacklabs.com) about the project you’ve created using Themis!
 
-# Contributing to us
+# Contributing
 
 If you're looking for something to contribute to and gain eternal respect, just pick the things in the [list of issues](https://github.com/cossacklabs/themis/issues). Head over to our [Contribution guidelines](https://docs.cossacklabs.com/themis/community/contributing/) as your starting point.
 
@@ -177,7 +178,7 @@ If you want to ask a technical question, feel free to raise an [issue](https://g
 
 To talk to the business wing of Cossack Labs Limited, drop us an email to [info@cossacklabs.com](mailto:info@cossacklabs.com).
 
-[![Blog](https://img.shields.io/badge/blog-cossacklabs.com-7a7c98.svg)](https://cossacklabs.com/) [![Twitter CossackLabs](https://img.shields.io/badge/twitter-cossacklabs-fbb03b.svg)](http://twitter.com/cossacklabs) [![Dev.to CossackLabs](https://d2fltix0v2e0sb.cloudfront.net/dev-badge.svg)](https://dev.to/cossacklabs/) 
+[![Blog](https://img.shields.io/badge/blog-cossacklabs.com-7a7c98.svg)](https://cossacklabs.com/) [![Twitter CossackLabs](https://img.shields.io/badge/twitter-cossacklabs-fbb03b.svg)](http://twitter.com/cossacklabs) [![Dev.to CossackLabs](https://img.shields.io/badge/dev.to-%40cossacklabs-orange.svg)](https://dev.to/@cossacklabs/) [![Medium CossackLabs](https://img.shields.io/badge/medium-%40cossacklabs-orange.svg)](https://medium.com/@cossacklabs/) 
 
 <!--[![Join the chat at https://gitter.im/cossacklabs/themis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cossacklabs/themis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) -->
 
