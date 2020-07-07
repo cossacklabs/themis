@@ -47,7 +47,7 @@ Themis helps to build both simple and complex cryptographic features easily, qui
 * **One cryptographic library that fits them all**: Themis is the best fit for multi-platform apps (e.g., iOS+Android+Electron app with Node.js backend) because it provides 100% compatible API and works in the same way across all supported platforms.
 
 
-## Crypto systems
+## Cryptosystems
 
 Themis provides ready-made building blocks *([“cryptosystems”](https://docs.cossacklabs.com/themis/#cryptosystems))* which simplify usage of core cryptographic security operations.
 
@@ -153,7 +153,6 @@ Read more about [Regulations](https://docs.cossacklabs.com/themis/regulations/) 
 
 Themis is [recommended by OWASP](https://github.com/OWASP/owasp-mstg/blob/1.1.0/Document/0x06e-Testing-Cryptography.md#third-party-libraries) as data encryption library for mobile platforms.
 
-<!-- TODO: re-link into internal "Projects the use Themis" page instead of blog post -->
 
 Themis is widely-used for both non-commercial and commercial projects, [some public applications and libraries can be found here](https://docs.cossacklabs.com/themis/community/projects-that-use-themis/).
 
