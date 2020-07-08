@@ -460,20 +460,15 @@ jobs:
             nvm install v14
       # Install Emscripten toolchain for Wasm support
       # See https://emscripten.org/docs/getting_started/downloads.html
-      - restore_cache:
-          keys:
-            - emscripten
       - run:
           name: Install and activate Emscripten
           command: |
-            if [ ! -d $HOME/emsdk ]
-            then
-                cd $HOME
-                git clone https://github.com/emscripten-core/emsdk.git
-            fi
+            cd $HOME
+            git clone https://github.com/emscripten-core/emsdk.git
             cd $HOME/emsdk
-            git reset --hard
-            git pull
+            # FIXME(ilammy, 2020-07-07): unpin emsdk version [T1698]
+            # Latest HEAD has a regression, we roll back to last good version.
+            git checkout 92d512faa832b3ff5d6b8bc991b6801e31d8e372
             # FIXME(ilammy, 2020-06-07): migrate to "upstream" flavor
             # LLVM flavor of Emscripten has some issues compiling our code,
             # and latest versions of the fastcomp flavor started giving out
@@ -558,13 +553,6 @@ jobs:
             make test_js
             # Run WasmThemis tests
             make BUILD_PATH=build-wasm test_wasm
-      - save_cache:
-          key: emscripten
-          paths:
-            - ~/emsdk
-            - ~/.emscripten
-            - ~/.emscripten_cache
-            - ~/.emscripten_cache.lock
 
   integration_tests:
     docker:
@@ -615,20 +603,15 @@ jobs:
       - run: curl https://sh.rustup.rs -sSf | sh -s -- -y && cat ~/.cargo/env >> $BASH_ENV && source ~/.cargo/env && cargo --version && rustc --version
       # Install Emscripten toolchain for Wasm support
       # See https://emscripten.org/docs/getting_started/downloads.html
-      - restore_cache:
-          keys:
-            - emscripten
       - run:
           name: Install Emscripten
           command: |
-            if [ ! -d $HOME/emsdk ]
-            then
-                cd $HOME
-                git clone https://github.com/emscripten-core/emsdk.git
-            fi
+            cd $HOME
+            git clone https://github.com/emscripten-core/emsdk.git
             cd $HOME/emsdk
-            git reset --hard
-            git pull
+            # FIXME(ilammy, 2020-07-07): unpin emsdk version [T1698]
+            # Latest HEAD has a regression, we roll back to last good version.
+            git checkout 92d512faa832b3ff5d6b8bc991b6801e31d8e372
             # FIXME(ilammy, 2020-06-07): migrate to "upstream" flavor
             # LLVM flavor of Emscripten has some issues compiling our code,
             # and latest versions of the fastcomp flavor started giving out
@@ -667,14 +650,6 @@ jobs:
       - run: python3 tests/_integration/tests_generator.py
       - run: bash tests/_integration/integration_total.sh
       - run: bash tests/tools/check_keygen.sh
-
-      - save_cache:
-          key: emscripten
-          paths:
-            - $HOME/emsdk
-            - $HOME/.emscripten
-            - $HOME/.emscripten_cache
-            - $HOME/.emscripten_cache.lock
 
   # using this php5 image until we ensure tests are working for php7
   php5:
