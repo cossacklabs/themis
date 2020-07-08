@@ -1,27 +1,19 @@
-Here we have some examples of Themis usage.
+# Rust examples
 
-* [**keygen**](keygen.rs) —
-  a tool for generating ECDSA keys (usable by other examples) 
-* [**secure_cell**](secure_cell.rs) —
-  simple file encryption/decryption based on Secure Cell
-* [**secure_compare**](secure_compare.rs) —
-  zero-knowledge secret comparison based on Secure Comparator
-* <b>secure_message_*</b> —
-  secure group chat implemented with Secure Messages 
-  * [**secure_message_server**](secure_message_server.rs) —
-    simple relay server
-  * [**secure_message_client_encrypt**](secure_message_client_encrypt.rs) —
-    chat client which encrypts messages
-  * [**secure_message_client_verify**](secure_message_client_verify.rs) —
-    chat client which signs and verifies messages
-* <b>secure_session_echo_*</b> —
-  an example of secure network communication with Secure Session
-  * [**secure_session_echo_client**](secure_session_echo_client.rs) —
-    simple echo client using buffer-oriented API
-  * [**secure_session_echo_server**](secure_session_echo_server.rs) —
-    simple echo server using callback API
+In this directory, we have some examples of Themis usage.
 
-You can run the examples with Cargo like this:
+* [**keygen**](keygen.rs) — a tool for generating ECDSA keys (usable by other examples).
+* [**secure_cell**](secure_cell.rs) — showcase of [Secure Cell](https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/) API.
+* [**secure_compare**](secure_compare.rs) — zero-knowledge secret comparison based on [Secure Comparator](https://docs.cossacklabs.com/pages/secure-comparator-cryptosystem/).
+* <b>secure_message_*</b> — secure group chat implemented with [Secure Message](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/)
+  * [**secure_message_server**](secure_message_server.rs) — simple relay server.
+  * [**secure_message_client_encrypt**](secure_message_client_encrypt.rs) — chat client which encrypts messages.
+  * [**secure_message_client_verify**](secure_message_client_verify.rs) — chat client which signs and verifies messages.
+* <b>secure_session_echo_*</b> — an example of secure network communication with [Secure Session](https://docs.cossacklabs.com/pages/secure-session-cryptosystem/).
+  * [**secure_session_echo_client**](secure_session_echo_client.rs) — simple echo client using buffer-oriented API.
+  * [**secure_session_echo_server**](secure_session_echo_server.rs) — simple echo server using callback API.
+
+This is how you can run the examples using Cargo:
 
 ```
 $ cargo run --example keygen -- --help
@@ -45,31 +37,23 @@ Note that the arguments are passed after `--`.
 
 ## keygen
 
-This tool can be used to generate key files usable by other examples.
-
-Themis supports RSA keys for some use-cases,
-but most of the features expect ECDSA keys.
+This tool can be used to generate key files usable for other examples.
 
 
 ## secure_cell
 
-This is a simple file encryption tool.
-It supports only seal mode of _Secure Cell_.
-
+This is a simple API demo, it has no command-line arguments.
+Note how encrypted message length depends on the mode being used.
 
 ## secure_compare
 
-This tool can be used to compare secrets over network
-without actually sharing them.
+This tool can be used to compare secrets over network without actually sharing them.
 It is made possible by _Secure Comparator_.
 
-The tool includes both the server and the client
-selectable via command-line.
-Both accept the secrets on the _standard input_
-and start comparison after input is complete
-(use Ctrl-D in a typical terminal for this).
+The tool includes both the server and the client selectable via command-line.
+Both accept the secrets on the _standard input_ and start comparison after input is complete (use Ctrl-D in a typical terminal for this).
 
-Typical comparison session looks like this:
+A typical comparison session looks like this:
 
 ```console
 $ echo "secret" | cargo run --example secure_compare -- server
@@ -86,16 +70,14 @@ secret
 
 ## secure_message
 
-This is a more involved example of relay chat over UDP using _Secure Messages_.
-It is deliberately kept simple,
-but the same principle can be applied to properly framed TCP transports
+This is a more complicated example of relay chat over UDP using _Secure Message_.
+It is kept simple on purpose, but the same principle can be applied to properly framed TCP transports
 as well as to using Tokio for async IO instead of blocking stdlib.
 
-Usually you don’t need to specify any custom options,
-the command-line defaults are expected to work right away.
+Usually you don’t need to specify custom options as the command-line defaults are expected to work right away.
 But you can override the defaults for port assignment and key file locations if necessary.
 
-First you’ll need to generate the keys for clients.
+First, you’ll need to generate the keys for clients.
 It also may be useful to enable logging before starting the server.
 This example uses [`env_logger` crate][env_logger] for logging
 which is configurable via environment variable `RUST_LOG`.
@@ -107,7 +89,7 @@ $ export RUST_LOG=secure_message=info
 $ cargo run --example keygen
 ```
 
-Then you can start up the server as well as some clients
+Then you can start the server and some clients
 (in separate terminal sessions):
 
 ```
@@ -123,9 +105,9 @@ $ cargo run --example secure_message_client_encrypt
 1: hello
 ```
 
-The first message from the client will introduce it to the server
-after which the server will relay other clients’ messages to the newly joined peer.
-(Sorry, you have to manually type in nicknames at the moment.)
+The first message from the client will introduce it to the server, then the server will relay other clients’ messages to the newly-joined peer.
+
+> Note: At the moment, you have to manually type in the nicknames.
 
 The clients use the generated keys to secure communications.
 You can observe the exchange with `tcpdump`:
@@ -150,19 +132,15 @@ Some notable things about this example:
 
 * The relay server has _zero knowledge_ of the encrypted message content.
 * The sign/verify client does not encrypt the messages
-  (as you may see with `tcpdump`).
-  But it still verifies their integrity.
+  (as you may see with `tcpdump`). But it still verifies their integrity.
 
 Currently all clients are expected to use the same keys.
 
 
 ## secure_session_echo
 
-The server expects connections from clients
-and echoes back any messages sent by individual clients.
+The server expects connections from clients and echoes back any messages sent by individual clients.
 Communication between parties is secured using Secure Session.
 
-Usually you don’t need to specify any custom options,
-the command-line defaults are expected to work right away.
-But you can override the port assignment
-if the default port is already in use on your system.
+Usually you don’t need to specify custom options as the command-line defaults are expected to work right away.
+But you can override the port assignment if the default port is already in use in your system.

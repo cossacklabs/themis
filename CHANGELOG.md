@@ -1,5 +1,877 @@
 # Themis ChangeLog
 
+## Unreleased
+
+Changes that are currently in development and have not been released yet.
+
+## [0.13.0](https://github.com/cossacklabs/themis/releases/tag/0.13.0), July 8th 2020
+
+**TL;DR:**
+
+- Added API for generating symmetric keys for use with Secure Cell.
+- Added API for Secure Cell encryption with human-readable passphrases.
+- [New supported platforms: Kotlin, Swift 5, iPadOS](#0.13.0-new-platforms).
+- [Updated look-and-feel of the documentation](https://docs.cossacklabs.com/products/themis/).
+- Squished many tricky bugs and added whole lot of extra security checks.
+
+**Breaking changes and deprecations:**
+
+- Many languages received Secure Cell API overhaul with parts of the old API becoming deprecated. Refer to individual language sections for details.
+- ObjCThemis installed via Carthage is now called `objcthemis` instead of just `themis` ([read more](#0.13.0-objcthemis-rename)).
+- Themis 0.9.6 compatibility is now disabled by default ([read more](#0.13.0-drop-0.9.6-compat)).
+- Themis is known to be broken on big-endian architectures ([read more](#0.13.0-big-endian)).
+- Java 7 is no longer supported, breaking Android and Java builds on outdated systems ([read more](#0.13.0-drop-java-7)).
+- Python 2 is no longer supported ([read more](#0.13.0-drop-python-2)).
+- Serialisation of Secure Session state in JavaThemis is now deprecated
+  ([read more](#0.13.0-deprecate-session-save-restore)).
+
+_Code:_
+
+- **Core**
+
+  - Added support for building with sanitizers like ASan and UBSan,
+    enabled by `WITH_ASAN=1` flags
+    ([#548](https://github.com/cossacklabs/themis/pull/548),
+     [#556](https://github.com/cossacklabs/themis/pull/556)).
+  - Fixed a number of possible use-after-free conditions
+    ([#546](https://github.com/cossacklabs/themis/pull/546)).
+  - Themis Core is now compiled with `-O2` optimizations enabled by default
+    ([#543](https://github.com/cossacklabs/themis/pull/543)).
+  - Themis Core is now compiled with even more paranoid compiler flags
+    ([#578](https://github.com/cossacklabs/themis/pull/578)).
+  - Fixed various edge-case correctness issues pointed out by sanitizers,
+    clang-tidy, and compiler warnings
+    ([#540](https://github.com/cossacklabs/themis/pull/540),
+     [#545](https://github.com/cossacklabs/themis/pull/545),
+     [#554](https://github.com/cossacklabs/themis/pull/554),
+     [#570](https://github.com/cossacklabs/themis/pull/570),
+     [#597](https://github.com/cossacklabs/themis/pull/597),
+     [#613](https://github.com/cossacklabs/themis/pull/613)).
+  - Improved memory wiping,
+    making sure that sensitive data doesn't stay in memory longer than absolutely necessary
+    ([#584](https://github.com/cossacklabs/themis/pull/584),
+     [#585](https://github.com/cossacklabs/themis/pull/585),
+     [#586](https://github.com/cossacklabs/themis/pull/586),
+     [#612](https://github.com/cossacklabs/themis/pull/612)).
+
+  - **Soter** (low-level security core used by Themis)
+
+    - New function `soter_pbkdf2_sha256()` can be used to derive encryption keys from passphrases with PBKDF2 algorithm ([#574](https://github.com/cossacklabs/themis/pull/574)).
+
+  - **Key generation**
+
+    - New function `themis_gen_sym_key()` can be used to securely generate symmetric keys for Secure Cell ([#560](https://github.com/cossacklabs/themis/pull/560)).
+
+  - **Secure Cell**
+
+    - New functions:
+
+      - `themis_secure_cell_encrypt_seal_with_passphrase()`
+      - `themis_secure_cell_decrypt_seal_with_passphrase()`
+
+      provide Seal mode API that is safe to use with passphrases
+      ([#577](https://github.com/cossacklabs/themis/pull/577),
+       [#582](https://github.com/cossacklabs/themis/pull/582),
+       [#640](https://github.com/cossacklabs/themis/pull/640)).
+
+  - **Secure Session**
+
+    - Fixed serialization issue in `secure_session_save()` and `secure_session_load()` methods
+      ([#658](https://github.com/cossacklabs/themis/pull/658)).
+
+  - **Breaking changes**
+
+    - <a id="0.13.0-drop-0.9.6-compat">Secure Cell compatibility with Themis 0.9.6 is now disabled by default ([#614](https://github.com/cossacklabs/themis/pull/614)).
+
+      Old versions of Themis have been calculating encrypted data length incorrectly, which made Secure Cells encrypted on 64-bit machines impossible to decrypt on 32-bit machines (see [#279](https://github.com/cossacklabs/themis/pull/279) for details).
+
+      Themis 0.10 and later versions include a fix for that issue and a compatiblity workaround that allows to decrypt data encrypted by Themis 0.9.6 on 64-bit platforms. This workaround was enabled by default and could be disabled by setting the `NO_SCELL_COMPAT` varible.
+
+      Since Themis 0.13 the workaround for Themis 0.9.6 compatibility is *disabled* by default (as it has performance implications). It can be enabled if needed by compling with `WITH_SCELL_COMPAT`.
+
+      We are planning to **remove** the workaround completely after Themis 0.9.6 reaches end-of-life in December 2020. Please use this time to migrate existing data if you have been using Themis 0.9.6. To migrate the data, decrypt it and encrypt it back with the latest Themis version.
+
+    - <a id="0.13.0-big-endian">Themis is known to be broken on big-endian architectures</a> ([#623](https://github.com/cossacklabs/themis/pull/623), [#592](https://github.com/cossacklabs/themis/pull/592)).
+
+      Themis has never committed to supporting machines with big-endian architectures.
+      However, it was expected to accidentally work to some degree on such machines,
+      with certain compatibility restrictions on interaction with little-endian machines.
+
+      Recent changes in Themis Core are known to introduce compatibility issues on big-endian architectures.
+      If you believe you are affected by this change, please reach out to us via
+      [dev@cossacklabs.com](mailto:dev@cossacklabs.com).
+
+- **Android**
+
+  See also: [Java API updates](#0.13.0-java).
+
+  - Kotlin is now officially supported language on Android
+    ([#637](https://github.com/cossacklabs/themis/pull/637)).
+  - Fixed a crash when decrypting corrupted Secure Cell data
+    ([#639](https://github.com/cossacklabs/themis/pull/639)).
+  - Updated embedded BoringSSL to the latest version
+    ([#643](https://github.com/cossacklabs/themis/pull/643)).
+  - Fixed broken `SecureSession#save` and `SecureSession#restore` methods
+    ([#658](https://github.com/cossacklabs/themis/pull/658)).
+
+  - **Breaking changes**
+
+    - Android build now uses Gradle 5.6 and requires Java 8 ([#633](https://github.com/cossacklabs/themis/pull/633)).
+
+      It is no longer possible to build AndroidThemis with Java 7.
+      Please upgrade to Java 8 or later version.
+
+  - **Deprecations**
+
+    - Unqualified Gradle targets are now deprecated ([#633](https://github.com/cossacklabs/themis/pull/633)).
+
+      To build Themis for Android, run
+
+          ./gradlew :android:assembleRelease
+
+      instead of
+
+          ./gradlew assembleRelease
+
+      The unqualified form still works for now, but may break in future releases.
+
+- **C++**
+
+  - Secure Cell API updates ([#588](https://github.com/cossacklabs/themis/pull/588))
+
+    - ThemisPP now supports _passphrase API_ of Secure Cell in Seal mode:
+
+      ```c++
+      #include <themispp/secure_cell.hpp>
+
+      auto cell = themispp::secure_cell_seal_with_passphrase("string");
+
+      uint8_t[] plaintext = "message";
+
+      std::vector<uint8_t> encrypted = cell.encrypt(plaintext);
+      std::vector<uint8_t> decrypted = cell.decrypt(encrypted);
+      ```
+
+      You can safely and securely use short, human-readable passphrases as strings with this new API.
+
+      Existing master key API (`themispp::secure_cell_seal` and other modes) should not be used with passphrases or passwords.
+      Use master key API with symmetric encryption keys, such as generated by `themispp::gen_sym_key()` ([#561](https://github.com/cossacklabs/themis/pull/561)).
+      Use passphrase API with human-readable passphrases.
+
+    - All modes of Secure Cell get a new initialisation API to avoid ambiguity over whether Secure Cell is secured with a passphrase or a master key (since both are effectively byte arrays in C++):
+
+      - `themispp::secure_cell_seal_with_key(master_key)`
+      - `themispp::secure_cell_token_protect_with_key(master_key)`
+      - `themispp::secure_cell_context_imprint_with_key(master_key)`
+
+      New API has additional benefits:
+
+      - broader range of input types is accepted, including STL-compatible containers such as `std::vector`, `std::array`, `std::span`, C arrays, etc.
+      - Token Protect API is much easier to use
+      - Secure Cell is now thread-safe
+
+    - **Deprecated API**
+
+      The following classes are deprecated:
+
+      - `themispp::secure_cell_seal_t`
+      - `themispp::secure_cell_token_protect_t`
+      - `themispp::secure_cell_context_imprint_t`
+
+      They should be replaced with their `_with_key` counterparts. In most cases migration should be a trivial renaming but there are caveats with Token Protect mode and iterator usage. Please see [#588](https://github.com/cossacklabs/themis/pull/588) for details.
+
+  - New function `themispp::gen_sym_key()` can be used to generate symmetric keys for Secure Cell
+    ([#561](https://github.com/cossacklabs/themis/pull/561),
+     [#576](https://github.com/cossacklabs/themis/pull/576)).
+  - Updated test suite to test C++14 and C++17 (in addition to C++11 and C++03) ([#572](https://github.com/cossacklabs/themis/pull/572)).
+
+- **Go**
+
+  - New function `keys.NewSymmetricKey()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Improved `ThemisError` introspection: added error constants, numeric error codes ([#622](https://github.com/cossacklabs/themis/pull/622)).
+
+  - Secure Cell API updates:
+
+    - New API with improved usability and consistent naming ([#624](https://github.com/cossacklabs/themis/pull/624)).
+
+      ```go
+      func SealWithKey(key *keys.SymmetricKey) (*SecureCellSeal, error)
+          func (sc *SecureCellSeal) Encrypt(plaintext, context []byte) ([]byte, error)
+          func (sc *SecureCellSeal) Decrypt(encrypted, context []byte) ([]byte, error)
+
+      func TokenProtectWithKey(key *keys.SymmetricKey) (*SecureCellTokenProtect, error)
+          func (sc *SecureCellTokenProtect) Encrypt(plaintext, context []byte) (encrypted, token []byte, error)
+          func (sc *SecureCellTokenProtect) Decrypt(encrypted, token, context []byte) ([]byte, error)
+
+      func ContextImprintWithKey(key *keys.SymmetricKey) (*SecureCellContextImprint, error)
+          func (sc *SecureCellContextImprint) Encrypt(plaintext, context []byte) ([]byte, error)
+          func (sc *SecureCellContextImprint) Decrypt(encrypted, context []byte) ([]byte, error)
+      ```
+
+      This API is less ambiguous and more convenient to use.
+
+    - GoThemis now supports _passphrase API_ in Seal mode ([#625](https://github.com/cossacklabs/themis/pull/625)).
+
+      ```go
+      scell, err := cell.SealWithPassphrase("secret")
+      if err != nil {
+              return err
+      }
+
+      encrypted, err := scell.Encrypt([]byte("message"), nil)
+      if err != nil {
+              return err
+      }
+
+      decrypted, err := scell.Decrypt(encrypted, nil)
+      if err != nil {
+              return err
+      }
+      ```
+
+      You can safely and securely use short, human-readable passphrases as strings with this new API.
+
+      Existing master key API (`cell.SealWithKey()` or `cell.New()`) should not be used with passphrases or passwords.
+      Use master key API with symmetric encryption keys, such as generated by `keys.NewSymmetricKey()` ([#561](https://github.com/cossacklabs/themis/pull/561)).
+      Use passphrase API with human-readable passphrases.
+
+  - **Deprecated API**
+
+    - Run-time mode-setting for Secure Cell is deprecated ([#624](https://github.com/cossacklabs/themis/pull/624)).
+
+      Please use new constructors `cell.SealWithKey()` instead of `cell.New()` and `cell.ModeSeal...` constants.
+      Encryption is now performed with `Encrypt()` method instead of `Protect()`.
+      For decryption use `Decrypt()` instead of `Unprotect()`.
+
+      Old API is retained for compatibility.
+
+- **iOS and macOS**
+
+  - New function `TSGenerateSymmetricKey()` (available in Objective-C and Swift) can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Mac Catalyst is explicitly disabled
+    ([#598](https://github.com/cossacklabs/themis/pull/598)).
+  - Improved test coverage of platforms
+    ([#599](https://github.com/cossacklabs/themis/pull/599),
+     [#607](https://github.com/cossacklabs/themis/pull/607),
+     [#610](https://github.com/cossacklabs/themis/pull/610),
+     [#642](https://github.com/cossacklabs/themis/pull/642)).
+  - SwiftThemis is now tested with Swift 5
+    ([#605](https://github.com/cossacklabs/themis/pull/605)).
+  - iPadOS is now officially supported target for ObjCThemis
+    ([#641](https://github.com/cossacklabs/themis/pull/641)).
+
+  - Secure Cell API updates:
+
+    - New encryption/decryption API with consistent naming: `encrypt` and `decrypt` ([#606](https://github.com/cossacklabs/themis/pull/606)).
+
+    - Improved Token Protect API ([#606](https://github.com/cossacklabs/themis/pull/606)):
+      - Encryption results use `NSData` now which bridges with Swift `Data` directly.
+      - Decryption no longer requires an intermediate `TSCellTokenEncryptedData` object.
+
+    - ObjCThemis now supports _passphrase API_ of in Seal mode ([#609](https://github.com/cossacklabs/themis/pull/609)).
+
+      In Swift:
+
+      ```swift
+      let cell = TSCellSeal(passphrase: "secret")
+
+      let encrypted = try cell.encrypt("message".data(using: .utf8)!)
+      let decrypted = try cell.decrypt(encrypted)
+      ```
+
+      In Objective-C:
+
+      ```objective-c
+      TSCellSeal *cell = [[TSCellSeal alloc] initWithPassphrase:@"secret"];
+
+      NSData *encrypted = [cell encrypt:[@"message" dataUsingEncoding:NSUTF8StringEncoding]];
+      NSData *decrypted = [cell decrypt:encrypted];
+      ```
+
+      You can safely and securely use short, human-readable passphrases as strings with this new API.
+
+      Existing master key API (`TSCellSeal(key: ...)` or `initWithKey:...`) should not be used with passphrases or passwords.
+      Use master key API with symmetric encryption keys, such as generated by `TSGenerateSymmetricKey()` ([#561](https://github.com/cossacklabs/themis/pull/561)).
+      Use passphrase API with human-readable passphrases.
+
+  - **Deprecated API**
+
+    - Secure Cell wrapData/unwrapData renamed into encrypt/decrypt ([#606](https://github.com/cossacklabs/themis/pull/606)).
+
+      As a result, the following methods are deprecated. There are no plans for their removal.
+
+      <details>
+      <summary>Swift</summary>
+      <table>
+        <tr><th>Mode</th><th>Deprecation</th><th>Replacement</th></tr>
+        <tr>
+          <td rowspan=2><code>TSCellSeal</code></td>
+          <td><code>wrap(_:, context:)</code><br/><code>wrap</code></td>
+          <td><code>encrypt(_:, context:)</code><br/><code>encrypt</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData(_:, context:)</code><br/><code>unwrapData</code></td>
+          <td><code>decrypt(_:, context:)</code><br/><code>decrypt</code></td>
+        </tr>
+        <tr>
+          <td rowspan=2><code>TSCellToken</code></td>
+          <td><code>wrap(_:, context:)</code><br/><code>wrap</code></td>
+          <td><code>encrypt(_:, context:)</code><br/><code>encrypt</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData(_:, context:)</code><br/><code>unwrapData</code></td>
+          <td><code>decrypt(_:, token:, context:)</code><br/><code>decrypt(_:, token:)</code></td>
+        </tr>
+        <tr>
+          <td rowspan=2><code>TSCellContextImprint</code></td>
+          <td><code>wrap(_:, context:)</code><br/><code>wrap</code></td>
+          <td><code>encrypt(_:, context:)</code><br/><code>encrypt</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData(_:, context:)</code><br/><code>unwrapData</code></td>
+          <td><code>decrypt(_:, context:)</code><br/><code>decrypt</code></td>
+        </tr>
+      </table>
+      </details>
+
+      <details>
+      <summary>Objective-C</summary>
+      <table>
+        <tr><th>Mode</th><th>Deprecation</th><th>Replacement</th></tr>
+        <tr>
+          <td rowspan=2><code>TSCellSeal</code></td>
+          <td><code>wrapData:context:error:</code><br><code>wrapData:error:</code></td>
+          <td><code>encrypt:context:error:</code><br><code>encrypt:error:</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData:context:error:</code><br><code>unwrapData:error:</code></td>
+          <td><code>decrypt:context:error:</code><br><code>decrypt:error:</code></td>
+        </tr>
+        <tr>
+          <td rowspan=2><code>TSCellToken</code></td>
+          <td><code>wrapData:context:error:</code><br><code>wrapData:error:</code></td>
+          <td><code>encrypt:context:error:</code><br><code>encrypt:error:</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData:context:error:</code><br><code>unwrapData:error:</code></td>
+          <td><code>decrypt:token:context:error:</code><br><code>decrypt:token:error:</code></td>
+        </tr>
+        <tr>
+          <td rowspan=2><code>TSCellContextImprint</code></td>
+          <td><code>wrapData:context:error:</code><br><code>wrapData:error:</code></td>
+          <td><code>encrypt:context:error:</code><br><code>encrypt:error:</code></td>
+        </tr>
+        <tr>
+          <td><code>unwrapData:context:error:</code><br><code>unwrapData:error:</code></td>
+          <td><code>decrypt:context:error:</code><br><code>decrypt:error:</code></td>
+        </tr>
+      </table>
+      </details>
+
+  - **Breaking changes**
+
+    - <a id="0.13.0-objcthemis-rename">ObjCThemis framework built by Carthage is now called `objcthemis.framework`</a> ([#604](https://github.com/cossacklabs/themis/pull/604)).
+
+      We have renamed the Carthage framework from `themis.framework` to `objcthemis.framework` in order to improve compatibility with CocoaPods and avoid possible import conflicts with Themis Core.
+
+      > ⚠️ Please migrate to `objcthemis.framework` in a timely manner. `themis.framework` is *deprecated* since Themis 0.13 and will be **removed** in the next release due to maintainability issues.
+      >
+      > ℹ️ Installations via CocoaPods are *not affected*. If you get Themis via CocoaPods then no action is necessary.
+
+      <details>
+      <summary>Migration instructions (click to reveal)</summary>
+
+      After upgrading to Themis 0.13 and running `carthage update` you will notice that _two_ Themis projects have been built:
+
+      ```
+      *** Building scheme "OpenSSL (iOS)" in OpenSSL.xcodeproj
+      *** Building scheme "ObjCThemis (iOS)" in ObjCThemis.xcodeproj
+      *** Building scheme "Themis (iOS)" in Themis.xcodeproj
+      ```
+
+      Your project is currently using “Themis”. In order to migrate to “ObjCThemis” you need to do the following:
+
+        - update `#import` statements in code (for Objective-C only)
+
+        - link against `objcthemis.framework` in Xcode project
+        - remove link to `themis.framework` in Xcode project
+
+      Use the new syntax to import ObjCThemis in Objective-C projects:
+
+      ```objective-c
+      // NEW:
+      #import <objcthemis/objcthemis.h>
+
+      // old and deprecated:
+      #import <themis/themis.h>
+      ```
+
+      The new syntax is now the same as used by CocoaPods.
+
+      If you are using Swift, the import syntax is unchanged:
+
+      ```swift
+      import themis
+      ```
+
+      After updating imports you *also* need to link against the new framework (regardless of the language).
+
+      1. Add `objcthemis.framework` to your project (can be found in `Carthage/Build/iOS` or `Mac`).
+      2. For each Xcode target:
+
+         1. Open **General** tab, **Frameworks and Libraries** section
+         2. Drag `objcthemis.framework` there. Select _Embed & Sign_ if necessary.
+         3. Remove `themis.framework` from dependencies.
+
+      3. Finally, remove `themis.framework` reference from the project.
+
+      Migration is complete, your project should build successfully now.
+
+      We are sorry for the inconvenience.
+
+      </details>
+
+- <a id="0.13.0-java">**Java**</a>
+
+  - JDK location is now detected automatically in most cases, you should not need to set JAVA_HOME or JDK_INCLUDE_PATH manually ([#551](https://github.com/cossacklabs/themis/pull/551)).
+  - JNI libraries are now available as `libthemis-jni` packages for supported Linux systems ([#552](https://github.com/cossacklabs/themis/pull/552), [#553](https://github.com/cossacklabs/themis/pull/553)).
+  - Fixed a NullPointerException bug in `SecureSocket` initialisation ([#557](https://github.com/cossacklabs/themis/pull/557)).
+  - Some Themis exceptions have been converted from checked `Exception` to _unchecked_ `RuntimeException`, relaxing requirements for `throws` specifiers ([#563](https://github.com/cossacklabs/themis/pull/563)).
+  - Introduced `IKey` interface with accessors to raw key data ([#564](https://github.com/cossacklabs/themis/pull/564)).
+  - New class `SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#565](https://github.com/cossacklabs/themis/pull/565)).
+  - It is now possible to build desktop Java with Gradle.
+    Run `./gradlew :desktop:tasks` to learn more
+    ([#633](https://github.com/cossacklabs/themis/pull/633)).
+  - Kotlin is now officially supported language for JavaThemis
+    ([#637](https://github.com/cossacklabs/themis/pull/637)).
+  - Fixed broken `SecureSession#save` and `SecureSession#restore` methods
+    ([#658](https://github.com/cossacklabs/themis/pull/658)).
+  - Java source code is now ASCII-only for improved compatibility
+    ([#655](https://github.com/cossacklabs/themis/pull/655)).
+
+  - Secure Cell API updates:
+
+    - New encryption/decryption API with consistent naming: `encrypt` and `decrypt`
+      ([#634](https://github.com/cossacklabs/themis/pull/634)).
+    - Improved Token Protect API
+      ([#634](https://github.com/cossacklabs/themis/pull/634)).
+      - Decryption no longer requires an intermediate `SecureCellData` object.
+      - `SecureCellData` can now be destructured in Kotlin
+        ([#638](https://github.com/cossacklabs/themis/pull/638)).
+
+        ```kotlin
+        // You can now write like this:
+        val (encrypted, authToken) = cellTP.encrypt(message, context)
+
+        // Instead of having to spell it out like this:
+        val result = cellTP.protect(context, message)
+        val encrypted = result.protectedData
+        val authToken = result.additionalData
+        ```
+
+    - Secure Cell mode can now be selected by instantiating an appropriate interface:
+
+      | New API | Old API |
+      | ------- | ------- |
+      | `SecureCell.SealWithKey(key)`                 | `new SecureCell(key, SecureCell.MODE_SEAL)` |
+      | `SecureCell.SealWithPassphrase(passphrase)`   | _not available_ |
+      | `SecureCell.TokenProtectWithKey(key)`         | `new SecureCell(key, SecureCell.MODE_TOKEN_PROTECT)` |
+      | `SecureCell.ContextImprintWithKey(key)`       | `new SecureCell(key, SecureCell.MODE_CONTEXT_IMPRINT)` |
+
+    - JavaThemis now supports _passphrase API_ of in Seal mode
+      ([#635](https://github.com/cossacklabs/themis/pull/635)).
+
+      In Kotlin:
+
+      ```kotlin
+      import com.cossacklabs.themis.SecureCell
+
+      val cell = SecureCell.SealWithPassphrase("secret")
+
+      val message = "message".toByteArray()
+
+      val encrypted = cell.encrypt(message)
+      val decrypted = cell.decrypt(encrypted)
+
+      assertArrayEquals(decrypted, message)
+      ```
+
+      In Java:
+
+      ```java
+      import com.cossacklabs.themis.SecureCell;
+
+      SecureCell.Seal cell = SecureCell.SealWithPassphrase("secret");
+
+      byte[] message = "message".getBytes(StandardCharsets.UTF_8);
+
+      byte[] encrypted = cell.encrypt(message);
+      byte[] decrypted = cell.decrypt(encrypted);
+
+      assertArrayEquals(decrypted, message);
+      ```
+
+      You can safely and securely use short, human-readable passphrases as strings with this new API.
+
+      Existing symmetric key API (`SecureCell.SealWithKey(...)` or `new SecureCell(...)`)
+      should not be used with passphrases or passwords.
+      Use symmetric key API with symmetric encryption keys,
+      such as generated by `SymmetricKey` ([#565](https://github.com/cossacklabs/themis/pull/565)).
+      Use passphrase API with human-readable passphrases.
+
+  - **Deprecated API**
+
+    - Secure Cell has received API overhaul which deprecates old API
+      ([#636](https://github.com/cossacklabs/themis/pull/636)).
+
+      The following items are deprecated:
+
+        - Constructors:
+          - `new SecureCell(int mode)`
+          - `new SecureCell(byte[] key)`
+          - `new SecureCell(byte[] key, int mode)`
+          - `new SecureCell(String password)` ⚠️ **not recommended, insecure**
+          - `new SecureCell(String password, int mode)` ⚠️ **not recommended, insecure**
+        - Methods:
+          - `protect(byte[] key, byte[] context, byte[] data)`
+          - `protect(byte[] constext, byte[] data)`
+          - `protect(String password, String context, byte[] data)` ⚠️ **not recommended, insecure**
+          - `protect(String context, byte[] data)`
+          - `unprotect(byte[] key, byte[] context, SecureCellData protected)`
+          - `unprotect(byte[] context, SecureCellData protected)`
+          - `unprotect(String password, String context, SecureCellData protected)` ⚠️ **not recommended, insecure**
+          - `unprotect(String context, SecureCellData protected)`
+        - Constants:
+          - `SecureCell.MODE_SEAL`
+          - `SecureCell.MODE_TOKEN_PROTECT`
+          - `SecureCell.MODE_CONTEXT_IMPRINT`
+
+      Some methods are not secure when used with short passphrases,
+      consider using new passphrase API instead.
+      Other methods have easier to use replacements in the new API,
+      consider using them instead.
+
+      Deprecated API is still supported, there are no plans for its removal.
+
+    - <a id="0.13.0-deprecate-session-save-restore"></a>
+      `SecureSession` methods `save` and `restore` are now deprecated
+      ([#659](https://github.com/cossacklabs/themis/pull/659)).
+
+      An improved API for serialisation might appear in some next version of JavaThemis.
+      For now, please refrain from using `SecureSession#save` and `SecureSession#restore`
+      which may be removed in the future.
+
+- **Node.js**
+
+  - New class `SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#562](https://github.com/cossacklabs/themis/pull/562)).
+  - New makefile target `make jsthemis` can be used to build JsThemis from source ([#618](https://github.com/cossacklabs/themis/pull/618)).
+  - `SecureCell` now allows `null` to explicitly specify omitted encryption context ([#620](https://github.com/cossacklabs/themis/pull/620)).
+  - `SecureMessage` now allows `null` for omitted keys in sign/verify mode ([#620](https://github.com/cossacklabs/themis/pull/620)).
+  - Fixed a crash when an exception is thrown from `SecureSession` callback ([#620](https://github.com/cossacklabs/themis/pull/620)).
+  - Node.js v14 is now supported
+    ([#654](https://github.com/cossacklabs/themis/pull/654)).
+
+  - Passphrase API support in Secure Cell ([#621](https://github.com/cossacklabs/themis/pull/621)).
+
+    JsThemis now supports _passphrase API_ of Secure Cell in Seal mode:
+
+    ```javascript
+    const themis = require('jsthemis')
+
+    let cell = themis.SecureCellSeal.withPassphrase('secret')
+
+    let encrypted = cell.encrypt(Buffer.from('message data'))
+    let decrypted = cell.decrypt(encrypted)
+    ```
+
+    You can safely and securely use short, human-readable passphrases as strings with this new API.
+
+    Existing master key API (available as `themis.SecureCellSeal.withKey(...)`) should not be used with passphrases or passwords.
+    Use master key API with symmetric encryption keys, such as generated by `SymmetricKey` ([#562](https://github.com/cossacklabs/themis/pull/562)).
+    Use passphrase API with human-readable passphrases.
+
+  - **Deprecated API**
+
+    - Secure Cell construction with `new` is deprecated ([#621](https://github.com/cossacklabs/themis/pull/621)).
+
+      Passphrase API makes it ambiguous whether a Secure Cell is initialised with a master key or a passphrase.
+      All Secure Cell classes – `SecureCellSeal`, `SecureCellTokenProtect`, `SecureCellContextImprint` –
+      get a static factory method `withKey` to reduce the ambiguity.
+      Please use it instead:
+
+      ```javascript
+      // NEW, write like this:
+      let cell = themis.SecureCellSeal.withKey(secret)
+
+      // old, avoid this:
+      let cell = new themis.SecureCellSeal(secret)
+      ```
+
+      `new` constructors are not recommended for use but they are still supported and will always work with master keys, as they did before.
+
+- **PHP**
+
+  - New function `phpthemis_gen_sym_key()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Resolved PHP Composer checksum issues once and for all
+    ([#566](https://github.com/cossacklabs/themis/pull/566),
+     [#567](https://github.com/cossacklabs/themis/pull/567)).
+  - PHPThemis now supports _passphrase API_ of Secure Cell in Seal mode ([#594](https://github.com/cossacklabs/themis/pull/594), [#601](https://github.com/cossacklabs/themis/pull/601)).
+
+    ```php
+    $encrypted = phpthemis_scell_seal_encrypt_with_passphrase('passphrase', 'message');
+    $decrypted = phpthemis_scell_seal_decrypt_with_passphrase('passphrase', $encrypted);
+    ```
+
+    You can safely and securely use short, human-readable passphrases as strings with this new API.
+
+    Existing master key API (`phpthemis_scell_seal_{encrypt,decrypt}` and other modes) should not be used with passphrases or passwords.
+    Use master key API with symmetric encryption keys, such as generated by `phpthemis_gen_sym_key()` ([#561](https://github.com/cossacklabs/themis/pull/561)).
+    Use passphrase API with human-readable passphrases.
+
+- **Python**
+
+  - Fixed compatibility issues on 32-bit platforms ([#555](https://github.com/cossacklabs/themis/pull/555)).
+  - New function `skeygen.GenerateSymmetricKey()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - PyThemis now supports _passphrase API_ of Secure Cell in Seal mode ([#596](https://github.com/cossacklabs/themis/pull/596)).
+
+    ```python
+    from pythemis.scell import SCellSeal
+
+    cell = SCellSeal(passphrase='my passphrase')
+
+    encrypted = cell.encrypt(b'message data')
+    decrypted = cell.decrypt(encrypted)
+    ```
+
+    You can safely and securely use short, human-readable passphrases as strings with this new API.
+
+    Existing master key API (`SCellSeal(key=...)`) should not be used with passphrases or passwords.
+    Use master key API with symmetric encryption keys, such as generated by `GenerateSymmetricKey()` ([#561](https://github.com/cossacklabs/themis/pull/561)).
+    Use passphrase API with human-readable passphrases.
+  - <a id="0.13.0-drop-python-2">Python 2 is no longer supported</a>
+    ([#648](https://github.com/cossacklabs/themis/pull/648)).
+
+    Python 2 had reached EOL on 2020-01-01.
+
+    In fact, we are not making any changes in this release that break compatibility, but we no longer officially support it. This means that we do not run any CI tests for Python 2, and in the future we will develop code compatible only with Python 3+.
+
+- **Ruby**
+
+  - New function `Themis::gen_sym_key()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Secure Cell API updates ([#603](https://github.com/cossacklabs/themis/pull/603)).
+
+    - RbThemis now supports _passphrase API_ of Secure Cell in Seal mode:
+
+      ```ruby
+      require 'rbthemis'
+
+      cell = Themis::ScellSealPassphrase.new('secret string')
+
+      encrypted = cell.encrypt('message data')
+      decrypted = cell.decrypt(encrypted)
+      ```
+
+      You can safely and securely use short, human-readable passphrases as strings with this new API.
+
+      Existing master key API (`Themis::Scell...`) should not be used with passphrases or passwords.
+      Use master key API with symmetric encryption keys, such as generated by `Themis::gen_sym_key` ([#561](https://github.com/cossacklabs/themis/pull/561)).
+      Use passphrase API with human-readable passphrases.
+
+    - Secure Cell mode can now be selected by instantiating an appropriate subclass:
+
+      | New API | Old API |
+      | ------- | ------- |
+      | `Themis::ScellSeal.new(key)`                  | `Themis::Scell.new(key, Themis::Scell::SEAL_MODE)`            |
+      | `Themis::ScellSealPassphrase.new(passphrase)` | _not available_                                               |
+      | `Themis::ScellTokenProtect.new(key)`          | `Themis::Scell.new(key, Themis::Scell::TOKEN_PROTECT_MODE)`   |
+      | `Themis::ScellContextImprint.new(key`         | `Themis::Scell.new(key, Themis::Scell::CONTEXT_IMPRINT_MODE)` |
+
+      `Themis::Scell` class is **deprecated** and should be replaced with new API.
+
+    - Token Protect mode now accepts encrypted data and token as separate arguments instead of requiring an array:
+
+      ```ruby
+      decrypted = cell.decrypt([encrypted, token], context) # old
+      decrypted = cell.decrypt(encrypted, token, context)   # new
+      ```
+
+      (Arrays are still accepted for compatibility but this API is deprecated.)
+
+- **Rust**
+
+  - New object `themis::keys::SymmetricKey` can be used to generate symmetric keys for Secure Cell
+    ([#561](https://github.com/cossacklabs/themis/pull/561),
+     [#631](https://github.com/cossacklabs/themis/pull/631)).
+  - Significantly reduced compilation time by removing `bindgen` crate from dependencies ([#626](https://github.com/cossacklabs/themis/pull/626)).
+  - Bindgen 0.54.1 or later is now required for RustThemis development
+    ([#664](https://github.com/cossacklabs/themis/pull/664)).
+  - Passphrase API support in Secure Cell ([#630](https://github.com/cossacklabs/themis/pull/630)).
+
+    RustThemis now supports _passphrase API_ of Secure Cell in Seal mode:
+
+    ```rust
+    use themis::secure_cell::SecureCell;
+
+    let cell = SecureCell::with_passphase("secret")?.seal();
+
+    let encrypted = cell.encrypt(b"message data")?;
+    let decrypted = cell.decrypt(&encrypted)?;
+    ```
+
+    You can safely and securely use short, human-readable passphrases as strings with this new API.
+
+    Existing master key API (available as `SecureCell::with_key(...)`) should not be used with passphrases or passwords.
+    Use master key API with symmetric encryption keys, such as generated by `themis::keys::SymmetricKey` ([#561](https://github.com/cossacklabs/themis/pull/561)).
+    Use passphrase API with human-readable passphrases.
+
+  - Miscellaneous minor improvements in code quality
+    ([#571](https://github.com/cossacklabs/themis/pull/571),
+     [#591](https://github.com/cossacklabs/themis/pull/591)).
+
+- **WebAssembly**
+
+  - New class `SymmetricKey` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
+  - Fixed an issue with webpack Terser plugin
+    ([#568](https://github.com/cossacklabs/themis/pull/568)).
+  - Updated Emscripten toolchain to the latest version
+    ([#550](https://github.com/cossacklabs/themis/pull/550),
+     [#569](https://github.com/cossacklabs/themis/pull/569),
+     [#602](https://github.com/cossacklabs/themis/pull/602),
+     [#653](https://github.com/cossacklabs/themis/pull/653)).
+  - Updated embedded BoringSSL and other dependencies to the latest versions
+    ([#608](https://github.com/cossacklabs/themis/pull/608),
+     [#643](https://github.com/cossacklabs/themis/pull/643)).
+  - Node.js v14 is now supported
+    ([#654](https://github.com/cossacklabs/themis/pull/654)).
+
+  - Passphrase API support in Secure Cell ([#616](https://github.com/cossacklabs/themis/pull/616)).
+
+    WasmThemis now supports _passphrase API_ of Secure Cell in Seal mode:
+
+    ```javascript
+    const themis = require('wasm-themis')
+
+    let cell = themis.SecureCellSeal.withPassphrase('secret')
+
+    let encrypted = cell.encrypt(Buffer.from('message data'))
+    let decrypted = cell.decrypt(encrypted)
+    ```
+
+    You can safely and securely use short, human-readable passphrases as strings with this new API.
+
+    Existing master key API (available as `themis.SecureCellSeal.withKey(...)`) should not be used with passphrases or passwords.
+    Use master key API with symmetric encryption keys, such as generated by `SymmetricKey` ([#561](https://github.com/cossacklabs/themis/pull/561)).
+    Use passphrase API with human-readable passphrases.
+
+  - **Deprecated API**
+
+    - Secure Cell construction with `new` is deprecated ([#616](https://github.com/cossacklabs/themis/pull/616)).
+
+      Passphrase API makes it ambiguous whether a Secure Cell is initialised with a master key or a passphrase. All Secure Cell classes –
+      `SecureCellSeal`, `SecureCellTokenProtect`, `SecureCellContextImprint` – get a static factory method `withKey` to reduce the ambiguity. Please use it instead:
+
+      ```javascript
+      // NEW, write like this:
+      let cell = themis.SecureCellSeal.withKey(secret)
+
+      // old, avoid this:
+      let cell = new themis.SecureCellSeal(secret)
+      ```
+
+      `new` constructors are not recommended for use but they are still supported and will always work with master keys, as they did before.
+
+_Docs:_
+
+- New improved design and structure of [Themis documentation](https://docs.cossacklabs.com/products/themis/).
+- Updated templates for GitHub issues and pull requests
+  ([#549](https://github.com/cossacklabs/themis/pull/549)).
+- Miscellaneous quality improvements in various pieces of documentation
+  ([#558](https://github.com/cossacklabs/themis/pull/558),
+   [#575](https://github.com/cossacklabs/themis/pull/575),
+   [#581](https://github.com/cossacklabs/themis/pull/581),
+   [#587](https://github.com/cossacklabs/themis/pull/587),
+   [#590](https://github.com/cossacklabs/themis/pull/590)).
+- Clarified information on data privacy regulations
+  ([#593](https://github.com/cossacklabs/themis/pull/593)).
+- Removed last surviving links to deprecated GitHub Wiki
+  ([#589](https://github.com/cossacklabs/themis/pull/589)).
+
+_Infrastructure:_
+
+- Changed name of the tarball produced by `make dist` to `themis_X.Y.Z.tar.gz`
+  ([#544](https://github.com/cossacklabs/themis/pull/544)).
+- Fixed Doxygen support
+  ([#559](https://github.com/cossacklabs/themis/pull/559)).
+- Automated benchmarking harness is now tracking Themis performance.
+  See [`benches`](https://github.com/cossacklabs/themis/tree/master/benches/)
+  ([#580](https://github.com/cossacklabs/themis/pull/580),
+   [#582](https://github.com/cossacklabs/themis/pull/582)).
+- Automated regular fuzzing of the code with AFL
+  ([#579](https://github.com/cossacklabs/themis/pull/579),
+   [#583](https://github.com/cossacklabs/themis/pull/583)).
+- Added automated tests for all code samples in documentation, ensuring they are always up-to-date ([#600](https://github.com/cossacklabs/themis/pull/600)).
+- All 13 supported platforms are verified on GitHub Actions, along with existing CircleCI and Bitrise tests ([#600](https://github.com/cossacklabs/themis/pull/600)).
+- New Makefile targets:
+  - `make jsthemis` builds JsThemis from source ([#618](https://github.com/cossacklabs/themis/pull/618)).
+- Resolved issues with library search paths on CentOS
+  when Themis Core is built from source and installed with `make install`
+  ([#645](https://github.com/cossacklabs/themis/pull/645).
+- Resolved issues with library search paths on Debian
+  when Themis Core is installed from packages
+  ([#651](https://github.com/cossacklabs/themis/pull/651)).
+- Introduced `./configure` script to significantly improve rebuild performance
+  ([#611](https://github.com/cossacklabs/themis/pull/611),
+   [#628](https://github.com/cossacklabs/themis/pull/628)).
+- Improved package installation testing and platform coverage
+  ([#595](https://github.com/cossacklabs/themis/pull/595),
+   [#650](https://github.com/cossacklabs/themis/pull/650)).
+- Miscellaneous minor improvements and updates in the build system
+  ([#542](https://github.com/cossacklabs/themis/pull/542),
+   [#573](https://github.com/cossacklabs/themis/pull/573),
+   [#615](https://github.com/cossacklabs/themis/pull/615),
+   [#617](https://github.com/cossacklabs/themis/pull/617),
+   [#629](https://github.com/cossacklabs/themis/pull/629),
+   [#627](https://github.com/cossacklabs/themis/pull/627),
+   [#632](https://github.com/cossacklabs/themis/pull/632),
+   [#644](https://github.com/cossacklabs/themis/pull/644),
+   [#646](https://github.com/cossacklabs/themis/pull/646),
+   [#649](https://github.com/cossacklabs/themis/pull/649),
+   [#656](https://github.com/cossacklabs/themis/pull/656)).
+
+- <a id="0.13.0-new-platforms">**New supported platforms**</a>
+
+  - CentOS 8 is now fully fully supported.
+  - Ubuntu 20.04 “Focal Fossa” is now fully fully supported.
+  - GoThemis is now tested with Go 1.14
+    ([#595](https://github.com/cossacklabs/themis/pull/595)).
+  - SwiftThemis is now tested with Swift 5
+    ([#605](https://github.com/cossacklabs/themis/pull/605)).
+  - Kotlin API of JavaThemis is now verified by all CI platforms
+    ([#637](https://github.com/cossacklabs/themis/pull/637)).
+  - iPadOS is now officially supported target for ObjCThemis
+    ([#641](https://github.com/cossacklabs/themis/pull/641)).
+  - Node.js v14 is now supported for JsThemis and WasmThemis
+    ([#654](https://github.com/cossacklabs/themis/pull/654)).
+
+- **Breaking changes**
+
+  - <a id="0.13.0-drop-java-7">Java 7 is no longer supported</a>
+    ([#633](https://github.com/cossacklabs/themis/pull/633)).
+
+    Updates in Gradle build infrastructure require Java 8.
+
+  - Debian 8 “Jessie” is no longer supported
+    ([#633](https://github.com/cossacklabs/themis/pull/633)).
+
+    This version is no longer maintained by the Debian team and it lacks Java 8.
+    We no longer provide binary packages for this distribution.
+
+  - Python 2 is no longer supported
+    ([#648](https://github.com/cossacklabs/themis/pull/648)).
+
+    Python 2 had finally reached EOL on 2020-01-01.
+    PyThemis 0.13 is the last version guaranteed to be compatible with Python 2.
+
 ## [0.12.0](https://github.com/cossacklabs/themis/releases/tag/0.12.0), September 27th 2019
 
 **TL;DR:**
@@ -106,8 +978,8 @@ _Code:_
   - ThemisPP is now available as a system package through [Cossack Labs repositories](https://docs.cossacklabs.com/pages/documentation-themis/#installing-themis-from-repositories) ([#506](https://github.com/cossacklabs/themis/pull/506)).
 
     Use
-      - `libthemispp-dev` for Debian and Ubuntu,     
-      - `libthemispp-devel` for CentOS.             
+      - `libthemispp-dev` for Debian and Ubuntu,
+      - `libthemispp-devel` for CentOS.
 
 - **Go**
 
@@ -163,7 +1035,7 @@ _Code:_
 
   - Minor internal code style modernizations ([#466](https://github.com/cossacklabs/themis/pull/466)).
 
-- **WebAssembly**    
+- **WebAssembly**
 
   - **WasmThemis** brings Themis to Web using [_WebAssembly_](https://webassembly.org).
     Thank you to [**@ilammy**](https://github.com/ilammy) for adding it.
@@ -172,7 +1044,7 @@ _Code:_
     Secure Cell, Secure Message, Secure Session, and Secure Comparator.
     WasmThemis package is [available via npm](https://www.npmjs.com/package/wasm-themis) as `wasm-themis`,
     sample code can be found in [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js),
-    and the How-To guide is available [on the documentation server](https://docs.cossacklabs.com/pages/js-wasm-howto/) ([#457](https://github.com/cossacklabs/themis/pull/457), [#461](https://github.com/cossacklabs/themis/pull/461), [#462](https://github.com/cossacklabs/themis/pull/462), [#473](https://github.com/cossacklabs/themis/pull/473), [#482](https://github.com/cossacklabs/themis/pull/482), [#489](https://github.com/cossacklabs/themis/pull/489), [#490](https://github.com/cossacklabs/themis/pull/490), [#491](https://github.com/cossacklabs/themis/pull/491), [#492](https://github.com/cossacklabs/themis/pull/492),[#494](https://github.com/cossacklabs/themis/pull/494), [#495](https://github.com/cossacklabs/themis/pull/495), [#498](https://github.com/cossacklabs/themis/pull/498), [#507](https://github.com/cossacklabs/themis/pull/507), [#513](https://github.com/cossacklabs/themis/pull/513)).
+    and the HowTo guide is available [on the documentation server](https://docs.cossacklabs.com/pages/js-wasm-howto/) ([#457](https://github.com/cossacklabs/themis/pull/457), [#461](https://github.com/cossacklabs/themis/pull/461), [#462](https://github.com/cossacklabs/themis/pull/462), [#473](https://github.com/cossacklabs/themis/pull/473), [#482](https://github.com/cossacklabs/themis/pull/482), [#489](https://github.com/cossacklabs/themis/pull/489), [#490](https://github.com/cossacklabs/themis/pull/490), [#491](https://github.com/cossacklabs/themis/pull/491), [#492](https://github.com/cossacklabs/themis/pull/492),[#494](https://github.com/cossacklabs/themis/pull/494), [#495](https://github.com/cossacklabs/themis/pull/495), [#498](https://github.com/cossacklabs/themis/pull/498), [#507](https://github.com/cossacklabs/themis/pull/507), [#513](https://github.com/cossacklabs/themis/pull/513)).
 
   - WasmThemis is tested with current Node.js LTS versions, popular Web browsers, and Electron framework.
     It is also tested for compatibility with other Themis wrappers ([#509](https://github.com/cossacklabs/themis/pull/509), [#510](https://github.com/cossacklabs/themis/pull/510), [#511](https://github.com/cossacklabs/themis/pull/511)).
@@ -193,7 +1065,7 @@ _Code:_
 _Docs:_
 
 - [Themis GitHub Wiki](https://github.com/cossacklabs/themis/wiki) is being deprecated.
-  Please find the latest documentation for Themis on [Cossack Labs Documentation Server](https://docs.cossacklabs.com/products/themis/). If you're used to using the [Themis Wiki](https://github.com/cossacklabs/themis/wiki) or have bookmarked a few pages for further use, don't worry - its pages and table of contents stay where they were, but each will now link to its corresponding [Cossack Labs Documentation Server](https://docs.cossacklabs.com/products/themis/) counterpart.    
+  Please find the latest documentation for Themis on [Cossack Labs Documentation Server](https://docs.cossacklabs.com/products/themis/). If you're used to using the [Themis Wiki](https://github.com/cossacklabs/themis/wiki) or have bookmarked a few pages for further use, don't worry - its pages and table of contents stay where they were, but each will now link to its corresponding [Cossack Labs Documentation Server](https://docs.cossacklabs.com/products/themis/) counterpart.
 
 - [Code of Conduct](https://github.com/cossacklabs/themis/blob/master/CODE_OF_CONDUCT.md) has been introduced to make sure that Themis project has a welcoming environment ([#518](https://github.com/cossacklabs/themis/pull/518)).
 
@@ -273,7 +1145,7 @@ _Code:_
 
     - Added additional safety tests for Secure Session: return error if clientID is empty (thanks [@deszip](https://github.com/deszip) for asking tough questions and mis-using clientID) ([#386](https://github.com/cossacklabs/themis/pull/386)).
 
-    - Described [thread safety code practices](https://github.com/cossacklabs/themis/wiki/Thread-Safety) when using Secure Session.
+    - Described [thread safety code practices](https://docs.cossacklabs.com/pages/thread-safety-themis/) when using Secure Session.
 
   - **Secure Message**
 
@@ -283,7 +1155,7 @@ _Code:_
 
       This change doesn't affect the language wrappers you are using, so no code changes are required from you.
 
-      Documentation for the new API calls is available [in the Wiki documentation](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem#implementation-details) and for each language separately (in their Howtos) ([#389](https://github.com/cossacklabs/themis/pull/389)).
+      Documentation for the new API calls is available [in the Wiki documentation](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/#implementation-details) and for each language separately (in their HowTos) ([#389](https://github.com/cossacklabs/themis/pull/389)).
 
     - Fixed a potential memory leak in Secure Message encryption and decryption ([#398](https://github.com/cossacklabs/themis/pull/398)).
 
@@ -305,13 +1177,13 @@ _Code:_
 
   - Introduced Rust Themis wrapper, all work done by brilliant [@ilammy](https://github.com/ilammy)!
 
-    Rust Themis supports the same functionality as other Themis wrappers: Secure Cell, Secure Message, Secure Session, and Secure Comparator. Rust Themis package is available through [crates.io](https://crates.io/crates/themis), examples are stored in [docs/examples/rust](https://github.com/cossacklabs/themis/tree/master/docs/examples/rust), the HowTo guide is available [in Wiki](https://github.com/cossacklabs/themis/wiki/Rust-Howto) ([#419](https://github.com/cossacklabs/themis/pull/419), [#405](https://github.com/cossacklabs/themis/pull/405), [#403](https://github.com/cossacklabs/themis/pull/403), [#390](https://github.com/cossacklabs/themis/pull/390), [#383](https://github.com/cossacklabs/themis/pull/383), [#382](https://github.com/cossacklabs/themis/pull/382), [#381](https://github.com/cossacklabs/themis/pull/381), [#380](https://github.com/cossacklabs/themis/pull/380), [#376](https://github.com/cossacklabs/themis/pull/376), [#375](https://github.com/cossacklabs/themis/pull/375), [#374](https://github.com/cossacklabs/themis/pull/374), [#373](https://github.com/cossacklabs/themis/pull/373), [#372](https://github.com/cossacklabs/themis/pull/372), [#365](https://github.com/cossacklabs/themis/pull/365), [#363](https://github.com/cossacklabs/themis/pull/363), [#362](https://github.com/cossacklabs/themis/pull/362), [#358](https://github.com/cossacklabs/themis/pull/358), [#357](https://github.com/cossacklabs/themis/pull/357), [#356](https://github.com/cossacklabs/themis/pull/356), [#353](https://github.com/cossacklabs/themis/pull/353), [#349](https://github.com/cossacklabs/themis/pull/349), [#340](https://github.com/cossacklabs/themis/pull/340)).
+    Rust Themis supports the same functionality as other Themis wrappers: Secure Cell, Secure Message, Secure Session, and Secure Comparator. Rust Themis package is available through [crates.io](https://crates.io/crates/themis), examples are stored in [docs/examples/rust](https://github.com/cossacklabs/themis/tree/master/docs/examples/rust), the HowTo guide is available [in Wiki](https://docs.cossacklabs.com/pages/rust-howto/) ([#419](https://github.com/cossacklabs/themis/pull/419), [#405](https://github.com/cossacklabs/themis/pull/405), [#403](https://github.com/cossacklabs/themis/pull/403), [#390](https://github.com/cossacklabs/themis/pull/390), [#383](https://github.com/cossacklabs/themis/pull/383), [#382](https://github.com/cossacklabs/themis/pull/382), [#381](https://github.com/cossacklabs/themis/pull/381), [#380](https://github.com/cossacklabs/themis/pull/380), [#376](https://github.com/cossacklabs/themis/pull/376), [#375](https://github.com/cossacklabs/themis/pull/375), [#374](https://github.com/cossacklabs/themis/pull/374), [#373](https://github.com/cossacklabs/themis/pull/373), [#372](https://github.com/cossacklabs/themis/pull/372), [#365](https://github.com/cossacklabs/themis/pull/365), [#363](https://github.com/cossacklabs/themis/pull/363), [#362](https://github.com/cossacklabs/themis/pull/362), [#358](https://github.com/cossacklabs/themis/pull/358), [#357](https://github.com/cossacklabs/themis/pull/357), [#356](https://github.com/cossacklabs/themis/pull/356), [#353](https://github.com/cossacklabs/themis/pull/353), [#349](https://github.com/cossacklabs/themis/pull/349), [#340](https://github.com/cossacklabs/themis/pull/340)).
 
 - **iOS and macOS**
 
   - Added Carthage support. Now users can add Themis to their Cartfile using `github "cossacklabs/themis"`.
 
-    More details available in [Objective-C Howto](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) and [Swift Howto](https://github.com/cossacklabs/themis/wiki/Swift-Howto) on wiki. Example projects available in [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc) and [docs/examples/swift/](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) folders ([#432](https://github.com/cossacklabs/themis/pull/432), [#430](https://github.com/cossacklabs/themis/pull/430), [#428](https://github.com/cossacklabs/themis/pull/428), [#427](https://github.com/cossacklabs/themis/pull/427)).
+    More details available in [Objective-C HowTo](https://docs.cossacklabs.com/pages/objective-c-howto/) and [Swift HowTo](https://docs.cossacklabs.com/pages/swift-howto/). Example projects available in [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc) and [docs/examples/swift/](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) folders ([#432](https://github.com/cossacklabs/themis/pull/432), [#430](https://github.com/cossacklabs/themis/pull/430), [#428](https://github.com/cossacklabs/themis/pull/428), [#427](https://github.com/cossacklabs/themis/pull/427)).
 
   - Added BoringSSL support, now users can select which crypto-engine they want to include. This change affects only Themis CocoaPod: users can add Themis based on BoringSSL to their Podfile using `pod 'themis/themis-boringssl'` ([#351](https://github.com/cossacklabs/themis/pull/351), [#331](https://github.com/cossacklabs/themis/pull/331), [#330](https://github.com/cossacklabs/themis/pull/330), [#329](https://github.com/cossacklabs/themis/pull/329)).
 
@@ -331,13 +1203,13 @@ _Code:_
 
   - Added Homebrew support for Themis Core. Now users can install Themis Core library using `brew tap cossacklabs/tap && brew update && brew install libthemis`. This is useful when you're developing on macOS.
 
-  More details can be found in [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#macos).
+  More details can be found in [the Installation guide](https://docs.cossacklabs.com/pages/documentation-themis/#macos).
 
 - **C++**
 
   - Improved Secure Session memory behavior (now users can move and copy Secure Session objects and callbacks) ([#370](https://github.com/cossacklabs/themis/pull/370), [#369](https://github.com/cossacklabs/themis/pull/369)).
 
-  - Allowed to link ThemisPP as header-only library by adding "inline" functions – thanks [@deszip](https://github.com/deszip) for pushing us. Check for detailed instructions in [C++ wiki](https://github.com/cossacklabs/themis/wiki/CPP-Howto) ([#371](https://github.com/cossacklabs/themis/pull/371)).
+  - Allowed to link ThemisPP as header-only library by adding "inline" functions – thanks [@deszip](https://github.com/deszip) for pushing us. Check for detailed instructions in [C++ HowTo](https://docs.cossacklabs.com/pages/cpp-howto/) ([#371](https://github.com/cossacklabs/themis/pull/371)).
 
   - Added support of smart pointer constructors for Secure Session, now users should use `std::shared_ptr<secure_session_callback_interface_t>` constructor ([#378](https://github.com/cossacklabs/themis/pull/378)).
 
@@ -362,7 +1234,7 @@ _Code:_
   - Added Maven distribution ([#361](https://github.com/cossacklabs/themis/pull/361)).
 
     The new installation process requires adding only two lines to the Maven app configuration (instead of manually re-compiling the whole Themis library)!
-    See the updated [HowTo guide](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) in Wiki.
+    See the updated [HowTo guide](https://docs.cossacklabs.com/pages/java-and-android-howto/) in Wiki.
 
   - Significantly improved [Themis usage examples for Android](https://github.com/cossacklabs/themis-java-examples) - thanks to [@Dimdron](https://github.com/Dimdron) [#3](https://github.com/cossacklabs/themis-java-examples/pull/3).
 
@@ -415,18 +1287,18 @@ _Code:_
 
 _Docs:_
 
-- Described the new [Secure Message API](https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem#implementation-details): how we divided the `wrap` function into `encrypt` and `sign`, and the `unwrap` function — into `decrypt` and `verify` to make it more obvious for the users.
+- Described the new [Secure Message API](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/#implementation-details): how we divided the `wrap` function into `encrypt` and `sign`, and the `unwrap` function — into `decrypt` and `verify` to make it more obvious for the users.
 
-- Described [thread safety code practices](https://github.com/cossacklabs/themis/wiki/Thread-Safety) when using Secure Session.
+- Described [thread safety code practices](https://docs.cossacklabs.com/pages/thread-safety-themis/) when using Secure Session.
 
 - Improved installation guides for numerous languages.
 
 
 _Infrastructure:_
 
-- Added Homebrew support for Themis Core. Now users can install Themis Core libraby using `brew tap cossacklabs/tap && brew update && brew install libthemis`. This is useful when you're developing on macOS. More details can be found in [the Installation guide](https://github.com/cossacklabs/themis/wiki/Installing-Themis#macos).
+- Added Homebrew support for Themis Core. Now users can install Themis Core libraby using `brew tap cossacklabs/tap && brew update && brew install libthemis`. This is useful when you're developing on macOS. More details can be found in [the Installation guide](https://docs.cossacklabs.com/pages/documentation-themis/#macos).
 
-- Added [installation guide on using Docker container](https://github.com/cossacklabs/themis/wiki/Building-and-Installing#docker) as a building environment for Themis: if you can't download Themis Core from packages, feel free to use Docker container for this.
+- Added [installation guide on using Docker container](https://docs.cossacklabs.com/pages/documentation-themis/#themis-with-docker) as a building environment for Themis: if you can't download Themis Core from packages, feel free to use Docker container for this.
 
 
 ## [0.10.0](https://github.com/cossacklabs/themis/releases/tag/0.10.0), February 6th 2018
@@ -439,19 +1311,19 @@ _Infrastructure:_
 
 - Rubythemis has breaking changes for Secure Cell Token Protect mode ([#281](https://github.com/cossacklabs/themis/pull/281)). We added checks for other language wrappers to make sure this won't happen again ([#282](https://github.com/cossacklabs/themis/pull/282), [#283](https://github.com/cossacklabs/themis/pull/283)).
 
-Check the [Migration Guide](https://github.com/cossacklabs/themis/wiki/Migration-guide) for more details.
+Check the [Migration Guide](https://docs.cossacklabs.com/pages/migration-guide-themis-v096-themis-0100/) for more details.
 
 _Docs:_
 
-- Updated the descriptions of [Crypto systems](https://github.com/cossacklabs/themis/wiki/Cryptosystems), added more usage examples and code samples.
-- Refreshed code samples in language tutorials, made them more readable.<br/>[Obj-C](https://github.com/cossacklabs/themis/wiki/Objective-C-Howto) | [Swift](https://github.com/cossacklabs/themis/wiki/Swift-Howto) | [Java and Android](https://github.com/cossacklabs/themis/wiki/Java-and-Android-Howto) | [Python](https://github.com/cossacklabs/themis/wiki/Python-Howto) | [PHP](https://github.com/cossacklabs/themis/wiki/PHP-Howto) | [Ruby](https://github.com/cossacklabs/themis/wiki/Ruby-Howto) | [C++](https://github.com/cossacklabs/themis/wiki/CPP-Howto) | [Go](https://github.com/cossacklabs/themis/wiki/Go-HowTo) | [Node js](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto).
-- Added human-friendly description of [Secure Comparator](https://github.com/cossacklabs/themis/wiki/Secure-Comparator-cryptosystem) and supplied usage examples for all languages with the exception of PHP.
+- Updated the descriptions of [Crypto systems](https://docs.cossacklabs.com/pages/cryptosystems/), added more usage examples and code samples.
+- Refreshed code samples in language tutorials, made them more readable.<br/>[Obj-C](https://docs.cossacklabs.com/pages/objective-c-howto/) | [Swift](https://docs.cossacklabs.com/pages/swift-howto/) | [Java and Android](https://docs.cossacklabs.com/pages/java-and-android-howto/) | [Python](https://docs.cossacklabs.com/pages/python-howto/) | [PHP](https://docs.cossacklabs.com/pages/php-howto/) | [Ruby](https://docs.cossacklabs.com/pages/ruby-howto/) | [C++](https://docs.cossacklabs.com/pages/cpp-howto/) | [Go](https://docs.cossacklabs.com/pages/go-howto/) | [Node.js](https://docs.cossacklabs.com/pages/nodejs-howto/).
+- Added human-friendly description of [Secure Comparator](https://docs.cossacklabs.com/pages/secure-comparator-cryptosystem/) and supplied usage examples for all languages with the exception of PHP.
 
 _Infrastructure:_
 
 - Added support of _Ubuntu 17.10_.
 - Removed support of _Ubuntu 16.10_ and _Ubuntu 17.04_ (no more compiled binaries for these OSs now).
-- Added CLI utils for easy testing of Secure Cell, Secure Message, and Key generation on local machine. Available for Python, Ruby, Go, NodeJS, and PHP. Check the [Console Utils](https://github.com/cossacklabs/themis/wiki/Encrypt-Decrypt-Console-Utils) guide for more details and usage description/guide.
+- Added CLI utils for easy testing of Secure Cell, Secure Message, and Key generation on local machine. Available for Python, Ruby, Go, NodeJS, and PHP. Check the [Console Utils](https://docs.cossacklabs.com/pages/documentation-themis/#encrypt-decrypt-console-utils) guide for more details and usage description/guide.
 - Added [Integration test suit](https://github.com/cossacklabs/themis/tree/master/tests/_integration) for the majority of the available language wrappers, which was the catalyst for many fixes in this release.
 - Added support of CircleCI 2.0 with multiple workflows. This allows testing each language wrapper and integrations between them easily and quickly ([#295](https://github.com/cossacklabs/themis/pull/295), [#299](https://github.com/cossacklabs/themis/pull/299)).
 
@@ -470,22 +1342,22 @@ _Code:_
   - Updated Secure Comparator definitions and provided code samples ([#287](https://github.com/cossacklabs/themis/pull/287), [#288](https://github.com/cossacklabs/themis/pull/288)).
 - **GoThemis:**
   - Added `get_remote_id` function, which is making SecureSession easier to use ([#272](https://github.com/cossacklabs/themis/pull/272));
-  - Added [CLI utils](https://github.com/cossacklabs/themis/wiki/Encrypt-Decrypt-Console-Utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
+  - Added [CLI utils](https://docs.cossacklabs.com/pages/documentation-themis/#encrypt-decrypt-console-utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
 - **JSThemis:**
   - Added a separate installation step in Makefile. Now you can install jsthemis via `make jsthemis_install` ([#302](https://github.com/cossacklabs/themis/pull/302));
-  - Added [CLI utils](https://github.com/cossacklabs/themis/wiki/Encrypt-Decrypt-Console-Utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
+  - Added [CLI utils](https://docs.cossacklabs.com/pages/documentation-themis/#encrypt-decrypt-console-utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
 - **RubyThemis:**
-  - Fixed arguments' order for Secure Cell in the Token Protect mode, which caused incompatibility with older versions of rubythemis ([#281](https://github.com/cossacklabs/themis/pull/281)). Please check the [migration guide](https://github.com/cossacklabs/themis/wiki/Migration-guide) for the details;
-  - Added [CLI utils](https://github.com/cossacklabs/themis/wiki/Encrypt-Decrypt-Console-Utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306))
+  - Fixed arguments' order for Secure Cell in the Token Protect mode, which caused incompatibility with older versions of rubythemis ([#281](https://github.com/cossacklabs/themis/pull/281)). Please check the [migration guide](https://docs.cossacklabs.com/pages/migration-guide-themis-v096-themis-0100/) for the details;
+  - Added [CLI utils](https://docs.cossacklabs.com/pages/documentation-themis/#encrypt-decrypt-console-utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306))
 - **PyThemis:**
   - Improved the installation process via Makefile for python3 users ([#300](https://github.com/cossacklabs/themis/pull/300));
-  - Added [CLI utils](https://github.com/cossacklabs/themis/wiki/Encrypt-Decrypt-Console-Utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
+  - Added [CLI utils](https://docs.cossacklabs.com/pages/documentation-themis/#encrypt-decrypt-console-utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
 - **PHPThemis:**
   - Added support of PHP 7.0, 7.1, 7.2 ([#278](https://github.com/cossacklabs/themis/pull/278), [#280](https://github.com/cossacklabs/themis/pull/280));
-  - Added a package for `phpthemis`. Now you don't need to compile it from sources. See the installation [PHP guide](https://github.com/cossacklabs/themis/wiki/PHP-Howto#installing-from-packages) for more details;
-  - Improved [unit tests](https://github.com/cossacklabs/themis/wiki/PHP-Howto#installing-phpthemis). Now it's easy to run tests because all the dependencies are handled by a php-composer ([#284](https://github.com/cossacklabs/themis/pull/284), [#285](https://github.com/cossacklabs/themis/pull/285), [#303](https://github.com/cossacklabs/themis/pull/303));
+  - Added a package for `phpthemis`. Now you don't need to compile it from sources. See the installation [PHP guide](https://docs.cossacklabs.com/pages/php-howto/#installing-stable-version-from-packages) for more details;
+  - Improved [unit tests](https://docs.cossacklabs.com/pages/php-howto/#installing-stable-version-from-packages). Now it's easy to run tests because all the dependencies are handled by a php-composer ([#284](https://github.com/cossacklabs/themis/pull/284), [#285](https://github.com/cossacklabs/themis/pull/285), [#303](https://github.com/cossacklabs/themis/pull/303));
   - Added a memory test suit, which allows us to keep a closer eye on PHPThemis' memory usage ([#298](https://github.com/cossacklabs/themis/pull/298));
-  - Added [CLI utils](https://github.com/cossacklabs/themis/wiki/Encrypt-Decrypt-Console-Utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
+  - Added [CLI utils](https://docs.cossacklabs.com/pages/documentation-themis/#encrypt-decrypt-console-utils) and integration tests that allow you to test Secure Cell, Secure Message, and Key generation on your local machine ([#277](https://github.com/cossacklabs/themis/pull/277), [#293](https://github.com/cossacklabs/themis/pull/293), [#305](https://github.com/cossacklabs/themis/pull/305), [#306](https://github.com/cossacklabs/themis/pull/306)).
 
 
 ## [0.9.6](https://github.com/cossacklabs/themis/releases/tag/0.9.6), December 14th 2017
@@ -494,7 +1366,7 @@ _Code:_
 
 _Docs:_
 
-- Significant update of the [Contributing section](https://github.com/cossacklabs/themis/wiki/Contribute) in Wiki.
+- Significant update of the [Contributing section](https://docs.cossacklabs.com/pages/documentation-themis/#contributing-to-themis).
 
 _Infrastructure:_
 
@@ -576,7 +1448,7 @@ Updating podspec to be compatible with CocoaPods 1.0
 
 _Infrastructure_:
 * Lots of new high-level language wrappers
-* Enhanced **[documentation](https://github.com/cossacklabs/themis/wiki)**
+* Enhanced **[documentation](https://docs.cossacklabs.com/products/themis/)**
 * Lots of various demo projects
 * Updated **[Themis Server](https://themis.cossacklabs.com)**
 * Better **make** system verbosity (now you can actually see what succeeded and what didn't)
@@ -584,11 +1456,11 @@ _Infrastructure_:
 
 _Code_:
 * **iOS wrapper** now has umbrella header.
-* We added **Swift** language [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) and [howto](https://github.com/cossacklabs/themis/wiki/Swift-Howto).
-* Themis wrapper for **Go** language: [howto](https://github.com/cossacklabs/themis/wiki/Go-HowTo) (examples coming soon).
-* Themis wrapper for **NodeJS**: [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/nodejs) and [howto](https://github.com/cossacklabs/themis/wiki/NodeJS-Howto).
+* We added **Swift** language [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) and [howto](https://docs.cossacklabs.com/pages/swift-howto/).
+* Themis wrapper for **Go** language: [howto](https://docs.cossacklabs.com/pages/go-howto/) (examples coming soon).
+* Themis wrapper for **NodeJS**: [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/nodejs) and [howto](https://docs.cossacklabs.com/pages/nodejs-howto/).
 * Google Chrome-friendly spin-off called [WebThemis](https://github.com/cossacklabs/webthemis) was released.
-* Themis wrapper for **C++**: [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) and [howto](https://github.com/cossacklabs/themis/wiki/CPP-Howto).
+* Themis wrapper for **C++**: [examples](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) and [HowTo](https://docs.cossacklabs.com/pages/cpp-howto/).
 * **[Secure Comparator](https://www.cossacklabs.com/files/secure-comparator-paper-rev12.pdf)** got [serious updates](https://cossacklabs.com/fixing-secure-comparator.html) to eliminate possible security drawbacks pointed out by cryptographic community.
 
 

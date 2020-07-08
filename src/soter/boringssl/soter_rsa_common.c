@@ -24,7 +24,7 @@
 #define SOTER_RSA_KEY_LENGTH 2048
 #endif
 
-unsigned rsa_key_length(const int size)
+int rsa_key_length(unsigned size)
 {
     switch (size) {
     case RSA_KEY_LENGTH_1024:

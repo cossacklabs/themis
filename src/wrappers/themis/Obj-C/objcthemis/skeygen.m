@@ -80,3 +80,24 @@
 }
 
 @end
+
+NSData* __nullable TSGenerateSymmetricKey(void)
+{
+    TSErrorType result;
+    NSMutableData *key;
+    size_t keyLength = 0;
+
+    result = (TSErrorType) themis_gen_sym_key(NULL, &keyLength);
+    if (result != TSErrorTypeBufferTooSmall) {
+        return nil;
+    }
+
+    key = [NSMutableData dataWithLength:keyLength];
+
+    result = (TSErrorType) themis_gen_sym_key(key.mutableBytes, &keyLength);
+    if (result != TSErrorTypeSuccess) {
+        return nil;
+    }
+
+    return key;
+}

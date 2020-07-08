@@ -5,19 +5,35 @@ buildscript {
     }
 
     dependencies {
+        // Using older version since 3.6.X has issues with NDK versioning:
+        // https://github.com/gradle/gradle/issues/12440
+        // And 3.5.X fails to link ARM binaries correctly, so we're staying
+        // on this Gradle version until it breaks or we *need* an upgrade:
         classpath 'com.android.tools.build:gradle:3.2.1'
+
+        // Kotlin plugin for Android
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
+repositories {
+    google()
+    jcenter()
+}
+
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
-    
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 16
+        // BoringSSL requires at least API 21 to target AArch64. Google Play
+        // as of August 2019 requires to target at least API 28 (but we can
+        // still support lower versions).
+        minSdkVersion 21
+        targetSdkVersion 28
         externalNativeBuild {
 		    cmake {
 		        arguments "-DCMAKE_TOOLCHAIN_FILE=" + android.ndkDirectory + "/build/cmake/android.toolchain.cmake",
@@ -28,13 +44,13 @@ android {
 		    }
 	    }
     }
-    
+
     externalNativeBuild {
         cmake {
             path "src/CMakeLists.txt"
         }
     }
-	
+
 	sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'

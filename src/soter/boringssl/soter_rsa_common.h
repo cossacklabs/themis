@@ -21,7 +21,7 @@
 #include "soter/soter_error.h"
 #include "soter/soter_rsa_key.h"
 
-unsigned rsa_key_length(int size);
+int rsa_key_length(unsigned size);
 soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx, unsigned key_length);
 soter_status_t soter_rsa_import_key(EVP_PKEY* pkey, const void* key, size_t key_length);
 soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate);

@@ -87,7 +87,7 @@ static void test_known_values(void)
 
         soter_hash_destroy(ctx);
 
-        testsuite_fail_if((hash_len != sizeof(result)) || (memcmp(hash, result, hash_len)),
+        testsuite_fail_if((hash_len != sizeof(result)) || (memcmp(hash, result, hash_len) != 0),
                           "hash == know value");
     }
 }

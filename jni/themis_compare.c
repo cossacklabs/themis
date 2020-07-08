@@ -83,6 +83,15 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCompare_jniBegin(
         return NULL;
     }
 
+    /*
+     * Normally the messages should not be this big, but just in case, avoid
+     * integer overflow here. JVM cannot allocate more than 2 GB in one chunk.
+     */
+    if (compare_data_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
+        return NULL;
+    }
+
     compare_data = (*env)->NewByteArray(env, compare_data_length);
     if (!compare_data) {
         return NULL;
@@ -139,6 +148,15 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCompare_jniProcee
 
     res = secure_comparator_proceed_compare(ctx, compare_data_buf, compare_data_length, NULL, &output_length);
     if (THEMIS_BUFFER_TOO_SMALL != res) {
+        goto err;
+    }
+
+    /*
+     * Normally the messages should not be this big, but just in case, avoid
+     * integer overflow here. JVM cannot allocate more than 2 GB in one chunk.
+     */
+    if (output_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
         goto err;
     }
 

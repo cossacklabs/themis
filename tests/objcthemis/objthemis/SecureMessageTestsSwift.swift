@@ -61,38 +61,39 @@ class SecureMessageTestsSwift: XCTestCase {
   
     func encryptDecrypt(withPrivateKey privateKeyData: Data, publicKeyData: Data) {
         let encrypter = TSMessage.init(inEncryptModeWithPrivateKey: privateKeyData,
-                                       peerPublicKey: publicKeyData)
+                                       peerPublicKey: publicKeyData)!
+
         let message: String = "- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java."
         
-        let encryptedMessage = try? encrypter?.wrap(message.data(using: .utf8))
-        XCTAssertNotNil(encryptedMessage!, "encrypting data should return encrypted data")
+        let encryptedMessage = try? encrypter.wrap(message.data(using: .utf8))
+        XCTAssertNotNil(encryptedMessage, "encrypting data should return encrypted data")
         
-        let decryptedMessage = try? encrypter?.unwrapData(encryptedMessage!)
-        XCTAssertNotNil(decryptedMessage!, "decrypting data should return decrypted data")
+        let decryptedMessage = try? encrypter.unwrapData(encryptedMessage!)
+        XCTAssertNotNil(decryptedMessage, "decrypting data should return decrypted data")
         
-        let resultString = String(data: decryptedMessage!!, encoding: .utf8)
+        let resultString = String(data: decryptedMessage!, encoding: .utf8)
         XCTAssertTrue((message == resultString), "initial string and decrypted string should be the same")
       
         // nil message
-        let encryptedNilMessage = try? encrypter?.wrap(nil)
-        XCTAssertTrue((encryptedNilMessage == nil), "encrypting nil data should return empty data")
+        let encryptedNilMessage = try? encrypter.wrap(nil)
+        XCTAssertNil(encryptedNilMessage, "encrypting nil data should return empty data")
       
-        let decryptedNilMessage = try? encrypter?.unwrapData(nil)
-        XCTAssertTrue((decryptedNilMessage == nil), "decrypting nil data should return empty data")
+        let decryptedNilMessage = try? encrypter.unwrapData(nil)
+        XCTAssertNil(decryptedNilMessage, "decrypting nil data should return empty data")
         
         // empty message
-        let encryptedEmptyMessage = try? encrypter?.wrap("".data(using: .utf8))
-        XCTAssertTrue((encryptedEmptyMessage == nil), "encrypting empty data should return empty data")
+        let encryptedEmptyMessage = try? encrypter.wrap("".data(using: .utf8))
+        XCTAssertNil(encryptedEmptyMessage, "encrypting empty data should return empty data")
         
-        let decryptedEmptyMessage = try? encrypter?.unwrapData("".data(using: .utf8))
-        XCTAssertTrue((decryptedEmptyMessage == nil), "decrypting empty data should return empty data")
+        let decryptedEmptyMessage = try? encrypter.unwrapData("".data(using: .utf8))
+        XCTAssertNil(decryptedEmptyMessage, "decrypting empty data should return empty data")
       
         // another encryptor
         let keyGeneratorEC = TSKeyGen(algorithm: .EC)!
         let anotherEncryptor = TSMessage.init(inEncryptModeWithPrivateKey: keyGeneratorEC.privateKey as Data,
-                                            peerPublicKey: keyGeneratorEC.publicKey as Data)
-        let badDecryptedMessage = try? anotherEncryptor?.unwrapData(encryptedMessage!)
-        XCTAssertTrue((badDecryptedMessage == nil), "another encryptor can't decrypt other encrypted message")
+                                            peerPublicKey: keyGeneratorEC.publicKey as Data)!
+        let badDecryptedMessage = try? anotherEncryptor.unwrapData(encryptedMessage!)
+        XCTAssertNil(badDecryptedMessage, "another encryptor can't decrypt other encrypted message")
     }
   
     func signVerifyStrings(withPrivateKey privateKey: String, publicKey: String) {
@@ -103,31 +104,32 @@ class SecureMessageTestsSwift: XCTestCase {
   
     func signVerify(withPrivateKey privateKeyData: Data, publicKeyData: Data) {
         let encrypter = TSMessage.init(inSignVerifyModeWithPrivateKey: privateKeyData,
-                                       peerPublicKey: publicKeyData)
+                                       peerPublicKey: publicKeyData)!
+
         let message: String = "- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java."
         
-        let signedMessage = try? encrypter?.wrap(message.data(using: .utf8))
-        XCTAssertNotNil(signedMessage!, "signing data should return signed data")
+        let signedMessage = try? encrypter.wrap(message.data(using: .utf8))
+        XCTAssertNotNil(signedMessage, "signing data should return signed data")
         
-        let verifiedMessage = try? encrypter?.unwrapData(signedMessage!)
-        XCTAssertNotNil(verifiedMessage!, "verifying data should return verified data")
+        let verifiedMessage = try? encrypter.unwrapData(signedMessage!)
+        XCTAssertNotNil(verifiedMessage, "verifying data should return verified data")
         
-        let resultString = String(data: verifiedMessage!!, encoding: .utf8)
+        let resultString = String(data: verifiedMessage!, encoding: .utf8)
         XCTAssertTrue((message == resultString), "initial string and verified string should be the same")
     
         // nil message
-        let signedNilMessage = try? encrypter?.wrap(nil)
-        XCTAssertTrue((signedNilMessage == nil), "signing nil data should return empty data")
+        let signedNilMessage = try? encrypter.wrap(nil)
+        XCTAssertNil(signedNilMessage, "signing nil data should return empty data")
         
-        let verifiedNilMessage = try? encrypter?.unwrapData(nil)
-        XCTAssertTrue((verifiedNilMessage == nil), "verifying nil data should return empty data")
+        let verifiedNilMessage = try? encrypter.unwrapData(nil)
+        XCTAssertNil(verifiedNilMessage, "verifying nil data should return empty data")
         
         // empty message
-        let signedEmptyMessage = try? encrypter?.wrap("".data(using: .utf8))
-        XCTAssertTrue((signedEmptyMessage == nil), "signing empty data should return empty data")
+        let signedEmptyMessage = try? encrypter.wrap("".data(using: .utf8))
+        XCTAssertNil(signedEmptyMessage, "signing empty data should return empty data")
         
-        let verifiedEmptyMessage = try? encrypter?.unwrapData("".data(using: .utf8))
-        XCTAssertTrue((verifiedEmptyMessage == nil), "verifying empty data should return empty data")
+        let verifiedEmptyMessage = try? encrypter.unwrapData("".data(using: .utf8))
+        XCTAssertNil(verifiedEmptyMessage, "verifying empty data should return empty data")
 
         // empty both keys
         let wrongSM = TSMessage.init(inSignVerifyModeWithPrivateKey: nil,
@@ -137,23 +139,21 @@ class SecureMessageTestsSwift: XCTestCase {
         // sign or verify only
         let anotherMessage = "sign message"
         let signer = TSMessage.init(inSignVerifyModeWithPrivateKey: privateKeyData,
-                                     peerPublicKey: nil)
-        XCTAssertNotNil(signer, "be able to create signer without public key")
+                                     peerPublicKey: nil)!
       
-        let anotherSignedMessage = try? signer?.wrap(anotherMessage.data(using: .utf8))
-        XCTAssertNotNil(anotherSignedMessage!, "signing data should return signed data")
+        let anotherSignedMessage = try? signer.wrap(anotherMessage.data(using: .utf8))
+        XCTAssertNotNil(anotherSignedMessage, "signing data should return signed data")
       
         let verifier = TSMessage.init(inSignVerifyModeWithPrivateKey: nil,
-                                    peerPublicKey: publicKeyData)
-        XCTAssertNotNil(verifier, "be able to create verifier without private key")
-      
-        let anotherVerifiedMessage = try? verifier?.unwrapData(anotherSignedMessage!)
-        XCTAssertNotNil(anotherVerifiedMessage!, "verifying data should return verified data")
+                                    peerPublicKey: publicKeyData)!
+
+        let anotherVerifiedMessage = try? verifier.unwrapData(anotherSignedMessage!)
+        XCTAssertNotNil(anotherVerifiedMessage, "verifying data should return verified data")
       
         let keyGeneratorEC = TSKeyGen(algorithm: .EC)!
         let yetAnotherVerifier = TSMessage.init(inSignVerifyModeWithPrivateKey: keyGeneratorEC.privateKey as Data,
-                                      peerPublicKey: keyGeneratorEC.publicKey as Data)
-        let badVerifiedMessage = try? yetAnotherVerifier?.unwrapData(anotherSignedMessage!)
+                                      peerPublicKey: keyGeneratorEC.publicKey as Data)!
+        let badVerifiedMessage = try? yetAnotherVerifier.unwrapData(anotherSignedMessage!)
         XCTAssertTrue((badVerifiedMessage == nil), "another verifier can't verify this signed message")
     }
     

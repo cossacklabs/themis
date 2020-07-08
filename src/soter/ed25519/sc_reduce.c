@@ -33,6 +33,7 @@ Output:
   Overwrites s in place.
 */
 
+SOTER_ED25519_NO_UBSAN
 void sc_reduce(unsigned char *s)
 {
   crypto_int64 s0 = 2097151 & load_3(s);

@@ -79,6 +79,14 @@ typedef int32_t soter_status_t;
 #endif
 #endif
 
+#if __cplusplus >= 201402L
+#define SOTER_MUST_USE [[nodiscard]]
+#elif defined(__GNUC__) || defined(__clang__)
+#define SOTER_MUST_USE __attribute__((warn_unused_result))
+#else
+#define SOTER_MUST_USE
+#endif
+
 /**@}*/
 
 /**
@@ -156,7 +164,7 @@ typedef int32_t soter_status_t;
 #define SOTER_STATUS_CHECK(x, y) \
     {                            \
         soter_status_t res = x;  \
-        if (res != y) {          \
+        if (res != (y)) {        \
             SOTER_ERROR_OUT(#x); \
             return res;          \
         }                        \
@@ -165,7 +173,7 @@ typedef int32_t soter_status_t;
 #define SOTER_STATUS_CHECK_FREE(x, y, z) \
     {                                    \
         soter_status_t res = x;          \
-        if (res != y) {                  \
+        if (res != (y)) {                \
             SOTER_ERROR_OUT(#x);         \
             free(z);                     \
             return res;                  \

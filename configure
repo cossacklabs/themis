@@ -1,0 +1,264 @@
+#!/bin/sh
+#
+# Configure Themis build.
+#
+# Normally you should not need to call this script explicitly as "make"
+# executes it automatically if needed. But by all means, you can do
+#
+#     ./configure
+#     make
+#     sudo make install
+#
+# to install Themis in a traditional way, or if you need to configure
+# something non-standard.
+#
+# Important environment variables:
+#
+#     BUILD_PATH - path to build directory (default: "build")
+#
+# ./configure expects to be run from the source root with build directory
+# configured by BUILD_PATH if necessary.
+#
+# Run
+#
+#     ./configure --help
+#
+# to see available options.
+
+set -eu
+
+BUILD_PATH=${BUILD_PATH:-build}
+
+CC=${CC:-cc}
+CMAKE=${CMAKE:-cmake}
+
+usage() {
+    cat <<EOF
+Usage:
+    $0 [options...] [<var>=<value>...]
+
+Options:
+    --prefix=path           installation prefix
+    --bindir=path           installation path for binaries
+    --includedir=path       installation path for headers
+    --libdir=path           installation path for shared libraries
+    --jnidir=path           installation path for JNI libraries
+    --pkgconfigdir=path     installation path for pkg-config files
+
+    --help                  read this help
+EOF
+}
+
+die() {
+    exec >&2
+    echo $@
+    echo
+    usage
+    exit 1
+}
+
+configure_mk="$BUILD_PATH/configure.mk"
+
+write_boilerplate() {
+    mkdir -p "$(dirname "$configure_mk")"
+    cat > "$configure_mk"  <<EOF
+# DO NOT EDIT
+#
+# Generated automatically by $0
+
+EOF
+}
+
+set_variable() {
+    eval "$1=\"$2\""
+    echo "$1 = $2" >> "$configure_mk"
+}
+
+append_variable() {
+    eval "$1=\"$1 $2\""
+    echo "$1 += $2" >> "$configure_mk"
+}
+
+standard_dirs="prefix bindir includedir libdir jnidir pkgconfigdir"
+
+is_standard_dir() {
+    for dir in $standard_dirs
+    do
+        if [ "$1" = "$dir" ]
+        then
+            return 0
+        fi
+    done
+    return 1
+}
+
+parse_variable_override() {
+    case "$1" in
+      --*=*)
+        var=${1#--}
+        value=${var#*=}
+        var=${var%%=*}
+        if is_standard_dir "$var"
+        then
+            set_variable "$var" "$value"
+            nshift=1
+            return 0
+        fi
+        die "unrecognized option: $1"
+        ;;
+
+      --*)
+        var=${1#--}
+        if is_standard_dir "$var"
+        then
+            if [ $# = 1 ]
+            then
+                die "option $1 expects an argument"
+            fi
+            value=$2
+            set_variable "$var" "$value"
+            nshift=2
+            return 0
+        fi
+        die "unrecognized option: $1"
+        ;;
+
+      *=*)
+        var=${1%%=*}
+        value=${1#*=}
+        set_variable "$var" "$value"
+        nshift=1
+        return 0
+        ;;
+    esac
+    return 1
+}
+
+parse_commandline() {
+    while [ $# -gt 0 ]
+    do
+        if [ "$1" = "--help" ]
+        then
+            usage
+            exit
+        fi
+
+        if parse_variable_override "$@"
+        then
+            shift $nshift
+            continue
+        fi
+
+        die "unrecognized argument: $1"
+    done
+}
+
+detect_platform() {
+    case "$(uname)" in
+      Darwin)
+        set_variable IS_MACOS "true"
+        ;;
+      Linux)
+        set_variable IS_LINUX "true"
+        ;;
+      *)
+        case "$(uname -o)" in
+          Msys)
+            set_variable IS_MSYS "true"
+            ;;
+        esac
+        ;;
+    esac
+
+    if $CC --version 2>&1 | grep -qi Emscripten
+    then
+        set_variable IS_EMSCRIPTEN "true"
+    fi
+}
+
+detect_compiler() {
+    if $CC --version 2>&1 | grep -qi "clang version"
+    then
+        set_variable IS_CLANG_COMPILER "true"
+    fi
+}
+
+select_shared_object_extension() {
+    if [ -n "${IS_MSYS:-}" ]
+    then
+        set_variable SHARED_EXT "dll"
+    elif [ -n "${IS_MACOS:-}" ]
+    then
+        set_variable SHARED_EXT "dylib"
+    else
+        set_variable SHARED_EXT "so"
+    fi
+}
+
+select_cmake_for_emscripten() {
+    [ -z "${IS_EMSCRIPTEN:-}" ] && return
+    # Recent versions of Emscripten toolchain provide new "emcmake" utility
+    # specifically for CMake. Older versions rely on generic "emconfigure".
+    if which emcmake >/dev/null 2>&1
+    then
+        set_variable CMAKE "emcmake $CMAKE"
+    else
+        set_variable CMAKE "emconfigure $CMAKE"
+    fi
+}
+
+configure_macos_toolchain() {
+    [ -z "${IS_MACOS:-}" ] && return
+
+    if [ -n "${SDK:-}" ]
+    then
+        set_variable SDK_PLATFORM_VERSION "$(xcrun --sdk "$SDK" --show-sdk-platform-version)"
+        set_variable XCODE_BASE "$(xcode-select --print-path)"
+        set_variable CC         "$XCODE_BASE/usr/bin/gcc"
+        set_variable BASE       "$(xcrun --sdk "$SDK" --show-sdk-platform-path)"
+        set_variable SDK_BASE   "$(xcrun --sdk "$SDK" --show-sdk-path)"
+        set_variable FRAMEWORKS   "$SDK_BASE/System/Library/Frameworks/"
+        set_variable SDK_INCLUDES "$SDK_BASE/usr/include"
+        append_variable CFLAGS "-isysroot \"$SDK_BASE\""
+    fi
+
+    if [ -n "${ARCH:-}" ]
+    then
+        append_variable CFLAGS "-arch $ARCH"
+    fi
+}
+
+find_macos_openssl() {
+    [ -z "${IS_MACOS:-}" ] && return
+    local path="$(brew --prefix openssl 2> /dev/null || true)"
+    if [ -n "$path" ]
+    then
+        set_variable HOMEBREW_OPENSSL_PATH "$path"
+    fi
+}
+
+detect_language_runtimes() {
+    set_variable PHP_VERSION        "$(exec 2>/dev/null; which php     >/dev/null && php -r "echo PHP_MAJOR_VERSION;")"
+    set_variable RUBY_GEM_VERSION   "$(exec 2>/dev/null; which gem     >/dev/null && gem --version)"
+    set_variable RUST_VERSION       "$(exec 2>/dev/null; which rustc   >/dev/null && rustc --version)"
+    set_variable GO_VERSION         "$(exec 2>/dev/null; which go      >/dev/null && go version)"
+    set_variable NODE_VERSION       "$(exec 2>/dev/null; which node    >/dev/null && node --version)"
+    set_variable NPM_VERSION        "$(exec 2>/dev/null; which npm     >/dev/null && npm --version)"
+    set_variable PIP_VERSION        "$(exec 2>/dev/null; which pip     >/dev/null && pip --version)"
+    set_variable PYTHON3_VERSION    "$(exec 2>/dev/null; which python3 >/dev/null && python3 --version)"
+}
+
+main() {
+    write_boilerplate
+    parse_commandline "$@"
+    detect_platform
+    detect_compiler
+    select_shared_object_extension
+    select_cmake_for_emscripten
+    configure_macos_toolchain
+    find_macos_openssl
+    detect_language_runtimes
+    echo "configuration written to $configure_mk"
+}
+
+main "$@"

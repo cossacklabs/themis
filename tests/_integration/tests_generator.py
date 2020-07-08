@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 import string
 import os
 from collections import namedtuple
 
 generate_for_languages = os.environ.get(
-    'GENERATE_LANGUAGES', 'ruby,python,js,node,go,php,rust')
+    'THEMIS_TEST_LANGUAGES', 'ruby,python,js,node,go,php,rust')
 generate_for_languages = generate_for_languages.split(',')
 
 LanguageSetting = namedtuple(
@@ -12,7 +12,7 @@ LanguageSetting = namedtuple(
 
 languages = [
     LanguageSetting(name='ruby', command='ruby', script_path='./tools/ruby', extension='rb'),
-    LanguageSetting(name='python', command='python', script_path='./tools/python', extension='py'),
+    LanguageSetting(name='python', command='python3', script_path='./tools/python', extension='py'),
     LanguageSetting(name='js', command='node', script_path='./tools/js/wasm-themis', extension='js'),
     LanguageSetting(name='node', command='node', script_path='./tools/js/jsthemis', extension='js'),
     LanguageSetting(name='go', command='go run', script_path='./tools/go', extension='go'),
@@ -25,6 +25,7 @@ templates = {
     'smessage_encryption': './tests/_integration/integration_smessage_encryption.template',
     'scell_token_protect': './tests/_integration/integration_scell_token_protect.template',
     'scell_seal': './tests/_integration/integration_scell_seal.template',
+    'scell_seal_pw': './tests/_integration/integration_scell_seal_pw.template',
     'scell_context_imprint': './tests/_integration/integration_scell_context_imprint.template',
 }
 

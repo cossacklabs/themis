@@ -22,9 +22,16 @@ import java.util.Random;
 import com.cossacklabs.themis.SecureCell;
 import com.cossacklabs.themis.SecureCellData;
 
-import android.test.AndroidTestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class SecureCellTest extends AndroidTestCase {
+/**
+ * These tests exercise old and deprecated API.
+ * See {@link SecureCellSealTest}, {@link SecureCellTokenProtectTest},
+ * {@link SecureCellContextImprintTest} for examples of new API.
+ */
+@SuppressWarnings("deprecation")
+public class SecureCellTest {
 	
 	static final int MAX_TEST_DATA = 1024;
 	Random rand = new Random();
@@ -42,7 +49,7 @@ public class SecureCellTest extends AndroidTestCase {
 		return data;
 	}
 
-	@Override
+	@Test
 	public void runTest() {
 		try {
 			testSeal();

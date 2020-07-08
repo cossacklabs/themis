@@ -1,0 +1,123 @@
+name: ThemisPP
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-cpp.yaml'
+      # GitHub Actions treat "c++" as invalid glob pattern
+      - 'docs/examples/c*/**'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/themispp/**'
+      - 'tests/common/**'
+      - 'tests/themispp/**'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc g++ clang make libssl-dev
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Build Themis Core
+        run: |
+          make all themis_test soter_test
+      #
+      # GCC
+      #
+      - name: Run test suite (C++03, GCC)
+        if: always()
+        run: CFLAGS=-std=c++03 make clean_themispp_test themispp_test test_cpp CC=gcc CXX=g++
+      - name: Run test suite (C++11, GCC)
+        if: always()
+        run: CFLAGS=-std=c++11 make clean_themispp_test themispp_test test_cpp CC=gcc CXX=g++
+      - name: Run test suite (C++14, GCC)
+        if: always()
+        run: CFLAGS=-std=c++14 make clean_themispp_test themispp_test test_cpp CC=gcc CXX=g++
+      - name: Run test suite (C++17, GCC)
+        if: always()
+        run: CFLAGS=-std=c++17 make clean_themispp_test themispp_test test_cpp CC=gcc CXX=g++
+      #
+      # Clang
+      #
+      - name: Run test suite (C++03, Clang)
+        if: always()
+        run: CFLAGS=-std=c++03 make clean_themispp_test themispp_test test_cpp CC=clang CXX=clang++
+      - name: Run test suite (C++11, Clang)
+        if: always()
+        run: CFLAGS=-std=c++11 make clean_themispp_test themispp_test test_cpp CC=clang CXX=clang++
+      - name: Run test suite (C++14, Clang)
+        if: always()
+        run: CFLAGS=-std=c++14 make clean_themispp_test themispp_test test_cpp CC=clang CXX=clang++
+      - name: Run test suite (C++17, Clang)
+        if: always()
+        run: CFLAGS=-std=c++17 make clean_themispp_test themispp_test test_cpp CC=clang CXX=clang++
+
+  examples:
+    name: Code examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc g++ make libssl-dev libboost-all-dev
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core, ThemisPP
+        run: |
+          make
+          sudo make install themispp_install
+      - name: Test examples (Secure Cell)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/c++
+          echo "Testing Secure Cell..."
+          make secure_cell_file_encrypter
+          ./secure_cell_file_encrypter e password secure_cell_file_encrypter.cpp     secure_cell_file_encrypter.cpp.enc
+          ./secure_cell_file_encrypter d password secure_cell_file_encrypter.cpp.enc secure_cell_file_encrypter.cpp.dec
+          test "$(sha1sum secure_cell_file_encrypter.cpp | awk '{print $1}')" = \
+               "$(sha1sum secure_cell_file_encrypter.cpp.dec | awk '{print $1}')"
+          echo "ok"
+      - name: Test examples (Secure Message)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/c++
+          echo "Testing Secure Message..."
+          make secure_message_client secure_message_server
+          ./secure_message_server 12345 &
+          sleep 1 # give the server time to launch
+          echo "secure message please ignore" | ./secure_message_client localhost 12345 | tee output.txt
+          kill -SIGTERM "$!"
+          test "$(cat output.txt)" = $'Enter message:\nClient received a reply: secure message please ignore'
+          echo "ok"
+      - name: Test examples (Secure Session)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/c++
+          echo "Testing Secure Session..."
+          make secure_session_client secure_session_server
+          ./secure_session_server 12345 &
+          sleep 1 # give the server time to launch
+          echo "test session please ignore" | ./secure_session_client localhost 12345 | tee output.txt
+          kill -SIGINT "$!"
+          test "$(cat output.txt)" = $'Enter message:\nClient received a reply: test session please ignore'
+          echo "ok"

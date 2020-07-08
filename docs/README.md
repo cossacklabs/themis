@@ -1,8 +1,7 @@
-Full cool documentation is available in our [wiki](https://github.com/cossacklabs/themis/wiki).
-For offline use you might want to:
+The complete and frequently updated [documentation for Themis]( https://docs.cossacklabs.com/products/themis/) (and other Cossack Labs products) can be found on the [Cossack Labs Documentation Server](https://docs.cossacklabs.com/).
 
-```
-git clone https://github.com/cossacklabs/themis.wiki.git
-```
+![Cossack Labs Docserver](https://www.cossacklabs.com/files/img/cossack-labs-docserver-main-img.png)    
 
-This folder contains examples and, in nearest future, will contain tutorials/demo apps for all platforms Themis works on.
+This folder contains examples and [links to tutorials and sample apps](https://github.com/cossacklabs/themis/tree/master/docs/examples) for all the platforms that Themis works on.
+
+

@@ -75,6 +75,13 @@ const (
 	secureMessageVerify
 )
 
+// Errors returned by Secure Message.
+var (
+	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
+	ErrMissingPublicKey  = errors.NewWithCode(errors.InvalidParameter, "empty peer public key for Secure Message")
+	ErrMissingPrivateKey = errors.NewWithCode(errors.InvalidParameter, "empty private key for Secure Message")
+)
+
 // SecureMessage provides a sequence-independent, stateless, contextless messaging system.
 type SecureMessage struct {
 	private    *keys.PrivateKey
@@ -90,7 +97,7 @@ func New(private *keys.PrivateKey, peerPublic *keys.PublicKey) *SecureMessage {
 
 func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, message []byte, mode int) ([]byte, error) {
 	if nil == message || 0 == len(message) {
-		return nil, errors.New("No message was provided")
+		return nil, ErrMissingMessage
 	}
 
 	var priv, pub unsafe.Pointer
@@ -152,11 +159,11 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 // Wrap encrypts the provided message.
 func (sm *SecureMessage) Wrap(message []byte) ([]byte, error) {
 	if nil == sm.private || 0 == len(sm.private.Value) {
-		return nil, errors.New("Private key was not provided")
+		return nil, ErrMissingPrivateKey
 	}
 
 	if nil == sm.peerPublic || 0 == len(sm.peerPublic.Value) {
-		return nil, errors.New("Peer public key was not provided")
+		return nil, ErrMissingPublicKey
 	}
 	return messageProcess(sm.private, sm.peerPublic, message, secureMessageEncrypt)
 }
@@ -164,11 +171,11 @@ func (sm *SecureMessage) Wrap(message []byte) ([]byte, error) {
 // Unwrap decrypts the encrypted message.
 func (sm *SecureMessage) Unwrap(message []byte) ([]byte, error) {
 	if nil == sm.private || 0 == len(sm.private.Value) {
-		return nil, errors.New("Private key was not provided")
+		return nil, ErrMissingPrivateKey
 	}
 
 	if nil == sm.peerPublic || 0 == len(sm.peerPublic.Value) {
-		return nil, errors.New("Peer public key was not provided")
+		return nil, ErrMissingPublicKey
 	}
 	return messageProcess(sm.private, sm.peerPublic, message, secureMessageDecrypt)
 }
@@ -176,7 +183,7 @@ func (sm *SecureMessage) Unwrap(message []byte) ([]byte, error) {
 // Sign signs the provided message and returns it signed.
 func (sm *SecureMessage) Sign(message []byte) ([]byte, error) {
 	if nil == sm.private || 0 == len(sm.private.Value) {
-		return nil, errors.New("Private key was not provided")
+		return nil, ErrMissingPrivateKey
 	}
 
 	return messageProcess(sm.private, nil, message, secureMessageSign)
@@ -185,7 +192,7 @@ func (sm *SecureMessage) Sign(message []byte) ([]byte, error) {
 // Verify checks the signature on the message and returns the original message.
 func (sm *SecureMessage) Verify(message []byte) ([]byte, error) {
 	if nil == sm.peerPublic || 0 == len(sm.peerPublic.Value) {
-		return nil, errors.New("Peer public key was not provided")
+		return nil, ErrMissingPublicKey
 	}
 
 	return messageProcess(nil, sm.peerPublic, message, secureMessageVerify)

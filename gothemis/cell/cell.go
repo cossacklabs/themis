@@ -1,3 +1,50 @@
+/*
+ * Copyright (c) 2016 Cossack Labs Limited
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Package cell provides Themis Secure Cell.
+//
+// Secure Сell is a high-level cryptographic service,
+// aimed to protect arbitrary data being stored in various types of storages
+// (like databases, filesystem files, document archives, cloud storage etc).
+// It provides a simple way to secure your data using strong encryption
+// and data authentication mechanisms,
+// with easy-to-use interfaces for broad range of use-cases.
+//
+// Implementing secure storage is often constrained by various practical matters –
+// ability to store keys, existence of length-sensitive code bound to database structure,
+// requirements to preserve structure.
+// To cover a broader range of usage scenarios and provide highest security level
+// for systems with such constraints, we’ve designed several types of interfaces
+// and implementations of secure data container, Secure Cell.
+// They slightly differ in overall security level and ease of use:
+// more complicated and slightly less secure ones can cover more constrained environments though.
+// Interfaces below are prioritized by our preference,
+// which takes only security and ease of use into account.
+//
+// ``SecureCellSeal'' is the most secure and the easiest one to use.
+//
+// ``SecureCellTokenProtect'' is able to preserve the encrypted data length
+// but requires separate data storage to be available.
+//
+// ``SecureCellContextImprint'' preserves encrypted data length too,
+// but at a cost of slightly lower security and more involved interface.
+//
+// Read more about Secure Cell modes here:
+//
+// https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/
 package cell
 
 /*
@@ -130,7 +177,19 @@ import (
 	"unsafe"
 )
 
+// Errors returned by Secure Cell.
+var (
+	ErrInvalidMode       = errors.NewWithCode(errors.InvalidParameter, "invalid Secure Cell mode specified")
+	ErrMissingKey        = errors.NewWithCode(errors.InvalidParameter, "empty symmetric key for Secure Cell")
+	ErrMissingPassphrase = errors.NewWithCode(errors.InvalidParameter, "empty passphrase for Secure Cell")
+	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
+	ErrMissingToken      = errors.NewWithCode(errors.InvalidParameter, "authentication token is required in Token Protect mode")
+	ErrMissingContext    = errors.NewWithCode(errors.InvalidParameter, "associated context is required in Context Imprint mode")
+)
+
 // Secure Cell operation mode.
+//
+// Deprecated: Since 0.13. Use SealWithKey(), TokenProtectWithKey(), ContextImprintWithKey() constructutors instead.
 const (
 	ModeSeal = iota
 	ModeTokenProtect
@@ -139,7 +198,7 @@ const (
 
 // Secure Cell operation mode.
 //
-// Deprecated: Since 0.11. Use "cell.Mode..." constants instead.
+// Deprecated: Since 0.13. Use SealWithKey(), TokenProtectWithKey(), ContextImprintWithKey() constructutors instead.
 const (
 	CELL_MODE_SEAL            = ModeSeal
 	CELL_MODE_TOKEN_PROTECT   = ModeTokenProtect
@@ -148,12 +207,16 @@ const (
 
 // SecureCell is a high-level cryptographic service aimed at protecting arbitrary data
 // stored in various types of storage
+//
+// Deprecated: Since 0.13. Use SecureCellSeal, SecureCellTokenProtect, SecureCellContextImprint instead.
 type SecureCell struct {
 	key  []byte
 	mode int
 }
 
 // New makes a new Secure Cell with master key and specified mode.
+//
+// Deprecated: Since 0.13. Use SealWithKey(), TokenProtectWithKey(), ContextImprintWithKey() constructutors instead.
 func New(key []byte, mode int) *SecureCell {
 	return &SecureCell{key, mode}
 }
@@ -165,20 +228,20 @@ func missing(data []byte) bool {
 // Protect encrypts or signs data with optional user context (depending on the Cell mode).
 func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, error) {
 	if (sc.mode < ModeSeal) || (sc.mode > ModeContextImprint) {
-		return nil, nil, errors.New("Invalid mode specified")
+		return nil, nil, ErrInvalidMode
 	}
 
 	if missing(sc.key) {
-		return nil, nil, errors.New("Master key was not provided")
+		return nil, nil, ErrMissingKey
 	}
 
 	if missing(data) {
-		return nil, nil, errors.New("Data was not provided")
+		return nil, nil, ErrMissingMessage
 	}
 
 	if ModeContextImprint == sc.mode {
 		if missing(context) {
-			return nil, nil, errors.New("Context is mandatory for context imprint mode")
+			return nil, nil, ErrMissingContext
 		}
 	}
 
@@ -233,26 +296,26 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 // Unprotect decrypts or verify data with optional user context (depending on the Cell mode).
 func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, context []byte) ([]byte, error) {
 	if (sc.mode < ModeSeal) || (sc.mode > ModeContextImprint) {
-		return nil, errors.New("Invalid mode specified")
+		return nil, ErrInvalidMode
 	}
 
 	if missing(sc.key) {
-		return nil, errors.New("Master key was not provided")
+		return nil, ErrMissingKey
 	}
 
 	if missing(protectedData) {
-		return nil, errors.New("Data was not provided")
+		return nil, ErrMissingMessage
 	}
 
 	if ModeContextImprint == sc.mode {
 		if missing(context) {
-			return nil, errors.New("Context is mandatory for context imprint mode")
+			return nil, ErrMissingContext
 		}
 	}
 
 	if ModeTokenProtect == sc.mode {
 		if missing(additionalData) {
-			return nil, errors.New("Additional data is mandatory for token protect mode")
+			return nil, ErrMissingToken
 		}
 	}
 
@@ -299,4 +362,15 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 	}
 
 	return decData, nil
+}
+
+func bytesData(b []byte) *C.uint8_t {
+	if len(b) == 0 {
+		return nil
+	}
+	return (*C.uint8_t)(unsafe.Pointer(&b[0]))
+}
+
+func bytesSize(b []byte) C.size_t {
+	return C.size_t(len(b))
 }

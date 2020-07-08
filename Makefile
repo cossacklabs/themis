@@ -14,7 +14,30 @@
 # limitations under the License.
 #
 
-########################################################################
+#===== Early setup =============================================================
+
+# Set default goal for "make"
+.DEFAULT_GOAL := all
+
+# Set shell for target commands
+SHELL = /bin/bash
+
+# Disable built-in rules
+MAKEFLAGS += --no-builtin-rules
+.SUFFIXES:
+
+## build directory
+BUILD_PATH ?= build
+
+# Include system configuration file, creating it if necessary
+-include $(BUILD_PATH)/configure.mk
+
+$(BUILD_PATH)/configure.mk:
+	@./configure
+
+#===== Variables ===============================================================
+
+#----- Versioning --------------------------------------------------------------
 
 # Increment VERSION when making a new release of Themis.
 #
@@ -23,41 +46,51 @@
 VERSION := $(shell test -d .git && git describe --tags || cat VERSION)
 LIBRARY_SO_VERSION = 0
 
-########################################################################
-#
-# Overridable default paths to applications and build/install directories
-#
+#----- Toolchain ---------------------------------------------------------------
 
-CMAKE = cmake
-SHELL = /bin/bash
+CMAKE ?= cmake
 
 CLANG_FORMAT ?= clang-format
 CLANG_TIDY   ?= clang-tidy
 
-INSTALL = install
-INSTALL_PROGRAM = $(INSTALL)
-INSTALL_DATA    = $(INSTALL) -m 644
+INSTALL         ?= install
+INSTALL_PROGRAM ?= $(INSTALL)
+INSTALL_DATA    ?= $(INSTALL) -m 644
 
-BUILD_PATH ?= build
+#----- Build directories -------------------------------------------------------
 
 SRC_PATH = src
 BIN_PATH = $(BUILD_PATH)
 OBJ_PATH = $(BIN_PATH)/obj
 AUD_PATH = $(BIN_PATH)/for_audit
+
 TEST_SRC_PATH = tests
 TEST_BIN_PATH = $(BIN_PATH)/tests
 
+#----- Installation paths ------------------------------------------------------
+
+## installation prefix
 PREFIX ?= /usr/local
 
-prefix       = $(PREFIX)
-exec_prefix  = $(prefix)
-bindir       = $(prefix)/bin
-includedir   = $(prefix)/include
-libdir       = $(exec_prefix)/lib
-pkgconfigdir = $(libdir)/pkgconfig
+# Advanced variables for fine-tuning installation paths
+prefix       ?= $(PREFIX)
+exec_prefix  ?= $(prefix)
+bindir       ?= $(prefix)/bin
+includedir   ?= $(prefix)/include
+libdir       ?= $(exec_prefix)/lib
+jnidir       ?= $(libdir)
+pkgconfigdir ?= $(libdir)/pkgconfig
 
-CFLAGS += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/ -fPIC
+#----- Basic compiler flags ----------------------------------------------------
+
+# Add Themis source directory to search paths
+CFLAGS  += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/
 LDFLAGS += -L$(BIN_PATH)
+# Not all platforms include /usr/local in default search path
+CFLAGS  += -I/usr/local/include
+LDFLAGS += -L/usr/local/lib
+# Build shared libraries
+CFLAGS  += -fPIC
 
 ########################################################################
 #
@@ -84,74 +117,6 @@ PRINT_WARNING = printf "$@ $(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
 PRINT_WARNING_ = printf "$(WARN_STRING)\n" && printf "$(CMD)\n$$LOG\n"
 BUILD_CMD = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING); else $(PRINT_OK); fi;
 BUILD_CMD_ = LOG=$$($(CMD) 2>&1) ; if [ $$? -ne 0 ]; then $(PRINT_ERROR_); elif [ "$$LOG" != "" ] ; then $(PRINT_WARNING_); else $(PRINT_OK_); fi;
-
-########################################################################
-#
-# Platform detection macros and default tweaks
-#
-
-UNAME := $(shell uname)
-
-ifeq ($(UNAME),Darwin)
-	IS_MACOS := true
-else ifeq ($(UNAME),Linux)
-	IS_LINUX := true
-else ifeq ($(shell uname -o),Msys)
-	IS_MSYS := true
-endif
-
-ifneq ($(shell $(CC) --version 2>&1 | grep -oi "Emscripten"),)
-	IS_EMSCRIPTEN := true
-endif
-ifneq ($(shell $(CC) --version 2>&1 | grep -E -i -c "clang version"),0)
-	IS_CLANG_COMPILER := true
-endif
-
-SHARED_EXT = so
-
-ifdef IS_MACOS
-SHARED_EXT = dylib
-ifneq ($(SDK),)
-SDK_PLATFORM_VERSION=$(shell xcrun --sdk $(SDK) --show-sdk-platform-version)
-XCODE_BASE=$(shell xcode-select --print-path)
-CC=$(XCODE_BASE)/usr/bin/gcc
-BASE=$(shell xcrun --sdk $(SDK) --show-sdk-platform-path)
-SDK_BASE=$(shell xcrun --sdk $(SDK) --show-sdk-path)
-FRAMEWORKS=$(SDK_BASE)/System/Library/Frameworks/
-SDK_INCLUDES=$(SDK_BASE)/usr/include
-CFLAGS += -isysroot $(SDK_BASE)
-endif
-ifneq ($(ARCH),)
-CFLAGS += -arch $(ARCH)
-endif
-endif
-
-ifdef IS_MSYS
-SHARED_EXT = dll
-endif
-
-ifdef IS_EMSCRIPTEN
-CMAKE = emconfigure cmake
-endif
-
-# Not all platforms include /usr/local into default search path
-CFLAGS  += -I/usr/local/include
-LDFLAGS += -L/usr/local/lib
-
-########################################################################
-#
-# Detecting installed language runtimes and their versions
-#
-
-PHP_VERSION := $(shell php -r "echo PHP_MAJOR_VERSION;" 2>/dev/null)
-RUBY_GEM_VERSION := $(shell gem --version 2>/dev/null)
-RUST_VERSION := $(shell rustc --version 2>/dev/null)
-GO_VERSION := $(shell which go >/dev/null 2>&1 && go version 2>&1)
-NODE_VERSION := $(shell node --version 2>/dev/null)
-NPM_VERSION := $(shell npm --version 2>/dev/null)
-PIP_VERSION := $(shell pip --version 2>/dev/null)
-PYTHON2_VERSION := $(shell which python2 >/dev/null 2>&1 && python2 --version 2>&1)
-PYTHON3_VERSION := $(shell python3 --version 2>/dev/null)
 
 ########################################################################
 #
@@ -185,10 +150,9 @@ CFLAGS += $(CRYPTO_ENGINE_CFLAGS)
 # Homebrew's OpenSSL instead of the system one by default.
 ifdef IS_MACOS
 	ifeq ($(CRYPTO_ENGINE_PATH),openssl)
-		OPENSSL_PATH := $(shell brew --prefix openssl)
-		ifneq ($(OPENSSL_PATH),)
-			CRYPTO_ENGINE_INCLUDE_PATH = $(OPENSSL_PATH)/include
-			CRYPTO_ENGINE_LIB_PATH = $(OPENSSL_PATH)/lib
+		ifneq ($(HOMEBREW_OPENSSL_PATH),)
+			CRYPTO_ENGINE_INCLUDE_PATH = $(HOMEBREW_OPENSSL_PATH)/include
+			CRYPTO_ENGINE_LIB_PATH = $(HOMEBREW_OPENSSL_PATH)/lib
 		endif
 	endif
 endif
@@ -229,20 +193,51 @@ endif
 # our compilation flags there, so do not export these variables.
 unexport CFLAGS LDFLAGS
 
+# Prevent undefined symbols in produced binaries, but allow them for sanitizers
+# which expect the libraries linked into the main executable to be underlinked.
+ifndef WITH_ASAN
+ifndef WITH_MSAN
+ifndef WITH_TSAN
+ifndef WITH_UBSAN
+# Not all Emscripten toolchains support these flags so leave them out as well.
+ifndef IS_EMSCRIPTEN
 ifdef IS_MACOS
 LDFLAGS += -Wl,-undefined,error
 endif
 ifdef IS_LINUX
 LDFLAGS += -Wl,--no-undefined
 endif
+endif
+endif
+endif
+endif
+endif
+
+CFLAGS += -O2 -g
+# Get better runtime backtraces by preserving the frame pointer. This eats
+# one of seven precious registers on x86, but our functions are quite large
+# so they almost always use stack and need the frame pointer anyway.
+CFLAGS += -fno-omit-frame-pointer
+# Enable runtime stack canaries for functions to guard for buffer overflows.
+ifeq (yes,$(call supported,-fstack-protector-strong))
+CFLAGS += -fstack-protector-strong
+else
+CFLAGS += -fstack-protector
+endif
+# Enable miscellaneous compile-time checks in standard library usage.
+CFLAGS += -D_FORTIFY_SOURCE=2
+# Prevent global offset table overwrite attacks.
+ifdef IS_LINUX
+LDFLAGS += -Wl,-z,relro -Wl,-z,now
+endif
 
 ifdef COVERAGE
-	CFLAGS += -g -O0 --coverage
+	CFLAGS += -O0 --coverage
 	LDFLAGS += --coverage
 endif
 
 ifdef DEBUG
-	CFLAGS += -DDEBUG -g
+	CFLAGS += -O0 -DDEBUG
 endif
 
 ifneq ($(GEM_INSTALL_OPTIONS),)
@@ -250,7 +245,7 @@ ifneq ($(GEM_INSTALL_OPTIONS),)
 endif
 
 define supported =
-$(shell if echo "int main(void){}" | $(if $(2),$(2),$(CC)) -x c -fsyntax-only -Werror $(1) - >/dev/null 2>&1; then echo "yes"; fi)
+$(shell if echo "int main(void){}" | $(if $(AFL_CC),$(AFL_CC),$(CC)) -x c -fsyntax-only -Werror $(1) - >/dev/null 2>&1; then echo "yes"; fi)
 endef
 
 ifeq (yes,$(WITH_FATAL_WARNINGS))
@@ -297,9 +292,67 @@ endif
 
 CFLAGS += -fvisibility=hidden
 
+#
+# Enable code sanitizers on demand and if supported by compiler
+#
+
+ifdef WITH_ASAN
+CFLAGS += -DWITH_ASAN
+ifeq (yes,$(call supported,-fsanitize=address))
+SANITIZERS += -fsanitize=address
+else
+$(error -fsanitize=address requested but $(CC) does not seem to support it)
+endif
+endif
+
+ifdef WITH_MSAN
+CFLAGS += -DWITH_MSAN
+ifeq (yes,$(call supported,-fsanitize=memory))
+SANITIZERS += -fsanitize=memory -fsanitize-memory-track-origins=2
+else
+$(error -fsanitize=memory requested but $(CC) does not seem to support it)
+endif
+endif
+
+ifdef WITH_TSAN
+CFLAGS += -DWITH_TSAN
+ifeq (yes,$(call supported,-fsanitize=thread))
+SANITIZERS += -fsanitize=thread
+else
+$(error -fsanitize=thread requested but $(CC) does not seem to support it)
+endif
+endif
+
+ifdef WITH_UBSAN
+CFLAGS += -DWITH_UBSAN
+ifeq (yes,$(call supported,-fsanitize=undefined))
+SANITIZERS += -fsanitize=undefined
+else
+$(error -fsanitize=undefined requested but $(CC) does not seem to support it)
+endif
+ifeq (yes,$(call supported,-fsanitize=integer))
+SANITIZERS += -fsanitize=integer
+else
+$(warning -fsanitize=integer not supported by $(CC), skipping...)
+endif
+ifeq (yes,$(call supported,-fsanitize=nullability))
+SANITIZERS += -fsanitize=nullability
+else
+$(warning -fsanitize=nullability not supported by $(CC), skipping...)
+endif
+endif
+
+ifeq (yes,$(WITH_FATAL_SANITIZERS))
+SANITIZERS += -fno-sanitize-recover=all
+endif
+
+CFLAGS  += $(SANITIZERS)
+LDFLAGS += $(SANITIZERS)
+
 # Binary format compatibility with Themis 0.9.6 on x86_64 architecture.
 # https://github.com/cossacklabs/themis/pull/279
-ifeq ($(NO_SCELL_COMPAT),)
+# Themis 0.9.6 is going EOL on 2020-12-13 so it can be removed after that.
+ifneq ($(WITH_SCELL_COMPAT),)
 	CFLAGS += -DSCELL_COMPAT
 endif
 
@@ -320,8 +373,6 @@ endif
 #
 # Principal Makefile targets
 #
-
-.DEFAULT_GOAL := all
 
 all: themis_static soter_static themis_shared soter_shared themis_pkgconfig soter_pkgconfig
 	@echo $(VERSION)
@@ -401,9 +452,23 @@ $(AUD_PATH)/%: $(SRC_PATH)/%
 # Themis Core installation
 #
 
+# Red Hat systems usually do not have "lsb_release" in their default setup
+# so we look into the release version files from "centos-release" package.
+ifdef IS_LINUX
+ifeq ($(shell . /etc/os-release; echo $$ID),centos)
+IS_CENTOS := true
+LD_SO_CONF = $(DESTDIR)/etc/ld.so.conf.d/themis.conf
+endif
+endif
+
 install: all install_soter install_themis
 	@echo -n "Themis installed to $(PREFIX)"
 	@$(PRINT_OK_)
+# CentOS does not have /usr/local/lib in the default search path, add it there.
+ifeq ($(IS_CENTOS),true)
+	-@mkdir -p "$$(dirname "$(LD_SO_CONF)")"
+	-@echo "$(libdir)" > "$(LD_SO_CONF)" && echo "Added $(libdir) to $(LD_SO_CONF)"
+endif
 ifdef IS_LINUX
 	-@ldconfig
 endif
@@ -429,36 +494,38 @@ endif
 uninstall: uninstall_themis uninstall_soter
 	@echo -n "Themis uninstalled from $(PREFIX) "
 	@$(PRINT_OK_)
+# Remove non-standard library search path created by "install" for CentOS.
+ifeq ($(IS_CENTOS),true)
+	@rm -f "$(LD_SO_CONF)"
+endif
 
 ########################################################################
 #
 # Themis distribution tarball
 #
 
-THEMIS_DIST_FILENAME = $(VERSION).tar.gz
+DIST_DIR = themis_$(VERSION)
+
+# Themis Core source code, tests, docs
+DIST_FILES += docs src tests Makefile VERSION
+DIST_FILES += README.md CHANGELOG.md LICENSE
+DIST_FILES += PKGBUILD.MSYS2 Themis.nsi
+# Supporting files for language wrappers
+DIST_FILES += Cargo.toml
+DIST_FILES += CMakeLists.txt
+DIST_FILES += gothemis
+DIST_FILES += jni
+DIST_FILES += scripts tools
 
 dist:
-	mkdir -p $(VERSION)
-	rsync -avz src $(VERSION)
-	rsync -avz docs $(VERSION)
-	rsync -avz gothemis $(VERSION)
-	rsync -avz gradle $(VERSION)
-	rsync -avz jni $(VERSION)
-	rsync -avz --exclude 'tests/soter/nist-sts/assess' tests $(VERSION)
-	rsync -avz tools $(VERSION)
-	rsync -avz CHANGELOG.md $(VERSION)
-	rsync -avz LICENSE $(VERSION)
-	rsync -avz Makefile $(VERSION)
-	rsync -avz README.md $(VERSION)
-	rsync -avz build.gradle $(VERSION)
-	rsync -avz gradlew $(VERSION)
-	rsync -avz themis.podspec $(VERSION)
-	rsync -avz VERSION $(VERSION)
-	tar -zcvf $(THEMIS_DIST_FILENAME) $(VERSION)
-	rm -rf $(VERSION)
+	@mkdir -p $(DIST_DIR)
+	@rsync -a $(DIST_FILES) $(DIST_DIR)
+	@tar czf $(DIST_DIR).tar.gz $(DIST_DIR)
+	@rm -rf $(DIST_DIR)
+	@echo $(DIST_DIR).tar.gz
 
 unpack_dist:
-	@tar -xf $(THEMIS_DIST_FILENAME)
+	@tar -xf $(DIST_DIR).tar.gz
 
 ########################################################################
 #
@@ -517,44 +584,16 @@ endif
 
 uninstall: rbthemis_uninstall
 
-## Node.js #####################
-
-JSTHEMIS_PACKAGE_VERSION=$(shell cat src/wrappers/themis/jsthemis/package.json \
-  | grep version \
-  | head -1 \
-  | awk -F: '{ print $$2 }' \
-  | sed 's/[",]//g' \
-  | tr -d '[[:space:]]')
-
-jsthemis_install: CMD = cd src/wrappers/themis/jsthemis && npm pack && mv jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz ../../../../build && cd - && npm install nan && npm install ./build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz
-jsthemis_install:
-ifdef NPM_VERSION
-	@echo -n "jsthemis install "
-	@$(BUILD_CMD_)
-else
-	@echo "Error: npm not found"
-	@exit 1
-endif
-
-jsthemis_uninstall: CMD = rm -rf build/jsthemis-$(JSTHEMIS_PACKAGE_VERSION).tgz && npm uninstall jsthemis
-jsthemis_uninstall:
-ifdef NPM_VERSION
-	@echo -n "jsthemis uninstall "
-	@$(BUILD_CMD_)
-endif
-
-uninstall: jsthemis_uninstall
-
 ## Python ######################
 
 ifdef PIP_VERSION
 PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
 endif
 
-pythemis_install: CMD = cd src/wrappers/themis/python/ && python2 setup.py install --record files.txt;  python3 setup.py install --record files3.txt
+pythemis_install: CMD = cd src/wrappers/themis/python/ && python3 setup.py install --record files3.txt
 pythemis_install:
-ifeq ($(or $(PYTHON2_VERSION),$(PYTHON3_VERSION)),)
-	@echo "python2 or python3 not found"
+ifeq ($(PYTHON3_VERSION),)
+	@echo "python3 not found"
 	@exit 1
 endif
 	@echo -n "pythemis install "
@@ -575,30 +614,28 @@ DEB_DEPENDENCIES := --depends openssl
 DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
 DEB_DEPENDENCIES_DEV += --depends libssl-dev
 DEB_DEPENDENCIES_THEMISPP = --depends "$(DEB_DEV_PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
+DEB_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) >= $(VERSION)+$(OS_CODENAME)"
 
 RPM_DEPENDENCIES = --depends openssl
 RPM_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_DEPENDENCIES_DEV += --depends openssl-devel
 RPM_DEPENDENCIES_THEMISPP = --depends "$(RPM_DEV_PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
+RPM_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) >= $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_RELEASE_NUM = 1
 
-ifeq ($(shell lsb_release -is 2> /dev/null),Debian)
+OS_NAME := $(shell lsb_release -is 2>/dev/null || printf 'unknown')
+ifeq ($(OS_NAME),$(filter $(OS_NAME),Debian Ubuntu))
 #0.9.4-153-g9915004+jessie_amd64.deb.
 	NAME_SUFFIX = $(VERSION)+$(DEB_CODENAME)_$(DEB_ARCHITECTURE).deb
 	OS_CODENAME = $(shell lsb_release -cs)
-	DEB_LIBDIR := /lib/$(shell $(CC) -dumpmachine)
-else ifeq ($(shell lsb_release -is 2> /dev/null),Ubuntu)
-	NAME_SUFFIX = $(VERSION)+$(DEB_CODENAME)_$(DEB_ARCHITECTURE).deb
-	OS_CODENAME = $(shell lsb_release -cs)
-	DEB_LIBDIR := /lib/$(shell $(CC) -dumpmachine)
-else
-# centos/rpm
+	DEB_LIBDIR := /lib/$(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+else ifeq ($(OS_NAME),$(filter $(OS_NAME),RedHatEnterpriseServer CentOS))
 	OS_NAME = $(shell cat /etc/os-release | grep -e "^ID=\".*\"" | cut -d'"' -f2)
 	OS_VERSION = $(shell cat /etc/os-release | grep -i version_id|cut -d'"' -f2)
 	ARCHITECTURE = $(shell arch)
 	RPM_VERSION = $(shell echo -n "$(VERSION)"|sed s/-/_/g)
 	NAME_SUFFIX = $(RPM_VERSION).$(OS_NAME)$(OS_VERSION).$(ARCHITECTURE).rpm
-	RPM_LIBDIR := $(shell [ $$(arch) == "x86_64" ] && echo "/lib64" || echo "/lib")
+	RPM_LIBDIR := /$(shell [ $$(arch) == "x86_64" ] && echo "lib64" || echo "lib")
 endif
 
 PACKAGE_NAME = libthemis
@@ -606,6 +643,7 @@ DEB_DEV_PACKAGE_NAME = libthemis-dev
 RPM_DEV_PACKAGE_NAME = libthemis-devel
 DEB_THEMISPP_PACKAGE_NAME = libthemispp-dev
 RPM_THEMISPP_PACKAGE_NAME = libthemispp-devel
+JNI_PACKAGE_NAME = libthemis-jni
 
 PACKAGE_CATEGORY = security
 SHORT_DESCRIPTION = Data security library for network communication and data storage
@@ -632,15 +670,19 @@ LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_LINK)
 
 THEMISPP_PACKAGE_FILES += $(includedir)/themispp/
 
+JNI_PACKAGE_FILES += $(jnidir)/$(LIBTHEMISJNI_SO)
+
+deb: MODE_PACKAGING = 1
 deb: DESTDIR = $(BIN_PATH)/deb/root
 deb: PREFIX = /usr
-deb: libdir = $(PREFIX)/$(DEB_LIBDIR)
+deb: libdir = $(PREFIX)$(DEB_LIBDIR)
+deb: jnidir = $(PREFIX)$(DEB_LIBDIR)/jni
 
-deb: install themispp_install
+deb: install themispp_install themis_jni_install
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
 	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
 
-	@find $(DESTDIR) -name '*.$(SHARED_EXT)*' -exec strip -o {} {} \;
+	@find $(DESTDIR) -name '*.$(SHARED_EXT)*' -type f -exec strip -o {} {} \;
 
 	@fpm --input-type dir \
 		 --output-type deb \
@@ -693,17 +735,35 @@ deb: install themispp_install
 		 --category $(PACKAGE_CATEGORY) \
 		 $(foreach file,$(THEMISPP_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
+	@fpm --input-type dir \
+		 --output-type deb \
+		 --name $(JNI_PACKAGE_NAME) \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --maintainer $(MAINTAINER) \
+		 --package $(BIN_PATH)/deb/$(JNI_PACKAGE_NAME)_$(NAME_SUFFIX) \
+		 --architecture $(DEB_ARCHITECTURE) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 $(DEB_DEPENDENCIES_JNI) \
+		 --after-install $(POST_INSTALL_SCRIPT) \
+		 --after-remove $(POST_UNINSTALL_SCRIPT) \
+		 --deb-priority optional \
+		 --category $(PACKAGE_CATEGORY) \
+		 $(foreach file,$(JNI_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
+
 	@find $(BIN_PATH) -name \*.deb
 
+rpm: MODE_PACKAGING = 1
 rpm: DESTDIR = $(BIN_PATH)/rpm/root
 rpm: PREFIX = /usr
-rpm: libdir = $(PREFIX)/$(RPM_LIBDIR)
+rpm: libdir = $(PREFIX)$(RPM_LIBDIR)
 
-rpm: install themispp_install
+rpm: install themispp_install themis_jni_install
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
 	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
 
-	@find $(DESTDIR) -name '*.$(SHARED_EXT)*' -exec strip -o {} {} \;
+	@find $(DESTDIR) -name '*.$(SHARED_EXT)*' -type f -exec strip -o {} {} \;
 
 	@fpm --input-type dir \
          --output-type rpm \
@@ -752,6 +812,22 @@ rpm: install themispp_install
          --version $(RPM_VERSION) \
          --category $(PACKAGE_CATEGORY) \
          $(foreach file,$(THEMISPP_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
+
+	@fpm --input-type dir \
+         --output-type rpm \
+         --name $(JNI_PACKAGE_NAME) \
+         --license $(LICENSE_NAME) \
+         --url '$(COSSACKLABS_URL)' \
+         --description '$(SHORT_DESCRIPTION)' \
+         --rpm-summary '$(RPM_SUMMARY)' \
+         --maintainer $(MAINTAINER) \
+         --after-install $(POST_INSTALL_SCRIPT) \
+         --after-remove $(POST_UNINSTALL_SCRIPT) \
+         $(RPM_DEPENDENCIES_JNI) \
+         --package $(BIN_PATH)/rpm/$(JNI_PACKAGE_NAME)-$(NAME_SUFFIX) \
+         --version $(RPM_VERSION) \
+         --category $(PACKAGE_CATEGORY) \
+         $(foreach file,$(JNI_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
 	@find $(BIN_PATH) -name \*.rpm
 
@@ -815,6 +891,7 @@ PHP_PRE_UNINSTALL_SCRIPT:=./scripts/phpthemis_preuninstall.sh
 PHP_API:=$(shell php -i 2>/dev/null|grep 'PHP API'|sed 's/PHP API => //')
 PHP_LIB_MAP:=./src/wrappers/themis/$(PHP_FOLDER)/.libs/phpthemis.so=/usr/lib/php/$(PHP_API)/
 
+deb_php: MODE_PACKAGING = 1
 deb_php:
 	@mkdir -p $(BIN_PATH)/deb
 	@fpm --input-type dir \

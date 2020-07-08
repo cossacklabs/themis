@@ -14,7 +14,7 @@ if (5 <= process.argv.length && process.argv.length <= 6) {
 }
 
 themis.initialized.then(function() {
-    let cell = new themis.SecureCellTokenProtect(Buffer.from(key))
+    let cell = themis.SecureCellTokenProtect.withKey(Buffer.from(key))
     let result
     switch (command) {
         case 'enc':

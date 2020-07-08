@@ -51,6 +51,20 @@ bool IsValidKey(const std::vector<uint8_t>& key);
 bool IsPrivateKey(const std::vector<uint8_t>& key);
 bool IsPublicKey(const std::vector<uint8_t>& key);
 
+class SymmetricKey : public Nan::ObjectWrap
+{
+public:
+    static void Init(v8::Local<v8::Object> exports);
+
+private:
+    static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);
+
+    static v8::Local<v8::Object> CopyIntoBuffer(const std::vector<uint8_t>& buffer);
+    static v8::Local<v8::Object> CopyIntoBuffer(v8::Local<v8::Value> buffer);
+
+    static Nan::Persistent<v8::Function> constructor;
+};
+
 } // namespace jsthemis
 
 #endif /* JSTHEMIS_KEY_PAIR_HPP_ */

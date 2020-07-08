@@ -20,6 +20,7 @@
 
 #include <themis/themis.h>
 
+#include "common.hpp"
 #include "errors.hpp"
 #include "secure_keygen.hpp"
 
@@ -66,24 +67,26 @@ void SecureMessage::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             args.GetReturnValue().SetUndefined();
             return;
         }
-        if (!args[0]->IsUint8Array()) {
-            ThrowParameterError("Secure Message constructor",
-                                "private key is not a byte buffer, use ByteBuffer or Uint8Array");
-            args.GetReturnValue().SetUndefined();
-            return;
+        std::vector<uint8_t> private_key;
+        if (!args[0]->IsNull()) {
+            if (!args[0]->IsUint8Array()) {
+                ThrowTypeError("SecureMessage",
+                               "private key is not a byte buffer, use ByteBuffer or Uint8Array");
+                args.GetReturnValue().SetUndefined();
+                return;
+            }
+            assign_buffer_to_vector(private_key, args[0]);
         }
-        if (!args[1]->IsUint8Array()) {
-            ThrowParameterError("Secure Message constructor",
-                                "public key is not a byte buffer, use ByteBuffer or Uint8Array");
-            args.GetReturnValue().SetUndefined();
-            return;
+        std::vector<uint8_t> public_key;
+        if (!args[1]->IsNull()) {
+            if (!args[1]->IsUint8Array()) {
+                ThrowTypeError("SecureMessage",
+                               "public key is not a byte buffer, use ByteBuffer or Uint8Array");
+                args.GetReturnValue().SetUndefined();
+                return;
+            }
+            assign_buffer_to_vector(public_key, args[1]);
         }
-        std::vector<uint8_t> private_key((uint8_t*)(node::Buffer::Data(args[0])),
-                                         (uint8_t*)(node::Buffer::Data(args[0])
-                                                    + node::Buffer::Length(args[0])));
-        std::vector<uint8_t> public_key((uint8_t*)(node::Buffer::Data(args[1])),
-                                        (uint8_t*)(node::Buffer::Data(args[1])
-                                                   + node::Buffer::Length(args[1])));
         if (!ValidateKeys(private_key, public_key)) {
             args.GetReturnValue().SetUndefined();
             return;
@@ -102,6 +105,10 @@ void SecureMessage::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
 bool SecureMessage::ValidateKeys(const std::vector<uint8_t>& private_key,
                                  const std::vector<uint8_t>& public_key)
 {
+    if (private_key.empty() && public_key.empty()) {
+        ThrowParameterError("SecureMessage", "private and public key cannot be both empty");
+        return false;
+    }
     if (!private_key.empty()) {
         if (!IsValidKey(private_key)) {
             ThrowParameterError("Secure Message constructor", "invalid private key");
@@ -146,8 +153,7 @@ void SecureMessage::encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Message failed to encrypt message",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureMessage", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -209,8 +215,7 @@ void SecureMessage::decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Message failed to decrypt message",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureMessage", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -267,8 +272,7 @@ void SecureMessage::sign(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Message failed to sign message",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureMessage", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -321,8 +325,7 @@ void SecureMessage::verify(const Nan::FunctionCallbackInfo<v8::Value>& args)
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Message failed to verify signature",
-                            "message is not byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureMessage", "message is not byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }

@@ -22,6 +22,7 @@
 #define MODE_SEAL 0
 #define MODE_TOKEN_PROTECT 1
 #define MODE_CONTEXT_IMPRINT 2
+#define MODE_SEAL_PASSPHRASE 3
 
 JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(
     JNIEnv* env, jobject thiz, jbyteArray key, jbyteArray context, jbyteArray data, jint mode)
@@ -80,6 +81,17 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(
                                               NULL,
                                               &encrypted_data_length);
         break;
+    case MODE_SEAL_PASSPHRASE:
+        /* Passphrase bytes passed as key */
+        res = themis_secure_cell_encrypt_seal_with_passphrase((uint8_t*)key_buf,
+                                                              key_length,
+                                                              (uint8_t*)context_buf,
+                                                              context_length,
+                                                              (uint8_t*)data_buf,
+                                                              data_length,
+                                                              NULL,
+                                                              &encrypted_data_length);
+        break;
     case MODE_TOKEN_PROTECT:
         res = themis_secure_cell_encrypt_token_protect((uint8_t*)key_buf,
                                                        key_length,
@@ -112,6 +124,15 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(
     }
 
     if (THEMIS_BUFFER_TOO_SMALL != res) {
+        goto err;
+    }
+
+    /*
+     * Secure Cell can contain up to 4 GB of data but JVM does not support
+     * byte arrays bigger that 2 GB. We just cannot allocate that much.
+     */
+    if (encrypted_data_length > INT32_MAX || additional_data_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
         goto err;
     }
 
@@ -149,6 +170,17 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_SecureCell_encrypt(
                                               data_length,
                                               (uint8_t*)encrypted_data_buf,
                                               &encrypted_data_length);
+        break;
+    case MODE_SEAL_PASSPHRASE:
+        /* Passphrase bytes passed as key */
+        res = themis_secure_cell_encrypt_seal_with_passphrase((uint8_t*)key_buf,
+                                                              key_length,
+                                                              (uint8_t*)context_buf,
+                                                              context_length,
+                                                              (uint8_t*)data_buf,
+                                                              data_length,
+                                                              (uint8_t*)encrypted_data_buf,
+                                                              &encrypted_data_length);
         break;
     case MODE_TOKEN_PROTECT:
         res = themis_secure_cell_encrypt_token_protect((uint8_t*)key_buf,
@@ -297,6 +329,17 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(
                                               NULL,
                                               &data_length);
         break;
+    case MODE_SEAL_PASSPHRASE:
+        /* Passphrase bytes passed as key */
+        res = themis_secure_cell_decrypt_seal_with_passphrase((uint8_t*)key_buf,
+                                                              key_length,
+                                                              (uint8_t*)context_buf,
+                                                              context_length,
+                                                              (uint8_t*)encrypted_data_buf,
+                                                              encrypted_data_length,
+                                                              NULL,
+                                                              &data_length);
+        break;
     case MODE_TOKEN_PROTECT:
         if (!additional_data_buf) {
             /* Additional data is mandatory for this mode */
@@ -337,6 +380,15 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(
         goto err;
     }
 
+    /*
+     * Secure Cell can contain up to 4 GB of data but JVM does not support
+     * byte arrays bigger that 2 GB. We just cannot allocate that much.
+     */
+    if (data_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
+        goto err;
+    }
+
     data = (*env)->NewByteArray(env, data_length);
     if (!data) {
         goto err;
@@ -357,6 +409,17 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureCell_decrypt(
                                               encrypted_data_length,
                                               (uint8_t*)data_buf,
                                               &data_length);
+        break;
+    case MODE_SEAL_PASSPHRASE:
+        /* Passphrase bytes passed as key */
+        res = themis_secure_cell_decrypt_seal_with_passphrase((uint8_t*)key_buf,
+                                                              key_length,
+                                                              (uint8_t*)context_buf,
+                                                              context_length,
+                                                              (uint8_t*)encrypted_data_buf,
+                                                              encrypted_data_length,
+                                                              (uint8_t*)data_buf,
+                                                              &data_length);
         break;
     case MODE_TOKEN_PROTECT:
         if (!additional_data_buf) {

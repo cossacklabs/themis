@@ -16,57 +16,66 @@
 
 #include <iostream>
 #include <fstream>
-#include <string.h>
+
 #include <themispp/secure_cell.hpp>
 
-void info(){
-  std::cout<<"file_encrypter - an sample application for ThemisPP"<<std::endl
-	   <<"usage file_encrypter [de] <password> <in_file_name> <out_file_name>"<<std::endl;
+void info(const char* argv0)
+{
+    std::cout << "file_encrypter - a sample application for ThemisPP" << std::endl
+              << "usage:" << std::endl
+              << "    " << argv0 << " {e|d} <password> <input-file> <output-file>" << std::endl;
 }
 
-int main(int argc, char* argv[]){
-  if(argc!=5){
-    info();
-    return 1;
-  }
-  std::ifstream in(argv[3], std::ifstream::binary);
-  if(!in.is_open()){
-    std::cerr<<"can`t open file "<<argv[3]<<std::endl;
-    return 1;
-  }
-  in.seekg (0, in.end);
-  int length = in.tellg();
-  in.seekg (0, in.beg);
-  
-  std::ofstream out(argv[4], std::ifstream::binary);
-  if(!out.is_open()){
-    std::cerr<<"can`t open file "<<argv[3]<<std::endl;
-    return 1;
-  }
+int main(int argc, char* argv[])
+{
+    if (argc != 5) {
+        info(argv[0]);
+        return 1;
+    }
+    std::string command  = argv[1];
+    std::string password = argv[2];
+    const char* in_path  = argv[3];
+    const char* out_path = argv[4];
 
-  std::vector<uint8_t> data(length);
-  in.read((char*)(&data[0]), length);
-  themispp::secure_cell_seal_t sc(std::vector<uint8_t>(argv[2], argv[2]+strlen(argv[2])));
-  if(std::string(argv[1]) == "d"){
-    //decrypt_file;
-    try{
-      const std::vector<uint8_t>& d(sc.decrypt(data));
-      out.write(reinterpret_cast<const char*>(&d[0]), d.size());
-    }catch(themispp::exception_t& e){
-      std::cerr<<"decryption error: "<<e.what()<<std::endl;
+    // Prepare input file
+    std::ifstream in(in_path, std::ifstream::binary);
+    if (!in.is_open()) {
+        std::cerr << "can't open file " << in_path << std::endl;
+        return 1;
     }
-  } else if (std::string(argv[1]) == "e"){
-    //encrypt_file
-    try{
-      const std::vector<uint8_t>& d(sc.encrypt(data));
-      out.write(reinterpret_cast<const char*>(&d[0]), d.size());
-    }catch(themispp::exception_t& e){
-      std::cerr<<"decryption error: "<<e.what()<<std::endl;
+    in.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+
+    // Query input file length
+    in.seekg(0, in.end);
+    size_t length = in.tellg();
+    in.seekg(0, in.beg);
+
+    // Prepare output file
+    std::ofstream out(out_path, std::ofstream::binary);
+    if (!out.is_open()) {
+        std::cerr << "can't open file " << out_path << std::endl;
+        return 1;
     }
-  } else {
-    info();
-  }
-  in.close();
-  out.close();
-  return 0;
+    out.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+
+    // Slurp input file
+    std::vector<uint8_t> data(length);
+    in.read(reinterpret_cast<char*>(&data[0]), length);
+
+    // Initialise Secure Cell in Seal mode
+    themispp::secure_cell_seal_with_passphrase scell(password);
+
+    // Encrypt or decrypt data, write out results
+    if (command == "e") {
+        std::vector<uint8_t> encrypted = scell.encrypt(data);
+        out.write(reinterpret_cast<const char*>(&encrypted[0]), encrypted.size());
+    } else if (command == "d") {
+        std::vector<uint8_t> decrypted = scell.decrypt(data);
+        out.write(reinterpret_cast<const char*>(&decrypted[0]), decrypted.size());
+    } else {
+        info(argv[0]);
+        return 1;
+    }
+
+    return 0;
 }

@@ -12,7 +12,7 @@ if (process.argv.length == 6) {
 }
 
 themis.initialized.then(function() {
-    let cell = new themis.SecureCellContextImprint(Buffer.from(key))
+    let cell = themis.SecureCellContextImprint.withKey(Buffer.from(key))
     let result
     switch (command) {
         case 'enc':

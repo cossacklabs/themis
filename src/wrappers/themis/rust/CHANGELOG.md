@@ -3,6 +3,21 @@
 
 The version currently in development.
 
+Version 0.13.0 - 2020-07-08
+===========================
+
+## New features
+
+- New `SymmetricKey` objects can be used as master keys for `SecureCell`.
+  ([#561](https://github.com/cossacklabs/themis/pull/561))
+- Safe passphrase API of Secure Cell: `SecureCell::with_passphrase`.
+  ([#630](https://github.com/cossacklabs/themis/pull/630))
+
+## Internal improvements
+
+- Significantly reduced compilation time by removing `bindgen` crate from dependencies.
+  ([#626](https://github.com/cossacklabs/themis/pull/626))
+
 Version 0.12.0 - 2019-09-26
 ===========================
 

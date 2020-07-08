@@ -1,0 +1,127 @@
+name: RbThemis
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-ruby.yaml'
+      - 'docs/examples/ruby/**'
+      - 'docs/examples/Themis-server/ruby/**'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/ruby/**'
+      - 'tests/rbthemis/**'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev \
+            ruby ruby-dev
+      - name: Install RVM
+        run: |
+          sudo apt install --yes software-properties-common
+          sudo apt-add-repository -y ppa:rael-gc/rvm
+          sudo apt update
+          sudo apt install rvm
+          # Recent versions of RVM do not add us to "rvm" group automatically
+          # and install their binaries into /usr/share, expecting the PATH
+          # to be set via shell profile. GitHub Actions do not load profile
+          # so we have to tweak the path manually here.
+          sudo usermod -a -G rvm $(id -nu)
+          echo "::add-path::/usr/share/rvm/bin"
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Prepare Themis Core
+        run: |
+          make
+          sudo make install
+          make prepare_tests_all
+      - name: Install RubyThemis
+        run: sudo make rbthemis_install
+      - name: Run test suite (system Ruby)
+        run: |
+          rvm use system
+          make test_ruby
+
+  examples:
+    name: Code examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev \
+            ruby ruby-dev
+      - name: Install Ruby gems
+        run: |
+          sudo gem install eventmachine
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core
+        run: |
+          make
+          sudo make install
+      - name: Install RubyThemis
+        run: sudo make rbthemis_install
+      - name: Test examples (Secure Cell)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/ruby
+          echo "Testing Secure Cell..."
+          ruby scell_test.rb
+          echo "ok"
+      - name: Test examples (Secure Message)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/ruby
+          echo "Testing Secure Message..."
+          ruby smessage_test.rb
+          ruby skeygen.rb
+          echo "ok"
+      - name: Test examples (Secure Session)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/ruby
+          echo "Testing Secure Session..."
+          ruby ssession_test_eventmachine_server.rb &
+          sleep 1 # give the server time to launch
+          ruby ssession_test_eventmachine_client.rb
+          wait "$!" # the server should shut down
+          echo "ok"
+      - name: Test examples (Secure Comparator)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/ruby
+          echo "Testing Secure Comparator..."
+          ruby scomparator_test_eventmachine_server.rb &
+          sleep 1 # give the server time to launch
+          ruby scomparator_test_eventmachine_client.rb | tee output.txt
+          grep -q '^does not match$' output.txt
+          kill -SIGTERM "$!"
+          echo "ok"
+      - name: Build Themis Server examples
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/Themis-server/ruby
+          # Since these require manual configuration, we just check the syntax.
+          ruby -c smessage_client.rb
+          ruby -c ssession_client.rb

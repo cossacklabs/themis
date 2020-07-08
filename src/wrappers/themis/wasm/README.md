@@ -4,12 +4,9 @@
 [![CircleCI][circle-ci-badge]][circle-ci]
 [![License][license-badge]][license]
 
-_WebAssembly_ wrapper for [**Themis** crypto library][themis].
+_WebAssembly_ wrapper for [Themis crypto library][themis].
 
-Themis is an open-source high-level cryptographic services library
-that provides secure data exchange, authentication, and storage protection.
-Themis provides ready-made building components,
-which simplify usage of core cryptographic security operations.
+Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis is aimed at modern development practices and has a unified API across 12 platforms, including WebAssembly, Node.js, Python, iOS/macOS, and Java/Android.
 
 [themis]: https://github.com/cossacklabs/themis
 [npm]: https://www.npmjs.com/package/wasm-themis
@@ -23,19 +20,19 @@ which simplify usage of core cryptographic security operations.
 
 ### Installation
 
-First, install the latest version of WasmThemis:
+Start by installing the latest version of WasmThemis:
 
 ```
 npm install wasm-themis
 ```
 
-Then import it into your project:
+Import it into your project:
 
 ```javascript
 const themis = require('wasm-themis')
 ```
 
-Finally, wait for WebAssembly code to be loaded:
+Wait for WebAssembly code to load:
 
 ```javascript
 themis.initialized.then(function() {
@@ -44,6 +41,7 @@ themis.initialized.then(function() {
     //
 })
 ```
+Success!
 
 ### Documentation
 
@@ -53,10 +51,12 @@ Read the following resources to learn more:
   - [How to build WasmThemis from source code][build-instructions].
   - [General documentation for Themis library on Cossack Labs Documentation Server][docserver].
 
+### Additional resources  
+  - To get a better understanding of how to use Themis, try playing around with [Interactive Themis Server Simulator](https://docs.cossacklabs.com/simulator/interactive/).
+  - If Node.js wrapper would be a better match for your project, see [JsThemis](https://github.com/cossacklabs/themis/tree/master/src/wrappers/themis/jsthemis).
+
 <!--
-
-TODO: refer to simulators, code samples, and tests here
-
+TODO: refer code samples and tests here
 -->
 
 [language-guide]: https://docs.cossacklabs.com/pages/js-wasm-howto/

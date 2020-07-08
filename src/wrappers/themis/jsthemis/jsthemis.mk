@@ -19,6 +19,9 @@ JSTHEMIS_OBJ = $(OBJ_PATH)/$(JSTHEMIS_SRC)
 
 JSTHEMIS_SOURCES = $(wildcard $(JSTHEMIS_SRC)/*.cpp)
 JSTHEMIS_HEADERS = $(wildcard $(JSTHEMIS_SRC)/*.hpp)
+JSTHEMIS_PACKAGE += $(JSTHEMIS_SRC)/README.md
+JSTHEMIS_PACKAGE += $(JSTHEMIS_SRC)/LICENSE
+JSTHEMIS_PACKAGE += $(JSTHEMIS_SRC)/package.json
 
 # Unfortunately, clang-tidy requires full compilation flags to be able to work and
 # node-gyp add quite a few custom flags with include search paths. It also requires
@@ -58,3 +61,29 @@ $(JSTHEMIS_OBJ)/warning_check:
 	$(warning NodeJS not installed, JsThemis code will not be checked)
 
 endif # ifdef NPM_VERSION
+
+$(BUILD_PATH)/jsthemis.tgz: $(JSTHEMIS_SOURCES) $(JSTHEMIS_HEADERS) $(JSTHEMIS_PACKAGE)
+	@cd $(BUILD_PATH) && npm pack $(abspath $(JSTHEMIS_SRC)) > /dev/null
+	@mv $(BUILD_PATH)/jsthemis-*.tgz $(BUILD_PATH)/jsthemis.tgz
+	@echo $(BUILD_PATH)/jsthemis.tgz
+
+jsthemis: $(BUILD_PATH)/jsthemis.tgz
+
+jsthemis_install: CMD = npm install $(abspath $(BUILD_PATH)/jsthemis.tgz)
+jsthemis_install: $(BUILD_PATH)/jsthemis.tgz
+ifdef NPM_VERSION
+	@echo -n "jsthemis install "
+	@$(BUILD_CMD_)
+else
+	@echo "Error: npm not found"
+	@exit 1
+endif
+
+jsthemis_uninstall: CMD = npm uninstall jsthemis
+jsthemis_uninstall:
+ifdef NPM_VERSION
+	@echo -n "jsthemis uninstall "
+	@$(BUILD_CMD_)
+endif
+
+uninstall: jsthemis_uninstall

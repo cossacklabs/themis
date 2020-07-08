@@ -14,66 +14,85 @@
  * limitations under the License.
  */
 
-
-
-#include <cstdlib>
 #include <iostream>
-#include <boost/bind.hpp>
-#include <boost/smart_ptr.hpp>
+
 #include <boost/asio.hpp>
-#include <boost/thread.hpp>
-#include <string.h>
+
 #include <themispp/secure_message.hpp>
 
-const uint8_t client_private_key[]={0x52, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2d, 0x00, 0xb2, 0x7f, 0x81, 0x00, 0x60, 0x9d, 0xe7, 0x7a, 0x39, 0x93, 0x68, 0xfc, 0x25, 0xd1, 0x79, 0x88, 0x6d, 0xfb, 0xf6, 0x19, 0x35, 0x53, 0x74, 0x10, 0xfc, 0x5b, 0x44, 0xe1, 0xf6, 0xf4, 0x4e, 0x59, 0x8d, 0x94, 0x99, 0x4f};
-const uint8_t client_public_key[]={0x55, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2d, 0x10, 0xf4, 0x68, 0x8c, 0x02, 0x1c, 0xd0, 0x3b, 0x20, 0x84, 0xf2, 0x7a, 0x38, 0xbc, 0xf6, 0x39, 0x74, 0xbf, 0xc3, 0x13, 0xae, 0xb1, 0x00, 0x26, 0x78, 0x07, 0xe1, 0x7f, 0x63, 0xce, 0xe0, 0xb8, 0xac, 0x02, 0x10, 0x40, 0x10};
+#include "shared_keys.hpp"
 
-const uint8_t server_private_key[]={0x52, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2d, 0xd0, 0xfd, 0x93, 0xc6, 0x00, 0xae, 0x83, 0xb3, 0xef, 0xef, 0x06, 0x2c, 0x9d, 0x76, 0x63, 0xf2, 0x50, 0xd8, 0xac, 0x32, 0x6e, 0x73, 0x96, 0x60, 0x53, 0x77, 0x51, 0xe4, 0x34, 0x26, 0x7c, 0xf2, 0x9f, 0xb6, 0x96, 0xeb, 0xd8};
-const uint8_t server_public_key[]={0x55, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2d, 0xa5, 0xb3, 0x9b, 0x9d, 0x03, 0xcd, 0x34, 0xc5, 0xc1, 0x95, 0x6a, 0xb2, 0x50, 0x43, 0xf1, 0x4f, 0xe5, 0x88, 0x3a, 0x0f, 0xb1, 0x11, 0x8c, 0x35, 0x81, 0x82, 0xe6, 0x9e, 0x5c, 0x5a, 0x3e, 0x14, 0x06, 0xc5, 0xb3, 0x7d, 0xdd};
 using boost::asio::ip::tcp;
 
-enum { max_length = 1024 };
+const size_t max_length = 1024;
 
 int main(int argc, char* argv[])
 {
-  try
-  {
-    if (argc != 3)
-    {
-      std::cerr << "Usage: blocking_tcp_echo_client <host> <port>\n";
-      return 1;
+    if (argc != 3) {
+        std::cout << "usage:" << std::endl
+                  << "     " << argv[0] << " <host> <port>" << std::endl;
+        return 1;
+    }
+    const char* host = argv[1];
+    const char* port = argv[2];
+
+    // Initialise Secure Message with pre-shared keys
+    themispp::secure_message_t smessage(client_private_key, server_public_key);
+
+    boost::asio::io_service io_service;
+    boost::system::error_code error;
+
+    // Resolve server's address
+    tcp::resolver resolver(io_service);
+    tcp::resolver::query query(host, port);
+    tcp::resolver::iterator address_end;
+    tcp::resolver::iterator address = resolver.resolve(query, error);
+    if (error) {
+        std::cerr << "failed to resolve " << host << ":" << port << std::endl;
+        return 1;
     }
 
-    themispp::secure_message_t sm(std::vector<uint8_t>(client_private_key, client_private_key+sizeof(client_private_key)), std::vector<uint8_t>(server_public_key, server_public_key+sizeof(server_public_key)));
-    boost::asio::io_service io_service;
+    // Connect to the server
+    tcp::socket socket(io_service);
+    while (address != address_end) {
+        socket.connect(*address++, error);
+        if (!error) {
+            break;
+        }
+    }
+    if (!socket.is_open()) {
+        std::cerr << "failed to connect to " << host << ":" << port << std::endl;
+        return 1;
+    }
 
-    tcp::resolver resolver(io_service);
-    tcp::resolver::query query(tcp::v4(), argv[1], argv[2]);
-    tcp::resolver::iterator iterator = resolver.resolve(query);
+    // Read message from the user
+    std::cout << "Enter message:" << std::endl;
+    std::string request;
+    std::getline(std::cin, request);
 
-    tcp::socket s(io_service);
-    s.connect(*iterator);
+    // Encrypt message with Secure Message
+    std::vector<uint8_t> request_bytes(request.begin(), request.end());
+    std::vector<uint8_t> request_encrypted = smessage.encrypt(request_bytes);
 
-    using namespace std; // For strlen.
-    std::cout << "Enter message: ";
-    char request[max_length];
-    std::cin.getline(request, max_length);
-    size_t request_length = strlen(request);
-    std::vector<uint8_t> d=sm.encrypt(std::vector<uint8_t>(request, request+request_length));
-    boost::asio::write(s, boost::asio::buffer(&d[0], d.size()));
-    std::cout<<d.size()<<std::endl;
-    size_t reply_length;
-    char reply[max_length];
-    reply_length = s.read_some(boost::asio::buffer(reply, reply_length));
-    std::vector<uint8_t> d2=sm.decrypt(std::vector<uint8_t>(reply, reply+reply_length));
-    std::cout << "Reply is: ";
-    std::cout.write((const char*)(&d2[0]), d2.size());
-    std::cout << "\n";
-  }
-  catch (std::exception& e)
-  {
-    std::cerr << "Exception: " << e.what() << "\n";
-  }
+    // Send encrypted message to the server
+    boost::asio::write(socket, boost::asio::buffer(request_encrypted), error);
+    if (error) {
+        throw boost::system::system_error(error);
+    }
 
-  return 0;
+    // Receive encrypted reply from the server
+    std::vector<uint8_t> reply_encrypted(max_length);
+    size_t reply_length = socket.read_some(boost::asio::buffer(reply_encrypted), error);
+    if (error) {
+        throw boost::system::system_error(error);
+    }
+    reply_encrypted.resize(reply_length);
+
+    // Decrypt reply
+    std::vector<uint8_t> reply_bytes = smessage.decrypt(reply_encrypted);
+    std::string reply(reply_bytes.begin(), reply_bytes.end());
+
+    std::cout << "Client received a reply: " << reply << std::endl;
+
+    return 0;
 }

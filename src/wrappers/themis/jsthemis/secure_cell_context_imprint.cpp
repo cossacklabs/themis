@@ -16,8 +16,11 @@
 
 #include "secure_cell_context_imprint.hpp"
 
+#include <utility>
+
 #include <node_buffer.h>
 
+#include <soter/soter.h>
 #include <themis/themis.h>
 
 #include "errors.hpp"
@@ -27,13 +30,14 @@ namespace jsthemis
 
 Nan::Persistent<v8::Function> SecureCellContextImprint::constructor;
 
-SecureCellContextImprint::SecureCellContextImprint(const std::vector<uint8_t>& key)
-    : key_(key)
+SecureCellContextImprint::SecureCellContextImprint(std::vector<uint8_t>&& key)
+    : key_(std::move(key))
 {
 }
 
 SecureCellContextImprint::~SecureCellContextImprint()
 {
+    soter_wipe(key_.data(), key_.size());
 }
 
 void SecureCellContextImprint::Init(v8::Local<v8::Object> exports)
@@ -43,6 +47,8 @@ void SecureCellContextImprint::Init(v8::Local<v8::Object> exports)
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SecureCellContextImprint::New);
     tpl->SetClassName(className);
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    // Static methods
+    Nan::SetMethod(tpl, "withKey", WithKey);
     // Prototype
     Nan::SetPrototypeMethod(tpl, "encrypt", encrypt);
     Nan::SetPrototypeMethod(tpl, "decrypt", decrypt);
@@ -62,8 +68,7 @@ void SecureCellContextImprint::New(const Nan::FunctionCallbackInfo<v8::Value>& a
             return;
         }
         if (!args[0]->IsUint8Array()) {
-            ThrowParameterError("Secure Cell (Context Imprint) constructor",
-                                "master key is not a byte buffer");
+            ThrowTypeError("SecureCellContextImprint", "master key is not a byte buffer");
             args.GetReturnValue().SetUndefined();
             return;
         }
@@ -74,14 +79,28 @@ void SecureCellContextImprint::New(const Nan::FunctionCallbackInfo<v8::Value>& a
         }
         std::vector<uint8_t> key((uint8_t*)(node::Buffer::Data(args[0])),
                                  (uint8_t*)(node::Buffer::Data(args[0]) + node::Buffer::Length(args[0])));
-        SecureCellContextImprint* obj = new SecureCellContextImprint(key);
+        SecureCellContextImprint* obj = new SecureCellContextImprint(std::move(key));
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
     } else {
-        const int argc = 1;
-        v8::Local<v8::Value> argv[argc] = {args[0]};
-        v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
-        args.GetReturnValue().Set(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
+        WithKey(args);
+    }
+}
+
+void SecureCellContextImprint::WithKey(const Nan::FunctionCallbackInfo<v8::Value>& args)
+{
+    if (args.Length() != 1) {
+        ThrowParameterError("SecureCellContextImprint",
+                            "incorrect argument count, expected symmetric key");
+        args.GetReturnValue().SetUndefined();
+        return;
+    }
+    const int argc = 1;
+    v8::Local<v8::Value> argv[argc] = {args[0]};
+    v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
+    Nan::MaybeLocal<v8::Object> cell = Nan::NewInstance(cons, argc, argv);
+    if (!cell.IsEmpty()) {
+        args.GetReturnValue().Set(cell.ToLocalChecked());
     }
 }
 
@@ -96,8 +115,8 @@ void SecureCellContextImprint::encrypt(const Nan::FunctionCallbackInfo<v8::Value
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Context Imprint) failed to encrypt",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellContextImprint",
+                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -107,8 +126,8 @@ void SecureCellContextImprint::encrypt(const Nan::FunctionCallbackInfo<v8::Value
         return;
     }
     if (!args[1]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Context Imprint) failed to encrypt",
-                            "context is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellContextImprint",
+                       "context is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -162,8 +181,8 @@ void SecureCellContextImprint::decrypt(const Nan::FunctionCallbackInfo<v8::Value
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Context Imprint) failed to decrypt",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellContextImprint",
+                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -173,8 +192,8 @@ void SecureCellContextImprint::decrypt(const Nan::FunctionCallbackInfo<v8::Value
         return;
     }
     if (!args[1]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Context Imprint) failed to decrypt",
-                            "context is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellContextImprint",
+                       "context is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }

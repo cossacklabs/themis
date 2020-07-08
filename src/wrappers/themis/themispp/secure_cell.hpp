@@ -22,11 +22,14 @@
 #include <themis/themis.h>
 
 #include "exception.hpp"
+#include "secure_cell_context_imprint.hpp"
+#include "secure_cell_seal.hpp"
+#include "secure_cell_token_protect.hpp"
 
 namespace themispp
 {
 
-class secure_cell_t
+class DEPRECATED("use concrete classes themispp::secure_cell_..._with_key") secure_cell_t
 {
 public:
     typedef std::vector<uint8_t> data_t;
@@ -48,6 +51,14 @@ public:
             throw themispp::exception_t("Secure Cell must have non-empty password");
         }
     }
+
+#if __cplusplus >= 201103L
+    virtual ~secure_cell_t() = default;
+#else
+    virtual ~secure_cell_t()
+    {
+    }
+#endif
 
     virtual const data_t& encrypt(data_t::const_iterator data_begin,
                                   data_t::const_iterator data_end,
@@ -97,11 +108,12 @@ public:
     }
 
 protected:
-    data_t _password;
-    data_t _res;
+    data_t _password; // NOLINT: keep inheritance-based interface (for now)
+    data_t _res;      // NOLINT
 };
 
-class secure_cell_optional_context_t : public secure_cell_t
+class DEPRECATED("use concrete classes themispp::secure_cell_..._with_key") secure_cell_optional_context_t
+    : public secure_cell_t
 {
 public:
     secure_cell_optional_context_t(data_t::const_iterator password_begin,
@@ -133,14 +145,15 @@ public:
         return secure_cell_t::decrypt(data_begin, data_end, context);
     }
 
-    const data_t& decrypt(const data_t data)
+    const data_t& decrypt(const data_t& data)
     {
         return decrypt(data.begin(), data.end());
     }
     using secure_cell_t::decrypt;
 };
 
-class secure_cell_seal_t : public secure_cell_optional_context_t
+class DEPRECATED("use 'themispp::secure_cell_seal_with_key' instead") secure_cell_seal_t
+    : public secure_cell_optional_context_t
 {
 public:
     secure_cell_seal_t(data_t::const_iterator password_begin, data_t::const_iterator password_end)
@@ -234,7 +247,8 @@ public:
     using secure_cell_optional_context_t::decrypt;
 };
 
-class secure_cell_token_protect_t : public secure_cell_optional_context_t
+class DEPRECATED("use 'themispp::secure_cell_token_protect_with_key' instead") secure_cell_token_protect_t
+    : public secure_cell_optional_context_t
 {
 public:
     secure_cell_token_protect_t(data_t::const_iterator password_begin, data_t::const_iterator password_end)
@@ -354,10 +368,11 @@ public:
     }
 
 protected:
-    data_t _token;
+    data_t _token; // NOLINT: keep inheritance-based interface (for now)
 };
 
-class secure_cell_context_imprint_t : public secure_cell_t
+class DEPRECATED("use 'themispp::secure_cell_context_imprint_with_key' instead") secure_cell_context_imprint_t
+    : public secure_cell_t
 {
 public:
     secure_cell_context_imprint_t(const data_t& password)

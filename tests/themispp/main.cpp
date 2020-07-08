@@ -16,18 +16,29 @@
 
 #include <common/sput.h>
 
+#include "input_buffer_test.hpp"
+#include "secret_bytes_test.hpp"
 #include "secure_cell_test.hpp"
 #include "secure_comparator_test.hpp"
 #include "secure_message_test.hpp"
+#include "secure_rand_test.hpp"
 #include "secure_session_test.hpp"
 
 int main()
 {
-    sput_start_testing();
-    themispp::secure_cell_test::run_secure_cell_test();
-    themispp::secure_message_test::run_secure_message_test();
-    themispp::secure_session_test::run_secure_session_test();
-    themispp::secure_session_test::run_secure_comparator_test();
-    sput_finish_testing();
-    return sput_get_return_value();
+    try {
+        sput_start_testing();
+        themispp::secure_cell_test::run_secure_cell_test();
+        themispp::secure_message_test::run_secure_message_test();
+        themispp::secure_session_test::run_secure_session_test();
+        themispp::secure_session_test::run_secure_comparator_test();
+        themispp::secure_rand_test::run_secure_rand_test();
+        themispp::input_buffer_test::run_input_buffer_test();
+        themispp::secret_bytes_test::run_secret_bytes_test();
+        sput_finish_testing();
+        return sput_get_return_value();
+    } catch (const std::exception& e) {
+        std::cerr << "unhandled exception: " << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
 }

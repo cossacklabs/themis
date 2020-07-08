@@ -1,18 +1,17 @@
-Metadata-Version: 0.12.0
+Metadata-Version: 0.13.0
 Name: pythemis
-Version: 0.12.0
+Version: 0.13.0
 Summary: Data security library for network communication and data storage for Python
 Home-page: https://cossacklabs.com
-Author: CossackLabs
+Author: Cossack Labs
 Author-email: dev@cossacklabs.com
 License: Apache License, Version 2.0
 Description: themis
         ======
-        Themis is a data security library, providing users with high-quality security 
-	services for secure messaging of any kinds and flexible data storage. Themis 
-	is aimed at modern developers, with high level OOP wrappers for multiple
- 	languages and environments. It is designed with ease of use in mind, 
-	high security and cross-platform availability.
+	Themis is a convenient cryptographic library for data protection.
+	It provides secure messaging with forward secrecy and secure data storage.
+	Themis is aimed at modern development practices and has a unified API
+	across 12 platforms, including Python, JavaScript, iOS/macOS, and Java/Android.
 
 Platform: UNKNOWN
 Classifier: Intended Audience :: Developers

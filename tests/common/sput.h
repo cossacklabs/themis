@@ -243,7 +243,7 @@ extern "C" {
                 difftime(__sput.time.end, __sput.time.start),              \
                 __sput.overall.ok, __sput.overall.nok, failp,              \
                 (sput_get_return_value() == EXIT_SUCCESS) ?                \
-                "SUCCESS" : "FAILURE");                                    \
+                 (const char*)"SUCCESS" : (const char*)"FAILURE");         \
     } while (0)
 
 
@@ -253,14 +253,14 @@ extern "C" {
     } while (0)
 
 
-#define sput_fail_if(_cond, _name, _line_num)                                         \
+#define sput_fail_if(_cond, _name, _line_num)                              \
     do {                                                                   \
         _sput_die_unless_initialized();                                    \
         _sput_die_unless_suite_set();                                      \
         _sput_die_unless_test_set();                                       \
-        __sput.check.name = _name != NULL ?                                \
-                            _name : SPUT_DEFAULT_CHECK_NAME;               \
-        __sput.check.line = _line_num;                                      \
+        __sput.check.name = _name != NULL ? ((const char*) _name)          \
+                                          : SPUT_DEFAULT_CHECK_NAME;       \
+        __sput.check.line = _line_num;                                     \
         __sput.check.cond = #_cond;                                        \
         __sput.check.type = "fail-if";                                     \
         __sput.test.nr++;                                                  \
@@ -276,14 +276,14 @@ extern "C" {
     } while (0)
 
 
-#define sput_fail_unless(_cond, _name, _line_num)                                     \
+#define sput_fail_unless(_cond, _name, _line_num)                          \
     do {                                                                   \
         _sput_die_unless_initialized();                                    \
         _sput_die_unless_suite_set();                                      \
         _sput_die_unless_test_set();                                       \
-        __sput.check.name = _name != NULL ?                                \
-                            _name : SPUT_DEFAULT_CHECK_NAME;               \
-        __sput.check.line = _line_num;                                      \
+        __sput.check.name = _name != NULL ? ((const char*) _name)          \
+                                          : SPUT_DEFAULT_CHECK_NAME;       \
+        __sput.check.line = _line_num;                                     \
         __sput.check.cond = #_cond;                                        \
         __sput.check.type = "fail-unless";                                 \
         __sput.test.nr++;                                                  \

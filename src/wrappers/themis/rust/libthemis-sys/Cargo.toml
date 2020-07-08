@@ -1,6 +1,6 @@
 [package]
 name = "libthemis-sys"
-version = "0.12.0"
+version = "0.13.0"
 edition = "2018"
 authors = ["rust-themis developers"]
 description = "FFI binding to libthemis"
@@ -20,9 +20,8 @@ maintenance = { status = "actively-developed" }
 vendored = ["libthemis-src"]
 
 [build-dependencies]
-bindgen = "0.46.0"
 cc = "1.0.28"
-libthemis-src = { path = "../libthemis-src", version = "0.12.0", optional = true }
+libthemis-src = { path = "../libthemis-src", version = "0.13.0", optional = true }
 pkg-config = "0.3.14"
 
 [package.metadata.docs.rs]

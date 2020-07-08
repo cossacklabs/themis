@@ -25,9 +25,35 @@
 
 #define THEMIS_SESSION_CONTEXT_TAG "TSSC"
 
-#define SESSION_CTX_SERIZALIZED_SIZE(_CTX_)                                                   \
-    (sizeof(_CTX_->session_id) + sizeof(_CTX_->is_client) + sizeof(_CTX_->session_master_key) \
-     + sizeof(_CTX_->out_seq) + sizeof(_CTX_->in_seq))
+/*
+ * Data layout of serialized Secure Session state looks like this:
+ *
+ *     0        1        2        3        4        5        6        7
+ * +--------+--------+--------+--------+--------+--------+--------+--------+
+ * |   'T'  |   'S'  |   'S'  |   'C'  |               size                | Soter Container header
+ * +--------+--------+--------+--------+--------+--------+--------+--------+
+ * |                CRC                |
+ * +--------+--------+--------+--------+
+ *
+ * +--------+--------+--------+--------+--------+--------+--------+--------+
+ * |             session ID            |             is_client             | Secure Session context
+ * +--------+--------+--------+--------+--------+--------+--------+--------+
+ * |                       Secure Session master key                       |
+ * + - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+
+ * |                                                                       |
+ * + - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+
+ * |                                                                       |
+ * + - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+ - - - -+
+ * |                                                                       |
+ * +--------+--------+--------+--------+--------+--------+--------+--------+
+ * |             out seqnum            |             in seqnum             |
+ * +--------+--------+--------+--------+--------+--------+--------+--------+
+ *
+ * All values are unsigned and encoded as big-endian.
+ */
+
+#define SESSION_CTX_SERIALIZED_SIZE \
+    (2 * sizeof(uint32_t) + SESSION_MASTER_KEY_LENGTH + 2 * sizeof(uint32_t))
 
 themis_status_t secure_session_save(const secure_session_t* session_ctx, void* out, size_t* out_length)
 {
@@ -45,15 +71,14 @@ themis_status_t secure_session_save(const secure_session_t* session_ctx, void* o
 
     /* | session_id | is_client | master_key | out_seq | in_seq | */
 
-    if ((!out)
-        || (*out_length < (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIZALIZED_SIZE(session_ctx)))) {
-        *out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIZALIZED_SIZE(session_ctx));
+    if ((!out) || (*out_length < (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIALIZED_SIZE))) {
+        *out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIALIZED_SIZE);
         return THEMIS_BUFFER_TOO_SMALL;
     }
 
-    *out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIZALIZED_SIZE(session_ctx));
+    *out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIALIZED_SIZE);
 
-    soter_container_set_data_size(hdr, SESSION_CTX_SERIZALIZED_SIZE(session_ctx));
+    soter_container_set_data_size(hdr, SESSION_CTX_SERIALIZED_SIZE);
     memcpy(hdr->tag, THEMIS_SESSION_CONTEXT_TAG, SOTER_CONTAINER_TAG_LENGTH);
 
     curr = (uint32_t*)soter_container_data(hdr);

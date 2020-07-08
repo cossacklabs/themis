@@ -94,6 +94,123 @@ themis_status_t themis_secure_cell_decrypt_seal(const uint8_t* master_key,
                                                 uint8_t* plain_message,
                                                 size_t* plain_message_length);
 
+/**
+ * Encrypts and puts the provided message into a sealed cell.
+ *
+ * @param [in]      passphrase                  passphrase to use for security
+ * @param [in]      passphrase_length           length of `passphrase` in bytes
+ * @param [in]      user_context                associated context data, may be NULL
+ * @param [in]      user_context_length         length of `user_context` in bytes, may be zero
+ * @param [in]      message                     message to encrypt
+ * @param [in]      message_length              length of `message` in bytes
+ * @param [out]     encrypted_message           output buffer for encrypted message
+ * @param [in,out]  encrypted_message_length    length of `encrypted_message` in bytes
+ *
+ * The passphrase is processed by a built-in key derivation function to obtain
+ * a derived symmetric key. Input message is then combined with the provided
+ * context (if any) and encrypted. Authentication data and key derivation
+ * parameters are appended to the resulting data. Output is written into the
+ * `encrypted_message` buffer that must have at least `encrypted_message_length`
+ * bytes available. Total length of the output is written to the location
+ * pointed by `encrypted_message_length`.
+ *
+ * You can pass NULL for `encrypted_message` in order to determine appropriate
+ * buffer length. In this case no encryption is performed, the expected length
+ * is written into provided location and THEMIS_BUFFER_TOO_SMALL is returned.
+ *
+ * `user_context` is optional _associated context data_, you may pass NULL here
+ * if `user_context_length` is set to zero. This data is not included into the
+ * message and you will need to provide the same data later for decryption.
+ * This may be something associated with input data (e.g., database row number,
+ * client name, protocol message ID, etc.)
+ *
+ * @returns THEMIS_SUCCESS if the message has been encrypted successfully
+ * and written into `encrypted_message`.
+ *
+ * @returns THEMIS_BUFFER_TOO_SMALL if only the expected length of output data
+ * has been written to `encrypted_message_length`.
+ *
+ * @exception THEMIS_INVALID_PARAMETER if `passphrase` is NULL or `passphrase_length` is zero.
+ * @exception THEMIS_INVALID_PARAMETER if `user_context` is NULL but `user_context_length` is not zero.
+ * @exception THEMIS_INVALID_PARAMETER if `message` is NULL or `message_length` is zero.
+ * @exception THEMIS_INVALID_PARAMETER if `encrypted_message_length` is NULL.
+ *
+ * @exception THEMIS_BUFFER_TOO_SMALL if `encrypted_message_length` is too
+ * small to hold the encrypted output.
+ *
+ * @exception THEMIS_FAIL if encryption failed for some reason.
+ *
+ * @see themis_secure_cell_decrypt_seal_with_passphrase
+ */
+THEMIS_API
+themis_status_t themis_secure_cell_encrypt_seal_with_passphrase(const uint8_t* passphrase,
+                                                                size_t passphrase_length,
+                                                                const uint8_t* user_context,
+                                                                size_t user_context_length,
+                                                                const uint8_t* message,
+                                                                size_t message_length,
+                                                                uint8_t* encrypted_message,
+                                                                size_t* encrypted_message_length);
+
+/**
+ * Extracts the original message from a sealed cell.
+ *
+ * @param [in]      passphrase                  passphrase used for security
+ * @param [in]      passphrase_length           length of `passphrase` in bytes
+ * @param [in]      user_context                associated context data, may be NULL
+ * @param [in]      user_context_length         length of `user_context` in bytes, may be zero
+ * @param [in]      encrypted_message           message to decrypt
+ * @param [in]      encrypted_message_length    length of `encrypted_message` in bytes
+ * @param [out]     plain_message               output buffer for decrypted message
+ * @param [in,out]  plain_message_length        length of `plain_message` in bytes
+ *
+ * The passphrase is processed by a key derivation function to obtain a derived
+ * symmetric key. Input message is then combined with the provided context
+ * (if any) and decrypted. Embedded authentication data is verified to ensure
+ * integrity of the message. If successful, output is written into the
+ * `plain_message` buffer that must have at least `plain_message_length`
+ * bytes available. Total length of the output is written to the location
+ * pointed by `plain_message_length`.
+ *
+ * You can pass NULL for `plain_message` in order to determine appropriate
+ * buffer length. In this case no decryption is performed, the expected length
+ * is written into provided location and THEMIS_BUFFER_TOO_SMALL is returned.
+ *
+ * `user_context` is optional _associated context data_, it must be the same
+ * data that was used for encryption. You may pass NULL here if `user_context_length`
+ * is set to zero. Typically this is something associated with encrypted data
+ * (e.g., database row number, client name, protocol message ID, etc.)
+ *
+ * @returns THEMIS_SUCCESS if the message has been decrypted successfully
+ * and written into `plain_message`.
+ *
+ * @returns THEMIS_BUFFER_TOO_SMALL if only the expected length of output data
+ * has been written to `plain_message_length`.
+ *
+ * @exception THEMIS_INVALID_PARAMETER if `passphrase` is NULL or `passphrase_length` is zero.
+ * @exception THEMIS_INVALID_PARAMETER if `user_context` is NULL but `user_context_length` is not zero.
+ * @exception THEMIS_INVALID_PARAMETER if `encrypted_message` is NULL or `encrypted_message_length` is zero.
+ * @exception THEMIS_INVALID_PARAMETER if `plain_message_length` is NULL.
+ *
+ * @exception THEMIS_BUFFER_TOO_SMALL if `plain_message_length` is too
+ * small to hold the decrypted output.
+ *
+ * @exception THEMIS_FAIL if decryption failed for any reason, be it invalid
+ * passphrase, mismatched context data, corrupted encrypted message, or some
+ * internal library failure.
+ *
+ * @see themis_secure_cell_encrypt_seal_with_passphrase
+ */
+THEMIS_API
+themis_status_t themis_secure_cell_decrypt_seal_with_passphrase(const uint8_t* passphrase,
+                                                                size_t passphrase_length,
+                                                                const uint8_t* user_context,
+                                                                size_t user_context_length,
+                                                                const uint8_t* encrypted_message,
+                                                                size_t encrypted_message_length,
+                                                                uint8_t* plain_message,
+                                                                size_t* plain_message_length);
+
 /** @} */
 
 /**

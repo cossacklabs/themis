@@ -51,6 +51,8 @@ tests/phpthemis/composer.json
 tests/phpthemis/composer.phar
 tests/phpthemis/composer.lock
 
+# Android build system
+src/wrappers/themis/android/.externalNativeBuild
 third_party/boringssl/.externalNativeBuild
 
 # php

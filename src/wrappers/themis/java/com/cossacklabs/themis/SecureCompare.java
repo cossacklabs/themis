@@ -1,6 +1,8 @@
 package com.cossacklabs.themis;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class SecureCompare {
 	
@@ -19,30 +21,30 @@ public class SecureCompare {
 		SEND_TO_PEER
 	}
 	
-	static final String CHARSET = "UTF-16";
+	static final Charset CHARSET = StandardCharsets.UTF_16;
 	
 	private long nativeCtx = 0;
 	
 	native long create();
 	native void destroy();
-	
-	public SecureCompare() throws SecureCompareException {
-		
+
+	public SecureCompare() {
+
 		nativeCtx = create();
 		
 		if (0 == nativeCtx) {
-			throw new SecureCompareException();
+			throw new RuntimeException("failed to create Secure Comparator", new SecureCompareException());
 		}
 	}
-	
-	public SecureCompare(byte[] secret) throws SecureCompareException {
-		
+
+	public SecureCompare(byte[] secret) {
+
 		this();
 		appendSecret(secret);
 		
 	}
-	
-	public SecureCompare(String password) throws UnsupportedEncodingException, SecureCompareException {
+
+	public SecureCompare(String password) {
 		this(password.getBytes(CHARSET));
 	}
 	
@@ -53,21 +55,28 @@ public class SecureCompare {
 	}
 	
 	@Override
+	@SuppressWarnings("deprecation")
 	protected void finalize() {
 		close();
 	}
 	
 	native int jniAppend(byte[] secret);
-	
-	public void appendSecret(byte[] secretData) throws SecureCompareException {
+
+	public void appendSecret(byte[] secretData) {
+		if (secretData == null) {
+			throw new NullArgumentException("secret cannot be null");
+		}
+		if (secretData.length == 0) {
+			throw new InvalidArgumentException("secret cannot be empty");
+		}
 		if (0 != jniAppend(secretData)) {
-			throw new SecureCompareException();
+			throw new RuntimeException("failed to append secret data", new SecureCompareException());
 		}
 	}
 	
 	native byte[] jniBegin();
-	
-	CompareResult parseResult(int result) throws SecureCompareException {
+
+	CompareResult parseResult(int result) {
 		if (result == scompareNotReady()) {
 		    return CompareResult.NOT_READY;
 		}else if (result == scompareNoMatch()){
@@ -75,28 +84,28 @@ public class SecureCompare {
 		}else if (result == scompareMatch()){
 		    return CompareResult.MATCH;
 		}
-		throw new SecureCompareException();
+		throw new RuntimeException("unexpected comparison result: " + result, new SecureCompareException());
 	}
-	
-	public byte[] begin() throws SecureCompareException {
+
+	public byte[] begin() {
 		byte[] compareData = jniBegin();
 		
 		if (null == compareData) {
-			throw new SecureCompareException();
+			throw new RuntimeException("failed to begin comparison", new SecureCompareException());
 		}
 		
 		return compareData;
 	}
 	
 	native byte[] jniProceed(byte[] compareData);
-	
+
 	public byte[] proceed(byte[] compareData) throws SecureCompareException {
 		return jniProceed(compareData);
 	}
 	
 	native int jniGetResult();
-	
-	public CompareResult getResult() throws SecureCompareException {
+
+	public CompareResult getResult() {
 		return parseResult(jniGetResult());
 	}
 

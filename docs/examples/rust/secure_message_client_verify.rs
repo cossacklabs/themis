@@ -18,6 +18,7 @@ extern crate log;
 use std::fs::File;
 use std::io::{self, Read, Write};
 use std::net::UdpSocket;
+use std::process;
 use std::thread;
 
 use clap::clap_app;
@@ -56,35 +57,60 @@ fn main() {
     let receive_secure = SecureVerify::new(public_key);
     let relay_secure = SecureSign::new(private_key);
 
+    let final_message_server = format!("client {} left chat\n", process::id())
+        .as_bytes()
+        .to_vec();
+    let final_message_client = final_message_server.clone();
+
     let receive = thread::spawn(move || {
-        let receive_message = || -> io::Result<()> {
+        let receive_message = || -> io::Result<bool> {
             let buffer = recv(&receive_socket)?;
+            if buffer == final_message_server {
+                return Ok(false);
+            }
+            if buffer.starts_with(b"client") {
+                return Ok(true);
+            }
             let message = receive_secure.verify(&buffer).map_err(themis_as_io_error)?;
             io::stdout().write_all(&message)?;
-            Ok(())
+            Ok(true)
         };
         loop {
-            if let Err(e) = receive_message() {
-                error!("failed to receive message: {}", e);
-                break;
+            match receive_message() {
+                Ok(true) => continue,
+                Ok(false) => break,
+                Err(e) => {
+                    error!("failed to receive message: {}", e);
+                    break;
+                }
             }
         }
     });
 
     let relay = thread::spawn(move || {
-        let relay_message = || -> io::Result<()> {
+        let relay_message = || -> io::Result<bool> {
             let mut buffer = String::new();
             io::stdin().read_line(&mut buffer)?;
+            if buffer.is_empty() {
+                return Ok(false);
+            }
             let message = relay_secure.sign(&buffer).map_err(themis_as_io_error)?;
             relay_socket.send(&message)?;
-            Ok(())
+            Ok(true)
         };
         loop {
-            if let Err(e) = relay_message() {
-                error!("failed to relay message: {}", e);
-                break;
+            match relay_message() {
+                Ok(true) => continue,
+                Ok(false) => break,
+                Err(e) => {
+                    error!("failed to relay message: {}", e);
+                    break;
+                }
             }
         }
+        relay_socket
+            .send(&final_message_client)
+            .expect("final message");
     });
 
     receive.join().unwrap();

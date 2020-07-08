@@ -1,4 +1,7 @@
 ---
-Checks: 'readability-*,-readability-implicit-bool-conversion'
+Checks: 'bugprone-*,cppcoreguidelines-*,clang-analyzer-*,misc-*,performance-*,portability-*,readability-*,-readability-implicit-bool-conversion,-readability-isolate-declaration,-*-magic-numbers,-cppcoreguidelines-pro-type-vararg'
 FormatStyle: none
+CheckOptions:
+  - key: cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
+    value: 1
 ...

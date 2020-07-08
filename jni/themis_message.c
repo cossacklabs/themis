@@ -118,6 +118,15 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
         goto err;
     }
 
+    /*
+     * Secure Message data format can store messages up to 4 GB long, but JVM
+     * cannot allocate more than 2 GB in one chunk. Avoid overflows here.
+     */
+    if (output_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
+        return NULL;
+    }
+
     output = (*env)->NewByteArray(env, output_length);
     if (!output) {
         goto err;

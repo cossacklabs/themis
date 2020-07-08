@@ -59,8 +59,8 @@ void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
     if (args.IsConstructCall()) {
         if (args.Length() == 2) {
             if (!args[0]->IsUint8Array()) {
-                ThrowParameterError("Key Pair constructor",
-                                    "private key is not a byte buffer, use ByteBuffer or Uint8Array");
+                ThrowTypeError("KeyPair",
+                               "private key is not a byte buffer, use ByteBuffer or Uint8Array");
                 return;
             }
             if (node::Buffer::Length(args[0]) == 0) {
@@ -68,8 +68,8 @@ void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
                 return;
             }
             if (!args[1]->IsUint8Array()) {
-                ThrowParameterError("Key Pair constructor",
-                                    "public key is not a byte buffer, use ByteBuffer or Uint8Array");
+                ThrowTypeError("KeyPair",
+                               "public key is not a byte buffer, use ByteBuffer or Uint8Array");
                 return;
             }
             if (node::Buffer::Length(args[1]) == 0) {
@@ -171,6 +171,100 @@ bool IsPublicKey(const std::vector<uint8_t>& key)
         }
     }
     return false;
+}
+
+Nan::Persistent<v8::Function> SymmetricKey::constructor;
+
+void SymmetricKey::Init(v8::Local<v8::Object> exports)
+{
+    v8::Local<v8::String> className = Nan::New("SymmetricKey").ToLocalChecked();
+
+    // Prepare constructor template
+    v8::Local<v8::FunctionTemplate> thisTemplate = Nan::New<v8::FunctionTemplate>(SymmetricKey::New);
+    thisTemplate->SetClassName(className);
+
+    // Export constructor
+    v8::Local<v8::Function> function = Nan::GetFunction(thisTemplate).ToLocalChecked();
+    constructor.Reset(function);
+    Nan::Set(exports, className, function);
+}
+
+void SymmetricKey::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
+{
+    // If not invoked as "new themis.SymmetricKey(...)" then reinvoke.
+    if (!args.IsConstructCall()) {
+        // We support at most one argument, pass it and ignore others.
+        v8::Local<v8::Value> argv[1] = {args[0]};
+        v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
+        args.GetReturnValue().Set(Nan::NewInstance(cons, args.Length(), argv).ToLocalChecked());
+        return;
+    }
+
+    // If invoked as "new themis.SymmetricKey()" then generate a new key.
+    if (args.Length() == 0) {
+        std::vector<uint8_t> buffer;
+
+        size_t length = 0;
+        themis_status_t status = themis_gen_sym_key(NULL, &length);
+        if (status != THEMIS_BUFFER_TOO_SMALL) {
+            ThrowError("Themis SymmetricKey", status);
+            args.GetReturnValue().SetUndefined();
+            return;
+        }
+
+        buffer.resize(length);
+        status = themis_gen_sym_key(&buffer.front(), &length);
+        if (status != THEMIS_SUCCESS) {
+            ThrowError("Themis SymmetricKey", status);
+            args.GetReturnValue().SetUndefined();
+            return;
+        }
+
+        args.GetReturnValue().Set(CopyIntoBuffer(buffer));
+        return;
+    }
+
+    // If invoked as "new themis.SymmetricKey(value)" then value must be
+    // a byte buffer that we copy.
+    v8::Local<v8::Value> value = args[0];
+    if (!value->IsUint8Array()) {
+        ThrowTypeError("SymmetricKey", "key is not a byte buffer (use Buffer or Uint8Array)");
+        args.GetReturnValue().SetUndefined();
+        return;
+    }
+    if (node::Buffer::Length(value) == 0) {
+        ThrowParameterError("Themis SymmetricKey", "key is empty");
+        args.GetReturnValue().SetUndefined();
+        return;
+    }
+
+    args.GetReturnValue().Set(CopyIntoBuffer(value));
+}
+
+// TODO: return properly inherited instances of SymmetricKey
+//
+// Currently "new themis.SymmetricKey()" produces instances of Buffer.
+// This works in practice (because JavaScript), but it may be unexpected
+// as "key instanceof themis.SymmetricKey" returns false.
+//
+// Unfortunately, V8 does not make JavaScript prototype inheritance easier
+// and I was not able to implement it correctly. It would be nice is someone
+// made SymmetricKey constructor return SymmetricKey instances that inherit
+// from Buffer and get all Node.js utities for free.
+
+v8::Local<v8::Object> SymmetricKey::CopyIntoBuffer(const std::vector<uint8_t>& buffer)
+{
+    const char* data = NULL;
+    if (!buffer.empty()) {
+        data = reinterpret_cast<const char*>(&buffer.front());
+    }
+    uint32_t length = buffer.size();
+    return Nan::CopyBuffer(data, length).ToLocalChecked();
+}
+
+v8::Local<v8::Object> SymmetricKey::CopyIntoBuffer(v8::Local<v8::Value> buffer)
+{
+    return Nan::CopyBuffer(node::Buffer::Data(buffer), node::Buffer::Length(buffer)).ToLocalChecked();
 }
 
 } // namespace jsthemis

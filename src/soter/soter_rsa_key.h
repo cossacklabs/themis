@@ -43,7 +43,7 @@
 #define RSA_PRIV_KEY_TAG(_KEY_SIZE_) (RSA_PRIV_KEY_PREF RSA_KEY_SUF(_KEY_SIZE_))
 #define RSA_PUB_KEY_TAG(_KEY_SIZE_) (RSA_PUB_KEY_PREF RSA_KEY_SUF(_KEY_SIZE_))
 
-#define RSA_BYTE_SIZE(_KEY_SIZE_) (_KEY_SIZE_ / 8)
+#define RSA_BYTE_SIZE(_KEY_SIZE_) ((_KEY_SIZE_) / 8)
 
 #define DECLARE_RSA_PUBLIC_KEY(_KEY_SIZE_)         \
     struct soter_rsa_pub_key_##_KEY_SIZE_##_type { \

@@ -1,102 +1,20 @@
-apply plugin: 'com.android.library'
+// Common dependency repositories for all subprojects. They need to be set
+// for both Gradle build itself and for the project it compiles.
+allprojects {
+    buildscript {
+        repositories {
+            google()
+            jcenter()
+            mavenCentral()
+        }
 
-buildscript {
+        // Set common Kotlin version that we are going to use.
+        ext.kotlin_version = '1.3.72'
+    }
+
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-
-        // Two necessary plugins for uploading .aar to bintray
-        // from: https://android.jlelse.eu/how-to-distribute-android-library-in-a-convenient-way-d43fb68304a7
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
-    }
-}
-
-dependencies {
-    implementation project(":boringssl")
-}
-
-android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
-
-    defaultConfig {
-    	minSdkVersion 16
-        targetSdkVersion 16
-    }
-
-    sourceSets {
-    	main {
-    		java.srcDirs = ['src/wrappers/themis/java']
-    		manifest.srcFile 'src/wrappers/themis/android/AndroidManifest.xml'
-    		jniLibs.srcDirs = ['libs']
-    	}
-    	androidTest.setRoot('tests/themis/wrappers/android')
-        androidTest.java.srcDirs = ['tests/themis/wrappers/android']
-        androidTest.manifest.srcFile 'tests/themis/wrappers/android/AndroidManifest.xml'
-
-	}
-
-    // ensure we execute boringssl tasks first
-    // tasks.whenTaskAdded({Task task -> task.dependsOn('boringssl:' + task.name)})
-
-    // publishing and bitray upload tasks should not run for ':boringssl' project
-    tasks.whenTaskAdded { task ->
-        println "executing $task ..."
-        if (task.name != 'bintrayUpload' && task.name != 'publishProductionPublicationToMavenLocal' && task.name != 'generatePomFileForProductionPublication') {
-            task.dependsOn('boringssl:' + task.name)
-        }
-    }
-
-	externalNativeBuild {
-	    ndkBuild {
-	        path "jni/Android.mk"
-	    }
-	}
-}
-
-// distribution
-
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'maven-publish'
-
-publishing {
-    publications {
-        Production(MavenPublication) {
-            artifact("$buildDir/outputs/aar/projects-release.aar")
-            groupId 'com.cossacklabs.com'
-            artifactId 'themis'
-            version '0.12.0'
-        }
-    }
-}
-
-bintray {
-    // Get Bintray credential from environment variable
-    user = System.getenv('BINTRAY_USER') // Get bintray User
-    key = System.getenv('BINTRAY_KEY') // Get bintray API Key from https://bintray.com/profile/edit -> APIKey
-    configurations = ['archives']
-    pkg {
-        repo = 'maven'
-        name = 'themis'
-        userOrg = 'cossacklabs'
-        licenses = ['Apache-2.0']
-        desc = 'Easy to use cryptographic framework for data protection: secure messaging with forward secrecy and secure data storage. Has unified APIs across ten platforms.'
-        websiteUrl = "https://cossacklabs.com/themis/"
-        vcsUrl = 'https://github.com/cossacklabs/themis.git'
-        publish = true
-        version {
-            name = '0.12.0'
-            released  = new Date()
-            gpg {
-                sign = true
-                passphrase = System.getenv('BINTRAY_GPG_PASSPHRASE')
-            }
-        }
-    }
-    publications = ['Production']
 }

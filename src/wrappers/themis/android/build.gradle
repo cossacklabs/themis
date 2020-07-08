@@ -1,0 +1,137 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+buildscript {
+    dependencies {
+        // Using older version since 3.6.X has issues with NDK versioning:
+        // https://github.com/gradle/gradle/issues/12440
+        // And 3.5.X fails to link ARM binaries correctly, so we're staying
+        // on this Gradle version until it breaks or we *need* an upgrade:
+        classpath 'com.android.tools.build:gradle:3.2.1'
+
+        // Two necessary plugins for uploading .aar to bintray
+        // from: https://android.jlelse.eu/how-to-distribute-android-library-in-a-convenient-way-d43fb68304a7
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
+
+        // Kotlin plugin for Android
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+dependencies {
+    implementation project(":boringssl")
+    // Use a compatibility version to support Java 6.
+    implementation 'org.jetbrains:annotations-java5:16.0.2'
+    // Instrumentation tests
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    // Keep it at 1.2, see tests/themis/wrappers/android/com/cossacklabs/themis/test/Base64.java
+    androidTestImplementation 'commons-codec:commons-codec:1.2'
+    // Kotlin for instrumentation tests
+    androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+
+    // BoringSSL requires at least API 21. Google Play as of August 2019 requires
+    // to target at least API 28 (but we can still support lower versions).
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+        // Our tests are written in JUnit, set default runner appropriately
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // Compile for Java 7.
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs = ['../java']
+            manifest.srcFile 'AndroidManifest.xml'
+            jniLibs.srcDirs = ['libs']
+        }
+        androidTest.setRoot('tests/themis/wrappers/android')
+        androidTest.java.srcDirs = ['../../../../tests/themis/wrappers/android']
+        androidTest.manifest.srcFile '../../../../tests/themis/wrappers/android/AndroidManifest.xml'
+    }
+
+    // Dependencies for instrumentation tests
+    useLibrary 'android.test.runner'
+    useLibrary 'android.test.base'
+    useLibrary 'android.test.mock'
+
+    // ensure we execute boringssl tasks first
+    // tasks.whenTaskAdded({Task task -> task.dependsOn('boringssl:' + task.name)})
+
+    // publishing and bitray upload tasks should not run for ':boringssl' project
+    tasks.whenTaskAdded { task ->
+        println "executing $task ..."
+        if (task.name != 'bintrayUpload' && task.name != 'publishProductionPublicationToMavenLocal' && task.name != 'generatePomFileForProductionPublication') {
+            task.dependsOn(':boringssl:' + task.name)
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path "../../../../jni/Android.mk"
+        }
+    }
+
+    // Due to various renames in annotation modules, Android's DEX compiler is confused.
+    // Remove them from compiled code to avoid issues.
+    // https://github.com/vimeo/vimeo-networking-java/issues/285
+    // https://github.com/vimeo/vimeo-networking-java/pull/321
+    configurations {
+        cleanedAnnotations
+        compile.exclude group: 'org.jetbrains' , module:'annotations'
+    }
+}
+
+// distribution
+
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        Production(MavenPublication) {
+            artifact("$buildDir/outputs/aar/projects-release.aar")
+            groupId 'com.cossacklabs.com'
+            artifactId 'themis'
+            version androidThemisVersion
+        }
+    }
+}
+
+bintray {
+    // Get Bintray credential from environment variable
+    user = System.getenv('BINTRAY_USER') // Get bintray User
+    key = System.getenv('BINTRAY_KEY') // Get bintray API Key from https://bintray.com/profile/edit -> APIKey
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = 'themis'
+        userOrg = 'cossacklabs'
+        licenses = ['Apache-2.0']
+        desc = 'Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis has a unified API across 12 platforms, including Python, JavaScript, iOS/macOS, and Java/Android.'
+        websiteUrl = "https://cossacklabs.com/themis/"
+        vcsUrl = 'https://github.com/cossacklabs/themis.git'
+        publish = true
+        version {
+            name = androidThemisVersion
+            released  = new Date()
+            gpg {
+                sign = true
+                passphrase = System.getenv('BINTRAY_GPG_PASSPHRASE')
+            }
+        }
+    }
+    publications = ['Production']
+}

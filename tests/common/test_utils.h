@@ -44,6 +44,8 @@ int testsuite_get_return_value(void);
 #define testsuite_fail_unless(_COND_, _NAME_) testsuite_fail_unless_on_line(_COND_, _NAME_, __LINE__)
 #define testsuite_run_test(_FUNC_) testsuite_run_test_in_file(_FUNC_, #_FUNC_, __FILE__)
 
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
+
 #ifdef __cplusplus
 }
 #endif

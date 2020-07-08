@@ -1,14 +1,12 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.12.2"
+    s.version = "0.13.0"
     s.summary = "Data security library for network communication and data storage for iOS and mac OS"
-    s.description = "Themis is a data security library, providing users with high-quality security services for secure messaging of any kinds and flexible data storage. Themis is aimed at modern development practices, with high level OOP wrappers for iOS / macOS, node,js, Go, Ruby, Python, PHP and Java / Android. It is designed with ease of use in mind, high security and cross-platform availability."
+    s.description = "Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis is aimed at modern development practices and has a unified API across 12 platforms, including iOS/macOS, Ruby, JavaScript, Python, and Java/Android."
     s.homepage = "https://cossacklabs.com"
     s.license = { :type => 'Apache 2.0'}
 
-    # TODO: use tag version, current update is just a dependency hotfix (26 sept 2019) 
-    #s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" } # <-- this is good
-    s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "0.12.1" }        # <-- this is bad and temp
+    s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
     s.module_name = 'themis'
@@ -18,6 +16,9 @@ Pod::Spec.new do |s|
     s.osx.deployment_target = '10.9'
     s.ios.frameworks = 'UIKit', 'Foundation'
 
+    # TODO(ilammy, 2020-03-02): resolve "pod spec lint" warnings due to dependencies
+    # If you update dependencies, please check whether we can remove "--allow-warnings"
+    # from podspec validation in .github/workflows/test-objc.yaml
 
     # use `themis/themis-openssl` as separate target to use Themis with OpenSSL
     s.subspec 'themis-openssl' do |so|
@@ -25,7 +26,7 @@ Pod::Spec.new do |s|
         so.ios.pod_target_xcconfig = {'ENABLE_BITCODE' => 'YES' }
 
         # TODO: due to error in symbols in GRKOpenSSLFramework 219 release, we've manually switched to 218
-        # which doesn't sound like a good decision, so when GRKOpenSSLFramework will be updated – 
+        # which doesn't sound like a good decision, so when GRKOpenSSLFramework will be updated –
         # please bring back correct dependency version
         # https://github.com/cossacklabs/themis/issues/538
         # 26 sept 2019

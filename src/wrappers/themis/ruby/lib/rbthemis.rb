@@ -18,13 +18,16 @@ require 'ffi'
 
 module ThemisCommon
   def string_to_pointer_size(string)
-    string_buf = FFI::MemoryPointer.new(
-      :char, string.force_encoding('BINARY').size)
-    string_buf.put_bytes(0, string.force_encoding('BINARY'),
-                         0, string.force_encoding('BINARY').size)
-    [string_buf, string.force_encoding('BINARY').size]
+    string_buf = FFI::MemoryPointer.from_string(string)
+    [string_buf, string.bytesize]
   end
+
+  def empty?(value)
+    return value.nil? || value.empty?
+  end
+
   module_function :string_to_pointer_size
+  module_function :empty?
 end
 
 module ThemisImport
@@ -73,6 +76,8 @@ module ThemisImport
                   [:pointer, :pointer, :pointer, :pointer], :int
   attach_function :themis_gen_ec_key_pair,
                   [:pointer, :pointer, :pointer, :pointer], :int
+  attach_function :themis_gen_sym_key,
+                  [:pointer, :pointer], :int
 
   THEMIS_KEY_INVALID = 0
   THEMIS_KEY_RSA_PRIVATE = 1
@@ -89,6 +94,13 @@ module ThemisImport
   attach_function :themis_secure_cell_decrypt_seal,
                   [:pointer, :int, :pointer, :int, :pointer, :int,
                    :pointer, :pointer], :int
+
+  attach_function :themis_secure_cell_encrypt_seal_with_passphrase,
+                   [:pointer, :int, :pointer, :int, :pointer, :int,
+                    :pointer, :pointer], :int
+  attach_function :themis_secure_cell_decrypt_seal_with_passphrase,
+                   [:pointer, :int, :pointer, :int, :pointer, :int,
+                    :pointer, :pointer], :int
 
   attach_function :themis_secure_cell_encrypt_token_protect,
                   [:pointer, :int, :pointer, :int, :pointer, :int,
@@ -127,9 +139,20 @@ module Themis
   BUFFER_TOO_SMALL = 14
   SUCCESS = 0
   FAIL = 11
+  INVALID_ARGUMENT = 12
   SEND_AS_IS = 1
 
-  ThemisError = Class.new(StandardError)
+  # Common class of errors caused by Themis functions.
+  # You can access the numerical value via "error_code" attribute.
+  # Human-readable message is accessible via "message" attribute.
+  class ThemisError < StandardError
+    attr_reader :error_code
+
+    def initialize(error_code = INVALID_ARGUMENT)
+      super
+      @error_code = error_code
+    end
+  end
 
   class Callbacks
     def get_pub_key_by_id(id)
@@ -476,6 +499,26 @@ module Themis
     unwrapped_message.get_bytes(0, unwrapped_message_length.read_uint)
   end
 
+  def gen_sym_key
+    key_length = FFI::MemoryPointer.new(:uint)
+
+    res = themis_gen_sym_key(nil, key_length)
+    if res != BUFFER_TOO_SMALL
+      raise ThemisError, "failed to get symmetric key size: #{res}"
+    end
+
+    key = FFI::MemoryPointer.new(:char, key_length.read_uint)
+
+    res = themis_gen_sym_key(key, key_length)
+    if res != SUCCESS
+      raise ThemisError, "failed to generate symmetric key: #{res}"
+    end
+
+    return key.get_bytes(0, key_length.read_uint)
+  end
+
+  # Scell base class is retained for compatibility.
+  # New code should use ScellSeal, ScellTokenProtect, or ScellContextImprint.
   class Scell
     include ThemisCommon
     include ThemisImport
@@ -485,145 +528,388 @@ module Themis
     CONTEXT_IMPRINT_MODE = 2
 
     def initialize(key, mode)
-      @key, @key_length = string_to_pointer_size(key)
-      @mode = mode
+      # We could have replaced this with "self.new" but it's not possible
+      # to override new *and* keep Scell as superclass of ScellSeal et al.
+      # So we keep an instance of appropriate class here and never call
+      # superclass initialize in subclasses.
+      case mode
+      when SEAL_MODE
+        @cell = ScellSeal.new(key)
+      when TOKEN_PROTECT_MODE
+        @cell = ScellTokenProtect.new(key)
+      when CONTEXT_IMPRINT_MODE
+        @cell = ScellContextImprint.new(key)
+      else
+        raise ThemisError, "unknown Secure Cell mode: #{mode}"
+      end
+      warn "NOTE: #{self.class.name} is deprecated; use #{@cell.class.name} instead."
     end
 
     def encrypt(message, context = nil)
-      message_, message_length_ = string_to_pointer_size(message)
-      context_, context_length_ =
-        context.nil? ? [nil, 0] : string_to_pointer_size(context)
-      encrypted_message_length = FFI::MemoryPointer.new(:uint)
-      enccontext_length = FFI::MemoryPointer.new(:uint)
-      case @mode
-      when SEAL_MODE
-        res = themis_secure_cell_encrypt_seal(
-          @key, @key_length, context_, context_length_, message_,
-          message_length_, nil, encrypted_message_length)
-        if res != BUFFER_TOO_SMALL
-          raise ThemisError, "Secure Cell (Seal) failed encrypting: #{res}"
-        end
-        encrypted_message = FFI::MemoryPointer.new(
-          :char, encrypted_message_length.read_uint)
-        res = themis_secure_cell_encrypt_seal(
-          @key, @key_length, context_, context_length_, message_,
-          message_length_, encrypted_message, encrypted_message_length)
-        if res != SUCCESS
-          raise ThemisError, "Secure Cell (Seal) failed encrypting: #{res}"
-        end
-        encrypted_message.get_bytes(0, encrypted_message_length.read_uint)
-      when TOKEN_PROTECT_MODE
-        res = themis_secure_cell_encrypt_token_protect(
-          @key, @key_length, context_, context_length_, message_,
-          message_length_, nil, enccontext_length, nil,
-          encrypted_message_length)
-        if res != BUFFER_TOO_SMALL
-          raise(ThemisError,
-                "Secure Cell (Token protect) failed encrypting: #{res}")
-        end
-        encrypted_message = FFI::MemoryPointer.new(
-          :char, encrypted_message_length.read_uint)
-        enccontext = FFI::MemoryPointer.new(:char, enccontext_length.read_uint)
-        res = themis_secure_cell_encrypt_token_protect(
-          @key, @key_length, context_, context_length_, message_,
-          message_length_, enccontext, enccontext_length, encrypted_message,
-          encrypted_message_length)
-        if res != SUCCESS
-          raise(ThemisError,
-                "Secure Cell (Token Protect) failed encrypting: #{res}")
-        end
-        [encrypted_message.get_bytes(0, encrypted_message_length.read_uint),
-         enccontext.get_bytes(0, enccontext_length.read_uint),]
-      when CONTEXT_IMPRINT_MODE
-        res = themis_secure_cell_encrypt_context_imprint(
-          @key, @key_length, message_, message_length_, context_,
-          context_length_, nil, encrypted_message_length)
-        if res != BUFFER_TOO_SMALL
-          raise(ThemisError,
-                "Secure Cell (Context Imprint) failed encrypting: #{res}")
-        end
-        encrypted_message = FFI::MemoryPointer.new(
-          :char, encrypted_message_length.read_uint)
-        res = themis_secure_cell_encrypt_context_imprint(
-          @key, @key_length, message_, message_length_, context_,
-          context_length_, encrypted_message, encrypted_message_length)
-        if res != SUCCESS
-          raise(ThemisError,
-                "Secure Cell (Context Imprint) failed encrypting: #{res}")
-        end
-        encrypted_message.get_bytes(0, encrypted_message_length.read_uint)
-      else
-        raise ThemisError, 'Secure Cell failed encrypting, undefined mode'
-      end
+      @cell.encrypt(message, context)
     end
 
     def decrypt(message, context = nil)
+      @cell.decrypt(message, context)
+    end
+  end
+
+  # Secure Cell in Seal mode.
+  class ScellSeal < Scell
+    include ThemisCommon
+    include ThemisImport
+
+    # Make a new Secure Cell with given key.
+    # The key must not be empty and is treated as binary data.
+    # You can use Themis::gen_sym_key to generate new keys.
+    def initialize(key)
+      if empty? key
+        raise ThemisError, "key cannot be empty"
+      end
+      @key, @key_length = string_to_pointer_size(key)
+    end
+
+    # Encrypts message with given optional context.
+    # The context is cryptographically combined with message but is not included
+    # into encrypted data, you will need to provide the same context for decryption.
+    # Resulting encrypted message includes authentication token.
+    # Message must not be empty, but context may be omitted.
+    # Both message and context are treated as binary data.
+    def encrypt(message, context = nil)
+      if empty? message
+        raise ThemisError, "message cannot be empty"
+      end
+
+      message_, message_length_ = string_to_pointer_size(message)
       context_, context_length_ =
         context.nil? ? [nil, 0] : string_to_pointer_size(context)
-      decrypted_message_length = FFI::MemoryPointer.new(:uint)
-      case @mode
-      when SEAL_MODE
-        message_, message_length_ = string_to_pointer_size(message)
-        res = themis_secure_cell_decrypt_seal(
-          @key, @key_length, context_, context_length_, message_,
-          message_length_, nil, decrypted_message_length)
-        if res != BUFFER_TOO_SMALL
-          raise ThemisError, "Secure Cell (Seal) failed decrypting: #{res}"
-        end
-        decrypted_message = FFI::MemoryPointer.new(
-          :char, decrypted_message_length.read_uint)
-        res = themis_secure_cell_decrypt_seal(
-          @key, @key_length, context_, context_length_, message_,
-          message_length_, decrypted_message, decrypted_message_length)
-        if res != SUCCESS
-          raise ThemisError, "Secure Cell (Seal) failed decrypting: #{res}"
-        end
-        decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
-      when TOKEN_PROTECT_MODE
-        message_, enccontext = message
-        message__, message_length__ = string_to_pointer_size(message_)
-        enccontext_, enccontext_length = string_to_pointer_size(enccontext)
-        res = themis_secure_cell_decrypt_token_protect(
-          @key, @key_length, context_, context_length_, message__,
-          message_length__, enccontext_, enccontext_length, nil,
-          decrypted_message_length)
-        if res != BUFFER_TOO_SMALL
-          raise(ThemisError,
-                "Secure Cell (Token Protect) failed decrypting: #{res}")
-        end
-        decrypted_message = FFI::MemoryPointer.new(
-          :char, decrypted_message_length.read_uint)
-        res = themis_secure_cell_decrypt_token_protect(
-          @key, @key_length, context_, context_length_, message__,
-          message_length__, enccontext_, enccontext_length,
-          decrypted_message, decrypted_message_length)
-        if res != SUCCESS
-          raise(ThemisError,
-                "Secure Cell (Token Protect) failed decrypting: #{res}")
-        end
-        decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
-      when CONTEXT_IMPRINT_MODE
-        message_, message_length_ = string_to_pointer_size(message)
-        res = themis_secure_cell_decrypt_context_imprint(
-          @key, @key_length, message_, message_length_, context_,
-          context_length_, nil, decrypted_message_length)
-        if res != BUFFER_TOO_SMALL
-          raise(ThemisError,
-                "Secure Cell (Context Imprint) failed decrypting: #{res}")
-        end
-        decrypted_message = FFI::MemoryPointer.new(
-          :char, decrypted_message_length.read_uint)
-        res = themis_secure_cell_decrypt_context_imprint(@key, @key_length,
-          message_, message_length_, context_, context_length_,
-          decrypted_message, decrypted_message_length)
-        if res != SUCCESS
-          raise(ThemisError,
-                "Secure Cell (Context Imprint) failed decrypting: #{res}")
-        end
-        decrypted_message.get_bytes(0, decrypted_message_length.read_uint)
-      else
-        raise ThemisError, 'Secure Cell failed encrypting, undefined mode'
+
+      encrypted_length = FFI::MemoryPointer.new(:uint)
+      res = themis_secure_cell_encrypt_seal(
+        @key, @key_length, context_, context_length_,
+        message_, message_length_, nil, encrypted_length)
+      if res != BUFFER_TOO_SMALL
+        raise ThemisError.new(res), "encrypt failed"
       end
+
+      encrypted_message = FFI::MemoryPointer.new(:char, encrypted_length.read_uint)
+      res = themis_secure_cell_encrypt_seal(
+        @key, @key_length, context_, context_length_,
+        message_, message_length_, encrypted_message, encrypted_length)
+      if res != SUCCESS
+        raise ThemisError.new(res), "encrypt failed"
+      end
+
+      encrypted_message.get_bytes(0, encrypted_length.read_uint)
+    end
+
+    # Decrypts message with given context.
+    # The context must be the same as the one used during encryption,
+    # or be omitted or set to nil if no context were used.
+    # Decrypted message is returned as binary data.
+    def decrypt(message, context = nil)
+      if empty? message
+        raise ThemisError, "message cannot be empty"
+      end
+
+      message_, message_length_ = string_to_pointer_size(message)
+      context_, context_length_ =
+        context.nil? ? [nil, 0] : string_to_pointer_size(context)
+
+      decrypted_length = FFI::MemoryPointer.new(:uint)
+      res = themis_secure_cell_decrypt_seal(
+        @key, @key_length, context_, context_length_,
+        message_, message_length_, nil, decrypted_length)
+      if res != BUFFER_TOO_SMALL
+        raise ThemisError.new(res), "decrypt failed"
+      end
+
+      decrypted_message = FFI::MemoryPointer.new(:char, decrypted_length.read_uint)
+      res = themis_secure_cell_decrypt_seal(
+        @key, @key_length, context_, context_length_,
+        message_, message_length_, decrypted_message, decrypted_length)
+      if res != SUCCESS
+        raise ThemisError.new(res), "decrypt failed"
+      end
+
+      decrypted_message.get_bytes(0, decrypted_length.read_uint)
+    end
+  end
+
+  # Secure Cell in Seal mode.
+  class ScellSealPassphrase < ScellSeal
+    include ThemisCommon
+    include ThemisImport
+
+    # Make a new Secure Cell with given passphrase.
+    # The passphrase must not be empty.
+    # If the passphrase is not binary it will be encoded in UTF-8 by default,
+    # you can use optional "encoding:" argument to use a different encoding.
+    def initialize(passphrase, encoding: Encoding::UTF_8)
+      if empty? passphrase
+        raise ThemisError, "passphrase cannot be empty"
+      end
+      if passphrase.encoding != Encoding::BINARY
+        passphrase = passphrase.encode(encoding)
+      end
+      @passphrase, @passphrase_length = string_to_pointer_size(passphrase)
+    end
+
+    # Encrypts message with given optional context.
+    # The context is cryptographically combined with message but is not included
+    # into encrypted data, you will need to provide the same context for decryption.
+    # Resulting encrypted message includes authentication token.
+    # Message must not be empty, but context may be omitted.
+    # Both message and context are treated as binary data.
+    def encrypt(message, context = nil)
+      if empty? message
+        raise ThemisError, "message cannot be empty"
+      end
+
+      message_, message_length_ = string_to_pointer_size(message)
+      context_, context_length_ =
+        context.nil? ? [nil, 0] : string_to_pointer_size(context)
+
+      encrypted_length = FFI::MemoryPointer.new(:uint)
+      res = themis_secure_cell_encrypt_seal_with_passphrase(
+        @passphrase, @passphrase_length, context_, context_length_,
+        message_, message_length_, nil, encrypted_length)
+      if res != BUFFER_TOO_SMALL
+        raise ThemisError.new(res), "encrypt failed"
+      end
+
+      encrypted_message = FFI::MemoryPointer.new(:char, encrypted_length.read_uint)
+      res = themis_secure_cell_encrypt_seal_with_passphrase(
+        @passphrase, @passphrase_length, context_, context_length_,
+        message_, message_length_, encrypted_message, encrypted_length)
+      if res != SUCCESS
+        raise ThemisError.new(res), "encrypt failed"
+      end
+
+      encrypted_message.get_bytes(0, encrypted_length.read_uint)
+    end
+
+    # Decrypts message with given context.
+    # The context must be the same as the one used during encryption,
+    # or be omitted or set to nil if no context were used.
+    # Decrypted message is returned as binary data.
+    def decrypt(message, context = nil)
+      if empty? message
+        raise ThemisError, "message cannot be empty"
+      end
+
+      message_, message_length_ = string_to_pointer_size(message)
+      context_, context_length_ =
+        context.nil? ? [nil, 0] : string_to_pointer_size(context)
+
+      decrypted_length = FFI::MemoryPointer.new(:uint)
+      res = themis_secure_cell_decrypt_seal_with_passphrase(
+        @passphrase, @passphrase_length, context_, context_length_,
+        message_, message_length_, nil, decrypted_length)
+      if res != BUFFER_TOO_SMALL
+        raise ThemisError.new(res), "decrypt failed"
+      end
+
+      decrypted_message = FFI::MemoryPointer.new(:char, decrypted_length.read_uint)
+      res = themis_secure_cell_decrypt_seal_with_passphrase(
+        @passphrase, @passphrase_length, context_, context_length_,
+        message_, message_length_, decrypted_message, decrypted_length)
+      if res != SUCCESS
+        raise ThemisError.new(res), "decrypt failed"
+      end
+
+      decrypted_message.get_bytes(0, decrypted_length.read_uint)
+    end
+  end
+
+  # Secure Cell in Token Protect mode.
+  class ScellTokenProtect < Scell
+    include ThemisCommon
+    include ThemisImport
+
+    # Make a new Secure Cell with given key.
+    # The key must not be empty and is treated as binary data.
+    # You can use Themis::gen_sym_key to generate new keys.
+    def initialize(key)
+      if empty? key
+        raise ThemisError, "key cannot be empty"
+      end
+      @key, @key_length = string_to_pointer_size(key)
+    end
+
+    # Encrypts message with given optional context.
+    # The context is cryptographically combined with message but is not included
+    # into encrypted data, you will need to provide the same context for decryption.
+    # Resulting encrypted message (the same length as input) and authentication token
+    # are returned separately; you will need to provide them both for decryption.
+    # Message must not be empty, but context may be omitted.
+    # Both message and context are treated as binary data.
+    def encrypt(message, context = nil)
+      if empty? message
+        raise ThemisError, "message cannot be empty"
+      end
+
+      message_, message_length_ = string_to_pointer_size(message)
+      context_, context_length_ =
+        context.nil? ? [nil, 0] : string_to_pointer_size(context)
+
+      auth_token_length = FFI::MemoryPointer.new(:uint)
+      encrypted_length = FFI::MemoryPointer.new(:uint)
+      res = themis_secure_cell_encrypt_token_protect(
+        @key, @key_length, context_, context_length_, message_, message_length_,
+        nil, auth_token_length, nil, encrypted_length)
+      if res != BUFFER_TOO_SMALL
+        raise ThemisError.new(res), "encrypt failed"
+      end
+
+      auth_token = FFI::MemoryPointer.new(:char, auth_token_length.read_uint)
+      encrypted_message = FFI::MemoryPointer.new(:char, encrypted_length.read_uint)
+      res = themis_secure_cell_encrypt_token_protect(
+        @key, @key_length, context_, context_length_, message_, message_length_,
+        auth_token, auth_token_length, encrypted_message, encrypted_length)
+      if res != SUCCESS
+        raise ThemisError.new(res), "encrypt failed"
+      end
+
+      [encrypted_message.get_bytes(0, encrypted_length.read_uint),
+       auth_token.get_bytes(0, auth_token_length.read_uint),]
+    end
+
+    # Decrypts message with given authentication token and context.
+    # The context must be the same as the one used during encryption,
+    # or be omitted or set to nil if no context were used.
+    # The token also must be the one returned during encryption.
+    # Decrypted message is returned as binary data.
+    def decrypt(message, token = nil, context = nil)
+      # For compatibility with older API we allow the message and token to be
+      # provided as a list in the first argument. In this case the second one
+      # contains (an optional) context. Then there is no third argument.
+      if message.kind_of? Array
+        context = token
+        message, token = message
+      end
+
+      if empty? message
+        raise ThemisError, "message cannot be empty"
+      end
+      if empty? token
+        raise ThemisError, "token cannot be empty"
+      end
+
+      message_, message_length_ = string_to_pointer_size(message)
+      token_, token_length_ = string_to_pointer_size(token)
+      context_, context_length_ =
+        context.nil? ? [nil, 0] : string_to_pointer_size(context)
+
+      decrypted_length = FFI::MemoryPointer.new(:uint)
+      res = themis_secure_cell_decrypt_token_protect(
+        @key, @key_length, context_, context_length_,
+        message_, message_length_, token_, token_length_,
+        nil, decrypted_length)
+      if res != BUFFER_TOO_SMALL
+        raise ThemisError.new(res), "decrypt failed"
+      end
+
+      decrypted_message = FFI::MemoryPointer.new(:char, decrypted_length.read_uint)
+      res = themis_secure_cell_decrypt_token_protect(
+        @key, @key_length, context_, context_length_,
+        message_, message_length_, token_, token_length_,
+        decrypted_message, decrypted_length)
+      if res != SUCCESS
+        raise ThemisError.new(res), "decrypt failed"
+      end
+
+      decrypted_message.get_bytes(0, decrypted_length.read_uint)
+    end
+  end
+
+  # Secure Cell in Context Imprint mode.
+  class ScellContextImprint < Scell
+    include ThemisCommon
+    include ThemisImport
+
+    # Make a new Secure Cell with given key.
+    # The key must not be empty and is treated as binary data.
+    # You can use Themis::gen_sym_key to generate new keys.
+    def initialize(key)
+      if empty? key
+        raise ThemisError, "key cannot be empty"
+      end
+      @key, @key_length = string_to_pointer_size(key)
+    end
+
+    # Encrypts message with given context.
+    # The context is cryptographically combined with message but is not included
+    # into encrypted data, you will need to provide the same context for decryption.
+    # Resulting encrypted message has the same length as input and does not include
+    # authentication data, so its integrity cannot be verified.
+    # Message and context must not be empty, both are treated as binary data.
+    def encrypt(message, context)
+      if empty? message
+        raise ThemisError, "message cannot be empty"
+      end
+      if empty? context
+        raise ThemisError, "context cannot be empty"
+      end
+
+      message_, message_length_ = string_to_pointer_size(message)
+      context_, context_length_ =
+        context.nil? ? [nil, 0] : string_to_pointer_size(context)
+
+      encrypted_length = FFI::MemoryPointer.new(:uint)
+      res = themis_secure_cell_encrypt_context_imprint(
+        @key, @key_length, message_, message_length_,
+        context_, context_length_, nil, encrypted_length)
+      if res != BUFFER_TOO_SMALL
+        raise ThemisError.new(res), "encrypt failed"
+      end
+
+      encrypted_message = FFI::MemoryPointer.new(:char, encrypted_length.read_uint)
+      res = themis_secure_cell_encrypt_context_imprint(
+        @key, @key_length, message_, message_length_,
+        context_, context_length_, encrypted_message, encrypted_length)
+      if res != SUCCESS
+        raise ThemisError.new(res), "encrypt failed"
+      end
+
+      encrypted_message.get_bytes(0, encrypted_length.read_uint)
+    end
+
+    # Decrypts message with given context.
+    # The context must be the same as the one used during encryption.
+    # Since Context Imprint mode does not include authentication data,
+    # integrity of the resulting message is not guaranteed.
+    # You need to verify it via some other means.
+    # Decrypted message is returned as binary data.
+    def decrypt(message, context)
+      if empty? message
+        raise ThemisError, "message cannot be empty"
+      end
+      if empty? context
+        raise ThemisError, "message cannot be empty"
+      end
+
+      message_, message_length_ = string_to_pointer_size(message)
+      context_, context_length_ =
+        context.nil? ? [nil, 0] : string_to_pointer_size(context)
+
+      decrypted_length = FFI::MemoryPointer.new(:uint)
+      res = themis_secure_cell_decrypt_context_imprint(
+        @key, @key_length, message_, message_length_,
+        context_, context_length_, nil, decrypted_length)
+      if res != BUFFER_TOO_SMALL
+        raise ThemisError.new(res), "decrypt failed"
+      end
+
+      decrypted_message = FFI::MemoryPointer.new(:char, decrypted_length.read_uint)
+      res = themis_secure_cell_decrypt_context_imprint(
+        @key, @key_length, message_, message_length_,
+        context_, context_length_, decrypted_message, decrypted_length)
+      if res != SUCCESS
+        raise ThemisError.new(res), "decrypt failed"
+      end
+
+      decrypted_message.get_bytes(0, decrypted_length.read_uint)
     end
   end
 
@@ -702,4 +988,5 @@ module Themis
   module_function :Sverify
   module_function :s_sign
   module_function :s_verify
+  module_function :gen_sym_key
 end

@@ -63,7 +63,7 @@ static uint32_t crc_c[256] = {
 
 soter_crc32_t soter_crc32_create(void)
 {
-    return ~0L;
+    return 0xFFFFFFFF;
 }
 
 void soter_crc32_update(soter_crc32_t* crc, const void* buf, size_t len)
@@ -79,7 +79,7 @@ void soter_crc32_update(soter_crc32_t* crc, const void* buf, size_t len)
 uint32_t soter_crc32_final(soter_crc32_t* crc)
 {
     uint32_t result = ~(*crc);
-    uint8_t byte0, byte1, byte2, byte3;
+    uint32_t byte0, byte1, byte2, byte3;
 
     /*  result  now holds the negated polynomial remainder;
      *  since the table and algorithm is "reflected" [williams95].

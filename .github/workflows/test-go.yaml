@@ -1,0 +1,123 @@
+name: GoThemis
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-go.yaml'
+      - 'docs/examples/go/**'
+      - 'docs/examples/Themis-server/go/**'
+      - 'gothemis/**'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'tests/common/**'
+      - 'tests/test.mk'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
+  WITH_FATAL_WARNINGS: yes
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: ['1.11.13', '1.12.17', '1.13.8', '1.14']
+      fail-fast: false
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev
+      - name: Install Go ${{ matrix.go }}
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go }}
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core
+        run: |
+          make
+          sudo make install
+      - name: Install GoThemis
+        run: |
+          mkdir -p ~/go/src/$GOTHEMIS_IMPORT
+          rsync -auv gothemis/ ~/go/src/$GOTHEMIS_IMPORT
+      - name: Run test suite (Go ${{ matrix.go }})
+        run: make test_go
+
+  examples:
+    name: Code examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core
+        run: |
+          make
+          sudo make install
+      - name: Install GoThemis
+        run: |
+          mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
+          rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT
+      - name: Test examples (Secure Cell)
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/go
+          echo "Testing Secure Cell..."
+          go run secure_cell.go
+          echo "ok"
+      - name: Test examples (Secure Message)
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/go
+          echo "Testing Secure Message..."
+          alice=($(go run secure_keygen.go))
+          bob=($(go run secure_keygen.go))
+          enc=$(go run secure_message.go enc "${alice[0]}" "${bob[1]}" message)
+          dec=$(go run secure_message.go dec "${bob[0]}" "${alice[1]}" "$enc")
+          test "$dec" = "message"
+          echo "ok"
+      - name: Test examples (Secure Session)
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/go
+          echo "Testing Secure Session..."
+          go build secure_session_server.go
+          go build secure_session_client.go
+          ./secure_session_server &
+          sleep 1 # give the server time to launch
+          ./secure_session_client
+          kill -SIGTERM "$!"
+          echo "ok"
+      - name: Test examples (Secure Comparator)
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/go
+          echo "Testing Secure Comparator..."
+          go build secure_comparator_server.go
+          go build secure_comparator_client.go
+          ./secure_comparator_server secret &
+          sleep 1 # give the server time to launch
+          ./secure_comparator_client secret
+          kill -SIGTERM "$!"
+          echo "ok"
+      - name: Build examples (Themis server)
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/Themis-server/go
+          # Since this requires manual interaction just make sure
+          # that the example code is buildable.
+          go build smessage_server.go
+          go build ssession_server.go

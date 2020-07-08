@@ -1,0 +1,207 @@
+name: PyThemis
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-python.yaml'
+      - 'docs/examples/python/**'
+      - 'docs/examples/Themis-server/python/**'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/python/**'
+      - 'tests/pythemis/**'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev \
+            python  python-setuptools \
+            python3 python3-setuptools
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Prepare Themis Core
+        run: |
+          make
+          sudo make install
+          make prepare_tests_all
+      - name: Install PyThemis
+        run: sudo make pythemis_install
+      - name: Run test suite
+        run: make test_python
+
+  examples:
+    name: Code examples
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [python3]
+      fail-fast: false
+    env:
+      PYTHON: ${{ matrix.python }}
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: scell_token_protect_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+      rabbitmq:
+        image: rabbitmq
+        ports:
+          - 5672:5672
+        options: --hostname=localhost
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev \
+            python  python-pip  python-setuptools \
+            python3 python3-pip python3-setuptools \
+            libpq-dev
+      - name: Install Python modules
+        run: |
+          sudo pip2 install tornado twisted psycopg2 pika
+          sudo pip3 install tornado twisted psycopg2 pika
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core
+        run: |
+          make
+          sudo make install
+      - name: Install PyThemis
+        run: sudo make pythemis_install
+
+      - name: Test examples (Secure Cell)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/python
+
+          echo "Secure Cell: showcase"
+          $PYTHON scell_test.py
+          echo
+
+          echo "Secure Cell: PostgreSQL"
+          $PYTHON scell_test_postgres.py
+          echo
+
+          echo "Secure Cell: XML processing"
+          $PYTHON scell_xml_format-preserving_encryption.py
+          diff -q example_data/test.xml decoded_data.xml
+          echo
+
+      - name: Test examples (Secure Message)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/python
+
+          echo "Generating keys..."
+          $PYTHON skeygen_test.py private.key public.key
+          echo
+
+          echo "Secure Message: sockets: encryption"
+          $PYTHON smessage_test_server.py &
+          sleep 1 # give server time to start
+          $PYTHON smessage_test_client.py
+          echo
+
+          echo "Secure Message: sockets: sign/verify"
+          $PYTHON smessage_sv_test_server.py &
+          sleep 1 # give server time to start
+          $PYTHON smessage_sv_test_client.py
+          echo
+
+          echo "Secure Message: Twisted"
+          $PYTHON smessage_test_twisted.py &
+          sleep 2 # give server time to start
+          $PYTHON smessage_test_client.py
+          kill -SIGTERM $!
+          echo
+
+          echo "Secure Message: Tornado"
+          $PYTHON smessage_test_tornado_server.py &
+          sleep 1 # give server time to start
+          $PYTHON smessage_test_tornado_client.py
+          kill -SIGTERM $!
+          echo
+
+          echo "Secure Message: RabbitMQ"
+          $PYTHON smessage_test_rabbitMQ_server.py &
+          sleep 1 # give server time to start
+          $PYTHON smessage_test_rabbitMQ_client.py
+          kill -SIGTERM $!
+          echo
+
+      - name: Test examples (Secure Session)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/python
+
+          echo "Secure Session: sockets"
+          $PYTHON ssession_test_server.py &
+          sleep 1 # give server time to start
+          $PYTHON ssession_test_client.py
+          echo
+
+          echo "Secure Session: Twisted"
+          $PYTHON ssession_test_twisted.py &
+          sleep 1 # give server time to start
+          $PYTHON ssession_test_client.py
+          kill -SIGTERM $!
+          echo
+
+          echo "Secure Session: Tornado"
+          $PYTHON ssession_test_tornado_server.py &
+          sleep 1 # give server time to start
+          $PYTHON ssession_test_tornado_client.py
+          kill -SIGTERM $!
+          echo
+
+          echo "Secure Session: RabbitMQ"
+          $PYTHON ssession_rabbitMQ_server_test.py &
+          sleep 1 # give server time to start
+          $PYTHON ssession_rabbitMQ_client_test.py
+          kill -SIGTERM $!
+          echo
+
+      - name: Test examples (Secure Comparator)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/python
+
+          $PYTHON scomparator_test_server.py | tee server-output.txt &
+          sleep 1 # give server time to start
+          $PYTHON scomparator_test_client.py | tee client-output.txt
+          test "$(cat server-output.txt)" = "match"
+          test "$(cat client-output.txt)" = "match"
+
+      - name: Build Themis Server
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/Themis-server/python
+          # Since these require manual configuration, we just check the syntax.
+          # Though it doesn't guarantee much: enjoy dynamic scripting languages.
+          rm -f *.pyc
+          $PYTHON -m py_compile smessage_client.py
+          $PYTHON -m py_compile ssession_client.py

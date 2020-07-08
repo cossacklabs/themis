@@ -22,12 +22,13 @@ for store additional encryption data we will use separate table "scell_data_auth
 stored object is represented by two independent string value
 """
 
+import base64
 import sys
 import psycopg2
 import psycopg2.extras
 from pythemis import scell
 
-password = b"password"
+master_key = base64.b64decode(b'c2NlbGxfeG1sX2Zvcm1hdC1wcmVzZXJ2aW5nX2VuY3J5cHRpb24ucHk=')
 
 CREATE_SCELL_DATA_TABLE_SQL = ("CREATE TABLE IF NOT EXISTS scell_data ("
                                "id serial PRIMARY KEY, num bytea, data bytea);")
@@ -44,7 +45,7 @@ def init_table(connection):
 
 
 def add_record(connection, field1, field2):
-    encryptor = scell.SCellTokenProtect(password)
+    encryptor = scell.SCellTokenProtect(master_key)
     # encrypt field1
     encrypted_field1, field1_auth_data = encryptor.encrypt(
         field1.encode('utf-8'))
@@ -72,7 +73,7 @@ def add_record(connection, field1, field2):
 
 def get_record(connection, id):
     # retrieve record from db by id
-    dec = scell.SCellTokenProtect(password)
+    dec = scell.SCellTokenProtect(master_key)
     with connection.cursor() as cursor:
         cursor.execute(
             "SELECT * FROM scell_data "
@@ -100,7 +101,7 @@ def get_record(connection, id):
 
 if __name__ == '__main__':
     dsn = ("dbname=scell_token_protect_test user=postgres password=postgres "
-           "host=172.17.0.2")
+           "host=localhost")
     with psycopg2.connect(dsn) as connection:
         init_table(connection)
         row_id = add_record(connection, "First record", "Second record")

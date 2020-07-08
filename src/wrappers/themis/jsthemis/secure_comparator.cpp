@@ -79,8 +79,8 @@ void SecureComparator::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             return;
         }
         if (!args[0]->IsUint8Array()) {
-            ThrowParameterError("Secure Comparator constructor",
-                                "secret is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureComparator",
+                           "secret is not a byte buffer, use ByteBuffer or Uint8Array");
             return;
         }
         if (node::Buffer::Length(args[0]) == 0) {
@@ -133,8 +133,7 @@ void SecureComparator::proceedCompare(const Nan::FunctionCallbackInfo<v8::Value>
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Comparator failed to proceed comparison",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureComparator", "message is not a byte buffer, use ByteBuffer or Uint8Array");
         return;
     }
     if (node::Buffer::Length(args[0]) == 0) {

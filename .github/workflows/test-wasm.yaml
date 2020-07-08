@@ -1,0 +1,84 @@
+name: WasmThemis
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-wasm.yaml'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/wasm/**'
+      - 'tests/common/**'
+      - 'tests/soter/**'
+      - 'tests/themis/**'
+      - '!tests/themis/wrappers/android/**'
+      - 'third_party/boringssl/src/**'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+  # RNG tests tend to fail in virtualized environment due to /dev/random
+  # not behaving properly. Disable them to avoid spurious failures.
+  NO_NIST_STS: 1
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - 8.x   # legacy
+          - 10.x  # old LTS
+          - 12.x  # current LTS
+          - 14.x  # current stable
+      fail-fast: false
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Emscripten
+        run: |
+          # Install Emscripten toolchain as described in documentation:
+          # https://emscripten.org/docs/getting_started/downloads.html
+          cd $HOME
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd $HOME/emsdk
+          # FIXME(ilammy, 2020-07-07): unpin emsdk version [T1698]
+          # Latest HEAD has a regression, we roll back to last good version.
+          git checkout 92d512faa832b3ff5d6b8bc991b6801e31d8e372
+          # FIXME(ilammy, 2020-06-07): migrate to "upstream" flavor
+          # LLVM flavor of Emscripten has some issues compiling our code,
+          # and latest versions of the fastcomp flavor started giving out
+          # compiler warnings (turned into errors by the build system).
+          # We need to migrate, but for the time being use the old version.
+          ./emsdk install  1.39.16-fastcomp
+          ./emsdk activate 1.39.16-fastcomp
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Build WasmThemis
+        run: |
+          source "$HOME/emsdk/emsdk_env.sh"
+          emmake make wasmthemis
+      - name: Run test suite (Themis Core)
+        run: |
+          source "$HOME/emsdk/emsdk_env.sh"
+          emmake make test
+      - name: Run test suite (WasmThemis)
+        run: make test_wasm

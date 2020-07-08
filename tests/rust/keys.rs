@@ -15,7 +15,7 @@
 use themis::keygen::{gen_ec_key_pair, gen_rsa_key_pair};
 use themis::keys::{
     EcdsaPrivateKey, EcdsaPublicKey, KeyKind, KeyPair, PrivateKey, PublicKey, RsaPrivateKey,
-    RsaPublicKey,
+    RsaPublicKey, SymmetricKey,
 };
 use themis::ErrorKind;
 
@@ -83,4 +83,26 @@ fn join_mismatching_keys() {
 
     let error = KeyPair::try_join(private_ec, public_rsa).expect_err("kind mismatch");
     assert_eq!(error.kind(), ErrorKind::InvalidParameter);
+}
+
+#[test]
+fn generate_symmetric_keys() {
+    let default_size = 32;
+    let key = SymmetricKey::new();
+    assert_eq!(key.as_ref().len(), default_size);
+}
+
+#[test]
+fn parse_generated_symmetric_keys_back() {
+    let this_key = SymmetricKey::new();
+    let same_key = SymmetricKey::try_from_slice(&this_key);
+    assert!(same_key.is_ok());
+    let same_key = same_key.unwrap();
+    assert_eq!(this_key, same_key);
+}
+
+#[test]
+fn parse_custom_symmetric_keys() {
+    assert!(SymmetricKey::try_from_slice(&[0]).is_ok());
+    assert!(SymmetricKey::try_from_slice(&[]).is_err());
 }

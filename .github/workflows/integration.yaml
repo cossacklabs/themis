@@ -1,0 +1,166 @@
+name: Integration testing
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/integration.yaml'
+      - 'gothemis/**'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/jsthemis/**'
+      - 'src/wrappers/themis/php/**'
+      - 'src/wrappers/themis/php7/**'
+      - 'src/wrappers/themis/python/**'
+      - 'src/wrappers/themis/ruby/**'
+      - 'src/wrappers/themis/rust/**'
+      - 'src/wrappers/themis/wasm/**'
+      - 'third_party/boringssl/src/**'
+      - 'tools/_integration/**'
+      - 'Cargo.toml'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+
+jobs:
+  cross-language:
+    name: Cross-language tests
+    runs-on: ubuntu-latest
+    env:
+      GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc g++ make libssl-dev \
+            python  python-setuptools \
+            python3 python3-setuptools \
+            ruby ruby-dev \
+            pkg-config clang
+      - name: Install RVM
+        run: |
+          sudo apt install --yes software-properties-common
+          sudo apt-add-repository -y ppa:rael-gc/rvm
+          sudo apt update
+          sudo apt install rvm
+          # Recent versions of RVM do not add us to "rvm" group automatically
+          # and install their binaries into /usr/share, expecting the PATH
+          # to be set via shell profile. GitHub Actions do not load profile
+          # so we have to tweak the path manually here.
+          sudo usermod -a -G rvm $(id -nu)
+          echo "::add-path::/usr/share/rvm/bin"
+      - name: Install stable Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+      - name: Install Node.js 10.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - name: Install Emscripten
+        run: |
+          # Install Emscripten toolchain as described in documentation:
+          # https://emscripten.org/docs/getting_started/downloads.html
+          cd $HOME
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd $HOME/emsdk
+          # FIXME(ilammy, 2020-07-07): unpin emsdk version [T1698]
+          # Latest HEAD has a regression, we roll back to last good version.
+          git checkout 92d512faa832b3ff5d6b8bc991b6801e31d8e372
+          # FIXME(ilammy, 2020-06-07): migrate to "upstream" flavor
+          # LLVM flavor of Emscripten has some issues compiling our code,
+          # and latest versions of the fastcomp flavor started giving out
+          # compiler warnings (turned into errors by the build system).
+          # We need to migrate, but for the time being use the old version.
+          ./emsdk install  1.39.16-fastcomp
+          ./emsdk activate 1.39.16-fastcomp
+      - name: Install PHP from PPA
+        run: |
+          sudo apt install --yes software-properties-common
+          sudo add-apt-repository ppa:ondrej/php
+          sudo apt update
+          sudo apt install --yes \
+            php7.2 php7.2-fpm- php7.2-dev php7.2-xml php7.2-mbstring
+          sudo update-alternatives --set php        /usr/bin/php7.2
+          sudo update-alternatives --set php-config /usr/bin/php-config7.2
+          sudo update-alternatives --set phpize     /usr/bin/phpize7.2
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Install Themis Core
+        run: |
+          make
+          sudo make install
+      - name: Install ThemisPP
+        run: sudo make themispp_install
+      - name: Install PyThemis
+        run: sudo make pythemis_install
+      - name: Install RubyThemis
+        run: sudo make rbthemis_install
+      - name: Install GoThemis
+        run: |
+          mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
+          rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT
+      # Cargo pulls in quite a few stuff from the Internet and Rust always
+      # (slowly) recompiles dependencies, so make heavy use of caching
+      - name: Cache Cargo registry
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-registry-
+      - name: Cache Cargo index
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-index-
+      - name: Cache Cargo build
+        uses: actions/cache@v1
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-tools-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-build-target-tools-
+            ${{ runner.os }}-cargo-build-target-
+      - name: Install RustThemis (test tools)
+        run: make rustthemis_integration_tools
+      - name: Install JsThemis
+        run: |
+          echo Node.js: $(node --version)
+          echo npm: $(npm --version)
+          # FIXME(ilammy, 2020-03-20): don't run previous installers as root
+          # This makes "build" owned by root and JsThemis cannot move there.
+          # We should not have a reason to build stuff as root.
+          sudo chown $(id -u):$(id -g) build
+          make jsthemis_install
+      - name: Install WasmThemis
+        run: |
+          source "$HOME/emsdk/emsdk_env.sh"
+          emmake make wasmthemis BUILD_PATH=build-wasm
+          make wasmthemis_install BUILD_PATH=build-wasm
+      - name: Install PHPThemis
+        run: |
+          sudo make phpthemis_install
+          sudo bash -c 'echo "extension=phpthemis.so" > /etc/php/7.2/cli/conf.d/20-phpthemis.ini'
+      - name: Run integration tests
+        run: |
+          python tests/_integration/tests_generator.py
+          echo "Integration tests..."
+          bash tests/_integration/integration_total.sh
+          echo
+          echo "Key generation tests..."
+          bash tests/tools/check_keygen.sh
+          echo

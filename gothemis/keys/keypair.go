@@ -72,6 +72,11 @@ const (
 	KEYTYPE_RSA = TypeRSA
 )
 
+// Errors returned by key generation.
+var (
+	ErrInvalidType = errors.NewWithCode(errors.InvalidParameter, "invalid key type specified")
+)
+
 // PrivateKey stores a ECDSA or RSA private key.
 type PrivateKey struct {
 	Value []byte
@@ -91,7 +96,7 @@ type Keypair struct {
 // New generates a new random pair of keys of the specified type.
 func New(keytype int) (*Keypair, error) {
 	if (keytype != TypeEC) && (keytype != TypeRSA) {
-		return nil, errors.New("Incorrect key type")
+		return nil, ErrInvalidType
 	}
 
 	var privLen, pubLen C.size_t

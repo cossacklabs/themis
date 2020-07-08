@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"net"
+	"os"
+
 	"github.com/cossacklabs/themis/gothemis/keys"
 	"github.com/cossacklabs/themis/gothemis/session"
-	"net"
 )
 
 type callbacks struct {
@@ -27,12 +29,12 @@ func sendWrappedMessage(c net.Conn, ss *session.SecureSession, message string) b
 	buf, err := ss.Wrap([]byte(message))
 	if nil != err {
 		fmt.Println("error wrapping message")
-		return false
+		os.Exit(1)
 	}
 	_, err = c.Write(buf)
 	if err != nil {
 		fmt.Println("error writing bytes from socket")
-		return false
+		os.Exit(1)
 	}
 	return true
 }
@@ -42,12 +44,12 @@ func receiveUnwrappedMessage(c net.Conn, ss *session.SecureSession) string {
 	readBytes, err := c.Read(buf)
 	if err != nil {
 		fmt.Println("error reading bytes from socket")
-		return ""
+		os.Exit(1)
 	}
 	buf, _, err = ss.Unwrap(buf[:readBytes])
 	if nil != err {
 		fmt.Println("error unwraping message")
-		return ""
+		os.Exit(1)
 	}
 	return string(buf[:])
 }
@@ -56,42 +58,42 @@ func main() {
 	conn, err := net.Dial("tcp", "127.0.0.1:8080")
 	if err != nil {
 		fmt.Println("connection error")
-		return
+		os.Exit(1)
 	}
 	clientKeyPair, err := keys.New(keys.TypeEC)
 	if err != nil {
 		fmt.Println("error generating key pair")
-		return
+		os.Exit(1)
 	}
 	ss, err := session.New([]byte(base64.StdEncoding.EncodeToString(clientKeyPair.Public.Value)), clientKeyPair.Private, &callbacks{})
 	if err != nil {
 		fmt.Println("error creating secure session object")
-		return
+		os.Exit(1)
 	}
 
 	buf, err := ss.ConnectRequest()
 	if err != nil {
 		fmt.Println("error creating connection request")
-		return
+		os.Exit(1)
 	}
 
 	for {
 		_, err = conn.Write(buf)
 		if err != nil {
 			fmt.Println("error writing bytes from socket")
-			return
+			os.Exit(1)
 		}
 
 		buf = make([]byte, 10240)
 		readBytes, err := conn.Read(buf)
 		if err != nil {
 			fmt.Println("error reading bytes from socket")
-			return
+			os.Exit(1)
 		}
 		buffer, sendPeer, err := ss.Unwrap(buf[:readBytes])
 		if nil != err {
 			fmt.Println("error unwraping message")
-			return
+			os.Exit(1)
 		}
 		buf = buffer
 		if !sendPeer {

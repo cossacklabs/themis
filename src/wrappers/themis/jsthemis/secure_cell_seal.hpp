@@ -30,16 +30,45 @@ public:
     static void Init(v8::Local<v8::Object> exports);
 
 private:
-    explicit SecureCellSeal(const std::vector<uint8_t>& key);
+    friend class SecureCellSealWithPassphrase;
+
+    explicit SecureCellSeal(std::vector<uint8_t>&& key);
     ~SecureCellSeal();
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void WithKey(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void WithPassphrase(const Nan::FunctionCallbackInfo<v8::Value>& args);
+
+    static void encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args);
+
+    static Nan::Persistent<v8::Function> constructor;
+    static Nan::Persistent<v8::FunctionTemplate> klass;
+
+private:
+    std::vector<uint8_t> key_;
+};
+
+class SecureCellSealWithPassphrase : public Nan::ObjectWrap
+{
+public:
+    static void Init(v8::Local<v8::Object> exports);
+
+private:
+    friend class SecureCellSeal;
+
+    explicit SecureCellSealWithPassphrase(std::vector<uint8_t>&& passphrase);
+    ~SecureCellSealWithPassphrase();
+
+    static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);
+
     static void encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args);
     static void decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args);
 
     static Nan::Persistent<v8::Function> constructor;
 
-    std::vector<uint8_t> key_;
+private:
+    std::vector<uint8_t> m_passphrase;
 };
 
 } // namespace jsthemis

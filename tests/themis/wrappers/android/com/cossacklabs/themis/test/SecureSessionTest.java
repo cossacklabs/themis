@@ -28,9 +28,11 @@ import com.cossacklabs.themis.SecureSession;
 import com.cossacklabs.themis.SecureSession.SessionDataType;
 import com.cossacklabs.themis.SecureSession.UnwrapResult;
 
-import android.test.AndroidTestCase;
+import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
-public class SecureSessionTest extends AndroidTestCase {
+public class SecureSessionTest {
 	
 	ISessionCallbacks callbacks = new ISessionCallbacks() {
 
@@ -80,7 +82,7 @@ public class SecureSessionTest extends AndroidTestCase {
 	Keypair serverPair;
 	
 	
-	@Override
+	@Before
 	public void setUp() {
 		try {
 			clientPair = KeypairGenerator.generateKeypair();
@@ -106,7 +108,9 @@ public class SecureSessionTest extends AndroidTestCase {
 		return data;
 	}
 	
-	@Override
+	// Allow deprecated #save and #restore methods.
+	@SuppressWarnings("deprecation")
+	@Test
 	public void runTest() {
 		
 		assertNotNull(clientPair);

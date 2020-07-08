@@ -18,6 +18,8 @@
 
 #include <openssl/rand.h>
 
+#include "soter/soter_wipe.h"
+
 soter_status_t soter_rand(uint8_t* buffer, size_t length)
 {
     int result;
@@ -29,9 +31,15 @@ soter_status_t soter_rand(uint8_t* buffer, size_t length)
     /* BoringSSL's RAND_bytes() accepts size_t, no need to cast */
     result = RAND_bytes(buffer, length);
 
-    if (result < 0) {
-        return SOTER_NOT_SUPPORTED;
+    if (result == 1) {
+        return SOTER_SUCCESS;
     }
 
-    return (result == 1) ? SOTER_SUCCESS : SOTER_FAIL;
+    /*
+     * Make sure we don't leak PRNG state in case the buffer has been
+     * partially filled and we have to return an error.
+     */
+    soter_wipe(buffer, length);
+
+    return (result < 0) ? SOTER_NOT_SUPPORTED : SOTER_FAIL;
 }

@@ -1,0 +1,123 @@
+name: JsThemis
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-nodejs.yaml'
+      - 'docs/examples/js/**'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/jsthemis/**'
+      - 'test/jsthemis/**'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - 8.x   # legacy
+          - 10.x  # old LTS
+          - 12.x  # current LTS
+          - 14.x  # current stable
+      fail-fast: false
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core
+        run: |
+          make
+          sudo make install
+      - name: Run test suite
+        run: |
+          echo Node.js: $(node --version)
+          echo npm: $(npm --version)
+          make test_js
+
+  examples:
+    name: Code examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev
+      - name: Install Node.js 10.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core
+        run: |
+          make
+          sudo make install
+      - name: Install JsThemis
+        run: |
+          echo Node.js: $(node --version)
+          echo npm: $(npm --version)
+          rm -rf node_modules package-lock.json
+          make jsthemis_install
+      - name: Test examples (Secure Cell)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/js
+          echo "Test Secure Cell..."
+          node secure_cell.js
+          echo "ok"
+      - name: Test examples (Secure Message)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/js
+          echo "Test Secure Message..."
+          alice=($(node secure_keygen.js | cut -c 15-))
+          bob=($(node secure_keygen.js | cut -c 15-))
+          enc=$(node secure_message.js enc "${alice[0]}" "${bob[1]}" message)
+          dec=$(node secure_message.js dec "${bob[0]}" "${alice[1]}" "$enc")
+          test "$dec" = "message"
+          echo "ok"
+      - name: Test examples (Secure Session)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/js
+          echo "Test Secure Session..."
+          node secure_session_server.js &
+          sleep 1 # give the server time to launch
+          node secure_session_client.js > output.txt
+          kill -SIGTERM "$!"
+          grep -q 'Hello server!!!' output.txt
+          echo "ok"
+      - name: Test examples (Secure Comparator)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/js
+          echo "Test Secure Comparator..."
+          node secure_comparator_server.js &
+          sleep 1 # give the server time to launch
+          node secure_comparator_client.js
+          kill -SIGTERM "$!"
+          echo "ok"

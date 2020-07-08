@@ -74,6 +74,12 @@ const (
 	COMPARE_NOT_READY = NotReady
 )
 
+// Errors returned by Secure Comparator.
+var (
+	ErrMissingSecret = errors.NewWithCode(errors.InvalidParameter, "empty secret for Secure Comparator")
+	ErrMissingData   = errors.NewWithCode(errors.InvalidParameter, "empty comparison message for Secure Comparator")
+)
+
 // SecureCompare is an interactive protocol for two parties that compares whether
 // they share the same secret or not.
 type SecureCompare struct {
@@ -113,7 +119,7 @@ func (sc *SecureCompare) Close() error {
 // Append adds data to be compared.
 func (sc *SecureCompare) Append(secret []byte) error {
 	if nil == secret || 0 == len(secret) {
-		return errors.New("Secret was not provided")
+		return ErrMissingSecret
 	}
 	if !bool(C.compare_append(sc.ctx, unsafe.Pointer(&secret[0]), C.size_t(len(secret)))) {
 		return errors.New("Failed to append secret")
@@ -145,7 +151,7 @@ func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 	var outLen C.size_t
 
 	if nil == data || 0 == len(data) {
-		return nil, errors.New("Data was not provided")
+		return nil, ErrMissingData
 	}
 
 	if !bool(C.compare_proceed_size(sc.ctx, unsafe.Pointer(&data[0]), C.size_t(len(data)), &outLen)) {

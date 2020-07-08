@@ -18,6 +18,7 @@
  */
 
 const libthemis = require('./libthemis.js')
+const {TextEncoder} = require('fastestsmallesttextencoderdecoder')
 
 /**
  * Convert an object into a byte buffer.
@@ -32,6 +33,30 @@ module.exports.coerceToBytes = function(buffer) {
         return new Uint8Array(buffer)
     }
     throw new TypeError('type mismatch, expect "Uint8Array" or "ArrayBuffer"')
+}
+
+const utf8Encoder = new TextEncoder()
+
+function stringToUTF8(str) {
+    return utf8Encoder.encode(str)
+}
+
+/**
+ * Convert passphrase into a byte buffer.
+ *
+ * @throws TypeError if input type is not supported
+ */
+module.exports.passphraseBytes = function(passphrase) {
+    if (typeof passphrase === 'string') {
+        return stringToUTF8(passphrase)
+    }
+    if (passphrase instanceof Uint8Array) {
+        return passphrase
+    }
+    if (passphrase instanceof ArrayBuffer) {
+        return new Uint8Array(passphrase)
+    }
+    throw new TypeError('type mismatch, expect "string" or "Uint8Array", "ArrayBuffer"')
 }
 
 /**

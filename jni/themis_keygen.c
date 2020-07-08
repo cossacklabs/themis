@@ -56,6 +56,15 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_gene
         return NULL;
     }
 
+    /*
+     * Normally the keys should not be this big, but just in case, avoid
+     * integer overflow here. JVM cannot allocate more than 2 GB in one chunk.
+     */
+    if (private_key_length > INT32_MAX || public_key_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
+        return NULL;
+    }
+
     private_key = (*env)->NewByteArray(env, private_key_length);
     if (!private_key) {
         return NULL;
@@ -112,4 +121,54 @@ JNIEXPORT jobjectArray JNICALL Java_com_cossacklabs_themis_KeypairGenerator_gene
     (*env)->SetObjectArrayElement(env, keys, 1, public_key);
 
     return keys;
+}
+
+JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SymmetricKey_generateSymmetricKey(JNIEnv* env,
+                                                                                           jobject thiz)
+{
+    themis_status_t res;
+    jbyteArray key = NULL;
+    jbyte* key_buffer = NULL;
+    size_t key_length = 0;
+
+    UNUSED(thiz);
+
+    res = themis_gen_sym_key(NULL, &key_length);
+    if (res != THEMIS_BUFFER_TOO_SMALL) {
+        goto error;
+    }
+
+    /*
+     * Normally the key should not be this big, but just in case, avoid
+     * integer overflow here. JVM cannot allocate more than 2 GB in one chunk.
+     */
+    if (key_length > INT32_MAX) {
+        res = THEMIS_NO_MEMORY;
+        return NULL;
+    }
+
+    key = (*env)->NewByteArray(env, key_length);
+    if (!key) {
+        goto error;
+    }
+
+    key_buffer = (*env)->GetByteArrayElements(env, key, NULL);
+    if (!key_buffer) {
+        goto error;
+    }
+
+    res = themis_gen_sym_key((uint8_t*)key_buffer, &key_length);
+    if (res != THEMIS_SUCCESS) {
+        goto error_release_key;
+    }
+
+    (*env)->ReleaseByteArrayElements(env, key, key_buffer, 0);
+
+    return key;
+
+error_release_key:
+    (*env)->ReleaseByteArrayElements(env, key, key_buffer, JNI_ABORT);
+
+error:
+    return NULL;
 }

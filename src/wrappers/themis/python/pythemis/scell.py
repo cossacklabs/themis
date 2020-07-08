@@ -14,7 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+import six
 import warnings
+
 from ctypes import cdll, c_int, byref, create_string_buffer, string_at
 from ctypes.util import find_library
 
@@ -24,11 +27,43 @@ from .exception import THEMIS_CODES
 themis = cdll.LoadLibrary(find_library('themis'))
 
 
+class SecureCellError(ThemisError):
+    def __init__(self, message, error_code=THEMIS_CODES.INVALID_PARAMETER):
+        message = 'Secure Cell: ' + message
+        super(SecureCellError, self).__init__(error_code, message)
+
+
 class SCellSeal(object):
+    def __new__(cls, key=None, passphrase=None, **kwargs):
+        """
+        Make a new Secure Cell in Seal mode.
+
+        You must specify either key= or passphrase= keyword argument.
+
+        :type key: bytes
+        :type passphrase: Union(str, bytes)
+        """
+        if key is None and passphrase is None:
+            raise SecureCellError('missing key or passphrase')
+        if key is not None and passphrase is not None:
+            raise SecureCellError('key and passphrase cannot be specified at the same time')
+        if key is not None:
+            return object.__new__(SCellSeal)
+        if passphrase is not None:
+            return object.__new__(SCellSealPassphrase)
+
     def __init__(self, key):
+        """
+        Make a new Secure Cell in Seal mode with a master key.
+
+        :type key: bytes
+        """
         if not key:
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Seal) failed creating")
+        if not isinstance(key, six.binary_type):
+            warnings.warn('master key should be "bytes", '
+                          'consider using "passphrase=" API with strings')
         self.key = key
 
     def encrypt(self, message, context=None):
@@ -70,11 +105,100 @@ class SCellSeal(object):
         return string_at(decrypted_message, decrypted_message_length.value)
 
 
+class SCellSealPassphrase(SCellSeal):
+    def __new__(cls, passphrase, **kwargs):
+        """
+        Make a new Secure Cell in Seal mode with a passphrase.
+
+        :type passphrase: Union(str, bytes)
+        """
+        return object.__new__(SCellSealPassphrase)
+
+    def __init__(self, passphrase, encoding='utf-8'):
+        """
+        Make a new Secure Cell in Seal mode with a passphrase.
+
+        :type passphrase: Union(str, bytes)
+        """
+        if not passphrase:
+            raise SecureCellError('passphrase cannot be empty')
+        if isinstance(passphrase, six.text_type):
+            passphrase = passphrase.encode(encoding)
+        elif isinstance(passphrase, six.binary_type):
+            pass
+        else:
+            raise SecureCellError('passphrase must be either "unicode" or "bytes"')
+        self.passphrase = passphrase
+
+    def encrypt(self, message, context=None):
+        """
+        Encrypt given message with optional context.
+
+        :type message: bytes
+        :type context: bytes
+        :returns bytes
+        """
+        context_length = len(context) if context else 0
+        encrypted_message_length = c_int(0)
+
+        res = themis.themis_secure_cell_encrypt_seal_with_passphrase(
+                self.passphrase, len(self.passphrase),
+                context, context_length,
+                message, len(message),
+                None, byref(encrypted_message_length))
+        if res != THEMIS_CODES.BUFFER_TOO_SMALL:
+            raise SecureCellError("encryption failed", error_code=res)
+
+        encrypted_message = create_string_buffer(encrypted_message_length.value)
+        res = themis.themis_secure_cell_encrypt_seal_with_passphrase(
+                self.passphrase, len(self.passphrase),
+                context, context_length,
+                message, len(message),
+                encrypted_message, byref(encrypted_message_length))
+        if res != THEMIS_CODES.SUCCESS:
+            raise SecureCellError("encryption failed", error_code=res)
+
+        return string_at(encrypted_message, encrypted_message_length.value)
+
+    def decrypt(self, message, context=None):
+        """
+        Decrypt given message with optional context.
+
+        :type message: bytes
+        :type context: bytes
+        :returns bytes
+        """
+        context_length = len(context) if context else 0
+        decrypted_message_length = c_int(0)
+
+        res = themis.themis_secure_cell_decrypt_seal_with_passphrase(
+                self.passphrase, len(self.passphrase),
+                context, context_length,
+                message, len(message),
+                None, byref(decrypted_message_length))
+        if res != THEMIS_CODES.BUFFER_TOO_SMALL:
+            raise SecureCellError("decryption failed", error_code=res)
+
+        decrypted_message = create_string_buffer(decrypted_message_length.value)
+        res = themis.themis_secure_cell_decrypt_seal_with_passphrase(
+                self.passphrase, len(self.passphrase),
+                context, context_length,
+                message, len(message),
+                decrypted_message, byref(decrypted_message_length))
+        if res != THEMIS_CODES.SUCCESS:
+            raise SecureCellError("decryption failed", error_code=res)
+
+        return string_at(decrypted_message, decrypted_message_length.value)
+
+
 class SCellTokenProtect(object):
     def __init__(self, key):
         if not key:
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Token Protect) failed creating")
+        if not isinstance(key, six.binary_type):
+            warnings.warn('master key should be "bytes", '
+                          'consider using skeygen.GenerateSymmetricKey()')
         self.key = key
 
     def encrypt(self, message, context=None):
@@ -124,6 +248,9 @@ class SCellContextImprint(object):
         if not key:
             raise ThemisError(THEMIS_CODES.FAIL,
                               "Secure Cell (Context Imprint) failed creating")
+        if not isinstance(key, six.binary_type):
+            warnings.warn('master key should be "bytes", '
+                          'consider using skeygen.GenerateSymmetricKey()')
         self.key = key
 
     def encrypt(self, message, context):

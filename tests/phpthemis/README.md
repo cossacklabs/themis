@@ -1,14 +1,15 @@
-# Setup
+# Installation
 
-Make install for themis core lib
+For **Themis core library**:    
 ```
 git clone https://github.com/cossacklabs/themis.git
 cd themis
+make
 sudo make install
 ```
 
 
-Make intstall for phpthemis
+For **phpthemis**:
 
 ```
 cd tests/phpthemis
@@ -17,8 +18,8 @@ sudo make phpthemis_install
 
 # Unit tests
 
-
-You can use shell scripts  for convenience
+## Using shell scripts
+After installing Themis, run the following:
 ```
 composer_setup.sh # to setup PHP Composer
 
@@ -30,9 +31,9 @@ init_env-php7.sh
 
 ```
 
-Or proceed manually.
+## Manual installation
 
-Install Composer locally
+After installing Themis, start by installing PHP Composer locally:
 
 ```console
 php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
@@ -42,7 +43,7 @@ php -r "unlink('composer-setup.php');"
 
 ```
 
-Check you current php version
+Check you current php version:
 ```console
 # to see current state
 update-alternatives --display php
@@ -52,12 +53,14 @@ update-alternatives --list php
 sudo update-alternatives --set php <path_to_php>
 ```
 
-Link version specific composer config
+Link the version-specific composer config:
 ```console
 ln -s composer-php<version>.json composer.json
 ```
 
-Update environment
+Update the environment
 ```console
 php composer.phar update
 ```
+
+The end.

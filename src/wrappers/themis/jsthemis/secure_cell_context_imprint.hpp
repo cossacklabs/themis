@@ -30,10 +30,12 @@ public:
     static void Init(v8::Local<v8::Object> exports);
 
 private:
-    explicit SecureCellContextImprint(const std::vector<uint8_t>& key);
+    explicit SecureCellContextImprint(std::vector<uint8_t>&& key);
     ~SecureCellContextImprint();
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);
+    static void WithKey(const Nan::FunctionCallbackInfo<v8::Value>& args);
+
     static void encrypt(const Nan::FunctionCallbackInfo<v8::Value>& args);
     static void decrypt(const Nan::FunctionCallbackInfo<v8::Value>& args);
 

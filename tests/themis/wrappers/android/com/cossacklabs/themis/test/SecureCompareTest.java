@@ -5,9 +5,10 @@ import java.util.Random;
 import com.cossacklabs.themis.SecureCompare;
 import com.cossacklabs.themis.SecureCompareException;
 
-import android.test.AndroidTestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
-public class SecureCompareTest extends AndroidTestCase {
+public class SecureCompareTest {
 	
 	static final int MAX_TEST_DATA = 1024;
 	Random rand = new Random();
@@ -84,7 +85,7 @@ public class SecureCompareTest extends AndroidTestCase {
 		assertTrue(expectedResult == bob.getResult());
 	}
 	
-	@Override
+	@Test
 	public void runTest() {
 				
 		try {

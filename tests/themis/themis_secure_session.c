@@ -116,7 +116,7 @@ static int on_get_public_key(
         return -1;
     }
 
-    if (memcmp(peer->id, id, id_length)) {
+    if (memcmp(peer->id, id, id_length) != 0) {
         return -1;
     }
 

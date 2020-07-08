@@ -1,0 +1,176 @@
+name: PHPThemis
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-php.yaml'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/php/**'
+      - 'src/wrappers/themis/php7/**'
+      - 'tests/phpthemis/**'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev
+      - name: Install PHP from PPA
+        run: |
+          sudo apt install --yes software-properties-common
+          sudo add-apt-repository ppa:ondrej/php
+          sudo apt update
+          sudo apt install --yes \
+            php7.4 php7.4-fpm- php7.4-dev php7.4-xml php7.4-mbstring \
+            php7.3 php7.3-fpm- php7.3-dev php7.3-xml php7.3-mbstring \
+            php7.2 php7.2-fpm- php7.2-dev php7.2-xml php7.2-mbstring \
+            php7.1 php7.1-fpm- php7.1-dev php7.1-xml php7.1-mbstring \
+            php7.0 php7.0-fpm- php7.0-dev php7.0-xml php7.0-mbstring \
+            php5.6 php5.6-fpm- php5.6-dev php5.6-xml php5.6-mbstring
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Prepare Themis Core
+        run: |
+          make
+          sudo make install
+          make prepare_tests_all
+      - name: Run test suite (PHP 5.6)
+        if: always()
+        run: |
+          sudo update-alternatives --set php        /usr/bin/php5.6
+          sudo update-alternatives --set php-config /usr/bin/php-config5.6
+          sudo update-alternatives --set phpize     /usr/bin/phpize5.6
+          sudo git clean -fxd src
+          ./configure
+          sudo make phpthemis_install
+          make test_php
+      - name: Run test suite (PHP 7.0)
+        if: always()
+        run: |
+          sudo update-alternatives --set php        /usr/bin/php7.0
+          sudo update-alternatives --set php-config /usr/bin/php-config7.0
+          sudo update-alternatives --set phpize     /usr/bin/phpize7.0
+          sudo git clean -fxd src
+          ./configure
+          sudo make phpthemis_install
+          make test_php
+      - name: Run test suite (PHP 7.1)
+        if: always()
+        run: |
+          sudo update-alternatives --set php        /usr/bin/php7.1
+          sudo update-alternatives --set php-config /usr/bin/php-config7.1
+          sudo update-alternatives --set phpize     /usr/bin/phpize7.1
+          sudo git clean -fxd src
+          ./configure
+          sudo make phpthemis_install
+          make test_php
+      - name: Run test suite (PHP 7.2)
+        if: always()
+        run: |
+          sudo update-alternatives --set php        /usr/bin/php7.2
+          sudo update-alternatives --set php-config /usr/bin/php-config7.2
+          sudo update-alternatives --set phpize     /usr/bin/phpize7.2
+          sudo git clean -fxd src
+          ./configure
+          sudo make phpthemis_install
+          make test_php
+      - name: Run test suite (PHP 7.3)
+        if: false # PHP 7.3 is not supported currently and crashes
+        run: |
+          sudo update-alternatives --set php        /usr/bin/php7.3
+          sudo update-alternatives --set php-config /usr/bin/php-config7.3
+          sudo update-alternatives --set phpize     /usr/bin/phpize7.3
+          sudo git clean -fxd src
+          ./configure
+          sudo make phpthemis_install
+          make test_php
+      - name: Run test suite (PHP 7.4)
+        if: false # PHP 7.4 is not supported currently and crashes
+        run: |
+          sudo update-alternatives --set php        /usr/bin/php7.4
+          sudo update-alternatives --set php-config /usr/bin/php-config7.4
+          sudo update-alternatives --set phpize     /usr/bin/phpize7.4
+          sudo git clean -fxd src
+          ./configure
+          sudo make phpthemis_install
+          make test_php
+
+  examples:
+    name: Code examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev
+      - name: Install PHP from PPA
+        run: |
+          sudo apt install --yes software-properties-common
+          sudo add-apt-repository ppa:ondrej/php
+          sudo apt update
+          sudo apt install --yes \
+            php7.2 php7.2-fpm- php7.2-dev php7.2-xml php7.2-mbstring
+          sudo update-alternatives --set php        /usr/bin/php7.2
+          sudo update-alternatives --set php-config /usr/bin/php-config7.2
+          sudo update-alternatives --set phpize     /usr/bin/phpize7.2
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core
+        run: |
+          make
+          sudo make install
+      - name: Install PHPThemis
+        run: |
+          sudo make phpthemis_install
+          sudo sh -c 'echo "extension=phpthemis.so" > /etc/php/7.2/cli/conf.d/20-phpthemis.ini'
+      - name: Test examples (Secure Cell, PHP 7.2)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/php
+          echo "Testing Secure Cell..."
+          php scell_test.php
+          echo "ok"
+      - name: Test examples (Secure Message, PHP 7.2)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/php
+          echo "Testing Secure Message..."
+          php smessage_test.php
+          echo "ok"
+      - name: Test examples (Secure Session, PHP 7.2)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/php
+          echo "Testing Secure Session..."
+          php ssession_server.php &
+          sleep 1 # give the server time to launch
+          php ssession_client.php
+          kill -SIGTERM "$!"
+          echo "ok"
+      # Secure Comparator not supported by PHPThemis (as of v0.12, 2019-11-17)
+      - name: Check Themis-Server examples (PHP 7.2)
+        if: always()
+        run: |
+          # Since these require manual configuration, we just check the syntax.
+          cd $GITHUB_WORKSPACE/docs/examples/Themis-server/php
+          php -l smessage_client.php
+          php -l ssession_client.php

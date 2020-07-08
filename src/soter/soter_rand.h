@@ -49,6 +49,7 @@ extern "C" {
  * SOTER_FAIL indicates that there is not enough entropy available
  * to fill the entire buffer. Please try again later.
  */
+SOTER_MUST_USE
 SOTER_API
 soter_status_t soter_rand(uint8_t* buffer, size_t length);
 

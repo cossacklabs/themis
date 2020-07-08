@@ -46,6 +46,7 @@ class SSocket(object):
         return self.socket.close()
 
     def bind(self, param):
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         return self.socket.bind(param)
 
     def listen(self, param):

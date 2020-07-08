@@ -45,11 +45,12 @@ private:
 
     static Nan::Persistent<v8::Function> constructor;
 
+    static int get_public_key_for_id_callback(
+        const void* id, size_t id_length, void* key_buffer, size_t key_buffer_length, void* user_data);
+
 private:
     secure_session_t* session_;
     secure_session_user_callbacks_t callback_;
-
-public:
     Nan::Callback id_to_pub_key_callback_;
 };
 

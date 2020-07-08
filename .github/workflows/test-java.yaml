@@ -1,0 +1,77 @@
+name: JavaThemis
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-java.yaml'
+      - '**/*gradle*'
+      - 'jni/**'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/android/**'
+      - 'src/wrappers/themis/java/**'
+      - 'third_party/boringssl/src/**'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+      fail-fast: false
+    steps:
+      - name: Install system dependencies
+        run: |
+          if [[ "$(uname)" = "Darwin" ]]
+          then
+            brew install openssl
+          else
+            sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+            sudo apt update
+            sudo apt install --yes gcc make libssl-dev default-jdk
+          fi
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core with JNI
+        run: |
+          make all themis_jni
+          sudo make install themis_jni_install
+      - name: Build and test JavaThemis
+        # Set native library search path for Java explicitly since most
+        # distribution-provided JVMs do not look there by default.
+        run: |
+          ./gradlew --no-daemon -Djava.library.path=/usr/local/lib \
+            :desktop:build
+
+  android-tests:
+    name: Android emulator
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Build Themis
+        run: ./gradlew --no-daemon :android:assembleDebug
+      # This works reliably only in macOS runners which have HAXM available.
+      # Ubuntu runners do not have KVM enabled, modern x86 emulators do not
+      # work without KVM, and ARM emulator is abysmally slow.
+      - name: Run test suite
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: ./gradlew --no-daemon :android:connectedAndroidTest

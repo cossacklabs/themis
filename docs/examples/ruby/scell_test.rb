@@ -1,3 +1,4 @@
+#!/usr/bin/env ruby
 #
 # Copyright (c) 2015 Cossack Labs Limited
 #
@@ -12,41 +13,48 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
 
-#!/usr/bin/env ruby
-
-require 'rubygems'
 require 'rbthemis'
+require 'base64'
 
-key = 'password'
+passphrase = 'open sesame'
+master_key = Themis::gen_sym_key
 context = 'context'
 message = 'test message'
 
-scell_full = Themis::Scell.new(key, Themis::Scell::SEAL_MODE)
-mm = scell_full.encrypt(message, context)
-p mm
-p scell_full.decrypt(mm, context)
+puts "Secure Cell - Seal mode (master key)"
+scell = Themis::ScellSeal.new(master_key)
+encrypted = scell.encrypt(message, context)
+decrypted = scell.decrypt(encrypted, context)
+puts "Encoded:   #{Base64.encode64 message}"
+puts "Encrypted: #{Base64.encode64 encrypted}"
+puts "Decrypted: #{decrypted}"
+puts
 
-mm = scell_full.encrypt(message)
-p mm
-p scell_full.decrypt(mm)
+puts "Secure Cell - Seal mode (passphrase)"
+scell = Themis::ScellSealPassphrase.new(passphrase)
+encrypted = scell.encrypt(message, context)
+decrypted = scell.decrypt(encrypted, context)
+puts "Encoded:   #{Base64.encode64 message}"
+puts "Encrypted: #{Base64.encode64 encrypted}"
+puts "Decrypted: #{decrypted}"
+puts
 
-scell_auto_split = Themis::Scell.new(key, Themis::Scell::TOKEN_PROTECT_MODE)
+puts "Secure Cell - Token Protect mode"
+scell = Themis::ScellTokenProtect.new(master_key)
+encrypted, token = scell.encrypt(message, context)
+decrypted = scell.decrypt(encrypted, token, context)
+puts "Encoded:   #{Base64.encode64 message}"
+puts "Encrypted: #{Base64.encode64 encrypted}"
+puts "Token:     #{Base64.encode64 token}"
+puts "Decrypted: #{decrypted}"
+puts
 
-mm, ss = scell_auto_split.encrypt(message, context)
-p mm, ss
-p scell_auto_split.decrypt([mm, ss], context)
-
-mm = scell_auto_split.encrypt(message)
-p mm
-p scell_auto_split.decrypt(mm)
-
-scell_user_split = Themis::Scell.new(key, Themis::Scell::CONTEXT_IMPRINT_MODE)
-mm = scell_user_split.encrypt(message, context)
-p mm
-p scell_user_split.decrypt(mm, context)
-
-# mm = scell_user_split.encrypt(message)
-# p mm
-# p scell_user_split.decrypt(mm)
+puts "Secure Cell - Context Imprint mode"
+scell = Themis::ScellContextImprint.new(master_key)
+encrypted = scell.encrypt(message, context)
+decrypted = scell.decrypt(encrypted, context)
+puts "Encoded:   #{Base64.encode64 message}"
+puts "Encrypted: #{Base64.encode64 encrypted}"
+puts "Decrypted: #{decrypted}"
+puts

@@ -1,0 +1,60 @@
+name: Code style
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/code-style.yaml'
+      - 'docs/examples/c*/**'
+      - 'jni/**'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/jsthemis/**'
+      - 'src/wrappers/themis/themispp/**'
+      - 'tests/common/**'
+      - 'tests/soter/**'
+      - 'tests/themis/**'
+      - 'tests/themispp/**'
+      - 'tools/afl/**'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+
+jobs:
+  check-formatting:
+    name: Check formatting
+    runs-on: ubuntu-latest
+    # GitHub's host contains way too much crap in /etc/apt/sources.list
+    # which causes package conflicts in clang-format-8 and clang-tidy-8
+    # installation. Run this job in a pristine Ubuntu 19.10 container.
+    container: ubuntu:19.10
+    steps:
+      - name: Install system dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt update
+          apt install --yes make clang-8 clang-format-8 clang-tidy-8 libstdc++-8-dev \
+            nodejs npm libssl-dev \
+            default-jdk git
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Check code formatting
+        env:
+          CC:  clang-8
+          CXX: clang++-8
+          CLANG_FORMAT: clang-format-8
+          CLANG_TIDY:   clang-tidy-8
+        run: |
+          make fmt_check ENGINE=boringssl
+          make fmt_check ENGINE=openssl

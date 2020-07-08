@@ -1,0 +1,320 @@
+name: Themis Core
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-core.yaml'
+      - 'benches/themis/**'
+      - 'docs/examples/c/**'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'tests/common/**'
+      - 'tests/soter/**'
+      - 'tests/themis/**'
+      - '!tests/themis/wrappers/android/**'
+      - 'third_party/boringssl/src/**'
+      - 'tools/afl/**'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+  # RNG tests tend to fail in virtualized environment due to /dev/random
+  # not behaving properly. Disable them to avoid spurious failures.
+  NO_NIST_STS: 1
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ${{ matrix.os }}
+    env:
+      SOTER_KDF_RUN_LONG_TESTS: yes
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+      fail-fast: false
+    steps:
+      - name: Install system dependencies
+        run: |
+          if [[ "$(uname)" = "Darwin" ]]
+          then
+            brew install cmake ninja openssl
+          else
+            sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+            sudo apt update
+            sudo apt install --yes gcc make libssl-dev cmake ninja-build
+          fi
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Build Themis Core (OpenSSL)
+        if: always()
+        run: make prepare_tests_basic ENGINE=openssl BUILD_PATH=build-openssl
+      - name: Build Themis Core (BoringSSL)
+        if: always()
+        run: make prepare_tests_basic ENGINE=boringssl BUILD_PATH=build-boringssl
+      - name: Build Themis Core (WITH_SCELL_COMPAT)
+        if: always()
+        run: make prepare_tests_basic WITH_SCELL_COMPAT=yes BUILD_PATH=build-compat
+      - name: Run test suite (OpenSSL)
+        if: always()
+        run: make test BUILD_PATH=build-openssl
+      - name: Run test suite (BoringSSL)
+        if: always()
+        run: make test BUILD_PATH=build-boringssl
+      - name: Run test suite (WITH_SCELL_COMPAT)
+        if: always()
+        run: make test BUILD_PATH=build-compat
+
+  examples:
+    name: Code examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core
+        run: |
+          make
+          sudo make install
+      - name: Run examples
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/c/session_buffer_test
+          echo "Secure Session: buffer interface"
+          cc -o session_buffer_test session_buffer_test.c -lthemis
+          ./session_buffer_test
+
+          cd $GITHUB_WORKSPACE/docs/examples/c/ssession_test
+          echo "Secure Session: socket interface"
+          cc -o session_test client.c server.c session_test.c -lthemis -pthread
+          ./session_test
+
+  sanitizers:
+    name: Unit tests (with sanitizers)
+    runs-on: ubuntu-latest
+    env:
+      WITH_FATAL_SANITIZERS: yes
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc-8 clang-8 make libssl-dev
+      - name: Check out code
+        uses: actions/checkout@v2
+      # We test only OpenSSL flavor to not expand the testing matrix too much
+      # (rebuilding BoringSSL is not fun and takes much time)
+      - name: Check with GCC (ASan)
+        if: always()
+        run: make clean test CC=gcc-8 WITH_ASAN=1
+      - name: Check with GCC (TSan)
+        if: always()
+        run: make clean test CC=gcc-8 WITH_TSAN=1
+      - name: Check with GCC (UBSan)
+        if: always()
+        run: make clean test CC=gcc-8 WITH_UBSAN=1
+      - name: Check with Clang (ASan)
+        if: always()
+        run: make clean test CC=clang-8 WITH_ASAN=1
+      - name: Check with Clang (TSan)
+        if: always()
+        run: make clean test CC=clang-8 WITH_TSAN=1
+      - name: Check with Clang (UBSan)
+        if: always()
+        run: make clean test CC=clang-8 WITH_UBSAN=1
+
+  benchmarks:
+    name: Benchmarks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev gnuplot zip
+      - name: Install Rust toolchain (stable)
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core
+        run: |
+          make
+          sudo make install
+      # Cargo pulls in quite a few stuff from the Internet and Rust always
+      # (slowly) recompiles dependencies, so make heavy use of caching
+      - name: Cache Cargo registry
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-registry-
+      - name: Cache Cargo index
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-index-
+      - name: Cache Cargo build
+        uses: actions/cache@v1
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-build-target-
+      # This can take a while on the first run, it's better with caches
+      - name: Build benchmarks
+        run: |
+          cd benches/themis
+          cargo bench --no-run
+      # TODO: if building a pull request, compare base with updates
+      - name: Benchmark Secure Cell (master key)
+        run: |
+          cd benches/themis
+          cargo bench -- 'Secure Cell .* master key/4 KB'
+      - name: Benchmark Secure Cell (passphrase)
+        run: |
+          cd benches/themis
+          # These are awfully slow due to KDF
+          cargo bench -- 'Secure Cell .* passphrase/4 KB' --sample-size 10
+      - name: Upload benchmark report
+        uses: actions/upload-artifact@v1
+        with:
+          name: Criterion report
+          path: benches/themis/target/criterion
+
+  fuzzing:
+    name: AFL fuzzing
+    runs-on: ubuntu-latest
+    env:
+      FUZZ_TIMEOUT: 30s
+      THEMIS_DEFAULT_PBKDF2_ITERATIONS: 10
+      WITH_FATAL_SANITIZERS: yes
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          # 32-bit toolchain is required to run AFL with some sanitizers
+          sudo dpkg --add-architecture i386
+          sudo apt update
+          sudo apt install --yes gcc make zip \
+              afl gcc-multilib libc6-dev:i386 \
+              libssl-dev:amd64 libssl-dev:i386
+          # AFL needs proper core dumps to be available, write them to files
+          sudo sh -c 'echo core > /proc/sys/kernel/core_pattern'
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Build fuzzing framework (Clang)
+        if: always()
+        run: make clean fuzz AFL_CC=afl-clang
+      - name: Build fuzzing framework (GCC)
+        if: always()
+        run: make clean fuzz AFL_CC=afl-gcc
+      # Don't run them for too long, we aim for low-hanging fruit here.
+      # Ideally we'd like to wait for AFL to make one cycle and stop.
+      - name: Fuzzing with Address Sanitizer
+        if: always()
+        run: |
+          make clean fuzz AFL_CC=afl-gcc WITH_ASAN=1
+          for tool in tools/afl/input/*
+          do
+            timeout -s INT "$FUZZ_TIMEOUT" \
+              make fuzz AFL_CC=afl-gcc WITH_ASAN=1 \
+                AFL_FUZZ="afl-fuzz -m 1024" \
+                FUZZ_BIN=$(basename $tool) \
+            | cat -u || true
+          done
+          # actions/upload-artifact cannot handle ":" in paths used by AFL,
+          # archive the report manually to prevent massive stalls
+          cd build/afl
+          zip -r results-asan.zip output
+          cd -
+          echo
+          echo Analyzing results...
+          echo
+          ./tools/afl/analyze_crashes.sh --no-debugger
+      - name: Upload ASan results
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: Core fuzzer report (ASan)
+          path: build/afl/results-asan.zip
+      - name: Fuzzing with Undefined Behavior Sanitizer
+        if: always()
+        run: |
+          make clean fuzz AFL_CC=afl-clang WITH_UBSAN=1
+          for tool in tools/afl/input/*
+          do
+            timeout -s INT "$FUZZ_TIMEOUT" \
+              make fuzz AFL_CC=afl-clang WITH_UBSAN=1 \
+                FUZZ_BIN=$(basename $tool) \
+            | cat -u || true
+          done
+          # actions/upload-artifact cannot handle ":" in paths used by AFL,
+          # archive the report manually to prevent massive stalls
+          cd build/afl
+          zip -r results-ubsan.zip output
+          cd -
+          echo
+          echo Analyzing results...
+          echo
+          ./tools/afl/analyze_crashes.sh --no-debugger
+      - name: Upload UBSan results
+        if: always()
+        uses: actions/upload-artifact@v1
+        with:
+          name: Core fuzzer report (UBSan)
+          path: build/afl/results-ubsan.zip
+      # TODO: 32-bit builds WITH_UBSAN=1
+
+  leak-check:
+    name: Memory leaks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev valgrind
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Build Themis Core
+        run: |
+          make prepare_tests_basic ENGINE=openssl   BUILD_PATH=build_openssl
+          make prepare_tests_basic ENGINE=boringssl BUILD_PATH=build_boringssl
+      - name: Check for leaks (OpenSSL)
+        if: always()
+        run: |
+          cd build_openssl
+          valgrind tests/soter_test  2>&1 | tee -a valgrind-report.txt
+          valgrind tests/themis_test 2>&1 | tee -a valgrind-report.txt
+          awk '
+            /ERROR SUMMARY|(definitely|indirectly|possibly) lost/ { sum += $4 }
+            END { if (sum > 0) { exit 1 } }
+          ' valgrind-report.txt
+      - name: Check for leaks (BoringSSL)
+        if: always()
+        run: |
+          cd build_boringssl
+          valgrind tests/soter_test  2>&1 | tee -a valgrind-report.txt
+          valgrind tests/themis_test 2>&1 | tee -a valgrind-report.txt
+          awk '
+            /ERROR SUMMARY|(definitely|indirectly|possibly) lost/ { sum += $4 }
+            END { if (sum > 0) { exit 1 } }
+          ' valgrind-report.txt

@@ -129,8 +129,9 @@
 //! ```
 
 use std::fmt;
+use std::ptr;
 
-use bindings::{themis_get_asym_key_kind, themis_is_valid_asym_key};
+use bindings::{themis_gen_sym_key, themis_get_asym_key_kind, themis_is_valid_asym_key};
 use zeroize::Zeroize;
 
 use crate::error::{Error, ErrorKind, Result};
@@ -539,6 +540,140 @@ fn try_get_key_kind(key: &KeyBytes) -> Result<KeyKind> {
 }
 
 //
+// Symmetric keys
+//
+
+/// Symmetric encryption key.
+///
+/// These keys are used by [`SecureCell`] objects.
+///
+/// Note that managing keys is _your_ responsibility. You have to make sure that keys
+/// are stored safely and are never disclosed to untrusted parties. You can consult
+/// [our guidelines][key-management] for some advice on key management.
+///
+/// [`SecureCell`]: ../secure_cell/index.html
+/// [key-management]: https://docs.cossacklabs.com/pages/documentation-themis/#key-management
+///
+/// # Examples
+///
+/// Generating a new symmetric key is trivial:
+///
+/// ```
+/// # fn main() -> Result<(), themis::Error> {
+/// use themis::keys::SymmetricKey;
+/// use themis::secure_cell::SecureCell;
+///
+/// let key = SymmetricKey::new();
+///
+/// let cell = SecureCell::with_key(&key)?.seal();
+///
+/// let encrypted = cell.encrypt(b"message")?;
+/// let decrypted = cell.decrypt(&encrypted)?;
+/// assert_eq!(decrypted, b"message");
+/// # Ok(())
+/// # }
+/// ```
+///
+/// Keys can be converted into a byte slice via the standard `AsRef` trait so that you can
+/// easily write them into files, send via network, pass to other Themis functions, and so on:
+///
+/// ```no_run
+/// # fn main() -> Result<(), std::io::Error> {
+/// # use themis::keys::SymmetricKey;
+/// # let key = SymmetricKey::new();
+/// use std::fs::File;
+/// use std::io::Write;
+///
+/// let mut file = File::create("master.key")?;
+/// file.write_all(key.as_ref())?;
+/// # Ok(())
+/// # }
+/// ```
+///
+/// You can also restore the keys from raw bytes using `try_from_slice` method. It checks that
+/// the byte slice indeed contains a valid Themis key:
+///
+/// ```no_run
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// # use themis::keys::SymmetricKey;
+/// use std::fs::File;
+/// use std::io::Read;
+///
+/// let mut file = File::open("master.key")?;
+///
+/// let mut buffer = Vec::new();
+/// file.read_to_end(&mut buffer)?;
+///
+/// let key = SymmetricKey::try_from_slice(&buffer)?;
+/// # Ok(())
+/// # }
+/// ```
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
+pub struct SymmetricKey {
+    inner: KeyBytes,
+}
+
+impl SymmetricKey {
+    /// Generates a new symmetric key.
+    ///
+    /// # Panics
+    ///
+    /// This function may panic in case of unrecoverable errors inside the library
+    /// (e.g., out-of-memory or assertion violations).
+    pub fn new() -> Self {
+        match Self::try_gen_sym_key() {
+            Ok(key) => key,
+            Err(e) => panic!("themis_gen_sym_key() failed: {}", e),
+        }
+    }
+
+    /// Generates a new symmetric key.
+    fn try_gen_sym_key() -> Result<Self> {
+        let mut key = Vec::new();
+        let mut key_len = 0;
+
+        unsafe {
+            let status = themis_gen_sym_key(ptr::null_mut(), &mut key_len);
+            let error = Error::from_themis_status(status);
+            if error.kind() != ErrorKind::BufferTooSmall {
+                return Err(error);
+            }
+        }
+
+        key.reserve(key_len);
+
+        unsafe {
+            let status = themis_gen_sym_key(key.as_mut_ptr(), &mut key_len);
+            let error = Error::from_themis_status(status);
+            if error.kind() != ErrorKind::Success {
+                return Err(error);
+            }
+            debug_assert!(key_len <= key.capacity());
+            key.set_len(key_len as usize);
+        }
+
+        Ok(Self {
+            inner: KeyBytes::from_vec(key).expect("invalid empty key"),
+        })
+    }
+
+    /// Parses a key from a byte slice.
+    ///
+    /// Returns an error if the slice does not contain a valid symmetric key.
+    pub fn try_from_slice(bytes: impl AsRef<[u8]>) -> Result<Self> {
+        Ok(Self {
+            inner: KeyBytes::copy_slice(bytes.as_ref())?,
+        })
+    }
+}
+
+impl Default for SymmetricKey {
+    fn default() -> Self {
+        SymmetricKey::new()
+    }
+}
+
+//
 // AsRef<[u8]> casts
 //
 
@@ -573,6 +708,12 @@ impl AsRef<[u8]> for PrivateKey {
 }
 
 impl AsRef<[u8]> for PublicKey {
+    fn as_ref(&self) -> &[u8] {
+        self.inner.as_bytes()
+    }
+}
+
+impl AsRef<[u8]> for SymmetricKey {
     fn as_ref(&self) -> &[u8] {
         self.inner.as_bytes()
     }

@@ -1,0 +1,58 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+buildscript {
+    dependencies {
+        // Kotlin plugin for Java
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+sourceSets {
+    main {
+        java.srcDirs = ['.']
+    }
+    test {
+        java.srcDirs = ['../../../../tests/themis/wrappers/android']
+    }
+}
+
+dependencies {
+    // Nullable annotations, etc.
+    // Use a compatibility version to support Java 6.
+    implementation 'org.jetbrains:annotations-java5:16.0.2'
+    // Unit tests
+    testImplementation 'junit:junit:4.13'
+    // Keep it at 1.2, see tests/themis/wrappers/android/com/cossacklabs/themis/test/Base64.java
+    testImplementation 'commons-codec:commons-codec:1.2'
+    // Kotlin for unit tests
+    testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+
+test {
+    useJUnit()
+
+    // Pass JVM options to the forked one used for test
+    systemProperty "java.library.path", System.getProperty("java.library.path")
+}
+
+// Tweak the resulting JAR name so it's not called "java".
+archivesBaseName = 'java-themis'
+version = javaThemisVersion
+group = 'com.cossacklabs'
+
+// Compile for Java 7.
+java {
+    sourceCompatibility JavaVersion.VERSION_1_7
+    targetCompatibility JavaVersion.VERSION_1_7
+}
+
+// Tweak compiler options.
+compileJava {
+    options.deprecation = true // log deprecated API usage
+    options.encoding = "ASCII" // allow only ASCII in source code
+}
+compileTestJava {
+    options.deprecation = true // log deprecated API usage
+    options.encoding = "ASCII" // allow only ASCII in source code
+}

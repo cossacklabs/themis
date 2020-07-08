@@ -14,6 +14,7 @@
 
 const themis = require('..')
 const assert = require('assert')
+const { performance } = require('perf_hooks')
 
 const ThemisErrorCode = themis.ThemisErrorCode
 
@@ -24,6 +25,13 @@ function expectError(errorCode) {
         }
         return false
     }
+}
+
+function measureTime(thunk) {
+    let t1 = performance.now()
+    thunk()
+    let t2 = performance.now()
+    return t2 - t1
 }
 
 describe('wasm-themis', function() {
@@ -94,7 +102,7 @@ describe('wasm-themis', function() {
             })
             it('detect data corruption', function() {
                 let key = new themis.KeyPair().privateKey
-                key[20] = 256 - key[20]
+                key[20] = ~key[20]
                 assert.throws(() => new themis.PrivateKey(key))
             })
             it('handles type mismatches', function() {
@@ -106,83 +114,107 @@ describe('wasm-themis', function() {
         })
     })
     describe('SecureCell', function() {
+        describe('key generation', function() {
+            const defaultLength = 32
+            it('generates new keys', function() {
+                let key = new themis.SymmetricKey()
+                assert.equal(key.length, defaultLength)
+            })
+            it('wraps existing keys', function() {
+                let buffer = new Uint8Array([1, 2, 3, 4])
+                let key = new themis.SymmetricKey(buffer)
+                assert.deepEqual(key, buffer)
+            })
+            it('fails with empty buffer', function() {
+                assert.throws(() => new themis.SymmetricKey(new Uint8Array()),
+                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                )
+            })
+            it('fails with invalid types', function() {
+                generallyInvalidArguments.forEach(function(invalid) {
+                    assert.throws(() => new themis.SymmetricKey(invalid),
+                        TypeError
+                    )
+                })
+            })
+        })
         let masterKey1 = new Uint8Array([1, 2, 3, 4])
         let masterKey2 = new Uint8Array([5, 6, 7, 8, 9])
+        let passphrase1 = 'open sesame'
+        let passphrase2 = 'pretty please'
         let emptyArray = new Uint8Array()
         let testInput = new Uint8Array([1, 1, 2, 3, 5, 8, 13])
         let testContext = new Uint8Array([42])
         describe('Seal mode', function() {
             it('does not accept strings', function() {
-                // It's a really nice idea to accept strings as 'master keys', but we have
-                // to define their interpretetaion. So treat them as errors for now.
-                assert.throws(() => new themis.SecureCellSeal('master key'), TypeError)
+                assert.throws(() => themis.SecureCellSeal.withKey('master key'), TypeError)
             })
             it('encrypts without context', function() {
-                let cell = new themis.SecureCellSeal(masterKey1)
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput)
                 let decrypted = cell.decrypt(encrypted)
                 assert.deepStrictEqual(decrypted, testInput)
             })
             it('encrypts with context', function() {
-                let cell = new themis.SecureCellSeal(masterKey1)
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
                 let decrypted = cell.decrypt(encrypted, testContext)
                 assert.deepStrictEqual(decrypted, testInput)
             })
             it('produces extended results', function() {
-                let cell = new themis.SecureCellSeal(masterKey1)
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput)
                 assert(encrypted.length > testInput.length)
             })
             it('forbits empty inputs', function() {
-                assert.throws(() => new themis.SecureCellSeal(emptyArray),
+                assert.throws(() => themis.SecureCellSeal.withKey(emptyArray),
                     expectError(ThemisErrorCode.INVALID_PARAMETER)
                 )
-                let cell = new themis.SecureCellSeal(masterKey1)
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
                 assert.throws(() => cell.encrypt(emptyArray),
                     expectError(ThemisErrorCode.INVALID_PARAMETER)
                 )
             })
             it('empty context == no context', function() {
-                let cell = new themis.SecureCellSeal(masterKey1)
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput)
                 let decrypted = cell.decrypt(encrypted, emptyArray)
                 assert.deepStrictEqual(decrypted, testInput)
             })
             it('null context == no context', function() {
-                let cell = new themis.SecureCellSeal(masterKey1)
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, null)
                 let decrypted = cell.decrypt(encrypted)
                 assert.deepStrictEqual(decrypted, testInput)
             })
             it('detects invalid master key', function() {
-                let cell1 = new themis.SecureCellSeal(masterKey1)
-                let cell2 = new themis.SecureCellSeal(masterKey2)
+                let cell1 = themis.SecureCellSeal.withKey(masterKey1)
+                let cell2 = themis.SecureCellSeal.withKey(masterKey2)
                 let encrypted = cell1.encrypt(testInput)
                 assert.throws(() => cell2.decrypt(encrypted),
                     expectError(ThemisErrorCode.FAIL)
                 )
             })
             it('detects invalid context', function() {
-                let cell = new themis.SecureCellSeal(masterKey1)
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
                 assert.throws(() => cell.decrypt(encrypted, testInput),
                     expectError(ThemisErrorCode.FAIL)
                 )
             })
             it('detects corrupted data', function() {
-                let cell = new themis.SecureCellSeal(masterKey1)
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput)
-                encrypted[20] = 256 - encrypted[20]
+                encrypted[20] = ~encrypted[20]
                 assert.throws(() => cell.decrypt(encrypted),
                     expectError(ThemisErrorCode.FAIL)
                 )
             })
             it('handles type mismatches', function() {
-                let cell = new themis.SecureCellSeal(masterKey1)
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput)
                 generallyInvalidArguments.forEach(function(invalid) {
-                    assert.throws(() => new themis.SecureCellSeal(invalid), TypeError)
+                    assert.throws(() => themis.SecureCellSeal.withKey(invalid), TypeError)
                     assert.throws(() => cell.encrypt(invalid), TypeError)
                     assert.throws(() => cell.decrypt(invalid), TypeError)
                     // null context is okay, it should not throw
@@ -192,36 +224,158 @@ describe('wasm-themis', function() {
                     }
                 })
             })
+            it('supports deprecated constructor API', function() {
+                let cellA = themis.SecureCellSeal.withKey(masterKey1)
+                let cellB = new themis.SecureCellSeal(masterKey1)
+                let encrypted = cellA.encrypt(testInput)
+                let decrypted = cellB.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+        })
+        describe('Seal mode (passphrase)', function() {
+            // Passphrase API uses KDF so it can be quite slow.
+            // Mocha uses default threshold of 75 ms which is not enough.
+            this.slow(1500) // milliseconds
+            const bottomLimit = 200
+
+            it('encrypts without context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('encrypts with context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                let decrypted = cell.decrypt(encrypted, testContext)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('produces extended results', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
+                assert(encrypted.length > testInput.length)
+            })
+            it('forbids empty inputs', function() {
+                assert.throws(() => themis.SecureCellSeal.withPassphrase(''),
+                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                )
+                assert.throws(() => themis.SecureCellSeal.withPassphrase(emptyArray),
+                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                )
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                assert.throws(() => cell.encrypt(emptyArray),
+                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                )
+            })
+            it('empty context == no context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted, emptyArray)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('null context == no context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput, null)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('detects invalid passphrase', function() {
+                let cell1 = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let cell2 = themis.SecureCellSeal.withPassphrase(passphrase2)
+                let encrypted = cell1.encrypt(testInput)
+                assert.throws(() => cell2.decrypt(encrypted),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('detects invalid context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput, testContext)
+                assert.throws(() => cell.decrypt(encrypted, testInput),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('detects corrupted data', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
+                encrypted[20] = ~encrypted[20]
+                assert.throws(() => cell.decrypt(encrypted),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('accepts byte arrays', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('passphrase is not master key', function() {
+                let cellMK = themis.SecureCellSeal.withKey(masterKey1)
+                let cellPW = themis.SecureCellSeal.withPassphrase(masterKey1)
+                let encryptedMK = cellMK.encrypt(testInput)
+                assert.throws(() => cellPW.decrypt(encryptedMK),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+                let encryptedPW = cellPW.encrypt(testInput)
+                assert.throws(() => cellMK.decrypt(encryptedPW),
+                    expectError(ThemisErrorCode.FAIL)
+                )
+            })
+            it('handles type mismatches', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
+                generallyInvalidArguments.forEach(function(invalid) {
+                    // strings are okay (only) for passphrase API
+                    if (typeof invalid !== 'string') {
+                        assert.throws(() => themis.SecureCellSeal.withPassphrase(invalid), TypeError)
+                    }
+                    assert.throws(() => cell.encrypt(invalid), TypeError)
+                    assert.throws(() => cell.decrypt(invalid), TypeError)
+                    // null context is okay, it should not throw
+                    if (invalid !== null) {
+                        assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
+                        assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
+                    }
+                })
+            })
+            it('takes its time to process data', function() {
+                // KDF deliberately slows down encryption and decryption.
+                // Make sure WebAssembly keeps it slow enough but not too slow.
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                var encrypted, decrypted
+                let timeEncrypt = measureTime(() => encrypted = cell.encrypt(testInput))
+                let timeDecrypt = measureTime(() => decrypted = cell.decrypt(encrypted))
+                assert.deepStrictEqual(decrypted, testInput)
+                assert(timeEncrypt >= bottomLimit)
+                assert(timeDecrypt >= bottomLimit)
+            })
         })
         describe('Token Protect mode', function() {
             it('does not accept strings', function() {
-                // It's a really nice idea to accept strings as 'master keys', but we have
-                // to define their interpretetaion. So treat them as errors for now.
-                assert.throws(() => new themis.SecureCellTokenProtect('master key'), TypeError)
+                assert.throws(() => themis.SecureCellTokenProtect.withKey('master key'), TypeError)
             })
             it('encrypts without context', function() {
-                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let cell = themis.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput)
                 let decrypted = cell.decrypt(result.data, result.token)
                 assert.deepStrictEqual(decrypted, testInput)
             })
             it('encrypts with context', function() {
-                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let cell = themis.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput, testContext)
                 let decrypted = cell.decrypt(result.data, result.token, testContext)
                 assert.deepStrictEqual(decrypted, testInput)
             })
             it('does not change encrypted data length', function() {
-                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let cell = themis.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput)
                 assert.strictEqual(result.data.length, testInput.length)
                 assert(result.token.length > 0)
             })
             it('forbids empty inputs', function() {
-                assert.throws(() => new themis.SecureCellTokenProtect(emptyArray),
+                assert.throws(() => themis.SecureCellTokenProtect.withKey(emptyArray),
                     expectError(ThemisErrorCode.INVALID_PARAMETER)
                 )
-                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let cell = themis.SecureCellTokenProtect.withKey(masterKey1)
                 assert.throws(() => cell.encrypt(emptyArray),
                     expectError(ThemisErrorCode.INVALID_PARAMETER)
                 )
@@ -234,28 +388,28 @@ describe('wasm-themis', function() {
                 )
             })
             it('empty context == no context', function() {
-                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let cell = themis.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput, emptyArray)
                 let decrypted = cell.decrypt(result.data, result.token)
                 assert.deepStrictEqual(decrypted, testInput)
             })
             it('null context == no context', function() {
-                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let cell = themis.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput)
                 let decrypted = cell.decrypt(result.data, result.token, null)
                 assert.deepStrictEqual(decrypted, testInput)
             })
             it('detects incorrect master key', function() {
-                let cell1 = new themis.SecureCellTokenProtect(masterKey1)
-                let cell2 = new themis.SecureCellTokenProtect(masterKey2)
+                let cell1 = themis.SecureCellTokenProtect.withKey(masterKey1)
+                let cell2 = themis.SecureCellTokenProtect.withKey(masterKey2)
                 let result = cell1.encrypt(testInput)
                 assert.throws(() => cell2.decrypt(result.data, result.token),
                     expectError(ThemisErrorCode.FAIL)
                 )
             })
             it('detects incorrect token', function() {
-                let cell1 = new themis.SecureCellTokenProtect(masterKey1)
-                let cell2 = new themis.SecureCellTokenProtect(masterKey2)
+                let cell1 = themis.SecureCellTokenProtect.withKey(masterKey1)
+                let cell2 = themis.SecureCellTokenProtect.withKey(masterKey2)
                 let result1 = cell1.encrypt(testInput)
                 let result2 = cell2.encrypt(testInput)
                 assert.throws(() => cell1.decrypt(result1.data, result2.token),
@@ -266,33 +420,33 @@ describe('wasm-themis', function() {
                 )
             })
             it('detects incorrect context', function() {
-                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let cell = themis.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput, testContext)
                 assert.throws(() => cell.decrypt(result.data, result.token, testInput),
                     expectError(ThemisErrorCode.FAIL)
                 )
             })
             it('detects corrupted data', function() {
-                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let cell = themis.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput)
-                result.data[5] = 256 - result.data[5]
+                result.data[5] = ~result.data[5]
                 assert.throws(() => cell.decrypt(result.data, result.token),
                     expectError(ThemisErrorCode.FAIL)
                 )
             })
             it('detects corrupted token', function() {
-                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let cell = themis.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput)
-                result.token[8] = 256 - result.token[8]
+                result.token[8] = ~result.token[8]
                 assert.throws(() => cell.decrypt(result.data, result.token),
-                    expectError(ThemisErrorCode.INVALID_PARAMETER)
+                    expectError(ThemisErrorCode.FAIL)
                 )
             })
             it('handles type mismatches', function() {
-                let cell = new themis.SecureCellTokenProtect(masterKey1)
+                let cell = themis.SecureCellTokenProtect.withKey(masterKey1)
                 let result = cell.encrypt(testInput)
                 generallyInvalidArguments.forEach(function(invalid) {
-                    assert.throws(() => new themis.SecureCellTokenProtect(invalid), TypeError)
+                    assert.throws(() => themis.SecureCellTokenProtect.withKey(invalid), TypeError)
                     assert.throws(() => cell.encrypt(invalid), TypeError)
                     assert.throws(() => cell.decrypt(result.data, invalid), TypeError)
                     assert.throws(() => cell.decrypt(invalid, result.token), TypeError)
@@ -303,30 +457,35 @@ describe('wasm-themis', function() {
                     }
                 })
             })
+            it('supports deprecated constructor API', function() {
+                let cellA = themis.SecureCellTokenProtect.withKey(masterKey1)
+                let cellB = new themis.SecureCellTokenProtect(masterKey1)
+                let result = cellA.encrypt(testInput)
+                let decrypted = cellB.decrypt(result.data, result.token)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
         })
         describe('Context Imprint mode', function() {
             it('does not accept strings', function() {
-                // It's a really nice idea to accept strings as 'master keys', but we have
-                // to define their interpretetaion. So treat them as errors for now.
-                assert.throws(() => new themis.SecureCellContextImprint('master key'), TypeError)
+                assert.throws(() => themis.SecureCellContextImprint.withKey('master key'), TypeError)
             })
             it('encrypts only with context', function() {
-                let cell = new themis.SecureCellContextImprint(masterKey1)
+                let cell = themis.SecureCellContextImprint.withKey(masterKey1)
                 assert.throws(() => cell.encrypt(testInput))
                 let encrypted = cell.encrypt(testInput, testContext)
                 let decrypted = cell.decrypt(encrypted, testContext)
                 assert.deepStrictEqual(decrypted, testInput)
             })
             it('encryption does not change data length', function() {
-                let cell = new themis.SecureCellContextImprint(masterKey1)
+                let cell = themis.SecureCellContextImprint.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
                 assert.equal(encrypted.length, testInput.length)
             })
             it('forbids empty message and context', function() {
-                assert.throws(() => new themis.SecureCellContextImprint(emptyArray),
+                assert.throws(() => themis.SecureCellContextImprint.withKey(emptyArray),
                     expectError(ThemisErrorCode.INVALID_PARAMETER)
                 )
-                let cell = new themis.SecureCellContextImprint(masterKey1)
+                let cell = themis.SecureCellContextImprint.withKey(masterKey1)
                 assert.throws(() => cell.encrypt(emptyArray, testContext))
                 assert.throws(() => cell.encrypt(null,       testContext))
                 assert.throws(() => cell.encrypt(testInput,  emptyArray))
@@ -341,30 +500,30 @@ describe('wasm-themis', function() {
                 assert.throws(() => cell.decrypt(null,       null))
             })
             it('does not detect incorrect master key', function() {
-                let cell1 = new themis.SecureCellContextImprint(masterKey1)
-                let cell2 = new themis.SecureCellContextImprint(masterKey2)
+                let cell1 = themis.SecureCellContextImprint.withKey(masterKey1)
+                let cell2 = themis.SecureCellContextImprint.withKey(masterKey2)
                 let encrypted = cell1.encrypt(testInput, testContext)
                 let decrypted = cell2.decrypt(encrypted, testContext)
                 assert.notDeepStrictEqual(testInput, decrypted)
             })
             it('does not detect incorrect context', function() {
-                let cell = new themis.SecureCellContextImprint(masterKey1)
+                let cell = themis.SecureCellContextImprint.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
                 let decrypted = cell.decrypt(encrypted, testInput)
                 assert.notDeepStrictEqual(testInput, decrypted)
             })
             it('does not detect corrupted data', function() {
-                let cell = new themis.SecureCellContextImprint(masterKey1)
+                let cell = themis.SecureCellContextImprint.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
-                encrypted[5] = 256 - encrypted[5]
+                encrypted[5] = ~encrypted[5]
                 let decrypted = cell.decrypt(encrypted, testContext)
                 assert.notDeepStrictEqual(testInput, decrypted)
             })
             it('handles type mismatches', function() {
-                let cell = new themis.SecureCellContextImprint(masterKey1)
+                let cell = themis.SecureCellContextImprint.withKey(masterKey1)
                 let encrypted = cell.encrypt(testInput, testContext)
                 generallyInvalidArguments.forEach(function(invalid) {
-                    assert.throws(() => new themis.SecureCellContextImprint(invalid), TypeError)
+                    assert.throws(() => themis.SecureCellContextImprint.withKey(invalid), TypeError)
                     assert.throws(() => cell.encrypt(invalid, testContext), TypeError)
                     assert.throws(() => cell.decrypt(invalid, testContext), TypeError)
                     // Contest Imprint mode has a custom error for omitted context
@@ -374,6 +533,13 @@ describe('wasm-themis', function() {
                     assert.throws(() => cell.encrypt(testInput, invalid), expectedError)
                     assert.throws(() => cell.decrypt(encrypted, invalid), expectedError)
                 })
+            })
+            it('supports deprecated constructor API', function() {
+                let cellA = themis.SecureCellContextImprint.withKey(masterKey1)
+                let cellB = new themis.SecureCellContextImprint(masterKey1)
+                let encrypted = cellA.encrypt(testInput, testContext)
+                let decrypted = cellB.decrypt(encrypted, testContext)
+                assert.deepStrictEqual(decrypted, testInput)
             })
         })
     })
@@ -422,7 +588,7 @@ describe('wasm-themis', function() {
             it('detects corrupted data', function() {
                 let secureMessage = new themis.SecureMessage(new themis.KeyPair())
                 let encrypted = secureMessage.encrypt(testInput)
-                encrypted[10] = 256 - encrypted[10]
+                encrypted[10] = ~encrypted[10]
                 assert.throws(() => secureMessage.decrypt(encrypted),
                     expectError(ThemisErrorCode.FAIL)
                 )
@@ -508,7 +674,7 @@ describe('wasm-themis', function() {
                 let signer = new themis.SecureMessageSign(keyPair.privateKey)
                 let verifier = new themis.SecureMessageVerify(keyPair.publicKey)
                 let signed = signer.sign(testInput)
-                signed[12] = 256 - signed[12]
+                signed[12] = ~signed[12]
                 assert.throws(() => verifier.verify(signed),
                     expectError(ThemisErrorCode.FAIL)
                 )

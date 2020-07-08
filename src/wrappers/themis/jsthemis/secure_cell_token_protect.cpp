@@ -16,8 +16,11 @@
 
 #include "secure_cell_token_protect.hpp"
 
+#include <utility>
+
 #include <node_buffer.h>
 
+#include <soter/soter.h>
 #include <themis/themis.h>
 
 #include "errors.hpp"
@@ -27,13 +30,14 @@ namespace jsthemis
 
 Nan::Persistent<v8::Function> SecureCellTokenProtect::constructor;
 
-SecureCellTokenProtect::SecureCellTokenProtect(const std::vector<uint8_t>& key)
-    : key_(key)
+SecureCellTokenProtect::SecureCellTokenProtect(std::vector<uint8_t>&& key)
+    : key_(std::move(key))
 {
 }
 
 SecureCellTokenProtect::~SecureCellTokenProtect()
 {
+    soter_wipe(key_.data(), key_.size());
 }
 
 void SecureCellTokenProtect::Init(v8::Local<v8::Object> exports)
@@ -43,6 +47,8 @@ void SecureCellTokenProtect::Init(v8::Local<v8::Object> exports)
     v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SecureCellTokenProtect::New);
     tpl->SetClassName(className);
     tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    // Static methods
+    Nan::SetMethod(tpl, "withKey", WithKey);
     // Prototype
     Nan::SetPrototypeMethod(tpl, "encrypt", encrypt);
     Nan::SetPrototypeMethod(tpl, "decrypt", decrypt);
@@ -62,8 +68,8 @@ void SecureCellTokenProtect::New(const Nan::FunctionCallbackInfo<v8::Value>& arg
             return;
         }
         if (!args[0]->IsUint8Array()) {
-            ThrowParameterError("Secure Cell (Token Protect) constructor",
-                                "master key is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureCellTokenProtect",
+                           "master key is not a byte buffer, use ByteBuffer or Uint8Array");
             args.GetReturnValue().SetUndefined();
             return;
         }
@@ -74,14 +80,28 @@ void SecureCellTokenProtect::New(const Nan::FunctionCallbackInfo<v8::Value>& arg
         }
         std::vector<uint8_t> key((uint8_t*)(node::Buffer::Data(args[0])),
                                  (uint8_t*)(node::Buffer::Data(args[0]) + node::Buffer::Length(args[0])));
-        SecureCellTokenProtect* obj = new SecureCellTokenProtect(key);
+        SecureCellTokenProtect* obj = new SecureCellTokenProtect(std::move(key));
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
     } else {
-        const int argc = 1;
-        v8::Local<v8::Value> argv[argc] = {args[0]};
-        v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
-        args.GetReturnValue().Set(Nan::NewInstance(cons, argc, argv).ToLocalChecked());
+        WithKey(args);
+    }
+}
+
+void SecureCellTokenProtect::WithKey(const Nan::FunctionCallbackInfo<v8::Value>& args)
+{
+    if (args.Length() != 1) {
+        ThrowParameterError("SecureCellTokenProtect",
+                            "incorrect argument count, expected symmetric key");
+        args.GetReturnValue().SetUndefined();
+        return;
+    }
+    const int argc = 1;
+    v8::Local<v8::Value> argv[argc] = {args[0]};
+    v8::Local<v8::Function> cons = Nan::New<v8::Function>(constructor);
+    Nan::MaybeLocal<v8::Object> cell = Nan::NewInstance(cons, argc, argv);
+    if (!cell.IsEmpty()) {
+        args.GetReturnValue().Set(cell.ToLocalChecked());
     }
 }
 
@@ -96,8 +116,8 @@ void SecureCellTokenProtect::encrypt(const Nan::FunctionCallbackInfo<v8::Value>&
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Token Protect) failed to encrypt",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellTokenProtect",
+                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -110,10 +130,10 @@ void SecureCellTokenProtect::encrypt(const Nan::FunctionCallbackInfo<v8::Value>&
     size_t token_length = 0;
     const uint8_t* context = NULL;
     size_t context_length = 0;
-    if (args.Length() == 2) {
+    if (args.Length() == 2 && !args[1]->IsNull()) {
         if (!args[1]->IsUint8Array()) {
-            ThrowParameterError("Secure Cell (Token Protect) failed to encrypt",
-                                "context is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureCellTokenProtect",
+                           "context is not a byte buffer, use ByteBuffer or Uint8Array");
             args.GetReturnValue().SetUndefined();
             return;
         }
@@ -175,8 +195,8 @@ void SecureCellTokenProtect::decrypt(const Nan::FunctionCallbackInfo<v8::Value>&
         return;
     }
     if (!args[0]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Token Protect) failed to decrypt",
-                            "message is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellTokenProtect",
+                       "message is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -186,8 +206,8 @@ void SecureCellTokenProtect::decrypt(const Nan::FunctionCallbackInfo<v8::Value>&
         return;
     }
     if (!args[1]->IsUint8Array()) {
-        ThrowParameterError("Secure Cell (Token Protect) failed to decrypt",
-                            "token is not a byte buffer, use ByteBuffer or Uint8Array");
+        ThrowTypeError("SecureCellTokenProtect",
+                       "token is not a byte buffer, use ByteBuffer or Uint8Array");
         args.GetReturnValue().SetUndefined();
         return;
     }
@@ -199,10 +219,10 @@ void SecureCellTokenProtect::decrypt(const Nan::FunctionCallbackInfo<v8::Value>&
     size_t length = 0;
     const uint8_t* context = NULL;
     size_t context_length = 0;
-    if (args.Length() == 3) {
+    if (args.Length() == 3 && !args[2]->IsNull()) {
         if (!args[2]->IsUint8Array()) {
-            ThrowParameterError("Secure Cell (Token Protect) failed to decrypt",
-                                "context is not a byte buffer, use ByteBuffer or Uint8Array");
+            ThrowTypeError("SecureCellTokenProtect",
+                           "context is not a byte buffer, use ByteBuffer or Uint8Array");
             args.GetReturnValue().SetUndefined();
             return;
         }

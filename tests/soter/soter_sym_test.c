@@ -225,7 +225,7 @@ static void test_known_values(void)
             soter_sym_decrypt_destroy(ctx);
             continue;
         }
-        testsuite_fail_if(memcmp(computed2, plaintext, computed_length2), "known decryption");
+        testsuite_fail_if(memcmp(computed2, plaintext, computed_length2) != 0, "known decryption");
     }
 }
 
@@ -339,9 +339,9 @@ static void test_known_values_gcm(void)
             testsuite_fail_if(res, "soter_sym_destroy");
         }
 
-        testsuite_fail_if(memcmp(computed, ciphertext, computed_length), "known encryption");
+        testsuite_fail_if(memcmp(computed, ciphertext, computed_length) != 0, "known encryption");
 
-        testsuite_fail_if(memcmp(auth_tag, expected_auth_tag, auth_tag_length),
+        testsuite_fail_if(memcmp(auth_tag, expected_auth_tag, auth_tag_length) != 0,
                           "known encryption (auth tag value)");
 
         /* Decryption */
@@ -388,7 +388,7 @@ static void test_known_values_gcm(void)
             continue;
         }
 
-        testsuite_fail_if(memcmp(computed2, plaintext, computed_length2), "known decryption");
+        testsuite_fail_if(memcmp(computed2, plaintext, computed_length2) != 0, "known decryption");
     }
 }
 
@@ -506,7 +506,7 @@ static void test_auth_tag(void)
 
     soter_sym_aead_decrypt_destroy(ctx);
 
-    if (memcmp(plaintext, decrypted, sizeof(plaintext))) {
+    if (memcmp(plaintext, decrypted, sizeof(plaintext)) != 0) {
         testsuite_fail_if(true, "decrypted date does not match plaintext");
         return;
     }

@@ -1,0 +1,228 @@
+name: RustThemis
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/test-rust.yaml'
+      - 'docs/examples/rust/**'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'src/wrappers/themis/rust/**'
+      - 'tests/rust/**'
+      - 'Cargo.toml'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '0 6 * * *' # every day at 6:00 UTC
+
+env:
+  WITH_FATAL_WARNINGS: yes
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev pkg-config clang
+      - name: Install stable Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          components: rustfmt, clippy
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core
+        run: |
+          make
+          sudo make install
+      # Cargo pulls in quite a few stuff from the Internet and Rust always
+      # (slowly) recompiles dependencies, so make heavy use of caching
+      - name: Cache Cargo registry
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-registry-
+      - name: Cache Cargo index
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-index-
+      - name: Cache Cargo build
+        uses: actions/cache@v1
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-unit-tests-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-build-target-unit-tests-
+            ${{ runner.os }}-cargo-build-target-
+      - name: Run test suite
+        run: make test_rust
+
+  examples:
+    name: Code examples
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev pkg-config clang
+      - name: Install stable Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core
+        run: |
+          make
+          sudo make install
+      # Cargo pulls in quite a few stuff from the Internet and Rust always
+      # (slowly) recompiles dependencies, so make heavy use of caching
+      - name: Cache Cargo registry
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-registry-
+      - name: Cache Cargo index
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-index-
+      - name: Cache Cargo build
+        uses: actions/cache@v1
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-examples-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-build-target-examples-
+            ${{ runner.os }}-cargo-build-target-
+      - name: Build examples
+        run: cargo build --examples
+      - name: Test examples (Secure Cell)
+        if: always()
+        run: |
+          cargo run --example secure_cell
+      - name: Test examples (Secure Message)
+        if: always()
+        run: |
+          cargo run --example keygen
+          cargo run --example secure_message_server &
+          server_pid=$!
+          (sleep 1; echo "hello from client 1"; sleep 1; echo "message from client 1"; sleep 1) | cargo run --example secure_message_client_encrypt | tee client-1.txt &
+          (sleep 1; echo "hello from client 2"; sleep 1; echo "message from client 2"; sleep 1) | cargo run --example secure_message_client_encrypt | tee client-2.txt &
+          sleep 4
+          # First messages may be skipped
+          grep -q "message from client 1" client-1.txt
+          grep -q "message from client 2" client-1.txt
+          grep -q "message from client 1" client-2.txt
+          grep -q "message from client 2" client-2.txt
+          (sleep 1; echo "hello from client 1"; sleep 1; echo "message from client 1"; sleep 1) | cargo run --example secure_message_client_verify | tee client-1.txt &
+          (sleep 1; echo "hello from client 2"; sleep 1; echo "message from client 2"; sleep 1) | cargo run --example secure_message_client_verify | tee client-2.txt &
+          sleep 4
+          # First messages may be skipped
+          grep -q "message from client 1" client-1.txt
+          grep -q "message from client 2" client-1.txt
+          grep -q "message from client 1" client-2.txt
+          grep -q "message from client 2" client-2.txt
+          kill -SIGTERM $server_pid
+      - name: Test examples (Secure Session)
+        if: always()
+        run: |
+          cargo run --example secure_session_echo_server &
+          sleep 1
+          echo "long enough message to avoid triggering an issue" | cargo run --example secure_session_echo_client | tee client.txt
+          kill -SIGTERM $!
+          test "$(cat client.txt)" = "long enough message to avoid triggering an issue"
+      - name: Test examples (Secure Comparator)
+        if: always()
+        run: |
+          echo "secret" | cargo run --example secure_compare -- server | tee server.txt &
+          sleep 1
+          echo "secret" | cargo run --example secure_compare -- client | tee client.txt
+          sleep 1
+          test "$(cat server.txt)" = "[+] match OK"
+          test "$(cat client.txt)" = "[+] match OK"
+
+          echo "alpha" | cargo run --example secure_compare -- server | tee server.txt &
+          sleep 1
+          echo "bravo" | cargo run --example secure_compare -- client | tee client.txt
+          sleep 1
+          test "$(cat server.txt)" = "[-] no match"
+          test "$(cat client.txt)" = "[-] no match"
+
+  bindgen:
+    name: libthemis-sys bindings
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes libssl-dev llvm
+      - name: Install stable Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          components: rustfmt
+      # Cargo pulls in quite a few stuff from the Internet and Rust always
+      # (slowly) recompiles dependencies, so make heavy use of caching
+      - name: Cache Cargo registry
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-registry-
+      - name: Cache Cargo index
+        uses: actions/cache@v1
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: ${{ runner.os }}-cargo-index-
+      - name: Cache Cargo build
+        uses: actions/cache@v1
+        with:
+          path: target
+          key: ${{ runner.os }}-cargo-build-target-unit-tests-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-build-target-unit-tests-
+            ${{ runner.os }}-cargo-build-target-
+      - name: Install Bindgen
+        run: cargo install bindgen
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Check bindgen.sh output
+        run: |
+          cd src/wrappers/themis/rust/libthemis-sys
+          mv src/lib.rs src/lib.rs.old
+          ./bindgen.sh
+          mv src/lib.rs src/lib.rs.new
+          if ! diff -u src/lib.rs.old src/lib.rs.new
+          then
+              echo
+              echo "Something has changed in exported definitions (see above)."
+              echo "You may need to do"
+              echo
+              echo "    cd src/wrappers/themis/rust/libthemis-sys"
+              echo "    ./bindgen.sh"
+              echo
+              echo "to refresh src/lib.rs content."
+              exit 1
+          fi
