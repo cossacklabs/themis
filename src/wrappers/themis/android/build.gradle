@@ -102,7 +102,7 @@ apply plugin: 'maven-publish'
 publishing {
     publications {
         Production(MavenPublication) {
-            artifact("$buildDir/outputs/aar/projects-release.aar")
+            artifact("build/outputs/aar/android.aar")
             groupId 'com.cossacklabs.com'
             artifactId 'themis'
             version androidThemisVersion
