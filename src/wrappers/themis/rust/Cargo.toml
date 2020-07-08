@@ -1,6 +1,6 @@
 [package]
 name = "themis"
-version = "0.12.0"
+version = "0.13.0"
 edition = "2018"
 authors = ["rust-themis developers"]
 description = "High-level cryptographic services for storage and messaging"
@@ -27,7 +27,7 @@ maintenance = { status = "actively-developed" }
 vendored = ["bindings/vendored"]
 
 [dependencies]
-bindings = { package = "libthemis-sys", path = "libthemis-sys", version = "0.12.0" }
+bindings = { package = "libthemis-sys", path = "libthemis-sys", version = "0.13.0" }
 zeroize = "0.5.2"
 
 [dev-dependencies]
