@@ -8,15 +8,6 @@ buildscript {
     }
 }
 
-sourceSets {
-    main {
-        java.srcDirs = ['.']
-    }
-    test {
-        java.srcDirs = ['../../../../tests/themis/wrappers/android']
-    }
-}
-
 dependencies {
     // Nullable annotations, etc.
     // Use a compatibility version to support Java 6.
@@ -27,6 +18,15 @@ dependencies {
     testImplementation 'commons-codec:commons-codec:1.2'
     // Kotlin for unit tests
     testImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+
+sourceSets {
+    main {
+        java.srcDirs = ['.']
+    }
+    test {
+        java.srcDirs = ['../../../../tests/themis/wrappers/android']
+    }
 }
 
 test {
