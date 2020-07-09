@@ -78,6 +78,9 @@ jobs:
         with:
           path: ~/.cocoapods
           key: ${{ runner.os }}-cocoapods-common
+      - name: Update CocoaPods repo
+        run: |
+          pod repo update
       - name: Install Themis via CocoaPods
         run: |
           cd $GITHUB_WORKSPACE/tests/objcthemis
@@ -234,6 +237,9 @@ jobs:
         with:
           path: ~/.cocoapods
           key: ${{ runner.os }}-cocoapods-common
+      - name: Update CocoaPods repo
+        run: |
+          pod repo update
       # Try building Themis for all iOS device architectures. We do it here
       # because CocoaPods does not allow to check that directly but with
       # example projects it's more or less possible.
