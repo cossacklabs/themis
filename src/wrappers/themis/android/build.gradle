@@ -114,7 +114,6 @@ bintray {
     // Get Bintray credential from environment variable
     user = System.getenv('BINTRAY_USER') // Get bintray User
     key = System.getenv('BINTRAY_KEY') // Get bintray API Key from https://bintray.com/profile/edit -> APIKey
-    configurations = ['archives']
     pkg {
         repo = 'maven'
         name = 'themis'
