@@ -11,7 +11,7 @@ buildscript {
 
         // Two necessary plugins for uploading .aar to bintray
         // from: https://android.jlelse.eu/how-to-distribute-android-library-in-a-convenient-way-d43fb68304a7
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.1'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
 
         // Kotlin plugin for Android
@@ -102,7 +102,7 @@ apply plugin: 'maven-publish'
 publishing {
     publications {
         Production(MavenPublication) {
-            artifact("$buildDir/outputs/aar/projects-release.aar")
+            artifact("build/outputs/aar/android.aar")
             groupId 'com.cossacklabs.com'
             artifactId 'themis'
             version androidThemisVersion
@@ -114,7 +114,6 @@ bintray {
     // Get Bintray credential from environment variable
     user = System.getenv('BINTRAY_USER') // Get bintray User
     key = System.getenv('BINTRAY_KEY') // Get bintray API Key from https://bintray.com/profile/edit -> APIKey
-    configurations = ['archives']
     pkg {
         repo = 'maven'
         name = 'themis'
