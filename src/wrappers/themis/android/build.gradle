@@ -11,7 +11,7 @@ buildscript {
 
         // Two necessary plugins for uploading .aar to bintray
         // from: https://android.jlelse.eu/how-to-distribute-android-library-in-a-convenient-way-d43fb68304a7
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.1'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
 
         // Kotlin plugin for Android
