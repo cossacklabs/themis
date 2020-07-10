@@ -56,9 +56,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         var encryptedMessage: Data = Data()
         do {
-            // context is optional parameter and may be ignored
-            encryptedMessage = try cellSeal.wrap(message.data(using: .utf8)!,
-                                                 context: context.data(using: .utf8)!)
+            // context is optional parameter and may be omitted
+            encryptedMessage = try cellSeal.encrypt(message.data(using: .utf8)!,
+                                                    context: context.data(using: .utf8)!)
             print("decryptedMessagez = \(encryptedMessage)")
 
         } catch let error as NSError {
@@ -67,8 +67,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         do {
-            let decryptedMessage: Data = try cellSeal.unwrapData(encryptedMessage,
-                                                                 context: context.data(using: .utf8)!)
+            let decryptedMessage = try cellSeal.decrypt(encryptedMessage,
+                                                        context: context.data(using: .utf8)!)
             let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
             print("decryptedMessage = \(resultString)")
 
@@ -88,12 +88,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let message: String = "Roses are grey. Violets are grey."
         let context: String = "I'm a dog"
 
-        var encryptedMessage: TSCellTokenEncryptedData = TSCellTokenEncryptedData()
+        var encryptedMessage = TSCellTokenEncryptedResult()
         do {
             // context is optional parameter and may be ignored
-            encryptedMessage = try cellToken.wrap(message.data(using: .utf8)!,
-                                                  context: context.data(using: .utf8)!)
-            print("encryptedMessage.cipher = \(encryptedMessage.cipherText)")
+            encryptedMessage = try cellToken.encrypt(message.data(using: .utf8)!,
+                                                     context: context.data(using: .utf8)!)
+            print("encryptedMessage.encrypted = \(encryptedMessage.encrypted)")
             print("encryptedMessage.token = \(encryptedMessage.token)")
 
         } catch let error as NSError {
@@ -102,8 +102,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         do {
-            let decryptedMessage: Data = try cellToken.unwrapData(encryptedMessage,
-                                                                  context: context.data(using: .utf8)!)
+            let decryptedMessage = try cellToken.decrypt(encryptedMessage.encrypted,
+                                                         token: encryptedMessage.token,
+                                                         context: context.data(using: .utf8)!)
             let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
             print("decryptedMessage = \(resultString)")
 
@@ -126,8 +127,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         var encryptedMessage: Data = Data()
         do {
             // context is NOT optional parameter here
-            encryptedMessage = try contextImprint.wrap(message.data(using: .utf8)!,
-                                                       context: context.data(using: .utf8)!)
+            encryptedMessage = try contextImprint.encrypt(message.data(using: .utf8)!,
+                                                          context: context.data(using: .utf8)!)
             print("encryptedMessage = \(encryptedMessage)")
 
         } catch let error as NSError {
@@ -137,8 +138,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         do {
             // context is NOT optional parameter here
-            let decryptedMessage: Data = try contextImprint.unwrapData(encryptedMessage,
-                                                                       context: context.data(using: .utf8)!)
+            let decryptedMessage = try contextImprint.decrypt(encryptedMessage,
+                                                              context: context.data(using: .utf8)!)
             let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
             print("decryptedMessage = \(resultString)")
 
