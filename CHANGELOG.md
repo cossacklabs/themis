@@ -185,6 +185,22 @@ _Code:_
      [#576](https://github.com/cossacklabs/themis/pull/576)).
   - Updated test suite to test C++14 and C++17 (in addition to C++11 and C++03) ([#572](https://github.com/cossacklabs/themis/pull/572)).
 
+  - **Breaking changes**
+
+    - `get_pub_key_by_id()` method of `secure_session_callback_interface_t`
+      now has to return non-const vector
+      ([#540](https://github.com/cossacklabs/themis/pull/540)).
+
+      Change your implementation like this:
+
+      ```diff
+      -const std::vector<uint8_t> get_pub_key_by_id(const std::vector<uint8_t>& id) override
+      +std::vector<uint8_t> get_pub_key_by_id(const std::vector<uint8_t>& id) override
+       {
+           // ...
+       }
+      ```
+
 - **Go**
 
   - New function `keys.NewSymmetricKey()` can be used to generate symmetric keys for Secure Cell ([#561](https://github.com/cossacklabs/themis/pull/561)).
