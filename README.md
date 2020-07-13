@@ -83,7 +83,7 @@ Themis is available for the following languages/platforms, refer to [language ho
 | ➕ C++ | [CPP Howto](https://docs.cossacklabs.com/themis/languages/cpp/) | [docs/examples/c++](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) ||
 | 🍭 Node.js | [Javascript (Node.js) Howto](https://docs.cossacklabs.com/themis/languages/nodejs/) | [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/jsthemis.svg)](https://www.npmjs.com/package/jsthemis) |
 | 🖥 WebAssembly | [Javascript (WebAssembly) Howto](https://docs.cossacklabs.com/themis/languages/wasm/)| [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/wasm-themis.svg)](https://www.npmjs.com/package/wasm-themis) |
-| 🐹 Go | [Go Howto](https://docs.cossacklabs.com/themis/languages/go/)| [docs/examples/go](https://github.com/cossacklabs/themis/tree/master/docs/examples/go) ||
+| 🐹 Go | [Go Howto](https://docs.cossacklabs.com/themis/languages/go/)| [docs/examples/go](https://github.com/cossacklabs/themis/tree/master/docs/examples/go) | [![go.dev](https://img.shields.io/badge/go.dev-v0.13.0-007d9c)](https://pkg.go.dev/mod/github.com/cossacklabs/themis/gothemis) |
 | 🦀 Rust | [Rust Howto](https://docs.cossacklabs.com/themis/languages/rust/)| [docs/examples/rust](https://github.com/cossacklabs/themis/tree/master/docs/examples/rust) | [![crates](https://img.shields.io/crates/v/themis.svg)](https://crates.io/crates/themis)|
 | 🕸 С++ PNaCl for Google Chrome||[WebThemis project](https://github.com/cossacklabs/webthemis)|
 
