@@ -59,9 +59,14 @@ SOTER_STATIC = $(BIN_PATH)/$(LIBSOTER_A) $(SOTER_ENGINE_DEPS)
 
 $(SOTER_OBJ): CFLAGS += -DSOTER_EXPORT
 
-$(BIN_PATH)/$(LIBSOTER_A): CMD = $(AR) rcs $@ $(filter %.o, $^)
+# First build Soter library, then merge embedded crypto engine libs into it.
+# On macOS this may cause warnings about files with no symbols in BoringSSL,
+# suppress those warnings with some Bash wizardry.
+$(BIN_PATH)/$(LIBSOTER_A): CMD = $(AR) rcs $@ $(filter %.o, $^) \
+    && scripts/merge-static-libs.sh $@ $(filter %.a, $^) \
+    $(if $(IS_MACOS),> >(grep -v 'has no symbols$$'))
 
-$(BIN_PATH)/$(LIBSOTER_A): $(SOTER_OBJ)
+$(BIN_PATH)/$(LIBSOTER_A): $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
