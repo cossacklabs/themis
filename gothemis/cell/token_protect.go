@@ -148,6 +148,9 @@ func encryptTokenProtect(symmetricKey, plaintext, userContext, ciphertext, authT
 		bytesData(ciphertext),
 		&ciphertextLength,
 	)
+	if sizeOverflow(ciphertextLength) || sizeOverflow(authTokenLength) {
+		return 0, 0, errors.NoMemory
+	}
 	return int(ciphertextLength), int(authTokenLength), errors.ThemisErrorCode(err)
 }
 
@@ -165,5 +168,8 @@ func decryptTokenProtect(symmetricKey, ciphertext, authToken, userContext, plain
 		bytesData(plaintext),
 		&plaintextLength,
 	)
+	if sizeOverflow(plaintextLength) {
+		return 0, errors.NoMemory
+	}
 	return int(plaintextLength), errors.ThemisErrorCode(err)
 }

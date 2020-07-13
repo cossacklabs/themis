@@ -138,6 +138,9 @@ func encryptContextImprint(symmetricKey, plaintext, userContext, ciphertext []by
 		bytesData(ciphertext),
 		&ciphertextLength,
 	)
+	if sizeOverflow(ciphertextLength) {
+		return 0, errors.NoMemory
+	}
 	return int(ciphertextLength), errors.ThemisErrorCode(err)
 }
 
@@ -153,5 +156,8 @@ func decryptContextImprint(symmetricKey, ciphertext, userContext, plaintext []by
 		bytesData(plaintext),
 		&plaintextLength,
 	)
+	if sizeOverflow(plaintextLength) {
+		return 0, errors.NoMemory
+	}
 	return int(plaintextLength), errors.ThemisErrorCode(err)
 }
