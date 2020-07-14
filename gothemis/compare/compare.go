@@ -53,9 +53,10 @@ static int compare_result(void *ctx)
 */
 import "C"
 import (
-	"github.com/cossacklabs/themis/gothemis/errors"
 	"runtime"
 	"unsafe"
+
+	"github.com/cossacklabs/themis/gothemis/errors"
 )
 
 // Secure comparison result.
@@ -78,6 +79,7 @@ const (
 var (
 	ErrMissingSecret = errors.NewWithCode(errors.InvalidParameter, "empty secret for Secure Comparator")
 	ErrMissingData   = errors.NewWithCode(errors.InvalidParameter, "empty comparison message for Secure Comparator")
+	ErrOverflow      = errors.NewWithCode(errors.NoMemory, "Secure Comparator cannot allocate enough memory")
 )
 
 // SecureCompare is an interactive protocol for two parties that compares whether
@@ -88,6 +90,13 @@ type SecureCompare struct {
 
 func finalize(sc *SecureCompare) {
 	sc.Close()
+}
+
+// C returns sizes as size_t but Go expresses buffer lengths as int.
+// Make sure that all sizes are representable in Go and there is no overflows.
+func sizeOverflow(n C.size_t) bool {
+	const maxInt = int(^uint(0) >> 1)
+	return n > C.size_t(maxInt)
 }
 
 // New prepares a new secure comparison.
@@ -135,6 +144,9 @@ func (sc *SecureCompare) Begin() ([]byte, error) {
 	if !bool(C.compare_begin_size(sc.ctx, &outLen)) {
 		return nil, errors.New("Failed to get output size")
 	}
+	if sizeOverflow(outLen) {
+		return nil, ErrOverflow
+	}
 
 	out := make([]byte, outLen)
 
@@ -156,6 +168,9 @@ func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 
 	if !bool(C.compare_proceed_size(sc.ctx, unsafe.Pointer(&data[0]), C.size_t(len(data)), &outLen)) {
 		return nil, errors.New("Failed to get output size")
+	}
+	if sizeOverflow(outLen) {
+		return nil, ErrOverflow
 	}
 
 	if 0 == outLen {

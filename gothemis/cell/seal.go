@@ -137,6 +137,9 @@ func encryptSeal(symmetricKey, plaintext, userContext, ciphertext []byte) (int, 
 		bytesData(ciphertext),
 		&ciphertextLength,
 	)
+	if sizeOverflow(ciphertextLength) {
+		return 0, errors.NoMemory
+	}
 	return int(ciphertextLength), errors.ThemisErrorCode(err)
 }
 
@@ -152,5 +155,8 @@ func decryptSeal(symmetricKey, ciphertext, userContext, plaintext []byte) (int, 
 		bytesData(plaintext),
 		&plaintextLength,
 	)
+	if sizeOverflow(plaintextLength) {
+		return 0, errors.NoMemory
+	}
 	return int(plaintextLength), errors.ThemisErrorCode(err)
 }
