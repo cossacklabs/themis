@@ -622,20 +622,24 @@ ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
 # use dependencies of "libssl-dev" as a proxy. Typically this is "libssl1.1".
 DEB_DEPENDENCIES += --depends $(shell apt-cache depends libssl-dev | grep 'Depends:' | cut -d: -f 2-)
 endif
+DEB_DEPENDENCIES += --conflicts $(OTHER_PACKAGE_NAME)
 DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
 ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
 DEB_DEPENDENCIES_DEV += --depends libssl-dev
 endif
+DEB_DEPENDENCIES_DEV += --conflicts $(OTHER_DEB_DEV_PACKAGE_NAME)
 DEB_DEPENDENCIES_THEMISPP = --depends "$(DEB_DEV_PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
 DEB_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) >= $(VERSION)+$(OS_CODENAME)"
 
 ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
 RPM_DEPENDENCIES += --depends openssl-libs
 endif
+RPM_DEPENDENCIES += --conflicts $(OTHER_PACKAGE_NAME)
 RPM_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
 RPM_DEPENDENCIES_DEV += --depends openssl-devel
 endif
+RPM_DEPENDENCIES_DEV += --conflicts $(OTHER_RPM_DEV_PACKAGE_NAME)
 RPM_DEPENDENCIES_THEMISPP = --depends "$(RPM_DEV_PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) >= $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_RELEASE_NUM = 1
@@ -664,6 +668,16 @@ RPM_DEV_PACKAGE_NAME = $(PACKAGE_NAME)-devel
 DEB_THEMISPP_PACKAGE_NAME = libthemispp-dev
 RPM_THEMISPP_PACKAGE_NAME = libthemispp-devel
 JNI_PACKAGE_NAME = libthemis-jni
+
+ifeq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
+OTHER_PACKAGE_NAME = libthemis
+OTHER_DEB_DEV_PACKAGE_NAME = libthemis-dev
+OTHER_RPM_DEV_PACKAGE_NAME = libthemis-devel
+else
+OTHER_PACKAGE_NAME = libthemis-boringssl
+OTHER_DEB_DEV_PACKAGE_NAME = libthemis-boringssl-dev
+OTHER_RPM_DEV_PACKAGE_NAME = libthemis-boringssl-devel
+endif
 
 PACKAGE_CATEGORY = security
 SHORT_DESCRIPTION = Data security library for network communication and data storage
