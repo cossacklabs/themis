@@ -173,8 +173,9 @@ static bool decrypt(const void *key, size_t key_len, const void *prot, size_t pr
 */
 import "C"
 import (
-	"github.com/cossacklabs/themis/gothemis/errors"
 	"unsafe"
+
+	"github.com/cossacklabs/themis/gothemis/errors"
 )
 
 // Errors returned by Secure Cell.
@@ -185,6 +186,7 @@ var (
 	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
 	ErrMissingToken      = errors.NewWithCode(errors.InvalidParameter, "authentication token is required in Token Protect mode")
 	ErrMissingContext    = errors.NewWithCode(errors.InvalidParameter, "associated context is required in Context Imprint mode")
+	ErrOverflow          = errors.NewWithCode(errors.NoMemory, "Secure Cell cannot allocate enough memory")
 )
 
 // Secure Cell operation mode.
@@ -223,6 +225,13 @@ func New(key []byte, mode int) *SecureCell {
 
 func missing(data []byte) bool {
 	return data == nil || len(data) == 0
+}
+
+// C returns sizes as size_t but Go expresses buffer lengths as int.
+// Make sure that all sizes are representable in Go and there is no overflows.
+func sizeOverflow(n C.size_t) bool {
+	const maxInt = int(^uint(0) >> 1)
+	return n > C.size_t(maxInt)
 }
 
 // Protect encrypts or signs data with optional user context (depending on the Cell mode).
@@ -265,6 +274,9 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		&encLen,
 		&addLen)) {
 		return nil, nil, errors.New("Failed to get output size")
+	}
+	if sizeOverflow(encLen) || sizeOverflow(addLen) {
+		return nil, nil, ErrOverflow
 	}
 
 	var addData []byte
@@ -344,6 +356,9 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		C.int(sc.mode),
 		&decLen)) {
 		return nil, errors.New("Failed to get output size")
+	}
+	if sizeOverflow(decLen) {
+		return nil, ErrOverflow
 	}
 
 	decData := make([]byte, decLen, decLen)
