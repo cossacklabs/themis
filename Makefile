@@ -604,6 +604,12 @@ endif
 # Packaging Themis Core: Linux distributions
 #
 
+ifeq ($(ENGINE),boringssl)
+ifeq ($(CRYPTO_ENGINE_LIB_PATH),)
+PACKAGE_EMBEDDED_BORINGSSL := yes
+endif
+endif
+
 COSSACKLABS_URL = https://www.cossacklabs.com
 MAINTAINER = "Cossack Labs Limited <dev@cossacklabs.com>"
 LICENSE_NAME = "Apache License Version 2.0"
@@ -641,9 +647,12 @@ else ifeq ($(OS_NAME),$(filter $(OS_NAME),RedHatEnterpriseServer CentOS))
 	RPM_LIBDIR := /$(shell [ $$(arch) == "x86_64" ] && echo "lib64" || echo "lib")
 endif
 
-PACKAGE_NAME = libthemis
-DEB_DEV_PACKAGE_NAME = libthemis-dev
-RPM_DEV_PACKAGE_NAME = libthemis-devel
+ifeq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
+PACKAGE_SUFFIX = -boringssl
+endif
+PACKAGE_NAME = libthemis$(PACKAGE_SUFFIX)
+DEB_DEV_PACKAGE_NAME = $(PACKAGE_NAME)-dev
+RPM_DEV_PACKAGE_NAME = $(PACKAGE_NAME)-devel
 DEB_THEMISPP_PACKAGE_NAME = libthemispp-dev
 RPM_THEMISPP_PACKAGE_NAME = libthemispp-devel
 JNI_PACKAGE_NAME = libthemis-jni
