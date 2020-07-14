@@ -126,6 +126,9 @@ func encryptSealWithPassphrase(passphrase string, plaintext, userContext, cipher
 		bytesData(ciphertext),
 		&ciphertextLength,
 	)
+	if sizeOverflow(ciphertextLength) {
+		return 0, errors.NoMemory
+	}
 	return int(ciphertextLength), errors.ThemisErrorCode(err)
 }
 
@@ -141,5 +144,8 @@ func decryptSealWithPassphrase(passphrase string, ciphertext, userContext, plain
 		bytesData(plaintext),
 		&plaintextLength,
 	)
+	if sizeOverflow(plaintextLength) {
+		return 0, errors.NoMemory
+	}
 	return int(plaintextLength), errors.ThemisErrorCode(err)
 }

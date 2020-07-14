@@ -54,8 +54,9 @@ static bool gen_keys(int key_type, void *private, size_t priv_len, void *public,
 import "C"
 
 import (
-	"github.com/cossacklabs/themis/gothemis/errors"
 	"unsafe"
+
+	"github.com/cossacklabs/themis/gothemis/errors"
 )
 
 // Type of Themis key.
@@ -75,6 +76,7 @@ const (
 // Errors returned by key generation.
 var (
 	ErrInvalidType = errors.NewWithCode(errors.InvalidParameter, "invalid key type specified")
+	ErrOverflow    = errors.NewWithCode(errors.NoMemory, "key generator cannot allocate enough memory")
 )
 
 // PrivateKey stores a ECDSA or RSA private key.
@@ -103,6 +105,9 @@ func New(keytype int) (*Keypair, error) {
 	if !bool(C.get_key_size(C.int(keytype), &privLen, &pubLen)) {
 		return nil, errors.New("Failed to get needed key sizes")
 	}
+	if sizeOverflow(privLen) || sizeOverflow(pubLen) {
+		return nil, ErrOverflow
+	}
 
 	priv := make([]byte, int(privLen), int(privLen))
 	pub := make([]byte, int(pubLen), int(pubLen))
@@ -115,4 +120,11 @@ func New(keytype int) (*Keypair, error) {
 		Private: &PrivateKey{Value: priv},
 		Public:  &PublicKey{Value: pub},
 	}, nil
+}
+
+// C returns sizes as size_t but Go expresses buffer lengths as int.
+// Make sure that all sizes are representable in Go and there is no overflows.
+func sizeOverflow(n C.size_t) bool {
+	const maxInt = int(^uint(0) >> 1)
+	return n > C.size_t(maxInt)
 }

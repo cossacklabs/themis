@@ -4,6 +4,12 @@
 
 Changes that are currently in development and have not been released yet.
 
+_Code:_
+
+- **Go**
+
+  - Fixed panics on 32-bit systems when processing corrupted data ([#677](https://github.com/cossacklabs/themis/pull/677)).
+
 _Infrastructure:_
 
 - Improved package split making `libthemis` thinner ([#678](https://github.com/cossacklabs/themis/pull/678)).

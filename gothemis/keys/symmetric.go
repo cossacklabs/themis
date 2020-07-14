@@ -36,6 +36,9 @@ func NewSymmetricKey() (*SymmetricKey, error) {
 	if !bool(C.get_sym_key_size(&len)) {
 		return nil, errors.New("Failed to get symmetric key size")
 	}
+	if sizeOverflow(len) {
+		return nil, ErrOverflow
+	}
 
 	key := make([]byte, int(len), int(len))
 	if !bool(C.gen_sym_key(unsafe.Pointer(&key[0]), len)) {
