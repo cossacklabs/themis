@@ -6,7 +6,7 @@ Changes that are currently in development and have not been released yet.
 
 _Infrastructure:_
 
-- Improved package split make `libthemis` thinner ([#678](https://github.com/cossacklabs/themis/pull/678)).
+- Improved package split making `libthemis` thinner ([#678](https://github.com/cossacklabs/themis/pull/678)).
 
 ## [0.13.0](https://github.com/cossacklabs/themis/releases/tag/0.13.0), July 8th 2020
 
