@@ -616,18 +616,26 @@ LICENSE_NAME = "Apache License Version 2.0"
 
 DEB_CODENAME := $(shell lsb_release -cs 2> /dev/null)
 DEB_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
+ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
 # If we were using native Debian packaging, dpkg-shlibdeps could supply us with
 # accurate dependency information. However, we build packages manually, so we
 # use dependencies of "libssl-dev" as a proxy. Typically this is "libssl1.1".
 DEB_DEPENDENCIES += --depends $(shell apt-cache depends libssl-dev | grep 'Depends:' | cut -d: -f 2-)
+endif
 DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
+ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
 DEB_DEPENDENCIES_DEV += --depends libssl-dev
+endif
 DEB_DEPENDENCIES_THEMISPP = --depends "$(DEB_DEV_PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
 DEB_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) >= $(VERSION)+$(OS_CODENAME)"
 
+ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
 RPM_DEPENDENCIES += --depends openssl-libs
+endif
 RPM_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
+ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
 RPM_DEPENDENCIES_DEV += --depends openssl-devel
+endif
 RPM_DEPENDENCIES_THEMISPP = --depends "$(RPM_DEV_PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) >= $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_RELEASE_NUM = 1
