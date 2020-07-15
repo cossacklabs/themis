@@ -660,13 +660,13 @@ POST_UNINSTALL_SCRIPT := $(BIN_PATH)/post_uninstall.sh
 DEV_PACKAGE_FILES += $(includedir)/soter/
 DEV_PACKAGE_FILES += $(includedir)/themis/
 DEV_PACKAGE_FILES += $(pkgconfigdir)/
+DEV_PACKAGE_FILES += $(libdir)/$(LIBSOTER_A)
+DEV_PACKAGE_FILES += $(libdir)/$(LIBSOTER_LINK)
+DEV_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_A)
+DEV_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_LINK)
 
-LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_A)
 LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_SO)
-LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_LINK)
-LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_A)
 LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_SO)
-LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_LINK)
 
 THEMISPP_PACKAGE_FILES += $(includedir)/themispp/
 

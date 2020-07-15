@@ -10,6 +10,10 @@ _Code:_
 
   - Fixed panics on 32-bit systems when processing corrupted data ([#677](https://github.com/cossacklabs/themis/pull/677)).
 
+_Infrastructure:_
+
+- Improved package split making `libthemis` thinner ([#678](https://github.com/cossacklabs/themis/pull/678)).
+
 ## [0.13.0](https://github.com/cossacklabs/themis/releases/tag/0.13.0), July 8th 2020
 
 **TL;DR:**
