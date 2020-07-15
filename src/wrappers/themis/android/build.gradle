@@ -72,8 +72,15 @@ android {
 
     // publishing and bitray upload tasks should not run for ':boringssl' project
     tasks.whenTaskAdded { task ->
-        println "executing $task ..."
-        if (task.name != 'bintrayUpload' && task.name != 'publishProductionPublicationToMavenLocal' && task.name != 'generatePomFileForProductionPublication') {
+        def excludeBoringSSL = [
+            'bintrayUpload',
+            'publishProductionPublicationToMavenLocal',
+            'generatePomFileForProductionPublication',
+            'generateSourceJar',
+            'generateJavadoc',
+            'generateJavadocJar',
+        ]
+        if (!excludeBoringSSL.contains(task.name)) {
             task.dependsOn(':boringssl:' + task.name)
         }
     }
@@ -94,6 +101,36 @@ android {
     }
 }
 
+// Publishing on JCenter requires packages with Java source code and Javadocs.
+// Note that "archiveClassifier" values are important for JCenter.
+
+task generateSourceJar(type: Jar) {
+    description = 'Assembles a JAR with Java source code'
+    archiveClassifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task generateJavadoc(type: Javadoc) {
+    description = 'Generates Javadocs from the source code'
+    source = android.sourceSets.main.java.srcDirs
+    title = 'Themis API Reference'
+    // Javadoc chokes on non-Java files so exclude non-sources from the source dir.
+    excludes = ['build', 'build.gradle']
+    // Add Android core system and all dependencies to classpath so that Javadoc
+    // finds their classes and links to them correctly.
+    classpath += files(android.bootClasspath)
+    android.libraryVariants.all { variant ->
+        classpath += variant.javaCompile.classpath
+    }
+}
+
+task generateJavadocJar(type: Jar) {
+    description = 'Assembles a JAR with Javadocs'
+    archiveClassifier = 'javadoc'
+    from generateJavadoc.destinationDir
+    dependsOn 'generateJavadoc'
+}
+
 // distribution
 
 apply plugin: 'com.jfrog.bintray'
@@ -103,6 +140,8 @@ publishing {
     publications {
         Production(MavenPublication) {
             artifact("build/outputs/aar/android.aar")
+            artifact generateSourceJar
+            artifact generateJavadocJar
             groupId 'com.cossacklabs.com'
             artifactId 'themis'
             version androidThemisVersion
