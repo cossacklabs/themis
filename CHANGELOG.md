@@ -14,6 +14,14 @@ _Code:_
 
   - Fixed panics on 32-bit systems when processing corrupted data ([#677](https://github.com/cossacklabs/themis/pull/677)).
 
+- **Node.js**
+
+  - Minor dependency updates making the world a better place ([#680](https://github.com/cossacklabs/themis/pull/680)).
+
+- **WebAssembly**
+
+  - Minor dependency updates making the world a better place ([#680](https://github.com/cossacklabs/themis/pull/680)).
+
 _Infrastructure:_
 
 - Improved package split making `libthemis` thinner ([#678](https://github.com/cossacklabs/themis/pull/678)).
