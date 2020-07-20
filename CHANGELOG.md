@@ -25,6 +25,7 @@ _Code:_
 _Infrastructure:_
 
 - Improved package split making `libthemis` thinner ([#678](https://github.com/cossacklabs/themis/pull/678)).
+- Optimized dependencies of `libthemis` DEB and RPM packages ([#682](https://github.com/cossacklabs/themis/pull/682)).
 - AndroidThemis is now available on JCenter ([#679](https://github.com/cossacklabs/themis/pull/679)).
 
 ## [0.13.0](https://github.com/cossacklabs/themis/releases/tag/0.13.0), July 8th 2020
