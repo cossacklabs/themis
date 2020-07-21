@@ -613,7 +613,7 @@ DEB_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
 # If we were using native Debian packaging, dpkg-shlibdeps could supply us with
 # accurate dependency information. However, we build packages manually, so we
 # use dependencies of "libssl-dev" as a proxy. Typically this is "libssl1.1".
-DEB_DEPENDENCIES += --depends $(shell apt-cache depends libssl-dev | grep 'Depends:' | cut -d: -f 2-)
+DEB_DEPENDENCIES += --depends $(shell apt-cache depends libssl-dev | grep 'Depends:' | cut -d: -f 2- | tr -d ' ')
 DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
 DEB_DEPENDENCIES_DEV += --depends libssl-dev
 DEB_DEPENDENCIES_THEMISPP = --depends "$(DEB_DEV_PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
