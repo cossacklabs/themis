@@ -50,17 +50,19 @@ trap 'rm -rf "$tempdir"' EXIT
 
 while [[ $# -gt 0 ]]
 do
-    # Unfortunately, ar can extract files only into the current directory
-    # and there is no easy and portable way to convert possibly relative path
-    # into an absolute one. So... this is slow but it works. I'm sorry.
-    cp "$1" "$tempdir/library.a"
-    mkdir "$tempdir/contents"
-    cd "$tempdir/contents"
-    "$AR" x ../library.a
+    if [[ ! -f "$1" ]]
+    then
+        echo >&2 "No such file: $1"
+        exit 1
+    fi
+    # Cast a possibly relative path to the absolute one.
+    src="$(cd "$(dirname "$1")" >/dev/null 2>&1 && pwd)/$(basename "$1")"
+    cd "$tempdir"
+    "$AR" x "$src"
     cd "$OLDPWD"
     # Actually merge the contents of the library into the target one.
-    find "$tempdir/contents" -type f -name '*.o' -print0 | xargs -0 "$AR" rs "$target"
+    find "$tempdir" -type f -name '*.o' -print0 | xargs -0 "$AR" rs "$target"
     # Clean up and go on.
-    rm -rf "$tempdir/library.a" "$tempdir/contents"
+    rm -rf "$tempdir"/*
     shift
 done
