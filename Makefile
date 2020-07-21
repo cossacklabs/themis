@@ -914,10 +914,11 @@ pkginfo:
 
 PHP_VERSION_FULL:=$(shell php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" 2>/dev/null)
 ifeq ($(OS_CODENAME),jessie)
-    PHP_DEPENDENCIES:=php5
+    PHP_DEPENDENCIES += --depends php5
 else
-    PHP_DEPENDENCIES:=php$(PHP_VERSION_FULL)
+    PHP_DEPENDENCIES += --depends php$(PHP_VERSION_FULL)
 endif
+PHP_DEPENDENCIES += --depends "$(PACKAGE_NAME) (>= $(VERSION)+$(OS_CODENAME)) | $(OTHER_PACKAGE_NAME) (>= $(VERSION)+$(OS_CODENAME))"
 
 PHP_PACKAGE_NAME:=libphpthemis-php$(PHP_VERSION_FULL)
 PHP_POST_INSTALL_SCRIPT:=./scripts/phpthemis_postinstall.sh
@@ -937,7 +938,7 @@ deb_php:
 		 --package $(BIN_PATH)/deb/$(PHP_PACKAGE_NAME)_$(NAME_SUFFIX) \
 		 --architecture $(DEB_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
-		 --depends "$(PHP_DEPENDENCIES)" \
+		 $(PHP_DEPENDENCIES) \
 		 --deb-priority optional \
 		 --after-install $(PHP_POST_INSTALL_SCRIPT) \
 		 --before-remove $(PHP_PRE_UNINSTALL_SCRIPT) \
