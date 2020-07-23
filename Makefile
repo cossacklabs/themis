@@ -610,13 +610,16 @@ LICENSE_NAME = "Apache License Version 2.0"
 
 DEB_CODENAME := $(shell lsb_release -cs 2> /dev/null)
 DEB_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
-DEB_DEPENDENCIES := --depends openssl
+# If we were using native Debian packaging, dpkg-shlibdeps could supply us with
+# accurate dependency information. However, we build packages manually, so we
+# use dependencies of "libssl-dev" as a proxy. Typically this is "libssl1.1".
+DEB_DEPENDENCIES += --depends $(shell apt-cache depends libssl-dev | grep 'Depends:' | cut -d: -f 2- | tr -d ' ')
 DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
 DEB_DEPENDENCIES_DEV += --depends libssl-dev
 DEB_DEPENDENCIES_THEMISPP = --depends "$(DEB_DEV_PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
 DEB_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) >= $(VERSION)+$(OS_CODENAME)"
 
-RPM_DEPENDENCIES = --depends openssl
+RPM_DEPENDENCIES += --depends openssl-libs
 RPM_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_DEPENDENCIES_DEV += --depends openssl-devel
 RPM_DEPENDENCIES_THEMISPP = --depends "$(RPM_DEV_PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
