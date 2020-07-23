@@ -620,7 +620,7 @@ ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
 # If we were using native Debian packaging, dpkg-shlibdeps could supply us with
 # accurate dependency information. However, we build packages manually, so we
 # use dependencies of "libssl-dev" as a proxy. Typically this is "libssl1.1".
-DEB_DEPENDENCIES += --depends $(shell apt-cache depends libssl-dev | grep 'Depends:' | cut -d: -f 2-)
+DEB_DEPENDENCIES += --depends $(shell apt-cache depends libssl-dev | grep 'Depends:' | cut -d: -f 2- | tr -d ' ')
 endif
 DEB_DEPENDENCIES += --conflicts $(OTHER_PACKAGE_NAME)
 DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
