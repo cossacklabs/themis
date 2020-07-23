@@ -6,6 +6,10 @@ Changes that are currently in development and have not been released yet.
 
 _Code:_
 
+- **Core**
+
+  - Include embedded BoringSSL into Soter for convenience ([#681](https://github.com/cossacklabs/themis/pull/681)).
+
 - **Android**
 
   - AndroidThemis is now available on JCenter ([#679](https://github.com/cossacklabs/themis/pull/679)).
