@@ -1501,6 +1501,7 @@
 				PRODUCT_NAME = objcthemis;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = "-Wno-documentation";
 			};
 			name = Debug;
 		};
@@ -1541,6 +1542,7 @@
 				PRODUCT_NAME = objcthemis;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = "-Wno-documentation";
 			};
 			name = Release;
 		};
@@ -1584,6 +1586,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WARNING_CFLAGS = "-Wno-documentation";
 			};
 			name = Debug;
 		};
@@ -1627,6 +1630,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WARNING_CFLAGS = "-Wno-documentation";
 			};
 			name = Release;
 		};
