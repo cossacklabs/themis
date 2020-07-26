@@ -99,7 +99,13 @@ static themis_status_t themis_auth_sym_derive_encryption_key_pbkdf2(
         goto error;
     }
 
-    res = themis_auth_sym_kdf_context(message_length, soter_kdf_context, &soter_kdf_context_length);
+    /*
+     * themis_auth_sym_encrypt_message_with_passphrase_() makes sure that
+     * message_length fits into uint32_t.
+     */
+    res = themis_auth_sym_kdf_context((uint32_t)message_length,
+                                      soter_kdf_context,
+                                      &soter_kdf_context_length);
     if (res != THEMIS_SUCCESS) {
         goto error;
     }
@@ -324,7 +330,13 @@ static themis_status_t themis_auth_sym_derive_decryption_key_pbkdf2(
         goto error;
     }
 
-    res = themis_auth_sym_kdf_context(message_length, soter_kdf_context, &soter_kdf_context_length);
+    /*
+     * themis_auth_sym_decrypt_message_with_passphrase_() makes sure that
+     * message_length fits into uint32_t.
+     */
+    res = themis_auth_sym_kdf_context((uint32_t)message_length,
+                                      soter_kdf_context,
+                                      &soter_kdf_context_length);
     if (res != THEMIS_SUCCESS) {
         goto error;
     }
