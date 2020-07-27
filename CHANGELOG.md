@@ -34,7 +34,7 @@ _Code:_
 _Infrastructure:_
 
 - Improved package split making `libthemis` thinner ([#678](https://github.com/cossacklabs/themis/pull/678)).
-- Optimized dependencies of `libthemis` DEB and RPM packages ([#682](https://github.com/cossacklabs/themis/pull/682)).
+- Optimized dependencies of `libthemis` DEB and RPM packages ([#682](https://github.com/cossacklabs/themis/pull/682), [#686](https://github.com/cossacklabs/themis/pull/686)).
 - AndroidThemis is now available on JCenter ([#679](https://github.com/cossacklabs/themis/pull/679)).
 - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
 

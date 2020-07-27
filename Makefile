@@ -629,7 +629,14 @@ else
 # If we were using native Debian packaging, dpkg-shlibdeps could supply us with
 # accurate dependency information. However, we build packages manually, so we
 # use dependencies of "libssl-dev" as a proxy. Typically this is "libssl1.1".
-DEB_DEPENDENCIES += --depends $(shell apt-cache depends libssl-dev | grep 'Depends:' | cut -d: -f 2- | tr -d ' ')
+#
+# Example output of "apt-cache depends" (from Ubuntu 16.04):
+#
+# libssl-dev
+#   Depends: libssl1.0.0
+#   Depends: zlib1g-dev
+#   Recommends: libssl-doc
+DEB_DEPENDENCIES += $(shell apt-cache depends libssl-dev | awk '$$1 == "Depends:" && $$2 ~ /^libssl/ { print "--depends", $$2 }' )
 DEB_DEPENDENCIES_DEV += --depends libssl-dev
 endif
 DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
