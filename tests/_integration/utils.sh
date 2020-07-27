@@ -1,4 +1,6 @@
-#!/usr/bin/env bash -e
+#!/usr/bin/env bash
+
+set -eu
 
 export TOP_PID=$$
 trap "exit 1" TERM
