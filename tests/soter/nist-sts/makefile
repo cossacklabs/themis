@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-CC ?= /usr/bin/gcc
+CC ?= gcc
 
 CFLAGS  += -Wall -Wno-unused
 LDFLAGS += -lm

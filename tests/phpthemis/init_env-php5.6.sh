@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/usr/bin/env bash -e
 
 rm -f composer.json
 ln -s composer-php5.6.json composer.json
