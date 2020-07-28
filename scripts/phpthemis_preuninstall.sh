@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -eu
+set -euo pipefail
 
 CONFCONT="extension=phpthemis.so"
 SEARCH="Scan this dir for additional .ini files => "
