@@ -16,6 +16,7 @@
 
 #include "soter/openssl/soter_rsa_common.h"
 
+#include <openssl/bn.h>
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 

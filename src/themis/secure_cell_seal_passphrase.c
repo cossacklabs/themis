@@ -99,7 +99,13 @@ static themis_status_t themis_auth_sym_derive_encryption_key_pbkdf2(
         goto error;
     }
 
-    res = themis_auth_sym_kdf_context(message_length, soter_kdf_context, &soter_kdf_context_length);
+    /*
+     * themis_auth_sym_encrypt_message_with_passphrase_() makes sure that
+     * message_length fits into uint32_t.
+     */
+    res = themis_auth_sym_kdf_context((uint32_t)message_length,
+                                      soter_kdf_context,
+                                      &soter_kdf_context_length);
     if (res != THEMIS_SUCCESS) {
         goto error;
     }
@@ -181,6 +187,7 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase_(const uint8_t* 
     uint8_t auth_tag[THEMIS_AUTH_SYM_AUTH_TAG_LENGTH] = {0};
     uint8_t derived_key[THEMIS_AUTH_SYM_KEY_LENGTH / 8] = {0};
     size_t derived_key_length = sizeof(derived_key);
+    size_t auth_token_real_length = 0;
     struct themis_scell_auth_token_passphrase hdr;
 
     /* Message length is currently stored as 32-bit integer, sorry */
@@ -233,8 +240,11 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase_(const uint8_t* 
         goto error;
     }
 
-    if (*auth_token_length < themis_scell_auth_token_passphrase_size(&hdr)) {
-        *auth_token_length = themis_scell_auth_token_passphrase_size(&hdr);
+    /* In valid Secure Cells auth token length always fits into uint32_t. */
+    auth_token_real_length = (uint32_t)themis_scell_auth_token_passphrase_size(&hdr);
+
+    if (*auth_token_length < auth_token_real_length) {
+        *auth_token_length = auth_token_real_length;
         res = THEMIS_BUFFER_TOO_SMALL;
         goto error;
     }
@@ -242,7 +252,7 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase_(const uint8_t* 
     if (res != THEMIS_SUCCESS) {
         goto error;
     }
-    *auth_token_length = themis_scell_auth_token_passphrase_size(&hdr);
+    *auth_token_length = auth_token_real_length;
     *encrypted_message_length = message_length;
 
 error:
@@ -324,7 +334,13 @@ static themis_status_t themis_auth_sym_derive_decryption_key_pbkdf2(
         goto error;
     }
 
-    res = themis_auth_sym_kdf_context(message_length, soter_kdf_context, &soter_kdf_context_length);
+    /*
+     * themis_auth_sym_decrypt_message_with_passphrase_() makes sure that
+     * message_length fits into uint32_t.
+     */
+    res = themis_auth_sym_kdf_context((uint32_t)message_length,
+                                      soter_kdf_context,
+                                      &soter_kdf_context_length);
     if (res != THEMIS_SUCCESS) {
         goto error;
     }

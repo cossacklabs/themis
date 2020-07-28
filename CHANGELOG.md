@@ -6,6 +6,10 @@ Changes that are currently in development and have not been released yet.
 
 _Code:_
 
+- **Core**
+
+  - Improved compatibility with OpenSSL 1.1.1 ([#684](https://github.com/cossacklabs/themis/pull/684)).
+
 - **Android**
 
   - AndroidThemis is now available on JCenter ([#679](https://github.com/cossacklabs/themis/pull/679)).
