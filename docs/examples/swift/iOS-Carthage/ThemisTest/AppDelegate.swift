@@ -23,23 +23,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // We don't do UI. Please look into debug console to see the results.
         //
 
-        // generate key from pre-defined string
-        print("Using key from pre-defined string")
-        let keyFromString = self.generateMasterKey()
+         // generate key from pre-defined string
+         print("Using key from pre-defined string")
+         let fixedKey = Data(base64Encoded: "UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg", options: .ignoreUnknownCharacters)!
         
-        // Secure Cell:
-        runExampleSecureCellSealMode(masterKeyData: keyFromString)
-        runExampleSecureCellTokenProtectMode(masterKeyData: keyFromString)
-        runExampleSecureCellImprint(masterKeyData: keyFromString)
-        
-        // generate key from key generator
-        print("Using key from TSGenerateSymmetricKey")
-        let keyFromGenerator = TSGenerateSymmetricKey()!
-        
-        // Secure Cell:
-        runExampleSecureCellSealMode(masterKeyData: keyFromGenerator)
-        runExampleSecureCellTokenProtectMode(masterKeyData: keyFromGenerator)
-        runExampleSecureCellImprint(masterKeyData: keyFromGenerator)
+         // Secure Cell:
+         runExampleSecureCellSealMode(masterKeyData: fixedKey)
+         runExampleSecureCellTokenProtectMode(masterKeyData: fixedKey)
+         runExampleSecureCellImprint(masterKeyData: fixedKey)
+         
+         // generate key from key generator
+         print("Using key from TSGenerateSymmetricKey")
+         let generatedKey = TSGenerateSymmetricKey()!
+         
+         // Secure Cell:
+         runExampleSecureCellSealMode(masterKeyData: generatedKey)
+         runExampleSecureCellTokenProtectMode(masterKeyData: generatedKey)
+         runExampleSecureCellImprint(masterKeyData: generatedKey)
         
         // Secure Cell with passphrase
         runExampleSecureCellWithPassphrase()
@@ -56,13 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     // MARK: - Secure Cell
-
-    func generateMasterKey() -> Data {
-        let masterKeyString: String = "UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg"
-        let masterKeyData: Data = Data(base64Encoded: masterKeyString, options: .ignoreUnknownCharacters)!
-        return masterKeyData
-    }
-
+    
     func runExampleSecureCellSealMode(masterKeyData: Data) {
         print("----------------------------------", #function)
         guard let cellSeal: TSCellSeal = TSCellSeal(key: masterKeyData) else {
