@@ -34,7 +34,11 @@ _Code:_
 
 - **Swift**
 
-  - Update Swift examples to showcase usage newest SecureCell API: generating symmetric keys and using Secure Cell with Passphrase ([#687](https://github.com/cossacklabs/themis/pull/687)).
+  - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage newest SecureCell API: generating symmetric keys and using Secure Cell with Passphrase ([#687](https://github.com/cossacklabs/themis/pull/687)).
+
+- **ObjC**
+
+  - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage newest SecureCell API: generating symmetric keys and using Secure Cell with Passphrase ([#687](https://github.com/cossacklabs/themis/pull/687)).
   
 
 _Infrastructure:_
