@@ -32,6 +32,11 @@ _Code:_
 
   - Minor dependency updates making the world a better place ([#680](https://github.com/cossacklabs/themis/pull/680)).
 
+- **Swift**
+
+  - Update Swift examples to showcase usage newest SecureCell API: generating symmetric keys and using Secure Cell with Passphrase ([#687](https://github.com/cossacklabs/themis/pull/687)).
+  
+
 _Infrastructure:_
 
 - Improved package split making `libthemis` thinner ([#678](https://github.com/cossacklabs/themis/pull/678)).
