@@ -139,6 +139,7 @@
 				73DDCB7B2181517000CD4CBB /* Sources */,
 				73DDCB822181517000CD4CBB /* Frameworks */,
 				73DDCB842181517000CD4CBB /* Resources */,
+				1FE0A1A4F1A3CF61ABA0F10F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -244,26 +245,40 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3A6B41F14AD42F8EC4F258D8 /* [CP] Embed Pods Frameworks */ = {
+		1FE0A1A4F1A3CF61ABA0F10F /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-objthemis/Pods-objthemis-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-objthemis_boring/Pods-objthemis_boring-frameworks.sh",
 				"${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-objthemis/Pods-objthemis-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-objthemis_boring/Pods-objthemis_boring-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		3A6B41F14AD42F8EC4F258D8 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-objthemis/Pods-objthemis-frameworks.sh",
+				"${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-objthemis/Pods-objthemis-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		F22ABA1C9C5F467FBCE3FB7F /* [CP] Check Pods Manifest.lock */ = {

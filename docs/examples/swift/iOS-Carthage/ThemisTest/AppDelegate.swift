@@ -23,10 +23,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // We don't do UI. Please look into debug console to see the results.
         //
 
-        runExampleSecureCellSealMode()
-        runExampleSecureCellTokenProtectMode()
-        runExampleSecureCellImprint()
-
+        // generate key from pre-defined string
+        print("Using key from pre-defined string")
+        let keyFromString = self.generateMasterKey()
+        
+        // Secure Cell:
+        runExampleSecureCellSealMode(masterKeyData: keyFromString)
+        runExampleSecureCellTokenProtectMode(masterKeyData: keyFromString)
+        runExampleSecureCellImprint(masterKeyData: keyFromString)
+        
+        // generate key from key generator
+        print("Using key from TSGenerateSymmetricKey")
+        let keyFromGenerator = TSGenerateSymmetricKey()!
+        
+        // Secure Cell:
+        runExampleSecureCellSealMode(masterKeyData: keyFromGenerator)
+        runExampleSecureCellTokenProtectMode(masterKeyData: keyFromGenerator)
+        runExampleSecureCellImprint(masterKeyData: keyFromGenerator)
+        
+        // Secure Cell with passphrase
+        runExampleSecureCellWithPassphrase()
+        
         runExampleGeneratingKeys()
         runExampleReadingKeysFromFile()
 
@@ -46,9 +63,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return masterKeyData
     }
 
-    func runExampleSecureCellSealMode() {
+    func runExampleSecureCellSealMode(masterKeyData: Data) {
         print("----------------------------------", #function)
-        let masterKeyData: Data = self.generateMasterKey()
         guard let cellSeal: TSCellSeal = TSCellSeal(key: masterKeyData) else {
             print("Error occurred while initializing object cellSeal", #function)
             return
@@ -80,9 +96,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func runExampleSecureCellTokenProtectMode() {
+    func runExampleSecureCellTokenProtectMode(masterKeyData: Data) {
         print("----------------------------------", #function)
-        let masterKeyData: Data = self.generateMasterKey()
         guard let cellToken: TSCellToken = TSCellToken(key: masterKeyData) else {
             print("Error occurred while initializing object cellToken", #function)
             return
@@ -116,9 +131,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func runExampleSecureCellImprint() {
+    func runExampleSecureCellImprint(masterKeyData: Data) {
         print("----------------------------------", #function)
-        let masterKeyData: Data = self.generateMasterKey()
         guard let contextImprint: TSCellContextImprint = TSCellContextImprint(key: masterKeyData) else {
             print("Error occurred while initializing object contextImprint", #function)
             return
@@ -150,10 +164,49 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
     }
+    
+    // MARK: - Secure Cell with Passphrase
+    func runExampleSecureCellWithPassphrase() {
+        print("----------------------------------", #function)
+        let cellWithPassphrase = TSCellSeal(passphrase: "We are the champions")!
+        let message = "Your secret is safe with us"
+        let context = "Many secrets are safe"
+        
+        
+        var encryptedMessage: Data = Data()
+        do {
+            // context is optional parameter and may be omitted
+            encryptedMessage = try cellWithPassphrase.encrypt(message.data(using: .utf8)!,
+                                                              context: context.data(using: .utf8)!)
+            print("encryptedMessage = \(encryptedMessage)")
+            
+        } catch let error as NSError {
+            print("Error occurred while encrypting \(error)", #function)
+            return
+        }
+        
+        do {
+            let decryptedMessage = try cellWithPassphrase.decrypt(encryptedMessage,
+                                                                  context: context.data(using: .utf8)!)
+            let resultString: String = String(data: decryptedMessage, encoding: .utf8)!
+            print("decryptedMessage = \(resultString)")
+            
+        } catch let error as NSError {
+            print("Error occurred while decrypting \(error)", #function)
+            return
+        }
+    }
+    
+    // MARK: - Key Generation
+    func runExampleGeneratingKeys() {
+        runExampleGeneratingAsymKeys()
+        runExampleGeneratingSymKeys()
+    }
+    
 
     // MARK: - Key Generation and Loading
 
-    func runExampleGeneratingKeys() {
+    func runExampleGeneratingAsymKeys() {
         print("----------------------------------", #function)
 
         // Generating RSA keys
@@ -175,6 +228,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let publicKeyEC: Data = keyGeneratorEC.publicKey as Data
         print("EC privateKey = \(privateKeyEC)")
         print("RSA publicKey = \(publicKeyEC)")
+    }
+    
+    func runExampleGeneratingSymKeys() {
+        print("----------------------------------", #function)
+        
+        let cell = TSCellSeal(key: TSGenerateSymmetricKey()!)!
+        let message = "All your base are belong to us!"
+        let context = "For great justice"
+
+        let encrypted = try? cell.encrypt(message.data(using: .utf8)!,
+                                          context: context.data(using: .utf8)!)
+        print("Cell encrypted with symm key \(encrypted!)")
+
+        let decrypted = try? cell.decrypt(encrypted!,
+                                          context: context.data(using: .utf8)!)
+        print("Cell decrypted with symm key \(decrypted!)")
+
+        let decryptedMessage = String(data: decrypted!, encoding: .utf8)
+        print("Cell decrypted content \(decryptedMessage!)")
     }
 
     // Sometimes you will need to read keys from files
