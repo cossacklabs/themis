@@ -32,6 +32,15 @@ _Code:_
 
   - Minor dependency updates making the world a better place ([#680](https://github.com/cossacklabs/themis/pull/680)).
 
+- **Swift**
+
+  - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)).
+
+- **Objective-C**
+
+  - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)).
+  
+
 _Infrastructure:_
 
 - Improved package split making `libthemis` thinner ([#678](https://github.com/cossacklabs/themis/pull/678)).
