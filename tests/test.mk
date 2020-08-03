@@ -46,14 +46,16 @@ prepare_tests_basic: soter_test themis_test
 prepare_tests_all: prepare_tests_basic themispp_test
 ifdef PHP_VERSION
 	@echo -n "make tests for phpthemis "
-	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/phpthemis_test.sh
+	@echo "#!/usr/bin/env bash" > ./$(BIN_PATH)/tests/phpthemis_test.sh
+	@echo "set -eu" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@echo "cd tests/phpthemis; bash ./run_tests.sh" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@$(PRINT_OK_)
 endif
 ifdef RUBY_GEM_VERSION
 	@echo -n "make tests for rbthemis "
-	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/rbthemis_test.sh
+	@echo "#!/usr/bin/env bash" > ./$(BIN_PATH)/tests/rbthemis_test.sh
+	@echo "set -eu" >> ./$(BIN_PATH)/tests/rbthemis_test.sh
 	@echo "ruby ./tests/rbthemis/scell_test.rb" >> ./$(BIN_PATH)/tests/rbthemis_test.sh
 	@echo "ruby ./tests/rbthemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rbthemis_test.sh
 	@echo "ruby ./tests/rbthemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rbthemis_test.sh
@@ -63,7 +65,8 @@ ifdef RUBY_GEM_VERSION
 endif
 ifdef PYTHON3_VERSION
 	@echo -n "make tests for pythemis with python3 "
-	@echo "#!/bin/bash -e" > ./$(PYTHON3_TEST_SCRIPT)
+	@echo "#!/usr/bin/env bash" > ./$(PYTHON3_TEST_SCRIPT)
+	@echo "set -eu" >> ./$(PYTHON3_TEST_SCRIPT)
 	@echo "python3 -m unittest discover -s tests/pythemis" >> ./$(PYTHON3_TEST_SCRIPT)
 	@chmod a+x ./$(PYTHON3_TEST_SCRIPT)
 	@$(PRINT_OK_)
