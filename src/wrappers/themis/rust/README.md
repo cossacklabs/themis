@@ -36,7 +36,7 @@ to get a feeling of how Themis can be used.
 [Wiki]: https://github.com/cossacklabs/themis/wiki
 [Docs.rs]: https://docs.rs/themis
 [Documentation Server]: https://docs.cossacklabs.com/products/themis/
-[CHANGELOG]: /src/wrappers/themis/rust/CHANGELOG.md
+[CHANGELOG]: /CHANGELOG.md
 [Examples]: /docs/examples/rust
 [Tests]: /tests/rust
 
