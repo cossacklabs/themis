@@ -42,7 +42,7 @@ _Code:_
   
 - **Rust**
 
-  - Dropped `libthemis-src` crate support. From now the feature `vendored` won't be available for RustThemis wrapper and `libthemis-sys` will only link with Themis libraries, and not build them by itself.
+  - Dropped `libthemis-src` crate support and removed the `vendored` feature. RustThemis wrapper now requires Themis Core to be installed in the system ([#691](https://github.com/cossacklabs/themis/pull/691)).
 
 _Infrastructure:_
 
