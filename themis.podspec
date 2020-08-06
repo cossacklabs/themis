@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
     s.module_name = 'themis'
-    s.default_subspec = 'themis-openssl'
+    s.default_subspec = 'openssl-1.1.1'
 
     s.ios.deployment_target = '8.0'
     s.osx.deployment_target = '10.9'
@@ -19,6 +19,61 @@ Pod::Spec.new do |s|
     # TODO(ilammy, 2020-03-02): resolve "pod spec lint" warnings due to dependencies
     # If you update dependencies, please check whether we can remove "--allow-warnings"
     # from podspec validation in .github/workflows/test-objc.yaml
+
+    # This variant uses the current stable, non-legacy version of OpenSSL.
+    s.subspec 'openssl-1.1.1' do |so|
+        # OpenSSL 1.1.1g
+        so.dependency 'CLOpenSSL', '~> 1.1.107'
+
+        # Enable Bitcode in projects that depend on Themis.
+        so.ios.pod_target_xcconfig = { 'ENABLE_BITCODE' => 'YES' }
+
+        # We're building some C code here which uses includes as it pleases.
+        # Allow this behavior, but we will have to control header mappings.
+        so.ios.xcconfig = {
+            'OTHER_CFLAGS' => '-DLIBRESSL',
+            'USE_HEADERMAP' => 'NO',
+            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
+            'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
+        }
+        so.osx.xcconfig = {
+            'OTHER_CFLAGS' => '-DLIBRESSL',
+            'USE_HEADERMAP' => 'NO',
+            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
+            'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
+        }
+
+        # We need to do this weird subspec matryoshka because CocoaPods
+        # insists on compiling everything as if it were a modular framework.
+        # Unfortunately, Themis has a lot of #include "themis/something.h"
+        # which break in modular compilation. The "header_dir" fixes it up,
+        # but we must set it differently for ObjCThemis. Hence two subspecs.
+        # They are not meant for the end users.
+        so.subspec 'core' do |ss|
+            ss.source_files = [
+                "src/themis/*.{c,h}",
+                "src/soter/*.{c,h}",
+                "src/soter/ed25519/*.{c,h}",
+                "src/soter/openssl/*.{c,h}",
+            ]
+            ss.header_dir = "src"
+            ss.header_mappings_dir = "src"
+            # Don't export Themis Core headers, make only ObjcThemis public.
+            ss.private_header_files = [
+                "src/themis/*.h",
+                "src/soter/*.h",
+                "src/soter/ed25519/*.h",
+                "src/soter/openssl/*.h",
+            ]
+        end
+        so.subspec 'objcwrapper' do |ss|
+            ss.dependency 'themis/openssl-1.1.1/core'
+            ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{m,h}"
+            ss.header_dir = "objcthemis"
+            ss.header_mappings_dir = "src/wrappers/themis/Obj-C/objcthemis"
+            ss.public_header_files = "src/wrappers/themis/Obj-C/objcthemis/*.h"
+        end
+    end
 
     # use `themis/themis-openssl` as separate target to use Themis with OpenSSL
     s.subspec 'themis-openssl' do |so|
