@@ -3,7 +3,6 @@ members = [
     "benches/themis",
     "src/wrappers/themis/rust",
     "src/wrappers/themis/rust/libthemis-sys",
-    "src/wrappers/themis/rust/libthemis-src",
     "tools/rust",
 ]
 default-members = [
