@@ -1,1 +1,2 @@
-github "krzyzanowskim/OpenSSL" "990bd88219da80d7a77289aeae245b3eb400d834"
+binary "https://raw.githubusercontent.com/cossacklabs/openssl-apple/cossacklabs/carthage/openssl-static-MacOSX.json" "1.1.107"
+binary "https://raw.githubusercontent.com/cossacklabs/openssl-apple/cossacklabs/carthage/openssl-static-iPhone.json" "1.1.107"
