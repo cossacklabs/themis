@@ -13,14 +13,8 @@
 // limitations under the License.
 
 fn main() {
-    #[cfg(feature = "vendored")]
-    libthemis_src::make();
-
     let mut pkg_config = pkg_config::Config::new();
     pkg_config.env_metadata(true);
-
-    #[cfg(feature = "vendored")]
-    pkg_config.statik(true);
 
     match pkg_config.probe("libthemis") {
         Ok(_) => {

@@ -40,6 +40,9 @@ _Code:_
 
   - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)).
   
+- **Rust**
+
+  - Dropped `libthemis-src` crate support. From now the feature `vendored` won't be available for RustThemis wrapper and `libthemis-sys` will only link with Themis libraries, and not build them by itself.
 
 _Infrastructure:_
 
