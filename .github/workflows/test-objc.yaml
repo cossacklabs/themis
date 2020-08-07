@@ -181,7 +181,7 @@ jobs:
         run: |
           # CocoaPods: podspec
           sed -E -i '' \
-              -e "s|^(\s*s\.source = ).*$|\1{ :git => \"https://github.com/${HACK_REPOSITORY}.git\", :commit => \"$HACK_SHA\" }|" \
+              -e "s|^([ ]*s\.source = ).*$|\1{ :git => \"https://github.com/${HACK_REPOSITORY}.git\", :commit => \"$HACK_SHA\" }|" \
               themis.podspec
           # Note that CocoaPods is *really* strict with versioning, does not
           # allow modified podspec to be published, and issues a warning
