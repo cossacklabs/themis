@@ -53,6 +53,7 @@ _Infrastructure:_
 - AndroidThemis is now available on JCenter ([#679](https://github.com/cossacklabs/themis/pull/679)).
 - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683)).
 - Build system and tests now respect the `PATH` settings ([#685](https://github.com/cossacklabs/themis/pull/685)).
+- ObjCThemis and SwiftThemis now require Xcode 11 ([#692](https://github.com/cossacklabs/themis/pull/692)).
 
 ## [0.13.0](https://github.com/cossacklabs/themis/releases/tag/0.13.0), July 8th 2020
 
