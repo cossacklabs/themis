@@ -36,11 +36,13 @@ _Code:_
 
   - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)).
   - Updated OpenSSL to the latest 1.1.1g ([#692](https://github.com/cossacklabs/themis/pull/692)).
+  - It is now possible to build iOS apps with **arm64e** architecture ([#692](https://github.com/cossacklabs/themis/pull/692)).
 
 - **Objective-C**
 
   - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)).
   - Updated OpenSSL to the latest 1.1.1g ([#692](https://github.com/cossacklabs/themis/pull/692)).
+  - It is now possible to build iOS apps with **arm64e** architecture ([#692](https://github.com/cossacklabs/themis/pull/692)).
 
 - **Rust**
 
