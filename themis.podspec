@@ -48,7 +48,7 @@ Pod::Spec.new do |s|
         # Unfortunately, Themis has a lot of #include "themis/something.h"
         # which break in modular compilation. The "header_dir" fixes it up,
         # but we must set it differently for ObjCThemis. Hence two subspecs.
-        # They are not meant for the end users.
+        # End users should use "themis/openssl-1.1.1" only, not these ones.
         so.subspec 'core' do |ss|
             ss.source_files = [
                 "src/themis/*.{c,h}",

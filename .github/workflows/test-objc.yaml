@@ -179,7 +179,7 @@ jobs:
       - name: Hack dependencies
         if: contains(env.HACK_DEPENDENCIES, 'true')
         run: |
-          # CocoaPods: podspec
+          # Use the current commit in CocoaPods podspec
           sed -E -i '' \
               -e "s|^([ ]*s\.source = ).*$|\1{ :git => \"https://github.com/${HACK_REPOSITORY}.git\", :commit => \"$HACK_SHA\" }|" \
               themis.podspec
