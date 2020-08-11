@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "soter/soter_wipe.h"
+#include "themis/secure_keygen.h"
 
 void secure_session_peer_cleanup(secure_session_peer_t* peer)
 {
@@ -42,6 +43,11 @@ themis_status_t secure_session_peer_init(secure_session_peer_t* peer,
     size_t total_len = id_len + sign_key_len;
 
     if (!id || !id_len || !sign_key || !sign_key_len) {
+        return THEMIS_INVALID_PARAMETER;
+    }
+
+    themis_key_kind_t key_kind = themis_get_asym_key_kind(sign_key, sign_key_len);
+    if (key_kind != THEMIS_KEY_EC_PRIVATE && key_kind != THEMIS_KEY_EC_PUBLIC) {
         return THEMIS_INVALID_PARAMETER;
     }
 
