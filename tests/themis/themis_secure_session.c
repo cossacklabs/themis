@@ -682,13 +682,36 @@ static void test_invalid_private_key_type(void)
     memcpy(&(client_rsa.transport), &transport, sizeof(secure_session_user_callbacks_t));
     client_rsa.transport.user_data = &client_rsa;
 
+    /* Public keys are not the ones secure_session_create() expects */
+
+    client.session = secure_session_create(client.id,
+                                           strlen(client.id),
+                                           client.pub,
+                                           client.pub_length,
+                                           &(client.transport));
+
+    testsuite_fail_if(client.session != NULL, "secure_session_create must fail with EC pub key");
+
+    memcpy(&(client.transport), &transport, sizeof(secure_session_user_callbacks_t));
+    client.transport.user_data = &client_rsa;
+
+    /* RSA keys are not currently supported */
+
     client_rsa.session = secure_session_create(client_rsa.id,
                                                strlen(client_rsa.id),
                                                client_rsa.priv,
                                                client_rsa.priv_length,
                                                &(client_rsa.transport));
 
-    testsuite_fail_if(client_rsa.session != NULL, "secure_session_create fail with RSA key");
+    testsuite_fail_if(client_rsa.session != NULL, "secure_session_create must fail with RSA key");
+
+    client_rsa.session = secure_session_create(client_rsa.id,
+                                               strlen(client_rsa.id),
+                                               client_rsa.pub,
+                                               client_rsa.pub_length,
+                                               &(client_rsa.transport));
+
+    testsuite_fail_if(client_rsa.session != NULL, "secure_session_create must fail with RSA pub key");
 }
 
 void run_secure_session_test(void)

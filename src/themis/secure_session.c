@@ -23,6 +23,7 @@
 #include "soter/soter_t.h"
 #include "soter/soter_wipe.h"
 
+#include "themis/secure_keygen.h"
 #include "themis/secure_session_t.h"
 #include "themis/secure_session_utils.h"
 #include "themis/themis_portable_endian.h"
@@ -100,6 +101,17 @@ themis_status_t secure_session_init(secure_session_t* session_ctx,
 {
     soter_status_t soter_status;
     themis_status_t res = THEMIS_SUCCESS;
+
+    if (!sign_key || !sign_key_length) {
+        res = THEMIS_INVALID_PARAMETER;
+        goto err;
+    }
+
+    themis_key_kind_t key_kind = themis_get_asym_key_kind(sign_key, sign_key_length);
+    if (key_kind != THEMIS_KEY_EC_PRIVATE) {
+        res = THEMIS_INVALID_PARAMETER;
+        goto err;
+    }
 
     res = secure_session_check_user_callbacks(user_callbacks);
     if (THEMIS_SUCCESS != res) {
