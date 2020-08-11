@@ -11,6 +11,7 @@ _Code:_
   - Include embedded BoringSSL into Soter for convenience ([#681](https://github.com/cossacklabs/themis/pull/681)).
   - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683)).
   - Improved compatibility with OpenSSL 1.1.1 ([#684](https://github.com/cossacklabs/themis/pull/684)).
+  - Add check of private key type when creating Secure Session, only allow EC keys.
 
 - **Android**
 
