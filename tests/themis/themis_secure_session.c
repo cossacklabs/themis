@@ -788,8 +788,6 @@ static void test_basic_flow_no_transport(void)
 
 static void test_empty_peer_id(void)
 {
-    themis_status_t res;
-
     memcpy(&(client.transport), &transport, sizeof(secure_session_user_callbacks_t));
     client.transport.user_data = &client;
 
@@ -804,8 +802,6 @@ static void test_empty_peer_id(void)
 
 static void test_invalid_private_key_type(void)
 {
-    themis_status_t res;
-
     memcpy(&(client_rsa.transport), &transport, sizeof(secure_session_user_callbacks_t));
     client_rsa.transport.user_data = &client_rsa;
 
