@@ -19,7 +19,6 @@
 #include <string.h>
 
 #include "soter/soter_wipe.h"
-#include "themis/secure_keygen.h"
 
 void secure_session_peer_cleanup(secure_session_peer_t* peer)
 {
