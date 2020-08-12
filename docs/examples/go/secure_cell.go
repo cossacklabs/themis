@@ -26,7 +26,7 @@ import (
 	"github.com/cossacklabs/themis/gothemis/keys"
 )
 
-func example_seal(key *keys.SymmetricKey, message, context []byte) {
+func exampleSeal(key *keys.SymmetricKey, message, context []byte) {
 	fmt.Println("Secure Cell - Seal mode (symmetric key)")
 	// This is the easiest mode to use.
 
@@ -55,7 +55,7 @@ func example_seal(key *keys.SymmetricKey, message, context []byte) {
 	fmt.Printf("\n")
 }
 
-func example_seal_with_passphrase(passphrase string, message, context []byte) {
+func exampleSealWithPassphrase(passphrase string, message, context []byte) {
 	fmt.Println("Secure Cell - Seal mode (passphrase)")
 	// This is the easiest mode to use if you need to keep the secret in your head.
 
@@ -84,7 +84,7 @@ func example_seal_with_passphrase(passphrase string, message, context []byte) {
 	fmt.Printf("\n")
 }
 
-func example_token_protect(key *keys.SymmetricKey, message, context []byte) {
+func exampleTokenProtect(key *keys.SymmetricKey, message, context []byte) {
 	fmt.Println("Secure Cell - Token Protect mode")
 	// A bit harded to use than Seal mode due to extra "authentication token",
 	// but the encrypted data has the same size as input.
@@ -115,7 +115,7 @@ func example_token_protect(key *keys.SymmetricKey, message, context []byte) {
 	fmt.Printf("\n")
 }
 
-func example_token_imprint(key *keys.SymmetricKey, message, context []byte) {
+func exampleTokenImprint(key *keys.SymmetricKey, message, context []byte) {
 	fmt.Println("Secure Cell - Context Imprint mode")
 	// Slightly less secure mode which preserves the input length too.
 	// However, it requires "associated context" to be specified
@@ -160,8 +160,8 @@ func main() {
 	message := []byte("Broccoli or cauliflower, which one is green?")
 	context := []byte("Correct! *gunshot*")
 
-	example_seal(key, message, context)
-	example_seal_with_passphrase(passphrase, message, context)
-	example_token_protect(key, message, context)
-	example_token_imprint(key, message, context)
+	exampleSeal(key, message, context)
+	exampleSealWithPassphrase(passphrase, message, context)
+	exampleTokenProtect(key, message, context)
+	exampleTokenImprint(key, message, context)
 }
