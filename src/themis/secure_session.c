@@ -102,11 +102,8 @@ themis_status_t secure_session_init(secure_session_t* session_ctx,
     soter_status_t soter_status;
     themis_status_t res = THEMIS_SUCCESS;
 
-    if (!sign_key || !sign_key_length) {
-        res = THEMIS_INVALID_PARAMETER;
-        goto err;
-    }
-
+    /* This change prevents from using RSA keys in Secure Session,
+     * as they are currently not supported */
     themis_key_kind_t key_kind = themis_get_asym_key_kind(sign_key, sign_key_length);
     if (key_kind != THEMIS_KEY_EC_PRIVATE) {
         res = THEMIS_INVALID_PARAMETER;

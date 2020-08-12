@@ -46,13 +46,6 @@ themis_status_t secure_session_peer_init(secure_session_peer_t* peer,
         return THEMIS_INVALID_PARAMETER;
     }
 
-    /* This change prevents from using RSA keys in Secure Session,
-     * as they are currently not supported */
-    themis_key_kind_t key_kind = themis_get_asym_key_kind(sign_key, sign_key_len);
-    if (key_kind != THEMIS_KEY_EC_PRIVATE && key_kind != THEMIS_KEY_EC_PUBLIC) {
-        return THEMIS_INVALID_PARAMETER;
-    }
-
     if (ecdh_key) {
         total_len += ecdh_key_len;
     }

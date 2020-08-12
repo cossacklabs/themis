@@ -671,13 +671,17 @@ static void test_empty_peer_id(void)
     memcpy(&(client.transport), &transport, sizeof(secure_session_user_callbacks_t));
     client.transport.user_data = &client;
 
+    client.session = secure_session_create(NULL, 9001, client.priv, client.priv_length, &(client.transport));
+
+    testsuite_fail_if(client.session != NULL, "secure_session_create must fail with peer id == NULL");
+
     client.session =
         secure_session_create(client.id, 0, client.priv, client.priv_length, &(client.transport));
 
-    testsuite_fail_if(client.session != NULL, "secure_session_create must fail with empty Peer ID");
+    testsuite_fail_if(client.session != NULL, "secure_session_create must fail with peer id_len == 0");
 }
 
-static void test_invalid_private_key_type(void)
+static void test_create_session_with_ec_pubkey(void)
 {
     memcpy(&(client_rsa.transport), &transport, sizeof(secure_session_user_callbacks_t));
     client_rsa.transport.user_data = &client_rsa;
@@ -691,7 +695,10 @@ static void test_invalid_private_key_type(void)
                                            &(client.transport));
 
     testsuite_fail_if(client.session != NULL, "secure_session_create must fail with EC pub key");
+}
 
+static void test_create_session_with_rsa_privkey(void)
+{
     memcpy(&(client.transport), &transport, sizeof(secure_session_user_callbacks_t));
     client.transport.user_data = &client_rsa;
 
@@ -704,6 +711,14 @@ static void test_invalid_private_key_type(void)
                                                &(client_rsa.transport));
 
     testsuite_fail_if(client_rsa.session != NULL, "secure_session_create must fail with RSA key");
+}
+
+static void test_create_session_with_rsa_pubkey(void)
+{
+    memcpy(&(client.transport), &transport, sizeof(secure_session_user_callbacks_t));
+    client.transport.user_data = &client_rsa;
+
+    /* Public keys are not expected at all */
 
     client_rsa.session = secure_session_create(client_rsa.id,
                                                strlen(client_rsa.id),
@@ -724,5 +739,7 @@ void run_secure_session_test(void)
 
     testsuite_enter_suite("secure session: invalid parameters");
     testsuite_run_test(test_empty_peer_id);
-    testsuite_run_test(test_invalid_private_key_type);
+    testsuite_run_test(test_create_session_with_ec_pubkey);
+    testsuite_run_test(test_create_session_with_rsa_privkey);
+    testsuite_run_test(test_create_session_with_rsa_pubkey);
 }
