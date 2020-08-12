@@ -1,0 +1,5 @@
+# Export only Objective-C classes in TS (Themis) namespace
+_OBJC_CLASS_$_TS*
+_OBJC_METACLASS_$_TS*
+# As well as global function from the said namespace too
+_TS*

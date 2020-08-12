@@ -26,9 +26,18 @@ _Code:_
 
   - Minor dependency updates making the world a better place ([#680](https://github.com/cossacklabs/themis/pull/680)).
 
+- **Swift**
+
+  - Updated OpenSSL to the latest 1.1.1g ([#692](https://github.com/cossacklabs/themis/pull/692)).
+
+- **Objective-C**
+
+  - Updated OpenSSL to the latest 1.1.1g ([#692](https://github.com/cossacklabs/themis/pull/692)).
+
 _Infrastructure:_
 
 - AndroidThemis is now available on JCenter ([#679](https://github.com/cossacklabs/themis/pull/679)).
+- ObjCThemis and SwiftThemis now require Xcode 11 ([#692](https://github.com/cossacklabs/themis/pull/692)).
 
 ## [0.13.0](https://github.com/cossacklabs/themis/releases/tag/0.13.0), July 8th 2020
 
