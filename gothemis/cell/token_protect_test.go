@@ -220,12 +220,12 @@ func TestTokenProtectContextSignificance(t *testing.T) {
 		t.Fatal("failed to encrypt message", err)
 	}
 
-	decrypted, err := cell.Decrypt(encrypted, token, contextB)
+	_, err = cell.Decrypt(encrypted, token, contextB)
 	if err == nil {
 		t.Error("message should not be decrypted with incorrect context")
 	}
 
-	decrypted, err = cell.Decrypt(encrypted, token, contextA)
+	decrypted, err := cell.Decrypt(encrypted, token, contextA)
 	if err != nil {
 		t.Error("correct context should allow decryption", err)
 	}

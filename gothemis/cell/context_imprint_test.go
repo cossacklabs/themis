@@ -163,7 +163,7 @@ func TestContextImprintContextSignificance(t *testing.T) {
 	// You can use a different context to decrypt data, but you'll get garbage.
 	decrypted, err := cell.Decrypt(encrypted, contextB)
 	if err != nil || bytes.Equal(decrypted, message) {
-		t.Error("message is successfuly decrypted into garbage")
+		t.Error("message is successfully decrypted into garbage")
 	}
 
 	// Only the original context will work.
@@ -204,7 +204,7 @@ func TestContextImprintNoDetectCorruptedData(t *testing.T) {
 	// Decrypts successfully but the content is garbage.
 	decrypted, err := cell.Decrypt(encrypted, context)
 	if err != nil || bytes.Equal(decrypted, message) {
-		t.Error("corrupted message is successfuly decrypted into garbage")
+		t.Error("corrupted message is successfully decrypted into garbage")
 	}
 }
 
@@ -228,7 +228,7 @@ func TestContextImprintNoDetectTruncatedData(t *testing.T) {
 
 	decrypted, err := cell.Decrypt(encrypted[:len(encrypted)-1], context)
 	if err != nil || bytes.Equal(decrypted, message) {
-		t.Error("truncated message is successfuly decrypted into garbage")
+		t.Error("truncated message is successfully decrypted into garbage")
 	}
 }
 
@@ -254,7 +254,7 @@ func TestContextImprintNoDetectExtendedData(t *testing.T) {
 
 	decrypted, err := cell.Decrypt(encrypted, context)
 	if err != nil || bytes.Equal(decrypted, message) {
-		t.Error("extended message is successfuly decrypted into garbage")
+		t.Error("extended message is successfully decrypted into garbage")
 	}
 }
 
