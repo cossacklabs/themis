@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 #
 # Analyze crashes found by American Fuzzy Lop
 #

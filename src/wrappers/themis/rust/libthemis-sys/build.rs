@@ -13,14 +13,14 @@
 // limitations under the License.
 
 fn main() {
-    #[cfg(feature = "vendored")]
-    libthemis_src::make();
+    if std::env::var("DOCS_RS") == Ok("1".to_string()) {
+        // Docs for https://docs.rs/themis are being generated, no need to
+        // search for libthemis (it will fail anyway).
+        return;
+    }
 
     let mut pkg_config = pkg_config::Config::new();
     pkg_config.env_metadata(true);
-
-    #[cfg(feature = "vendored")]
-    pkg_config.statik(true);
 
     match pkg_config.probe("libthemis") {
         Ok(_) => {

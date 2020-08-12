@@ -1481,6 +1481,9 @@
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				FRAMEWORK_VERSION = A;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
@@ -1498,6 +1501,7 @@
 				PRODUCT_NAME = objcthemis;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = "-Wno-documentation";
 			};
 			name = Debug;
 		};
@@ -1518,6 +1522,9 @@
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				FRAMEWORK_VERSION = A;
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
@@ -1535,6 +1542,7 @@
 				PRODUCT_NAME = objcthemis;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
+				WARNING_CFLAGS = "-Wno-documentation";
 			};
 			name = Release;
 		};
@@ -1553,6 +1561,9 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
@@ -1575,6 +1586,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WARNING_CFLAGS = "-Wno-documentation";
 			};
 			name = Debug;
 		};
@@ -1593,6 +1605,9 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
@@ -1615,6 +1630,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				WARNING_CFLAGS = "-Wno-documentation";
 			};
 			name = Release;
 		};

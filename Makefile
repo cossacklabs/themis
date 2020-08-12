@@ -20,7 +20,7 @@
 .DEFAULT_GOAL := all
 
 # Set shell for target commands
-SHELL = /bin/bash
+SHELL = bash
 
 # Disable built-in rules
 MAKEFLAGS += --no-builtin-rules

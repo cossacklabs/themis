@@ -23,9 +23,6 @@ include = [
 circle-ci = { repository = "cossacklabs/themis", branch = "master" }
 maintenance = { status = "actively-developed" }
 
-[features]
-vendored = ["bindings/vendored"]
-
 [dependencies]
 bindings = { package = "libthemis-sys", path = "libthemis-sys", version = "0.13.0" }
 zeroize = "0.5.2"
@@ -37,7 +34,3 @@ clap = "2.32"
 lazy_static = "1.2.0"
 log = "0.4.6"
 env_logger = "0.6.0"
-
-[package.metadata.docs.rs]
-features = ["vendored"]
-dependencies = ["libssl-dev"]
