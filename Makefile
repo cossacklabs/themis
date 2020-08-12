@@ -616,32 +616,47 @@ LICENSE_NAME = "Apache License Version 2.0"
 
 DEB_CODENAME := $(shell lsb_release -cs 2> /dev/null)
 DEB_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
-ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
+ifeq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
+# fpm has "--provides" option, but it eats package versions when we need to
+# preserve them for correct dependency resolution. Insert fields directly.
+DEB_DEPENDENCIES += --deb-field "Provides: $(CANONICAL_PACKAGE_NAME) (= $(VERSION)+$(OS_CODENAME))"
+DEB_DEPENDENCIES += --conflicts $(CANONICAL_PACKAGE_NAME)
+DEB_DEPENDENCIES += --replaces  $(CANONICAL_PACKAGE_NAME)
+DEB_DEPENDENCIES_DEV += --deb-field "Provides: $(DEB_CANONICAL_DEV_PACKAGE_NAME) (= $(VERSION)+$(OS_CODENAME))"
+DEB_DEPENDENCIES_DEV += --conflicts $(DEB_CANONICAL_DEV_PACKAGE_NAME)
+DEB_DEPENDENCIES_DEV += --replaces  $(DEB_CANONICAL_DEV_PACKAGE_NAME)
+else
 # If we were using native Debian packaging, dpkg-shlibdeps could supply us with
 # accurate dependency information. However, we build packages manually, so we
 # use dependencies of "libssl-dev" as a proxy. Typically this is "libssl1.1".
-DEB_DEPENDENCIES += --depends $(shell apt-cache depends libssl-dev | grep 'Depends:' | cut -d: -f 2- | tr -d ' ')
-endif
-DEB_DEPENDENCIES += --conflicts $(OTHER_PACKAGE_NAME)
-DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
-ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
+#
+# Example output of "apt-cache depends" (from Ubuntu 16.04):
+#
+# libssl-dev
+#   Depends: libssl1.0.0
+#   Depends: zlib1g-dev
+#   Recommends: libssl-doc
+DEB_DEPENDENCIES += $(shell apt-cache depends libssl-dev | awk '$$1 == "Depends:" && $$2 ~ /^libssl/ { print "--depends", $$2 }' )
 DEB_DEPENDENCIES_DEV += --depends libssl-dev
 endif
-DEB_DEPENDENCIES_DEV += --conflicts $(OTHER_DEB_DEV_PACKAGE_NAME)
-DEB_DEPENDENCIES_THEMISPP = --depends "$(DEB_DEV_PACKAGE_NAME) (= $(VERSION)+$(OS_CODENAME)) | $(OTHER_DEB_DEV_PACKAGE_NAME) (= $(VERSION)+$(OS_CODENAME))"
-DEB_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) (>= $(VERSION)+$(OS_CODENAME)) | $(OTHER_PACKAGE_NAME) >= ($(VERSION)+$(OS_CODENAME))"
+DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
+DEB_DEPENDENCIES_THEMISPP = --depends "$(DEB_CANONICAL_DEV_PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
+DEB_DEPENDENCIES_JNI += --depends "$(CANONICAL_PACKAGE_NAME) >= $(VERSION)+$(OS_CODENAME)"
 
-ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
-RPM_DEPENDENCIES += --depends openssl-libs
-endif
-RPM_DEPENDENCIES += --conflicts $(OTHER_PACKAGE_NAME)
-RPM_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
-ifneq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
+ifeq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
+RPM_DEPENDENCIES += --provides  $(CANONICAL_PACKAGE_NAME)
+RPM_DEPENDENCIES += --conflicts $(CANONICAL_PACKAGE_NAME)
+RPM_DEPENDENCIES += --replaces  $(CANONICAL_PACKAGE_NAME)
+RPM_DEPENDENCIES_DEV += --provides  $(RPM_CANONICAL_DEV_PACKAGE_NAME)
+RPM_DEPENDENCIES_DEV += --conflicts $(RPM_CANONICAL_DEV_PACKAGE_NAME)
+RPM_DEPENDENCIES_DEV += --replaces  $(RPM_CANONICAL_DEV_PACKAGE_NAME)
+else
+RPM_DEPENDENCIES     += --depends openssl-libs
 RPM_DEPENDENCIES_DEV += --depends openssl-devel
 endif
-RPM_DEPENDENCIES_DEV += --conflicts $(OTHER_RPM_DEV_PACKAGE_NAME)
-RPM_DEPENDENCIES_THEMISPP = --depends "($(RPM_DEV_PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM) or $(OTHER_RPM_DEV_PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM))"
-RPM_DEPENDENCIES_JNI += --depends "($(PACKAGE_NAME) >= $(RPM_VERSION)-$(RPM_RELEASE_NUM) or $(OTHER_PACKAGE_NAME) >= $(RPM_VERSION)-$(RPM_RELEASE_NUM))"
+RPM_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
+RPM_DEPENDENCIES_THEMISPP = --depends "$(RPM_CANONICAL_DEV_PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
+RPM_DEPENDENCIES_JNI += --depends "$(CANONICAL_PACKAGE_NAME) >= $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_RELEASE_NUM = 1
 
 OS_NAME := $(shell lsb_release -is 2>/dev/null || printf 'unknown')
@@ -659,25 +674,19 @@ else ifeq ($(OS_NAME),$(filter $(OS_NAME),RedHatEnterpriseServer CentOS))
 	RPM_LIBDIR := /$(shell [ $$(arch) == "x86_64" ] && echo "lib64" || echo "lib")
 endif
 
+CANONICAL_PACKAGE_NAME         = libthemis
+DEB_CANONICAL_DEV_PACKAGE_NAME = $(CANONICAL_PACKAGE_NAME)-dev
+RPM_CANONICAL_DEV_PACKAGE_NAME = $(CANONICAL_PACKAGE_NAME)-devel
 ifeq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
-PACKAGE_SUFFIX = -boringssl
+PACKAGE_NAME = libthemis-boringssl
+else
+PACKAGE_NAME = libthemis
 endif
-PACKAGE_NAME = libthemis$(PACKAGE_SUFFIX)
 DEB_DEV_PACKAGE_NAME = $(PACKAGE_NAME)-dev
 RPM_DEV_PACKAGE_NAME = $(PACKAGE_NAME)-devel
 DEB_THEMISPP_PACKAGE_NAME = libthemispp-dev
 RPM_THEMISPP_PACKAGE_NAME = libthemispp-devel
 JNI_PACKAGE_NAME = libthemis-jni
-
-ifeq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
-OTHER_PACKAGE_NAME = libthemis
-OTHER_DEB_DEV_PACKAGE_NAME = libthemis-dev
-OTHER_RPM_DEV_PACKAGE_NAME = libthemis-devel
-else
-OTHER_PACKAGE_NAME = libthemis-boringssl
-OTHER_DEB_DEV_PACKAGE_NAME = libthemis-boringssl-dev
-OTHER_RPM_DEV_PACKAGE_NAME = libthemis-boringssl-devel
-endif
 
 PACKAGE_CATEGORY = security
 SHORT_DESCRIPTION = Data security library for network communication and data storage
@@ -918,7 +927,7 @@ ifeq ($(OS_CODENAME),jessie)
 else
     PHP_DEPENDENCIES += --depends php$(PHP_VERSION_FULL)
 endif
-PHP_DEPENDENCIES += --depends "$(PACKAGE_NAME) (>= $(VERSION)+$(OS_CODENAME)) | $(OTHER_PACKAGE_NAME) (>= $(VERSION)+$(OS_CODENAME))"
+PHP_DEPENDENCIES += --depends "$(CANONICAL_PACKAGE_NAME) >= $(VERSION)+$(OS_CODENAME)"
 
 PHP_PACKAGE_NAME:=libphpthemis-php$(PHP_VERSION_FULL)
 PHP_POST_INSTALL_SCRIPT:=./scripts/phpthemis_postinstall.sh
