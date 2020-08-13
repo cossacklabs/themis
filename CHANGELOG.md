@@ -25,6 +25,7 @@ _Code:_
 - **Go**
 
   - Fixed panics on 32-bit systems when processing corrupted data ([#677](https://github.com/cossacklabs/themis/pull/677)).
+  - Improved GoThemis package README and documentation ([#699](https://github.com/cossacklabs/themis/pull/699)).
 
 - **Node.js**
 
