@@ -223,6 +223,29 @@ func testSession(keytype int, t *testing.T) {
 	<-finCh
 }
 
+func testInvalidKeyHandling(t *testing.T) {
+	kpa, err := keys.New(keys.TypeRSA)
+	if nil != err {
+		t.Error(err)
+		return
+	}
+
+	kpb, err := keys.New(keys.TypeRSA)
+	if nil != err {
+		t.Error(err)
+		return
+	}
+
+	clb := &testCallbacks{kpa, kpb}
+
+	_, err = New(clientID, kpa.Private, clb)
+	if nil == err {
+		t.Error("Creating Secure Session with RSA key")
+		return
+	}
+}
+
 func TestSession(t *testing.T) {
 	testSession(keys.TypeEC, t)
+	testInvalidKeyHandling(t)
 }
