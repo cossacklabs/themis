@@ -4,6 +4,14 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.13.1](https://github.com/cossacklabs/themis/releases/tag/0.13.1), August 13th 2020
+
+**TL;DR:**
+
+- AndroidThemis is now available on JCenter
+- ObjCThemis and SwiftThemis get latest OpenSSL update
+- Minor security fixes in GoThemis, JsThemis, WasmThemis
+
 _Code:_
 
 - **Core**
