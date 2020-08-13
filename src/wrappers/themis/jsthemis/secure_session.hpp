@@ -31,16 +31,16 @@ class SecureSession : public Nan::ObjectWrap
 public:
     static void Init(v8::Local<v8::Object> exports);
 
-    bool isCreated()
-    {
-        return session_ != nullptr;
-    }
-
 private:
     explicit SecureSession(const std::vector<uint8_t>& id,
                            const std::vector<uint8_t>& private_key,
                            v8::Local<v8::Function> get_pub_by_id_callback);
     ~SecureSession();
+
+    bool isCreated()
+    {
+        return session_ != nullptr;
+    }
 
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);
     static void connectRequest(const Nan::FunctionCallbackInfo<v8::Value>& args);
