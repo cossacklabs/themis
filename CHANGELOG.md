@@ -10,8 +10,45 @@ _Code:_
 
   - Include embedded BoringSSL into Soter for convenience ([#681](https://github.com/cossacklabs/themis/pull/681)).
   - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
-  - Improved compatibility with OpenSSL 1.1.1 ([#684](https://github.com/cossacklabs/themis/pull/684)).
   - `secure_session_create()` now allows only EC keys, returning an error for RSA ([#693](https://github.com/cossacklabs/themis/pull/693)).
+
+- **PHP**
+
+  - `libphpthemis` packages for Debian/Ubuntu now have accurate dependencies ([#683](https://github.com/cossacklabs/themis/pull/683)).
+
+- **Swift**
+
+  - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)).
+
+- **Objective-C**
+
+  - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)).
+
+- **Rust**
+
+  - Dropped `libthemis-src` crate support and removed the `vendored` feature. RustThemis wrapper now requires Themis Core to be installed in the system ([#691](https://github.com/cossacklabs/themis/pull/691)).
+
+_Infrastructure:_
+
+- Improved package split making `libthemis` thinner ([#678](https://github.com/cossacklabs/themis/pull/678)).
+- Optimized dependencies of `libthemis` DEB and RPM packages ([#682](https://github.com/cossacklabs/themis/pull/682), [#686](https://github.com/cossacklabs/themis/pull/686)).
+- `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
+- Build system and tests now respect the `PATH` settings ([#685](https://github.com/cossacklabs/themis/pull/685)).
+
+## [0.13.1](https://github.com/cossacklabs/themis/releases/tag/0.13.1), August 13th 2020
+
+**TL;DR:**
+
+- AndroidThemis is now available on JCenter
+- ObjCThemis and SwiftThemis get latest OpenSSL update
+- ObjCThemis and SwiftThemis now require Xcode 11 (or later)
+- Minor security fixes in GoThemis, JsThemis, WasmThemis
+
+_Code:_
+
+- **Core**
+
+  - Improved compatibility with OpenSSL 1.1.1 ([#684](https://github.com/cossacklabs/themis/pull/684)).
 
 - **Android**
 
@@ -26,35 +63,21 @@ _Code:_
 
   - Minor dependency updates making the world a better place ([#680](https://github.com/cossacklabs/themis/pull/680)).
 
-- **PHP**
-
-  - `libphpthemis` packages for Debian/Ubuntu now have accurate dependencies ([#683](https://github.com/cossacklabs/themis/pull/683)).
-
 - **WebAssembly**
 
   - Minor dependency updates making the world a better place ([#680](https://github.com/cossacklabs/themis/pull/680)).
 
 - **Swift**
 
-  - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)).
   - Updated OpenSSL to the latest 1.1.1g ([#692](https://github.com/cossacklabs/themis/pull/692)).
 
 - **Objective-C**
 
-  - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)).
   - Updated OpenSSL to the latest 1.1.1g ([#692](https://github.com/cossacklabs/themis/pull/692)).
-
-- **Rust**
-
-  - Dropped `libthemis-src` crate support and removed the `vendored` feature. RustThemis wrapper now requires Themis Core to be installed in the system ([#691](https://github.com/cossacklabs/themis/pull/691)).
 
 _Infrastructure:_
 
-- Improved package split making `libthemis` thinner ([#678](https://github.com/cossacklabs/themis/pull/678)).
-- Optimized dependencies of `libthemis` DEB and RPM packages ([#682](https://github.com/cossacklabs/themis/pull/682), [#686](https://github.com/cossacklabs/themis/pull/686)).
 - AndroidThemis is now available on JCenter ([#679](https://github.com/cossacklabs/themis/pull/679)).
-- `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
-- Build system and tests now respect the `PATH` settings ([#685](https://github.com/cossacklabs/themis/pull/685)).
 - ObjCThemis and SwiftThemis now require Xcode 11 ([#692](https://github.com/cossacklabs/themis/pull/692)).
 
 ## [0.13.0](https://github.com/cossacklabs/themis/releases/tag/0.13.0), July 8th 2020
