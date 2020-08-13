@@ -31,6 +31,11 @@ class SecureSession : public Nan::ObjectWrap
 public:
     static void Init(v8::Local<v8::Object> exports);
 
+    bool isCreated()
+    {
+        return session_ != nullptr;
+    }
+
 private:
     explicit SecureSession(const std::vector<uint8_t>& id,
                            const std::vector<uint8_t>& private_key,
