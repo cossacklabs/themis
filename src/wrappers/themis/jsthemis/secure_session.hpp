@@ -37,6 +37,11 @@ private:
                            v8::Local<v8::Function> get_pub_by_id_callback);
     ~SecureSession();
 
+    bool isCreated()
+    {
+        return session_ != nullptr;
+    }
+
     static void New(const Nan::FunctionCallbackInfo<v8::Value>& args);
     static void connectRequest(const Nan::FunctionCallbackInfo<v8::Value>& args);
     static void wrap(const Nan::FunctionCallbackInfo<v8::Value>& args);
