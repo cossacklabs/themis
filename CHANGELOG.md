@@ -4,6 +4,8 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.13.2](https://github.com/cossacklabs/themis/releases/tag/0.13.2), August 14th 2020
+
 **Breaking changes and deprecations:**
 
 - ObjCThemis framework built by Carthage is now called `themis.framework` once again ([read more](#0.13.2-revert-objcthemis-rename)).
