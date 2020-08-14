@@ -56,6 +56,7 @@ class TestSession < Test::Unit::TestCase
   def setup
     @server_priv_key, @server_pub_key = Themis::SKeyPairGen.new.ec
     @client_priv_key, @client_pub_key = Themis::SKeyPairGen.new.ec
+    @client_priv_key_rsa, @client_pub_key_rsa = Themis::SKeyPairGen.new.rsa
     @q1 = Queue.new
     @q2 = Queue.new
     @pub_keys = {'server' => @server_pub_key, 'client' => @client_pub_key}
@@ -92,5 +93,35 @@ class TestSession < Test::Unit::TestCase
       Thread.new { server },
       Thread.new { client }
     ].each(&:join)
+  end
+
+  def test_invalid_key_public_ec
+    begin
+      session = Themis::Ssession.new(
+        'client', @client_pub_key, CallbacksForThemis.new(@pub_keys))
+    rescue
+    else
+      assert(false)
+    end
+  end
+
+  def test_invalid_key_private_rsa
+    begin
+      session = Themis::Ssession.new(
+        'client', @client_priv_key_rsa, CallbacksForThemis.new(@pub_keys))
+    rescue
+    else
+      assert(false)
+    end
+  end
+
+  def test_invalid_key_public_rsa
+    begin
+      session = Themis::Ssession.new(
+        'client', @client_pub_key_rsa, CallbacksForThemis.new(@pub_keys))
+    rescue
+    else
+      assert(false)
+    end
   end
 end
