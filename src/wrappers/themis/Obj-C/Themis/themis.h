@@ -20,8 +20,4 @@ FOUNDATION_EXPORT double themisVersionNumber;
 //! Project version string for Themis.
 FOUNDATION_EXPORT const unsigned char themisVersionString[];
 
-#import "objcthemis/objcthemis.h"
-
-#warning #import <themis/themis.h> is deprecated since Themis 0.13. \
-Please use #import <objcthemis/objcthemis.h> instead. \
-See https://github.com/cossacklabs/themis/blob/master/CHANGELOG.md#0.13.0-objcthemis-rename
+#import "objcthemis.h"

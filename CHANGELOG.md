@@ -4,6 +4,24 @@
 
 Changes that are currently in development and have not been released yet.
 
+**Breaking changes and deprecations:**
+
+- ObjCThemis framework built by Carthage is now called `themis.framework` once again ([read more](#0.13.2-revert-objcthemis-rename)).
+
+_Code:_
+
+- **Objective-C**
+
+  - **Breaking changes**
+
+    - <a id="0.13.2-revert-objcthemis-rename">ObjCThemis framework built by Carthage is now called `themis.framework` once again</a> ([#704](https://github.com/cossacklabs/themis/pull/704)).
+
+      [ObjCThemis 0.13.0](#0.13.0-objcthemis-rename) has initiated renaming of the framework produced by Carthage into `objcthemis.framework` from its historical name `themis.framework`. This decision has been a mistake. More information is available in the pull request linked above.
+
+      `objcthemis.framework` is removed and should not be used.
+
+      Please continue linking your applications to `themis.framework`. Note as well that starting with ObjCThemis 0.13.1, you do not have to embed `openssl.framework` anymore when ObjCThemis is installed via Carthage.
+
 ## [0.13.1](https://github.com/cossacklabs/themis/releases/tag/0.13.1), August 13th 2020
 
 **TL;DR:**
