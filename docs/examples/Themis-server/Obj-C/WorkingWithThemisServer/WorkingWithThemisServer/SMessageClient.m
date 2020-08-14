@@ -1,7 +1,6 @@
-#import <objcthemis/smessage.h>
-#import <objcthemis/skeygen.h>
-
 #import "SMessageClient.h"
+
+@import themis;
 
 // ---------------------- IMPORTANT SETUP ---------------------------------------
 
