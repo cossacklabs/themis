@@ -143,7 +143,7 @@ class SSession(object):
                 ctypes.byref(ctypes.create_string_buffer(sign_key)),
                 len(sign_key),
                 ctypes.byref(self.transport_))
-        if self.session_ctx is None:
+        if not self.session_ctx:
             raise exception.ThemisError(THEMIS_CODES.FAIL,
                                         "Secure Session failed creating")
 

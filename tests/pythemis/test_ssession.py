@@ -21,6 +21,7 @@ from threading import Thread
 
 from pythemis import ssession
 from pythemis import skeygen
+from pythemis import exception
 
 q1 = deque([])
 q2 = deque([])
@@ -133,6 +134,35 @@ class SSessionTest(unittest.TestCase):
         self.assertEqual(data, client_session.unwrap(server_session.wrap(data)))
         self.assertEqual(data, server_session.unwrap(client_session.wrap(data)))
 
+    def test_invalid_key_types(self):
+        keypair2 = skeygen.GenerateKeyPair(skeygen.KEY_PAIR_TYPE.EC)
+        user_id2 = b'user_id2'
+
+        transport = ssession.SimpleMemoryTransport(
+            user_id2,
+            keypair2.export_public_key()
+        )
+
+        keypair1 = skeygen.GenerateKeyPair(skeygen.KEY_PAIR_TYPE.EC)
+        user_id1 = b'user_id1'
+
+        # public key should be rejected
+        self.assertRaises(exception.ThemisError, lambda: ssession.SSession(
+                user_id1, keypair1.export_public_key(), transport))
+
+        keypair1 = skeygen.GenerateKeyPair(skeygen.KEY_PAIR_TYPE.RSA)
+
+        # RSA key should be rejected, not supported
+        self.assertRaises(exception.ThemisError, lambda: ssession.SSession(
+                user_id1, keypair1.export_private_key(), transport))
+
+        # public key should be rejected
+        self.assertRaises(exception.ThemisError, lambda: ssession.SSession(
+                user_id1, keypair1.export_public_key(), transport))
+
+        # not an asymm key at all
+        self.assertRaises(exception.ThemisError, lambda: ssession.SSession(
+                user_id1, b'totally not a valid key', transport))
 
 if __name__ == '__main__':
     unittest.main()
