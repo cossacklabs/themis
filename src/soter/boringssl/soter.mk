@@ -36,15 +36,24 @@ CRYPTO_ENGINE_LDFLAGS += -lcrypto -ldecrepit -lpthread
 SOTER_ENGINE_CMAKE_FLAGS += -DCMAKE_BUILD_TYPE=Release
 SOTER_ENGINE_CMAKE_FLAGS += -DCMAKE_C_FLAGS="-fpic"
 
+ifdef IS_LINUX
+RENAME_BORINGSSL_SYMBOLS = yes
+endif
+ifdef IS_MACOS
+RENAME_BORINGSSL_SYMBOLS = yes
+endif
 ifdef IS_EMSCRIPTEN
+RENAME_BORINGSSL_SYMBOLS = no
 SOTER_ENGINE_CMAKE_FLAGS += -DOPENSSL_NO_ASM=1
 endif
 
+ifeq ($(RENAME_BORINGSSL_SYMBOLS),yes)
 # The prefix must be a valid C identifier. Replace invalid characters.
 SOTER_BORINGSSL_PREFIX := $(shell echo "SOTER_$(VERSION)" | tr '.-' '_')
 
 SOTER_CRYPTO_ENGINE_CFLAGS += -DBORINGSSL_PREFIX=$(SOTER_BORINGSSL_PREFIX)
 SOTER_CRYPTO_ENGINE_CFLAGS += -I$(BIN_PATH)/boringssl/stage-2/symbol_prefix_include
+endif
 
 $(BIN_PATH)/boringssl/crypto/libcrypto.a $(BIN_PATH)/boringssl/decrepit/libdecrepit.a:
 	@echo "building embedded BoringSSL..."
@@ -52,6 +61,10 @@ $(BIN_PATH)/boringssl/crypto/libcrypto.a $(BIN_PATH)/boringssl/decrepit/libdecre
 	@cd $(BIN_PATH)/boringssl/stage-1 && \
 	 $(CMAKE) $(SOTER_ENGINE_CMAKE_FLAGS) $(abspath third_party/boringssl/src)
 	@$(MAKE) -C $(BIN_PATH)/boringssl/stage-1 crypto decrepit
+	@mkdir -p $(BIN_PATH)/boringssl/crypto $(BIN_PATH)/boringssl/decrepit
+	@cp $(BIN_PATH)/boringssl/stage-1/crypto/libcrypto.a     $(BIN_PATH)/boringssl/crypto/libcrypto.a
+	@cp $(BIN_PATH)/boringssl/stage-1/decrepit/libdecrepit.a $(BIN_PATH)/boringssl/decrepit/libdecrepit.a
+ifeq ($(RENAME_BORINGSSL_SYMBOLS),yes)
 	@cd third_party/boringssl/src && \
 	 $(GO) run util/read_symbols.go -out $(abspath $(BIN_PATH)/boringssl/symbols.txt) \
 	     $(abspath $(BIN_PATH)/boringssl/stage-1/crypto/libcrypto.a) \
@@ -69,3 +82,4 @@ $(BIN_PATH)/boringssl/crypto/libcrypto.a $(BIN_PATH)/boringssl/decrepit/libdecre
 	@mkdir -p $(BIN_PATH)/boringssl/crypto $(BIN_PATH)/boringssl/decrepit
 	@cp $(BIN_PATH)/boringssl/stage-2/crypto/libcrypto.a     $(BIN_PATH)/boringssl/crypto/libcrypto.a
 	@cp $(BIN_PATH)/boringssl/stage-2/decrepit/libdecrepit.a $(BIN_PATH)/boringssl/decrepit/libdecrepit.a
+endif
