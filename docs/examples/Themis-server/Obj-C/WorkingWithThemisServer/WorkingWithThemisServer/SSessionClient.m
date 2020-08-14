@@ -6,8 +6,9 @@
 //  Copyright © 2015 Cossacklabs. All rights reserved.
 //
 
-#import <objcthemis/objcthemis.h>
 #import "SSessionClient.h"
+
+@import themis;
 
 // ---------------------- IMPORTANT SETUP ---------------------------------------
 
