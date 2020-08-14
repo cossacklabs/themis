@@ -1,13 +1,13 @@
 # Default reviewer set
-*                   @vixentael @Lagovas
+*                   @vixentael @ilammy
 /src/soter/         @vixentael @Lagovas @ilammy @storojs72 @ignatk
 /src/themis/        @vixentael @Lagovas @ilammy @storojs72 @ignatk
 
 # Build system
-Makefile            @vixentael @Lagovas @shadinua
-*.mk                @vixentael @Lagovas @shadinua
-*.sh                @vixentael @Lagovas @shadinua
+Makefile            @vixentael @ilammy @shadinua
+*.mk                @vixentael @ilammy @shadinua
+*.sh                @vixentael @ilammy @shadinua
 
 # rust-themis
-Cargo.toml          @vixentael @Lagovas @ilammy
-*.rs                @vixentael @Lagovas @ilammy
+Cargo.toml          @vixentael @ilammy @iamnotacake
+*.rs                @vixentael @ilammy @iamnotacake
