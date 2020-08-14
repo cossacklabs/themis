@@ -101,6 +101,8 @@
 		9F00E93E223C1AE600EC1EF3 /* secure_session.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2438223A74AF005CB63A /* secure_session.c */; };
 		9F00E93F223C1AE600EC1EF3 /* sym_enc_message.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2431223A74AF005CB63A /* sym_enc_message.c */; };
 		9F00E941223C1AFA00EC1EF3 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E940223C1AFA00EC1EF3 /* openssl.framework */; };
+		9F0BBCE924E6FC820073CA52 /* themis.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F0BBCE824E6FC810073CA52 /* themis.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9F0BBCEA24E6FC820073CA52 /* themis.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F0BBCE824E6FC810073CA52 /* themis.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F33485823B38D9B00368291 /* soter_kdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F33485723B38D9B00368291 /* soter_kdf.c */; };
 		9F33485923B38D9B00368291 /* soter_kdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F33485723B38D9B00368291 /* soter_kdf.c */; };
 		9F4A24C4223A8FA9005CB63A /* scell_seal.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B0223A8FA7005CB63A /* scell_seal.m */; };
@@ -340,6 +342,7 @@
 /* Begin PBXFileReference section */
 		9F00E8D7223C197900EC1EF3 /* themis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = themis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F00E940223C1AFA00EC1EF3 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Carthage/Build/Mac/openssl.framework; sourceTree = "<group>"; };
+		9F0BBCE824E6FC810073CA52 /* themis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = themis.h; path = "src/wrappers/themis/Obj-C/Themis/themis.h"; sourceTree = "<group>"; };
 		9F33485723B38D9B00368291 /* soter_kdf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_kdf.c; path = src/soter/openssl/soter_kdf.c; sourceTree = "<group>"; };
 		9F34EA3023D9CA0A0079A1D7 /* secure_cell_seal_passphrase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = secure_cell_seal_passphrase.h; path = src/themis/secure_cell_seal_passphrase.h; sourceTree = "<group>"; };
 		9F4A2342223A73B0005CB63A /* soter_hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_hash.h; path = src/soter/soter_hash.h; sourceTree = "<group>"; };
@@ -777,6 +780,7 @@
 				9F4A2370223A73B6005CB63A /* soter */,
 				9F4A241D223A7493005CB63A /* themis */,
 				9F4A24AA223A8E15005CB63A /* Info.plist */,
+				9F0BBCE824E6FC810073CA52 /* themis.h */,
 			);
 			name = Themis;
 			sourceTree = "<group>";
@@ -847,6 +851,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F0BBCEA24E6FC820073CA52 /* themis.h in Headers */,
 				9F00E8E2223C1A3300EC1EF3 /* objcthemis.h in Headers */,
 				9F00E8E3223C1A3300EC1EF3 /* scell_context_imprint.h in Headers */,
 				9F00E8E4223C1A3300EC1EF3 /* scell_seal.h in Headers */,
@@ -865,6 +870,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F0BBCE924E6FC820073CA52 /* themis.h in Headers */,
 				9F4A24DA223A918A005CB63A /* objcthemis.h in Headers */,
 				9F4A24DB223A918A005CB63A /* scell_context_imprint.h in Headers */,
 				9F4A24DC223A918A005CB63A /* scell_seal.h in Headers */,
