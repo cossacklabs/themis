@@ -8,6 +8,8 @@
 #ifndef StaticKeys_h
 #define StaticKeys_h
 
+#import <Foundation/Foundation.h>
+
 static NSString * privateKeyEc256 = @"UkVDMgAAAC1JhwRrAPIGB33HHFmhjzn8lIE/nsW6cG+TCI3jhYJb+D/Gnwvf";
 static NSString * publicKeyEc256 = @"VUVDMgAAAC11WDPUAhLfH+nqSBHh+XGOJBHL/cCjbtasiLZEwpokhO5QTD6g";
 
