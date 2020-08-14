@@ -40,8 +40,32 @@ ifdef IS_EMSCRIPTEN
 SOTER_ENGINE_CMAKE_FLAGS += -DOPENSSL_NO_ASM=1
 endif
 
+# The prefix must be a valid C identifier. Replace invalid characters.
+SOTER_BORINGSSL_PREFIX := $(shell echo "SOTER_$(VERSION)" | tr '.-' '_')
+
+SOTER_CRYPTO_ENGINE_CFLAGS += -DBORINGSSL_PREFIX=$(SOTER_BORINGSSL_PREFIX)
+SOTER_CRYPTO_ENGINE_CFLAGS += -I$(BIN_PATH)/boringssl/stage-2/symbol_prefix_include
+
 $(BIN_PATH)/boringssl/crypto/libcrypto.a $(BIN_PATH)/boringssl/decrepit/libdecrepit.a:
 	@echo "building embedded BoringSSL..."
-	@mkdir -p $(BIN_PATH)/boringssl
-	@cd $(BIN_PATH)/boringssl && $(CMAKE) $(SOTER_ENGINE_CMAKE_FLAGS) $(abspath third_party/boringssl/src)
-	@$(MAKE) -C $(BIN_PATH)/boringssl crypto decrepit
+	@mkdir -p $(BIN_PATH)/boringssl/stage-1
+	@cd $(BIN_PATH)/boringssl/stage-1 && \
+	 $(CMAKE) $(SOTER_ENGINE_CMAKE_FLAGS) $(abspath third_party/boringssl/src)
+	@$(MAKE) -C $(BIN_PATH)/boringssl/stage-1 crypto decrepit
+	@cd third_party/boringssl/src && \
+	 $(GO) run util/read_symbols.go -out $(abspath $(BIN_PATH)/boringssl/symbols.txt) \
+	     $(abspath $(BIN_PATH)/boringssl/stage-1/crypto/libcrypto.a) \
+	     $(abspath $(BIN_PATH)/boringssl/stage-1/decrepit/libdecrepit.a)
+	@# Path to symbols must be a relative one (relative to the build directory)
+	@# because absolute paths confuse BoringSSL's make.
+	@echo "building embedded BoringSSL again with renamed symbols..."
+	@mkdir -p $(BIN_PATH)/boringssl/stage-2
+	@cd $(BIN_PATH)/boringssl/stage-2 && \
+	 $(CMAKE) $(SOTER_ENGINE_CMAKE_FLAGS) \
+	     -DBORINGSSL_PREFIX=$(SOTER_BORINGSSL_PREFIX) \
+	     -DBORINGSSL_PREFIX_SYMBOLS=../symbols.txt \
+	     $(abspath third_party/boringssl/src)
+	@$(MAKE) -C $(BIN_PATH)/boringssl/stage-2 crypto decrepit
+	@mkdir -p $(BIN_PATH)/boringssl/crypto $(BIN_PATH)/boringssl/decrepit
+	@cp $(BIN_PATH)/boringssl/stage-2/crypto/libcrypto.a     $(BIN_PATH)/boringssl/crypto/libcrypto.a
+	@cp $(BIN_PATH)/boringssl/stage-2/decrepit/libdecrepit.a $(BIN_PATH)/boringssl/decrepit/libdecrepit.a
