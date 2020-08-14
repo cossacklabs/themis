@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1010"
+   LastUpgradeVersion = "1120"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9F4A24A0223A8D7F005CB63A"
-               BuildableName = "themis.framework"
+               BuildableName = "objcthemis.framework"
                BlueprintName = "Themis (iOS)"
                ReferencedContainer = "container:Themis.xcodeproj">
             </BuildableReference>
@@ -28,18 +28,27 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "9F70B3032420E16E009CB629"
+               BuildableName = "Test Themis (Swift 4, iOS).xctest"
+               BlueprintName = "Test Themis (Swift 4, iOS)"
+               ReferencedContainer = "container:Themis.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "9F70B2E6241D17A3009CB629"
+               BuildableName = "Test Themis (Swift 5, iOS).xctest"
+               BlueprintName = "Test Themis (Swift 5, iOS)"
+               ReferencedContainer = "container:Themis.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "738B810E2239809D00A9947C"
-            BuildableName = "ThemisCore.framework"
-            BlueprintName = "ThemisCore"
-            ReferencedContainer = "container:Themis.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -51,17 +60,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9F4A24A0223A8D7F005CB63A"
-            BuildableName = "themis.framework"
-            BlueprintName = "Themis (iOS)"
-            ReferencedContainer = "container:Themis.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -69,6 +67,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "9F4A24A0223A8D7F005CB63A"
+            BuildableName = "objcthemis.framework"
+            BlueprintName = "Themis (iOS)"
+            ReferencedContainer = "container:Themis.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
