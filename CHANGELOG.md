@@ -6,7 +6,7 @@ Changes that are currently in development and have not been released yet.
 
 **Breaking changes and deprecations:**
 
-- ObjCThemis framework built by Carthage is now called `objcthemis.framework` once again ([read more](#0.13.0-revert-objcthemis-rename)).
+- ObjCThemis framework built by Carthage is now called `themis.framework` once again ([read more](#0.13.2-revert-objcthemis-rename)).
 
 _Code:_
 
@@ -30,7 +30,7 @@ _Code:_
 
   - **Breaking changes**
 
-    - <a id="0.13.0-revert-objcthemis-rename">ObjCThemis framework built by Carthage is now called `themis.framework` once again</a> ([#704](https://github.com/cossacklabs/themis/pull/704)).
+    - <a id="0.13.2-revert-objcthemis-rename">ObjCThemis framework built by Carthage is now called `themis.framework` once again</a> ([#704](https://github.com/cossacklabs/themis/pull/704)).
 
       [ObjCThemis 0.13.0](#0.13.0-objcthemis-rename) has initiated renaming of the framework produced by Carthage into `objcthemis.framework` from its historical name `themis.framework`. This decision has been a mistake. More information is available in the pull request linked above.
 
