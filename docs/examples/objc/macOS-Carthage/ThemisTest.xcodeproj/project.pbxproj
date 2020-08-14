@@ -11,8 +11,6 @@
 		9F00EA002241348800EC1EF3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9FF2241348800EC1EF3 /* Assets.xcassets */; };
 		9F00EA032241348800EC1EF3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA012241348800EC1EF3 /* MainMenu.xib */; };
 		9F00EA062241348800EC1EF3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F00EA052241348800EC1EF3 /* main.m */; };
-		9F00EA15224135AD00EC1EF3 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00EA0E224135A300EC1EF3 /* openssl.framework */; };
-		9F00EA16224135AD00EC1EF3 /* openssl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00EA0E224135A300EC1EF3 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F00EA1C22413D1300EC1EF3 /* client.pub in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA1822413D1300EC1EF3 /* client.pub */; };
 		9F00EA1D22413D1300EC1EF3 /* client.priv in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA1922413D1300EC1EF3 /* client.priv */; };
 		9F00EA1E22413D1300EC1EF3 /* server.pub in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA1A22413D1300EC1EF3 /* server.pub */; };
@@ -29,7 +27,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				9F1444AC24E6D46D008B6C73 /* themis.framework in Embed Frameworks */,
-				9F00EA16224135AD00EC1EF3 /* openssl.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -45,7 +42,6 @@
 		9F00EA042241348800EC1EF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9F00EA052241348800EC1EF3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		9F00EA072241348800EC1EF3 /* ThemisTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ThemisTest.entitlements; sourceTree = "<group>"; };
-		9F00EA0E224135A300EC1EF3 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Carthage/Build/Mac/openssl.framework; sourceTree = "<group>"; };
 		9F00EA1822413D1300EC1EF3 /* client.pub */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.pub; sourceTree = "<group>"; };
 		9F00EA1922413D1300EC1EF3 /* client.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.priv; sourceTree = "<group>"; };
 		9F00EA1A22413D1300EC1EF3 /* server.pub */ = {isa = PBXFileReference; lastKnownFileType = file; path = server.pub; sourceTree = "<group>"; };
@@ -59,7 +55,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F1444AB24E6D46D008B6C73 /* themis.framework in Frameworks */,
-				9F00EA15224135AD00EC1EF3 /* openssl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,7 +97,6 @@
 			isa = PBXGroup;
 			children = (
 				9F1444A924E6D46A008B6C73 /* themis.framework */,
-				9F00EA0E224135A300EC1EF3 /* openssl.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
