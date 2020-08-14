@@ -311,7 +311,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-WorkingWithThemisServer/Pods-WorkingWithThemisServer-frameworks.sh",
-				"${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework",
+				"${PODS_ROOT}/CLOpenSSL/openssl-dynamic-iPhone.zip/openssl.framework",
 				"${BUILT_PRODUCTS_DIR}/themis/themis.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -524,7 +524,7 @@
 				DEVELOPMENT_TEAM = X6X7AHQ2D4;
 				INFOPLIST_FILE = WorkingWithThemisServer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.stanfy.WorkingWithThemisServer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cl.WorkingWithThemisServer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -539,7 +539,7 @@
 				DEVELOPMENT_TEAM = X6X7AHQ2D4;
 				INFOPLIST_FILE = WorkingWithThemisServer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.stanfy.WorkingWithThemisServer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cl.WorkingWithThemisServer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
