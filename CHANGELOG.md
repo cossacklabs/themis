@@ -8,7 +8,7 @@ _Code:_
 
 - **Core**
 
-  - Include embedded BoringSSL into Soter for convenience ([#681](https://github.com/cossacklabs/themis/pull/681)).
+  - Include embedded BoringSSL into Soter for convenience ([#681](https://github.com/cossacklabs/themis/pull/681), [#702](https://github.com/cossacklabs/themis/pull/702)).
   - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
   - `secure_session_create()` now allows only EC keys, returning an error for RSA ([#693](https://github.com/cossacklabs/themis/pull/693)).
 
@@ -34,6 +34,7 @@ _Infrastructure:_
 - Optimized dependencies of `libthemis` DEB and RPM packages ([#682](https://github.com/cossacklabs/themis/pull/682), [#686](https://github.com/cossacklabs/themis/pull/686)).
 - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
 - Build system and tests now respect the `PATH` settings ([#685](https://github.com/cossacklabs/themis/pull/685)).
+- Rename embedded BoringSSL symbols by default to avoid conflicts with system OpenSSL ([#702](https://github.com/cossacklabs/themis/pull/702)).
 
 ## [0.13.1](https://github.com/cossacklabs/themis/releases/tag/0.13.1), August 13th 2020
 
