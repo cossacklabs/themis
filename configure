@@ -248,6 +248,14 @@ detect_language_runtimes() {
     set_variable PYTHON3_VERSION    "$(exec 2>/dev/null; which python3 >/dev/null && python3 --version)"
 }
 
+detect_optional_toolchain() {
+    local ninja="$(which ninja 2>/dev/null || true)"
+    if [ -n "$ninja" ]
+    then
+        set_variable NINJA "$ninja"
+    fi
+}
+
 main() {
     write_boilerplate
     parse_commandline "$@"
@@ -258,6 +266,7 @@ main() {
     configure_macos_toolchain
     find_macos_openssl
     detect_language_runtimes
+    detect_optional_toolchain
     echo "configuration written to $configure_mk"
 }
 
