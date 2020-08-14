@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "9F4A24A0223A8D7F005CB63A"
-               BuildableName = "objcthemis.framework"
+               BuildableName = "themis.framework"
                BlueprintName = "Themis (iOS)"
                ReferencedContainer = "container:Themis.xcodeproj">
             </BuildableReference>
@@ -28,26 +28,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9F70B3032420E16E009CB629"
-               BuildableName = "Test Themis (Swift 4, iOS).xctest"
-               BlueprintName = "Test Themis (Swift 4, iOS)"
-               ReferencedContainer = "container:Themis.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9F70B2E6241D17A3009CB629"
-               BuildableName = "Test Themis (Swift 5, iOS).xctest"
-               BlueprintName = "Test Themis (Swift 5, iOS)"
-               ReferencedContainer = "container:Themis.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -71,7 +51,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "9F4A24A0223A8D7F005CB63A"
-            BuildableName = "objcthemis.framework"
+            BuildableName = "themis.framework"
             BlueprintName = "Themis (iOS)"
             ReferencedContainer = "container:Themis.xcodeproj">
          </BuildableReference>
