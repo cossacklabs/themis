@@ -16,8 +16,8 @@
 		9F00E9ED224132A600EC1EF3 /* client.priv in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9E9224132A600EC1EF3 /* client.priv */; };
 		9F00E9EE224132A600EC1EF3 /* server.priv in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9EA224132A600EC1EF3 /* server.priv */; };
 		9F00E9EF224132A600EC1EF3 /* client.pub in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9EB224132A600EC1EF3 /* client.pub */; };
-		9FCAA6B32493D680002A2CE1 /* objcthemis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCAA6B12493D665002A2CE1 /* objcthemis.framework */; };
-		9FCAA6B42493D680002A2CE1 /* objcthemis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9FCAA6B12493D665002A2CE1 /* objcthemis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9F1294EE24E6D56700434ABB /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1294EC24E6D56100434ABB /* themis.framework */; };
+		9F1294EF24E6D56700434ABB /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1294EC24E6D56100434ABB /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,7 +27,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9FCAA6B42493D680002A2CE1 /* objcthemis.framework in Embed Frameworks */,
+				9F1294EF24E6D56700434ABB /* themis.framework in Embed Frameworks */,
 				9F00E9E6224131BD00EC1EF3 /* openssl.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -47,7 +47,7 @@
 		9F00E9E9224132A600EC1EF3 /* client.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.priv; sourceTree = "<group>"; };
 		9F00E9EA224132A600EC1EF3 /* server.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = server.priv; sourceTree = "<group>"; };
 		9F00E9EB224132A600EC1EF3 /* client.pub */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.pub; sourceTree = "<group>"; };
-		9FCAA6B12493D665002A2CE1 /* objcthemis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = objcthemis.framework; path = Carthage/Build/Mac/objcthemis.framework; sourceTree = "<group>"; };
+		9F1294EC24E6D56100434ABB /* themis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = themis.framework; path = Carthage/Build/Mac/themis.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,7 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9FCAA6B32493D680002A2CE1 /* objcthemis.framework in Frameworks */,
+				9F1294EE24E6D56700434ABB /* themis.framework in Frameworks */,
 				9F00E9E5224131BD00EC1EF3 /* openssl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -96,7 +96,7 @@
 		9F00E9DD224131B300EC1EF3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9FCAA6B12493D665002A2CE1 /* objcthemis.framework */,
+				9F1294EC24E6D56100434ABB /* themis.framework */,
 				9F00E9DE224131B300EC1EF3 /* openssl.framework */,
 			);
 			name = Frameworks;
