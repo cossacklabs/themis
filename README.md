@@ -11,11 +11,15 @@
 
 <p align="center">
   <a href="https://github.com/cossacklabs/themis/releases"><img src="https://img.shields.io/github/release/cossacklabs/themis.svg" alt="GitHub release"></a>
-  <a href="https://circleci.com/gh/cossacklabs/themis"><img src="https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield" alt="Circle CI"></a>
-  <a href="https://app.bitrise.io/app/69a1d5c9d42fa60f"><img src="https://app.bitrise.io/app/69a1d5c9d42fa60f/status.svg?token=Fp_06Ema5PgzBbZQyQy1bA&branch=master" alt="Bitrise"></a>
   <a href="https://github.com/cossacklabs/themis/releases/latest"><img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Linux%20%7C%20Java%20%7C%20WASM-green.svg" alt="Platforms"></a>
   <a href='https://coveralls.io/github/cossacklabs/themis'><img src='https://coveralls.io/repos/github/cossacklabs/themis/badge.svg?branch=master' alt='Coverage Status' /></a>
   <a href='https://goreportcard.com/report/github.com/cossacklabs/themis'><img class="badge" tag="github.com/cossacklabs/themis" src="https://goreportcard.com/badge/github.com/cossacklabs/themis"></a>
+  <br>
+  <a href="https://github.com/cossacklabs/themis/actions?query=workflow%3A%22Themis+Core%22"><img src="https://github.com/cossacklabs/themis/workflows/Themis%20Core/badge.svg" alt="Themis Core"></a>
+  <a href="https://github.com/cossacklabs/themis/actions?query=workflow%3A%22Integration+testing%22"><img src="https://github.com/cossacklabs/themis/workflows/Integration%20testing/badge.svg" alt="Integration testing"></a>
+  <a href="https://github.com/cossacklabs/themis/actions?query=workflow%3A%22Code+style%22"><img src="https://github.com/cossacklabs/themis/workflows/Code%20style/badge.svg" alt="Code style"></a>
+  <a href="https://circleci.com/gh/cossacklabs/themis"><img src="https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield" alt="Circle CI"></a>
+  <a href="https://app.bitrise.io/app/69a1d5c9d42fa60f"><img src="https://app.bitrise.io/app/69a1d5c9d42fa60f/status.svg?token=Fp_06Ema5PgzBbZQyQy1bA&branch=master" alt="Bitrise"></a>
 </p>
 <h4 align="center">General purpose cryptographic library for storage and messaging for iOS (Swift, Obj-C), Android (Java, Kotlin), desktop Java, С/С++, Node.js, Python, Ruby, PHP, Go, Rust, WASM.</h4>
 <h4 align="center">Perfect fit for multi-platform apps. Hides cryptographic details. Made by cryptographers for developers 🧡</h4>
