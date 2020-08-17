@@ -124,7 +124,7 @@ jobs:
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData  \
-            -project ObjCThemis.xcodeproj \
+            -project Themis.xcodeproj \
             -scheme "Test Themis (Swift 4, macOS)" \
             test
       - name: Run unit tests (Swift 5, macOS)
@@ -133,7 +133,7 @@ jobs:
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData  \
-            -project ObjCThemis.xcodeproj \
+            -project Themis.xcodeproj \
             -scheme "Test Themis (Swift 5, macOS)" \
             test
       - name: Run unit tests (Swift 4, iOS Simulator)
@@ -142,7 +142,7 @@ jobs:
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData  \
-            -project ObjCThemis.xcodeproj \
+            -project Themis.xcodeproj \
             -scheme "Test Themis (Swift 4, iOS)" \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=${TEST_IPAD}" \
@@ -153,7 +153,7 @@ jobs:
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData  \
-            -project ObjCThemis.xcodeproj \
+            -project Themis.xcodeproj \
             -scheme "Test Themis (Swift 5, iOS)" \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=${TEST_IPHONE}" \
@@ -250,8 +250,8 @@ jobs:
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
-            -project ObjCThemis.xcodeproj \
-            -scheme "ObjCThemis (iOS)" \
+            -project Themis.xcodeproj \
+            -scheme "Themis (iOS)" \
             -sdk iphoneos \
             -destination "generic/platform=iOS" \
             build

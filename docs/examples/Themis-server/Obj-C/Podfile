@@ -23,6 +23,6 @@ use_frameworks!
 
 target :"WorkingWithThemisServer" do
 
-  pod 'themis', '0.13.0'
+  pod 'themis', '0.13.1'
 
 end

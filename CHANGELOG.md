@@ -18,11 +18,11 @@ _Code:_
 
 - **Swift**
 
-  - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)).
+  - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.2 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706)).
 
 - **Objective-C**
 
-  - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)).
+  - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.2 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706)).
 
 - **Rust**
 
@@ -35,6 +35,27 @@ _Infrastructure:_
 - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
 - Build system and tests now respect the `PATH` settings ([#685](https://github.com/cossacklabs/themis/pull/685)).
 - Rename embedded BoringSSL symbols by default to avoid conflicts with system OpenSSL ([#702](https://github.com/cossacklabs/themis/pull/702)).
+- Started phasing out CircleCI in favour of GitHub Actions ([#709](https://github.com/cossacklabs/themis/pull/709)).
+
+## [0.13.2](https://github.com/cossacklabs/themis/releases/tag/0.13.2), August 14th 2020
+
+**Breaking changes and deprecations:**
+
+- ObjCThemis framework built by Carthage is now called `themis.framework` once again ([read more](#0.13.2-revert-objcthemis-rename)).
+
+_Code:_
+
+- **Objective-C**
+
+  - **Breaking changes**
+
+    - <a id="0.13.2-revert-objcthemis-rename">ObjCThemis framework built by Carthage is now called `themis.framework` once again</a> ([#704](https://github.com/cossacklabs/themis/pull/704)).
+
+      [ObjCThemis 0.13.0](#0.13.0-objcthemis-rename) has initiated renaming of the framework produced by Carthage into `objcthemis.framework` from its historical name `themis.framework`. This decision has been a mistake. More information is available in the pull request linked above.
+
+      `objcthemis.framework` is removed and should not be used.
+
+      Please continue linking your applications to `themis.framework`. Note as well that starting with ObjCThemis 0.13.1, you do not have to embed `openssl.framework` anymore when ObjCThemis is installed via Carthage.
 
 ## [0.13.1](https://github.com/cossacklabs/themis/releases/tag/0.13.1), August 13th 2020
 
