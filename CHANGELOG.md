@@ -34,6 +34,7 @@ _Infrastructure:_
 - Optimized dependencies of `libthemis` DEB and RPM packages ([#682](https://github.com/cossacklabs/themis/pull/682), [#686](https://github.com/cossacklabs/themis/pull/686)).
 - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
 - Build system and tests now respect the `PATH` settings ([#685](https://github.com/cossacklabs/themis/pull/685)).
+- Started phasing out CircleCI in favour of GitHub Actions ([#709](https://github.com/cossacklabs/themis/pull/709)).
 
 ## [0.13.2](https://github.com/cossacklabs/themis/releases/tag/0.13.2), August 14th 2020
 
