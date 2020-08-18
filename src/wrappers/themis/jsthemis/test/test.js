@@ -310,17 +310,17 @@ describe("jsthemis", function(){
         })
         it('does not allow EC public key', function() {
             let keyPair = new addon.KeyPair()
-            assert.throws(() => new addon.SecureSession(emptyArray, keyPair.public(), function(){}),
+            assert.throws(() => new addon.SecureSession(clientID, keyPair.public(), function(){}),
                 expect_code(addon.INVALID_PARAMETER)
             )
         })
         it('does not allow RSA key', function() {
-            assert.throws(() => new addon.SecureSession(emptyArray, rsaKeyPair.private(), function(){}),
+            assert.throws(() => new addon.SecureSession(clientID, rsaKeyPair.private(), function(){}),
                 expect_code(addon.INVALID_PARAMETER)
             )
         })
         it('does not allow RSA public key', function() {
-            assert.throws(() => new addon.SecureSession(emptyArray, rsaKeyPair.public(), function(){}),
+            assert.throws(() => new addon.SecureSession(clientID, rsaKeyPair.public(), function(){}),
                 expect_code(addon.INVALID_PARAMETER)
             )
         })
