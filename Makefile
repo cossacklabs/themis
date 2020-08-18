@@ -49,6 +49,7 @@ LIBRARY_SO_VERSION = 0
 #----- Toolchain ---------------------------------------------------------------
 
 CMAKE ?= cmake
+GO    ?= go
 
 CLANG_FORMAT ?= clang-format
 CLANG_TIDY   ?= clang-tidy
