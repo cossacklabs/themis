@@ -225,43 +225,43 @@ func testSession(keytype int, t *testing.T) {
 
 func TestValidKeyHandling(t *testing.T) {
 	kpa, err := keys.New(keys.TypeEC)
-	if nil != err {
+	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	kpb, err := keys.New(keys.TypeEC)
-	if nil != err {
+	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	clb := &testCallbacks{kpa, kpb}
 
-	_, err = New(clientID, kpa.Private, clb)
-	if nil != err {
-		t.Error("Creating Secure Session with EC key")
+	client, err := New(clientID, kpa.Private, clb)
+	if client == nil || err != nil {
+		t.Error("Creating Secure Session with EC key", err)
 		return
 	}
 }
 
 func TestInvalidKeyHandling(t *testing.T) {
 	kpa, err := keys.New(keys.TypeRSA)
-	if nil != err {
+	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	kpb, err := keys.New(keys.TypeRSA)
-	if nil != err {
+	if err != nil {
 		t.Error(err)
 		return
 	}
 
 	clb := &testCallbacks{kpa, kpb}
 
-	_, err = New(clientID, kpa.Private, clb)
-	if nil == err {
+	client, err := New(clientID, kpa.Private, clb)
+	if client != nil || err == nil {
 		t.Error("Creating Secure Session with RSA key")
 		return
 	}

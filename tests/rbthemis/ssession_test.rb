@@ -96,41 +96,30 @@ class TestSession < Test::Unit::TestCase
   end
 
   def test_valid_key_private_ec
-    begin
+    assert_nothing_raised do
       session = Themis::Ssession.new(
         'client', @client_priv_key, CallbacksForThemis.new(@pub_keys))
-    rescue
-      assert(false)
     end
   end
 
   def test_invalid_key_public_ec
-    begin
+    assert_raise(Themis::ThemisError) do
       session = Themis::Ssession.new(
         'client', @client_pub_key, CallbacksForThemis.new(@pub_keys))
-    rescue
-    else
-      assert(false)
     end
   end
 
   def test_invalid_key_private_rsa
-    begin
+    assert_raise(Themis::ThemisError) do
       session = Themis::Ssession.new(
         'client', @client_priv_key_rsa, CallbacksForThemis.new(@pub_keys))
-    rescue
-    else
-      assert(false)
     end
   end
 
   def test_invalid_key_public_rsa
-    begin
+    assert_raise(Themis::ThemisError) do
       session = Themis::Ssession.new(
         'client', @client_pub_key_rsa, CallbacksForThemis.new(@pub_keys))
-    rescue
-    else
-      assert(false)
     end
   end
 end
