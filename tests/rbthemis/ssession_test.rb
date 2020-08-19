@@ -95,6 +95,15 @@ class TestSession < Test::Unit::TestCase
     ].each(&:join)
   end
 
+  def test_valid_key_private_ec
+    begin
+      session = Themis::Ssession.new(
+        'client', @client_priv_key, CallbacksForThemis.new(@pub_keys))
+    rescue
+      assert(false)
+    end
+  end
+
   def test_invalid_key_public_ec
     begin
       session = Themis::Ssession.new(

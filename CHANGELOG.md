@@ -20,9 +20,21 @@ _Code:_
 
   - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.2 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706)).
 
+- **Node.js**
+
+  - `SecureSession` constructor now throws an exception when given incorrect key type ([#698](https://github.com/cossacklabs/themis/pull/698)).
+
 - **Objective-C**
 
   - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.2 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706)).
+
+- **Python**
+
+  - `SSession` constructor now throws an exception when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
+
+- **Ruby**
+
+  - `Ssession` constructor now throws an exception when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
 
 - **Rust**
 

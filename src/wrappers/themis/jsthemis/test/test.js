@@ -236,6 +236,8 @@ describe("jsthemis", function(){
         let serverID = Buffer.from('server')
         let messageA = Buffer.from('testing, testing')
         let messageB = Buffer.from('everything seems to be in order')
+        // JS API does not provide methods for generating RSA keys,
+        // we have to import them from buffers instead
         let rsaKeyPair = addon.KeyPair(Buffer.from("UlJBMgAABJBm8NGvTdCr5R7/iNvQy+WrC6DsYPg5ze5dc1/UxsthqEE4t+4Euwq6IVdddjisxUBvzWQ0VuyQbaExbCrrIaMYHgF9DSNOyrCznrHKBlNZrfxM+pHIkVB6q+b2hLEX4j3wnMZKE0dE0W3SGO/p0oYCsF0gjC7kNTjsh67WwjsIo6EqOrAG7RF9p3UaGUNm4tGEKCAM4NE8d8URcaWSIhQIHeOrVVbziWdMFiOX2GRGwpi2lWFxTLhI1Tyyov+NLy/J5b7NL8n7qusC13eG2XPMrEucuhZtihczn5l4wGkrPi/+jAW+Kn09rQERAPe1rOXHcpu2PzVOdO0bBkqK6IzVylgxQepMriLBQzaEZwQ3BER0byG/k6H1wcvdt9qo+6byB/jHs3hnbqJP4H9HdrJQJshxko8HqS2UHxhSFUaW2H7LR2vD68YBMnUf+JP/79D68sVWXj8/s68PqXw/iLjZcLY+94adKa8FmqYB/MD0tYXGc4+G+ZmPYZGUF1apkQOIvdI5y36+d+UmxdpGHH4KR+JcOsyIzDDTlWKbFk3sIqZzg18cFEVgK6ujc4lCOAPCbhiDic1GKeYxNDEShhI54l+b3FV2Fxy7nPVqRBBumx/Zp56qxHK32Fm2O8WuslReRxXQbOxslfyeNlnGIXMLWBXCw+eBw90pEhaJ0G//a5MXfyVF50TZB7Im9M/LeSKjzd1OQ1snqiv8yBTPfzU9tN5eAi7wkGN4t74yGz81qiY4DXJ9i/qUp6mzVuIUInNLORkA9P5GIBtOyJAgj+6b+hMufzs1Qas5YsHdWRNQm0c+iIDPP9qs5k4ik1s2sovp8rCNtOaJQzcH+RgRehvS4xxHOQuEP8lPSbN21/Ly2ygYUnnta2yK8t6Idxh7DnsjinQL5O3swzWVgCmgwgOjitRqRL9+w5LJeU1n3ZGC5I3ANXTxzT4fnSqT5RC3EVtsIQhQfX+ism7nHN4jIPDsv20seeBAPSD77ARNbl4kQacZjC1EI97u3E0uw1vtiroO2AyVIO937I7l1IR4u9SIj6imKiTrfDkie/Yi98Z9OESQJtb48Zg5IaDSccs33vbY1cE4SNVgh+b1oQTNUGL7TFCPfh2Y0i4VFnvrwQ9EDoP6UqreP/CKaI3IezvmPH3cDyS9TsCzVnwSBm+2h5dIFjZbIE3EiaM2Rtzvz2XvH7TpZ2e6Ps4l6Pg9I0MRiyABTwA5L3a8hN169D13sKXtJDpZjbixtGUCbRNK+18/wRIsWkrJF1kn5hzO63s1hFhXcuSYDxH85C3+EYu7/O76bXz9A+/yxXSDbYB5PKTzgf/WoPuLtVtZKPa7kFvekM/WHSQBtwrdZlpRqzTx+WhX5kA/FC45ADdVO4jpGJH7+9JOHsjWg1u9/7qnssTCFXz8zB+8Gf8AHfgMdARt2KN81j7EgBrL7+YC5rUu5vR+tdUheGkDjbAP6Zl266UB+iTTxBO08qXMYV9/fFSn6SAK7crwaSInntXBYgjl/JM0WKnh2e0kIgCITfswK2a9o/CM2Kk9AAEAAQ==", "base64"), Buffer.from("VVJBMgAAARB1/lOFuj7OJej4PSNDEYsgAU8AOS92vITdevQ9d7Cl7SQ6WY24sbRlAm0TSvtfP8ESLFpKyRdZJ+Yczut7NYRYV3LkmA8R/OQt/hGLu/zu+m18/QPv8sV0g22AeTyk84H/1qD7i7VbWSj2u5Bb3pDP1h0kAbcK3WZaUas08floV+ZAPxQuOQA3VTuI6RiR+/vSTh7I1oNbvf+6p7LEwhV8/MwfvBn/AB34DHQEbdijfNY+xIAay+/mAua1Lub0frXVIXhpA42wD+mZduulAfok08QTtPKlzGFff3xUp+kgCu3K8GkiJ57VwWII5fyTNFip4dntJCIAiE37MCtmvaPwjNipPQABAAE=", "base64"))
 
         function makeKeyMaterial() {
@@ -307,6 +309,11 @@ describe("jsthemis", function(){
             assert.throws(() => new addon.SecureSession(emptyArray, keyPair.private(), function(){}),
                 expect_code(addon.INVALID_PARAMETER)
             )
+        })
+        it('allows EC private key', function() {
+            let keys = makeKeyMaterial()
+            let client = new addon.SecureSession(clientID, keys.client.private(), keys.clientCallback)
+            assert.ok(client)
         })
         it('does not allow EC public key', function() {
             let keyPair = new addon.KeyPair()

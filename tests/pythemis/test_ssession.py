@@ -146,23 +146,24 @@ class SSessionTest(unittest.TestCase):
         keypair1 = skeygen.GenerateKeyPair(skeygen.KEY_PAIR_TYPE.EC)
         user_id1 = b'user_id1'
 
-        # public key should be rejected
-        self.assertRaises(exception.ThemisError, lambda: ssession.SSession(
-                user_id1, keypair1.export_public_key(), transport))
+        self.assertIsNotNone(
+            ssession.SSession(user_id1, keypair1.export_private_key(), transport),
+            msg="EC private key should be accepted"
+        )
+
+        with self.assertRaises(exception.ThemisError, msg="EC public key should be rejected"):
+            ssession.SSession(user_id1, keypair1.export_public_key(), transport)
 
         keypair1 = skeygen.GenerateKeyPair(skeygen.KEY_PAIR_TYPE.RSA)
 
-        # RSA key should be rejected, not supported
-        self.assertRaises(exception.ThemisError, lambda: ssession.SSession(
-                user_id1, keypair1.export_private_key(), transport))
+        with self.assertRaises(exception.ThemisError, msg="RSA key should be rejected, not supported"):
+            ssession.SSession(user_id1, keypair1.export_private_key(), transport)
 
-        # public key should be rejected
-        self.assertRaises(exception.ThemisError, lambda: ssession.SSession(
-                user_id1, keypair1.export_public_key(), transport))
+        with self.assertRaises(exception.ThemisError, msg="RSA public key should be rejected"):
+            ssession.SSession(user_id1, keypair1.export_public_key(), transport)
 
-        # not an asymm key at all
-        self.assertRaises(exception.ThemisError, lambda: ssession.SSession(
-                user_id1, b'totally not a valid key', transport))
+        with self.assertRaises(exception.ThemisError, msg="non-valid asymm key should be rejected"):
+            ssession.SSession(user_id1, b'totally not a valid key', transport)
 
 if __name__ == '__main__':
     unittest.main()

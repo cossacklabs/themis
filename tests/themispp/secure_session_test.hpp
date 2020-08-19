@@ -232,7 +232,19 @@ static void secure_session_ownership()
 }
 #endif
 
-static void secure_session_with_rsa_key()
+static void secure_session_with_ec_priv_key()
+{
+    bool init_throws = false;
+    try {
+        callback client_callbacks;
+        themispp::secure_session_t client(client_id, client_private_key, &client_callbacks);
+    } catch (const themispp::exception_t&) {
+        init_throws = true;
+    }
+    sput_fail_if(init_throws, "using EC public key", __LINE__);
+}
+
+static void secure_session_with_rsa_priv_key()
 {
     bool init_throws = false;
     try {
@@ -276,7 +288,8 @@ inline int run_secure_session_test()
     sput_run_test(secure_session_uninitialized, "secure_session_uninitialized", __FILE__);
     sput_run_test(secure_session_moved, "secure_session_moved", __FILE__);
     sput_run_test(secure_session_ownership, "secure_session_ownership", __FILE__);
-    sput_run_test(secure_session_with_rsa_key, "secure_session_with_rsa_key", __FILE__);
+    sput_run_test(secure_session_with_ec_priv_key, "secure_session_with_ec_priv_key", __FILE__);
+    sput_run_test(secure_session_with_rsa_priv_key, "secure_session_with_rsa_priv_key", __FILE__);
     sput_run_test(secure_session_with_ec_pub_key, "secure_session_with_ec_pub_key", __FILE__);
     sput_run_test(secure_session_with_rsa_pub_key, "secure_session_with_rsa_pub_key", __FILE__);
     return 0;
