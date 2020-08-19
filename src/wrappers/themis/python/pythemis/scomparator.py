@@ -42,7 +42,7 @@ class SComparator(object):
     def __init__(self, shared_secret):
         self.session_ctx = ctypes.POINTER(ctypes.c_int)
         self.comparator_ctx = scomparator_create()
-        if self.comparator_ctx is None:
+        if not self.comparator_ctx:
             raise exception.ThemisError(THEMIS_CODES.FAIL,
                                         "Secure Comparator failed creating")
         res = themis.secure_comparator_append_secret(

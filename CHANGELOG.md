@@ -12,21 +12,35 @@ _Code:_
   - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
   - `secure_session_create()` now allows only EC keys, returning an error for RSA ([#693](https://github.com/cossacklabs/themis/pull/693)).
 
+- **Objective-C**
+
+  - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.2 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706)).
+  - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
+
 - **PHP**
 
   - `libphpthemis` packages for Debian/Ubuntu now have accurate dependencies ([#683](https://github.com/cossacklabs/themis/pull/683)).
 
-- **Swift**
+- **Node.js**
 
-  - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.2 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706)).
+  - `SecureSession` constructor now throws an exception when given incorrect key type ([#698](https://github.com/cossacklabs/themis/pull/698)).
 
-- **Objective-C**
+- **Python**
 
-  - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.2 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706)).
+  - `SSession` constructor now throws an exception when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
+
+- **Ruby**
+
+  - `Ssession` constructor now throws an exception when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
 
 - **Rust**
 
   - Dropped `libthemis-src` crate support and removed the `vendored` feature. RustThemis wrapper now requires Themis Core to be installed in the system ([#691](https://github.com/cossacklabs/themis/pull/691)).
+
+- **Swift**
+
+  - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.2 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706)).
+  - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
 
 _Infrastructure:_
 

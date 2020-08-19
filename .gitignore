@@ -46,6 +46,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+src/wrappers/themis/python/dist
+src/wrappers/themis/python/files3.txt
+src/wrappers/themis/python/pythemis.egg-info
+
 tests/phpthemis/vendor
 tests/phpthemis/composer.json
 tests/phpthemis/composer.phar
@@ -75,8 +79,12 @@ docs/examples/objc/iOS-Carthage/Carthage
 
 # rust
 /target
+/src/wrappers/themis/rust/target
 **/*.rs.bk
 Cargo.lock
+
+# ruby
+/src/wrappers/themis/ruby/*.gem
 
 # vscode
 .settings

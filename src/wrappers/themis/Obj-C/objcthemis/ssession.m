@@ -34,6 +34,9 @@
     if (self) {
         self.session = secure_session_create([userId bytes], [userId length],
                 [privateKey bytes], [privateKey length], [callbacks callbacks]);
+        if (!self.session) {
+            return nil;
+        }
     }
     return self;
 }
