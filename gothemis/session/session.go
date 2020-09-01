@@ -37,8 +37,8 @@ const (
 
 // Errors returned by Secure Session.
 var (
-	ErrDestroyObj                = errors.New("Failed to destroy secure session object")
-	ErrCreateObj                 = errors.New("Failed to create secure session object")
+	ErrDestroySessionObject      = errors.New("Failed to destroy secure session object")
+	ErrCreateSessionObject       = errors.New("Failed to create secure session object")
 	ErrGetRequestSize            = errors.New("Failed to get request size")
 	ErrGenRequest                = errors.New("Failed to generate request")
 	ErrGetWrappedSize            = errors.New("Failed to get wrapped size")
@@ -47,9 +47,9 @@ var (
 	ErrUnwrapData                = errors.New("Failed to unwrap data")
 	ErrCallbackGetUnwrappedSize  = errors.NewCallbackError("Failed to get unwraped size (get_public_key_by_id callback error)")
 	ErrCallbackUnwrapData        = errors.NewCallbackError("Failed to unwrap data (get_public_key_by_id callback error)")
-	ErrCallbackGetRemIDLen       = errors.NewCallbackError("Failed to get session remote id length")
-	ErrCallbackBadRemIDLen       = errors.NewCallbackError("Incorrect remote id length (0)")
-	ErrCallbackGetRemID          = errors.NewCallbackError("Failed to get session remote id")
+	ErrCallbackGetRemoteIDLen    = errors.NewCallbackError("Failed to get session remote id length")
+	ErrCallbackBadRemoteIDLen    = errors.NewCallbackError("Incorrect remote id length (0)")
+	ErrCallbackGetRemoteID       = errors.NewCallbackError("Failed to get session remote id")
 	ErrMissingClientID           = errors.NewWithCode(errors.InvalidParameter, "empty client ID for Secure Session")
 	ErrMissingPrivateKey         = errors.NewWithCode(errors.InvalidParameter, "empty client private key for Secure Session")
 	ErrMissingMessage            = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Session")
@@ -100,7 +100,7 @@ func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*Secu
 		C.size_t(len(signKey.Value)))
 
 	if ss.ctx == nil {
-		return nil, ErrCreateObj
+		return nil, ErrCreateSessionObject
 	}
 
 	runtime.SetFinalizer(ss, finalize)
@@ -114,7 +114,7 @@ func (ss *SecureSession) Close() error {
 		if bool(C.session_destroy(ss.ctx)) {
 			ss.ctx = nil
 		} else {
-			return ErrDestroyObj
+			return ErrDestroySessionObject
 		}
 	}
 
@@ -261,17 +261,17 @@ func (ss *SecureSession) GetRemoteID() ([]byte, error) {
 	// secure_session_get_remote_id
 	var outLength C.size_t
 	if C.secure_session_get_remote_id(ss.ctx.session, nil, &outLength) != C.THEMIS_BUFFER_TOO_SMALL {
-		return nil, ErrCallbackGetRemIDLen
+		return nil, ErrCallbackGetRemoteIDLen
 	}
 	if outLength == 0 {
-		return nil, ErrCallbackBadRemIDLen
+		return nil, ErrCallbackBadRemoteIDLen
 	}
 	if sizeOverflow(outLength) {
 		return nil, ErrOverflow
 	}
 	out := make([]byte, int(outLength))
 	if C.secure_session_get_remote_id(ss.ctx.session, (*C.uint8_t)(&out[0]), &outLength) != C.THEMIS_SUCCESS {
-		return nil, ErrCallbackGetRemID
+		return nil, ErrCallbackGetRemoteID
 	}
 	return out, nil
 }

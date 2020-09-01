@@ -83,7 +83,7 @@ var (
 	ErrSignMsg           = errors.New("Failed to sign message")
 	ErrVerifyMsg         = errors.New("Failed to verify message")
 	ErrProcessMsg        = errors.New("Failed to process message")
-	ErrGetOutSize        = errors.New("Failed to get output size")
+	ErrGetOutputSize     = errors.New("Failed to get output size")
 	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
 	ErrMissingPublicKey  = errors.NewWithCode(errors.InvalidParameter, "empty peer public key for Secure Message")
 	ErrMissingPrivateKey = errors.NewWithCode(errors.InvalidParameter, "empty private key for Secure Message")
@@ -141,7 +141,7 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		C.size_t(len(message)),
 		C.int(mode),
 		&outputLength)) {
-		return nil, ErrGetOutSize
+		return nil, ErrGetOutputSize
 	}
 	if sizeOverflow(outputLength) {
 		return nil, ErrOverflow

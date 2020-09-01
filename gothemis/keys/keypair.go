@@ -75,10 +75,10 @@ const (
 
 // Errors returned by key generation.
 var (
-	ErrGetKeySize  = errors.New("Failed to get needed key sizes")
-	ErrGenKeypair  = errors.New("Failed to generate keypair")
-	ErrInvalidType = errors.NewWithCode(errors.InvalidParameter, "invalid key type specified")
-	ErrOverflow    = errors.NewWithCode(errors.NoMemory, "key generator cannot allocate enough memory")
+	ErrGetKeySize       = errors.New("Failed to get needed key sizes")
+	ErrGenerateKeypair  = errors.New("Failed to generate keypair")
+	ErrInvalidType      = errors.NewWithCode(errors.InvalidParameter, "invalid key type specified")
+	ErrOverflow         = errors.NewWithCode(errors.NoMemory, "key generator cannot allocate enough memory")
 )
 
 // PrivateKey stores a ECDSA or RSA private key.
@@ -115,7 +115,7 @@ func New(keytype int) (*Keypair, error) {
 	pub := make([]byte, int(pubLen), int(pubLen))
 
 	if !bool(C.gen_keys(C.int(keytype), unsafe.Pointer(&priv[0]), privLen, unsafe.Pointer(&pub[0]), pubLen)) {
-		return nil, ErrGenKeypair
+		return nil, ErrGenerateKeypair
 	}
 
 	return &Keypair{

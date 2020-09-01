@@ -180,7 +180,7 @@ import (
 
 // Errors returned by Secure Cell.
 var (
-	ErrGetOutSize        = errors.New("Failed to get output size")
+	ErrGetOutputSize     = errors.New("Failed to get output size")
 	ErrEncryptData       = errors.New("Failed to protect data")
 	ErrDecryptData       = errors.New("Failed to unprotect data")
 	ErrInvalidMode       = errors.NewWithCode(errors.InvalidParameter, "invalid Secure Cell mode specified")
@@ -276,7 +276,7 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		C.int(sc.mode),
 		&encLen,
 		&addLen)) {
-		return nil, nil, ErrGetOutSize
+		return nil, nil, ErrGetOutputSize
 	}
 	if sizeOverflow(encLen) || sizeOverflow(addLen) {
 		return nil, nil, ErrOverflow
@@ -358,7 +358,7 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		ctxLen,
 		C.int(sc.mode),
 		&decLen)) {
-		return nil, ErrGetOutSize
+		return nil, ErrGetOutputSize
 	}
 	if sizeOverflow(decLen) {
 		return nil, ErrOverflow
