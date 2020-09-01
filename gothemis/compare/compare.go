@@ -86,7 +86,7 @@ var (
 	ErrGetOutputSize            = errors.New("Failed to get output size")
 	ErrMissingSecret            = errors.NewWithCode(errors.InvalidParameter, "empty secret for Secure Comparator")
 	ErrMissingData              = errors.NewWithCode(errors.InvalidParameter, "empty comparison message for Secure Comparator")
-	ErrOverflow                 = errors.NewWithCode(errors.NoMemory, "Secure Comparator cannot allocate enough memory")
+	ErrOutOfMemory              = errors.NewWithCode(errors.NoMemory, "Secure Comparator cannot allocate enough memory")
 )
 
 // SecureCompare is an interactive protocol for two parties that compares whether
@@ -152,7 +152,7 @@ func (sc *SecureCompare) Begin() ([]byte, error) {
 		return nil, ErrGetOutputSize
 	}
 	if sizeOverflow(outLen) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 
 	out := make([]byte, outLen)
@@ -177,7 +177,7 @@ func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 		return nil, ErrGetOutputSize
 	}
 	if sizeOverflow(outLen) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 
 	if 0 == outLen {

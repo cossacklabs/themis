@@ -53,7 +53,7 @@ var (
 	ErrMissingClientID           = errors.NewWithCode(errors.InvalidParameter, "empty client ID for Secure Session")
 	ErrMissingPrivateKey         = errors.NewWithCode(errors.InvalidParameter, "empty client private key for Secure Session")
 	ErrMissingMessage            = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Session")
-	ErrOverflow                  = errors.NewWithCode(errors.NoMemory, "Secure Session cannot allocate enough memory")
+	ErrOutOfMemory               = errors.NewWithCode(errors.NoMemory, "Secure Session cannot allocate enough memory")
 )
 
 // SessionCallbacks implements a delegate for SecureSession.
@@ -166,7 +166,7 @@ func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 		return nil, ErrGetRequestSize
 	}
 	if sizeOverflow(reqLen) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 
 	req := make([]byte, reqLen)
@@ -194,7 +194,7 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 		return nil, ErrGetWrappedSize
 	}
 	if sizeOverflow(outLen) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 
 	out := make([]byte, outLen)
@@ -231,7 +231,7 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 		return nil, false, ErrGetUnwrappedSize
 	}
 	if sizeOverflow(outLen) {
-		return nil, false, ErrOverflow
+		return nil, false, ErrOutOfMemory
 	}
 
 	out := make([]byte, outLen)
@@ -267,7 +267,7 @@ func (ss *SecureSession) GetRemoteID() ([]byte, error) {
 		return nil, ErrCallbackBadRemoteIDLen
 	}
 	if sizeOverflow(outLength) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 	out := make([]byte, int(outLength))
 	if C.secure_session_get_remote_id(ss.ctx.session, (*C.uint8_t)(&out[0]), &outLength) != C.THEMIS_SUCCESS {

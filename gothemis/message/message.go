@@ -87,7 +87,7 @@ var (
 	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
 	ErrMissingPublicKey  = errors.NewWithCode(errors.InvalidParameter, "empty peer public key for Secure Message")
 	ErrMissingPrivateKey = errors.NewWithCode(errors.InvalidParameter, "empty private key for Secure Message")
-	ErrOverflow          = errors.NewWithCode(errors.NoMemory, "Secure Message cannot allocate enough memory")
+	ErrOutOfMemory       = errors.NewWithCode(errors.NoMemory, "Secure Message cannot allocate enough memory")
 )
 
 // SecureMessage provides a sequence-independent, stateless, contextless messaging system.
@@ -144,7 +144,7 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		return nil, ErrGetOutputSize
 	}
 	if sizeOverflow(outputLength) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 
 	output := make([]byte, int(outputLength), int(outputLength))

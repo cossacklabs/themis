@@ -43,7 +43,7 @@ func NewSymmetricKey() (*SymmetricKey, error) {
 		return nil, ErrGetSymmKeySize
 	}
 	if sizeOverflow(len) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 
 	key := make([]byte, int(len), int(len))

@@ -78,7 +78,7 @@ var (
 	ErrGetKeySize       = errors.New("Failed to get needed key sizes")
 	ErrGenerateKeypair  = errors.New("Failed to generate keypair")
 	ErrInvalidType      = errors.NewWithCode(errors.InvalidParameter, "invalid key type specified")
-	ErrOverflow         = errors.NewWithCode(errors.NoMemory, "key generator cannot allocate enough memory")
+	ErrOutOfMemory      = errors.NewWithCode(errors.NoMemory, "key generator cannot allocate enough memory")
 )
 
 // PrivateKey stores a ECDSA or RSA private key.
@@ -108,7 +108,7 @@ func New(keytype int) (*Keypair, error) {
 		return nil, ErrGetKeySize
 	}
 	if sizeOverflow(privLen) || sizeOverflow(pubLen) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 
 	priv := make([]byte, int(privLen), int(privLen))

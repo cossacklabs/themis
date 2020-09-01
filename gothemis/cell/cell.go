@@ -189,7 +189,7 @@ var (
 	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
 	ErrMissingToken      = errors.NewWithCode(errors.InvalidParameter, "authentication token is required in Token Protect mode")
 	ErrMissingContext    = errors.NewWithCode(errors.InvalidParameter, "associated context is required in Context Imprint mode")
-	ErrOverflow          = errors.NewWithCode(errors.NoMemory, "Secure Cell cannot allocate enough memory")
+	ErrOutOfMemory       = errors.NewWithCode(errors.NoMemory, "Secure Cell cannot allocate enough memory")
 )
 
 // Secure Cell operation mode.
@@ -279,7 +279,7 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		return nil, nil, ErrGetOutputSize
 	}
 	if sizeOverflow(encLen) || sizeOverflow(addLen) {
-		return nil, nil, ErrOverflow
+		return nil, nil, ErrOutOfMemory
 	}
 
 	var addData []byte
@@ -361,7 +361,7 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		return nil, ErrGetOutputSize
 	}
 	if sizeOverflow(decLen) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 
 	decData := make([]byte, decLen, decLen)
