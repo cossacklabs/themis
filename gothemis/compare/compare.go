@@ -77,6 +77,13 @@ const (
 
 // Errors returned by Secure Comparator.
 var (
+	ErrAppendSecret  = errors.New("Failed to append secret")
+	ErrCreateObj     = errors.New("Failed to create comparator object")
+	ErrDestroyObj    = errors.New("Failed to destroy comparator object")
+	ErrGetCmpData    = errors.New("Failed to get compare data")
+	ErrGetCmpRes     = errors.New("Failed to get compare result")
+	ErrGetOut        = errors.New("Failed to get output")
+	ErrGetOutSize    = errors.New("Failed to get output size")
 	ErrMissingSecret = errors.NewWithCode(errors.InvalidParameter, "empty secret for Secure Comparator")
 	ErrMissingData   = errors.NewWithCode(errors.InvalidParameter, "empty comparison message for Secure Comparator")
 	ErrOverflow      = errors.NewWithCode(errors.NoMemory, "Secure Comparator cannot allocate enough memory")
@@ -103,7 +110,7 @@ func sizeOverflow(n C.size_t) bool {
 func New() (*SecureCompare, error) {
 	ctx := C.compare_init()
 	if nil == ctx {
-		return nil, errors.New("Failed to create comparator object")
+		return nil, ErrCreateObj
 	}
 
 	sc := &SecureCompare{ctx}
@@ -118,7 +125,7 @@ func (sc *SecureCompare) Close() error {
 		if bool(C.compare_destroy(sc.ctx)) {
 			sc.ctx = nil
 		} else {
-			return errors.New("Failed to destroy comparator object")
+			return ErrDestroyObj
 		}
 	}
 
@@ -131,7 +138,7 @@ func (sc *SecureCompare) Append(secret []byte) error {
 		return ErrMissingSecret
 	}
 	if !bool(C.compare_append(sc.ctx, unsafe.Pointer(&secret[0]), C.size_t(len(secret)))) {
-		return errors.New("Failed to append secret")
+		return ErrAppendSecret
 	}
 
 	return nil
@@ -142,7 +149,7 @@ func (sc *SecureCompare) Begin() ([]byte, error) {
 	var outLen C.size_t
 
 	if !bool(C.compare_begin_size(sc.ctx, &outLen)) {
-		return nil, errors.New("Failed to get output size")
+		return nil, ErrGetOutSize
 	}
 	if sizeOverflow(outLen) {
 		return nil, ErrOverflow
@@ -151,7 +158,7 @@ func (sc *SecureCompare) Begin() ([]byte, error) {
 	out := make([]byte, outLen)
 
 	if !bool(C.compare_begin(sc.ctx, unsafe.Pointer(&out[0]), outLen)) {
-		return nil, errors.New("Failed to get compare data")
+		return nil, ErrGetCmpData
 	}
 
 	return out, nil
@@ -167,7 +174,7 @@ func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 	}
 
 	if !bool(C.compare_proceed_size(sc.ctx, unsafe.Pointer(&data[0]), C.size_t(len(data)), &outLen)) {
-		return nil, errors.New("Failed to get output size")
+		return nil, ErrGetOutSize
 	}
 	if sizeOverflow(outLen) {
 		return nil, ErrOverflow
@@ -187,7 +194,7 @@ func (sc *SecureCompare) Proceed(data []byte) ([]byte, error) {
 		return out, nil
 	}
 
-	return nil, errors.New("Failed to get output")
+	return nil, ErrGetOut
 }
 
 // Result returns the result of the comparison.
@@ -198,5 +205,5 @@ func (sc *SecureCompare) Result() (int, error) {
 		return int(res), nil
 	}
 
-	return NotReady, errors.New("Failed to get compare result")
+	return NotReady, ErrGetCmpRes
 }

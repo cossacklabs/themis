@@ -180,6 +180,9 @@ import (
 
 // Errors returned by Secure Cell.
 var (
+	ErrGetOutSize        = errors.New("Failed to get output size")
+	ErrEncryptData       = errors.New("Failed to protect data")
+	ErrDecryptData       = errors.New("Failed to unprotect data")
 	ErrInvalidMode       = errors.NewWithCode(errors.InvalidParameter, "invalid Secure Cell mode specified")
 	ErrMissingKey        = errors.NewWithCode(errors.InvalidParameter, "empty symmetric key for Secure Cell")
 	ErrMissingPassphrase = errors.NewWithCode(errors.InvalidParameter, "empty passphrase for Secure Cell")
@@ -273,7 +276,7 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		C.int(sc.mode),
 		&encLen,
 		&addLen)) {
-		return nil, nil, errors.New("Failed to get output size")
+		return nil, nil, ErrGetOutSize
 	}
 	if sizeOverflow(encLen) || sizeOverflow(addLen) {
 		return nil, nil, ErrOverflow
@@ -299,7 +302,7 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		encLen,
 		add,
 		addLen)) {
-		return nil, nil, errors.New("Failed to protect data")
+		return nil, nil, ErrEncryptData
 	}
 
 	return encData, addData, nil
@@ -355,7 +358,7 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		ctxLen,
 		C.int(sc.mode),
 		&decLen)) {
-		return nil, errors.New("Failed to get output size")
+		return nil, ErrGetOutSize
 	}
 	if sizeOverflow(decLen) {
 		return nil, ErrOverflow
@@ -373,7 +376,7 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		C.int(sc.mode),
 		unsafe.Pointer(&decData[0]),
 		decLen)) {
-		return nil, errors.New("Failed to unprotect data")
+		return nil, ErrDecryptData
 	}
 
 	return decData, nil

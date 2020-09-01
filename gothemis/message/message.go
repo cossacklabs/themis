@@ -78,6 +78,12 @@ const (
 
 // Errors returned by Secure Message.
 var (
+	ErrEncryptMsg        = errors.New("Failed to encrypt message")
+	ErrDecryptMsg        = errors.New("Failed to decrypt message")
+	ErrSignMsg           = errors.New("Failed to sign message")
+	ErrVerifyMsg         = errors.New("Failed to verify message")
+	ErrProcessMsg        = errors.New("Failed to process message")
+	ErrGetOutSize        = errors.New("Failed to get output size")
 	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
 	ErrMissingPublicKey  = errors.NewWithCode(errors.InvalidParameter, "empty peer public key for Secure Message")
 	ErrMissingPrivateKey = errors.NewWithCode(errors.InvalidParameter, "empty private key for Secure Message")
@@ -135,7 +141,7 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		C.size_t(len(message)),
 		C.int(mode),
 		&outputLength)) {
-		return nil, errors.New("Failed to get output size")
+		return nil, ErrGetOutSize
 	}
 	if sizeOverflow(outputLength) {
 		return nil, ErrOverflow
@@ -153,15 +159,15 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		outputLength)) {
 		switch mode {
 		case secureMessageEncrypt:
-			return nil, errors.New("Failed to encrypt message")
+			return nil, ErrEncryptMsg
 		case secureMessageDecrypt:
-			return nil, errors.New("Failed to decrypt message")
+			return nil, ErrDecryptMsg
 		case secureMessageSign:
-			return nil, errors.New("Failed to sign message")
+			return nil, ErrSignMsg
 		case secureMessageVerify:
-			return nil, errors.New("Failed to verify message")
+			return nil, ErrVerifyMsg
 		default:
-			return nil, errors.New("Failed to process message")
+			return nil, ErrProcessMsg
 		}
 	}
 

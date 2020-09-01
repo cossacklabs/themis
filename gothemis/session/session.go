@@ -37,6 +37,14 @@ const (
 
 // Errors returned by Secure Session.
 var (
+	ErrDestroyObj        = errors.New("Failed to destroy secure session object")
+	ErrCreateObj         = errors.New("Failed to create secure session object")
+	ErrGetRequestSize    = errors.New("Failed to get request size")
+	ErrGenRequest        = errors.New("Failed to generate request")
+	ErrGetWrappedSize    = errors.New("Failed to get wrapped size")
+	ErrWrapData          = errors.New("Failed to wrap data")
+	ErrGetUnwrappedSize  = errors.New("Failed to get unwrapped size")
+	ErrUnwrapData        = errors.New("Failed to unwrap data")
 	ErrMissingClientID   = errors.NewWithCode(errors.InvalidParameter, "empty client ID for Secure Session")
 	ErrMissingPrivateKey = errors.NewWithCode(errors.InvalidParameter, "empty client private key for Secure Session")
 	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Session")
@@ -87,7 +95,7 @@ func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*Secu
 		C.size_t(len(signKey.Value)))
 
 	if ss.ctx == nil {
-		return nil, errors.New("Failed to create secure session object")
+		return nil, ErrCreateObj
 	}
 
 	runtime.SetFinalizer(ss, finalize)
@@ -101,7 +109,7 @@ func (ss *SecureSession) Close() error {
 		if bool(C.session_destroy(ss.ctx)) {
 			ss.ctx = nil
 		} else {
-			return errors.New("Failed to destroy secure session object")
+			return ErrDestroyObj
 		}
 	}
 
@@ -150,7 +158,7 @@ func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 
 	if !bool(C.session_connect_size(ss.ctx,
 		&reqLen)) {
-		return nil, errors.New("Failed to get request size")
+		return nil, ErrGetRequestSize
 	}
 	if sizeOverflow(reqLen) {
 		return nil, ErrOverflow
@@ -160,7 +168,7 @@ func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 	if !bool(C.session_connect(&ss.ctx,
 		unsafe.Pointer(&req[0]),
 		reqLen)) {
-		return nil, errors.New("Failed to generate request")
+		return nil, ErrGenRequest
 	}
 
 	return req, nil
@@ -178,7 +186,7 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 		unsafe.Pointer(&data[0]),
 		C.size_t(len(data)),
 		&outLen)) {
-		return nil, errors.New("Failed to get wrapped size")
+		return nil, ErrGetWrappedSize
 	}
 	if sizeOverflow(outLen) {
 		return nil, ErrOverflow
@@ -190,7 +198,7 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 		C.size_t(len(data)),
 		unsafe.Pointer(&out[0]),
 		outLen)) {
-		return nil, errors.New("Failed to wrap data")
+		return nil, ErrWrapData
 	}
 
 	return out, nil
@@ -215,7 +223,7 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res):
 		return nil, false, errors.NewCallbackError("Failed to get unwraped size (get_public_key_by_id callback error)")
 	case (C.GOTHEMIS_BUFFER_TOO_SMALL != res):
-		return nil, false, errors.New("Failed to get unwrapped size")
+		return nil, false, ErrGetUnwrappedSize
 	}
 	if sizeOverflow(outLen) {
 		return nil, false, ErrOverflow
@@ -240,7 +248,7 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 		return nil, false, errors.NewCallbackError("Failed to unwrap data (get_public_key_by_id callback error)")
 	}
 
-	return nil, false, errors.New("Failed to unwrap data")
+	return nil, false, ErrUnwrapData
 }
 
 // GetRemoteID returns ID of the remote peer.

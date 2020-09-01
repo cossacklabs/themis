@@ -25,6 +25,12 @@ import (
 	"github.com/cossacklabs/themis/gothemis/errors"
 )
 
+// Errors returned by key generation.
+var (
+	ErrGetSymmKeySize   = errors.New("Failed to get symmetric key size")
+	ErrGenSymmKey       = errors.New("Failed to generate symmetric key")
+)
+
 // SymmetricKey stores a master key for Secure Cell.
 type SymmetricKey struct {
 	Value []byte
@@ -34,7 +40,7 @@ type SymmetricKey struct {
 func NewSymmetricKey() (*SymmetricKey, error) {
 	var len C.size_t
 	if !bool(C.get_sym_key_size(&len)) {
-		return nil, errors.New("Failed to get symmetric key size")
+		return nil, ErrGetSymmKeySize
 	}
 	if sizeOverflow(len) {
 		return nil, ErrOverflow
@@ -42,7 +48,7 @@ func NewSymmetricKey() (*SymmetricKey, error) {
 
 	key := make([]byte, int(len), int(len))
 	if !bool(C.gen_sym_key(unsafe.Pointer(&key[0]), len)) {
-		return nil, errors.New("Failed to generate symmetric key")
+		return nil, ErrGenSymmKey
 	}
 
 	return &SymmetricKey{Value: key}, nil
