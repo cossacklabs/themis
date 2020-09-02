@@ -39,12 +39,8 @@ const (
 var (
 	ErrCreateSession             = errors.New("Failed to create secure session object")
 	ErrDestroySession            = errors.New("Failed to destroy secure session object")
-	ErrGetRequestSize            = errors.New("Failed to get request size")
-	ErrGenerateRequest           = errors.New("Failed to generate request")
-	ErrGetWrappedSize            = errors.New("Failed to get wrapped size")
-	ErrWrapData                  = errors.New("Failed to wrap data")
-	ErrGetUnwrappedSize          = errors.New("Failed to get unwrapped size")
-	ErrUnwrapData                = errors.New("Failed to unwrap data")
+	ErrMessageSize               = errors.New("Failed to get message size")
+	ErrMessageData               = errors.New("Failed to process message data")
 	ErrNoPublicKey               = errors.NewCallbackError("Failed to get public key (get_public_key_by_id callback error)")
 	ErrBadRemoteIDLength         = errors.NewCallbackError("Incorrect remote id length (0)")
 	ErrGetRemoteID               = errors.NewCallbackError("Failed to get session remote id")
@@ -163,7 +159,7 @@ func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 
 	if !bool(C.session_connect_size(ss.ctx,
 		&reqLen)) {
-		return nil, ErrGetRequestSize
+		return nil, ErrMessageSize
 	}
 	if sizeOverflow(reqLen) {
 		return nil, ErrOutOfMemory
@@ -173,7 +169,7 @@ func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 	if !bool(C.session_connect(&ss.ctx,
 		unsafe.Pointer(&req[0]),
 		reqLen)) {
-		return nil, ErrGenerateRequest
+		return nil, ErrMessageData
 	}
 
 	return req, nil
@@ -191,7 +187,7 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 		unsafe.Pointer(&data[0]),
 		C.size_t(len(data)),
 		&outLen)) {
-		return nil, ErrGetWrappedSize
+		return nil, ErrMessageSize
 	}
 	if sizeOverflow(outLen) {
 		return nil, ErrOutOfMemory
@@ -203,7 +199,7 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 		C.size_t(len(data)),
 		unsafe.Pointer(&out[0]),
 		outLen)) {
-		return nil, ErrWrapData
+		return nil, ErrMessageData
 	}
 
 	return out, nil
@@ -228,7 +224,7 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res):
 		return nil, false, ErrNoPublicKey
 	case (C.GOTHEMIS_BUFFER_TOO_SMALL != res):
-		return nil, false, ErrGetUnwrappedSize
+		return nil, false, ErrMessageSize
 	}
 	if sizeOverflow(outLen) {
 		return nil, false, ErrOutOfMemory
@@ -253,7 +249,7 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 		return nil, false, ErrNoPublicKey
 	}
 
-	return nil, false, ErrUnwrapData
+	return nil, false, ErrMessageData
 }
 
 // GetRemoteID returns ID of the remote peer.
