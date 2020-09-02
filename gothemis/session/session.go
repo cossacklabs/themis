@@ -37,23 +37,23 @@ const (
 
 // Errors returned by Secure Session.
 var (
-	ErrDestroySessionObject      = errors.New("Failed to destroy secure session object")
-	ErrCreateSessionObject       = errors.New("Failed to create secure session object")
+	ErrCreateSession             = errors.New("Failed to create secure session object")
+	ErrDestroySession            = errors.New("Failed to destroy secure session object")
 	ErrGetRequestSize            = errors.New("Failed to get request size")
-	ErrGenRequest                = errors.New("Failed to generate request")
+	ErrGenerateRequest           = errors.New("Failed to generate request")
 	ErrGetWrappedSize            = errors.New("Failed to get wrapped size")
 	ErrWrapData                  = errors.New("Failed to wrap data")
 	ErrGetUnwrappedSize          = errors.New("Failed to get unwrapped size")
 	ErrUnwrapData                = errors.New("Failed to unwrap data")
-	ErrCallbackGetUnwrappedSize  = errors.NewCallbackError("Failed to get unwraped size (get_public_key_by_id callback error)")
-	ErrCallbackUnwrapData        = errors.NewCallbackError("Failed to unwrap data (get_public_key_by_id callback error)")
-	ErrCallbackGetRemoteIDLen    = errors.NewCallbackError("Failed to get session remote id length")
-	ErrCallbackBadRemoteIDLen    = errors.NewCallbackError("Incorrect remote id length (0)")
-	ErrCallbackGetRemoteID       = errors.NewCallbackError("Failed to get session remote id")
+	ErrNoPublicKey               = errors.NewCallbackError("Failed to get public key (get_public_key_by_id callback error)")
+	ErrBadRemoteIDLength         = errors.NewCallbackError("Incorrect remote id length (0)")
+	ErrGetRemoteID               = errors.NewCallbackError("Failed to get session remote id")
 	ErrMissingClientID           = errors.NewWithCode(errors.InvalidParameter, "empty client ID for Secure Session")
 	ErrMissingPrivateKey         = errors.NewWithCode(errors.InvalidParameter, "empty client private key for Secure Session")
 	ErrMissingMessage            = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Session")
 	ErrOutOfMemory               = errors.NewWithCode(errors.NoMemory, "Secure Session cannot allocate enough memory")
+	// Deprecated: Since 0.13.3. Use ErrOutOfMemory instead.
+	ErrOverflow                  = ErrOutOfMemory
 )
 
 // SessionCallbacks implements a delegate for SecureSession.
@@ -100,7 +100,7 @@ func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*Secu
 		C.size_t(len(signKey.Value)))
 
 	if ss.ctx == nil {
-		return nil, ErrCreateSessionObject
+		return nil, ErrCreateSession
 	}
 
 	runtime.SetFinalizer(ss, finalize)
@@ -114,7 +114,7 @@ func (ss *SecureSession) Close() error {
 		if bool(C.session_destroy(ss.ctx)) {
 			ss.ctx = nil
 		} else {
-			return ErrDestroySessionObject
+			return ErrDestroySession
 		}
 	}
 
@@ -173,7 +173,7 @@ func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 	if !bool(C.session_connect(&ss.ctx,
 		unsafe.Pointer(&req[0]),
 		reqLen)) {
-		return nil, ErrGenRequest
+		return nil, ErrGenerateRequest
 	}
 
 	return req, nil
@@ -226,7 +226,7 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	case (C.GOTHEMIS_SUCCESS == res) && (0 == outLen):
 		return nil, false, nil
 	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res):
-		return nil, false, ErrCallbackGetUnwrappedSize
+		return nil, false, ErrNoPublicKey
 	case (C.GOTHEMIS_BUFFER_TOO_SMALL != res):
 		return nil, false, ErrGetUnwrappedSize
 	}
@@ -250,7 +250,7 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	case (C.GOTHEMIS_SUCCESS == res) && (0 < outLen):
 		return out, false, nil
 	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res):
-		return nil, false, ErrCallbackUnwrapData
+		return nil, false, ErrNoPublicKey
 	}
 
 	return nil, false, ErrUnwrapData
@@ -261,17 +261,17 @@ func (ss *SecureSession) GetRemoteID() ([]byte, error) {
 	// secure_session_get_remote_id
 	var outLength C.size_t
 	if C.secure_session_get_remote_id(ss.ctx.session, nil, &outLength) != C.THEMIS_BUFFER_TOO_SMALL {
-		return nil, ErrCallbackGetRemoteIDLen
+		return nil, ErrGetRemoteID
 	}
 	if outLength == 0 {
-		return nil, ErrCallbackBadRemoteIDLen
+		return nil, ErrBadRemoteIDLength
 	}
 	if sizeOverflow(outLength) {
 		return nil, ErrOutOfMemory
 	}
 	out := make([]byte, int(outLength))
 	if C.secure_session_get_remote_id(ss.ctx.session, (*C.uint8_t)(&out[0]), &outLength) != C.THEMIS_SUCCESS {
-		return nil, ErrCallbackGetRemoteID
+		return nil, ErrGetRemoteID
 	}
 	return out, nil
 }

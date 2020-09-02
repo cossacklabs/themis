@@ -27,8 +27,8 @@ import (
 
 // Errors returned by key generation.
 var (
-	ErrGetSymmKeySize   = errors.New("Failed to get symmetric key size")
-	ErrGenSymmKey       = errors.New("Failed to generate symmetric key")
+	ErrGetSymmetricKeySize  = errors.New("Failed to get symmetric key size")
+	ErrGenerateSymmetricKey = errors.New("Failed to generate symmetric key")
 )
 
 // SymmetricKey stores a master key for Secure Cell.
@@ -40,7 +40,7 @@ type SymmetricKey struct {
 func NewSymmetricKey() (*SymmetricKey, error) {
 	var len C.size_t
 	if !bool(C.get_sym_key_size(&len)) {
-		return nil, ErrGetSymmKeySize
+		return nil, ErrGetSymmetricKeySize
 	}
 	if sizeOverflow(len) {
 		return nil, ErrOutOfMemory
@@ -48,7 +48,7 @@ func NewSymmetricKey() (*SymmetricKey, error) {
 
 	key := make([]byte, int(len), int(len))
 	if !bool(C.gen_sym_key(unsafe.Pointer(&key[0]), len)) {
-		return nil, ErrGenSymmKey
+		return nil, ErrGenerateSymmetricKey
 	}
 
 	return &SymmetricKey{Value: key}, nil

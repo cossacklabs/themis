@@ -190,6 +190,8 @@ var (
 	ErrMissingToken      = errors.NewWithCode(errors.InvalidParameter, "authentication token is required in Token Protect mode")
 	ErrMissingContext    = errors.NewWithCode(errors.InvalidParameter, "associated context is required in Context Imprint mode")
 	ErrOutOfMemory       = errors.NewWithCode(errors.NoMemory, "Secure Cell cannot allocate enough memory")
+	// Deprecated: Since 0.13.3. Use ErrOutOfMemory instead.
+	ErrOverflow          = ErrOutOfMemory
 )
 
 // Secure Cell operation mode.

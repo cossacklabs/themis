@@ -78,16 +78,18 @@ const (
 
 // Errors returned by Secure Message.
 var (
-	ErrEncryptMsg        = errors.New("Failed to encrypt message")
-	ErrDecryptMsg        = errors.New("Failed to decrypt message")
-	ErrSignMsg           = errors.New("Failed to sign message")
-	ErrVerifyMsg         = errors.New("Failed to verify message")
-	ErrProcessMsg        = errors.New("Failed to process message")
+	ErrEncryptMessage    = errors.New("Failed to encrypt message")
+	ErrDecryptMessage    = errors.New("Failed to decrypt message")
+	ErrSignMessage       = errors.New("Failed to sign message")
+	ErrVerifyMessage     = errors.New("Failed to verify message")
+	ErrProcessMessage    = errors.New("Failed to process message")
 	ErrGetOutputSize     = errors.New("Failed to get output size")
 	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
 	ErrMissingPublicKey  = errors.NewWithCode(errors.InvalidParameter, "empty peer public key for Secure Message")
 	ErrMissingPrivateKey = errors.NewWithCode(errors.InvalidParameter, "empty private key for Secure Message")
 	ErrOutOfMemory       = errors.NewWithCode(errors.NoMemory, "Secure Message cannot allocate enough memory")
+	// Deprecated: Since 0.13.3. Use ErrOutOfMemory instead.
+	ErrOverflow          = ErrOutOfMemory
 )
 
 // SecureMessage provides a sequence-independent, stateless, contextless messaging system.
@@ -159,15 +161,15 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		outputLength)) {
 		switch mode {
 		case secureMessageEncrypt:
-			return nil, ErrEncryptMsg
+			return nil, ErrEncryptMessage
 		case secureMessageDecrypt:
-			return nil, ErrDecryptMsg
+			return nil, ErrDecryptMessage
 		case secureMessageSign:
-			return nil, ErrSignMsg
+			return nil, ErrSignMessage
 		case secureMessageVerify:
-			return nil, ErrVerifyMsg
+			return nil, ErrVerifyMessage
 		default:
-			return nil, ErrProcessMsg
+			return nil, ErrProcessMessage
 		}
 	}
 
