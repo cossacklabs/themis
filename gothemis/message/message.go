@@ -88,7 +88,7 @@ var (
 	ErrMissingPublicKey  = errors.NewWithCode(errors.InvalidParameter, "empty peer public key for Secure Message")
 	ErrMissingPrivateKey = errors.NewWithCode(errors.InvalidParameter, "empty private key for Secure Message")
 	ErrOutOfMemory       = errors.NewWithCode(errors.NoMemory, "Secure Message cannot allocate enough memory")
-	// Deprecated: Since 0.13.3. Use ErrOutOfMemory instead.
+	// Deprecated: Since 0.14. Use ErrOutOfMemory instead.
 	ErrOverflow          = ErrOutOfMemory
 )
 

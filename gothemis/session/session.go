@@ -48,7 +48,7 @@ var (
 	ErrMissingPrivateKey         = errors.NewWithCode(errors.InvalidParameter, "empty client private key for Secure Session")
 	ErrMissingMessage            = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Session")
 	ErrOutOfMemory               = errors.NewWithCode(errors.NoMemory, "Secure Session cannot allocate enough memory")
-	// Deprecated: Since 0.13.3. Use ErrOutOfMemory instead.
+	// Deprecated: Since 0.14. Use ErrOutOfMemory instead.
 	ErrOverflow                  = ErrOutOfMemory
 )
 

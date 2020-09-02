@@ -79,7 +79,7 @@ var (
 	ErrGenerateKeypair  = errors.New("Failed to generate keypair")
 	ErrInvalidType      = errors.NewWithCode(errors.InvalidParameter, "invalid key type specified")
 	ErrOutOfMemory      = errors.NewWithCode(errors.NoMemory, "key generator cannot allocate enough memory")
-	// Deprecated: Since 0.13.3. Use ErrOutOfMemory instead.
+	// Deprecated: Since 0.14. Use ErrOutOfMemory instead.
 	ErrOverflow         = ErrOutOfMemory
 )
 

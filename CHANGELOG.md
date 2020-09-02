@@ -14,7 +14,7 @@ _Code:_
 
 - **Go**
 
-  - Error `ErrOverflow` is now deprecated in favor of `ErrOutOfMemory`, new error types were added ([711](https://github.com/cossacklabs/themis/pull/711)).
+  - Error `ErrOverflow` is now deprecated in favor of `ErrOutOfMemory`, new error types were added ([#711](https://github.com/cossacklabs/themis/pull/711)).
 
 - **Objective-C**
 

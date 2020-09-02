@@ -86,7 +86,7 @@ var (
 	ErrMissingSecret            = errors.NewWithCode(errors.InvalidParameter, "empty secret for Secure Comparator")
 	ErrMissingData              = errors.NewWithCode(errors.InvalidParameter, "empty comparison message for Secure Comparator")
 	ErrOutOfMemory              = errors.NewWithCode(errors.NoMemory, "Secure Comparator cannot allocate enough memory")
-	// Deprecated: Since 0.13.3. Use ErrOutOfMemory instead.
+	// Deprecated: Since 0.14. Use ErrOutOfMemory instead.
 	ErrOverflow                 = ErrOutOfMemory
 )
 
