@@ -180,9 +180,9 @@ import (
 
 // Errors returned by Secure Cell.
 var (
-	ErrGetOutputSize     = errors.New("Failed to get output size")
-	ErrEncryptData       = errors.New("Failed to protect data")
-	ErrDecryptData       = errors.New("Failed to unprotect data")
+	ErrGetOutputSize     = errors.New("failed to get output size")
+	ErrEncryptData       = errors.New("failed to protect data")
+	ErrDecryptData       = errors.New("failed to unprotect data")
 	ErrInvalidMode       = errors.NewWithCode(errors.InvalidParameter, "invalid Secure Cell mode specified")
 	ErrMissingKey        = errors.NewWithCode(errors.InvalidParameter, "empty symmetric key for Secure Cell")
 	ErrMissingPassphrase = errors.NewWithCode(errors.InvalidParameter, "empty passphrase for Secure Cell")

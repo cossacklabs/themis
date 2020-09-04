@@ -78,12 +78,12 @@ const (
 
 // Errors returned by Secure Message.
 var (
-	ErrEncryptMessage    = errors.New("Failed to encrypt message")
-	ErrDecryptMessage    = errors.New("Failed to decrypt message")
-	ErrSignMessage       = errors.New("Failed to sign message")
-	ErrVerifyMessage     = errors.New("Failed to verify message")
-	ErrProcessMessage    = errors.New("Failed to process message")
-	ErrGetOutputSize     = errors.New("Failed to get output size")
+	ErrEncryptMessage    = errors.New("failed to encrypt message")
+	ErrDecryptMessage    = errors.New("failed to decrypt message")
+	ErrSignMessage       = errors.New("failed to sign message")
+	ErrVerifyMessage     = errors.New("failed to verify message")
+	ErrProcessMessage    = errors.New("failed to process message")
+	ErrGetOutputSize     = errors.New("failed to get output size")
 	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
 	ErrMissingPublicKey  = errors.NewWithCode(errors.InvalidParameter, "empty peer public key for Secure Message")
 	ErrMissingPrivateKey = errors.NewWithCode(errors.InvalidParameter, "empty private key for Secure Message")

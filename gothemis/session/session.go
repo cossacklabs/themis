@@ -37,13 +37,13 @@ const (
 
 // Errors returned by Secure Session.
 var (
-	ErrCreateSession             = errors.New("Failed to create secure session object")
-	ErrDestroySession            = errors.New("Failed to destroy secure session object")
-	ErrMessageSize               = errors.New("Failed to get message size")
-	ErrMessageData               = errors.New("Failed to process message data")
-	ErrNoPublicKey               = errors.NewCallbackError("Failed to get public key (get_public_key_by_id callback error)")
-	ErrBadRemoteIDLength         = errors.NewCallbackError("Incorrect remote id length (0)")
-	ErrGetRemoteID               = errors.NewCallbackError("Failed to get session remote id")
+	ErrCreateSession             = errors.New("failed to create secure session object")
+	ErrDestroySession            = errors.New("failed to destroy secure session object")
+	ErrMessageSize               = errors.New("failed to get message size")
+	ErrMessageData               = errors.New("failed to process message data")
+	ErrNoPublicKey               = errors.NewCallbackError("failed to get public key (get_public_key_by_id callback error)")
+	ErrBadRemoteIDLength         = errors.NewCallbackError("incorrect remote id length (0)")
+	ErrGetRemoteID               = errors.NewCallbackError("failed to get session remote id")
 	ErrMissingClientID           = errors.NewWithCode(errors.InvalidParameter, "empty client ID for Secure Session")
 	ErrMissingPrivateKey         = errors.NewWithCode(errors.InvalidParameter, "empty client private key for Secure Session")
 	ErrMissingMessage            = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Session")

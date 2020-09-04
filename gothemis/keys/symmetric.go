@@ -27,8 +27,8 @@ import (
 
 // Errors returned by key generation.
 var (
-	ErrGetSymmetricKeySize  = errors.New("Failed to get symmetric key size")
-	ErrGenerateSymmetricKey = errors.New("Failed to generate symmetric key")
+	ErrGetSymmetricKeySize  = errors.New("failed to get symmetric key size")
+	ErrGenerateSymmetricKey = errors.New("failed to generate symmetric key")
 )
 
 // SymmetricKey stores a master key for Secure Cell.

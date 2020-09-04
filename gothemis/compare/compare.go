@@ -77,12 +77,12 @@ const (
 
 // Errors returned by Secure Comparator.
 var (
-	ErrAppendSecret             = errors.New("Failed to append secret")
-	ErrCreateComparator         = errors.New("Failed to create comparator object")
-	ErrDestroyComparator        = errors.New("Failed to destroy comparator object")
-	ErrProtocolData             = errors.New("Failed to get protocol data")
-	ErrProtocolDataSize         = errors.New("Failed to get protocol data size")
-	ErrNoResult                 = errors.New("Failed to get result")
+	ErrAppendSecret             = errors.New("failed to append secret")
+	ErrCreateComparator         = errors.New("failed to create comparator object")
+	ErrDestroyComparator        = errors.New("failed to destroy comparator object")
+	ErrProtocolData             = errors.New("failed to get protocol data")
+	ErrProtocolDataSize         = errors.New("failed to get protocol data size")
+	ErrNoResult                 = errors.New("failed to get result")
 	ErrMissingSecret            = errors.NewWithCode(errors.InvalidParameter, "empty secret for Secure Comparator")
 	ErrMissingData              = errors.NewWithCode(errors.InvalidParameter, "empty comparison message for Secure Comparator")
 	ErrOutOfMemory              = errors.NewWithCode(errors.NoMemory, "Secure Comparator cannot allocate enough memory")
