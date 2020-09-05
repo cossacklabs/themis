@@ -37,10 +37,19 @@ const (
 
 // Errors returned by Secure Session.
 var (
-	ErrMissingClientID   = errors.NewWithCode(errors.InvalidParameter, "empty client ID for Secure Session")
-	ErrMissingPrivateKey = errors.NewWithCode(errors.InvalidParameter, "empty client private key for Secure Session")
-	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Session")
-	ErrOverflow          = errors.NewWithCode(errors.NoMemory, "Secure Session cannot allocate enough memory")
+	ErrCreateSession             = errors.New("failed to create secure session object")
+	ErrDestroySession            = errors.New("failed to destroy secure session object")
+	ErrMessageSize               = errors.New("failed to get message size")
+	ErrMessageData               = errors.New("failed to process message data")
+	ErrNoPublicKey               = errors.NewCallbackError("failed to get public key (get_public_key_by_id callback error)")
+	ErrBadRemoteIDLength         = errors.NewCallbackError("incorrect remote id length (0)")
+	ErrGetRemoteID               = errors.NewCallbackError("failed to get session remote id")
+	ErrMissingClientID           = errors.NewWithCode(errors.InvalidParameter, "empty client ID for Secure Session")
+	ErrMissingPrivateKey         = errors.NewWithCode(errors.InvalidParameter, "empty client private key for Secure Session")
+	ErrMissingMessage            = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Session")
+	ErrOutOfMemory               = errors.NewWithCode(errors.NoMemory, "Secure Session cannot allocate enough memory")
+	// Deprecated: Since 0.14. Use ErrOutOfMemory instead.
+	ErrOverflow                  = ErrOutOfMemory
 )
 
 // SessionCallbacks implements a delegate for SecureSession.
@@ -87,7 +96,7 @@ func New(id []byte, signKey *keys.PrivateKey, callbacks SessionCallbacks) (*Secu
 		C.size_t(len(signKey.Value)))
 
 	if ss.ctx == nil {
-		return nil, errors.New("Failed to create secure session object")
+		return nil, ErrCreateSession
 	}
 
 	runtime.SetFinalizer(ss, finalize)
@@ -101,7 +110,7 @@ func (ss *SecureSession) Close() error {
 		if bool(C.session_destroy(ss.ctx)) {
 			ss.ctx = nil
 		} else {
-			return errors.New("Failed to destroy secure session object")
+			return ErrDestroySession
 		}
 	}
 
@@ -150,17 +159,17 @@ func (ss *SecureSession) ConnectRequest() ([]byte, error) {
 
 	if !bool(C.session_connect_size(ss.ctx,
 		&reqLen)) {
-		return nil, errors.New("Failed to get request size")
+		return nil, ErrMessageSize
 	}
 	if sizeOverflow(reqLen) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 
 	req := make([]byte, reqLen)
 	if !bool(C.session_connect(&ss.ctx,
 		unsafe.Pointer(&req[0]),
 		reqLen)) {
-		return nil, errors.New("Failed to generate request")
+		return nil, ErrMessageData
 	}
 
 	return req, nil
@@ -178,10 +187,10 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 		unsafe.Pointer(&data[0]),
 		C.size_t(len(data)),
 		&outLen)) {
-		return nil, errors.New("Failed to get wrapped size")
+		return nil, ErrMessageSize
 	}
 	if sizeOverflow(outLen) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 
 	out := make([]byte, outLen)
@@ -190,7 +199,7 @@ func (ss *SecureSession) Wrap(data []byte) ([]byte, error) {
 		C.size_t(len(data)),
 		unsafe.Pointer(&out[0]),
 		outLen)) {
-		return nil, errors.New("Failed to wrap data")
+		return nil, ErrMessageData
 	}
 
 	return out, nil
@@ -213,12 +222,12 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	case (C.GOTHEMIS_SUCCESS == res) && (0 == outLen):
 		return nil, false, nil
 	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res):
-		return nil, false, errors.NewCallbackError("Failed to get unwraped size (get_public_key_by_id callback error)")
+		return nil, false, ErrNoPublicKey
 	case (C.GOTHEMIS_BUFFER_TOO_SMALL != res):
-		return nil, false, errors.New("Failed to get unwrapped size")
+		return nil, false, ErrMessageSize
 	}
 	if sizeOverflow(outLen) {
-		return nil, false, ErrOverflow
+		return nil, false, ErrOutOfMemory
 	}
 
 	out := make([]byte, outLen)
@@ -237,10 +246,10 @@ func (ss *SecureSession) Unwrap(data []byte) ([]byte, bool, error) {
 	case (C.GOTHEMIS_SUCCESS == res) && (0 < outLen):
 		return out, false, nil
 	case (C.GOTHEMIS_SSESSION_GET_PUB_FOR_ID_ERROR == res):
-		return nil, false, errors.NewCallbackError("Failed to unwrap data (get_public_key_by_id callback error)")
+		return nil, false, ErrNoPublicKey
 	}
 
-	return nil, false, errors.New("Failed to unwrap data")
+	return nil, false, ErrMessageData
 }
 
 // GetRemoteID returns ID of the remote peer.
@@ -248,17 +257,17 @@ func (ss *SecureSession) GetRemoteID() ([]byte, error) {
 	// secure_session_get_remote_id
 	var outLength C.size_t
 	if C.secure_session_get_remote_id(ss.ctx.session, nil, &outLength) != C.THEMIS_BUFFER_TOO_SMALL {
-		return nil, errors.NewCallbackError("Failed to get session remote id length")
+		return nil, ErrGetRemoteID
 	}
 	if outLength == 0 {
-		return nil, errors.NewCallbackError("Incorrect remote id length (0)")
+		return nil, ErrBadRemoteIDLength
 	}
 	if sizeOverflow(outLength) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 	out := make([]byte, int(outLength))
 	if C.secure_session_get_remote_id(ss.ctx.session, (*C.uint8_t)(&out[0]), &outLength) != C.THEMIS_SUCCESS {
-		return nil, errors.NewCallbackError("Failed to get session remote id")
+		return nil, ErrGetRemoteID
 	}
 	return out, nil
 }
