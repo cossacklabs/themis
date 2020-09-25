@@ -44,7 +44,11 @@ themis_status_t themis_message_set(themis_message_t* ctx, const uint8_t* message
         if (!ctx) {
             ctx->data = malloc(message_length);
         } else {
+            uint8_t *tmp = ctx->data;
             ctx->data = realloc(ctx->data, message_length);
+            if (!(ctx->data)) {
+                free(tmp);
+            }
         }
         if (!(ctx->data)) {
             ctx->length = 0;
