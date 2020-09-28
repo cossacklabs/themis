@@ -11,7 +11,7 @@ _Code:_
   - Include embedded BoringSSL into Soter for convenience ([#681](https://github.com/cossacklabs/themis/pull/681), [#702](https://github.com/cossacklabs/themis/pull/702)).
   - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
   - `secure_session_create()` now allows only EC keys, returning an error for RSA ([#693](https://github.com/cossacklabs/themis/pull/693)).
-  - Cleaned up unused private API ([#713](https://github.com/cossacklabs/themis/pull/713)).
+  - Cleaned up unused private API ([#714](https://github.com/cossacklabs/themis/pull/714)).
 
 - **Go**
 
