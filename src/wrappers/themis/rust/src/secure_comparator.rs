@@ -374,10 +374,7 @@ impl SecureComparator {
     /// assert!(!comparison.is_complete());
     /// ```
     pub fn is_complete(&self) -> bool {
-        match self.result() {
-            Err(ref e) if e.kind() == ErrorKind::CompareNotReady => false,
-            _ => true,
-        }
+        !matches!(self.result(), Err(ref e) if e.kind() == ErrorKind::CompareNotReady)
     }
 
     /// Returns the result of comparison.
