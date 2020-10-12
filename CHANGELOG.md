@@ -5,7 +5,7 @@
 Changes that are currently in development and have not been released yet.
 
 
-## [0.13.3](https://github.com/cossacklabs/themis/releases/tag/0.13.2), October 12th 2020
+## [0.13.3](https://github.com/cossacklabs/themis/releases/tag/0.13.3), October 12th 2020
 
 **Hotfix for Themis CocoaPods and Xcode12:**
 
@@ -15,7 +15,7 @@ _Code:_
 
 - **Objective-C / Swift**
 
-  - Themis CocoaPods podspec is updated with bitcode fixes and disabling arm64 simulator in order to support Xcode12 builds. This is a podspec change only, no changes in code, headers or whatsoever. Default podspec is set as "themis/themis-openssl", which uses OpenSSL 1.0.2u. Fixes for "themis/openssl" podspec (OpenSSL 1.1.1g) will arrive soon.
+  - Themis CocoaPods podspec is updated with bitcode fixes and disabling arm64 simulator in order to support Xcode12 builds. This is a podspec change only, no changes in code, headers or whatsoever. Default podspec is set as "themis/themis-openssl", which uses OpenSSL 1.0.2u. Fixes for "themis/openssl" podspec (OpenSSL 1.1.1g) might arrive soon.
 
 
 
