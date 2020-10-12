@@ -56,6 +56,20 @@ _Infrastructure:_
 - Rename embedded BoringSSL symbols by default to avoid conflicts with system OpenSSL ([#702](https://github.com/cossacklabs/themis/pull/702)).
 - Started phasing out CircleCI in favour of GitHub Actions ([#709](https://github.com/cossacklabs/themis/pull/709)).
 
+
+## [0.13.3](https://github.com/cossacklabs/themis/releases/tag/0.13.3), October 12th 2020
+
+**Hotfix for Themis CocoaPods and Xcode12:**
+
+- Default Themis podspec is using OpenSSL 1.0.2u again ("themis/themis-openssl"). OpenSSL 1.1.1g podspec ("themis/openssl") might be broken for Xcode12, fixing is in progress. BoringSSL podspec ("themis/themis-boringssl") is available too.
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - Themis CocoaPods podspec is updated with bitcode fixes and disabling arm64 simulator in order to support Xcode12 builds. This is a podspec change only, no changes in code, headers or whatsoever. Default podspec is set as "themis/themis-openssl", which uses OpenSSL 1.0.2u. Fixes for "themis/openssl" podspec (OpenSSL 1.1.1g) might arrive soon.
+
+
 ## [0.13.2](https://github.com/cossacklabs/themis/releases/tag/0.13.2), August 14th 2020
 
 **Breaking changes and deprecations:**
