@@ -16,13 +16,13 @@
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, '10.0'
+platform :ios, '12.0'
 project 'SwiftThemisServerExample/SwiftThemisServerExample.xcodeproj'
 inhibit_all_warnings!
 use_frameworks!
 
 target :"SwiftThemisServerExample" do
 
-  pod 'themis', '0.13.1'
+  pod 'themis', '0.13.3'
 
 end
