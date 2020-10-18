@@ -5,22 +5,6 @@
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
-      <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9F70B2E6241D17A3009CB629"
-               BuildableName = "Test Themis (Swift 5, iOS).xctest"
-               BlueprintName = "Test Themis (Swift 5, iOS)"
-               ReferencedContainer = "container:ObjCThemis.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-      </BuildActionEntries>
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
@@ -32,10 +16,10 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "9F70B2E6241D17A3009CB629"
-               BuildableName = "Test Themis (Swift 5, iOS).xctest"
-               BlueprintName = "Test Themis (Swift 5, iOS)"
-               ReferencedContainer = "container:ObjCThemis.xcodeproj">
+               BlueprintIdentifier = "9F70B31B2420E176009CB629"
+               BuildableName = "Test Themis (Swift 4, macOS).xctest"
+               BlueprintName = "Test Themis (Swift 4, macOS)"
+               ReferencedContainer = "container:Themis.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -57,15 +41,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "9F70B2E6241D17A3009CB629"
-            BuildableName = "Test Themis (Swift 5, iOS).xctest"
-            BlueprintName = "Test Themis (Swift 5, iOS)"
-            ReferencedContainer = "container:ObjCThemis.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

@@ -16,7 +16,7 @@
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, '8.0'
+platform :ios, '10.0'
 inhibit_all_warnings!
 
 target "objthemis" do
@@ -25,6 +25,9 @@ target "objthemis" do
   pod 'themis', :git => "https://github.com/cossacklabs/themis.git"
 
 end
+
+#TODO: add tests for openssl1.1.1 target?
+
 
 target "objthemis_boring" do
 

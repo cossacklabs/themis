@@ -4,6 +4,85 @@
 
 Changes that are currently in development and have not been released yet.
 
+
+## [0.13.3](https://github.com/cossacklabs/themis/releases/tag/0.13.3), October 12th 2020
+
+**Hotfix for Themis CocoaPods and Xcode12:**
+
+- Default Themis podspec is using OpenSSL 1.0.2u again ("themis/themis-openssl"). OpenSSL 1.1.1g podspec ("themis/openssl") might be broken for Xcode12, fixing is in progress. BoringSSL podspec ("themis/themis-boringssl") is available too.
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - Themis CocoaPods podspec is updated with bitcode fixes and disabling arm64 simulator in order to support Xcode12 builds. This is a podspec change only, no changes in code, headers or whatsoever. Default podspec is set as "themis/themis-openssl", which uses OpenSSL 1.0.2u. Fixes for "themis/openssl" podspec (OpenSSL 1.1.1g) might arrive soon.
+
+
+
+## [0.13.2](https://github.com/cossacklabs/themis/releases/tag/0.13.2), August 14th 2020
+
+**Breaking changes and deprecations:**
+
+- ObjCThemis framework built by Carthage is now called `themis.framework` once again ([read more](#0.13.2-revert-objcthemis-rename)).
+
+_Code:_
+
+- **Objective-C**
+
+  - **Breaking changes**
+
+    - <a id="0.13.2-revert-objcthemis-rename">ObjCThemis framework built by Carthage is now called `themis.framework` once again</a> ([#704](https://github.com/cossacklabs/themis/pull/704)).
+
+      [ObjCThemis 0.13.0](#0.13.0-objcthemis-rename) has initiated renaming of the framework produced by Carthage into `objcthemis.framework` from its historical name `themis.framework`. This decision has been a mistake. More information is available in the pull request linked above.
+
+      `objcthemis.framework` is removed and should not be used.
+
+      Please continue linking your applications to `themis.framework`. Note as well that starting with ObjCThemis 0.13.1, you do not have to embed `openssl.framework` anymore when ObjCThemis is installed via Carthage.
+
+## [0.13.1](https://github.com/cossacklabs/themis/releases/tag/0.13.1), August 13th 2020
+
+**TL;DR:**
+
+- AndroidThemis is now available on JCenter
+- ObjCThemis and SwiftThemis get latest OpenSSL update
+- Minor security fixes in GoThemis, JsThemis, WasmThemis
+
+_Code:_
+
+- **Core**
+
+  - Improved compatibility with OpenSSL 1.1.1 ([#684](https://github.com/cossacklabs/themis/pull/684)).
+
+- **Android**
+
+  - AndroidThemis is now available on JCenter ([#679](https://github.com/cossacklabs/themis/pull/679)).
+
+- **Go**
+
+  - Fixed panics on 32-bit systems when processing corrupted data ([#677](https://github.com/cossacklabs/themis/pull/677)).
+  - Improved GoThemis package README and documentation ([#699](https://github.com/cossacklabs/themis/pull/699)).
+
+- **Node.js**
+
+  - Minor dependency updates making the world a better place ([#680](https://github.com/cossacklabs/themis/pull/680)).
+
+- **WebAssembly**
+
+  - Minor dependency updates making the world a better place ([#680](https://github.com/cossacklabs/themis/pull/680)).
+
+- **Swift**
+
+  - Updated OpenSSL to the latest 1.1.1g ([#692](https://github.com/cossacklabs/themis/pull/692)).
+
+- **Objective-C**
+
+  - Updated OpenSSL to the latest 1.1.1g ([#692](https://github.com/cossacklabs/themis/pull/692)).
+
+_Infrastructure:_
+
+- AndroidThemis is now available on JCenter ([#679](https://github.com/cossacklabs/themis/pull/679)).
+- ObjCThemis and SwiftThemis now require Xcode 11 ([#692](https://github.com/cossacklabs/themis/pull/692)).
+
 ## [0.13.0](https://github.com/cossacklabs/themis/releases/tag/0.13.0), July 8th 2020
 
 **TL;DR:**

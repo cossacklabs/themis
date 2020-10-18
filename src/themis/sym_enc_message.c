@@ -277,6 +277,7 @@ themis_status_t themis_auth_sym_encrypt_message_(const uint8_t* key,
     uint8_t derived_key[THEMIS_AUTH_SYM_KEY_LENGTH / 8] = {0};
     size_t kdf_context_length = sizeof(kdf_context);
     size_t derived_key_length = sizeof(derived_key);
+    size_t auth_token_real_length = 0;
     struct themis_scell_auth_token_key hdr;
 
     /* Message length is currently stored as 32-bit integer, sorry */
@@ -331,8 +332,11 @@ themis_status_t themis_auth_sym_encrypt_message_(const uint8_t* key,
         goto error;
     }
 
-    if (*auth_token_length < themis_scell_auth_token_key_size(&hdr)) {
-        *auth_token_length = themis_scell_auth_token_key_size(&hdr);
+    /* In valid Secure Cells auth token length always fits into uint32_t. */
+    auth_token_real_length = (uint32_t)themis_scell_auth_token_key_size(&hdr);
+
+    if (*auth_token_length < auth_token_real_length) {
+        *auth_token_length = auth_token_real_length;
         res = THEMIS_BUFFER_TOO_SMALL;
         goto error;
     }
@@ -340,7 +344,7 @@ themis_status_t themis_auth_sym_encrypt_message_(const uint8_t* key,
     if (res != THEMIS_SUCCESS) {
         goto error;
     }
-    *auth_token_length = themis_scell_auth_token_key_size(&hdr);
+    *auth_token_length = auth_token_real_length;
     *encrypted_message_length = message_length;
 
 error:

@@ -78,6 +78,9 @@ jobs:
         with:
           path: ~/.cocoapods
           key: ${{ runner.os }}-cocoapods-common
+      - name: Update CocoaPods repo
+        run: |
+          pod repo update
       - name: Install Themis via CocoaPods
         run: |
           cd $GITHUB_WORKSPACE/tests/objcthemis
@@ -121,7 +124,7 @@ jobs:
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData  \
-            -project ObjCThemis.xcodeproj \
+            -project Themis.xcodeproj \
             -scheme "Test Themis (Swift 4, macOS)" \
             test
       - name: Run unit tests (Swift 5, macOS)
@@ -130,7 +133,7 @@ jobs:
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData  \
-            -project ObjCThemis.xcodeproj \
+            -project Themis.xcodeproj \
             -scheme "Test Themis (Swift 5, macOS)" \
             test
       - name: Run unit tests (Swift 4, iOS Simulator)
@@ -139,7 +142,7 @@ jobs:
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData  \
-            -project ObjCThemis.xcodeproj \
+            -project Themis.xcodeproj \
             -scheme "Test Themis (Swift 4, iOS)" \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=${TEST_IPAD}" \
@@ -150,7 +153,7 @@ jobs:
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData  \
-            -project ObjCThemis.xcodeproj \
+            -project Themis.xcodeproj \
             -scheme "Test Themis (Swift 5, iOS)" \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=${TEST_IPHONE}" \
@@ -176,9 +179,9 @@ jobs:
       - name: Hack dependencies
         if: contains(env.HACK_DEPENDENCIES, 'true')
         run: |
-          # CocoaPods: podspec
+          # Use the current commit in CocoaPods podspec
           sed -E -i '' \
-              -e "s|^(\s*s\.source = ).*$|\1{ :git => \"https://github.com/${HACK_REPOSITORY}.git\", :commit => \"$HACK_SHA\" }|" \
+              -e "s|^([ ]*s\.source = ).*$|\1{ :git => \"https://github.com/${HACK_REPOSITORY}.git\", :commit => \"$HACK_SHA\" }|" \
               themis.podspec
           # Note that CocoaPods is *really* strict with versioning, does not
           # allow modified podspec to be published, and issues a warning
@@ -234,6 +237,9 @@ jobs:
         with:
           path: ~/.cocoapods
           key: ${{ runner.os }}-cocoapods-common
+      - name: Update CocoaPods repo
+        run: |
+          pod repo update
       # Try building Themis for all iOS device architectures. We do it here
       # because CocoaPods does not allow to check that directly but with
       # example projects it's more or less possible.
@@ -244,8 +250,8 @@ jobs:
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
-            -project ObjCThemis.xcodeproj \
-            -scheme "ObjCThemis (iOS)" \
+            -project Themis.xcodeproj \
+            -scheme "Themis (iOS)" \
             -sdk iphoneos \
             -destination "generic/platform=iOS" \
             build
