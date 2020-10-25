@@ -26,6 +26,7 @@ _Code:_
 - **PHP**
 
   - `libphpthemis` packages for Debian/Ubuntu now have accurate dependencies ([#683](https://github.com/cossacklabs/themis/pull/683)).
+  - PHP Composer 2.0 is now supported by PHPThemis unit tests ([#730](https://github.com/cossacklabs/themis/pull/730)).
 
 - **Node.js**
 
