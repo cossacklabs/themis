@@ -17,19 +17,8 @@
 		73156E151ADBDF0800E3E520 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 73156E131ADBDF0800E3E520 /* ViewController.m */; };
 		73156E171ADBDF0F00E3E520 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 73156E161ADBDF0F00E3E520 /* Images.xcassets */; };
 		731624981ADB174200972A7A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 731624971ADB174200972A7A /* main.m */; };
-		731624B21ADB174200972A7A /* ThemisTestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 731624B11ADB174200972A7A /* ThemisTestTests.m */; };
 		B35ED97225A7E4197A0AA0AE /* Pods_ThemisTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 93A7B8C89ACDDE5EB678CD95 /* Pods_ThemisTest.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		731624AC1ADB174200972A7A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 7316248A1ADB174200972A7A /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 731624911ADB174200972A7A;
-			remoteInfo = ThemisTest;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		192EA2F8AFB4D5A59D33DCE6 /* server.priv */ = {isa = PBXFileReference; lastKnownFileType = file.priv; path = server.priv; sourceTree = "<group>"; };
@@ -47,9 +36,6 @@
 		731624921ADB174200972A7A /* ThemisTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThemisTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		731624961ADB174200972A7A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		731624971ADB174200972A7A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		731624AB1ADB174200972A7A /* ThemisTestTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThemisTestTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		731624B01ADB174200972A7A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		731624B11ADB174200972A7A /* ThemisTestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThemisTestTests.m; sourceTree = "<group>"; };
 		738D1E7F1ADBBEBB00661F4A /* libobjcthemis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libobjcthemis.a; path = ../themis/objcthemis/ios/lib/libobjcthemis.a; sourceTree = "<group>"; };
 		93A7B8C89ACDDE5EB678CD95 /* Pods_ThemisTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ThemisTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FFE61BEB81FB4FF4AC421B37 /* Pods-ThemisTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisTest.debug.xcconfig"; path = "Target Support Files/Pods-ThemisTest/Pods-ThemisTest.debug.xcconfig"; sourceTree = "<group>"; };
@@ -61,13 +47,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B35ED97225A7E4197A0AA0AE /* Pods_ThemisTest.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		731624A81ADB174200972A7A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,7 +99,6 @@
 			isa = PBXGroup;
 			children = (
 				731624941ADB174200972A7A /* ThemisTest */,
-				731624AE1ADB174200972A7A /* ThemisTestTests */,
 				731624931ADB174200972A7A /* Products */,
 				1F5F881BD0CD342D1E9B9E25 /* Frameworks */,
 				E2188C81A9E1F264E3C877A3 /* Pods */,
@@ -131,7 +109,6 @@
 			isa = PBXGroup;
 			children = (
 				731624921ADB174200972A7A /* ThemisTest.app */,
-				731624AB1ADB174200972A7A /* ThemisTestTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -151,23 +128,6 @@
 			children = (
 				731624961ADB174200972A7A /* Info.plist */,
 				731624971ADB174200972A7A /* main.m */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		731624AE1ADB174200972A7A /* ThemisTestTests */ = {
-			isa = PBXGroup;
-			children = (
-				731624B11ADB174200972A7A /* ThemisTestTests.m */,
-				731624AF1ADB174200972A7A /* Supporting Files */,
-			);
-			path = ThemisTestTests;
-			sourceTree = "<group>";
-		};
-		731624AF1ADB174200972A7A /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				731624B01ADB174200972A7A /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -204,24 +164,6 @@
 			productReference = 731624921ADB174200972A7A /* ThemisTest.app */;
 			productType = "com.apple.product-type.application";
 		};
-		731624AA1ADB174200972A7A /* ThemisTestTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 731624B81ADB174200972A7A /* Build configuration list for PBXNativeTarget "ThemisTestTests" */;
-			buildPhases = (
-				731624A71ADB174200972A7A /* Sources */,
-				731624A81ADB174200972A7A /* Frameworks */,
-				731624A91ADB174200972A7A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				731624AD1ADB174200972A7A /* PBXTargetDependency */,
-			);
-			name = ThemisTestTests;
-			productName = ThemisTestTests;
-			productReference = 731624AB1ADB174200972A7A /* ThemisTestTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -233,13 +175,7 @@
 				TargetAttributes = {
 					731624911ADB174200972A7A = {
 						CreatedOnToolsVersion = 6.3;
-						DevelopmentTeam = X6X7AHQ2D4;
 						ProvisioningStyle = Automatic;
-					};
-					731624AA1ADB174200972A7A = {
-						CreatedOnToolsVersion = 6.3;
-						DevelopmentTeam = X6X7AHQ2D4;
-						TestTargetID = 731624911ADB174200972A7A;
 					};
 				};
 			};
@@ -257,7 +193,6 @@
 			projectRoot = "";
 			targets = (
 				731624911ADB174200972A7A /* ThemisTest */,
-				731624AA1ADB174200972A7A /* ThemisTestTests */,
 			);
 		};
 /* End PBXProject section */
@@ -274,13 +209,6 @@
 				192EA8EBD7208E756BFFCD3E /* client.priv in Resources */,
 				73156E061ADBDE7900E3E520 /* LaunchScreen.xib in Resources */,
 				192EACACC1C841554F9EB9D9 /* server.priv in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		731624A91ADB174200972A7A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,23 +270,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		731624A71ADB174200972A7A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				731624B21ADB174200972A7A /* ThemisTestTests.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		731624AD1ADB174200972A7A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 731624911ADB174200972A7A /* ThemisTest */;
-			targetProxy = 731624AC1ADB174200972A7A /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		73156E021ADBDE7900E3E520 /* LaunchScreen.xib */ = {
@@ -430,7 +342,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -479,7 +391,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
@@ -495,12 +407,12 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = X6X7AHQ2D4;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ThemisTest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.cossacklabs.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.ThemisTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
@@ -516,56 +428,16 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = X6X7AHQ2D4;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ThemisTest/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.cossacklabs.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.ThemisTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		731624B91ADB174200972A7A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = X6X7AHQ2D4;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = ThemisTestTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.cossacklabs.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTS_MACCATALYST = NO;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ThemisTest.app/ThemisTest";
-			};
-			name = Debug;
-		};
-		731624BA1ADB174200972A7A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = X6X7AHQ2D4;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = ThemisTestTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.cossacklabs.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SUPPORTS_MACCATALYST = NO;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ThemisTest.app/ThemisTest";
 			};
 			name = Release;
 		};
@@ -586,15 +458,6 @@
 			buildConfigurations = (
 				731624B61ADB174200972A7A /* Debug */,
 				731624B71ADB174200972A7A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		731624B81ADB174200972A7A /* Build configuration list for PBXNativeTarget "ThemisTestTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				731624B91ADB174200972A7A /* Debug */,
-				731624BA1ADB174200972A7A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
