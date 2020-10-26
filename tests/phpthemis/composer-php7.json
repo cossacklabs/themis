@@ -1,5 +1,5 @@
 {
-    "name": "tests/phpthemis/php-7",
+    "name": "phpthemis/test-php-7",
     "description": "Some stuff for tests",
     "require": {
         "php": "^7",
