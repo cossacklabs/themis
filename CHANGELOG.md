@@ -4,6 +4,16 @@
 
 Changes that are currently in development and have not been released yet.
 
+_Code:_
+
+- **Objective-C**
+
+  - CocoaPods will now link ObjCThemis statically into application ([#731](https://github.com/cossacklabs/themis/pull/731)).
+
+- **Swift**
+
+  - CocoaPods will now link SwiftThemis statically into application ([#731](https://github.com/cossacklabs/themis/pull/731)).
+
 
 ## [0.13.3](https://github.com/cossacklabs/themis/releases/tag/0.13.3), October 12th 2020
 
