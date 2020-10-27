@@ -93,12 +93,14 @@ Pod::Spec.new do |s|
             'BITCODE_GENERATION_MODE[config=Debug]'     => 'bitcode-marker'
         }
 
-        # Xcode12, arm64 simulator issues https://stackoverflow.com/a/63955114
-        # disable building for arm64 simulator for now
-
-        so.ios.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+        # As of version 1.0.2.20.1, GRKOpenSSLFramework binaries do not contain
+        # arm64 slices for iOS Simulator and macOS, and thus do not support
+        # Apple Silicon. Disable building Themis for Apple Silicon until
+        # GRKOpenSSLFramework gets proper arm64 support.
+        so.ios.pod_target_xcconfig  = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
         so.ios.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
-
+        so.osx.pod_target_xcconfig  = { 'EXCLUDED_ARCHS' => 'arm64' }
+        so.osx.user_target_xcconfig = { 'EXCLUDED_ARCHS' => 'arm64' }
 
         # TODO: due to error in symbols in GRKOpenSSLFramework 219 release, we've manually switched to 218
         # which doesn't sound like a good decision, so when GRKOpenSSLFramework will be updated –
