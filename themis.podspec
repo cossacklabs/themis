@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
     s.module_name = 'themis'
-    s.default_subspec = 'themis-openssl'
+    s.default_subspec = 'openssl-1.1.1'
 
     s.ios.deployment_target = '10.0'
     s.osx.deployment_target = '10.11'
@@ -25,8 +25,6 @@ Pod::Spec.new do |s|
     # If you update dependencies, please check whether we can remove "--allow-warnings"
     # from podspec validation in .github/workflows/test-objc.yaml
 
-    # TODO(vixentael, 11 oct 2020): as xcode12 introduces new arm64 architecture, our own openssl framework doesn't work yet
-    # Change openssl-1.1.1 to default when fix our openssl
     # This variant uses the current stable, non-legacy version of OpenSSL.
     s.subspec 'openssl-1.1.1' do |so|
         # OpenSSL 1.1.1h
