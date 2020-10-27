@@ -19,9 +19,10 @@ _Code:_
 
 - **Objective-C**
 
-  - Switched to test on Xcode 12.0, disable ARM64 builds for Themis CocoaPods and Themis Carthage ([#721](https://github.com/cossacklabs/themis/pull/721), [#722](https://github.com/cossacklabs/themis/pull/722), [#733](https://github.com/cossacklabs/themis/pull/733)).
+  - Switched to test on Xcode 12.0, disable ARM64 builds for Themis CocoaPods and Themis Carthage ([#721](https://github.com/cossacklabs/themis/pull/721), [#722](https://github.com/cossacklabs/themis/pull/722), [#732](https://github.com/cossacklabs/themis/pull/732), [#733](https://github.com/cossacklabs/themis/pull/733)).
   - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.2, 0.13.3 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706), [#723](https://github.com/cossacklabs/themis/pull/723), [#724](https://github.com/cossacklabs/themis/pull/724), [#726](https://github.com/cossacklabs/themis/pull/726)).
   - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
+  - CocoaPods will now link ObjCThemis statically into application ([#731](https://github.com/cossacklabs/themis/pull/731)).
 
 - **PHP**
 
@@ -46,9 +47,10 @@ _Code:_
 
 - **Swift**
 
-  - Switched to test on Xcode 12.0, disable ARM64 builds for Themis CocoaPods and Themis Carthage ([#721](https://github.com/cossacklabs/themis/pull/721), [#722](https://github.com/cossacklabs/themis/pull/722), [#733](https://github.com/cossacklabs/themis/pull/733)).
+  - Switched to test on Xcode 12.0, disable ARM64 builds for Themis CocoaPods and Themis Carthage ([#721](https://github.com/cossacklabs/themis/pull/721), [#722](https://github.com/cossacklabs/themis/pull/722), [#732](https://github.com/cossacklabs/themis/pull/732), [#733](https://github.com/cossacklabs/themis/pull/733)).
   - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.2, 0.13.3 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706)).
   - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
+  - CocoaPods will now link SwiftThemis statically into application ([#731](https://github.com/cossacklabs/themis/pull/731)).
 
 _Infrastructure:_
 
