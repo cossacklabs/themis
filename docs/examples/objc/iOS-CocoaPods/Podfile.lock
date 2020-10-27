@@ -16,7 +16,7 @@ DEPENDENCIES:
   - themis (= 0.13.3)
 
 SPEC REPOS:
-  https://github.com/CocoaPods/Specs.git:
+  trunk:
     - GRKOpenSSLFramework
     - themis
 
@@ -24,6 +24,6 @@ SPEC CHECKSUMS:
   GRKOpenSSLFramework: 1d65e55d569af7b23074373041a92cc8bc768a92
   themis: 00b56e2cdcc5ab1fc846aa0271ef0c2895a1c476
 
-PODFILE CHECKSUM: f486aa7ca9a901d732c89bd57be0febeed03081f
+PODFILE CHECKSUM: 509c901ee5abf7f1963b0e1aaa3eba2696f67613
 
 COCOAPODS: 1.9.3
