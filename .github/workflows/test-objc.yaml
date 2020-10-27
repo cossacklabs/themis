@@ -79,11 +79,6 @@ jobs:
           find tests/objcthemis -type f -name Podfile -print0 | xargs -0 \
             sed -E -i '' \
                 -e "s|(pod 'themis.*').*|\1, :git => \"https://github.com/${HACK_REPOSITORY}.git\", :commit => \"$HACK_SHA\"|"
-      - name: CocoaPods cache
-        uses: actions/cache@v1
-        with:
-          path: ~/.cocoapods
-          key: ${{ runner.os }}-cocoapods-common
       - name: Update CocoaPods repo
         run: |
           pod repo update
@@ -252,11 +247,6 @@ jobs:
           find docs/examples -type f -name Podfile -print0 | xargs -0 \
             sed -E -i '' \
                 -e "s|(pod 'themis(/[a-z-]*)*').*|\1, :git => \"https://github.com/${HACK_REPOSITORY}.git\", :commit => \"$HACK_SHA\"|"
-      - name: CocoaPods cache
-        uses: actions/cache@v1
-        with:
-          path: ~/.cocoapods
-          key: ${{ runner.os }}-cocoapods-common
       - name: Update CocoaPods repo
         run: |
           pod repo update
