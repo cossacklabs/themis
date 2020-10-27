@@ -29,8 +29,8 @@ Pod::Spec.new do |s|
     # Change openssl-1.1.1 to default when fix our openssl
     # This variant uses the current stable, non-legacy version of OpenSSL.
     s.subspec 'openssl-1.1.1' do |so|
-        # OpenSSL 1.1.1g
-        so.dependency 'CLOpenSSL', '~> 1.1.107'
+        # OpenSSL 1.1.1h
+        so.dependency 'CLOpenSSL', '~> 1.1.10801'
 
         # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip
         so.ios.pod_target_xcconfig = {
@@ -40,10 +40,11 @@ Pod::Spec.new do |s|
             'BITCODE_GENERATION_MODE[config=Debug]'     => 'bitcode-marker'
         }
 
-        # Xcode12, arm64 simulator issues https://stackoverflow.com/a/63955114
-        # disable building for arm64 simulator for now
-
-        so.ios.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+        # As of version 1.1.10801, the framework produced by CLOpenSSL does not
+        # contain arm64 slice for iOS Simulator since it conflicts with arm64
+        # slice for the real iOS. Fixing this requires migration to XCFrameworks.
+        # See T1406 for current status of XCFrameworks.
+        so.ios.pod_target_xcconfig  = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
         so.ios.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 
         # We're building some C code here which uses includes as it pleases.
