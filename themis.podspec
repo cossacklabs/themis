@@ -7,7 +7,7 @@ Pod::Spec.new do |s|
     s.license = { :type => 'Apache 2.0'}
 
     s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
-  
+
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
     s.module_name = 'themis'
@@ -30,17 +30,17 @@ Pod::Spec.new do |s|
     #     # OpenSSL 1.1.1g
     #     so.dependency 'CLOpenSSL', '~> 1.1.107'
 
-    #     # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip 
+    #     # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip
     #     so.ios.pod_target_xcconfig = {
     #         'OTHER_CFLAGS[config=Debug]'                => '$(inherited) -fembed-bitcode-marker',
     #         'OTHER_CFLAGS[config=Release]'              => '$(inherited) -fembed-bitcode',
     #         'BITCODE_GENERATION_MODE[config=Release]'   => 'bitcode',
     #         'BITCODE_GENERATION_MODE[config=Debug]'     => 'bitcode-marker'
     #     }
-        
+
     #     # Xcode12, arm64 simulator issues https://stackoverflow.com/a/63955114
     #     # disable building for arm64 simulator for now
-        
+
     #     so.ios.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
     #     so.ios.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 
@@ -93,21 +93,21 @@ Pod::Spec.new do |s|
 
     # use `themis/themis-openssl` as separate target to use Themis with OpenSSL
     s.subspec 'themis-openssl' do |so|
-        # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip 
+        # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip
         so.ios.pod_target_xcconfig = {
             'OTHER_CFLAGS[config=Debug]'                => '$(inherited) -fembed-bitcode-marker',
             'OTHER_CFLAGS[config=Release]'              => '$(inherited) -fembed-bitcode',
             'BITCODE_GENERATION_MODE[config=Release]'   => 'bitcode',
             'BITCODE_GENERATION_MODE[config=Debug]'     => 'bitcode-marker'
         }
-        
+
         # Xcode12, arm64 simulator issues https://stackoverflow.com/a/63955114
         # disable building for arm64 simulator for now
-        
+
         so.ios.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
         so.ios.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
-        
-        
+
+
         # TODO: due to error in symbols in GRKOpenSSLFramework 219 release, we've manually switched to 218
         # which doesn't sound like a good decision, so when GRKOpenSSLFramework will be updated –
         # please bring back correct dependency version
