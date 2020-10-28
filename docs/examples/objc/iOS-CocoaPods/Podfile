@@ -16,13 +16,13 @@
 
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, '10.0'
+platform :ios, '12.0'
 project 'ThemisTest/ThemisTest.xcodeproj'
 inhibit_all_warnings!
 use_frameworks!
 
 target :"ThemisTest" do
 
-  pod 'themis', '0.13.0'
+  pod 'themis', '0.13.3'
 
 end

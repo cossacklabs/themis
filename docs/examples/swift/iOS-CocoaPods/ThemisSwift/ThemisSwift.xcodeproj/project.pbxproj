@@ -7,25 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		589E3AB46FEFED757B4131A9 /* Pods_ThemisSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C62EC44DF5B1717D370F9794 /* Pods_ThemisSwift.framework */; };
+		2CBD21F7B992CE689510E7F3 /* Pods_ThemisSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16AED0505C9B225B66E44057 /* Pods_ThemisSwift.framework */; };
 		7399813E1CC449010095138F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7399812E1CC449010095138F /* AppDelegate.swift */; };
 		7399813F1CC449010095138F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7399812F1CC449010095138F /* ViewController.swift */; };
-		739981401CC449010095138F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 739981311CC449010095138F /* Assets.xcassets */; };
 		739981411CC449010095138F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 739981321CC449010095138F /* LaunchScreen.storyboard */; };
 		739981421CC449010095138F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 739981341CC449010095138F /* Main.storyboard */; };
 		739981431CC449010095138F /* client.priv in Resources */ = {isa = PBXBuildFile; fileRef = 739981371CC449010095138F /* client.priv */; };
 		739981441CC449010095138F /* client.pub in Resources */ = {isa = PBXBuildFile; fileRef = 739981381CC449010095138F /* client.pub */; };
 		739981451CC449010095138F /* server.priv in Resources */ = {isa = PBXBuildFile; fileRef = 739981391CC449010095138F /* server.priv */; };
 		739981461CC449010095138F /* server.pub in Resources */ = {isa = PBXBuildFile; fileRef = 7399813A1CC449010095138F /* server.pub */; };
+		92A1E62B2534C316000E412D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92A1E62A2534C316000E412D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		15D4143D2B7DBBB08E9F6D96 /* Pods-ThemisSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisSwift.release.xcconfig"; path = "Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift.release.xcconfig"; sourceTree = "<group>"; };
-		267D206279DDBB5EEEAE5D0A /* Pods-ThemisSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisSwift.debug.xcconfig"; path = "Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift.debug.xcconfig"; sourceTree = "<group>"; };
+		16AED0505C9B225B66E44057 /* Pods_ThemisSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ThemisSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		739981171CC42C880095138F /* ThemisSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThemisSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7399812E1CC449010095138F /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7399812F1CC449010095138F /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		739981311CC449010095138F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		739981331CC449010095138F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		739981351CC449010095138F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		739981371CC449010095138F /* client.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.priv; sourceTree = "<group>"; };
@@ -34,7 +32,9 @@
 		7399813A1CC449010095138F /* server.pub */ = {isa = PBXFileReference; lastKnownFileType = file; path = server.pub; sourceTree = "<group>"; };
 		739981491CC44ABA0095138F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7399814A1CC44ABA0095138F /* ThemisSwift-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ThemisSwift-Bridging-Header.h"; sourceTree = "<group>"; };
-		C62EC44DF5B1717D370F9794 /* Pods_ThemisSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ThemisSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		92A1E62A2534C316000E412D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		93EC01A7F8CF79954803FD2A /* Pods-ThemisSwift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisSwift.debug.xcconfig"; path = "Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift.debug.xcconfig"; sourceTree = "<group>"; };
+		A18C0ABF3DF2A59B31B66CC6 /* Pods-ThemisSwift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ThemisSwift.release.xcconfig"; path = "Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,7 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				589E3AB46FEFED757B4131A9 /* Pods_ThemisSwift.framework in Frameworks */,
+				2CBD21F7B992CE689510E7F3 /* Pods_ThemisSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,8 +54,8 @@
 			children = (
 				739981191CC42C880095138F /* ThemisSwift */,
 				739981181CC42C880095138F /* Products */,
-				9730B30D6BDD6DFEC487F94C /* Pods */,
-				806F350E0AF2ABB0202825C6 /* Frameworks */,
+				A0FC46B1FCA900D8FD74D1A9 /* Pods */,
+				77DA3112369D215A26E2907F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -89,7 +89,7 @@
 		739981301CC449010095138F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				739981311CC449010095138F /* Assets.xcassets */,
+				92A1E62A2534C316000E412D /* Assets.xcassets */,
 				739981321CC449010095138F /* LaunchScreen.storyboard */,
 				739981341CC449010095138F /* Main.storyboard */,
 				739981361CC449010095138F /* keys */,
@@ -117,19 +117,19 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		806F350E0AF2ABB0202825C6 /* Frameworks */ = {
+		77DA3112369D215A26E2907F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C62EC44DF5B1717D370F9794 /* Pods_ThemisSwift.framework */,
+				16AED0505C9B225B66E44057 /* Pods_ThemisSwift.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		9730B30D6BDD6DFEC487F94C /* Pods */ = {
+		A0FC46B1FCA900D8FD74D1A9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				267D206279DDBB5EEEAE5D0A /* Pods-ThemisSwift.debug.xcconfig */,
-				15D4143D2B7DBBB08E9F6D96 /* Pods-ThemisSwift.release.xcconfig */,
+				93EC01A7F8CF79954803FD2A /* Pods-ThemisSwift.debug.xcconfig */,
+				A18C0ABF3DF2A59B31B66CC6 /* Pods-ThemisSwift.release.xcconfig */,
 			);
 			name = Pods;
 			path = ../Pods;
@@ -142,12 +142,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 739981291CC42C880095138F /* Build configuration list for PBXNativeTarget "ThemisSwift" */;
 			buildPhases = (
-				C88190DDBFC5CE3874543DB5 /* [CP] Check Pods Manifest.lock */,
+				9B154E78471D163D6AAA949A /* [CP] Check Pods Manifest.lock */,
 				739981131CC42C880095138F /* Sources */,
 				739981141CC42C880095138F /* Frameworks */,
 				739981151CC42C880095138F /* Resources */,
 				73688AFE1CC4504F00D3C430 /* ShellScript */,
-				CEAB072F8AB94A91A7A953E7 /* [CP] Embed Pods Frameworks */,
+				B7BAFA7DFD04061DCA1DD61C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -165,7 +165,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = CossackLabs;
 				TargetAttributes = {
 					739981161CC42C880095138F = {
@@ -202,9 +202,9 @@
 				739981421CC449010095138F /* Main.storyboard in Resources */,
 				739981451CC449010095138F /* server.priv in Resources */,
 				739981431CC449010095138F /* client.priv in Resources */,
-				739981401CC449010095138F /* Assets.xcassets in Resources */,
 				739981411CC449010095138F /* LaunchScreen.storyboard in Resources */,
 				739981461CC449010095138F /* server.pub in Resources */,
+				92A1E62B2534C316000E412D /* Assets.xcassets in Resources */,
 				739981441CC449010095138F /* client.pub in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -225,7 +225,7 @@
 			shellPath = /bin/sh;
 			shellScript = "if which swiftlint >/dev/null; then\n# uncomment for autocorrection\n# swiftlint autocorrect\n    swiftlint lint --quiet\nelse\n    echo \"SwiftLint does not exist, download from https://github.com/realm/SwiftLint\"\nfi";
 		};
-		C88190DDBFC5CE3874543DB5 /* [CP] Check Pods Manifest.lock */ = {
+		9B154E78471D163D6AAA949A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -247,7 +247,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CEAB072F8AB94A91A7A953E7 /* [CP] Embed Pods Frameworks */ = {
+		B7BAFA7DFD04061DCA1DD61C /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -325,6 +325,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -349,7 +350,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -382,6 +383,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -400,7 +402,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
@@ -411,7 +413,7 @@
 		};
 		7399812A1CC42C880095138F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 267D206279DDBB5EEEAE5D0A /* Pods-ThemisSwift.debug.xcconfig */;
+			baseConfigurationReference = 93EC01A7F8CF79954803FD2A /* Pods-ThemisSwift.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -420,22 +422,22 @@
 				DEVELOPMENT_TEAM = X6X7AHQ2D4;
 				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/ThemisSwift/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.ThemisSwift;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cl.ThemisSwiftCocoaPodsiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/$(PROJECT_NAME)/ThemisSwift-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		7399812B1CC42C880095138F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 15D4143D2B7DBBB08E9F6D96 /* Pods-ThemisSwift.release.xcconfig */;
+			baseConfigurationReference = A18C0ABF3DF2A59B31B66CC6 /* Pods-ThemisSwift.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -444,15 +446,15 @@
 				DEVELOPMENT_TEAM = X6X7AHQ2D4;
 				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/ThemisSwift/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.ThemisSwift;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cl.ThemisSwiftCocoaPodsiOS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/$(PROJECT_NAME)/ThemisSwift-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
