@@ -13,7 +13,7 @@ Changes that are currently in development and have not been released yet.
 - Resolved issues with stable Xcode 12 support (disabled arm64 builds for iOS Simulator)
 - Updated OpenSSL to the latest 1.1.1h
 - CocoaPods is now using OpenSSL 1.1.1h by default (again)
-- CocoaPods and Carthage now both produce full-static builds of Themis, resolving critical issues with App Store deployment
+- CocoaPods and Carthage now both produce full-static builds of Themis, resolving critical issues with App Store deployment (see [#715](https://github.com/cossacklabs/themis/issues/715))
 
 _Code:_
 
