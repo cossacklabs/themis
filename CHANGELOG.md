@@ -4,6 +4,17 @@
 
 Changes that are currently in development and have not been released yet.
 
+
+## [0.13.4](https://github.com/cossacklabs/themis/releases/tag/0.13.4), October 29th 2020
+
+**Hotfix for Apple platforms:**
+
+- Improved Apple Silicon support (arm64 builds for macOS with Xcode 12.2 beta)
+- Resolved issues with stable Xcode 12 support (disabled arm64 builds for iOS Simulator)
+- Updated OpenSSL to the latest 1.1.1h
+- CocoaPods is now using OpenSSL 1.1.1h by default (again)
+- CocoaPods and Carthage now both produce full-static builds of Themis, resolving critical issues with App Store deployment
+
 _Code:_
 
 - **Objective-C**
