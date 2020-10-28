@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
     s.module_name = 'themis'
-    s.default_subspec = 'themis-openssl'
+    s.default_subspec = 'openssl-1.1.1'
 
     s.ios.deployment_target = '10.0'
     s.osx.deployment_target = '10.11'
@@ -25,75 +25,72 @@ Pod::Spec.new do |s|
     # If you update dependencies, please check whether we can remove "--allow-warnings"
     # from podspec validation in .github/workflows/test-objc.yaml
 
-    # TODO(vixentael, 12 oct 2020): disable this podspec to prevent linting errors, until we fix it
+    # This variant uses the current stable, non-legacy version of OpenSSL.
+    s.subspec 'openssl-1.1.1' do |so|
+        # OpenSSL 1.1.1h
+        so.dependency 'CLOpenSSL', '~> 1.1.10801'
 
-    # # TODO(vixentael, 11 oct 2020): as xcode12 introduces new arm64 architecture, our own openssl framework doesn't work yet
-    # # Change openssl-1.1.1 to default when fix our openssl
-    # # This variant uses the current stable, non-legacy version of OpenSSL.
-    # s.subspec 'openssl-1.1.1' do |so|
-    #     # OpenSSL 1.1.1g
-    #     so.dependency 'CLOpenSSL', '~> 1.1.107'
+        # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip
+        so.ios.pod_target_xcconfig = {
+            'OTHER_CFLAGS[config=Debug]'                => '$(inherited) -fembed-bitcode-marker',
+            'OTHER_CFLAGS[config=Release]'              => '$(inherited) -fembed-bitcode',
+            'BITCODE_GENERATION_MODE[config=Release]'   => 'bitcode',
+            'BITCODE_GENERATION_MODE[config=Debug]'     => 'bitcode-marker'
+        }
 
-    #     # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip
-    #     so.ios.pod_target_xcconfig = {
-    #         'OTHER_CFLAGS[config=Debug]'                => '$(inherited) -fembed-bitcode-marker',
-    #         'OTHER_CFLAGS[config=Release]'              => '$(inherited) -fembed-bitcode',
-    #         'BITCODE_GENERATION_MODE[config=Release]'   => 'bitcode',
-    #         'BITCODE_GENERATION_MODE[config=Debug]'     => 'bitcode-marker'
-    #     }
+        # As of version 1.1.10801, the framework produced by CLOpenSSL does not
+        # contain arm64 slice for iOS Simulator since it conflicts with arm64
+        # slice for the real iOS. Fixing this requires migration to XCFrameworks.
+        # See T1406 for current status of XCFrameworks.
+        so.ios.pod_target_xcconfig  = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+        so.ios.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 
-    #     # Xcode12, arm64 simulator issues https://stackoverflow.com/a/63955114
-    #     # disable building for arm64 simulator for now
+        # We're building some C code here which uses includes as it pleases.
+        # Allow this behavior, but we will have to control header mappings.
+        so.ios.xcconfig = {
+            'OTHER_CFLAGS' => '-DLIBRESSL',
+            'USE_HEADERMAP' => 'NO',
+            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
+            'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
+        }
+        so.osx.xcconfig = {
+            'OTHER_CFLAGS' => '-DLIBRESSL',
+            'USE_HEADERMAP' => 'NO',
+            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
+            'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
+        }
 
-    #     so.ios.pod_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
-    #     so.ios.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
-
-    #     # We're building some C code here which uses includes as it pleases.
-    #     # Allow this behavior, but we will have to control header mappings.
-    #     so.ios.xcconfig = {
-    #         'OTHER_CFLAGS' => '-DLIBRESSL',
-    #         'USE_HEADERMAP' => 'NO',
-    #         'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
-    #         'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
-    #     }
-    #     so.osx.xcconfig = {
-    #         'OTHER_CFLAGS' => '-DLIBRESSL',
-    #         'USE_HEADERMAP' => 'NO',
-    #         'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
-    #         'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
-    #     }
-
-    #     # We need to do this weird subspec matryoshka because CocoaPods
-    #     # insists on compiling everything as if it were a modular framework.
-    #     # Unfortunately, Themis has a lot of #include "themis/something.h"
-    #     # which break in modular compilation. The "header_dir" fixes it up,
-    #     # but we must set it differently for ObjCThemis. Hence two subspecs.
-    #     # End users should use "themis/openssl-1.1.1" only, not these ones.
-    #     so.subspec 'core' do |ss|
-    #         ss.source_files = [
-    #             "src/themis/*.{c,h}",
-    #             "src/soter/*.{c,h}",
-    #             "src/soter/ed25519/*.{c,h}",
-    #             "src/soter/openssl/*.{c,h}",
-    #         ]
-    #         ss.header_dir = "src"
-    #         ss.header_mappings_dir = "src"
-    #         # Don't export Themis Core headers, make only ObjcThemis public.
-    #         ss.private_header_files = [
-    #             "src/themis/*.h",
-    #             "src/soter/*.h",
-    #             "src/soter/ed25519/*.h",
-    #             "src/soter/openssl/*.h",
-    #         ]
-    #     end
-    #     so.subspec 'objcwrapper' do |ss|
-    #         ss.dependency 'themis/openssl-1.1.1/core'
-    #         ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{m,h}"
-    #         ss.header_dir = "objcthemis"
-    #         ss.header_mappings_dir = "src/wrappers/themis/Obj-C/objcthemis"
-    #         ss.public_header_files = "src/wrappers/themis/Obj-C/objcthemis/*.h"
-    #     end
-    # end
+        # We need to do this weird subspec matryoshka because CocoaPods
+        # insists on compiling everything as if it were a modular framework.
+        # Unfortunately, Themis has a lot of #include "themis/something.h"
+        # which break in modular compilation. The "header_dir" fixes it up,
+        # but we must set it differently for ObjCThemis. Hence two subspecs.
+        # End users should use "themis/openssl-1.1.1" only, not these ones.
+        so.subspec 'core' do |ss|
+            ss.source_files = [
+                "src/themis/*.{c,h}",
+                "src/soter/*.{c,h}",
+                "src/soter/ed25519/*.{c,h}",
+                "src/soter/openssl/*.{c,h}",
+            ]
+            ss.header_dir = "src"
+            ss.header_mappings_dir = "src"
+            # Don't export Themis Core headers, make only ObjcThemis public.
+            ss.private_header_files = [
+                "src/themis/*.h",
+                "src/soter/*.h",
+                "src/soter/ed25519/*.h",
+                "src/soter/openssl/*.h",
+            ]
+        end
+        so.subspec 'objcwrapper' do |ss|
+            ss.dependency 'themis/openssl-1.1.1/core'
+            ss.source_files = "src/wrappers/themis/Obj-C/objcthemis/*.{m,h}"
+            ss.header_dir = "objcthemis"
+            ss.header_mappings_dir = "src/wrappers/themis/Obj-C/objcthemis"
+            ss.public_header_files = "src/wrappers/themis/Obj-C/objcthemis/*.h"
+        end
+    end
 
     # use `themis/themis-openssl` as separate target to use Themis with OpenSSL
     s.subspec 'themis-openssl' do |so|
