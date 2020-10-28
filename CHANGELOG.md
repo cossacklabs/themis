@@ -9,12 +9,14 @@ _Code:_
 - **Objective-C**
 
   - Switched to test on Xcode 12.0, disable ARM64 builds for Themis CocoaPods and Themis Carthage ([#721](https://github.com/cossacklabs/themis/pull/721), [#722](https://github.com/cossacklabs/themis/pull/722), [#732](https://github.com/cossacklabs/themis/pull/732), [#733](https://github.com/cossacklabs/themis/pull/733)).
-  - CocoaPods will now link ObjCThemis statically into application ([#731](https://github.com/cossacklabs/themis/pull/731)).
+  - CocoaPods will now link ObjCThemis statically into application ([#731](https://github.com/cossacklabs/themis/pull/731), [#735](https://github.com/cossacklabs/themis/pull/735)).
+  - Updated OpenSSL to the latest 1.1.1h ([#735](https://github.com/cossacklabs/themis/pull/735)).
 
 - **Swift**
 
   - Switched to test on Xcode 12.0, disable ARM64 builds for Themis CocoaPods and Themis Carthage ([#721](https://github.com/cossacklabs/themis/pull/721), [#722](https://github.com/cossacklabs/themis/pull/722), [#732](https://github.com/cossacklabs/themis/pull/732), [#733](https://github.com/cossacklabs/themis/pull/733)).
-  - CocoaPods will now link SwiftThemis statically into application ([#731](https://github.com/cossacklabs/themis/pull/731)).
+  - CocoaPods will now link SwiftThemis statically into application ([#731](https://github.com/cossacklabs/themis/pull/731), [#735](https://github.com/cossacklabs/themis/pull/735)).
+  - Updated OpenSSL to the latest 1.1.1h ([#735](https://github.com/cossacklabs/themis/pull/735)).
 
 
 ## [0.13.3](https://github.com/cossacklabs/themis/releases/tag/0.13.3), October 12th 2020

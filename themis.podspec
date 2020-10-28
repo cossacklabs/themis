@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
     s.module_name = 'themis'
-    s.default_subspec = 'themis-openssl'
+    s.default_subspec = 'openssl-1.1.1'
 
     s.ios.deployment_target = '10.0'
     s.osx.deployment_target = '10.11'
@@ -25,15 +25,25 @@ Pod::Spec.new do |s|
     # If you update dependencies, please check whether we can remove "--allow-warnings"
     # from podspec validation in .github/workflows/test-objc.yaml
 
-    # TODO(vixentael, 11 oct 2020): as xcode12 introduces new arm64 architecture, our own openssl framework doesn't work yet
-    # Change openssl-1.1.1 to default when fix our openssl
     # This variant uses the current stable, non-legacy version of OpenSSL.
     s.subspec 'openssl-1.1.1' do |so|
-        # OpenSSL 1.1.1g
-        so.dependency 'CLOpenSSL', '~> 1.1.107'
+        # OpenSSL 1.1.1h
+        so.dependency 'CLOpenSSL', '~> 1.1.10801'
 
-        # Enable Bitcode in projects that depend on Themis.
-        so.ios.pod_target_xcconfig = { 'ENABLE_BITCODE' => 'YES' }
+        # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip
+        so.ios.pod_target_xcconfig = {
+            'OTHER_CFLAGS[config=Debug]'                => '$(inherited) -fembed-bitcode-marker',
+            'OTHER_CFLAGS[config=Release]'              => '$(inherited) -fembed-bitcode',
+            'BITCODE_GENERATION_MODE[config=Release]'   => 'bitcode',
+            'BITCODE_GENERATION_MODE[config=Debug]'     => 'bitcode-marker'
+        }
+
+        # As of version 1.1.10801, the framework produced by CLOpenSSL does not
+        # contain arm64 slice for iOS Simulator since it conflicts with arm64
+        # slice for the real iOS. Fixing this requires migration to XCFrameworks.
+        # See T1406 for current status of XCFrameworks.
+        so.ios.pod_target_xcconfig  = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+        so.ios.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 
         # We're building some C code here which uses includes as it pleases.
         # Allow this behavior, but we will have to control header mappings.
