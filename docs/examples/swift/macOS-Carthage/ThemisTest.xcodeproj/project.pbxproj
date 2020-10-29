@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		92E59668254AF4A800361564 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1294EC24E6D56100434ABB /* themis.framework */; };
+		92E59669254AF4A800361564 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1294EC24E6D56100434ABB /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F00E9D022412F8900EC1EF3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F00E9CF22412F8900EC1EF3 /* AppDelegate.swift */; };
 		9F00E9D222412F8B00EC1EF3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9D122412F8B00EC1EF3 /* Assets.xcassets */; };
 		9F00E9D522412F8B00EC1EF3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9D322412F8B00EC1EF3 /* MainMenu.xib */; };
@@ -14,18 +16,16 @@
 		9F00E9ED224132A600EC1EF3 /* client.priv in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9E9224132A600EC1EF3 /* client.priv */; };
 		9F00E9EE224132A600EC1EF3 /* server.priv in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9EA224132A600EC1EF3 /* server.priv */; };
 		9F00E9EF224132A600EC1EF3 /* client.pub in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9EB224132A600EC1EF3 /* client.pub */; };
-		9F1294EE24E6D56700434ABB /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1294EC24E6D56100434ABB /* themis.framework */; };
-		9F1294EF24E6D56700434ABB /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1294EC24E6D56100434ABB /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		9F00E9E4224131BB00EC1EF3 /* Embed Frameworks */ = {
+		92E5966A254AF4A800361564 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9F1294EF24E6D56700434ABB /* themis.framework in Embed Frameworks */,
+				92E59669254AF4A800361564 /* themis.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -51,7 +51,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F1294EE24E6D56700434ABB /* themis.framework in Frameworks */,
+				92E59668254AF4A800361564 /* themis.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +117,7 @@
 				9F00E9C822412F8900EC1EF3 /* Sources */,
 				9F00E9C922412F8900EC1EF3 /* Frameworks */,
 				9F00E9CA22412F8900EC1EF3 /* Resources */,
-				9F00E9E4224131BB00EC1EF3 /* Embed Frameworks */,
+				92E5966A254AF4A800361564 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -253,7 +253,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -309,7 +309,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -329,6 +329,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
@@ -338,7 +339,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis.ThemisTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -356,6 +357,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
@@ -365,7 +367,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis.ThemisTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
