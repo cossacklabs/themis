@@ -5,6 +5,25 @@
 Changes that are currently in development and have not been released yet.
 
 
+## [0.13.4](https://github.com/cossacklabs/themis/releases/tag/0.13.4), October 29th 2020
+
+**Hotfix for Apple platforms:**
+
+- Improved Apple Silicon support (arm64 builds for macOS with Xcode 12.2 beta)
+- Resolved issues with stable Xcode 12 support (disabled arm64 builds for iOS Simulator)
+- Updated OpenSSL to the latest 1.1.1h
+- CocoaPods is now using OpenSSL 1.1.1h by default (again)
+- CocoaPods and Carthage now both produce full-static builds of Themis, resolving critical issues with App Store deployment (see [#715](https://github.com/cossacklabs/themis/issues/715))
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - Switched to test on Xcode 12.0, disable ARM64 builds for Themis CocoaPods and Themis Carthage ([#721](https://github.com/cossacklabs/themis/pull/721), [#722](https://github.com/cossacklabs/themis/pull/722), [#732](https://github.com/cossacklabs/themis/pull/732), [#733](https://github.com/cossacklabs/themis/pull/733)).
+  - CocoaPods will now link ObjCThemis statically into application ([#731](https://github.com/cossacklabs/themis/pull/731), [#735](https://github.com/cossacklabs/themis/pull/735)).
+  - Updated OpenSSL to the latest 1.1.1h ([#735](https://github.com/cossacklabs/themis/pull/735)).
+
+
 ## [0.13.3](https://github.com/cossacklabs/themis/releases/tag/0.13.3), October 12th 2020
 
 **Hotfix for Themis CocoaPods and Xcode12:**
