@@ -19,11 +19,8 @@ _Code:_
 
 - **Objective-C**
 
-  - Switched to test on Xcode 12.0, disable ARM64 builds for Themis CocoaPods and Themis Carthage ([#721](https://github.com/cossacklabs/themis/pull/721), [#722](https://github.com/cossacklabs/themis/pull/722), [#732](https://github.com/cossacklabs/themis/pull/732), [#733](https://github.com/cossacklabs/themis/pull/733)).
   - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.2, 0.13.3 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706), [#723](https://github.com/cossacklabs/themis/pull/723), [#724](https://github.com/cossacklabs/themis/pull/724), [#726](https://github.com/cossacklabs/themis/pull/726)).
   - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
-  - CocoaPods will now link ObjCThemis statically into application ([#731](https://github.com/cossacklabs/themis/pull/731), [#735](https://github.com/cossacklabs/themis/pull/735)).
-  - Updated OpenSSL to the latest 1.1.1h ([#735](https://github.com/cossacklabs/themis/pull/735)).
 
 - **PHP**
 
@@ -48,11 +45,8 @@ _Code:_
 
 - **Swift**
 
-  - Switched to test on Xcode 12.0, disable ARM64 builds for Themis CocoaPods and Themis Carthage ([#721](https://github.com/cossacklabs/themis/pull/721), [#722](https://github.com/cossacklabs/themis/pull/722), [#732](https://github.com/cossacklabs/themis/pull/732), [#733](https://github.com/cossacklabs/themis/pull/733)).
   - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.2, 0.13.3 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706)).
   - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
-  - CocoaPods will now link SwiftThemis statically into application ([#731](https://github.com/cossacklabs/themis/pull/731), [#735](https://github.com/cossacklabs/themis/pull/735)).
-  - Updated OpenSSL to the latest 1.1.1h ([#735](https://github.com/cossacklabs/themis/pull/735)).
 
 _Infrastructure:_
 
@@ -62,6 +56,25 @@ _Infrastructure:_
 - Build system and tests now respect the `PATH` settings ([#685](https://github.com/cossacklabs/themis/pull/685)).
 - Rename embedded BoringSSL symbols by default to avoid conflicts with system OpenSSL ([#702](https://github.com/cossacklabs/themis/pull/702)).
 - Started phasing out CircleCI in favour of GitHub Actions ([#709](https://github.com/cossacklabs/themis/pull/709)).
+
+
+## [0.13.4](https://github.com/cossacklabs/themis/releases/tag/0.13.4), October 29th 2020
+
+**Hotfix for Apple platforms:**
+
+- Improved Apple Silicon support (arm64 builds for macOS with Xcode 12.2 beta)
+- Resolved issues with stable Xcode 12 support (disabled arm64 builds for iOS Simulator)
+- Updated OpenSSL to the latest 1.1.1h
+- CocoaPods is now using OpenSSL 1.1.1h by default (again)
+- CocoaPods and Carthage now both produce full-static builds of Themis, resolving critical issues with App Store deployment (see [#715](https://github.com/cossacklabs/themis/issues/715))
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - Switched to test on Xcode 12.0, disable ARM64 builds for Themis CocoaPods and Themis Carthage ([#721](https://github.com/cossacklabs/themis/pull/721), [#722](https://github.com/cossacklabs/themis/pull/722), [#732](https://github.com/cossacklabs/themis/pull/732), [#733](https://github.com/cossacklabs/themis/pull/733)).
+  - CocoaPods will now link ObjCThemis statically into application ([#731](https://github.com/cossacklabs/themis/pull/731), [#735](https://github.com/cossacklabs/themis/pull/735)).
+  - Updated OpenSSL to the latest 1.1.1h ([#735](https://github.com/cossacklabs/themis/pull/735)).
 
 
 ## [0.13.3](https://github.com/cossacklabs/themis/releases/tag/0.13.3), October 12th 2020
