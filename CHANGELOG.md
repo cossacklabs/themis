@@ -64,6 +64,7 @@ _Infrastructure:_
 - Build system and tests now respect the `PATH` settings ([#685](https://github.com/cossacklabs/themis/pull/685)).
 - Rename embedded BoringSSL symbols by default to avoid conflicts with system OpenSSL ([#702](https://github.com/cossacklabs/themis/pull/702)).
 - Started phasing out CircleCI in favour of GitHub Actions ([#709](https://github.com/cossacklabs/themis/pull/709)).
+- New makefile target `update_boringssl` can be used to update embedded BoringSSL ([#743](https://github.com/cossacklabs/themis/pull/743)).
 
 
 ## [0.13.4](https://github.com/cossacklabs/themis/releases/tag/0.13.4), October 29th 2020
