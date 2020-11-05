@@ -3846,6 +3846,32 @@
 		9F56694625546397005CF297 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					arm64e,
+				);
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"*armx32*.S",
+					"*armx64*.S",
+					"*armv4*.S",
+					"*armv7*.S",
+					"*armv8*.S",
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
+					"OPENSSL_NO_ASM=1",
+					"$(inherited)",
+				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/third_party/boringssl/src/include";
+				"INCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=arm64*]" = (
+					"*armx64*.S",
+					"*armv8*.S",
+				);
+				"INCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=armv7*]" = (
+					"*armx32*.S",
+					"*armv4*.S",
+					"*armv7*.S",
+				);
 				PRODUCT_NAME = boringssl;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -3855,6 +3881,32 @@
 		9F56694725546397005CF297 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					arm64e,
+				);
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"*armx32*.S",
+					"*armx64*.S",
+					"*armv4*.S",
+					"*armv7*.S",
+					"*armv8*.S",
+				);
+				"GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*]" = (
+					"OPENSSL_NO_ASM=1",
+					"$(inherited)",
+				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/third_party/boringssl/src/include";
+				"INCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=arm64*]" = (
+					"*armx64*.S",
+					"*armv8*.S",
+				);
+				"INCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos*][arch=armv7*]" = (
+					"*armx32*.S",
+					"*armv4*.S",
+					"*armv7*.S",
+				);
 				PRODUCT_NAME = boringssl;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -3864,7 +3916,31 @@
 		9F566951255463B5005CF297 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"x86-*.S",
+					"x86_64-*.S",
+					"*-586.S",
+					"*-x86.S",
+					"*-x86_64.S",
+					"*-x86_64-*.S",
+				);
 				EXECUTABLE_PREFIX = lib;
+				"GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*][arch=arm64]" = (
+					"OPENSSL_NO_ASM=1",
+					"$(inherited)",
+				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/third_party/boringssl/src/include";
+				"INCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=i386]" = (
+					"x86-*.S",
+					"*-586.S",
+					"*-x86.S",
+				);
+				"INCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=x86_64]" = (
+					"x86_64-*.S",
+					"*-x86_64.S",
+					"*-x86_64-*.S",
+				);
 				PRODUCT_NAME = boringssl;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -3874,7 +3950,31 @@
 		9F566952255463B5005CF297 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					"x86-*.S",
+					"x86_64-*.S",
+					"*-586.S",
+					"*-x86.S",
+					"*-x86_64.S",
+					"*-x86_64-*.S",
+				);
 				EXECUTABLE_PREFIX = lib;
+				"GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*][arch=arm64]" = (
+					"OPENSSL_NO_ASM=1",
+					"$(inherited)",
+				);
+				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/third_party/boringssl/src/include";
+				"INCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=i386]" = (
+					"x86-*.S",
+					"*-586.S",
+					"*-x86.S",
+				);
+				"INCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=x86_64]" = (
+					"x86_64-*.S",
+					"*-x86_64.S",
+					"*-x86_64-*.S",
+				);
 				PRODUCT_NAME = boringssl;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
