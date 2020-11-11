@@ -22,6 +22,7 @@ _Code:_
   - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.4 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706), [#723](https://github.com/cossacklabs/themis/pull/723), [#724](https://github.com/cossacklabs/themis/pull/724), [#726](https://github.com/cossacklabs/themis/pull/726), [#740](https://github.com/cossacklabs/themis/pull/740)).
   - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
   - Improved compatibility with Xcode 12 ([#742](https://github.com/cossacklabs/themis/pull/742)).
+  - Fixed code signing issues on macOS with Xcode 12 ([#744](https://github.com/cossacklabs/themis/pull/744)).
 
 - **PHP**
 
@@ -49,6 +50,7 @@ _Code:_
   - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.4 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706), [#740](https://github.com/cossacklabs/themis/pull/740)).
   - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
   - Improved compatibility with Xcode 12 ([#742](https://github.com/cossacklabs/themis/pull/742)).
+  - Fixed code signing issues on macOS with Xcode 12 ([#744](https://github.com/cossacklabs/themis/pull/744)).
 
 _Infrastructure:_
 
