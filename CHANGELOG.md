@@ -4,6 +4,12 @@
 
 Changes that are currently in development and have not been released yet.
 
+_Code:_
+
+- **Objective-C / Swift**
+
+  - Fixed code signing issues on macOS with Xcode 12 ([#744](https://github.com/cossacklabs/themis/pull/744)).
+
 
 ## [0.13.4](https://github.com/cossacklabs/themis/releases/tag/0.13.4), October 29th 2020
 
