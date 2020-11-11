@@ -4,6 +4,13 @@
 
 Changes that are currently in development and have not been released yet.
 
+
+## [0.13.5](https://github.com/cossacklabs/themis/releases/tag/0.13.5), November 12th 2020
+
+**Hotfix for Apple platforms:**
+
+- Resolved issues with deploying macOS apps with Apple Silicon support when Themis is installed via Carthage
+
 _Code:_
 
 - **Objective-C / Swift**
