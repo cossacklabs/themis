@@ -101,7 +101,7 @@ We build and verify Themis on the latest stable OS versions:
   - macOS (10.12–10.15, 11)
   - Android (4–11)
   - iOS (10–14) <img src="https://img.shields.io/github/issues-pr-closed/cossacklabs/themis/Bitcode%20%F0%9F%90%99?color=%23cceaff&label=Bitcode-related%20issues" alt="Bitrise"></img>
-  - Windows (experimenal MSYS2 support)
+  - Windows (experimental MSYS2 support)
 
 We plan to expand this list with a broader set of platforms.
 If you'd like to help improve or bring Themis to your favourite platform or language —
