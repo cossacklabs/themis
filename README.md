@@ -100,7 +100,7 @@ We build and verify Themis on the latest stable OS versions:
   - Debian (9, 10), CentOS (7, 8), Ubuntu (16.04, 18.04, 20.04)
   - macOS (10.12–10.15, 11)
   - Android (4–11)
-  - iOS (10–14) <img src="https://img.shields.io/github/issues-pr-closed/cossacklabs/themis/Bitcode%20%F0%9F%90%99?color=%23cceaff&label=Bitcode-related%20issues" alt="Bitrise"></img>
+  - iOS (10–14)
   - Windows (experimental MSYS2 support)
 
 We plan to expand this list with a broader set of platforms.
@@ -183,5 +183,7 @@ If you want to ask a technical question, feel free to raise an [issue](https://g
 To talk to the business wing of Cossack Labs Limited, drop us an email to [info@cossacklabs.com](mailto:info@cossacklabs.com).
 
 [![Blog](https://img.shields.io/badge/blog-cossacklabs.com-7a7c98.svg)](https://cossacklabs.com/) [![Twitter CossackLabs](https://img.shields.io/badge/twitter-cossacklabs-fbb03b.svg)](http://twitter.com/cossacklabs) [![Dev.to CossackLabs](https://img.shields.io/badge/dev.to-%40cossacklabs-orange.svg)](https://dev.to/@cossacklabs/) [![Medium CossackLabs](https://img.shields.io/badge/medium-%40cossacklabs-orange.svg)](https://medium.com/@cossacklabs/) 
+
+[![Closed pull requests with Bitcode-related changes](https://img.shields.io/github/issues-pr-closed/cossacklabs/themis/Bitcode%20%F0%9F%90%99?color=informational&label=Bitcode-related%20issues)](https://github.com/cossacklabs/themis/pulls?q=is%3Apr+is%3Aclosed+label%3A%22Bitcode+%F0%9F%90%99%22)
 
 <!--[![Join the chat at https://gitter.im/cossacklabs/themis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cossacklabs/themis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) -->
