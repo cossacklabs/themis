@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
     # This variant uses the current stable, non-legacy version of OpenSSL.
     s.subspec 'openssl-1.1.1' do |so|
         # OpenSSL 1.1.1h
-        so.dependency 'CLOpenSSL', '~> 1.1.10801'
+        so.dependency 'CLOpenSSL', '~> 1.1.10802'
 
         # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip
         so.ios.pod_target_xcconfig = {
