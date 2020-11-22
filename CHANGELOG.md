@@ -4,6 +4,14 @@
 
 Changes that are currently in development and have not been released yet.
 
+_Code:_
+
+- **Objective-C / Swift**
+
+  - CocoaPods will now again link ObjCThemis *dynamically* into application ([#750](https://github.com/cossacklabs/themis/pull/750)).
+  - Carthage no longer builds `arm64e` architecture slice ([#750](https://github.com/cossacklabs/themis/pull/750)).
+  - Updated OpenSSL to the latest 1.1.1h-2 ([#750](https://github.com/cossacklabs/themis/pull/750)).
+
 
 ## [0.13.5](https://github.com/cossacklabs/themis/releases/tag/0.13.5), November 12th 2020
 
