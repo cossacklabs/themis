@@ -60,6 +60,23 @@ _Infrastructure:_
 - Started phasing out CircleCI in favour of GitHub Actions ([#709](https://github.com/cossacklabs/themis/pull/709)).
 
 
+## [0.13.6](https://github.com/cossacklabs/themis/releases/tag/0.13.6), November 23rd 2020
+
+**Hotfix for Apple platforms:**
+
+- `themis` pod is now restored to use *dynamic* linkage again
+- Resolved errors related to `@rpath` when using CocoaPods
+- Removed `arm64e` architecture slice from Carthage builds for iOS which prevented CocoaPods from functioning correctly
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - CocoaPods will now again link ObjCThemis *dynamically* into application ([#750](https://github.com/cossacklabs/themis/pull/750)).
+  - Carthage no longer builds `arm64e` architecture slice ([#750](https://github.com/cossacklabs/themis/pull/750)).
+  - Updated OpenSSL to the latest 1.1.1h-2 ([#750](https://github.com/cossacklabs/themis/pull/750)).
+
+
 ## [0.13.5](https://github.com/cossacklabs/themis/releases/tag/0.13.5), November 12th 2020
 
 **Hotfix for Apple platforms:**
