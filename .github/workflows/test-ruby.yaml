@@ -46,7 +46,7 @@ jobs:
           # to be set via shell profile. GitHub Actions do not load profile
           # so we have to tweak the path manually here.
           sudo usermod -a -G rvm $(id -nu)
-          echo "::add-path::/usr/share/rvm/bin"
+          echo "/usr/share/rvm/bin" >> "$GITHUB_PATH"
       - name: Check out code
         uses: actions/checkout@v2
       - name: Prepare Themis Core

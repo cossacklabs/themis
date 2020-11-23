@@ -207,7 +207,7 @@ jobs:
           # allow modified podspec to be published, and issues a warning
           # if the source is anything but a release tag. For regular builds
           # we allow warnings with this extra flag:
-          echo "::set-env name=ALLOW_WARNINGS::--allow-warnings"
+          echo "ALLOW_WARNINGS=--allow-warnings" >> "$GITHUB_ENV"
       - name: Syntax check
         run: pod spec lint $ALLOW_WARNINGS --quick
       - name: Lint podspec
