@@ -4,6 +4,15 @@
 
 Changes that are currently in development and have not been released yet.
 
+
+## [0.13.6](https://github.com/cossacklabs/themis/releases/tag/0.13.6), November 23th 2020
+
+**Hotfix for Apple platforms:**
+
+- `themis` pod is now restored to use *dynamic* linkage again
+- Resolved errors related to `@rpath` when using CocoaPods
+- Removed `arm64e` architecture slice from Carthage builds for iOS which prevented CocoaPods from functioning correctly
+
 _Code:_
 
 - **Objective-C / Swift**
