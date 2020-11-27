@@ -318,3 +318,32 @@ jobs:
             /ERROR SUMMARY|(definitely|indirectly|possibly) lost/ { sum += $4 }
             END { if (sum > 0) { exit 1 } }
           ' valgrind-report.txt
+
+  coverage:
+    name: Unit test coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev lcov
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Build Themis Core
+        run: make prepare_tests_basic COVERAGE=y
+      - name: Reset lcov counters
+        run: lcov --directory . --zerocounters
+      - name: Run test suite
+        run: make test COVERAGE=y
+      - name: Prepare lcov data
+        run: |
+          lcov --output-file coverage.info --directory . --capture
+          # Do not include tests themselves as well as system headers
+          lcov --output-file coverage.info --remove coverage.info '*/tests/*' '/usr/*'
+          lcov --list coverage.info
+      - name: Submit results to Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./coverage.info
