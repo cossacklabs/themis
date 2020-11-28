@@ -209,7 +209,7 @@ extern "C" {
     ) -> themis_status_t;
 }
 #[repr(u32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub enum themis_key_kind {
     THEMIS_KEY_INVALID = 0,
     THEMIS_KEY_RSA_PRIVATE = 1,
