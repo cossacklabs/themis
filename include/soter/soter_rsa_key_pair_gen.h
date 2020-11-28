@@ -19,7 +19,6 @@
 
 #include <soter/soter_api.h>
 #include <soter/soter_error.h>
-#include <soter/soter_rsa_key.h>
 
 typedef struct soter_rsa_key_pair_gen_type soter_rsa_key_pair_gen_t;
 
