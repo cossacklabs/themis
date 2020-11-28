@@ -14,18 +14,13 @@ _Code:_
   - Cleaned up unused private API. Thanks to [**@luismerino**](https://github.com/luismerino) for pointing this out ([#714](https://github.com/cossacklabs/themis/pull/714)).
   - Cleaned up public header files and API of Themis and Soter ([#759](https://github.com/cossacklabs/themis/pull/759)).
 
-    Private header files are no longer installed.
-    Private APIs which have been unintentially exported are no longer available.
-    This might be a **breaking change** for those who have used them.
-    Please refrain from using private API and include only public API:
+    Private header files are no longer installed. Private APIs which have been unintentially exported are no longer available. This might be a **breaking change** for those who have used them. Please refrain from using private API and include only public API:
 
     ```c
     #include <themis/themis.h>
     ```
 
-    Users of official high-level wrappers are not affected.
-    However, this might affect developers of third-party wrappers.
-    Refer to the detailed description below for a list of removed headers.
+    Users of official high-level wrappers are not affected. However, this might affect developers of third-party wrappers. Refer to the detailed description below for a list of removed headers.
 
     <details>
 
@@ -56,8 +51,7 @@ _Code:_
 
     All APIs previously exported by them are no longer available as well.
 
-    In addition to that, the following private symbols and definitions
-    previously exported by `<themis/secure_session.h>` have been hidden:
+    In addition to that, the following private symbols and definitions previously exported by `<themis/secure_session.h>` have been hidden:
 
       - `THEMIS_SESSION_ID_TAG`
       - `THEMIS_SESSION_PROTO_TAG`
