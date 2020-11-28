@@ -32,7 +32,8 @@ LOCAL_SRC_FILES += $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/soter/ed2
 
 LOCAL_CFLAGS := -DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl
 LOCAL_EXPORT_CFLAGS := -DBORINGSSL
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../src
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../third_party/boringssl/src/include
 
 include $(BUILD_STATIC_LIBRARY)
@@ -43,7 +44,8 @@ LOCAL_MODULE := libthemis
 
 LOCAL_SRC_FILES := $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../src/themis/*.c))
 LOCAL_CFLAGS := -DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../src
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../third_party/boringssl/src/include
 
 include $(BUILD_STATIC_LIBRARY)
@@ -55,7 +57,8 @@ LOCAL_MODULE := libthemis_jni
 LOCAL_SRC_FILES := themis_jni.c themis_message.c themis_keygen.c themis_cell.c themis_session.c
 LOCAL_SRC_FILES += themis_compare.c
 LOCAL_CFLAGS := -DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../src
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/../third_party/boringssl/src/include
 LOCAL_STATIC_LIBRARIES := libthemis libsoter libcrypto libdecrepit
 
@@ -85,7 +88,9 @@ LOCAL_SRC_FILES += $(patsubst jni/%,%, $(wildcard $(LOCAL_PATH)/../tests/common/
 
 LOCAL_SHARED_LIBRARIES := libthemis_jni
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../src $(LOCAL_PATH)/../tests
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../include
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../src
+LOCAL_C_INCLUDES += $(LOCAL_PATH)/../tests
 
 include $(BUILD_EXECUTABLE)
 

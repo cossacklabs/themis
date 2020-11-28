@@ -1495,6 +1495,7 @@
 				);
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
 				);
@@ -1528,6 +1529,7 @@
 				);
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
 				);
@@ -1563,6 +1565,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
 				);
@@ -1599,6 +1602,7 @@
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
 				);
