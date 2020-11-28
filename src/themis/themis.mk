@@ -33,7 +33,8 @@ LIBTHEMIS_SO_LDFLAGS = -Wl,-out-implib,$(BIN_PATH)/$(LIBTHEMIS_IMPORT)
 endif
 
 THEMIS_SOURCES = $(wildcard $(SRC_PATH)/themis/*.c)
-THEMIS_HEADERS = $(wildcard $(SRC_PATH)/themis/*.h)
+THEMIS_HEADERS += $(wildcard $(INC_PATH)/themis/*.h)
+THEMIS_HEADERS += $(wildcard $(SRC_PATH)/themis/*.h)
 
 THEMIS_SRC = $(THEMIS_SOURCES)
 THEMIS_AUD_SRC = $(THEMIS_SOURCES) $(THEMIS_HEADERS)
@@ -86,7 +87,7 @@ ifdef IS_MSYS
 	@mkdir -p $(DESTDIR)$(bindir)
 endif
 	@mkdir -p $(DESTDIR)$(libdir)
-	@$(INSTALL_DATA) $(SRC_PATH)/themis/*.h             $(DESTDIR)$(includedir)/themis
+	@$(INSTALL_DATA) $(INC_PATH)/themis/*.h             $(DESTDIR)$(includedir)/themis
 	@$(INSTALL_DATA) $(BIN_PATH)/libthemis.pc           $(DESTDIR)$(pkgconfigdir)
 	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBTHEMIS_A)         $(DESTDIR)$(libdir)
 ifdef IS_MSYS

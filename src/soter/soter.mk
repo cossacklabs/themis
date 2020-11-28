@@ -33,7 +33,8 @@ LIBSOTER_SO_LDFLAGS = -Wl,-out-implib,$(BIN_PATH)/$(LIBSOTER_IMPORT)
 endif
 
 SOTER_SOURCES = $(wildcard $(SRC_PATH)/soter/*.c)
-SOTER_HEADERS = $(wildcard $(SRC_PATH)/soter/*.h)
+SOTER_HEADERS += $(wildcard $(INC_PATH)/soter/*.h)
+SOTER_HEADERS += $(wildcard $(SRC_PATH)/soter/*.h)
 ED25519_SOURCES = $(wildcard $(SRC_PATH)/soter/ed25519/*.c)
 ED25519_HEADERS = $(wildcard $(SRC_PATH)/soter/ed25519/*.h)
 
@@ -103,7 +104,7 @@ ifdef IS_MSYS
 	@mkdir -p $(DESTDIR)$(bindir)
 endif
 	@mkdir -p $(DESTDIR)$(libdir)
-	@$(INSTALL_DATA) $(SRC_PATH)/soter/*.h              $(DESTDIR)$(includedir)/soter
+	@$(INSTALL_DATA) $(INC_PATH)/soter/*.h              $(DESTDIR)$(includedir)/soter
 	@$(INSTALL_DATA) $(BIN_PATH)/libsoter.pc            $(DESTDIR)$(pkgconfigdir)
 	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBSOTER_A)          $(DESTDIR)$(libdir)
 ifdef IS_MSYS
