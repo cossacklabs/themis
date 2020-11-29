@@ -18,6 +18,7 @@
 #define SOTER_TEST_H
 
 #include <soter/soter.h>
+#include <soter/soter_rsa_key.h>
 #include <soter/soter_t.h>
 
 #include <common/test_utils.h>

@@ -56,11 +56,6 @@ extern "C" {
  * @{
  */
 
-/** @brief id tag */
-#define THEMIS_SESSION_ID_TAG "TSID"
-/** @brief protocol tag */
-#define THEMIS_SESSION_PROTO_TAG "TSPM"
-
 /** @brief idle state define */
 #define STATE_IDLE 0
 /** @brief negotiating state define */
@@ -89,69 +84,8 @@ struct secure_session_user_callbacks_type {
 
 typedef struct secure_session_user_callbacks_type secure_session_user_callbacks_t;
 
-/* TODO: probably move this to private headers */
-//#include <soter/soter_t.h>
-#include <themis/secure_session_peer.h>
-/* TODO: move to separate header */
-struct secure_session_peer_type {
-    uint8_t* id;
-    size_t id_length;
-
-    uint8_t* ecdh_key;
-    size_t ecdh_key_length;
-
-    uint8_t* sign_key;
-    size_t sign_key_length;
-};
-
-typedef struct secure_session_peer_type secure_session_peer_t;
-
-themis_status_t secure_session_peer_init(secure_session_peer_t* peer,
-                                         const void* id,
-                                         size_t id_len,
-                                         const void* ecdh_key,
-                                         size_t ecdh_key_len,
-                                         const void* sign_key,
-                                         size_t sign_key_len);
-void secure_session_peer_cleanup(secure_session_peer_t* peer);
-
-#define SESSION_MASTER_KEY_LENGTH 32
-/* TODO: for now session keys are same length as master key */
-#define SESSION_MESSAGE_KEY_LENGTH SESSION_MASTER_KEY_LENGTH
-
 typedef struct secure_session_type secure_session_t;
-typedef themis_status_t (*secure_session_handler)(secure_session_t* session_ctx,
-                                                  const void* data,
-                                                  size_t data_length,
-                                                  void* output,
-                                                  size_t* output_length);
 
-/*struct secure_session_type
-{
-        soter_asym_ka_t ecdh_ctx;
-        const secure_session_user_callbacks_t *user_callbacks;
-
-        secure_session_handler state_handler;
-
-        struct secure_session_peer_type we;
-        struct secure_session_peer_type peer;
-
-        uint32_t session_id;
-        uint8_t session_master_key[SESSION_MASTER_KEY_LENGTH];
-
-        uint8_t out_cipher_key[SESSION_MESSAGE_KEY_LENGTH];
-        uint8_t in_cipher_key[SESSION_MESSAGE_KEY_LENGTH];
-
-        uint32_t out_seq;
-        uint32_t in_seq;
-
-        bool is_client;
-};
-
-themis_status_t secure_session_init(secure_session_t *session_ctx, const void *id, size_t id_length,
-const void *sign_key, size_t sign_key_length, const secure_session_user_callbacks_t
-*user_callbacks); themis_status_t secure_session_cleanup(secure_session_t *session_ctx);
-*/
 THEMIS_API
 secure_session_t* secure_session_create(const void* id,
                                         size_t id_length,
