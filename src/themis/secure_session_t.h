@@ -20,6 +20,19 @@
 #include <soter/soter_t.h>
 
 #include <themis/secure_session.h>
+#include <themis/secure_session_peer.h>
+#include <themis/secure_session_utils.h>
+
+/** @brief id tag */
+#define THEMIS_SESSION_ID_TAG "TSID"
+/** @brief protocol tag */
+#define THEMIS_SESSION_PROTO_TAG "TSPM"
+
+typedef themis_status_t (*secure_session_handler)(secure_session_t* session_ctx,
+                                                  const void* data,
+                                                  size_t data_length,
+                                                  void* output,
+                                                  size_t* output_length);
 
 struct secure_session_type {
     soter_asym_ka_t ecdh_ctx;
