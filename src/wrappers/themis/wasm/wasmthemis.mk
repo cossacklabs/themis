@@ -25,7 +25,7 @@ WASM_PRE_JS  = $(abspath $(WASM_PATH)/emscripten/pre.js)
 WASM_PACKAGE = $(BIN_PATH)/wasm-themis.tgz
 
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s EXTRA_EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME)
-$(BIN_PATH)/libthemis.js: LDFLAGS += -s RESERVED_FUNCTION_POINTERS=1
+$(BIN_PATH)/libthemis.js: LDFLAGS += -s ALLOW_TABLE_GROWTH
 $(BIN_PATH)/libthemis.js: LDFLAGS += --pre-js $(WASM_PRE_JS)
 
 $(BIN_PATH)/libthemis.js: CMD = $(CC) -o $@ $(filter %.o %a, $^) $(LDFLAGS)
