@@ -73,7 +73,7 @@ class SecureMessage {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let result_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let private_key_ptr, public_key_ptr, message_ptr, result_ptr, result_length
         try {
             private_key_ptr = utils.heapAlloc(this.privateKey.length)
@@ -134,7 +134,7 @@ class SecureMessage {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let result_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let private_key_ptr, public_key_ptr, message_ptr, result_ptr, result_length
         try {
             private_key_ptr = utils.heapAlloc(this.privateKey.length)
@@ -205,7 +205,7 @@ class SecureMessageSign {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let result_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let private_key_ptr, message_ptr, result_ptr, result_length
         try {
             private_key_ptr = utils.heapAlloc(this.privateKey.length)
@@ -271,7 +271,7 @@ class SecureMessageVerify {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let result_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let public_key_ptr, message_ptr, result_ptr, result_length
         try {
             public_key_ptr = utils.heapAlloc(this.publicKey.length)
