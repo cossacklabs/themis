@@ -227,9 +227,9 @@ soter_status_t soter_sym_ctx_final(soter_sym_ctx_t* ctx, void* out_data, size_t*
         }
     }
     if (encrypt) {
-        SOTER_CHECK(EVP_EncryptFinal(ctx->evp_sym_ctx, out_data, (int*)out_data_length) != 0);
+        SOTER_CHECK(EVP_EncryptFinal_ex(ctx->evp_sym_ctx, out_data, (int*)out_data_length) != 0);
     } else {
-        SOTER_CHECK(EVP_DecryptFinal(ctx->evp_sym_ctx, out_data, (int*)out_data_length) != 0);
+        SOTER_CHECK(EVP_DecryptFinal_ex(ctx->evp_sym_ctx, out_data, (int*)out_data_length) != 0);
     }
     return SOTER_SUCCESS;
 }
@@ -239,10 +239,10 @@ soter_status_t soter_sym_aead_ctx_final(soter_sym_ctx_t* ctx, bool encrypt)
     uint8_t out_data[16];
     size_t out_data_length = 0;
     if (encrypt) {
-        SOTER_CHECK(EVP_EncryptFinal(ctx->evp_sym_ctx, out_data, (int*)&out_data_length) != 0
+        SOTER_CHECK(EVP_EncryptFinal_ex(ctx->evp_sym_ctx, out_data, (int*)&out_data_length) != 0
                     && out_data_length == 0);
     } else {
-        SOTER_CHECK(EVP_DecryptFinal(ctx->evp_sym_ctx, out_data, (int*)&out_data_length) != 0
+        SOTER_CHECK(EVP_DecryptFinal_ex(ctx->evp_sym_ctx, out_data, (int*)&out_data_length) != 0
                     && out_data_length == 0);
     }
     return SOTER_SUCCESS;

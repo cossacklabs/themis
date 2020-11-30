@@ -12,6 +12,58 @@ _Code:_
   - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
   - `secure_session_create()` now allows only EC keys, returning an error for RSA ([#693](https://github.com/cossacklabs/themis/pull/693)).
   - Cleaned up unused private API. Thanks to [**@luismerino**](https://github.com/luismerino) for pointing this out ([#714](https://github.com/cossacklabs/themis/pull/714)).
+  - Cleaned up public header files and API of Themis and Soter ([#759](https://github.com/cossacklabs/themis/pull/759)).
+
+    Private header files are no longer installed. Private APIs which have been unintentially exported are no longer available. This might be a **breaking change** for those who have used them. Please refrain from using private API and include only public API:
+
+    ```c
+    #include <themis/themis.h>
+    ```
+
+    Users of official high-level wrappers are not affected. However, this might affect developers of third-party wrappers. Refer to the detailed description below for a list of removed headers.
+
+    <details>
+
+    The following Soter headers are no longer available:
+
+      - `<soter/soter_container.h>`
+      - `<soter/soter_crc32.h>`
+      - `<soter/soter_ec_key.h>`
+      - `<soter/soter_portable_endian.h>`
+      - `<soter/soter_rsa_key.h>`
+      - `<soter/soter_sign_ecdsa.h>`
+      - `<soter/soter_sign_rsa.h>`
+      - `<soter/soter_t.h>`
+
+    All APIs previously exported by them are no longer available as well.
+
+    The following Themis headers are no longer available:
+
+      - `<themis/secure_cell_alg.h>`
+      - `<themis/secure_cell_seal_passphrase.h>`
+      - `<themis/secure_comparator_t.h>`
+      - `<themis/secure_message_wrapper.h>`
+      - `<themis/secure_session_peer.h>`
+      - `<themis/secure_session_t.h>`
+      - `<themis/secure_session_utils.h>`
+      - `<themis/sym_enc_message.h>`
+      - `<themis/themis_portable_endian.h>`
+
+    All APIs previously exported by them are no longer available as well.
+
+    In addition to that, the following private symbols and definitions previously exported by `<themis/secure_session.h>` have been hidden:
+
+      - `THEMIS_SESSION_ID_TAG`
+      - `THEMIS_SESSION_PROTO_TAG`
+      - `SESSION_MASTER_KEY_LENGTH`
+      - `SESSION_MESSAGE_KEY_LENGTH`
+      - `struct secure_session_peer_type`
+      - `typedef secure_session_peer_t`
+      - `typedef secure_session_handler`
+      - `secure_session_peer_init()`
+      - `secure_session_peer_cleanup()`
+
+    </details>
 
 - **Go**
 

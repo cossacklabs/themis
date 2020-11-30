@@ -60,6 +60,7 @@ INSTALL_DATA    ?= $(INSTALL) -m 644
 
 #----- Build directories -------------------------------------------------------
 
+INC_PATH = include
 SRC_PATH = src
 BIN_PATH = $(BUILD_PATH)
 OBJ_PATH = $(BIN_PATH)/obj
@@ -85,7 +86,7 @@ pkgconfigdir ?= $(libdir)/pkgconfig
 #----- Basic compiler flags ----------------------------------------------------
 
 # Add Themis source directory to search paths
-CFLAGS  += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/
+CFLAGS  += -I$(INC_PATH) -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/
 LDFLAGS += -L$(BIN_PATH)
 # Not all platforms include /usr/local in default search path
 CFLAGS  += -I/usr/local/include
