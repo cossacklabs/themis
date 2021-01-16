@@ -154,6 +154,28 @@ themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_ver
         && soter_verify_get_alg_id(ctx->verify_ctx) != SOTER_SIGN_ecdsa_none_pkcs8) {
         return THEMIS_INVALID_PARAMETER;
     }
+    /*
+     * Note that this allows "wrapped_message" to be longer than expected from the header,
+     * with some unused bits of data at the end. Historically, this has been allowed and
+     * it MUST be kept this way for the sake of compatibility. Normally, in cryptography,
+     * you should detect and report this condition, but hysterical raisins do object.
+     *
+     * The reason here is that some of the high-level wrappers (in Go, Java/Kotlin, C++)
+     * have been producing Secure Messages slightly longer than necessary. They have been
+     * doing this because of a bug in their implementation, enabled by an idiosyncrasy in
+     * Secure Message implementation in Themis Core.
+     *
+     * When you first call themis_secure_message_sign() with NULL output buffer to measure
+     * the expected output length, Themis may return a length which is slightly bigger than
+     * the actual output length would be on the second themis_secure_message_sign() call.
+     * (This is because OpenSSL API is that way. Deal with it.) The abovementioned wrappers
+     * ignored the correct length returned on the second call and returned buffers allocated
+     * with the length obtained on the first call--larger by 2 bytes for ECDSA signatures.
+     *
+     * Hence, do allow extra bytes at the end of the "wrapped_message", more than it must
+     * have based on the information encoded in the header. This is necessary for Themis
+     * to be able to verify all those overlong Secure Messages produced in the past.
+     */
     if (msg->message_hdr.message_length + msg->signature_length + sizeof(themis_secure_message_hdr_t)
         > wrapped_message_length) {
         return THEMIS_INVALID_PARAMETER;
