@@ -135,6 +135,15 @@ themis_secure_message_verifier_t* themis_secure_message_verifier_init(const uint
     return ctx;
 }
 
+static inline uint64_t total_signed_message_length(const themis_secure_signed_message_hdr_t* msg)
+{
+    /* We're using uint64_t to avoid overflows. Length components are uint32_t. */
+    uint64_t length = sizeof(themis_secure_signed_message_hdr_t);
+    length += msg->message_hdr.message_length;
+    length += msg->signature_length;
+    return length;
+}
+
 themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_verifier_t* ctx,
                                                        const uint8_t* wrapped_message,
                                                        const size_t wrapped_message_length,
@@ -176,8 +185,7 @@ themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_ver
      * have based on the information encoded in the header. This is necessary for Themis
      * to be able to verify all those overlong Secure Messages produced in the past.
      */
-    if (msg->message_hdr.message_length + msg->signature_length + sizeof(themis_secure_signed_message_hdr_t)
-        > wrapped_message_length) {
+    if (wrapped_message_length < total_signed_message_length(msg)) {
         return THEMIS_INVALID_PARAMETER;
     }
     if (message == NULL || (*message_length) < msg->message_hdr.message_length) {
