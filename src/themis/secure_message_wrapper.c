@@ -336,6 +336,15 @@ themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_messag
                        == THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED);
     THEMIS_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length
                        == wrapped_message_length);
+    /*
+     * Make sure the code below does not trigger an underflow if the header is corrupted.
+     * The subtraction subexpression does not underflow because of the check we made before.
+     * (And yes, this code needs cleanup. I intentionally leave it ugly.)
+     */
+    if ((wrapped_message_length - sizeof(themis_secure_rsa_encrypted_message_hdr_t))
+        < ((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length) {
+        return THEMIS_FAIL;
+    }
     size_t ml = 0;
     THEMIS_CHECK(
         themis_secure_cell_decrypt_seal((const uint8_t*)"123",
