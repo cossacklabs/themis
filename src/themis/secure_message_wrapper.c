@@ -142,7 +142,9 @@ themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_ver
                                                        size_t* message_length)
 {
     THEMIS_CHECK(ctx != NULL);
-    THEMIS_CHECK(wrapped_message != NULL && wrapped_message_length != 0 && message_length != NULL);
+    THEMIS_CHECK(wrapped_message != NULL)
+    THEMIS_CHECK(wrapped_message_length >= sizeof(themis_secure_signed_message_hdr_t));
+    THEMIS_CHECK(message_length != NULL);
     themis_secure_signed_message_hdr_t* msg = (themis_secure_signed_message_hdr_t*)wrapped_message;
     if (((msg->message_hdr.message_type == THEMIS_SECURE_MESSAGE_RSA_SIGNED
           && soter_verify_get_alg_id(ctx->verify_ctx) != SOTER_SIGN_rsa_pss_pkcs8)
