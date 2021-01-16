@@ -105,7 +105,7 @@ themis_status_t themis_secure_message_decrypt(const uint8_t* private_key,
                                               size_t* message_length)
 {
     THEMIS_CHECK_PARAM(encrypted_message != NULL);
-    THEMIS_CHECK_PARAM(encrypted_message_length != 0);
+    THEMIS_CHECK_PARAM(encrypted_message_length >= sizeof(themis_secure_message_hdr_t));
     THEMIS_CHECK_PARAM(message_length != NULL);
     THEMIS_CHECK_PARAM(valid_private_key(private_key, private_key_length));
     THEMIS_CHECK_PARAM(valid_public_key(public_key, public_key_length));
@@ -162,7 +162,7 @@ themis_status_t themis_secure_message_verify(const uint8_t* public_key,
                                              size_t* message_length)
 {
     THEMIS_CHECK_PARAM(signed_message != NULL);
-    THEMIS_CHECK_PARAM(signed_message_length != 0);
+    THEMIS_CHECK_PARAM(signed_message_length >= sizeof(themis_secure_message_hdr_t));
     THEMIS_CHECK_PARAM(message_length != NULL);
     THEMIS_CHECK_PARAM(valid_public_key(public_key, public_key_length));
 
@@ -252,7 +252,7 @@ themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
     THEMIS_CHECK_PARAM(public_key != NULL);
     THEMIS_CHECK_PARAM(public_key_length != 0);
     THEMIS_CHECK_PARAM(wrapped_message != NULL);
-    THEMIS_CHECK_PARAM(wrapped_message_length != 0);
+    THEMIS_CHECK_PARAM(wrapped_message_length >= sizeof(themis_secure_message_hdr_t));
     THEMIS_CHECK_PARAM(message_length != NULL);
     themis_secure_message_hdr_t* message_hdr = (themis_secure_message_hdr_t*)wrapped_message;
     THEMIS_CHECK_PARAM(IS_THEMIS_SECURE_MESSAGE_SIGNED(message_hdr->message_type)
