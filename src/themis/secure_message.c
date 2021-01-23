@@ -114,7 +114,6 @@ themis_status_t themis_secure_message_decrypt(const uint8_t* private_key,
 
     themis_secure_message_hdr_t* message_hdr = (themis_secure_message_hdr_t*)encrypted_message;
     THEMIS_CHECK_PARAM(IS_THEMIS_SECURE_MESSAGE_ENCRYPTED(message_hdr->message_type));
-    THEMIS_CHECK_PARAM(encrypted_message_length >= THEMIS_SECURE_MESSAGE_LENGTH(message_hdr));
 
     themis_secure_message_decrypter_t* ctx = NULL;
     ctx = themis_secure_message_decrypter_init(private_key, private_key_length, public_key, public_key_length);
@@ -168,7 +167,6 @@ themis_status_t themis_secure_message_verify(const uint8_t* public_key,
 
     themis_secure_message_hdr_t* message_hdr = (themis_secure_message_hdr_t*)signed_message;
     THEMIS_CHECK_PARAM(IS_THEMIS_SECURE_MESSAGE_SIGNED(message_hdr->message_type));
-    THEMIS_CHECK_PARAM(signed_message_length >= THEMIS_SECURE_MESSAGE_LENGTH(message_hdr));
 
     themis_secure_message_verifier_t* ctx = NULL;
     ctx = themis_secure_message_verifier_init(public_key, public_key_length);
@@ -257,7 +255,6 @@ themis_status_t themis_secure_message_unwrap(const uint8_t* private_key,
     themis_secure_message_hdr_t* message_hdr = (themis_secure_message_hdr_t*)wrapped_message;
     THEMIS_CHECK_PARAM(IS_THEMIS_SECURE_MESSAGE_SIGNED(message_hdr->message_type)
                        || IS_THEMIS_SECURE_MESSAGE_ENCRYPTED(message_hdr->message_type));
-    THEMIS_CHECK_PARAM(wrapped_message_length >= THEMIS_SECURE_MESSAGE_LENGTH(message_hdr));
     if (IS_THEMIS_SECURE_MESSAGE_SIGNED(message_hdr->message_type)) {
         themis_secure_message_verifier_t* ctx = NULL;
         ctx = themis_secure_message_verifier_init(public_key, public_key_length);
