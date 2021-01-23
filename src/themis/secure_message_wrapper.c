@@ -176,7 +176,7 @@ themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_ver
      * have based on the information encoded in the header. This is necessary for Themis
      * to be able to verify all those overlong Secure Messages produced in the past.
      */
-    if (msg->message_hdr.message_length + msg->signature_length + sizeof(themis_secure_message_hdr_t)
+    if (msg->message_hdr.message_length + msg->signature_length + sizeof(themis_secure_signed_message_hdr_t)
         > wrapped_message_length) {
         return THEMIS_INVALID_PARAMETER;
     }
