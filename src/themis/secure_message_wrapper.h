@@ -43,8 +43,6 @@ struct themis_secure_message_hdr_type {
 };
 typedef struct themis_secure_message_hdr_type themis_secure_message_hdr_t;
 
-#define THEMIS_SECURE_MESSAGE_LENGTH(hdr) ((hdr)->message_length)
-
 struct themis_secure_signed_message_hdr_type {
     themis_secure_message_hdr_t message_hdr;
     uint32_t signature_length;
