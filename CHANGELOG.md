@@ -65,6 +65,8 @@ _Code:_
 
     </details>
 
+  - Fixed multiple buffer overflows in Secure Message ([#763](https://github.com/cossacklabs/themis/pull/763)).
+
 - **Go**
 
   - Error `ErrOverflow` is now deprecated in favor of `ErrOutOfMemory`, new error types were added ([#711](https://github.com/cossacklabs/themis/pull/711)).
