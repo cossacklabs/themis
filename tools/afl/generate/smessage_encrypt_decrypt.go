@@ -49,13 +49,21 @@ func main() {
 		fmt.Fprintf(os.Stderr, "unknown key type: %s\nsupported: EC, RSA\n", args[1])
 		os.Exit(1)
 	}
-	keypair, _ := keys.New(keyType)
+	keypair, err := keys.New(keyType)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to generate new keypair: %v\n", err)
+		os.Exit(1)
+	}
 
 	msg := []byte(args[2])
 
 	sm := message.New(keypair.Private, keypair.Public)
 
-	encrypted, _ := sm.Wrap(msg)
+	encrypted, err := sm.Wrap(msg)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to encrypt Secure Message: %v\n", err)
+		os.Exit(1)
+	}
 
 	writeByteString(os.Stdout, keypair.Private.Value)
 	writeByteString(os.Stdout, keypair.Public.Value)
