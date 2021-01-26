@@ -77,12 +77,10 @@ jobs:
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev \
-            python  python-pip  python-setuptools \
             python3 python3-pip python3-setuptools \
             libpq-dev
       - name: Install Python modules
         run: |
-          sudo pip2 install tornado twisted psycopg2 pika
           sudo pip3 install tornado twisted psycopg2 pika
       - name: Check out code
         uses: actions/checkout@v2
