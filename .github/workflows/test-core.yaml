@@ -212,7 +212,7 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt update
           sudo apt install --yes gcc make zip \
-              afl gcc-multilib libc6-dev:i386 \
+              afl++ gcc-multilib libc6-dev:i386 \
               libssl-dev:amd64 libssl-dev:i386
           # AFL needs proper core dumps to be available, write them to files
           sudo sh -c 'echo core > /proc/sys/kernel/core_pattern'
