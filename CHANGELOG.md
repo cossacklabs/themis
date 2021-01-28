@@ -65,6 +65,8 @@ _Code:_
 
     </details>
 
+  - Fixed multiple buffer overflows in Secure Message ([#763](https://github.com/cossacklabs/themis/pull/763)).
+
 - **Go**
 
   - Error `ErrOverflow` is now deprecated in favor of `ErrOutOfMemory`, new error types were added ([#711](https://github.com/cossacklabs/themis/pull/711)).
@@ -114,6 +116,7 @@ _Infrastructure:_
 - Build system and tests now respect the `PATH` settings ([#685](https://github.com/cossacklabs/themis/pull/685)).
 - Rename embedded BoringSSL symbols by default to avoid conflicts with system OpenSSL ([#702](https://github.com/cossacklabs/themis/pull/702)).
 - Started phasing out CircleCI in favour of GitHub Actions ([#709](https://github.com/cossacklabs/themis/pull/709), [#755](https://github.com/cossacklabs/themis/pull/755)).
+- Themis is now fuzzed with `afl++` ([#766](https://github.com/cossacklabs/themis/pull/766)).
 - Secure Message is now covered with fuzz testing ([#762](https://github.com/cossacklabs/themis/pull/762)).
 
 
