@@ -135,6 +135,15 @@ themis_secure_message_verifier_t* themis_secure_message_verifier_init(const uint
     return ctx;
 }
 
+static inline uint64_t total_signed_message_length(const themis_secure_signed_message_hdr_t* msg)
+{
+    /* We're using uint64_t to avoid overflows. Length components are uint32_t. */
+    uint64_t length = sizeof(themis_secure_signed_message_hdr_t);
+    length += msg->message_hdr.message_length;
+    length += msg->signature_length;
+    return length;
+}
+
 themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_verifier_t* ctx,
                                                        const uint8_t* wrapped_message,
                                                        const size_t wrapped_message_length,
@@ -142,14 +151,41 @@ themis_status_t themis_secure_message_verifier_proceed(themis_secure_message_ver
                                                        size_t* message_length)
 {
     THEMIS_CHECK(ctx != NULL);
-    THEMIS_CHECK(wrapped_message != NULL && wrapped_message_length != 0 && message_length != NULL);
+    THEMIS_CHECK(wrapped_message != NULL)
+    THEMIS_CHECK(wrapped_message_length >= sizeof(themis_secure_signed_message_hdr_t));
+    THEMIS_CHECK(message_length != NULL);
     themis_secure_signed_message_hdr_t* msg = (themis_secure_signed_message_hdr_t*)wrapped_message;
-    if (((msg->message_hdr.message_type == THEMIS_SECURE_MESSAGE_RSA_SIGNED
-          && soter_verify_get_alg_id(ctx->verify_ctx) != SOTER_SIGN_rsa_pss_pkcs8)
-         || (msg->message_hdr.message_type == THEMIS_SECURE_MESSAGE_EC_SIGNED
-             && soter_verify_get_alg_id(ctx->verify_ctx) != SOTER_SIGN_ecdsa_none_pkcs8))
-        && (msg->message_hdr.message_length + msg->signature_length + sizeof(themis_secure_message_hdr_t)
-            > wrapped_message_length)) {
+    if (msg->message_hdr.message_type == THEMIS_SECURE_MESSAGE_RSA_SIGNED
+        && soter_verify_get_alg_id(ctx->verify_ctx) != SOTER_SIGN_rsa_pss_pkcs8) {
+        return THEMIS_INVALID_PARAMETER;
+    }
+    if (msg->message_hdr.message_type == THEMIS_SECURE_MESSAGE_EC_SIGNED
+        && soter_verify_get_alg_id(ctx->verify_ctx) != SOTER_SIGN_ecdsa_none_pkcs8) {
+        return THEMIS_INVALID_PARAMETER;
+    }
+    /*
+     * Note that this allows "wrapped_message" to be longer than expected from the header,
+     * with some unused bits of data at the end. Historically, this has been allowed and
+     * it MUST be kept this way for the sake of compatibility. Normally, in cryptography,
+     * you should detect and report this condition, but hysterical raisins do object.
+     *
+     * The reason here is that some of the high-level wrappers (in Go, Java/Kotlin, C++)
+     * have been producing Secure Messages slightly longer than necessary. They have been
+     * doing this because of a bug in their implementation, enabled by an idiosyncrasy in
+     * Secure Message implementation in Themis Core.
+     *
+     * When you first call themis_secure_message_sign() with NULL output buffer to measure
+     * the expected output length, Themis may return a length which is slightly bigger than
+     * the actual output length would be on the second themis_secure_message_sign() call.
+     * (This is because OpenSSL API is that way. Deal with it.) The abovementioned wrappers
+     * ignored the correct length returned on the second call and returned buffers allocated
+     * with the length obtained on the first call--larger by 2 bytes for ECDSA signatures.
+     *
+     * Hence, do allow extra bytes at the end of the "wrapped_message", more than it must
+     * have based on the information encoded in the header. This is necessary for Themis
+     * to be able to verify all those overlong Secure Messages produced in the past.
+     */
+    if (wrapped_message_length < total_signed_message_length(msg)) {
         return THEMIS_INVALID_PARAMETER;
     }
     if (message == NULL || (*message_length) < msg->message_hdr.message_length) {
@@ -300,6 +336,15 @@ themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_messag
                        == THEMIS_SECURE_MESSAGE_RSA_ENCRYPTED);
     THEMIS_CHECK_PARAM(((const themis_secure_encrypted_message_hdr_t*)wrapped_message)->message_hdr.message_length
                        == wrapped_message_length);
+    /*
+     * Make sure the code below does not trigger an underflow if the header is corrupted.
+     * The subtraction subexpression does not underflow because of the check we made before.
+     * (And yes, this code needs cleanup. I intentionally leave it ugly.)
+     */
+    if ((wrapped_message_length - sizeof(themis_secure_rsa_encrypted_message_hdr_t))
+        < ((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length) {
+        return THEMIS_FAIL;
+    }
     size_t ml = 0;
     THEMIS_CHECK(
         themis_secure_cell_decrypt_seal((const uint8_t*)"123",
