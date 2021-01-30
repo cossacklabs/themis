@@ -1,7 +1,7 @@
 # RustThemis
 
 [![crates.io][crates-io-badge]][crates-io]
-[![CircleCI][circle-ci-badge]][circle-ci]
+[![RustThemis][github-ci-badge]][github-ci]
 [![License][license-badge]][license]
 
 _Rust_ wrapper for [Themis] crypto library.
@@ -12,8 +12,8 @@ Themis provides ready-made building components, which simplifies the usage of co
 [Themis]: https://github.com/cossacklabs/themis
 [crates-io]: https://crates.io/crates/themis
 [crates-io-badge]: https://img.shields.io/crates/v/themis.svg
-[circle-ci]: https://circleci.com/gh/cossacklabs/themis/tree/master
-[circle-ci-badge]: https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield
+[github-ci]: https://github.com/cossacklabs/themis/actions?query=workflow%3ARustThemis
+[github-ci-badge]: https://github.com/cossacklabs/themis/workflows/RustThemis/badge.svg
 [license]: LICENSE
 [license-badge]: https://img.shields.io/crates/l/themis.svg
 
