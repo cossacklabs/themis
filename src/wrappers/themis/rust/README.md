@@ -17,7 +17,7 @@ Themis provides ready-made building components, which simplifies the usage of co
 [license]: LICENSE
 [license-badge]: https://img.shields.io/crates/l/themis.svg
 
-## Quickstart
+## Getting started
 
 RustThemis requires native Themis library to be installed.
 Please refer to the [installation instructions][install].
