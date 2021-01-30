@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Read more about Secure Cell modes:
  *
- * https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/
+ * https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/
  */
 @interface TSCell : NSObject
 
@@ -83,4 +83,4 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 /** @} */
-/** @} */  
+/** @} */
