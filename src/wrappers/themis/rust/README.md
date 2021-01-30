@@ -1,4 +1,4 @@
-# Rust-Themis
+# RustThemis
 
 [![crates.io][crates-io-badge]][crates-io]
 [![CircleCI][circle-ci-badge]][circle-ci]
