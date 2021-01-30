@@ -23,5 +23,5 @@ If you'd like to participate in the core development more closely, [get in touch
 
 - Requests/bugfixes/queries should go through [GitHub Issues](https://github.com/cossacklabs/themis/issues)
 - To reach the developers, use [dev@cossacklabs.com](mailto:dev@cossacklabs.com).
-- See more information on contributing on our [Documentation Server/Contributing, contacts, assistance](https://docs.cossacklabs.com/pages/documentation-themis/#contributing-contacts-assistance).
+- See more information [on contributing](https://docs.cossacklabs.com/themis/community/contributing/) and [Themis community](https://docs.cossacklabs.com/themis/community/).
 - To talk to the business wing of Cossack Labs, drop us an email to [info@cossacklabs.com](mailto:info@cossacklabs.com).
