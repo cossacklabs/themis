@@ -36,7 +36,7 @@ That’s it.
 You don’t have to compile and install Themis,
 we’ll do it for you, in a special way.
 
-[build]: https://docs.cossacklabs.com/pages/documentation-themis/#building-and-installing
+[build]: https://docs.cossacklabs.com/themis/installation/
 
 ### Running fuzzing tests
 
@@ -252,8 +252,8 @@ in order to add a `${new_tool}` to fuzz test suite.
     input is a good place to fuzz.
     For example:
     key files,
-    [Secure Cell](https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/) containers,
-    network packets received by [Secure Session](https://docs.cossacklabs.com/pages/secure-session-cryptosystem/),
+    [Secure Cell](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/) containers,
+    network packets received by [Secure Session](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-session/),
     etc.
 
   - Use `abort()` to check assertions.
