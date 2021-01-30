@@ -1,8 +1,8 @@
 # How to use Themis Server with Swift     
 
-0. [Install Pods](https://docs.cossacklabs.com/pages/swift-howto/#installing-stable-version-from-cocoapods)
+0. [Install Pods](https://docs.cossacklabs.com/themis/languages/swift/installation/)
 1. Run the app (yes, it crashes on asserts – this is fine :)
-2. Open `AppDelegate` and choose a Client example for either SMessage ([Secure Message](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/)) or SSession ([Secure Session](https://docs.cossacklabs.com/pages/secure-session-cryptosystem/)). Uncomment the necessary mode to start.     
+2. Open `AppDelegate` and choose a Client example for either SMessage ([Secure Message](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-message/)) or SSession ([Secure Session](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-session/)). Uncomment the necessary mode to start.
 
 
 ![appdelegate](pics/appdelegate.png)
@@ -10,7 +10,7 @@
 
 ## Secure Session mode   
 
-Let's assume, you want to play with [Secure Session](https://docs.cossacklabs.com/pages/secure-session-cryptosystem/).
+Let's assume, you want to play with [Secure Session](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-session/).
 
 3. Open `SSessionClient` file.
 
@@ -50,7 +50,7 @@ The idea is to let the Server know the Client's public key, and let the Client k
 
  
 9. Open [Themis Server](https://docs.cossacklabs.com/simulator/interactive/).  
-10. Log in with your existing Themis Server credentials or [register](https://docs.cossacklabs.com/pages/using-themis-server/#registration). 
+10. Log in with your existing Themis Server credentials or [register](https://docs.cossacklabs.com/themis/debugging/themis-server/#registration).
 
 >Note: The UI of Themis Server is gradually (albeit constantly) evolving. Don’t be surprised to see that some of the UI elements have changed their colour or that some buttons have moved around a little. The core functionality of Themis Server stays the same.    
 
@@ -91,4 +91,4 @@ Follow the same steps as described above, but do it for `SMessageClient` file :)
 
 ## Useful reading  
 
-To get most of Themis Server, read a [detailed explanation of how Themis Server Simulator works](https://docs.cossacklabs.com/pages/using-themis-server/).
+To get most of Themis Server, read a [detailed explanation of how Themis Server Simulator works](https://docs.cossacklabs.com/themis/debugging/themis-server/).
