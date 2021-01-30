@@ -19,23 +19,24 @@ Themis provides ready-made building components, which simplifies the usage of co
 
 ## Quickstart
 
-Rust-Themis requires a native Themis library.
-Please refer to the [Quickstart guide] for the installation instructions.
+RustThemis requires native Themis library to be installed.
+Please refer to the [installation instructions][install].
 
 See also:
-   
- - [In-depth documentation on our Documentation Server][Documentation Server],     
- - [Rust API documentation on Docs.rs][Docs.rs],     
- - [Changelog on GitHub][CHANGELOG].
+
+ - [In-depth documentation on our Documentation Server][Documentation Server]
+ - [RustThemis user guide][user guide]
+ - [RustThemis API documentation on Docs.rs][Docs.rs]
+ - [Changelog on GitHub][CHANGELOG]
 
 You can start experimenting with [Examples]
 or take a look at [Tests]
 to get a feeling of how Themis can be used.
 
-[Quickstart guide]: https://github.com/cossacklabs/themis/wiki/Rust-Howto
-[Wiki]: https://github.com/cossacklabs/themis/wiki
+[install]: https://docs.cossacklabs.com/themis/languages/rust/installation/
+[user guide]: https://docs.cossacklabs.com/themis/languages/rust/
 [Docs.rs]: https://docs.rs/themis
-[Documentation Server]: https://docs.cossacklabs.com/products/themis/
+[Documentation Server]: https://docs.cossacklabs.com/themis/
 [CHANGELOG]: /CHANGELOG.md
 [Examples]: /docs/examples/rust
 [Tests]: /tests/rust
