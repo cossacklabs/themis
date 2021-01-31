@@ -3,6 +3,7 @@ package message
 import (
 	"bytes"
 	"crypto/rand"
+	"encoding/base64"
 	"math/big"
 	"testing"
 
@@ -300,4 +301,47 @@ func BenchmarkSMessageVerifyEC(b *testing.B) {
 			b.Errorf("verification failed: %v", err)
 		}
 	}
+}
+
+// Check that GoThemis is still able to verify old signed messages with extra bytes at the end.
+// Modern versions of GoThemis do not produce such messages.
+func TestVerifyOverlongEllipticSignatures(t *testing.T) {
+	publicKey := &keys.PublicKey{
+		Value: decodeString("VUVDMgAAAC2EoQKyAzIj/ESwMOntizF5o+aGtG/a3rd38HE3Hq9YxwS6bIIQ"),
+	}
+	signatures := []string{
+		// NIST P-256 curve, 69..72 bytes long signatures, with and without zero padding
+		"ICYEJk8AAABIAAAAQm9sw6lybyBpcyBhIG9uZS1tb3ZlbWVudCBvcmNoZXN0cmFsIHBpZWNlIGJ5IHRoZSBGcmVuY2ggY29tcG9zZXIgTWF1cmljZSBSYXZlbDBGAiEA2RTru1XIEjVuOVZhWIiU68gCGS1vLIavK2/h8Tp35yMCIQD2tPLZ+7GTPrIgHvFPi82iH7ghKESlsbFwNRSu4QVapA==",
+		"ICYEJk8AAABIAAAAQm9sw6lybyBpcyBhIG9uZS1tb3ZlbWVudCBvcmNoZXN0cmFsIHBpZWNlIGJ5IHRoZSBGcmVuY2ggY29tcG9zZXIgTWF1cmljZSBSYXZlbDBGAiEA2RTru1XIEjVuOVZhWIiU68gCGS1vLIavK2/h8Tp35yMCIQD2tPLZ+7GTPrIgHvFPi82iH7ghKESlsbFwNRSu4QVapA==",
+		"ICYEJk8AAABHAAAAQm9sw6lybyBpcyBhIG9uZS1tb3ZlbWVudCBvcmNoZXN0cmFsIHBpZWNlIGJ5IHRoZSBGcmVuY2ggY29tcG9zZXIgTWF1cmljZSBSYXZlbDBFAiBsaS6CcXhMuVNBkMLh94wh6MzrCGf/iv5YAbzwsasUcgIhAKm/jWtvxfRdL7gUxr3yUU08gfd0ZQhFUOipoOEJcvXDAA==",
+		"ICYEJk8AAABHAAAAQm9sw6lybyBpcyBhIG9uZS1tb3ZlbWVudCBvcmNoZXN0cmFsIHBpZWNlIGJ5IHRoZSBGcmVuY2ggY29tcG9zZXIgTWF1cmljZSBSYXZlbDBFAiBsaS6CcXhMuVNBkMLh94wh6MzrCGf/iv5YAbzwsasUcgIhAKm/jWtvxfRdL7gUxr3yUU08gfd0ZQhFUOipoOEJcvXD",
+		"ICYEJk8AAABGAAAAQm9sw6lybyBpcyBhIG9uZS1tb3ZlbWVudCBvcmNoZXN0cmFsIHBpZWNlIGJ5IHRoZSBGcmVuY2ggY29tcG9zZXIgTWF1cmljZSBSYXZlbDBEAiBMDtaLonRC9wzc4yj4C/5zHJSFlxnWJ1BS279WpbshzgIgRmXEoGyefv/W4Jl5TitjKQrRbpWb1RI6jgnyti3kh3wAAA==",
+		"ICYEJk8AAABGAAAAQm9sw6lybyBpcyBhIG9uZS1tb3ZlbWVudCBvcmNoZXN0cmFsIHBpZWNlIGJ5IHRoZSBGcmVuY2ggY29tcG9zZXIgTWF1cmljZSBSYXZlbDBEAiBMDtaLonRC9wzc4yj4C/5zHJSFlxnWJ1BS279WpbshzgIgRmXEoGyefv/W4Jl5TitjKQrRbpWb1RI6jgnyti3kh3w=",
+		"ICYEJk8AAABFAAAAQm9sw6lybyBpcyBhIG9uZS1tb3ZlbWVudCBvcmNoZXN0cmFsIHBpZWNlIGJ5IHRoZSBGcmVuY2ggY29tcG9zZXIgTWF1cmljZSBSYXZlbDBDAiAgM9Vi17JZdp7B5QXu8Jge3uZNp2Ry99g8F6VRJtdw5QIfPgJTFaIJCz7Iv8oyly1eCkhQixLHUowBCyyf0idFkAAAAA==",
+		"ICYEJk8AAABFAAAAQm9sw6lybyBpcyBhIG9uZS1tb3ZlbWVudCBvcmNoZXN0cmFsIHBpZWNlIGJ5IHRoZSBGcmVuY2ggY29tcG9zZXIgTWF1cmljZSBSYXZlbDBDAiAgM9Vi17JZdp7B5QXu8Jge3uZNp2Ry99g8F6VRJtdw5QIfPgJTFaIJCz7Iv8oyly1eCkhQixLHUowBCyyf0idFkA==",
+	}
+	expected := "Boléro is a one-movement orchestral piece by the French composer Maurice Ravel"
+
+	smessage := New(nil, publicKey)
+	for i, signature := range signatures {
+		signature := decodeString(signature)
+		verified, err := smessage.Verify(signature)
+		if err != nil {
+			t.Errorf("failed to verify signature[%d] of length %d: %v", i, len(signature), err)
+		}
+		if string(verified) != expected {
+			t.Logf("signature[%d] of length %d", i, len(signature))
+			t.Logf("expected: %s", expected)
+			t.Logf("actual:   %s", string(verified))
+			t.Error("verified messages do not match")
+		}
+	}
+}
+
+func decodeString(str string) []byte {
+	bytes, err := base64.StdEncoding.DecodeString(str)
+	if err != nil {
+		panic(err)
+	}
+	return bytes
 }
