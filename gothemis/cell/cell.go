@@ -191,7 +191,7 @@ var (
 	ErrMissingContext    = errors.NewWithCode(errors.InvalidParameter, "associated context is required in Context Imprint mode")
 	ErrOutOfMemory       = errors.NewWithCode(errors.NoMemory, "Secure Cell cannot allocate enough memory")
 	// Deprecated: Since 0.14. Use ErrOutOfMemory instead.
-	ErrOverflow = ErrOutOfMemory
+	ErrOverflow          = ErrOutOfMemory
 )
 
 // Secure Cell operation mode.
