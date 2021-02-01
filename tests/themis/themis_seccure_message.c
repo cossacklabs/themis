@@ -1566,6 +1566,183 @@ static void keygen_parameters_rsa(void)
                           "themis_gen_rsa_key_pair: only public key requested");
 }
 
+static void secure_message_overlong_ecdsa_signature(void)
+{
+    themis_status_t status;
+    uint8_t private_key[MAX_KEY_SIZE] = {0};
+    uint8_t public_key[MAX_KEY_SIZE] = {0};
+    size_t private_key_length = sizeof(private_key);
+    size_t public_key_length = sizeof(public_key);
+
+    const char* message = "I'm half a crazy man"
+                          "    Waiting for confirmation"
+                          "Signs keep a'changing and"
+                          "    I need some more information";
+    const uint8_t* message_bytes = (const uint8_t*)message;
+    size_t message_length = strlen(message);
+
+    uint8_t* signed_message = NULL;
+    size_t signed_message_length_measured = 0;
+    size_t signed_message_length_actual = 0;
+
+    status = themis_gen_ec_key_pair(&private_key[0], &private_key_length, &public_key[0], &public_key_length);
+    if (status != THEMIS_SUCCESS) {
+        testsuite_fail_if(true, "themis_gen_ec_key_pair failed");
+        goto out;
+    }
+
+    signed_message_length_measured = 0;
+    status = themis_secure_message_sign(private_key,
+                                        private_key_length,
+                                        message_bytes,
+                                        message_length,
+                                        NULL,
+                                        &signed_message_length_measured);
+    if (status != THEMIS_BUFFER_TOO_SMALL) {
+        testsuite_fail_if(true, "themis_secure_message_sign failed to determine signed message length");
+        goto out;
+    }
+
+    signed_message = malloc(signed_message_length_measured);
+    if (!signed_message) {
+        testsuite_fail_if(true, "failed to allocate memory for signed message");
+        goto out;
+    }
+
+    signed_message_length_actual = signed_message_length_measured;
+    status = themis_secure_message_sign(private_key,
+                                        private_key_length,
+                                        message_bytes,
+                                        message_length,
+                                        signed_message,
+                                        &signed_message_length_actual);
+    if (status != THEMIS_SUCCESS) {
+        testsuite_fail_if(true, "themis_secure_message_sign failed to sign the message");
+        goto out;
+    }
+
+    /*
+     * Due to Secure Message implementation details and OpenSSL peculiarities,
+     * themis_secure_message_sign() may return slightly longer expected signed
+     * message length during the measurement phase. After that the second call
+     * to themis_secure_message_sign() returns correct message length--possibly
+     * shorter than initially measured.
+     *
+     * The reason for this length variability is that OpenSSL uses compact
+     * representation for ECDSA signatures, and the resulting signature may
+     * take either 70, 71, or 72 bytes with the current curve used by Themis.
+     * During the measurement phase OpenSSL returns the maximum possible length
+     * while the actual length is known only after the signature is computed.
+     * ECDSA involves random number generation so you can't predict the output.
+     *
+     * Why is this important? Because some high-level wrappers ignore the real
+     * size of the signature and return the initially allocated buffer which
+     * might or might not have a couple of garbage bytes at the end.
+     *
+     * The variation depends on the elliptic curve used. Currently, Themis 0.13
+     * uses prime256v1 by default. When that changes, the size of the keys and
+     * signature output will be different: you should update this test, as well
+     * as add new sample data to secure_message_overlong_ecdsa_verification().
+     */
+    testsuite_fail_unless(private_key_length == 45, "uses private key of expected length");
+    testsuite_fail_unless((187 <= signed_message_length_actual) && (signed_message_length_actual <= 189),
+                          "produces message with expected actual length");
+    testsuite_fail_unless(signed_message_length_measured == 189,
+                          "output measurement produces expected result");
+
+out:
+    free(signed_message);
+}
+
+static void secure_message_overlong_ecdsa_verification(void)
+{
+    themis_status_t status;
+
+    /* key for prime256v1 curve */
+    static const uint8_t public_key[] = {
+        0x55, 0x45, 0x43, 0x32, 0x00, 0x00, 0x00, 0x2D, 0x88, 0x85, 0x9B, 0xA6, 0x03, 0xEB, 0x02,
+        0x70, 0x0E, 0xCB, 0x1E, 0x98, 0xC0, 0x61, 0x18, 0x0A, 0xCF, 0xCD, 0x60, 0x57, 0x91, 0xAE,
+        0xF1, 0xB6, 0xD8, 0x94, 0x23, 0x80, 0x55, 0x2C, 0xB5, 0x54, 0x3B, 0xDA, 0x53, 0x2B, 0xB0,
+    };
+
+    /* signed with GoThemis 0.13.0 */
+    static const uint8_t signed_message[] = {
+        0x20, 0x26, 0x04, 0x26, 0x41, 0x00, 0x00, 0x00, 0x46, 0x00, 0x00, 0x00, 0x61, 0x6E, 0x6F,
+        0x20, 0x68, 0x69, 0x74, 0x6F, 0x20, 0x77, 0x61, 0x20, 0x20, 0x20, 0x6D, 0x6F, 0x75, 0x20,
+        0x6B, 0x69, 0x7A, 0x75, 0x6B, 0x75, 0x20, 0x6B, 0x6F, 0x72, 0x6F, 0x20, 0x79, 0x6F, 0x20,
+        0x62, 0x61, 0x73, 0x75, 0x20, 0x72, 0x75, 0x75, 0x6D, 0x75, 0x20, 0x6E, 0x69, 0x20, 0x20,
+        0x20, 0x20, 0x72, 0x75, 0x75, 0x6A, 0x75, 0x20, 0x6E, 0x6F, 0x20, 0x64, 0x65, 0x6E, 0x67,
+        0x6F, 0x6E, 0x30, 0x44, 0x02, 0x1F, 0x27, 0x53, 0x74, 0x46, 0x2F, 0x38, 0x1F, 0x61, 0xFF,
+        0xEB, 0xE6, 0x1B, 0x2A, 0x48, 0xC7, 0x64, 0x74, 0x69, 0x38, 0xDB, 0xCA, 0xF2, 0x23, 0xBA,
+        0x25, 0x50, 0x84, 0xDE, 0x4A, 0xE3, 0x0D, 0x02, 0x21, 0x00, 0xC4, 0xD9, 0x3C, 0x8A, 0xEA,
+        0x6B, 0xCA, 0xFF, 0x2A, 0xF4, 0x42, 0x43, 0xF4, 0x56, 0xA1, 0x76, 0x15, 0x2C, 0xCC, 0x81,
+        0xE6, 0x76, 0xF8, 0xD8, 0x77, 0x25, 0x59, 0xE9, 0x4E, 0x71, 0xBB, 0x71, 0x90, 0xFE,
+    };
+
+    const char* expected_message = "ano hito wa"
+                                   "   mou kizuku koro yo"
+                                   " basu ruumu ni"
+                                   "    ruuju no dengon";
+    size_t expected_message_length = strlen(expected_message);
+
+    uint8_t* verified_message = NULL;
+    size_t verified_message_length = 0;
+
+    verified_message_length = expected_message_length;
+    verified_message = malloc(expected_message_length);
+    if (!verified_message) {
+        testsuite_fail_if(true, "failed to allocate memory for verified message");
+        goto out;
+    }
+
+    status = themis_secure_message_verify(public_key,
+                                          sizeof(public_key),
+                                          signed_message,
+                                          sizeof(signed_message),
+                                          verified_message,
+                                          &verified_message_length);
+    testsuite_fail_unless(status == THEMIS_SUCCESS,
+                          "Secure Message verifies overlong message successfully");
+
+    testsuite_fail_unless(verified_message_length == expected_message_length,
+                          "verified message length matches");
+    testsuite_fail_unless(memcmp(verified_message, expected_message, expected_message_length) == 0,
+                          "verified message content matches");
+
+    /*
+     * Wanna see a cool trick? Those two bytes at the end do not matter.
+     * Want to know why? Read the comment in secure_message_overlong_ecdsa_signature().
+     */
+
+    status = themis_secure_message_verify(public_key,
+                                          sizeof(public_key),
+                                          signed_message,
+                                          sizeof(signed_message) - 2,
+                                          verified_message,
+                                          &verified_message_length);
+    testsuite_fail_unless(status == THEMIS_SUCCESS,
+                          "Secure Message verifies truncated message successfully");
+
+    testsuite_fail_unless(verified_message_length == expected_message_length,
+                          "message length still matches");
+    testsuite_fail_unless(memcmp(verified_message, expected_message, expected_message_length) == 0,
+                          "message content still matches");
+
+    /* You can shave off no more than 2 bytes, though. */
+
+    status = themis_secure_message_verify(public_key,
+                                          sizeof(public_key),
+                                          signed_message,
+                                          sizeof(signed_message) - 3,
+                                          verified_message,
+                                          &verified_message_length);
+    testsuite_fail_unless(status == THEMIS_INVALID_PARAMETER,
+                          "Secure Message notices when message is too truncated");
+
+out:
+    free(verified_message);
+}
+
 void run_secure_message_test(void)
 {
     testsuite_enter_suite("generic secure message");
@@ -1580,4 +1757,8 @@ void run_secure_message_test(void)
     testsuite_run_test(key_validation_test);
     testsuite_run_test(keygen_parameters_ec);
     testsuite_run_test(keygen_parameters_rsa);
+
+    testsuite_enter_suite("secure message: compatibility");
+    testsuite_run_test(secure_message_overlong_ecdsa_signature);
+    testsuite_run_test(secure_message_overlong_ecdsa_verification);
 }
