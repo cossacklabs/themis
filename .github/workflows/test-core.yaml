@@ -195,7 +195,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: Criterion report
-          path: benches/themis/target/criterion
+          path: target/criterion
 
   fuzzing:
     name: AFL fuzzing
