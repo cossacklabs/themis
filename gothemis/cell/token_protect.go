@@ -54,7 +54,7 @@ import (
 //
 // Read more about Token Protect mode here:
 //
-// https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#token-protect-mode
+// https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/#token-protect-mode
 type SecureCellTokenProtect struct {
 	key *keys.SymmetricKey
 }

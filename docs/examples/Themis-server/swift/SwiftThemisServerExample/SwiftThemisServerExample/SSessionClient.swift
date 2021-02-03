@@ -46,7 +46,7 @@ final class SSessionClient {
     
     // ---------------------- IMPORTANT SETUP ---------------------------------------
     // Read how Themis Server works:
-    // https://docs.cossacklabs.com/pages/documentation-themis/#interactive-simulator-themis-server
+    // https://docs.cossacklabs.com/themis/debugging/themis-server/
     
     // You may NEED to re-generate all keys
     
@@ -256,7 +256,7 @@ final class SSessionClient {
     
     fileprivate func checkKeysNotEmpty() {
         // Read how Themis Server works:
-        // https://docs.cossacklabs.com/pages/documentation-themis/#interactive-simulator-themis-server
+        // https://docs.cossacklabs.com/themis/debugging/themis-server/
         
         
         assert(!(kUserId == "<user id>"), "Get user id from https://docs.cossacklabs.com/simulator/interactive/")

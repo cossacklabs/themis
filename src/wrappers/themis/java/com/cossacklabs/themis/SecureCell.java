@@ -103,7 +103,7 @@ import java.nio.charset.StandardCharsets;
  * For example, {@link SecureCell#SealWithKey(SymmetricKey)} constructs Secure Cell in Seal mode
  * using a symmetric key.
  * <p>
- * <a href="https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/">Here you can learn more</a>
+ * <a href="https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/">Here you can learn more</a>
  * about the underlying considerations, limitations, and features of each mode.
  *
  * @since JavaThemis 0.9
@@ -142,7 +142,7 @@ public class SecureCell {
      * use passphrase API instead: {@link SecureCell#SealWithPassphrase(String)}.
      * <p>
      * You can read more about Seal mode
-     * <a href="https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#seal-mode">in documentation</a>.
+     * <a href="https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/#seal-mode">in documentation</a>.
      *
      * @since JavaThemis 0.13
      */
@@ -358,7 +358,7 @@ public class SecureCell {
      * then use {@link SecureCell#TokenProtectWithKey(SymmetricKey)} to construct a Secure Cell.
      * <p>
      * You can read more about Token Protect mode
-     * <a href="https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#token-protect-mode">in documentation</a>.
+     * <a href="https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/#token-protect-mode">in documentation</a>.
      *
      * @since JavaThemis 0.13
      */
@@ -512,7 +512,7 @@ public class SecureCell {
      * supply a different associated context for each encryption invocation with the same key.
      * <p>
      * You can read more about Context Imprint mode
-     * <a href="https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#context-imprint-mode">in documentation</a>.
+     * <a href="https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/#context-imprint-mode">in documentation</a>.
      *
      * @since JavaThemis 0.13
      */
