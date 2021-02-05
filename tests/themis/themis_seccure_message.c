@@ -1628,12 +1628,12 @@ static void secure_message_overlong_ecdsa_signature(void)
      * to themis_secure_message_sign() returns correct message length--possibly
      * shorter than initially measured.
      *
-     * The reason for this length variability is that OpenSSL uses compact
-     * representation for ECDSA signatures, and the resulting signature may
-     * take either 70, 71, or 72 bytes with the current curve used by Themis.
      * During the measurement phase OpenSSL returns the maximum possible length
      * while the actual length is known only after the signature is computed.
      * ECDSA involves random number generation so you can't predict the output.
+     * With current curve selection, the signature can take anywhere between
+     * 8 and 72 bytes, usually something around 70. "I have discovered a truly
+     * remarkable proof thereof, but this comment is too small to contain it."
      *
      * Why is this important? Because some high-level wrappers ignore the real
      * size of the signature and return the initially allocated buffer which
@@ -1645,7 +1645,14 @@ static void secure_message_overlong_ecdsa_signature(void)
      * as add new sample data to secure_message_overlong_ecdsa_verification().
      */
     testsuite_fail_unless(private_key_length == 45, "uses private key of expected length");
-    testsuite_fail_unless((187 <= signed_message_length_actual) && (signed_message_length_actual <= 189),
+    /*
+     * Secure Message header       12 bytes
+     * signed message             105 bytes
+     * signature                8..72 bytes
+     * ------------------------------------
+     *                       125..189 bytes
+     */
+    testsuite_fail_unless((125 <= signed_message_length_actual) && (signed_message_length_actual <= 189),
                           "produces message with expected actual length");
     testsuite_fail_unless(signed_message_length_measured == 189,
                           "output measurement produces expected result");
