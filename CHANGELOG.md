@@ -69,12 +69,12 @@ _Code:_
 
 - **C++**
 
-  - `themispp::secure_message_t` now produces signed messages of optimal length ([#775](https://github.com/cossacklabs/themis/pull/775)).
+  - `themispp::secure_message_t::sign()` output is a bit smaller now ([#775](https://github.com/cossacklabs/themis/pull/775)).
 
 - **Go**
 
   - Error `ErrOverflow` is now deprecated in favor of `ErrOutOfMemory`, new error types were added ([#711](https://github.com/cossacklabs/themis/pull/711)).
-  - `SecureMessage` now produces signed messages of optimal length ([#775](https://github.com/cossacklabs/themis/pull/775)).
+  - `SecureMessage.Sign()` output is a bit smaller now ([#775](https://github.com/cossacklabs/themis/pull/775)).
 
 - **Objective-C**
 
