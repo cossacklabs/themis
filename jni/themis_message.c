@@ -124,7 +124,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
      */
     if (output_length > INT32_MAX) {
         res = THEMIS_NO_MEMORY;
-        return NULL;
+        goto err;
     }
 
     output = (*env)->NewByteArray(env, output_length);
