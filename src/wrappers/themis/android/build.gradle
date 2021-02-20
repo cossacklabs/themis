@@ -73,11 +73,15 @@ android {
     // publishing and bitray upload tasks should not run for ':boringssl' project
     tasks.whenTaskAdded { task ->
         def excludeBoringSSL = [
+            'publish',
+            'publishToMavenLocal',
+            'publishProductionPublicationToMavenRepository',
             'publishProductionPublicationToMavenLocal',
             'generatePomFileForProductionPublication',
             'generateSourceJar',
             'generateJavadoc',
             'generateJavadocJar',
+            'signProductionPublication',
         ]
         if (!excludeBoringSSL.contains(task.name)) {
             task.dependsOn(':boringssl:' + task.name)
