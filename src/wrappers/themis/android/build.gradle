@@ -145,6 +145,30 @@ publishing {
             groupId 'com.cossacklabs.com'
             artifactId 'themis'
             version androidThemisVersion
+            pom {
+                name = 'Themis for Android'
+                description = 'Cross-platform high-level cryptographic library for mobile, web, and server platforms'
+                url = 'https://www.cossacklabs.com/themis/'
+                licenses {
+                    license {
+                        name = 'Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        name = 'Cossack Labs'
+                        email = 'dev@cossacklabs.com'
+                        organization = 'Cossack Labs'
+                        organizationUrl = 'https://www.cossacklabs.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/cossacklabs/themis.git'
+                    developerConnection = 'scm:git:ssh://github.com:cossacklabs/themis.git'
+                    url = 'https://github.com/cossacklabs/themis'
+                }
+            }
         }
     }
 }
