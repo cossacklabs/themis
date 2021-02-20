@@ -135,6 +135,7 @@ task generateJavadocJar(type: Jar) {
 
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 publishing {
     publications {
@@ -182,6 +183,22 @@ publishing {
             }
         }
     }
+}
+
+// Credentials for signing should be set in "~/.gradle/gradle.properties" file.
+// (The global one in your home directory, NOT the one in the project root.)
+//
+//     signing.gnupg.executable=gpg
+//     signing.gnupg.keyName=...
+//     signing.gnupg.passphrase=...
+//
+// Yes, only in that file. Because Gradle says so.
+//
+// https://docs.gradle.org/current/userguide/signing_plugin.html#example_configure_the_gnupgsignatory
+signing {
+    required { gradle.taskGraph.hasTask("publish") }
+    useGpgCmd()
+    sign publishing.publications.Production
 }
 
 bintray {
