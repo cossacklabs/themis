@@ -73,7 +73,6 @@ android {
     // publishing and bitray upload tasks should not run for ':boringssl' project
     tasks.whenTaskAdded { task ->
         def excludeBoringSSL = [
-            'bintrayUpload',
             'publishProductionPublicationToMavenLocal',
             'generatePomFileForProductionPublication',
             'generateSourceJar',
@@ -101,8 +100,8 @@ android {
     }
 }
 
-// Publishing on JCenter requires packages with Java source code and Javadocs.
-// Note that "archiveClassifier" values are important for JCenter.
+// Publishing on Maven Central requires packages with Java source code and Javadocs.
+// Note that "archiveClassifier" values are important for Maven Central.
 
 task generateSourceJar(type: Jar) {
     description = 'Assembles a JAR with Java source code'
@@ -133,7 +132,6 @@ task generateJavadocJar(type: Jar) {
 
 // distribution
 
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
@@ -199,29 +197,4 @@ signing {
     required { gradle.taskGraph.hasTask("publish") }
     useGpgCmd()
     sign publishing.publications.Production
-}
-
-bintray {
-    // Get Bintray credential from environment variable
-    user = System.getenv('BINTRAY_USER') // Get bintray User
-    key = System.getenv('BINTRAY_KEY') // Get bintray API Key from https://bintray.com/profile/edit -> APIKey
-    pkg {
-        repo = 'maven'
-        name = 'themis'
-        userOrg = 'cossacklabs'
-        licenses = ['Apache-2.0']
-        desc = 'Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis has a unified API across 12 platforms, including Python, JavaScript, iOS/macOS, and Java/Android.'
-        websiteUrl = "https://cossacklabs.com/themis/"
-        vcsUrl = 'https://github.com/cossacklabs/themis.git'
-        publish = true
-        version {
-            name = androidThemisVersion
-            released  = new Date()
-            gpg {
-                sign = true
-                passphrase = System.getenv('BINTRAY_GPG_PASSPHRASE')
-            }
-        }
-    }
-    publications = ['Production']
 }
