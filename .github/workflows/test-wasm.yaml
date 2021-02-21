@@ -58,8 +58,8 @@ jobs:
           cd $HOME
           git clone https://github.com/emscripten-core/emsdk.git
           cd $HOME/emsdk
-          ./emsdk install  2.0.9
-          ./emsdk activate 2.0.9
+          ./emsdk install  2.0.13
+          ./emsdk activate 2.0.13
       - name: Check out code
         uses: actions/checkout@v2
         with:
