@@ -34,15 +34,35 @@ public class SecureSession {
 	 * SecureSession state
 	 */
 	public enum State {
-		IDLE, /** < session was just created */
-		NEGOTIATING, /** < key agreement is in progress. No data exchange possible yet. */
-		ESTABLISHED /** < session is secured. Possible to exchange data securely. */
+		/**
+		 * Initial state for newly created Secure Session.
+		 */
+		IDLE,
+		/**
+		 * Key agreement is in progress. Data exchange is not possible yet.
+		 */
+		NEGOTIATING,
+		/**
+		 * Secure Session is established. You may exchange data securely now.
+		 */
+		ESTABLISHED
 	}
 	
 	public enum SessionDataType {
-		NO_DATA, /** < no output data */
-		PROTOCOL_DATA, /** < output is an internal protocol message. Needs to be sent to your peer.*/
-		USER_DATA; /** < output is decrypted user data. It should be handled according to your application flow.*/
+		/**
+		 * No output data.
+		 */
+		NO_DATA,
+		/**
+		 * Output is a Secure Session protocol message.
+		 * Send this data to your peer as is.
+		 */
+		PROTOCOL_DATA,
+		/**
+		 * Output is decrypted user data.
+		 * Pass it to the application for processing.
+		 */
+		USER_DATA;
 
 		public static SessionDataType fromByte(byte src) throws SecureSessionException {
 			switch (src) {
