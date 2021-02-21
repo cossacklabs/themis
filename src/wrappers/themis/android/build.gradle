@@ -67,10 +67,12 @@ android {
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
 
-    // ensure we execute boringssl tasks first
-    // tasks.whenTaskAdded({Task task -> task.dependsOn('boringssl:' + task.name)})
-
-    // publishing and bitray upload tasks should not run for ':boringssl' project
+    // TODO(ilammy, 2021-02-21): improve sanity and make this less brittle
+    // This piece of arcane magick ensures that BoringSSL is built before Android stuff.
+    // However, we also need to ensure that BoringSSL artifacts are NOT published
+    // when JavaThemis is published.
+    // There should be a better way to specify build dependencies, right?
+    // Or at least make it a list of depenedencies to add, not to exclude.
     tasks.whenTaskAdded { task ->
         def excludeBoringSSL = [
             'publish',
@@ -142,6 +144,11 @@ apply plugin: 'signing'
 publishing {
     publications {
         Production(MavenPublication) {
+            // TODO(ilammy, 2021-02-21): depend on release binaries explicitly
+            // It would be nice to have the "publish" task depend on "assembleRelease"
+            // so that you don't have sequence them manually. But the official way for
+            // doing so seems to be way too braindead:
+            // https://developer.android.com/studio/build/maven-publish-plugin
             artifact("build/outputs/aar/android.aar")
             artifact generateSourceJar
             artifact generateJavadocJar
