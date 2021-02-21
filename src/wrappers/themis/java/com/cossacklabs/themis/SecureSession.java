@@ -105,9 +105,9 @@ public class SecureSession {
 	
 	/**
 	 * Creates new SecureSession
-	 * @param your id
-	 * @param your sign PrivateKey
-	 * @param callbacks implementation
+	 * @param id your id
+	 * @param signPrivateKey your sign PrivateKey
+	 * @param callbacks callbacks implementation
 	 * @throws NullArgumentException if `id` is null
 	 * @throws InvalidArgumentException if `id` is empty
 	 * @throws RuntimeException when cannot create session
@@ -131,9 +131,9 @@ public class SecureSession {
 	
 	/**
 	 * Creates new SecureSession
-	 * @param your id
-	 * @param your sign PrivateKey
-	 * @param callbacks implementation
+	 * @param id your id
+	 * @param signPrivateKey your sign PrivateKey
+	 * @param callbacks callbacks implementation
 	 * @throws NullArgumentException if `id` is null
 	 * @throws InvalidArgumentException if `id` is empty
 	 * @throws RuntimeException when cannot create session
@@ -169,7 +169,7 @@ public class SecureSession {
 	
 	/**
 	 * Wraps outgoing data
-	 * @param data to wrap
+	 * @param data data to wrap
 	 * @return wrapped data
 	 * @throws IllegalStateException is the session is already closed
 	 * @throws SecureSessionException when cannot wrap data
@@ -195,7 +195,7 @@ public class SecureSession {
 	
 	/**
 	 * Unwraps incoming data
-	 * @param wrapped data
+	 * @param wrappedData wrapped data
 	 * @return unwrapped data
 	 * @throws IllegalStateException is the session is already closed
 	 * @throws SecureSessionException when cannot unwrap data
@@ -303,8 +303,8 @@ public class SecureSession {
 	
 	/**
 	 * Restores previously saved session
-	 * @param saved session state
-	 * @param callbacks implementation
+	 * @param state saved session state
+	 * @param callbacks callbacks implementation
 	 * @return restored SecureSession
 	 * @throws SecureSessionException when cannot restore session
 	 * @deprecated since JavaThemis 0.13
