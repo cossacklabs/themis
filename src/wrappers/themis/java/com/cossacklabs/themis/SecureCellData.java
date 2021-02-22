@@ -28,8 +28,8 @@ public class SecureCellData {
 	
 	/**
 	 * Creates new SecureCellData
-	 * @param actual protected data
-	 * @param auxiliary data
+	 * @param protectedData actual protected data
+	 * @param additionalData auxiliary data
 	 */
 	public SecureCellData(byte[] protectedData, byte[] additionalData) {
 		this.protectedData = protectedData;
@@ -65,6 +65,7 @@ public class SecureCellData {
 	 * <p>
 	 * This method is equivalent to {@link #getProtectedData()}.
 	 * You are not expected to use it directly, it exists for improved Kotlin API.
+	 * @return protected data.
 	 */
 	public @NotNull byte[] component1() {
 		return this.protectedData;
@@ -75,6 +76,7 @@ public class SecureCellData {
 	 * <p>
 	 * This method is equivalent to {@link #getAdditionalData()}.
 	 * You are not expected to use it directly, it exists for improved Kotlin API.
+	 * @return auxiliary data (may be null).
 	 */
 	public @NotNull byte[] component2() {
 		return this.additionalData;
