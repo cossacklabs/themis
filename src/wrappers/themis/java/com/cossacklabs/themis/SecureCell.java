@@ -602,7 +602,7 @@ public class SecureCell {
 
 	/**
 	 * Creates new SecureCell in specified mode
-	 * @param SecureCell mode
+	 * @param mode SecureCell mode
 	 * @throws InvalidArgumentException when unsupported mode is specified
 	 * @deprecated since JavaThemis 0.13
 	 * <p>
@@ -625,7 +625,7 @@ public class SecureCell {
 	
 	/**
 	 * Creates new SecureCell with default master key in SEAL mode
-	 * @param default master key
+	 * @param key master key
 	 * @deprecated since JavaThemis 0.13
 	 * <p>
 	 * Use {@link #SealWithKey(byte[])} instead.
@@ -637,8 +637,8 @@ public class SecureCell {
 	
 	/**
 	 * Creates new SecureCell with default master key in specified mode
-	 * @param default master key
-	 * @param SecureCell mode
+	 * @param key master key
+	 * @param mode SecureCell mode
 	 * @throws InvalidArgumentException when unsupported mode is specified
 	 * @deprecated since JavaThemis 0.13
 	 * <p>
@@ -657,7 +657,7 @@ public class SecureCell {
 	
 	/**
 	 * Creates new SecureCell with default master password in SEAL mode
-	 * @param default master password
+	 * @param password master password
 	 * @deprecated since JavaThemis 0.13
 	 * <p>
 	 * This method is <strong>not secure</strong> when used with short passphrases or passwords.
@@ -676,8 +676,8 @@ public class SecureCell {
 	
 	/**
 	 * Creates new SecureCell with default master password in specified mode
-	 * @param default master password
-	 * @param SecureCell mode
+	 * @param password master password
+	 * @param mode Secure Cell mode
 	 * @throws InvalidArgumentException when unsupported mode is specified
 	 * @deprecated since JavaThemis 0.13
 	 * <p>
@@ -783,7 +783,7 @@ public class SecureCell {
 	
 	/**
 	 * Protects data with specified master key
-	 * @param master key to use for protecting data
+	 * @param key master key to use for protecting data
 	 * @param context to which protected data will be bound (may be null)
 	 * @param data to protect
 	 * @return SecureCellData with protected data
@@ -816,7 +816,7 @@ public class SecureCell {
 	
 	/**
 	 * Protects data with specified master password
-	 * @param master password to use for protecting data
+	 * @param password master password to use for protecting data
 	 * @param context to which protected data will be bound (may be null)
 	 * @param data to protect
 	 * @return SecureCellData with protected data
@@ -852,7 +852,7 @@ public class SecureCell {
 	
 	/**
 	 * Decrypts and verifies protected data
-	 * @param master key
+	 * @param key master key
 	 * @param context to which protected data will is bound (may be null, must be same as provided in protect call)
 	 * @param protectedData to verify
 	 * @return original data
@@ -887,7 +887,7 @@ public class SecureCell {
 	
 	/**
 	 * Decrypts and verifies protected data
-	 * @param master password
+	 * @param password master password
 	 * @param context to which protected data will is bound (may be null, must be same as provided in protect call)
 	 * @param protectedData to verify
 	 * @return original data

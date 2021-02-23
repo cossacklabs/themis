@@ -46,7 +46,7 @@ public abstract class KeypairGenerator {
 	
 	/**
 	 * Generates new keypair
-	 * @param key type (EC or RSA)
+	 * @param keyType type of the keypair to generate (EC or RSA)
 	 * @return new Keypair
 	 * @throws KeyGenerationException when cannot generate a keypair
 	 * @throws InvalidArgumentException when keyType is invalid
