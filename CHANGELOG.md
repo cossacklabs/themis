@@ -79,6 +79,15 @@ _Code:_
 - **Java / Kotlin**
 
   - `SecureMessage#sign()` output is a bit smaller now ([#777](https://github.com/cossacklabs/themis/pull/777)).
+  - JavaThemis for **Android** is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786)).
+
+    Add the Maven Central repository to your `build.gradle`:
+
+    ```groovy
+    repositories {
+        mavenCentral()
+    }
+    ```
 
 - **Objective-C**
 
@@ -127,6 +136,7 @@ _Infrastructure:_
 - Started phasing out CircleCI in favour of GitHub Actions ([#709](https://github.com/cossacklabs/themis/pull/709), [#755](https://github.com/cossacklabs/themis/pull/755)).
 - Themis is now fuzzed with `afl++` ([#766](https://github.com/cossacklabs/themis/pull/766)).
 - Secure Message is now covered with fuzz testing ([#762](https://github.com/cossacklabs/themis/pull/762)).
+- JavaThemis for **Android** is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786)).
 
 
 ## [0.13.6](https://github.com/cossacklabs/themis/releases/tag/0.13.6), November 23rd 2020
