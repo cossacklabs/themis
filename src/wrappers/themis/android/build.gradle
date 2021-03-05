@@ -9,11 +9,6 @@ buildscript {
         // on this Gradle version until it breaks or we *need* an upgrade:
         classpath 'com.android.tools.build:gradle:3.2.1'
 
-        // Two necessary plugins for uploading .aar to bintray
-        // from: https://android.jlelse.eu/how-to-distribute-android-library-in-a-convenient-way-d43fb68304a7
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.1'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
-
         // Kotlin plugin for Android
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
