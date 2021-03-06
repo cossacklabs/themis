@@ -79,13 +79,29 @@ _Code:_
 - **Java / Kotlin**
 
   - `SecureMessage#sign()` output is a bit smaller now ([#777](https://github.com/cossacklabs/themis/pull/777)).
-  - JavaThemis for **Android** is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786)).
+  - JavaThemis is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
 
     Add the Maven Central repository to your `build.gradle`:
 
     ```groovy
     repositories {
         mavenCentral()
+    }
+    ```
+
+    For Android, use this dependency:
+
+    ```groovy
+    dependencies {
+        implementation 'com.cossacklabs.com:themis:0.14.0'
+    }
+    ```
+
+    For desktop systems use this one:
+
+    ```groovy
+    dependencies {
+        implementation 'com.cossacklabs.com:java-themis:0.14.0'
     }
     ```
 
@@ -136,7 +152,7 @@ _Infrastructure:_
 - Started phasing out CircleCI in favour of GitHub Actions ([#709](https://github.com/cossacklabs/themis/pull/709), [#755](https://github.com/cossacklabs/themis/pull/755)).
 - Themis is now fuzzed with `afl++` ([#766](https://github.com/cossacklabs/themis/pull/766)).
 - Secure Message is now covered with fuzz testing ([#762](https://github.com/cossacklabs/themis/pull/762)).
-- JavaThemis for **Android** is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786)).
+- JavaThemis is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
 
 
 ## [0.13.6](https://github.com/cossacklabs/themis/releases/tag/0.13.6), November 23rd 2020
