@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D0A527E25FA2E7000C49E55 /* cl-openssl in Frameworks */ = {isa = PBXBuildFile; productRef = 6D0A527D25FA2E7000C49E55 /* cl-openssl */; };
+		6D0A528025FA2E8300C49E55 /* cl-openssl in Frameworks */ = {isa = PBXBuildFile; productRef = 6D0A527F25FA2E8300C49E55 /* cl-openssl */; };
 		9F00E8E2223C1A3300EC1EF3 /* objcthemis.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24B5223A8FA8005CB63A /* objcthemis.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F00E8E3223C1A3300EC1EF3 /* scell_context_imprint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24B9223A8FA8005CB63A /* scell_context_imprint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F00E8E4223C1A3300EC1EF3 /* scell_seal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24BC223A8FA8005CB63A /* scell_seal.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -519,6 +521,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D0A528025FA2E8300C49E55 /* cl-openssl in Frameworks */,
 				9F00E941223C1AFA00EC1EF3 /* openssl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -527,6 +530,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D0A527E25FA2E7000C49E55 /* cl-openssl in Frameworks */,
 				9FBD853D223BFB5E009EAEB3 /* openssl.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -947,6 +951,9 @@
 			dependencies = (
 			);
 			name = "Themis (macOS)";
+			packageProductDependencies = (
+				6D0A527F25FA2E8300C49E55 /* cl-openssl */,
+			);
 			productName = "Themis (macOS)";
 			productReference = 9F00E8D7223C197900EC1EF3 /* themis.framework */;
 			productType = "com.apple.product-type.framework";
@@ -964,6 +971,9 @@
 			dependencies = (
 			);
 			name = "Themis (iOS)";
+			packageProductDependencies = (
+				6D0A527D25FA2E7000C49E55 /* cl-openssl */,
+			);
 			productName = Themis;
 			productReference = 9F4A24A1223A8D7F005CB63A /* themis.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1077,6 +1087,9 @@
 				Base,
 			);
 			mainGroup = 738B81052239809D00A9947C;
+			packageReferences = (
+				6D0A527C25FA2E7000C49E55 /* XCRemoteSwiftPackageReference "openssl-apple" */,
+			);
 			productRefGroup = 738B81102239809D00A9947C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1874,6 +1887,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6D0A527C25FA2E7000C49E55 /* XCRemoteSwiftPackageReference "openssl-apple" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/julepka/openssl-apple";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.1080202;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6D0A527D25FA2E7000C49E55 /* cl-openssl */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6D0A527C25FA2E7000C49E55 /* XCRemoteSwiftPackageReference "openssl-apple" */;
+			productName = "cl-openssl";
+		};
+		6D0A527F25FA2E8300C49E55 /* cl-openssl */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6D0A527C25FA2E7000C49E55 /* XCRemoteSwiftPackageReference "openssl-apple" */;
+			productName = "cl-openssl";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 738B81062239809D00A9947C /* Project object */;
 }
