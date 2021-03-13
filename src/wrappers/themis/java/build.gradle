@@ -56,3 +56,105 @@ compileTestJava {
     options.deprecation = true // log deprecated API usage
     options.encoding = "ASCII" // allow only ASCII in source code
 }
+
+// Publishing on Maven Central requires packages with Java source code and Javadocs.
+// Note that "archiveClassifier" values are important for Maven Central.
+
+task generateSourceJar(type: Jar) {
+    description = 'Assembles a JAR with Java source code'
+    archiveClassifier = 'sources'
+    from sourceSets.main.java.srcDirs
+    // "You cannot place a Planck generator container within another Planck generator,
+    // as it will cause a graviton harmonics chain reaction whose end cannot be determined."
+    // No, seriously, sometimes Gradle eats much more glue than it usually does.
+    // When packing the current directory -- sourceSets.main.java.srcDirs --
+    // into a JAR, it will just go ahead and pack the "build" directory too,
+    // along the very JAR it's currently constructing. RIP disk space.
+    excludes = ['build']
+}
+
+task generateJavadoc(type: Javadoc) {
+    description = 'Generates Javadocs from the source code'
+    source = sourceSets.main.java.srcDirs
+    title = 'Themis API Reference'
+    // Javadoc chokes on non-Java files so exclude non-sources from the source dir.
+    excludes = ['build', 'build.gradle']
+    // Make runtime dependencies available to Javadoc (important for annotations)
+    classpath = project.sourceSets.main.runtimeClasspath
+}
+
+task generateJavadocJar(type: Jar) {
+    description = 'Assembles a JAR with Javadocs'
+    archiveClassifier = 'javadoc'
+    from generateJavadoc.destinationDir
+    dependsOn 'generateJavadoc'
+}
+
+// Maven Central distribution
+
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+publishing {
+    publications {
+        Production(MavenPublication) {
+            from components.java
+            artifact generateSourceJar
+            artifact generateJavadocJar
+            groupId 'com.cossacklabs.com'
+            artifactId 'java-themis'
+            version javaThemisVersion
+            pom {
+                name = 'JavaThemis'
+                description = 'Cross-platform high-level cryptographic library for mobile, web, and server platforms'
+                url = 'https://www.cossacklabs.com/themis/'
+                licenses {
+                    license {
+                        name = 'Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        name = 'Cossack Labs'
+                        email = 'dev@cossacklabs.com'
+                        organization = 'Cossack Labs'
+                        organizationUrl = 'https://www.cossacklabs.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/cossacklabs/themis.git'
+                    developerConnection = 'scm:git:ssh://github.com:cossacklabs/themis.git'
+                    url = 'https://github.com/cossacklabs/themis'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            credentials {
+                // Use API tokens instead of actual username and password
+                // https://oss.sonatype.org/#profile;User%20Token
+                username System.getenv('OSSRH_USERNAME')
+                password System.getenv('OSSRH_PASSWORD')
+            }
+        }
+    }
+}
+
+// Credentials for signing should be set in "~/.gradle/gradle.properties" file.
+// (The global one in your home directory, NOT the one in the project root.)
+//
+//     signing.gnupg.executable=gpg
+//     signing.gnupg.keyName=...
+//     signing.gnupg.passphrase=...
+//
+// Yes, only in that file. Because Gradle says so.
+//
+// https://docs.gradle.org/current/userguide/signing_plugin.html#example_configure_the_gnupgsignatory
+signing {
+    required { gradle.taskGraph.hasTask("publish") }
+    useGpgCmd()
+    sign publishing.publications.Production
+}
