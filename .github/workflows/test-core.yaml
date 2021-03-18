@@ -347,3 +347,53 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ./coverage.info
+
+  msys2:
+    name: MSYS2 environment
+    runs-on: windows-latest
+    env:
+      SOTER_KDF_RUN_LONG_TESTS: yes
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Install MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          install: >-
+            base-devel tar git gcc make
+            libopenssl>=1.1.1
+            openssl-devel>=1.1.1
+            mingw-w64-x86_64-nsis
+      # Git, I know you're only trying to help, but MSYS can work with
+      # UNIX line endings just fine. In fact, "makepkg" *requires* them.
+      # So don't be smart: just fetch the files as they are.
+      - name: Use UNIX line endings
+        shell: bash
+        run: git config --global core.autocrlf input
+      - name: Check out code
+        uses: actions/checkout@v2
+      # TODO: if there are users of the BoringSSL flavor on Windows,
+      # we should be testing that one as well
+      - name: Build Themis Core
+        run: make prepare_tests_basic
+      - name: Run test suite
+        run: make test
+      # TODO: it would be nice to test the installer too
+      - name: Build Themis installer
+        run: make nsis_installer
+      - name: Build Themis packages
+        run: makepkg -p PKGBUILD.MSYS2
+      - name: Install Themis packages
+        run: pacman -U --noconfirm themis-*.pkg.*
+      - name: Try building examples
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/c/session_buffer_test
+          echo "Secure Session: buffer interface"
+          cc -o session_buffer_test session_buffer_test.c -lthemis
+          ./session_buffer_test
+
+          cd $GITHUB_WORKSPACE/docs/examples/c/ssession_test
+          echo "Secure Session: socket interface"
+          cc -o session_test client.c server.c session_test.c -lthemis -pthread
+          ./session_test
