@@ -20,7 +20,7 @@ const ThemisErrorCode = themis.ThemisErrorCode
 
 function expectError(errorCode) {
     return function(error) {
-        if (error instanceof themis.ThemisError) {
+        if (error.errorCode) {
             return error.errorCode == errorCode
         }
         return false
@@ -60,17 +60,6 @@ describe('wasm-themis', function() {
             assert.deepStrictEqual(thisPair.privateKey, thatPair.privateKey)
             assert.deepStrictEqual(thisPair.publicKey, thatPair.publicKey)
         })
-        it('validates key kinds', function() {
-            let thatPair = new themis.KeyPair()
-            // Arguably, we could accept inverted order, as long as the keys
-            // are not both public or private. But let's be strict for now.
-            assert.throws(
-                function() {
-                    new themis.KeyPair(thatPair.publicKey, thatPair.privateKey)
-                },
-                expectError(ThemisErrorCode.INVALID_PARAMETER)
-            )
-        })
         it('handles type mismatches', function() {
             let keyPair = new themis.KeyPair()
             generallyInvalidArguments.forEach(function(invalid) {
@@ -92,16 +81,16 @@ describe('wasm-themis', function() {
             })
             it('check strict types', function() {
                 let key = new themis.KeyPair().publicKey
-                assert.deepStrictEqual(key, new themis.PublicKey(new Uint8Array(key)))
-                assert.deepStrictEqual(key, new themis.PublicKey(key.buffer))
-                assert.throws(() => new themis.PublicKey(new Int8Array(key)))
+                assert.deepStrictEqual(key, new themis.PublicKey(new Uint8Array(key.data)))
+                assert.deepStrictEqual(key, new themis.PublicKey(key.data.buffer))
+                assert.throws(() => new themis.PublicKey(new Int8Array(key.data)))
             })
             it('do not accept strings', function() {
                 let base64key = 'UkVDMgAAAC1JhwRrAPIGB33HHFmhjzn8lIE/nsW6cG+TCI3jhYJb+D/Gnwvf'
                 assert.throws(() => new themis.PrivateKey(base64key))
             })
             it('detect data corruption', function() {
-                let key = new themis.KeyPair().privateKey
+                let key = new themis.KeyPair().privateKey.data
                 key[20] = ~key[20]
                 assert.throws(() => new themis.PrivateKey(key))
             })
@@ -123,7 +112,7 @@ describe('wasm-themis', function() {
             it('wraps existing keys', function() {
                 let buffer = new Uint8Array([1, 2, 3, 4])
                 let key = new themis.SymmetricKey(buffer)
-                assert.deepEqual(key, buffer)
+                assert.deepEqual(key.data, buffer)
             })
             it('fails with empty buffer', function() {
                 assert.throws(() => new themis.SymmetricKey(new Uint8Array()),
