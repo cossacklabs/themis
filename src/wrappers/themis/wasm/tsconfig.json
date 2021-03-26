@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "declaration": true,
-    "target": "es5",
+    "target": "es6",
     "lib": [ "es2015", "dom" ],
     "module": "commonjs",
     "strict": true,

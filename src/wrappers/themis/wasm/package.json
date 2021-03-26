@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "test": "ts-mocha -p tsconfig.json test/test.js",
-    "tsc-es5": "tsc && cp src/libthemis* src/.npmignore dist/",
+    "tsc-es5": "tsc -m es5 --outDir dist && cp src/libthemis* src/.npmignore dist/",
     "tsc-es6": "tsc -m es6 --outDir dist-es6 && cp src/libthemis* src/.npmignore dist-es6/",
     "prepare": "npm run tsc-es5 && npm run tsc-es6"
   },
