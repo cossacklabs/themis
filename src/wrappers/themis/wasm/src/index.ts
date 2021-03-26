@@ -12,34 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * @file
- * WasmThemis module entry point.
- */
+import context, { YourOwnEmscriptenModule } from "./context";
+import libthemisFn from "./libthemis.js";
 
-const libthemis = require('./libthemis.js')
+export { SecureCellSeal } from "./secure_cell_seal";
+export { SecureCellTokenProtect } from "./secure_cell_token_protect";
+export { SecureCellContextImprint } from "./secure_cell_context_imprint";
+export { ThemisError, ThemisErrorCode } from "./themis_error";
+export {
+  SecureMessageSign,
+  SecureMessage,
+  SecureMessageVerify,
+} from "./secure_message";
+export { SecureSession } from "./secure_session";
+export { KeyPair, PrivateKey, PublicKey, SymmetricKey } from "./secure_keygen";
+export { SecureComparator } from "./secure_comparator";
 
-Object.assign(module.exports
-  , require('./secure_cell.js')
-  , require('./secure_comparator.js')
-  , require('./secure_keygen.js')
-  , require('./secure_message.js')
-  , require('./secure_session.js')
-  , require('./themis_error.js')
-)
+export const initialize = async (wasmPath: string) => {
+  const libthemis = await libthemisFn({
+    onRuntimeInitialized: function () {},
+    locateFile: function () {
+      return wasmPath;
+    },
+  });
 
-let resolveInitialization
-let initializationPromise = new Promise(function(resolve) {
-    resolveInitialization = resolve
-})
-
-/**
- * Themis initialization promise.
- *
- * Resolved when Themis is loaded and ready to use.
- */
-module.exports.initialized = initializationPromise
-
-libthemis["onRuntimeInitialized"] = function() {
-    resolveInitialization()
-}
+  context.libthemis = libthemis as YourOwnEmscriptenModule;
+  return libthemis;
+};

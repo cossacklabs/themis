@@ -17,195 +17,264 @@
  * Themis Secure Cell (Token Protect mode).
  */
 
-const libthemis = require('./libthemis.js')
-const errors = require('./themis_error.js')
-const utils = require('./utils.js')
+import themisContext from "./context";
+import { ThemisError, ThemisErrorCode } from "./themis_error";
+import {
+  coerceToBytes,
+  heapFree,
+  heapGetArray,
+  heapPutArray,
+  heapAlloc,
+} from "./utils";
 
-const cryptosystem_name = 'SecureCellTokenProtect'
+const cryptosystem_name = "SecureCellTokenProtect";
 
-const ThemisError = errors.ThemisError
-const ThemisErrorCode = errors.ThemisErrorCode
+export class SecureCellTokenProtect {
+  private masterKey: Uint8Array;
+  constructor(masterKey: Uint8Array) {
+    masterKey = coerceToBytes(masterKey);
+    if (masterKey.length == 0) {
+      throw new ThemisError(
+        cryptosystem_name,
+        ThemisErrorCode.INVALID_PARAMETER,
+        "master key must be not empty"
+      );
+    }
+    this.masterKey = masterKey;
+  }
 
-module.exports = class SecureCellTokenProtect {
-    constructor(masterKey) {
-        masterKey = utils.coerceToBytes(masterKey)
-        if (masterKey.length == 0) {
-            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
-                'master key must be not empty')
-        }
-        this.masterKey = masterKey
+  /**
+   * Makes a new Secure Cell in Token Protect mode with given master key.
+   *
+   * @param masterKey     non-empty array of master key bytes (Buffer or Uint8Array)
+   *
+   * @returns a new instance of SecureCellTokenProtect.
+   *
+   * @throws TypeError if the master key is not a byte buffer.
+   * @throws ThemisError if the master key is empty.
+   */
+  static withKey(masterKey: Uint8Array) {
+    return new SecureCellTokenProtect(masterKey);
+  }
+
+  encrypt(message: Uint8Array) {
+    message = coerceToBytes(message);
+    if (message.length == 0) {
+      throw new ThemisError(
+        cryptosystem_name,
+        ThemisErrorCode.INVALID_PARAMETER,
+        "message must be not empty"
+      );
     }
 
-    /**
-     * Makes a new Secure Cell in Token Protect mode with given master key.
-     *
-     * @param masterKey     non-empty array of master key bytes (Buffer or Uint8Array)
-     *
-     * @returns a new instance of SecureCellTokenProtect.
-     *
-     * @throws TypeError if the master key is not a byte buffer.
-     * @throws ThemisError if the master key is empty.
-     */
-    static withKey(masterKey) {
-        return new SecureCellTokenProtect(masterKey)
+    let context;
+    if (arguments.length > 1 && arguments[1] !== null) {
+      context = coerceToBytes(arguments[1]);
+    } else {
+      context = new Uint8Array();
     }
 
-    encrypt(message) {
-        message = utils.coerceToBytes(message)
-        if (message.length == 0) {
-            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
-                'message must be not empty')
-        }
+    let status;
+    /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
+    /// allocate() with ALLOC_STACK cannot be called multiple times,
+    /// but we need two size_t values so allocate an array, of a sort.
+    let result_length_ptr = themisContext.libthemis!!.allocate(
+      new ArrayBuffer(2 * 4),
+      themisContext.libthemis!!.ALLOC_STACK
+    );
+    let token_length_ptr = result_length_ptr + 4;
+    let master_key_ptr,
+      message_ptr,
+      context_ptr,
+      result_ptr,
+      result_length,
+      token_ptr,
+      token_length;
+    try {
+      master_key_ptr = heapAlloc(this.masterKey.length);
+      message_ptr = heapAlloc(message.length);
+      context_ptr = heapAlloc(context.length);
+      if (!master_key_ptr || !message_ptr || !context_ptr) {
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY);
+      }
 
-        let context
-        if (arguments.length > 1 && arguments[1] !== null) {
-            context = utils.coerceToBytes(arguments[1])
-        } else {
-            context = new Uint8Array()
-        }
+      heapPutArray(this.masterKey, master_key_ptr);
+      heapPutArray(message, message_ptr);
+      heapPutArray(context, context_ptr);
 
-        let status
-        /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        /// allocate() with ALLOC_STACK cannot be called multiple times,
-        /// but we need two size_t values so allocate an array, of a sort.
-        let result_length_ptr = libthemis.allocate(new ArrayBuffer(2 * 4), libthemis.ALLOC_STACK)
-        let token_length_ptr = result_length_ptr + 4
-        let master_key_ptr, message_ptr, context_ptr, result_ptr, result_length, token_ptr, token_length
-        try {
-            master_key_ptr = utils.heapAlloc(this.masterKey.length)
-            message_ptr = utils.heapAlloc(message.length)
-            context_ptr = utils.heapAlloc(context.length)
-            if (!master_key_ptr || !message_ptr || !context_ptr) {
-                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
-            }
+      status = themisContext.libthemis!!._themis_secure_cell_encrypt_token_protect(
+        master_key_ptr,
+        this.masterKey.length,
+        context_ptr,
+        context.length,
+        message_ptr,
+        message.length,
+        null,
+        token_length_ptr,
+        null,
+        result_length_ptr
+      );
+      if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
+        throw new ThemisError(cryptosystem_name, status);
+      }
 
-            utils.heapPutArray(this.masterKey, master_key_ptr)
-            utils.heapPutArray(message, message_ptr)
-            utils.heapPutArray(context, context_ptr)
+      result_length = themisContext.libthemis!!.getValue(
+        result_length_ptr,
+        "i32"
+      );
+      token_length = themisContext.libthemis!!.getValue(
+        token_length_ptr,
+        "i32"
+      );
+      result_ptr = heapAlloc(result_length);
+      token_ptr = heapAlloc(token_length);
+      if (!result_ptr || !token_ptr) {
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY);
+      }
 
-            status = libthemis._themis_secure_cell_encrypt_token_protect(
-                master_key_ptr, this.masterKey.length,
-                context_ptr, context.length,
-                message_ptr, message.length,
-                null, token_length_ptr,
-                null, result_length_ptr
-            )
-            if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(cryptosystem_name, status)
-            }
+      status = themisContext.libthemis!!._themis_secure_cell_encrypt_token_protect(
+        master_key_ptr,
+        this.masterKey.length,
+        context_ptr,
+        context.length,
+        message_ptr,
+        message.length,
+        token_ptr,
+        token_length_ptr,
+        result_ptr,
+        result_length_ptr
+      );
+      if (status != ThemisErrorCode.SUCCESS) {
+        throw new ThemisError(cryptosystem_name, status);
+      }
 
-            result_length = libthemis.getValue(result_length_ptr, 'i32')
-            token_length = libthemis.getValue(token_length_ptr, 'i32')
-            result_ptr = utils.heapAlloc(result_length)
-            token_ptr = utils.heapAlloc(token_length)
-            if (!result_ptr || !token_ptr) {
-                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
-            }
+      result_length = themisContext.libthemis!!.getValue(
+        result_length_ptr,
+        "i32"
+      );
+      token_length = themisContext.libthemis!!.getValue(
+        token_length_ptr,
+        "i32"
+      );
 
-            status = libthemis._themis_secure_cell_encrypt_token_protect(
-                master_key_ptr, this.masterKey.length,
-                context_ptr, context.length,
-                message_ptr, message.length,
-                token_ptr, token_length_ptr,
-                result_ptr, result_length_ptr
-            )
-            if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(cryptosystem_name, status)
-            }
+      return {
+        data: heapGetArray(result_ptr, result_length),
+        token: heapGetArray(token_ptr, token_length),
+      };
+    } finally {
+      heapFree(master_key_ptr, this.masterKey.length);
+      heapFree(message_ptr, message.length);
+      heapFree(context_ptr, context.length);
+      heapFree(result_ptr, result_length);
+      heapFree(token_ptr, token_length);
+    }
+  }
 
-            result_length = libthemis.getValue(result_length_ptr, 'i32')
-            token_length = libthemis.getValue(token_length_ptr, 'i32')
-
-            return {
-                data: utils.heapGetArray(result_ptr, result_length),
-                token: utils.heapGetArray(token_ptr, token_length)
-            }
-        }
-        finally {
-            utils.heapFree(master_key_ptr, this.masterKey.length)
-            utils.heapFree(message_ptr, message.length)
-            utils.heapFree(context_ptr, context.length)
-            utils.heapFree(result_ptr, result_length)
-            utils.heapFree(token_ptr, token_length)
-        }
+  decrypt(message: Uint8Array, token: Uint8Array) {
+    message = coerceToBytes(message);
+    if (message.length == 0) {
+      throw new ThemisError(
+        cryptosystem_name,
+        ThemisErrorCode.INVALID_PARAMETER,
+        "message must be not empty"
+      );
     }
 
-    decrypt(message, token) {
-        message = utils.coerceToBytes(message)
-        if (message.length == 0) {
-            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
-                'message must be not empty')
-        }
-
-        token = utils.coerceToBytes(token)
-        if (token.length == 0) {
-            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
-                'token must be not empty')
-        }
-
-        let context
-        if (arguments.length > 2 && arguments[2] !== null) {
-            context = utils.coerceToBytes(arguments[2])
-        } else {
-            context = new Uint8Array()
-        }
-
-        let status
-        /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
-        let master_key_ptr, message_ptr, context_ptr, token_ptr, result_ptr, result_length
-        try {
-            master_key_ptr = utils.heapAlloc(this.masterKey.length)
-            message_ptr = utils.heapAlloc(message.length)
-            context_ptr = utils.heapAlloc(context.length)
-            token_ptr = utils.heapAlloc(token.length)
-            if (!master_key_ptr || !message_ptr || !context_ptr || !token_ptr) {
-                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
-            }
-
-            utils.heapPutArray(this.masterKey, master_key_ptr)
-            utils.heapPutArray(message, message_ptr)
-            utils.heapPutArray(context, context_ptr)
-            utils.heapPutArray(token, token_ptr)
-
-            status = libthemis._themis_secure_cell_decrypt_token_protect(
-                master_key_ptr, this.masterKey.length,
-                context_ptr, context.length,
-                message_ptr, message.length,
-                token_ptr, token.length,
-                null, result_length_ptr
-            )
-            if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(cryptosystem_name, status)
-            }
-
-            result_length = libthemis.getValue(result_length_ptr, 'i32')
-            result_ptr = utils.heapAlloc(result_length)
-            if (!result_ptr) {
-                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
-            }
-
-            status = libthemis._themis_secure_cell_decrypt_token_protect(
-                master_key_ptr, this.masterKey.length,
-                context_ptr, context.length,
-                message_ptr, message.length,
-                token_ptr, token.length,
-                result_ptr, result_length_ptr
-            )
-            if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(cryptosystem_name, status)
-            }
-
-            result_length = libthemis.getValue(result_length_ptr, 'i32')
-
-            return utils.heapGetArray(result_ptr, result_length)
-        }
-        finally {
-            utils.heapFree(master_key_ptr, this.masterKey.length)
-            utils.heapFree(message_ptr, message.length)
-            utils.heapFree(context_ptr, context.length)
-            utils.heapFree(result_ptr, result_length)
-            utils.heapFree(token_ptr, token.length)
-        }
+    token = coerceToBytes(token);
+    if (token.length == 0) {
+      throw new ThemisError(
+        cryptosystem_name,
+        ThemisErrorCode.INVALID_PARAMETER,
+        "token must be not empty"
+      );
     }
+
+    let context;
+    if (arguments.length > 2 && arguments[2] !== null) {
+      context = coerceToBytes(arguments[2]);
+    } else {
+      context = new Uint8Array();
+    }
+
+    let status;
+    /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
+    let result_length_ptr = themisContext.libthemis!!.allocate(
+      new ArrayBuffer(4),
+      themisContext.libthemis!!.ALLOC_STACK
+    );
+    let master_key_ptr,
+      message_ptr,
+      context_ptr,
+      token_ptr,
+      result_ptr,
+      result_length;
+    try {
+      master_key_ptr = heapAlloc(this.masterKey.length);
+      message_ptr = heapAlloc(message.length);
+      context_ptr = heapAlloc(context.length);
+      token_ptr = heapAlloc(token.length);
+      if (!master_key_ptr || !message_ptr || !context_ptr || !token_ptr) {
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY);
+      }
+
+      heapPutArray(this.masterKey, master_key_ptr);
+      heapPutArray(message, message_ptr);
+      heapPutArray(context, context_ptr);
+      heapPutArray(token, token_ptr);
+
+      status = themisContext.libthemis!!._themis_secure_cell_decrypt_token_protect(
+        master_key_ptr,
+        this.masterKey.length,
+        context_ptr,
+        context.length,
+        message_ptr,
+        message.length,
+        token_ptr,
+        token.length,
+        null,
+        result_length_ptr
+      );
+      if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
+        throw new ThemisError(cryptosystem_name, status);
+      }
+
+      result_length = themisContext.libthemis!!.getValue(
+        result_length_ptr,
+        "i32"
+      );
+      result_ptr = heapAlloc(result_length);
+      if (!result_ptr) {
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY);
+      }
+
+      status = themisContext.libthemis!!._themis_secure_cell_decrypt_token_protect(
+        master_key_ptr,
+        this.masterKey.length,
+        context_ptr,
+        context.length,
+        message_ptr,
+        message.length,
+        token_ptr,
+        token.length,
+        result_ptr,
+        result_length_ptr
+      );
+      if (status != ThemisErrorCode.SUCCESS) {
+        throw new ThemisError(cryptosystem_name, status);
+      }
+
+      result_length = themisContext.libthemis!!.getValue(
+        result_length_ptr,
+        "i32"
+      );
+
+      return heapGetArray(result_ptr, result_length);
+    } finally {
+      heapFree(master_key_ptr, this.masterKey.length);
+      heapFree(message_ptr, message.length);
+      heapFree(context_ptr, context.length);
+      heapFree(result_ptr, result_length);
+      heapFree(token_ptr, token.length);
+    }
+  }
 }

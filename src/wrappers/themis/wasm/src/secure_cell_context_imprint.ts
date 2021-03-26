@@ -17,186 +17,244 @@
  * Themis Secure Cell (Context Imprint mode).
  */
 
-const libthemis = require('./libthemis.js')
-const errors = require('./themis_error.js')
-const utils = require('./utils.js')
+import themisContext from "./context";
+import { ThemisError, ThemisErrorCode } from "./themis_error";
+import {
+  coerceToBytes,
+  heapFree,
+  heapGetArray,
+  heapPutArray,
+  heapAlloc,
+} from "./utils";
 
-const cryptosystem_name = 'SecureCellContextImprint'
+const cryptosystem_name = "SecureCellContextImprint";
 
-const ThemisError = errors.ThemisError
-const ThemisErrorCode = errors.ThemisErrorCode
+export class SecureCellContextImprint {
+  private masterKey: Uint8Array;
 
-module.exports = class SecureCellContextImprint {
-    constructor(masterKey) {
-        masterKey = utils.coerceToBytes(masterKey)
-        if (masterKey.length == 0) {
-            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
-                'master key must be not empty')
-        }
-        this.masterKey = masterKey
+  constructor(masterKey: Uint8Array) {
+    masterKey = coerceToBytes(masterKey);
+    if (masterKey.length == 0) {
+      throw new ThemisError(
+        cryptosystem_name,
+        ThemisErrorCode.INVALID_PARAMETER,
+        "master key must be not empty"
+      );
+    }
+    this.masterKey = masterKey;
+  }
+
+  /**
+   * Makes a new Secure Cell in Context Imprint mode with given master key.
+   *
+   * @param masterKey     non-empty array of master key bytes (Buffer or Uint8Array)
+   *
+   * @returns a new instance of SecureCellContextImprint.
+   *
+   * @throws TypeError if the master key is not a byte buffer.
+   * @throws ThemisError if the master key is empty.
+   */
+  static withKey(masterKey: Uint8Array) {
+    return new SecureCellContextImprint(masterKey);
+  }
+
+  encrypt(message: Uint8Array, context: Uint8Array) {
+    message = coerceToBytes(message);
+    if (message.length == 0) {
+      throw new ThemisError(
+        cryptosystem_name,
+        ThemisErrorCode.INVALID_PARAMETER,
+        "message must be not empty"
+      );
     }
 
-    /**
-     * Makes a new Secure Cell in Context Imprint mode with given master key.
-     *
-     * @param masterKey     non-empty array of master key bytes (Buffer or Uint8Array)
-     *
-     * @returns a new instance of SecureCellContextImprint.
-     *
-     * @throws TypeError if the master key is not a byte buffer.
-     * @throws ThemisError if the master key is empty.
-     */
-    static withKey(masterKey) {
-        return new SecureCellContextImprint(masterKey)
+    // Other Secure Cell kinds have optional context, so the users are likely to omit
+    // the context here as well. Let's produce a more helpful error message instead
+    // of an error about 'undefined' being invalid byte buffer type.
+    if (context === undefined) {
+      throw new ThemisError(
+        cryptosystem_name,
+        ThemisErrorCode.INVALID_PARAMETER,
+        "SecureCellContextImprint requires context for encrypting"
+      );
     }
 
-    encrypt(message, context) {
-        message = utils.coerceToBytes(message)
-        if (message.length == 0) {
-            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
-                'message must be not empty')
-        }
-
-        // Other Secure Cell kinds have optional context, so the users are likely to omit
-        // the context here as well. Let's produce a more helpful error message instead
-        // of an error about 'undefined' being invalid byte buffer type.
-        if (context === undefined) {
-            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
-                'SecureCellContextImprint requires context for encrypting')
-        }
-
-        context = utils.coerceToBytes(context)
-        if (context.length == 0) {
-            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
-                'context must be not empty')
-        }
-
-        let status
-        /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
-        let master_key_ptr, message_ptr, context_ptr, result_ptr, result_length
-        try {
-            master_key_ptr = utils.heapAlloc(this.masterKey.length)
-            message_ptr = utils.heapAlloc(message.length)
-            context_ptr = utils.heapAlloc(context.length)
-            if (!master_key_ptr || !message_ptr || !context_ptr) {
-                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
-            }
-
-            utils.heapPutArray(this.masterKey, master_key_ptr)
-            utils.heapPutArray(message, message_ptr)
-            utils.heapPutArray(context, context_ptr)
-
-            status = libthemis._themis_secure_cell_encrypt_context_imprint(
-                master_key_ptr, this.masterKey.length,
-                message_ptr, message.length,
-                context_ptr, context.length,
-                null, result_length_ptr
-            )
-            if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(cryptosystem_name, status)
-            }
-
-            result_length = libthemis.getValue(result_length_ptr, 'i32')
-            result_ptr = utils.heapAlloc(result_length)
-            if (!result_ptr) {
-                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
-            }
-
-            status = libthemis._themis_secure_cell_encrypt_context_imprint(
-                master_key_ptr, this.masterKey.length,
-                message_ptr, message.length,
-                context_ptr, context.length,
-                result_ptr, result_length_ptr
-            )
-            if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(cryptosystem_name, status)
-            }
-
-            result_length = libthemis.getValue(result_length_ptr, 'i32')
-
-            return utils.heapGetArray(result_ptr, result_length)
-        }
-        finally {
-            utils.heapFree(master_key_ptr, this.masterKey.length)
-            utils.heapFree(message_ptr, message.length)
-            utils.heapFree(context_ptr, context.length)
-            utils.heapFree(result_ptr, result_length)
-        }
+    context = coerceToBytes(context);
+    if (context.length == 0) {
+      throw new ThemisError(
+        cryptosystem_name,
+        ThemisErrorCode.INVALID_PARAMETER,
+        "context must be not empty"
+      );
     }
 
-    decrypt(message, context) {
-        message = utils.coerceToBytes(message)
-        if (message.length == 0) {
-            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
-                'message must be not empty')
-        }
+    let status;
+    /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
+    let result_length_ptr = themisContext.libthemis!!.allocate(
+      new ArrayBuffer(4),
+      themisContext.libthemis!!.ALLOC_STACK
+    );
+    let master_key_ptr, message_ptr, context_ptr, result_ptr, result_length;
+    try {
+      master_key_ptr = heapAlloc(this.masterKey.length);
+      message_ptr = heapAlloc(message.length);
+      context_ptr = heapAlloc(context.length);
+      if (!master_key_ptr || !message_ptr || !context_ptr) {
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY);
+      }
 
-        // Other Secure Cell kinds have optional context, so the users are likely to omit
-        // the context here as well. Let's produce a more helpful error message instead
-        // of an error about 'undefined' being invalid byte buffer type.
-        if (context === undefined) {
-            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
-                'SecureCellContextImprint requires context for decrypting')
-        }
+      heapPutArray(this.masterKey, master_key_ptr);
+      heapPutArray(message, message_ptr);
+      heapPutArray(context, context_ptr);
 
-        context = utils.coerceToBytes(context)
-        if (context.length == 0) {
-            throw new ThemisError(cryptosystem_name, ThemisErrorCode.INVALID_PARAMETER,
-                'context must be not empty')
-        }
+      status = themisContext.libthemis!!._themis_secure_cell_encrypt_context_imprint(
+        master_key_ptr,
+        this.masterKey.length,
+        message_ptr,
+        message.length,
+        context_ptr,
+        context.length,
+        null,
+        result_length_ptr
+      );
+      if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
+        throw new ThemisError(cryptosystem_name, status);
+      }
 
-        let status
-        /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
-        let master_key_ptr, message_ptr, context_ptr, result_ptr, result_length
-        try {
-            master_key_ptr = utils.heapAlloc(this.masterKey.length)
-            message_ptr = utils.heapAlloc(message.length)
-            context_ptr = utils.heapAlloc(context.length)
-            if (!master_key_ptr || !message_ptr || !context_ptr) {
-                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
-            }
+      result_length = themisContext.libthemis!!.getValue(
+        result_length_ptr,
+        "i32"
+      );
+      result_ptr = heapAlloc(result_length);
+      if (!result_ptr) {
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY);
+      }
 
-            utils.heapPutArray(this.masterKey, master_key_ptr)
-            utils.heapPutArray(message, message_ptr)
-            utils.heapPutArray(context, context_ptr)
+      status = themisContext.libthemis!!._themis_secure_cell_encrypt_context_imprint(
+        master_key_ptr,
+        this.masterKey.length,
+        message_ptr,
+        message.length,
+        context_ptr,
+        context.length,
+        result_ptr,
+        result_length_ptr
+      );
+      if (status != ThemisErrorCode.SUCCESS) {
+        throw new ThemisError(cryptosystem_name, status);
+      }
 
-            status = libthemis._themis_secure_cell_decrypt_context_imprint(
-                master_key_ptr, this.masterKey.length,
-                message_ptr, message.length,
-                context_ptr, context.length,
-                null, result_length_ptr
-            )
-            if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
-                throw new ThemisError(cryptosystem_name, status)
-            }
+      result_length = themisContext.libthemis!!.getValue(
+        result_length_ptr,
+        "i32"
+      );
 
-            result_length = libthemis.getValue(result_length_ptr, 'i32')
-            result_ptr = utils.heapAlloc(result_length)
-            if (!result_ptr) {
-                throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY)
-            }
-
-            status = libthemis._themis_secure_cell_decrypt_context_imprint(
-                master_key_ptr, this.masterKey.length,
-                message_ptr, message.length,
-                context_ptr, context.length,
-                result_ptr, result_length_ptr
-            )
-            if (status != ThemisErrorCode.SUCCESS) {
-                throw new ThemisError(cryptosystem_name, status)
-            }
-
-            result_length = libthemis.getValue(result_length_ptr, 'i32')
-
-            return utils.heapGetArray(result_ptr, result_length)
-        }
-        finally {
-            utils.heapFree(master_key_ptr, this.masterKey.length)
-            utils.heapFree(message_ptr, message.length)
-            utils.heapFree(context_ptr, context.length)
-            utils.heapFree(result_ptr, result_length)
-        }
+      return heapGetArray(result_ptr, result_length);
+    } finally {
+      heapFree(master_key_ptr, this.masterKey.length);
+      heapFree(message_ptr, message.length);
+      heapFree(context_ptr, context.length);
+      heapFree(result_ptr, result_length);
     }
+  }
+
+  decrypt(message: Uint8Array, context: Uint8Array) {
+    message = coerceToBytes(message);
+    if (message.length == 0) {
+      throw new ThemisError(
+        cryptosystem_name,
+        ThemisErrorCode.INVALID_PARAMETER,
+        "message must be not empty"
+      );
+    }
+
+    // Other Secure Cell kinds have optional context, so the users are likely to omit
+    // the context here as well. Let's produce a more helpful error message instead
+    // of an error about 'undefined' being invalid byte buffer type.
+    if (context === undefined) {
+      throw new ThemisError(
+        cryptosystem_name,
+        ThemisErrorCode.INVALID_PARAMETER,
+        "SecureCellContextImprint requires context for decrypting"
+      );
+    }
+
+    context = coerceToBytes(context);
+    if (context.length == 0) {
+      throw new ThemisError(
+        cryptosystem_name,
+        ThemisErrorCode.INVALID_PARAMETER,
+        "context must be not empty"
+      );
+    }
+
+    let status;
+    /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
+    let result_length_ptr = themisContext.libthemis!!.allocate(
+      new ArrayBuffer(4),
+      themisContext.libthemis!!.ALLOC_STACK
+    );
+    let master_key_ptr, message_ptr, context_ptr, result_ptr, result_length;
+    try {
+      master_key_ptr = heapAlloc(this.masterKey.length);
+      message_ptr = heapAlloc(message.length);
+      context_ptr = heapAlloc(context.length);
+      if (!master_key_ptr || !message_ptr || !context_ptr) {
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY);
+      }
+
+      heapPutArray(this.masterKey, master_key_ptr);
+      heapPutArray(message, message_ptr);
+      heapPutArray(context, context_ptr);
+
+      status = themisContext.libthemis!!._themis_secure_cell_decrypt_context_imprint(
+        master_key_ptr,
+        this.masterKey.length,
+        message_ptr,
+        message.length,
+        context_ptr,
+        context.length,
+        null,
+        result_length_ptr
+      );
+      if (status != ThemisErrorCode.BUFFER_TOO_SMALL) {
+        throw new ThemisError(cryptosystem_name, status);
+      }
+
+      result_length = themisContext.libthemis!!.getValue(
+        result_length_ptr,
+        "i32"
+      );
+      result_ptr = heapAlloc(result_length);
+      if (!result_ptr) {
+        throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY);
+      }
+
+      status = themisContext.libthemis!!._themis_secure_cell_decrypt_context_imprint(
+        master_key_ptr,
+        this.masterKey.length,
+        message_ptr,
+        message.length,
+        context_ptr,
+        context.length,
+        result_ptr,
+        result_length_ptr
+      );
+      if (status != ThemisErrorCode.SUCCESS) {
+        throw new ThemisError(cryptosystem_name, status);
+      }
+
+      result_length = themisContext.libthemis!!.getValue(
+        result_length_ptr,
+        "i32"
+      );
+
+      return heapGetArray(result_ptr, result_length);
+    } finally {
+      heapFree(master_key_ptr, this.masterKey.length);
+      heapFree(message_ptr, message.length);
+      heapFree(context_ptr, context.length);
+      heapFree(result_ptr, result_length);
+    }
+  }
 }
