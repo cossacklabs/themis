@@ -42,17 +42,27 @@ export enum KeyKind {
   EC_PUBLIC = 4,
 }
 
-export class PrivateKey extends Uint8Array {
+export class PrivateKey {
+  data: Uint8Array
   constructor(array: Uint8Array | ArrayBuffer) {
-    super(coerceToBytes(array));
-    validateKeyBuffer(this, [KeyKind.EC_PRIVATE, KeyKind.RSA_PRIVATE]);
+    this.data = coerceToBytes(array);
+    validateKeyBuffer(this.data, [KeyKind.EC_PRIVATE, KeyKind.RSA_PRIVATE]);
+  }
+
+  get length() {
+    return this.data.length
   }
 }
 
-export class PublicKey extends Uint8Array {
+export class PublicKey {
+  data: Uint8Array
   constructor(array: Uint8Array | ArrayBuffer) {
-    super(coerceToBytes(array));
-    validateKeyBuffer(this, [KeyKind.EC_PUBLIC, KeyKind.RSA_PUBLIC]);
+    this.data = coerceToBytes(array);
+    validateKeyBuffer(this.data, [KeyKind.EC_PUBLIC, KeyKind.RSA_PUBLIC]);
+  }
+
+  get length() {
+    return this.data.length
   }
 }
 
@@ -107,25 +117,21 @@ export class KeyPair {
   private _publicKey: PublicKey;
   private _privateKey: PrivateKey;
 
-  constructor() {
-    if (arguments.length == 2) {
-      this._privateKey = new PrivateKey(arguments[0]);
-      this._publicKey = new PublicKey(arguments[1]);
-      return;
-    }
-
-    if (arguments.length == 0) {
+  constructor(privateKey?: PrivateKey, publicKey?: PublicKey) {
+    if (arguments.length === 2) {
+      this._privateKey = new PrivateKey(privateKey?.data!!); // Throw TypeError when passing null
+      this._publicKey = new PublicKey(publicKey?.data!!);
+    } else if (arguments.length === 0) {
       let keyPair = generateECKeyPair();
       this._privateKey = new PrivateKey(keyPair.private);
       this._publicKey = new PublicKey(keyPair.public);
-      return;
+    } else {
+      throw new ThemisError(
+        cryptosystem_name,
+        ThemisErrorCode.INVALID_PARAMETER,
+        "invalid argument count: expected either no arguments, or private and public keys"
+      );
     }
-
-    throw new ThemisError(
-      cryptosystem_name,
-      ThemisErrorCode.INVALID_PARAMETER,
-      "invalid argument count: expected either no arguments, or private and public keys"
-    );
   }
 
   get publicKey(): PublicKey {
@@ -137,7 +143,7 @@ export class KeyPair {
   }
 }
 
-const generateECKeyPair = () => {
+const generateECKeyPair = (): {private: Uint8Array, public: Uint8Array} => {
   var err;
 
   // C API uses "size_t" for lengths, it's defined as "i32" on Emscripten
@@ -197,16 +203,21 @@ const generateECKeyPair = () => {
   }
 };
 
-export class SymmetricKey extends Uint8Array {
+export class SymmetricKey {
+  data: Uint8Array
   constructor(array: Uint8Array | ArrayBuffer = generateSymmetricKey()) {
-    if (array.byteLength == 0) {
+    if (array.byteLength === 0) {
       throw new ThemisError(
         "SymmetricKey",
         ThemisErrorCode.INVALID_PARAMETER,
         "key must not be empty"
       );
     }
-    super(coerceToBytes(array));
+    this.data = coerceToBytes(array);
+  }
+
+  get length() {
+    return this.data.length
   }
 }
 

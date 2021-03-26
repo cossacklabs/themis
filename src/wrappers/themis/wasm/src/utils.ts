@@ -103,7 +103,7 @@ export const heapPutArray = (array: number[] | Uint8Array, buffer: number) => {
 /**
  * Move an array from Emscripten heap into JavaScript heap.
  */
-export const heapGetArray = (buffer: number, length: number) =>
+export const heapGetArray = (buffer: number, length: number): Uint8Array =>
   context.libthemis!!.HEAPU8.slice(buffer, buffer + length);
 
 /**
