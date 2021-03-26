@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import context, { YourOwnEmscriptenModule } from "./context";
+import context from "./context";
 import libthemisFn from "./libthemis.js";
 
 export { SecureCellSeal } from "./secure_cell_seal";
@@ -29,13 +29,12 @@ export { KeyPair, PrivateKey, PublicKey, SymmetricKey } from "./secure_keygen";
 export { SecureComparator } from "./secure_comparator";
 
 export const initialize = async (wasmPath?: string) => {
-  const libthemis = await libthemisFn({
+  context.libthemis = await libthemisFn({
     onRuntimeInitialized: function () {},
     locateFile: wasmPath ? function () {
       return wasmPath;
     } : undefined,
   });
 
-  context.libthemis = libthemis as YourOwnEmscriptenModule;
-  return libthemis;
+  return context.libthemis;
 };
