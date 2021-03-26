@@ -1,11 +1,23 @@
 {
   "name": "wasm-themis",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "description": "Themis is a convenient cryptographic library for data protection.",
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist-es6/index.js",
+  "files": [
+    "dist/*.js",
+    "dist/*.ts",
+    "dist/libthemis.wasm",
+    "dist-es6/*.js",
+    "dist-es6/*.ts",
+    "dist-es6/libthemis.wasm"
+  ],
   "scripts": {
     "test": "ts-mocha -p tsconfig.json test/test.js",
-    "build": "esbuild src/index.ts --bundle --platform=node --sourcemap --minify --outfile=dist/index.js"
+    "tsc-es5": "tsc && cp src/libthemis* src/.npmignore dist/",
+    "tsc-es6": "tsc -m es6 --outDir dist-es6 && cp src/libthemis* src/.npmignore dist-es6/",
+    "prepare": "npm run tsc-es5 && npm run tsc-es6"
   },
   "repository": {
     "type": "git",
@@ -28,7 +40,6 @@
     "@types/expect": "^24.3.0",
     "@types/mocha": "^8.2.2",
     "@types/node": "^14.14.36",
-    "esbuild": "^0.10.1",
     "mocha": "^7.1.1",
     "ts-mocha": "^8.0.0",
     "typescript": "^4.2.3"
