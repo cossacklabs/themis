@@ -28,12 +28,12 @@ export { SecureSession } from "./secure_session";
 export { KeyPair, PrivateKey, PublicKey, SymmetricKey } from "./secure_keygen";
 export { SecureComparator } from "./secure_comparator";
 
-export const initialize = async (wasmPath: string) => {
+export const initialize = async (wasmPath?: string) => {
   const libthemis = await libthemisFn({
     onRuntimeInitialized: function () {},
-    locateFile: function () {
+    locateFile: wasmPath ? function () {
       return wasmPath;
-    },
+    } : undefined,
   });
 
   context.libthemis = libthemis as YourOwnEmscriptenModule;
