@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const themis = require('..')
+const themis = require('../src/index.ts')
 const assert = require('assert')
 const { performance } = require('perf_hooks')
 
@@ -36,14 +36,14 @@ function measureTime(thunk) {
 
 describe('wasm-themis', function() {
     let generallyInvalidArguments = [
-        null, undefined, 'string',
+        null, 'string',
         new Int16Array([1, 2, 3]), [4, 5, 6],
         () => new Uint8Array([27, 18, 28, 18, 28]),
         { value: [3, 14, 15, 92, 6] }
     ]
     describe('initialization', function() {
         it('resolves "initialized" promise', function(done) {
-            themis.initialized.then(function() {
+            themis.initialize().then(function() {
                 done()
             })
         })
