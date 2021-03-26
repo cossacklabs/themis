@@ -24,6 +24,8 @@
   "homepage": "https://www.cossacklabs.com/themis/",
   "dependencies": {},
   "devDependencies": {
-    "mocha": "^7.1.1"
+    "esbuild": "^0.10.1",
+    "mocha": "^7.1.1",
+    "typescript": "^4.2.3"
   }
 }
