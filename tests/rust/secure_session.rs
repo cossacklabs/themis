@@ -660,14 +660,14 @@ fn panic_in_status_change() {
 // MockTransport implementation
 //
 
-type GetPublicKeyForID = Box<dyn FnMut(&[u8]) -> Option<EcdsaPublicKey>>;
+type GetPublicKeyForId = Box<dyn FnMut(&[u8]) -> Option<EcdsaPublicKey>>;
 type SendData = Box<dyn FnMut(&[u8]) -> Result<usize, TransportError>>;
 type ReceiveData = Box<dyn FnMut(&mut [u8]) -> Result<usize, TransportError>>;
 type StateChanged = Box<dyn FnMut(SecureSessionState)>;
 
 #[derive(Default)]
 struct MockTransport {
-    impl_get_public_key_for_id: Option<GetPublicKeyForID>,
+    impl_get_public_key_for_id: Option<GetPublicKeyForId>,
     impl_send_data: Option<SendData>,
     impl_receive_data: Option<ReceiveData>,
     impl_state_changed: Option<StateChanged>,
