@@ -21,7 +21,7 @@ const ThemisErrorCode = themis.ThemisErrorCode
 function expectError(errorCode) {
     return function(error) {
         if (error.errorCode) {
-            return error.errorCode == errorCode
+            return error.errorCode === errorCode
         }
         return false
     }
