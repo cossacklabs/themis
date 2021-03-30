@@ -60,6 +60,17 @@ describe('wasm-themis', function() {
             assert.deepStrictEqual(thisPair.privateKey, thatPair.privateKey)
             assert.deepStrictEqual(thisPair.publicKey, thatPair.publicKey)
         })
+        it('validates key kinds', function() {
+            let thatPair = new themis.KeyPair()
+            // Arguably, we could accept inverted order, as long as the keys
+            // are not both public or private. But let's be strict for now.
+            assert.throws(
+                function() {
+                    new themis.KeyPair(thatPair.publicKey, thatPair.privateKey)
+                },
+                expectError(ThemisErrorCode.INVALID_PARAMETER)
+            )
+        })
         it('handles type mismatches', function() {
             let keyPair = new themis.KeyPair()
             generallyInvalidArguments.forEach(function(invalid) {
