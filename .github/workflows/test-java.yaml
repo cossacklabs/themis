@@ -51,6 +51,9 @@ jobs:
           make all themis_jni
           sudo make install themis_jni_install
       - name: Build and test JavaThemis
+        # This step tends to randomly hang up. Use a shorter timeout here
+        # instead of the default 6-hour one.
+        timeout-minutes: 5
         # Set native library search path for Java explicitly since most
         # distribution-provided JVMs do not look there by default.
         run: |
@@ -66,11 +69,17 @@ jobs:
         with:
           submodules: true
       - name: Build Themis
+        # This step tends to randomly hang up. Use a shorter timeout here
+        # instead of the default 6-hour one.
+        timeout-minutes: 30
         run: ./gradlew --no-daemon :android:assembleDebug
       # This works reliably only in macOS runners which have HAXM available.
       # Ubuntu runners do not have KVM enabled, modern x86 emulators do not
       # work without KVM, and ARM emulator is abysmally slow.
       - name: Run test suite
+        # This step tends to randomly hang up. Use a shorter timeout here
+        # instead of the default 6-hour one.
+        timeout-minutes: 15
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29

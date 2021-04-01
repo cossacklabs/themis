@@ -149,6 +149,9 @@ jobs:
 
       - name: Test examples (Secure Session)
         if: always()
+        # This step tends to randomly hang up. Use a shorter timeout here
+        # instead of the default 6-hour one.
+        timeout-minutes: 5
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/python
 
