@@ -131,6 +131,7 @@ _Code:_
 - **Rust**
 
   - Dropped `libthemis-src` crate support and removed the `vendored` feature. RustThemis wrapper now requires Themis Core to be installed in the system ([#691](https://github.com/cossacklabs/themis/pull/691)).
+  - Updated `zeroize` depedency to 1.x version. Rust 1.47 or newer is now required ([#799](https://github.com/cossacklabs/themis/pull/799)).
 
 - **Swift**
 
