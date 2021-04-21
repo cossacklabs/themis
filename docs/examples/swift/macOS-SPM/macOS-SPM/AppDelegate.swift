@@ -12,38 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import UIKit
+import Cocoa
 import themis
 
-@UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+@NSApplicationMain
+class AppDelegate: NSObject, NSApplicationDelegate {
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         //
         // We don't do UI. Please look into debug console to see the results.
         //
 
-         // generate key from pre-defined string
-         print("Using key from pre-defined string")
-         let fixedKey = Data(base64Encoded: "UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg", options: .ignoreUnknownCharacters)!
-        
-         // Secure Cell:
-         runExampleSecureCellSealMode(masterKeyData: fixedKey)
-         runExampleSecureCellTokenProtectMode(masterKeyData: fixedKey)
-         runExampleSecureCellImprint(masterKeyData: fixedKey)
+        // generate key from pre-defined string
+        print("Using key from pre-defined string")
+        let fixedKey = Data(base64Encoded: "UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg", options: .ignoreUnknownCharacters)!
+
+        // Secure Cell:
+        runExampleSecureCellSealMode(masterKeyData: fixedKey)
+        runExampleSecureCellTokenProtectMode(masterKeyData: fixedKey)
+        runExampleSecureCellImprint(masterKeyData: fixedKey)
          
-         // generate key from key generator
-         print("Using key from TSGenerateSymmetricKey")
-         let generatedKey = TSGenerateSymmetricKey()!
+        // generate key from key generator
+        print("Using key from TSGenerateSymmetricKey")
+        let generatedKey = TSGenerateSymmetricKey()!
          
-         // Secure Cell:
-         runExampleSecureCellSealMode(masterKeyData: generatedKey)
-         runExampleSecureCellTokenProtectMode(masterKeyData: generatedKey)
-         runExampleSecureCellImprint(masterKeyData: generatedKey)
-        
+        // Secure Cell:
+        runExampleSecureCellSealMode(masterKeyData: generatedKey)
+        runExampleSecureCellTokenProtectMode(masterKeyData: generatedKey)
+        runExampleSecureCellImprint(masterKeyData: generatedKey)
+         
         // Secure Cell with passphrase
         runExampleSecureCellWithPassphrase()
-        
+
         runExampleGeneratingKeys()
         runExampleReadingKeysFromFile()
 
@@ -51,12 +51,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         runExampleSecureMessageSignVerify()
 
         runExampleSecureComparator()
-
-        return true
     }
 
     // MARK: - Secure Cell
-    
+
     func runExampleSecureCellSealMode(masterKeyData: Data) {
         print("----------------------------------", #function)
         guard let cellSeal: TSCellSeal = TSCellSeal(key: masterKeyData) else {
@@ -101,7 +99,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         var encryptedMessage = TSCellTokenEncryptedResult()
         do {
-            // context is optional parameter and may be omitted
+            // context is optional parameter and may be ignored
             encryptedMessage = try cellToken.encrypt(message.data(using: .utf8)!,
                                                      context: context.data(using: .utf8)!)
             print("encryptedMessage.encrypted = \(encryptedMessage.encrypted)")
@@ -190,16 +188,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
     }
-    
+
     // MARK: - Key Generation
     func runExampleGeneratingKeys() {
         runExampleGeneratingAsymKeys()
         runExampleGeneratingSymKeys()
     }
     
-
-    // MARK: - Key Generation and Loading
-
+    
+    // MARK: - RSA/EC
     func runExampleGeneratingAsymKeys() {
         print("----------------------------------", #function)
 
@@ -223,7 +220,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("EC privateKey = \(privateKeyEC)")
         print("RSA publicKey = \(publicKeyEC)")
     }
-    
+
     func runExampleGeneratingSymKeys() {
         print("----------------------------------", #function)
         
@@ -242,7 +239,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let decryptedMessage = String(data: decrypted!, encoding: .utf8)
         print("Cell decrypted content \(decryptedMessage!)")
     }
-
+    
+    // MARK: - Keys from file
+    
     // Sometimes you will need to read keys from files
     func runExampleReadingKeysFromFile() {
         print("----------------------------------", #function)
@@ -331,50 +330,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func runExampleSecureMessageSignVerify() {
         print("----------------------------------", #function)
-
+        
         // base64 encoded keys:
         // private key
         // public key
-
+        
         let publicKeyString: String = "VUVDMgAAAC2ELbj5Aue5xjiJWW3P2KNrBX+HkaeJAb+Z4MrK0cWZlAfpBUql"
         let privateKeyString: String = "UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR"
-
+        
         guard let publicKey: Data = Data(base64Encoded: publicKeyString,
-                                               options: .ignoreUnknownCharacters),
+                                         options: .ignoreUnknownCharacters),
             let privateKey: Data = Data(base64Encoded: privateKeyString,
-                                              options: .ignoreUnknownCharacters) else {
-                                                print("Error occurred during base64 encoding", #function)
-                                                return
+                                        options: .ignoreUnknownCharacters) else {
+                                            print("Error occurred during base64 encoding", #function)
+                                            return
         }
-
+        
         // ---------- signing ----------------
         // use private key
         
         let signer: TSMessage = TSMessage.init(inSignVerifyModeWithPrivateKey: privateKey,
                                                peerPublicKey: nil)!
-
+        
         let message: String = "I had a problem so I though to use Java. Now I have a ProblemFactory."
-
+        
         var signedMessage: Data = Data()
         do {
             signedMessage = try signer.wrap(message.data(using: .utf8))
             print("signedMessage = \(signedMessage)")
-
+            
         } catch let error as NSError {
             print("Error occurred while signing \(error)", #function)
             return
         }
-
+        
         // ---------- verification ----------------
         // use public key
         let verifier = TSMessage.init(inSignVerifyModeWithPrivateKey: nil,
                                       peerPublicKey: publicKey)!
-
+        
         do {
             let verifiedMessage: Data = try verifier.unwrapData(signedMessage)
             let resultString: String = String(data: verifiedMessage, encoding: .utf8)!
             print("verifiedMessage ->\n\(resultString)")
-
+            
         } catch let error as NSError {
             print("Error occurred while verifing \(error)", #function)
             return
