@@ -37,9 +37,10 @@ jobs:
       matrix:
         node-version:
           - 8.x   # legacy
-          - 10.x  # old LTS
-          - 12.x  # current LTS
-          - 14.x  # current stable
+          - 10.x  # legacy
+          - 12.x  # old LTS
+          - 14.x  # current LTS
+          - 16.x  # current stable
       fail-fast: false
     steps:
       - name: Install system dependencies

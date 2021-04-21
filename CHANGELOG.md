@@ -119,6 +119,7 @@ _Code:_
 - **Node.js**
 
   - `SecureSession` constructor now throws an exception when given incorrect key type ([#698](https://github.com/cossacklabs/themis/pull/698)).
+  - Node.js v16 is now supported ([#801](https://github.com/cossacklabs/themis/pull/801)).
 
 - **Python**
 
@@ -142,6 +143,7 @@ _Code:_
 - **WebAssembly**
 
   - Updated Emscripten toolchain to the latest version ([#760](https://github.com/cossacklabs/themis/pull/760)).
+  - Node.js v16 is now supported ([#801](https://github.com/cossacklabs/themis/pull/801)).
 
 _Infrastructure:_
 
