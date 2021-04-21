@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "themis",
+        "repositoryURL": "https://github.com/julepka/themis",
+        "state": {
+          "branch": null,
+          "revision": "8bb38e19fddaef489cbead527410b3e3e45aeda7",
+          "version": "2.2.1"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
