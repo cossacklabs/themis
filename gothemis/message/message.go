@@ -38,22 +38,22 @@ static bool get_message_size(const void *priv, size_t priv_len, const void *publ
 	return THEMIS_BUFFER_TOO_SMALL == res;
 }
 
-static bool process(const void *priv, size_t priv_len, const void *public, size_t pub_len, const void *message, size_t message_len, int mode, void *out, size_t out_len)
+static bool process(const void *priv, size_t priv_len, const void *public, size_t pub_len, const void *message, size_t message_len, int mode, void *out, size_t *out_len)
 {
 	themis_status_t res = THEMIS_NOT_SUPPORTED;
 
 	switch (mode) {
 	case SecureMessageEncrypt:
-		res = themis_secure_message_encrypt(priv, priv_len, public, pub_len, message, message_len, out, &out_len);
+		res = themis_secure_message_encrypt(priv, priv_len, public, pub_len, message, message_len, out, out_len);
 		break;
 	case SecureMessageDecrypt:
-		res = themis_secure_message_decrypt(priv, priv_len, public, pub_len, message, message_len, out, &out_len);
+		res = themis_secure_message_decrypt(priv, priv_len, public, pub_len, message, message_len, out, out_len);
 		break;
 	case SecureMessageSign:
-		res = themis_secure_message_sign(priv, priv_len, message, message_len, out, &out_len);
+		res = themis_secure_message_sign(priv, priv_len, message, message_len, out, out_len);
 		break;
 	case SecureMessageVerify:
-		res = themis_secure_message_verify(public, pub_len, message, message_len, out, &out_len);
+		res = themis_secure_message_verify(public, pub_len, message, message_len, out, out_len);
 		break;
 	}
 
@@ -158,7 +158,7 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		C.size_t(len(message)),
 		C.int(mode),
 		unsafe.Pointer(&output[0]),
-		outputLength)) {
+		&outputLength)) {
 		switch mode {
 		case secureMessageEncrypt:
 			return nil, ErrEncryptMessage
@@ -173,7 +173,7 @@ func messageProcess(private *keys.PrivateKey, peerPublic *keys.PublicKey, messag
 		}
 	}
 
-	return output, nil
+	return output[:outputLength], nil
 }
 
 // Wrap encrypts the provided message.

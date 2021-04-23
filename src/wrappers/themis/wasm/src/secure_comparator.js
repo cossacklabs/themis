@@ -106,7 +106,7 @@ class SecureComparator {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let message_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let message_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let message_ptr, message_length
         try {
             status = libthemis._secure_comparator_begin_compare(this.comparatorPtr,
@@ -143,7 +143,7 @@ class SecureComparator {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let reply_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let reply_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let request_ptr, reply_ptr, reply_length
         try {
             request_ptr = utils.heapAlloc(request.length)

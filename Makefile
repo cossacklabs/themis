@@ -221,10 +221,16 @@ CFLAGS += -O2 -g
 # so they almost always use stack and need the frame pointer anyway.
 CFLAGS += -fno-omit-frame-pointer
 # Enable runtime stack canaries for functions to guard for buffer overflows.
+# FIXME(ilammy, 2020-10-29): enable stack canaries for WasmThemis too
+# Currently, stack protector is not supported by the "upstream" flavor
+# of Emscripten toolchain. Tracking issue is here:
+# https://github.com/emscripten-core/emscripten/issues/9780
+ifndef IS_EMSCRIPTEN
 ifeq (yes,$(call supported,-fstack-protector-strong))
 CFLAGS += -fstack-protector-strong
 else
 CFLAGS += -fstack-protector
+endif
 endif
 # Enable miscellaneous compile-time checks in standard library usage.
 CFLAGS += -D_FORTIFY_SOURCE=2

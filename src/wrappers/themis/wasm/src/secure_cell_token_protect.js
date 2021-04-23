@@ -66,8 +66,10 @@ module.exports = class SecureCellTokenProtect {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
-        let token_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        /// allocate() with ALLOC_STACK cannot be called multiple times,
+        /// but we need two size_t values so allocate an array, of a sort.
+        let result_length_ptr = libthemis.allocate(new ArrayBuffer(2 * 4), libthemis.ALLOC_STACK)
+        let token_length_ptr = result_length_ptr + 4
         let master_key_ptr, message_ptr, context_ptr, result_ptr, result_length, token_ptr, token_length
         try {
             master_key_ptr = utils.heapAlloc(this.masterKey.length)
@@ -150,7 +152,7 @@ module.exports = class SecureCellTokenProtect {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let result_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let master_key_ptr, message_ptr, context_ptr, token_ptr, result_ptr, result_length
         try {
             master_key_ptr = utils.heapAlloc(this.masterKey.length)

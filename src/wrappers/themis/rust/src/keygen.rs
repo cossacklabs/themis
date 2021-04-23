@@ -24,7 +24,7 @@
 //!
 //! [`SecureMessage`]: ../secure_message/index.html
 //! [`SecureSession`]: ../secure_session/index.html
-//! [key-management]: https://github.com/cossacklabs/themis/wiki/Key-management
+//! [key-management]: https://docs.cossacklabs.com/themis/crypto-theory/key-management/
 //!
 //! # Examples
 //!

@@ -49,7 +49,7 @@ import (
 //
 // Read more about Seal mode here:
 //
-// https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#seal-mode
+// https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/#seal-mode
 type SecureCellSeal struct {
 	key *keys.SymmetricKey
 }

@@ -30,7 +30,7 @@ public class SecureMessage {
 	
 	/**
 	 * Creates new SecureMessage with specified PrivateKey
-	 * @param your own PrivateKey
+	 * @param privateKey your own PrivateKey
 	 * @throws NullArgumentException when privateKey is null
 	 */
 	public SecureMessage(PrivateKey privateKey) {
@@ -44,7 +44,7 @@ public class SecureMessage {
 
 	/**
 	 * Creates new SecureMessage with default peer PublicKey (can be used only for signature verification)
-	 * @param default peer PublicKey
+	 * @param peerPublicKey peer PublicKey
 	 * @throws NullArgumentException when peerPublicKey is null
 	 */
 	public SecureMessage(PublicKey peerPublicKey) {
@@ -58,8 +58,8 @@ public class SecureMessage {
 	
 	/**
 	 * Creates new SecureMessage with specified PrivateKey and default peer PublicKey
-	 * @param your own PrivateKey
-	 * @param default peer PublicKey
+	 * @param privateKey your own PrivateKey
+	 * @param peerPublicKey peer PublicKey
 	 * @throws NullArgumentException when privateKey or peerPublicKey is null
 	 */
 	public SecureMessage(PrivateKey privateKey, PublicKey peerPublicKey) {
@@ -84,8 +84,8 @@ public class SecureMessage {
 
 	/**
 	 * Wraps message for peer
-	 * @param message to wrap
-	 * @param receiver's PublicKey
+	 * @param message message to wrap
+	 * @param peerPublicKey receiver's PublicKey
 	 * @return wrapped message
 	 * @throws NullArgumentException when message or peerPublicKey is null
 	 * @throws SecureMessageWrapException when cannot wrap message
@@ -111,7 +111,7 @@ public class SecureMessage {
 	
 	/**
 	 * Wraps message for default peer
-	 * @param message to wrap
+	 * @param message message to wrap
 	 * @return wrapped message
 	 * @throws NullArgumentException when message or default peer PublicKey is null
 	 * @throws SecureMessageWrapException when cannot wrap message
@@ -122,8 +122,8 @@ public class SecureMessage {
 	
 	/**
 	 * Unwraps message from peer
-	 * @param wrapped message
-	 * @param sender's PublicKey
+	 * @param message wrapped message
+	 * @param peerPublicKey sender's PublicKey
 	 * @return unwrapped message
 	 * @throws NullArgumentException when message or peerPublicKey is null
 	 * @throws SecureMessageWrapException when cannot unwrap message
@@ -149,7 +149,7 @@ public class SecureMessage {
 	
 	/**
 	 * Unwraps message from default peer
-	 * @param wrapped message
+	 * @param message wrapped message
 	 * @return unwrapped message
 	 * @throws NullArgumentException when message or default peer PublicKey is null
 	 * @throws SecureMessageWrapException when cannot unwrap message
@@ -160,7 +160,7 @@ public class SecureMessage {
 
 	/**
 	 * Signs message
-	 * @param message to sign
+	 * @param message message to sign
 	 * @return signed message
 	 * @throws NullArgumentException when message or default peer PublicKey is null
 	 * @throws SecureMessageWrapException when cannot wrap message
@@ -186,8 +186,8 @@ public class SecureMessage {
 
 	/**
 	 * Verifies signed message from peer
-	 * @param signed message
-	 * @param sender's PublicKey
+	 * @param message signed message
+	 * @param peerPublicKey sender's PublicKey
 	 * @return verified message
 	 * @throws NullArgumentException when message or peerPublicKey is null
 	 * @throws SecureMessageWrapException when cannot verify message
@@ -213,7 +213,7 @@ public class SecureMessage {
 
 	/**
 	 * Verifies message from default peer
-	 * @param signed message
+	 * @param message signed message
 	 * @return verified message
 	 * @throws NullArgumentException when message or default peer PublicKey is null
 	 * @throws SecureMessageWrapException when cannot verify message

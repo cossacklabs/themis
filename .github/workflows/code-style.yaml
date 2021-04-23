@@ -35,8 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     # GitHub's host contains way too much crap in /etc/apt/sources.list
     # which causes package conflicts in clang-format-8 and clang-tidy-8
-    # installation. Run this job in a pristine Ubuntu 19.10 container.
-    container: ubuntu:19.10
+    # installation. Run this job in a pristine Ubuntu 20.04 container.
+    container: ubuntu:20.04
     steps:
       - name: Install system dependencies
         run: |

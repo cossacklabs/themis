@@ -65,9 +65,45 @@ _Code:_
 
     </details>
 
+  - Fixed multiple buffer overflows in Secure Message ([#763](https://github.com/cossacklabs/themis/pull/763)).
+
+- **C++**
+
+  - `themispp::secure_message_t::sign()` output is a bit smaller now ([#775](https://github.com/cossacklabs/themis/pull/775)).
+
 - **Go**
 
   - Error `ErrOverflow` is now deprecated in favor of `ErrOutOfMemory`, new error types were added ([#711](https://github.com/cossacklabs/themis/pull/711)).
+  - `SecureMessage.Sign()` output is a bit smaller now ([#775](https://github.com/cossacklabs/themis/pull/775)).
+
+- **Java / Kotlin**
+
+  - `SecureMessage#sign()` output is a bit smaller now ([#777](https://github.com/cossacklabs/themis/pull/777)).
+  - JavaThemis for Android and desktop Java is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
+
+    Add the Maven Central repository to your `build.gradle`:
+
+    ```groovy
+    repositories {
+        mavenCentral()
+    }
+    ```
+
+    For Android, use this dependency:
+
+    ```groovy
+    dependencies {
+        implementation 'com.cossacklabs.com:themis:0.14.0'
+    }
+    ```
+
+    For desktop systems use this one:
+
+    ```groovy
+    dependencies {
+        implementation 'com.cossacklabs.com:java-themis:0.14.0'
+    }
+    ```
 
 - **Objective-C**
 
@@ -83,6 +119,7 @@ _Code:_
 - **Node.js**
 
   - `SecureSession` constructor now throws an exception when given incorrect key type ([#698](https://github.com/cossacklabs/themis/pull/698)).
+  - Node.js v16 is now supported ([#801](https://github.com/cossacklabs/themis/pull/801)).
 
 - **Python**
 
@@ -95,12 +132,18 @@ _Code:_
 - **Rust**
 
   - Dropped `libthemis-src` crate support and removed the `vendored` feature. RustThemis wrapper now requires Themis Core to be installed in the system ([#691](https://github.com/cossacklabs/themis/pull/691)).
+  - Updated `zeroize` depedency to 1.x version. Rust 1.47 or newer is now required ([#799](https://github.com/cossacklabs/themis/pull/799)).
 
 - **Swift**
 
   - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.4 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706), [#740](https://github.com/cossacklabs/themis/pull/740)).
   - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
   - Improved compatibility with Xcode 12 ([#742](https://github.com/cossacklabs/themis/pull/742)).
+
+- **WebAssembly**
+
+  - Updated Emscripten toolchain to the latest version ([#760](https://github.com/cossacklabs/themis/pull/760)).
+  - Node.js v16 is now supported ([#801](https://github.com/cossacklabs/themis/pull/801)).
 
 _Infrastructure:_
 
@@ -110,6 +153,10 @@ _Infrastructure:_
 - Build system and tests now respect the `PATH` settings ([#685](https://github.com/cossacklabs/themis/pull/685)).
 - Rename embedded BoringSSL symbols by default to avoid conflicts with system OpenSSL ([#702](https://github.com/cossacklabs/themis/pull/702)).
 - Started phasing out CircleCI in favour of GitHub Actions ([#709](https://github.com/cossacklabs/themis/pull/709), [#755](https://github.com/cossacklabs/themis/pull/755)).
+- Themis is now fuzzed with `afl++` ([#766](https://github.com/cossacklabs/themis/pull/766)).
+- Secure Message is now covered with fuzz testing ([#762](https://github.com/cossacklabs/themis/pull/762)).
+- JavaThemis for Android and desktop Java is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
+- MSYS2 builds for Windows are now checked by CI ([#791](https://github.com/cossacklabs/themis/pull/791)).
 
 
 ## [0.13.6](https://github.com/cossacklabs/themis/releases/tag/0.13.6), November 23rd 2020
