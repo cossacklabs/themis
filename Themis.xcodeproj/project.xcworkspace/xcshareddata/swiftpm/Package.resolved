@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "cl-openssl",
+        "repositoryURL": "https://github.com/julepka/openssl-apple",
+        "state": {
+          "branch": null,
+          "revision": "4b0b616731e7ffb41e28e2c817c9f5d15802be6d",
+          "version": "1.1.1080202"
+        }
+      }
+    ]
+  },
+  "version": 1
+}

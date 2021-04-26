@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -1082,6 +1082,7 @@
 			);
 			mainGroup = 738B81052239809D00A9947C;
 			packageReferences = (
+				6DEDCEE72636BDC1007D1DCB /* XCRemoteSwiftPackageReference "openssl-apple" */,
 			);
 			productRefGroup = 738B81102239809D00A9947C /* Products */;
 			projectDirPath = "";
@@ -1880,6 +1881,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6DEDCEE72636BDC1007D1DCB /* XCRemoteSwiftPackageReference "openssl-apple" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/julepka/openssl-apple";
+			requirement = {
+				kind = exactVersion;
+				version = 1.1.1080202;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 738B81062239809D00A9947C /* Project object */;
 }
