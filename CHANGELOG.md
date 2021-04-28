@@ -4,6 +4,19 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.13.7](https://github.com/cossacklabs/themis/releases/tag/0.13.7), April 28th 2021
+
+**Hotfix for Apple platforms:**
+
+- `themis` is now packaged as xcframework. It is available in the release attached files section.
+- `themis` now supports SPM, its installation and usage are very straightforward, just add `themis` as SPM dependency.
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - Added script to generate xcframework for iOS, iOS Simulator and macOS ([#789](https://github.com/cossacklabs/themis/pull/789)).
+  - Added Package.swift file for SPM ([#789](https://github.com/cossacklabs/themis/pull/789)).
 
 ## [0.13.6](https://github.com/cossacklabs/themis/releases/tag/0.13.6), November 23th 2020
 
