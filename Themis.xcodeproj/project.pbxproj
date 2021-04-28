@@ -947,6 +947,8 @@
 			dependencies = (
 			);
 			name = "Themis (macOS)";
+			packageProductDependencies = (
+			);
 			productName = "Themis (macOS)";
 			productReference = 9F00E8D7223C197900EC1EF3 /* themis.framework */;
 			productType = "com.apple.product-type.framework";
@@ -964,6 +966,8 @@
 			dependencies = (
 			);
 			name = "Themis (iOS)";
+			packageProductDependencies = (
+			);
 			productName = Themis;
 			productReference = 9F4A24A1223A8D7F005CB63A /* themis.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1077,6 +1081,8 @@
 				Base,
 			);
 			mainGroup = 738B81052239809D00A9947C;
+			packageReferences = (
+			);
 			productRefGroup = 738B81102239809D00A9947C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1484,6 +1490,7 @@
 		9F00E8DC223C197A00EC1EF3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 7;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1506,6 +1513,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.13.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1518,6 +1526,7 @@
 		9F00E8DD223C197A00EC1EF3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 7;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1540,6 +1549,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.13.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1552,6 +1562,7 @@
 		9F4A24A7223A8D7F005CB63A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 7;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1576,6 +1587,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.13.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1589,6 +1601,7 @@
 		9F4A24A8223A8D7F005CB63A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 7;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1613,6 +1626,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.13.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
