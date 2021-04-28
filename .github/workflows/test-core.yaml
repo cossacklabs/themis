@@ -195,11 +195,18 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: Criterion report
-          path: benches/themis/target/criterion
+          path: target/criterion
 
   fuzzing:
     name: AFL fuzzing
-    runs-on: ubuntu-latest
+    # TODO(ilammy, 2021-01-28): use "ubuntu-latest" once it works
+    # Currently "ubuntu-latest" means "ubuntu-18.04" but for some inexplicable
+    # reasons GitHub runners in the main repo treat it as "ubuntu-20.04" which
+    # does not seem to work yet (for this job). Pin the Ubuntu 18.04 version
+    # for now, but don't forget to update this once "ubuntu-latest" changes
+    # its meaning or starts working for this job.
+    # See: https://docs.github.com/en/actions/reference/specifications-for-github-hosted-runners
+    runs-on: ubuntu-18.04
     env:
       FUZZ_TIMEOUT: 30s
       THEMIS_DEFAULT_PBKDF2_ITERATIONS: 10
@@ -212,7 +219,7 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt update
           sudo apt install --yes gcc make zip \
-              afl gcc-multilib libc6-dev:i386 \
+              afl++ gcc-multilib libc6-dev:i386 \
               libssl-dev:amd64 libssl-dev:i386
           # AFL needs proper core dumps to be available, write them to files
           sudo sh -c 'echo core > /proc/sys/kernel/core_pattern'

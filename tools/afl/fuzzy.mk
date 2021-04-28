@@ -17,6 +17,11 @@
 AFL_FUZZ ?= afl-fuzz
 AFL_CC   ?= afl-clang
 
+# TODO(ilammy, 2021-01-27): use afl++ toolchain if available
+# The above tools are compaible with the original "afl" which is currently
+# not maintained. Modern systems come with "afl++" that has mostly compatible
+# command-line and new instrumentation toolchain. We should use it if possible.
+
 FUZZ_PATH = tools/afl
 FUZZ_BIN_PATH = $(BIN_PATH)/afl
 FUZZ_SRC_PATH = $(FUZZ_PATH)/src
