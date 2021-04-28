@@ -163,7 +163,7 @@ _Infrastructure:_
 **Hotfix for Apple platforms:**
 
 - `themis` is now packaged as xcframework. It is available in the release attached files section.
-- `themis` now supports SPM.
+- `themis` now supports SPM, its installation and usage are very straightforward, just add `themis` as SPM dependency.
 
 _Code:_
 
