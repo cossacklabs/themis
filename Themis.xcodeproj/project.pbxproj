@@ -4302,10 +4302,6 @@
 		9F56694625546397005CF297 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					arm64e,
-				);
 				EXCLUDED_SOURCE_FILE_NAMES = (
 					"*armx32*.S",
 					"*armx64*.S",
@@ -4327,10 +4323,6 @@
 		9F56694725546397005CF297 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					arm64e,
-				);
 				EXCLUDED_SOURCE_FILE_NAMES = (
 					"*armx32*.S",
 					"*armx64*.S",
