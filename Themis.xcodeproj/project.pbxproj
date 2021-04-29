@@ -4403,7 +4403,6 @@
 					"*armv8*.S",
 				);
 				EXECUTABLE_PREFIX = lib;
-				"GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*][arch=arm64]" = "OPENSSL_NO_ASM=1 $(inherited)";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/third_party/boringssl/src/include";
 				"INCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=i386]" = "x86-*.S *-586.S *-x86.S";
@@ -4429,7 +4428,6 @@
 					"*armv8*.S",
 				);
 				EXECUTABLE_PREFIX = lib;
-				"GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*][arch=arm64]" = "OPENSSL_NO_ASM=1 $(inherited)";
 				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/third_party/boringssl/src/include";
 				"INCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=i386]" = "x86-*.S *-586.S *-x86.S";
