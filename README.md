@@ -38,7 +38,7 @@ Themis helps to build both simple and complex cryptographic features easily, qui
 
 * **Encrypt sensitive data fields** before storing in database (_"application-side field-level encryption"_).
 
-* Support **searchable encryption**, data tokenisation *and* data masking using Themis and [Acra](https://www.cossacklabs.com/acra/).
+* Support **searchable encryption**, data tokenisation and data masking using Themis and [Acra](https://www.cossacklabs.com/acra/).
 
 * Exchange secrets securely: **share sensitive data** between parties, build simple chat app between patients and doctors.
 
@@ -93,15 +93,15 @@ Themis is available for the following languages/platforms, refer to [language ho
 
 # Availability
 
-Themis supports following CPU architectures: x86_64/i386, ARM, various Android architectures.
+Themis supports following CPU architectures: x86_64/i386, ARM, Apple Silicon (ARM64), various Android architectures.
 
 We build and verify Themis on the latest stable OS versions:
 
   - Debian (9, 10), CentOS (7, 8), Ubuntu (16.04, 18.04, 20.04)
   - macOS (10.12–10.15, 11)
   - Android (4–11)
-  - iOS and iPadOS (9–14beta),
-  - Windows (experimenal MSYS2 support)
+  - iOS (10–14)
+  - Windows (experimental MSYS2 support)
 
 We plan to expand this list with a broader set of platforms.
 If you'd like to help improve or bring Themis to your favourite platform or language —
@@ -113,7 +113,7 @@ If you'd like to help improve or bring Themis to your favourite platform or lang
 
 Refer to the documentation to learn more about:
 - [cryptography in Themis](https://docs.cossacklabs.com/themis/crypto-theory/) ([Themis cryptosystems and attacks on them](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/), [cryptography donors](https://docs.cossacklabs.com/themis/crypto-theory/cryptography-donors/), [key management advice](https://docs.cossacklabs.com/themis/crypto-theory/key-management/), [FIPS 140-2 and GOST](https://docs.cossacklabs.com/themis/crypto-theory/fips-and-gost/)),
-- [debugging and troubleshooting Themis](https://docs.cossacklabs.com/themis/debugging/) ([command-line utilities](https://docs.cossacklabs.com/themis/debugging/cli-utilities/), [Themis Server interactive web simulator](https://docs.cossacklabs.com/themis/debugging/themis-server/), [thread safety](https://docs.cossacklabs.com/themis/debugging/thread-safety/), [migration guidelines between Themis versions](https://docs.cossacklabs.com/themis/debugging/migration-guides/)) ,  
+- [debugging and troubleshooting Themis](https://docs.cossacklabs.com/themis/debugging/) ([command-line utilities](https://docs.cossacklabs.com/themis/debugging/cli-utilities/), [Themis Server interactive web simulator](https://docs.cossacklabs.com/themis/debugging/themis-server/), [thread safety](https://docs.cossacklabs.com/themis/debugging/thread-safety/), [migration guidelines between Themis versions](https://docs.cossacklabs.com/themis/debugging/migration-guides/)),  
 - [Themis architecture](https://docs.cossacklabs.com/themis/architecture/),
 - [Themis security](https://docs.cossacklabs.com/themis/security/) ([Themis and OWASP](https://docs.cossacklabs.com/themis/security/owasp/), [Themis development security practices](https://docs.cossacklabs.com/themis/security/dev-security-practices/)),
 - [community behind Themis](https://docs.cossacklabs.com/themis/community/) ([contributing guidelines](https://docs.cossacklabs.com/themis/community/contributing/), [credits and honorable mentions](https://docs.cossacklabs.com/themis/community/credits/),  [projects that use Themis](https://docs.cossacklabs.com/themis/community/projects-that-use-themis/), [tutorials](https://docs.cossacklabs.com/themis/community/tutorials-workshops-talks/), [workshops and talks](https://docs.cossacklabs.com/themis/community/tutorials-workshops-talks/)).
@@ -183,5 +183,7 @@ If you want to ask a technical question, feel free to raise an [issue](https://g
 To talk to the business wing of Cossack Labs Limited, drop us an email to [info@cossacklabs.com](mailto:info@cossacklabs.com).
 
 [![Blog](https://img.shields.io/badge/blog-cossacklabs.com-7a7c98.svg)](https://cossacklabs.com/) [![Twitter CossackLabs](https://img.shields.io/badge/twitter-cossacklabs-fbb03b.svg)](http://twitter.com/cossacklabs) [![Dev.to CossackLabs](https://img.shields.io/badge/dev.to-%40cossacklabs-orange.svg)](https://dev.to/@cossacklabs/) [![Medium CossackLabs](https://img.shields.io/badge/medium-%40cossacklabs-orange.svg)](https://medium.com/@cossacklabs/) 
+
+[![Closed pull requests with Bitcode-related changes](https://img.shields.io/github/issues-pr-closed/cossacklabs/themis/Bitcode%20%F0%9F%90%99?color=informational&label=Bitcode-related%20issues)](https://github.com/cossacklabs/themis/pulls?q=is%3Apr+is%3Aclosed+label%3A%22Bitcode+%F0%9F%90%99%22)
 
 <!--[![Join the chat at https://gitter.im/cossacklabs/themis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cossacklabs/themis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) -->

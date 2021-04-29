@@ -34,15 +34,35 @@ public class SecureSession {
 	 * SecureSession state
 	 */
 	public enum State {
-		IDLE, /** < session was just created */
-		NEGOTIATING, /** < key agreement is in progress. No data exchange possible yet. */
-		ESTABLISHED /** < session is secured. Possible to exchange data securely. */
+		/**
+		 * Initial state for newly created Secure Session.
+		 */
+		IDLE,
+		/**
+		 * Key agreement is in progress. Data exchange is not possible yet.
+		 */
+		NEGOTIATING,
+		/**
+		 * Secure Session is established. You may exchange data securely now.
+		 */
+		ESTABLISHED
 	}
 	
 	public enum SessionDataType {
-		NO_DATA, /** < no output data */
-		PROTOCOL_DATA, /** < output is an internal protocol message. Needs to be sent to your peer.*/
-		USER_DATA; /** < output is decrypted user data. It should be handled according to your application flow.*/
+		/**
+		 * No output data.
+		 */
+		NO_DATA,
+		/**
+		 * Output is a Secure Session protocol message.
+		 * Send this data to your peer as is.
+		 */
+		PROTOCOL_DATA,
+		/**
+		 * Output is decrypted user data.
+		 * Pass it to the application for processing.
+		 */
+		USER_DATA;
 
 		public static SessionDataType fromByte(byte src) throws SecureSessionException {
 			switch (src) {
@@ -105,9 +125,9 @@ public class SecureSession {
 	
 	/**
 	 * Creates new SecureSession
-	 * @param your id
-	 * @param your sign PrivateKey
-	 * @param callbacks implementation
+	 * @param id your id
+	 * @param signPrivateKey your sign PrivateKey
+	 * @param callbacks callbacks implementation
 	 * @throws NullArgumentException if `id` is null
 	 * @throws InvalidArgumentException if `id` is empty
 	 * @throws RuntimeException when cannot create session
@@ -131,9 +151,9 @@ public class SecureSession {
 	
 	/**
 	 * Creates new SecureSession
-	 * @param your id
-	 * @param your sign PrivateKey
-	 * @param callbacks implementation
+	 * @param id your id
+	 * @param signPrivateKey your sign PrivateKey
+	 * @param callbacks callbacks implementation
 	 * @throws NullArgumentException if `id` is null
 	 * @throws InvalidArgumentException if `id` is empty
 	 * @throws RuntimeException when cannot create session
@@ -169,7 +189,7 @@ public class SecureSession {
 	
 	/**
 	 * Wraps outgoing data
-	 * @param data to wrap
+	 * @param data data to wrap
 	 * @return wrapped data
 	 * @throws IllegalStateException is the session is already closed
 	 * @throws SecureSessionException when cannot wrap data
@@ -195,7 +215,7 @@ public class SecureSession {
 	
 	/**
 	 * Unwraps incoming data
-	 * @param wrapped data
+	 * @param wrappedData wrapped data
 	 * @return unwrapped data
 	 * @throws IllegalStateException is the session is already closed
 	 * @throws SecureSessionException when cannot unwrap data
@@ -303,8 +323,8 @@ public class SecureSession {
 	
 	/**
 	 * Restores previously saved session
-	 * @param saved session state
-	 * @param callbacks implementation
+	 * @param state saved session state
+	 * @param callbacks callbacks implementation
 	 * @return restored SecureSession
 	 * @throws SecureSessionException when cannot restore session
 	 * @deprecated since JavaThemis 0.13

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.13.4"
+    s.version = "0.13.6"
     s.summary = "Data security library for network communication and data storage for iOS and mac OS"
     s.description = "Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis is aimed at modern development practices and has a unified API across 12 platforms, including iOS/macOS, Ruby, JavaScript, Python, and Java/Android."
     s.homepage = "https://cossacklabs.com"
@@ -17,10 +17,6 @@ Pod::Spec.new do |s|
     s.osx.deployment_target = '10.11'
     s.ios.frameworks = 'UIKit', 'Foundation'
 
-    # Tell CocoaPods that the frameworks we publish are "static frameworks".
-    # This ensures correct resolution of transitive dependencies.
-    s.static_framework = true
-
     # TODO(ilammy, 2020-03-02): resolve "pod spec lint" warnings due to dependencies
     # If you update dependencies, please check whether we can remove "--allow-warnings"
     # from podspec validation in .github/workflows/test-objc.yaml
@@ -28,7 +24,7 @@ Pod::Spec.new do |s|
     # This variant uses the current stable, non-legacy version of OpenSSL.
     s.subspec 'openssl-1.1.1' do |so|
         # OpenSSL 1.1.1h
-        so.dependency 'CLOpenSSL', '~> 1.1.10801'
+        so.dependency 'CLOpenSSL', '1.1.10802'
 
         # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip
         so.ios.pod_target_xcconfig = {
@@ -47,16 +43,17 @@ Pod::Spec.new do |s|
 
         # We're building some C code here which uses includes as it pleases.
         # Allow this behavior, but we will have to control header mappings.
+        # Also, configure some preprocessor definitions to select OpenSSL backend.
         so.ios.xcconfig = {
             'OTHER_CFLAGS' => '-DLIBRESSL',
             'USE_HEADERMAP' => 'NO',
-            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
+            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/include" "${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
             'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
         }
         so.osx.xcconfig = {
             'OTHER_CFLAGS' => '-DLIBRESSL',
             'USE_HEADERMAP' => 'NO',
-            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
+            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/include" "${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
             'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
         }
 
@@ -68,15 +65,19 @@ Pod::Spec.new do |s|
         # End users should use "themis/openssl-1.1.1" only, not these ones.
         so.subspec 'core' do |ss|
             ss.source_files = [
+                "include/themis/*.h",
+                "include/soter/*.h",
                 "src/themis/*.{c,h}",
                 "src/soter/*.{c,h}",
                 "src/soter/ed25519/*.{c,h}",
                 "src/soter/openssl/*.{c,h}",
             ]
-            ss.header_dir = "src"
-            ss.header_mappings_dir = "src"
+            # Prevent CocoaPods from flattening the headers, we need structure.
+            ss.header_mappings_dir = "."
             # Don't export Themis Core headers, make only ObjcThemis public.
             ss.private_header_files = [
+                "include/themis/*.h",
+                "include/soter/*.h",
                 "src/themis/*.h",
                 "src/soter/*.h",
                 "src/soter/ed25519/*.h",
@@ -123,21 +124,43 @@ Pod::Spec.new do |s|
 
         so.dependency 'GRKOpenSSLFramework', '1.0.2.18'  # <-- this is temp
 
-
-        so.ios.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL', 'USE_HEADERMAP' => 'NO',
-        'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
-
-        so.osx.xcconfig = { 'OTHER_CFLAGS' => '-DLIBRESSL', 'USE_HEADERMAP' => 'NO',
-            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
-
+        # We're building some C code here which uses includes as it pleases.
+        # Allow this behavior, but we will have to control header mappings.
+        # Also, configure some preprocessor definitions to select OpenSSL backend.
+        so.ios.xcconfig = {
+            'OTHER_CFLAGS' => '-DLIBRESSL',
+            'USE_HEADERMAP' => 'NO',
+            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/include" "${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
+            'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
+        }
+        so.osx.xcconfig = {
+            'OTHER_CFLAGS' => '-DLIBRESSL',
+            'USE_HEADERMAP' => 'NO',
+            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/include" "${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
+            'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
+        }
 
         # don't use as independent target
         so.subspec 'core' do |ss|
-            ss.source_files = "src/themis/*.{h,c}", "src/soter/*.{c,h}", "src/soter/ed25519/*.{c,h}", "src/soter/openssl/*.{c,h}"
-            ss.header_mappings_dir = "src"
-            ss.header_dir = 'src'
-            ss.preserve_paths = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/openssl/*.h"
-            ss.private_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/openssl/*.h"
+            ss.source_files = [
+                "include/themis/*.h",
+                "include/soter/*.h",
+                "src/themis/*.{c,h}",
+                "src/soter/*.{c,h}",
+                "src/soter/ed25519/*.{c,h}",
+                "src/soter/openssl/*.{c,h}",
+            ]
+            # Prevent CocoaPods from flattening the headers, we need structure.
+            ss.header_mappings_dir = "."
+            # Don't export Themis Core headers, make only ObjcThemis public.
+            ss.private_header_files = [
+                "include/themis/*.h",
+                "include/soter/*.h",
+                "src/themis/*.h",
+                "src/soter/*.h",
+                "src/soter/ed25519/*.h",
+                "src/soter/openssl/*.h",
+            ]
         end
 
         # don't use as independent target
@@ -156,19 +179,44 @@ Pod::Spec.new do |s|
 
         so.dependency 'BoringSSL', '~> 10.0'
 
-        so.ios.xcconfig = { 'OTHER_CFLAGS' => '-DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl -DSOTER_BORINGSSL_DISABLE_XTS', 'USE_HEADERMAP' => 'NO',
-            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
 
-        so.osx.xcconfig = { 'OTHER_CFLAGS' => '-DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl -DSOTER_BORINGSSL_DISABLE_XTS', 'USE_HEADERMAP' => 'NO',
-            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"', 'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES' }
+        # We're building some C code here which uses includes as it pleases.
+        # Allow this behavior, but we will have to control header mappings.
+        # Also, configure some preprocessor definitions to select BoringSSL backend.
+        so.ios.xcconfig = {
+            'OTHER_CFLAGS' => '-DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl -DSOTER_BORINGSSL_DISABLE_XTS',
+            'USE_HEADERMAP' => 'NO',
+            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/include" "${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
+            'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
+        }
+        so.osx.xcconfig = {
+            'OTHER_CFLAGS' => '-DBORINGSSL -DCRYPTO_ENGINE_PATH=boringssl -DSOTER_BORINGSSL_DISABLE_XTS',
+            'USE_HEADERMAP' => 'NO',
+            'HEADER_SEARCH_PATHS' => '"${PODS_ROOT}/themis/include" "${PODS_ROOT}/themis/src" "${PODS_ROOT}/themis/src/wrappers/themis/Obj-C"',
+            'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
+        }
 
         # don't use as independent target
         so.subspec 'core' do |ss|
-            ss.source_files = "src/themis/*.{h,c}", "src/soter/*.{c,h}", "src/soter/ed25519/*.{c,h}", "src/soter/boringssl/*.{c,h}"
-            ss.header_mappings_dir = "src"
-            ss.header_dir = 'src'
-            ss.preserve_paths = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/boringssl/*.h"
-            ss.private_header_files = "src/themis/*.h", "src/soter/*.h", "src/soter/ed25519/*.h", "src/soter/boringssl/*.h"
+            ss.source_files = [
+                "include/themis/*.h",
+                "include/soter/*.h",
+                "src/themis/*.{c,h}",
+                "src/soter/*.{c,h}",
+                "src/soter/ed25519/*.{c,h}",
+                "src/soter/boringssl/*.{c,h}",
+            ]
+            # Prevent CocoaPods from flattening the headers, we need structure.
+            ss.header_mappings_dir = "."
+            # Don't export Themis Core headers, make only ObjcThemis public.
+            ss.private_header_files = [
+                "include/themis/*.h",
+                "include/soter/*.h",
+                "src/themis/*.h",
+                "src/soter/*.h",
+                "src/soter/ed25519/*.h",
+                "src/soter/boringssl/*.h",
+            ]
         end
 
         # don't use as independent target

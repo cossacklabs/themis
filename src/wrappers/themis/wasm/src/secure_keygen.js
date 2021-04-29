@@ -122,8 +122,10 @@ function generateECKeyPair() {
     var err
 
     // C API uses "size_t" for lengths, it's defined as "i32" on Emscripten
-    let private_len_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
-    let public_len_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+    /// allocate() with ALLOC_STACK cannot be called multiple times,
+    /// but we need two size_t values so allocate an array, of a sort.
+    let private_len_ptr = libthemis.allocate(new ArrayBuffer(2 * 4), libthemis.ALLOC_STACK)
+    let public_len_ptr = private_len_ptr + 4
 
     err = libthemis._themis_gen_ec_key_pair(null, private_len_ptr, null, public_len_ptr)
     if (err != ThemisErrorCode.BUFFER_TOO_SMALL) {
@@ -179,7 +181,7 @@ function generateSymmetricKey() {
     var err
 
     // C API uses "size_t" for lengths, it's defined as "i32" on Emscripten
-    let key_len_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+    let key_len_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
 
     err = libthemis._themis_gen_sym_key(null, key_len_ptr)
     if (err != ThemisErrorCode.BUFFER_TOO_SMALL) {

@@ -43,7 +43,8 @@ bindgen bindgen.h \
     --whitelist-var "$WHITELIST" \
     --output src/lib.rs \
     -- \
-    -I ../../../.. # ${repository_root}/src
+    -I ../../../../../include \
+    -I ../../../../../src
 
 TMP="$(mktemp)"
 

@@ -47,7 +47,7 @@ import (
 //
 // Read more about Context Imprint mode here:
 //
-// https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#context-imprint-mode
+// https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/#context-imprint-mode
 type SecureCellContextImprint struct {
 	key *keys.SymmetricKey
 }

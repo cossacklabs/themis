@@ -13,7 +13,13 @@ Every commit that goes into the master branch is audited and reviewed by somebod
 
 ## "I'd like to help somehow, but don't know what will be useful. What should I do?"
 
-There's a Development [status page](https://docs.cossacklabs.com/pages/documentation-themis/#development-status), which displays what we're working on right now and what critical stuff is not there yet. If you'd like to take over any of those tasks, get in touch or just raise an issue and work on it. 
+If you're looking for something to contribute to and gain eternal respect,
+just pick the things in the [list of issues](https://github.com/cossacklabs/themis/issues)
+and let us know via [email](mailto:dev@cossacklabs.com),
+or raise a [new issue](https://github.com/cossacklabs/themis/issues)
+to make sure nobody's on it yet.
+
+Issues marked as ["enhancement"](https://github.com/cossacklabs/themis/issues?utf8=%E2%9C%93&q=is%3Aissue%20is%3Aopen%20label%3Aenhancement%20) are a great place to start.
 
 If you'd like to do independent parts (implement new procedures/objects, create a language wrapper or a set of examples for languages or architectures we don't have and don't even plan yet) — just go ahead and let us know when you finish. 
 
@@ -23,5 +29,5 @@ If you'd like to participate in the core development more closely, [get in touch
 
 - Requests/bugfixes/queries should go through [GitHub Issues](https://github.com/cossacklabs/themis/issues)
 - To reach the developers, use [dev@cossacklabs.com](mailto:dev@cossacklabs.com).
-- See more information on contributing on our [Documentation Server/Contributing, contacts, assistance](https://docs.cossacklabs.com/pages/documentation-themis/#contributing-contacts-assistance).
+- See more information [on contributing](https://docs.cossacklabs.com/themis/community/contributing/) and [Themis community](https://docs.cossacklabs.com/themis/community/).
 - To talk to the business wing of Cossack Labs, drop us an email to [info@cossacklabs.com](mailto:info@cossacklabs.com).

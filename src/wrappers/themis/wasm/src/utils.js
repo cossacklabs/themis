@@ -18,7 +18,6 @@
  */
 
 const libthemis = require('./libthemis.js')
-const {TextEncoder} = require('fastestsmallesttextencoderdecoder')
 
 /**
  * Convert an object into a byte buffer.
@@ -35,10 +34,25 @@ module.exports.coerceToBytes = function(buffer) {
     throw new TypeError('type mismatch, expect "Uint8Array" or "ArrayBuffer"')
 }
 
-const utf8Encoder = new TextEncoder()
+function getTextEncoder() {
+    if (typeof window !== 'undefined' && window.TextEncoder) {
+        return new window.TextEncoder()
+    }
+
+    if (typeof TextEncoder !== 'undefined') {
+        return new TextEncoder()
+    }
+    
+    // we are using a browser which does not support TextEncoder or in a Node process which has TextEncoder
+    // available through the util package.
+    const NodeTextEncoder = require('util').TextEncoder
+    return new NodeTextEncoder()
+}
+
+const textEncoder = getTextEncoder()
 
 function stringToUTF8(str) {
-    return utf8Encoder.encode(str)
+    return textEncoder.encode(str)
 }
 
 /**

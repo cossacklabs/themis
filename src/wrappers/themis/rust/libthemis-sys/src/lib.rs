@@ -44,8 +44,6 @@ pub const THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER: u32 = 1;
 pub const THEMIS_SCOMPARE_MATCH: u32 = 21;
 pub const THEMIS_SCOMPARE_NO_MATCH: u32 = 22;
 pub const THEMIS_SCOMPARE_NOT_READY: u32 = 0;
-pub const THEMIS_SESSION_ID_TAG: &'static [u8; 5usize] = b"TSID\0";
-pub const THEMIS_SESSION_PROTO_TAG: &'static [u8; 5usize] = b"TSPM\0";
 pub const STATE_IDLE: u32 = 0;
 pub const STATE_NEGOTIATING: u32 = 1;
 pub const STATE_ESTABLISHED: u32 = 2;
@@ -211,7 +209,7 @@ extern "C" {
     ) -> themis_status_t;
 }
 #[repr(u32)]
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, Hash, PartialEq, Eq)]
 pub enum themis_key_kind {
     THEMIS_KEY_INVALID = 0,
     THEMIS_KEY_RSA_PRIVATE = 1,
@@ -332,44 +330,10 @@ pub struct secure_session_user_callbacks_type {
 pub type secure_session_user_callbacks_t = secure_session_user_callbacks_type;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
-pub struct secure_session_peer_type {
-    pub id: *mut u8,
-    pub id_length: usize,
-    pub ecdh_key: *mut u8,
-    pub ecdh_key_length: usize,
-    pub sign_key: *mut u8,
-    pub sign_key_length: usize,
-}
-pub type secure_session_peer_t = secure_session_peer_type;
-extern "C" {
-    pub fn secure_session_peer_init(
-        peer: *mut secure_session_peer_t,
-        id: *const ::std::os::raw::c_void,
-        id_len: usize,
-        ecdh_key: *const ::std::os::raw::c_void,
-        ecdh_key_len: usize,
-        sign_key: *const ::std::os::raw::c_void,
-        sign_key_len: usize,
-    ) -> themis_status_t;
-}
-extern "C" {
-    pub fn secure_session_peer_cleanup(peer: *mut secure_session_peer_t);
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct secure_session_type {
     _unused: [u8; 0],
 }
 pub type secure_session_t = secure_session_type;
-pub type secure_session_handler = ::std::option::Option<
-    unsafe extern "C" fn(
-        session_ctx: *mut secure_session_t,
-        data: *const ::std::os::raw::c_void,
-        data_length: usize,
-        output: *mut ::std::os::raw::c_void,
-        output_length: *mut usize,
-    ) -> themis_status_t,
->;
 extern "C" {
     pub fn secure_session_create(
         id: *const ::std::os::raw::c_void,

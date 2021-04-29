@@ -1230,27 +1230,16 @@
 		9F142DDDEA16A89F0696B0F2 /* sha512-586.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "sha512-586.S"; path = "third_party/boringssl/mac-x86/crypto/fipsmodule/sha512-586.S"; sourceTree = SOURCE_ROOT; };
 		9F33485723B38D9B00368291 /* soter_kdf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_kdf.c; path = src/soter/openssl/soter_kdf.c; sourceTree = "<group>"; };
 		9F34EA3023D9CA0A0079A1D7 /* secure_cell_seal_passphrase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = secure_cell_seal_passphrase.h; path = src/themis/secure_cell_seal_passphrase.h; sourceTree = "<group>"; };
-		9F4A2342223A73B0005CB63A /* soter_hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_hash.h; path = src/soter/soter_hash.h; sourceTree = "<group>"; };
-		9F4A2343223A73B0005CB63A /* soter_asym_cipher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_asym_cipher.h; path = src/soter/soter_asym_cipher.h; sourceTree = "<group>"; };
 		9F4A2344223A73B0005CB63A /* soter_sign_rsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_sign_rsa.h; path = src/soter/soter_sign_rsa.h; sourceTree = "<group>"; };
-		9F4A2345223A73B0005CB63A /* soter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter.h; path = src/soter/soter.h; sourceTree = "<group>"; };
 		9F4A2346223A73B0005CB63A /* soter_t.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_t.h; path = src/soter/soter_t.h; sourceTree = "<group>"; };
 		9F4A2347223A73B0005CB63A /* soter_rsa_key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_rsa_key.h; path = src/soter/soter_rsa_key.h; sourceTree = "<group>"; };
 		9F4A2348223A73B0005CB63A /* soter_container.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_container.c; path = src/soter/soter_container.c; sourceTree = "<group>"; };
-		9F4A2349223A73B0005CB63A /* soter_hmac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_hmac.h; path = src/soter/soter_hmac.h; sourceTree = "<group>"; };
-		9F4A234A223A73B0005CB63A /* soter_rsa_key_pair_gen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_rsa_key_pair_gen.h; path = src/soter/soter_rsa_key_pair_gen.h; sourceTree = "<group>"; };
-		9F4A234B223A73B0005CB63A /* soter_asym_ka.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_asym_ka.h; path = src/soter/soter_asym_ka.h; sourceTree = "<group>"; };
-		9F4A234C223A73B0005CB63A /* soter_error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_error.h; path = src/soter/soter_error.h; sourceTree = "<group>"; };
 		9F4A234D223A73B0005CB63A /* soter_crc32.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_crc32.c; path = src/soter/soter_crc32.c; sourceTree = "<group>"; };
 		9F4A234E223A73B0005CB63A /* soter_crc32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_crc32.h; path = src/soter/soter_crc32.h; sourceTree = "<group>"; };
-		9F4A234F223A73B1005CB63A /* soter_kdf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_kdf.h; path = src/soter/soter_kdf.h; sourceTree = "<group>"; };
-		9F4A2350223A73B1005CB63A /* soter_asym_sign.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_asym_sign.h; path = src/soter/soter_asym_sign.h; sourceTree = "<group>"; };
 		9F4A2351223A73B1005CB63A /* soter_sign.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_sign.c; path = src/soter/soter_sign.c; sourceTree = "<group>"; };
 		9F4A2352223A73B1005CB63A /* soter_ec_key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_ec_key.h; path = src/soter/soter_ec_key.h; sourceTree = "<group>"; };
 		9F4A2353223A73B1005CB63A /* soter_hmac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_hmac.c; path = src/soter/soter_hmac.c; sourceTree = "<group>"; };
-		9F4A2354223A73B1005CB63A /* soter_rand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_rand.h; path = src/soter/soter_rand.h; sourceTree = "<group>"; };
 		9F4A2355223A73B1005CB63A /* soter_sign_ecdsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_sign_ecdsa.h; path = src/soter/soter_sign_ecdsa.h; sourceTree = "<group>"; };
-		9F4A2356223A73B1005CB63A /* soter_sym.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_sym.h; path = src/soter/soter_sym.h; sourceTree = "<group>"; };
 		9F4A2357223A73B1005CB63A /* soter_kdf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_kdf.c; path = src/soter/soter_kdf.c; sourceTree = "<group>"; };
 		9F4A2358223A73B1005CB63A /* soter_container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_container.h; path = src/soter/soter_container.h; sourceTree = "<group>"; };
 		9F4A2384223A7425005CB63A /* soter_ecdsa_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_ecdsa_common.h; path = src/soter/openssl/soter_ecdsa_common.h; sourceTree = "<group>"; };
@@ -1332,24 +1321,17 @@
 		9F4A241E223A74AE005CB63A /* secure_cell.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_cell.c; path = src/themis/secure_cell.c; sourceTree = "<group>"; };
 		9F4A241F223A74AE005CB63A /* secure_comparator_t.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_comparator_t.h; path = src/themis/secure_comparator_t.h; sourceTree = "<group>"; };
 		9F4A2420223A74AE005CB63A /* secure_message_wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_message_wrapper.h; path = src/themis/secure_message_wrapper.h; sourceTree = "<group>"; };
-		9F4A2421223A74AE005CB63A /* secure_message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_message.h; path = src/themis/secure_message.h; sourceTree = "<group>"; };
 		9F4A2422223A74AE005CB63A /* secure_message_wrapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_message_wrapper.c; path = src/themis/secure_message_wrapper.c; sourceTree = "<group>"; };
-		9F4A2424223A74AE005CB63A /* secure_keygen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_keygen.h; path = src/themis/secure_keygen.h; sourceTree = "<group>"; };
 		9F4A2425223A74AE005CB63A /* secure_session_serialize.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_session_serialize.c; path = src/themis/secure_session_serialize.c; sourceTree = "<group>"; };
 		9F4A2426223A74AE005CB63A /* secure_session_t.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_session_t.h; path = src/themis/secure_session_t.h; sourceTree = "<group>"; };
 		9F4A2427223A74AE005CB63A /* secure_keygen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_keygen.c; path = src/themis/secure_keygen.c; sourceTree = "<group>"; };
 		9F4A2428223A74AE005CB63A /* secure_session_peer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_session_peer.h; path = src/themis/secure_session_peer.h; sourceTree = "<group>"; };
 		9F4A2429223A74AF005CB63A /* secure_session_peer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_session_peer.c; path = src/themis/secure_session_peer.c; sourceTree = "<group>"; };
 		9F4A242B223A74AF005CB63A /* sym_enc_message.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sym_enc_message.h; path = src/themis/sym_enc_message.h; sourceTree = "<group>"; };
-		9F4A242C223A74AF005CB63A /* secure_cell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_cell.h; path = src/themis/secure_cell.h; sourceTree = "<group>"; };
-		9F4A242D223A74AF005CB63A /* secure_session.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_session.h; path = src/themis/secure_session.h; sourceTree = "<group>"; };
 		9F4A242E223A74AF005CB63A /* secure_session_utils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_session_utils.c; path = src/themis/secure_session_utils.c; sourceTree = "<group>"; };
-		9F4A242F223A74AF005CB63A /* themis_error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = themis_error.h; path = src/themis/themis_error.h; sourceTree = "<group>"; };
 		9F4A2430223A74AF005CB63A /* secure_cell_alg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_cell_alg.h; path = src/themis/secure_cell_alg.h; sourceTree = "<group>"; };
 		9F4A2431223A74AF005CB63A /* sym_enc_message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sym_enc_message.c; path = src/themis/sym_enc_message.c; sourceTree = "<group>"; };
 		9F4A2432223A74AF005CB63A /* secure_comparator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_comparator.c; path = src/themis/secure_comparator.c; sourceTree = "<group>"; };
-		9F4A2433223A74AF005CB63A /* themis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = themis.h; path = src/themis/themis.h; sourceTree = "<group>"; };
-		9F4A2434223A74AF005CB63A /* secure_comparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = secure_comparator.h; path = src/themis/secure_comparator.h; sourceTree = "<group>"; };
 		9F4A2435223A74AF005CB63A /* secure_session_message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_session_message.c; path = src/themis/secure_session_message.c; sourceTree = "<group>"; };
 		9F4A2437223A74AF005CB63A /* secure_message.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_message.c; path = src/themis/secure_message.c; sourceTree = "<group>"; };
 		9F4A2438223A74AF005CB63A /* secure_session.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = secure_session.c; path = src/themis/secure_session.c; sourceTree = "<group>"; };
@@ -1392,178 +1374,33 @@
 		9F70B2E7241D17A3009CB629 /* Test Themis (Swift 5, iOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Test Themis (Swift 5, iOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F70B3192420E16F009CB629 /* Test Themis (Swift 4, iOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Test Themis (Swift 4, iOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F70B3312420E176009CB629 /* Test Themis (Swift 4, macOS).xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Test Themis (Swift 4, macOS).xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9F7E521E2571DEBB0054558B /* soter_asym_ka.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_asym_ka.h; path = include/soter/soter_asym_ka.h; sourceTree = "<group>"; };
+		9F7E521F2571DEBB0054558B /* soter_error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_error.h; path = include/soter/soter_error.h; sourceTree = "<group>"; };
+		9F7E52202571DEBB0054558B /* soter_wipe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_wipe.h; path = include/soter/soter_wipe.h; sourceTree = "<group>"; };
+		9F7E52212571DEBB0054558B /* soter_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_api.h; path = include/soter/soter_api.h; sourceTree = "<group>"; };
+		9F7E52222571DEBB0054558B /* soter_asym_cipher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_asym_cipher.h; path = include/soter/soter_asym_cipher.h; sourceTree = "<group>"; };
+		9F7E52232571DEBB0054558B /* soter_kdf.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_kdf.h; path = include/soter/soter_kdf.h; sourceTree = "<group>"; };
+		9F7E52242571DEBB0054558B /* soter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter.h; path = include/soter/soter.h; sourceTree = "<group>"; };
+		9F7E52252571DEBB0054558B /* soter_sym.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_sym.h; path = include/soter/soter_sym.h; sourceTree = "<group>"; };
+		9F7E52262571DEBB0054558B /* soter_asym_sign.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_asym_sign.h; path = include/soter/soter_asym_sign.h; sourceTree = "<group>"; };
+		9F7E52272571DEBC0054558B /* soter_rand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_rand.h; path = include/soter/soter_rand.h; sourceTree = "<group>"; };
+		9F7E52282571DEBC0054558B /* soter_rsa_key_pair_gen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_rsa_key_pair_gen.h; path = include/soter/soter_rsa_key_pair_gen.h; sourceTree = "<group>"; };
+		9F7E52292571DEBC0054558B /* soter_hmac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_hmac.h; path = include/soter/soter_hmac.h; sourceTree = "<group>"; };
+		9F7E522A2571DEBC0054558B /* soter_hash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_hash.h; path = include/soter/soter_hash.h; sourceTree = "<group>"; };
+		9F7E522C2571DEE50054558B /* secure_message.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = secure_message.h; path = include/themis/secure_message.h; sourceTree = "<group>"; };
+		9F7E522D2571DEE50054558B /* secure_session.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = secure_session.h; path = include/themis/secure_session.h; sourceTree = "<group>"; };
+		9F7E522E2571DEE50054558B /* secure_keygen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = secure_keygen.h; path = include/themis/secure_keygen.h; sourceTree = "<group>"; };
+		9F7E522F2571DEE50054558B /* themis_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = themis_api.h; path = include/themis/themis_api.h; sourceTree = "<group>"; };
+		9F7E52302571DEE50054558B /* themis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = themis.h; path = include/themis/themis.h; sourceTree = "<group>"; };
+		9F7E52312571DEE50054558B /* secure_cell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = secure_cell.h; path = include/themis/secure_cell.h; sourceTree = "<group>"; };
+		9F7E52322571DEE50054558B /* themis_error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = themis_error.h; path = include/themis/themis_error.h; sourceTree = "<group>"; };
+		9F7E52332571DEE50054558B /* secure_comparator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = secure_comparator.h; path = include/themis/secure_comparator.h; sourceTree = "<group>"; };
 		9F874AB122CCB0D100E8DECA /* soter_ec_key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_ec_key.c; path = src/soter/soter_ec_key.c; sourceTree = "<group>"; };
 		9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_rsa_key.c; path = src/soter/soter_rsa_key.c; sourceTree = "<group>"; };
-		9F98F32422CCEA5D008E14E6 /* soter_wipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_wipe.h; path = src/soter/soter_wipe.h; sourceTree = "<group>"; };
 		9F98F32722CCEB0E008E14E6 /* soter_wipe.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_wipe.c; path = src/soter/openssl/soter_wipe.c; sourceTree = "<group>"; };
 		9FB1BC9A233BEC9900930861 /* themis_portable_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = themis_portable_endian.h; path = src/themis/themis_portable_endian.h; sourceTree = "<group>"; };
 		9FB1BC9D233BECB900930861 /* soter_portable_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_portable_endian.h; path = src/soter/soter_portable_endian.h; sourceTree = "<group>"; };
 		9FBD853C223BFB5E009EAEB3 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Carthage/Build/iOS/openssl.framework; sourceTree = "<group>"; };
-		9FD4C3522260D41700132A88 /* soter_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = soter_api.h; path = src/soter/soter_api.h; sourceTree = "<group>"; };
-		9FD4C3532260D43B00132A88 /* themis_api.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = themis_api.h; path = src/themis/themis_api.h; sourceTree = "<group>"; };
-		A0C994CC094848F8ADCE3044 /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/evp/internal.h; sourceTree = SOURCE_ROOT; };
-		A3105D2F513220714E7EF51F /* cmac.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cmac.h; path = third_party/boringssl/src/include/openssl/cmac.h; sourceTree = SOURCE_ROOT; };
-		A32FB45D5F58A85A32D01DCF /* x509_vfy.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x509_vfy.c; path = third_party/boringssl/src/crypto/x509/x509_vfy.c; sourceTree = SOURCE_ROOT; };
-		A33A7702643E32246579EB2D /* bio.c */ = {isa = PBXFileReference; includeInIndex = 1; name = bio.c; path = third_party/boringssl/src/crypto/bio/bio.c; sourceTree = SOURCE_ROOT; };
-		A4E7D91A437DF020D4F48BED /* pem_pkey.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pem_pkey.c; path = third_party/boringssl/src/crypto/pem/pem_pkey.c; sourceTree = SOURCE_ROOT; };
-		A52000842DFBCAC7B99ED4DC /* arm_arch.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = arm_arch.h; path = third_party/boringssl/src/include/openssl/arm_arch.h; sourceTree = SOURCE_ROOT; };
-		A60AFCC29FAA309FCF080E46 /* v3_info.c */ = {isa = PBXFileReference; includeInIndex = 1; name = v3_info.c; path = third_party/boringssl/src/crypto/x509v3/v3_info.c; sourceTree = SOURCE_ROOT; };
-		A65E0EE9F0D7D3B6B4774847 /* e_rc2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = e_rc2.c; path = third_party/boringssl/src/crypto/cipher_extra/e_rc2.c; sourceTree = SOURCE_ROOT; };
-		A76D3A032495B2E6A0FE81AB /* x509spki.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x509spki.c; path = third_party/boringssl/src/crypto/x509/x509spki.c; sourceTree = SOURCE_ROOT; };
-		A7D0AF51092D48E8AE3EBA8C /* cpu-aarch64-fuchsia.c */ = {isa = PBXFileReference; includeInIndex = 1; name = "cpu-aarch64-fuchsia.c"; path = "third_party/boringssl/src/crypto/cpu-aarch64-fuchsia.c"; sourceTree = SOURCE_ROOT; };
-		A8F4B7092939D121EF7E978F /* a_int.c */ = {isa = PBXFileReference; includeInIndex = 1; name = a_int.c; path = third_party/boringssl/src/crypto/asn1/a_int.c; sourceTree = SOURCE_ROOT; };
-		A92475E9E7597E89F577E4D3 /* v3_int.c */ = {isa = PBXFileReference; includeInIndex = 1; name = v3_int.c; path = third_party/boringssl/src/crypto/x509v3/v3_int.c; sourceTree = SOURCE_ROOT; };
-		A9771EE8C6C71F85DA9FB13F /* a_bitstr.c */ = {isa = PBXFileReference; includeInIndex = 1; name = a_bitstr.c; path = third_party/boringssl/src/crypto/asn1/a_bitstr.c; sourceTree = SOURCE_ROOT; };
-		AA5E1B1495F5557F3829598C /* tls1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = tls1.h; path = third_party/boringssl/src/include/openssl/tls1.h; sourceTree = SOURCE_ROOT; };
-		ABA9C9DC496226D0073AF034 /* a_utctm.c */ = {isa = PBXFileReference; includeInIndex = 1; name = a_utctm.c; path = third_party/boringssl/src/crypto/asn1/a_utctm.c; sourceTree = SOURCE_ROOT; };
-		ABD25C05B204AED5CF5805C9 /* poly1305.c */ = {isa = PBXFileReference; includeInIndex = 1; name = poly1305.c; path = third_party/boringssl/src/crypto/poly1305/poly1305.c; sourceTree = SOURCE_ROOT; };
-		AC36D106F74AFBB099F93F84 /* x509_ext.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x509_ext.c; path = third_party/boringssl/src/crypto/x509/x509_ext.c; sourceTree = SOURCE_ROOT; };
-		ACE9ED75F02886A065F8876A /* pem.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pem.h; path = third_party/boringssl/src/include/openssl/pem.h; sourceTree = SOURCE_ROOT; };
-		AD89CDFA8DC57008B72E31F0 /* voprf.c */ = {isa = PBXFileReference; includeInIndex = 1; name = voprf.c; path = third_party/boringssl/src/crypto/trust_token/voprf.c; sourceTree = SOURCE_ROOT; };
-		ADC8B32AED52AD9F6EF621D6 /* p_x25519.c */ = {isa = PBXFileReference; includeInIndex = 1; name = p_x25519.c; path = third_party/boringssl/src/crypto/evp/p_x25519.c; sourceTree = SOURCE_ROOT; };
-		AE60B773FB00F389E1A45271 /* md5-586.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "md5-586.S"; path = "third_party/boringssl/mac-x86/crypto/fipsmodule/md5-586.S"; sourceTree = SOURCE_ROOT; };
-		AE8ED46F05C4BB9B244E8D28 /* aesni-x86_64.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "aesni-x86_64.S"; path = "third_party/boringssl/mac-x86_64/crypto/fipsmodule/aesni-x86_64.S"; sourceTree = SOURCE_ROOT; };
-		AEDFF21C65CE91378BBF42E2 /* print.c */ = {isa = PBXFileReference; includeInIndex = 1; name = print.c; path = third_party/boringssl/src/crypto/evp/print.c; sourceTree = SOURCE_ROOT; };
-		AFFDFC4C6DC120F106B4FE85 /* x509_txt.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x509_txt.c; path = third_party/boringssl/src/crypto/x509/x509_txt.c; sourceTree = SOURCE_ROOT; };
-		B00B882D2657E731447A774A /* t1_lib.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = t1_lib.cc; path = third_party/boringssl/src/ssl/t1_lib.cc; sourceTree = SOURCE_ROOT; };
-		B0C2121CB284DCDD8DE65562 /* safestack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = safestack.h; path = third_party/boringssl/src/include/openssl/safestack.h; sourceTree = SOURCE_ROOT; };
-		B0D956142CDBA2B3232878BC /* base64.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = base64.h; path = third_party/boringssl/src/include/openssl/base64.h; sourceTree = SOURCE_ROOT; };
-		B10B32D5E693C7AB2B3EC4C7 /* x86_64-mont5.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "x86_64-mont5.S"; path = "third_party/boringssl/mac-x86_64/crypto/fipsmodule/x86_64-mont5.S"; sourceTree = SOURCE_ROOT; };
-		B186A617FA9CF1C37B486F4C /* sign.c */ = {isa = PBXFileReference; includeInIndex = 1; name = sign.c; path = third_party/boringssl/src/crypto/evp/sign.c; sourceTree = SOURCE_ROOT; };
-		B25B5A0437CFEEFDB6F243B1 /* vpaes-armv7.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "vpaes-armv7.S"; path = "third_party/boringssl/ios-arm/crypto/fipsmodule/vpaes-armv7.S"; sourceTree = SOURCE_ROOT; };
-		B269DC2580FF48FDDA8D96FF /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/ssl/internal.h; sourceTree = SOURCE_ROOT; };
-		B2991B22ACCE7F6A44BA566E /* aes128gcmsiv-x86_64.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "aes128gcmsiv-x86_64.S"; path = "third_party/boringssl/mac-x86_64/crypto/cipher_extra/aes128gcmsiv-x86_64.S"; sourceTree = SOURCE_ROOT; };
-		B34D0EED6A7CF28CA22988B2 /* base.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = base.h; path = third_party/boringssl/src/include/openssl/base.h; sourceTree = SOURCE_ROOT; };
-		B4FE2BD55E53F74EEC023470 /* check.c */ = {isa = PBXFileReference; includeInIndex = 1; name = check.c; path = third_party/boringssl/src/crypto/dh/check.c; sourceTree = SOURCE_ROOT; };
-		B619769CA5B098821E98408E /* err.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = err.h; path = third_party/boringssl/src/include/openssl/err.h; sourceTree = SOURCE_ROOT; };
-		B619A7C7E0450DFD135A4F66 /* x_info.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x_info.c; path = third_party/boringssl/src/crypto/x509/x_info.c; sourceTree = SOURCE_ROOT; };
-		B62A52F8EA53898BC8C716A5 /* bio.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = bio.h; path = third_party/boringssl/src/include/openssl/bio.h; sourceTree = SOURCE_ROOT; };
-		B6843EF2F229AEF2A29BC077 /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/fipsmodule/aes/internal.h; sourceTree = SOURCE_ROOT; };
-		B6DC26BDBA4BECBEA1224A77 /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/hpke/internal.h; sourceTree = SOURCE_ROOT; };
-		B7879D7AA28E2D8FB8200E5C /* asn1.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1.h; path = third_party/boringssl/src/include/openssl/asn1.h; sourceTree = SOURCE_ROOT; };
-		B89B87A78000851FBEEC7D2F /* sha512-x86_64.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "sha512-x86_64.S"; path = "third_party/boringssl/mac-x86_64/crypto/fipsmodule/sha512-x86_64.S"; sourceTree = SOURCE_ROOT; };
-		B934BF07ACFB2293A215D615 /* obj.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = obj.h; path = third_party/boringssl/src/include/openssl/obj.h; sourceTree = SOURCE_ROOT; };
-		B9515B5B877FD5C828A22DBE /* ssl_session.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = ssl_session.cc; path = third_party/boringssl/src/ssl/ssl_session.cc; sourceTree = SOURCE_ROOT; };
-		B98B7CE22540BB1217678A00 /* digestsign.c */ = {isa = PBXFileReference; includeInIndex = 1; name = digestsign.c; path = third_party/boringssl/src/crypto/evp/digestsign.c; sourceTree = SOURCE_ROOT; };
-		B9F67A0ACB2C42D647BEEA34 /* sha512-armv8.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "sha512-armv8.S"; path = "third_party/boringssl/ios-aarch64/crypto/fipsmodule/sha512-armv8.S"; sourceTree = SOURCE_ROOT; };
-		BB5843A05A8B43CE098360C3 /* s3_lib.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = s3_lib.cc; path = third_party/boringssl/src/ssl/s3_lib.cc; sourceTree = SOURCE_ROOT; };
-		BB8ABFC2B7CE8E15FB839DFF /* handshake.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = handshake.cc; path = third_party/boringssl/src/ssl/handshake.cc; sourceTree = SOURCE_ROOT; };
-		BBCF10BD5ED5068E500B30FF /* pem_lib.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pem_lib.c; path = third_party/boringssl/src/crypto/pem/pem_lib.c; sourceTree = SOURCE_ROOT; };
-		BC39820C190CAF570198E400 /* handoff.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = handoff.cc; path = third_party/boringssl/src/ssl/handoff.cc; sourceTree = SOURCE_ROOT; };
-		BCA66DE8534D296D6BCA4DF7 /* a_i2d_fp.c */ = {isa = PBXFileReference; includeInIndex = 1; name = a_i2d_fp.c; path = third_party/boringssl/src/crypto/asn1/a_i2d_fp.c; sourceTree = SOURCE_ROOT; };
-		BD16FA91465586A170434865 /* evp_asn1.c */ = {isa = PBXFileReference; includeInIndex = 1; name = evp_asn1.c; path = third_party/boringssl/src/crypto/evp/evp_asn1.c; sourceTree = SOURCE_ROOT; };
-		BDA9315BA77B3BF8D764470D /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/fipsmodule/bn/internal.h; sourceTree = SOURCE_ROOT; };
-		BEBB73DE3A09B3842EA2017E /* handshake_server.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = handshake_server.cc; path = third_party/boringssl/src/ssl/handshake_server.cc; sourceTree = SOURCE_ROOT; };
-		BFB1DBA08CCD9C97A098F663 /* objects.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = objects.h; path = third_party/boringssl/src/include/openssl/objects.h; sourceTree = SOURCE_ROOT; };
-		C0C42ECDFC203C2EC815008A /* ec.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = ec.h; path = third_party/boringssl/src/include/openssl/ec.h; sourceTree = SOURCE_ROOT; };
-		C382B826410DFBA264B3DF7B /* sha256-armv4.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "sha256-armv4.S"; path = "third_party/boringssl/ios-arm/crypto/fipsmodule/sha256-armv4.S"; sourceTree = SOURCE_ROOT; };
-		C403170A5CDA5BE5C2189AA7 /* armv8-mont.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "armv8-mont.S"; path = "third_party/boringssl/ios-aarch64/crypto/fipsmodule/armv8-mont.S"; sourceTree = SOURCE_ROOT; };
-		C42B8A74B1158CAC3B00377A /* tasn_enc.c */ = {isa = PBXFileReference; includeInIndex = 1; name = tasn_enc.c; path = third_party/boringssl/src/crypto/asn1/tasn_enc.c; sourceTree = SOURCE_ROOT; };
-		C644D5783AE45767A8770C06 /* algorithm.c */ = {isa = PBXFileReference; includeInIndex = 1; name = algorithm.c; path = third_party/boringssl/src/crypto/x509/algorithm.c; sourceTree = SOURCE_ROOT; };
-		C65523E0540C74C015D8591C /* stack.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = stack.h; path = third_party/boringssl/src/include/openssl/stack.h; sourceTree = SOURCE_ROOT; };
-		C65CAA9D9996AC8A8A008D31 /* srtp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = srtp.h; path = third_party/boringssl/src/include/openssl/srtp.h; sourceTree = SOURCE_ROOT; };
-		C72234EFA032595DF2800D31 /* vpaes-armv8.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "vpaes-armv8.S"; path = "third_party/boringssl/ios-aarch64/crypto/fipsmodule/vpaes-armv8.S"; sourceTree = SOURCE_ROOT; };
-		C7B550A5C58A5E48193F68A1 /* asn1_lib.c */ = {isa = PBXFileReference; includeInIndex = 1; name = asn1_lib.c; path = third_party/boringssl/src/crypto/asn1/asn1_lib.c; sourceTree = SOURCE_ROOT; };
-		C7BFFFC4F0F8D1D3BAAEFE09 /* bn_asn1.c */ = {isa = PBXFileReference; includeInIndex = 1; name = bn_asn1.c; path = third_party/boringssl/src/crypto/bn_extra/bn_asn1.c; sourceTree = SOURCE_ROOT; };
-		C84F8380687B00895BE940DC /* pcy_data.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pcy_data.c; path = third_party/boringssl/src/crypto/x509v3/pcy_data.c; sourceTree = SOURCE_ROOT; };
-		C935D5BED37C68409E6677A7 /* chacha-x86_64.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "chacha-x86_64.S"; path = "third_party/boringssl/mac-x86_64/crypto/chacha/chacha-x86_64.S"; sourceTree = SOURCE_ROOT; };
-		CAFDF4FC52D1018709D8EA43 /* lhash.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = lhash.h; path = third_party/boringssl/src/include/openssl/lhash.h; sourceTree = SOURCE_ROOT; };
-		CB17E06F0D2D1839DD16B048 /* ssl_cipher.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = ssl_cipher.cc; path = third_party/boringssl/src/ssl/ssl_cipher.cc; sourceTree = SOURCE_ROOT; };
-		CC5EE2F1740B1762E4BA7136 /* v3_pmaps.c */ = {isa = PBXFileReference; includeInIndex = 1; name = v3_pmaps.c; path = third_party/boringssl/src/crypto/x509v3/v3_pmaps.c; sourceTree = SOURCE_ROOT; };
-		CC764578867C8C7AD2651E2A /* x_algor.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x_algor.c; path = third_party/boringssl/src/crypto/x509/x_algor.c; sourceTree = SOURCE_ROOT; };
-		CE19AC93F884A334F1BD61D5 /* buf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = buf.h; path = third_party/boringssl/src/include/openssl/buf.h; sourceTree = SOURCE_ROOT; };
-		CE71EDFF9835DF507B5285B9 /* cpu-arm-linux.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "cpu-arm-linux.h"; path = "third_party/boringssl/src/crypto/cpu-arm-linux.h"; sourceTree = SOURCE_ROOT; };
-		CF1B5FF561CF36BC0AC10D5F /* md5-x86_64.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "md5-x86_64.S"; path = "third_party/boringssl/mac-x86_64/crypto/fipsmodule/md5-x86_64.S"; sourceTree = SOURCE_ROOT; };
-		CF2B71789F563370D0E352BA /* ssl_cert.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = ssl_cert.cc; path = third_party/boringssl/src/ssl/ssl_cert.cc; sourceTree = SOURCE_ROOT; };
-		CF2D5B25FF21AC3C2D2C3875 /* pool.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pool.c; path = third_party/boringssl/src/crypto/pool/pool.c; sourceTree = SOURCE_ROOT; };
-		D1679DEA8ACAC1EF3D2EDE86 /* curve25519.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = curve25519.h; path = third_party/boringssl/src/include/openssl/curve25519.h; sourceTree = SOURCE_ROOT; };
-		D1A7C1F5EF1E7013D323491A /* pem_pk8.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pem_pk8.c; path = third_party/boringssl/src/crypto/pem/pem_pk8.c; sourceTree = SOURCE_ROOT; };
-		D28537C4403B394F10B0DA71 /* cpu.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = cpu.h; path = third_party/boringssl/src/include/openssl/cpu.h; sourceTree = SOURCE_ROOT; };
-		D2B1BC48935DB173DE3A8ACD /* d1_lib.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = d1_lib.cc; path = third_party/boringssl/src/ssl/d1_lib.cc; sourceTree = SOURCE_ROOT; };
-		D2D7A39BE7B688469C1ACB86 /* a_digest.c */ = {isa = PBXFileReference; includeInIndex = 1; name = a_digest.c; path = third_party/boringssl/src/crypto/x509/a_digest.c; sourceTree = SOURCE_ROOT; };
-		D33701E6552427B848DA9C38 /* tls_method.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = tls_method.cc; path = third_party/boringssl/src/ssl/tls_method.cc; sourceTree = SOURCE_ROOT; };
-		D3D34DD4ABD4A85E0D2ADED3 /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/internal.h; sourceTree = SOURCE_ROOT; };
-		D81A2F99D8704AB0684D39DC /* ssl_transcript.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = ssl_transcript.cc; path = third_party/boringssl/src/ssl/ssl_transcript.cc; sourceTree = SOURCE_ROOT; };
-		D85131D1BE23E9510D1F17CE /* ex_data.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ex_data.c; path = third_party/boringssl/src/crypto/ex_data.c; sourceTree = SOURCE_ROOT; };
-		D9858FE588779BB2B1739917 /* dh_asn1.c */ = {isa = PBXFileReference; includeInIndex = 1; name = dh_asn1.c; path = third_party/boringssl/src/crypto/dh/dh_asn1.c; sourceTree = SOURCE_ROOT; };
-		DA6C9F95793CBF2392F2D029 /* crypto.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = crypto.h; path = third_party/boringssl/src/include/openssl/crypto.h; sourceTree = SOURCE_ROOT; };
-		DB175B2311EF7782E8E0198D /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/pool/internal.h; sourceTree = SOURCE_ROOT; };
-		DB1CB34D3FADAB1D9D7A9BB4 /* a_strnid.c */ = {isa = PBXFileReference; includeInIndex = 1; name = a_strnid.c; path = third_party/boringssl/src/crypto/asn1/a_strnid.c; sourceTree = SOURCE_ROOT; };
-		DB92CECBC984C6C6DAB329B1 /* obj_dat.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = obj_dat.h; path = third_party/boringssl/src/crypto/obj/obj_dat.h; sourceTree = SOURCE_ROOT; };
-		DC51A70B1E062932F26F8122 /* opensslconf.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = opensslconf.h; path = third_party/boringssl/src/include/openssl/opensslconf.h; sourceTree = SOURCE_ROOT; };
-		DCAA01DBAA2E2D0BB4B8747E /* sha512-armv4.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "sha512-armv4.S"; path = "third_party/boringssl/ios-arm/crypto/fipsmodule/sha512-armv4.S"; sourceTree = SOURCE_ROOT; };
-		DCC463B08B4E4A06BA8F9E83 /* x509_obj.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x509_obj.c; path = third_party/boringssl/src/crypto/x509/x509_obj.c; sourceTree = SOURCE_ROOT; };
-		DD083D8B20F29BED52D6F48B /* pkcs8.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pkcs8.c; path = third_party/boringssl/src/crypto/pkcs8/pkcs8.c; sourceTree = SOURCE_ROOT; };
-		DD0C06668D42A00A0BA3372C /* v3_lib.c */ = {isa = PBXFileReference; includeInIndex = 1; name = v3_lib.c; path = third_party/boringssl/src/crypto/x509v3/v3_lib.c; sourceTree = SOURCE_ROOT; };
-		DDD636FFEC5FE587582861B5 /* a_octet.c */ = {isa = PBXFileReference; includeInIndex = 1; name = a_octet.c; path = third_party/boringssl/src/crypto/asn1/a_octet.c; sourceTree = SOURCE_ROOT; };
-		DEE5DF85BE2CA192F5BC3F7C /* obj_xref.c */ = {isa = PBXFileReference; includeInIndex = 1; name = obj_xref.c; path = third_party/boringssl/src/crypto/obj/obj_xref.c; sourceTree = SOURCE_ROOT; };
-		DFA9D52C845A30AF215411A1 /* ecdh_extra.c */ = {isa = PBXFileReference; includeInIndex = 1; name = ecdh_extra.c; path = third_party/boringssl/src/crypto/ecdh_extra/ecdh_extra.c; sourceTree = SOURCE_ROOT; };
-		DFFE008C9904E44C1256C168 /* asn1_locl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1_locl.h; path = third_party/boringssl/src/crypto/asn1/asn1_locl.h; sourceTree = SOURCE_ROOT; };
-		DFFECF9350D25752F74A8CBA /* x509_lu.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x509_lu.c; path = third_party/boringssl/src/crypto/x509/x509_lu.c; sourceTree = SOURCE_ROOT; };
-		E0B9715586C94F104257B401 /* pem_oth.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pem_oth.c; path = third_party/boringssl/src/crypto/pem/pem_oth.c; sourceTree = SOURCE_ROOT; };
-		E0DCFED547057C7EC6E6925A /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/fipsmodule/rand/internal.h; sourceTree = SOURCE_ROOT; };
-		E0FE471AC87DCD791A1660C8 /* chacha-x86.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "chacha-x86.S"; path = "third_party/boringssl/mac-x86/crypto/chacha/chacha-x86.S"; sourceTree = SOURCE_ROOT; };
-		E12A0C10E2AA54F36031DC55 /* tls13_server.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = tls13_server.cc; path = third_party/boringssl/src/ssl/tls13_server.cc; sourceTree = SOURCE_ROOT; };
-		E1BB22E1D558489261BDEE8B /* p256_table.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = p256_table.h; path = third_party/boringssl/src/crypto/fipsmodule/ec/p256_table.h; sourceTree = SOURCE_ROOT; };
-		E28667BB32ADBB330DC018D2 /* cipher_extra.c */ = {isa = PBXFileReference; includeInIndex = 1; name = cipher_extra.c; path = third_party/boringssl/src/crypto/cipher_extra/cipher_extra.c; sourceTree = SOURCE_ROOT; };
-		E33FAEE3B869464168536BC1 /* md4.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = md4.h; path = third_party/boringssl/src/include/openssl/md4.h; sourceTree = SOURCE_ROOT; };
-		E37F2F6B1892541EFD385900 /* x_x509.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x_x509.c; path = third_party/boringssl/src/crypto/x509/x_x509.c; sourceTree = SOURCE_ROOT; };
-		E3E7C0757719648786D8AD32 /* co-586.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "co-586.S"; path = "third_party/boringssl/mac-x86/crypto/fipsmodule/co-586.S"; sourceTree = SOURCE_ROOT; };
-		E4095C2B4A0753EEEA9CD1E1 /* p_x25519_asn1.c */ = {isa = PBXFileReference; includeInIndex = 1; name = p_x25519_asn1.c; path = third_party/boringssl/src/crypto/evp/p_x25519_asn1.c; sourceTree = SOURCE_ROOT; };
-		E466D310C80161BBF0829BDA /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/x509v3/internal.h; sourceTree = SOURCE_ROOT; };
-		E4E009C8B2E7D963FC9C4253 /* asn1_gen.c */ = {isa = PBXFileReference; includeInIndex = 1; name = asn1_gen.c; path = third_party/boringssl/src/crypto/x509/asn1_gen.c; sourceTree = SOURCE_ROOT; };
-		E4E6C44C21830CEDA40E7507 /* hrss.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = hrss.h; path = third_party/boringssl/src/include/openssl/hrss.h; sourceTree = SOURCE_ROOT; };
-		E51C78B9B6F878AB5B3322AB /* x509cset.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x509cset.c; path = third_party/boringssl/src/crypto/x509/x509cset.c; sourceTree = SOURCE_ROOT; };
-		E569401E2990BFCE6665E1A8 /* type_check.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = type_check.h; path = third_party/boringssl/src/include/openssl/type_check.h; sourceTree = SOURCE_ROOT; };
-		E5EBC45AE7D49F9859B62065 /* v3_akeya.c */ = {isa = PBXFileReference; includeInIndex = 1; name = v3_akeya.c; path = third_party/boringssl/src/crypto/x509v3/v3_akeya.c; sourceTree = SOURCE_ROOT; };
-		E65FB2FACD0029EB1C71BCB1 /* thread.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = thread.h; path = third_party/boringssl/src/include/openssl/thread.h; sourceTree = SOURCE_ROOT; };
-		E66AAF697B0EF172FA2BBA08 /* poly1305_arm.c */ = {isa = PBXFileReference; includeInIndex = 1; name = poly1305_arm.c; path = third_party/boringssl/src/crypto/poly1305/poly1305_arm.c; sourceTree = SOURCE_ROOT; };
-		E6719F4A83AD907BE14FD85B /* pool.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pool.h; path = third_party/boringssl/src/include/openssl/pool.h; sourceTree = SOURCE_ROOT; };
-		E6906B00C3E2282A8133444D /* ghash-x86_64.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "ghash-x86_64.S"; path = "third_party/boringssl/mac-x86_64/crypto/fipsmodule/ghash-x86_64.S"; sourceTree = SOURCE_ROOT; };
-		E6A9D793D50908634812557F /* x509_r2x.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x509_r2x.c; path = third_party/boringssl/src/crypto/x509/x509_r2x.c; sourceTree = SOURCE_ROOT; };
-		E6F9DB82D223F97BB866D904 /* a_verify.c */ = {isa = PBXFileReference; includeInIndex = 1; name = a_verify.c; path = third_party/boringssl/src/crypto/x509/a_verify.c; sourceTree = SOURCE_ROOT; };
-		E73C38919C91CDFB79FC256D /* sha256-586.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "sha256-586.S"; path = "third_party/boringssl/mac-x86/crypto/fipsmodule/sha256-586.S"; sourceTree = SOURCE_ROOT; };
-		E74384388426899A16AB2C96 /* bsaes-armv7.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "bsaes-armv7.S"; path = "third_party/boringssl/ios-arm/crypto/fipsmodule/bsaes-armv7.S"; sourceTree = SOURCE_ROOT; };
-		E748E0F2D1FD5032311DEC5F /* thread.c */ = {isa = PBXFileReference; includeInIndex = 1; name = thread.c; path = third_party/boringssl/src/crypto/thread.c; sourceTree = SOURCE_ROOT; };
-		E7DCC0A684A040865FF6141B /* pkcs7.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pkcs7.c; path = third_party/boringssl/src/crypto/pkcs7/pkcs7.c; sourceTree = SOURCE_ROOT; };
-		E8281D26AD22626F0AC29260 /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/fipsmodule/rsa/internal.h; sourceTree = SOURCE_ROOT; };
-		E86064153E80B408B494451D /* x86-mont.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "x86-mont.S"; path = "third_party/boringssl/mac-x86/crypto/fipsmodule/x86-mont.S"; sourceTree = SOURCE_ROOT; };
-		E91893910DB512AB776494C6 /* asn1_par.c */ = {isa = PBXFileReference; includeInIndex = 1; name = asn1_par.c; path = third_party/boringssl/src/crypto/asn1/asn1_par.c; sourceTree = SOURCE_ROOT; };
-		E945A9A5DE51372CBF3923C8 /* evp_ctx.c */ = {isa = PBXFileReference; includeInIndex = 1; name = evp_ctx.c; path = third_party/boringssl/src/crypto/evp/evp_ctx.c; sourceTree = SOURCE_ROOT; };
-		E9A2E98F34BD07B657C5207E /* lhash.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lhash.c; path = third_party/boringssl/src/crypto/lhash/lhash.c; sourceTree = SOURCE_ROOT; };
-		EA506D1C7B4C9776B3EBE802 /* x_spki.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x_spki.c; path = third_party/boringssl/src/crypto/x509/x_spki.c; sourceTree = SOURCE_ROOT; };
-		EADDB9E28528A5464FAA5B13 /* cpu-arm.c */ = {isa = PBXFileReference; includeInIndex = 1; name = "cpu-arm.c"; path = "third_party/boringssl/src/crypto/cpu-arm.c"; sourceTree = SOURCE_ROOT; };
-		EAF6C9311325EF4747C6A644 /* trampoline-x86.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "trampoline-x86.S"; path = "third_party/boringssl/mac-x86/crypto/test/trampoline-x86.S"; sourceTree = SOURCE_ROOT; };
-		EC279A306FA9A2787C567E2B /* thread_none.c */ = {isa = PBXFileReference; includeInIndex = 1; name = thread_none.c; path = third_party/boringssl/src/crypto/thread_none.c; sourceTree = SOURCE_ROOT; };
-		ECB271261246EC820D9A2E1D /* bcm.c */ = {isa = PBXFileReference; includeInIndex = 1; name = bcm.c; path = third_party/boringssl/src/crypto/fipsmodule/bcm.c; sourceTree = SOURCE_ROOT; };
-		EDA02D6A9B8AE353EB4EF67D /* chacha-armv4.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "chacha-armv4.S"; path = "third_party/boringssl/ios-arm/crypto/chacha/chacha-armv4.S"; sourceTree = SOURCE_ROOT; };
-		EDF773AD84E18E41F5273982 /* mem.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = mem.h; path = third_party/boringssl/src/include/openssl/mem.h; sourceTree = SOURCE_ROOT; };
-		EE2F993735234F88B5D63BBF /* v3_ia5.c */ = {isa = PBXFileReference; includeInIndex = 1; name = v3_ia5.c; path = third_party/boringssl/src/crypto/x509v3/v3_ia5.c; sourceTree = SOURCE_ROOT; };
-		EEC48E832DAB24AA0886CEBD /* curve25519_tables.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = curve25519_tables.h; path = third_party/boringssl/src/crypto/curve25519/curve25519_tables.h; sourceTree = SOURCE_ROOT; };
-		EEE8FE52855E17345E8ED8D9 /* convert.c */ = {isa = PBXFileReference; includeInIndex = 1; name = convert.c; path = third_party/boringssl/src/crypto/bn_extra/convert.c; sourceTree = SOURCE_ROOT; };
-		EF5480230921DE10D5EBE2EA /* pkcs12.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pkcs12.h; path = third_party/boringssl/src/include/openssl/pkcs12.h; sourceTree = SOURCE_ROOT; };
-		F063F94114AFB26895706326 /* engine.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = engine.h; path = third_party/boringssl/src/include/openssl/engine.h; sourceTree = SOURCE_ROOT; };
-		F12FE581FF45E1100F922DCF /* dsa.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = dsa.h; path = third_party/boringssl/src/include/openssl/dsa.h; sourceTree = SOURCE_ROOT; };
-		F1BA28C125375A96F5D75D04 /* buf.c */ = {isa = PBXFileReference; includeInIndex = 1; name = buf.c; path = third_party/boringssl/src/crypto/buf/buf.c; sourceTree = SOURCE_ROOT; };
-		F2058EFA8FFB0C88A670FA9A /* ghash-x86.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "ghash-x86.S"; path = "third_party/boringssl/mac-x86/crypto/fipsmodule/ghash-x86.S"; sourceTree = SOURCE_ROOT; };
-		F2F0ABF5CAF6691C743AB30B /* tasn_typ.c */ = {isa = PBXFileReference; includeInIndex = 1; name = tasn_typ.c; path = third_party/boringssl/src/crypto/asn1/tasn_typ.c; sourceTree = SOURCE_ROOT; };
-		F3006166E130511A1992A82A /* pkcs8_x509.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pkcs8_x509.c; path = third_party/boringssl/src/crypto/pkcs8/pkcs8_x509.c; sourceTree = SOURCE_ROOT; };
-		F3ABB5BE96D5EF6887ACAA06 /* aead.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = aead.h; path = third_party/boringssl/src/include/openssl/aead.h; sourceTree = SOURCE_ROOT; };
-		F459BB58B607DBEED1D36879 /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/fipsmodule/digest/internal.h; sourceTree = SOURCE_ROOT; };
-		F48668D0996BE3AE88C0E50C /* v3_ocsp.c */ = {isa = PBXFileReference; includeInIndex = 1; name = v3_ocsp.c; path = third_party/boringssl/src/crypto/x509v3/v3_ocsp.c; sourceTree = SOURCE_ROOT; };
-		F69B079A646A58605138E330 /* hash_to_curve.c */ = {isa = PBXFileReference; includeInIndex = 1; name = hash_to_curve.c; path = third_party/boringssl/src/crypto/ec_extra/hash_to_curve.c; sourceTree = SOURCE_ROOT; };
-		F6BEEE754EAA135CA0426148 /* aes.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = aes.h; path = third_party/boringssl/src/include/openssl/aes.h; sourceTree = SOURCE_ROOT; };
-		F6C1BDF82C5FB91FF4F32284 /* p256_32.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = p256_32.h; path = third_party/boringssl/src/third_party/fiat/p256_32.h; sourceTree = SOURCE_ROOT; };
-		F8040B9CC2D1EEA80BF13CA9 /* pbkdf.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pbkdf.c; path = third_party/boringssl/src/crypto/evp/pbkdf.c; sourceTree = SOURCE_ROOT; };
-		F8E40C91F5B93B3FD55F9670 /* a_d2i_fp.c */ = {isa = PBXFileReference; includeInIndex = 1; name = a_d2i_fp.c; path = third_party/boringssl/src/crypto/asn1/a_d2i_fp.c; sourceTree = SOURCE_ROOT; };
-		F92331D971CC4BDF6827B10F /* v3_crld.c */ = {isa = PBXFileReference; includeInIndex = 1; name = v3_crld.c; path = third_party/boringssl/src/crypto/x509v3/v3_crld.c; sourceTree = SOURCE_ROOT; };
-		F9788E28FFE9FEFD5AA039D8 /* x509_v3.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x509_v3.c; path = third_party/boringssl/src/crypto/x509/x509_v3.c; sourceTree = SOURCE_ROOT; };
-		F9ADE38960E853381BB1192E /* ssl_aead_ctx.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = ssl_aead_ctx.cc; path = third_party/boringssl/src/ssl/ssl_aead_ctx.cc; sourceTree = SOURCE_ROOT; };
-		FA761223082B310EB7B0A8E1 /* thread_win.c */ = {isa = PBXFileReference; includeInIndex = 1; name = thread_win.c; path = third_party/boringssl/src/crypto/thread_win.c; sourceTree = SOURCE_ROOT; };
-		FBA27C0D1449301A49026538 /* ghash-ssse3-x86.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "ghash-ssse3-x86.S"; path = "third_party/boringssl/mac-x86/crypto/fipsmodule/ghash-ssse3-x86.S"; sourceTree = SOURCE_ROOT; };
-		FDE1864CE0AC7B6F512B7F21 /* t_x509a.c */ = {isa = PBXFileReference; includeInIndex = 1; name = t_x509a.c; path = third_party/boringssl/src/crypto/x509/t_x509a.c; sourceTree = SOURCE_ROOT; };
-		FE2D8EC51FCAFA4C2D25C787 /* pem_info.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pem_info.c; path = third_party/boringssl/src/crypto/pem/pem_info.c; sourceTree = SOURCE_ROOT; };
-		FF4F2FD521D7F76CD24CA446 /* pkcs8.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = pkcs8.h; path = third_party/boringssl/src/include/openssl/pkcs8.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2117,36 +1954,24 @@
 		9F4A2370223A73B6005CB63A /* soter */ = {
 			isa = PBXGroup;
 			children = (
+				9F7E521D2571DE970054558B /* include */,
 				9F4A23A6223A742F005CB63A /* ed25519 */,
 				9F4A2383223A740E005CB63A /* openssl */,
-				9FD4C3522260D41700132A88 /* soter_api.h */,
-				9F4A2343223A73B0005CB63A /* soter_asym_cipher.h */,
-				9F4A234B223A73B0005CB63A /* soter_asym_ka.h */,
-				9F4A2350223A73B1005CB63A /* soter_asym_sign.h */,
 				9F4A2348223A73B0005CB63A /* soter_container.c */,
 				9F4A2358223A73B1005CB63A /* soter_container.h */,
 				9F4A234D223A73B0005CB63A /* soter_crc32.c */,
 				9F4A234E223A73B0005CB63A /* soter_crc32.h */,
 				9F874AB122CCB0D100E8DECA /* soter_ec_key.c */,
 				9F4A2352223A73B1005CB63A /* soter_ec_key.h */,
-				9F4A234C223A73B0005CB63A /* soter_error.h */,
-				9F4A2342223A73B0005CB63A /* soter_hash.h */,
 				9F4A2353223A73B1005CB63A /* soter_hmac.c */,
-				9F4A2349223A73B0005CB63A /* soter_hmac.h */,
 				9F4A2357223A73B1005CB63A /* soter_kdf.c */,
-				9F4A234F223A73B1005CB63A /* soter_kdf.h */,
 				9FB1BC9D233BECB900930861 /* soter_portable_endian.h */,
-				9F4A2354223A73B1005CB63A /* soter_rand.h */,
-				9F4A234A223A73B0005CB63A /* soter_rsa_key_pair_gen.h */,
 				9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */,
 				9F4A2347223A73B0005CB63A /* soter_rsa_key.h */,
 				9F4A2355223A73B1005CB63A /* soter_sign_ecdsa.h */,
 				9F4A2344223A73B0005CB63A /* soter_sign_rsa.h */,
 				9F4A2351223A73B1005CB63A /* soter_sign.c */,
-				9F4A2356223A73B1005CB63A /* soter_sym.h */,
-				9F98F32422CCEA5D008E14E6 /* soter_wipe.h */,
 				9F4A2346223A73B0005CB63A /* soter_t.h */,
-				9F4A2345223A73B0005CB63A /* soter.h */,
 			);
 			name = soter;
 			sourceTree = "<group>";
@@ -2246,20 +2071,17 @@
 		9F4A241D223A7493005CB63A /* themis */ = {
 			isa = PBXGroup;
 			children = (
+				9F7E522B2571DED30054558B /* include */,
 				9F4A2430223A74AF005CB63A /* secure_cell_alg.h */,
 				9F4A241E223A74AE005CB63A /* secure_cell.c */,
-				9F4A242C223A74AF005CB63A /* secure_cell.h */,
 				9F6B385423D9D11600EA5D1B /* secure_cell_seal_passphrase.c */,
 				9F34EA3023D9CA0A0079A1D7 /* secure_cell_seal_passphrase.h */,
 				9F4A241F223A74AE005CB63A /* secure_comparator_t.h */,
 				9F4A2432223A74AF005CB63A /* secure_comparator.c */,
-				9F4A2434223A74AF005CB63A /* secure_comparator.h */,
 				9F4A2427223A74AE005CB63A /* secure_keygen.c */,
-				9F4A2424223A74AE005CB63A /* secure_keygen.h */,
 				9F4A2422223A74AE005CB63A /* secure_message_wrapper.c */,
 				9F4A2420223A74AE005CB63A /* secure_message_wrapper.h */,
 				9F4A2437223A74AF005CB63A /* secure_message.c */,
-				9F4A2421223A74AE005CB63A /* secure_message.h */,
 				9F4A2435223A74AF005CB63A /* secure_session_message.c */,
 				9F4A2429223A74AF005CB63A /* secure_session_peer.c */,
 				9F4A2428223A74AE005CB63A /* secure_session_peer.h */,
@@ -2268,13 +2090,9 @@
 				9F4A242E223A74AF005CB63A /* secure_session_utils.c */,
 				9F4A2439223A74AF005CB63A /* secure_session_utils.h */,
 				9F4A2438223A74AF005CB63A /* secure_session.c */,
-				9F4A242D223A74AF005CB63A /* secure_session.h */,
 				9F4A2431223A74AF005CB63A /* sym_enc_message.c */,
 				9F4A242B223A74AF005CB63A /* sym_enc_message.h */,
-				9FD4C3532260D43B00132A88 /* themis_api.h */,
-				9F4A242F223A74AF005CB63A /* themis_error.h */,
 				9FB1BC9A233BEC9900930861 /* themis_portable_endian.h */,
-				9F4A2433223A74AF005CB63A /* themis.h */,
 			);
 			name = themis;
 			sourceTree = "<group>";
@@ -2370,62 +2188,39 @@
 			name = iOS;
 			sourceTree = "<group>";
 		};
-		A189CD7587094DF1F1F604D5 /* libssl */ = {
+		9F7E521D2571DE970054558B /* include */ = {
 			isa = PBXGroup;
 			children = (
-				55B90CE40474569D54E1B6E0 /* dtls1.h */,
-				C65CAA9D9996AC8A8A008D31 /* srtp.h */,
-				986276C3E10EEAE1DB64BD3A /* ssl.h */,
-				93BBF9014D6D99E070DEAF91 /* ssl3.h */,
-				AA5E1B1495F5557F3829598C /* tls1.h */,
-				509EC4B4C141CE301D66CA8D /* bio_ssl.cc */,
-				5FD5429150CF6F236AA79092 /* d1_both.cc */,
-				D2B1BC48935DB173DE3A8ACD /* d1_lib.cc */,
-				75CC11DB98B917751D40CBC9 /* d1_pkt.cc */,
-				6ECD5BC194DE9BAC99069EBC /* d1_srtp.cc */,
-				784859AE5972882460B912F7 /* dtls_method.cc */,
-				72D32A1FE0BEE57F117FF294 /* dtls_record.cc */,
-				BC39820C190CAF570198E400 /* handoff.cc */,
-				BB8ABFC2B7CE8E15FB839DFF /* handshake.cc */,
-				3DEB93AA2EAA7D93D19EFFA9 /* handshake_client.cc */,
-				BEBB73DE3A09B3842EA2017E /* handshake_server.cc */,
-				B269DC2580FF48FDDA8D96FF /* internal.h */,
-				8B52A92B582E327EB340F704 /* s3_both.cc */,
-				BB5843A05A8B43CE098360C3 /* s3_lib.cc */,
-				750BD9572A318597650FF40C /* s3_pkt.cc */,
-				F9ADE38960E853381BB1192E /* ssl_aead_ctx.cc */,
-				7EC9609F096A873390D3ADC1 /* ssl_asn1.cc */,
-				086C342E6E720CE9A198E53E /* ssl_buffer.cc */,
-				CF2B71789F563370D0E352BA /* ssl_cert.cc */,
-				CB17E06F0D2D1839DD16B048 /* ssl_cipher.cc */,
-				2506934288FF25BF533BC4AC /* ssl_file.cc */,
-				98BA6AE516364FB93C3190D6 /* ssl_key_share.cc */,
-				0E6FD5DCEACDFD8AE76B594D /* ssl_lib.cc */,
-				8EEE759D2A321C7FB49D1850 /* ssl_privkey.cc */,
-				B9515B5B877FD5C828A22DBE /* ssl_session.cc */,
-				5846535852E32910F573CF3B /* ssl_stat.cc */,
-				D81A2F99D8704AB0684D39DC /* ssl_transcript.cc */,
-				2186DB31312D4217D9226D8D /* ssl_versions.cc */,
-				16A269E3C635C41FC96EC64D /* ssl_x509.cc */,
-				9D90E9045EC9AC8D4EB8D5CA /* t1_enc.cc */,
-				B00B882D2657E731447A774A /* t1_lib.cc */,
-				047D28E799D2A99356A1291F /* tls13_both.cc */,
-				298734224B865AD166C3D367 /* tls13_client.cc */,
-				2AD3FB487F9EC11E8E3328BD /* tls13_enc.cc */,
-				E12A0C10E2AA54F36031DC55 /* tls13_server.cc */,
-				D33701E6552427B848DA9C38 /* tls_method.cc */,
-				6CC5F754CF1DB8F286B78FBA /* tls_record.cc */,
+				9F7E52212571DEBB0054558B /* soter_api.h */,
+				9F7E52222571DEBB0054558B /* soter_asym_cipher.h */,
+				9F7E521E2571DEBB0054558B /* soter_asym_ka.h */,
+				9F7E52262571DEBB0054558B /* soter_asym_sign.h */,
+				9F7E521F2571DEBB0054558B /* soter_error.h */,
+				9F7E522A2571DEBC0054558B /* soter_hash.h */,
+				9F7E52292571DEBC0054558B /* soter_hmac.h */,
+				9F7E52232571DEBB0054558B /* soter_kdf.h */,
+				9F7E52272571DEBC0054558B /* soter_rand.h */,
+				9F7E52282571DEBC0054558B /* soter_rsa_key_pair_gen.h */,
+				9F7E52252571DEBB0054558B /* soter_sym.h */,
+				9F7E52202571DEBB0054558B /* soter_wipe.h */,
+				9F7E52242571DEBB0054558B /* soter.h */,
 			);
-			name = libssl;
+			name = include;
 			sourceTree = "<group>";
 		};
-		EDE6B954E564E6D35702F95C /* iOS */ = {
+		9F7E522B2571DED30054558B /* include */ = {
 			isa = PBXGroup;
 			children = (
-				52C194FA529DE0DCC36A10C0 /* ARM64 */,
-				63783C4D6B21BB17030DC332 /* ARMv7 */,
+				9F7E52312571DEE50054558B /* secure_cell.h */,
+				9F7E52332571DEE50054558B /* secure_comparator.h */,
+				9F7E522E2571DEE50054558B /* secure_keygen.h */,
+				9F7E522C2571DEE50054558B /* secure_message.h */,
+				9F7E522D2571DEE50054558B /* secure_session.h */,
+				9F7E522F2571DEE50054558B /* themis_api.h */,
+				9F7E52322571DEE50054558B /* themis_error.h */,
+				9F7E52302571DEE50054558B /* themis.h */,
 			);
-			name = iOS;
+			name = include;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2528,6 +2323,8 @@
 			dependencies = (
 			);
 			name = "Themis (macOS)";
+			packageProductDependencies = (
+			);
 			productName = "Themis (macOS)";
 			productReference = 9F00E8D7223C197900EC1EF3 /* themis.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2545,6 +2342,8 @@
 			dependencies = (
 			);
 			name = "Themis (iOS)";
+			packageProductDependencies = (
+			);
 			productName = Themis;
 			productReference = 9F4A24A1223A8D7F005CB63A /* themis.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2698,6 +2497,8 @@
 				Base,
 			);
 			mainGroup = 738B81052239809D00A9947C;
+			packageReferences = (
+			);
 			productRefGroup = 738B81102239809D00A9947C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -3617,9 +3418,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 6;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_BITCODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -3641,7 +3441,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MARKETING_VERSION = 0.13.4;
+				MARKETING_VERSION = 0.13.6;
 				ONLY_ACTIVE_ARCH = YES;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -3684,9 +3484,8 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 6;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_BITCODE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -3702,7 +3501,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MARKETING_VERSION = 0.13.4;
+				MARKETING_VERSION = 0.13.6;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3714,6 +3513,7 @@
 		9F00E8DC223C197A00EC1EF3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 7;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -3725,6 +3525,7 @@
 				);
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
 				);
@@ -3735,6 +3536,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.13.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -3747,6 +3549,7 @@
 		9F00E8DD223C197A00EC1EF3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 7;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -3758,6 +3561,7 @@
 				);
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
 				);
@@ -3768,6 +3572,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.13.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -3780,22 +3585,21 @@
 		9F4A24A7223A8D7F005CB63A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					arm64e,
-				);
+				CURRENT_PROJECT_VERSION = 7;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = YES;
 				EXCLUDED_ARCHS = "";
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 arm64e";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				EXPORTED_SYMBOLS_FILE = "$(PROJECT_DIR)/src/wrappers/themis/Obj-C/exported.symbols";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
 				);
@@ -3806,6 +3610,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.13.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -3819,22 +3624,21 @@
 		9F4A24A8223A8D7F005CB63A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					arm64e,
-				);
+				CURRENT_PROJECT_VERSION = 7;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = YES;
 				EXCLUDED_ARCHS = "";
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 arm64e";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				EXPORTED_SYMBOLS_FILE = "$(PROJECT_DIR)/src/wrappers/themis/Obj-C/exported.symbols";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
 				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
 				);
@@ -3845,6 +3649,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.13.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -3954,7 +3759,6 @@
 		9F70B2C5241D0FEC009CB629 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
@@ -3977,7 +3781,6 @@
 		9F70B2C6241D0FEC009CB629 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
@@ -4000,12 +3803,8 @@
 		9F70B2F0241D17A3009CB629 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					arm64e,
-				);
 				ENABLE_BITCODE = NO;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 arm64e";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -4028,12 +3827,8 @@
 		9F70B2F1241D17A3009CB629 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					arm64e,
-				);
 				ENABLE_BITCODE = NO;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 arm64e";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -4056,12 +3851,8 @@
 		9F70B3172420E16E009CB629 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					arm64e,
-				);
 				ENABLE_BITCODE = NO;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 arm64e";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -4084,12 +3875,8 @@
 		9F70B3182420E16E009CB629 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					arm64e,
-				);
 				ENABLE_BITCODE = NO;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "arm64 arm64e";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -4112,7 +3899,6 @@
 		9F70B32F2420E176009CB629 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
@@ -4135,7 +3921,6 @@
 		9F70B3302420E176009CB629 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",

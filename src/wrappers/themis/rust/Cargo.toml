@@ -25,7 +25,7 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 bindings = { package = "libthemis-sys", path = "libthemis-sys", version = "0.13.0" }
-zeroize = "0.5.2"
+zeroize = "1"
 
 [dev-dependencies]
 base64 = "0.10.0"

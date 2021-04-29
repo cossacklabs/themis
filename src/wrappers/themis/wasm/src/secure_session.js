@@ -216,7 +216,7 @@ class SecureSession {
     connectionRequest() {
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let request_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let request_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let request_ptr, request_length
         try {
             status = libthemis._secure_session_generate_connect_request(
@@ -259,7 +259,7 @@ class SecureSession {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let reply_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let reply_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let message_ptr, reply_ptr, reply_length
         try {
             message_ptr = utils.heapAlloc(message.length)
@@ -315,7 +315,7 @@ class SecureSession {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let wrapped_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let wrapped_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let message_ptr, wrapped_ptr, wrapped_length
         try {
             message_ptr = utils.heapAlloc(message.length)
@@ -368,7 +368,7 @@ class SecureSession {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let unwrapped_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let unwrapped_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let message_ptr, unwrapped_ptr, unwrapped_length
         try {
             message_ptr = utils.heapAlloc(message.length)

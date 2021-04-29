@@ -27,6 +27,10 @@
 #define CIPHER_MAX_BLOCK_SIZE 16
 #define CIPHER_AUTH_TAG_SIZE 16
 
+#define SESSION_MASTER_KEY_LENGTH 32
+/* TODO: for now session keys are same length as master key */
+#define SESSION_MESSAGE_KEY_LENGTH SESSION_MASTER_KEY_LENGTH
+
 soter_sign_alg_t get_key_sign_type(const void* sign_key, size_t sign_key_length);
 soter_sign_alg_t get_peer_key_sign_type(const void* sign_key, size_t sign_key_length);
 themis_status_t compute_signature(const void* sign_key,

@@ -44,7 +44,7 @@
 //
 // Read more about Secure Cell modes here:
 //
-// https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/
+// https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/
 package cell
 
 /*

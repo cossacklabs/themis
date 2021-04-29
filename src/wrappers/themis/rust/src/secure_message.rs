@@ -32,13 +32,13 @@
 //!     generated key (in RSA) or a key derived by ECDH (in ECDSA), via symmetric
 //!     algorithm with Secure Cell in seal mode (keys are 256 bits long).
 //!
-//! [Here you can read more][wiki] about cryptographic internals of Secure Messages.
+//! [Here you can read more][docs] about cryptographic internals of Secure Messages.
 //!
 //! [Secure Session]: ../secure_session/index.html
 //! [Sign]: struct.SecureSign.html
 //! [Verify]: struct.SecureVerify.html
 //! [Encrypt/Decrypt]: struct.SecureMessage.html
-//! [wiki]: https://github.com/cossacklabs/themis/wiki/Secure-Message-cryptosystem
+//! [docs]: https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-message/
 //!
 //! # Examples
 //!

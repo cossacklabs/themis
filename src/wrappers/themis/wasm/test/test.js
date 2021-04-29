@@ -236,7 +236,7 @@ describe('wasm-themis', function() {
             // Passphrase API uses KDF so it can be quite slow.
             // Mocha uses default threshold of 75 ms which is not enough.
             this.slow(1500) // milliseconds
-            const bottomLimit = 200
+            const bottomLimit = 100
 
             it('encrypts without context', function() {
                 let cell = themis.SecureCellSeal.withPassphrase(passphrase1)

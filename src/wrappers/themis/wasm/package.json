@@ -22,9 +22,7 @@
     "url": "https://github.com/cossacklabs/themis/issues"
   },
   "homepage": "https://www.cossacklabs.com/themis/",
-  "dependencies": {
-    "fastestsmallesttextencoderdecoder": "^1.0.14"
-  },
+  "dependencies": {},
   "devDependencies": {
     "mocha": "^7.1.1"
   }

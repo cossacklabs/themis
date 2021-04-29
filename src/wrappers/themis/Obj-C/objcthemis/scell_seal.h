@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Read more about Seal mode:
  *
- * https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#seal-mode
+ * https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/#seal-mode
  */
 @interface TSCellSeal : TSCell
 

@@ -37,9 +37,10 @@ jobs:
       matrix:
         node-version:
           - 8.x   # legacy
-          - 10.x  # old LTS
-          - 12.x  # current LTS
-          - 14.x  # current stable
+          - 10.x  # legacy
+          - 12.x  # old LTS
+          - 14.x  # current LTS
+          - 16.x  # current stable
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -58,16 +59,8 @@ jobs:
           cd $HOME
           git clone https://github.com/emscripten-core/emsdk.git
           cd $HOME/emsdk
-          # FIXME(ilammy, 2020-07-07): unpin emsdk version [T1698]
-          # Latest HEAD has a regression, we roll back to last good version.
-          git checkout 92d512faa832b3ff5d6b8bc991b6801e31d8e372
-          # FIXME(ilammy, 2020-06-07): migrate to "upstream" flavor
-          # LLVM flavor of Emscripten has some issues compiling our code,
-          # and latest versions of the fastcomp flavor started giving out
-          # compiler warnings (turned into errors by the build system).
-          # We need to migrate, but for the time being use the old version.
-          ./emsdk install  1.39.16-fastcomp
-          ./emsdk activate 1.39.16-fastcomp
+          ./emsdk install  2.0.13
+          ./emsdk activate 2.0.13
       - name: Check out code
         uses: actions/checkout@v2
         with:

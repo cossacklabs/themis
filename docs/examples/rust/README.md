@@ -3,13 +3,13 @@
 In this directory, we have some examples of Themis usage.
 
 * [**keygen**](keygen.rs) — a tool for generating ECDSA keys (usable by other examples).
-* [**secure_cell**](secure_cell.rs) — showcase of [Secure Cell](https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/) API.
-* [**secure_compare**](secure_compare.rs) — zero-knowledge secret comparison based on [Secure Comparator](https://docs.cossacklabs.com/pages/secure-comparator-cryptosystem/).
-* <b>secure_message_*</b> — secure group chat implemented with [Secure Message](https://docs.cossacklabs.com/pages/secure-message-cryptosystem/)
+* [**secure_cell**](secure_cell.rs) — showcase of [Secure Cell](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/) API.
+* [**secure_compare**](secure_compare.rs) — zero-knowledge secret comparison based on [Secure Comparator](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-comparator/).
+* <b>secure_message_*</b> — secure group chat implemented with [Secure Message](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-message/)
   * [**secure_message_server**](secure_message_server.rs) — simple relay server.
   * [**secure_message_client_encrypt**](secure_message_client_encrypt.rs) — chat client which encrypts messages.
   * [**secure_message_client_verify**](secure_message_client_verify.rs) — chat client which signs and verifies messages.
-* <b>secure_session_echo_*</b> — an example of secure network communication with [Secure Session](https://docs.cossacklabs.com/pages/secure-session-cryptosystem/).
+* <b>secure_session_echo_*</b> — an example of secure network communication with [Secure Session](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-session/).
   * [**secure_session_echo_client**](secure_session_echo_client.rs) — simple echo client using buffer-oriented API.
   * [**secure_session_echo_server**](secure_session_echo_server.rs) — simple echo server using callback API.
 

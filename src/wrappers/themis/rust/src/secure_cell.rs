@@ -81,7 +81,7 @@
 //!
 //! The operation mode is selected via an appropriate method of a basic [`SecureCell`] object.
 //!
-//! [Here you can learn more](https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/)
+//! [Here you can learn more](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/)
 //! about the underlying considerations, limitations, and features of each mode.
 //!
 //! [`SecureCell`]: struct.SecureCell.html
@@ -285,7 +285,7 @@ impl SecureCellWithPassphrase {
 /// [`SymmetricKey`]: ../keys/struct.SymmetricKey.html#method.new
 /// [`SecureCell::with_passphrase`]: struct.SecureCell.html#method.with_passphrase
 /// [`SecureCellSealWithPassphrase`]: struct.SecureCellSealWithPassphrase.html
-/// [1]: https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#seal-mode
+/// [1]: https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/#seal-mode
 ///
 /// # Examples
 ///
@@ -622,7 +622,7 @@ impl SecureCellSeal {
 ///
 /// [`SecureCell::with_key`]: struct.SecureCell.html#method.with_key
 /// [`SecureCellSeal`]: struct.SecureCellSeal.html
-/// [1]: https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#seal-mode
+/// [1]: https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/#seal-mode
 ///
 /// # Examples
 ///
@@ -1149,7 +1149,7 @@ fn decrypt_seal_with_passphrase(
 /// You can read more about Token Protect mode [in documentation][1].
 ///
 /// [`SymmetricKey`]: ../keys/struct.SymmetricKey.html#method.new
-/// [1]: https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#token-protect-mode
+/// [1]: https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/#token-protect-mode
 ///
 /// # Examples
 ///
@@ -1662,7 +1662,7 @@ fn decrypt_token_protect(
 /// You can read more about Context Imprint mode [in documentation][1].
 ///
 /// [`SymmetricKey`]: ../keys/struct.SymmetricKey.html#method.new
-/// [1]: https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#context-imprint-mode
+/// [1]: https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/#context-imprint-mode
 ///
 /// # Examples
 ///

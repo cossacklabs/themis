@@ -17,9 +17,9 @@ depends=('libopenssl>=1.1.1')
 makedepends=('tar' 'gcc' 'make' 'openssl-devel>=1.1.1')
 
 source=("https://github.com/cossacklabs/themis/archive/$pkgver.tar.gz")
-sha256sums=('ee5c4be360401094dc5429035e1499912b3ccc10e93f71d0c2578934a5b2c81f')
-sha1sums=('418d71b0d3dd1ffff93ef025908bacb99d4c4aa4')
-md5sums=('afc3ac4e7d6c6db59e4e2f059a4fc973')
+sha256sums=('4dbe8faff569b8992ee091a207367604db468648503e5e6679a4c89e0918d525')
+sha1sums=('21372309e4e3d714bd637bce1e931e9be39a765f')
+md5sums=('623383678c6e73651a31b38cadcab441')
 # TODO: verify package signature
 
 # Unfortunately, bsdtar cannot handle symlinks on MSYS2 [1] so we have to use

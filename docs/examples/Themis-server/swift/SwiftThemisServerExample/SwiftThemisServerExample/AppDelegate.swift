@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // https://docs.cossacklabs.com/simulator/interactive/
         // 
         // Read more how server simulator works
-        // https://docs.cossacklabs.com/pages/documentation-themis/#interactive-simulator-themis-server
+        // https://docs.cossacklabs.com/themis/debugging/themis-server/
         
         print(" ------------ running SMessage Client example ")
         SMessageClient().runSecureMessageCITest()

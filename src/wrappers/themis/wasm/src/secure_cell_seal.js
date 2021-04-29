@@ -81,7 +81,7 @@ class SecureCellSeal {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let result_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let master_key_ptr, message_ptr, context_ptr, result_ptr, result_length
         try {
             master_key_ptr = utils.heapAlloc(this.masterKey.length)
@@ -149,7 +149,7 @@ class SecureCellSeal {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let result_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let master_key_ptr, message_ptr, context_ptr, result_ptr, result_length
         try {
             master_key_ptr = utils.heapAlloc(this.masterKey.length)
@@ -223,7 +223,7 @@ class SecureCellSealWithPassphrase extends SecureCellSeal {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let result_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let master_key_ptr, message_ptr, context_ptr, result_ptr, result_length
         try {
             master_key_ptr = utils.heapAlloc(this.masterKey.length)
@@ -291,7 +291,7 @@ class SecureCellSealWithPassphrase extends SecureCellSeal {
 
         let status
         /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
-        let result_length_ptr = libthemis.allocate(4, 'i32', libthemis.ALLOC_STACK)
+        let result_length_ptr = libthemis.allocate(new ArrayBuffer(4), libthemis.ALLOC_STACK)
         let master_key_ptr, message_ptr, context_ptr, result_ptr, result_length
         try {
             master_key_ptr = utils.heapAlloc(this.masterKey.length)

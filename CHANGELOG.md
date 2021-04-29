@@ -12,15 +12,103 @@ _Code:_
   - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
   - `secure_session_create()` now allows only EC keys, returning an error for RSA ([#693](https://github.com/cossacklabs/themis/pull/693)).
   - Cleaned up unused private API. Thanks to [**@luismerino**](https://github.com/luismerino) for pointing this out ([#714](https://github.com/cossacklabs/themis/pull/714)).
+  - Cleaned up public header files and API of Themis and Soter ([#759](https://github.com/cossacklabs/themis/pull/759)).
+
+    Private header files are no longer installed. Private APIs which have been unintentially exported are no longer available. This might be a **breaking change** for those who have used them. Please refrain from using private API and include only public API:
+
+    ```c
+    #include <themis/themis.h>
+    ```
+
+    Users of official high-level wrappers are not affected. However, this might affect developers of third-party wrappers. Refer to the detailed description below for a list of removed headers.
+
+    <details>
+
+    The following Soter headers are no longer available:
+
+      - `<soter/soter_container.h>`
+      - `<soter/soter_crc32.h>`
+      - `<soter/soter_ec_key.h>`
+      - `<soter/soter_portable_endian.h>`
+      - `<soter/soter_rsa_key.h>`
+      - `<soter/soter_sign_ecdsa.h>`
+      - `<soter/soter_sign_rsa.h>`
+      - `<soter/soter_t.h>`
+
+    All APIs previously exported by them are no longer available as well.
+
+    The following Themis headers are no longer available:
+
+      - `<themis/secure_cell_alg.h>`
+      - `<themis/secure_cell_seal_passphrase.h>`
+      - `<themis/secure_comparator_t.h>`
+      - `<themis/secure_message_wrapper.h>`
+      - `<themis/secure_session_peer.h>`
+      - `<themis/secure_session_t.h>`
+      - `<themis/secure_session_utils.h>`
+      - `<themis/sym_enc_message.h>`
+      - `<themis/themis_portable_endian.h>`
+
+    All APIs previously exported by them are no longer available as well.
+
+    In addition to that, the following private symbols and definitions previously exported by `<themis/secure_session.h>` have been hidden:
+
+      - `THEMIS_SESSION_ID_TAG`
+      - `THEMIS_SESSION_PROTO_TAG`
+      - `SESSION_MASTER_KEY_LENGTH`
+      - `SESSION_MESSAGE_KEY_LENGTH`
+      - `struct secure_session_peer_type`
+      - `typedef secure_session_peer_t`
+      - `typedef secure_session_handler`
+      - `secure_session_peer_init()`
+      - `secure_session_peer_cleanup()`
+
+    </details>
+
+  - Fixed multiple buffer overflows in Secure Message ([#763](https://github.com/cossacklabs/themis/pull/763)).
   - Updated embedded BoringSSL to the latest version ([#743](https://github.com/cossacklabs/themis/pull/743)).
 
 - **Android**
 
   - Updated embedded BoringSSL to the latest version ([#743](https://github.com/cossacklabs/themis/pull/743)).
 
+- **C++**
+
+  - `themispp::secure_message_t::sign()` output is a bit smaller now ([#775](https://github.com/cossacklabs/themis/pull/775)).
+
 - **Go**
 
   - Error `ErrOverflow` is now deprecated in favor of `ErrOutOfMemory`, new error types were added ([#711](https://github.com/cossacklabs/themis/pull/711)).
+  - `SecureMessage.Sign()` output is a bit smaller now ([#775](https://github.com/cossacklabs/themis/pull/775)).
+
+- **Java / Kotlin**
+
+  - `SecureMessage#sign()` output is a bit smaller now ([#777](https://github.com/cossacklabs/themis/pull/777)).
+  - JavaThemis for Android and desktop Java is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
+
+    Add the Maven Central repository to your `build.gradle`:
+
+    ```groovy
+    repositories {
+        mavenCentral()
+    }
+    ```
+
+    For Android, use this dependency:
+
+    ```groovy
+    dependencies {
+        implementation 'com.cossacklabs.com:themis:0.14.0'
+    }
+    ```
+
+    For desktop systems use this one:
+
+    ```groovy
+    dependencies {
+        implementation 'com.cossacklabs.com:java-themis:0.14.0'
+    }
+    ```
 
 - **Objective-C**
 
@@ -40,6 +128,7 @@ _Code:_
 - **Node.js**
 
   - `SecureSession` constructor now throws an exception when given incorrect key type ([#698](https://github.com/cossacklabs/themis/pull/698)).
+  - Node.js v16 is now supported ([#801](https://github.com/cossacklabs/themis/pull/801)).
 
 - **Python**
 
@@ -52,6 +141,7 @@ _Code:_
 - **Rust**
 
   - Dropped `libthemis-src` crate support and removed the `vendored` feature. RustThemis wrapper now requires Themis Core to be installed in the system ([#691](https://github.com/cossacklabs/themis/pull/691)).
+  - Updated `zeroize` depedency to 1.x version. Rust 1.47 or newer is now required ([#799](https://github.com/cossacklabs/themis/pull/799)).
 
 - **Swift**
 
@@ -65,6 +155,8 @@ _Code:_
 
 - **WebAssembly**
 
+  - Updated Emscripten toolchain to the latest version ([#760](https://github.com/cossacklabs/themis/pull/760)).
+  - Node.js v16 is now supported ([#801](https://github.com/cossacklabs/themis/pull/801)).
   - Updated embedded BoringSSL to the latest version ([#743](https://github.com/cossacklabs/themis/pull/743)).
 
 _Infrastructure:_
@@ -74,8 +166,57 @@ _Infrastructure:_
 - `make deb` and `make rpm` with `ENGINE=boringssl` will now produce `libthemis-boringssl` packages with embedded BoringSSL ([#683](https://github.com/cossacklabs/themis/pull/683), [#686](https://github.com/cossacklabs/themis/pull/686)).
 - Build system and tests now respect the `PATH` settings ([#685](https://github.com/cossacklabs/themis/pull/685)).
 - Rename embedded BoringSSL symbols by default to avoid conflicts with system OpenSSL ([#702](https://github.com/cossacklabs/themis/pull/702)).
-- Started phasing out CircleCI in favour of GitHub Actions ([#709](https://github.com/cossacklabs/themis/pull/709)).
+- Started phasing out CircleCI in favour of GitHub Actions ([#709](https://github.com/cossacklabs/themis/pull/709), [#755](https://github.com/cossacklabs/themis/pull/755)).
+- Themis is now fuzzed with `afl++` ([#766](https://github.com/cossacklabs/themis/pull/766)).
+- Secure Message is now covered with fuzz testing ([#762](https://github.com/cossacklabs/themis/pull/762)).
+- JavaThemis for Android and desktop Java is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
+- MSYS2 builds for Windows are now checked by CI ([#791](https://github.com/cossacklabs/themis/pull/791)).
 - New makefile target `update_boringssl` can be used to update embedded BoringSSL ([#743](https://github.com/cossacklabs/themis/pull/743)).
+
+
+## [0.13.7](https://github.com/cossacklabs/themis/releases/tag/0.13.7), April 28rd 2021
+
+**Hotfix for Apple platforms:**
+
+- `themis` is now packaged as xcframework. It is available in the release attached files section.
+- `themis` now supports SPM, its installation and usage are very straightforward, just add `themis` as SPM dependency.
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - Added script to generate xcframework for iOS, iOS Simulator and macOS ([#789](https://github.com/cossacklabs/themis/pull/789)).
+  - Added Package.swift file for SPM ([#789](https://github.com/cossacklabs/themis/pull/789)).
+
+
+## [0.13.6](https://github.com/cossacklabs/themis/releases/tag/0.13.6), November 23rd 2020
+
+**Hotfix for Apple platforms:**
+
+- `themis` pod is now restored to use *dynamic* linkage again
+- Resolved errors related to `@rpath` when using CocoaPods
+- Removed `arm64e` architecture slice from Carthage builds for iOS which prevented CocoaPods from functioning correctly
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - CocoaPods will now again link ObjCThemis *dynamically* into application ([#750](https://github.com/cossacklabs/themis/pull/750)).
+  - Carthage no longer builds `arm64e` architecture slice ([#750](https://github.com/cossacklabs/themis/pull/750)).
+  - Updated OpenSSL to the latest 1.1.1h-2 ([#750](https://github.com/cossacklabs/themis/pull/750)).
+
+
+## [0.13.5](https://github.com/cossacklabs/themis/releases/tag/0.13.5), November 12th 2020
+
+**Hotfix for Apple platforms:**
+
+- Resolved issues with deploying macOS apps with Apple Silicon support when Themis is installed via Carthage
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - Fixed code signing issues on macOS with Xcode 12 ([#744](https://github.com/cossacklabs/themis/pull/744)).
 
 
 ## [0.13.4](https://github.com/cossacklabs/themis/releases/tag/0.13.4), October 29th 2020
