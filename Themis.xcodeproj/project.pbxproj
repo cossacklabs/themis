@@ -4399,6 +4399,8 @@
 					"*-x86.S",
 					"*-x86_64.S",
 					"*-x86_64-*.S",
+					"*armx64*.S",
+					"*armv8*.S",
 				);
 				EXECUTABLE_PREFIX = lib;
 				"GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*][arch=arm64]" = "OPENSSL_NO_ASM=1 $(inherited)";
@@ -4406,6 +4408,7 @@
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/third_party/boringssl/src/include";
 				"INCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=i386]" = "x86-*.S *-586.S *-x86.S";
 				"INCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=x86_64]" = "x86_64-*.S *-x86_64.S *-x86_64-*.S";
+				"INCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=arm64*]" = "*armx64*.S *armv8*.S";
 				PRODUCT_NAME = boringssl;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -4422,6 +4425,8 @@
 					"*-x86.S",
 					"*-x86_64.S",
 					"*-x86_64-*.S",
+					"*armx64*.S",
+					"*armv8*.S",
 				);
 				EXECUTABLE_PREFIX = lib;
 				"GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*][arch=arm64]" = "OPENSSL_NO_ASM=1 $(inherited)";
@@ -4429,6 +4434,7 @@
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/third_party/boringssl/src/include";
 				"INCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=i386]" = "x86-*.S *-586.S *-x86.S";
 				"INCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=x86_64]" = "x86_64-*.S *-x86_64.S *-x86_64-*.S";
+				"INCLUDED_SOURCE_FILE_NAMES[sdk=macosx*][arch=arm64*]" = "*armx64*.S *armv8*.S";
 				PRODUCT_NAME = boringssl;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
