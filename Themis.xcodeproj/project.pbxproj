@@ -68,8 +68,10 @@
 		14AD218BC21F4020DCA3A3FB /* s3_both.cc in Sources */ = {isa = PBXBuildFile; fileRef = 655553F23840F5CBB0E5B8B5 /* s3_both.cc */; };
 		15916C97F664330664FA49BD /* x_name.c in Sources */ = {isa = PBXBuildFile; fileRef = 6CE20512C94B30F997E6EF38 /* x_name.c */; };
 		15C02ED1E55E82E90DCA70AE /* connect.c in Sources */ = {isa = PBXBuildFile; fileRef = 076C03F157AB6EB1C6464A76 /* connect.c */; };
+		1634610AE4D3D508945BD078 /* vpaes-armv8.S in Sources */ = {isa = PBXBuildFile; fileRef = 9C8A0F700B9726EC82DE2E82 /* vpaes-armv8.S */; };
 		166161D59BBEAA9B32EB30D7 /* windows.c in Sources */ = {isa = PBXBuildFile; fileRef = 642CD0E9E215ECA43275185B /* windows.c */; };
 		16B888F8C99F76400DB869CE /* refcount_c11.c in Sources */ = {isa = PBXBuildFile; fileRef = 0280A3D732820375556EC136 /* refcount_c11.c */; };
+		16D7B151CC13E8126C2FC15B /* armv8-mont.S in Sources */ = {isa = PBXBuildFile; fileRef = 48D1F629BA07F82DC8B45DB0 /* armv8-mont.S */; };
 		179FADB12273584C21F43604 /* pem_pk8.c in Sources */ = {isa = PBXBuildFile; fileRef = 87F7E9647ED80A0905AC51C1 /* pem_pk8.c */; };
 		17FAEB9CF96F6C6124570875 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		182FBDF3338C6AB3DB980B81 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
@@ -114,6 +116,7 @@
 		22D04738EF9B0F20B59B0595 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		240F52513D8C09B304F9DB91 /* x509_d2.c in Sources */ = {isa = PBXBuildFile; fileRef = 57267DFA1DBC96BBF2D79360 /* x509_d2.c */; };
 		24A0C953BC2309B1BF8DBD0A /* v3_ncons.c in Sources */ = {isa = PBXBuildFile; fileRef = 388B50675A22B5705B4EB3B9 /* v3_ncons.c */; };
+		24DBB28178224B84ECBAFEB3 /* trampoline-armv8.S in Sources */ = {isa = PBXBuildFile; fileRef = 8822800239BC5753B234DD94 /* trampoline-armv8.S */; };
 		25D3A6B0772AB0D4B751BD39 /* cpu-aarch64-linux.c in Sources */ = {isa = PBXBuildFile; fileRef = 6D7EDA0FA370A0AB18644E01 /* cpu-aarch64-linux.c */; };
 		25D78B2BE3694E12B3E18483 /* ghash-ssse3-x86_64.S in Sources */ = {isa = PBXBuildFile; fileRef = 699CF476A8E660A1DA11A9CA /* ghash-ssse3-x86_64.S */; };
 		26471552F0A2C4549D23E691 /* x509_ext.c in Sources */ = {isa = PBXBuildFile; fileRef = 26331B634DFE6AE10160CCE9 /* x509_ext.c */; };
@@ -147,11 +150,13 @@
 		2D9BC916CCA11F0412B07977 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		2E06848746D3CF2378264BF7 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		2E5384DDBE16EB255768A210 /* x509_txt.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E48EAC687DE0A94C1801B53 /* x509_txt.c */; };
+		2E5EAE1B7A7D0D45BA710078 /* aesv8-armx64.S in Sources */ = {isa = PBXBuildFile; fileRef = 30B2FFAAB2758A27C881CAE7 /* aesv8-armx64.S */; };
 		2E8E2ACFA325740F188C9E55 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		2EB49619612512892AD605FB /* a_strnid.c in Sources */ = {isa = PBXBuildFile; fileRef = 445D99E3F2D2E23044127878 /* a_strnid.c */; };
 		2EBAF6190B7424E734014DA9 /* x509cset.c in Sources */ = {isa = PBXBuildFile; fileRef = 77F3FBF88BF0BC0574369136 /* x509cset.c */; };
 		2F4BCD604E48C619A391B3D9 /* rsa_pss.c in Sources */ = {isa = PBXBuildFile; fileRef = 65C257F11F97056D16E27186 /* rsa_pss.c */; };
 		2F740AAB90BBEDAD53E42626 /* err_data.c in Sources */ = {isa = PBXBuildFile; fileRef = 003F2551708A65D09588819A /* err_data.c */; };
+		304A7CE00D426A2840A6120B /* chacha-armv8.S in Sources */ = {isa = PBXBuildFile; fileRef = 4B8B7BBB9F596DFF423FC5F7 /* chacha-armv8.S */; };
 		3087EFC2FF066221CE32B878 /* bsaes-armv7.S in Sources */ = {isa = PBXBuildFile; fileRef = 6FB575443BE267EC454CD820 /* bsaes-armv7.S */; };
 		30A39BCA2F56EA31D3955981 /* fuchsia.c in Sources */ = {isa = PBXBuildFile; fileRef = 9A95045F93F8CB0DD158DEDD /* fuchsia.c */; };
 		30E5CAA1F675FEB1086182D7 /* bn-586.S in Sources */ = {isa = PBXBuildFile; fileRef = 14BABBBF9DFE7AA9C2FD9E0E /* bn-586.S */; };
@@ -185,6 +190,7 @@
 		394795CF0C2CB04AD57A6D66 /* p_ec_asn1.c in Sources */ = {isa = PBXBuildFile; fileRef = 4914822D1328CA2EC4B64178 /* p_ec_asn1.c */; };
 		397A455350C69A71E1B39C04 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		3984A7A9719C0B3E0991C566 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		39B190D834034671D3F982E2 /* ghashv8-armx64.S in Sources */ = {isa = PBXBuildFile; fileRef = 2F250883B7FF6BB34D64D55D /* ghashv8-armx64.S */; };
 		3A0A3562156B7A0BA0F5644B /* i2d_pr.c in Sources */ = {isa = PBXBuildFile; fileRef = 93A271CB1989BA640C107747 /* i2d_pr.c */; };
 		3A770C70133081AF5414A38C /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		3A9294BD816B3EE92E692347 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
@@ -306,6 +312,7 @@
 		5A68F278C83E03C27E4F59FE /* poly1305_vec.c in Sources */ = {isa = PBXBuildFile; fileRef = 622DBF359D8430487A68FEC0 /* poly1305_vec.c */; };
 		5A8CCBD6596671C5C4BC87E8 /* pkcs8.c in Sources */ = {isa = PBXBuildFile; fileRef = 61A12AF57A4EF06C81A24522 /* pkcs8.c */; };
 		5AC270CB716F5A8E7DF6E444 /* v3_enum.c in Sources */ = {isa = PBXBuildFile; fileRef = 781039BE709E9A484FD9F050 /* v3_enum.c */; };
+		5AC289EE050211529E599F1D /* ghash-neon-armv8.S in Sources */ = {isa = PBXBuildFile; fileRef = 2F9796240DCF3D61199E86EC /* ghash-neon-armv8.S */; };
 		5AC89FE8FD81768934684584 /* v3_cpols.c in Sources */ = {isa = PBXBuildFile; fileRef = 5717D37A1D32B48E5812E828 /* v3_cpols.c */; };
 		5AE3DFB922177CD825C9ED47 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		5B57F1D55E09C49C0CBABE78 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
@@ -497,6 +504,7 @@
 		95A8372CC32642CB97A5EF2C /* engine.c in Sources */ = {isa = PBXBuildFile; fileRef = 95CC2FCA0159642C9A4ECB6A /* engine.c */; };
 		95F66580DCC8786B6B6F4204 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		95FE4E59B77B67919213295D /* BuildFile in Sources */ = {isa = PBXBuildFile; };
+		9661111C9CFBBDF5487AF159 /* sha256-armv8.S in Sources */ = {isa = PBXBuildFile; fileRef = 469931B7DF85C06E3ED6759F /* sha256-armv8.S */; };
 		968B0C8A797DD9BC7B454EA8 /* rsa_asn1.c in Sources */ = {isa = PBXBuildFile; fileRef = 168CB17B865EF3921ED536D7 /* rsa_asn1.c */; };
 		97648F81331CF217C2FDB438 /* a_octet.c in Sources */ = {isa = PBXBuildFile; fileRef = 752C466B046BE268E003DE89 /* a_octet.c */; };
 		976F4BE0D6367CF998A132D9 /* x_x509a.c in Sources */ = {isa = PBXBuildFile; fileRef = 8B0289DA9C8571E91054CA26 /* x_x509a.c */; };
@@ -984,6 +992,7 @@
 		E6979FA1831E2E4C3228A19E /* ec_derive.c in Sources */ = {isa = PBXBuildFile; fileRef = 944E25D4E83DBE736299E6ED /* ec_derive.c */; };
 		E69A9D104EA3C853FDF6C0B6 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		E72EB4B9A33CEF9D1E6565FD /* hash_to_curve.c in Sources */ = {isa = PBXBuildFile; fileRef = 2CB9153513892563E8DAA4A8 /* hash_to_curve.c */; };
+		E75A4612872BAC52AD8E6EC6 /* sha512-armv8.S in Sources */ = {isa = PBXBuildFile; fileRef = 402CFACCC6BA4ABFD21B642F /* sha512-armv8.S */; };
 		E7612744B21FBA98B6C27978 /* a_gentm.c in Sources */ = {isa = PBXBuildFile; fileRef = 02648893B99FA192BF18C7D9 /* a_gentm.c */; };
 		E859330115668BD1FF7E26DD /* blake2.c in Sources */ = {isa = PBXBuildFile; fileRef = D6036EB3A60237627F3AEB47 /* blake2.c */; };
 		E92E332C1268CBBE12B22B08 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
@@ -992,6 +1001,7 @@
 		EA080302B8826557F304969D /* p_rsa_asn1.c in Sources */ = {isa = PBXBuildFile; fileRef = 8BB0887EC587795C7DD1B950 /* p_rsa_asn1.c */; };
 		EA2247C90FAF72DCC4FB82B1 /* s3_pkt.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4B99C93A91E01D305AA2702D /* s3_pkt.cc */; };
 		EA53F0364191E656042C14F5 /* cpu-intel.c in Sources */ = {isa = PBXBuildFile; fileRef = 9DCF1E1E5903FDED6A994244 /* cpu-intel.c */; };
+		EA67E0DBFC68070322C1F2FD /* sha1-armv8.S in Sources */ = {isa = PBXBuildFile; fileRef = 78811EB6D224E4E4C5A8D83F /* sha1-armv8.S */; };
 		ED806EF61781490AE85CB483 /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		EDCEF56CD4802F93FD7282A1 /* a_int.c in Sources */ = {isa = PBXBuildFile; fileRef = 80BDCBB23AD2A536C6556FAD /* a_int.c */; };
 		EDF8D6D3E65714E0E5F7B6B4 /* asn1_compat.c in Sources */ = {isa = PBXBuildFile; fileRef = 22354C3686D4BD44D77ED990 /* asn1_compat.c */; };
@@ -1243,9 +1253,12 @@
 		2CB9153513892563E8DAA4A8 /* hash_to_curve.c */ = {isa = PBXFileReference; includeInIndex = 1; name = hash_to_curve.c; path = third_party/boringssl/src/crypto/ec_extra/hash_to_curve.c; sourceTree = SOURCE_ROOT; };
 		2F02A5AE2AD958C375B7D205 /* pool.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pool.c; path = third_party/boringssl/src/crypto/pool/pool.c; sourceTree = SOURCE_ROOT; };
 		2F1683BF1D2C3DEE3E455130 /* x509_obj.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x509_obj.c; path = third_party/boringssl/src/crypto/x509/x509_obj.c; sourceTree = SOURCE_ROOT; };
+		2F250883B7FF6BB34D64D55D /* ghashv8-armx64.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "ghashv8-armx64.S"; path = "third_party/boringssl/ios-aarch64/crypto/fipsmodule/ghashv8-armx64.S"; sourceTree = SOURCE_ROOT; };
 		2F2BE92783B72A2F21B0E093 /* siphash.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = siphash.c; path = third_party/boringssl/src/crypto/siphash/siphash.c; sourceTree = SOURCE_ROOT; };
+		2F9796240DCF3D61199E86EC /* ghash-neon-armv8.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "ghash-neon-armv8.S"; path = "third_party/boringssl/ios-aarch64/crypto/fipsmodule/ghash-neon-armv8.S"; sourceTree = SOURCE_ROOT; };
 		2FB602A5D3F8B679D3E20ABE /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/evp/internal.h; sourceTree = SOURCE_ROOT; };
 		308BCB682304D8E6968BFF34 /* evp.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = evp.h; path = third_party/boringssl/src/include/openssl/evp.h; sourceTree = SOURCE_ROOT; };
+		30B2FFAAB2758A27C881CAE7 /* aesv8-armx64.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "aesv8-armx64.S"; path = "third_party/boringssl/ios-aarch64/crypto/fipsmodule/aesv8-armx64.S"; sourceTree = SOURCE_ROOT; };
 		30FC8E575F4775DB44ED500D /* x509_vfy.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = x509_vfy.h; path = third_party/boringssl/src/include/openssl/x509_vfy.h; sourceTree = SOURCE_ROOT; };
 		311485E0365FAAF88702425D /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/fipsmodule/des/internal.h; sourceTree = SOURCE_ROOT; };
 		31498604FF0AF2E19071A302 /* pcy_node.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = pcy_node.c; path = third_party/boringssl/src/crypto/x509v3/pcy_node.c; sourceTree = SOURCE_ROOT; };
@@ -1290,6 +1303,7 @@
 		3EE3DFBB3C397BEC734849EC /* rsaz-avx2.S */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.asm; name = "rsaz-avx2.S"; path = "third_party/boringssl/mac-x86_64/crypto/fipsmodule/rsaz-avx2.S"; sourceTree = SOURCE_ROOT; };
 		3F6093D305A339C78F82B3CC /* v3_ocsp.c */ = {isa = PBXFileReference; includeInIndex = 1; name = v3_ocsp.c; path = third_party/boringssl/src/crypto/x509v3/v3_ocsp.c; sourceTree = SOURCE_ROOT; };
 		3FA51A3AD44830372D0BECD3 /* t_crl.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = t_crl.c; path = third_party/boringssl/src/crypto/x509/t_crl.c; sourceTree = SOURCE_ROOT; };
+		402CFACCC6BA4ABFD21B642F /* sha512-armv8.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "sha512-armv8.S"; path = "third_party/boringssl/ios-aarch64/crypto/fipsmodule/sha512-armv8.S"; sourceTree = SOURCE_ROOT; };
 		40489B408C550104B165EBE1 /* bn_asn1.c */ = {isa = PBXFileReference; includeInIndex = 1; name = bn_asn1.c; path = third_party/boringssl/src/crypto/bn_extra/bn_asn1.c; sourceTree = SOURCE_ROOT; };
 		404B7E35A96E1F3FDC8E9406 /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/pkcs8/internal.h; sourceTree = SOURCE_ROOT; };
 		40834C452855B97F603F1D4B /* ssl_file.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = ssl_file.cc; path = third_party/boringssl/src/ssl/ssl_file.cc; sourceTree = SOURCE_ROOT; };
@@ -1308,15 +1322,18 @@
 		445D99E3F2D2E23044127878 /* a_strnid.c */ = {isa = PBXFileReference; includeInIndex = 1; name = a_strnid.c; path = third_party/boringssl/src/crypto/asn1/a_strnid.c; sourceTree = SOURCE_ROOT; };
 		4548A24187C07A2099E69654 /* socket.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = socket.c; path = third_party/boringssl/src/crypto/bio/socket.c; sourceTree = SOURCE_ROOT; };
 		45A6244416D7F9A0909AB664 /* x_spki.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x_spki.c; path = third_party/boringssl/src/crypto/x509/x_spki.c; sourceTree = SOURCE_ROOT; };
+		469931B7DF85C06E3ED6759F /* sha256-armv8.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "sha256-armv8.S"; path = "third_party/boringssl/ios-aarch64/crypto/fipsmodule/sha256-armv8.S"; sourceTree = SOURCE_ROOT; };
 		46A92E5AB98DB71A68ED8DD6 /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/fipsmodule/sha/internal.h; sourceTree = SOURCE_ROOT; };
 		46D49BABD342EDF458E0E9A9 /* x_algor.c */ = {isa = PBXFileReference; includeInIndex = 1; name = x_algor.c; path = third_party/boringssl/src/crypto/x509/x_algor.c; sourceTree = SOURCE_ROOT; };
 		46EEFBE0EB930750E2CFF81D /* md5-586.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "md5-586.S"; path = "third_party/boringssl/mac-x86/crypto/fipsmodule/md5-586.S"; sourceTree = SOURCE_ROOT; };
 		477F738F512DAA7E171E67B5 /* asn1_locl.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = asn1_locl.h; path = third_party/boringssl/src/crypto/asn1/asn1_locl.h; sourceTree = SOURCE_ROOT; };
 		480BFF2590448FA91027A3AC /* curve25519.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = curve25519.h; path = third_party/boringssl/src/include/openssl/curve25519.h; sourceTree = SOURCE_ROOT; };
+		48D1F629BA07F82DC8B45DB0 /* armv8-mont.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "armv8-mont.S"; path = "third_party/boringssl/ios-aarch64/crypto/fipsmodule/armv8-mont.S"; sourceTree = SOURCE_ROOT; };
 		4914822D1328CA2EC4B64178 /* p_ec_asn1.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = p_ec_asn1.c; path = third_party/boringssl/src/crypto/evp/p_ec_asn1.c; sourceTree = SOURCE_ROOT; };
 		4A3C15FEB510C3395FD5F590 /* tls_method.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = tls_method.cc; path = third_party/boringssl/src/ssl/tls_method.cc; sourceTree = SOURCE_ROOT; };
 		4AC445F076CA03A291762953 /* obj.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = obj.c; path = third_party/boringssl/src/crypto/obj/obj.c; sourceTree = SOURCE_ROOT; };
 		4B4EE9CD9AE016AF4425E1F1 /* v3_genn.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = v3_genn.c; path = third_party/boringssl/src/crypto/x509v3/v3_genn.c; sourceTree = SOURCE_ROOT; };
+		4B8B7BBB9F596DFF423FC5F7 /* chacha-armv8.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "chacha-armv8.S"; path = "third_party/boringssl/ios-aarch64/crypto/chacha/chacha-armv8.S"; sourceTree = SOURCE_ROOT; };
 		4B99C93A91E01D305AA2702D /* s3_pkt.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = s3_pkt.cc; path = third_party/boringssl/src/ssl/s3_pkt.cc; sourceTree = SOURCE_ROOT; };
 		4C0ED393FA85526282634662 /* cpu-arm-linux.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = "cpu-arm-linux.c"; path = "third_party/boringssl/src/crypto/cpu-arm-linux.c"; sourceTree = SOURCE_ROOT; };
 		4C50A854C1EAD9EF9B194814 /* v3_pcons.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = v3_pcons.c; path = third_party/boringssl/src/crypto/x509v3/v3_pcons.c; sourceTree = SOURCE_ROOT; };
@@ -1429,6 +1446,7 @@
 		77F892463CFE6CCFBA96A1F6 /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/fipsmodule/tls/internal.h; sourceTree = SOURCE_ROOT; };
 		781039BE709E9A484FD9F050 /* v3_enum.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = v3_enum.c; path = third_party/boringssl/src/crypto/x509v3/v3_enum.c; sourceTree = SOURCE_ROOT; };
 		7811B9D6494A5AB21BEBBA0D /* p5_pbev2.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = p5_pbev2.c; path = third_party/boringssl/src/crypto/pkcs8/p5_pbev2.c; sourceTree = SOURCE_ROOT; };
+		78811EB6D224E4E4C5A8D83F /* sha1-armv8.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "sha1-armv8.S"; path = "third_party/boringssl/ios-aarch64/crypto/fipsmodule/sha1-armv8.S"; sourceTree = SOURCE_ROOT; };
 		78827B2C5E783A656A2D98CA /* encrypted_client_hello.cc */ = {isa = PBXFileReference; includeInIndex = 1; name = encrypted_client_hello.cc; path = third_party/boringssl/src/ssl/encrypted_client_hello.cc; sourceTree = SOURCE_ROOT; };
 		78A26D24578B17CE601F4891 /* convert.c */ = {isa = PBXFileReference; includeInIndex = 1; name = convert.c; path = third_party/boringssl/src/crypto/bn_extra/convert.c; sourceTree = SOURCE_ROOT; };
 		7912CB6711FFD85DFB08D6C8 /* co-586.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "co-586.S"; path = "third_party/boringssl/mac-x86/crypto/fipsmodule/co-586.S"; sourceTree = SOURCE_ROOT; };
@@ -1462,6 +1480,7 @@
 		8748FEF0B2E8FDB2DA3FA631 /* internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = internal.h; path = third_party/boringssl/src/crypto/trust_token/internal.h; sourceTree = SOURCE_ROOT; };
 		87F7E9647ED80A0905AC51C1 /* pem_pk8.c */ = {isa = PBXFileReference; includeInIndex = 1; name = pem_pk8.c; path = third_party/boringssl/src/crypto/pem/pem_pk8.c; sourceTree = SOURCE_ROOT; };
 		87FE78FEDADDD59E21059F01 /* time_support.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = time_support.c; path = third_party/boringssl/src/crypto/asn1/time_support.c; sourceTree = SOURCE_ROOT; };
+		8822800239BC5753B234DD94 /* trampoline-armv8.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "trampoline-armv8.S"; path = "third_party/boringssl/ios-aarch64/crypto/test/trampoline-armv8.S"; sourceTree = SOURCE_ROOT; };
 		88D3C1AEF8FD1320EE422AE3 /* dsa.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = dsa.c; path = third_party/boringssl/src/crypto/dsa/dsa.c; sourceTree = SOURCE_ROOT; };
 		892A42B51ED1E3869ED83FEE /* p256_64.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = p256_64.h; path = third_party/boringssl/src/third_party/fiat/p256_64.h; sourceTree = SOURCE_ROOT; };
 		89FBD593BF89A485F4F54CB3 /* ghash-armv4.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "ghash-armv4.S"; path = "third_party/boringssl/ios-arm/crypto/fipsmodule/ghash-armv4.S"; sourceTree = SOURCE_ROOT; };
@@ -1516,6 +1535,7 @@
 		9B18676C61937D7798C7170C /* base64.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = base64.h; path = third_party/boringssl/src/include/openssl/base64.h; sourceTree = SOURCE_ROOT; };
 		9B3979357642B5C047A03E2A /* t_x509.c */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.c; name = t_x509.c; path = third_party/boringssl/src/crypto/x509/t_x509.c; sourceTree = SOURCE_ROOT; };
 		9B3B84D45873C689B102F452 /* sha1-armv4-large.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "sha1-armv4-large.S"; path = "third_party/boringssl/ios-arm/crypto/fipsmodule/sha1-armv4-large.S"; sourceTree = SOURCE_ROOT; };
+		9C8A0F700B9726EC82DE2E82 /* vpaes-armv8.S */ = {isa = PBXFileReference; includeInIndex = 1; name = "vpaes-armv8.S"; path = "third_party/boringssl/ios-aarch64/crypto/fipsmodule/vpaes-armv8.S"; sourceTree = SOURCE_ROOT; };
 		9CE91498F46D069A4D4C5E62 /* md32_common.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = md32_common.h; path = third_party/boringssl/src/crypto/fipsmodule/digest/md32_common.h; sourceTree = SOURCE_ROOT; };
 		9D28B55C96DB5A30AA5950C4 /* v3_ia5.c */ = {isa = PBXFileReference; includeInIndex = 1; name = v3_ia5.c; path = third_party/boringssl/src/crypto/x509v3/v3_ia5.c; sourceTree = SOURCE_ROOT; };
 		9DAF449D0061FFBF2F43A81F /* voprf.c */ = {isa = PBXFileReference; includeInIndex = 1; name = voprf.c; path = third_party/boringssl/src/crypto/trust_token/voprf.c; sourceTree = SOURCE_ROOT; };
@@ -1866,6 +1886,23 @@
 				443CAD46CC5EDE99ED4A5D99 /* trampoline-x86.S */,
 			);
 			name = x86;
+			sourceTree = "<group>";
+		};
+		0B9C9B414B7197D24E1C6DE8 /* ARM64 */ = {
+			isa = PBXGroup;
+			children = (
+				4B8B7BBB9F596DFF423FC5F7 /* chacha-armv8.S */,
+				30B2FFAAB2758A27C881CAE7 /* aesv8-armx64.S */,
+				48D1F629BA07F82DC8B45DB0 /* armv8-mont.S */,
+				2F9796240DCF3D61199E86EC /* ghash-neon-armv8.S */,
+				2F250883B7FF6BB34D64D55D /* ghashv8-armx64.S */,
+				78811EB6D224E4E4C5A8D83F /* sha1-armv8.S */,
+				469931B7DF85C06E3ED6759F /* sha256-armv8.S */,
+				402CFACCC6BA4ABFD21B642F /* sha512-armv8.S */,
+				9C8A0F700B9726EC82DE2E82 /* vpaes-armv8.S */,
+				8822800239BC5753B234DD94 /* trampoline-armv8.S */,
+			);
+			name = ARM64;
 			sourceTree = "<group>";
 		};
 		3F3EA2FC7699904539266441 /* x86_64 */ = {
@@ -2289,6 +2326,7 @@
 			children = (
 				0B3ABCA9CF4DA8B402318129 /* x86 */,
 				3F3EA2FC7699904539266441 /* x86_64 */,
+				0B9C9B414B7197D24E1C6DE8 /* ARM64 */,
 			);
 			name = macOS;
 			sourceTree = "<group>";
@@ -3943,6 +3981,16 @@
 				1C0B67DA571A504E2340EE72 /* md5-x86_64.S in Sources */,
 				A2921373E98B810BF568BEA6 /* sha512-x86_64.S in Sources */,
 				789E5134B2AC9B1B79D93D08 /* x86_64-mont5.S in Sources */,
+				304A7CE00D426A2840A6120B /* chacha-armv8.S in Sources */,
+				2E5EAE1B7A7D0D45BA710078 /* aesv8-armx64.S in Sources */,
+				16D7B151CC13E8126C2FC15B /* armv8-mont.S in Sources */,
+				5AC289EE050211529E599F1D /* ghash-neon-armv8.S in Sources */,
+				39B190D834034671D3F982E2 /* ghashv8-armx64.S in Sources */,
+				EA67E0DBFC68070322C1F2FD /* sha1-armv8.S in Sources */,
+				9661111C9CFBBDF5487AF159 /* sha256-armv8.S in Sources */,
+				E75A4612872BAC52AD8E6EC6 /* sha512-armv8.S in Sources */,
+				1634610AE4D3D508945BD078 /* vpaes-armv8.S in Sources */,
+				24DBB28178224B84ECBAFEB3 /* trampoline-armv8.S in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

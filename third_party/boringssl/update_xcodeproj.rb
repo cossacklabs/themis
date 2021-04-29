@@ -62,6 +62,7 @@ update_sources('boringssl_ios_aarch64_sources', 'iOS/ARM64')
 update_sources('boringssl_ios_arm_sources',     'iOS/ARMv7')
 update_sources('boringssl_mac_x86_sources',     'macOS/x86')
 update_sources('boringssl_mac_x86_64_sources',  'macOS/x86_64')
+update_sources('boringssl_ios_aarch64_sources', 'macOS/ARM64') # (yes, iOS)
 
 # Locate "BoringSSL (iOS)" and "BoringSSL (macOS)" targets in the project.
 # They have been created manually. Add all relevant files to the targets.
@@ -82,7 +83,7 @@ def update_references(target_name, subgroups)
 end
 
 update_references('BoringSSL (iOS)',   ['libssl', 'libcrypto', 'iOS/ARM64', 'iOS/ARMv7'])
-update_references('BoringSSL (macOS)', ['libssl', 'libcrypto', 'macOS/x86', 'macOS/x86_64'])
+update_references('BoringSSL (macOS)', ['libssl', 'libcrypto', 'macOS/x86', 'macOS/x86_64', 'macOS/ARM64'])
 
 # Write changes to disk.
 $project.save if $project.dirty?
