@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "themis",
+        "repositoryURL": "https://github.com/cossacklabs/themis",
+        "state": {
+          "branch": null,
+          "revision": "68b485b8017098fce723e0839ecb9543d32463f6",
+          "version": "0.13.7"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
