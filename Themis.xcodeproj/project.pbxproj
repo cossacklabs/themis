@@ -930,10 +930,6 @@
 		9F52B1B0263D3CA00025EB78 /* SecureMessageTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CB241D1042009CB629 /* SecureMessageTestsSwift.swift */; };
 		9F52B1B1263D3CA00025EB78 /* SecureMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CE241D1043009CB629 /* SecureMessageTests.m */; };
 		9F52B1B2263D3CA00025EB78 /* SecureCellTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CF241D1043009CB629 /* SecureCellTestsSwift.swift */; };
-		9F52B1B4263D3CA00025EB78 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4A24A1223A8D7F005CB63A /* themis.framework */; };
-		9F52B1B5263D3CA00025EB78 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBD853C223BFB5E009EAEB3 /* openssl.framework */; };
-		9F52B1B7263D3CA00025EB78 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4A24A1223A8D7F005CB63A /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9F52B1B8263D3CA00025EB78 /* openssl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBD853C223BFB5E009EAEB3 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F52B1CE263D3CA60025EB78 /* objthemis-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F70B2C9241D1042009CB629 /* objthemis-Bridging-Header.h */; };
 		9F52B1CF263D3CA60025EB78 /* StaticKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F70B2CC241D1043009CB629 /* StaticKeys.h */; };
 		9F52B1D1263D3CA60025EB78 /* SecureCellTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CF241D1043009CB629 /* SecureCellTestsSwift.swift */; };
@@ -942,10 +938,10 @@
 		9F52B1D4263D3CA60025EB78 /* SecureComparatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2C7241D1042009CB629 /* SecureComparatorTests.m */; };
 		9F52B1D5263D3CA60025EB78 /* SecureComparatorTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CA241D1042009CB629 /* SecureComparatorTestsSwift.swift */; };
 		9F52B1D6263D3CA60025EB78 /* SecureMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CE241D1043009CB629 /* SecureMessageTests.m */; };
-		9F52B1D8263D3CA60025EB78 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E940223C1AFA00EC1EF3 /* openssl.framework */; };
-		9F52B1D9263D3CA60025EB78 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E8D7223C197900EC1EF3 /* themis.framework */; };
-		9F52B1DB263D3CA60025EB78 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E8D7223C197900EC1EF3 /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9F52B1DC263D3CA60025EB78 /* openssl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E940223C1AFA00EC1EF3 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9F52B202263D3E240025EB78 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F52B08B263D30430025EB78 /* themis.framework */; };
+		9F52B203263D3E2C0025EB78 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F52B08B263D30430025EB78 /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9F52B20C263D3E420025EB78 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F52B106263D310F0025EB78 /* themis.framework */; };
+		9F52B20D263D3E480025EB78 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F52B106263D310F0025EB78 /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F6B385523D9D11600EA5D1B /* secure_cell_seal_passphrase.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B385423D9D11600EA5D1B /* secure_cell_seal_passphrase.c */; };
 		9F6B385623D9D11600EA5D1B /* secure_cell_seal_passphrase.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B385423D9D11600EA5D1B /* secure_cell_seal_passphrase.c */; };
 		9F70B2C1241D0FEC009CB629 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E8D7223C197900EC1EF3 /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1302,19 +1298,19 @@
 			remoteGlobalIDString = 9F56694E255463B5005CF297;
 			remoteInfo = "BoringSSL (macOS)";
 		};
-		9F52B1A8263D3CA00025EB78 /* PBXContainerItemProxy */ = {
+		9F52B200263D3DED0025EB78 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 738B81062239809D00A9947C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 9F4A24A0223A8D7F005CB63A;
-			remoteInfo = "Themis (iOS)";
+			remoteGlobalIDString = 9F52B021263D30430025EB78;
+			remoteInfo = "Themis (iOS) - BoringSSL";
 		};
-		9F52B1CC263D3CA60025EB78 /* PBXContainerItemProxy */ = {
+		9F52B20A263D3E3B0025EB78 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 738B81062239809D00A9947C /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 9F00E8D6223C197900EC1EF3;
-			remoteInfo = "Themis (macOS)";
+			remoteGlobalIDString = 9F52B09C263D310F0025EB78;
+			remoteInfo = "Themis (macOS) - BoringSSL";
 		};
 		9F70B2C2241D0FEC009CB629 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1353,8 +1349,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9F52B1B7263D3CA00025EB78 /* themis.framework in Embed Frameworks */,
-				9F52B1B8263D3CA00025EB78 /* openssl.framework in Embed Frameworks */,
+				9F52B203263D3E2C0025EB78 /* themis.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1365,8 +1360,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9F52B1DB263D3CA60025EB78 /* themis.framework in Embed Frameworks */,
-				9F52B1DC263D3CA60025EB78 /* openssl.framework in Embed Frameworks */,
+				9F52B20D263D3E480025EB78 /* themis.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2134,8 +2128,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F52B1B4263D3CA00025EB78 /* themis.framework in Frameworks */,
-				9F52B1B5263D3CA00025EB78 /* openssl.framework in Frameworks */,
+				9F52B202263D3E240025EB78 /* themis.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2143,8 +2136,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F52B1D8263D3CA60025EB78 /* openssl.framework in Frameworks */,
-				9F52B1D9263D3CA60025EB78 /* themis.framework in Frameworks */,
+				9F52B20C263D3E420025EB78 /* themis.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3288,7 +3280,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				9F52B1A7263D3CA00025EB78 /* PBXTargetDependency */,
+				9F52B201263D3DED0025EB78 /* PBXTargetDependency */,
 			);
 			name = "Test Themis (BoringSSL, Swift 5, iOS)";
 			productName = "Test Themis (iOS)";
@@ -3307,7 +3299,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				9F52B1CB263D3CA60025EB78 /* PBXTargetDependency */,
+				9F52B20B263D3E3B0025EB78 /* PBXTargetDependency */,
 			);
 			name = "Test Themis (BoringSSL, Swift 5, macOS)";
 			productName = "Test Themis (macOS)";
@@ -4771,15 +4763,15 @@
 			target = 9F56694E255463B5005CF297 /* BoringSSL (macOS) */;
 			targetProxy = 9F52B174263D352D0025EB78 /* PBXContainerItemProxy */;
 		};
-		9F52B1A7263D3CA00025EB78 /* PBXTargetDependency */ = {
+		9F52B201263D3DED0025EB78 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9F4A24A0223A8D7F005CB63A /* Themis (iOS) */;
-			targetProxy = 9F52B1A8263D3CA00025EB78 /* PBXContainerItemProxy */;
+			target = 9F52B021263D30430025EB78 /* Themis (iOS) - BoringSSL */;
+			targetProxy = 9F52B200263D3DED0025EB78 /* PBXContainerItemProxy */;
 		};
-		9F52B1CB263D3CA60025EB78 /* PBXTargetDependency */ = {
+		9F52B20B263D3E3B0025EB78 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 9F00E8D6223C197900EC1EF3 /* Themis (macOS) */;
-			targetProxy = 9F52B1CC263D3CA60025EB78 /* PBXContainerItemProxy */;
+			target = 9F52B09C263D310F0025EB78 /* Themis (macOS) - BoringSSL */;
+			targetProxy = 9F52B20A263D3E3B0025EB78 /* PBXContainerItemProxy */;
 		};
 		9F70B2C3241D0FEC009CB629 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
