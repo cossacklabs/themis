@@ -4891,6 +4891,7 @@
 					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
+					"$(PROJECT_DIR)/third_party/boringssl/src/include",
 				);
 				INFOPLIST_FILE = "src/wrappers/themis/Obj-c/Themis/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4930,6 +4931,7 @@
 					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
+					"$(PROJECT_DIR)/third_party/boringssl/src/include",
 				);
 				INFOPLIST_FILE = "src/wrappers/themis/Obj-c/Themis/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -4967,6 +4969,7 @@
 					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
+					"$(PROJECT_DIR)/third_party/boringssl/src/include",
 				);
 				INFOPLIST_FILE = "src/wrappers/themis/Obj-c/Themis/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -5003,6 +5006,7 @@
 					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
 					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
+					"$(PROJECT_DIR)/third_party/boringssl/src/include",
 				);
 				INFOPLIST_FILE = "src/wrappers/themis/Obj-c/Themis/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
