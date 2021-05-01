@@ -806,7 +806,6 @@
 		9F52B083263D30430025EB78 /* scell_seal.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B0223A8FA7005CB63A /* scell_seal.m */; };
 		9F52B084263D30430025EB78 /* skeygen.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B7223A8FA8005CB63A /* skeygen.m */; };
 		9F52B085263D30430025EB78 /* scomparator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B6223A8FA8005CB63A /* scomparator.m */; };
-		9F52B087263D30430025EB78 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBD853C223BFB5E009EAEB3 /* openssl.framework */; };
 		9F52B09E263D310F0025EB78 /* themis.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F0BBCE824E6FC810073CA52 /* themis.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F52B09F263D310F0025EB78 /* objcthemis.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24B5223A8FA8005CB63A /* objcthemis.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F52B0A0263D310F0025EB78 /* scell_context_imprint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24B9223A8FA8005CB63A /* scell_context_imprint.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -889,7 +888,6 @@
 		9F52B0FE263D310F0025EB78 /* smessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B8223A8FA8005CB63A /* smessage.m */; };
 		9F52B0FF263D310F0025EB78 /* ssession_transport_interface.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B2223A8FA7005CB63A /* ssession_transport_interface.m */; };
 		9F52B100263D310F0025EB78 /* ssession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24BA223A8FA8005CB63A /* ssession.m */; };
-		9F52B102263D310F0025EB78 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E940223C1AFA00EC1EF3 /* openssl.framework */; };
 		9F52B138263D32F30025EB78 /* soter_asym_cipher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B017263D2F840025EB78 /* soter_asym_cipher.c */; };
 		9F52B139263D32F30025EB78 /* soter_asym_ka.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B020263D2F850025EB78 /* soter_asym_ka.c */; };
 		9F52B13A263D32F30025EB78 /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B01E263D2F850025EB78 /* soter_ec_key.c */; };
@@ -922,6 +920,8 @@
 		9F52B167263D33290025EB78 /* soter_verify_ecdsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B01D263D2F850025EB78 /* soter_verify_ecdsa.c */; };
 		9F52B168263D33290025EB78 /* soter_verify_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B014263D2F840025EB78 /* soter_verify_rsa.c */; };
 		9F52B169263D33290025EB78 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B015263D2F840025EB78 /* soter_wipe.c */; };
+		9F52B170263D35120025EB78 /* libboringssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F56693F25546397005CF297 /* libboringssl.a */; };
+		9F52B173263D35270025EB78 /* libboringssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F56694F255463B5005CF297 /* libboringssl.a */; };
 		9F6B385523D9D11600EA5D1B /* secure_cell_seal_passphrase.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B385423D9D11600EA5D1B /* secure_cell_seal_passphrase.c */; };
 		9F6B385623D9D11600EA5D1B /* secure_cell_seal_passphrase.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B385423D9D11600EA5D1B /* secure_cell_seal_passphrase.c */; };
 		9F70B2C1241D0FEC009CB629 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E8D7223C197900EC1EF3 /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1264,6 +1264,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		9F52B171263D35180025EB78 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 738B81062239809D00A9947C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9F56693E25546397005CF297;
+			remoteInfo = "BoringSSL (iOS)";
+		};
+		9F52B174263D352D0025EB78 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 738B81062239809D00A9947C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9F56694E255463B5005CF297;
+			remoteInfo = "BoringSSL (macOS)";
+		};
 		9F70B2C2241D0FEC009CB629 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 738B81062239809D00A9947C /* Project object */;
@@ -2038,7 +2052,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F52B087263D30430025EB78 /* openssl.framework in Frameworks */,
+				9F52B170263D35120025EB78 /* libboringssl.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2046,7 +2060,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F52B102263D310F0025EB78 /* openssl.framework in Frameworks */,
+				9F52B173263D35270025EB78 /* libboringssl.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3131,6 +3145,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9F52B172263D35180025EB78 /* PBXTargetDependency */,
 			);
 			name = "Themis (iOS) - BoringSSL";
 			productName = Themis;
@@ -3148,6 +3163,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				9F52B175263D352D0025EB78 /* PBXTargetDependency */,
 			);
 			name = "Themis (macOS) - BoringSSL";
 			productName = "Themis (macOS)";
@@ -4573,6 +4589,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		9F52B172263D35180025EB78 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9F56693E25546397005CF297 /* BoringSSL (iOS) */;
+			targetProxy = 9F52B171263D35180025EB78 /* PBXContainerItemProxy */;
+		};
+		9F52B175263D352D0025EB78 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9F56694E255463B5005CF297 /* BoringSSL (macOS) */;
+			targetProxy = 9F52B174263D352D0025EB78 /* PBXContainerItemProxy */;
+		};
 		9F70B2C3241D0FEC009CB629 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 9F00E8D6223C197900EC1EF3 /* Themis (macOS) */;
