@@ -4887,6 +4887,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"BORINGSSL=1",
+					"CRYPTO_ENGINE_PATH=boringssl",
+					"SOTER_BORINGSSL_DISABLE_XTS=1",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
@@ -4927,6 +4933,12 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"BORINGSSL=1",
+					"CRYPTO_ENGINE_PATH=boringssl",
+					"SOTER_BORINGSSL_DISABLE_XTS=1",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
@@ -4965,6 +4977,12 @@
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				FRAMEWORK_VERSION = A;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"BORINGSSL=1",
+					"CRYPTO_ENGINE_PATH=boringssl",
+					"SOTER_BORINGSSL_DISABLE_XTS=1",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
@@ -5002,6 +5020,12 @@
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				FRAMEWORK_VERSION = A;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"BORINGSSL=1",
+					"CRYPTO_ENGINE_PATH=boringssl",
+					"SOTER_BORINGSSL_DISABLE_XTS=1",
+					"$(inherited)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/src",
