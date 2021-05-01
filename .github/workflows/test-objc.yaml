@@ -117,6 +117,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Pull Carthage dependencies
         run: carthage bootstrap
       - name: Run unit tests (Swift 4, macOS)
@@ -156,6 +158,26 @@ jobs:
             -derivedDataPath DerivedData  \
             -project Themis.xcodeproj \
             -scheme "Test Themis (Swift 5, iOS)" \
+            -sdk iphonesimulator \
+            -destination "platform=iOS Simulator,name=${TEST_IPHONE}" \
+            test
+      - name: Run unit tests (BoringSSL, Swift 5, macOS)
+        if: always()
+        run: |
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData  \
+            -project Themis.xcodeproj \
+            -scheme "Test Themis (BoringSSL, Swift 5, macOS)" \
+            test
+      - name: Run unit tests (BoringSSL, Swift 5, iOS Simulator)
+        if: always()
+        run: |
+          rm -rf DerivedData
+          xcodebuild \
+            -derivedDataPath DerivedData  \
+            -project Themis.xcodeproj \
+            -scheme "Test Themis (BoringSSL, Swift 5, iOS)" \
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=${TEST_IPHONE}" \
             test
