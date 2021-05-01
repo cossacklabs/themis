@@ -752,24 +752,8 @@
 		9F52B03D263D30430025EB78 /* soter_hmac.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2353223A73B1005CB63A /* soter_hmac.c */; };
 		9F52B03E263D30430025EB78 /* soter_kdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2357223A73B1005CB63A /* soter_kdf.c */; };
 		9F52B03F263D30430025EB78 /* soter_sign.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2351223A73B1005CB63A /* soter_sign.c */; };
-		9F52B040263D30430025EB78 /* soter_asym_cipher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238F223A7426005CB63A /* soter_asym_cipher.c */; };
-		9F52B041263D30430025EB78 /* soter_asym_ka.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2388223A7425005CB63A /* soter_asym_ka.c */; };
-		9F52B042263D30430025EB78 /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2392223A7426005CB63A /* soter_ec_key.c */; };
-		9F52B043263D30430025EB78 /* soter_ecdsa_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2387223A7425005CB63A /* soter_ecdsa_common.c */; };
-		9F52B044263D30430025EB78 /* soter_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2390223A7426005CB63A /* soter_hash.c */; };
-		9F52B045263D30430025EB78 /* soter_rand.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238E223A7426005CB63A /* soter_rand.c */; };
 		9F52B046263D30430025EB78 /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB122CCB0D100E8DECA /* soter_ec_key.c */; };
 		9F52B047263D30430025EB78 /* secure_cell_seal_passphrase.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B385423D9D11600EA5D1B /* secure_cell_seal_passphrase.c */; };
-		9F52B048263D30430025EB78 /* soter_rsa_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2386223A7425005CB63A /* soter_rsa_common.c */; };
-		9F52B049263D30430025EB78 /* soter_rsa_key_pair_gen.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238A223A7425005CB63A /* soter_rsa_key_pair_gen.c */; };
-		9F52B04A263D30430025EB78 /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2385223A7425005CB63A /* soter_rsa_key.c */; };
-		9F52B04B263D30430025EB78 /* soter_kdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F33485723B38D9B00368291 /* soter_kdf.c */; };
-		9F52B04C263D30430025EB78 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F98F32722CCEB0E008E14E6 /* soter_wipe.c */; };
-		9F52B04D263D30430025EB78 /* soter_sign_ecdsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2389223A7425005CB63A /* soter_sign_ecdsa.c */; };
-		9F52B04E263D30430025EB78 /* soter_sign_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238C223A7425005CB63A /* soter_sign_rsa.c */; };
-		9F52B04F263D30430025EB78 /* soter_sym.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2394223A7426005CB63A /* soter_sym.c */; };
-		9F52B050263D30430025EB78 /* soter_verify_ecdsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2393223A7426005CB63A /* soter_verify_ecdsa.c */; };
-		9F52B051263D30430025EB78 /* soter_verify_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238D223A7426005CB63A /* soter_verify_rsa.c */; };
 		9F52B052263D30430025EB78 /* fe_0.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23B3223A745B005CB63A /* fe_0.c */; };
 		9F52B053263D30430025EB78 /* fe_1.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23CF223A745C005CB63A /* fe_1.c */; };
 		9F52B054263D30430025EB78 /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */; };
@@ -851,24 +835,8 @@
 		9F52B0B8263D310F0025EB78 /* soter_hmac.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2353223A73B1005CB63A /* soter_hmac.c */; };
 		9F52B0B9263D310F0025EB78 /* soter_kdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2357223A73B1005CB63A /* soter_kdf.c */; };
 		9F52B0BA263D310F0025EB78 /* soter_sign.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2351223A73B1005CB63A /* soter_sign.c */; };
-		9F52B0BB263D310F0025EB78 /* soter_asym_cipher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238F223A7426005CB63A /* soter_asym_cipher.c */; };
-		9F52B0BC263D310F0025EB78 /* soter_asym_ka.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2388223A7425005CB63A /* soter_asym_ka.c */; };
-		9F52B0BD263D310F0025EB78 /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2392223A7426005CB63A /* soter_ec_key.c */; };
-		9F52B0BE263D310F0025EB78 /* soter_ecdsa_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2387223A7425005CB63A /* soter_ecdsa_common.c */; };
-		9F52B0BF263D310F0025EB78 /* soter_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2390223A7426005CB63A /* soter_hash.c */; };
-		9F52B0C0263D310F0025EB78 /* soter_rand.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238E223A7426005CB63A /* soter_rand.c */; };
 		9F52B0C1263D310F0025EB78 /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB122CCB0D100E8DECA /* soter_ec_key.c */; };
 		9F52B0C2263D310F0025EB78 /* secure_cell_seal_passphrase.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B385423D9D11600EA5D1B /* secure_cell_seal_passphrase.c */; };
-		9F52B0C3263D310F0025EB78 /* soter_rsa_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2386223A7425005CB63A /* soter_rsa_common.c */; };
-		9F52B0C4263D310F0025EB78 /* soter_rsa_key_pair_gen.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238A223A7425005CB63A /* soter_rsa_key_pair_gen.c */; };
-		9F52B0C5263D310F0025EB78 /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2385223A7425005CB63A /* soter_rsa_key.c */; };
-		9F52B0C6263D310F0025EB78 /* soter_kdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F33485723B38D9B00368291 /* soter_kdf.c */; };
-		9F52B0C7263D310F0025EB78 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F98F32722CCEB0E008E14E6 /* soter_wipe.c */; };
-		9F52B0C8263D310F0025EB78 /* soter_sign_ecdsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2389223A7425005CB63A /* soter_sign_ecdsa.c */; };
-		9F52B0C9263D310F0025EB78 /* soter_sign_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238C223A7425005CB63A /* soter_sign_rsa.c */; };
-		9F52B0CA263D310F0025EB78 /* soter_sym.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2394223A7426005CB63A /* soter_sym.c */; };
-		9F52B0CB263D310F0025EB78 /* soter_verify_ecdsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2393223A7426005CB63A /* soter_verify_ecdsa.c */; };
-		9F52B0CC263D310F0025EB78 /* soter_verify_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238D223A7426005CB63A /* soter_verify_rsa.c */; };
 		9F52B0CD263D310F0025EB78 /* ge_p2_to_p3.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23B2223A745A005CB63A /* ge_p2_to_p3.c */; };
 		9F52B0CE263D310F0025EB78 /* ge_p3_0.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23BB223A745B005CB63A /* ge_p3_0.c */; };
 		9F52B0CF263D310F0025EB78 /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */; };
@@ -922,6 +890,38 @@
 		9F52B0FF263D310F0025EB78 /* ssession_transport_interface.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B2223A8FA7005CB63A /* ssession_transport_interface.m */; };
 		9F52B100263D310F0025EB78 /* ssession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24BA223A8FA8005CB63A /* ssession.m */; };
 		9F52B102263D310F0025EB78 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E940223C1AFA00EC1EF3 /* openssl.framework */; };
+		9F52B138263D32F30025EB78 /* soter_asym_cipher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B017263D2F840025EB78 /* soter_asym_cipher.c */; };
+		9F52B139263D32F30025EB78 /* soter_asym_ka.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B020263D2F850025EB78 /* soter_asym_ka.c */; };
+		9F52B13A263D32F30025EB78 /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B01E263D2F850025EB78 /* soter_ec_key.c */; };
+		9F52B13B263D32F30025EB78 /* soter_ecdsa_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B012263D2F840025EB78 /* soter_ecdsa_common.c */; };
+		9F52B13C263D32F30025EB78 /* soter_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B011263D2F840025EB78 /* soter_hash.c */; };
+		9F52B13D263D32F30025EB78 /* soter_kdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B018263D2F840025EB78 /* soter_kdf.c */; };
+		9F52B13E263D32F30025EB78 /* soter_rand.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B00F263D2F840025EB78 /* soter_rand.c */; };
+		9F52B13F263D32F30025EB78 /* soter_rsa_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B016263D2F840025EB78 /* soter_rsa_common.c */; };
+		9F52B140263D32F30025EB78 /* soter_rsa_key_pair_gen.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B01C263D2F850025EB78 /* soter_rsa_key_pair_gen.c */; };
+		9F52B141263D32F30025EB78 /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B01A263D2F850025EB78 /* soter_rsa_key.c */; };
+		9F52B142263D32F30025EB78 /* soter_sign_ecdsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B00E263D2F840025EB78 /* soter_sign_ecdsa.c */; };
+		9F52B143263D32F30025EB78 /* soter_sign_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B01F263D2F850025EB78 /* soter_sign_rsa.c */; };
+		9F52B144263D32F30025EB78 /* soter_sym.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B010263D2F840025EB78 /* soter_sym.c */; };
+		9F52B145263D32F30025EB78 /* soter_verify_ecdsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B01D263D2F850025EB78 /* soter_verify_ecdsa.c */; };
+		9F52B146263D32F30025EB78 /* soter_verify_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B014263D2F840025EB78 /* soter_verify_rsa.c */; };
+		9F52B147263D32F30025EB78 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B015263D2F840025EB78 /* soter_wipe.c */; };
+		9F52B15A263D33290025EB78 /* soter_asym_cipher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B017263D2F840025EB78 /* soter_asym_cipher.c */; };
+		9F52B15B263D33290025EB78 /* soter_asym_ka.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B020263D2F850025EB78 /* soter_asym_ka.c */; };
+		9F52B15C263D33290025EB78 /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B01E263D2F850025EB78 /* soter_ec_key.c */; };
+		9F52B15D263D33290025EB78 /* soter_ecdsa_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B012263D2F840025EB78 /* soter_ecdsa_common.c */; };
+		9F52B15E263D33290025EB78 /* soter_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B011263D2F840025EB78 /* soter_hash.c */; };
+		9F52B15F263D33290025EB78 /* soter_kdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B018263D2F840025EB78 /* soter_kdf.c */; };
+		9F52B160263D33290025EB78 /* soter_rand.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B00F263D2F840025EB78 /* soter_rand.c */; };
+		9F52B161263D33290025EB78 /* soter_rsa_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B016263D2F840025EB78 /* soter_rsa_common.c */; };
+		9F52B162263D33290025EB78 /* soter_rsa_key_pair_gen.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B01C263D2F850025EB78 /* soter_rsa_key_pair_gen.c */; };
+		9F52B163263D33290025EB78 /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B01A263D2F850025EB78 /* soter_rsa_key.c */; };
+		9F52B164263D33290025EB78 /* soter_sign_ecdsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B00E263D2F840025EB78 /* soter_sign_ecdsa.c */; };
+		9F52B165263D33290025EB78 /* soter_sign_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B01F263D2F850025EB78 /* soter_sign_rsa.c */; };
+		9F52B166263D33290025EB78 /* soter_sym.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B010263D2F840025EB78 /* soter_sym.c */; };
+		9F52B167263D33290025EB78 /* soter_verify_ecdsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B01D263D2F850025EB78 /* soter_verify_ecdsa.c */; };
+		9F52B168263D33290025EB78 /* soter_verify_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B014263D2F840025EB78 /* soter_verify_rsa.c */; };
+		9F52B169263D33290025EB78 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F52B015263D2F840025EB78 /* soter_wipe.c */; };
 		9F6B385523D9D11600EA5D1B /* secure_cell_seal_passphrase.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B385423D9D11600EA5D1B /* secure_cell_seal_passphrase.c */; };
 		9F6B385623D9D11600EA5D1B /* secure_cell_seal_passphrase.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B385423D9D11600EA5D1B /* secure_cell_seal_passphrase.c */; };
 		9F70B2C1241D0FEC009CB629 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E8D7223C197900EC1EF3 /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -3512,6 +3512,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F52B138263D32F30025EB78 /* soter_asym_cipher.c in Sources */,
+				9F52B139263D32F30025EB78 /* soter_asym_ka.c in Sources */,
+				9F52B13A263D32F30025EB78 /* soter_ec_key.c in Sources */,
+				9F52B13B263D32F30025EB78 /* soter_ecdsa_common.c in Sources */,
+				9F52B13C263D32F30025EB78 /* soter_hash.c in Sources */,
+				9F52B13D263D32F30025EB78 /* soter_kdf.c in Sources */,
+				9F52B13E263D32F30025EB78 /* soter_rand.c in Sources */,
+				9F52B13F263D32F30025EB78 /* soter_rsa_common.c in Sources */,
+				9F52B140263D32F30025EB78 /* soter_rsa_key_pair_gen.c in Sources */,
+				9F52B141263D32F30025EB78 /* soter_rsa_key.c in Sources */,
+				9F52B142263D32F30025EB78 /* soter_sign_ecdsa.c in Sources */,
+				9F52B143263D32F30025EB78 /* soter_sign_rsa.c in Sources */,
+				9F52B144263D32F30025EB78 /* soter_sym.c in Sources */,
+				9F52B145263D32F30025EB78 /* soter_verify_ecdsa.c in Sources */,
+				9F52B146263D32F30025EB78 /* soter_verify_rsa.c in Sources */,
+				9F52B147263D32F30025EB78 /* soter_wipe.c in Sources */,
 				9F52B030263D30430025EB78 /* secure_cell.c in Sources */,
 				9F52B031263D30430025EB78 /* secure_comparator.c in Sources */,
 				9F52B032263D30430025EB78 /* secure_keygen.c in Sources */,
@@ -3528,24 +3544,8 @@
 				9F52B03D263D30430025EB78 /* soter_hmac.c in Sources */,
 				9F52B03E263D30430025EB78 /* soter_kdf.c in Sources */,
 				9F52B03F263D30430025EB78 /* soter_sign.c in Sources */,
-				9F52B040263D30430025EB78 /* soter_asym_cipher.c in Sources */,
-				9F52B041263D30430025EB78 /* soter_asym_ka.c in Sources */,
-				9F52B042263D30430025EB78 /* soter_ec_key.c in Sources */,
-				9F52B043263D30430025EB78 /* soter_ecdsa_common.c in Sources */,
-				9F52B044263D30430025EB78 /* soter_hash.c in Sources */,
-				9F52B045263D30430025EB78 /* soter_rand.c in Sources */,
 				9F52B046263D30430025EB78 /* soter_ec_key.c in Sources */,
 				9F52B047263D30430025EB78 /* secure_cell_seal_passphrase.c in Sources */,
-				9F52B048263D30430025EB78 /* soter_rsa_common.c in Sources */,
-				9F52B049263D30430025EB78 /* soter_rsa_key_pair_gen.c in Sources */,
-				9F52B04A263D30430025EB78 /* soter_rsa_key.c in Sources */,
-				9F52B04B263D30430025EB78 /* soter_kdf.c in Sources */,
-				9F52B04C263D30430025EB78 /* soter_wipe.c in Sources */,
-				9F52B04D263D30430025EB78 /* soter_sign_ecdsa.c in Sources */,
-				9F52B04E263D30430025EB78 /* soter_sign_rsa.c in Sources */,
-				9F52B04F263D30430025EB78 /* soter_sym.c in Sources */,
-				9F52B050263D30430025EB78 /* soter_verify_ecdsa.c in Sources */,
-				9F52B051263D30430025EB78 /* soter_verify_rsa.c in Sources */,
 				9F52B052263D30430025EB78 /* fe_0.c in Sources */,
 				9F52B053263D30430025EB78 /* fe_1.c in Sources */,
 				9F52B054263D30430025EB78 /* soter_rsa_key.c in Sources */,
@@ -3605,6 +3605,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9F52B15A263D33290025EB78 /* soter_asym_cipher.c in Sources */,
+				9F52B15B263D33290025EB78 /* soter_asym_ka.c in Sources */,
+				9F52B15C263D33290025EB78 /* soter_ec_key.c in Sources */,
+				9F52B15D263D33290025EB78 /* soter_ecdsa_common.c in Sources */,
+				9F52B15E263D33290025EB78 /* soter_hash.c in Sources */,
+				9F52B15F263D33290025EB78 /* soter_kdf.c in Sources */,
+				9F52B160263D33290025EB78 /* soter_rand.c in Sources */,
+				9F52B161263D33290025EB78 /* soter_rsa_common.c in Sources */,
+				9F52B162263D33290025EB78 /* soter_rsa_key_pair_gen.c in Sources */,
+				9F52B163263D33290025EB78 /* soter_rsa_key.c in Sources */,
+				9F52B164263D33290025EB78 /* soter_sign_ecdsa.c in Sources */,
+				9F52B165263D33290025EB78 /* soter_sign_rsa.c in Sources */,
+				9F52B166263D33290025EB78 /* soter_sym.c in Sources */,
+				9F52B167263D33290025EB78 /* soter_verify_ecdsa.c in Sources */,
+				9F52B168263D33290025EB78 /* soter_verify_rsa.c in Sources */,
+				9F52B169263D33290025EB78 /* soter_wipe.c in Sources */,
 				9F52B0AB263D310F0025EB78 /* secure_cell.c in Sources */,
 				9F52B0AC263D310F0025EB78 /* secure_comparator.c in Sources */,
 				9F52B0AD263D310F0025EB78 /* secure_keygen.c in Sources */,
@@ -3621,24 +3637,8 @@
 				9F52B0B8263D310F0025EB78 /* soter_hmac.c in Sources */,
 				9F52B0B9263D310F0025EB78 /* soter_kdf.c in Sources */,
 				9F52B0BA263D310F0025EB78 /* soter_sign.c in Sources */,
-				9F52B0BB263D310F0025EB78 /* soter_asym_cipher.c in Sources */,
-				9F52B0BC263D310F0025EB78 /* soter_asym_ka.c in Sources */,
-				9F52B0BD263D310F0025EB78 /* soter_ec_key.c in Sources */,
-				9F52B0BE263D310F0025EB78 /* soter_ecdsa_common.c in Sources */,
-				9F52B0BF263D310F0025EB78 /* soter_hash.c in Sources */,
-				9F52B0C0263D310F0025EB78 /* soter_rand.c in Sources */,
 				9F52B0C1263D310F0025EB78 /* soter_ec_key.c in Sources */,
 				9F52B0C2263D310F0025EB78 /* secure_cell_seal_passphrase.c in Sources */,
-				9F52B0C3263D310F0025EB78 /* soter_rsa_common.c in Sources */,
-				9F52B0C4263D310F0025EB78 /* soter_rsa_key_pair_gen.c in Sources */,
-				9F52B0C5263D310F0025EB78 /* soter_rsa_key.c in Sources */,
-				9F52B0C6263D310F0025EB78 /* soter_kdf.c in Sources */,
-				9F52B0C7263D310F0025EB78 /* soter_wipe.c in Sources */,
-				9F52B0C8263D310F0025EB78 /* soter_sign_ecdsa.c in Sources */,
-				9F52B0C9263D310F0025EB78 /* soter_sign_rsa.c in Sources */,
-				9F52B0CA263D310F0025EB78 /* soter_sym.c in Sources */,
-				9F52B0CB263D310F0025EB78 /* soter_verify_ecdsa.c in Sources */,
-				9F52B0CC263D310F0025EB78 /* soter_verify_rsa.c in Sources */,
 				9F52B0CD263D310F0025EB78 /* ge_p2_to_p3.c in Sources */,
 				9F52B0CE263D310F0025EB78 /* ge_p3_0.c in Sources */,
 				9F52B0CF263D310F0025EB78 /* soter_rsa_key.c in Sources */,
