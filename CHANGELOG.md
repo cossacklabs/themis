@@ -66,6 +66,11 @@ _Code:_
     </details>
 
   - Fixed multiple buffer overflows in Secure Message ([#763](https://github.com/cossacklabs/themis/pull/763)).
+  - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
+
+- **Android**
+
+  - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
 
 - **C++**
 
@@ -144,6 +149,7 @@ _Code:_
 
   - Updated Emscripten toolchain to the latest version ([#760](https://github.com/cossacklabs/themis/pull/760)).
   - Node.js v16 is now supported ([#801](https://github.com/cossacklabs/themis/pull/801)).
+  - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
 
 _Infrastructure:_
 
