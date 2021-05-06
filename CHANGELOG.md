@@ -158,6 +158,21 @@ _Infrastructure:_
 - JavaThemis for Android and desktop Java is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
 - MSYS2 builds for Windows are now checked by CI ([#791](https://github.com/cossacklabs/themis/pull/791)).
 
+## [0.13.8](https://github.com/cossacklabs/themis/releases/tag/0.13.8), April 30th 2021
+
+**Hotfix for Apple platforms:**
+
+- Updated OpenSSL to the latest 1.1.1k for SPM and attached `themis.xcframework`. (iOS and macOS).
+- New Swift and Objective-C example projects: SPM for iOS and macOS.
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - Updated OpenSSL to the latest 1.1.1k for SPM and attached `themis.xcframework`. It is `openssl-apple` version 1.1.11101.
+  - New Swift and Objective-C example projects: SPM for iOS and macOS.
+  - Updated SPM examples source code to remove deprecated calls.
+
 ## [0.13.7](https://github.com/cossacklabs/themis/releases/tag/0.13.7), April 28rd 2021
 
 **Hotfix for Apple platforms:**

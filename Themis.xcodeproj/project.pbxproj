@@ -1395,7 +1395,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1418,7 +1418,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MARKETING_VERSION = 0.13.6;
+				MARKETING_VERSION = 0.13.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -1461,7 +1461,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1478,7 +1478,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MARKETING_VERSION = 0.13.6;
+				MARKETING_VERSION = 0.13.8;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1490,7 +1490,7 @@
 		9F00E8DC223C197A00EC1EF3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1513,7 +1513,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.13.7;
+				MARKETING_VERSION = 0.13.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1526,7 +1526,7 @@
 		9F00E8DD223C197A00EC1EF3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1549,7 +1549,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.13.7;
+				MARKETING_VERSION = 0.13.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1562,7 +1562,7 @@
 		9F4A24A7223A8D7F005CB63A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1587,7 +1587,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.13.7;
+				MARKETING_VERSION = 0.13.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1601,7 +1601,7 @@
 		9F4A24A8223A8D7F005CB63A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 8;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1626,7 +1626,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.13.7;
+				MARKETING_VERSION = 0.13.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
