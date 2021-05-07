@@ -89,3 +89,4 @@ Cargo.lock
 # vscode
 .settings
 .project
+.cache

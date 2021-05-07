@@ -85,9 +85,7 @@ themis_status_t secure_session_wrap(secure_session_t* session_ctx,
                       length,
                       message_length + sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint32_t)
                           + CIPHER_AUTH_TAG_SIZE);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     *session_id = htobe32(session_ctx->session_id);
     session_ctx->out_seq++;
@@ -174,44 +172,45 @@ themis_status_t secure_session_unwrap(secure_session_t* session_ctx,
             seq = be32toh(*((uint32_t *)(message_header + sizeof(uint32_t))));
             ts = be64toh(*((time_t *)(message_header + sizeof(uint32_t) + sizeof(uint32_t))));
     }*/
+    do {
+        res = soter_sym_aead_decrypt_update(sym_ctx,
+                                            iv + CIPHER_MAX_BLOCK_SIZE,
+                                            sizeof(message_header),
+                                            message_header,
+                                            &message_header_size);
+        if (THEMIS_SUCCESS != res) {
+            break;
+        }
 
-    res = soter_sym_aead_decrypt_update(sym_ctx,
-                                        iv + CIPHER_MAX_BLOCK_SIZE,
-                                        sizeof(message_header),
-                                        message_header,
-                                        &message_header_size);
-    if (THEMIS_SUCCESS != res) {
-        goto err;
-    }
+        if (sizeof(message_header) != message_header_size) {
+            res = THEMIS_FAIL;
+            break;
+        }
 
-    if (sizeof(message_header) != message_header_size) {
-        res = THEMIS_FAIL;
-        goto err;
-    }
+        length = be32toh(*((uint32_t*)message_header));
+        seq = be32toh(*((uint32_t*)(message_header + sizeof(uint32_t))));
+        ts = be64toh(*((uint64_t*)(message_header + sizeof(uint32_t) + sizeof(uint32_t))));
 
-    length = be32toh(*((uint32_t*)message_header));
-    seq = be32toh(*((uint32_t*)(message_header + sizeof(uint32_t))));
-    ts = be64toh(*((uint64_t*)(message_header + sizeof(uint32_t) + sizeof(uint32_t))));
+        if (length > (UNWRAPPED_SIZE(wrapped_message_length) + sizeof(uint32_t) + 8)) {
+            res = THEMIS_INVALID_PARAMETER;
+            break;
+        }
 
-    if (length > (UNWRAPPED_SIZE(wrapped_message_length) + sizeof(uint32_t) + 8)) {
-        res = THEMIS_INVALID_PARAMETER;
-        goto err;
-    }
+        if ((seq < (session_ctx->in_seq - SEQ_MAX_DIFF))
+            || (seq > (session_ctx->in_seq + SEQ_MAX_DIFF))) {
+            res = THEMIS_INVALID_PARAMETER;
+            break;
+        }
 
-    if ((seq < (session_ctx->in_seq - SEQ_MAX_DIFF)) || (seq > (session_ctx->in_seq + SEQ_MAX_DIFF))) {
-        res = THEMIS_INVALID_PARAMETER;
-        goto err;
-    }
+        if ((ts < (uint64_t)(curr_time - TS_MAX_DIFF)) || (ts > (uint64_t)(curr_time + TS_MAX_DIFF))) {
+            res = THEMIS_INVALID_PARAMETER;
+            break;
+        }
 
-    if ((ts < (uint64_t)(curr_time - TS_MAX_DIFF)) || (ts > (uint64_t)(curr_time + TS_MAX_DIFF))) {
-        res = THEMIS_INVALID_PARAMETER;
-        goto err;
-    }
+        *message_length = length - (sizeof(uint32_t) + sizeof(uint64_t));
 
-    *message_length = length - (sizeof(uint32_t) + sizeof(uint64_t));
-
-    /* TODO: change to GCM when fixed */
-    /*{
+        /* TODO: change to GCM when fixed */
+        /*{
             size_t i;
 
             for (i = 0; i < *message_length; i++)
@@ -221,25 +220,25 @@ themis_status_t secure_session_unwrap(secure_session_t* session_ctx,
             }
     }*/
 
-    res = soter_sym_aead_decrypt_update(sym_ctx,
-                                        iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header),
-                                        *message_length,
-                                        message,
-                                        message_length);
-    if (THEMIS_SUCCESS != res) {
-        goto err;
-    }
+        res = soter_sym_aead_decrypt_update(sym_ctx,
+                                            iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header),
+                                            *message_length,
+                                            message,
+                                            message_length);
+        if (THEMIS_SUCCESS != res) {
+            break;
+        }
 
-    res = soter_sym_aead_decrypt_final(sym_ctx,
-                                       iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header) + *message_length,
-                                       CIPHER_AUTH_TAG_SIZE);
-    if (THEMIS_SUCCESS != res) {
-        goto err;
-    }
+        res = soter_sym_aead_decrypt_final(sym_ctx,
+                                           iv + CIPHER_MAX_BLOCK_SIZE + sizeof(message_header)
+                                               + *message_length,
+                                           CIPHER_AUTH_TAG_SIZE);
+        if (THEMIS_SUCCESS != res) {
+            break;
+        }
 
-    session_ctx->in_seq = seq;
-
-err:
+        session_ctx->in_seq = seq;
+    } while (0);
 
     if (NULL != sym_ctx) {
         soter_sym_aead_decrypt_destroy(sym_ctx);

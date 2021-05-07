@@ -203,59 +203,61 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase_(const uint8_t* 
     hdr.auth_tag_length = sizeof(auth_tag);
     hdr.message_length = (uint32_t)message_length;
 
-    res = themis_auth_sym_derive_encryption_key_passphrase(&hdr,
-                                                           passphrase,
-                                                           passphrase_length,
-                                                           user_context,
-                                                           user_context_length,
-                                                           message_length,
-                                                           derived_key,
-                                                           &derived_key_length,
-                                                           auth_token,
-                                                           auth_token_length);
-    if (res != THEMIS_SUCCESS) {
-        goto error;
-    }
+    do {
 
-    res = soter_rand(iv, sizeof(iv));
-    if (res != THEMIS_SUCCESS) {
-        goto error;
-    }
+        res = themis_auth_sym_derive_encryption_key_passphrase(&hdr,
+                                                               passphrase,
+                                                               passphrase_length,
+                                                               user_context,
+                                                               user_context_length,
+                                                               message_length,
+                                                               derived_key,
+                                                               &derived_key_length,
+                                                               auth_token,
+                                                               auth_token_length);
+        if (res != THEMIS_SUCCESS) {
+            break;
+        }
 
-    /* We are doing KDF ourselves, ask Soter to not interfere */
-    res = themis_auth_sym_plain_encrypt(soter_alg_without_kdf(hdr.alg),
-                                        derived_key,
-                                        derived_key_length,
-                                        hdr.iv,
-                                        hdr.iv_length,
-                                        user_context,
-                                        user_context_length,
-                                        message,
-                                        message_length,
-                                        encrypted_message,
-                                        encrypted_message_length,
-                                        &auth_tag[0],
-                                        &hdr.auth_tag_length);
-    if (res != THEMIS_SUCCESS) {
-        goto error;
-    }
+        res = soter_rand(iv, sizeof(iv));
+        if (res != THEMIS_SUCCESS) {
+            break;
+        }
 
-    /* In valid Secure Cells auth token length always fits into uint32_t. */
-    auth_token_real_length = (uint32_t)themis_scell_auth_token_passphrase_size(&hdr);
+        /* We are doing KDF ourselves, ask Soter to not interfere */
+        res = themis_auth_sym_plain_encrypt(soter_alg_without_kdf(hdr.alg),
+                                            derived_key,
+                                            derived_key_length,
+                                            hdr.iv,
+                                            hdr.iv_length,
+                                            user_context,
+                                            user_context_length,
+                                            message,
+                                            message_length,
+                                            encrypted_message,
+                                            encrypted_message_length,
+                                            &auth_tag[0],
+                                            &hdr.auth_tag_length);
+        if (res != THEMIS_SUCCESS) {
+            break;
+        }
 
-    if (*auth_token_length < auth_token_real_length) {
+        /* In valid Secure Cells auth token length always fits into uint32_t. */
+        auth_token_real_length = (uint32_t)themis_scell_auth_token_passphrase_size(&hdr);
+
+        if (*auth_token_length < auth_token_real_length) {
+            *auth_token_length = auth_token_real_length;
+            res = THEMIS_BUFFER_TOO_SMALL;
+            break;
+        }
+        res = themis_write_scell_auth_token_passphrase(&hdr, auth_token, *auth_token_length);
+        if (res != THEMIS_SUCCESS) {
+            break;
+        }
         *auth_token_length = auth_token_real_length;
-        res = THEMIS_BUFFER_TOO_SMALL;
-        goto error;
-    }
-    res = themis_write_scell_auth_token_passphrase(&hdr, auth_token, *auth_token_length);
-    if (res != THEMIS_SUCCESS) {
-        goto error;
-    }
-    *auth_token_length = auth_token_real_length;
-    *encrypted_message_length = message_length;
+        *encrypted_message_length = message_length;
+    } while (0);
 
-error:
     soter_wipe(iv, sizeof(iv));
     soter_wipe(auth_tag, sizeof(auth_tag));
     soter_wipe(derived_key, sizeof(derived_key));
@@ -282,8 +284,10 @@ themis_status_t themis_auth_sym_encrypt_message_with_passphrase(const uint8_t* p
     THEMIS_CHECK_PARAM(auth_token_length != NULL);
     THEMIS_CHECK_PARAM(encrypted_message_length != NULL);
 
-    if (!auth_token_length || !encrypted_message || *auth_token_length < default_auth_token_size()
-        || *encrypted_message_length < message_length) {
+    int is_small = !auth_token_length || !encrypted_message
+                   || *auth_token_length < default_auth_token_size()
+                   || *encrypted_message_length < message_length;
+    if (is_small) {
         *auth_token_length = default_auth_token_size();
         *encrypted_message_length = message_length;
         return THEMIS_BUFFER_TOO_SMALL;
@@ -319,47 +323,47 @@ static themis_status_t themis_auth_sym_derive_decryption_key_pbkdf2(
 
     memset(&kdf, 0, sizeof(kdf));
     res = themis_read_scell_pbkdf2_context(hdr, &kdf);
-    if (res != THEMIS_SUCCESS) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
-    res = soter_pbkdf2_sha256(passphrase,
-                              passphrase_length,
-                              kdf.salt,
-                              kdf.salt_length,
-                              kdf.iteration_count,
-                              prekey,
-                              sizeof(prekey));
-    if (res != THEMIS_SUCCESS) {
-        goto error;
-    }
+    do {
+        res = soter_pbkdf2_sha256(passphrase,
+                                passphrase_length,
+                                kdf.salt,
+                                kdf.salt_length,
+                                kdf.iteration_count,
+                                prekey,
+                                sizeof(prekey));
+        if (res != THEMIS_SUCCESS) {
+            break;
+        }
 
-    /*
-     * themis_auth_sym_decrypt_message_with_passphrase_() makes sure that
-     * message_length fits into uint32_t.
-     */
-    res = themis_auth_sym_kdf_context((uint32_t)message_length,
-                                      soter_kdf_context,
-                                      &soter_kdf_context_length);
-    if (res != THEMIS_SUCCESS) {
-        goto error;
-    }
+        /*
+        * themis_auth_sym_decrypt_message_with_passphrase_() makes sure that
+        * message_length fits into uint32_t.
+        */
+        res = themis_auth_sym_kdf_context((uint32_t)message_length,
+                                        soter_kdf_context,
+                                        &soter_kdf_context_length);
+        if (res != THEMIS_SUCCESS) {
+            break;
+        }
 
-    /* Use Soter KDF to derive key from prekey */
-    res = themis_auth_sym_derive_encryption_key(soter_alg_without_kdf(hdr->alg),
-                                                prekey,
-                                                sizeof(prekey),
-                                                soter_kdf_context,
-                                                soter_kdf_context_length,
-                                                user_context,
-                                                user_context_length,
-                                                derived_key,
-                                                derived_key_length);
-    if (res != THEMIS_SUCCESS) {
-        goto error;
-    }
+        /* Use Soter KDF to derive key from prekey */
+        res = themis_auth_sym_derive_encryption_key(soter_alg_without_kdf(hdr->alg),
+                                                    prekey,
+                                                    sizeof(prekey),
+                                                    soter_kdf_context,
+                                                    soter_kdf_context_length,
+                                                    user_context,
+                                                    user_context_length,
+                                                    derived_key,
+                                                    derived_key_length);
+        if (res != THEMIS_SUCCESS) {
+            break;
+        }
 
-error:
+    }  while (0);
+
     soter_wipe(prekey, sizeof(prekey));
 
     return res;
@@ -485,9 +489,7 @@ themis_status_t themis_auth_sym_decrypt_message_with_passphrase(const uint8_t* p
 
     /* Do a quick guess without parsing the message too deeply here */
     res = themis_scell_auth_token_message_size(auth_token, auth_token_length, &expected_message_length);
-    if (res != THEMIS_SUCCESS) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
     if (!message || *message_length < expected_message_length) {
         *message_length = expected_message_length;
         return THEMIS_BUFFER_TOO_SMALL;

@@ -104,40 +104,41 @@ themis_status_t secure_session_init(secure_session_t* session_ctx,
 
     /* This change prevents from using RSA keys in Secure Session,
      * as they are currently not supported */
-    themis_key_kind_t key_kind = themis_get_asym_key_kind(sign_key, sign_key_length);
-    if (key_kind != THEMIS_KEY_EC_PRIVATE) {
-        res = THEMIS_INVALID_PARAMETER;
-        goto err;
-    }
+    do {
+        themis_key_kind_t key_kind = themis_get_asym_key_kind(sign_key, sign_key_length);
+        if (key_kind != THEMIS_KEY_EC_PRIVATE) {
+            res = THEMIS_INVALID_PARAMETER;
+            break;
+        }
 
-    res = secure_session_check_user_callbacks(user_callbacks);
-    if (THEMIS_SUCCESS != res) {
-        goto err;
-    }
+        res = secure_session_check_user_callbacks(user_callbacks);
+        if (THEMIS_SUCCESS != res) {
+            break;
+        }
 
-    res = secure_session_peer_init(&(session_ctx->we), id, id_length, NULL, 0, sign_key, sign_key_length);
-    if (THEMIS_SUCCESS != res) {
-        goto err;
-    }
+        res = secure_session_peer_init(&(session_ctx->we), id, id_length, NULL, 0, sign_key, sign_key_length);
+        if (THEMIS_SUCCESS != res) {
+            break;
+        }
 
-    session_ctx->user_callbacks = user_callbacks;
+        session_ctx->user_callbacks = user_callbacks;
 
-    soter_status = soter_asym_ka_init(&(session_ctx->ecdh_ctx), SOTER_ASYM_KA_EC_P256);
-    if (THEMIS_SUCCESS != soter_status) {
-        res = soter_status;
-        goto err;
-    }
+        soter_status = soter_asym_ka_init(&(session_ctx->ecdh_ctx), SOTER_ASYM_KA_EC_P256);
+        if (THEMIS_SUCCESS != soter_status) {
+            res = soter_status;
+            break;
+        }
 
-    soter_status = soter_asym_ka_gen_key(&(session_ctx->ecdh_ctx));
-    if (THEMIS_SUCCESS != soter_status) {
-        res = soter_status;
-        goto err;
-    }
+        soter_status = soter_asym_ka_gen_key(&(session_ctx->ecdh_ctx));
+        if (THEMIS_SUCCESS != soter_status) {
+            res = soter_status;
+            break;
+        }
 
-    /* Initially we are in the "server accept" mode */
-    session_ctx->state_handler = secure_session_accept;
+        /* Initially we are in the "server accept" mode */
+        session_ctx->state_handler = secure_session_accept;
 
-err:
+    } while (0);
 
     if (THEMIS_SUCCESS != res) {
         secure_session_cleanup(session_ctx);
@@ -238,9 +239,7 @@ themis_status_t secure_session_generate_connect_request(secure_session_t* sessio
                             data_to_send + (2 * sizeof(soter_container_hdr_t))
                                 + session_ctx->we.id_length + ecdh_key_length,
                             &signature_length);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     length_to_send += signature_length;
     *output_length = length_to_send;
@@ -815,9 +814,7 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
     mac = signature + signature_length;
 
     res = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), ecdh_key, &ecdh_key_length, false);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     sign_data[0].data = session_ctx->peer.ecdh_key;
     sign_data[0].length = session_ctx->peer.ecdh_key_length;
@@ -837,18 +834,14 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
                            4,
                            signature,
                            signature_length);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     res = soter_asym_ka_derive(&(session_ctx->ecdh_ctx),
                                session_ctx->peer.ecdh_key,
                                session_ctx->peer.ecdh_key_length,
                                shared_secret,
                                &shared_secret_length);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     res = soter_kdf(NULL,
                     0,
@@ -857,9 +850,7 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
                     4,
                     &(session_ctx->session_id),
                     sizeof(session_ctx->session_id));
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     sign_data[0].data = (const uint8_t*)(&(session_ctx->session_id));
     sign_data[0].length = sizeof(session_ctx->session_id);
@@ -871,9 +862,7 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
                     1,
                     session_ctx->session_master_key,
                     sizeof(session_ctx->session_master_key));
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     sign_data[0].data = ecdh_key;
     sign_data[0].length = ecdh_key_length;
@@ -887,9 +876,7 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
                      2,
                      mac,
                      mac_length);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     sign_data[0].data = session_ctx->peer.ecdh_key;
     sign_data[0].length = session_ctx->peer.ecdh_key_length;
@@ -904,9 +891,7 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
                       2,
                       soter_container_data(response_message),
                       &ecdh_key_length);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     if ((NULL == output) || (*output_length < (ecdh_key_length + sizeof(soter_container_hdr_t)))) {
         *output_length = ecdh_key_length + sizeof(soter_container_hdr_t);
@@ -916,9 +901,7 @@ static themis_status_t secure_session_finish_server(secure_session_t* session_ct
     *output_length = ecdh_key_length + sizeof(soter_container_hdr_t);
 
     res = secure_session_derive_message_keys(session_ctx);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     memcpy(response_message->tag, THEMIS_SESSION_PROTO_TAG, SOTER_CONTAINER_TAG_LENGTH);
     soter_container_set_data_size(response_message, ecdh_key_length);
@@ -969,9 +952,7 @@ static themis_status_t secure_session_finish_client(secure_session_t* session_ct
     }
 
     res = soter_asym_ka_export_key(&(session_ctx->ecdh_ctx), ecdh_key, &ecdh_key_length, false);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     sign_data[0].data = ecdh_key;
     sign_data[0].length = ecdh_key_length;
@@ -985,14 +966,10 @@ static themis_status_t secure_session_finish_client(secure_session_t* session_ct
                      2,
                      soter_container_const_data(proto_message),
                      soter_container_data_size(proto_message));
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     res = secure_session_derive_message_keys(session_ctx);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     *output_length = 0;
 

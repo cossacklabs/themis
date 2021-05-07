@@ -350,9 +350,7 @@ themis_status_t secure_session_derive_message_keys(secure_session_t* session_ctx
                     1,
                     session_ctx->out_cipher_key,
                     SESSION_MESSAGE_KEY_LENGTH);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     res = soter_kdf(session_ctx->session_master_key,
                     SESSION_MASTER_KEY_LENGTH,
@@ -361,9 +359,7 @@ themis_status_t secure_session_derive_message_keys(secure_session_t* session_ctx
                     1,
                     session_ctx->in_cipher_key,
                     SESSION_MESSAGE_KEY_LENGTH);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     res = soter_kdf(session_ctx->session_master_key,
                     SESSION_MASTER_KEY_LENGTH,
@@ -372,9 +368,7 @@ themis_status_t secure_session_derive_message_keys(secure_session_t* session_ctx
                     1,
                     &(session_ctx->out_seq),
                     sizeof(session_ctx->out_seq));
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     res = soter_kdf(session_ctx->session_master_key,
                     SESSION_MASTER_KEY_LENGTH,
@@ -383,9 +377,7 @@ themis_status_t secure_session_derive_message_keys(secure_session_t* session_ctx
                     1,
                     &(session_ctx->in_seq),
                     sizeof(session_ctx->in_seq));
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     return res;
 }

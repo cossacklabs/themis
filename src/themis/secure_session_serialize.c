@@ -71,12 +71,13 @@ themis_status_t secure_session_save(const secure_session_t* session_ctx, void* o
 
     /* | session_id | is_client | master_key | out_seq | in_seq | */
 
-    if ((!out) || (*out_length < (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIALIZED_SIZE))) {
-        *out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIALIZED_SIZE);
+    size_t required_length = sizeof(soter_container_hdr_t) + SESSION_CTX_SERIALIZED_SIZE;
+    if ((!out) || (*out_length < required_length)) {
+        *out_length = required_length;
         return THEMIS_BUFFER_TOO_SMALL;
     }
 
-    *out_length = (sizeof(soter_container_hdr_t) + SESSION_CTX_SERIALIZED_SIZE);
+    *out_length = required_length;
 
     soter_container_set_data_size(hdr, SESSION_CTX_SERIALIZED_SIZE);
     memcpy(hdr->tag, THEMIS_SESSION_CONTEXT_TAG, SOTER_CONTAINER_TAG_LENGTH);

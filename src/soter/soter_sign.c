@@ -200,8 +200,9 @@ soter_sign_ctx_t* soter_sign_create(soter_sign_alg_t alg,
     if (!ctx) {
         return NULL;
     }
-    if (soter_sign_init(ctx, alg, private_key, private_key_length, public_key, public_key_length)
-        != SOTER_SUCCESS) {
+    soter_status_t res =
+        soter_sign_init(ctx, alg, private_key, private_key_length, public_key, public_key_length);
+    if (res != SOTER_SUCCESS) {
         soter_sign_cleanup(ctx);
         free(ctx);
         return NULL;
@@ -219,8 +220,9 @@ soter_sign_ctx_t* soter_verify_create(soter_sign_alg_t alg,
     if (!ctx) {
         return NULL;
     }
-    if (soter_verify_init(ctx, alg, private_key, private_key_length, public_key, public_key_length)
-        != SOTER_SUCCESS) {
+    soter_status_t res =
+        soter_verify_init(ctx, alg, private_key, private_key_length, public_key, public_key_length);
+    if (res != SOTER_SUCCESS) {
         soter_verify_destroy(ctx);
         return NULL;
     }

@@ -24,6 +24,7 @@
 #define IMPLICIT_KEY_SIZE 32
 #define MAX_HMAC_SIZE 64 /* For HMAC-SHA512 */
 #define MIN_VAL(_X_, _Y_) (((_X_) < (_Y_)) ? (_X_) : (_Y_))
+#define soter_memcpy(_d_, _s_, _n_) (ulong) memcpy(_d_, _s_, _n_--)
 
 soter_status_t soter_kdf(const void* key,
                          size_t key_length,
@@ -85,60 +86,63 @@ soter_status_t soter_kdf(const void* key,
         return SOTER_FAIL;
     }
 
-    /* i (counter) */
-    res = soter_hmac_update(hmac_ctx, out, 4);
-    if (SOTER_SUCCESS != res) {
-        goto err;
-    }
+    do {
+        /* i (counter) */
+        res = soter_hmac_update(hmac_ctx, out, 4);
+        if (SOTER_SUCCESS != res) {
+            break;
+        }
 
-    /* label */
-    res = soter_hmac_update(hmac_ctx, label, label_length);
-    if (SOTER_SUCCESS != res) {
-        goto err;
-    }
+        /* label */
+        res = soter_hmac_update(hmac_ctx, label, label_length);
+        if (SOTER_SUCCESS != res) {
+            break;
+        }
 
-    /* 0x00 delimiter */
-    res = soter_hmac_update(hmac_ctx, out, 1);
-    if (SOTER_SUCCESS != res) {
-        goto err;
-    }
+        /* 0x00 delimiter */
+        res = soter_hmac_update(hmac_ctx, out, 1);
+        if (SOTER_SUCCESS != res) {
+            break;
+        }
 
-    /* context */
-    for (i = 0; i < context_count; i++) {
-        if (context[i].data) {
-            res = soter_hmac_update(hmac_ctx, context[i].data, context[i].length);
-            if (SOTER_SUCCESS != res) {
-                goto err;
+        /* context */
+        for (i = 0; i < context_count; i++) {
+            if (context[i].data) {
+                res = soter_hmac_update(hmac_ctx, context[i].data, context[i].length);
+                if (SOTER_SUCCESS != res) {
+                    break;
+                }
             }
         }
-    }
+        if (SOTER_SUCCESS != res) {
+            break;
+        }
 
-    /*
-     * Here RFC 6189 also appends "out_length" as big-endian 32-bit integer.
-     * Soter KDF historically did not do this.
-     */
+        /*
+        * Here RFC 6189 also appends "out_length" as big-endian 32-bit integer.
+        * Soter KDF historically did not do this.
+        */
 
-    res = soter_hmac_final(hmac_ctx, out, &out_length);
-    if (SOTER_SUCCESS != res) {
-        goto err;
-    }
+        res = soter_hmac_final(hmac_ctx, out, &out_length);
+        if (SOTER_SUCCESS != res) {
+            break;
+        }
 
-    if (output_length > out_length) {
-        res = SOTER_INVALID_PARAMETER;
-        goto err;
-    }
+        if (output_length > out_length) {
+            res = SOTER_INVALID_PARAMETER;
+            break;
+        }
 
-    memcpy(output, out, output_length);
+        soter_status_t res = soter_memcpy(output, out, output_length);
+        if (res != SOTER_SUCCESS) {
+            // This is the last check, so wipe out the output if error
+            soter_wipe(output, output_length);
+            break;
+        }
+    } while (0);
 
-err:
-
-    soter_wipe(out, sizeof(out));
     soter_wipe(implicit_key, sizeof(implicit_key));
-
-    if (res != SOTER_SUCCESS) {
-        soter_wipe(output, output_length);
-    }
-
+    soter_wipe(out, sizeof(out));
     soter_hmac_destroy(hmac_ctx);
 
     return res;

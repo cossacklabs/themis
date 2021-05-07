@@ -106,6 +106,13 @@ typedef int32_t themis_status_t;
         }                                  \
     } while (0)
 
+#define THEMIS_PROPAGATE(err)          \
+    do {                               \
+        if ((err) != THEMIS_SUCCESS) { \
+            return err;                \
+        }                              \
+    } while (0)
+
 /** @}
  * @}
  */

@@ -742,10 +742,7 @@ themis_status_t themis_sym_decrypt_message_u(const uint8_t* key,
                                            encrypted_message_length,
                                            derived_key,
                                            sizeof(derived_key));
-    if (res != THEMIS_SUCCESS) {
-        return res;
-    }
-
+    THEMIS_PROPAGATE(res);
     res = themis_sym_decrypt_message_u_(derived_key,
                                         sizeof(derived_key),
                                         context,

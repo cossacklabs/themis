@@ -37,12 +37,12 @@ soter_sign_alg_t get_alg_id(const uint8_t* key, size_t key_length)
         && key_length < (size_t)((const soter_container_hdr_t*)key)->size) {
         return (soter_sign_alg_t)(-1);
     }
-    if (memcmp(((const soter_container_hdr_t*)key)->tag, EC_PRIV_KEY_PREF, 3) == 0
-        || memcmp(((const soter_container_hdr_t*)key)->tag, EC_PUB_KEY_PREF, 3) == 0) {
+
+    const char* tag = ((const soter_container_hdr_t*)key)->tag;
+    if (memcmp(tag, EC_PRIV_KEY_PREF, 3) == 0 || memcmp(tag, EC_PUB_KEY_PREF, 3) == 0) {
         return SOTER_SIGN_ecdsa_none_pkcs8;
     }
-    if (memcmp(((const soter_container_hdr_t*)key)->tag, RSA_PRIV_KEY_PREF, 3) == 0
-        || memcmp(((const soter_container_hdr_t*)key)->tag, RSA_PUB_KEY_PREF, 3) == 0) {
+    if (memcmp(tag, RSA_PRIV_KEY_PREF, 3) == 0 || memcmp(tag, RSA_PUB_KEY_PREF, 3) == 0) {
         return SOTER_SIGN_rsa_pss_pkcs8;
     }
     return SOTER_SIGN_undefined;
@@ -76,13 +76,13 @@ themis_status_t themis_secure_message_signer_proceed(themis_secure_message_signe
     THEMIS_CHECK(soter_sign_update(ctx->sign_ctx, message, message_length) == THEMIS_SUCCESS);
     THEMIS_CHECK(soter_sign_final(ctx->sign_ctx, signature, &signature_length)
                  == THEMIS_BUFFER_TOO_SMALL);
-    if (wrapped_message == NULL
-        || (message_length + signature_length + sizeof(themis_secure_signed_message_hdr_t)
-            > (*wrapped_message_length))) {
-        (*wrapped_message_length) = message_length + signature_length
-                                    + sizeof(themis_secure_signed_message_hdr_t);
+
+    size_t full_length = message_length + signature_length + sizeof(themis_secure_signed_message_hdr_t);
+    if (wrapped_message == NULL || ((*wrapped_message_length) < full_length)) {
+        (*wrapped_message_length) = full_length;
         return THEMIS_BUFFER_TOO_SMALL;
     }
+
     signature = malloc(signature_length);
     THEMIS_CHECK(signature != NULL);
     if (soter_sign_final(ctx->sign_ctx, signature, &signature_length) != THEMIS_SUCCESS) {
@@ -102,13 +102,16 @@ themis_status_t themis_secure_message_signer_proceed(themis_secure_message_signe
     };
     hdr.message_hdr.message_length = (uint32_t)message_length;
     hdr.signature_length = (uint32_t)signature_length;
-    memcpy(wrapped_message, &hdr, sizeof(themis_secure_signed_message_hdr_t));
-    memcpy(wrapped_message + sizeof(themis_secure_signed_message_hdr_t), message, message_length);
-    memcpy(wrapped_message + sizeof(themis_secure_signed_message_hdr_t) + message_length,
-           signature,
-           signature_length);
-    (*wrapped_message_length) = message_length + signature_length
-                                + sizeof(themis_secure_signed_message_hdr_t);
+
+    uint8_t* hdr_place = wrapped_message;
+    uint8_t* message_place = hdr_place + sizeof(themis_secure_signed_message_hdr_t);
+    uint8_t* signature_place = message_place + message_length;
+
+    memcpy(hdr_place, &hdr, sizeof(themis_secure_signed_message_hdr_t));
+    memcpy(message_place, message, message_length);
+    memcpy(signature_place, signature, signature_length);
+
+    (*wrapped_message_length) = full_length;
     free(signature);
     return THEMIS_SUCCESS;
 }
@@ -260,14 +263,14 @@ themis_status_t themis_secure_message_rsa_encrypter_proceed(themis_secure_messag
     THEMIS_CHECK(
         themis_secure_cell_encrypt_seal((const uint8_t*)"123", 3, NULL, 0, message, message_length, NULL, &seal_message_length)
         == THEMIS_BUFFER_TOO_SMALL);
-    if (wrapped_message == NULL
-        || (*wrapped_message_length) < (sizeof(themis_secure_rsa_encrypted_message_hdr_t)
-                                        + symm_passwd_length + seal_message_length)) {
-        (*wrapped_message_length) = (sizeof(themis_secure_rsa_encrypted_message_hdr_t)
-                                     + symm_passwd_length + seal_message_length);
+
+    size_t full_length = sizeof(themis_secure_rsa_encrypted_message_hdr_t) + symm_passwd_length
+                         + seal_message_length;
+    if (wrapped_message == NULL || (*wrapped_message_length) < full_length) {
+        (*wrapped_message_length) = full_length;
         return THEMIS_BUFFER_TOO_SMALL;
     }
-    //  symm_init_ctx_t symm_passwd_salt;
+
     uint8_t symm_passwd[THEMIS_RSA_SYMM_PASSWD_LENGTH];
     THEMIS_CHECK(soter_rand(symm_passwd, sizeof(symm_passwd)) == THEMIS_SUCCESS);
     uint8_t* encrypted_symm_pass = wrapped_message + sizeof(themis_secure_rsa_encrypted_message_hdr_t);
@@ -341,8 +344,11 @@ themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_messag
      * The subtraction subexpression does not underflow because of the check we made before.
      * (And yes, this code needs cleanup. I intentionally leave it ugly.)
      */
-    if ((wrapped_message_length - sizeof(themis_secure_rsa_encrypted_message_hdr_t))
-        < ((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length) {
+    const themis_secure_rsa_encrypted_message_hdr_t* wrapped_message_as_hdr =
+        (const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message;
+    uint64_t encrypted_passwd_length = (uint64_t)wrapped_message_as_hdr->encrypted_passwd_length;
+    if (wrapped_message_length
+        < (encrypted_passwd_length + sizeof(themis_secure_rsa_encrypted_message_hdr_t))) {
         return THEMIS_FAIL;
     }
     size_t ml = 0;
@@ -352,12 +358,10 @@ themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_messag
                                         NULL,
                                         0,
                                         wrapped_message + sizeof(themis_secure_rsa_encrypted_message_hdr_t)
-                                            + ((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)
-                                                  ->encrypted_passwd_length,
+                                            + encrypted_passwd_length,
                                         wrapped_message_length
                                             - sizeof(themis_secure_rsa_encrypted_message_hdr_t)
-                                            - ((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)
-                                                  ->encrypted_passwd_length,
+                                            - encrypted_passwd_length,
                                         NULL,
                                         &ml)
         == THEMIS_BUFFER_TOO_SMALL);
@@ -455,17 +459,15 @@ themis_status_t themis_secure_message_ec_encrypter_proceed(themis_secure_message
                                                  &encrypted_message_length)
                      == THEMIS_BUFFER_TOO_SMALL
                  && encrypted_message_length != 0);
-    if (wrapped_message == NULL
-        || (*wrapped_message_length)
-               < (sizeof(themis_secure_encrypted_message_hdr_t) + encrypted_message_length)) {
-        (*wrapped_message_length) = (sizeof(themis_secure_encrypted_message_hdr_t)
-                                     + encrypted_message_length);
+    size_t full_length = sizeof(themis_secure_encrypted_message_hdr_t) + encrypted_message_length;
+    if (wrapped_message == NULL || (*wrapped_message_length) < full_length) {
+        (*wrapped_message_length) = full_length;
         return THEMIS_BUFFER_TOO_SMALL;
     }
     themis_secure_encrypted_message_hdr_t* hdr = (themis_secure_encrypted_message_hdr_t*)wrapped_message;
     hdr->message_hdr.message_type = THEMIS_SECURE_MESSAGE_EC_ENCRYPTED;
-    hdr->message_hdr.message_length = (uint32_t)(sizeof(themis_secure_encrypted_message_hdr_t)
-                                                 + encrypted_message_length);
+    hdr->message_hdr.message_length = (uint32_t)(full_length);
+
     encrypted_message_length = (*wrapped_message_length) - sizeof(themis_secure_encrypted_message_hdr_t);
     THEMIS_CHECK(themis_secure_cell_encrypt_seal(ctx->shared_secret,
                                                  ctx->shared_secret_length,

@@ -30,22 +30,19 @@ soter_status_t soter_ec_pub_key_check_length(const soter_container_hdr_t* key, s
 {
     switch (key->tag[3]) {
     case EC_SIZE_TAG_256:
-        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(256)) {
-            return SOTER_SUCCESS;
-        }
-        return SOTER_INVALID_PARAMETER;
+        return (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(256))
+                   ? SOTER_SUCCESS
+                   : SOTER_INVALID_PARAMETER;
 
     case EC_SIZE_TAG_384:
-        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(384)) {
-            return SOTER_SUCCESS;
-        }
-        return SOTER_INVALID_PARAMETER;
+        return (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(384))
+                   ? SOTER_SUCCESS
+                   : SOTER_INVALID_PARAMETER;
 
     case EC_SIZE_TAG_521:
-        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(521)) {
-            return SOTER_SUCCESS;
-        }
-        return SOTER_INVALID_PARAMETER;
+        return (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(521))
+                   ? SOTER_SUCCESS
+                   : SOTER_INVALID_PARAMETER;
     }
     return SOTER_INVALID_PARAMETER;
 }

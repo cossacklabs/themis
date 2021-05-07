@@ -219,38 +219,37 @@ static themis_status_t ed_dbl_base_sign(uint8_t pos,
     ge_double_scalarmult_vartime(&R2, r2, base1, r1);
 
     res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     ge_p3_tobytes(k, &R1);
     res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
     if (THEMIS_SUCCESS != res) {
-        soter_hash_cleanup(&hash_ctx);
-        return res;
+        goto hash_cleanup;
     }
 
     ge_tobytes(k, &R2);
     res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
     if (THEMIS_SUCCESS != res) {
-        soter_hash_cleanup(&hash_ctx);
-        return res;
+        goto hash_cleanup;
     }
 
     res = soter_hash_update(&hash_ctx, &pos, sizeof(pos));
     if (THEMIS_SUCCESS != res) {
-        soter_hash_cleanup(&hash_ctx);
-        return res;
+        goto hash_cleanup;
     }
 
     res = soter_hash_final(&hash_ctx, k, &hash_length);
 
-    if (THEMIS_SUCCESS == res) {
-        sc_reduce(k);
-        memcpy(signature, k, ED25519_GE_LENGTH);
-        sc_muladd(signature + ED25519_GE_LENGTH, k, scalar1, r1);
-        sc_muladd(signature + (2 * ED25519_GE_LENGTH), k, scalar2, r2);
+    if (THEMIS_SUCCESS != res) {
+        goto hash_cleanup;
     }
+
+    sc_reduce(k);
+    memcpy(signature, k, ED25519_GE_LENGTH);
+    sc_muladd(signature + ED25519_GE_LENGTH, k, scalar1, r1);
+    sc_muladd(signature + (2 * ED25519_GE_LENGTH), k, scalar2, r2);
+
+hash_cleanup:
     soter_hash_cleanup(&hash_ctx);
 
     return res;
@@ -283,9 +282,7 @@ static themis_status_t ed_dbl_base_verify(uint8_t pos,
     ge_p3_tobytes(k, &R1);
 
     res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
     if (THEMIS_SUCCESS != res) {
@@ -345,14 +342,11 @@ static themis_status_t ed_point_sign(uint8_t pos, const uint8_t* scalar, const g
     ge_p3_tobytes(k, &R);
 
     res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
     if (THEMIS_SUCCESS != res) {
-        soter_hash_cleanup(&hash_ctx);
-        return res;
+        goto hash_cleanup;
     }
 
     ge_scalarmult_blinded(&R, r, point);
@@ -360,27 +354,24 @@ static themis_status_t ed_point_sign(uint8_t pos, const uint8_t* scalar, const g
 
     res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
     if (THEMIS_SUCCESS != res) {
-        soter_hash_cleanup(&hash_ctx);
-        return res;
+        goto hash_cleanup;
     }
 
     res = soter_hash_update(&hash_ctx, &pos, sizeof(pos));
     if (THEMIS_SUCCESS != res) {
-        soter_hash_cleanup(&hash_ctx);
-        return res;
+        goto hash_cleanup;
     }
 
     res = soter_hash_final(&hash_ctx, k, &hash_length);
-    soter_hash_cleanup(&hash_ctx);
     if (THEMIS_SUCCESS != res) {
-        return res;
+        goto hash_cleanup;
     }
+    sc_reduce(k);
+    memcpy(signature, k, ED25519_GE_LENGTH);
+    sc_muladd(signature + ED25519_GE_LENGTH, k, scalar, r);
 
-    if (THEMIS_SUCCESS == res) {
-        sc_reduce(k);
-        memcpy(signature, k, ED25519_GE_LENGTH);
-        sc_muladd(signature + ED25519_GE_LENGTH, k, scalar, r);
-    }
+hash_cleanup:
+    soter_hash_cleanup(&hash_ctx);
 
     return res;
 }
@@ -414,9 +405,7 @@ static themis_status_t ed_point_verify(uint8_t pos,
     ge_tobytes(k, (const ge_p2*)&R1);
 
     res = soter_hash_init(&hash_ctx, SOTER_HASH_SHA512);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     res = soter_hash_update(&hash_ctx, k, ED25519_GE_LENGTH);
     if (THEMIS_SUCCESS != res) {
@@ -443,17 +432,11 @@ static themis_status_t ed_point_verify(uint8_t pos,
 
     res = soter_hash_final(&hash_ctx, k, &hash_length);
     soter_hash_cleanup(&hash_ctx);
-    if (THEMIS_SUCCESS != res) {
-        return res;
-    }
+    THEMIS_PROPAGATE(res);
 
     sc_reduce(k);
 
-    if (memcmp(k, signature, ED25519_GE_LENGTH) != 0) {
-        return THEMIS_INVALID_SIGNATURE;
-    }
-
-    return THEMIS_SUCCESS;
+    return (memcmp(k, signature, ED25519_GE_LENGTH) != 0) ? THEMIS_INVALID_SIGNATURE : THEMIS_SUCCESS;
 }
 
 themis_status_t secure_comparator_init(secure_comparator_t* comp_ctx)
@@ -467,9 +450,7 @@ themis_status_t secure_comparator_init(secure_comparator_t* comp_ctx)
     memset(comp_ctx, 0, sizeof(secure_comparator_t));
 
     soter_status = soter_hash_init(&(comp_ctx->hash_ctx), SOTER_HASH_SHA256);
-    if (SOTER_SUCCESS != soter_status) {
-        return (themis_status_t)soter_status;
-    }
+    THEMIS_PROPAGATE((themis_status_t)soter_status);
 
     return THEMIS_SUCCESS;
 }
@@ -549,9 +530,7 @@ static themis_status_t secure_comparator_alice_step1(secure_comparator_t* comp_c
     themis_status = (themis_status_t)soter_hash_final(&(comp_ctx->hash_ctx),
                                                       comp_ctx->secret,
                                                       &secret_length);
-    if (THEMIS_SUCCESS != themis_status) {
-        return themis_status;
-    }
+    THEMIS_PROPAGATE(themis_status);
 
     if (sizeof(comp_ctx->secret) != secret_length) {
         return THEMIS_FAIL;
@@ -1061,9 +1040,5 @@ themis_status_t secure_comparator_proceed_compare(secure_comparator_t* comp_ctx,
 
 themis_status_t secure_comparator_get_result(const secure_comparator_t* comp_ctx)
 {
-    if (!comp_ctx) {
-        return THEMIS_INVALID_PARAMETER;
-    }
-
-    return comp_ctx->result;
+    return (!comp_ctx) ? THEMIS_INVALID_PARAMETER : comp_ctx->result;
 }
