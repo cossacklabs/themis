@@ -63,7 +63,7 @@ internal class SecSessionExampleClient {
     @Throws(SecureSessionException::class)
     fun testSSessionCIClient() {
         val callbacks: ISessionCallbacks = object : ISessionCallbacks {
-            override fun getPublicKeyForId(session: SecureSession, id: ByteArray): PublicKey {
+            override fun getPublicKeyForId(session: SecureSession, id: ByteArray): PublicKey? {
                 val serverId = SERVER_ID.toByteArray(CHARSET)
                 if (Arrays.equals(id, serverId)) {
                     val publicKey = PublicKey(Base64.decode(SERVER_PUBLIC_KEY.toByteArray(CHARSET), Base64.NO_WRAP))
