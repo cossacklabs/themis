@@ -5,7 +5,6 @@ import android.util.Base64
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.cossacklabs.themis.*
-import java.io.UnsupportedEncodingException
 import java.nio.charset.StandardCharsets
 import java.util.*
 
@@ -22,17 +21,12 @@ class MainActivitySecureMessage : AppCompatActivity() {
             // setup Themis IS first:
             // https://themis.cossacklabs.com/interactive-simulator/setup/
             //new SecMessageExampleClient().testSMessageCIClient();
-        } catch (e: NullArgumentException) {
-            e.printStackTrace()
-        } catch (e: SecureMessageWrapException) {
-            e.printStackTrace()
-        } catch (e: UnsupportedEncodingException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    @Throws(UnsupportedEncodingException::class, NullArgumentException::class, SecureMessageWrapException::class)
-    fun secureMessageLocal() {
+    private fun secureMessageLocal() {
         val charset = StandardCharsets.UTF_8
         val clientPrivateKey = "UkVDMgAAAC1EvnquAPUxxwJsoJxoMAkEF7c06Fo7dVwnWPnmNX5afyjEEGmG"
         val serverPublicKey = "VUVDMgAAAC1FJv/DAmg8/L1Pl5l6ypyRqXUU9xQQaAgzfRZ+/gsjqgEdwXhc"

@@ -38,7 +38,6 @@ internal class SecSessionExampleClient {
         })
     }
 
-    @Throws(SecureSessionException::class, NullArgumentException::class)
     private fun sendRealMessage(ss: SecureSession) {
         val wrappedMessage = ss.wrap(MESSAGE.toByteArray(CHARSET))
         val base64Message = Base64.encodeToString(wrappedMessage, Base64.NO_WRAP)
@@ -60,7 +59,6 @@ internal class SecSessionExampleClient {
         })
     }
 
-    @Throws(SecureSessionException::class)
     fun testSSessionCIClient() {
         val callbacks: ISessionCallbacks = object : ISessionCallbacks {
             override fun getPublicKeyForId(session: SecureSession, id: ByteArray): PublicKey? {

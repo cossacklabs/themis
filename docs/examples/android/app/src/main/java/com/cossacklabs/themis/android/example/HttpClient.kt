@@ -12,7 +12,6 @@ import java.util.concurrent.Future
 import javax.net.ssl.HttpsURLConnection
 
 internal class HttpClient(private val executorService: ExecutorService) {
-    @Throws(IOException::class, HttpException::class)
     fun sendMessage(endpoint: String?, message: String?, messageCharset: Charset): ByteArray {
         val query = "message=" + URLEncoder.encode(message, messageCharset.name())
         val url = URL(endpoint)
@@ -48,7 +47,6 @@ internal class HttpClient(private val executorService: ExecutorService) {
         }
     }
 
-    @Throws(IOException::class)
     private fun readResponse(inputStream: InputStream): ByteArray {
         val os = ByteArrayOutputStream()
         val buffer = ByteArray(1024)

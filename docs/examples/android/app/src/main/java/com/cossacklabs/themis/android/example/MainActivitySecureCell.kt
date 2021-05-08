@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.cossacklabs.themis.InvalidArgumentException
-import com.cossacklabs.themis.NullArgumentException
 import com.cossacklabs.themis.SecureCell
-import com.cossacklabs.themis.SecureCellException
 import java.nio.charset.StandardCharsets
 
 class MainActivitySecureCell : AppCompatActivity() {
@@ -18,17 +15,12 @@ class MainActivitySecureCell : AppCompatActivity() {
         // Secure cell
         try {
             encryptDataForStoring()
-        } catch (e: InvalidArgumentException) {
-            e.printStackTrace()
-        } catch (e: NullArgumentException) {
-            e.printStackTrace()
-        } catch (e: SecureCellException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    @Throws(SecureCellException::class, NullArgumentException::class, InvalidArgumentException::class)
-    fun encryptDataForStoring() {
+    private fun encryptDataForStoring() {
         val charset = StandardCharsets.UTF_8
         val pass = "pass"
         val message = "hello message"

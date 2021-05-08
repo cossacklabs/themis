@@ -2,7 +2,6 @@ package com.cossacklabs.themis.android.example
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.cossacklabs.themis.SecureSessionException
 
 class MainActivitySecureSession : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +15,7 @@ class MainActivitySecureSession : AppCompatActivity() {
             // https://themis.cossacklabs.com/interactive-simulator/setup/
             val client = SecSessionExampleClient()
             client.testSSessionCIClient()
-        } catch (e: SecureSessionException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }

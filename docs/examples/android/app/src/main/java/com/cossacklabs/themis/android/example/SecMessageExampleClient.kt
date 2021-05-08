@@ -14,7 +14,6 @@ import java.util.concurrent.Executors
 internal class SecMessageExampleClient {
     private val httpClient = HttpClient(Executors.newSingleThreadExecutor())
 
-    @Throws(NullArgumentException::class, SecureMessageWrapException::class)
     fun testSMessageCIClient() {
         val privateKey = PrivateKey(Base64.decode(CLIENT_PRIVATE_KEY.toByteArray(CHARSET), Base64.NO_WRAP))
         val publicKey = PublicKey(Base64.decode(SERVER_PUBLIC_KEY.toByteArray(CHARSET), Base64.NO_WRAP))
