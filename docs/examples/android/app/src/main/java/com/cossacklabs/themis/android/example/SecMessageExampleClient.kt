@@ -2,7 +2,9 @@ package com.cossacklabs.themis.android.example
 
 import android.util.Base64
 import android.util.Log
-import com.cossacklabs.themis.*
+import com.cossacklabs.themis.PrivateKey
+import com.cossacklabs.themis.PublicKey
+import com.cossacklabs.themis.SecureMessage
 import java.nio.charset.StandardCharsets
 import java.util.*
 import java.util.concurrent.Executors

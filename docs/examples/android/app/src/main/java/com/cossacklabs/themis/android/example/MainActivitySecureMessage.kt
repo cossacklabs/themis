@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.cossacklabs.themis.*
+import com.cossacklabs.themis.PrivateKey
+import com.cossacklabs.themis.PublicKey
+import com.cossacklabs.themis.SecureMessage
 import java.nio.charset.StandardCharsets
 import java.util.*
 
