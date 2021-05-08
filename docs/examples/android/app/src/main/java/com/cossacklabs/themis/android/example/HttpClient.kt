@@ -59,6 +59,6 @@ internal class HttpClient(private val executorService: ExecutorService) {
         return os.toByteArray()
     }
 
-    class HttpException(val code: Int, val response: String?) : Exception(String.format("Request failed with code %s (%s)", code, response))
+    class HttpException(code: Int, response: String?) : Exception(String.format("Request failed with code %s (%s)", code, response))
 
 }
