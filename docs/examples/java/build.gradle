@@ -1,27 +1,17 @@
-apply plugin: 'java'
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation 'com.cossacklabs.com:java-themis:0.13.1'
-}
-
-sourceSets {
-    main {
-        java.srcDirs = ["src"]
+buildscript {
+    repositories {
+        jcenter()
     }
 }
 
-// Pack *everything* into JAR, including dependencies and their dependencies.
-// By default this will pack only local classes, compiled here.
-jar {
-    manifest {
-        attributes "Main-Class": "main"
+allprojects {
+    repositories {
+        jcenter()
     }
+}
 
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
