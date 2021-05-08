@@ -1,7 +1,7 @@
 package com.cossacklabs.themis.android.example;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 
@@ -11,7 +11,6 @@ import com.cossacklabs.themis.PublicKey;
 import com.cossacklabs.themis.SecureMessage;
 import com.cossacklabs.themis.SecureMessageWrapException;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
