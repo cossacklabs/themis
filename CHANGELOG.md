@@ -105,6 +105,8 @@ _Code:_
     }
     ```
 
+  - Example project for desktop Java moved to the main repository – [`docs/examples/java`](docs/examples/java) ([#814](https://github.com/cossacklabs/themis/pull/814)).
+
 - **Objective-C**
 
   - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.4 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706), [#723](https://github.com/cossacklabs/themis/pull/723), [#724](https://github.com/cossacklabs/themis/pull/724), [#726](https://github.com/cossacklabs/themis/pull/726), [#740](https://github.com/cossacklabs/themis/pull/740)).
@@ -157,6 +159,8 @@ _Infrastructure:_
 - Secure Message is now covered with fuzz testing ([#762](https://github.com/cossacklabs/themis/pull/762)).
 - JavaThemis for Android and desktop Java is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
 - MSYS2 builds for Windows are now checked by CI ([#791](https://github.com/cossacklabs/themis/pull/791)).
+- Added automated tests for desktop Java example project ([#814](https://github.com/cossacklabs/themis/pull/814)).
+
 
 ## [0.13.8](https://github.com/cossacklabs/themis/releases/tag/0.13.8), April 30th 2021
 
