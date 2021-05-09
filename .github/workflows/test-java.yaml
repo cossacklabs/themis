@@ -84,3 +84,29 @@ jobs:
         with:
           api-level: 29
           script: ./gradlew --no-daemon :android:connectedAndroidTest
+
+  java-example:
+    name: Example project – JavaThemis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev default-jdk
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core with JNI
+        run: |
+          make all themis_jni
+          sudo make install themis_jni_install
+      - name: Build JavaThemis example
+        run: |
+          cd docs/examples/java
+          ./gradlew --no-daemon build
+      # Thus runs a bit of an abomination: Themis Core and JNI libs are built
+      # from source while JavaThemis binaries are installed from Maven Central.
+      - name: Run JavaThemis example
+        run: |
+          cd docs/examples/java
+          java -Djava.library.path=/usr/local/lib -jar app/build/libs/app.jar
