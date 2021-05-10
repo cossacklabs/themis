@@ -329,7 +329,7 @@ themis_secure_message_rsa_decrypter_t* themis_secure_message_rsa_decrypter_init(
 }
 
 themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_message_rsa_decrypter_t* ctx,
-                                                            const uint8_t* wrapped_message,
+                                                            const uint8_t* const wrapped_message,
                                                             const size_t wrapped_message_length,
                                                             uint8_t* message,
                                                             size_t* message_length)
@@ -346,9 +346,10 @@ themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_messag
      */
     const themis_secure_rsa_encrypted_message_hdr_t* wrapped_message_as_hdr =
         (const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message;
-    uint64_t encrypted_passwd_length = (uint64_t)wrapped_message_as_hdr->encrypted_passwd_length;
-    if (wrapped_message_length
-        < (encrypted_passwd_length + sizeof(themis_secure_rsa_encrypted_message_hdr_t))) {
+    const uint32_t encrypted_passwd_length = wrapped_message_as_hdr->encrypted_passwd_length;
+    // cast to uint64 to prevent overflow
+    if ((uint64_t)wrapped_message_length
+        < ((uint64_t)encrypted_passwd_length + sizeof(themis_secure_rsa_encrypted_message_hdr_t))) {
         return THEMIS_FAIL;
     }
     size_t ml = 0;
@@ -371,26 +372,30 @@ themis_status_t themis_secure_message_rsa_decrypter_proceed(themis_secure_messag
     }
     uint8_t sym_ctx_buffer[1024];
     size_t sym_ctx_length_ = sizeof(sym_ctx_buffer);
-    const uint8_t* wrapped_message_ = wrapped_message;
-    wrapped_message_ += sizeof(themis_secure_rsa_encrypted_message_hdr_t);
-    size_t wrapped_message_length_ = wrapped_message_length;
-    wrapped_message_length_ -= sizeof(themis_secure_rsa_encrypted_message_hdr_t);
+
+    // skip header to reach the encrypted symmetric key
+    const uint8_t* wrapped_password = wrapped_message
+                                      + sizeof(themis_secure_rsa_encrypted_message_hdr_t);
+
     THEMIS_CHECK(soter_asym_cipher_decrypt(ctx->asym_cipher,
-                                           wrapped_message_,
-                                           ((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)
-                                               ->encrypted_passwd_length,
+                                           wrapped_password,
+                                           encrypted_passwd_length,
                                            sym_ctx_buffer,
                                            &sym_ctx_length_)
                  == THEMIS_SUCCESS);
-    wrapped_message_ += ((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length;
-    wrapped_message_length_ -=
-        ((const themis_secure_rsa_encrypted_message_hdr_t*)wrapped_message)->encrypted_passwd_length;
+
+    // skip encrypted symmetric key to reach the actual encrypted data
+    const uint8_t* wrapped_leftover = wrapped_password + encrypted_passwd_length;
+    const size_t wrapped_leftover_length = wrapped_message_length
+                                           - sizeof(themis_secure_rsa_encrypted_message_hdr_t)
+                                           - encrypted_passwd_length;
+
     THEMIS_CHECK(themis_secure_cell_decrypt_seal(sym_ctx_buffer,
                                                  sym_ctx_length_,
                                                  NULL,
                                                  0,
-                                                 wrapped_message_,
-                                                 wrapped_message_length_,
+                                                 wrapped_leftover,
+                                                 wrapped_leftover_length,
                                                  message,
                                                  message_length)
                  == THEMIS_SUCCESS);
