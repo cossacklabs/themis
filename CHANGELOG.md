@@ -4,6 +4,21 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.13.9](https://github.com/cossacklabs/themis/releases/tag/0.13.8), May 11th 2021
+
+**Hotfix for Apple platforms:**
+
+- `themis` for Carthage switched to using xcframeworks
+- Updated OpenSSL to the latest 1.1.1k for Carthage
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - `themis` for Carthage now loads OpenSSL as xcframework, and Carthege builds `themis` as scframework as well.
+  - Updated OpenSSL to the latest 1.1.1k for Carthage
+  - `create_xcframeworks.sh` script (used for SPM) no longer requires `Themis.xcodeproj` modifications because OpenSSL is now added as xcframework.
+
 ## [0.13.8](https://github.com/cossacklabs/themis/releases/tag/0.13.8), April 30th 2021
 
 **Hotfix for Apple platforms:**
