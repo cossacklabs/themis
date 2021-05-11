@@ -67,6 +67,11 @@ _Code:_
 
   - Fixed multiple buffer overflows in Secure Message ([#763](https://github.com/cossacklabs/themis/pull/763)).
 
+- **Android**
+
+  - Example project moved to the main repository – [`docs/examples/android`](docs/examples/android) ([#813](https://github.com/cossacklabs/themis/pull/813)).
+  - Example project is now written in Kotlin ([#813](https://github.com/cossacklabs/themis/pull/813)).
+
 - **C++**
 
   - `themispp::secure_message_t::sign()` output is a bit smaller now ([#775](https://github.com/cossacklabs/themis/pull/775)).
@@ -159,6 +164,7 @@ _Infrastructure:_
 - Secure Message is now covered with fuzz testing ([#762](https://github.com/cossacklabs/themis/pull/762)).
 - JavaThemis for Android and desktop Java is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
 - MSYS2 builds for Windows are now checked by CI ([#791](https://github.com/cossacklabs/themis/pull/791)).
+- Added automated tests for Android example project ([#813](https://github.com/cossacklabs/themis/pull/813)).
 - Added automated tests for desktop Java example project ([#816](https://github.com/cossacklabs/themis/pull/816)).
 
 

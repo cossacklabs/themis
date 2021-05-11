@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/test-java.yaml'
       - '**/*gradle*'
+      - 'docs/examples/android/**'
       - 'jni/**'
       - 'src/soter/**'
       - 'src/themis/**'
@@ -84,6 +85,19 @@ jobs:
         with:
           api-level: 29
           script: ./gradlew --no-daemon :android:connectedAndroidTest
+
+  android-example:
+    name: Example – AndroidThemis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      # Just build and run unit tests, don't launch the app or anything.
+      # Donations in the form of UI integration tests are welcome.
+      - name: Build AndroidThemis example
+        run: |
+          cd docs/examples/android
+          ./gradlew --no-daemon build
 
   java-example:
     name: Example project – JavaThemis
