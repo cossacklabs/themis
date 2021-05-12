@@ -123,7 +123,15 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: Pull Carthage dependencies
-        run: carthage bootstrap
+        run: |
+
+          # Carthage versioning workaround:
+          # Themis requires Carthage version 0.38 and up to use XCF binary dependencies.
+          # Force upgrade is required until newer Carthage version is added to base images:
+          # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#package-management 
+          brew upgrade carthage
+
+          carthage bootstrap
       - name: Run unit tests (Swift 4, macOS)
         if: always()
         run: |
@@ -172,22 +180,17 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: Pull Carthage dependencies
-        run: carthage bootstrap
+        run: |
+
+          # Carthage versioning workaround:
+          # Themis requires Carthage version 0.38 and up to use XCF binary dependencies.
+          # Force upgrade is required until newer Carthage version is added to base images:
+          # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#package-management 
+          brew upgrade carthage
+
+          carthage bootstrap
       - name: Build Carthage projects - excluding arm64
         run: |
-          # ------ beginning of workaround
-          # from https://github.com/Carthage/Carthage/issues/3019#issuecomment-699143260
-          # supports Xcode 12.0.1
-          set -euo pipefail
-          xcconfig=$(mktemp /tmp/static.xcconfig.XXXXXX)
-          trap 'rm -f "$xcconfig"' INT TERM HUP EXIT
-          # For Xcode 12 make sure EXCLUDED_ARCHS is set to arm architectures otherwise
-          # the build will fail on lipo due to duplicate architectures.
-          echo 'EXCLUDED_ARCHS__EFFECTIVE_PLATFORM_SUFFIX_simulator__NATIVE_ARCH_64_BIT_x86_64__XCODE_1200 = arm64 arm64e armv7 armv7s armv6 armv8' >> $xcconfig
-          echo 'EXCLUDED_ARCHS = $(inherited) $(EXCLUDED_ARCHS__EFFECTIVE_PLATFORM_SUFFIX_$(EFFECTIVE_PLATFORM_SUFFIX)__NATIVE_ARCH_64_BIT_$(NATIVE_ARCH_64_BIT)__XCODE_$(XCODE_VERSION_MAJOR))' >> $xcconfig
-          export XCODE_XCCONFIG_FILE="$xcconfig"          
-          # ------ end of workaround
-
           carthage build --no-skip-current
 
   project-cocoapods:
@@ -266,6 +269,13 @@ jobs:
       - name: Build ObjCThemis for Generic Device (Carthage)
         if: always()
         run: |
+          
+          # Carthage versioning workaround:
+          # Themis requires Carthage version 0.38 and up to use XCF binary dependencies.
+          # Force upgrade is required until newer Carthage version is added to base images:
+          # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#package-management 
+          brew upgrade carthage
+
           carthage bootstrap --platform iOS
           rm -rf DerivedData
           xcodebuild \
@@ -297,22 +307,7 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/objc/iOS-Carthage
-
-          # ------ beginning of workaround
-          # from https://github.com/Carthage/Carthage/issues/3019#issuecomment-699143260
-          # supports Xcode 12.0.1
-          set -euo pipefail
-          xcconfig=$(mktemp /tmp/static.xcconfig.XXXXXX)
-          trap 'rm -f "$xcconfig"' INT TERM HUP EXIT
-          # For Xcode 12 make sure EXCLUDED_ARCHS is set to arm architectures otherwise
-          # the build will fail on lipo due to duplicate architectures.
-          echo 'EXCLUDED_ARCHS__EFFECTIVE_PLATFORM_SUFFIX_simulator__NATIVE_ARCH_64_BIT_x86_64__XCODE_1200 = arm64 arm64e armv7 armv7s armv6 armv8' >> $xcconfig
-          echo 'EXCLUDED_ARCHS = $(inherited) $(EXCLUDED_ARCHS__EFFECTIVE_PLATFORM_SUFFIX_$(EFFECTIVE_PLATFORM_SUFFIX)__NATIVE_ARCH_64_BIT_$(NATIVE_ARCH_64_BIT)__XCODE_$(XCODE_VERSION_MAJOR))' >> $xcconfig
-          export XCODE_XCCONFIG_FILE="$xcconfig"          
-          # ------ end of workaround
-
           carthage bootstrap --platform iOS
-
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -325,6 +320,7 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/objc/macOS-Carthage
+          brew upgrade carthage
           carthage bootstrap --platform macOS
           rm -rf DerivedData
           xcodebuild \
@@ -352,20 +348,6 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/swift/iOS-Carthage
-
-          # ------ beginning of workaround
-          # from https://github.com/Carthage/Carthage/issues/3019#issuecomment-699143260
-          # supports Xcode 12.0.1
-          set -euo pipefail
-          xcconfig=$(mktemp /tmp/static.xcconfig.XXXXXX)
-          trap 'rm -f "$xcconfig"' INT TERM HUP EXIT
-          # For Xcode 12 make sure EXCLUDED_ARCHS is set to arm architectures otherwise
-          # the build will fail on lipo due to duplicate architectures.
-          echo 'EXCLUDED_ARCHS__EFFECTIVE_PLATFORM_SUFFIX_simulator__NATIVE_ARCH_64_BIT_x86_64__XCODE_1200 = arm64 arm64e armv7 armv7s armv6 armv8' >> $xcconfig
-          echo 'EXCLUDED_ARCHS = $(inherited) $(EXCLUDED_ARCHS__EFFECTIVE_PLATFORM_SUFFIX_$(EFFECTIVE_PLATFORM_SUFFIX)__NATIVE_ARCH_64_BIT_$(NATIVE_ARCH_64_BIT)__XCODE_$(XCODE_VERSION_MAJOR))' >> $xcconfig
-          export XCODE_XCCONFIG_FILE="$xcconfig"          
-          # ------ end of workaround
-
           carthage bootstrap --platform iOS
           rm -rf DerivedData
           xcodebuild \
