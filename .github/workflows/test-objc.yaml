@@ -132,6 +132,7 @@ jobs:
           brew upgrade carthage
 
           carthage bootstrap --use-xcframeworks
+          carthage build --no-skip-current --use-xcframeworks
       - name: Run unit tests (Swift 4, macOS)
         if: always()
         run: |
@@ -269,7 +270,14 @@ jobs:
       - name: Build ObjCThemis for Generic Device (Carthage)
         if: always()
         run: |
-          carthage bootstrap --platform iOS
+
+          # Carthage versioning workaround:
+          # Themis requires Carthage version 0.38 and up to use XCF binary dependencies.
+          # Force upgrade is required until newer Carthage version is added to base images:
+          # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#package-management 
+          brew upgrade carthage
+
+          carthage bootstrap --platform iOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
