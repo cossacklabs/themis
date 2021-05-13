@@ -63,15 +63,15 @@ You will need Rust toolchain installed to run benchmarks.
 |                   | Master keys   | Passphrases   |
 | ----------------- | ------------- | ------------- |
 | Seal              | ✅ complete   | ✅ complete   |
-| Token Protect     | 💭 soon       | 🛠 WIP        |
-| Context Imprint   | 💭 soon       | ➖ N/A        |
+| Token Protect     | ✅ complete   | 🛠 WIP        |
+| Context Imprint   | ✅ complete   | ➖ N/A        |
 
 ### Secure Message
 
 |                   | ECDSA         | RSA           |
 | ----------------- | ------------- | ------------- |
-| Encrypt / Decrypt | 💭 soon       | 💭 soon       |
-| Sign / Verify     | 💭 soon       | 💭 soon       |
+| Encrypt / Decrypt | ✅ complete   | ✅ complete   |
+| Sign / Verify     | ✅ complete   | ✅ complete   |
 
 ### Secure Session
 
