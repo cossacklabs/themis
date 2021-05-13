@@ -119,6 +119,8 @@ jobs:
   unit-tests-carthage:
     name: Unit tests (Carthage)
     runs-on: macos-latest
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -177,6 +179,8 @@ jobs:
   project-carthage:
     name: Carthage project
     runs-on: macos-latest
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -240,6 +244,8 @@ jobs:
   examples:
     name: Code examples
     runs-on: macos-latest
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
