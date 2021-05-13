@@ -26,3 +26,7 @@ harness = false
 [[bench]]
 name = "secure_cell_context_imprint_master_key"
 harness = false
+
+[[bench]]
+name = "secure_message_encrypt_decrypt_ecdsa"
+harness = false
