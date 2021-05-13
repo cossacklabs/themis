@@ -8,7 +8,7 @@ Changes that are currently in development and have not been released yet.
 
 **Hotfix for Apple platforms:**
 
-- `themis` for Carthage switched to using XCFrameworks ([#817](https://github.com/cossacklabs/themis/pull/817)). So, the minimum required Carthage version is now [0.38.0](https://github.com/Carthage/Carthage/releases/tag/0.38.0).
+- `themis` for Carthage switched to using XCFrameworks ([#817](https://github.com/cossacklabs/themis/pull/817)). So, the minimum required Carthage version is now [0.38.0](https://github.com/Carthage/Carthage/releases/tag/0.38.0). You can continue using previous Themis version with previous Carthage versions.
 - Updated OpenSSL to the latest 1.1.1k for Carthage ([#817](https://github.com/cossacklabs/themis/pull/817)).
 
 _Code:_
