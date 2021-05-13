@@ -38,3 +38,7 @@ harness = false
 [[bench]]
 name = "secure_message_sign_verify_ecdsa"
 harness = false
+
+[[bench]]
+name = "secure_message_sign_verify_rsa"
+harness = false
