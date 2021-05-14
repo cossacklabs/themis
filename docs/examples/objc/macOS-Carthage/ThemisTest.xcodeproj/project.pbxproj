@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6DCCB215264F00AD008072EF /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB214264F00AD008072EF /* themis.xcframework */; };
 		9F00E9FE2241348700EC1EF3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F00E9FD2241348700EC1EF3 /* AppDelegate.m */; };
 		9F00EA002241348800EC1EF3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9FF2241348800EC1EF3 /* Assets.xcassets */; };
 		9F00EA032241348800EC1EF3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA012241348800EC1EF3 /* MainMenu.xib */; };
@@ -15,25 +16,10 @@
 		9F00EA1D22413D1300EC1EF3 /* client.priv in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA1922413D1300EC1EF3 /* client.priv */; };
 		9F00EA1E22413D1300EC1EF3 /* server.pub in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA1A22413D1300EC1EF3 /* server.pub */; };
 		9F00EA1F22413D1300EC1EF3 /* server.priv in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA1B22413D1300EC1EF3 /* server.priv */; };
-		9F1444AB24E6D46D008B6C73 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1444A924E6D46A008B6C73 /* themis.framework */; };
-		9F1444AC24E6D46D008B6C73 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1444A924E6D46A008B6C73 /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		9F00EA14224135AB00EC1EF3 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				9F1444AC24E6D46D008B6C73 /* themis.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		6DCCB214264F00AD008072EF /* themis.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = themis.xcframework; path = Carthage/Build/themis.xcframework; sourceTree = "<group>"; };
 		9F00E9F92241348700EC1EF3 /* ThemisTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThemisTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F00E9FC2241348700EC1EF3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		9F00E9FD2241348700EC1EF3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -46,7 +32,6 @@
 		9F00EA1922413D1300EC1EF3 /* client.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.priv; sourceTree = "<group>"; };
 		9F00EA1A22413D1300EC1EF3 /* server.pub */ = {isa = PBXFileReference; lastKnownFileType = file; path = server.pub; sourceTree = "<group>"; };
 		9F00EA1B22413D1300EC1EF3 /* server.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = server.priv; sourceTree = "<group>"; };
-		9F1444A924E6D46A008B6C73 /* themis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = themis.framework; path = Carthage/Build/Mac/themis.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,7 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F1444AB24E6D46D008B6C73 /* themis.framework in Frameworks */,
+				6DCCB215264F00AD008072EF /* themis.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,7 +81,7 @@
 		9F00EA0D224135A300EC1EF3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9F1444A924E6D46A008B6C73 /* themis.framework */,
+				6DCCB214264F00AD008072EF /* themis.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -122,7 +107,6 @@
 				9F00E9F52241348700EC1EF3 /* Sources */,
 				9F00E9F62241348700EC1EF3 /* Frameworks */,
 				9F00E9F72241348700EC1EF3 /* Resources */,
-				9F00EA14224135AB00EC1EF3 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -331,7 +315,7 @@
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = ThemisTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -357,7 +341,7 @@
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = ThemisTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
