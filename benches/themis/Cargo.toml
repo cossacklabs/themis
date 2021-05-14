@@ -46,3 +46,7 @@ harness = false
 [[bench]]
 name = "secure_cell_wrapped_seal_master_key"
 harness = false
+
+[[bench]]
+name = "secure_cell_wrapped_token_protect_master_key"
+harness = false
