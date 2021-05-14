@@ -127,6 +127,8 @@ jobs:
       - name: Pull Carthage dependencies
         run: |
           carthage bootstrap --use-xcframeworks
+      - name: Build Carthage projects
+        run: |
           carthage build --no-skip-current --use-xcframeworks
       - name: Run unit tests (Swift 4, macOS)
         if: always()
