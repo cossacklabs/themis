@@ -16,7 +16,7 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 
 use themis::{keys::SymmetricKey, secure_cell::SecureCell};
 
-const CONTEXT: &[u8] = b"Themis Core benchmark";
+const CONTEXT: &[u8] = b"Rust Themis benchmark";
 
 const KB: usize = 1024;
 const MB: usize = 1024 * KB;
@@ -40,7 +40,7 @@ pub fn encryption(c: &mut Criterion) {
         .context_imprint();
 
     let mut group =
-        c.benchmark_group("Wrapped Secure Cell encryption - Context Imprint, master key");
+        c.benchmark_group("RustThemis - Secure Cell encryption - Context Imprint, master key");
     for message_size in MESSAGE_SIZES {
         group.throughput(Throughput::Bytes(*message_size as u64));
         group.bench_with_input(
@@ -64,7 +64,7 @@ pub fn decryption(c: &mut Criterion) {
         .context_imprint();
 
     let mut group =
-        c.benchmark_group("Wrapped Secure Cell decryption - Context Imprint, master key");
+        c.benchmark_group("RustThemis - Secure Cell decryption - Context Imprint, master key");
     for message_size in MESSAGE_SIZES {
         group.throughput(Throughput::Bytes(*message_size as u64));
         group.bench_with_input(

@@ -44,17 +44,17 @@ name = "secure_message_sign_verify_rsa"
 harness = false
 
 [[bench]]
-name = "secure_cell_wrapped_seal_master_key"
+name = "rust_secure_cell_seal_master_key"
 harness = false
 
 [[bench]]
-name = "secure_cell_wrapped_token_protect_master_key"
+name = "rust_secure_cell_token_protect_master_key"
 harness = false
 
 [[bench]]
-name = "secure_cell_wrapped_context_imprint_master_key"
+name = "rust_secure_cell_context_imprint_master_key"
 harness = false
 
 [[bench]]
-name = "secure_cell_wrapped_seal_passphrase"
+name = "rust_secure_cell_seal_passphrase"
 harness = false

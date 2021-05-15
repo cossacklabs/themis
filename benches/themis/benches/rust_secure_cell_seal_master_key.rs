@@ -14,27 +14,32 @@
 
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 
-use themis::secure_cell::SecureCell;
+use themis::{keys::SymmetricKey, secure_cell::SecureCell};
 
-const CONTEXT: &[u8] = b"Themis Core benchmark";
-const PASSPHRASE: &str = "correct horse battery staple";
+const CONTEXT: &[u8] = b"Rust Themis benchmark";
 
 const KB: usize = 1024;
 const MB: usize = 1024 * KB;
 #[allow(clippy::identity_op)]
 const MESSAGE_SIZES: &[usize] = &[
-    // There is no significant difference between those due to KDF
+    16,     // UUID
+    32,     // SymmetricKey
     64,     // cache line (and close to EcdsaPrivateKey)
+    256,    // RsaPrivateKey
     4 * KB, // memory page
+    16 * KB,
+    64 * KB,
     1 * MB, // L2 cache
+    2 * MB,
+    4 * MB,
 ];
 
 pub fn encryption(c: &mut Criterion) {
-    let cell = SecureCell::with_passphrase(PASSPHRASE)
+    let cell = SecureCell::with_key(SymmetricKey::new())
         .expect("invalid key")
         .seal();
 
-    let mut group = c.benchmark_group("Wrapped Secure Cell encryption - Seal, passphrase");
+    let mut group = c.benchmark_group("RustThemis - Secure Cell encryption - Seal, master key");
     for message_size in MESSAGE_SIZES {
         group.throughput(Throughput::Bytes(*message_size as u64));
         group.bench_with_input(
@@ -53,11 +58,11 @@ pub fn encryption(c: &mut Criterion) {
 }
 
 pub fn decryption(c: &mut Criterion) {
-    let cell = SecureCell::with_key(PASSPHRASE)
+    let cell = SecureCell::with_key(SymmetricKey::new())
         .expect("invalid key")
         .seal();
 
-    let mut group = c.benchmark_group("Wrapped Secure Cell decryption - Seal, passphrase");
+    let mut group = c.benchmark_group("RustThemis - Secure Cell decryption - Seal, master key");
     for message_size in MESSAGE_SIZES {
         group.throughput(Throughput::Bytes(*message_size as u64));
         group.bench_with_input(

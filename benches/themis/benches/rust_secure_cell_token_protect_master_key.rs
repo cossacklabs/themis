@@ -16,7 +16,7 @@ use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Through
 
 use themis::{keys::SymmetricKey, secure_cell::SecureCell};
 
-const CONTEXT: &[u8] = b"Themis Core benchmark";
+const CONTEXT: &[u8] = b"Rust Themis benchmark";
 
 const KB: usize = 1024;
 const MB: usize = 1024 * KB;
@@ -37,9 +37,10 @@ const MESSAGE_SIZES: &[usize] = &[
 pub fn encryption(c: &mut Criterion) {
     let cell = SecureCell::with_key(SymmetricKey::new())
         .expect("invalid key")
-        .seal();
+        .token_protect();
 
-    let mut group = c.benchmark_group("Wrapped Secure Cell encryption - Seal, master key");
+    let mut group =
+        c.benchmark_group("RustThemis - Secure Cell encryption - Token Protect, master key");
     for message_size in MESSAGE_SIZES {
         group.throughput(Throughput::Bytes(*message_size as u64));
         group.bench_with_input(
@@ -60,20 +61,21 @@ pub fn encryption(c: &mut Criterion) {
 pub fn decryption(c: &mut Criterion) {
     let cell = SecureCell::with_key(SymmetricKey::new())
         .expect("invalid key")
-        .seal();
+        .token_protect();
 
-    let mut group = c.benchmark_group("Wrapped Secure Cell decryption - Seal, master key");
+    let mut group =
+        c.benchmark_group("RustThemis - Secure Cell decryption - Token Protect, master key");
     for message_size in MESSAGE_SIZES {
         group.throughput(Throughput::Bytes(*message_size as u64));
         group.bench_with_input(
             BenchmarkId::from_parameter(pretty(*message_size)),
             message_size,
             |b, &size| {
-                let encrypted = cell
+                let (encrypted, token) = cell
                     .encrypt_with_context(vec![0; size], CONTEXT)
                     .expect("failed encryption");
                 b.iter(|| {
-                    let decrypted = cell.decrypt_with_context(&encrypted, CONTEXT);
+                    let decrypted = cell.decrypt_with_context(&encrypted, &token, CONTEXT);
                     assert!(decrypted.is_ok());
                 })
             },
