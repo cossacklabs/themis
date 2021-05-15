@@ -3,27 +3,27 @@ name: Themis Core
 on:
   pull_request:
     paths:
-      - ".github/workflows/test-core.yaml"
-      - "benches/themis/**"
-      - "docs/examples/c/**"
-      - "src/soter/**"
-      - "src/themis/**"
-      - "tests/common/**"
-      - "tests/soter/**"
-      - "tests/themis/**"
-      - "!tests/themis/wrappers/android/**"
-      - "third_party/boringssl/src/**"
-      - "tools/afl/**"
-      - "**/*.mk"
-      - "Makefile"
-      - "!**/README*"
+      - '.github/workflows/test-core.yaml'
+      - 'benches/themis/**'
+      - 'docs/examples/c/**'
+      - 'src/soter/**'
+      - 'src/themis/**'
+      - 'tests/common/**'
+      - 'tests/soter/**'
+      - 'tests/themis/**'
+      - '!tests/themis/wrappers/android/**'
+      - 'third_party/boringssl/src/**'
+      - 'tools/afl/**'
+      - '**/*.mk'
+      - 'Makefile'
+      - '!**/README*'
   push:
     branches:
       - master
       - stable
       - release/*
   schedule:
-    - cron: "0 6 * * *" # every day at 6:00 UTC
+    - cron: '0 6 * * *' # every day at 6:00 UTC
 
 env:
   WITH_FATAL_WARNINGS: yes
@@ -194,11 +194,11 @@ jobs:
       - name: Benchmark Secure Message (RSA)
         run: |
           cd benches/themis
-          cargo bench -- 'Secure Message .* - RSA/4 KB'
+          cargo bench -- '^Secure Message .* - RSA/4 KB'
       - name: Benchmark Secure Message (ECDSA)
         run: |
           cd benches/themis
-          cargo bench -- 'Secure Message .* - ECDSA/4 KB'
+          cargo bench -- '^Secure Message .* - ECDSA/4 KB'
       - name: Upload benchmark report
         uses: actions/upload-artifact@v1
         with:
