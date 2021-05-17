@@ -4,6 +4,8 @@
 
 Rust Themis benchmarks are written using [**Criterion.rs**](https://bheisler.github.io/criterion.rs/book/criterion_rs.html) statistical benchmarking tool.
 
+The idea is to compare Themis Core benchmarks and RustThemis benchmarks to understand how much latency Rust wrapper adds.
+
 You will need Rust toolchain installed to run benchmarks.
 [Visit rustup.rs](https://rustup.rs/) to install Rust.
 
