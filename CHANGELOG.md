@@ -9,6 +9,8 @@ Changes that are currently in development and have not been released yet.
 **Hotfix for Apple platforms:**
 
 - `themis` for CocoaPods now uses OpenSSL 1.1.1k ([#828](https://github.com/cossacklabs/themis/pull/828)) and supports ARM64 simulator.
+  - Updated Carthage examples to use Themis XCFramework ([#823](https://github.com/cossacklabs/themis/pull/823)).
+  - Updated Carthage examples to use Themis XCFramework [#823](https://github.com/cossacklabs/themis/pull/823).
 
 _Code:_
 
