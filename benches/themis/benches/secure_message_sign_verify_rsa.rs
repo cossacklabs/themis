@@ -88,7 +88,7 @@ pub fn signing(c: &mut Criterion) {
 
 pub fn verification(c: &mut Criterion) {
     let key_pair = gen_rsa_key_pair();
-    let (private, public) = key_pair.clone().split();
+    let (private, public) = key_pair.split();
     let public = public.as_ref();
 
     let mut group = c.benchmark_group("Secure Message verification - RSA");
