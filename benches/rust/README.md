@@ -1,8 +1,10 @@
-# ⏱ Themis Core benchmarks
+# ⏱ Rust Themis benchmarks
 
 ## Quickstart
 
-Themis Core benchmarks are written using [**Criterion.rs**](https://bheisler.github.io/criterion.rs/book/criterion_rs.html) statistical benchmarking tool.
+Rust Themis benchmarks are written using [**Criterion.rs**](https://bheisler.github.io/criterion.rs/book/criterion_rs.html) statistical benchmarking tool.
+
+The idea is to compare Themis Core benchmarks and RustThemis benchmarks to understand how much latency Rust wrapper adds.
 
 You will need Rust toolchain installed to run benchmarks.
 [Visit rustup.rs](https://rustup.rs/) to install Rust.
@@ -26,7 +28,7 @@ You will need Rust toolchain installed to run benchmarks.
  2. ⚙️ **Change directory from repository root**
 
     ```bash
-    cd benches/themis
+    cd benches/rust
     ```
 
     It’s not required but you would have to type less.
@@ -60,18 +62,18 @@ You will need Rust toolchain installed to run benchmarks.
 
 ### Secure Cell
 
-|                   | Master keys   | Passphrases   |
-| ----------------- | ------------- | ------------- |
-| Seal              | ✅ complete   | ✅ complete   |
-| Token Protect     | ✅ complete   | 🛠 WIP        |
-| Context Imprint   | ✅ complete   | ➖ N/A        |
+|                 | Master keys | Passphrases |
+| --------------- | ----------- | ----------- |
+| Seal            | ✅ complete | ✅ complete |
+| Token Protect   | ✅ complete | 🛠 WIP       |
+| Context Imprint | ✅ complete | ➖ N/A       |
 
 ### Secure Message
 
-|                   | ECDSA         | RSA           |
-| ----------------- | ------------- | ------------- |
-| Encrypt / Decrypt | ✅ complete   | ✅ complete   |
-| Sign / Verify     | ✅ complete   | ✅ complete   |
+|                   | ECDSA      | RSA        |
+| ----------------- | ---------- | ---------- |
+| Encrypt / Decrypt | 💭 soon    | 💭 soon    |
+| Sign / Verify     | 💭 soon    | 💭 soon    |
 
 ### Secure Session
 
