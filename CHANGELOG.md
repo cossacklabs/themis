@@ -4,6 +4,8 @@
 
 Changes that are currently in development and have not been released yet.
 
+  - Updated Carthage examples to use Themis XCFramework ([#823](https://github.com/cossacklabs/themis/pull/823)).
+  - Updated Carthage examples to use Themis XCFramework [#823](https://github.com/cossacklabs/themis/pull/823).
 ## [0.13.9](https://github.com/cossacklabs/themis/releases/tag/0.13.9), May 14th 2021
 
 **Hotfix for Apple platforms:**
