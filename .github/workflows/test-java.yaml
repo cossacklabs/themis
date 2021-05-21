@@ -65,6 +65,13 @@ jobs:
     name: Android emulator
     runs-on: macos-latest
     steps:
+      # This particular version of CMake confuses Gradle by not being semver.
+      # We're fine with 3.10.2 which is also installed. Keep an eye on the
+      # virtual environments though:
+      # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#android
+      - name: Nuke CMake 3.18.1-g262b901
+        run: |
+          ~/Library/Android/sdk/tools/bin/sdkmanager --uninstall 'cmake;3.18.1'
       - name: Check out code
         uses: actions/checkout@v2
         with:
