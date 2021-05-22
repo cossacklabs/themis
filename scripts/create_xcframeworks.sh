@@ -12,7 +12,6 @@ BUILD_PATH=${BUILD_PATH:-build}
 
 output_dir=$BUILD_PATH/xcf_output
 
-project_dir=$(pwd) #repo root where Themis.xcodeproj and Package.swift are
 if [[ (! -d Themis.xcodeproj) || (! -f Package.swift) ]]
 then
     echo >&2 "Please launch scripts/create_xcframeworks.sh from Themis repository root"
@@ -70,11 +69,10 @@ rm -rf $output_dir/macosx
 # SPM accepts binary targets only in zip format
 cd $output_dir
 zip -r themis.xcframework.zip themis.xcframework
-
 rm -rf themis.xcframework
+cd ~-
 
 # calculate checksum from the directory with Package.swift
 # update the the checksum in Package.swift if that is a new release
-cd $project_dir
 echo "XCF Checksum:"
 swift package compute-checksum $output_dir/themis.xcframework.zip
