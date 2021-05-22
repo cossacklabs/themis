@@ -114,13 +114,19 @@ jobs:
   unit-tests-carthage:
     name: Unit tests (Carthage)
     runs-on: macos-latest
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
         with:
           submodules: true
       - name: Pull Carthage dependencies
-        run: carthage bootstrap
+        run: |
+          carthage bootstrap --use-xcframeworks
+      - name: Build Carthage projects
+        run: |
+          carthage build --no-skip-current --use-xcframeworks
       - name: Run unit tests (Swift 4, macOS)
         if: always()
         run: |
@@ -185,14 +191,17 @@ jobs:
   project-carthage:
     name: Carthage project
     runs-on: macos-latest
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
       - name: Pull Carthage dependencies
-        run: carthage bootstrap
+        run: |
+          carthage bootstrap --use-xcframeworks
       - name: Build Carthage projects
         run: |
-          carthage build --no-skip-current
+          carthage build --no-skip-current --use-xcframeworks
 
   project-cocoapods:
     name: CocoaPods project
@@ -240,6 +249,8 @@ jobs:
   examples:
     name: Code examples
     runs-on: macos-latest
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -265,7 +276,7 @@ jobs:
       - name: Build ObjCThemis for Generic Device (Carthage)
         if: always()
         run: |
-          carthage bootstrap --platform iOS
+          carthage bootstrap --platform iOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -296,7 +307,7 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/objc/iOS-Carthage
-          carthage bootstrap --platform iOS
+          carthage bootstrap --platform iOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -309,7 +320,7 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/objc/macOS-Carthage
-          carthage bootstrap --platform macOS
+          carthage bootstrap --platform macOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -336,7 +347,7 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/swift/iOS-Carthage
-          carthage bootstrap --platform iOS
+          carthage bootstrap --platform iOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -349,7 +360,7 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/swift/macOS-Carthage
-          carthage bootstrap --platform macOS
+          carthage bootstrap --platform macOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \

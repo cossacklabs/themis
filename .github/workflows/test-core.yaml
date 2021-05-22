@@ -185,12 +185,20 @@ jobs:
       - name: Benchmark Secure Cell (master key)
         run: |
           cd benches/themis
-          cargo bench -- 'Secure Cell .* master key/4 KB'
+          cargo bench -- '^Secure Cell .* master key/4 KB'
       - name: Benchmark Secure Cell (passphrase)
         run: |
           cd benches/themis
           # These are awfully slow due to KDF
-          cargo bench -- 'Secure Cell .* passphrase/4 KB' --sample-size 10
+          cargo bench -- '^Secure Cell .* passphrase/4 KB' --sample-size 10
+      - name: Benchmark Secure Message (RSA)
+        run: |
+          cd benches/themis
+          cargo bench -- '^Secure Message .* - RSA/4 KB'
+      - name: Benchmark Secure Message (ECDSA)
+        run: |
+          cd benches/themis
+          cargo bench -- '^Secure Message .* - ECDSA/4 KB'
       - name: Upload benchmark report
         uses: actions/upload-artifact@v1
         with:

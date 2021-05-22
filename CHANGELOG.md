@@ -72,6 +72,11 @@ _Code:_
 
   - Updated embedded BoringSSL to the latest version ([#743](https://github.com/cossacklabs/themis/pull/743)).
 
+- **Android**
+
+  - Example project moved to the main repository – [`docs/examples/android`](docs/examples/android) ([#813](https://github.com/cossacklabs/themis/pull/813)).
+  - Example project is now written in Kotlin ([#813](https://github.com/cossacklabs/themis/pull/813)).
+
 - **C++**
 
   - `themispp::secure_message_t::sign()` output is a bit smaller now ([#775](https://github.com/cossacklabs/themis/pull/775)).
@@ -110,11 +115,14 @@ _Code:_
     }
     ```
 
+  - Example project for desktop Java moved to the main repository – [`docs/examples/java`](docs/examples/java) ([#816](https://github.com/cossacklabs/themis/pull/816)).
+
 - **Objective-C**
 
   - Updated Objective-C examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.4 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706), [#723](https://github.com/cossacklabs/themis/pull/723), [#724](https://github.com/cossacklabs/themis/pull/724), [#726](https://github.com/cossacklabs/themis/pull/726), [#740](https://github.com/cossacklabs/themis/pull/740)).
   - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
   - Improved compatibility with Xcode 12 ([#742](https://github.com/cossacklabs/themis/pull/742)).
+  - Updated Carthage examples to use Themis XCFramework ([#823](https://github.com/cossacklabs/themis/pull/823)).
 
 - **PHP**
 
@@ -144,6 +152,7 @@ _Code:_
   - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.4 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706), [#740](https://github.com/cossacklabs/themis/pull/740)).
   - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
   - Improved compatibility with Xcode 12 ([#742](https://github.com/cossacklabs/themis/pull/742)).
+  - Updated Carthage examples to use Themis XCFramework [#823](https://github.com/cossacklabs/themis/pull/823).
 
 - **WebAssembly**
 
@@ -164,36 +173,53 @@ _Infrastructure:_
 - JavaThemis for Android and desktop Java is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
 - MSYS2 builds for Windows are now checked by CI ([#791](https://github.com/cossacklabs/themis/pull/791)).
 - New makefile target `update_boringssl` can be used to update embedded BoringSSL ([#743](https://github.com/cossacklabs/themis/pull/743)).
+- Added automated tests for Android example project ([#813](https://github.com/cossacklabs/themis/pull/813)).
+- Added automated tests for desktop Java example project ([#816](https://github.com/cossacklabs/themis/pull/816)).
 
+## [0.13.9](https://github.com/cossacklabs/themis/releases/tag/0.13.9), May 14th 2021
+
+**Hotfix for Apple platforms:**
+
+- `themis` for Carthage switched to using XCFrameworks ([#817](https://github.com/cossacklabs/themis/pull/817)). So, the minimum required Carthage version is now [0.38.0](https://github.com/Carthage/Carthage/releases/tag/0.38.0). You can continue using previous Themis version with previous Carthage versions.
+- Updated OpenSSL to the latest 1.1.1k for Carthage ([#817](https://github.com/cossacklabs/themis/pull/817)).
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - `themis` for Carthage now pulls OpenSSL dependency as XCFramework, and Carthage builds `themis` as XCFramework as well. `Themis.xcodeproj` now uses `openssl.xcframwork` and `themis.xcframework`. Carthage dependencies should be built with `--use-xcframeworks` flag ([#817](https://github.com/cossacklabs/themis/pull/817)).
+  - Updated OpenSSL to the latest 1.1.1k for Carthage ([#817](https://github.com/cossacklabs/themis/pull/817)).
+  - Tests (Github Actions) are updated to use the latest Carthage version (0.38.0 and up) and `--use-xcframeworks` flag ([#817](https://github.com/cossacklabs/themis/pull/817)).
 
 ## [0.13.8](https://github.com/cossacklabs/themis/releases/tag/0.13.8), April 30th 2021
 
 **Hotfix for Apple platforms:**
 
-- Updated OpenSSL to the latest 1.1.1k for SPM and attached `themis.xcframework`. (iOS and macOS).
-- New Swift and Objective-C example projects: SPM for iOS and macOS.
+- Updated OpenSSL to the latest 1.1.1k for SPM and attached `themis.xcframework` (iOS and macOS) ([#808](https://github.com/cossacklabs/themis/pull/808)).
+- New Swift and Objective-C example projects: SPM for iOS and macOS ([#808](https://github.com/cossacklabs/themis/pull/808)).
 
 _Code:_
 
 - **Objective-C / Swift**
 
-  - Updated OpenSSL to the latest 1.1.1k for SPM and attached `themis.xcframework`. It is `openssl-apple` version 1.1.11101.
-  - New Swift and Objective-C example projects: SPM for iOS and macOS.
-  - Updated SPM examples source code to remove deprecated calls.
+  - Updated OpenSSL to the latest 1.1.1k for SPM and attached `themis.xcframework`. It is `openssl-apple` version 1.1.11101 ([#808](https://github.com/cossacklabs/themis/pull/808)).
+  - New Swift and Objective-C example projects: SPM for iOS and macOS ([#808](https://github.com/cossacklabs/themis/pull/808)).
+  - Updated SPM examples source code to remove deprecated calls ([#808](https://github.com/cossacklabs/themis/pull/808)).
 
-## [0.13.7](https://github.com/cossacklabs/themis/releases/tag/0.13.7), April 28rd 2021
+## [0.13.7](https://github.com/cossacklabs/themis/releases/tag/0.13.7), April 28th 2021
 
 **Hotfix for Apple platforms:**
 
-- `themis` is now packaged as xcframework. It is available in the release attached files section.
-- `themis` now supports SPM, its installation and usage are very straightforward, just add `themis` as SPM dependency.
+- `themis` is now packaged as XCFramework ([#789](https://github.com/cossacklabs/themis/pull/789)). It is available in the release attached files section.
+- `themis` now supports SPM ([#789](https://github.com/cossacklabs/themis/pull/789)), its installation and usage are very straightforward, just add `themis` as SPM dependency.
 
 _Code:_
 
 - **Objective-C / Swift**
 
-  - Added script to generate xcframework for iOS, iOS Simulator and macOS ([#789](https://github.com/cossacklabs/themis/pull/789)).
+  - Added script to generate XCFramework for iOS, iOS Simulator and macOS ([#789](https://github.com/cossacklabs/themis/pull/789)).
   - Added Package.swift file for SPM ([#789](https://github.com/cossacklabs/themis/pull/789)).
+
 
 
 ## [0.13.6](https://github.com/cossacklabs/themis/releases/tag/0.13.6), November 23rd 2020

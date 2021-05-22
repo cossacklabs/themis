@@ -1,0 +1,27 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.cossacklabs.com:java-themis:0.13.1'
+}
+
+sourceSets {
+    main {
+        java.srcDirs = ["src"]
+    }
+}
+
+// Pack *everything* into JAR, including dependencies and their dependencies.
+// By default this will pack only local classes, compiled here.
+jar {
+    manifest {
+        attributes "Main-Class": "main"
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
