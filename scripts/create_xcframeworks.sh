@@ -13,6 +13,11 @@ BUILD_PATH=${BUILD_PATH:-build}
 output_dir=$BUILD_PATH/xcf_output
 
 project_dir=$(pwd) #repo root where Themis.xcodeproj and Package.swift are
+if [[ (! -d Themis.xcodeproj) || (! -f Package.swift) ]]
+then
+    echo >&2 "Please launch scripts/create_xcframeworks.sh from Themis repository root"
+    exit 1
+fi
 
 # creating required xcframework structure
 mkdir -p $output_dir/archives
