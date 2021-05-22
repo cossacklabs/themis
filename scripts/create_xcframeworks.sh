@@ -18,6 +18,13 @@ then
     exit 1
 fi
 
+# CLOpenSSL builds expect Carthage dependencies to be fetched.
+# If they don't seem to be here, do a favor and pull them now.
+if [[ ! -d Carthage ]]
+then
+    carthage bootstrap
+fi
+
 # creating required xcframework structure
 mkdir -p $output_dir/archives
 mkdir -p $output_dir/iphoneos
