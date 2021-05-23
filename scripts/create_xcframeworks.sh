@@ -14,6 +14,10 @@ clopenssl_scheme_ios="Themis (iOS)"
 clopenssl_scheme_mac="Themis (macOS)"
 clopenssl_output_dir=$BUILD_PATH/xcf_output/CLOpenSSL
 
+boringssl_scheme_ios="Themis (iOS) - BoringSSL"
+boringssl_scheme_mac="Themis (macOS) - BoringSSL"
+boringssl_output_dir=$BUILD_PATH/xcf_output/BoringSSL
+
 if [[ (! -d Themis.xcodeproj) || (! -f Package.swift) ]]
 then
     echo >&2 "Please launch scripts/create_xcframeworks.sh from Themis repository root"
@@ -125,6 +129,9 @@ checksum_xcf() {
     swift package compute-checksum $output_dir/themis.xcframework.zip
 }
 
-build_xcf    "$clopenssl_output_dir" "$clopenssl_scheme_ios" "$clopenssl_scheme_mac"
-pack_xcf     "$clopenssl_output_dir"
-checksum_xcf "$clopenssl_output_dir"
+[[ -n "$build_clopenssl" ]] && build_xcf    "$clopenssl_output_dir" "$clopenssl_scheme_ios" "$clopenssl_scheme_mac"
+[[ -n "$build_boringssl" ]] && build_xcf    "$boringssl_output_dir" "$boringssl_scheme_ios" "$boringssl_scheme_mac"
+[[ -n "$build_clopenssl" ]] && pack_xcf     "$clopenssl_output_dir"
+[[ -n "$build_boringssl" ]] && pack_xcf     "$boringssl_output_dir"
+[[ -n "$build_clopenssl" ]] && checksum_xcf "$clopenssl_output_dir"
+[[ -n "$build_boringssl" ]] && checksum_xcf "$boringssl_output_dir"
