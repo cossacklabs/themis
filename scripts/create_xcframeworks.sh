@@ -18,16 +18,23 @@ then
     exit 1
 fi
 
+help() {
+    eval "echo \"$(cat $0 | awk 'NR == 3, /^$/ { print substr($0, 3) }')\""
+}
+
 build_clopenssl=
 build_boringssl=
 
 while [[ $# -gt 0 ]]
 do
     case "$1" in
+      -h|--help) help; exit;;
       --with-clopenssl) build_clopenssl=yes; shift;;
       --with-boringssl) build_boringssl=yes; shift;;
       *)
         echo >&2 "Unknown option: $1"
+        echo >&2
+        help
         exit 1
         ;;
     esac
