@@ -53,6 +53,7 @@ then
 fi
 
 build_xcf() {
+    local output_dir="$1"
     # creating required xcframework structure
     mkdir -p $output_dir/archives
     mkdir -p $output_dir/iphoneos
@@ -102,6 +103,7 @@ build_xcf() {
 }
 
 pack_xcf() {
+    local output_dir="$1"
     # zip the xcodeframework
     # SPM accepts binary targets only in zip format
     cd $output_dir
@@ -111,12 +113,13 @@ pack_xcf() {
 }
 
 checksum_xcf() {
+    local output_dir="$1"
     # calculate checksum from the directory with Package.swift
     # update the the checksum in Package.swift if that is a new release
     echo "XCF Checksum:"
     swift package compute-checksum $output_dir/themis.xcframework.zip
 }
 
-build_xcf
-pack_xcf
-checksum_xcf
+build_xcf    "$output_dir"
+pack_xcf     "$output_dir"
+checksum_xcf "$output_dir"
