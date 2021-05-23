@@ -10,6 +10,8 @@ set -eu
 
 BUILD_PATH=${BUILD_PATH:-build}
 
+clopenssl_scheme_ios="Themis (iOS)"
+clopenssl_scheme_mac="Themis (macOS)"
 clopenssl_output_dir=$BUILD_PATH/xcf_output/CLOpenSSL
 
 if [[ (! -d Themis.xcodeproj) || (! -f Package.swift) ]]
@@ -54,6 +56,9 @@ fi
 
 build_xcf() {
     local output_dir="$1"
+    local scheme_ios="$2"
+    local scheme_mac="$3"
+
     # creating required xcframework structure
     mkdir -p $output_dir/archives
     mkdir -p $output_dir/iphoneos
@@ -61,7 +66,7 @@ build_xcf() {
 
     # build the framework for iOS devices
     xcodebuild archive \
-        -scheme "Themis (iOS)" \
+        -scheme "$scheme_ios" \
         -destination="iOS" \
         -archivePath $output_dir/archives/ios.xcarchive \
         -derivedDataPath $output_dir/iphoneos \
@@ -71,7 +76,7 @@ build_xcf() {
 
     # build the framework for iOS simulator
     xcodebuild archive \
-        -scheme "Themis (iOS)" \
+        -scheme "$scheme_ios" \
         -destination="iOS Simulator" \
         -archivePath $output_dir/archives/iossimulator.xcarchive \
         -derivedDataPath $output_dir/iphoneos \
@@ -81,7 +86,7 @@ build_xcf() {
 
     # build the framework for macOS
     xcodebuild archive \
-        -scheme "Themis (macOS)" \
+        -scheme "$scheme_mac" \
         -destination="macOS" \
         -archivePath $output_dir/archives/macosx.xcarchive \
         -derivedDataPath $output_dir/macosx \
@@ -120,6 +125,6 @@ checksum_xcf() {
     swift package compute-checksum $output_dir/themis.xcframework.zip
 }
 
-build_xcf    "$clopenssl_output_dir"
+build_xcf    "$clopenssl_output_dir" "$clopenssl_scheme_ios" "$clopenssl_scheme_mac"
 pack_xcf     "$clopenssl_output_dir"
 checksum_xcf "$clopenssl_output_dir"
