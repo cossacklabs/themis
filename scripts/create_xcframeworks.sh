@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 #
-# Shebang to explicitly use bash and not break on macOS boxes with zsh as default shell.
+# Generate Themis XCFramework for iOS and macOS.
 #
-# This script generates Themis xcframework for iOS and macOS.
-# Run it from the repo root so the xcodebuild command finds Themis.xcodeproj
+#     scripts/create_xcframework.sh
+#
+# Output will be placed into $BUILD_PATH/xcf_output
 
-set -eu # common flags to ensure that the shell does not ignore failures
+set -eu
 
 BUILD_PATH=${BUILD_PATH:-build}
 
