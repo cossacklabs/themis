@@ -2,7 +2,7 @@
 #
 # Generate Themis XCFramework for iOS and macOS.
 #
-#     scripts/create_xcframework.sh
+#     scripts/create_xcframework.sh [--with-clopenss] [--with-boringssl]
 #
 # Output will be placed into $BUILD_PATH/xcf_output
 
@@ -16,6 +16,26 @@ if [[ (! -d Themis.xcodeproj) || (! -f Package.swift) ]]
 then
     echo >&2 "Please launch scripts/create_xcframeworks.sh from Themis repository root"
     exit 1
+fi
+
+build_clopenssl=
+build_boringssl=
+
+while [[ $# -gt 0 ]]
+do
+    case "$1" in
+      --with-clopenssl) build_clopenssl=yes; shift;;
+      --with-boringssl) build_boringssl=yes; shift;;
+      *)
+        echo >&2 "Unknown option: $1"
+        exit 1
+        ;;
+    esac
+done
+
+if [[ -z "$build_clopenssl" && -z "$build_boringssl" ]]
+then
+    build_clopenssl=yes
 fi
 
 # CLOpenSSL builds expect Carthage dependencies to be fetched.
