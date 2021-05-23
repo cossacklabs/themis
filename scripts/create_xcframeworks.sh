@@ -129,9 +129,14 @@ checksum_xcf() {
     swift package compute-checksum $output_dir/themis.xcframework.zip
 }
 
+echo "Building XCFramework..."
 [[ -n "$build_clopenssl" ]] && build_xcf    "$clopenssl_output_dir" "$clopenssl_scheme_ios" "$clopenssl_scheme_mac"
 [[ -n "$build_boringssl" ]] && build_xcf    "$boringssl_output_dir" "$boringssl_scheme_ios" "$boringssl_scheme_mac"
+
+echo "Packing XCFramework..."
 [[ -n "$build_clopenssl" ]] && pack_xcf     "$clopenssl_output_dir"
 [[ -n "$build_boringssl" ]] && pack_xcf     "$boringssl_output_dir"
+
+echo "Computing checksums..."
 [[ -n "$build_clopenssl" ]] && checksum_xcf "$clopenssl_output_dir"
 [[ -n "$build_boringssl" ]] && checksum_xcf "$boringssl_output_dir"
