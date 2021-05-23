@@ -40,7 +40,7 @@ fi
 
 # CLOpenSSL builds expect Carthage dependencies to be fetched.
 # If they don't seem to be here, do a favor and pull them now.
-if [[ ! -d Carthage ]]
+if [[ -n "$build_clopenssl" && ! -d Carthage ]]
 then
     carthage bootstrap
 fi
