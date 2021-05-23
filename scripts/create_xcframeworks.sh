@@ -10,7 +10,7 @@ set -eu
 
 BUILD_PATH=${BUILD_PATH:-build}
 
-output_dir=$BUILD_PATH/xcf_output
+clopenssl_output_dir=$BUILD_PATH/xcf_output/CLOpenSSL
 
 if [[ (! -d Themis.xcodeproj) || (! -f Package.swift) ]]
 then
@@ -120,6 +120,6 @@ checksum_xcf() {
     swift package compute-checksum $output_dir/themis.xcframework.zip
 }
 
-build_xcf    "$output_dir"
-pack_xcf     "$output_dir"
-checksum_xcf "$output_dir"
+build_xcf    "$clopenssl_output_dir"
+pack_xcf     "$clopenssl_output_dir"
+checksum_xcf "$clopenssl_output_dir"
