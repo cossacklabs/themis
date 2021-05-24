@@ -1,72 +1,145 @@
 #!/usr/bin/env bash
 #
-# Shebang to explicitly use bash and not break on macOS boxes with zsh as default shell.
+# Generate Themis XCFramework for iOS and macOS.
 #
-# This script generates Themis xcframework for iOS and macOS.
-# Run it from the repo root so the xcodebuild command finds Themis.xcodeproj
+#     scripts/create_xcframework.sh [--with-clopenss] [--with-boringssl]
+#
+# Output will be placed into $BUILD_PATH/xcf_output
 
-set -eu # common flags to ensure that the shell does not ignore failures
+set -eu
 
 BUILD_PATH=${BUILD_PATH:-build}
-output_dir=$BUILD_PATH/xcf_output
-project_dir=$(pwd) #repo root where Themis.xcodeproj and Package.swift are
 
-# creating required xcframework structure
-mkdir -p $output_dir/archives
-mkdir -p $output_dir/iphoneos
-mkdir -p $output_dir/macosx
+clopenssl_scheme_ios="Themis (iOS)"
+clopenssl_scheme_mac="Themis (macOS)"
+clopenssl_output_dir=$BUILD_PATH/xcf_output/CLOpenSSL
 
-# build the framework for iOS devices
-xcodebuild archive \
--scheme "Themis (iOS)" \
--destination="iOS" \
--archivePath $output_dir/archives/ios.xcarchive \
--derivedDataPath $output_dir/iphoneos \
--sdk iphoneos \
-SKIP_INSTALL=NO \
-BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+boringssl_scheme_ios="Themis (iOS) - BoringSSL"
+boringssl_scheme_mac="Themis (macOS) - BoringSSL"
+boringssl_output_dir=$BUILD_PATH/xcf_output/BoringSSL
 
-# build the framework for iOS simulator
-xcodebuild archive \
--scheme "Themis (iOS)" \
--destination="iOS Simulator" \
--archivePath $output_dir/archives/iossimulator.xcarchive \
--derivedDataPath $output_dir/iphoneos \
--sdk iphonesimulator \
-SKIP_INSTALL=NO \
-BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+if [[ (! -d Themis.xcodeproj) || (! -f Package.swift) ]]
+then
+    echo >&2 "Please launch scripts/create_xcframeworks.sh from Themis repository root"
+    exit 1
+fi
 
-# build the framework for macOS
-xcodebuild archive \
--scheme "Themis (macOS)" \
--destination="macOS" \
--archivePath $output_dir/archives/macosx.xcarchive \
--derivedDataPath $output_dir/macosx \
--sdk macosx \
-SKIP_INSTALL=NO \
-BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+help() {
+    eval "echo \"$(cat $0 | awk 'NR == 3, /^$/ { print substr($0, 3) }')\""
+}
 
-# gather separate frameworks into a single xcframework
-xcodebuild -create-xcframework \
--framework $output_dir/archives/ios.xcarchive/Products/Library/Frameworks/themis.framework \
--framework $output_dir/archives/iossimulator.xcarchive/Products/Library/Frameworks/themis.framework \
--framework $output_dir/archives/macosx.xcarchive/Products/Library/Frameworks/themis.framework \
--output $output_dir/themis.xcframework
+build_clopenssl=
+build_boringssl=
 
-# deleting the artifacts
-rm -rf $output_dir/archives
-rm -rf $output_dir/iphoneos
-rm -rf $output_dir/macosx
+while [[ $# -gt 0 ]]
+do
+    case "$1" in
+      -h|--help) help; exit;;
+      --with-clopenssl) build_clopenssl=yes; shift;;
+      --with-boringssl) build_boringssl=yes; shift;;
+      *)
+        echo >&2 "Unknown option: $1"
+        echo >&2
+        help
+        exit 1
+        ;;
+    esac
+done
 
-# zip the xcodeframework
-# SPM accepts binary targets only in zip format
-cd $output_dir
-zip -r themis.xcframework.zip themis.xcframework
+if [[ -z "$build_clopenssl" && -z "$build_boringssl" ]]
+then
+    build_clopenssl=yes
+fi
 
-rm -rf themis.xcframework
+# CLOpenSSL builds expect Carthage dependencies to be fetched.
+# If they don't seem to be here, do a favor and pull them now.
+if [[ -n "$build_clopenssl" && ! -d Carthage ]]
+then
+    carthage bootstrap
+fi
 
-# calculate checksum from the directory with Package.swift
-# update the the checksum in Package.swift if that is a new release
-cd $project_dir
-echo "XCF Checksum:"
-swift package compute-checksum $output_dir/themis.xcframework.zip
+build_xcf() {
+    local output_dir="$1"
+    local scheme_ios="$2"
+    local scheme_mac="$3"
+
+    # creating required xcframework structure
+    mkdir -p $output_dir/archives
+    mkdir -p $output_dir/iphoneos
+    mkdir -p $output_dir/macosx
+
+    # build the framework for iOS devices
+    xcodebuild archive \
+        -scheme "$scheme_ios" \
+        -destination="iOS" \
+        -archivePath $output_dir/archives/ios.xcarchive \
+        -derivedDataPath $output_dir/iphoneos \
+        -sdk iphoneos \
+        SKIP_INSTALL=NO \
+        BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+
+    # build the framework for iOS simulator
+    xcodebuild archive \
+        -scheme "$scheme_ios" \
+        -destination="iOS Simulator" \
+        -archivePath $output_dir/archives/iossimulator.xcarchive \
+        -derivedDataPath $output_dir/iphoneos \
+        -sdk iphonesimulator \
+        SKIP_INSTALL=NO \
+        BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+
+    # build the framework for macOS
+    xcodebuild archive \
+        -scheme "$scheme_mac" \
+        -destination="macOS" \
+        -archivePath $output_dir/archives/macosx.xcarchive \
+        -derivedDataPath $output_dir/macosx \
+        -sdk macosx \
+        SKIP_INSTALL=NO \
+        BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+
+    # gather separate frameworks into a single xcframework
+    xcodebuild -create-xcframework \
+        -framework $output_dir/archives/ios.xcarchive/Products/Library/Frameworks/themis.framework \
+        -framework $output_dir/archives/iossimulator.xcarchive/Products/Library/Frameworks/themis.framework \
+        -framework $output_dir/archives/macosx.xcarchive/Products/Library/Frameworks/themis.framework \
+        -output $output_dir/themis.xcframework
+
+    # deleting the artifacts
+    rm -rf $output_dir/archives
+    rm -rf $output_dir/iphoneos
+    rm -rf $output_dir/macosx
+}
+
+pack_xcf() {
+    local output_dir="$1"
+    # zip the xcodeframework
+    # SPM accepts binary targets only in zip format
+    cd $output_dir
+    zip -r themis.xcframework.zip themis.xcframework
+    rm -rf themis.xcframework
+    cd ~-
+}
+
+checksum_xcf() {
+    local output_dir="$1"
+    # calculate checksum from the directory with Package.swift
+    # update the the checksum in Package.swift if that is a new release
+    local filename="$output_dir/themis.xcframework.zip"
+    local checksum="$(swift package compute-checksum "$filename")"
+    echo "$checksum $filename"
+}
+
+echo "Building XCFramework..."
+[[ -n "$build_clopenssl" ]] && build_xcf    "$clopenssl_output_dir" "$clopenssl_scheme_ios" "$clopenssl_scheme_mac"
+[[ -n "$build_boringssl" ]] && build_xcf    "$boringssl_output_dir" "$boringssl_scheme_ios" "$boringssl_scheme_mac"
+echo
+
+echo "Packing XCFramework..."
+[[ -n "$build_clopenssl" ]] && pack_xcf     "$clopenssl_output_dir"
+[[ -n "$build_boringssl" ]] && pack_xcf     "$boringssl_output_dir"
+echo
+
+echo "Computing XCFramework checksums..."
+[[ -n "$build_clopenssl" ]] && checksum_xcf "$clopenssl_output_dir"
+[[ -n "$build_boringssl" ]] && checksum_xcf "$boringssl_output_dir"
