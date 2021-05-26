@@ -3,23 +3,40 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6DCCB215264F00AD008072EF /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB214264F00AD008072EF /* themis.xcframework */; };
 		9F00E9FE2241348700EC1EF3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F00E9FD2241348700EC1EF3 /* AppDelegate.m */; };
 		9F00EA002241348800EC1EF3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9FF2241348800EC1EF3 /* Assets.xcassets */; };
 		9F00EA032241348800EC1EF3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA012241348800EC1EF3 /* MainMenu.xib */; };
 		9F00EA062241348800EC1EF3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F00EA052241348800EC1EF3 /* main.m */; };
+		9F00EA11224135A300EC1EF3 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00EA0F224135A300EC1EF3 /* themis.framework */; };
+		9F00EA13224135AB00EC1EF3 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00EA0F224135A300EC1EF3 /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9F00EA15224135AD00EC1EF3 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00EA0E224135A300EC1EF3 /* openssl.framework */; };
+		9F00EA16224135AD00EC1EF3 /* openssl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00EA0E224135A300EC1EF3 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F00EA1C22413D1300EC1EF3 /* client.pub in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA1822413D1300EC1EF3 /* client.pub */; };
 		9F00EA1D22413D1300EC1EF3 /* client.priv in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA1922413D1300EC1EF3 /* client.priv */; };
 		9F00EA1E22413D1300EC1EF3 /* server.pub in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA1A22413D1300EC1EF3 /* server.pub */; };
 		9F00EA1F22413D1300EC1EF3 /* server.priv in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA1B22413D1300EC1EF3 /* server.priv */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		9F00EA14224135AB00EC1EF3 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9F00EA13224135AB00EC1EF3 /* themis.framework in Embed Frameworks */,
+				9F00EA16224135AD00EC1EF3 /* openssl.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		6DCCB214264F00AD008072EF /* themis.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = themis.xcframework; path = Carthage/Build/themis.xcframework; sourceTree = "<group>"; };
 		9F00E9F92241348700EC1EF3 /* ThemisTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThemisTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F00E9FC2241348700EC1EF3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		9F00E9FD2241348700EC1EF3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -28,6 +45,8 @@
 		9F00EA042241348800EC1EF3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9F00EA052241348800EC1EF3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		9F00EA072241348800EC1EF3 /* ThemisTest.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ThemisTest.entitlements; sourceTree = "<group>"; };
+		9F00EA0E224135A300EC1EF3 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Carthage/Build/Mac/openssl.framework; sourceTree = "<group>"; };
+		9F00EA0F224135A300EC1EF3 /* themis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = themis.framework; path = Carthage/Build/Mac/themis.framework; sourceTree = "<group>"; };
 		9F00EA1822413D1300EC1EF3 /* client.pub */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.pub; sourceTree = "<group>"; };
 		9F00EA1922413D1300EC1EF3 /* client.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.priv; sourceTree = "<group>"; };
 		9F00EA1A22413D1300EC1EF3 /* server.pub */ = {isa = PBXFileReference; lastKnownFileType = file; path = server.pub; sourceTree = "<group>"; };
@@ -39,7 +58,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6DCCB215264F00AD008072EF /* themis.xcframework in Frameworks */,
+				9F00EA15224135AD00EC1EF3 /* openssl.framework in Frameworks */,
+				9F00EA11224135A300EC1EF3 /* themis.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,7 +101,8 @@
 		9F00EA0D224135A300EC1EF3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6DCCB214264F00AD008072EF /* themis.xcframework */,
+				9F00EA0E224135A300EC1EF3 /* openssl.framework */,
+				9F00EA0F224135A300EC1EF3 /* themis.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -107,6 +128,7 @@
 				9F00E9F52241348700EC1EF3 /* Sources */,
 				9F00E9F62241348700EC1EF3 /* Frameworks */,
 				9F00E9F72241348700EC1EF3 /* Resources */,
+				9F00EA14224135AB00EC1EF3 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -244,7 +266,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -298,7 +320,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -309,21 +331,18 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_ENTITLEMENTS = ThemisTest/ThemisTest.entitlements;
-				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				INFOPLIST_FILE = ThemisTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				ONLY_ACTIVE_ARCH = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis.ThemisTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -335,21 +354,18 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
 				CODE_SIGN_ENTITLEMENTS = ThemisTest/ThemisTest.entitlements;
-				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				INFOPLIST_FILE = ThemisTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				ONLY_ACTIVE_ARCH = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis.ThemisTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
