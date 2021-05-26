@@ -15,6 +15,7 @@ Please, switch to the default option in your Podfile: `pod 'themis'`
 **Hotfix for Apple platforms:**
 
 - `themis` for CocoaPods now uses XCFrameworks, supports Apple Silicon, and OpenSSL 1.1.1k ([#828](https://github.com/cossacklabs/themis/pull/828)).
+- Updated Carthage examples to use Themis XCFramework ([#823](https://github.com/cossacklabs/themis/pull/823)).
 
 _Code:_
 
