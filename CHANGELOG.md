@@ -6,13 +6,13 @@ Changes that are currently in development and have not been released yet.
 
 ## [0.13.10](https://github.com/cossacklabs/themis/releases/tag/0.13.10), May 26th 2021
 
-**Hotfix for Apple platforms:**
-
 **Deprecation Notice for CocoaPods users:**
-  - `themis/themis-openssl` target based on GRKOpenSSLFramework is deprecated and will be removed in Themis version 0.14.
-  - `themis/themis-boringssl` target based on BoringSSL is deprecated and will be removed in Themis version 0.14.
+  - `themis/themis-openssl` subspec based on GRKOpenSSLFramework is deprecated and will be removed in Themis version 0.14.
+  - `themis/themis-boringssl` subspec based on BoringSSL is deprecated and will be removed in Themis version 0.14.
 
 Please, switch to the default option in your Podfile: `pod 'themis'`
+
+**Hotfix for Apple platforms:**
 
 - `themis` for CocoaPods now uses XCFrameworks, supports Apple Silicon, and OpenSSL 1.1.1k ([#828](https://github.com/cossacklabs/themis/pull/828)).
 
