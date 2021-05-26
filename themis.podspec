@@ -81,6 +81,11 @@ Pod::Spec.new do |s|
         end
     end
 
+    # ---------- WARNING! --------------------------------------------
+    # themis-boringssl is DEPRECATED and will be removed in version 0.14
+    # Switch to the default subspec in your Podfile: `pod 'themis'`
+    # ----------------------------------------------------------------
+
     # use `themis/themis-openssl` as separate target to use Themis with OpenSSL
     s.subspec 'themis-openssl' do |so|
         # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip
@@ -141,6 +146,11 @@ Pod::Spec.new do |s|
         end
     end
 
+
+    # ---------- WARNING! ----------------------------------------------
+    # themis-boringssl is DEPRECATED and will be removed in version 0.14
+    # Switch to the default subspec in your Podfile: `pod 'themis'`
+    # ------------------------------------------------------------------
 
     # use `themis/themis-boringssl` as separate target to use Themis with BoringSSL
     s.subspec 'themis-boringssl' do |so|
