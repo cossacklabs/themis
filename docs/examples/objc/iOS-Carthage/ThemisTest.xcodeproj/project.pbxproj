@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6DEC19AF265BDD180042EA63 /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB20D264EFFE8008072EF /* themis.xcframework */; };
-		6DEC19B0265BDD180042EA63 /* themis.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB20D264EFFE8008072EF /* themis.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6DCCB20E264EFFE8008072EF /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB20D264EFFE8008072EF /* themis.xcframework */; };
 		9F00EA2E2241539600EC1EF3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F00EA2D2241539600EC1EF3 /* AppDelegate.m */; };
 		9F00EA312241539600EC1EF3 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F00EA302241539600EC1EF3 /* ViewController.m */; };
 		9F00EA342241539600EC1EF3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA322241539600EC1EF3 /* Main.storyboard */; };
@@ -20,20 +19,6 @@
 		9F00EA542241563800EC1EF3 /* server.pub in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA502241563800EC1EF3 /* server.pub */; };
 		9F00EA552241563800EC1EF3 /* client.pub in Resources */ = {isa = PBXBuildFile; fileRef = 9F00EA512241563800EC1EF3 /* client.pub */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		6DEC19B1265BDD180042EA63 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				6DEC19B0265BDD180042EA63 /* themis.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		6DCCB20D264EFFE8008072EF /* themis.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = themis.xcframework; path = Carthage/Build/themis.xcframework; sourceTree = "<group>"; };
@@ -58,7 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6DEC19AF265BDD180042EA63 /* themis.xcframework in Frameworks */,
+				6DCCB20E264EFFE8008072EF /* themis.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -128,7 +113,6 @@
 				9F00EA252241539600EC1EF3 /* Sources */,
 				9F00EA262241539600EC1EF3 /* Frameworks */,
 				9F00EA272241539600EC1EF3 /* Resources */,
-				6DEC19B1265BDD180042EA63 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
