@@ -4,6 +4,18 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.13.10](https://github.com/cossacklabs/themis/releases/tag/0.13.9), May 26th 2021
+
+**Hotfix for Apple platforms:**
+
+- `themis` for CocoaPods now uses OpenSSL 1.1.1k ([#828](https://github.com/cossacklabs/themis/pull/828)) and supports ARM64 simulator.
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - `themis` for CocoaPods now uses OpenSSL 1.1.1k ([#828](https://github.com/cossacklabs/themis/pull/828)) and supports ARM64 simulator.
+
 ## [0.13.9](https://github.com/cossacklabs/themis/releases/tag/0.13.9), May 14th 2021
 
 **Hotfix for Apple platforms:**
