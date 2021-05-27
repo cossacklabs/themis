@@ -147,7 +147,6 @@ _Code:_
   - Updated Swift examples (iOS and macOS, Carthage and CocoaPods) to showcase usage of the newest Secure Cell API: generating symmetric keys and using Secure Cell with Passphrase ([#688](https://github.com/cossacklabs/themis/pull/688)) and to use latest Themis 0.13.4 ([#701](https://github.com/cossacklabs/themis/pull/701), [#703](https://github.com/cossacklabs/themis/pull/703), [#706](https://github.com/cossacklabs/themis/pull/706), [#740](https://github.com/cossacklabs/themis/pull/740)).
   - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
   - Improved compatibility with Xcode 12 ([#742](https://github.com/cossacklabs/themis/pull/742)).
-  - Updated Carthage examples to use Themis XCFramework [#823](https://github.com/cossacklabs/themis/pull/823).
 
 - **WebAssembly**
 
@@ -168,6 +167,25 @@ _Infrastructure:_
 - MSYS2 builds for Windows are now checked by CI ([#791](https://github.com/cossacklabs/themis/pull/791)).
 - Added automated tests for Android example project ([#813](https://github.com/cossacklabs/themis/pull/813)).
 - Added automated tests for desktop Java example project ([#816](https://github.com/cossacklabs/themis/pull/816)).
+
+## [0.13.10](https://github.com/cossacklabs/themis/releases/tag/0.13.10), May 26th 2021
+
+**Deprecation Notice for CocoaPods users:**
+  - `themis/themis-openssl` subspec based on GRKOpenSSLFramework is deprecated and will be removed in Themis version 0.14.
+  - `themis/themis-boringssl` subspec based on BoringSSL is deprecated and will be removed in Themis version 0.14.
+
+Please, switch to the default option in your Podfile: `pod 'themis'`
+
+**Hotfix for Apple platforms:**
+
+- `themis` for CocoaPods now uses XCFrameworks, supports Apple Silicon, and OpenSSL 1.1.1k ([#828](https://github.com/cossacklabs/themis/pull/828)).
+- Updated Carthage examples to use Themis XCFramework ([#823](https://github.com/cossacklabs/themis/pull/823)).
+
+_Code:_
+
+- **Objective-C / Swift**
+
+  - `themis` for CocoaPods now uses XCFrameworks, supports Apple Silicon, and OpenSSL 1.1.1k ([#828](https://github.com/cossacklabs/themis/pull/828)).
 
 ## [0.13.9](https://github.com/cossacklabs/themis/releases/tag/0.13.9), May 14th 2021
 
