@@ -286,7 +286,6 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/objc/iOS-Carthage
           carthage bootstrap --platform iOS --use-xcframeworks
-          # This workaround lives here until we update example projects
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -327,7 +326,6 @@ jobs:
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/swift/iOS-Carthage
           carthage bootstrap --platform iOS --use-xcframeworks
-          # This workaround lives here until we update example projects
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
