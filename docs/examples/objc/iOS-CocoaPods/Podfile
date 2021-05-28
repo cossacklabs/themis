@@ -23,6 +23,6 @@ use_frameworks!
 
 target :"ThemisTest" do
 
-  pod 'themis', '0.13.4'
+  pod 'themis', '0.13.10'
 
 end

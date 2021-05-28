@@ -16,13 +16,13 @@
 
 source 'https://cdn.cocoapods.org/'
 
-platform :ios, '10.0'
+platform :ios, '12.0'
 project 'ThemisSwift/ThemisSwift.xcodeproj'
 inhibit_all_warnings!
 use_frameworks!
 
 target :"ThemisSwift" do
 
-  pod 'themis', '0.13.4'
+  pod 'themis', '0.13.10'
 
 end
