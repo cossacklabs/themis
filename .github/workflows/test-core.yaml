@@ -297,7 +297,7 @@ jobs:
         run: |
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
-          sudo apt install --yes gcc make libssl-dev valgrind
+          sudo apt install --yes gcc make libssl-dev valgrind ninja-build
       - name: Check out code
         uses: actions/checkout@v2
         with:
