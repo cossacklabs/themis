@@ -168,6 +168,7 @@ _Infrastructure:_
 - MSYS2 builds for Windows are now checked by CI ([#791](https://github.com/cossacklabs/themis/pull/791)).
 - Added automated tests for Android example project ([#813](https://github.com/cossacklabs/themis/pull/813)).
 - Added automated tests for desktop Java example project ([#816](https://github.com/cossacklabs/themis/pull/816)).
+- Embedded BoringSSL now builds faster if Ninja is available ([#837](https://github.com/cossacklabs/themis/pull/837)).
 
 ## [0.13.10](https://github.com/cossacklabs/themis/releases/tag/0.13.10), May 26th 2021
 
