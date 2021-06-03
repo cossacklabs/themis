@@ -178,7 +178,10 @@ Drop us an email to [info@cossacklabs.com](mailto:info@cossacklabs.com) or check
 
 # Contacts
 
-If you want to ask a technical question, feel free to raise an [issue](https://github.com/cossacklabs/themis/issues) or write to [dev@cossacklabs.com](mailto:dev@cossacklabs.com).
+If you want to ask a technical question, report a bug or suggest a feature,
+feel free to [start a discussion on GitHub](https://github.com/cossacklabs/themis/discussions),
+raise an issue in the [issue tracker](https://github.com/cossacklabs/themis/issues),
+or write to [dev@cossacklabs.com](mailto:dev@cossacklabs.com).
 
 To talk to the business wing of Cossack Labs Limited, drop us an email to [info@cossacklabs.com](mailto:info@cossacklabs.com).
 
