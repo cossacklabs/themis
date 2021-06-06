@@ -4,6 +4,7 @@ Themis is an open-source, Apache 2 licensed software, maintained by [Cossack Lab
 
 We highly encourage you to: 
 
+  - Ask questions and participate in [discussions on GitHub](https://github.com/cossacklabs/themis/discussions).
   - Report any bugs and request features via [GitHub Issues](https://github.com/cossacklabs/themis/issues).
   - Report bugs that you have fixes with a patch via [GitHub Pull request](https://github.com/cossacklabs/themis/pulls) (after issuing a corresponding issue and leaving a link to pull there).
   - Add something new to Themis. There is a certain design scheme according to which we'd like to keep developing Themis. If your contributions fall along with it, we'd be more than glad to accept some fundamental additions. It's better to discuss the subject using [email](mailto:dev@cossacklabs.com) before taking action.

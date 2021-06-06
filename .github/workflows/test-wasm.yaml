@@ -47,7 +47,7 @@ jobs:
         run: |
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
-          sudo apt install --yes gcc make libssl-dev
+          sudo apt install --yes gcc make libssl-dev ninja-build
       - name: Install Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:

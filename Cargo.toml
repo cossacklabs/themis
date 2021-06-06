@@ -1,6 +1,7 @@
 [workspace]
 members = [
     "benches/themis",
+    "benches/rust",
     "src/wrappers/themis/rust",
     "src/wrappers/themis/rust/libthemis-sys",
     "tools/rust",

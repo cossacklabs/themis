@@ -9,7 +9,7 @@ themis = { version = "0.13", path = "../../src/wrappers/themis/rust" }
 libthemis-sys = { version = "0.13", path = "../../src/wrappers/themis/rust/libthemis-sys" }
 
 [dev-dependencies]
-criterion = { version = "0.3.4", features = ["cargo_bench_support", "html_reports"]}
+criterion = { version = "0.3.4", features = ["cargo_bench_support", "html_reports"] }
 
 [[bench]]
 name = "secure_cell_seal_master_key"
@@ -17,4 +17,28 @@ harness = false
 
 [[bench]]
 name = "secure_cell_seal_passphrase"
+harness = false
+
+[[bench]]
+name = "secure_cell_token_protect_master_key"
+harness = false
+
+[[bench]]
+name = "secure_cell_context_imprint_master_key"
+harness = false
+
+[[bench]]
+name = "secure_message_encrypt_decrypt_ecdsa"
+harness = false
+
+[[bench]]
+name = "secure_message_encrypt_decrypt_rsa"
+harness = false
+
+[[bench]]
+name = "secure_message_sign_verify_ecdsa"
+harness = false
+
+[[bench]]
+name = "secure_message_sign_verify_rsa"
 harness = false
