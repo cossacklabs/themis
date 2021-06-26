@@ -20,9 +20,9 @@ type SymmetricAlgorithm int
 // Supported SymmetricAlgorithm values.
 const (
 	AesECB SymmetricAlgorithm = 0x1
-	AesCBC                    = 0x2
-	AesXTS                    = 0x3
-	AesGCM                    = 0x4
+	AesCBC SymmetricAlgorithm = 0x2
+	AesXTS SymmetricAlgorithm = 0x3
+	AesGCM SymmetricAlgorithm = 0x4
 )
 
 // KeyDerivationFunction indicates key derivation function in AlgorithmID.
@@ -31,7 +31,7 @@ type KeyDerivationFunction int
 // Supported KeyDerivationFunction values.
 const (
 	NoKDF            KeyDerivationFunction = 0x0
-	PBKDF2HmacSha256                       = 0x1
+	PBKDF2HmacSha256 KeyDerivationFunction = 0x1
 )
 
 // PaddingAlgorithm indicates padding algorithm in AlgorithmID.
@@ -40,7 +40,7 @@ type PaddingAlgorithm int
 // Supported PaddingAlgorithm values.
 const (
 	NoPadding    PaddingAlgorithm = 0x0
-	PKCS7Padding                  = 0x1
+	PKCS7Padding PaddingAlgorithm = 0x1
 )
 
 // MakeAlgorithmID constructs algorithm ID from components.
