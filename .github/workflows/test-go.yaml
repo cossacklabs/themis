@@ -57,12 +57,8 @@ jobs:
         run: |
           make
           sudo make install
-      - name: Install GoThemis
-        run: |
-          mkdir -p ~/go/src/$GOTHEMIS_IMPORT
-          rsync -auv gothemis/ ~/go/src/$GOTHEMIS_IMPORT
       - name: Run test suite (Go ${{ matrix.go }})
-        run: make test_go
+        run: cd gothemis && go test -v ./...
 
   examples:
     name: Code examples
