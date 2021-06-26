@@ -32,7 +32,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: ['1.11.13', '1.12.17', '1.13.8', '1.14']
+        go:
+          - '1.11'
+          - '1.12'
+          - '1.13'
+          - '1.14'
+          - '1.15'
+          - '1.16'
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -44,6 +50,7 @@ jobs:
         uses: actions/setup-go@v1
         with:
           go-version: ${{ matrix.go }}
+      - run: go version
       - name: Check out code
         uses: actions/checkout@v2
       - name: Install Themis Core
