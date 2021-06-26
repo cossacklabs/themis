@@ -121,3 +121,14 @@ jobs:
           # that the example code is buildable.
           go build smessage_server.go
           go build ssession_server.go
+
+  reference-implementation:
+    name: Reference implementation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      # Unit tests for reference implementation do not require neither GoThemis
+      # nor Themis Core to be installed. Do not install them before this step.
+      - name: Run unit test suite
+        run: cd reference && go test -v ./...
