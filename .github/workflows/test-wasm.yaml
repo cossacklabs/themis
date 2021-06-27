@@ -116,6 +116,55 @@ jobs:
       - name: Install WasmThemis
         run: |
           npm install ./build/wasm-themis.tgz
+      - name: Test examples (keygen, ES5)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es5
+          echo "Test keygen..."
+          node secure_keygen.js
+          echo "ok"
+      - name: Test examples (Secure Cell, ES5)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es5
+          echo "Test Secure Cell..."
+          node secure_cell.js
+          echo "ok"
+      - name: Test examples (Secure Message, ES5)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es5
+          echo "Test Secure Message..."
+          alice=($(node secure_keygen.js | cut -c 14-))
+          bob=($(node secure_keygen.js | cut -c 14-))
+          enc=$(node secure_message.js enc "${alice[0]}" "${bob[1]}" message)
+          dec=$(node secure_message.js dec "${bob[0]}" "${alice[1]}" "$enc")
+          test "$dec" = "message"
+          echo "ok"
+      - name: Test examples (Secure Session, ES5)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es5
+          echo "Test Secure Session..."
+          node secure_session_server.js | tee server-output.txt &
+          sleep 1 # give the server time to launch
+          node secure_session_client.js | tee client-output.txt
+          killall node
+          grep -q 'Hello' server-output.txt
+          grep -q 'Hello' client-output.txt
+          echo "ok"
+      - name: Test examples (Secure Comparator, ES5)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es5
+          echo "Test Secure Comparator..."
+          node secure_comparator_server.js | tee server-output.txt &
+          sleep 1 # give the server time to launch
+          node secure_comparator_client.js | tee client-output.txt
+          killall node
+          grep -q 'compare equal: true' server-output.txt
+          grep -q 'compare equal: true' client-output.txt
+          echo "ok"
       - name: Test tools (keygen, ES5)
         if: always()
         run: |
