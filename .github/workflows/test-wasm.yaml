@@ -75,3 +75,101 @@ jobs:
           emmake make test
       - name: Run test suite (WasmThemis)
         run: make test_wasm
+
+  examples:
+    name: Code examples
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - 12.x  # old LTS
+          - 14.x  # current LTS
+          - 16.x  # current stable
+      fail-fast: false
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev ninja-build
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Install Emscripten
+        run: |
+          # Install Emscripten toolchain as described in documentation:
+          # https://emscripten.org/docs/getting_started/downloads.html
+          cd $HOME
+          git clone https://github.com/emscripten-core/emsdk.git
+          cd $HOME/emsdk
+          ./emsdk install  2.0.13
+          ./emsdk activate 2.0.13
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Build WasmThemis
+        run: |
+          source "$HOME/emsdk/emsdk_env.sh"
+          emmake make wasmthemis
+      - name: Install WasmThemis
+        run: |
+          npm install ./build/wasm-themis.tgz
+      - name: Test tools (keygen, ES5)
+        if: always()
+        run: |
+          echo "Test keygen..."
+          node ./tools/js/wasm-themis/keygen.js
+          test -e key
+          test -e key.pub
+          rm key key.pub
+          echo "ok"
+      - name: Test tools (Secure Cell, ES5)
+        if: always()
+        run: |
+          echo "Test Secure Cell (Seal)..."
+          enc=$(node ./tools/js/wasm-themis/scell_seal_string_echo.js \
+                    enc "master-key" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_seal_string_echo.js \
+                    dec "master-key" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+
+          echo "Test Secure Cell (Seal + passphrase)..."
+          enc=$(node ./tools/js/wasm-themis/scell_seal_string_echo_pw.js \
+                    enc "passphrase" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_seal_string_echo_pw.js \
+                    dec "passphrase" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+
+          echo "Test Secure Cell (Token Protect)..."
+          enc=$(node ./tools/js/wasm-themis/scell_token_string_echo.js \
+                    enc "master-key" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_token_string_echo.js \
+                    dec "master-key" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+
+          echo "Test Secure Cell (Context Imprint)..."
+          enc=$(node ./tools/js/wasm-themis/scell_context_string_echo.js \
+                    enc "master-key" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_context_string_echo.js \
+                    dec "master-key" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+      - name: Test tools (Secure Message, ES5)
+        if: always()
+        run: |
+          echo "Test Secure Message (encryption)..."
+          enc=$(node ./tools/js/wasm-themis/smessage_encryption.js \
+                    enc ./tests/_integration/keys/client.priv \
+                        ./tests/_integration/keys/server.pub \
+                    "your secure message")
+          dec=$(node ./tools/js/wasm-themis/smessage_encryption.js \
+                    dec ./tests/_integration/keys/client.priv \
+                        ./tests/_integration/keys/server.pub \
+                    "$enc")
+          test "$dec" = "your secure message"
+          echo "ok"
