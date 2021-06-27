@@ -1,6 +1,6 @@
 const themis = require('wasm-themis')
 
-let command, key, message, context
+let command, passphrase, message, context
 if (5 <= process.argv.length && process.argv.length <= 6) {
     command = process.argv[2]
     passphrase = process.argv[3]
