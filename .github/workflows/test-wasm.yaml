@@ -125,6 +125,15 @@ jobs:
           test -e key.pub
           rm key key.pub
           echo "ok"
+      - name: Test tools (keygen, ES6)
+        if: always()
+        run: |
+          echo "Test keygen..."
+          node ./tools/js/wasm-themis/keygen.mjs
+          test -e key
+          test -e key.pub
+          rm key key.pub
+          echo "ok"
       - name: Test tools (Secure Cell, ES5)
         if: always()
         run: |
@@ -159,6 +168,40 @@ jobs:
                     dec "master-key" "$enc" "associated context")
           test "$dec" = "message"
           echo "ok"
+      - name: Test tools (Secure Cell, ES6)
+        if: always()
+        run: |
+          echo "Test Secure Cell (Seal)..."
+          enc=$(node ./tools/js/wasm-themis/scell_seal_string_echo.mjs \
+                    enc "master-key" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_seal_string_echo.mjs \
+                    dec "master-key" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+
+          echo "Test Secure Cell (Seal + passphrase)..."
+          enc=$(node ./tools/js/wasm-themis/scell_seal_string_echo_pw.mjs \
+                    enc "passphrase" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_seal_string_echo_pw.mjs \
+                    dec "passphrase" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+
+          echo "Test Secure Cell (Token Protect)..."
+          enc=$(node ./tools/js/wasm-themis/scell_token_string_echo.mjs \
+                    enc "master-key" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_token_string_echo.mjs \
+                    dec "master-key" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+
+          echo "Test Secure Cell (Context Imprint)..."
+          enc=$(node ./tools/js/wasm-themis/scell_context_string_echo.mjs \
+                    enc "master-key" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_context_string_echo.mjs \
+                    dec "master-key" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
       - name: Test tools (Secure Message, ES5)
         if: always()
         run: |
@@ -168,6 +211,20 @@ jobs:
                         ./tests/_integration/keys/server.pub \
                     "your secure message")
           dec=$(node ./tools/js/wasm-themis/smessage_encryption.js \
+                    dec ./tests/_integration/keys/client.priv \
+                        ./tests/_integration/keys/server.pub \
+                    "$enc")
+          test "$dec" = "your secure message"
+          echo "ok"
+      - name: Test tools (Secure Message, ES6)
+        if: always()
+        run: |
+          echo "Test Secure Message (encryption)..."
+          enc=$(node ./tools/js/wasm-themis/smessage_encryption.mjs \
+                    enc ./tests/_integration/keys/client.priv \
+                        ./tests/_integration/keys/server.pub \
+                    "your secure message")
+          dec=$(node ./tools/js/wasm-themis/smessage_encryption.mjs \
                     dec ./tests/_integration/keys/client.priv \
                         ./tests/_integration/keys/server.pub \
                     "$enc")
