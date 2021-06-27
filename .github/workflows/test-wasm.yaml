@@ -30,28 +30,15 @@ env:
   NO_NIST_STS: 1
 
 jobs:
-  unit-tests:
-    name: Unit tests
+  build-wasmthemis:
+    name: Build WasmThemis
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version:
-          - 8.x   # legacy
-          - 10.x  # legacy
-          - 12.x  # old LTS
-          - 14.x  # current LTS
-          - 16.x  # current stable
-      fail-fast: false
     steps:
       - name: Install system dependencies
         run: |
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev ninja-build
-      - name: Install Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
       - name: Install Emscripten
         run: |
           # Install Emscripten toolchain as described in documentation:
@@ -73,12 +60,52 @@ jobs:
         run: |
           source "$HOME/emsdk/emsdk_env.sh"
           emmake make test
+      - name: Pack build directory
+        run: tar cz build src/wrappers/themis/wasm > build.tgz
+      - name: Upload build directory
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: build.tgz
+          retention-days: 1 # can be dropped after this build is complete
+
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    needs: build-wasmthemis
+    strategy:
+      matrix:
+        node-version:
+          - 8.x   # legacy
+          - 10.x  # legacy
+          - 12.x  # old LTS
+          - 14.x  # current LTS
+          - 16.x  # current stable
+      fail-fast: false
+    steps:
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Download build directory
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+      - name: Unpack build directory
+        run: |
+          tar xf build.tgz
+          # Remove configuration of "build-wasmthemis" job.
+          # We have a different Node.js here and we're not in Emscripten env.
+          rm build/configure.mk
       - name: Run test suite (WasmThemis)
         run: make test_wasm
 
   examples:
     name: Code examples
     runs-on: ubuntu-latest
+    needs: build-wasmthemis
     strategy:
       matrix:
         node-version:
@@ -87,32 +114,18 @@ jobs:
           - 16.x  # current stable
       fail-fast: false
     steps:
-      - name: Install system dependencies
-        run: |
-          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
-          sudo apt update
-          sudo apt install --yes gcc make libssl-dev ninja-build
       - name: Install Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install Emscripten
-        run: |
-          # Install Emscripten toolchain as described in documentation:
-          # https://emscripten.org/docs/getting_started/downloads.html
-          cd $HOME
-          git clone https://github.com/emscripten-core/emsdk.git
-          cd $HOME/emsdk
-          ./emsdk install  2.0.13
-          ./emsdk activate 2.0.13
       - name: Check out code
         uses: actions/checkout@v2
+      - name: Download build directory
+        uses: actions/download-artifact@v2
         with:
-          submodules: true
-      - name: Build WasmThemis
-        run: |
-          source "$HOME/emsdk/emsdk_env.sh"
-          emmake make wasmthemis
+          name: build
+      - name: Unpack build directory
+        run: tar xf build.tgz
       - name: Install WasmThemis
         run: |
           npm install ./build/wasm-themis.tgz
