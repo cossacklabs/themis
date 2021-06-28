@@ -1,0 +1,13 @@
+.dimmed {
+    animation: desaturate-text 0.5s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes desaturate-text {
+    0% {
+        color: #000;
+    }
+    100% {
+        color: #bbb;
+    }
+}
