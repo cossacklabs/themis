@@ -1,20 +1,20 @@
-const net = require('net')
-const themis = require('wasm-themis')
+var net = require('net')
+var themis = require('wasm-themis')
 
-const serverPrivateKeyBuffer = Buffer.from('UkVDMgAAAC0U6AK7AAm6ha0cgHmovSTpZax01+icg9xwFlZAqqGWeGTqbHUt', 'base64')
-const clientPublicKeyBuffer = Buffer.from('VUVDMgAAAC15KNjgAr1DQEw+So1oztUarO4Jw/CGgyehBRCbOxbpHrPBKO7s', 'base64')
+var serverPrivateKeyBuffer = Buffer.from('UkVDMgAAAC0U6AK7AAm6ha0cgHmovSTpZax01+icg9xwFlZAqqGWeGTqbHUt', 'base64')
+var clientPublicKeyBuffer = Buffer.from('VUVDMgAAAC15KNjgAr1DQEw+So1oztUarO4Jw/CGgyehBRCbOxbpHrPBKO7s', 'base64')
 
-const clientID = Buffer.from('client')
-const serverID = Buffer.from('server')
+var clientID = Buffer.from('client')
+var serverID = Buffer.from('server')
 
 themis.initialized.then(function() {
-    let serverPrivateKey = new themis.PrivateKey(serverPrivateKeyBuffer)
-    let clientPublicKey = new themis.PublicKey(clientPublicKeyBuffer)
+    var serverPrivateKey = new themis.PrivateKey(serverPrivateKeyBuffer)
+    var clientPublicKey = new themis.PublicKey(clientPublicKeyBuffer)
 
-    let server = net.createServer(function(socket) {
+    var server = net.createServer(function(socket) {
         console.log('Server: accepted connection')
 
-        let session = new themis.SecureSession(serverID, serverPrivateKey, function(id) {
+        var session = new themis.SecureSession(serverID, serverPrivateKey, function(id) {
             if (clientID.equals(id)) {
                 return clientPublicKey
             }
@@ -24,15 +24,15 @@ themis.initialized.then(function() {
 
         socket.on('data', function(dataFromClient) {
             if (!session.established()) {
-                let dataToClient = session.negotiateReply(dataFromClient)
+                var dataToClient = session.negotiateReply(dataFromClient)
                 socket.write(dataToClient)
                 if (session.established()) {
                     console.log('Server: Secure Session established')
                 }
             } else {
-                let message = session.unwrap(dataFromClient)
+                var message = session.unwrap(dataFromClient)
                 console.log('Server: client says: ' + Buffer.from(message).toString())
-                let reply = session.wrap(message)
+                var reply = session.wrap(message)
                 socket.write(reply)
             }
         })

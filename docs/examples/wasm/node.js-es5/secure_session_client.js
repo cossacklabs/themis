@@ -1,17 +1,17 @@
-const net = require('net')
-const themis = require('wasm-themis')
+var net = require('net')
+var themis = require('wasm-themis')
 
-const clientPrivateKeyBuffer = Buffer.from('UkVDMgAAAC3DZR2qAEbvO092R/IKXBttnf9dVSU65R+Fb4eNoyxxlzn2n4GR', 'base64')
-const serverPublicKeyBuffer = Buffer.from('VUVDMgAAAC30/vs+AwciK6egi82A9TkTydVuOzMFsJ9AkA0gMGyNH0tSu5Bk', 'base64')
+var clientPrivateKeyBuffer = Buffer.from('UkVDMgAAAC3DZR2qAEbvO092R/IKXBttnf9dVSU65R+Fb4eNoyxxlzn2n4GR', 'base64')
+var serverPublicKeyBuffer = Buffer.from('VUVDMgAAAC30/vs+AwciK6egi82A9TkTydVuOzMFsJ9AkA0gMGyNH0tSu5Bk', 'base64')
 
-const clientID = Buffer.from('client')
-const serverID = Buffer.from('server')
+var clientID = Buffer.from('client')
+var serverID = Buffer.from('server')
 
 themis.initialized.then(function() {
-    let clientPrivateKey = new themis.PrivateKey(clientPrivateKeyBuffer)
-    let serverPublicKey = new themis.PublicKey(serverPublicKeyBuffer)
+    var clientPrivateKey = new themis.PrivateKey(clientPrivateKeyBuffer)
+    var serverPublicKey = new themis.PublicKey(serverPublicKeyBuffer)
 
-    let session = new themis.SecureSession(clientID, clientPrivateKey, function(id) {
+    var session = new themis.SecureSession(clientID, clientPrivateKey, function(id) {
         if (serverID.equals(id)) {
             return serverPublicKey
         }
@@ -19,29 +19,29 @@ themis.initialized.then(function() {
         return null
     })
 
-    let counter = 5
+    var counter = 5
 
-    let socket = new net.Socket()
+    var socket = new net.Socket()
     socket.connect(1337, '127.0.0.1', function() {
         console.log('Client: connected')
-        let request = session.connectionRequest()
+        var request = session.connectionRequest()
         socket.write(request)
     })
 
     socket.on('data', function(dataFromServer) {
         if (!session.established()) {
-            let dataToServer = session.negotiateReply(dataFromServer)
+            var dataToServer = session.negotiateReply(dataFromServer)
             socket.write(dataToServer)
             if (session.established()) {
                 console.log('Client: Secure Session established')
-                let dataToServer = session.wrap(Buffer.from('Hello ' + counter))
+                var dataToServer = session.wrap(Buffer.from('Hello ' + counter))
                 socket.write(dataToServer)
             }
         } else {
-            let message = session.unwrap(dataFromServer)
+            var message = session.unwrap(dataFromServer)
             console.log('Client: server says: ' + Buffer.from(message).toString())
             if (counter--) {
-                let dataToServer = session.wrap(Buffer.from('Hello ' + counter))
+                var dataToServer = session.wrap(Buffer.from('Hello ' + counter))
                 socket.write(dataToServer)
             } else {
                 session.destroy()

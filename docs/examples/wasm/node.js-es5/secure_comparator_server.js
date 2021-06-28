@@ -1,14 +1,14 @@
-const net = require('net')
-const themis = require('wasm-themis')
+var net = require('net')
+var themis = require('wasm-themis')
 
 themis.initialized.then(function() {
-    let server = net.createServer(function(socket) {
+    var server = net.createServer(function(socket) {
         console.log('Server: accepted connection')
 
-        let comparator = new themis.SecureComparator(Buffer.from('secret'))
+        var comparator = new themis.SecureComparator(Buffer.from('secret'))
 
         socket.on('data', function(dataFromClient) {
-            let dataToClient = comparator.proceed(dataFromClient)
+            var dataToClient = comparator.proceed(dataFromClient)
             socket.write(dataToClient)
             if (comparator.complete()) {
                 console.log('Server: compare equal: ' + comparator.compareEqual())

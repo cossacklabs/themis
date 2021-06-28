@@ -1,18 +1,18 @@
-const themis = require('wasm-themis')
+var themis = require('wasm-themis')
 
 themis.initialized.then(function() {
-    let message = 'Test Message Please Ignore'
-    let context = 'Secure Cell example code'
-    let master_key = Buffer.from('bm8sIHRoaXMgaXMgbm90IGEgdmFsaWQgbWFzdGVyIGtleQ==', 'base64')
-    let passphrase = 'My Litte Secret: Passphrase Is Magic'
+    var message = 'Test Message Please Ignore'
+    var context = 'Secure Cell example code'
+    var master_key = Buffer.from('bm8sIHRoaXMgaXMgbm90IGEgdmFsaWQgbWFzdGVyIGtleQ==', 'base64')
+    var passphrase = 'My Litte Secret: Passphrase Is Magic'
 
-    let encrypted_message, decrypted_message
+    var encrypted_message, decrypted_message
 
     console.log('# Secure Cell in Seal mode\n')
 
     console.log('## Master key API\n')
 
-    let scellMK = themis.SecureCellSeal.withKey(master_key)
+    var scellMK = themis.SecureCellSeal.withKey(master_key)
 
     encrypted_message = scellMK.encrypt(Buffer.from(message, 'UTF-8'))
     console.log('Encrypted: ' + Buffer.from(encrypted_message).toString('base64'))
@@ -31,7 +31,7 @@ themis.initialized.then(function() {
 
     console.log('## Passphrase API\n')
 
-    let scellPW = themis.SecureCellSeal.withPassphrase(passphrase)
+    var scellPW = themis.SecureCellSeal.withPassphrase(passphrase)
 
     encrypted_message = scellPW.encrypt(Buffer.from(message, 'UTF-8'))
     console.log('Encrypted: ' + Buffer.from(encrypted_message).toString('base64'))
@@ -44,7 +44,7 @@ themis.initialized.then(function() {
 
     console.log('# Secure Cell in Token Protect mode\n')
 
-    let scellTP = themis.SecureCellTokenProtect.withKey(master_key)
+    var scellTP = themis.SecureCellTokenProtect.withKey(master_key)
 
     encrypted_message = scellTP.encrypt(Buffer.from(message, 'UTF-8'))
     console.log('Encrypted:  ' + Buffer.from(encrypted_message.data).toString('base64'))
@@ -58,7 +58,7 @@ themis.initialized.then(function() {
 
     console.log('# Secure Cell in Context Imprint mode\n')
 
-    let scellCI = themis.SecureCellContextImprint.withKey(master_key)
+    var scellCI = themis.SecureCellContextImprint.withKey(master_key)
 
     encrypted_message = scellCI.encrypt(Buffer.from(message, 'UTF-8'), Buffer.from(context, 'UTF-8'))
     console.log('Encrypted: ' + Buffer.from(encrypted_message).toString('base64'))

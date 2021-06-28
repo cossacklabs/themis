@@ -1,6 +1,6 @@
-const themis = require('wasm-themis')
+var themis = require('wasm-themis')
 
-let command, privateKeyText, publicKeyText, message
+var command, privateKeyText, publicKeyText, message
 if (process.argv.length == 6) {
     command        = process.argv[2]
     privateKeyText = process.argv[3]
@@ -12,18 +12,18 @@ if (process.argv.length == 6) {
 }
 
 themis.initialized.then(function() {
-    let privateKey = new themis.PrivateKey(Buffer.from(privateKeyText, 'base64'))
-    let publicKey = new themis.PublicKey(Buffer.from(publicKeyText, 'base64'))
+    var privateKey = new themis.PrivateKey(Buffer.from(privateKeyText, 'base64'))
+    var publicKey = new themis.PublicKey(Buffer.from(publicKeyText, 'base64'))
 
-    let secureMessage = new themis.SecureMessage(privateKey, publicKey)
+    var secureMessage = new themis.SecureMessage(privateKey, publicKey)
 
     switch (command) {
     case 'enc':
-        let encrypted = secureMessage.encrypt(Buffer.from(message, 'UTF-8'))
+        var encrypted = secureMessage.encrypt(Buffer.from(message, 'UTF-8'))
         console.log(Buffer.from(encrypted).toString('base64'))
         break
     case 'dec':
-        let decrypted = secureMessage.decrypt(Buffer.from(message, 'base64'))
+        var decrypted = secureMessage.decrypt(Buffer.from(message, 'base64'))
         console.log(Buffer.from(decrypted).toString('UTF-8'))
         break
     default:
