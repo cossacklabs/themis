@@ -170,6 +170,8 @@ _Infrastructure:_
 - Added automated tests for Android example project ([#813](https://github.com/cossacklabs/themis/pull/813)).
 - Added automated tests for desktop Java example project ([#816](https://github.com/cossacklabs/themis/pull/816)).
 - Embedded BoringSSL now builds faster if Ninja is available ([#837](https://github.com/cossacklabs/themis/pull/837)).
+- Embedded BoringSSL can now be cross-compiled on macOS by setting `ARCH` and `SDK` variables ([#849](https://github.com/cossacklabs/themis/pull/849)).
+
 
 ## [0.13.10](https://github.com/cossacklabs/themis/releases/tag/0.13.10), May 26th 2021
 
