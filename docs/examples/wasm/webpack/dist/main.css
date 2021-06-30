@@ -11,3 +11,21 @@
         color: #bbb;
     }
 }
+
+textarea {
+    display: block;
+}
+
+/*
+ * It would be nice to have this animated, but CSS plays animations only once,
+ * I have wasted a hour trying to learn how to restart them (unsuccessfully),
+ * so I refuse to deal with this bullshit any longer. Enjoy crisp transitions.
+ */
+
+.hidden {
+    opacity: 0.0;
+}
+
+.passphrase .only-keys {
+    color: #bbb;
+}
