@@ -4,9 +4,9 @@ import (
 	"encoding/binary"
 	"testing"
 
+	"github.com/cossacklabs/themis/docs/reference-implementation/soter"
 	"github.com/cossacklabs/themis/gothemis/cell"
 	"github.com/cossacklabs/themis/gothemis/keys"
-	"github.com/cossacklabs/themis/reference/soter"
 )
 
 // Secure Cell header starts with a Soter algorithm ID.

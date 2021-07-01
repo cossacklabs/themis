@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/cossacklabs/themis/reference/soter"
+	"github.com/cossacklabs/themis/docs/reference-implementation/soter"
 )
 
 const label = "Example key derivation"

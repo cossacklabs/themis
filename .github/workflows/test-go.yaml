@@ -6,12 +6,12 @@ on:
       - '.github/workflows/test-go.yaml'
       - 'docs/examples/go/**'
       - 'docs/examples/Themis-server/go/**'
+      - 'docs/reference-implementation/**'
       - 'gothemis/**'
-      - 'reference/**'
       - 'src/soter/**'
       - 'src/themis/**'
       - 'tests/common/**'
-      - 'tests/reference/**'
+      - 'tests/reference-implementation/**'
       - 'tests/test.mk'
       - '**/*.mk'
       - 'Makefile'
@@ -141,10 +141,10 @@ jobs:
       # Unit tests for reference implementation do not require neither GoThemis
       # nor Themis Core to be installed. Do not install them before this step.
       - name: Run unit test suite
-        run: cd reference && go test -v ./...
+        run: cd docs/reference-implementation && go test -v ./...
       - name: Install Themis Core
         run: |
           make
           sudo make install
       - name: Run integration test suite
-        run: cd tests/reference && go test -v ./...
+        run: cd tests/reference-implementation && go test -v ./...
