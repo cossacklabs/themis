@@ -2,7 +2,6 @@
 *                   @vixentael @ilammy
 /src/soter/         @vixentael @Lagovas @ilammy @storojs72 @ignatk
 /src/themis/        @vixentael @Lagovas @ilammy @storojs72 @ignatk
-/reference          @vixentael @Lagovas @ilammy @storojs72
 
 # Build system
 Makefile            @vixentael @ilammy @shadinua
@@ -24,3 +23,6 @@ Cargo.toml          @vixentael @ilammy @iamnotacake
 Cartfile*                   @vixentael @julepka
 Package.swift               @vixentael @julepka
 Podfile*                    @vixentael @julepka
+
+/docs/reference-implementation  @vixentael @Lagovas @ilammy @storojs72
+/tests/reference-implementation @vixentael @Lagovas @ilammy @storojs72
