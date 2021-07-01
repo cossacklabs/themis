@@ -153,7 +153,7 @@ ifdef GO_VERSION
 	@echo "Running gothemis tests."
 	@echo "In case of errors, see https://docs.cossacklabs.com/themis/languages/go/"
 	@echo "------------------------------------------------------------"
-	@go test -v $(GOTHEMIS_IMPORT)/...
+	@GO111MODULE=off go test -v $(GOTHEMIS_IMPORT)/...
 endif
 
 test_rust:
