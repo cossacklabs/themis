@@ -17,8 +17,8 @@
 <div id="wasm-loaded">WasmThemis loading...</div>
 
 <p>
-    All text data is interpreted as UTF-8.
-    All binary data is represented in base64.
+    All <span class="text-input-span">text data</span> is interpreted as UTF-8.
+    All <span class="binary-input-span">binary data</span> is represented in base64.
 </p>
 
 <main>
@@ -36,6 +36,7 @@
                 </span>
                 <span class="hinted-input">
                 <input
+                    class="binary-input"
                     type="text" minlength="1" spellcheck="off"
                     placeholder="Paste your symmetric key here"
                     size="44">
@@ -52,6 +53,7 @@
                 </span>
                 <span class="hinted-input">
                 <input
+                    class="text-input"
                     type="text" minlength="1" spellcheck="off"
                     placeholder="Enter your passphrase here"
                     size="44" disabled>
@@ -61,6 +63,7 @@
         </div>
     </div>
 </div>
+<div class="strut"/>
 <div class="multi-input-block">
     <div class="input-block">
         <h3>Input</h3>
@@ -69,6 +72,7 @@
                 <label>
                     Plaintext:
                     <textarea
+                        class="text-input"
                         spellcheck="off" minlength="1"
                         placeholder="Text to be encrypted"
                         cols="44" rows="2"></textarea>
@@ -84,6 +88,7 @@
                 <label>
                     Associated context:
                     <textarea
+                        class="text-input"
                         spellcheck="off"
                         placeholder="Optional encryption context"
                         cols="44" rows="2"></textarea>
@@ -102,6 +107,7 @@
                 <label>
                     Ciphertext:
                     <textarea
+                        class="binary-input"
                         autocomplete="off" spellcheck="off"
                         placeholder="Encrypted data"
                         cols="44" rows="2"></textarea>
@@ -116,6 +122,7 @@
                 <label>
                     Ciphertext:
                     <textarea
+                        class="binary-input"
                         autocomplete="off" spellcheck="off"
                         placeholder="Encrypted data"
                         cols="44" rows="2"></textarea>
@@ -126,6 +133,7 @@
                 <label>
                     Authentication token:
                     <textarea
+                        class="binary-input"
                         autocomplete="off" spellcheck="off"
                         placeholder="Secure Cell data"
                         cols="44" rows="2"></textarea>
@@ -140,6 +148,7 @@
                 <label>
                     Ciphertext:
                     <textarea
+                        class="binary-input"
                         autocomplete="off" spellcheck="off"
                         placeholder="Encrypted data"
                         cols="44" rows="2"></textarea>
