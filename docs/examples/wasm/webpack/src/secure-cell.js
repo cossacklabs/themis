@@ -50,6 +50,16 @@ export function setupSecureCell() {
     const outputBoxContextImprint = document.getElementById('secure-cell-context-imprint-output')
     const errorBoxContextImprint = outputBoxContextImprint.querySelector('div.error-box')
 
+    function adjustTextAreaRows(area) {
+        // Non-BMP characters? Grapheme clusters? Emoji? Who uses *that*?
+        const rows = area.value.split('\n').reduce(((rows, row) => {
+            return rows + Math.floor((row.length + area.cols - 1) / area.cols)
+        }), 0)
+        if (rows <= 5 && area.rows < rows) {
+            area.rows = rows
+        }
+    }
+
     function encryptSealWithKey() {
         try {
             const decodedKey = Base64ToBytes(symmetricKeyInput.value)
@@ -61,6 +71,7 @@ export function setupSecureCell() {
 
             ciphertextSealArea.value = BytesToBase64(ciphertext)
             ciphertextSealLength.textContent = `${ciphertext.length} bytes`
+            adjustTextAreaRows(ciphertextSealArea)
 
             errorBoxSeal.textContent = ''
             errorBoxSeal.classList.add('hidden')
@@ -85,6 +96,7 @@ export function setupSecureCell() {
 
             plaintextArea.value = UTF8ArrayToString(plaintext)
             plaintextLength.textContent = `${plaintext.length} bytes`
+            adjustTextAreaRows(plaintextArea)
 
             errorBoxSeal.textContent = ''
             errorBoxSeal.classList.add('hidden')
@@ -109,6 +121,7 @@ export function setupSecureCell() {
 
             ciphertextSealArea.value = BytesToBase64(ciphertext)
             ciphertextSealLength.textContent = `${ciphertext.length} bytes`
+            adjustTextAreaRows(ciphertextSealArea)
 
             errorBoxSeal.textContent = ''
             errorBoxSeal.classList.add('hidden')
@@ -133,6 +146,7 @@ export function setupSecureCell() {
 
             plaintextArea.value = UTF8ArrayToString(plaintext)
             plaintextLength.textContent = `${plaintext.length} bytes`
+            adjustTextAreaRows(plaintextArea)
 
             errorBoxSeal.textContent = ''
             errorBoxSeal.classList.add('hidden')
@@ -157,9 +171,11 @@ export function setupSecureCell() {
 
             ciphertextTokenProtectArea.value = BytesToBase64(data)
             ciphertextTokenProtectLength.textContent = `${data.length} bytes`
+            adjustTextAreaRows(ciphertextTokenProtectArea)
 
             authTokenTokenProtectArea.value = BytesToBase64(token)
             authTokenTokenProtectLength.textContent = `${token.length} bytes`
+            adjustTextAreaRows(authTokenTokenProtectArea)
 
             errorBoxTokenProtect.textContent = ''
             errorBoxTokenProtect.classList.add('hidden')
@@ -188,6 +204,7 @@ export function setupSecureCell() {
 
             plaintextArea.value = UTF8ArrayToString(plaintext)
             plaintextLength.textContent = `${plaintext.length} bytes`
+            adjustTextAreaRows(plaintextArea)
 
             errorBoxTokenProtect.textContent = ''
             errorBoxTokenProtect.classList.add('hidden')
@@ -212,6 +229,7 @@ export function setupSecureCell() {
 
             ciphertextContextImprintArea.value = BytesToBase64(ciphertext)
             ciphertextContextImprintLength.textContent = `${ciphertext.length} bytes`
+            adjustTextAreaRows(ciphertextContextImprintArea)
 
             errorBoxContextImprint.textContent = ''
             errorBoxContextImprint.classList.add('hidden')
@@ -236,6 +254,7 @@ export function setupSecureCell() {
 
             plaintextArea.value = UTF8ArrayToString(plaintext)
             plaintextLength.textContent = `${plaintext.length} bytes`
+            adjustTextAreaRows(plaintextArea)
 
             errorBoxContextImprint.textContent = ''
             errorBoxContextImprint.classList.add('hidden')
@@ -364,5 +383,16 @@ export function setupSecureCell() {
         ciphertextContextImprintLength.textContent = `${encoded.length} bytes`
         update = decryptContextImprint
         decryptContextImprint()
+    })
+
+    const textAreas = [
+        plaintextArea,
+        ciphertextSealArea,
+        ciphertextTokenProtectArea,
+        authTokenTokenProtectArea,
+        ciphertextContextImprintArea,
+    ]
+    textAreas.forEach((area) => {
+        area.addEventListener('input', () => adjustTextAreaRows(area))
     })
 }
