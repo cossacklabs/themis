@@ -60,6 +60,15 @@ export function setupSecureCell() {
         }
     }
 
+    function massageErrorMessage(error) {
+        let message = error.toString()
+        const colonIndex = message.lastIndexOf(': ')
+        if (colonIndex != -1) {
+            message = message.slice(0, colonIndex) + ':<br>' + message.slice(colonIndex + 2)
+        }
+        return message
+    }
+
     function encryptSealWithKey() {
         try {
             const decodedKey = Base64ToBytes(symmetricKeyInput.value)
@@ -80,7 +89,7 @@ export function setupSecureCell() {
             ciphertextSealArea.value = ''
             ciphertextSealLength.textContent = '0 bytes'
 
-            errorBoxSeal.textContent = error.toString()
+            errorBoxSeal.innerHTML = massageErrorMessage(error)
             errorBoxSeal.classList.remove('hidden')
         }
     }
@@ -105,7 +114,7 @@ export function setupSecureCell() {
             plaintextArea.value = ''
             plaintextLength.textContent = '0 bytes'
 
-            errorBoxSeal.textContent = error.toString()
+            errorBoxSeal.innerHTML = massageErrorMessage(error)
             errorBoxSeal.classList.remove('hidden')
         }
     }
@@ -130,7 +139,7 @@ export function setupSecureCell() {
             ciphertextSealArea.value = ''
             ciphertextSealLength.textContent = '0 bytes'
 
-            errorBoxSeal.textContent = error.toString()
+            errorBoxSeal.innerHTML = massageErrorMessage(error)
             errorBoxSeal.classList.remove('hidden')
         }
     }
@@ -155,7 +164,7 @@ export function setupSecureCell() {
             plaintextArea.value = ''
             plaintextLength.textContent = '0 bytes'
 
-            errorBoxSeal.textContent = error.toString()
+            errorBoxSeal.innerHTML = massageErrorMessage(error)
             errorBoxSeal.classList.remove('hidden')
         }
     }
@@ -187,7 +196,7 @@ export function setupSecureCell() {
             authTokenTokenProtectArea.value = ''
             authTokenTokenProtectLength.textContent = '0 bytes'
 
-            errorBoxTokenProtect.textContent = error.toString()
+            errorBoxTokenProtect.innerHTML = massageErrorMessage(error)
             errorBoxTokenProtect.classList.remove('hidden')
         }
     }
@@ -213,7 +222,7 @@ export function setupSecureCell() {
             plaintextArea.value = ''
             plaintextLength.textContent = '0 bytes'
 
-            errorBoxTokenProtect.textContent = error.toString()
+            errorBoxTokenProtect.innerHTML = massageErrorMessage(error)
             errorBoxTokenProtect.classList.remove('hidden')
         }
     }
@@ -238,7 +247,7 @@ export function setupSecureCell() {
             ciphertextContextImprintArea.value = ''
             ciphertextContextImprintLength.textContent = '0 bytes'
 
-            errorBoxContextImprint.textContent = error.toString()
+            errorBoxContextImprint.innerHTML = massageErrorMessage(error)
             errorBoxContextImprint.classList.remove('hidden')
         }
     }
@@ -263,7 +272,7 @@ export function setupSecureCell() {
             plaintextArea.value = ''
             plaintextLength.textContent = '0 bytes'
 
-            errorBoxContextImprint.textContent = error.toString()
+            errorBoxContextImprint.innerHTML = massageErrorMessage(error)
             errorBoxContextImprint.classList.remove('hidden')
         }
     }
