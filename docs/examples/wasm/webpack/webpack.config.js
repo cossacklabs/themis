@@ -1,6 +1,7 @@
 const path = require('path')
 const CopyPlugin = require("copy-webpack-plugin")
 const HtmlPlugin = require('html-webpack-plugin')
+const SRIPlugin = require('webpack-subresource-integrity')
 
 module.exports = {
     mode: 'development',
@@ -8,6 +9,7 @@ module.exports = {
     output: {
         filename: 'main.js',
         path: path.resolve(__dirname, 'dist'),
+        crossOriginLoading: 'anonymous',
     },
     devtool: 'inline-source-map',
     devServer: {
@@ -25,6 +27,7 @@ module.exports = {
         }
     },
     // Bundle libthemis.wasm with the script.
+    // Compute SRI hash sum of the script and inject it into HTML.
     plugins: [
         new CopyPlugin({
             patterns: [
@@ -37,6 +40,9 @@ module.exports = {
         new HtmlPlugin({
             filename: 'index.html',
             template: 'src/index.html',
+        }),
+        new SRIPlugin({
+            hashFuncNames: ['sha256'],
         }),
     ],
     // libthemis.wasm and it's JS bundle is over 1 megabyte.
