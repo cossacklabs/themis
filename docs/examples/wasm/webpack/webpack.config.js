@@ -1,5 +1,6 @@
 const path = require('path')
 const CopyPlugin = require("copy-webpack-plugin")
+const HtmlPlugin = require('html-webpack-plugin')
 
 module.exports = {
     mode: 'development',
@@ -32,6 +33,10 @@ module.exports = {
                     to: '.'
                 },
             ],
+        }),
+        new HtmlPlugin({
+            filename: 'index.html',
+            template: 'src/index.html',
         }),
     ],
     // libthemis.wasm and it's JS bundle is over 1 megabyte.
