@@ -1,7 +1,7 @@
-var fs = require('fs')
-var themis = require('wasm-themis')
+import fs from 'fs'
+import themis from 'wasm-themis'
 
-var private_key_path, public_key_path
+let private_key_path, public_key_path
 switch (process.argv.length) {
     case 2:
         private_key_path = 'key'
@@ -17,7 +17,7 @@ switch (process.argv.length) {
 }
 
 themis.initialized.then(function() {
-    var keypair = new themis.KeyPair()
+    let keypair = new themis.KeyPair()
 
     fs.writeFile(private_key_path, keypair.privateKey, {'mode': 0o600}, function(err) {
         if (err) {
