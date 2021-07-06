@@ -5,7 +5,7 @@
 Changes that are currently in development and have not been released yet.
 
 
-## [0.13.11](https://github.com/cossacklabs/themis/releases/tag/0.13.11), June 30th 2021
+## [0.13.11](https://github.com/cossacklabs/themis/releases/tag/0.13.11), July 6th 2021
 
 **Hotfix for WasmThemis:**
 
