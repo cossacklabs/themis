@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/test-wasm.yaml'
+      - 'docs/examples/wasm/**'
       - 'src/soter/**'
       - 'src/themis/**'
       - 'src/wrappers/themis/wasm/**'
