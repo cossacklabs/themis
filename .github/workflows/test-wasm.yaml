@@ -29,10 +29,6 @@ env:
   # RNG tests tend to fail in virtualized environment due to /dev/random
   # not behaving properly. Disable them to avoid spurious failures.
   NO_NIST_STS: 1
-  # WasmThemis uses promises to handle asynchronous WebAssmebly compilation.
-  # Node.js by default prints a warning if the top-level promise is rejected.
-  # Make it rethrow the exception failing the tests in this case.
-  NODE_OPTIONS: --unhandled-rejections=strict
 
 jobs:
   build-wasmthemis:
