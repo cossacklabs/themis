@@ -25,6 +25,11 @@ body {
 
 textarea {
     display: block;
+    margin: 0.25em 0;
+}
+
+input[type="text"] {
+    margin: 0;
 }
 
 input[type="button"] {
@@ -35,7 +40,6 @@ textarea, input[type="text"] {
     border: 1px groove;
     font-family: monospace;
     font-size: 80%;
-    margin: 0;
     min-width: 10em;
     width: 44.5ch;
 }
