@@ -13,7 +13,7 @@
   "author": "Cossack Labs",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ilammy/wasm-themis-preview": "^0.13.11"
+    "wasm-themis": "^0.13.11"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^9.0.1",

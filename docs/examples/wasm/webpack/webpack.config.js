@@ -31,8 +31,7 @@ module.exports = {
     plugins: [
         new CopyPlugin({
             patterns: [
-                // FIXME: use "wasm-themis" instead of "@ilammy/wasm-themis-preview"
-                { from: 'node_modules/@ilammy/wasm-themis-preview/src/libthemis.wasm',
+                { from: 'node_modules/wasm-themis/src/libthemis.wasm',
                     to: '.'
                 },
             ],

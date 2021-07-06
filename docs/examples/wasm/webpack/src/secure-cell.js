@@ -1,5 +1,4 @@
-// FIXME: use 'wasm-themis' instead of '@ilammy/wasm-themis-preview'
-import themis from '@ilammy/wasm-themis-preview'
+import themis from 'wasm-themis'
 import { Base64ToBytes, BytesToBase64 } from './base64.js'
 import { StringToUTF8Array, UTF8ArrayToString } from './utf8.js'
 

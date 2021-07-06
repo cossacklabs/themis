@@ -1,5 +1,4 @@
-// FIXME: use 'wasm-themis' instead of '@ilammy/wasm-themis-preview'
-import themis from '@ilammy/wasm-themis-preview'
+import themis from 'wasm-themis'
 import { setupSecureCell } from './secure-cell.js'
 
 window.onload = function() {
