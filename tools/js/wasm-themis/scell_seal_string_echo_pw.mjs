@@ -1,21 +1,21 @@
-var themis = require('wasm-themis')
+import themis from 'wasm-themis'
 
-var command, key, message, context
+let command, passphrase, message, context
 if (5 <= process.argv.length && process.argv.length <= 6) {
     command = process.argv[2]
-    key     = process.argv[3]
+    passphrase = process.argv[3]
     message = process.argv[4]
     if (process.argv.length == 6) {
         context = process.argv[5]
     }
 } else {
-    console.log('usage: node scell_seal_string_echo.js <enc|dec> <key> <message> [<context>]')
+    console.log('usage: node scell_seal_string_echo.js {enc|dec} <passphrase> <message> [<context>]')
     process.exit(1);
 }
 
 themis.initialized.then(function() {
-    var cell = themis.SecureCellSeal.withKey(Buffer.from(key))
-    var result
+    let cell = themis.SecureCellSeal.withPassphrase(passphrase)
+    let result
     switch (command) {
         case 'enc':
             if (context) {
