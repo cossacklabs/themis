@@ -40,6 +40,16 @@ ifneq ($(NINJA),)
 SOTER_ENGINE_CMAKE_FLAGS += -G Ninja
 endif
 
+# Cross-compilation support for macOS
+ifdef IS_MACOS
+ifdef SDK
+SOTER_ENGINE_CMAKE_FLAGS += -DCMAKE_OSX_SYSROOT=$(SDK)
+endif
+ifdef ARCH
+SOTER_ENGINE_CMAKE_FLAGS += -DCMAKE_OSX_ARCHITECTURES=$(ARCH)
+endif
+endif
+
 ifdef IS_LINUX
 RENAME_BORINGSSL_SYMBOLS = yes
 endif
