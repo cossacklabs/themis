@@ -29,6 +29,10 @@ env:
   # RNG tests tend to fail in virtualized environment due to /dev/random
   # not behaving properly. Disable them to avoid spurious failures.
   NO_NIST_STS: 1
+  # WasmThemis uses promises to handle asynchronous WebAssmebly compilation.
+  # Node.js by default prints a warning if the top-level promise is rejected.
+  # Make it rethrow the exception failing the tests in this case.
+  NODE_OPTIONS: --unhandled-rejections=strict
 
 jobs:
   build-wasmthemis:
@@ -114,6 +118,12 @@ jobs:
           - 14.x  # current LTS
           - 16.x  # current stable
       fail-fast: false
+    env:
+      # WasmThemis uses promises to handle asynchronous WebAssmebly compilation.
+      # Node.js by default prints a warning if the top-level promise is rejected.
+      # Make it rethrow the exception failing the tests in this case.
+      # "--unhandled-rejections" is supported since Node.js v12.0.0, v10.17.0
+      NODE_OPTIONS: --unhandled-rejections=strict
     steps:
       - name: Install Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
