@@ -16,7 +16,7 @@ switch (process.argv.length) {
         process.exit(1)
 }
 
-themis.initialize().then(function() {
+themis.initialized.then(function() {
     let keypair = new themis.KeyPair()
 
     fs.writeFile(private_key_path, keypair.privateKey.data, {'mode': 0o600}, function(err) {

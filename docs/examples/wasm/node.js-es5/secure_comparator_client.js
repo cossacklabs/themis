@@ -1,7 +1,7 @@
 var net = require('net')
 var themis = require('wasm-themis')
 
-themis.initialize().then(function() {
+themis.initialized.then(function() {
     var comparator = new themis.SecureComparator(Buffer.from('secret'))
 
     var socket = new net.Socket()

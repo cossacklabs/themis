@@ -22,7 +22,7 @@ fs.readFile(privateKeyPath, function(err, privateKey) {
             console.log('failed to read ' + publicKeyPath + ': ' + err)
             process.exit(1)
         }
-        themis.initialize().then(function() {
+        themis.initialized.then(function() {
             privateKey = new themis.PrivateKey(privateKey)
             publicKey = new themis.PublicKey(publicKey)
             let smessage = new themis.SecureMessage(privateKey, publicKey)
