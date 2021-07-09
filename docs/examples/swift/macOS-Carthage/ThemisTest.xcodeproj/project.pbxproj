@@ -3,12 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		92E59668254AF4A800361564 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1294EC24E6D56100434ABB /* themis.framework */; };
-		92E59669254AF4A800361564 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1294EC24E6D56100434ABB /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6DCCB209264EFEB3008072EF /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB208264EFEB3008072EF /* themis.xcframework */; };
 		9F00E9D022412F8900EC1EF3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F00E9CF22412F8900EC1EF3 /* AppDelegate.swift */; };
 		9F00E9D222412F8B00EC1EF3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9D122412F8B00EC1EF3 /* Assets.xcassets */; };
 		9F00E9D522412F8B00EC1EF3 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9D322412F8B00EC1EF3 /* MainMenu.xib */; };
@@ -18,21 +17,8 @@
 		9F00E9EF224132A600EC1EF3 /* client.pub in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9EB224132A600EC1EF3 /* client.pub */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		92E5966A254AF4A800361564 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				92E59669254AF4A800361564 /* themis.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
+		6DCCB208264EFEB3008072EF /* themis.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = themis.xcframework; path = Carthage/Build/themis.xcframework; sourceTree = "<group>"; };
 		9F00E9CC22412F8900EC1EF3 /* ThemisTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThemisTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F00E9CF22412F8900EC1EF3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9F00E9D122412F8B00EC1EF3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -43,7 +29,6 @@
 		9F00E9E9224132A600EC1EF3 /* client.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.priv; sourceTree = "<group>"; };
 		9F00E9EA224132A600EC1EF3 /* server.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = server.priv; sourceTree = "<group>"; };
 		9F00E9EB224132A600EC1EF3 /* client.pub */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.pub; sourceTree = "<group>"; };
-		9F1294EC24E6D56100434ABB /* themis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = themis.framework; path = Carthage/Build/Mac/themis.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,7 +36,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				92E59668254AF4A800361564 /* themis.framework in Frameworks */,
+				6DCCB209264EFEB3008072EF /* themis.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,7 +76,7 @@
 		9F00E9DD224131B300EC1EF3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9F1294EC24E6D56100434ABB /* themis.framework */,
+				6DCCB208264EFEB3008072EF /* themis.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -117,7 +102,6 @@
 				9F00E9C822412F8900EC1EF3 /* Sources */,
 				9F00E9C922412F8900EC1EF3 /* Frameworks */,
 				9F00E9CA22412F8900EC1EF3 /* Resources */,
-				92E5966A254AF4A800361564 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -332,7 +316,7 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = ThemisTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -360,7 +344,7 @@
 				ENABLE_HARDENED_RUNTIME = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = ThemisTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

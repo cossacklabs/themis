@@ -23,7 +23,7 @@ on:
       - stable
       - release/*
   schedule:
-    - cron: '0 6 * * *' # every day at 6:00 UTC
+    - cron: '20 6 * * 1' # every Monday at 6:20 UTC
 
 env:
   WITH_FATAL_WARNINGS: yes
@@ -114,11 +114,28 @@ jobs:
   unit-tests-carthage:
     name: Unit tests (Carthage)
     runs-on: macos-latest
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+      # Work around Carthage braindeath and let it focus on building the project
+      # that actually matters not a gazillion of examples with SPM dependencies.
+      # If these issues get resolved, they might contain a better way:
+      # https://github.com/Carthage/Carthage/issues/3148
+      # https://github.com/Carthage/Carthage/issues/1227
+      - name: Remove Carthage distractions
+        run: |
+          rm -rf docs/examples/objc
+          rm -rf docs/examples/swift
+          rm -rf tests/objcthemis/objcthemis.xcworkspace
+          rm -rf tests/objcthemis/objcthemis.xcodeproj
       - name: Pull Carthage dependencies
-        run: carthage bootstrap
+        run: |
+          carthage bootstrap --use-xcframeworks
+      - name: Build Carthage projects
+        run: |
+          carthage build --no-skip-current --use-xcframeworks
       - name: Run unit tests (Swift 4, macOS)
         if: always()
         run: |
@@ -163,14 +180,28 @@ jobs:
   project-carthage:
     name: Carthage project
     runs-on: macos-latest
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+      # Work around Carthage braindeath and let it focus on building the project
+      # that actually matters not a gazillion of examples with SPM dependencies.
+      # If these issues get resolved, they might contain a better way:
+      # https://github.com/Carthage/Carthage/issues/3148
+      # https://github.com/Carthage/Carthage/issues/1227
+      - name: Remove Carthage distractions
+        run: |
+          rm -rf docs/examples/objc
+          rm -rf docs/examples/swift
+          rm -rf tests/objcthemis/objcthemis.xcworkspace
+          rm -rf tests/objcthemis/objcthemis.xcodeproj
       - name: Pull Carthage dependencies
-        run: carthage bootstrap
+        run: |
+          carthage bootstrap --use-xcframeworks
       - name: Build Carthage projects
         run: |
-          carthage build --no-skip-current
+          carthage build --no-skip-current --use-xcframeworks
 
   project-cocoapods:
     name: CocoaPods project
@@ -218,6 +249,8 @@ jobs:
   examples:
     name: Code examples
     runs-on: macos-latest
+    env:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -243,7 +276,7 @@ jobs:
       - name: Build ObjCThemis for Generic Device (Carthage)
         if: always()
         run: |
-          carthage bootstrap --platform iOS
+          carthage bootstrap --platform iOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -274,7 +307,7 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/objc/iOS-Carthage
-          carthage bootstrap --platform iOS
+          carthage bootstrap --platform iOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -287,7 +320,7 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/objc/macOS-Carthage
-          carthage bootstrap --platform macOS
+          carthage bootstrap --platform macOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -314,7 +347,7 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/swift/iOS-Carthage
-          carthage bootstrap --platform iOS
+          carthage bootstrap --platform iOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -327,7 +360,7 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/swift/macOS-Carthage
-          carthage bootstrap --platform macOS
+          carthage bootstrap --platform macOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \

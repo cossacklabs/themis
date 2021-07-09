@@ -36,6 +36,20 @@ CRYPTO_ENGINE_LDFLAGS += -lcrypto -ldecrepit -lpthread
 SOTER_ENGINE_CMAKE_FLAGS += -DCMAKE_BUILD_TYPE=Release
 SOTER_ENGINE_CMAKE_FLAGS += -DCMAKE_C_FLAGS="-fpic"
 
+ifneq ($(NINJA),)
+SOTER_ENGINE_CMAKE_FLAGS += -G Ninja
+endif
+
+# Cross-compilation support for macOS
+ifdef IS_MACOS
+ifdef SDK
+SOTER_ENGINE_CMAKE_FLAGS += -DCMAKE_OSX_SYSROOT=$(SDK)
+endif
+ifdef ARCH
+SOTER_ENGINE_CMAKE_FLAGS += -DCMAKE_OSX_ARCHITECTURES=$(ARCH)
+endif
+endif
+
 ifdef IS_LINUX
 RENAME_BORINGSSL_SYMBOLS = yes
 endif
@@ -60,7 +74,11 @@ $(BIN_PATH)/boringssl/crypto/libcrypto.a $(BIN_PATH)/boringssl/decrepit/libdecre
 	@mkdir -p $(BIN_PATH)/boringssl/stage-1
 	@cd $(BIN_PATH)/boringssl/stage-1 && \
 	 $(CMAKE) $(SOTER_ENGINE_CMAKE_FLAGS) $(abspath third_party/boringssl/src)
+ifeq ($(NINJA),)
 	@$(MAKE) -C $(BIN_PATH)/boringssl/stage-1 crypto decrepit
+else
+	@$(NINJA) -C $(BIN_PATH)/boringssl/stage-1 crypto decrepit
+endif
 	@mkdir -p $(BIN_PATH)/boringssl/crypto $(BIN_PATH)/boringssl/decrepit
 	@cp $(BIN_PATH)/boringssl/stage-1/crypto/libcrypto.a     $(BIN_PATH)/boringssl/crypto/libcrypto.a
 	@cp $(BIN_PATH)/boringssl/stage-1/decrepit/libdecrepit.a $(BIN_PATH)/boringssl/decrepit/libdecrepit.a
@@ -78,7 +96,11 @@ ifeq ($(RENAME_BORINGSSL_SYMBOLS),yes)
 	     -DBORINGSSL_PREFIX=$(SOTER_BORINGSSL_PREFIX) \
 	     -DBORINGSSL_PREFIX_SYMBOLS=../symbols.txt \
 	     $(abspath third_party/boringssl/src)
+ifeq ($(NINJA),)
 	@$(MAKE) -C $(BIN_PATH)/boringssl/stage-2 crypto decrepit
+else
+	@$(NINJA) -C $(BIN_PATH)/boringssl/stage-2 crypto decrepit
+endif
 	@mkdir -p $(BIN_PATH)/boringssl/crypto $(BIN_PATH)/boringssl/decrepit
 	@cp $(BIN_PATH)/boringssl/stage-2/crypto/libcrypto.a     $(BIN_PATH)/boringssl/crypto/libcrypto.a
 	@cp $(BIN_PATH)/boringssl/stage-2/decrepit/libdecrepit.a $(BIN_PATH)/boringssl/decrepit/libdecrepit.a

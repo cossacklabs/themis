@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.13.6"
+    s.version = "0.13.10"
     s.summary = "Data security library for network communication and data storage for iOS and mac OS"
     s.description = "Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis is aimed at modern development practices and has a unified API across 12 platforms, including iOS/macOS, Ruby, JavaScript, Python, and Java/Android."
     s.homepage = "https://cossacklabs.com"
@@ -23,8 +23,8 @@ Pod::Spec.new do |s|
 
     # This variant uses the current stable, non-legacy version of OpenSSL.
     s.subspec 'openssl-1.1.1' do |so|
-        # OpenSSL 1.1.1h
-        so.dependency 'CLOpenSSL', '1.1.10802'
+        # OpenSSL 1.1.1k
+        so.dependency 'CLOpenSSL-XCF', '1.1.11101'
 
         # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip
         so.ios.pod_target_xcconfig = {
@@ -33,13 +33,6 @@ Pod::Spec.new do |s|
             'BITCODE_GENERATION_MODE[config=Release]'   => 'bitcode',
             'BITCODE_GENERATION_MODE[config=Debug]'     => 'bitcode-marker'
         }
-
-        # As of version 1.1.10801, the framework produced by CLOpenSSL does not
-        # contain arm64 slice for iOS Simulator since it conflicts with arm64
-        # slice for the real iOS. Fixing this requires migration to XCFrameworks.
-        # See T1406 for current status of XCFrameworks.
-        so.ios.pod_target_xcconfig  = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
-        so.ios.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
 
         # We're building some C code here which uses includes as it pleases.
         # Allow this behavior, but we will have to control header mappings.
@@ -93,6 +86,11 @@ Pod::Spec.new do |s|
         end
     end
 
+    # ---------- WARNING! --------------------------------------------
+    # themis-boringssl is DEPRECATED and will be removed in version 0.14
+    # Switch to the default subspec in your Podfile: `pod 'themis'`
+    # ----------------------------------------------------------------
+
     # use `themis/themis-openssl` as separate target to use Themis with OpenSSL
     s.subspec 'themis-openssl' do |so|
         # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip
@@ -107,6 +105,7 @@ Pod::Spec.new do |s|
         # arm64 slices for iOS Simulator and macOS, and thus do not support
         # Apple Silicon. Disable building Themis for Apple Silicon until
         # GRKOpenSSLFramework gets proper arm64 support.
+        # Update: 1.0.2.20.2 still with no arm64 simulator support
         so.ios.pod_target_xcconfig  = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
         so.ios.user_target_xcconfig = { 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
         so.osx.pod_target_xcconfig  = { 'EXCLUDED_ARCHS' => 'arm64' }
@@ -173,6 +172,11 @@ Pod::Spec.new do |s|
         end
     end
 
+
+    # ---------- WARNING! ----------------------------------------------
+    # themis-boringssl is DEPRECATED and will be removed in version 0.14
+    # Switch to the default subspec in your Podfile: `pod 'themis'`
+    # ------------------------------------------------------------------
 
     # use `themis/themis-boringssl` as separate target to use Themis with BoringSSL
     s.subspec 'themis-boringssl' do |so|

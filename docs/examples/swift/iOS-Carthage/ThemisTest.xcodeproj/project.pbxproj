@@ -3,10 +3,12 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6DEC19AB265BD0360042EA63 /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB200264EFDC0008072EF /* themis.xcframework */; };
+		6DEC19AC265BD0360042EA63 /* themis.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB200264EFDC0008072EF /* themis.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F00E99A22410F7600EC1EF3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F00E99922410F7600EC1EF3 /* AppDelegate.swift */; };
 		9F00E99C22410F7600EC1EF3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F00E99B22410F7600EC1EF3 /* ViewController.swift */; };
 		9F00E99F22410F7600EC1EF3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E99D22410F7600EC1EF3 /* Main.storyboard */; };
@@ -16,10 +18,24 @@
 		9F00E9B92241172400EC1EF3 /* client.priv in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9B52241172400EC1EF3 /* client.priv */; };
 		9F00E9BA2241172400EC1EF3 /* server.priv in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9B62241172400EC1EF3 /* server.priv */; };
 		9F00E9BB2241172400EC1EF3 /* client.pub in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E9B72241172400EC1EF3 /* client.pub */; };
-		9F1444AF24E6D4ED008B6C73 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F1444AD24E6D4E7008B6C73 /* themis.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		6DEC19AD265BD0360042EA63 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6DEC19AC265BD0360042EA63 /* themis.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		6DCCB200264EFDC0008072EF /* themis.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = themis.xcframework; path = Carthage/Build/themis.xcframework; sourceTree = "<group>"; };
 		9F00E99622410F7600EC1EF3 /* ThemisTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ThemisTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F00E99922410F7600EC1EF3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9F00E99B22410F7600EC1EF3 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -31,7 +47,6 @@
 		9F00E9B52241172400EC1EF3 /* client.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.priv; sourceTree = "<group>"; };
 		9F00E9B62241172400EC1EF3 /* server.priv */ = {isa = PBXFileReference; lastKnownFileType = file; path = server.priv; sourceTree = "<group>"; };
 		9F00E9B72241172400EC1EF3 /* client.pub */ = {isa = PBXFileReference; lastKnownFileType = file; path = client.pub; sourceTree = "<group>"; };
-		9F1444AD24E6D4E7008B6C73 /* themis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = themis.framework; path = Carthage/Build/iOS/themis.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,7 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F1444AF24E6D4ED008B6C73 /* themis.framework in Frameworks */,
+				6DEC19AB265BD0360042EA63 /* themis.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -80,7 +95,7 @@
 		9F00E9AF224113A800EC1EF3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9F1444AD24E6D4E7008B6C73 /* themis.framework */,
+				6DCCB200264EFDC0008072EF /* themis.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -106,7 +121,7 @@
 				9F00E99222410F7600EC1EF3 /* Sources */,
 				9F00E99322410F7600EC1EF3 /* Frameworks */,
 				9F00E99422410F7600EC1EF3 /* Resources */,
-				6D7E2AB52537389A00B16F8F /* ShellScript */,
+				6DEC19AD265BD0360042EA63 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -166,28 +181,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		6D7E2AB52537389A00B16F8F /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/themis.framework",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(BUILT_PRODUCT_DIR)/$(FRAMEWORKS_FOLDER_PATH)/themis.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		9F00E99222410F7600EC1EF3 /* Sources */ = {
@@ -348,11 +341,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/ThemisTest/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
@@ -374,11 +368,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/ThemisTest/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;

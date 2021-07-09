@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/test-java.yaml'
       - '**/*gradle*'
+      - 'docs/examples/android/**'
       - 'jni/**'
       - 'src/soter/**'
       - 'src/themis/**'
@@ -20,7 +21,7 @@ on:
       - stable
       - release/*
   schedule:
-    - cron: '0 6 * * *' # every day at 6:00 UTC
+    - cron: '20 6 * * 1' # every Monday at 6:20 UTC
 
 env:
   WITH_FATAL_WARNINGS: yes
@@ -62,8 +63,15 @@ jobs:
 
   android-tests:
     name: Android emulator
-    runs-on: macos-latest
+    runs-on: macos-10.15
     steps:
+      # This particular version of CMake confuses Gradle by not being semver.
+      # We're fine with 3.10.2 which is also installed. Keep an eye on the
+      # virtual environments though:
+      # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#android
+      - name: Nuke CMake 3.18.1-g262b901
+        run: |
+          ~/Library/Android/sdk/tools/bin/sdkmanager --uninstall 'cmake;3.18.1'
       - name: Check out code
         uses: actions/checkout@v2
         with:
@@ -84,3 +92,42 @@ jobs:
         with:
           api-level: 29
           script: ./gradlew --no-daemon :android:connectedAndroidTest
+
+  android-example:
+    name: Example – AndroidThemis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      # Just build and run unit tests, don't launch the app or anything.
+      # Donations in the form of UI integration tests are welcome.
+      - name: Build AndroidThemis example
+        run: |
+          cd docs/examples/android
+          ./gradlew --no-daemon build
+
+  java-example:
+    name: Example project – JavaThemis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev default-jdk
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core with JNI
+        run: |
+          make all themis_jni
+          sudo make install themis_jni_install
+      - name: Build JavaThemis example
+        run: |
+          cd docs/examples/java
+          ./gradlew --no-daemon build
+      # Thus runs a bit of an abomination: Themis Core and JNI libs are built
+      # from source while JavaThemis binaries are installed from Maven Central.
+      - name: Run JavaThemis example
+        run: |
+          cd docs/examples/java
+          java -Djava.library.path=/usr/local/lib -jar app/build/libs/app.jar

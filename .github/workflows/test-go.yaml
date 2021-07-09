@@ -20,7 +20,7 @@ on:
       - stable
       - release/*
   schedule:
-    - cron: '0 6 * * *' # every day at 6:00 UTC
+    - cron: '20 6 * * 1' # every Monday at 6:20 UTC
 
 env:
   GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
@@ -32,7 +32,13 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        go: ['1.11.13', '1.12.17', '1.13.8', '1.14']
+        go:
+          - '1.11'
+          - '1.12'
+          - '1.13'
+          - '1.14'
+          - '1.15'
+          - '1.16'
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -44,18 +50,15 @@ jobs:
         uses: actions/setup-go@v1
         with:
           go-version: ${{ matrix.go }}
+      - run: go version
       - name: Check out code
         uses: actions/checkout@v2
       - name: Install Themis Core
         run: |
           make
           sudo make install
-      - name: Install GoThemis
-        run: |
-          mkdir -p ~/go/src/$GOTHEMIS_IMPORT
-          rsync -auv gothemis/ ~/go/src/$GOTHEMIS_IMPORT
       - name: Run test suite (Go ${{ matrix.go }})
-        run: make test_go
+        run: cd gothemis && go test -v ./...
 
   examples:
     name: Code examples

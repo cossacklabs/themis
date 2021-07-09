@@ -18,7 +18,7 @@ on:
       - stable
       - release/*
   schedule:
-    - cron: '0 6 * * *' # every day at 6:00 UTC
+    - cron: '20 6 * * 1' # every Monday at 6:20 UTC
 
 env:
   WITH_FATAL_WARNINGS: yes
@@ -31,9 +31,10 @@ jobs:
       matrix:
         node-version:
           - 8.x   # legacy
-          - 10.x  # old LTS
-          - 12.x  # current LTS
-          - 14.x  # current stable
+          - 10.x  # legacy
+          - 12.x  # old LTS
+          - 14.x  # current LTS
+          - 16.x  # current stable
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -60,16 +61,23 @@ jobs:
   examples:
     name: Code examples
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version:
+          - 12.x  # old LTS
+          - 14.x  # current LTS
+          - 16.x  # current stable
+      fail-fast: false
     steps:
       - name: Install system dependencies
         run: |
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev
-      - name: Install Node.js 10.x
+      - name: Install Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: 10.x
+          node-version: ${{ matrix.node-version }}
       - name: Check out code
         uses: actions/checkout@v2
       - name: Install Themis Core

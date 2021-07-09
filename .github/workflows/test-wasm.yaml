@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/test-wasm.yaml'
+      - 'docs/examples/wasm/**'
       - 'src/soter/**'
       - 'src/themis/**'
       - 'src/wrappers/themis/wasm/**'
@@ -21,7 +22,7 @@ on:
       - stable
       - release/*
   schedule:
-    - cron: '0 6 * * *' # every day at 6:00 UTC
+    - cron: '20 6 * * 1' # every Monday at 6:20 UTC
 
 env:
   WITH_FATAL_WARNINGS: yes
@@ -30,27 +31,15 @@ env:
   NO_NIST_STS: 1
 
 jobs:
-  unit-tests:
-    name: Unit tests
+  build-wasmthemis:
+    name: Build WasmThemis
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version:
-          - 8.x   # legacy
-          - 10.x  # old LTS
-          - 12.x  # current LTS
-          - 14.x  # current stable
-      fail-fast: false
     steps:
       - name: Install system dependencies
         run: |
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
-          sudo apt install --yes gcc make libssl-dev
-      - name: Install Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
+          sudo apt install --yes gcc make libssl-dev ninja-build
       - name: Install Emscripten
         run: |
           # Install Emscripten toolchain as described in documentation:
@@ -72,5 +61,290 @@ jobs:
         run: |
           source "$HOME/emsdk/emsdk_env.sh"
           emmake make test
+      - name: Pack build directory
+        run: tar cz build src/wrappers/themis/wasm > build.tgz
+      - name: Upload build directory
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: build.tgz
+          retention-days: 1 # can be dropped after this build is complete
+
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    needs: build-wasmthemis
+    strategy:
+      matrix:
+        node-version:
+          - 8.x   # legacy
+          - 10.x  # legacy
+          - 12.x  # old LTS
+          - 14.x  # current LTS
+          - 16.x  # current stable
+      fail-fast: false
+    steps:
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Download build directory
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+      - name: Unpack build directory
+        run: |
+          tar xf build.tgz
+          # Remove configuration of "build-wasmthemis" job.
+          # We have a different Node.js here and we're not in Emscripten env.
+          rm build/configure.mk
       - name: Run test suite (WasmThemis)
         run: make test_wasm
+
+  examples:
+    name: Code examples
+    runs-on: ubuntu-latest
+    needs: build-wasmthemis
+    strategy:
+      matrix:
+        node-version:
+          - 12.x  # old LTS
+          - 14.x  # current LTS
+          - 16.x  # current stable
+      fail-fast: false
+    env:
+      # WasmThemis uses promises to handle asynchronous WebAssmebly compilation.
+      # Node.js by default prints a warning if the top-level promise is rejected.
+      # Make it rethrow the exception failing the tests in this case.
+      # "--unhandled-rejections" is supported since Node.js v12.0.0, v10.17.0
+      NODE_OPTIONS: --unhandled-rejections=strict
+    steps:
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Download build directory
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+      - name: Unpack build directory
+        run: tar xf build.tgz
+      - name: Install WasmThemis
+        run: |
+          npm install ./build/wasm-themis.tgz
+      - name: Test examples (keygen, ES5)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es5
+          echo "Test keygen..."
+          node secure_keygen.js
+          echo "ok"
+      - name: Test examples (keygen, ES6)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es6
+          echo "Test keygen..."
+          node secure_keygen.mjs
+          echo "ok"
+      - name: Test examples (Secure Cell, ES5)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es5
+          echo "Test Secure Cell..."
+          node secure_cell.js
+          echo "ok"
+      - name: Test examples (Secure Cell, ES6)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es6
+          echo "Test Secure Cell..."
+          node secure_cell.mjs
+          echo "ok"
+      - name: Test examples (Secure Message, ES5)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es5
+          echo "Test Secure Message..."
+          alice=($(node secure_keygen.js | cut -c 14-))
+          bob=($(node secure_keygen.js | cut -c 14-))
+          enc=$(node secure_message.js enc "${alice[0]}" "${bob[1]}" message)
+          dec=$(node secure_message.js dec "${bob[0]}" "${alice[1]}" "$enc")
+          test "$dec" = "message"
+          echo "ok"
+      - name: Test examples (Secure Message, ES6)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es6
+          echo "Test Secure Message..."
+          alice=($(node secure_keygen.mjs | cut -c 14-))
+          bob=($(node secure_keygen.mjs | cut -c 14-))
+          enc=$(node secure_message.mjs enc "${alice[0]}" "${bob[1]}" message)
+          dec=$(node secure_message.mjs dec "${bob[0]}" "${alice[1]}" "$enc")
+          test "$dec" = "message"
+          echo "ok"
+      - name: Test examples (Secure Session, ES5)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es5
+          echo "Test Secure Session..."
+          node secure_session_server.js | tee server-output.txt &
+          sleep 1 # give the server time to launch
+          node secure_session_client.js | tee client-output.txt
+          killall node
+          grep -q 'Hello' server-output.txt
+          grep -q 'Hello' client-output.txt
+          echo "ok"
+      - name: Test examples (Secure Session, ES6)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es6
+          echo "Test Secure Session..."
+          node secure_session_server.mjs | tee server-output.txt &
+          sleep 1 # give the server time to launch
+          node secure_session_client.mjs | tee client-output.txt
+          killall node
+          grep -q 'Hello' server-output.txt
+          grep -q 'Hello' client-output.txt
+          echo "ok"
+      - name: Test examples (Secure Comparator, ES5)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es5
+          echo "Test Secure Comparator..."
+          node secure_comparator_server.js | tee server-output.txt &
+          sleep 1 # give the server time to launch
+          node secure_comparator_client.js | tee client-output.txt
+          killall node
+          grep -q 'compare equal: true' server-output.txt
+          grep -q 'compare equal: true' client-output.txt
+          echo "ok"
+      - name: Test examples (Secure Comparator, ES6)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/wasm/node.js-es6
+          echo "Test Secure Comparator..."
+          node secure_comparator_server.mjs | tee server-output.txt &
+          sleep 1 # give the server time to launch
+          node secure_comparator_client.mjs | tee client-output.txt
+          killall node
+          grep -q 'compare equal: true' server-output.txt
+          grep -q 'compare equal: true' client-output.txt
+          echo "ok"
+      - name: Test tools (keygen, ES5)
+        if: always()
+        run: |
+          echo "Test keygen..."
+          node ./tools/js/wasm-themis/keygen.js
+          test -e key
+          test -e key.pub
+          rm key key.pub
+          echo "ok"
+      - name: Test tools (keygen, ES6)
+        if: always()
+        run: |
+          echo "Test keygen..."
+          node ./tools/js/wasm-themis/keygen.mjs
+          test -e key
+          test -e key.pub
+          rm key key.pub
+          echo "ok"
+      - name: Test tools (Secure Cell, ES5)
+        if: always()
+        run: |
+          echo "Test Secure Cell (Seal)..."
+          enc=$(node ./tools/js/wasm-themis/scell_seal_string_echo.js \
+                    enc "master-key" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_seal_string_echo.js \
+                    dec "master-key" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+
+          echo "Test Secure Cell (Seal + passphrase)..."
+          enc=$(node ./tools/js/wasm-themis/scell_seal_string_echo_pw.js \
+                    enc "passphrase" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_seal_string_echo_pw.js \
+                    dec "passphrase" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+
+          echo "Test Secure Cell (Token Protect)..."
+          enc=$(node ./tools/js/wasm-themis/scell_token_string_echo.js \
+                    enc "master-key" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_token_string_echo.js \
+                    dec "master-key" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+
+          echo "Test Secure Cell (Context Imprint)..."
+          enc=$(node ./tools/js/wasm-themis/scell_context_string_echo.js \
+                    enc "master-key" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_context_string_echo.js \
+                    dec "master-key" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+      - name: Test tools (Secure Cell, ES6)
+        if: always()
+        run: |
+          echo "Test Secure Cell (Seal)..."
+          enc=$(node ./tools/js/wasm-themis/scell_seal_string_echo.mjs \
+                    enc "master-key" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_seal_string_echo.mjs \
+                    dec "master-key" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+
+          echo "Test Secure Cell (Seal + passphrase)..."
+          enc=$(node ./tools/js/wasm-themis/scell_seal_string_echo_pw.mjs \
+                    enc "passphrase" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_seal_string_echo_pw.mjs \
+                    dec "passphrase" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+
+          echo "Test Secure Cell (Token Protect)..."
+          enc=$(node ./tools/js/wasm-themis/scell_token_string_echo.mjs \
+                    enc "master-key" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_token_string_echo.mjs \
+                    dec "master-key" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+
+          echo "Test Secure Cell (Context Imprint)..."
+          enc=$(node ./tools/js/wasm-themis/scell_context_string_echo.mjs \
+                    enc "master-key" "message" "associated context")
+          dec=$(node ./tools/js/wasm-themis/scell_context_string_echo.mjs \
+                    dec "master-key" "$enc" "associated context")
+          test "$dec" = "message"
+          echo "ok"
+      - name: Test tools (Secure Message, ES5)
+        if: always()
+        run: |
+          echo "Test Secure Message (encryption)..."
+          enc=$(node ./tools/js/wasm-themis/smessage_encryption.js \
+                    enc ./tests/_integration/keys/client.priv \
+                        ./tests/_integration/keys/server.pub \
+                    "your secure message")
+          dec=$(node ./tools/js/wasm-themis/smessage_encryption.js \
+                    dec ./tests/_integration/keys/client.priv \
+                        ./tests/_integration/keys/server.pub \
+                    "$enc")
+          test "$dec" = "your secure message"
+          echo "ok"
+      - name: Test tools (Secure Message, ES6)
+        if: always()
+        run: |
+          echo "Test Secure Message (encryption)..."
+          enc=$(node ./tools/js/wasm-themis/smessage_encryption.mjs \
+                    enc ./tests/_integration/keys/client.priv \
+                        ./tests/_integration/keys/server.pub \
+                    "your secure message")
+          dec=$(node ./tools/js/wasm-themis/smessage_encryption.mjs \
+                    dec ./tests/_integration/keys/client.priv \
+                        ./tests/_integration/keys/server.pub \
+                    "$enc")
+          test "$dec" = "your secure message"
+          echo "ok"

@@ -3,10 +3,28 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6DB8748A26497B8C0022A1F6 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
+		6DB8748E26497B950022A1F6 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
+		6DB8749326497BEF0022A1F6 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
+		6DB8749426497C1E0022A1F6 /* openssl.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6DB8749726497C240022A1F6 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
+		6DB8749A26497C2B0022A1F6 /* openssl.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6DB8749D26497C300022A1F6 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
+		6DB874A026497C350022A1F6 /* openssl.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6DB874A326497C390022A1F6 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
+		6DB874A626497C3E0022A1F6 /* openssl.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6DCCB1D6264D3223008072EF /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB1D5264D3223008072EF /* themis.xcframework */; };
+		6DCCB1D9264D3233008072EF /* themis.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB1D5264D3223008072EF /* themis.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6DCCB1DC264D3246008072EF /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB1D5264D3223008072EF /* themis.xcframework */; };
+		6DCCB1DF264D324C008072EF /* themis.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB1D5264D3223008072EF /* themis.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6DCCB1E2264D325A008072EF /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB1D5264D3223008072EF /* themis.xcframework */; };
+		6DCCB1E5264D3261008072EF /* themis.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB1D5264D3223008072EF /* themis.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6DCCB1E8264D3269008072EF /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB1D5264D3223008072EF /* themis.xcframework */; };
+		6DCCB1EB264D3270008072EF /* themis.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB1D5264D3223008072EF /* themis.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F00E8E2223C1A3300EC1EF3 /* objcthemis.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24B5223A8FA8005CB63A /* objcthemis.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F00E8E3223C1A3300EC1EF3 /* scell_context_imprint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24B9223A8FA8005CB63A /* scell_context_imprint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F00E8E4223C1A3300EC1EF3 /* scell_seal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24BC223A8FA8005CB63A /* scell_seal.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -99,7 +117,6 @@
 		9F00E93D223C1AE600EC1EF3 /* secure_session_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A242E223A74AF005CB63A /* secure_session_utils.c */; };
 		9F00E93E223C1AE600EC1EF3 /* secure_session.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2438223A74AF005CB63A /* secure_session.c */; };
 		9F00E93F223C1AE600EC1EF3 /* sym_enc_message.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2431223A74AF005CB63A /* sym_enc_message.c */; };
-		9F00E941223C1AFA00EC1EF3 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E940223C1AFA00EC1EF3 /* openssl.framework */; };
 		9F0BBCE924E6FC820073CA52 /* themis.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F0BBCE824E6FC810073CA52 /* themis.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F0BBCEA24E6FC820073CA52 /* themis.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F0BBCE824E6FC810073CA52 /* themis.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F33485823B38D9B00368291 /* soter_kdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F33485723B38D9B00368291 /* soter_kdf.c */; };
@@ -198,7 +215,6 @@
 		9F4A2622223ABEF2005CB63A /* sym_enc_message.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2431223A74AF005CB63A /* sym_enc_message.c */; };
 		9F6B385523D9D11600EA5D1B /* secure_cell_seal_passphrase.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B385423D9D11600EA5D1B /* secure_cell_seal_passphrase.c */; };
 		9F6B385623D9D11600EA5D1B /* secure_cell_seal_passphrase.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B385423D9D11600EA5D1B /* secure_cell_seal_passphrase.c */; };
-		9F70B2C1241D0FEC009CB629 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E8D7223C197900EC1EF3 /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F70B2D0241D1043009CB629 /* SecureComparatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2C7241D1042009CB629 /* SecureComparatorTests.m */; };
 		9F70B2D1241D1043009CB629 /* SecureCellTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2C8241D1042009CB629 /* SecureCellTests.m */; };
 		9F70B2D2241D1043009CB629 /* SecureComparatorTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CA241D1042009CB629 /* SecureComparatorTestsSwift.swift */; };
@@ -207,10 +223,6 @@
 		9F70B2D6241D1043009CB629 /* SecureCellTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CF241D1043009CB629 /* SecureCellTestsSwift.swift */; };
 		9F70B2D8241D1064009CB629 /* objthemis-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F70B2C9241D1042009CB629 /* objthemis-Bridging-Header.h */; };
 		9F70B2D9241D1065009CB629 /* StaticKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F70B2CC241D1043009CB629 /* StaticKeys.h */; };
-		9F70B2DD241D16B4009CB629 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E940223C1AFA00EC1EF3 /* openssl.framework */; };
-		9F70B2E1241D1753009CB629 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E8D7223C197900EC1EF3 /* themis.framework */; };
-		9F70B2E2241D175E009CB629 /* openssl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E940223C1AFA00EC1EF3 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9F70B2EC241D17A3009CB629 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4A24A1223A8D7F005CB63A /* themis.framework */; };
 		9F70B2F3241D17BF009CB629 /* objthemis-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F70B2C9241D1042009CB629 /* objthemis-Bridging-Header.h */; };
 		9F70B2F4241D17C2009CB629 /* StaticKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F70B2CC241D1043009CB629 /* StaticKeys.h */; };
 		9F70B2F5241D17CB009CB629 /* SecureCellTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2C8241D1042009CB629 /* SecureCellTests.m */; };
@@ -219,9 +231,6 @@
 		9F70B2F8241D17D0009CB629 /* SecureComparatorTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CA241D1042009CB629 /* SecureComparatorTestsSwift.swift */; };
 		9F70B2F9241D17D1009CB629 /* SecureMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CE241D1043009CB629 /* SecureMessageTests.m */; };
 		9F70B2FA241D17D3009CB629 /* SecureMessageTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CB241D1042009CB629 /* SecureMessageTestsSwift.swift */; };
-		9F70B2FB241D17D8009CB629 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBD853C223BFB5E009EAEB3 /* openssl.framework */; };
-		9F70B2FD241D17F0009CB629 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4A24A1223A8D7F005CB63A /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9F70B2FE241D17F2009CB629 /* openssl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBD853C223BFB5E009EAEB3 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F70B3072420E16E009CB629 /* objthemis-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F70B2C9241D1042009CB629 /* objthemis-Bridging-Header.h */; };
 		9F70B3082420E16E009CB629 /* StaticKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F70B2CC241D1043009CB629 /* StaticKeys.h */; };
 		9F70B30A2420E16E009CB629 /* SecureComparatorTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CA241D1042009CB629 /* SecureComparatorTestsSwift.swift */; };
@@ -230,10 +239,6 @@
 		9F70B30D2420E16E009CB629 /* SecureMessageTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CB241D1042009CB629 /* SecureMessageTestsSwift.swift */; };
 		9F70B30E2420E16E009CB629 /* SecureMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CE241D1043009CB629 /* SecureMessageTests.m */; };
 		9F70B30F2420E16E009CB629 /* SecureCellTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CF241D1043009CB629 /* SecureCellTestsSwift.swift */; };
-		9F70B3112420E16E009CB629 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4A24A1223A8D7F005CB63A /* themis.framework */; };
-		9F70B3122420E16E009CB629 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBD853C223BFB5E009EAEB3 /* openssl.framework */; };
-		9F70B3142420E16E009CB629 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F4A24A1223A8D7F005CB63A /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9F70B3152420E16E009CB629 /* openssl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBD853C223BFB5E009EAEB3 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F70B31F2420E176009CB629 /* objthemis-Bridging-Header.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F70B2C9241D1042009CB629 /* objthemis-Bridging-Header.h */; };
 		9F70B3202420E176009CB629 /* StaticKeys.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F70B2CC241D1043009CB629 /* StaticKeys.h */; };
 		9F70B3222420E176009CB629 /* SecureCellTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CF241D1043009CB629 /* SecureCellTestsSwift.swift */; };
@@ -242,17 +247,12 @@
 		9F70B3252420E176009CB629 /* SecureComparatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2C7241D1042009CB629 /* SecureComparatorTests.m */; };
 		9F70B3262420E176009CB629 /* SecureComparatorTestsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CA241D1042009CB629 /* SecureComparatorTestsSwift.swift */; };
 		9F70B3272420E176009CB629 /* SecureMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F70B2CE241D1043009CB629 /* SecureMessageTests.m */; };
-		9F70B3292420E176009CB629 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E940223C1AFA00EC1EF3 /* openssl.framework */; };
-		9F70B32A2420E176009CB629 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E8D7223C197900EC1EF3 /* themis.framework */; };
-		9F70B32C2420E176009CB629 /* themis.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E8D7223C197900EC1EF3 /* themis.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9F70B32D2420E176009CB629 /* openssl.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9F00E940223C1AFA00EC1EF3 /* openssl.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F874AB322CCB0D100E8DECA /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB122CCB0D100E8DECA /* soter_ec_key.c */; };
 		9F874AB422CCB0D100E8DECA /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB122CCB0D100E8DECA /* soter_ec_key.c */; };
 		9F874AB522CCB0D100E8DECA /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */; };
 		9F874AB622CCB0D100E8DECA /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */; };
 		9F98F32822CCEB0E008E14E6 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F98F32722CCEB0E008E14E6 /* soter_wipe.c */; };
 		9F98F32922CCEB0E008E14E6 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F98F32722CCEB0E008E14E6 /* soter_wipe.c */; };
-		9FBD853D223BFB5E009EAEB3 /* openssl.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FBD853C223BFB5E009EAEB3 /* openssl.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -293,8 +293,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9F70B2C1241D0FEC009CB629 /* themis.framework in Embed Frameworks */,
-				9F70B2E2241D175E009CB629 /* openssl.framework in Embed Frameworks */,
+				6DCCB1EB264D3270008072EF /* themis.xcframework in Embed Frameworks */,
+				6DB874A626497C3E0022A1F6 /* openssl.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -305,8 +305,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9F70B2FD241D17F0009CB629 /* themis.framework in Embed Frameworks */,
-				9F70B2FE241D17F2009CB629 /* openssl.framework in Embed Frameworks */,
+				6DCCB1E5264D3261008072EF /* themis.xcframework in Embed Frameworks */,
+				6DB874A026497C350022A1F6 /* openssl.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -317,8 +317,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9F70B3142420E16E009CB629 /* themis.framework in Embed Frameworks */,
-				9F70B3152420E16E009CB629 /* openssl.framework in Embed Frameworks */,
+				6DCCB1D9264D3233008072EF /* themis.xcframework in Embed Frameworks */,
+				6DB8749426497C1E0022A1F6 /* openssl.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -329,8 +329,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				9F70B32C2420E176009CB629 /* themis.framework in Embed Frameworks */,
-				9F70B32D2420E176009CB629 /* openssl.framework in Embed Frameworks */,
+				6DCCB1DF264D324C008072EF /* themis.xcframework in Embed Frameworks */,
+				6DB8749A26497C2B0022A1F6 /* openssl.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -338,8 +338,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		6DB8748926497B8B0022A1F6 /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = Carthage/Build/openssl.xcframework; sourceTree = "<group>"; };
+		6DCCB1D5264D3223008072EF /* themis.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = themis.xcframework; path = Carthage/Build/themis.xcframework; sourceTree = "<group>"; };
 		9F00E8D7223C197900EC1EF3 /* themis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = themis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9F00E940223C1AFA00EC1EF3 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Carthage/Build/Mac/openssl.framework; sourceTree = "<group>"; };
 		9F0BBCE824E6FC810073CA52 /* themis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = themis.h; path = "src/wrappers/themis/Obj-C/Themis/themis.h"; sourceTree = "<group>"; };
 		9F33485723B38D9B00368291 /* soter_kdf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_kdf.c; path = src/soter/openssl/soter_kdf.c; sourceTree = "<group>"; };
 		9F34EA3023D9CA0A0079A1D7 /* secure_cell_seal_passphrase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = secure_cell_seal_passphrase.h; path = src/themis/secure_cell_seal_passphrase.h; sourceTree = "<group>"; };
@@ -511,7 +512,6 @@
 		9F98F32722CCEB0E008E14E6 /* soter_wipe.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_wipe.c; path = src/soter/openssl/soter_wipe.c; sourceTree = "<group>"; };
 		9FB1BC9A233BEC9900930861 /* themis_portable_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = themis_portable_endian.h; path = src/themis/themis_portable_endian.h; sourceTree = "<group>"; };
 		9FB1BC9D233BECB900930861 /* soter_portable_endian.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = soter_portable_endian.h; path = src/soter/soter_portable_endian.h; sourceTree = "<group>"; };
-		9FBD853C223BFB5E009EAEB3 /* openssl.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = openssl.framework; path = Carthage/Build/iOS/openssl.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -519,7 +519,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F00E941223C1AFA00EC1EF3 /* openssl.framework in Frameworks */,
+				6DB8748E26497B950022A1F6 /* openssl.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -527,7 +527,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9FBD853D223BFB5E009EAEB3 /* openssl.framework in Frameworks */,
+				6DB8748A26497B8C0022A1F6 /* openssl.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -535,8 +535,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F70B2DD241D16B4009CB629 /* openssl.framework in Frameworks */,
-				9F70B2E1241D1753009CB629 /* themis.framework in Frameworks */,
+				6DCCB1E8264D3269008072EF /* themis.xcframework in Frameworks */,
+				6DB874A326497C390022A1F6 /* openssl.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -544,8 +544,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F70B2EC241D17A3009CB629 /* themis.framework in Frameworks */,
-				9F70B2FB241D17D8009CB629 /* openssl.framework in Frameworks */,
+				6DCCB1E2264D325A008072EF /* themis.xcframework in Frameworks */,
+				6DB8749D26497C300022A1F6 /* openssl.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -553,8 +553,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F70B3112420E16E009CB629 /* themis.framework in Frameworks */,
-				9F70B3122420E16E009CB629 /* openssl.framework in Frameworks */,
+				6DB8749326497BEF0022A1F6 /* openssl.xcframework in Frameworks */,
+				6DCCB1D6264D3223008072EF /* themis.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -562,8 +562,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9F70B3292420E176009CB629 /* openssl.framework in Frameworks */,
-				9F70B32A2420E176009CB629 /* themis.framework in Frameworks */,
+				6DCCB1DC264D3246008072EF /* themis.xcframework in Frameworks */,
+				6DB8749726497C240022A1F6 /* openssl.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -742,8 +742,8 @@
 		9F4A2476223A885F005CB63A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				9F70B2DC241D16A9009CB629 /* iOS */,
-				9F70B2DB241D16A2009CB629 /* macOS */,
+				6DCCB1D5264D3223008072EF /* themis.xcframework */,
+				6DB8748926497B8B0022A1F6 /* openssl.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -801,22 +801,6 @@
 				9F70B2CD241D1043009CB629 /* Info.plist */,
 			);
 			name = Tests;
-			sourceTree = "<group>";
-		};
-		9F70B2DB241D16A2009CB629 /* macOS */ = {
-			isa = PBXGroup;
-			children = (
-				9F00E940223C1AFA00EC1EF3 /* openssl.framework */,
-			);
-			name = macOS;
-			sourceTree = "<group>";
-		};
-		9F70B2DC241D16A9009CB629 /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				9FBD853C223BFB5E009EAEB3 /* openssl.framework */,
-			);
-			name = iOS;
 			sourceTree = "<group>";
 		};
 		9F7E521D2571DE970054558B /* include */ = {
@@ -947,6 +931,8 @@
 			dependencies = (
 			);
 			name = "Themis (macOS)";
+			packageProductDependencies = (
+			);
 			productName = "Themis (macOS)";
 			productReference = 9F00E8D7223C197900EC1EF3 /* themis.framework */;
 			productType = "com.apple.product-type.framework";
@@ -964,6 +950,8 @@
 			dependencies = (
 			);
 			name = "Themis (iOS)";
+			packageProductDependencies = (
+			);
 			productName = Themis;
 			productReference = 9F4A24A1223A8D7F005CB63A /* themis.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1077,6 +1065,8 @@
 				Base,
 			);
 			mainGroup = 738B81052239809D00A9947C;
+			packageReferences = (
+			);
 			productRefGroup = 738B81102239809D00A9947C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -1389,7 +1379,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -1412,7 +1402,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MARKETING_VERSION = 0.13.6;
+				MARKETING_VERSION = 0.13.8;
 				ONLY_ACTIVE_ARCH = YES;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -1455,7 +1445,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1472,7 +1462,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MARKETING_VERSION = 0.13.6;
+				MARKETING_VERSION = 0.13.8;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1484,6 +1474,7 @@
 		9F00E8DC223C197A00EC1EF3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 9;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1491,7 +1482,7 @@
 				EXPORTED_SYMBOLS_FILE = "$(PROJECT_DIR)/src/wrappers/themis/Obj-C/exported.symbols";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = (
@@ -1506,6 +1497,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.13.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1518,6 +1510,7 @@
 		9F00E8DD223C197A00EC1EF3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CURRENT_PROJECT_VERSION = 9;
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -1525,7 +1518,7 @@
 				EXPORTED_SYMBOLS_FILE = "$(PROJECT_DIR)/src/wrappers/themis/Obj-C/exported.symbols";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = (
@@ -1540,6 +1533,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.13.9;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1552,7 +1546,11 @@
 		9F4A24A7223A8D7F005CB63A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 10;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1562,7 +1560,7 @@
 				EXPORTED_SYMBOLS_FILE = "$(PROJECT_DIR)/src/wrappers/themis/Obj-C/exported.symbols";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/include",
@@ -1576,6 +1574,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.13.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1589,7 +1588,11 @@
 		9F4A24A8223A8D7F005CB63A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 10;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_ASSET_PATHS = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1599,7 +1602,7 @@
 				EXPORTED_SYMBOLS_FILE = "$(PROJECT_DIR)/src/wrappers/themis/Obj-C/exported.symbols";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/include",
@@ -1613,6 +1616,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.13.10;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1628,7 +1632,7 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = tests/objcthemis/objthemis/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1650,7 +1654,7 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = tests/objcthemis/objthemis/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1674,7 +1678,7 @@
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = tests/objcthemis/objthemis/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1698,7 +1702,7 @@
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = tests/objcthemis/objthemis/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1722,7 +1726,7 @@
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = tests/objcthemis/objthemis/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1746,7 +1750,7 @@
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = tests/objcthemis/objthemis/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1768,7 +1772,7 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = tests/objcthemis/objthemis/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1790,7 +1794,7 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/Mac",
+					"$(PROJECT_DIR)/Carthage/Build",
 				);
 				INFOPLIST_FILE = tests/objcthemis/objthemis/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

@@ -1,0 +1,27 @@
+[package]
+name = "rust-themis-bench"
+version = "0.0.0"
+edition = "2018"
+publish = false
+
+[dependencies]
+themis = { version = "0.13", path = "../../src/wrappers/themis/rust" }
+
+[dev-dependencies]
+criterion = { version = "0.3.4", features = ["cargo_bench_support", "html_reports"] }
+
+[[bench]]
+name = "secure_cell_seal_master_key"
+harness = false
+
+[[bench]]
+name = "secure_cell_token_protect_master_key"
+harness = false
+
+[[bench]]
+name = "secure_cell_context_imprint_master_key"
+harness = false
+
+[[bench]]
+name = "secure_cell_seal_passphrase"
+harness = false

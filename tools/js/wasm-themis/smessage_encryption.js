@@ -1,7 +1,7 @@
-const fs = require('fs')
-const themis = require('wasm-themis')
+var fs = require('fs')
+var themis = require('wasm-themis')
 
-let command, privateKeyPath, publicKeyPath, message
+var command, privateKeyPath, publicKeyPath, message
 if (process.argv.length == 6) {
     command = process.argv[2]
     privateKeyPath = process.argv[3]
@@ -25,10 +25,10 @@ fs.readFile(privateKeyPath, function(err, privateKey) {
         themis.initialize().then(function() {
             privateKey = new themis.PrivateKey(privateKey)
             publicKey = new themis.PublicKey(publicKey)
-            let smessage = new themis.SecureMessage(privateKey, publicKey)
-            let smessage_sign = new themis.SecureMessageSign(privateKey)
-            let smessage_verify = new themis.SecureMessageVerify(publicKey)
-            let result
+            var smessage = new themis.SecureMessage(privateKey, publicKey)
+            var smessage_sign = new themis.SecureMessageSign(privateKey)
+            var smessage_verify = new themis.SecureMessageVerify(publicKey)
+            var result
             switch (command) {
                 case 'enc':
                     result = smessage.encrypt(Buffer.from(message))

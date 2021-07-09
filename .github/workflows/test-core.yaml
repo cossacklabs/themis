@@ -23,7 +23,7 @@ on:
       - stable
       - release/*
   schedule:
-    - cron: '0 6 * * *' # every day at 6:00 UTC
+    - cron: '20 6 * * 1' # every Monday at 6:20 UTC
 
 env:
   WITH_FATAL_WARNINGS: yes
@@ -185,12 +185,20 @@ jobs:
       - name: Benchmark Secure Cell (master key)
         run: |
           cd benches/themis
-          cargo bench -- 'Secure Cell .* master key/4 KB'
+          cargo bench -- '^Secure Cell .* master key/4 KB'
       - name: Benchmark Secure Cell (passphrase)
         run: |
           cd benches/themis
           # These are awfully slow due to KDF
-          cargo bench -- 'Secure Cell .* passphrase/4 KB' --sample-size 10
+          cargo bench -- '^Secure Cell .* passphrase/4 KB' --sample-size 10
+      - name: Benchmark Secure Message (RSA)
+        run: |
+          cd benches/themis
+          cargo bench -- '^Secure Message .* - RSA/4 KB'
+      - name: Benchmark Secure Message (ECDSA)
+        run: |
+          cd benches/themis
+          cargo bench -- '^Secure Message .* - ECDSA/4 KB'
       - name: Upload benchmark report
         uses: actions/upload-artifact@v1
         with:
@@ -289,7 +297,7 @@ jobs:
         run: |
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
-          sudo apt install --yes gcc make libssl-dev valgrind
+          sudo apt install --yes gcc make libssl-dev valgrind ninja-build
       - name: Check out code
         uses: actions/checkout@v2
         with:
@@ -397,3 +405,31 @@ jobs:
           echo "Secure Session: socket interface"
           cc -o session_test client.c server.c session_test.c -lthemis -pthread
           ./session_test
+
+  macos-cross-compile:
+    name: macOS cross toolchain
+    runs-on: macos-10.15
+    steps:
+      - name: Install system dependencies
+        run: |
+          brew install cmake ninja
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+      # We can't test OpenSSL builds since this requires OpenSSL libraries
+      # built for the target architecture (and Homebrew doesn't have any).
+      #
+      # GitHub's virtual environemnts can change the default version of Xcode
+      # and that changes the available SDKs. Check the combinations here:
+      # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#xcode
+      - name: Build Themis Core (BoringSSL, arm64)
+        run: make SDK=macosx11.1 ARCH=arm64 ENGINE=boringssl
+      # Of course we can't run unit tests either because there is no emulator.
+      # So I will be satisifed to see the build succeed and produce binaries
+      # with expected architecture.
+      - name: Check binary architecture
+        run: |
+          set -x
+          test $(lipo -archs build/libsoter.0.dylib) = arm64
+          test $(lipo -archs build/libthemis.0.dylib) = arm64
