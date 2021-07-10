@@ -14,7 +14,7 @@
     "dist-es6/libthemis.wasm"
   ],
   "scripts": {
-    "test": "ts-mocha -p tsconfig.json test/test.js",
+    "test": "find test -name *.js | sort | xargs -L1 ts-mocha -p tsconfig.json",
     "tsc-es5": "tsc -t es5 -m commonjs --outDir dist && cp src/libthemis* src/.npmignore dist/",
     "tsc-es6": "tsc -t es6 -m es6 --outDir dist-es6 && cp src/libthemis* src/.npmignore dist-es6/",
     "prepare": "npm run tsc-es5 && npm run tsc-es6"
