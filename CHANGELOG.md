@@ -4,6 +4,20 @@
 
 Changes that are currently in development and have not been released yet.
 
+
+## [0.13.11](https://github.com/cossacklabs/themis/releases/tag/0.13.11), July 6th 2021
+
+**Hotfix for WasmThemis:**
+
+- Fixed issue when bundling WasmThemis with webpack ([#779](https://github.com/cossacklabs/themis/issue/779)).
+
+_Code:_
+
+- **WebAssembly**
+
+  - Fixed issue with `TypeError: TextEncoder is not a constructor` when bundling WasmThemis with webpack ([#779](https://github.com/cossacklabs/themis/issue/779)).
+
+
 ## [0.13.10](https://github.com/cossacklabs/themis/releases/tag/0.13.10), May 26th 2021
 
 **Deprecation Notice for CocoaPods users:**

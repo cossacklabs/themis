@@ -1,6 +1,6 @@
 {
   "name": "wasm-themis",
-  "version": "0.13.1",
+  "version": "0.13.11",
   "description": "Themis is a convenient cryptographic library for data protection.",
   "main": "src/index.js",
   "scripts": {
@@ -22,9 +22,7 @@
     "url": "https://github.com/cossacklabs/themis/issues"
   },
   "homepage": "https://www.cossacklabs.com/themis/",
-  "dependencies": {
-    "fastestsmallesttextencoderdecoder": "^1.0.14"
-  },
+  "dependencies": {},
   "devDependencies": {
     "mocha": "^7.1.1"
   }
