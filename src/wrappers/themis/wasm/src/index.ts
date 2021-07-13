@@ -14,6 +14,7 @@
 
 import context from "./context";
 import libthemisFn from "./libthemis.js";
+import { ThemisError, ThemisErrorCode } from "./themis_error";
 
 export { SecureCellSeal } from "./secure_cell_seal";
 export { SecureCellTokenProtect } from "./secure_cell_token_protect";
@@ -41,6 +42,8 @@ let onRuntimeInitialized: () => void
 // is expected to call, then await the result to resolve before using
 // other WasmThemis functions.
 
+let libthemisInitialized = false;
+
 /**
  * Initialize WasmThemis.
  *
@@ -54,15 +57,26 @@ let onRuntimeInitialized: () => void
  *
  * @param wasmPath URL of `libthemis.wasm` to download.
  *
+ * @throws {ThemisError} is thrown if this function is called more than once,
+ * or if WasmThemis has been already initialized via `initialized`.
+ *
  * @since WasmThemis 0.14.0
  */
 export const initialize = async (wasmPath?: string) => {
+  if (libthemisInitialized) {
+    throw new ThemisError(
+      'initialize',
+      ThemisErrorCode.FAIL,
+      'WasmThemis can only be initalized once',
+    );
+  }
   context.libthemis = await libthemisFn({
     onRuntimeInitialized: () => onRuntimeInitialized(),
     locateFile: wasmPath ? function () {
       return wasmPath;
     } : undefined,
   });
+  libthemisInitialized = true;
 
   return context.libthemis;
 };
@@ -143,6 +157,9 @@ class InitializedPromise {
  * WebAssembly code is expected to be located in `libthemis.wasm` file
  * in the same directory as the executing script.
  * If you need to use a custom location, call `initialize()`.
+ *
+ * Note that you cannot use `initialize()` after WasmThemis has been initialized
+ * using this promise.
  *
  * @see initialize
  */
