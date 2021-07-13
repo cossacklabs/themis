@@ -47,9 +47,10 @@ let onRuntimeInitialized: () => void
  * This function **must** be called and awaited before using any WasmThemis interfaces.
  * It will download and compile WebAssembly code of WasmThemis.
  *
- * If you are hosting WebAssembly code on a CDN or at a non-standard location,
- * you should pass the URL as an argument.
- * Otherwise, `libthemis.wasm` will be downloaded, relative to the script.
+ * If you are hosting `libthemis.wasm` on a CDN or at a non-standard location,
+ * pass URL to `libthemis.wasm` as an argument.
+ * If URL is omitted, `libthemis.wasm` is expected to be located in the same directory
+ * as the executing script.
  *
  * @param wasmPath URL of `libthemis.wasm` to download.
  *
@@ -67,13 +68,13 @@ export const initialize = async (wasmPath?: string) => {
 };
 
 // However, it was not always the case. Previously, WasmThemis has exported
-// just "initialzed" promise which is resolved once WASM code is downloaded
+// just "initialized" promise which is resolved once WASM code is downloaded
 // and compiled. User code is expected to await for that promise to resolve,
 // then proceed using WasmThemis functions.
 //
 // Back in the day, WasmThemis was not modularized, so the download & compile
-// was initialized immediately once JS code of WasmThemis got loaded and the
-// module was evalated.
+// was initiated immediately once JS code of WasmThemis got loaded and the
+// module was evaluated.
 //
 // Obviously, there is no way to pass any parameters to this promise either.
 //
@@ -87,8 +88,8 @@ export const initialize = async (wasmPath?: string) => {
 // that WasmThemis is loaded by the time it's needed. This should be rare.
 // Users have been warned.
 
-// TypeScript does not allow to extend Promise nicely [1], but since JavaScript
-// is actually duck-typed, we can just mimick the API and get away with it.
+// TypeScript does not allow to extend Promise nicely in ES5 [1], but since
+// JavaScript is actually duck-typed, we can just mimick the API.
 // [1]: https://github.com/microsoft/TypeScript/issues/15202
 class InitializedPromise {
   private initialized: boolean = false;
@@ -132,14 +133,15 @@ class InitializedPromise {
 }
 
 /**
- * Await WasmThemis initialisation.
+ * Await WasmThemis initialization.
  *
  * This promise is resolved once WebAssembly code has been downloaded and compiled
  * and WasmThemis is ready to use.
  *
- * You **must** await either this promise, or `initialize()` to use WasmThemis.
+ * You **must** await either this promise or `initialize()` to use WasmThemis.
  *
- * WebAssembly code is expected to be located at `libthemis.wasm` relative to the script.
+ * WebAssembly code is expected to be located in `libthemis.wasm` file
+ * in the same directory as the executing script.
  * If you need to use a custom location, call `initialize()`.
  *
  * @see initialize
