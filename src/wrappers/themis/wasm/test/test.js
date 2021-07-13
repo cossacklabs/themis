@@ -111,6 +111,13 @@ describe('wasm-themis', function() {
                     assert.throws(() => new themis.PublicKey(invalid), TypeError)
                 })
             })
+            it('keys are Uint8Arrays', function() {
+                let pair = new themis.KeyPair()
+                assert.ok(pair.privateKey instanceof themis.PrivateKey)
+                assert.ok(pair.privateKey instanceof Uint8Array)
+                assert.ok(pair.publicKey instanceof themis.PublicKey)
+                assert.ok(pair.publicKey instanceof Uint8Array)
+            })
         })
     })
     describe('SecureCell', function() {
@@ -136,6 +143,11 @@ describe('wasm-themis', function() {
                         TypeError
                     )
                 })
+            })
+            it('keys are Uint8Arrays', function() {
+                let key = new themis.SymmetricKey()
+                assert.ok(key instanceof themis.SymmetricKey)
+                assert.ok(key instanceof Uint8Array)
             })
         })
         let masterKey1 = new Uint8Array([1, 2, 3, 4])
