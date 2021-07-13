@@ -293,8 +293,8 @@ export function setupSecureCell() {
 
     generateButton.addEventListener('click', function() {
         const key = new themis.SymmetricKey()
-        symmetricKeyInput.value = BytesToBase64(key.data)
-        symmetricKeyLength.textContent = `${key.data.length} bytes`
+        symmetricKeyInput.value = BytesToBase64(key)
+        symmetricKeyLength.textContent = `${key.length} bytes`
         update()
     })
 
