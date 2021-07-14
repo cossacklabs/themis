@@ -42,27 +42,19 @@ export enum KeyKind {
   EC_PUBLIC = 4,
 }
 
-export class PrivateKey {
-  data: Uint8Array
+export class PrivateKey extends Uint8Array {
   constructor(array: Uint8Array | ArrayBuffer) {
-    this.data = coerceToBytes(array);
-    validateKeyBuffer(this.data, [KeyKind.EC_PRIVATE, KeyKind.RSA_PRIVATE]);
-  }
-
-  get length() {
-    return this.data.length
+    const data = coerceToBytes(array);
+    validateKeyBuffer(data, [KeyKind.EC_PRIVATE, KeyKind.RSA_PRIVATE]);
+    super(data);
   }
 }
 
-export class PublicKey {
-  data: Uint8Array
+export class PublicKey extends Uint8Array {
   constructor(array: Uint8Array | ArrayBuffer) {
-    this.data = coerceToBytes(array);
-    validateKeyBuffer(this.data, [KeyKind.EC_PUBLIC, KeyKind.RSA_PUBLIC]);
-  }
-
-  get length() {
-    return this.data.length
+    const data = coerceToBytes(array);
+    validateKeyBuffer(data, [KeyKind.EC_PUBLIC, KeyKind.RSA_PUBLIC]);
+    super(data);
   }
 }
 
@@ -119,8 +111,8 @@ export class KeyPair {
 
   constructor(privateKey?: PrivateKey, publicKey?: PublicKey) {
     if (arguments.length === 2) {
-      this._privateKey = new PrivateKey(privateKey?.data!!); // Throw TypeError when passing null
-      this._publicKey = new PublicKey(publicKey?.data!!);
+      this._privateKey = new PrivateKey(privateKey!); // Throw TypeError when passing null
+      this._publicKey = new PublicKey(publicKey!);
     } else if (arguments.length === 0) {
       let keyPair = generateECKeyPair();
       this._privateKey = new PrivateKey(keyPair.private);
@@ -203,8 +195,7 @@ const generateECKeyPair = (): {private: Uint8Array, public: Uint8Array} => {
   }
 };
 
-export class SymmetricKey {
-  data: Uint8Array
+export class SymmetricKey extends Uint8Array {
   constructor(array: Uint8Array | ArrayBuffer = generateSymmetricKey()) {
     if (array.byteLength === 0) {
       throw new ThemisError(
@@ -213,11 +204,7 @@ export class SymmetricKey {
         "key must not be empty"
       );
     }
-    this.data = coerceToBytes(array);
-  }
-
-  get length() {
-    return this.data.length
+    super(coerceToBytes(array));
   }
 }
 

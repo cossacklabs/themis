@@ -92,16 +92,16 @@ describe('wasm-themis', function() {
             })
             it('check strict types', function() {
                 let key = new themis.KeyPair().publicKey
-                assert.deepStrictEqual(key, new themis.PublicKey(new Uint8Array(key.data)))
-                assert.deepStrictEqual(key, new themis.PublicKey(key.data.buffer))
-                assert.throws(() => new themis.PublicKey(new Int8Array(key.data)))
+                assert.deepStrictEqual(key, new themis.PublicKey(new Uint8Array(key)))
+                assert.deepStrictEqual(key, new themis.PublicKey(key.buffer))
+                assert.throws(() => new themis.PublicKey(new Int8Array(key)))
             })
             it('do not accept strings', function() {
                 let base64key = 'UkVDMgAAAC1JhwRrAPIGB33HHFmhjzn8lIE/nsW6cG+TCI3jhYJb+D/Gnwvf'
                 assert.throws(() => new themis.PrivateKey(base64key))
             })
             it('detect data corruption', function() {
-                let key = new themis.KeyPair().privateKey.data
+                let key = new themis.KeyPair().privateKey
                 key[20] = ~key[20]
                 assert.throws(() => new themis.PrivateKey(key))
             })
@@ -110,6 +110,13 @@ describe('wasm-themis', function() {
                     assert.throws(() => new themis.PrivateKey(invalid), TypeError)
                     assert.throws(() => new themis.PublicKey(invalid), TypeError)
                 })
+            })
+            it('keys are Uint8Arrays', function() {
+                let pair = new themis.KeyPair()
+                assert.ok(pair.privateKey instanceof themis.PrivateKey)
+                assert.ok(pair.privateKey instanceof Uint8Array)
+                assert.ok(pair.publicKey instanceof themis.PublicKey)
+                assert.ok(pair.publicKey instanceof Uint8Array)
             })
         })
     })
@@ -123,7 +130,7 @@ describe('wasm-themis', function() {
             it('wraps existing keys', function() {
                 let buffer = new Uint8Array([1, 2, 3, 4])
                 let key = new themis.SymmetricKey(buffer)
-                assert.deepEqual(key.data, buffer)
+                assert.deepEqual(key, buffer)
             })
             it('fails with empty buffer', function() {
                 assert.throws(() => new themis.SymmetricKey(new Uint8Array()),
@@ -141,6 +148,11 @@ describe('wasm-themis', function() {
                         TypeError
                     )
                 })
+            })
+            it('keys are Uint8Arrays', function() {
+                let key = new themis.SymmetricKey()
+                assert.ok(key instanceof themis.SymmetricKey)
+                assert.ok(key instanceof Uint8Array)
             })
         })
         let masterKey1 = new Uint8Array([1, 2, 3, 4])

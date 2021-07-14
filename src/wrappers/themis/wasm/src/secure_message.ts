@@ -104,8 +104,8 @@ export class SecureMessage {
         throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY);
       }
 
-      heapPutArray(this.privateKey.data, private_key_ptr);
-      heapPutArray(this.publicKey.data, public_key_ptr);
+      heapPutArray(this.privateKey, private_key_ptr);
+      heapPutArray(this.publicKey, public_key_ptr);
       heapPutArray(message, message_ptr);
 
       status = context.libthemis!!._themis_secure_message_encrypt(
@@ -178,8 +178,8 @@ export class SecureMessage {
         throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY);
       }
 
-      heapPutArray(this.privateKey.data, private_key_ptr);
-      heapPutArray(this.publicKey.data, public_key_ptr);
+      heapPutArray(this.privateKey, private_key_ptr);
+      heapPutArray(this.publicKey, public_key_ptr);
       heapPutArray(message, message_ptr);
 
       status = context.libthemis!!._themis_secure_message_decrypt(
@@ -266,7 +266,7 @@ export class SecureMessageSign {
         throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY);
       }
 
-      heapPutArray(this.privateKey.data, private_key_ptr);
+      heapPutArray(this.privateKey, private_key_ptr);
       heapPutArray(message, message_ptr);
 
       status = context.libthemis!!._themis_secure_message_sign(
@@ -347,7 +347,7 @@ export class SecureMessageVerify {
         throw new ThemisError(cryptosystem_name, ThemisErrorCode.NO_MEMORY);
       }
 
-      heapPutArray(this.publicKey.data, public_key_ptr);
+      heapPutArray(this.publicKey, public_key_ptr);
       heapPutArray(message, message_ptr);
 
       status = context.libthemis!!._themis_secure_message_verify(

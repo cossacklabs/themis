@@ -172,7 +172,7 @@ const getPublicKeyForIdThunk = (
       "public key cannot fit into provided buffer"
     );
   }
-  heapPutArray(publicKey.data, keyPtr);
+  heapPutArray(publicKey, keyPtr);
 
   return GetPublicKeySuccess;
 };
@@ -222,7 +222,7 @@ export class SecureSession {
       }
 
       heapPutArray(sessionID, session_id_ptr);
-      heapPutArray(privateKey.data, private_key_ptr);
+      heapPutArray(privateKey, private_key_ptr);
 
       this.keyCallback = keyCallback;
       initUserCallbacks(callbacks_ptr);

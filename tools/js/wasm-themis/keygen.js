@@ -19,12 +19,12 @@ switch (process.argv.length) {
 themis.initialized.then(function() {
     var keypair = new themis.KeyPair()
 
-    fs.writeFile(private_key_path, keypair.privateKey.data, {'mode': 0o600}, function(err) {
+    fs.writeFile(private_key_path, keypair.privateKey, {'mode': 0o600}, function(err) {
         if (err) {
             console.log('failed to write ' + private_key_path + ': ' + err)
         }
     })
-    fs.writeFile(public_key_path, keypair.publicKey.data, function(err) {
+    fs.writeFile(public_key_path, keypair.publicKey, function(err) {
         if (err) {
             console.log('failed to write ' + public_key_path + ': ' + err)
         }
