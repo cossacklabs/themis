@@ -1,6 +1,6 @@
 var themis = require('wasm-themis')
 
-themis.initialize().then(function() {
+themis.initialized.then(function() {
     var message = 'Test Message Please Ignore'
     var context = 'Secure Cell example code'
     var master_key = Buffer.from('bm8sIHRoaXMgaXMgbm90IGEgdmFsaWQgbWFzdGVyIGtleQ==', 'base64')

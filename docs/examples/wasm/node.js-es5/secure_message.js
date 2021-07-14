@@ -11,7 +11,7 @@ if (process.argv.length == 6) {
     process.exit(1)
 }
 
-themis.initialize().then(function() {
+themis.initialized.then(function() {
     var privateKey = new themis.PrivateKey(Buffer.from(privateKeyText, 'base64'))
     var publicKey = new themis.PublicKey(Buffer.from(publicKeyText, 'base64'))
 

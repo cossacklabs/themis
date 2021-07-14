@@ -1,7 +1,7 @@
 var net = require('net')
 var themis = require('wasm-themis')
 
-themis.initialize().then(function() {
+themis.initialized.then(function() {
     var server = net.createServer(function(socket) {
         console.log('Server: accepted connection')
 

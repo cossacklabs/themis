@@ -13,7 +13,7 @@ if (5 <= process.argv.length && process.argv.length <= 6) {
     process.exit(1);
 }
 
-themis.initialize().then(function() {
+themis.initialized.then(function() {
     var cell = themis.SecureCellTokenProtect.withKey(Buffer.from(key))
     var result
     switch (command) {

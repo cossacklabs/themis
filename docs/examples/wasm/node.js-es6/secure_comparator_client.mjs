@@ -2,7 +2,7 @@ import net from 'net'
 import themis from 'wasm-themis'
 
 async function main() {
-    await themis.initialize()
+    await themis.initialized
 
     let comparator = new themis.SecureComparator(Buffer.from('secret'))
 

@@ -36,14 +36,14 @@ function measureTime(thunk) {
 
 describe('wasm-themis', function() {
     let generallyInvalidArguments = [
-        null, 'string',
+        null, undefined, 'string',
         new Int16Array([1, 2, 3]), [4, 5, 6],
         () => new Uint8Array([27, 18, 28, 18, 28]),
         { value: [3, 14, 15, 92, 6] }
     ]
     describe('initialization', function() {
         it('resolves "initialized" promise', function(done) {
-            themis.initialize().then(function() {
+            themis.initialized.then(function() {
                 done()
             })
         })
@@ -139,6 +139,11 @@ describe('wasm-themis', function() {
             })
             it('fails with invalid types', function() {
                 generallyInvalidArguments.forEach(function(invalid) {
+                    // TypeScript implementation handles "undefined" as "no argument".
+                    // themis.SymmetricKey() is a valid constructor, so allow this.
+                    if (invalid === undefined) {
+                        return
+                    }
                     assert.throws(() => new themis.SymmetricKey(invalid),
                         TypeError
                     )
@@ -230,7 +235,8 @@ describe('wasm-themis', function() {
                     assert.throws(() => cell.encrypt(invalid), TypeError)
                     assert.throws(() => cell.decrypt(invalid), TypeError)
                     // null context is okay, it should not throw
-                    if (invalid !== null) {
+                    // undefined is interpreted as omitted context, it's okay too
+                    if (invalid !== null && invalid !== undefined) {
                         assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
                         assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
                     }
