@@ -7,7 +7,7 @@ var serverPublicKeyBuffer = Buffer.from('VUVDMgAAAC30/vs+AwciK6egi82A9TkTydVuOzM
 var clientID = Buffer.from('client')
 var serverID = Buffer.from('server')
 
-themis.initialize().then(function() {
+themis.initialized.then(function() {
     var clientPrivateKey = new themis.PrivateKey(clientPrivateKeyBuffer)
     var serverPublicKey = new themis.PublicKey(serverPublicKeyBuffer)
 

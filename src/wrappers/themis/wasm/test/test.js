@@ -43,7 +43,7 @@ describe('wasm-themis', function() {
     ]
     describe('initialization', function() {
         it('resolves "initialized" promise', function(done) {
-            themis.initialize().then(function() {
+            themis.initialized.then(function() {
                 done()
             })
         })

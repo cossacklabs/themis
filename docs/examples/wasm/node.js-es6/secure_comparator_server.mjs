@@ -2,7 +2,7 @@ import net from 'net'
 import themis from 'wasm-themis'
 
 async function main() {
-    await themis.initialize()
+    await themis.initialized
 
     let server = net.createServer(function(socket) {
         console.log('Server: accepted connection')

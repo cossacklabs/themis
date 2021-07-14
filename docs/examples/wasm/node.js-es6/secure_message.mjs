@@ -12,7 +12,7 @@ if (process.argv.length == 6) {
 }
 
 async function main() {
-    await themis.initialize()
+    await themis.initialized
 
     let privateKey = new themis.PrivateKey(Buffer.from(privateKeyText, 'base64'))
     let publicKey = new themis.PublicKey(Buffer.from(publicKeyText, 'base64'))

@@ -8,7 +8,7 @@ const clientID = Buffer.from('client')
 const serverID = Buffer.from('server')
 
 async function main() {
-    await themis.initialize()
+    await themis.initialized
 
     let clientPrivateKey = new themis.PrivateKey(clientPrivateKeyBuffer)
     let serverPublicKey = new themis.PublicKey(serverPublicKeyBuffer)

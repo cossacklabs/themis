@@ -11,7 +11,7 @@ if (process.argv.length == 6) {
     process.exit(1);
 }
 
-themis.initialize().then(function() {
+themis.initialized.then(function() {
     var cell = themis.SecureCellContextImprint.withKey(Buffer.from(key))
     var result
     switch (command) {

@@ -1,7 +1,7 @@
 import themis from 'wasm-themis'
 
 async function main() {
-    await themis.initialize()
+    await themis.initialized
 
     let message = 'Test Message Please Ignore'
     let context = 'Secure Cell example code'
