@@ -11,7 +11,8 @@
     "dist/libthemis.wasm",
     "dist-es6/*.js",
     "dist-es6/*.ts",
-    "dist-es6/libthemis.wasm"
+    "dist-es6/libthemis.wasm",
+    "src/libthemis.wasm"
   ],
   "scripts": {
     "test": "find test -name *.js | sort | xargs -L1 ts-mocha -p tsconfig.json",
