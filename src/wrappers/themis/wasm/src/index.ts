@@ -14,20 +14,19 @@
 
 import context from "./context";
 import libthemisFn from "./libthemis.js";
-import { ThemisError, ThemisErrorCode } from "./themis_error";
 
-export { SecureCellSeal } from "./secure_cell_seal";
-export { SecureCellTokenProtect } from "./secure_cell_token_protect";
-export { SecureCellContextImprint } from "./secure_cell_context_imprint";
-export { ThemisError, ThemisErrorCode } from "./themis_error";
-export {
+import { SecureCellSeal } from "./secure_cell_seal";
+import { SecureCellTokenProtect } from "./secure_cell_token_protect";
+import { SecureCellContextImprint } from "./secure_cell_context_imprint";
+import { ThemisError, ThemisErrorCode } from "./themis_error";
+import {
   SecureMessageSign,
   SecureMessage,
   SecureMessageVerify,
 } from "./secure_message";
-export { SecureSession } from "./secure_session";
-export { KeyPair, PrivateKey, PublicKey, SymmetricKey } from "./secure_keygen";
-export { SecureComparator } from "./secure_comparator";
+import { SecureSession } from "./secure_session";
+import { KeyPair, PrivateKey, PublicKey, SymmetricKey } from "./secure_keygen";
+import { SecureComparator } from "./secure_comparator";
 
 // WebAssembly code is not directly included with compiled JavaScript code.
 // Emscripten generates a stub that will download and compile WebAssembly
@@ -166,3 +165,47 @@ class InitializedPromise {
 export const initialized = new InitializedPromise((resolve) => {
   onRuntimeInitialized = resolve;
 });
+
+// Historically, WasmThemis allowed to use default import in ES6 code:
+//
+//     import themis from 'wasm-themis';
+//
+// Make sure it still works.
+
+export default {
+  initialize,
+  initialized,
+  SecureCellSeal,
+  SecureCellTokenProtect,
+  SecureCellContextImprint,
+  SecureMessage,
+  SecureMessageSign,
+  SecureMessageVerify,
+  SecureSession,
+  SecureComparator,
+  ThemisError,
+  ThemisErrorCode,
+  SymmetricKey,
+  KeyPair,
+  PrivateKey,
+  PublicKey,
+};
+
+// And of course export all public things individually.
+
+export {
+  SecureCellSeal,
+  SecureCellTokenProtect,
+  SecureCellContextImprint,
+  SecureMessage,
+  SecureMessageSign,
+  SecureMessageVerify,
+  SecureSession,
+  SecureComparator,
+  ThemisError,
+  ThemisErrorCode,
+  SymmetricKey,
+  KeyPair,
+  PrivateKey,
+  PublicKey,
+};
