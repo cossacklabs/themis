@@ -154,6 +154,11 @@ _Code:_
 
   - Updated Emscripten toolchain to the latest version ([#760](https://github.com/cossacklabs/themis/pull/760)).
   - Node.js v16 is now supported ([#801](https://github.com/cossacklabs/themis/pull/801)).
+  - TypeScript type definitions and ES6 module are now available, thanks to [**@maxammann**](https://github.com/maxammann) ([#792](https://github.com/cossacklabs/themis/pull/792)).
+    ```js
+    import {SecureCell, SecureMessage, SecureSession, SecureComparator} from 'wasm-themis';
+    ```
+  - New initialization API: `initialize()`, allowing to specify custom URL for `libthemis.wasm` ([#792](https://github.com/cossacklabs/themis/pull/792), [#854](https://github.com/cossacklabs/themis/pull/854), [#857](https://github.com/cossacklabs/themis/pull/857)).
 
 _Infrastructure:_
 
