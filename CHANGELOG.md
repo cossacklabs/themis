@@ -67,11 +67,13 @@ _Code:_
 
   - Fixed multiple buffer overflows in Secure Message ([#763](https://github.com/cossacklabs/themis/pull/763)).
   - Fixed cross-compilation on macOS by setting `ARCH` and `SDK` variables ([#849](https://github.com/cossacklabs/themis/pull/849)).
+  - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
 
 - **Android**
 
   - Example project moved to the main repository – [`docs/examples/android`](docs/examples/android) ([#813](https://github.com/cossacklabs/themis/pull/813)).
   - Example project is now written in Kotlin ([#813](https://github.com/cossacklabs/themis/pull/813)).
+  - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
 
 - **C++**
 
@@ -159,6 +161,7 @@ _Code:_
     import {SecureCell, SecureMessage, SecureSession, SecureComparator} from 'wasm-themis';
     ```
   - New initialization API: `initialize()`, allowing to specify custom URL for `libthemis.wasm` ([#792](https://github.com/cossacklabs/themis/pull/792), [#854](https://github.com/cossacklabs/themis/pull/854), [#857](https://github.com/cossacklabs/themis/pull/857)).
+  - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
 
 _Infrastructure:_
 
