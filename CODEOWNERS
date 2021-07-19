@@ -23,3 +23,6 @@ Cargo.toml          @vixentael @ilammy @iamnotacake
 Cartfile*                   @vixentael @julepka
 Package.swift               @vixentael @julepka
 Podfile*                    @vixentael @julepka
+
+/docs/reference-implementation  @vixentael @Lagovas @ilammy @storojs72
+/tests/reference-implementation @vixentael @Lagovas @ilammy @storojs72
