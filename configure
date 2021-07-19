@@ -220,11 +220,13 @@ configure_macos_toolchain() {
         set_variable FRAMEWORKS   "$SDK_BASE/System/Library/Frameworks/"
         set_variable SDK_INCLUDES "$SDK_BASE/usr/include"
         append_variable CFLAGS "-isysroot \"$SDK_BASE\""
+        append_variable LDFLAGS "-isysroot \"$SDK_BASE\""
     fi
 
     if [ -n "${ARCH:-}" ]
     then
         append_variable CFLAGS "-arch $ARCH"
+        append_variable LDFLAGS "-arch $ARCH"
     fi
 }
 

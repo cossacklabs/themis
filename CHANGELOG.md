@@ -66,16 +66,14 @@ _Code:_
     </details>
 
   - Fixed multiple buffer overflows in Secure Message ([#763](https://github.com/cossacklabs/themis/pull/763)).
-  - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
-
-- **Android**
-
+  - Fixed cross-compilation on macOS by setting `ARCH` and `SDK` variables ([#849](https://github.com/cossacklabs/themis/pull/849)).
   - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
 
 - **Android**
 
   - Example project moved to the main repository – [`docs/examples/android`](docs/examples/android) ([#813](https://github.com/cossacklabs/themis/pull/813)).
   - Example project is now written in Kotlin ([#813](https://github.com/cossacklabs/themis/pull/813)).
+  - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
 
 - **C++**
 
@@ -158,6 +156,11 @@ _Code:_
 
   - Updated Emscripten toolchain to the latest version ([#760](https://github.com/cossacklabs/themis/pull/760)).
   - Node.js v16 is now supported ([#801](https://github.com/cossacklabs/themis/pull/801)).
+  - TypeScript type definitions and ES6 module are now available, thanks to [**@maxammann**](https://github.com/maxammann) ([#792](https://github.com/cossacklabs/themis/pull/792)).
+    ```js
+    import {SecureCell, SecureMessage, SecureSession, SecureComparator} from 'wasm-themis';
+    ```
+  - New initialization API: `initialize()`, allowing to specify custom URL for `libthemis.wasm` ([#792](https://github.com/cossacklabs/themis/pull/792), [#854](https://github.com/cossacklabs/themis/pull/854), [#857](https://github.com/cossacklabs/themis/pull/857)).
   - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
 
 _Infrastructure:_
@@ -175,6 +178,21 @@ _Infrastructure:_
 - Added automated tests for Android example project ([#813](https://github.com/cossacklabs/themis/pull/813)).
 - Added automated tests for desktop Java example project ([#816](https://github.com/cossacklabs/themis/pull/816)).
 - Embedded BoringSSL now builds faster if Ninja is available ([#837](https://github.com/cossacklabs/themis/pull/837)).
+- Embedded BoringSSL can now be cross-compiled on macOS by setting `ARCH` and `SDK` variables ([#849](https://github.com/cossacklabs/themis/pull/849)).
+
+
+## [0.13.11](https://github.com/cossacklabs/themis/releases/tag/0.13.11), July 6th 2021
+
+**Hotfix for WasmThemis:**
+
+- Fixed issue when bundling WasmThemis with webpack ([#779](https://github.com/cossacklabs/themis/issue/779)).
+
+_Code:_
+
+- **WebAssembly**
+
+  - Fixed issue with `TypeError: TextEncoder is not a constructor` when bundling WasmThemis with webpack ([#779](https://github.com/cossacklabs/themis/issue/779)).
+
 
 ## [0.13.10](https://github.com/cossacklabs/themis/releases/tag/0.13.10), May 26th 2021
 

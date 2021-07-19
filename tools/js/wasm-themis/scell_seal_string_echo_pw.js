@@ -1,6 +1,6 @@
-const themis = require('wasm-themis')
+var themis = require('wasm-themis')
 
-let command, key, message, context
+var command, passphrase, message, context
 if (5 <= process.argv.length && process.argv.length <= 6) {
     command = process.argv[2]
     passphrase = process.argv[3]
@@ -14,8 +14,8 @@ if (5 <= process.argv.length && process.argv.length <= 6) {
 }
 
 themis.initialized.then(function() {
-    let cell = themis.SecureCellSeal.withPassphrase(passphrase)
-    let result
+    var cell = themis.SecureCellSeal.withPassphrase(passphrase)
+    var result
     switch (command) {
         case 'enc':
             if (context) {

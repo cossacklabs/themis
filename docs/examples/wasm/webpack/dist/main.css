@@ -1,0 +1,170 @@
+.dimmed {
+    animation: desaturate-text 0.5s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes desaturate-text {
+    0% {
+        color: #000;
+    }
+    100% {
+        color: #bbb;
+    }
+}
+
+body {
+    color: #000;
+    font-family: sans-serif;
+    font-size: 12pt;
+    max-width: 70em;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+textarea {
+    display: block;
+    margin: 0.25em 0;
+}
+
+input[type="text"] {
+    margin: 0;
+}
+
+input[type="button"] {
+    font-size: 10pt;
+}
+
+textarea, input[type="text"] {
+    border: 1px groove;
+    font-family: monospace;
+    font-size: 80%;
+    min-width: 10em;
+    width: 44.5ch;
+}
+
+textarea:disabled, input[type="text"]:disabled {
+    background-color: #f5f5f5;
+}
+
+.binary-input {
+    background-color: #d1fdff;
+}
+
+.binary-input-span {
+    background-color: #d1fdff;
+    padding: 2pt;
+}
+
+.text-input {
+    background-color: #d1ffd1;
+}
+
+.text-input-span {
+    background-color: #d1ffd1;
+    padding: 2pt;
+}
+
+.input-block {
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+h3 {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+h4 {
+    margin-top: 0.25em;
+    margin-bottom: 0.5em;
+}
+
+.multi-input-block {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.multi-input-block .input-block {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.input-line, .input-line label {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+}
+
+.input-line {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+.input-line label .radio-box {
+    min-width: 7.5em;
+    padding-left: 0.25em;
+    padding-right: 0.25em;
+}
+
+.input-line span.size-hint {
+    padding-right: 1.25em;
+    min-width: 4.5em;
+    text-align: right;
+}
+
+.size-hint {
+    color: #888;
+    font-size: 80%;
+}
+
+.hinted-input {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.strut {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+
+.input-box {
+    padding-right: 1em;
+    padding-bottom: 0.25em;
+}
+
+.input-box .size-hint {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.25em;
+}
+
+.error-box {
+    font-size: 80%;
+    background-color: #fcc;
+    border-radius: 0.2em;
+    padding: 0.5em 0.6em;
+    max-width: 22em;
+    width: max-content;
+}
+
+/*
+ * It would be nice to have this animated, but CSS plays animations only once,
+ * I have wasted a hour trying to learn how to restart them (unsuccessfully),
+ * so I refuse to deal with this bullshit any longer. Enjoy crisp transitions.
+ */
+
+.hidden {
+    opacity: 0.0;
+}
+
+.passphrase .only-keys {
+    color: #bbb;
+}

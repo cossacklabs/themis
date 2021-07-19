@@ -1,10 +1,24 @@
 {
   "name": "wasm-themis",
-  "version": "0.13.1",
+  "version": "0.14.0",
   "description": "Themis is a convenient cryptographic library for data protection.",
-  "main": "src/index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist-es6/index.js",
+  "files": [
+    "dist/*.js",
+    "dist/*.ts",
+    "dist/libthemis.wasm",
+    "dist-es6/*.js",
+    "dist-es6/*.ts",
+    "dist-es6/libthemis.wasm",
+    "src/libthemis.wasm"
+  ],
   "scripts": {
-    "test": "mocha"
+    "test": "find test -name *.js | sort | xargs -L1 ts-mocha -p tsconfig.json",
+    "tsc-cjs": "tsc -t es6 -m commonjs --outDir dist && cp src/libthemis* src/.npmignore dist/",
+    "tsc-es6": "tsc -t es6 -m es6 --outDir dist-es6 && cp src/libthemis* src/.npmignore dist-es6/",
+    "prepare": "npm run tsc-cjs && npm run tsc-es6"
   },
   "repository": {
     "type": "git",
@@ -22,8 +36,13 @@
     "url": "https://github.com/cossacklabs/themis/issues"
   },
   "homepage": "https://www.cossacklabs.com/themis/",
-  "dependencies": {},
   "devDependencies": {
-    "mocha": "^7.1.1"
+    "@types/emscripten": "^1.39.4",
+    "@types/expect": "^24.3.0",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^14.14.36",
+    "mocha": "^7.1.1",
+    "ts-mocha": "^8.0.0",
+    "typescript": "^4.2.3"
   }
 }

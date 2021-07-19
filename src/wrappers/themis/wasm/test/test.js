@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const themis = require('..')
+const themis = require('../src/index.ts')
 const assert = require('assert')
 const { performance } = require('perf_hooks')
 
@@ -20,8 +20,8 @@ const ThemisErrorCode = themis.ThemisErrorCode
 
 function expectError(errorCode) {
     return function(error) {
-        if (error instanceof themis.ThemisError) {
-            return error.errorCode == errorCode
+        if (error.errorCode) {
+            return error.errorCode === errorCode
         }
         return false
     }
@@ -111,6 +111,13 @@ describe('wasm-themis', function() {
                     assert.throws(() => new themis.PublicKey(invalid), TypeError)
                 })
             })
+            it('keys are Uint8Arrays', function() {
+                let pair = new themis.KeyPair()
+                assert.ok(pair.privateKey instanceof themis.PrivateKey)
+                assert.ok(pair.privateKey instanceof Uint8Array)
+                assert.ok(pair.publicKey instanceof themis.PublicKey)
+                assert.ok(pair.publicKey instanceof Uint8Array)
+            })
         })
     })
     describe('SecureCell', function() {
@@ -132,10 +139,20 @@ describe('wasm-themis', function() {
             })
             it('fails with invalid types', function() {
                 generallyInvalidArguments.forEach(function(invalid) {
+                    // TypeScript implementation handles "undefined" as "no argument".
+                    // themis.SymmetricKey() is a valid constructor, so allow this.
+                    if (invalid === undefined) {
+                        return
+                    }
                     assert.throws(() => new themis.SymmetricKey(invalid),
                         TypeError
                     )
                 })
+            })
+            it('keys are Uint8Arrays', function() {
+                let key = new themis.SymmetricKey()
+                assert.ok(key instanceof themis.SymmetricKey)
+                assert.ok(key instanceof Uint8Array)
             })
         })
         let masterKey1 = new Uint8Array([1, 2, 3, 4])
@@ -218,7 +235,8 @@ describe('wasm-themis', function() {
                     assert.throws(() => cell.encrypt(invalid), TypeError)
                     assert.throws(() => cell.decrypt(invalid), TypeError)
                     // null context is okay, it should not throw
-                    if (invalid !== null) {
+                    // undefined is interpreted as omitted context, it's okay too
+                    if (invalid !== null && invalid !== undefined) {
                         assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
                         assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
                     }

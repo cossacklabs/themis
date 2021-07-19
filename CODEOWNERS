@@ -11,3 +11,15 @@ Makefile            @vixentael @ilammy @shadinua
 # rust-themis
 Cargo.toml          @vixentael @ilammy @iamnotacake
 *.rs                @vixentael @ilammy @iamnotacake
+
+# Land of the Fruit
+/docs/examples/objc         @vixentael @julepka
+/docs/examples/swift        @vixentael @julepka
+/src/wrappers/themis/Obj-C  @vixentael @julepka
+/tests/objcthemis           @vixentael @julepka
+*.podspec                   @vixentael @julepka
+*.xcodeproj                 @vixentael @julepka
+*.xcworkspace               @vixentael @julepka
+Cartfile*                   @vixentael @julepka
+Package.swift               @vixentael @julepka
+Podfile*                    @vixentael @julepka
