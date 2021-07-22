@@ -1,6 +1,6 @@
-var themis = require('wasm-themis')
+import themis from 'wasm-themis'
 
-var command, key, message, context
+let command, key, message, context
 if (process.argv.length == 6) {
     command = process.argv[2]
     key     = process.argv[3]
@@ -12,8 +12,8 @@ if (process.argv.length == 6) {
 }
 
 themis.initialized.then(function() {
-    var cell = themis.SecureCellContextImprint.withKey(Buffer.from(key))
-    var result
+    let cell = themis.SecureCellContextImprint.withKey(Buffer.from(key))
+    let result
     switch (command) {
         case 'enc':
             result = cell.encrypt(Buffer.from(message), Buffer.from(context))
