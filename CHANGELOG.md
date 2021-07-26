@@ -181,6 +181,17 @@ _Infrastructure:_
 - Embedded BoringSSL can now be cross-compiled on macOS by setting `ARCH` and `SDK` variables ([#849](https://github.com/cossacklabs/themis/pull/849)).
 
 
+## [0.13.12](https://github.com/cossacklabs/themis/releases/tag/0.13.12), July 26th 2021
+
+**Hotfix for Apple arm64 simulators for M1**
+
+- Fixed issue [864](https://github.com/cossacklabs/themis/issues/864): Themis XCFramework now includes arm64 slice for simulators ([865](https://github.com/cossacklabs/themis/pull/865)).
+
+_Code:_
+
+  - Fixed `Themis.xcodeproj` build settings: removed arm64 from exluded architectures ([865](https://github.com/cossacklabs/themis/pull/865)).
+
+
 ## [0.13.11](https://github.com/cossacklabs/themis/releases/tag/0.13.11), July 6th 2021
 
 **Hotfix for WasmThemis:**
