@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6DEC19AB265BD0360042EA63 /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB200264EFDC0008072EF /* themis.xcframework */; };
-		6DEC19AC265BD0360042EA63 /* themis.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB200264EFDC0008072EF /* themis.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6D50C560270C9B0800C8C30F /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB200264EFDC0008072EF /* themis.xcframework */; };
+		6D50C561270C9B0800C8C30F /* themis.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB200264EFDC0008072EF /* themis.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9F00E99A22410F7600EC1EF3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F00E99922410F7600EC1EF3 /* AppDelegate.swift */; };
 		9F00E99C22410F7600EC1EF3 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F00E99B22410F7600EC1EF3 /* ViewController.swift */; };
 		9F00E99F22410F7600EC1EF3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9F00E99D22410F7600EC1EF3 /* Main.storyboard */; };
@@ -21,13 +21,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		6DEC19AD265BD0360042EA63 /* Embed Frameworks */ = {
+		6D50C562270C9B0800C8C30F /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				6DEC19AC265BD0360042EA63 /* themis.xcframework in Embed Frameworks */,
+				6D50C561270C9B0800C8C30F /* themis.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -54,7 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6DEC19AB265BD0360042EA63 /* themis.xcframework in Frameworks */,
+				6D50C560270C9B0800C8C30F /* themis.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -121,7 +121,7 @@
 				9F00E99222410F7600EC1EF3 /* Sources */,
 				9F00E99322410F7600EC1EF3 /* Frameworks */,
 				9F00E99422410F7600EC1EF3 /* Resources */,
-				6DEC19AD265BD0360042EA63 /* Embed Frameworks */,
+				6D50C562270C9B0800C8C30F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
