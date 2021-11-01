@@ -232,7 +232,7 @@ configure_macos_toolchain() {
 
 find_macos_openssl() {
     [ -z "${IS_MACOS:-}" ] && return
-    local path="$(brew --prefix openssl 2> /dev/null || true)"
+    local path="$(brew --prefix openssl@1.1 2> /dev/null || true)"
     if [ -n "$path" ]
     then
         set_variable HOMEBREW_OPENSSL_PATH "$path"
