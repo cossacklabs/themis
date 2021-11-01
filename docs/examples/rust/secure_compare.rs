@@ -101,7 +101,7 @@ fn send_msg(message: &[u8], peer: &mut TcpStream) -> io::Result<()> {
         ));
     }
     peer.write_u32::<LittleEndian>(message.len() as u32)?;
-    peer.write_all(&message)
+    peer.write_all(message)
 }
 
 fn receive_msg(peer: &mut TcpStream) -> io::Result<Vec<u8>> {
