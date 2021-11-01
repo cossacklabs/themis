@@ -46,7 +46,7 @@ jobs:
         run: |
           if [[ "$(uname)" = "Darwin" ]]
           then
-            brew install cmake ninja openssl@1.1
+            brew install cmake ninja openssl@1.1 openssl@3
           else
             sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
             sudo apt update
@@ -74,6 +74,19 @@ jobs:
       - name: Run test suite (WITH_SCELL_COMPAT)
         if: always()
         run: make test BUILD_PATH=build-compat
+      - name: Ensure OpenSSL 3.0 fails (macOS only)
+        if: ${{ matrix.os == 'macos-latest' }}
+        run: |
+          # Themis uses OpenSSL 1.1 by default if installed.
+          # Explicitly request OpenSSL 3.0 by pointing the build into OpenSSL 3.0's paths.
+          openssl3=$(brew --prefix openssl@3)
+          if ! make ENGINE=openssl BUILD_PATH=build-openssl-3.0 ENGINE_INCLUDE_PATH=$openssl3/include ENGINE_LIB_PATH=$openssl3/lib
+          then
+            true
+          else
+            echo "Build with OpenSSL 3.0 did not fail when it should have"
+            exit 1
+          fi
 
   examples:
     name: Code examples
