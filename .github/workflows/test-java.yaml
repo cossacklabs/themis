@@ -39,7 +39,7 @@ jobs:
         run: |
           if [[ "$(uname)" = "Darwin" ]]
           then
-            brew install openssl
+            brew install openssl@1.1
           else
             sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
             sudo apt update
