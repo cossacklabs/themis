@@ -28,7 +28,7 @@
  * The code seems to build fine but it fails the tests, so we're not sure
  * that it is safe to use Soter with OpenSSL 3.0.
  */
-#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L && !THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
 #error OpenSSL 3.0 is currently not supported
 #endif
 
