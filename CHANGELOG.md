@@ -68,6 +68,7 @@ _Code:_
   - Fixed multiple buffer overflows in Secure Message ([#763](https://github.com/cossacklabs/themis/pull/763)).
   - Fixed cross-compilation on macOS by setting `ARCH` and `SDK` variables ([#849](https://github.com/cossacklabs/themis/pull/849)).
   - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
+  - Builds with OpenSSL 3.0 will result in a compilation error for the time being ([#872](https://github.com/cossacklabs/themis/pull/872)).
 
 - **Android**
 
@@ -180,6 +181,7 @@ _Infrastructure:_
 - Embedded BoringSSL now builds faster if Ninja is available ([#837](https://github.com/cossacklabs/themis/pull/837)).
 - Embedded BoringSSL can now be cross-compiled on macOS by setting `ARCH` and `SDK` variables ([#849](https://github.com/cossacklabs/themis/pull/849)).
 - Builds on macOS use OpenSSL 1.1 from Homebrew by default ([#871](https://github.com/cossacklabs/themis/pull/871)).
+- Builds with OpenSSL 3.0 are currently **not supported** ([#872](https://github.com/cossacklabs/themis/pull/872)).
 
 
 ## [0.13.12](https://github.com/cossacklabs/themis/releases/tag/0.13.12), July 26th 2021
