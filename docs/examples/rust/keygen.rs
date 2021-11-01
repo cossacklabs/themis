@@ -31,11 +31,11 @@ fn main() {
 
     let (private_key, public_key) = gen_ec_key_pair().split();
 
-    match write_file(&private_key, &private_path) {
+    match write_file(&private_key, private_path) {
         Ok(_) => eprintln!("wrote private key to {}", private_path),
         Err(e) => eprintln!("failed to write private key to {}: {}", private_path, e),
     }
-    match write_file(&public_key, &public_path) {
+    match write_file(&public_key, public_path) {
         Ok(_) => eprintln!("wrote public key to {}", public_path),
         Err(e) => eprintln!("failed to write public key to {}: {}", public_path, e),
     }

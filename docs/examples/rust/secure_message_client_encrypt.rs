@@ -42,9 +42,9 @@ fn main() {
     let public_path = matches.value_of("public").unwrap_or("public.key");
     let remote_addr = matches.value_of("address").unwrap_or("localhost:7573");
 
-    let private_key = read_file(&private_path).expect("read private key");
+    let private_key = read_file(private_path).expect("read private key");
     let private_key = PrivateKey::try_from_slice(private_key).expect("parse private key");
-    let public_key = read_file(&public_path).expect("read public key");
+    let public_key = read_file(public_path).expect("read public key");
     let public_key = PublicKey::try_from_slice(public_key).expect("parse public key");
     let key_pair = KeyPair::try_join(private_key, public_key).expect("matching keys");
 
