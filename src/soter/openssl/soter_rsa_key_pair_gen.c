@@ -173,7 +173,9 @@ soter_status_t soter_rsa_key_pair_gen_destroy(soter_rsa_key_pair_gen_t* ctx)
 {
     soter_status_t res = SOTER_FAIL;
 
-    SOTER_CHECK_PARAM(ctx);
+    if (!ctx) {
+        return SOTER_INVALID_PARAMETER;
+    }
 
     res = soter_rsa_key_pair_gen_cleanup(ctx);
 
