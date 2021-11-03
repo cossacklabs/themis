@@ -191,11 +191,17 @@ soter_status_t soter_rsa_key_pair_gen_export_key(soter_rsa_key_pair_gen_t* ctx,
 {
     EVP_PKEY* pkey = NULL;
 
-    SOTER_CHECK_PARAM(ctx);
+    if (!ctx) {
+        return SOTER_INVALID_PARAMETER;
+    }
 
     pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
-    SOTER_CHECK_PARAM(pkey);
-    SOTER_CHECK_PARAM(EVP_PKEY_RSA == EVP_PKEY_id(pkey));
+    if (!pkey) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    if (EVP_PKEY_id(pkey) != EVP_PKEY_RSA) {
+        return SOTER_INVALID_PARAMETER;
+    }
 
     if (isprivate) {
         return soter_engine_specific_to_rsa_priv_key((const soter_engine_specific_rsa_key_t*)pkey,
