@@ -108,6 +108,7 @@ soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, const 
 
     /* Only RSA supports asymmetric encryption */
     if (EVP_PKEY_set_type(pkey, EVP_PKEY_RSA) != 1) {
+        res = SOTER_FAIL;
         goto free_pkey;
     }
 
@@ -118,6 +119,7 @@ soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, const 
     }
 
     if (EVP_PKEY_keygen_init(ctx->pkey_ctx) != 1) {
+        res = SOTER_FAIL;
         goto free_pkey_ctx;
     }
 
@@ -140,6 +142,7 @@ soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, const 
     }
 
     if (EVP_PKEY_keygen(ctx->pkey_ctx, &pkey) != 1) {
+        res = SOTER_FAIL;
         goto free_pkey_ctx;
     }
 
