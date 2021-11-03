@@ -159,7 +159,9 @@ free_pkey:
 
 soter_status_t soter_rsa_key_pair_gen_cleanup(soter_rsa_key_pair_gen_t* ctx)
 {
-    SOTER_CHECK_PARAM(ctx);
+    if (!ctx) {
+        return SOTER_INVALID_PARAMETER;
+    }
     if (ctx->pkey_ctx) {
         EVP_PKEY_CTX_free(ctx->pkey_ctx);
         ctx->pkey_ctx = NULL;
