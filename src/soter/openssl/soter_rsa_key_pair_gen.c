@@ -44,6 +44,7 @@ static int rsa_key_length(unsigned size)
 
 soter_rsa_key_pair_gen_t* soter_rsa_key_pair_gen_create(const unsigned key_length)
 {
+    soter_status_t res = SOTER_FAIL;
     soter_rsa_key_pair_gen_t* ctx = NULL;
 
     if (rsa_key_length(key_length) <= 0) {
@@ -55,7 +56,12 @@ soter_rsa_key_pair_gen_t* soter_rsa_key_pair_gen_create(const unsigned key_lengt
         return NULL;
     }
 
-    SOTER_IF_FAIL_(soter_rsa_key_pair_gen_init(ctx, key_length) == SOTER_SUCCESS, free(ctx));
+    res = soter_rsa_key_pair_gen_init(ctx, key_length);
+    if (res != SOTER_SUCCESS) {
+        free(ctx);
+        return NULL;
+    }
+
     return ctx;
 }
 
