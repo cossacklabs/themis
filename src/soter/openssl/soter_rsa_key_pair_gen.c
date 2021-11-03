@@ -50,7 +50,7 @@ soter_rsa_key_pair_gen_t* soter_rsa_key_pair_gen_create(const unsigned key_lengt
         return NULL;
     }
 
-    ctx = malloc(sizeof(soter_rsa_key_pair_gen_t));
+    ctx = calloc(1, sizeof(*ctx));
     SOTER_CHECK_MALLOC_(ctx);
     SOTER_IF_FAIL_(soter_rsa_key_pair_gen_init(ctx, key_length) == SOTER_SUCCESS, free(ctx));
     return ctx;
