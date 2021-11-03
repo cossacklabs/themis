@@ -98,7 +98,7 @@ static soter_status_t soter_set_rsa_key_length(EVP_PKEY_CTX* pkey_ctx, int lengt
 
 soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, const unsigned key_length)
 {
-    soter_status_t err = SOTER_FAIL;
+    soter_status_t res = SOTER_FAIL;
     EVP_PKEY* pkey = NULL;
 
     pkey = EVP_PKEY_new();
@@ -113,7 +113,7 @@ soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, const 
 
     ctx->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
     if (!ctx->pkey_ctx) {
-        err = SOTER_NO_MEMORY;
+        res = SOTER_NO_MEMORY;
         goto free_pkey;
     }
 
@@ -125,8 +125,8 @@ soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, const 
      * Although it seems that OpenSSL/LibreSSL use 0x10001 as default public exponent,
      * we will set it explicitly just in case.
      */
-    err = soter_set_default_rsa_pub_exp(ctx->pkey_ctx);
-    if (err != SOTER_SUCCESS) {
+    res = soter_set_default_rsa_pub_exp(ctx->pkey_ctx);
+    if (res != SOTER_SUCCESS) {
         goto free_pkey_ctx;
     }
 
@@ -134,8 +134,8 @@ soter_status_t soter_rsa_key_pair_gen_init(soter_rsa_key_pair_gen_t* ctx, const 
      * Override default key length for RSA key. Currently OpenSSL has default
      * key length of 1024. LibreSSL has 2048. We will set length explicitly.
      */
-    err = soter_set_rsa_key_length(ctx->pkey_ctx, rsa_key_length(key_length));
-    if (err != SOTER_SUCCESS) {
+    res = soter_set_rsa_key_length(ctx->pkey_ctx, rsa_key_length(key_length));
+    if (res != SOTER_SUCCESS) {
         goto free_pkey_ctx;
     }
 
@@ -151,7 +151,7 @@ free_pkey_ctx:
     ctx->pkey_ctx = NULL;
 free_pkey:
     EVP_PKEY_free(pkey);
-    return err;
+    return res;
 }
 
 soter_status_t soter_rsa_key_pair_gen_cleanup(soter_rsa_key_pair_gen_t* ctx)
