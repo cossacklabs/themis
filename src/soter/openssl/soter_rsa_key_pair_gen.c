@@ -171,10 +171,15 @@ soter_status_t soter_rsa_key_pair_gen_cleanup(soter_rsa_key_pair_gen_t* ctx)
 
 soter_status_t soter_rsa_key_pair_gen_destroy(soter_rsa_key_pair_gen_t* ctx)
 {
+    soter_status_t res = SOTER_FAIL;
+
     SOTER_CHECK_PARAM(ctx);
-    SOTER_CHECK(soter_rsa_key_pair_gen_cleanup(ctx) == SOTER_SUCCESS);
+
+    res = soter_rsa_key_pair_gen_cleanup(ctx);
+
     free(ctx);
-    return SOTER_SUCCESS;
+
+    return res;
 }
 
 soter_status_t soter_rsa_key_pair_gen_export_key(soter_rsa_key_pair_gen_t* ctx,
