@@ -33,6 +33,8 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
     EVP_PKEY* pkey = NULL;
     EVP_PKEY_CTX* md_pkey_ctx = NULL;
 
+    ctx->pkey = NULL;
+
     pkey = EVP_PKEY_new();
     if (!pkey) {
         return SOTER_NO_MEMORY;
@@ -141,6 +143,10 @@ soter_status_t soter_sign_cleanup_rsa_pss_pkcs8(soter_sign_ctx_t* ctx)
 {
     if (!ctx) {
         return SOTER_INVALID_PARAMETER;
+    }
+    if (ctx->pkey) {
+        EVP_PKEY_free(ctx->pkey);
+        ctx->pkey = NULL;
     }
     if (ctx->pkey_ctx) {
         EVP_PKEY_CTX_free(ctx->pkey_ctx);

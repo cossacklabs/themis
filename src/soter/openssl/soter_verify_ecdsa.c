@@ -32,6 +32,8 @@ soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
     soter_status_t err = SOTER_FAIL;
     EVP_PKEY* pkey = NULL;
 
+    ctx->pkey = NULL;
+
     pkey = EVP_PKEY_new();
     if (!pkey) {
         return SOTER_NO_MEMORY;
@@ -123,6 +125,10 @@ soter_status_t soter_verify_cleanup_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx)
 {
     if (!ctx) {
         return SOTER_INVALID_PARAMETER;
+    }
+    if (ctx->pkey) {
+        EVP_PKEY_free(ctx->pkey);
+        ctx->pkey = NULL;
     }
     if (ctx->md_ctx) {
         EVP_MD_CTX_destroy(ctx->md_ctx);
