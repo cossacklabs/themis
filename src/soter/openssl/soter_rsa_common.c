@@ -24,11 +24,15 @@
 #define SOTER_RSA_KEY_LENGTH 2048
 #endif
 
-soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx)
+soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
 {
     /* it is copy-paste from /src/soter/openssl/soter_asym_cipher.c */
     BIGNUM* pub_exp;
-    EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(pkey_ctx);
+    EVP_PKEY* pkey = NULL;
+    if (!ppkey) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    pkey = *ppkey;
     if (!pkey) {
         return SOTER_INVALID_PARAMETER;
     }
@@ -64,7 +68,7 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx)
         return SOTER_FAIL;
     }
 
-    if (!EVP_PKEY_keygen(pkey_ctx, &pkey)) {
+    if (!EVP_PKEY_keygen(pkey_ctx, ppkey)) {
         return SOTER_FAIL;
     }
     return SOTER_SUCCESS;

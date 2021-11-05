@@ -48,7 +48,7 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
     }
 
     if ((!private_key) && (!public_key)) {
-        err = soter_rsa_gen_key(ctx->pkey_ctx);
+        err = soter_rsa_gen_key(ctx->pkey_ctx, &ctx->pkey);
         if (err != SOTER_SUCCESS) {
             goto free_pkey_ctx;
         }
