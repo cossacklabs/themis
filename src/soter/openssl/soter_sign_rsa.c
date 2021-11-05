@@ -30,21 +30,18 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
                                              const size_t public_key_length)
 {
     soter_status_t err = SOTER_FAIL;
-    EVP_PKEY* pkey = NULL;
     EVP_PKEY_CTX* md_pkey_ctx = NULL;
 
-    ctx->pkey = NULL;
-
-    pkey = EVP_PKEY_new();
-    if (!pkey) {
+    ctx->pkey = EVP_PKEY_new();
+    if (!ctx->pkey) {
         return SOTER_NO_MEMORY;
     }
 
-    if (!EVP_PKEY_set_type(pkey, EVP_PKEY_RSA)) {
+    if (!EVP_PKEY_set_type(ctx->pkey, EVP_PKEY_RSA)) {
         goto free_pkey;
     }
 
-    ctx->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
+    ctx->pkey_ctx = EVP_PKEY_CTX_new(ctx->pkey, NULL);
     if (!(ctx->pkey_ctx)) {
         err = SOTER_NO_MEMORY;
         goto free_pkey;
@@ -57,13 +54,13 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
         }
     } else {
         if (private_key != NULL) {
-            err = soter_rsa_import_key(pkey, private_key, private_key_length);
+            err = soter_rsa_import_key(ctx->pkey, private_key, private_key_length);
             if (err != SOTER_SUCCESS) {
                 goto free_pkey_ctx;
             }
         }
         if (public_key != NULL) {
-            err = soter_rsa_import_key(pkey, public_key, public_key_length);
+            err = soter_rsa_import_key(ctx->pkey, public_key, public_key_length);
             if (err != SOTER_SUCCESS) {
                 goto free_pkey_ctx;
             }
@@ -77,7 +74,7 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
     }
 
     /* md_pkey_ctx is owned by ctx->md_ctx */
-    if (!EVP_DigestSignInit(ctx->md_ctx, &md_pkey_ctx, EVP_sha256(), NULL, pkey)) {
+    if (!EVP_DigestSignInit(ctx->md_ctx, &md_pkey_ctx, EVP_sha256(), NULL, ctx->pkey)) {
         goto free_md_ctx;
     }
     if (!EVP_PKEY_CTX_set_rsa_padding(md_pkey_ctx, RSA_PKCS1_PSS_PADDING)) {
@@ -87,7 +84,6 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
         goto free_md_ctx;
     }
 
-    EVP_PKEY_free(pkey);
     return SOTER_SUCCESS;
 
 free_md_ctx:
@@ -97,7 +93,8 @@ free_pkey_ctx:
     EVP_PKEY_CTX_free(ctx->pkey_ctx);
     ctx->pkey_ctx = NULL;
 free_pkey:
-    EVP_PKEY_free(pkey);
+    EVP_PKEY_free(ctx->pkey);
+    ctx->pkey = NULL;
     return err;
 }
 
