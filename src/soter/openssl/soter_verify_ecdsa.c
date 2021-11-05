@@ -40,11 +40,7 @@ soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
         goto free_pkey;
     }
 
-    ctx->pkey_ctx = EVP_PKEY_CTX_new(ctx->pkey, NULL);
-    if (!(ctx->pkey_ctx)) {
-        err = SOTER_NO_MEMORY;
-        goto free_pkey;
-    }
+    ctx->pkey_ctx = NULL;
 
     /* TODO: Review needed */
     if ((private_key) && (private_key_length)) {
@@ -76,8 +72,6 @@ free_md_ctx:
     EVP_MD_CTX_destroy(ctx->md_ctx);
     ctx->md_ctx = NULL;
 free_pkey_ctx:
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    ctx->pkey_ctx = NULL;
 free_pkey:
     EVP_PKEY_free(ctx->pkey);
     ctx->pkey = NULL;
