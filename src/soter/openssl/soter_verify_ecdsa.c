@@ -117,15 +117,11 @@ soter_status_t soter_verify_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
         return SOTER_INVALID_PARAMETER;
     }
 
-    int res = EVP_DigestVerifyFinal(ctx->md_ctx, (unsigned char*)signature, signature_length);
-    switch (res) {
-    case 0:
-        return SOTER_INVALID_SIGNATURE;
-    case 1:
-        return SOTER_SUCCESS;
-    default:
+    if (EVP_DigestVerifyFinal(ctx->md_ctx, (unsigned char*)signature, signature_length) != 1) {
         return SOTER_INVALID_SIGNATURE;
     }
+
+    return SOTER_SUCCESS;
 }
 
 soter_status_t soter_verify_cleanup_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx)
