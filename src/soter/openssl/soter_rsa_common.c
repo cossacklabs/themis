@@ -58,10 +58,12 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
         return SOTER_FAIL;
     }
 
+    /* Passing ownership over pub_exp to EVP_PKEY_CTX */
     if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_PUBEXP, 0, pub_exp)) {
         BN_free(pub_exp);
         return SOTER_FAIL;
     }
+    pub_exp = NULL;
 
     /* Override default key size for RSA key. Currently OpenSSL has default key size of 1024.
      * LibreSSL has 2048. We will put 2048 explicitly */
@@ -74,6 +76,9 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
     }
 
     res = SOTER_SUCCESS;
+
+err:
+    BN_free(pub_exp);
 
     return res;
     /* end of copy-paste from /src/soter/openssl/soter_asym_cipher.c*/
