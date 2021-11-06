@@ -22,14 +22,17 @@
 #include "soter/openssl/soter_engine.h"
 #include "soter/soter_ec_key.h"
 
-soter_status_t soter_ec_gen_key(EVP_PKEY_CTX* pkey_ctx)
+soter_status_t soter_ec_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
 {
     EVP_PKEY* pkey;
     EC_KEY* ec;
     if (!pkey_ctx) {
         return SOTER_INVALID_PARAMETER;
     }
-    pkey = EVP_PKEY_CTX_get0_pkey(pkey_ctx);
+    if (!ppkey) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    pkey = *ppkey;
     if (!pkey) {
         return SOTER_INVALID_PARAMETER;
     }
