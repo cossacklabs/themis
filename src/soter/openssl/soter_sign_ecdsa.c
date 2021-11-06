@@ -45,10 +45,12 @@ soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
     } else {
         ctx->pkey = EVP_PKEY_new();
         if (!ctx->pkey) {
-            return SOTER_NO_MEMORY;
+            err = SOTER_NO_MEMORY;
+            goto free_pkey;
         }
 
         if (!EVP_PKEY_set_type(ctx->pkey, EVP_PKEY_EC)) {
+            err = SOTER_FAIL;
             goto free_pkey;
         }
 
