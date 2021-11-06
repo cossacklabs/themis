@@ -33,17 +33,7 @@ soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey)
         return SOTER_INVALID_PARAMETER;
     }
 
-    param = EVP_PKEY_new();
-    if (!param) {
-        return SOTER_NO_MEMORY;
-    }
-
-    if (!EVP_PKEY_set_type(param, EVP_PKEY_EC)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    param_ctx = EVP_PKEY_CTX_new(param, NULL);
+    param_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL);
     if (!param_ctx) {
         res = SOTER_NO_MEMORY;
         goto err;
