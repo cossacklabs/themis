@@ -25,7 +25,7 @@
 soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey)
 {
     soter_status_t res = SOTER_FAIL;
-    EVP_PKEY* pkey = NULL;
+    EVP_PKEY* param = NULL;
     EVP_PKEY_CTX* param_ctx = NULL;
     EVP_PKEY_CTX* pkey_ctx = NULL;
 
@@ -33,18 +33,17 @@ soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey)
         return SOTER_INVALID_PARAMETER;
     }
 
-    pkey = EVP_PKEY_new();
-    if (!pkey) {
+    param = EVP_PKEY_new();
+    if (!param) {
         return SOTER_NO_MEMORY;
     }
-    *ppkey = pkey;
 
-    if (!EVP_PKEY_set_type(pkey, EVP_PKEY_EC)) {
+    if (!EVP_PKEY_set_type(param, EVP_PKEY_EC)) {
         res = SOTER_FAIL;
         goto err;
     }
 
-    param_ctx = EVP_PKEY_CTX_new(pkey, NULL);
+    param_ctx = EVP_PKEY_CTX_new(param, NULL);
     if (!param_ctx) {
         res = SOTER_NO_MEMORY;
         goto err;
@@ -58,12 +57,12 @@ soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey)
         res = SOTER_FAIL;
         goto err;
     }
-    if (!EVP_PKEY_paramgen(param_ctx, &pkey)) {
+    if (!EVP_PKEY_paramgen(param_ctx, &param)) {
         res = SOTER_FAIL;
         goto err;
     }
 
-    pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
+    pkey_ctx = EVP_PKEY_CTX_new(param, NULL);
     if (!pkey_ctx) {
         res = SOTER_NO_MEMORY;
         goto err;
@@ -83,6 +82,7 @@ soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey)
 err:
     EVP_PKEY_CTX_free(param_ctx);
     EVP_PKEY_CTX_free(pkey_ctx);
+    EVP_PKEY_free(param);
 
     return res;
 }
