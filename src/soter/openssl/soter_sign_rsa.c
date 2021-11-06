@@ -30,7 +30,6 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
                                              const size_t public_key_length)
 {
     soter_status_t err = SOTER_FAIL;
-    EVP_PKEY_CTX* pkey_ctx = NULL;
     EVP_PKEY_CTX* md_pkey_ctx = NULL;
 
     ctx->pkey = EVP_PKEY_new();
@@ -42,14 +41,8 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
         goto free_pkey;
     }
 
-    pkey_ctx = EVP_PKEY_CTX_new(ctx->pkey, NULL);
-    if (!pkey_ctx) {
-        err = SOTER_NO_MEMORY;
-        goto free_pkey;
-    }
-
     if ((!private_key) && (!public_key)) {
-        err = soter_rsa_gen_key(pkey_ctx, &ctx->pkey);
+        err = soter_rsa_gen_key(&ctx->pkey);
         if (err != SOTER_SUCCESS) {
             goto free_pkey_ctx;
         }
@@ -91,7 +84,6 @@ free_md_ctx:
     EVP_MD_CTX_destroy(ctx->md_ctx);
     ctx->md_ctx = NULL;
 free_pkey_ctx:
-    EVP_PKEY_CTX_free(pkey_ctx);
 free_pkey:
     EVP_PKEY_free(ctx->pkey);
     ctx->pkey = NULL;

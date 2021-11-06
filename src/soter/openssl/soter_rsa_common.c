@@ -24,11 +24,12 @@
 #define SOTER_RSA_KEY_LENGTH 2048
 #endif
 
-soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
+soter_status_t soter_rsa_gen_key(EVP_PKEY** ppkey)
 {
     soter_status_t res = SOTER_FAIL;
     BIGNUM* pub_exp = NULL;
     EVP_PKEY* pkey = NULL;
+    EVP_PKEY_CTX* pkey_ctx = NULL;
 
     if (!ppkey) {
         return SOTER_INVALID_PARAMETER;
@@ -42,8 +43,15 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
         return SOTER_INVALID_PARAMETER;
     }
 
+    pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
+    if (!pkey_ctx) {
+        res = SOTER_NO_MEMORY;
+        goto err;
+    }
+
     if (!EVP_PKEY_keygen_init(pkey_ctx)) {
-        return SOTER_INVALID_PARAMETER;
+        res = SOTER_INVALID_PARAMETER;
+        goto err;
     }
 
     /* Although it seems that OpenSSL/LibreSSL use 0x10001 as default public exponent, we will set
@@ -82,6 +90,7 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
 
 err:
     BN_free(pub_exp);
+    EVP_PKEY_CTX_free(pkey_ctx);
 
     return res;
 }
