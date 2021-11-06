@@ -106,14 +106,11 @@ soter_status_t soter_verify_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
                                                 const void* signature,
                                                 const size_t signature_length)
 {
-    if (!ctx) {
+    if (!ctx || !ctx->pkey) {
         return SOTER_INVALID_PARAMETER;
     }
-    EVP_PKEY* pkey = ctx->pkey;
-    if (!pkey) {
-        return SOTER_INVALID_PARAMETER;
-    }
-    if (signature_length != (size_t)EVP_PKEY_size(pkey)) {
+
+    if (signature_length != (size_t)EVP_PKEY_size(ctx->pkey)) {
         return SOTER_FAIL;
     }
     if (!EVP_DigestVerifyFinal(ctx->md_ctx, (unsigned char*)signature, signature_length)) {
