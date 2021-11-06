@@ -50,29 +50,32 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
      * it explicitly just in case */
     pub_exp = BN_new();
     if (!pub_exp) {
-        return SOTER_NO_MEMORY;
+        res = SOTER_NO_MEMORY;
+        goto err;
     }
 
     if (!BN_set_word(pub_exp, RSA_F4)) {
-        BN_free(pub_exp);
-        return SOTER_FAIL;
+        res = SOTER_FAIL;
+        goto err;
     }
 
     /* Passing ownership over pub_exp to EVP_PKEY_CTX */
     if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_PUBEXP, 0, pub_exp)) {
-        BN_free(pub_exp);
-        return SOTER_FAIL;
+        res = SOTER_FAIL;
+        goto err;
     }
     pub_exp = NULL;
 
     /* Override default key size for RSA key. Currently OpenSSL has default key size of 1024.
      * LibreSSL has 2048. We will put 2048 explicitly */
     if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_BITS, SOTER_RSA_KEY_LENGTH, NULL)) {
-        return SOTER_FAIL;
+        res = SOTER_FAIL;
+        goto err;
     }
 
     if (!EVP_PKEY_keygen(pkey_ctx, ppkey)) {
-        return SOTER_FAIL;
+        res = SOTER_FAIL;
+        goto err;
     }
 
     res = SOTER_SUCCESS;
