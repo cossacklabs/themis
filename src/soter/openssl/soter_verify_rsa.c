@@ -93,10 +93,13 @@ soter_status_t soter_verify_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
                                                  const void* data,
                                                  const size_t data_length)
 {
-    if (!ctx) {
+    if (!ctx || !ctx->pkey) {
         return SOTER_INVALID_PARAMETER;
     }
     if (!data || data_length == 0) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    if (EVP_PKEY_base_id(ctx->pkey) != EVP_PKEY_RSA) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -114,6 +117,9 @@ soter_status_t soter_verify_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
         return SOTER_INVALID_PARAMETER;
     }
     if (!signature || signature_length == 0) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    if (EVP_PKEY_base_id(ctx->pkey) != EVP_PKEY_RSA) {
         return SOTER_INVALID_PARAMETER;
     }
 
