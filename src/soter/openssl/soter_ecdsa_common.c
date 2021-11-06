@@ -25,8 +25,9 @@
 soter_status_t soter_ec_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
 {
     soter_status_t res = SOTER_FAIL;
-    EVP_PKEY* pkey;
-    EC_KEY* ec;
+    EVP_PKEY* pkey = NULL;
+    EC_KEY* ec = NULL;
+
     if (!pkey_ctx) {
         return SOTER_INVALID_PARAMETER;
     }
