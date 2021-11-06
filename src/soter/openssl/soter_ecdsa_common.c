@@ -39,15 +39,15 @@ soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey)
         goto err;
     }
 
-    if (!EVP_PKEY_paramgen_init(param_ctx)) {
+    if (EVP_PKEY_paramgen_init(param_ctx) != 1) {
         res = SOTER_FAIL;
         goto err;
     }
-    if (!EVP_PKEY_CTX_set_ec_paramgen_curve_nid(param_ctx, NID_X9_62_prime256v1)) {
+    if (EVP_PKEY_CTX_set_ec_paramgen_curve_nid(param_ctx, NID_X9_62_prime256v1) != 1) {
         res = SOTER_FAIL;
         goto err;
     }
-    if (!EVP_PKEY_paramgen(param_ctx, &param)) {
+    if (EVP_PKEY_paramgen(param_ctx, &param) != 1) {
         res = SOTER_FAIL;
         goto err;
     }
