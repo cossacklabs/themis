@@ -41,7 +41,7 @@ soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
         return SOTER_NO_MEMORY;
     }
 
-    if (!EVP_PKEY_set_type(ctx->pkey, EVP_PKEY_EC)) {
+    if (EVP_PKEY_set_type(ctx->pkey, EVP_PKEY_EC) != 1) {
         goto free_pkey;
     }
 
@@ -67,7 +67,7 @@ soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
         goto free_pkey;
     }
 
-    if (!EVP_DigestVerifyInit(ctx->md_ctx, NULL, EVP_sha256(), NULL, ctx->pkey)) {
+    if (EVP_DigestVerifyInit(ctx->md_ctx, NULL, EVP_sha256(), NULL, ctx->pkey) != 1) {
         goto free_md_ctx;
     }
 
@@ -96,7 +96,7 @@ soter_status_t soter_verify_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
         return SOTER_INVALID_PARAMETER;
     }
 
-    if (!EVP_DigestVerifyUpdate(ctx->md_ctx, data, data_length)) {
+    if (EVP_DigestVerifyUpdate(ctx->md_ctx, data, data_length) != 1) {
         return SOTER_FAIL;
     }
     return SOTER_SUCCESS;
