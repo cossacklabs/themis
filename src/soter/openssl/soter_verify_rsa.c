@@ -46,8 +46,6 @@ soter_status_t soter_verify_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
         goto free_pkey;
     }
 
-    ctx->pkey_ctx = NULL;
-
     if (private_key && private_key_length != 0) {
         err = soter_rsa_import_key(ctx->pkey, private_key, private_key_length);
         if (err != SOTER_SUCCESS) {
@@ -141,10 +139,6 @@ soter_status_t soter_verify_cleanup_rsa_pss_pkcs8(soter_sign_ctx_t* ctx)
     if (ctx->pkey) {
         EVP_PKEY_free(ctx->pkey);
         ctx->pkey = NULL;
-    }
-    if (ctx->pkey_ctx) {
-        EVP_PKEY_CTX_free(ctx->pkey_ctx);
-        ctx->pkey_ctx = NULL;
     }
     if (ctx->md_ctx) {
         EVP_MD_CTX_destroy(ctx->md_ctx);

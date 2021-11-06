@@ -45,8 +45,6 @@ soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
         goto free_pkey;
     }
 
-    ctx->pkey_ctx = NULL;
-
     /* TODO: Review needed */
     if ((private_key) && (private_key_length)) {
         err = soter_ec_import_key(ctx->pkey, private_key, private_key_length);
@@ -136,10 +134,6 @@ soter_status_t soter_verify_cleanup_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx)
     if (ctx->md_ctx) {
         EVP_MD_CTX_destroy(ctx->md_ctx);
         ctx->md_ctx = NULL;
-    }
-    if (ctx->pkey_ctx) {
-        EVP_PKEY_CTX_free(ctx->pkey_ctx);
-        ctx->pkey_ctx = NULL;
     }
     return SOTER_SUCCESS;
 }

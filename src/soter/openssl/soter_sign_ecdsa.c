@@ -166,9 +166,5 @@ soter_status_t soter_sign_cleanup_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx)
         EVP_MD_CTX_destroy(ctx->md_ctx);
         ctx->md_ctx = NULL;
     }
-    if (ctx->pkey_ctx) {
-        EVP_PKEY_CTX_free(ctx->pkey_ctx);
-        ctx->pkey_ctx = NULL;
-    }
     return SOTER_SUCCESS;
 }

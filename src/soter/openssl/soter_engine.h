@@ -55,7 +55,6 @@ struct soter_asym_ka_type {
 
 struct soter_sign_ctx_type {
     EVP_PKEY* pkey;
-    EVP_PKEY_CTX* pkey_ctx;
     EVP_MD_CTX* md_ctx;
     soter_sign_alg_t alg;
 };

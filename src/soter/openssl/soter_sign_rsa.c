@@ -168,10 +168,6 @@ soter_status_t soter_sign_cleanup_rsa_pss_pkcs8(soter_sign_ctx_t* ctx)
         EVP_PKEY_free(ctx->pkey);
         ctx->pkey = NULL;
     }
-    if (ctx->pkey_ctx) {
-        EVP_PKEY_CTX_free(ctx->pkey_ctx);
-        ctx->pkey_ctx = NULL;
-    }
     if (ctx->md_ctx) {
         EVP_MD_CTX_destroy(ctx->md_ctx);
         ctx->md_ctx = NULL;
