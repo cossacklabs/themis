@@ -114,6 +114,10 @@ soter_status_t soter_sign_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
     if (!ctx) {
         return SOTER_INVALID_PARAMETER;
     }
+    if (!data || data_length == 0) {
+        return SOTER_INVALID_PARAMETER;
+    }
+
     if (!EVP_DigestSignUpdate(ctx->md_ctx, data, data_length)) {
         return SOTER_FAIL;
     }
@@ -127,15 +131,19 @@ soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signa
     if (!ctx || !ctx->pkey) {
         return SOTER_INVALID_PARAMETER;
     }
+    if (!signature_length) {
+        return SOTER_INVALID_PARAMETER;
+    }
 
     key_size = EVP_PKEY_size(ctx->pkey);
     if (key_size < 0) {
         return SOTER_FAIL;
     }
-    if ((*signature_length) < (size_t)key_size) {
+    if (!signature || (*signature_length) < (size_t)key_size) {
         (*signature_length) = (size_t)key_size;
         return SOTER_BUFFER_TOO_SMALL;
     }
+
     if (!EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length)) {
         return SOTER_FAIL;
     }
