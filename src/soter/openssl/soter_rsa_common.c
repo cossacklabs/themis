@@ -26,7 +26,6 @@
 
 soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
 {
-    /* it is copy-paste from /src/soter/openssl/soter_asym_cipher.c */
     soter_status_t res = SOTER_FAIL;
     BIGNUM* pub_exp;
     EVP_PKEY* pkey = NULL;
@@ -84,7 +83,6 @@ err:
     BN_free(pub_exp);
 
     return res;
-    /* end of copy-paste from /src/soter/openssl/soter_asym_cipher.c*/
 }
 
 soter_status_t soter_rsa_import_key(EVP_PKEY* pkey, const void* key, const size_t key_length)
