@@ -107,7 +107,7 @@ soter_status_t soter_sign_export_key_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
     if (EVP_PKEY_base_id(ctx->pkey) != EVP_PKEY_RSA) {
         return SOTER_INVALID_PARAMETER;
     }
-    return soter_rsa_export_key(ctx, key, key_length, isprivate);
+    return soter_rsa_export_key(ctx->pkey, key, key_length, isprivate);
 }
 
 soter_status_t soter_sign_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
