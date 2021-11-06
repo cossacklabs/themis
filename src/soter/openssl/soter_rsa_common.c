@@ -28,28 +28,13 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY** ppkey)
 {
     soter_status_t res = SOTER_FAIL;
     BIGNUM* pub_exp = NULL;
-    EVP_PKEY* pkey = NULL;
     EVP_PKEY_CTX* pkey_ctx = NULL;
 
     if (!ppkey) {
         return SOTER_INVALID_PARAMETER;
     }
 
-    pkey = EVP_PKEY_new();
-    if (!pkey) {
-        return SOTER_NO_MEMORY;
-    }
-    *ppkey = pkey;
-
-    if (!EVP_PKEY_set_type(pkey, EVP_PKEY_RSA)) {
-        return SOTER_FAIL;
-    }
-
-    if (EVP_PKEY_RSA != EVP_PKEY_id(pkey)) {
-        return SOTER_INVALID_PARAMETER;
-    }
-
-    pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
+    pkey_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
     if (!pkey_ctx) {
         res = SOTER_NO_MEMORY;
         goto err;
