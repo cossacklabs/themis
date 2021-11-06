@@ -100,11 +100,7 @@ soter_status_t soter_verify_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
                                                    const void* signature,
                                                    const size_t signature_length)
 {
-    if (!ctx) {
-        return SOTER_INVALID_PARAMETER;
-    }
-    EVP_PKEY* pkey = ctx->pkey;
-    if (!pkey) {
+    if (!ctx || !ctx->pkey) {
         return SOTER_INVALID_PARAMETER;
     }
 
