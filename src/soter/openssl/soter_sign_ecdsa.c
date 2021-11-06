@@ -32,21 +32,30 @@ soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
 {
     soter_status_t err = SOTER_FAIL;
 
-    ctx->pkey = EVP_PKEY_new();
-    if (!ctx->pkey) {
-        return SOTER_NO_MEMORY;
-    }
-
-    if (!EVP_PKEY_set_type(ctx->pkey, EVP_PKEY_EC)) {
-        goto free_pkey;
-    }
-
     if ((!private_key) && (!public_key)) {
+        ctx->pkey = EVP_PKEY_new();
+        if (!ctx->pkey) {
+            return SOTER_NO_MEMORY;
+        }
+
+        if (!EVP_PKEY_set_type(ctx->pkey, EVP_PKEY_EC)) {
+            goto free_pkey;
+        }
+
         err = soter_ec_gen_key(&ctx->pkey);
         if (err != SOTER_SUCCESS) {
             goto free_pkey;
         }
     } else {
+        ctx->pkey = EVP_PKEY_new();
+        if (!ctx->pkey) {
+            return SOTER_NO_MEMORY;
+        }
+
+        if (!EVP_PKEY_set_type(ctx->pkey, EVP_PKEY_EC)) {
+            goto free_pkey;
+        }
+
         if (private_key != NULL) {
             err = soter_ec_import_key(ctx->pkey, private_key, private_key_length);
             if (err != SOTER_SUCCESS) {
