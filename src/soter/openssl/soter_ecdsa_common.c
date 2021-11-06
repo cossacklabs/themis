@@ -27,7 +27,6 @@ soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey)
     soter_status_t res = SOTER_FAIL;
     EVP_PKEY* pkey = NULL;
     EVP_PKEY_CTX* pkey_ctx = NULL;
-    EC_KEY* ec = NULL;
 
     if (!ppkey) {
         return SOTER_INVALID_PARAMETER;
@@ -42,11 +41,6 @@ soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey)
     if (!EVP_PKEY_set_type(pkey, EVP_PKEY_EC)) {
         res = SOTER_FAIL;
         goto err;
-    }
-
-    ec = EVP_PKEY_get0(pkey);
-    if (NULL == ec) {
-        return SOTER_INVALID_PARAMETER;
     }
 
     pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
@@ -68,7 +62,11 @@ soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey)
         goto err;
     }
 
-    if (EC_KEY_generate_key(ec) != 1) {
+    if (EVP_PKEY_keygen_init(pkey_ctx) != 1) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+    if (EVP_PKEY_keygen(pkey_ctx, ppkey) != 1) {
         res = SOTER_FAIL;
         goto err;
     }
