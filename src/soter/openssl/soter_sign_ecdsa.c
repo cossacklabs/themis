@@ -139,7 +139,7 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
     }
 
     key_size = EVP_PKEY_size(ctx->pkey);
-    if (key_size < 0) {
+    if (key_size <= 0) {
         return SOTER_FAIL;
     }
     if (!signature || (*signature_length) < (size_t)key_size) {
