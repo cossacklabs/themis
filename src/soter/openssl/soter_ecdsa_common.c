@@ -44,12 +44,15 @@ soter_status_t soter_ec_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
     if (NULL == ec) {
         return SOTER_INVALID_PARAMETER;
     }
+
     if (EC_KEY_generate_key(ec) != 1) {
-        return SOTER_FAIL;
+        res = SOTER_FAIL;
+        goto err;
     }
 
     res = SOTER_SUCCESS;
 
+err:
     return res;
 }
 
