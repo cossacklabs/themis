@@ -27,8 +27,9 @@
 soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
 {
     soter_status_t res = SOTER_FAIL;
-    BIGNUM* pub_exp;
+    BIGNUM* pub_exp = NULL;
     EVP_PKEY* pkey = NULL;
+
     if (!ppkey) {
         return SOTER_INVALID_PARAMETER;
     }
