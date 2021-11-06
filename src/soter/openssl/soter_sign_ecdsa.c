@@ -32,6 +32,11 @@ soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
 {
     soter_status_t err = SOTER_FAIL;
 
+    /* soter_sign_ctx_t should be initialized only once */
+    if (!ctx || ctx->pkey || ctx->md_ctx) {
+        return SOTER_INVALID_PARAMETER;
+    }
+
     if ((!private_key) && (!public_key)) {
         err = soter_ec_gen_key(&ctx->pkey);
         if (err != SOTER_SUCCESS) {
