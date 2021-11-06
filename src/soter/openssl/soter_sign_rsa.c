@@ -44,19 +44,19 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
     if ((!private_key) && (!public_key)) {
         err = soter_rsa_gen_key(&ctx->pkey);
         if (err != SOTER_SUCCESS) {
-            goto free_pkey_ctx;
+            goto free_pkey;
         }
     } else {
         if (private_key != NULL) {
             err = soter_rsa_import_key(ctx->pkey, private_key, private_key_length);
             if (err != SOTER_SUCCESS) {
-                goto free_pkey_ctx;
+                goto free_pkey;
             }
         }
         if (public_key != NULL) {
             err = soter_rsa_import_key(ctx->pkey, public_key, public_key_length);
             if (err != SOTER_SUCCESS) {
-                goto free_pkey_ctx;
+                goto free_pkey;
             }
         }
     }
@@ -64,7 +64,7 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
     ctx->md_ctx = EVP_MD_CTX_create();
     if (!(ctx->md_ctx)) {
         err = SOTER_NO_MEMORY;
-        goto free_pkey_ctx;
+        goto free_pkey;
     }
 
     /* md_pkey_ctx is owned by ctx->md_ctx */
@@ -83,7 +83,6 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
 free_md_ctx:
     EVP_MD_CTX_destroy(ctx->md_ctx);
     ctx->md_ctx = NULL;
-free_pkey_ctx:
 free_pkey:
     EVP_PKEY_free(ctx->pkey);
     ctx->pkey = NULL;
