@@ -31,6 +31,11 @@ soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
 {
     soter_status_t err = SOTER_FAIL;
 
+    /* soter_sign_ctx_t should be initialized only once */
+    if (!ctx || ctx->pkey || ctx->md_ctx) {
+        return SOTER_INVALID_PARAMETER;
+    }
+
     ctx->pkey = EVP_PKEY_new();
     if (!ctx->pkey) {
         return SOTER_NO_MEMORY;
