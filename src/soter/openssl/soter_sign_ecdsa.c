@@ -123,7 +123,7 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
                                                  void* signature,
                                                  size_t* signature_length)
 {
-    EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
+    EVP_PKEY* pkey = ctx->pkey;
     if (!pkey) {
         return SOTER_INVALID_PARAMETER;
     }

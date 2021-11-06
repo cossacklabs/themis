@@ -76,7 +76,7 @@ soter_status_t soter_ec_import_key(EVP_PKEY* pkey, const void* key, const size_t
 
 soter_status_t soter_ec_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate)
 {
-    EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
+    EVP_PKEY* pkey = ctx->pkey;
     if (!pkey) {
         return SOTER_INVALID_PARAMETER;
     }
