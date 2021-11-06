@@ -31,6 +31,7 @@ soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
                                                 const size_t public_key_length)
 {
     soter_status_t err = SOTER_FAIL;
+    EVP_PKEY_CTX *pkey_ctx = NULL;
 
     ctx->pkey = EVP_PKEY_new();
     if (!ctx->pkey) {
@@ -41,24 +42,24 @@ soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
         goto free_pkey;
     }
 
-    ctx->pkey_ctx = EVP_PKEY_CTX_new(ctx->pkey, NULL);
-    if (!(ctx->pkey_ctx)) {
+    pkey_ctx = EVP_PKEY_CTX_new(ctx->pkey, NULL);
+    if (!pkey_ctx) {
         err = SOTER_NO_MEMORY;
         goto free_pkey;
     }
 
-    if (!EVP_PKEY_paramgen_init(ctx->pkey_ctx)) {
+    if (!EVP_PKEY_paramgen_init(pkey_ctx)) {
         goto free_pkey_ctx;
     }
-    if (!EVP_PKEY_CTX_set_ec_paramgen_curve_nid(ctx->pkey_ctx, NID_X9_62_prime256v1)) {
+    if (!EVP_PKEY_CTX_set_ec_paramgen_curve_nid(pkey_ctx, NID_X9_62_prime256v1)) {
         goto free_pkey_ctx;
     }
-    if (!EVP_PKEY_paramgen(ctx->pkey_ctx, &ctx->pkey)) {
+    if (!EVP_PKEY_paramgen(pkey_ctx, &ctx->pkey)) {
         goto free_pkey_ctx;
     }
 
     if ((!private_key) && (!public_key)) {
-        err = soter_ec_gen_key(ctx->pkey_ctx, &ctx->pkey);
+        err = soter_ec_gen_key(pkey_ctx, &ctx->pkey);
         if (err != SOTER_SUCCESS) {
             goto free_pkey_ctx;
         }
@@ -87,14 +88,15 @@ soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
         goto free_md_ctx;
     }
 
+    EVP_PKEY_CTX_free(pkey_ctx);
+
     return SOTER_SUCCESS;
 
 free_md_ctx:
     EVP_MD_CTX_destroy(ctx->md_ctx);
     ctx->md_ctx = NULL;
 free_pkey_ctx:
-    EVP_PKEY_CTX_free(ctx->pkey_ctx);
-    ctx->pkey_ctx = NULL;
+    EVP_PKEY_CTX_free(pkey_ctx);
 free_pkey:
     EVP_PKEY_free(ctx->pkey);
     ctx->pkey = NULL;
