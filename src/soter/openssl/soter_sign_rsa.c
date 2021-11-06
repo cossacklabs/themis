@@ -116,11 +116,10 @@ soter_status_t soter_sign_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
 
 soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signature, size_t* signature_length)
 {
-    EVP_PKEY* pkey = ctx->pkey;
-    if (!pkey) {
+    if (!ctx->pkey) {
         return SOTER_INVALID_PARAMETER;
     }
-    int key_size = EVP_PKEY_size(pkey);
+    int key_size = EVP_PKEY_size(ctx->pkey);
     if (key_size < 0) {
         return SOTER_FAIL;
     }
