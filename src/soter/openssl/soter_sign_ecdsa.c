@@ -111,16 +111,15 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
                                                  void* signature,
                                                  size_t* signature_length)
 {
-    EVP_PKEY* pkey = ctx->pkey;
-    if (!pkey) {
+    if (!ctx->pkey) {
         return SOTER_INVALID_PARAMETER;
     }
-    if (EVP_PKEY_base_id(pkey) != EVP_PKEY_EC) {
+    if (EVP_PKEY_base_id(ctx->pkey) != EVP_PKEY_EC) {
         return SOTER_INVALID_PARAMETER;
     } /* TODO: need review */
     soter_status_t res = SOTER_SUCCESS;
-    if (!signature || (*signature_length) < (size_t)EVP_PKEY_size(pkey)) {
-        (*signature_length) = (size_t)EVP_PKEY_size(pkey);
+    if (!signature || (*signature_length) < (size_t)EVP_PKEY_size(ctx->pkey)) {
+        (*signature_length) = (size_t)EVP_PKEY_size(ctx->pkey);
         res = SOTER_BUFFER_TOO_SMALL;
     } else {
         if (EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length) != 1) {
