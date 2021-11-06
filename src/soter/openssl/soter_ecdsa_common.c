@@ -44,9 +44,6 @@ soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey)
         goto err;
     }
 
-    if (EVP_PKEY_EC != EVP_PKEY_id(pkey)) {
-        return SOTER_INVALID_PARAMETER;
-    }
     ec = EVP_PKEY_get0(pkey);
     if (NULL == ec) {
         return SOTER_INVALID_PARAMETER;
