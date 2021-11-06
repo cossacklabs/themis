@@ -22,15 +22,13 @@
 #include "soter/openssl/soter_engine.h"
 #include "soter/soter_ec_key.h"
 
-soter_status_t soter_ec_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
+soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey)
 {
     soter_status_t res = SOTER_FAIL;
     EVP_PKEY* pkey = NULL;
+    EVP_PKEY_CTX* pkey_ctx = NULL;
     EC_KEY* ec = NULL;
 
-    if (!pkey_ctx) {
-        return SOTER_INVALID_PARAMETER;
-    }
     if (!ppkey) {
         return SOTER_INVALID_PARAMETER;
     }
@@ -46,6 +44,25 @@ soter_status_t soter_ec_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
         return SOTER_INVALID_PARAMETER;
     }
 
+    pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
+    if (!pkey_ctx) {
+        res = SOTER_NO_MEMORY;
+        goto err;
+    }
+
+    if (!EVP_PKEY_paramgen_init(pkey_ctx)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+    if (!EVP_PKEY_CTX_set_ec_paramgen_curve_nid(pkey_ctx, NID_X9_62_prime256v1)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+    if (!EVP_PKEY_paramgen(pkey_ctx, &pkey)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
     if (EC_KEY_generate_key(ec) != 1) {
         res = SOTER_FAIL;
         goto err;
@@ -54,6 +71,8 @@ soter_status_t soter_ec_gen_key(EVP_PKEY_CTX* pkey_ctx, EVP_PKEY** ppkey)
     res = SOTER_SUCCESS;
 
 err:
+    EVP_PKEY_CTX_free(pkey_ctx);
+
     return res;
 }
 
