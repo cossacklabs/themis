@@ -145,7 +145,7 @@ soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signa
     }
 
     key_size = EVP_PKEY_size(ctx->pkey);
-    if (key_size < 0) {
+    if (key_size <= 0) {
         return SOTER_FAIL;
     }
     if (!signature || (*signature_length) < (size_t)key_size) {
