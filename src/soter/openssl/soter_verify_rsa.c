@@ -93,6 +93,9 @@ soter_status_t soter_verify_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
                                                  const void* data,
                                                  const size_t data_length)
 {
+    if (!ctx) {
+        return SOTER_INVALID_PARAMETER;
+    }
     if (!EVP_DigestVerifyUpdate(ctx->md_ctx, data, data_length)) {
         return SOTER_FAIL;
     }
