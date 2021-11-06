@@ -49,7 +49,7 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
             goto free_pkey;
         }
 
-        if (!EVP_PKEY_set_type(ctx->pkey, EVP_PKEY_RSA)) {
+        if (EVP_PKEY_set_type(ctx->pkey, EVP_PKEY_RSA) != 1) {
             err = SOTER_FAIL;
             goto free_pkey;
         }
@@ -75,13 +75,13 @@ soter_status_t soter_sign_init_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
     }
 
     /* md_pkey_ctx is owned by ctx->md_ctx */
-    if (!EVP_DigestSignInit(ctx->md_ctx, &md_pkey_ctx, EVP_sha256(), NULL, ctx->pkey)) {
+    if (EVP_DigestSignInit(ctx->md_ctx, &md_pkey_ctx, EVP_sha256(), NULL, ctx->pkey) != 1) {
         goto free_md_ctx;
     }
-    if (!EVP_PKEY_CTX_set_rsa_padding(md_pkey_ctx, RSA_PKCS1_PSS_PADDING)) {
+    if (EVP_PKEY_CTX_set_rsa_padding(md_pkey_ctx, RSA_PKCS1_PSS_PADDING) != 1) {
         goto free_md_ctx;
     }
-    if (!EVP_PKEY_CTX_set_rsa_pss_saltlen(md_pkey_ctx, -2)) {
+    if (EVP_PKEY_CTX_set_rsa_pss_saltlen(md_pkey_ctx, -2) != 1) {
         goto free_md_ctx;
     }
 
@@ -124,7 +124,7 @@ soter_status_t soter_sign_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
         return SOTER_INVALID_PARAMETER;
     }
 
-    if (!EVP_DigestSignUpdate(ctx->md_ctx, data, data_length)) {
+    if (EVP_DigestSignUpdate(ctx->md_ctx, data, data_length) != 1) {
         return SOTER_FAIL;
     }
     return SOTER_SUCCESS;
@@ -153,7 +153,7 @@ soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signa
         return SOTER_BUFFER_TOO_SMALL;
     }
 
-    if (!EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length)) {
+    if (EVP_DigestSignFinal(ctx->md_ctx, signature, signature_length) != 1) {
         return SOTER_FAIL;
     }
     return SOTER_SUCCESS;

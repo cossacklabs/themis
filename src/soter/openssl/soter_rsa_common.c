@@ -40,7 +40,7 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY** ppkey)
         goto err;
     }
 
-    if (!EVP_PKEY_keygen_init(pkey_ctx)) {
+    if (EVP_PKEY_keygen_init(pkey_ctx) != 1) {
         res = SOTER_INVALID_PARAMETER;
         goto err;
     }
@@ -72,7 +72,7 @@ soter_status_t soter_rsa_gen_key(EVP_PKEY** ppkey)
         goto err;
     }
 
-    if (!EVP_PKEY_keygen(pkey_ctx, ppkey)) {
+    if (EVP_PKEY_keygen(pkey_ctx, ppkey) != 1) {
         res = SOTER_FAIL;
         goto err;
     }
