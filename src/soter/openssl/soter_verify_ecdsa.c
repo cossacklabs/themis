@@ -89,6 +89,10 @@ soter_status_t soter_verify_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
     if (!ctx) {
         return SOTER_INVALID_PARAMETER;
     }
+    if (!data || data_length == 0) {
+        return SOTER_INVALID_PARAMETER;
+    }
+
     if (!EVP_DigestVerifyUpdate(ctx->md_ctx, data, data_length)) {
         return SOTER_FAIL;
     }
@@ -101,6 +105,9 @@ soter_status_t soter_verify_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
                                                    const size_t signature_length)
 {
     if (!ctx || !ctx->pkey) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    if (!signature || signature_length == 0) {
         return SOTER_INVALID_PARAMETER;
     }
 
