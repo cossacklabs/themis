@@ -101,6 +101,9 @@ soter_status_t soter_sign_export_key_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
                                                    size_t* key_length,
                                                    bool isprivate)
 {
+    if (!ctx) {
+        return SOTER_INVALID_PARAMETER;
+    }
     return soter_rsa_export_key(ctx, key, key_length, isprivate);
 }
 
@@ -108,6 +111,9 @@ soter_status_t soter_sign_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
                                                const void* data,
                                                const size_t data_length)
 {
+    if (!ctx) {
+        return SOTER_INVALID_PARAMETER;
+    }
     if (!EVP_DigestSignUpdate(ctx->md_ctx, data, data_length)) {
         return SOTER_FAIL;
     }
@@ -118,7 +124,7 @@ soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signa
 {
     int key_size = 0;
 
-    if (!ctx->pkey) {
+    if (!ctx || !ctx->pkey) {
         return SOTER_INVALID_PARAMETER;
     }
 
