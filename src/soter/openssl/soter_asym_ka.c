@@ -285,7 +285,7 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
         goto err;
     }
 
-    if (out_length > *shared_secret_length) {
+    if (!shared_secret || out_length > *shared_secret_length) {
         *shared_secret_length = out_length;
         res = SOTER_BUFFER_TOO_SMALL;
         goto err;
