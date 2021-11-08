@@ -219,29 +219,21 @@ soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx,
                                         size_t* key_length,
                                         bool isprivate)
 {
-    EVP_PKEY* pkey;
-
-    if (!asym_ka_ctx) {
+    if (!asym_ka_ctx || !asym_ka_ctx->pkey) {
         return SOTER_INVALID_PARAMETER;
     }
-
-    pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
-
-    if (!pkey) {
-        return SOTER_INVALID_PARAMETER;
-    }
-
-    if (EVP_PKEY_EC != EVP_PKEY_id(pkey)) {
+    if (EVP_PKEY_id(asym_ka_ctx->pkey) != EVP_PKEY_EC) {
         return SOTER_INVALID_PARAMETER;
     }
 
     if (isprivate) {
-        return soter_engine_specific_to_ec_priv_key((const soter_engine_specific_ec_key_t*)pkey,
+        return soter_engine_specific_to_ec_priv_key((const soter_engine_specific_ec_key_t*)
+                                                        asym_ka_ctx->pkey,
                                                     (soter_container_hdr_t*)key,
                                                     key_length);
     }
 
-    return soter_engine_specific_to_ec_pub_key((const soter_engine_specific_ec_key_t*)pkey,
+    return soter_engine_specific_to_ec_pub_key((const soter_engine_specific_ec_key_t*)asym_ka_ctx->pkey,
                                                (soter_container_hdr_t*)key,
                                                key_length);
 }
