@@ -222,7 +222,7 @@ soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx,
     if (!asym_ka_ctx || !asym_ka_ctx->pkey) {
         return SOTER_INVALID_PARAMETER;
     }
-    if (EVP_PKEY_id(asym_ka_ctx->pkey) != EVP_PKEY_EC) {
+    if (EVP_PKEY_base_id(asym_ka_ctx->pkey) != EVP_PKEY_EC) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -252,6 +252,9 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
         return SOTER_INVALID_PARAMETER;
     }
     if (!peer_key || peer_key_length == 0 || !shared_secret_length) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    if (EVP_PKEY_base_id(asym_ka_ctx->pkey) != EVP_PKEY_EC) {
         return SOTER_INVALID_PARAMETER;
     }
 
