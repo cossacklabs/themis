@@ -267,36 +267,39 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
                                               peer_key_length,
                                               ((soter_engine_specific_ec_key_t**)&peer_pkey));
     if (SOTER_SUCCESS != res) {
-        EVP_PKEY_free(peer_pkey);
-        return res;
+        goto err;
     }
 
     if (1 != EVP_PKEY_derive_init(asym_ka_ctx->pkey_ctx)) {
-        EVP_PKEY_free(peer_pkey);
-        return SOTER_FAIL;
+        res = SOTER_FAIL;
+        goto err;
     }
 
     if (1 != EVP_PKEY_derive_set_peer(asym_ka_ctx->pkey_ctx, peer_pkey)) {
-        EVP_PKEY_free(peer_pkey);
-        return SOTER_FAIL;
+        res = SOTER_FAIL;
+        goto err;
     }
 
     if (1 != EVP_PKEY_derive(asym_ka_ctx->pkey_ctx, NULL, &out_length)) {
-        EVP_PKEY_free(peer_pkey);
-        return SOTER_FAIL;
+        res = SOTER_FAIL;
+        goto err;
     }
 
     if (out_length > *shared_secret_length) {
-        EVP_PKEY_free(peer_pkey);
         *shared_secret_length = out_length;
-        return SOTER_BUFFER_TOO_SMALL;
+        res = SOTER_BUFFER_TOO_SMALL;
+        goto err;
     }
 
     if (1 != EVP_PKEY_derive(asym_ka_ctx->pkey_ctx, (unsigned char*)shared_secret, shared_secret_length)) {
-        EVP_PKEY_free(peer_pkey);
-        return SOTER_FAIL;
+        res = SOTER_FAIL;
+        goto err;
     }
 
+    res = SOTER_SUCCESS;
+
+err:
     EVP_PKEY_free(peer_pkey);
-    return SOTER_SUCCESS;
+
+    return res;
 }
