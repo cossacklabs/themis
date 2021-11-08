@@ -169,7 +169,6 @@ err:
 soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void* key, size_t key_length)
 {
     const soter_container_hdr_t* hdr = key;
-    EVP_PKEY* pkey;
 
     if ((!asym_ka_ctx) || (!key)) {
         return SOTER_INVALID_PARAMETER;
@@ -179,25 +178,37 @@ soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void
         return SOTER_INVALID_PARAMETER;
     }
 
-    pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
+    /*
+     * soter_ec_{priv,pub}_key_to_engine_specific() expect EVP_PKEY of EVP_PKEY_EC type
+     * to be already allocated and non-NULL. We might be importing it anew, or we might be
+     * replacing previously generated keypair.
+     */
+    if (asym_ka_ctx->pkey) {
+        if (EVP_PKEY_base_id(asym_ka_ctx->pkey) != EVP_PKEY_EC) {
+            return SOTER_INVALID_PARAMETER;
+        }
+    } else {
+        asym_ka_ctx->pkey = EVP_PKEY_new();
+        if (!asym_ka_ctx->pkey) {
+            return SOTER_NO_MEMORY;
+        }
 
-    if (!pkey) {
-        return SOTER_INVALID_PARAMETER;
-    }
-
-    if (EVP_PKEY_EC != EVP_PKEY_id(pkey)) {
-        return SOTER_INVALID_PARAMETER;
+        if (EVP_PKEY_set_type(asym_ka_ctx->pkey, EVP_PKEY_EC) != 1) {
+            EVP_PKEY_free(asym_ka_ctx->pkey);
+            asym_ka_ctx->pkey = NULL;
+            return SOTER_FAIL;
+        }
     }
 
     switch (hdr->tag[0]) {
     case 'R':
         return soter_ec_priv_key_to_engine_specific(hdr,
                                                     key_length,
-                                                    ((soter_engine_specific_ec_key_t**)&pkey));
+                                                    ((soter_engine_specific_ec_key_t**)&asym_ka_ctx->pkey));
     case 'U':
         return soter_ec_pub_key_to_engine_specific(hdr,
                                                    key_length,
-                                                   ((soter_engine_specific_ec_key_t**)&pkey));
+                                                   ((soter_engine_specific_ec_key_t**)&asym_ka_ctx->pkey));
     default:
         return SOTER_INVALID_PARAMETER;
     }
