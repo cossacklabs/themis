@@ -136,33 +136,34 @@ soter_status_t soter_asym_ka_destroy(soter_asym_ka_t* asym_ka_ctx)
 
 soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx)
 {
-    EVP_PKEY* pkey;
-    EC_KEY* ec;
+    soter_status_t res = SOTER_FAIL;
+    EVP_PKEY_CTX* pkey_ctx = NULL;
 
-    if (!asym_ka_ctx) {
+    if (!asym_ka_ctx || !asym_ka_ctx->param) {
         return SOTER_INVALID_PARAMETER;
     }
 
-    pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
-
-    if (!pkey) {
-        return SOTER_INVALID_PARAMETER;
+    pkey_ctx = EVP_PKEY_CTX_new(asym_ka_ctx->param, NULL);
+    if (!pkey_ctx) {
+        return SOTER_NO_MEMORY;
     }
 
-    if (EVP_PKEY_EC != EVP_PKEY_id(pkey)) {
-        return SOTER_INVALID_PARAMETER;
+    if (EVP_PKEY_keygen_init(pkey_ctx) != 1) {
+        res = SOTER_FAIL;
+        goto err;
     }
 
-    ec = EVP_PKEY_get0(pkey);
-    if (NULL == ec) {
-        return SOTER_INVALID_PARAMETER;
+    if (EVP_PKEY_keygen(pkey_ctx, &asym_ka_ctx->pkey) != 1) {
+        res = SOTER_FAIL;
+        goto err;
     }
 
-    if (1 == EC_KEY_generate_key(ec)) {
-        return SOTER_SUCCESS;
-    }
+    res = SOTER_SUCCESS;
 
-    return SOTER_FAIL;
+err:
+    EVP_PKEY_CTX_free(pkey_ctx);
+
+    return res;
 }
 
 soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void* key, size_t key_length)
