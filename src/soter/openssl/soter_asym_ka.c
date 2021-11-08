@@ -64,7 +64,7 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_al
     if (1 != EVP_PKEY_CTX_set_ec_paramgen_curve_nid(asym_ka_ctx->pkey_ctx, nid)) {
         goto free_pkey_ctx;
     }
-    if (1 != EVP_PKEY_paramgen(asym_ka_ctx->pkey_ctx, &pkey)) {
+    if (1 != EVP_PKEY_paramgen(asym_ka_ctx->pkey_ctx, &asym_ka_ctx->param)) {
         goto free_pkey_ctx;
     }
 
