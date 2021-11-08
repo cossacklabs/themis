@@ -248,14 +248,16 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
     EVP_PKEY* peer_pkey = NULL;
     size_t out_length = 0;
 
+    if (!asym_ka_ctx || !asym_ka_ctx->pkey) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    if (!peer_key || peer_key_length == 0 || !shared_secret_length) {
+        return SOTER_INVALID_PARAMETER;
+    }
+
     peer_pkey = EVP_PKEY_new();
     if (NULL == peer_pkey) {
         return SOTER_NO_MEMORY;
-    }
-
-    if ((!asym_ka_ctx) || (!shared_secret_length)) {
-        EVP_PKEY_free(peer_pkey);
-        return SOTER_INVALID_PARAMETER;
     }
 
     res = soter_ec_pub_key_to_engine_specific((const soter_container_hdr_t*)peer_key,
