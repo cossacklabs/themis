@@ -43,6 +43,9 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_al
         return SOTER_INVALID_PARAMETER;
     }
 
+    asym_ka_ctx->param = NULL;
+    asym_ka_ctx->pkey = NULL;
+
     pkey = EVP_PKEY_new();
     if (!pkey) {
         return SOTER_NO_MEMORY;
@@ -84,6 +87,14 @@ soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
 {
     if (!asym_ka_ctx) {
         return SOTER_INVALID_PARAMETER;
+    }
+    if (asym_ka_ctx->param) {
+        EVP_PKEY_free(asym_ka_ctx->param);
+        asym_ka_ctx->param = NULL;
+    }
+    if (asym_ka_ctx->pkey) {
+        EVP_PKEY_free(asym_ka_ctx->pkey);
+        asym_ka_ctx->pkey = NULL;
     }
     if (asym_ka_ctx->pkey_ctx) {
         EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
