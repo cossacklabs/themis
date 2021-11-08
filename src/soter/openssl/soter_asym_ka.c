@@ -246,6 +246,7 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
 {
     soter_status_t res = SOTER_FAIL;
     EVP_PKEY* peer_pkey = NULL;
+    EVP_PKEY_CTX* derive_ctx = NULL;
     size_t out_length = 0;
 
     if (!asym_ka_ctx || !asym_ka_ctx->pkey) {
@@ -270,17 +271,23 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
         goto err;
     }
 
-    if (1 != EVP_PKEY_derive_init(asym_ka_ctx->pkey_ctx)) {
+    derive_ctx = EVP_PKEY_CTX_new(asym_ka_ctx->pkey, NULL);
+    if (!derive_ctx) {
+        res = SOTER_NO_MEMORY;
+        goto err;
+    }
+
+    if (1 != EVP_PKEY_derive_init(derive_ctx)) {
         res = SOTER_FAIL;
         goto err;
     }
 
-    if (1 != EVP_PKEY_derive_set_peer(asym_ka_ctx->pkey_ctx, peer_pkey)) {
+    if (1 != EVP_PKEY_derive_set_peer(derive_ctx, peer_pkey)) {
         res = SOTER_FAIL;
         goto err;
     }
 
-    if (1 != EVP_PKEY_derive(asym_ka_ctx->pkey_ctx, NULL, &out_length)) {
+    if (1 != EVP_PKEY_derive(derive_ctx, NULL, &out_length)) {
         res = SOTER_FAIL;
         goto err;
     }
@@ -291,7 +298,7 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
         goto err;
     }
 
-    if (1 != EVP_PKEY_derive(asym_ka_ctx->pkey_ctx, (unsigned char*)shared_secret, shared_secret_length)) {
+    if (1 != EVP_PKEY_derive(derive_ctx, (unsigned char*)shared_secret, shared_secret_length)) {
         res = SOTER_FAIL;
         goto err;
     }
@@ -300,6 +307,7 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
 
 err:
     EVP_PKEY_free(peer_pkey);
+    EVP_PKEY_CTX_free(derive_ctx);
 
     return res;
 }
