@@ -244,10 +244,11 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
                                     void* shared_secret,
                                     size_t* shared_secret_length)
 {
-    EVP_PKEY* peer_pkey = EVP_PKEY_new();
-    soter_status_t res;
-    size_t out_length;
+    soter_status_t res = SOTER_FAIL;
+    EVP_PKEY* peer_pkey = NULL;
+    size_t out_length = 0;
 
+    peer_pkey = EVP_PKEY_new();
     if (NULL == peer_pkey) {
         return SOTER_NO_MEMORY;
     }
