@@ -84,10 +84,6 @@ soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
         EVP_PKEY_free(asym_ka_ctx->pkey);
         asym_ka_ctx->pkey = NULL;
     }
-    if (asym_ka_ctx->pkey_ctx) {
-        EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
-        asym_ka_ctx->pkey_ctx = NULL;
-    }
     return SOTER_SUCCESS;
 }
 
