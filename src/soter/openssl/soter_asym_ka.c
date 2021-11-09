@@ -36,23 +36,13 @@ SOTER_PRIVATE_API
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_alg_t alg)
 {
     soter_status_t err = SOTER_FAIL;
-    EVP_PKEY* pkey = NULL;
     int nid = soter_alg_to_curve_nid(alg);
 
     if ((!asym_ka_ctx) || (0 == nid)) {
         return SOTER_INVALID_PARAMETER;
     }
 
-    pkey = EVP_PKEY_new();
-    if (!pkey) {
-        return SOTER_NO_MEMORY;
-    }
-
-    if (!EVP_PKEY_set_type(pkey, EVP_PKEY_EC)) {
-        goto free_pkey;
-    }
-
-    asym_ka_ctx->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
+    asym_ka_ctx->pkey_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL);
     if (!(asym_ka_ctx->pkey_ctx)) {
         err = SOTER_NO_MEMORY;
         goto free_pkey;
@@ -68,14 +58,12 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_al
         goto free_pkey_ctx;
     }
 
-    EVP_PKEY_free(pkey);
     return SOTER_SUCCESS;
 
 free_pkey_ctx:
     EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
     asym_ka_ctx->pkey_ctx = NULL;
 free_pkey:
-    EVP_PKEY_free(pkey);
     return err;
 }
 
