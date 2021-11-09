@@ -35,7 +35,7 @@ static int soter_alg_to_curve_nid(soter_asym_ka_alg_t alg)
 SOTER_PRIVATE_API
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_alg_t alg)
 {
-    soter_status_t err = SOTER_FAIL;
+    soter_status_t res = SOTER_FAIL;
     EVP_PKEY_CTX* param_ctx = NULL;
     int nid = soter_alg_to_curve_nid(alg);
 
@@ -45,27 +45,29 @@ soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_al
 
     param_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL);
     if (!param_ctx) {
-        err = SOTER_NO_MEMORY;
-        goto free_pkey;
+        res = SOTER_NO_MEMORY;
+        goto err;
     }
 
     if (1 != EVP_PKEY_paramgen_init(param_ctx)) {
-        goto free_pkey_ctx;
+        res = SOTER_FAIL;
+        goto err;
     }
     if (1 != EVP_PKEY_CTX_set_ec_paramgen_curve_nid(param_ctx, nid)) {
-        goto free_pkey_ctx;
+        res = SOTER_FAIL;
+        goto err;
     }
     if (1 != EVP_PKEY_paramgen(param_ctx, &asym_ka_ctx->param)) {
-        goto free_pkey_ctx;
+        res = SOTER_FAIL;
+        goto err;
     }
 
-    EVP_PKEY_CTX_free(param_ctx);
-    return SOTER_SUCCESS;
+    res = SOTER_SUCCESS;
 
-free_pkey_ctx:
+err:
     EVP_PKEY_CTX_free(param_ctx);
-free_pkey:
-    return err;
+
+    return res;
 }
 
 SOTER_PRIVATE_API
