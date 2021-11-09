@@ -36,33 +36,34 @@ SOTER_PRIVATE_API
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_alg_t alg)
 {
     soter_status_t err = SOTER_FAIL;
+    EVP_PKEY_CTX* param_ctx = NULL;
     int nid = soter_alg_to_curve_nid(alg);
 
     if ((!asym_ka_ctx) || (0 == nid)) {
         return SOTER_INVALID_PARAMETER;
     }
 
-    asym_ka_ctx->pkey_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL);
-    if (!(asym_ka_ctx->pkey_ctx)) {
+    param_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL);
+    if (!param_ctx) {
         err = SOTER_NO_MEMORY;
         goto free_pkey;
     }
 
-    if (1 != EVP_PKEY_paramgen_init(asym_ka_ctx->pkey_ctx)) {
+    if (1 != EVP_PKEY_paramgen_init(param_ctx)) {
         goto free_pkey_ctx;
     }
-    if (1 != EVP_PKEY_CTX_set_ec_paramgen_curve_nid(asym_ka_ctx->pkey_ctx, nid)) {
+    if (1 != EVP_PKEY_CTX_set_ec_paramgen_curve_nid(param_ctx, nid)) {
         goto free_pkey_ctx;
     }
-    if (1 != EVP_PKEY_paramgen(asym_ka_ctx->pkey_ctx, &asym_ka_ctx->param)) {
+    if (1 != EVP_PKEY_paramgen(param_ctx, &asym_ka_ctx->param)) {
         goto free_pkey_ctx;
     }
 
+    EVP_PKEY_CTX_free(param_ctx);
     return SOTER_SUCCESS;
 
 free_pkey_ctx:
-    EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
-    asym_ka_ctx->pkey_ctx = NULL;
+    EVP_PKEY_CTX_free(param_ctx);
 free_pkey:
     return err;
 }
