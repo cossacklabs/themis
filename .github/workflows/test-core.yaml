@@ -67,13 +67,13 @@ jobs:
         run: make prepare_tests_basic WITH_SCELL_COMPAT=yes BUILD_PATH=build-compat
       - name: Run test suite (OpenSSL)
         if: always()
-        run: make test BUILD_PATH=build-openssl
+        run: make test ENGINE=openssl BUILD_PATH=build-openssl
       - name: Run test suite (BoringSSL)
         if: always()
-        run: make test BUILD_PATH=build-boringssl
+        run: make test ENGINE=boringssl BUILD_PATH=build-boringssl
       - name: Run test suite (WITH_SCELL_COMPAT)
         if: always()
-        run: make test BUILD_PATH=build-compat
+        run: make test WITH_SCELL_COMPAT=yes BUILD_PATH=build-compat
       - name: Ensure OpenSSL 3.0 fails (macOS only)
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
