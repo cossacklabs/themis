@@ -80,7 +80,10 @@ jobs:
           # Themis uses OpenSSL 1.1 by default if installed.
           # Explicitly request OpenSSL 3.0 by pointing the build into OpenSSL 3.0's paths.
           openssl3=$(brew --prefix openssl@3)
-          if ! make ENGINE=openssl BUILD_PATH=build-openssl-3.0 ENGINE_INCLUDE_PATH=$openssl3/include ENGINE_LIB_PATH=$openssl3/lib
+          export ENGINE=openssl
+          export ENGINE_INCLUDE_PATH="$openssl3/include"
+          export ENGINE_LIB_PATH="$openssl3/lib"
+          if ! make BUILD_PATH=build-openssl-3.0-without-magic-word
           then
             true
           else
