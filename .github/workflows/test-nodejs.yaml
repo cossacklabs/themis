@@ -48,10 +48,19 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Install Themis Core
+        env:
+          NODE_VERSION: ${{ matrix.node-version }}
         run: |
+          # Workaround for Node.js 8.x using OpenSSL 1.0.2 when Themis is built against OpenSSL 1.1
+          # https://github.com/cossacklabs/themis/issues/657
+          if [[ "$NODE_VERSION" = "8.x" ]]; then
+            export ENGINE=boringssl
+          fi
           make
-          sudo make install
+          sudo -E make install
       - name: Run test suite
         run: |
           echo Node.js: $(node --version)
