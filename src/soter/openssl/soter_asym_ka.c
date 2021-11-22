@@ -35,48 +35,39 @@ static int soter_alg_to_curve_nid(soter_asym_ka_alg_t alg)
 SOTER_PRIVATE_API
 soter_status_t soter_asym_ka_init(soter_asym_ka_t* asym_ka_ctx, soter_asym_ka_alg_t alg)
 {
-    soter_status_t err = SOTER_FAIL;
-    EVP_PKEY* pkey = NULL;
+    soter_status_t res = SOTER_FAIL;
+    EVP_PKEY_CTX* param_ctx = NULL;
     int nid = soter_alg_to_curve_nid(alg);
 
     if ((!asym_ka_ctx) || (0 == nid)) {
         return SOTER_INVALID_PARAMETER;
     }
 
-    pkey = EVP_PKEY_new();
-    if (!pkey) {
-        return SOTER_NO_MEMORY;
+    param_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL);
+    if (!param_ctx) {
+        res = SOTER_NO_MEMORY;
+        goto err;
     }
 
-    if (!EVP_PKEY_set_type(pkey, EVP_PKEY_EC)) {
-        goto free_pkey;
+    if (1 != EVP_PKEY_paramgen_init(param_ctx)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+    if (1 != EVP_PKEY_CTX_set_ec_paramgen_curve_nid(param_ctx, nid)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+    if (1 != EVP_PKEY_paramgen(param_ctx, &asym_ka_ctx->param)) {
+        res = SOTER_FAIL;
+        goto err;
     }
 
-    asym_ka_ctx->pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
-    if (!(asym_ka_ctx->pkey_ctx)) {
-        err = SOTER_NO_MEMORY;
-        goto free_pkey;
-    }
+    res = SOTER_SUCCESS;
 
-    if (1 != EVP_PKEY_paramgen_init(asym_ka_ctx->pkey_ctx)) {
-        goto free_pkey_ctx;
-    }
-    if (1 != EVP_PKEY_CTX_set_ec_paramgen_curve_nid(asym_ka_ctx->pkey_ctx, nid)) {
-        goto free_pkey_ctx;
-    }
-    if (1 != EVP_PKEY_paramgen(asym_ka_ctx->pkey_ctx, &pkey)) {
-        goto free_pkey_ctx;
-    }
+err:
+    EVP_PKEY_CTX_free(param_ctx);
 
-    EVP_PKEY_free(pkey);
-    return SOTER_SUCCESS;
-
-free_pkey_ctx:
-    EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
-    asym_ka_ctx->pkey_ctx = NULL;
-free_pkey:
-    EVP_PKEY_free(pkey);
-    return err;
+    return res;
 }
 
 SOTER_PRIVATE_API
@@ -85,9 +76,13 @@ soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
     if (!asym_ka_ctx) {
         return SOTER_INVALID_PARAMETER;
     }
-    if (asym_ka_ctx->pkey_ctx) {
-        EVP_PKEY_CTX_free(asym_ka_ctx->pkey_ctx);
-        asym_ka_ctx->pkey_ctx = NULL;
+    if (asym_ka_ctx->param) {
+        EVP_PKEY_free(asym_ka_ctx->param);
+        asym_ka_ctx->param = NULL;
+    }
+    if (asym_ka_ctx->pkey) {
+        EVP_PKEY_free(asym_ka_ctx->pkey);
+        asym_ka_ctx->pkey = NULL;
     }
     return SOTER_SUCCESS;
 }
@@ -95,7 +90,7 @@ soter_status_t soter_asym_ka_cleanup(soter_asym_ka_t* asym_ka_ctx)
 soter_asym_ka_t* soter_asym_ka_create(soter_asym_ka_alg_t alg)
 {
     soter_status_t status;
-    soter_asym_ka_t* ctx = malloc(sizeof(soter_asym_ka_t));
+    soter_asym_ka_t* ctx = calloc(1, sizeof(*ctx));
     if (!ctx) {
         return NULL;
     }
@@ -128,39 +123,39 @@ soter_status_t soter_asym_ka_destroy(soter_asym_ka_t* asym_ka_ctx)
 
 soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx)
 {
-    EVP_PKEY* pkey;
-    EC_KEY* ec;
+    soter_status_t res = SOTER_FAIL;
+    EVP_PKEY_CTX* pkey_ctx = NULL;
 
-    if (!asym_ka_ctx) {
+    if (!asym_ka_ctx || !asym_ka_ctx->param) {
         return SOTER_INVALID_PARAMETER;
     }
 
-    pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
-
-    if (!pkey) {
-        return SOTER_INVALID_PARAMETER;
+    pkey_ctx = EVP_PKEY_CTX_new(asym_ka_ctx->param, NULL);
+    if (!pkey_ctx) {
+        return SOTER_NO_MEMORY;
     }
 
-    if (EVP_PKEY_EC != EVP_PKEY_id(pkey)) {
-        return SOTER_INVALID_PARAMETER;
+    if (EVP_PKEY_keygen_init(pkey_ctx) != 1) {
+        res = SOTER_FAIL;
+        goto err;
     }
 
-    ec = EVP_PKEY_get0(pkey);
-    if (NULL == ec) {
-        return SOTER_INVALID_PARAMETER;
+    if (EVP_PKEY_keygen(pkey_ctx, &asym_ka_ctx->pkey) != 1) {
+        res = SOTER_FAIL;
+        goto err;
     }
 
-    if (1 == EC_KEY_generate_key(ec)) {
-        return SOTER_SUCCESS;
-    }
+    res = SOTER_SUCCESS;
 
-    return SOTER_FAIL;
+err:
+    EVP_PKEY_CTX_free(pkey_ctx);
+
+    return res;
 }
 
 soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void* key, size_t key_length)
 {
     const soter_container_hdr_t* hdr = key;
-    EVP_PKEY* pkey;
 
     if ((!asym_ka_ctx) || (!key)) {
         return SOTER_INVALID_PARAMETER;
@@ -170,25 +165,37 @@ soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void
         return SOTER_INVALID_PARAMETER;
     }
 
-    pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
+    /*
+     * soter_ec_{priv,pub}_key_to_engine_specific() expect EVP_PKEY of EVP_PKEY_EC type
+     * to be already allocated and non-NULL. We might be importing it anew, or we might be
+     * replacing previously generated keypair.
+     */
+    if (asym_ka_ctx->pkey) {
+        if (EVP_PKEY_base_id(asym_ka_ctx->pkey) != EVP_PKEY_EC) {
+            return SOTER_INVALID_PARAMETER;
+        }
+    } else {
+        asym_ka_ctx->pkey = EVP_PKEY_new();
+        if (!asym_ka_ctx->pkey) {
+            return SOTER_NO_MEMORY;
+        }
 
-    if (!pkey) {
-        return SOTER_INVALID_PARAMETER;
-    }
-
-    if (EVP_PKEY_EC != EVP_PKEY_id(pkey)) {
-        return SOTER_INVALID_PARAMETER;
+        if (EVP_PKEY_set_type(asym_ka_ctx->pkey, EVP_PKEY_EC) != 1) {
+            EVP_PKEY_free(asym_ka_ctx->pkey);
+            asym_ka_ctx->pkey = NULL;
+            return SOTER_FAIL;
+        }
     }
 
     switch (hdr->tag[0]) {
     case 'R':
         return soter_ec_priv_key_to_engine_specific(hdr,
                                                     key_length,
-                                                    ((soter_engine_specific_ec_key_t**)&pkey));
+                                                    ((soter_engine_specific_ec_key_t**)&asym_ka_ctx->pkey));
     case 'U':
         return soter_ec_pub_key_to_engine_specific(hdr,
                                                    key_length,
-                                                   ((soter_engine_specific_ec_key_t**)&pkey));
+                                                   ((soter_engine_specific_ec_key_t**)&asym_ka_ctx->pkey));
     default:
         return SOTER_INVALID_PARAMETER;
     }
@@ -199,29 +206,21 @@ soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx,
                                         size_t* key_length,
                                         bool isprivate)
 {
-    EVP_PKEY* pkey;
-
-    if (!asym_ka_ctx) {
+    if (!asym_ka_ctx || !asym_ka_ctx->pkey) {
         return SOTER_INVALID_PARAMETER;
     }
-
-    pkey = EVP_PKEY_CTX_get0_pkey(asym_ka_ctx->pkey_ctx);
-
-    if (!pkey) {
-        return SOTER_INVALID_PARAMETER;
-    }
-
-    if (EVP_PKEY_EC != EVP_PKEY_id(pkey)) {
+    if (EVP_PKEY_base_id(asym_ka_ctx->pkey) != EVP_PKEY_EC) {
         return SOTER_INVALID_PARAMETER;
     }
 
     if (isprivate) {
-        return soter_engine_specific_to_ec_priv_key((const soter_engine_specific_ec_key_t*)pkey,
+        return soter_engine_specific_to_ec_priv_key((const soter_engine_specific_ec_key_t*)
+                                                        asym_ka_ctx->pkey,
                                                     (soter_container_hdr_t*)key,
                                                     key_length);
     }
 
-    return soter_engine_specific_to_ec_pub_key((const soter_engine_specific_ec_key_t*)pkey,
+    return soter_engine_specific_to_ec_pub_key((const soter_engine_specific_ec_key_t*)asym_ka_ctx->pkey,
                                                (soter_container_hdr_t*)key,
                                                key_length);
 }
@@ -232,53 +231,70 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
                                     void* shared_secret,
                                     size_t* shared_secret_length)
 {
-    EVP_PKEY* peer_pkey = EVP_PKEY_new();
-    soter_status_t res;
-    size_t out_length;
+    soter_status_t res = SOTER_FAIL;
+    EVP_PKEY* peer_pkey = NULL;
+    EVP_PKEY_CTX* derive_ctx = NULL;
+    size_t out_length = 0;
 
-    if (NULL == peer_pkey) {
-        return SOTER_NO_MEMORY;
+    if (!asym_ka_ctx || !asym_ka_ctx->pkey) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    if (!peer_key || peer_key_length == 0 || !shared_secret_length) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    if (EVP_PKEY_base_id(asym_ka_ctx->pkey) != EVP_PKEY_EC) {
+        return SOTER_INVALID_PARAMETER;
     }
 
-    if ((!asym_ka_ctx) || (!shared_secret_length)) {
-        EVP_PKEY_free(peer_pkey);
-        return SOTER_INVALID_PARAMETER;
+    peer_pkey = EVP_PKEY_new();
+    if (NULL == peer_pkey) {
+        return SOTER_NO_MEMORY;
     }
 
     res = soter_ec_pub_key_to_engine_specific((const soter_container_hdr_t*)peer_key,
                                               peer_key_length,
                                               ((soter_engine_specific_ec_key_t**)&peer_pkey));
     if (SOTER_SUCCESS != res) {
-        EVP_PKEY_free(peer_pkey);
-        return res;
+        goto err;
     }
 
-    if (1 != EVP_PKEY_derive_init(asym_ka_ctx->pkey_ctx)) {
-        EVP_PKEY_free(peer_pkey);
-        return SOTER_FAIL;
+    derive_ctx = EVP_PKEY_CTX_new(asym_ka_ctx->pkey, NULL);
+    if (!derive_ctx) {
+        res = SOTER_NO_MEMORY;
+        goto err;
     }
 
-    if (1 != EVP_PKEY_derive_set_peer(asym_ka_ctx->pkey_ctx, peer_pkey)) {
-        EVP_PKEY_free(peer_pkey);
-        return SOTER_FAIL;
+    if (1 != EVP_PKEY_derive_init(derive_ctx)) {
+        res = SOTER_FAIL;
+        goto err;
     }
 
-    if (1 != EVP_PKEY_derive(asym_ka_ctx->pkey_ctx, NULL, &out_length)) {
-        EVP_PKEY_free(peer_pkey);
-        return SOTER_FAIL;
+    if (1 != EVP_PKEY_derive_set_peer(derive_ctx, peer_pkey)) {
+        res = SOTER_FAIL;
+        goto err;
     }
 
-    if (out_length > *shared_secret_length) {
-        EVP_PKEY_free(peer_pkey);
+    if (1 != EVP_PKEY_derive(derive_ctx, NULL, &out_length)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (!shared_secret || out_length > *shared_secret_length) {
         *shared_secret_length = out_length;
-        return SOTER_BUFFER_TOO_SMALL;
+        res = SOTER_BUFFER_TOO_SMALL;
+        goto err;
     }
 
-    if (1 != EVP_PKEY_derive(asym_ka_ctx->pkey_ctx, (unsigned char*)shared_secret, shared_secret_length)) {
-        EVP_PKEY_free(peer_pkey);
-        return SOTER_FAIL;
+    if (1 != EVP_PKEY_derive(derive_ctx, (unsigned char*)shared_secret, shared_secret_length)) {
+        res = SOTER_FAIL;
+        goto err;
     }
 
+    res = SOTER_SUCCESS;
+
+err:
     EVP_PKEY_free(peer_pkey);
-    return SOTER_SUCCESS;
+    EVP_PKEY_CTX_free(derive_ctx);
+
+    return res;
 }

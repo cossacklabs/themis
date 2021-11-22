@@ -50,7 +50,8 @@ struct soter_rsa_key_pair_gen_type {
 };
 
 struct soter_asym_ka_type {
-    EVP_PKEY_CTX* pkey_ctx;
+    EVP_PKEY* param;
+    EVP_PKEY* pkey;
 };
 
 struct soter_sign_ctx_type {
