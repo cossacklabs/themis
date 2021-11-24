@@ -83,6 +83,16 @@ ifndef IS_EMSCRIPTEN
 	 fi
 	@exit 1
 endif
+#   Typical version string:
+#	emcc (Emscripten gcc/clang-like replacement + linker emulating GNU ld) 2.0.13 (681cdf3e7edeef79855adc2f2a04a1a2a44ec24f)
+	@actual="$$(emcc --version | head -1 | sed -E 's/^emcc \([^()]*\) (.*) \([0-9a-f]*\)$$/\1/')"; \
+     expected="$$(cat $(WASM_PATH)/emscripten/VERSION)"; \
+	 if [[ "$$actual" != "$$expected" ]]; then \
+	     echo "Current Emscripten environment is not supported!" ; \
+	     echo "    actual:   $$actual" ; \
+	     echo "    expected: $$expected" ; \
+	     exit 1 ; \
+	 fi
 
 wasmthemis_install: CMD = npm install $(abspath $(WASM_PACKAGE))
 wasmthemis_install:
