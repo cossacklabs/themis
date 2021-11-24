@@ -47,6 +47,10 @@ jobs:
             python3 python3-setuptools \
             ruby ruby-dev \
             pkg-config clang
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Install RVM
         run: |
           sudo apt install --yes software-properties-common
@@ -70,13 +74,14 @@ jobs:
           node-version: 10.x
       - name: Install Emscripten
         run: |
+          version=$(cat src/wrappers/themis/wasm/emscripten/VERSION)
           # Install Emscripten toolchain as described in documentation:
           # https://emscripten.org/docs/getting_started/downloads.html
           cd $HOME
           git clone https://github.com/emscripten-core/emsdk.git
           cd $HOME/emsdk
-          ./emsdk install  2.0.13
-          ./emsdk activate 2.0.13
+          ./emsdk install  "$version"
+          ./emsdk activate "$version"
       - name: Install PHP from PPA
         run: |
           sudo apt install --yes software-properties-common
@@ -87,10 +92,6 @@ jobs:
           sudo update-alternatives --set php        /usr/bin/php7.2
           sudo update-alternatives --set php-config /usr/bin/php-config7.2
           sudo update-alternatives --set phpize     /usr/bin/phpize7.2
-      - name: Check out code
-        uses: actions/checkout@v2
-        with:
-          submodules: true
       - name: Install Themis Core
         run: |
           make

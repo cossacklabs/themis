@@ -40,19 +40,20 @@ jobs:
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev ninja-build
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Install Emscripten
         run: |
+          version=$(cat src/wrappers/themis/wasm/emscripten/VERSION)
           # Install Emscripten toolchain as described in documentation:
           # https://emscripten.org/docs/getting_started/downloads.html
           cd $HOME
           git clone https://github.com/emscripten-core/emsdk.git
           cd $HOME/emsdk
-          ./emsdk install  2.0.13
-          ./emsdk activate 2.0.13
-      - name: Check out code
-        uses: actions/checkout@v2
-        with:
-          submodules: true
+          ./emsdk install  "$version"
+          ./emsdk activate "$version"
       - name: Build WasmThemis
         run: |
           source "$HOME/emsdk/emsdk_env.sh"
