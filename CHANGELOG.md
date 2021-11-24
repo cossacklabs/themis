@@ -155,7 +155,7 @@ _Code:_
 
 - **WebAssembly**
 
-  - Updated Emscripten toolchain to the latest version ([#760](https://github.com/cossacklabs/themis/pull/760)).
+  - Updated Emscripten toolchain to the latest version ([#760](https://github.com/cossacklabs/themis/pull/760), [#880](https://github.com/cossacklabs/themis/pull/880)).
   - Node.js v16 is now supported ([#801](https://github.com/cossacklabs/themis/pull/801)).
   - TypeScript type definitions and ES6 module are now available, thanks to [**@maxammann**](https://github.com/maxammann) ([#792](https://github.com/cossacklabs/themis/pull/792)).
     ```js

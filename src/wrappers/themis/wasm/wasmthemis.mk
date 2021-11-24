@@ -24,7 +24,7 @@ WASM_PRE_JS  = $(abspath $(WASM_PATH)/emscripten/pre.js)
 
 WASM_PACKAGE = $(BIN_PATH)/wasm-themis.tgz
 
-$(BIN_PATH)/libthemis.js: LDFLAGS += -s EXTRA_EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME)
+$(BIN_PATH)/libthemis.js: LDFLAGS += -s EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME)
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s ALLOW_TABLE_GROWTH
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s MODULARIZE=1
 # FIXME(ilammy, 2020-11-29): rely in EMSCRIPTEN_KEEPALIVE instead of LINKABLE
@@ -32,6 +32,11 @@ $(BIN_PATH)/libthemis.js: LDFLAGS += -s MODULARIZE=1
 # LINKABLE flag wasm-ld ends up stripping *all* Themis functions from "*.wasm"
 # output, as if removed by dead code elimination.
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s LINKABLE=1
+# FIXME(ilammy, 2021-11-24): figure out why Emscripten linker is so stupid
+# Same as above. For some reason Emscripten linker will either strip everything
+# from our WebAssembly module, or complain that BoringSSL functions that Themis
+# does not use are missing the from the binary. Suppress the warnings.
+$(BIN_PATH)/libthemis.js: LDFLAGS += -s ERROR_ON_UNDEFINED_SYMBOLS=0
 $(BIN_PATH)/libthemis.js: LDFLAGS += --pre-js $(WASM_PRE_JS)
 
 $(BIN_PATH)/libthemis.js: CMD = $(CC) -o $@ $(filter %.o %a, $^) $(LDFLAGS)
