@@ -74,13 +74,14 @@ jobs:
           node-version: 10.x
       - name: Install Emscripten
         run: |
+          version=$(cat src/wrappers/themis/wasm/emscripten/VERSION)
           # Install Emscripten toolchain as described in documentation:
           # https://emscripten.org/docs/getting_started/downloads.html
           cd $HOME
           git clone https://github.com/emscripten-core/emsdk.git
           cd $HOME/emsdk
-          ./emsdk install  2.0.13
-          ./emsdk activate 2.0.13
+          ./emsdk install  "$version"
+          ./emsdk activate "$version"
       - name: Install PHP from PPA
         run: |
           sudo apt install --yes software-properties-common
