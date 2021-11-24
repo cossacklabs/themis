@@ -163,6 +163,7 @@ _Code:_
     ```
   - New initialization API: `initialize()`, allowing to specify custom URL for `libthemis.wasm` ([#792](https://github.com/cossacklabs/themis/pull/792), [#854](https://github.com/cossacklabs/themis/pull/854), [#857](https://github.com/cossacklabs/themis/pull/857)).
   - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
+  - `make wasmthemis` now fails with unsupported Emscripten toolchains ([#879](https://github.com/cossacklabs/themis/pull/879)).
 
 _Infrastructure:_
 
