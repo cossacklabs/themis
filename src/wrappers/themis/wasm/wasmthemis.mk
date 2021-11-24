@@ -24,7 +24,7 @@ WASM_PRE_JS  = $(abspath $(WASM_PATH)/emscripten/pre.js)
 
 WASM_PACKAGE = $(BIN_PATH)/wasm-themis.tgz
 
-$(BIN_PATH)/libthemis.js: LDFLAGS += -s EXTRA_EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME)
+$(BIN_PATH)/libthemis.js: LDFLAGS += -s EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME)
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s ALLOW_TABLE_GROWTH
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s MODULARIZE=1
 # FIXME(ilammy, 2020-11-29): rely in EMSCRIPTEN_KEEPALIVE instead of LINKABLE
