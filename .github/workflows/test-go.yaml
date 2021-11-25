@@ -25,7 +25,6 @@ on:
     - cron: '20 6 * * 1' # every Monday at 6:20 UTC
 
 env:
-  GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
   WITH_FATAL_WARNINGS: yes
 
 jobs:
@@ -82,10 +81,6 @@ jobs:
         run: |
           make
           sudo make install
-      - name: Install GoThemis
-        run: |
-          mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
-          rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT
       - name: Test examples (Secure Cell)
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/go
