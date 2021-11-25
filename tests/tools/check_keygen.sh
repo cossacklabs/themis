@@ -30,7 +30,7 @@ test_lang 'node' && test_keygen node tools/js/jsthemis/keygen.js
 test_lang 'js' && test_keygen node tools/js/wasm-themis/keygen.js
 test_lang 'php' && test_keygen "php -f" tools/php/keygen.php
 test_lang 'ruby' && test_keygen ruby tools/ruby/keygen.rb
-test_lang 'go' && test_keygen "go run" tools/go/keygen.go
+test_lang 'go' && test_keygen env tools/go/keygen.go.compiled
 test_lang 'rust' && test_keygen env tools/rust/keygen_tool.rust
 
 exit ${status}
