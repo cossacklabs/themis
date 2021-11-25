@@ -17,8 +17,6 @@
 COMMON_TEST_SRC = $(wildcard tests/common/*.c)
 COMMON_TEST_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(COMMON_TEST_SRC))
 
-GOTHEMIS_IMPORT = github.com/cossacklabs/themis/gothemis
-
 include tests/soter/soter.mk
 include tests/tools/tools.mk
 include tests/themis/themis.mk
@@ -31,6 +29,8 @@ themispp_test: $(TEST_BIN_PATH)/themispp_test
 
 $(OBJ_PATH)/tests/%: CFLAGS += -I$(TEST_SRC_PATH)
 
+GOTHEMIS_SRC = gothemis
+
 PYTHON2_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis2_test.sh
 PYTHON3_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis3_test.sh
 
@@ -39,6 +39,11 @@ rustthemis_integration_tools:
 	@cargo build --package themis-integration-tools
 	@for tool in $(notdir $(foreach tool,$(wildcard tools/rust/*.rs),$(basename $(tool)))); \
 	do cp target/debug/$$tool tools/rust/$$tool.rust; done
+	@$(PRINT_OK_)
+
+gothemis_integration_tools:
+	@echo "make integration tools for GoThemis..."
+	@cd tools/go && for tool in *.go; do go build -o "$$tool.compiled" "$$tool"; done
 	@$(PRINT_OK_)
 
 prepare_tests_basic: soter_test themis_test
@@ -153,7 +158,7 @@ ifdef GO_VERSION
 	@echo "Running gothemis tests."
 	@echo "In case of errors, see https://docs.cossacklabs.com/themis/languages/go/"
 	@echo "------------------------------------------------------------"
-	@GO111MODULE=off go test -v $(GOTHEMIS_IMPORT)/...
+	@cd $(GOTHEMIS_SRC) && go test -v ./...
 endif
 
 test_rust:

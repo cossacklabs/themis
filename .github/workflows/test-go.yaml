@@ -25,7 +25,6 @@ on:
     - cron: '20 6 * * 1' # every Monday at 6:20 UTC
 
 env:
-  GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
   WITH_FATAL_WARNINGS: yes
 
 jobs:
@@ -41,6 +40,7 @@ jobs:
           - '1.14'
           - '1.15'
           - '1.16'
+          - '1.17'
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -60,7 +60,7 @@ jobs:
           make
           sudo make install
       - name: Run test suite (Go ${{ matrix.go }})
-        run: cd gothemis && go test -v ./...
+        run: make test_go
 
   examples:
     name: Code examples
@@ -71,16 +71,16 @@ jobs:
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev
+      - name: Install Go 1.17
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.17
       - name: Check out code
         uses: actions/checkout@v2
       - name: Install Themis Core
         run: |
           make
           sudo make install
-      - name: Install GoThemis
-        run: |
-          mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
-          rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT
       - name: Test examples (Secure Cell)
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/go

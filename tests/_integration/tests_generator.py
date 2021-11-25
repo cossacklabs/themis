@@ -15,7 +15,7 @@ languages = [
     LanguageSetting(name='python', command='python3', script_path='./tools/python', extension='py'),
     LanguageSetting(name='js', command='node', script_path='./tools/js/wasm-themis', extension='js'),
     LanguageSetting(name='node', command='node', script_path='./tools/js/jsthemis', extension='js'),
-    LanguageSetting(name='go', command='go run', script_path='./tools/go', extension='go'),
+    LanguageSetting(name='go', command='env', script_path='./tools/go', extension='go.compiled'),
     LanguageSetting(name='php', command='php -f', script_path='./tools/php', extension='php'),
     LanguageSetting(name='rust', command='env', script_path='./tools/rust', extension='rust'),
 ]
