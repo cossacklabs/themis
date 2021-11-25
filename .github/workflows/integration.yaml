@@ -35,8 +35,6 @@ jobs:
   cross-language:
     name: Cross-language tests
     runs-on: ubuntu-latest
-    env:
-      GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
     steps:
       - name: Install system dependencies
         run: |
@@ -102,10 +100,6 @@ jobs:
         run: sudo make pythemis_install
       - name: Install RubyThemis
         run: sudo make rbthemis_install
-      - name: Install GoThemis
-        run: |
-          mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
-          rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT
       - name: Install GoThemis (test tools)
         run: make gothemis_integration_tools
       # Cargo pulls in quite a few stuff from the Internet and Rust always
