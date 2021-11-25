@@ -61,7 +61,7 @@ jobs:
           make
           sudo make install
       - name: Run test suite (Go ${{ matrix.go }})
-        run: cd gothemis && go test -v ./...
+        run: make test_go
 
   examples:
     name: Code examples
