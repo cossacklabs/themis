@@ -106,6 +106,8 @@ jobs:
         run: |
           mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
           rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT
+      - name: Install GoThemis (test tools)
+        run: make gothemis_integration_tools
       # Cargo pulls in quite a few stuff from the Internet and Rust always
       # (slowly) recompiles dependencies, so make heavy use of caching
       - name: Cache Cargo registry
