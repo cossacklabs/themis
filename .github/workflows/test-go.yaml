@@ -72,6 +72,10 @@ jobs:
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev
+      - name: Install Go 1.17
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.17
       - name: Check out code
         uses: actions/checkout@v2
       - name: Install Themis Core
