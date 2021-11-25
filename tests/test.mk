@@ -41,6 +41,11 @@ rustthemis_integration_tools:
 	do cp target/debug/$$tool tools/rust/$$tool.rust; done
 	@$(PRINT_OK_)
 
+gothemis_integration_tools:
+	@echo "make integration tools for GoThemis..."
+	@cd tools/go && for tool in *.go; do go build -o "$$tool.compiled" "$$tool"; done
+	@$(PRINT_OK_)
+
 prepare_tests_basic: soter_test themis_test
 
 prepare_tests_all: prepare_tests_basic themispp_test
