@@ -41,6 +41,7 @@ jobs:
           - '1.14'
           - '1.15'
           - '1.16'
+          - '1.17'
       fail-fast: false
     steps:
       - name: Install system dependencies
