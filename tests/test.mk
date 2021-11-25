@@ -17,8 +17,6 @@
 COMMON_TEST_SRC = $(wildcard tests/common/*.c)
 COMMON_TEST_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(COMMON_TEST_SRC))
 
-GOTHEMIS_IMPORT = github.com/cossacklabs/themis/gothemis
-
 include tests/soter/soter.mk
 include tests/tools/tools.mk
 include tests/themis/themis.mk
@@ -30,6 +28,8 @@ themis_test:   $(THEMIS_TEST_BIN)
 themispp_test: $(TEST_BIN_PATH)/themispp_test
 
 $(OBJ_PATH)/tests/%: CFLAGS += -I$(TEST_SRC_PATH)
+
+GOTHEMIS_SRC = gothemis
 
 PYTHON2_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis2_test.sh
 PYTHON3_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis3_test.sh
@@ -153,7 +153,7 @@ ifdef GO_VERSION
 	@echo "Running gothemis tests."
 	@echo "In case of errors, see https://docs.cossacklabs.com/themis/languages/go/"
 	@echo "------------------------------------------------------------"
-	@GO111MODULE=off go test -v $(GOTHEMIS_IMPORT)/...
+	@cd $(GOTHEMIS_SRC) && go test -v ./...
 endif
 
 test_rust:
