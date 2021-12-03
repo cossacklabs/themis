@@ -69,6 +69,7 @@ _Code:_
   - Fixed cross-compilation on macOS by setting `ARCH` and `SDK` variables ([#849](https://github.com/cossacklabs/themis/pull/849)).
   - Updated embedded BoringSSL to the latest version ([#812](https://github.com/cossacklabs/themis/pull/812)).
   - Builds with OpenSSL 3.0 will result in a compilation error for the time being ([#872](https://github.com/cossacklabs/themis/pull/872)).
+  - Hardened EC/RSA key generation and handling in Secure Message and Secure Session ([#875](https://github.com/cossacklabs/themis/pull/875), [#876](https://github.com/cossacklabs/themis/pull/876))
 
 - **Android**
 
