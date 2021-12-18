@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.13.12"
+    s.version = "0.14.0"
     s.summary = "Data security library for network communication and data storage for iOS and mac OS"
     s.description = "Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis is aimed at modern development practices and has a unified API across 12 platforms, including iOS/macOS, Ruby, JavaScript, Python, and Java/Android."
     s.homepage = "https://cossacklabs.com"
