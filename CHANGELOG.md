@@ -9,13 +9,13 @@ Changes that are currently in development and have not been released yet.
 
 **TL;DR:**
 
-- JavaThemis for Android has moved to Maven Central.
-- JavaThemis for Java is available on Maven Central.
-- TypeScript definitions and ES6 module are now available for WasmThemis.
+- JavaThemis for Android has moved to Maven Central ([read more](#0.14-maven-central)).
+- JavaThemis for Java is available on Maven Central ([read more](#0.14-maven-central)).
+- TypeScript definitions and ES6 module are now available for WasmThemis ([read more](#0.14-typescript)).
 - Node.js v16 is now supported.
 - [Overhaul of documentation once again](https://docs.cossacklabs.com/themis/).
 - New Themis Core packages with BoringSSL – `libthemis-boringssl`.
-- OpenSSL 3.0 support is work-in-progress, but not ready yet.
+- OpenSSL 3.0 support is work-in-progress, but not ready yet ([read more](https://github.com/cossacklabs/themis/issues/873)).
 - And as usual: more security hardening, fewer known bugs.
 
 **Breaking changes and deprecations:**
@@ -110,7 +110,7 @@ _Code:_
 - **Java / Kotlin**
 
   - `SecureMessage#sign()` output is a bit smaller now ([#777](https://github.com/cossacklabs/themis/pull/777)).
-  - JavaThemis for Android and desktop Java is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
+  - <a id="0.14-maven-central">JavaThemis for Android and desktop Java is now published in the Maven Central repository</a> ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
 
     Add the Maven Central repository to your `build.gradle`:
 
@@ -179,7 +179,7 @@ _Code:_
 
   - Updated Emscripten toolchain to the latest version ([#760](https://github.com/cossacklabs/themis/pull/760), [#880](https://github.com/cossacklabs/themis/pull/880)).
   - Node.js v16 is now supported ([#801](https://github.com/cossacklabs/themis/pull/801)).
-  - TypeScript type definitions and ES6 module are now available, thanks to [**@maxammann**](https://github.com/maxammann) ([#792](https://github.com/cossacklabs/themis/pull/792)).
+  - <a id="0.14-typescript">TypeScript type definitions and ES6 module are now available,</a> thanks to [**@maxammann**](https://github.com/maxammann) ([#792](https://github.com/cossacklabs/themis/pull/792)).
     ```js
     import {SecureCell, SecureMessage, SecureSession, SecureComparator} from 'wasm-themis';
     ```
