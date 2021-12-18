@@ -4,6 +4,27 @@
 
 Changes that are currently in development and have not been released yet.
 
+
+## [0.14.0](https://github.com/cossacklabs/themis/releases/tag/0.14.0), December 24th 2021
+
+**TL;DR:**
+
+- JavaThemis for Android has moved to Maven Central.
+- JavaThemis for Java is available on Maven Central.
+- TypeScript definitions and ES6 module are now available for WasmThemis.
+- Node.js v16 is now supported.
+- [Overhaul of documentation once again](https://docs.cossacklabs.com/themis/).
+- New Themis Core packages with BoringSSL – `libthemis-boringssl`.
+- OpenSSL 3.0 support is work-in-progress, but not ready yet.
+- And as usual: more security hardening, fewer known bugs.
+
+**Breaking changes and deprecations:**
+
+- Themis Core: private C header files are no longer installed.
+- GoThemis: `ErrOverflow` is now deprecated.
+- Rust: `themis` now requires Rust 1.47 or newer.
+- Rust: `libthemis-src` is no longer supported.
+
 _Code:_
 
 - **Core**
