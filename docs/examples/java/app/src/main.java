@@ -15,12 +15,6 @@ public class main {
   public static void main(final String[] args) throws NullArgumentException, SecureMessageWrapException, IOException, SecureSessionException, SecureCellException, InvalidArgumentException {
     encryptDataForStoring();
     encryptDataForMessaging();
-
-    // tests with Themis Interactive simulator
-    // setup Themis IS first:
-    // https://themis.cossacklabs.com/interactive-simulator/setup/
-//    SMessageClient.runSMessageWithThemisInteractiveSimulator();
-//    SSessionClient.runSSessionWithThemisInteractiveSimulator();
   }
 
   static void encryptDataForStoring() throws SecureCellException, NullArgumentException, InvalidArgumentException {
@@ -46,15 +40,19 @@ public class main {
 
   static void encryptDataForMessaging() throws UnsupportedEncodingException, NullArgumentException, SecureMessageWrapException {
     // keys can be generated using KeypairGenerator
-    String clientPrivateKey = "UkVDMgAAAC1EvnquAPUxxwJsoJxoMAkEF7c06Fo7dVwnWPnmNX5afyjEEGmG";
-    String serverPublicKey = "VUVDMgAAAC1FJv/DAmg8/L1Pl5l6ypyRqXUU9xQQaAgzfRZ+/gsjqgEdwXhc";
+    //String clientPrivateKey = "UkVDMgAAAC1EvnquAPUxxwJsoJxoMAkEF7c06Fo7dVwnWPnmNX5afyjEEGmG";
+    //String serverPublicKey = "VUVDMgAAAC1FJv/DAmg8/L1Pl5l6ypyRqXUU9xQQaAgzfRZ+/gsjqgEdwXhc";
 
     String message = "message to send";
 
     System.out.println("Running SecureMessage example");
 
-    PrivateKey privateKey = new PrivateKey(Base64.getDecoder().decode(clientPrivateKey.getBytes(charset.name())));
-    PublicKey publicKey = new PublicKey(Base64.getDecoder().decode(serverPublicKey.getBytes(charset.name())));
+    Keypair pair = KeypairGenerator.generateKeypair();
+    PrivateKey privateKey = pair.getPrivateKey();
+    PublicKey publicKey = pair.getPublicKey();
+
+    //PrivateKey privateKey = new PrivateKey(Base64.getDecoder().decode(clientPrivateKey.getBytes(charset.name())));
+    //PublicKey publicKey = new PublicKey(Base64.getDecoder().decode(serverPublicKey.getBytes(charset.name())));
     System.out.println("privateKey1 = " + Arrays.toString(privateKey.toByteArray()));
     System.out.println("publicKey1 = " + Arrays.toString(publicKey.toByteArray()));
 
