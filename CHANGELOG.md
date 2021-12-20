@@ -11,6 +11,8 @@ Changes that are currently in development and have not been released yet.
 
 - JavaThemis for Android has moved to Maven Central ([read more](#0.14-maven-central)).
 - JavaThemis for Java is available on Maven Central ([read more](#0.14-maven-central)).
+- Themis is now available via Swift Package Manager ([read more](https://docs.cossacklabs.com/themis/languages/swift/installation/#installing-with-spm))
+- Themis for iOS and macOS is also available as XCFramework, attached to the release.
 - TypeScript definitions and ES6 module are now available for WasmThemis ([read more](#0.14-typescript)).
 - Node.js v16 is now supported.
 - [Overhaul of documentation once again](https://docs.cossacklabs.com/themis/).
@@ -24,6 +26,7 @@ Changes that are currently in development and have not been released yet.
 - GoThemis: `ErrOverflow` is now deprecated.
 - Rust: `themis` now requires Rust 1.47 or newer.
 - Rust: `libthemis-src` is no longer supported.
+- Installing Themis via Carthage now requires Carthage 0.38 or newer ([read more](#0.13.9-carthage-0.38)).
 
 _Code:_
 
@@ -254,7 +257,7 @@ _Code:_
 
 **Hotfix for Apple platforms:**
 
-- `themis` for Carthage switched to using XCFrameworks ([#817](https://github.com/cossacklabs/themis/pull/817)). So, the minimum required Carthage version is now [0.38.0](https://github.com/Carthage/Carthage/releases/tag/0.38.0). You can continue using previous Themis version with previous Carthage versions.
+- `themis` for Carthage switched to using XCFrameworks ([#817](https://github.com/cossacklabs/themis/pull/817)). So, <a id="0.13.9-carthage-0.38">the minimum required Carthage version</a> is now [0.38.0](https://github.com/Carthage/Carthage/releases/tag/0.38.0). You can continue using previous Themis version with previous Carthage versions.
 - Updated OpenSSL to the latest 1.1.1k for Carthage ([#817](https://github.com/cossacklabs/themis/pull/817)).
 
 _Code:_
