@@ -52,7 +52,6 @@ Read the following resources to learn more:
   - [General documentation for Themis library on Cossack Labs Documentation Server][docserver].
 
 ### Additional resources  
-  - To get a better understanding of how to use Themis, try playing around with [Interactive Themis Server Simulator](https://docs.cossacklabs.com/simulator/interactive/).
   - If Node.js wrapper would be a better match for your project, see [JsThemis](https://www.npmjs.com/package/jsthemis).
 
 <!--
