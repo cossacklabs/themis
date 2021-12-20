@@ -148,6 +148,7 @@ _Code:_
   - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
   - Improved compatibility with Xcode 12 ([#742](https://github.com/cossacklabs/themis/pull/742)).
   - Updated CocoaPods examples to the latest Themis version 0.13.10 ([#834](https://github.com/cossacklabs/themis/pull/834)).
+  - Removed deprecated CocoaPods subspecs: `themis/themis-openssl` and `themis/themis-boringssl` ([#884](https://github.com/cossacklabs/themis/pull/884), [#885](https://github.com/cossacklabs/themis/pull/885)).
 
 - **PHP**
 
@@ -178,6 +179,7 @@ _Code:_
   - `TSSession` initializer now returns an error (`nil`) when given incorrect key type ([#710](https://github.com/cossacklabs/themis/pull/710)).
   - Improved compatibility with Xcode 12 ([#742](https://github.com/cossacklabs/themis/pull/742)).
   - Updated CocoaPods examples to the latest Themis version 0.13.10 ([#834](https://github.com/cossacklabs/themis/pull/834)).
+  - Removed deprecated CocoaPods subspecs: `themis/themis-openssl` and `themis/themis-boringssl` ([#884](https://github.com/cossacklabs/themis/pull/884), [#885](https://github.com/cossacklabs/themis/pull/885)).
 
 - **WebAssembly**
 
