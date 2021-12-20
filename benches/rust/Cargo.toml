@@ -5,7 +5,7 @@ edition = "2018"
 publish = false
 
 [dependencies]
-themis = { version = "0.13", path = "../../src/wrappers/themis/rust" }
+themis = { version = "0.14", path = "../../src/wrappers/themis/rust" }
 
 [dev-dependencies]
 criterion = { version = "0.3.4", features = ["cargo_bench_support", "html_reports"] }

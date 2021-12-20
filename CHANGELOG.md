@@ -4,6 +4,31 @@
 
 Changes that are currently in development and have not been released yet.
 
+
+## [0.14.0](https://github.com/cossacklabs/themis/releases/tag/0.14.0), December 24th 2021
+
+**TL;DR:**
+
+- JavaThemis for Android has moved to Maven Central ([read more](#0.14-maven-central)).
+- JavaThemis for Java is available on Maven Central ([read more](#0.14-maven-central)).
+- Themis is now available via Swift Package Manager ([read more](https://docs.cossacklabs.com/themis/languages/swift/installation/#installing-with-spm))
+- Themis for iOS and macOS is also available as XCFramework, attached to the release.
+- TypeScript definitions and ES6 module are now available for WasmThemis ([read more](#0.14-typescript)).
+- Node.js v16 is now supported.
+- [Overhaul of documentation once again](https://docs.cossacklabs.com/themis/).
+- New Themis Core packages with BoringSSL – `libthemis-boringssl`.
+- OpenSSL 3.0 support is work-in-progress, but not ready yet ([read more](https://github.com/cossacklabs/themis/issues/873)).
+- And as usual: more security hardening, fewer known bugs.
+
+**Breaking changes and deprecations:**
+
+- Themis Core: private C header files are no longer installed.
+- GoThemis: `ErrOverflow` is now deprecated.
+- Rust: `themis` now requires Rust 1.47 or newer.
+- Rust: `libthemis-src` is no longer supported.
+- Installing Themis via Carthage now requires Carthage 0.38 or newer ([read more](#0.13.9-carthage-0.38)).
+- Deprecated CocoaPods subspecs `themis/themis-openssl` and `themis/themis-boringssl` have been removed ([read more](#0.13.10-subspecs))
+
 _Code:_
 
 - **Core**
@@ -89,7 +114,7 @@ _Code:_
 - **Java / Kotlin**
 
   - `SecureMessage#sign()` output is a bit smaller now ([#777](https://github.com/cossacklabs/themis/pull/777)).
-  - JavaThemis for Android and desktop Java is now published in the Maven Central repository ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
+  - <a id="0.14-maven-central">JavaThemis for Android and desktop Java is now published in the Maven Central repository</a> ([#786](https://github.com/cossacklabs/themis/pull/786), [#788](https://github.com/cossacklabs/themis/pull/788)).
 
     Add the Maven Central repository to your `build.gradle`:
 
@@ -160,7 +185,7 @@ _Code:_
 
   - Updated Emscripten toolchain to the latest version ([#760](https://github.com/cossacklabs/themis/pull/760), [#880](https://github.com/cossacklabs/themis/pull/880)).
   - Node.js v16 is now supported ([#801](https://github.com/cossacklabs/themis/pull/801)).
-  - TypeScript type definitions and ES6 module are now available, thanks to [**@maxammann**](https://github.com/maxammann) ([#792](https://github.com/cossacklabs/themis/pull/792)).
+  - <a id="0.14-typescript">TypeScript type definitions and ES6 module are now available,</a> thanks to [**@maxammann**](https://github.com/maxammann) ([#792](https://github.com/cossacklabs/themis/pull/792)).
     ```js
     import {SecureCell, SecureMessage, SecureSession, SecureComparator} from 'wasm-themis';
     ```
@@ -214,6 +239,7 @@ _Code:_
 
 ## [0.13.10](https://github.com/cossacklabs/themis/releases/tag/0.13.10), May 26th 2021
 
+<a id="0.13.10-subspecs"></a>
 **Deprecation Notice for CocoaPods users:**
   - `themis/themis-openssl` subspec based on GRKOpenSSLFramework is deprecated and will be removed in Themis version 0.14.
   - `themis/themis-boringssl` subspec based on BoringSSL is deprecated and will be removed in Themis version 0.14.
@@ -235,7 +261,7 @@ _Code:_
 
 **Hotfix for Apple platforms:**
 
-- `themis` for Carthage switched to using XCFrameworks ([#817](https://github.com/cossacklabs/themis/pull/817)). So, the minimum required Carthage version is now [0.38.0](https://github.com/Carthage/Carthage/releases/tag/0.38.0). You can continue using previous Themis version with previous Carthage versions.
+- `themis` for Carthage switched to using XCFrameworks ([#817](https://github.com/cossacklabs/themis/pull/817)). So, <a id="0.13.9-carthage-0.38">the minimum required Carthage version</a> is now [0.38.0](https://github.com/Carthage/Carthage/releases/tag/0.38.0). You can continue using previous Themis version with previous Carthage versions.
 - Updated OpenSSL to the latest 1.1.1k for Carthage ([#817](https://github.com/cossacklabs/themis/pull/817)).
 
 _Code:_
