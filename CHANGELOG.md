@@ -27,6 +27,7 @@ Changes that are currently in development and have not been released yet.
 - Rust: `themis` now requires Rust 1.47 or newer.
 - Rust: `libthemis-src` is no longer supported.
 - Installing Themis via Carthage now requires Carthage 0.38 or newer ([read more](#0.13.9-carthage-0.38)).
+- Deprecated CocoaPods subspecs `themis/themis-openssl` and `themis/themis-boringssl` have been removed ([read more](#0.13.10-subspecs))
 
 _Code:_
 
@@ -236,6 +237,7 @@ _Code:_
 
 ## [0.13.10](https://github.com/cossacklabs/themis/releases/tag/0.13.10), May 26th 2021
 
+<a id="0.13.10-subspecs"></a>
 **Deprecation Notice for CocoaPods users:**
   - `themis/themis-openssl` subspec based on GRKOpenSSLFramework is deprecated and will be removed in Themis version 0.14.
   - `themis/themis-boringssl` subspec based on BoringSSL is deprecated and will be removed in Themis version 0.14.
