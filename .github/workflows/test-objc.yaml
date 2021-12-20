@@ -97,18 +97,6 @@ jobs:
             -sdk iphonesimulator \
             -destination "platform=iOS Simulator,name=${TEST_IPHONE}" \
             test
-      - name: Run unit tests (iOS Simulator, BoringSSL)
-        if: always()
-        run: |
-          cd $GITHUB_WORKSPACE/tests/objcthemis
-          rm -rf DerivedData
-          xcodebuild \
-            -derivedDataPath DerivedData \
-            -workspace objcthemis.xcworkspace \
-            -scheme "objthemis_boring" \
-            -sdk iphonesimulator \
-            -destination "platform=iOS Simulator,name=${TEST_IPAD}" \
-            test
 
   unit-tests-carthage:
     name: Unit tests (Carthage)
