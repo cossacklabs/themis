@@ -5,7 +5,6 @@ on:
     paths:
       - '.github/workflows/test-ruby.yaml'
       - 'docs/examples/ruby/**'
-      - 'docs/examples/Themis-server/ruby/**'
       - 'src/soter/**'
       - 'src/themis/**'
       - 'src/wrappers/themis/ruby/**'
@@ -118,10 +117,3 @@ jobs:
           grep -q '^does not match$' output.txt
           kill -SIGTERM "$!"
           echo "ok"
-      - name: Build Themis Server examples
-        if: always()
-        run: |
-          cd $GITHUB_WORKSPACE/docs/examples/Themis-server/ruby
-          # Since these require manual configuration, we just check the syntax.
-          ruby -c smessage_client.rb
-          ruby -c ssession_client.rb

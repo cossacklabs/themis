@@ -23,7 +23,7 @@ if sys.version_info < (3, 4):
 
 setup(
     name='pythemis',
-    version='0.13.0',
+    version='0.14.0',
 
     description='',
     long_description=open("README.md").read(),
@@ -43,9 +43,6 @@ setup(
         "Operating System :: POSIX :: BSD",
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.6",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.2",
         "Programming Language :: Python :: 3.3",
