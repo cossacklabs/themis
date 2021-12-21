@@ -28,6 +28,7 @@ Changes that are currently in development and have not been released yet.
 - Rust: `libthemis-src` is no longer supported.
 - Installing Themis via Carthage now requires Carthage 0.38 or newer ([read more](#0.13.9-carthage-0.38)).
 - Deprecated CocoaPods subspecs `themis/themis-openssl` and `themis/themis-boringssl` have been removed ([read more](#0.13.10-subspecs))
+- Themis Server (Themis Interactive Simulator) is no longer supported ([read more](https://docs.cossacklabs.com/themis/debugging/themis-server/).
 
 _Code:_
 
