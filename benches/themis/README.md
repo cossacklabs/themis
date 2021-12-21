@@ -19,7 +19,7 @@ You will need Rust toolchain installed to run benchmarks.
     ```
 
     If it doesn’t work (or this is your first time building Themis)
-    then you might need to [review the documentation](https://docs.cossacklabs.com/pages/documentation-themis/#building-and-installing).
+    then you might need to [review the documentation](https://docs.cossacklabs.com/themis/installation/).
 
     If it still doesn’t work, please [file an issue](https://github.com/cossacklabs/themis/issues/new?labels=bug,installation,core&template=bug_report.md&title=).
 
@@ -63,15 +63,15 @@ You will need Rust toolchain installed to run benchmarks.
 |                   | Master keys   | Passphrases   |
 | ----------------- | ------------- | ------------- |
 | Seal              | ✅ complete   | ✅ complete   |
-| Token Protect     | 💭 soon       | 🛠 WIP        |
-| Context Imprint   | 💭 soon       | ➖ N/A        |
+| Token Protect     | ✅ complete   | 🛠 WIP        |
+| Context Imprint   | ✅ complete   | ➖ N/A        |
 
 ### Secure Message
 
 |                   | ECDSA         | RSA           |
 | ----------------- | ------------- | ------------- |
-| Encrypt / Decrypt | 💭 soon       | 💭 soon       |
-| Sign / Verify     | 💭 soon       | 💭 soon       |
+| Encrypt / Decrypt | ✅ complete   | ✅ complete   |
+| Sign / Verify     | ✅ complete   | ✅ complete   |
 
 ### Secure Session
 

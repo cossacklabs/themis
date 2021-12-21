@@ -36,9 +36,9 @@ fn main() {
     let public_key_path = matches.value_of("public_key").unwrap();
     let message = matches.value_of("message").unwrap();
 
-    let private_key = read_file(&private_key_path).expect("read private key");
+    let private_key = read_file(private_key_path).expect("read private key");
     let private_key = PrivateKey::try_from_slice(private_key).expect("parse private key");
-    let public_key = read_file(&public_key_path).expect("read public key");
+    let public_key = read_file(public_key_path).expect("read public key");
     let public_key = PublicKey::try_from_slice(public_key).expect("parse public key");
 
     match command {

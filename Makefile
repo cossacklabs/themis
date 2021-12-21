@@ -20,7 +20,7 @@
 .DEFAULT_GOAL := all
 
 # Set shell for target commands
-SHELL = /bin/bash
+SHELL = bash
 
 # Disable built-in rules
 MAKEFLAGS += --no-builtin-rules
@@ -49,6 +49,7 @@ LIBRARY_SO_VERSION = 0
 #----- Toolchain ---------------------------------------------------------------
 
 CMAKE ?= cmake
+GO    ?= go
 
 CLANG_FORMAT ?= clang-format
 CLANG_TIDY   ?= clang-tidy
@@ -59,6 +60,7 @@ INSTALL_DATA    ?= $(INSTALL) -m 644
 
 #----- Build directories -------------------------------------------------------
 
+INC_PATH = include
 SRC_PATH = src
 BIN_PATH = $(BUILD_PATH)
 OBJ_PATH = $(BIN_PATH)/obj
@@ -84,7 +86,7 @@ pkgconfigdir ?= $(libdir)/pkgconfig
 #----- Basic compiler flags ----------------------------------------------------
 
 # Add Themis source directory to search paths
-CFLAGS  += -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/
+CFLAGS  += -I$(INC_PATH) -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/
 LDFLAGS += -L$(BIN_PATH)
 # Not all platforms include /usr/local in default search path
 CFLAGS  += -I/usr/local/include
@@ -184,6 +186,10 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
 
+ifeq ($(WITH_EXPERIMENTAL_OPENSSL_3_SUPPORT),yes)
+	CFLAGS += -DTHEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT=1
+endif
+
 ########################################################################
 #
 # Compilation flags for C/C++ code
@@ -219,10 +225,16 @@ CFLAGS += -O2 -g
 # so they almost always use stack and need the frame pointer anyway.
 CFLAGS += -fno-omit-frame-pointer
 # Enable runtime stack canaries for functions to guard for buffer overflows.
+# FIXME(ilammy, 2020-10-29): enable stack canaries for WasmThemis too
+# Currently, stack protector is not supported by the "upstream" flavor
+# of Emscripten toolchain. Tracking issue is here:
+# https://github.com/emscripten-core/emscripten/issues/9780
+ifndef IS_EMSCRIPTEN
 ifeq (yes,$(call supported,-fstack-protector-strong))
 CFLAGS += -fstack-protector-strong
 else
 CFLAGS += -fstack-protector
+endif
 endif
 # Enable miscellaneous compile-time checks in standard library usage.
 CFLAGS += -D_FORTIFY_SOURCE=2
@@ -604,23 +616,59 @@ endif
 # Packaging Themis Core: Linux distributions
 #
 
+ifeq ($(ENGINE),boringssl)
+ifeq ($(CRYPTO_ENGINE_LIB_PATH),)
+PACKAGE_EMBEDDED_BORINGSSL := yes
+endif
+endif
+
 COSSACKLABS_URL = https://www.cossacklabs.com
 MAINTAINER = "Cossack Labs Limited <dev@cossacklabs.com>"
 LICENSE_NAME = "Apache License Version 2.0"
 
 DEB_CODENAME := $(shell lsb_release -cs 2> /dev/null)
 DEB_ARCHITECTURE = `dpkg --print-architecture 2>/dev/null`
-DEB_DEPENDENCIES := --depends openssl
-DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
+ifeq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
+# fpm has "--provides" option, but it eats package versions when we need to
+# preserve them for correct dependency resolution. Insert fields directly.
+DEB_DEPENDENCIES += --deb-field "Provides: $(CANONICAL_PACKAGE_NAME) (= $(VERSION)+$(OS_CODENAME))"
+DEB_DEPENDENCIES += --conflicts $(CANONICAL_PACKAGE_NAME)
+DEB_DEPENDENCIES += --replaces  $(CANONICAL_PACKAGE_NAME)
+DEB_DEPENDENCIES_DEV += --deb-field "Provides: $(DEB_CANONICAL_DEV_PACKAGE_NAME) (= $(VERSION)+$(OS_CODENAME))"
+DEB_DEPENDENCIES_DEV += --conflicts $(DEB_CANONICAL_DEV_PACKAGE_NAME)
+DEB_DEPENDENCIES_DEV += --replaces  $(DEB_CANONICAL_DEV_PACKAGE_NAME)
+else
+# If we were using native Debian packaging, dpkg-shlibdeps could supply us with
+# accurate dependency information. However, we build packages manually, so we
+# use dependencies of "libssl-dev" as a proxy. Typically this is "libssl1.1".
+#
+# Example output of "apt-cache depends" (from Ubuntu 16.04):
+#
+# libssl-dev
+#   Depends: libssl1.0.0
+#   Depends: zlib1g-dev
+#   Recommends: libssl-doc
+DEB_DEPENDENCIES += $(shell apt-cache depends libssl-dev | awk '$$1 == "Depends:" && $$2 ~ /^libssl/ { print "--depends", $$2 }' )
 DEB_DEPENDENCIES_DEV += --depends libssl-dev
-DEB_DEPENDENCIES_THEMISPP = --depends "$(DEB_DEV_PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
-DEB_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) >= $(VERSION)+$(OS_CODENAME)"
+endif
+DEB_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
+DEB_DEPENDENCIES_THEMISPP = --depends "$(DEB_CANONICAL_DEV_PACKAGE_NAME) = $(VERSION)+$(OS_CODENAME)"
+DEB_DEPENDENCIES_JNI += --depends "$(CANONICAL_PACKAGE_NAME) >= $(VERSION)+$(OS_CODENAME)"
 
-RPM_DEPENDENCIES = --depends openssl
-RPM_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
+ifeq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
+RPM_DEPENDENCIES += --provides  $(CANONICAL_PACKAGE_NAME)
+RPM_DEPENDENCIES += --conflicts $(CANONICAL_PACKAGE_NAME)
+RPM_DEPENDENCIES += --replaces  $(CANONICAL_PACKAGE_NAME)
+RPM_DEPENDENCIES_DEV += --provides  $(RPM_CANONICAL_DEV_PACKAGE_NAME)
+RPM_DEPENDENCIES_DEV += --conflicts $(RPM_CANONICAL_DEV_PACKAGE_NAME)
+RPM_DEPENDENCIES_DEV += --replaces  $(RPM_CANONICAL_DEV_PACKAGE_NAME)
+else
+RPM_DEPENDENCIES     += --depends openssl-libs
 RPM_DEPENDENCIES_DEV += --depends openssl-devel
-RPM_DEPENDENCIES_THEMISPP = --depends "$(RPM_DEV_PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
-RPM_DEPENDENCIES_JNI += --depends "$(PACKAGE_NAME) >= $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
+endif
+RPM_DEPENDENCIES_DEV += --depends "$(PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
+RPM_DEPENDENCIES_THEMISPP = --depends "$(RPM_CANONICAL_DEV_PACKAGE_NAME) = $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
+RPM_DEPENDENCIES_JNI += --depends "$(CANONICAL_PACKAGE_NAME) >= $(RPM_VERSION)-$(RPM_RELEASE_NUM)"
 RPM_RELEASE_NUM = 1
 
 OS_NAME := $(shell lsb_release -is 2>/dev/null || printf 'unknown')
@@ -638,9 +686,16 @@ else ifeq ($(OS_NAME),$(filter $(OS_NAME),RedHatEnterpriseServer CentOS))
 	RPM_LIBDIR := /$(shell [ $$(arch) == "x86_64" ] && echo "lib64" || echo "lib")
 endif
 
+CANONICAL_PACKAGE_NAME         = libthemis
+DEB_CANONICAL_DEV_PACKAGE_NAME = $(CANONICAL_PACKAGE_NAME)-dev
+RPM_CANONICAL_DEV_PACKAGE_NAME = $(CANONICAL_PACKAGE_NAME)-devel
+ifeq ($(PACKAGE_EMBEDDED_BORINGSSL),yes)
+PACKAGE_NAME = libthemis-boringssl
+else
 PACKAGE_NAME = libthemis
-DEB_DEV_PACKAGE_NAME = libthemis-dev
-RPM_DEV_PACKAGE_NAME = libthemis-devel
+endif
+DEB_DEV_PACKAGE_NAME = $(PACKAGE_NAME)-dev
+RPM_DEV_PACKAGE_NAME = $(PACKAGE_NAME)-devel
 DEB_THEMISPP_PACKAGE_NAME = libthemispp-dev
 RPM_THEMISPP_PACKAGE_NAME = libthemispp-devel
 JNI_PACKAGE_NAME = libthemis-jni
@@ -660,13 +715,13 @@ POST_UNINSTALL_SCRIPT := $(BIN_PATH)/post_uninstall.sh
 DEV_PACKAGE_FILES += $(includedir)/soter/
 DEV_PACKAGE_FILES += $(includedir)/themis/
 DEV_PACKAGE_FILES += $(pkgconfigdir)/
+DEV_PACKAGE_FILES += $(libdir)/$(LIBSOTER_A)
+DEV_PACKAGE_FILES += $(libdir)/$(LIBSOTER_LINK)
+DEV_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_A)
+DEV_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_LINK)
 
-LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_A)
 LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_SO)
-LIB_PACKAGE_FILES += $(libdir)/$(LIBSOTER_LINK)
-LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_A)
 LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_SO)
-LIB_PACKAGE_FILES += $(libdir)/$(LIBTHEMIS_LINK)
 
 THEMISPP_PACKAGE_FILES += $(includedir)/themispp/
 
@@ -880,10 +935,11 @@ pkginfo:
 
 PHP_VERSION_FULL:=$(shell php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;" 2>/dev/null)
 ifeq ($(OS_CODENAME),jessie)
-    PHP_DEPENDENCIES:=php5
+    PHP_DEPENDENCIES += --depends php5
 else
-    PHP_DEPENDENCIES:=php$(PHP_VERSION_FULL)
+    PHP_DEPENDENCIES += --depends php$(PHP_VERSION_FULL)
 endif
+PHP_DEPENDENCIES += --depends "$(CANONICAL_PACKAGE_NAME) >= $(VERSION)+$(OS_CODENAME)"
 
 PHP_PACKAGE_NAME:=libphpthemis-php$(PHP_VERSION_FULL)
 PHP_POST_INSTALL_SCRIPT:=./scripts/phpthemis_postinstall.sh
@@ -903,7 +959,7 @@ deb_php:
 		 --package $(BIN_PATH)/deb/$(PHP_PACKAGE_NAME)_$(NAME_SUFFIX) \
 		 --architecture $(DEB_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
-		 --depends "$(PHP_DEPENDENCIES)" \
+		 $(PHP_DEPENDENCIES) \
 		 --deb-priority optional \
 		 --after-install $(PHP_POST_INSTALL_SCRIPT) \
 		 --before-remove $(PHP_PRE_UNINSTALL_SCRIPT) \

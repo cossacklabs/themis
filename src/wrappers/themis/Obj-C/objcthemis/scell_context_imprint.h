@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Read more about Context Imprint mode:
  *
- * https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/#context-imprint-mode
+ * https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/#context-imprint-mode
  */
 @interface TSCellContextImprint : TSCell
 

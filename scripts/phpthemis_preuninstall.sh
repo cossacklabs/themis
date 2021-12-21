@@ -1,4 +1,4 @@
-#/bin/bash -e
+#!/usr/bin/env bash
 #
 # Copyright (c) 2017 Cossack Labs Limited
 #
@@ -13,6 +13,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+set -euo pipefail
 
 CONFCONT="extension=phpthemis.so"
 SEARCH="Scan this dir for additional .ini files => "

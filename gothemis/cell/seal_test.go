@@ -214,12 +214,12 @@ func TestSealContextSignificance(t *testing.T) {
 		t.Fatal("failed to encrypt message", err)
 	}
 
-	decrypted, err := cell.Decrypt(encrypted, contextB)
+	_, err = cell.Decrypt(encrypted, contextB)
 	if err == nil {
 		t.Error("message should not be decrypted with incorrect context")
 	}
 
-	decrypted, err = cell.Decrypt(encrypted, contextA)
+	decrypted, err := cell.Decrypt(encrypted, contextA)
 	if err != nil {
 		t.Error("correct context should allow decryption", err)
 	}

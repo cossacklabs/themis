@@ -274,7 +274,7 @@ module Themis
       @session = secure_session_create(
         id_buf, id_length, private_key_buf, private_key_length, @callbacks)
 
-      raise ThemisError, 'Secure Session failed creating' unless @session
+      raise ThemisError, 'Secure Session failed creating' if @session.null?
     end
 
     def is_established
@@ -925,7 +925,7 @@ module Themis
       shared_secret_buf, shared_secret_length =
         string_to_pointer_size(shared_secret)
       @comparator = secure_comparator_create
-      raise ThemisError, 'Secure Comparator failed creating' unless @comparator
+      raise ThemisError, 'Secure Comparator failed creating' if @comparator.null?
       res = secure_comparator_append_secret(
         @comparator, shared_secret_buf, shared_secret_length)
       if res != SUCCESS

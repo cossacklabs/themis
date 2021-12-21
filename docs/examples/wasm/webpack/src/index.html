@@ -1,0 +1,167 @@
+<!doctype html>
+<html>
+<head>
+<title>WasmThemis Example</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="favicon.png" rel="icon">
+<link href="main.css" rel="stylesheet">
+<% /* webpack will inject "main.js" here */ %>
+</head>
+<body>
+
+<h1>WasmThemis Example</h1>
+<noscript>
+    <p>You need to enable JavaScript for WebAssembly to work. Sorry :(</p>
+</noscript>
+<div id="wasm-loaded">WasmThemis loading...</div>
+
+<p>
+    All <span class="text-input-span">text data</span> is interpreted as UTF-8.
+    All <span class="binary-input-span">binary data</span> is represented in base64.
+</p>
+
+<main>
+
+<section id="secure-cell-section">
+<h2>Secure Cell</h2>
+<div class="input-block">
+    <h3>Shared secret</h3>
+    <div class="input-box">
+        <div class="input-line" id="secure-cell-symmetric-key">
+            <label>
+                <input type="radio" name="secure-cell-secret" checked>
+                <span class="radio-box">
+                Symmetric key:
+                </span>
+                <span class="hinted-input">
+                <input
+                    class="binary-input"
+                    type="text" minlength="1" spellcheck="off"
+                    placeholder="Paste your symmetric key here"
+                    size="44">
+                <span class="size-hint">0 bytes</span>
+                </span>
+            </label>
+            <input type="button" value="Generate">
+        </div>
+        <div class="input-line" id="secure-cell-passphrase">
+            <label>
+                <input type="radio" name="secure-cell-secret">
+                <span class="radio-box">
+                Passphrase:
+                </span>
+                <span class="hinted-input">
+                <input
+                    class="text-input"
+                    type="text" minlength="1" spellcheck="off"
+                    placeholder="Enter your passphrase here"
+                    size="44" disabled>
+                <span class="size-hint">0 bytes</span>
+                </span>
+            </label>
+        </div>
+    </div>
+</div>
+<div class="strut"/>
+<div class="multi-input-block">
+    <div class="input-block">
+        <h3>Input</h3>
+        <div class="input-box">
+            <div id="secure-cell-plaintext">
+                <label>
+                    Plaintext:
+                    <textarea
+                        class="text-input"
+                        spellcheck="off" minlength="1"
+                        placeholder="Text to be encrypted"
+                        cols="44" rows="2"></textarea>
+                    <span class="size-hint">0 bytes</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="input-block">
+        <h3>Context</h3>
+        <div class="input-box">
+            <div id="secure-cell-context">
+                <label>
+                    Associated context:
+                    <textarea
+                        class="text-input"
+                        spellcheck="off"
+                        placeholder="Optional encryption context"
+                        cols="44" rows="2"></textarea>
+                    <span class="size-hint">0 bytes</span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="input-block">
+    <h3>Output</h3>
+    <div class="multi-input-block">
+        <div class="input-block" id="secure-cell-seal-output">
+            <h4>Seal mode</h4>
+            <div class="input-box" id="secure-cell-seal-ciphertext">
+                <label>
+                    Ciphertext:
+                    <textarea
+                        class="binary-input"
+                        autocomplete="off" spellcheck="off"
+                        placeholder="Encrypted data"
+                        cols="44" rows="2"></textarea>
+                    <span class="size-hint">0 bytes</span>
+                </label>
+            </div>
+            <div class="error-box hidden"></div>
+        </div>
+        <div class="input-block only-keys" id="secure-cell-token-protect-output">
+            <h4>Token Protect mode</h4>
+            <div class="input-box" id="secure-cell-token-protect-ciphertext">
+                <label>
+                    Ciphertext:
+                    <textarea
+                        class="binary-input"
+                        autocomplete="off" spellcheck="off"
+                        placeholder="Encrypted data"
+                        cols="44" rows="2"></textarea>
+                    <span class="size-hint">0 bytes</span>
+                </label>
+            </div>
+            <div class="input-box" id="secure-cell-token-protect-auth-token">
+                <label>
+                    Authentication token:
+                    <textarea
+                        class="binary-input"
+                        autocomplete="off" spellcheck="off"
+                        placeholder="Secure Cell data"
+                        cols="44" rows="2"></textarea>
+                    <span class="size-hint">0 bytes</span>
+                </label>
+            </div>
+            <div class="error-box hidden"></div>
+        </div>
+        <div class="input-block only-keys" id="secure-cell-context-imprint-output">
+            <h4>Context Imprint mode</h4>
+            <div class="input-box" id="secure-cell-context-imprint-ciphertext">
+                <label>
+                    Ciphertext:
+                    <textarea
+                        class="binary-input"
+                        autocomplete="off" spellcheck="off"
+                        placeholder="Encrypted data"
+                        cols="44" rows="2"></textarea>
+                    <span class="size-hint">0 bytes</span>
+                </label>
+            </div>
+            <div class="error-box hidden"></div>
+        </div>
+    </div>
+</div>
+</section>
+
+</main>
+
+</body>
+</html>

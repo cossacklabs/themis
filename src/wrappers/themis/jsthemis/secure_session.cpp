@@ -146,6 +146,13 @@ void SecureSession::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             return;
         }
         SecureSession* obj = new SecureSession(id, private_key, v8::Local<v8::Function>::Cast(args[2]));
+        if (!obj->isCreated()) {
+            // secure_session_create() inside SecureSession::SecureSession()
+            // may fail, we need to catch this and throw exception to JS
+            ThrowParameterError("SecureSession", "unsupported private key");
+            args.GetReturnValue().SetUndefined();
+            return;
+        }
         obj->Wrap(args.This());
         args.GetReturnValue().Set(args.This());
     } else {

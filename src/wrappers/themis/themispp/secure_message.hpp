@@ -112,6 +112,7 @@ public:
         if (status != THEMIS_SUCCESS) {
             throw themispp::exception_t("Secure Message failed to encrypt message", status);
         }
+        res_.resize(encrypted_data_length);
         return res_;
     }
 
@@ -157,6 +158,7 @@ public:
         if (status != THEMIS_SUCCESS) {
             throw themispp::exception_t("Secure Message failed to decrypt message", status);
         }
+        res_.resize(decrypted_data_length);
         return res_;
     }
 
@@ -194,6 +196,7 @@ public:
         if (status != THEMIS_SUCCESS) {
             throw themispp::exception_t("Secure Message failed to sign message", status);
         }
+        res_.resize(encrypted_data_length);
         return res_;
     }
 
@@ -232,6 +235,7 @@ public:
         if (status != THEMIS_SUCCESS) {
             throw themispp::exception_t("Secure Message failed to verify signature", status);
         }
+        res_.resize(decrypted_data_length);
         return res_;
     }
 

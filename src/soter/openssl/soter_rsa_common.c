@@ -24,51 +24,66 @@
 #define SOTER_RSA_KEY_LENGTH 2048
 #endif
 
-soter_status_t soter_rsa_gen_key(EVP_PKEY_CTX* pkey_ctx)
+soter_status_t soter_rsa_gen_key(EVP_PKEY** ppkey)
 {
-    /* it is copy-paste from /src/soter/openssl/soter_asym_cipher.c */
-    BIGNUM* pub_exp;
-    EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(pkey_ctx);
-    if (!pkey) {
+    soter_status_t res = SOTER_FAIL;
+    BIGNUM* pub_exp = NULL;
+    EVP_PKEY_CTX* pkey_ctx = NULL;
+
+    if (!ppkey) {
         return SOTER_INVALID_PARAMETER;
     }
 
-    if (EVP_PKEY_RSA != EVP_PKEY_id(pkey)) {
-        return SOTER_INVALID_PARAMETER;
+    pkey_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
+    if (!pkey_ctx) {
+        res = SOTER_NO_MEMORY;
+        goto err;
     }
 
-    if (!EVP_PKEY_keygen_init(pkey_ctx)) {
-        return SOTER_INVALID_PARAMETER;
+    if (EVP_PKEY_keygen_init(pkey_ctx) != 1) {
+        res = SOTER_INVALID_PARAMETER;
+        goto err;
     }
 
     /* Although it seems that OpenSSL/LibreSSL use 0x10001 as default public exponent, we will set
      * it explicitly just in case */
     pub_exp = BN_new();
     if (!pub_exp) {
-        return SOTER_NO_MEMORY;
+        res = SOTER_NO_MEMORY;
+        goto err;
     }
 
     if (!BN_set_word(pub_exp, RSA_F4)) {
-        BN_free(pub_exp);
-        return SOTER_FAIL;
+        res = SOTER_FAIL;
+        goto err;
     }
 
+    /* Passing ownership over pub_exp to EVP_PKEY_CTX */
     if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_PUBEXP, 0, pub_exp)) {
-        BN_free(pub_exp);
-        return SOTER_FAIL;
+        res = SOTER_FAIL;
+        goto err;
     }
+    pub_exp = NULL;
 
     /* Override default key size for RSA key. Currently OpenSSL has default key size of 1024.
      * LibreSSL has 2048. We will put 2048 explicitly */
     if (1 > EVP_PKEY_CTX_ctrl(pkey_ctx, -1, -1, EVP_PKEY_CTRL_RSA_KEYGEN_BITS, SOTER_RSA_KEY_LENGTH, NULL)) {
-        return SOTER_FAIL;
+        res = SOTER_FAIL;
+        goto err;
     }
 
-    if (!EVP_PKEY_keygen(pkey_ctx, &pkey)) {
-        return SOTER_FAIL;
+    if (EVP_PKEY_keygen(pkey_ctx, ppkey) != 1) {
+        res = SOTER_FAIL;
+        goto err;
     }
-    return SOTER_SUCCESS;
-    /* end of copy-paste from /src/soter/openssl/soter_asym_cipher.c*/
+
+    res = SOTER_SUCCESS;
+
+err:
+    BN_free(pub_exp);
+    EVP_PKEY_CTX_free(pkey_ctx);
+
+    return res;
 }
 
 soter_status_t soter_rsa_import_key(EVP_PKEY* pkey, const void* key, const size_t key_length)
@@ -94,10 +109,8 @@ soter_status_t soter_rsa_import_key(EVP_PKEY* pkey, const void* key, const size_
     return SOTER_INVALID_PARAMETER;
 }
 
-soter_status_t soter_rsa_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate)
+soter_status_t soter_rsa_export_key(EVP_PKEY* pkey, void* key, size_t* key_length, bool isprivate)
 {
-    EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
-
     if (!pkey) {
         return SOTER_INVALID_PARAMETER;
     }

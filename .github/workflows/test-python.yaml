@@ -5,7 +5,6 @@ on:
     paths:
       - '.github/workflows/test-python.yaml'
       - 'docs/examples/python/**'
-      - 'docs/examples/Themis-server/python/**'
       - 'src/soter/**'
       - 'src/themis/**'
       - 'src/wrappers/themis/python/**'
@@ -19,7 +18,7 @@ on:
       - stable
       - release/*
   schedule:
-    - cron: '0 6 * * *' # every day at 6:00 UTC
+    - cron: '20 6 * * 1' # every Monday at 6:20 UTC
 
 env:
   WITH_FATAL_WARNINGS: yes
@@ -149,6 +148,9 @@ jobs:
 
       - name: Test examples (Secure Session)
         if: always()
+        # This step tends to randomly hang up. Use a shorter timeout here
+        # instead of the default 6-hour one.
+        timeout-minutes: 5
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/python
 
@@ -189,13 +191,3 @@ jobs:
           python3 scomparator_test_client.py | tee client-output.txt
           test "$(cat server-output.txt)" = "match"
           test "$(cat client-output.txt)" = "match"
-
-      - name: Build Themis Server
-        if: always()
-        run: |
-          cd $GITHUB_WORKSPACE/docs/examples/Themis-server/python
-          # Since these require manual configuration, we just check the syntax.
-          # Though it doesn't guarantee much: enjoy dynamic scripting languages.
-          rm -f *.pyc
-          python3 -m py_compile smessage_client.py
-          python3 -m py_compile ssession_client.py

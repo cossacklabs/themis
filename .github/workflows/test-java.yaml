@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/test-java.yaml'
       - '**/*gradle*'
+      - 'docs/examples/android/**'
       - 'jni/**'
       - 'src/soter/**'
       - 'src/themis/**'
@@ -20,7 +21,7 @@ on:
       - stable
       - release/*
   schedule:
-    - cron: '0 6 * * *' # every day at 6:00 UTC
+    - cron: '20 6 * * 1' # every Monday at 6:20 UTC
 
 env:
   WITH_FATAL_WARNINGS: yes
@@ -38,7 +39,7 @@ jobs:
         run: |
           if [[ "$(uname)" = "Darwin" ]]
           then
-            brew install openssl
+            brew install openssl@1.1
           else
             sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
             sudo apt update
@@ -51,6 +52,9 @@ jobs:
           make all themis_jni
           sudo make install themis_jni_install
       - name: Build and test JavaThemis
+        # This step tends to randomly hang up. Use a shorter timeout here
+        # instead of the default 6-hour one.
+        timeout-minutes: 5
         # Set native library search path for Java explicitly since most
         # distribution-provided JVMs do not look there by default.
         run: |
@@ -73,12 +77,57 @@ jobs:
         with:
           submodules: true
       - name: Build Themis
+        # This step tends to randomly hang up. Use a shorter timeout here
+        # instead of the default 6-hour one.
+        timeout-minutes: 30
         run: ./gradlew --no-daemon :android:assembleDebug
       # This works reliably only in macOS runners which have HAXM available.
       # Ubuntu runners do not have KVM enabled, modern x86 emulators do not
       # work without KVM, and ARM emulator is abysmally slow.
       - name: Run test suite
+        # This step tends to randomly hang up. Use a shorter timeout here
+        # instead of the default 6-hour one.
+        timeout-minutes: 15
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
           script: ./gradlew --no-daemon :android:connectedAndroidTest
+
+  android-example:
+    name: Example – AndroidThemis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      # Just build and run unit tests, don't launch the app or anything.
+      # Donations in the form of UI integration tests are welcome.
+      - name: Build AndroidThemis example
+        run: |
+          cd docs/examples/android
+          ./gradlew --no-daemon build
+
+  java-example:
+    name: Example project – JavaThemis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev default-jdk
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Install Themis Core with JNI
+        run: |
+          make all themis_jni
+          sudo make install themis_jni_install
+      - name: Build JavaThemis example
+        run: |
+          cd docs/examples/java
+          ./gradlew --no-daemon build
+      # Thus runs a bit of an abomination: Themis Core and JNI libs are built
+      # from source while JavaThemis binaries are installed from Maven Central.
+      - name: Run JavaThemis example
+        run: |
+          cd docs/examples/java
+          java -Djava.library.path=/usr/local/lib -jar app/build/libs/app.jar

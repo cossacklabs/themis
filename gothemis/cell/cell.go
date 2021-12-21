@@ -44,7 +44,7 @@
 //
 // Read more about Secure Cell modes here:
 //
-// https://docs.cossacklabs.com/pages/secure-cell-cryptosystem/
+// https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/secure-cell/
 package cell
 
 /*
@@ -180,13 +180,18 @@ import (
 
 // Errors returned by Secure Cell.
 var (
+	ErrGetOutputSize     = errors.New("failed to get output size")
+	ErrEncryptData       = errors.New("failed to protect data")
+	ErrDecryptData       = errors.New("failed to unprotect data")
 	ErrInvalidMode       = errors.NewWithCode(errors.InvalidParameter, "invalid Secure Cell mode specified")
 	ErrMissingKey        = errors.NewWithCode(errors.InvalidParameter, "empty symmetric key for Secure Cell")
 	ErrMissingPassphrase = errors.NewWithCode(errors.InvalidParameter, "empty passphrase for Secure Cell")
 	ErrMissingMessage    = errors.NewWithCode(errors.InvalidParameter, "empty message for Secure Cell")
 	ErrMissingToken      = errors.NewWithCode(errors.InvalidParameter, "authentication token is required in Token Protect mode")
 	ErrMissingContext    = errors.NewWithCode(errors.InvalidParameter, "associated context is required in Context Imprint mode")
-	ErrOverflow          = errors.NewWithCode(errors.NoMemory, "Secure Cell cannot allocate enough memory")
+	ErrOutOfMemory       = errors.NewWithCode(errors.NoMemory, "Secure Cell cannot allocate enough memory")
+	// Deprecated: Since 0.14. Use ErrOutOfMemory instead.
+	ErrOverflow          = ErrOutOfMemory
 )
 
 // Secure Cell operation mode.
@@ -273,10 +278,10 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		C.int(sc.mode),
 		&encLen,
 		&addLen)) {
-		return nil, nil, errors.New("Failed to get output size")
+		return nil, nil, ErrGetOutputSize
 	}
 	if sizeOverflow(encLen) || sizeOverflow(addLen) {
-		return nil, nil, ErrOverflow
+		return nil, nil, ErrOutOfMemory
 	}
 
 	var addData []byte
@@ -299,7 +304,7 @@ func (sc *SecureCell) Protect(data []byte, context []byte) ([]byte, []byte, erro
 		encLen,
 		add,
 		addLen)) {
-		return nil, nil, errors.New("Failed to protect data")
+		return nil, nil, ErrEncryptData
 	}
 
 	return encData, addData, nil
@@ -355,10 +360,10 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		ctxLen,
 		C.int(sc.mode),
 		&decLen)) {
-		return nil, errors.New("Failed to get output size")
+		return nil, ErrGetOutputSize
 	}
 	if sizeOverflow(decLen) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 
 	decData := make([]byte, decLen, decLen)
@@ -373,7 +378,7 @@ func (sc *SecureCell) Unprotect(protectedData []byte, additionalData []byte, con
 		C.int(sc.mode),
 		unsafe.Pointer(&decData[0]),
 		decLen)) {
-		return nil, errors.New("Failed to unprotect data")
+		return nil, ErrDecryptData
 	}
 
 	return decData, nil

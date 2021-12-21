@@ -11,11 +11,15 @@
 
 <p align="center">
   <a href="https://github.com/cossacklabs/themis/releases"><img src="https://img.shields.io/github/release/cossacklabs/themis.svg" alt="GitHub release"></a>
-  <a href="https://circleci.com/gh/cossacklabs/themis"><img src="https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield" alt="Circle CI"></a>
-  <a href="https://app.bitrise.io/app/69a1d5c9d42fa60f"><img src="https://app.bitrise.io/app/69a1d5c9d42fa60f/status.svg?token=Fp_06Ema5PgzBbZQyQy1bA&branch=master" alt="Bitrise"></a>
   <a href="https://github.com/cossacklabs/themis/releases/latest"><img src="https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20macOS%20%7C%20Linux%20%7C%20Java%20%7C%20WASM-green.svg" alt="Platforms"></a>
   <a href='https://coveralls.io/github/cossacklabs/themis'><img src='https://coveralls.io/repos/github/cossacklabs/themis/badge.svg?branch=master' alt='Coverage Status' /></a>
   <a href='https://goreportcard.com/report/github.com/cossacklabs/themis'><img class="badge" tag="github.com/cossacklabs/themis" src="https://goreportcard.com/badge/github.com/cossacklabs/themis"></a>
+  <br>
+  <a href="https://github.com/cossacklabs/themis/actions?query=workflow%3A%22Themis+Core%22"><img src="https://github.com/cossacklabs/themis/workflows/Themis%20Core/badge.svg" alt="Themis Core"></a>
+  <a href="https://github.com/cossacklabs/themis/actions?query=workflow%3A%22Integration+testing%22"><img src="https://github.com/cossacklabs/themis/workflows/Integration%20testing/badge.svg" alt="Integration testing"></a>
+  <a href="https://github.com/cossacklabs/themis/actions?query=workflow%3A%22Code+style%22"><img src="https://github.com/cossacklabs/themis/workflows/Code%20style/badge.svg" alt="Code style"></a>
+  <a href="https://circleci.com/gh/cossacklabs/themis"><img src="https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield" alt="Circle CI"></a>
+  <a href="https://app.bitrise.io/app/69a1d5c9d42fa60f"><img src="https://app.bitrise.io/app/69a1d5c9d42fa60f/status.svg?token=Fp_06Ema5PgzBbZQyQy1bA&branch=master" alt="Bitrise"></a>
 </p>
 <h4 align="center">General purpose cryptographic library for storage and messaging for iOS (Swift, Obj-C), Android (Java, Kotlin), desktop Java, С/С++, Node.js, Python, Ruby, PHP, Go, Rust, WASM.</h4>
 <h4 align="center">Perfect fit for multi-platform apps. Hides cryptographic details. Made by cryptographers for developers 🧡</h4>
@@ -34,7 +38,7 @@ Themis helps to build both simple and complex cryptographic features easily, qui
 
 * **Encrypt sensitive data fields** before storing in database (_"application-side field-level encryption"_).
 
-* Support **searchable encryption**, data tokenisation *and* data masking using Themis and [Acra](https://www.cossacklabs.com/acra/).
+* Support **searchable encryption**, data tokenisation and data masking using Themis and [Acra](https://www.cossacklabs.com/acra/).
 
 * Exchange secrets securely: **share sensitive data** between parties, build simple chat app between patients and doctors.
 
@@ -83,21 +87,21 @@ Themis is available for the following languages/platforms, refer to [language ho
 | ➕ C++ | [CPP Howto](https://docs.cossacklabs.com/themis/languages/cpp/) | [docs/examples/c++](https://github.com/cossacklabs/themis/tree/master/docs/examples/c%2B%2B) ||
 | 🍭 Node.js | [Javascript (Node.js) Howto](https://docs.cossacklabs.com/themis/languages/nodejs/) | [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/jsthemis.svg)](https://www.npmjs.com/package/jsthemis) |
 | 🖥 WebAssembly | [Javascript (WebAssembly) Howto](https://docs.cossacklabs.com/themis/languages/wasm/)| [docs/examples/js](https://github.com/cossacklabs/themis/tree/master/docs/examples/js) | [![npm](https://img.shields.io/npm/v/wasm-themis.svg)](https://www.npmjs.com/package/wasm-themis) |
-| 🐹 Go | [Go Howto](https://docs.cossacklabs.com/themis/languages/go/)| [docs/examples/go](https://github.com/cossacklabs/themis/tree/master/docs/examples/go) ||
+| 🐹 Go | [Go Howto](https://docs.cossacklabs.com/themis/languages/go/)| [docs/examples/go](https://github.com/cossacklabs/themis/tree/master/docs/examples/go) | [![go.dev](https://img.shields.io/badge/go.dev-v0.13.0-007d9c)](https://pkg.go.dev/mod/github.com/cossacklabs/themis/gothemis) |
 | 🦀 Rust | [Rust Howto](https://docs.cossacklabs.com/themis/languages/rust/)| [docs/examples/rust](https://github.com/cossacklabs/themis/tree/master/docs/examples/rust) | [![crates](https://img.shields.io/crates/v/themis.svg)](https://crates.io/crates/themis)|
 | 🕸 С++ PNaCl for Google Chrome||[WebThemis project](https://github.com/cossacklabs/webthemis)|
 
 # Availability
 
-Themis supports following CPU architectures: x86_64/i386, ARM, various Android architectures.
+Themis supports following CPU architectures: x86_64/i386, ARM, Apple Silicon (ARM64), various Android architectures.
 
 We build and verify Themis on the latest stable OS versions:
 
   - Debian (9, 10), CentOS (7, 8), Ubuntu (16.04, 18.04, 20.04)
   - macOS (10.12–10.15, 11)
   - Android (4–11)
-  - iOS and iPadOS (9–14beta),
-  - Windows (experimenal MSYS2 support)
+  - iOS (10–14)
+  - Windows (experimental MSYS2 support)
 
 We plan to expand this list with a broader set of platforms.
 If you'd like to help improve or bring Themis to your favourite platform or language —
@@ -109,7 +113,7 @@ If you'd like to help improve or bring Themis to your favourite platform or lang
 
 Refer to the documentation to learn more about:
 - [cryptography in Themis](https://docs.cossacklabs.com/themis/crypto-theory/) ([Themis cryptosystems and attacks on them](https://docs.cossacklabs.com/themis/crypto-theory/cryptosystems/), [cryptography donors](https://docs.cossacklabs.com/themis/crypto-theory/cryptography-donors/), [key management advice](https://docs.cossacklabs.com/themis/crypto-theory/key-management/), [FIPS 140-2 and GOST](https://docs.cossacklabs.com/themis/crypto-theory/fips-and-gost/)),
-- [debugging and troubleshooting Themis](https://docs.cossacklabs.com/themis/debugging/) ([command-line utilities](https://docs.cossacklabs.com/themis/debugging/cli-utilities/), [Themis Server interactive web simulator](https://docs.cossacklabs.com/themis/debugging/themis-server/), [thread safety](https://docs.cossacklabs.com/themis/debugging/thread-safety/), [migration guidelines between Themis versions](https://docs.cossacklabs.com/themis/debugging/migration-guides/)) ,  
+- [debugging and troubleshooting Themis](https://docs.cossacklabs.com/themis/debugging/) ([command-line utilities](https://docs.cossacklabs.com/themis/debugging/cli-utilities/), [thread safety](https://docs.cossacklabs.com/themis/debugging/thread-safety/), [migration guidelines between Themis versions](https://docs.cossacklabs.com/themis/debugging/migration-guides/)),  
 - [Themis architecture](https://docs.cossacklabs.com/themis/architecture/),
 - [Themis security](https://docs.cossacklabs.com/themis/security/) ([Themis and OWASP](https://docs.cossacklabs.com/themis/security/owasp/), [Themis development security practices](https://docs.cossacklabs.com/themis/security/dev-security-practices/)),
 - [community behind Themis](https://docs.cossacklabs.com/themis/community/) ([contributing guidelines](https://docs.cossacklabs.com/themis/community/contributing/), [credits and honorable mentions](https://docs.cossacklabs.com/themis/community/credits/),  [projects that use Themis](https://docs.cossacklabs.com/themis/community/projects-that-use-themis/), [tutorials](https://docs.cossacklabs.com/themis/community/tutorials-workshops-talks/), [workshops and talks](https://docs.cossacklabs.com/themis/community/tutorials-workshops-talks/)).
@@ -174,10 +178,15 @@ Drop us an email to [info@cossacklabs.com](mailto:info@cossacklabs.com) or check
 
 # Contacts
 
-If you want to ask a technical question, feel free to raise an [issue](https://github.com/cossacklabs/themis/issues) or write to [dev@cossacklabs.com](mailto:dev@cossacklabs.com).
+If you want to ask a technical question, report a bug or suggest a feature,
+feel free to [start a discussion on GitHub](https://github.com/cossacklabs/themis/discussions),
+raise an issue in the [issue tracker](https://github.com/cossacklabs/themis/issues),
+or write to [dev@cossacklabs.com](mailto:dev@cossacklabs.com).
 
 To talk to the business wing of Cossack Labs Limited, drop us an email to [info@cossacklabs.com](mailto:info@cossacklabs.com).
 
 [![Blog](https://img.shields.io/badge/blog-cossacklabs.com-7a7c98.svg)](https://cossacklabs.com/) [![Twitter CossackLabs](https://img.shields.io/badge/twitter-cossacklabs-fbb03b.svg)](http://twitter.com/cossacklabs) [![Dev.to CossackLabs](https://img.shields.io/badge/dev.to-%40cossacklabs-orange.svg)](https://dev.to/@cossacklabs/) [![Medium CossackLabs](https://img.shields.io/badge/medium-%40cossacklabs-orange.svg)](https://medium.com/@cossacklabs/) 
+
+[![Closed pull requests with Bitcode-related changes](https://img.shields.io/github/issues-pr-closed/cossacklabs/themis/Bitcode%20%F0%9F%90%99?color=informational&label=Bitcode-related%20issues)](https://github.com/cossacklabs/themis/pulls?q=is%3Apr+is%3Aclosed+label%3A%22Bitcode+%F0%9F%90%99%22)
 
 <!--[![Join the chat at https://gitter.im/cossacklabs/themis](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cossacklabs/themis?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) -->

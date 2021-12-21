@@ -9,11 +9,6 @@ buildscript {
         // on this Gradle version until it breaks or we *need* an upgrade:
         classpath 'com.android.tools.build:gradle:3.2.1'
 
-        // Two necessary plugins for uploading .aar to bintray
-        // from: https://android.jlelse.eu/how-to-distribute-android-library-in-a-convenient-way-d43fb68304a7
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.1'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
-
         // Kotlin plugin for Android
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
@@ -67,18 +62,23 @@ android {
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
 
-    // ensure we execute boringssl tasks first
-    // tasks.whenTaskAdded({Task task -> task.dependsOn('boringssl:' + task.name)})
-
-    // publishing and bitray upload tasks should not run for ':boringssl' project
+    // TODO(ilammy, 2021-02-21): improve sanity and make this less brittle
+    // This piece of arcane magick ensures that BoringSSL is built before Android stuff.
+    // However, we also need to ensure that BoringSSL artifacts are NOT published
+    // when JavaThemis is published.
+    // There should be a better way to specify build dependencies, right?
+    // Or at least make it a list of depenedencies to add, not to exclude.
     tasks.whenTaskAdded { task ->
         def excludeBoringSSL = [
-            'bintrayUpload',
+            'publish',
+            'publishToMavenLocal',
+            'publishProductionPublicationToMavenRepository',
             'publishProductionPublicationToMavenLocal',
             'generatePomFileForProductionPublication',
             'generateSourceJar',
             'generateJavadoc',
             'generateJavadocJar',
+            'signProductionPublication',
         ]
         if (!excludeBoringSSL.contains(task.name)) {
             task.dependsOn(':boringssl:' + task.name)
@@ -101,8 +101,8 @@ android {
     }
 }
 
-// Publishing on JCenter requires packages with Java source code and Javadocs.
-// Note that "archiveClassifier" values are important for JCenter.
+// Publishing on Maven Central requires packages with Java source code and Javadocs.
+// Note that "archiveClassifier" values are important for Maven Central.
 
 task generateSourceJar(type: Jar) {
     description = 'Assembles a JAR with Java source code'
@@ -133,43 +133,74 @@ task generateJavadocJar(type: Jar) {
 
 // distribution
 
-apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 publishing {
     publications {
         Production(MavenPublication) {
+            // TODO(ilammy, 2021-02-21): depend on release binaries explicitly
+            // It would be nice to have the "publish" task depend on "assembleRelease"
+            // so that you don't have sequence them manually. But the official way for
+            // doing so seems to be way too braindead:
+            // https://developer.android.com/studio/build/maven-publish-plugin
             artifact("build/outputs/aar/android.aar")
             artifact generateSourceJar
             artifact generateJavadocJar
             groupId 'com.cossacklabs.com'
             artifactId 'themis'
             version androidThemisVersion
+            pom {
+                name = 'Themis for Android'
+                description = 'Cross-platform high-level cryptographic library for mobile, web, and server platforms'
+                url = 'https://www.cossacklabs.com/themis/'
+                licenses {
+                    license {
+                        name = 'Apache License, Version 2.0'
+                        url = 'https://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        name = 'Cossack Labs'
+                        email = 'dev@cossacklabs.com'
+                        organization = 'Cossack Labs'
+                        organizationUrl = 'https://www.cossacklabs.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/cossacklabs/themis.git'
+                    developerConnection = 'scm:git:ssh://github.com:cossacklabs/themis.git'
+                    url = 'https://github.com/cossacklabs/themis'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            credentials {
+                // Use API tokens instead of actual username and password
+                // https://oss.sonatype.org/#profile;User%20Token
+                username System.getenv('OSSRH_USERNAME')
+                password System.getenv('OSSRH_PASSWORD')
+            }
         }
     }
 }
 
-bintray {
-    // Get Bintray credential from environment variable
-    user = System.getenv('BINTRAY_USER') // Get bintray User
-    key = System.getenv('BINTRAY_KEY') // Get bintray API Key from https://bintray.com/profile/edit -> APIKey
-    pkg {
-        repo = 'maven'
-        name = 'themis'
-        userOrg = 'cossacklabs'
-        licenses = ['Apache-2.0']
-        desc = 'Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis has a unified API across 12 platforms, including Python, JavaScript, iOS/macOS, and Java/Android.'
-        websiteUrl = "https://cossacklabs.com/themis/"
-        vcsUrl = 'https://github.com/cossacklabs/themis.git'
-        publish = true
-        version {
-            name = androidThemisVersion
-            released  = new Date()
-            gpg {
-                sign = true
-                passphrase = System.getenv('BINTRAY_GPG_PASSPHRASE')
-            }
-        }
-    }
-    publications = ['Production']
+// Credentials for signing should be set in "~/.gradle/gradle.properties" file.
+// (The global one in your home directory, NOT the one in the project root.)
+//
+//     signing.gnupg.executable=gpg
+//     signing.gnupg.keyName=...
+//     signing.gnupg.passphrase=...
+//
+// Yes, only in that file. Because Gradle says so.
+//
+// https://docs.gradle.org/current/userguide/signing_plugin.html#example_configure_the_gnupgsignatory
+signing {
+    required { gradle.taskGraph.hasTask("publish") }
+    useGpgCmd()
+    sign publishing.publications.Production
 }

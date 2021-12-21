@@ -23,6 +23,7 @@
 #include <openssl/rsa.h>
 
 #include "soter/openssl/soter_engine.h"
+#include "soter/soter_rsa_key.h"
 
 static int rsa_key_length(unsigned size)
 {

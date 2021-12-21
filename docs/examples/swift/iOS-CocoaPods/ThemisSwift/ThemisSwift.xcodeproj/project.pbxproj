@@ -147,7 +147,7 @@
 				739981141CC42C880095138F /* Frameworks */,
 				739981151CC42C880095138F /* Resources */,
 				73688AFE1CC4504F00D3C430 /* ShellScript */,
-				B7BAFA7DFD04061DCA1DD61C /* [CP] Embed Pods Frameworks */,
+				EF7FB655C649DB9910C5909E /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -247,20 +247,20 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B7BAFA7DFD04061DCA1DD61C /* [CP] Embed Pods Frameworks */ = {
+		EF7FB655C649DB9910C5909E /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift-frameworks.sh",
-				"${PODS_ROOT}/GRKOpenSSLFramework/OpenSSL-iOS/bin/openssl.framework",
 				"${BUILT_PRODUCTS_DIR}/themis/themis.framework",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/openssl/openssl.framework/openssl",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/themis.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -419,6 +419,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = X6X7AHQ2D4;
 				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/ThemisSwift/Info.plist";
@@ -443,6 +444,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = X6X7AHQ2D4;
 				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/ThemisSwift/Info.plist";

@@ -1,6 +1,6 @@
 [package]
 name = "themis"
-version = "0.13.0"
+version = "0.14.0"
 edition = "2018"
 authors = ["rust-themis developers"]
 description = "High-level cryptographic services for storage and messaging"
@@ -23,11 +23,8 @@ include = [
 circle-ci = { repository = "cossacklabs/themis", branch = "master" }
 maintenance = { status = "actively-developed" }
 
-[features]
-vendored = ["bindings/vendored"]
-
 [dependencies]
-bindings = { package = "libthemis-sys", path = "libthemis-sys", version = "0.13.0" }
+bindings = { package = "libthemis-sys", path = "libthemis-sys", version = "0.14.0" }
 zeroize = "1"
 
 [dev-dependencies]
@@ -37,7 +34,3 @@ clap = "2.32"
 lazy_static = "1.2.0"
 log = "0.4.6"
 env_logger = "0.6.0"
-
-[package.metadata.docs.rs]
-features = ["vendored"]
-dependencies = ["libssl-dev"]

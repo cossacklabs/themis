@@ -22,28 +22,59 @@
 #include "soter/openssl/soter_engine.h"
 #include "soter/soter_ec_key.h"
 
-soter_status_t soter_ec_gen_key(EVP_PKEY_CTX* pkey_ctx)
+soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey)
 {
-    EVP_PKEY* pkey;
-    EC_KEY* ec;
+    soter_status_t res = SOTER_FAIL;
+    EVP_PKEY* param = NULL;
+    EVP_PKEY_CTX* param_ctx = NULL;
+    EVP_PKEY_CTX* pkey_ctx = NULL;
+
+    if (!ppkey) {
+        return SOTER_INVALID_PARAMETER;
+    }
+
+    param_ctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL);
+    if (!param_ctx) {
+        res = SOTER_NO_MEMORY;
+        goto err;
+    }
+
+    if (EVP_PKEY_paramgen_init(param_ctx) != 1) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+    if (EVP_PKEY_CTX_set_ec_paramgen_curve_nid(param_ctx, NID_X9_62_prime256v1) != 1) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+    if (EVP_PKEY_paramgen(param_ctx, &param) != 1) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    pkey_ctx = EVP_PKEY_CTX_new(param, NULL);
     if (!pkey_ctx) {
-        return SOTER_INVALID_PARAMETER;
+        res = SOTER_NO_MEMORY;
+        goto err;
     }
-    pkey = EVP_PKEY_CTX_get0_pkey(pkey_ctx);
-    if (!pkey) {
-        return SOTER_INVALID_PARAMETER;
+
+    if (EVP_PKEY_keygen_init(pkey_ctx) != 1) {
+        res = SOTER_FAIL;
+        goto err;
     }
-    if (EVP_PKEY_EC != EVP_PKEY_id(pkey)) {
-        return SOTER_INVALID_PARAMETER;
+    if (EVP_PKEY_keygen(pkey_ctx, ppkey) != 1) {
+        res = SOTER_FAIL;
+        goto err;
     }
-    ec = EVP_PKEY_get0(pkey);
-    if (NULL == ec) {
-        return SOTER_INVALID_PARAMETER;
-    }
-    if (1 == EC_KEY_generate_key(ec)) {
-        return SOTER_SUCCESS;
-    }
-    return SOTER_FAIL;
+
+    res = SOTER_SUCCESS;
+
+err:
+    EVP_PKEY_CTX_free(param_ctx);
+    EVP_PKEY_CTX_free(pkey_ctx);
+    EVP_PKEY_free(param);
+
+    return res;
 }
 
 soter_status_t soter_ec_import_key(EVP_PKEY* pkey, const void* key, const size_t key_length)
@@ -71,9 +102,8 @@ soter_status_t soter_ec_import_key(EVP_PKEY* pkey, const void* key, const size_t
     return SOTER_INVALID_PARAMETER;
 }
 
-soter_status_t soter_ec_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate)
+soter_status_t soter_ec_export_key(EVP_PKEY* pkey, void* key, size_t* key_length, bool isprivate)
 {
-    EVP_PKEY* pkey = EVP_PKEY_CTX_get0_pkey(ctx->pkey_ctx);
     if (!pkey) {
         return SOTER_INVALID_PARAMETER;
     }

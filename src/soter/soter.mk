@@ -33,7 +33,8 @@ LIBSOTER_SO_LDFLAGS = -Wl,-out-implib,$(BIN_PATH)/$(LIBSOTER_IMPORT)
 endif
 
 SOTER_SOURCES = $(wildcard $(SRC_PATH)/soter/*.c)
-SOTER_HEADERS = $(wildcard $(SRC_PATH)/soter/*.h)
+SOTER_HEADERS += $(wildcard $(INC_PATH)/soter/*.h)
+SOTER_HEADERS += $(wildcard $(SRC_PATH)/soter/*.h)
 ED25519_SOURCES = $(wildcard $(SRC_PATH)/soter/ed25519/*.c)
 ED25519_HEADERS = $(wildcard $(SRC_PATH)/soter/ed25519/*.h)
 
@@ -55,13 +56,24 @@ SOTER_AUD = $(patsubst $(SRC_PATH)/%,$(AUD_PATH)/%, $(SOTER_AUD_SRC))
 FMT_FIXUP += $(patsubst %,$(OBJ_PATH)/%.fmt_fixup, $(SOTER_FMT_SRC))
 FMT_CHECK += $(patsubst %,$(OBJ_PATH)/%.fmt_check, $(SOTER_FMT_SRC))
 
-SOTER_STATIC = $(BIN_PATH)/$(LIBSOTER_A) $(SOTER_ENGINE_DEPS)
+SOTER_STATIC = $(BIN_PATH)/$(LIBSOTER_A)
 
 $(SOTER_OBJ): CFLAGS += -DSOTER_EXPORT
+$(SOTER_OBJ): CFLAGS += $(SOTER_CRYPTO_ENGINE_CFLAGS)
 
-$(BIN_PATH)/$(LIBSOTER_A): CMD = $(AR) rcs $@ $(filter %.o, $^)
+# First build Soter library, then merge embedded crypto engine libs into it.
+# On macOS this may cause warnings about files with no symbols in BoringSSL,
+# suppress those warnings with some Bash wizardry.
+$(BIN_PATH)/$(LIBSOTER_A): CMD = $(AR) rcs $@ $(filter %.o, $^) \
+    && scripts/merge-static-libs.sh $@ $(filter %.a, $^) \
+    $(if $(IS_MACOS),> >(grep -v 'has no symbols$$'))
 
-$(BIN_PATH)/$(LIBSOTER_A): $(SOTER_OBJ)
+# Make sure to build dependencies before objects. This is important in case
+# of embedded BoringSSL with renamed symbols: they need to be renamed before
+# Soter's objects are built against them.
+$(SOTER_OBJ): $(SOTER_ENGINE_DEPS)
+
+$(BIN_PATH)/$(LIBSOTER_A): $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
 	@mkdir -p $(@D)
 	@echo -n "link "
 	@$(BUILD_CMD)
@@ -92,7 +104,7 @@ ifdef IS_MSYS
 	@mkdir -p $(DESTDIR)$(bindir)
 endif
 	@mkdir -p $(DESTDIR)$(libdir)
-	@$(INSTALL_DATA) $(SRC_PATH)/soter/*.h              $(DESTDIR)$(includedir)/soter
+	@$(INSTALL_DATA) $(INC_PATH)/soter/*.h              $(DESTDIR)$(includedir)/soter
 	@$(INSTALL_DATA) $(BIN_PATH)/libsoter.pc            $(DESTDIR)$(pkgconfigdir)
 	@$(INSTALL_DATA) $(BIN_PATH)/$(LIBSOTER_A)          $(DESTDIR)$(libdir)
 ifdef IS_MSYS

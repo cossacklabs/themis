@@ -18,7 +18,7 @@ on:
       - stable
       - release/*
   schedule:
-    - cron: '0 6 * * *' # every day at 6:00 UTC
+    - cron: '20 6 * * 1' # every Monday at 6:20 UTC
 
 env:
   WITH_FATAL_WARNINGS: yes
@@ -167,10 +167,3 @@ jobs:
           kill -SIGTERM "$!"
           echo "ok"
       # Secure Comparator not supported by PHPThemis (as of v0.12, 2019-11-17)
-      - name: Check Themis-Server examples (PHP 7.2)
-        if: always()
-        run: |
-          # Since these require manual configuration, we just check the syntax.
-          cd $GITHUB_WORKSPACE/docs/examples/Themis-server/php
-          php -l smessage_client.php
-          php -l ssession_client.php

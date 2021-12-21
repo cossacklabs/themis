@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-source 'https://github.com/CocoaPods/Specs.git'
+source 'https://cdn.cocoapods.org/'
 
 platform :ios, '10.0'
 inhibit_all_warnings!
@@ -27,11 +27,3 @@ target "objthemis" do
 end
 
 #TODO: add tests for openssl1.1.1 target?
-
-
-target "objthemis_boring" do
-
-  # example should work with head
-  pod 'themis/themis-boringssl', :git => "https://github.com/cossacklabs/themis.git"
-
-end

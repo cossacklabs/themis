@@ -223,6 +223,50 @@ func testSession(keytype int, t *testing.T) {
 	<-finCh
 }
 
+func TestValidKeyHandling(t *testing.T) {
+	kpa, err := keys.New(keys.TypeEC)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	kpb, err := keys.New(keys.TypeEC)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	clb := &testCallbacks{kpa, kpb}
+
+	client, err := New(clientID, kpa.Private, clb)
+	if client == nil || err != nil {
+		t.Error("Creating Secure Session with EC key", err)
+		return
+	}
+}
+
+func TestInvalidKeyHandling(t *testing.T) {
+	kpa, err := keys.New(keys.TypeRSA)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	kpb, err := keys.New(keys.TypeRSA)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	clb := &testCallbacks{kpa, kpb}
+
+	client, err := New(clientID, kpa.Private, clb)
+	if client != nil || err == nil {
+		t.Error("Creating Secure Session with RSA key")
+		return
+	}
+}
+
 func TestSession(t *testing.T) {
 	testSession(keys.TypeEC, t)
 }

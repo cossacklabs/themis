@@ -127,7 +127,7 @@ static void secure_comparator_api_test(void)
 {
     /* setup */
     themis_status_t themis_status;
-    secret_length = rand_int(MAX_SECRET_SIZE);
+    secret_length = rand_int(MAX_SECRET_SIZE - 1) + 1;
     if (SOTER_SUCCESS != soter_rand(secret, secret_length)) {
         testsuite_fail_if(true, "soter_rand failed");
         return;

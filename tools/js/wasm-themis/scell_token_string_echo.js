@@ -1,6 +1,6 @@
-const themis = require('wasm-themis')
+var themis = require('wasm-themis')
 
-let command, key, message, context
+var command, key, message, context
 if (5 <= process.argv.length && process.argv.length <= 6) {
     command = process.argv[2]
     key     = process.argv[3]
@@ -14,8 +14,8 @@ if (5 <= process.argv.length && process.argv.length <= 6) {
 }
 
 themis.initialized.then(function() {
-    let cell = themis.SecureCellTokenProtect.withKey(Buffer.from(key))
-    let result
+    var cell = themis.SecureCellTokenProtect.withKey(Buffer.from(key))
+    var result
     switch (command) {
         case 'enc':
             if (context) {
@@ -27,7 +27,7 @@ themis.initialized.then(function() {
                       + Buffer.from(result.token).toString('base64'))
             break
         case 'dec':
-            let [the_message, token] = message.split(',')
+            var [the_message, token] = message.split(',')
             if (context) {
                 result = cell.decrypt(Buffer.from(the_message, 'base64'),
                                       Buffer.from(token, 'base64'), Buffer.from(context))

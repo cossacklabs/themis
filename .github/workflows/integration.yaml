@@ -26,7 +26,7 @@ on:
       - stable
       - release/*
   schedule:
-    - cron: '0 6 * * *' # every day at 6:00 UTC
+    - cron: '20 6 * * 1' # every Monday at 6:20 UTC
 
 env:
   WITH_FATAL_WARNINGS: yes
@@ -35,8 +35,6 @@ jobs:
   cross-language:
     name: Cross-language tests
     runs-on: ubuntu-latest
-    env:
-      GOTHEMIS_IMPORT: github.com/cossacklabs/themis/gothemis
     steps:
       - name: Install system dependencies
         run: |
@@ -47,6 +45,10 @@ jobs:
             python3 python3-setuptools \
             ruby ruby-dev \
             pkg-config clang
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Install RVM
         run: |
           sudo apt install --yes software-properties-common
@@ -70,21 +72,14 @@ jobs:
           node-version: 10.x
       - name: Install Emscripten
         run: |
+          version=$(cat src/wrappers/themis/wasm/emscripten/VERSION)
           # Install Emscripten toolchain as described in documentation:
           # https://emscripten.org/docs/getting_started/downloads.html
           cd $HOME
           git clone https://github.com/emscripten-core/emsdk.git
           cd $HOME/emsdk
-          # FIXME(ilammy, 2020-07-07): unpin emsdk version [T1698]
-          # Latest HEAD has a regression, we roll back to last good version.
-          git checkout 92d512faa832b3ff5d6b8bc991b6801e31d8e372
-          # FIXME(ilammy, 2020-06-07): migrate to "upstream" flavor
-          # LLVM flavor of Emscripten has some issues compiling our code,
-          # and latest versions of the fastcomp flavor started giving out
-          # compiler warnings (turned into errors by the build system).
-          # We need to migrate, but for the time being use the old version.
-          ./emsdk install  1.39.16-fastcomp
-          ./emsdk activate 1.39.16-fastcomp
+          ./emsdk install  "$version"
+          ./emsdk activate "$version"
       - name: Install PHP from PPA
         run: |
           sudo apt install --yes software-properties-common
@@ -95,10 +90,6 @@ jobs:
           sudo update-alternatives --set php        /usr/bin/php7.2
           sudo update-alternatives --set php-config /usr/bin/php-config7.2
           sudo update-alternatives --set phpize     /usr/bin/phpize7.2
-      - name: Check out code
-        uses: actions/checkout@v2
-        with:
-          submodules: true
       - name: Install Themis Core
         run: |
           make
@@ -109,10 +100,8 @@ jobs:
         run: sudo make pythemis_install
       - name: Install RubyThemis
         run: sudo make rbthemis_install
-      - name: Install GoThemis
-        run: |
-          mkdir -p $HOME/go/src/$GOTHEMIS_IMPORT
-          rsync -auv gothemis/ $HOME/go/src/$GOTHEMIS_IMPORT
+      - name: Install GoThemis (test tools)
+        run: make gothemis_integration_tools
       # Cargo pulls in quite a few stuff from the Internet and Rust always
       # (slowly) recompiles dependencies, so make heavy use of caching
       - name: Cache Cargo registry

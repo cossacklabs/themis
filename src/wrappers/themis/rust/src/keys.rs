@@ -552,7 +552,7 @@ fn try_get_key_kind(key: &KeyBytes) -> Result<KeyKind> {
 /// [our guidelines][key-management] for some advice on key management.
 ///
 /// [`SecureCell`]: ../secure_cell/index.html
-/// [key-management]: https://docs.cossacklabs.com/pages/documentation-themis/#key-management
+/// [key-management]: https://docs.cossacklabs.com/themis/crypto-theory/key-management/
 ///
 /// # Examples
 ///

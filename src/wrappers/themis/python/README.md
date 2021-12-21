@@ -7,10 +7,10 @@ Themis provides ready-made building components, which simplifies the usage of co
 
 [Themis]: https://github.com/cossacklabs/themis
 
-## Quickstart
+## Getting started
 
-PyThemis requires a native Themis library.
-Please refer to the [Quickstart guide] for the installation instructions.
+PyThemis requires native Themis library to be installed.
+Please refer to the [installation instructions][install].
 
 In-depth documentation can be found on our [Documentation Server].     
 Make sure to check out the [Examples].
@@ -20,8 +20,8 @@ TODO: refer to simulators, code samples, and tests here
 
 -->
 
-[Quickstart guide]: https://docs.cossacklabs.com/pages/python-howto/
-[Documentation Server]: https://docs.cossacklabs.com/products/themis/
+[install]: https://docs.cossacklabs.com/themis/languages/python/installation/
+[Documentation Server]: https://docs.cossacklabs.com/themis/
 [Examples]: /docs/examples/python
 
 

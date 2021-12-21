@@ -129,6 +129,10 @@
     XCTAssertNil(emptyMessageDe, @"decrypting data with empty message should return nil message");
   
     // empty keys
+    // Key parameters here are marked with "nonnull" and normally issue warnings.
+    // Suppress the warnings and verify that we don't crash if they are ignored.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wnonnull"
     TSMessage *encrypterEPriv = [[TSMessage alloc] initInEncryptModeWithPrivateKey:NULL peerPublicKey:publicKeyData];
     XCTAssertNil(encrypterEPriv, @"init SMessage in Encrypt/Decrypt mode with empty private key should return nil");
   
@@ -137,7 +141,8 @@
   
     TSMessage *encrypterEPrivEPub = [[TSMessage alloc] initInEncryptModeWithPrivateKey:NULL peerPublicKey:NULL];
     XCTAssertNil(encrypterEPrivEPub, @"init SMessage in Encrypt/Decrypt mode with both empty keys should return nil");
-  
+#pragma GCC diagnostic pop
+
     // another encryptor
     TSKeyGen *keygenRSA = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmRSA];
     TSMessage *anotherEncryptor = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:keygenRSA.privateKey peerPublicKey:keygenRSA.publicKey];

@@ -1,6 +1,6 @@
 [package]
 name = "libthemis-sys"
-version = "0.13.0"
+version = "0.14.0"
 edition = "2018"
 authors = ["rust-themis developers"]
 description = "FFI binding to libthemis"
@@ -16,14 +16,6 @@ links = "themis"
 circle-ci = { repository = "cossacklabs/themis", branch = "master" }
 maintenance = { status = "actively-developed" }
 
-[features]
-vendored = ["libthemis-src"]
-
 [build-dependencies]
 cc = "1.0.28"
-libthemis-src = { path = "../libthemis-src", version = "0.13.0", optional = true }
 pkg-config = "0.3.14"
-
-[package.metadata.docs.rs]
-features = ["vendored"]
-dependencies = ["libssl-dev"]

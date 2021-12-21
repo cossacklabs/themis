@@ -75,8 +75,12 @@ const (
 
 // Errors returned by key generation.
 var (
-	ErrInvalidType = errors.NewWithCode(errors.InvalidParameter, "invalid key type specified")
-	ErrOverflow    = errors.NewWithCode(errors.NoMemory, "key generator cannot allocate enough memory")
+	ErrGetKeySize       = errors.New("failed to get needed key sizes")
+	ErrGenerateKeypair  = errors.New("failed to generate keypair")
+	ErrInvalidType      = errors.NewWithCode(errors.InvalidParameter, "invalid key type specified")
+	ErrOutOfMemory      = errors.NewWithCode(errors.NoMemory, "key generator cannot allocate enough memory")
+	// Deprecated: Since 0.14. Use ErrOutOfMemory instead.
+	ErrOverflow         = ErrOutOfMemory
 )
 
 // PrivateKey stores a ECDSA or RSA private key.
@@ -103,17 +107,17 @@ func New(keytype int) (*Keypair, error) {
 
 	var privLen, pubLen C.size_t
 	if !bool(C.get_key_size(C.int(keytype), &privLen, &pubLen)) {
-		return nil, errors.New("Failed to get needed key sizes")
+		return nil, ErrGetKeySize
 	}
 	if sizeOverflow(privLen) || sizeOverflow(pubLen) {
-		return nil, ErrOverflow
+		return nil, ErrOutOfMemory
 	}
 
 	priv := make([]byte, int(privLen), int(privLen))
 	pub := make([]byte, int(pubLen), int(pubLen))
 
 	if !bool(C.gen_keys(C.int(keytype), unsafe.Pointer(&priv[0]), privLen, unsafe.Pointer(&pub[0]), pubLen)) {
-		return nil, errors.New("Failed to generate keypair")
+		return nil, ErrGenerateKeypair
 	}
 
 	return &Keypair{

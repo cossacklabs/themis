@@ -15,6 +15,7 @@
  */
 
 #include <jni.h>
+#include <string.h>
 #include <themis/secure_message.h>
 #include <themis/themis_error.h>
 
@@ -40,7 +41,8 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
     jbyte* priv_buf = NULL;
     jbyte* pub_buf = NULL;
     jbyte* message_buf = NULL;
-    jbyte* output_buf = NULL;
+    jbyte* output_bytes = NULL;
+    uint8_t* output_buffer = NULL;
 
     themis_status_t res = THEMIS_FAIL;
     jbyteArray output = NULL;
@@ -124,16 +126,12 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
      */
     if (output_length > INT32_MAX) {
         res = THEMIS_NO_MEMORY;
-        return NULL;
-    }
-
-    output = (*env)->NewByteArray(env, output_length);
-    if (!output) {
         goto err;
     }
 
-    output_buf = (*env)->GetByteArrayElements(env, output, NULL);
-    if (!output_buf) {
+    output_buffer = malloc(output_length);
+    if (!output_buffer) {
+        res = THEMIS_NO_MEMORY;
         goto err;
     }
 
@@ -145,7 +143,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
                                             public_key_length,
                                             (uint8_t*)message_buf,
                                             message_length,
-                                            (uint8_t*)output_buf,
+                                            output_buffer,
                                             &output_length);
         break;
     case SECURE_MESSAGE_DECRYPT:
@@ -155,7 +153,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
                                             public_key_length,
                                             (uint8_t*)message_buf,
                                             message_length,
-                                            (uint8_t*)output_buf,
+                                            output_buffer,
                                             &output_length);
         break;
     case SECURE_MESSAGE_SIGN:
@@ -163,7 +161,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
                                          private_key_length,
                                          (uint8_t*)message_buf,
                                          message_length,
-                                         (uint8_t*)output_buf,
+                                         output_buffer,
                                          &output_length);
         break;
     case SECURE_MESSAGE_VERIFY:
@@ -171,7 +169,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
                                            public_key_length,
                                            (uint8_t*)message_buf,
                                            message_length,
-                                           (uint8_t*)output_buf,
+                                           output_buffer,
                                            &output_length);
         break;
     default:
@@ -179,11 +177,26 @@ JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureMessage_process(J
         break;
     }
 
-err:
-
-    if (output_buf) {
-        (*env)->ReleaseByteArrayElements(env, output, output_buf, 0);
+    if (res != THEMIS_SUCCESS) {
+        goto err;
     }
+
+    output = (*env)->NewByteArray(env, output_length);
+    if (!output) {
+        res = THEMIS_NO_MEMORY;
+        goto err;
+    }
+
+    output_bytes = (*env)->GetPrimitiveArrayCritical(env, output, NULL);
+    if (!output_bytes) {
+        res = THEMIS_FAIL;
+        goto err;
+    }
+    memmove(output_bytes, output_buffer, output_length);
+    (*env)->ReleasePrimitiveArrayCritical(env, output, output_bytes, 0);
+
+err:
+    free(output_buffer);
 
     if (message_buf) {
         (*env)->ReleaseByteArrayElements(env, message, message_buf, 0);

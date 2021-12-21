@@ -22,4 +22,27 @@
 
 #include <themis/secure_session.h>
 
+struct secure_session_peer_type {
+    uint8_t* id;
+    size_t id_length;
+
+    uint8_t* ecdh_key;
+    size_t ecdh_key_length;
+
+    uint8_t* sign_key;
+    size_t sign_key_length;
+};
+
+typedef struct secure_session_peer_type secure_session_peer_t;
+
+themis_status_t secure_session_peer_init(secure_session_peer_t* peer,
+                                         const void* id,
+                                         size_t id_len,
+                                         const void* ecdh_key,
+                                         size_t ecdh_key_len,
+                                         const void* sign_key,
+                                         size_t sign_key_len);
+
+void secure_session_peer_cleanup(secure_session_peer_t* peer);
+
 #endif /* THEMIS_SECURE_SESSION_PEER_H */

@@ -46,6 +46,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+src/wrappers/themis/python/dist
+src/wrappers/themis/python/files3.txt
+src/wrappers/themis/python/pythemis.egg-info
+
 tests/phpthemis/vendor
 tests/phpthemis/composer.json
 tests/phpthemis/composer.phar
@@ -62,8 +66,6 @@ third_party/boringssl/.externalNativeBuild
 *.lo
 
 # ios
-docs/examples/Themis-server/swift/Pods
-docs/examples/Themis-server/Obj-C/Pods
 docs/examples/swift/iOS-CocoaPods/Pods
 docs/examples/objc/iOS-CocoaPods/Pods
 
@@ -75,8 +77,12 @@ docs/examples/objc/iOS-Carthage/Carthage
 
 # rust
 /target
+/src/wrappers/themis/rust/target
 **/*.rs.bk
 Cargo.lock
+
+# ruby
+/src/wrappers/themis/ruby/*.gem
 
 # vscode
 .settings

@@ -26,20 +26,7 @@ import (
 	"github.com/cossacklabs/themis/gothemis/keys"
 )
 
-func main() {
-	// Cryptographic parameters. Keep them secret.
-	passphrase := "broccoli"
-	key, err := keys.NewSymmetricKey()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "cannot generate symmetric key: %v\n", err)
-		os.Exit(1)
-	}
-
-	// Input data. Note that you always encrypt bytes so strings need to be encoded.
-	// Here we just cast them into []byte, effectively encoding in UTF-8.
-	message := []byte("Broccoli or cauliflower, which one is green?")
-	context := []byte("Correct! *gunshot*")
-
+func exampleSeal(key *keys.SymmetricKey, message, context []byte) {
 	fmt.Println("Secure Cell - Seal mode (symmetric key)")
 	// This is the easiest mode to use.
 
@@ -66,7 +53,9 @@ func main() {
 	fmt.Printf("Encrypted: %s\n", base64.StdEncoding.EncodeToString(encrypted))
 	fmt.Printf("Decrypted: %s\n", string(decrypted))
 	fmt.Printf("\n")
+}
 
+func exampleSealWithPassphrase(passphrase string, message, context []byte) {
 	fmt.Println("Secure Cell - Seal mode (passphrase)")
 	// This is the easiest mode to use if you need to keep the secret in your head.
 
@@ -75,12 +64,12 @@ func main() {
 		fmt.Fprintf(os.Stderr, "cannot construct Secure Cell: %v\n", err)
 		os.Exit(1)
 	}
-	encrypted, err = scellPW.Encrypt(message, context)
+	encrypted, err := scellPW.Encrypt(message, context)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to encrypt message: %v\n", err)
 		os.Exit(1)
 	}
-	decrypted, err = scellPW.Decrypt(encrypted, context)
+	decrypted, err := scellPW.Decrypt(encrypted, context)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to decrypt message: %v\n", err)
 		os.Exit(1)
@@ -93,7 +82,9 @@ func main() {
 	fmt.Printf("Encrypted: %s\n", base64.StdEncoding.EncodeToString(encrypted))
 	fmt.Printf("Decrypted: %s\n", string(decrypted))
 	fmt.Printf("\n")
+}
 
+func exampleTokenProtect(key *keys.SymmetricKey, message, context []byte) {
 	fmt.Println("Secure Cell - Token Protect mode")
 	// A bit harded to use than Seal mode due to extra "authentication token",
 	// but the encrypted data has the same size as input.
@@ -108,7 +99,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "failed to encrypt message: %v\n", err)
 		os.Exit(1)
 	}
-	decrypted, err = scellTP.Decrypt(encrypted, token, context)
+	decrypted, err := scellTP.Decrypt(encrypted, token, context)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to decrypt message: %v\n", err)
 		os.Exit(1)
@@ -122,7 +113,9 @@ func main() {
 	fmt.Printf("Token:     %s\n", base64.StdEncoding.EncodeToString(token))
 	fmt.Printf("Decrypted: %s\n", string(decrypted))
 	fmt.Printf("\n")
+}
 
+func exampleTokenImprint(key *keys.SymmetricKey, message, context []byte) {
 	fmt.Println("Secure Cell - Context Imprint mode")
 	// Slightly less secure mode which preserves the input length too.
 	// However, it requires "associated context" to be specified
@@ -133,12 +126,12 @@ func main() {
 		fmt.Fprintf(os.Stderr, "cannot construct Secure Cell: %v\n", err)
 		os.Exit(1)
 	}
-	encrypted, err = scellCI.Encrypt(message, context)
+	encrypted, err := scellCI.Encrypt(message, context)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to encrypt message: %v\n", err)
 		os.Exit(1)
 	}
-	decrypted, err = scellCI.Decrypt(encrypted, context)
+	decrypted, err := scellCI.Decrypt(encrypted, context)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to decrypt message: %v\n", err)
 		os.Exit(1)
@@ -151,4 +144,24 @@ func main() {
 	fmt.Printf("Encrypted: %s\n", base64.StdEncoding.EncodeToString(encrypted))
 	fmt.Printf("Decrypted: %s\n", string(decrypted))
 	fmt.Printf("\n")
+}
+
+func main() {
+	// Cryptographic parameters. Keep them secret.
+	passphrase := "broccoli"
+	key, err := keys.NewSymmetricKey()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "cannot generate symmetric key: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Input data. Note that you always encrypt bytes so strings need to be encoded.
+	// Here we just cast them into []byte, effectively encoding in UTF-8.
+	message := []byte("Broccoli or cauliflower, which one is green?")
+	context := []byte("Correct! *gunshot*")
+
+	exampleSeal(key, message, context)
+	exampleSealWithPassphrase(passphrase, message, context)
+	exampleTokenProtect(key, message, context)
+	exampleTokenImprint(key, message, context)
 }

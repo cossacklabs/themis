@@ -14,7 +14,7 @@
 
 #import "AppDelegate.h"
 
-#import <themis/themis.h>
+@import themis;
 
 @implementation AppDelegate
 
@@ -23,48 +23,61 @@
     // We don't do UI. Please look into debug console to see the results.
     //
 
-    [self runExampleGeneratingKeys];
-    [self runExampleReadingKeysFromFile];
+    // Please, look in debug console to see results
 
+    // Generating/reading keys:
+    
+    [self runExampleGeneratingKeys];
+    [self readingKeysFromFile];
+
+    
+    // Secure Message:
+    
     [self runExampleSecureMessageEncryptionDecryption];
     [self runExampleSecureMessageSignVerify];
-
-    [self runExampleSecureCellSealMode];
-    [self runExampleSecureCellTokenProtectMode];
-    [self runExampleSecureCellImprint];
-
+    
+    
+    // Secure Cell:
+    
+    NSData * fixedKey = [[NSData alloc]
+                         initWithBase64EncodedString:@"UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg"
+                         options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    [self runExampleSecureCellSealMode:fixedKey];
+    [self runExampleSecureCellTokenProtectMode:fixedKey];
+    [self runExampleSecureCellImprint:fixedKey];
+    
+    
+    NSData * generatedKey = TSGenerateSymmetricKey();
+    [self runExampleSecureCellSealMode:generatedKey];
+    [self runExampleSecureCellTokenProtectMode:generatedKey];
+    [self runExampleSecureCellImprint:generatedKey];
+    
+    
+    // Secure Comparator
     [self runExampleSecureComparator];
 }
 
 #pragma mark - Secure Cell
 
-- (NSData *)generateMasterKey {
-    NSString *masterKeyString = @"UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg";
-    NSData *masterKeyData = [[NSData alloc] initWithBase64EncodedString:masterKeyString
-                                                                 options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    return masterKeyData;
-}
-
-- (void)runExampleSecureCellSealMode {
+- (void)runExampleSecureCellSealMode:(NSData *)masterKeyData {
     NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
-
-    NSData *masterKeyData = [self generateMasterKey];
-    TSCellSeal *cellSeal = [[TSCellSeal alloc] initWithKey:masterKeyData];
+    
+    TSCellSeal * cellSeal = [[TSCellSeal alloc] initWithKey:masterKeyData];
 
     if (!cellSeal) {
         NSLog(@"%s Error occurred while initializing object cellSeal", sel_getName(_cmd));
         return;
     }
 
-    NSString *message = @"All your base are belong to us!";
-    NSString *context = @"For great justice";
-    NSError *themisError;
+    NSString * message = @"All your base are belong to us!";
+    NSString * context = @"For great justice";
+    NSError * themisError;
 
 
-    // context is optional parameter and may be ignored
-    NSData *encryptedMessage = [cellSeal wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                           context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                             error:&themisError];
+    // context is optional parameter and may be omitted
+    NSData * encryptedMessage = [cellSeal encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                            error:&themisError];
 
     if (themisError) {
         NSLog(@"%s Error occurred while enrypting %@", sel_getName(_cmd), themisError);
@@ -72,73 +85,75 @@
     }
     NSLog(@"encryptedMessage = %@", encryptedMessage);
 
-    NSData *decryptedMessage = [cellSeal unwrapData:encryptedMessage
-                                             context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                               error:&themisError];
+    NSData * decryptedMessage = [cellSeal decrypt:encryptedMessage
+                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                            error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
         return;
     }
-    NSString *resultString = [[NSString alloc] initWithData:decryptedMessage
+    NSString * resultString = [[NSString alloc] initWithData:decryptedMessage
                                                     encoding:NSUTF8StringEncoding];
     NSLog(@"%s resultString = %@", sel_getName(_cmd), resultString);
 }
 
-- (void)runExampleSecureCellTokenProtectMode {
+
+- (void)runExampleSecureCellTokenProtectMode:(NSData *)masterKeyData {
     NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
 
-    NSData *masterKeyData = [self generateMasterKey];
-    TSCellToken *cellToken = [[TSCellToken alloc] initWithKey:masterKeyData];
+    TSCellToken * cellToken = [[TSCellToken alloc] initWithKey:masterKeyData];
 
     if (!cellToken) {
         NSLog(@"%s Error occurred while initializing object cellToken", sel_getName(_cmd));
         return;
     }
 
-    NSString *message = @"Roses are grey. Violets are grey.";
-    NSString *context = @"I'm a dog";
-    NSError *themisError;
+    NSString * message = @"Roses are grey. Violets are grey.";
+    NSString * context = @"I'm a dog";
+    NSError * themisError;
 
-    // context is optional parameter and may be ignored
-    TSCellTokenEncryptedData *encryptedMessage = [cellToken wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                                              context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                                error:&themisError];
+    // context is optional parameter and may be omitted
+    TSCellTokenEncryptedResult * encryptedMessage = [cellToken encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                                               context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                                                 error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occurred while enrypting %@", sel_getName(_cmd), themisError);
         return;
     }
-    NSLog(@"%s\ncipher = %@:\ntoken = %@", sel_getName(_cmd), encryptedMessage.cipherText,encryptedMessage.token);
+    NSLog(@"%s\ncipher = %@:\ntoken = %@", sel_getName(_cmd), encryptedMessage.encrypted, encryptedMessage.token);
 
-    NSData *decryptedMessage = [cellToken unwrapData:encryptedMessage
-                                              context:[context dataUsingEncoding:NSUTF8StringEncoding] error:&themisError];
+    NSData * decryptedMessage = [cellToken decrypt:encryptedMessage.encrypted
+                                             token:encryptedMessage.token
+                                           context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                             error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
         return;
     }
-    NSString *resultString = [[NSString alloc] initWithData:decryptedMessage
+    NSString * resultString = [[NSString alloc] initWithData:decryptedMessage
                                                     encoding:NSUTF8StringEncoding];
     NSLog(@"%s resultString = %@", sel_getName(_cmd), resultString);
 }
 
-- (void)runExampleSecureCellImprint {
-    NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
 
-    NSData *masterKeyData = [self generateMasterKey];
-    TSCellContextImprint *contextImprint = [[TSCellContextImprint alloc] initWithKey:masterKeyData];
+- (void)runExampleSecureCellImprint:(NSData *)masterKeyData {
+    NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
+    
+    TSCellContextImprint * contextImprint = [[TSCellContextImprint alloc] initWithKey:masterKeyData];
 
     if (!contextImprint) {
         NSLog(@"%s Error occurred while initializing object contextImprint", sel_getName(_cmd));
         return;
     }
 
-    NSString *message = @"Roses are red. My name is Dave. This poem have no sense";
-    NSString *context = @"Microwave";
-    NSError *themisError;
+    NSString * message = @"Roses are red. My name is Dave. This poem have no sense";
+    NSString * context = @"Microwave";
+    NSError * themisError;
 
     // context is not optional parameter here
-    NSData *encryptedMessage = [contextImprint wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                                 context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                   error:&themisError];
+    NSData * encryptedMessage = [contextImprint encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                                context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                                  error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occurred while enrypting %@", sel_getName(_cmd), themisError);
         return;
@@ -146,14 +161,52 @@
     NSLog(@"%@", encryptedMessage);
 
     // context is not optional parameter here
-    NSData *decryptedMessage = [contextImprint unwrapData:encryptedMessage
-                                                   context:[context dataUsingEncoding:NSUTF8StringEncoding]
-                                                     error:&themisError];
+    NSData * decryptedMessage = [contextImprint decrypt:encryptedMessage
+                                                context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                                  error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
         return;
     }
-    NSString *resultString = [[NSString alloc] initWithData:decryptedMessage
+    NSString * resultString = [[NSString alloc] initWithData:decryptedMessage
+                                                    encoding:NSUTF8StringEncoding];
+    NSLog(@"%s resultString = %@", sel_getName(_cmd), resultString);
+}
+
+- (void)runExampleSecureCellWithPassphrase {
+    NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
+    
+    TSCellSeal * cellSeal = [[TSCellSeal alloc] initWithPassphrase:@"We are the champions"];
+
+    if (!cellSeal) {
+        NSLog(@"%s Error occurred while initializing object cellSeal", sel_getName(_cmd));
+        return;
+    }
+
+    NSString * message = @"Your secret is safe with us!";
+    NSString * context = @"Many secrets are safe";
+    NSError * themisError;
+
+
+    // context is optional parameter and may be omitted
+    NSData * encryptedMessage = [cellSeal encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                            error:&themisError];
+
+    if (themisError) {
+        NSLog(@"%s Error occurred while enrypting %@", sel_getName(_cmd), themisError);
+        return;
+    }
+    NSLog(@"encryptedMessage = %@", encryptedMessage);
+
+    NSData * decryptedMessage = [cellSeal decrypt:encryptedMessage
+                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                            error:&themisError];
+    if (themisError) {
+        NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
+        return;
+    }
+    NSString * resultString = [[NSString alloc] initWithData:decryptedMessage
                                                     encoding:NSUTF8StringEncoding];
     NSLog(@"%s resultString = %@", sel_getName(_cmd), resultString);
 }
@@ -161,13 +214,19 @@
 #pragma mark - Key Generation and Loading
 
 - (void)runExampleGeneratingKeys {
-    NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
+    [self runExampleGeneratingAsymKeys];
+    [self runExampleGeneratingSymmKeys];
+}
 
-    NSData *privateKey;
-    NSData *publicKey;
+
+- (void)runExampleGeneratingAsymKeys {
+    NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
+    
+    NSData * privateKey;
+    NSData * publicKey;
 
     // Generating RSA keys
-    TSKeyGen *keygenRSA = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmRSA];
+    TSKeyGen * keygenRSA = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmRSA];
 
     if (!keygenRSA) {
         NSLog(@"%s Error occurred while initializing object keygenRSA", sel_getName(_cmd));
@@ -182,7 +241,7 @@
 
     // Generating EC keys
 
-    TSKeyGen *keygenEC = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmEC];
+    TSKeyGen * keygenEC = [[TSKeyGen alloc] initWithAlgorithm:TSKeyGenAsymmetricAlgorithmEC];
 
     if (!keygenEC) {
         NSLog(@"%s Error occurred while initializing object keygenEC", sel_getName(_cmd));
@@ -196,50 +255,65 @@
     NSLog(@"EC public key:%@", publicKey);
 }
 
-// Sometimes you will need to read keys from files
-- (void)runExampleReadingKeysFromFile {
-    NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
 
-    NSData *serverPrivateKeyFromFile = [[NSFileManager defaultManager] contentsAtPath:[[NSBundle mainBundle] pathForResource:@"server"
-                                                                                                                       ofType:@"priv"]];
-    NSData *serverPublicKeyFromFile = [[NSFileManager defaultManager] contentsAtPath:[[NSBundle mainBundle] pathForResource:@"server"
-                                                                                                                      ofType:@"pub"]];
-    NSData *clientPrivateKeyOldFromFile = [[NSFileManager defaultManager] contentsAtPath:[[NSBundle mainBundle] pathForResource:@"client"
-                                                                                                                          ofType:@"priv"]];
-    NSData *clientPublicKeyOldFromFile = [[NSFileManager defaultManager] contentsAtPath:[[NSBundle mainBundle] pathForResource:@"client"
-                                                                                                                         ofType:@"pub"]];
-    NSLog(@"%s", sel_getName(_cmd));
-    NSLog(@"serverPrivateKeyFromFile %@", serverPrivateKeyFromFile);
-    NSLog(@"serverPublicKeyFromFile %@", serverPublicKeyFromFile);
-    NSLog(@"clientPrivateKeyOldFromFile %@", clientPrivateKeyOldFromFile);
-    NSLog(@"clientPublicKeyOldFromFile %@", clientPublicKeyOldFromFile);
+- (void)runExampleGeneratingSymmKeys {
+    NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
+    
+    NSData *masterKey = TSGenerateSymmetricKey();
+    TSCellSeal * cellSeal = [[TSCellSeal alloc] initWithKey:masterKey];
+
+    NSString * message = @"All your base are belong to us!";
+    NSString * context = @"For great justice";
+    NSError * themisError;
+
+    // context is optional parameter and may be omitted
+    NSData * encryptedMessage = [cellSeal encrypt:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                            error:&themisError];
+
+    if (themisError) {
+        NSLog(@"%s Error occurred while enrypting %@", sel_getName(_cmd), themisError);
+        return;
+    }
+    NSLog(@"encryptedMessage = %@", encryptedMessage);
+
+    NSData * decryptedMessage = [cellSeal decrypt:encryptedMessage
+                                          context:[context dataUsingEncoding:NSUTF8StringEncoding]
+                                            error:&themisError];
+    if (themisError) {
+        NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
+        return;
+    }
+    NSString * resultString = [[NSString alloc] initWithData:decryptedMessage
+                                                    encoding:NSUTF8StringEncoding];
+    NSLog(@"%s resultString = %@", sel_getName(_cmd), resultString);
 }
 
 #pragma mark - Secure Message
 
 - (void)runExampleSecureMessageEncryptionDecryption {
     NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
-
+    
     // ---------- encryption
 
     // base64 encoded keys:
     // client private key
     // server public key
-    NSString *serverPublicKeyString = @"VUVDMgAAAC2ELbj5Aue5xjiJWW3P2KNrBX+HkaeJAb+Z4MrK0cWZlAfpBUql";
-    NSString *clientPrivateKeyString = @"UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg";
+    NSString * serverPublicKeyString = @"VUVDMgAAAC2ELbj5Aue5xjiJWW3P2KNrBX+HkaeJAb+Z4MrK0cWZlAfpBUql";
+    NSString * clientPrivateKeyString = @"UkVDMgAAAC13PCVZAKOczZXUpvkhsC+xvwWnv3CLmlG0Wzy8ZBMnT+2yx/dg";
 
-    NSData *serverPublicKey = [[NSData alloc] initWithBase64EncodedString:serverPublicKeyString
+    NSData * serverPublicKey = [[NSData alloc] initWithBase64EncodedString:serverPublicKeyString
                                                                    options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    NSData *clientPrivateKey = [[NSData alloc] initWithBase64EncodedString:clientPrivateKeyString
+    NSData * clientPrivateKey = [[NSData alloc] initWithBase64EncodedString:clientPrivateKeyString
                                                                     options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
     // initialize encrypter
-    TSMessage *encrypter = [[TSMessage alloc] initInEncryptModeWithPrivateKey:clientPrivateKey peerPublicKey:serverPublicKey];
+    TSMessage * encrypter = [[TSMessage alloc] initInEncryptModeWithPrivateKey:clientPrivateKey peerPublicKey:serverPublicKey];
 
-    NSString *message = @"- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java.";
+    NSString * message = @"- Knock, knock.\n- Who’s there?\n*very long pause...*\n- Java.";
 
-    NSError *themisError;
-    NSData *encryptedMessage = [encrypter wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
+    NSError * themisError;
+    NSData * encryptedMessage = [encrypter wrapData:[message dataUsingEncoding:NSUTF8StringEncoding]
                                               error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occurred while encrypting %@", sel_getName(_cmd), themisError);
@@ -247,29 +321,30 @@
     }
     NSLog(@"%@", encryptedMessage);
 
+
     // -------- decryption
 
     // base64 encoded keys:
     // server private key
     // client public key
-    NSString *serverPrivateKeyString = @"UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR";
-    NSString *clientPublicKeyString = @"VUVDMgAAAC1SsL32Axjosnf2XXUwm/4WxPlZauQ+v+0eOOjpwMN/EO+Huh5d";
+    NSString * serverPrivateKeyString = @"UkVDMgAAAC1FsVa6AMGljYqtNWQ+7r4RjXTabLZxZ/14EXmi6ec2e1vrCmyR";
+    NSString * clientPublicKeyString = @"VUVDMgAAAC1SsL32Axjosnf2XXUwm/4WxPlZauQ+v+0eOOjpwMN/EO+Huh5d";
 
-    NSData *serverPrivateKey = [[NSData alloc] initWithBase64EncodedString:serverPrivateKeyString
+    NSData * serverPrivateKey = [[NSData alloc] initWithBase64EncodedString:serverPrivateKeyString
                                                                     options:NSDataBase64DecodingIgnoreUnknownCharacters];
-    NSData *clientPublicKey = [[NSData alloc] initWithBase64EncodedString:clientPublicKeyString
+    NSData * clientPublicKey = [[NSData alloc] initWithBase64EncodedString:clientPublicKeyString
                                                                    options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
     // initialize decrypter
-    TSMessage *decrypter = [[TSMessage alloc] initInEncryptModeWithPrivateKey:serverPrivateKey peerPublicKey:clientPublicKey];
+    TSMessage * decrypter = [[TSMessage alloc] initInEncryptModeWithPrivateKey:serverPrivateKey peerPublicKey:clientPublicKey];
 
-    NSData *decryptedMessage = [decrypter unwrapData:encryptedMessage error:&themisError];
+    NSData * decryptedMessage = [decrypter unwrapData:encryptedMessage error:&themisError];
     if (themisError) {
         NSLog(@"%s Error occurred while decrypting %@", sel_getName(_cmd), themisError);
         return;
     }
 
-    NSString *resultString = [[NSString alloc] initWithData:decryptedMessage encoding:NSUTF8StringEncoding];
+    NSString * resultString = [[NSString alloc] initWithData:decryptedMessage encoding:NSUTF8StringEncoding];
     NSLog(@"%@", resultString);
 }
 
@@ -321,18 +396,38 @@
 
 #pragma mark - Secure Comparator
 
+// Sometimes you will need to read keys from files
+- (void)readingKeysFromFile {
+    NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
+    
+    NSData * serverPrivateKeyFromFile = [[NSFileManager defaultManager] contentsAtPath:[[NSBundle mainBundle] pathForResource:@"server"
+                                                                                                                       ofType:@"priv"]];
+    NSData * serverPublicKeyFromFile = [[NSFileManager defaultManager] contentsAtPath:[[NSBundle mainBundle] pathForResource:@"server"
+                                                                                                                      ofType:@"pub"]];
+    NSData * clientPrivateKeyOldFromFile = [[NSFileManager defaultManager] contentsAtPath:[[NSBundle mainBundle] pathForResource:@"client"
+                                                                                                                          ofType:@"priv"]];
+    NSData * clientPublicKeyOldFromFile = [[NSFileManager defaultManager] contentsAtPath:[[NSBundle mainBundle] pathForResource:@"client"
+                                                                                                                         ofType:@"pub"]];
+    NSLog(@"%s", sel_getName(_cmd));
+    NSLog(@"serverPrivateKeyFromFile %@", serverPrivateKeyFromFile);
+    NSLog(@"serverPublicKeyFromFile %@", serverPublicKeyFromFile);
+    NSLog(@"clientPrivateKeyOldFromFile %@", clientPrivateKeyOldFromFile);
+    NSLog(@"clientPublicKeyOldFromFile %@", clientPublicKeyOldFromFile);
+}
+
+
 - (void)runExampleSecureComparator {
     NSLog(@"----------------- %s -----------------", sel_getName(_cmd));
-
-    NSString *sharedSecret = @"shared secret";
-    NSData *sharedSecretData = [sharedSecret dataUsingEncoding:NSUTF8StringEncoding];
-
-    TSComparator *client = [[TSComparator alloc] initWithMessageToCompare:sharedSecretData];
-    TSComparator *server = [[TSComparator alloc] initWithMessageToCompare:sharedSecretData];
-    NSError *error = nil;
-
+    
+    NSString * sharedSecret = @"shared secret";
+    NSData * sharedSecretData = [sharedSecret dataUsingEncoding:NSUTF8StringEncoding];
+    
+    TSComparator * client = [[TSComparator alloc] initWithMessageToCompare:sharedSecretData];
+    TSComparator * server = [[TSComparator alloc] initWithMessageToCompare:sharedSecretData];
+    NSError * error = nil;
+    
     // send this message to server
-    NSData *data = [client beginCompare:&error];
+    NSData * data = [client beginCompare:&error];
     while ([client status] == TSComparatorNotReady || [server status] == TSComparatorNotReady) {
         // receive from server
         data = [server proceedCompare:data error:&error];

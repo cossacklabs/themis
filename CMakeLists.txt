@@ -22,6 +22,7 @@ file(GLOB SOTER_TEST_SOURCE tests/soter/*.c tests/common/*.c )
 file(GLOB THEMIS_TEST_SOURCE tests/themis/*.c tests/common/*.c)
 
 add_executable(soter_test ${SOTER_TEST_SOURCE} )
+target_include_directories(soter_test PRIVATE tests)
 target_link_libraries(soter_test soter crypto)
 
 add_executable(themis_test ${THEMIS_TEST_SOURCE} ${SOTER_SOURCE_FILES})

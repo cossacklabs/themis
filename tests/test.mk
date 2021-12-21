@@ -17,8 +17,6 @@
 COMMON_TEST_SRC = $(wildcard tests/common/*.c)
 COMMON_TEST_OBJ = $(patsubst %,$(OBJ_PATH)/%.o, $(COMMON_TEST_SRC))
 
-GOTHEMIS_IMPORT = github.com/cossacklabs/themis/gothemis
-
 include tests/soter/soter.mk
 include tests/tools/tools.mk
 include tests/themis/themis.mk
@@ -31,6 +29,8 @@ themispp_test: $(TEST_BIN_PATH)/themispp_test
 
 $(OBJ_PATH)/tests/%: CFLAGS += -I$(TEST_SRC_PATH)
 
+GOTHEMIS_SRC = gothemis
+
 PYTHON2_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis2_test.sh
 PYTHON3_TEST_SCRIPT=$(BIN_PATH)/tests/pythemis3_test.sh
 
@@ -41,19 +41,26 @@ rustthemis_integration_tools:
 	do cp target/debug/$$tool tools/rust/$$tool.rust; done
 	@$(PRINT_OK_)
 
+gothemis_integration_tools:
+	@echo "make integration tools for GoThemis..."
+	@cd tools/go && for tool in *.go; do go build -o "$$tool.compiled" "$$tool"; done
+	@$(PRINT_OK_)
+
 prepare_tests_basic: soter_test themis_test
 
 prepare_tests_all: prepare_tests_basic themispp_test
 ifdef PHP_VERSION
 	@echo -n "make tests for phpthemis "
-	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/phpthemis_test.sh
+	@echo "#!/usr/bin/env bash" > ./$(BIN_PATH)/tests/phpthemis_test.sh
+	@echo "set -eu" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@echo "cd tests/phpthemis; bash ./run_tests.sh" >> ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@chmod a+x ./$(BIN_PATH)/tests/phpthemis_test.sh
 	@$(PRINT_OK_)
 endif
 ifdef RUBY_GEM_VERSION
 	@echo -n "make tests for rbthemis "
-	@echo "#!/bin/bash -e" > ./$(BIN_PATH)/tests/rbthemis_test.sh
+	@echo "#!/usr/bin/env bash" > ./$(BIN_PATH)/tests/rbthemis_test.sh
+	@echo "set -eu" >> ./$(BIN_PATH)/tests/rbthemis_test.sh
 	@echo "ruby ./tests/rbthemis/scell_test.rb" >> ./$(BIN_PATH)/tests/rbthemis_test.sh
 	@echo "ruby ./tests/rbthemis/smessage_test.rb" >> ./$(BIN_PATH)/tests/rbthemis_test.sh
 	@echo "ruby ./tests/rbthemis/ssession_test.rb" >> ./$(BIN_PATH)/tests/rbthemis_test.sh
@@ -63,7 +70,8 @@ ifdef RUBY_GEM_VERSION
 endif
 ifdef PYTHON3_VERSION
 	@echo -n "make tests for pythemis with python3 "
-	@echo "#!/bin/bash -e" > ./$(PYTHON3_TEST_SCRIPT)
+	@echo "#!/usr/bin/env bash" > ./$(PYTHON3_TEST_SCRIPT)
+	@echo "set -eu" >> ./$(PYTHON3_TEST_SCRIPT)
 	@echo "python3 -m unittest discover -s tests/pythemis" >> ./$(PYTHON3_TEST_SCRIPT)
 	@chmod a+x ./$(PYTHON3_TEST_SCRIPT)
 	@$(PRINT_OK_)
@@ -95,7 +103,7 @@ endif
 test_cpp:
 	@echo "------------------------------------------------------------"
 	@echo "Running themissp tests."
-	@echo "In case of errors, see https://docs.cossacklabs.com/pages/cpp-howto/"
+	@echo "In case of errors, see https://docs.cossacklabs.com/themis/languages/cpp/"
 	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/themispp_test
 	@echo "------------------------------------------------------------"
@@ -104,7 +112,7 @@ test_php:
 ifdef PHP_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running phpthemis tests."
-	@echo "In case of errors, see https://docs.cossacklabs.com/pages/php-howto/"
+	@echo "In case of errors, see https://docs.cossacklabs.com/themis/languages/php/"
 	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/phpthemis_test.sh
 	@echo "------------------------------------------------------------"
@@ -115,7 +123,7 @@ test_python:
 ifneq ($(PYTHON3_VERSION),)
 	@echo "------------------------------------------------------------"
 	@echo "Running pythemis tests."
-	@echo "In case of errors, see https://docs.cossacklabs.com/pages/python-howto/"
+	@echo "In case of errors, see https://docs.cossacklabs.com/themis/languages/python/"
 	@echo "------------------------------------------------------------"
 	$(PYTHON3_TEST_SCRIPT)
 	@echo "------------------------------------------------------------"
@@ -128,7 +136,7 @@ test_ruby:
 ifdef RUBY_GEM_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running rbthemis tests."
-	@echo "In case of errors, see https://docs.cossacklabs.com/pages/ruby-howto/"
+	@echo "In case of errors, see https://docs.cossacklabs.com/themis/languages/ruby/"
 	@echo "------------------------------------------------------------"
 	$(TEST_BIN_PATH)/rbthemis_test.sh
 	@echo "------------------------------------------------------------"
@@ -138,7 +146,7 @@ test_js:
 ifdef NPM_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running jsthemis tests."
-	@echo "In case of errors, see https://docs.cossacklabs.com/pages/nodejs-howto/"
+	@echo "In case of errors, see https://docs.cossacklabs.com/themis/languages/nodejs/"
 	@echo "------------------------------------------------------------"
 	cd $(JSTHEMIS_SRC) && npm install && npm test
 	@echo "------------------------------------------------------------"
@@ -148,16 +156,16 @@ test_go:
 ifdef GO_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running gothemis tests."
-	@echo "In case of errors, see https://docs.cossacklabs.com/pages/go-howto/"
+	@echo "In case of errors, see https://docs.cossacklabs.com/themis/languages/go/"
 	@echo "------------------------------------------------------------"
-	@go test -v $(GOTHEMIS_IMPORT)/...
+	@cd $(GOTHEMIS_SRC) && go test -v ./...
 endif
 
 test_rust:
 ifdef RUST_VERSION
 	@echo "------------------------------------------------------------"
 	@echo "Running rust-themis tests."
-	@echo "In case of errors, see https://docs.cossacklabs.com/pages/rust-howto/"
+	@echo "In case of errors, see https://docs.cossacklabs.com/themis/languages/rust/"
 	@echo "------------------------------------------------------------"
 	$(TEST_SRC_PATH)/rust/run_tests.sh
 	@echo "------------------------------------------------------------"
