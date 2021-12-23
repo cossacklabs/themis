@@ -47,7 +47,6 @@ Read the following resources to learn more:
   - [General documentation for Themis library on Cossack Labs Documentation Server](https://docs.cossacklabs.com/themis/).
 
 ### Additional resources  
-  - To get a better understanding of how to use Themis, try playing around with [Themis Server](https://docs.cossacklabs.com/simulator/interactive/).
   - If WebAssembly would be a better match for your project, see [WasmThemis wrapper](https://www.npmjs.com/package/wasm-themis).
 
 ## Licensing

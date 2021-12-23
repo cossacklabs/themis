@@ -17,7 +17,7 @@
 #ifndef _PHP_THEMIS_H_
 #define _PHP_THEMIS_H_
 
-#define PHP_THEMIS_VERSION "0.13.0"
+#define PHP_THEMIS_VERSION "0.14.0"
 #define PHP_THEMIS_EXTNAME "phpthemis"
 
 PHP_FUNCTION(phpthemis_secure_message_wrap);

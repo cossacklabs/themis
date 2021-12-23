@@ -66,8 +66,6 @@ third_party/boringssl/.externalNativeBuild
 *.lo
 
 # ios
-docs/examples/Themis-server/swift/Pods
-docs/examples/Themis-server/Obj-C/Pods
 docs/examples/swift/iOS-CocoaPods/Pods
 docs/examples/objc/iOS-CocoaPods/Pods
 
