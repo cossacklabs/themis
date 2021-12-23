@@ -245,7 +245,7 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ThemisTest/Pods-ThemisTest-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/themis/themis.framework",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/openssl/openssl.framework/openssl",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/CLOpenSSL-XCF/openssl.framework/openssl",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -408,6 +408,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
+				CURRENT_PROJECT_VERSION = 2021122301;
 				INFOPLIST_FILE = ThemisTest/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -429,6 +430,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
+				CURRENT_PROJECT_VERSION = 2021122301;
 				INFOPLIST_FILE = ThemisTest/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
