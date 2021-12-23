@@ -1,6 +1,6 @@
-Metadata-Version: 0.13.0
+Metadata-Version: 0.14.0
 Name: pythemis
-Version: 0.13.0
+Version: 0.14.0
 Summary: Data security library for network communication and data storage for Python
 Home-page: https://cossacklabs.com
 Author: Cossack Labs
@@ -22,9 +22,6 @@ Classifier: Operating System :: POSIX
 Classifier: Operating System :: POSIX :: BSD
 Classifier: Operating System :: POSIX :: Linux
 Classifier: Programming Language :: Python
-Classifier: Programming Language :: Python :: 2
-Classifier: Programming Language :: Python :: 2.6
-Classifier: Programming Language :: Python :: 2.7
 Classifier: Programming Language :: Python :: 3
 Classifier: Programming Language :: Python :: 3.2
 Classifier: Programming Language :: Python :: 3.3

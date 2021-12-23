@@ -1,7 +1,7 @@
 # GoThemis
 
 [![pkg.go.dev][pkg-go-dev-badge]][pkg-go-dev]
-[![CircleCI][circle-ci-badge]][circle-ci]
+[![GitHub Actions][github-ci-badge]][github-ci]
 [![License][license-badge]][license]
 
 _Go_ wrapper for [**Themis** crypto library][themis].
@@ -12,8 +12,8 @@ Themis provides ready-made building components, which simplifies the usage of co
 [themis]: https://github.com/cossacklabs/themis
 [pkg-go-dev]: https://pkg.go.dev/mod/github.com/cossacklabs/themis/gothemis
 [pkg-go-dev-badge]: https://pkg.go.dev/badge/mod/github.com/cossacklabs/themis/gothemis
-[circle-ci]: https://circleci.com/gh/cossacklabs/themis/tree/master
-[circle-ci-badge]: https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield
+[github-ci]: https://github.com/cossacklabs/themis/actions?query=workflow%3AGoThemis
+[github-ci-badge]: https://github.com/cossacklabs/themis/workflows/GoThemis/badge.svg
 [license]: https://github.com/cossacklabs/themis/blob/master/LICENSE
 [license-badge]: https://img.shields.io/github/license/cossacklabs/themis
 

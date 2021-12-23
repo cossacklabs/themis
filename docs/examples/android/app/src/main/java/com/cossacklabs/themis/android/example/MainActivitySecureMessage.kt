@@ -18,11 +18,6 @@ class MainActivitySecureMessage : AppCompatActivity() {
         // Check secure message
         try {
             secureMessageLocal()
-
-            // tests with Themis Interactive simulator
-            // setup Themis IS first:
-            // https://themis.cossacklabs.com/interactive-simulator/setup/
-            //new SecMessageExampleClient().testSMessageCIClient();
         } catch (e: Exception) {
             e.printStackTrace()
         }
