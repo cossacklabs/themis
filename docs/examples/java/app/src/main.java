@@ -15,12 +15,6 @@ public class main {
   public static void main(final String[] args) throws NullArgumentException, SecureMessageWrapException, IOException, SecureSessionException, SecureCellException, InvalidArgumentException {
     encryptDataForStoring();
     encryptDataForMessaging();
-
-    // tests with Themis Interactive simulator
-    // setup Themis IS first:
-    // https://themis.cossacklabs.com/interactive-simulator/setup/
-//    SMessageClient.runSMessageWithThemisInteractiveSimulator();
-//    SSessionClient.runSSessionWithThemisInteractiveSimulator();
   }
 
   static void encryptDataForStoring() throws SecureCellException, NullArgumentException, InvalidArgumentException {
@@ -45,27 +39,33 @@ public class main {
 
 
   static void encryptDataForMessaging() throws UnsupportedEncodingException, NullArgumentException, SecureMessageWrapException {
-    // keys can be generated using KeypairGenerator
-    String clientPrivateKey = "UkVDMgAAAC1EvnquAPUxxwJsoJxoMAkEF7c06Fo7dVwnWPnmNX5afyjEEGmG";
-    String serverPublicKey = "VUVDMgAAAC1FJv/DAmg8/L1Pl5l6ypyRqXUU9xQQaAgzfRZ+/gsjqgEdwXhc";
-
-    String message = "message to send";
+    String message = "hello from alice to bob";
 
     System.out.println("Running SecureMessage example");
 
-    PrivateKey privateKey = new PrivateKey(Base64.getDecoder().decode(clientPrivateKey.getBytes(charset.name())));
-    PublicKey publicKey = new PublicKey(Base64.getDecoder().decode(serverPublicKey.getBytes(charset.name())));
-    System.out.println("privateKey1 = " + Arrays.toString(privateKey.toByteArray()));
-    System.out.println("publicKey1 = " + Arrays.toString(publicKey.toByteArray()));
+    Keypair alice = KeypairGenerator.generateKeypair(AsymmetricKey.KEYTYPE_EC);
+    PrivateKey alicePrivateKey = alice.getPrivateKey();
+    PublicKey alicePublicKey = alice.getPublicKey();
 
-    final SecureMessage sm = new SecureMessage(privateKey, publicKey);
+    Keypair bob = KeypairGenerator.generateKeypair(AsymmetricKey.KEYTYPE_EC);
+    PrivateKey bobPrivateKey = bob.getPrivateKey();
+    PublicKey bobPublicKey = bob.getPublicKey();
 
-    byte[] wrappedMessage = sm.wrap(message.getBytes(charset));
+    System.out.println("alicePrivateKey = " + Arrays.toString(alicePrivateKey.toByteArray()));
+    System.out.println("alicePublicKey = " + Arrays.toString(alicePublicKey.toByteArray()));
+    System.out.println("bobPrivateKey = " + Arrays.toString(bobPrivateKey.toByteArray()));
+    System.out.println("bobPublicKey = " + Arrays.toString(bobPublicKey.toByteArray()));
+
+    final SecureMessage aliceSM = new SecureMessage(alicePrivateKey, bobPublicKey);
+
+    byte[] wrappedMessage = aliceSM.wrap(message.getBytes(charset));
     String encodedMessage = Base64.getEncoder().encodeToString(wrappedMessage);
     System.out.println("EncodedMessage = " + encodedMessage);
 
+
+    final SecureMessage bobSM = new SecureMessage(bobPrivateKey, alicePublicKey);
     byte[] wrappedMessageFromB64 = Base64.getDecoder().decode(encodedMessage);
-    String decodedMessage = new String(sm.unwrap(wrappedMessageFromB64), charset);
+    String decodedMessage = new String(bobSM.unwrap(wrappedMessageFromB64), charset);
     System.out.println("DecodedMessage = " + decodedMessage);
   }
 }

@@ -5,7 +5,6 @@ on:
     paths:
       - '.github/workflows/test-go.yaml'
       - 'docs/examples/go/**'
-      - 'docs/examples/Themis-server/go/**'
       - 'docs/reference-implementation/**'
       - 'gothemis/**'
       - 'src/soter/**'
@@ -119,13 +118,6 @@ jobs:
           ./secure_comparator_client secret
           kill -SIGTERM "$!"
           echo "ok"
-      - name: Build examples (Themis server)
-        run: |
-          cd $GITHUB_WORKSPACE/docs/examples/Themis-server/go
-          # Since this requires manual interaction just make sure
-          # that the example code is buildable.
-          go build smessage_server.go
-          go build ssession_server.go
 
   reference-implementation:
     name: Reference implementation
