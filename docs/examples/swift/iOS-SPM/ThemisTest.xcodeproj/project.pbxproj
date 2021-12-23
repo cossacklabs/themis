@@ -319,6 +319,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ThemisTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -338,6 +339,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ThemisTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -380,7 +382,7 @@
 			repositoryURL = "https://github.com/cossacklabs/themis";
 			requirement = {
 				kind = exactVersion;
-				version = 0.13.7;
+				version = 0.14.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
