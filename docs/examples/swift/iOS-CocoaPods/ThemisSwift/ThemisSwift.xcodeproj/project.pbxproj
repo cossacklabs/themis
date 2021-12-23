@@ -255,7 +255,7 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ThemisSwift/Pods-ThemisSwift-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/themis/themis.framework",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/openssl/openssl.framework/openssl",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/CLOpenSSL-XCF/openssl.framework/openssl",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -419,7 +419,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 2021122301;
 				DEVELOPMENT_TEAM = X6X7AHQ2D4;
 				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/ThemisSwift/Info.plist";
@@ -444,7 +444,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 2021122301;
 				DEVELOPMENT_TEAM = X6X7AHQ2D4;
 				ENABLE_BITCODE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/ThemisSwift/Info.plist";

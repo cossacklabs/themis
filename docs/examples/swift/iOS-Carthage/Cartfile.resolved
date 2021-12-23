@@ -1,2 +1,2 @@
 binary "https://raw.githubusercontent.com/cossacklabs/openssl-apple/cossacklabs/carthage/openssl-static-xcframework.json" "1.1.11101"
-github "cossacklabs/themis" "0.13.13"
+github "cossacklabs/themis" "0.14.0"
