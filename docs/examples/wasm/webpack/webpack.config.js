@@ -35,6 +35,12 @@ module.exports = {
             zlib: false,
         }
     },
+    // I have no clue *why* this happens, and I don't care. Fix the warnings.
+    // https://github.com/websockets/ws/issues/1126
+    externals: {
+        "bufferutil": "bufferutil",
+        "utf-8-validate": "utf-8-validate",
+    },
     // Bundle libthemis.wasm with the script.
     // Compute SRI hash sum of the script and inject it into HTML.
     plugins: [
