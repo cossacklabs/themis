@@ -57,6 +57,9 @@ module.exports = {
         }),
         new SRIPlugin({
             hashFuncNames: ['sha256'],
+            // webpack-subresource-integrity *really* does not like dev server.
+            // https://github.com/waysact/webpack-subresource-integrity/blob/5c42f351a2070b1f3323f14bcfcb8e0b62a202b3/README.md#hot-reloading
+            enabled: process.env.NODE_ENV === 'production',
         }),
     ],
     // libthemis.wasm and it's JS bundle is over 1 megabyte.
