@@ -24,8 +24,15 @@ module.exports = {
         fallback: {
             crypto: false,
             fs: false,
+            http: false,
+            https: false,
+            net: false,
             path: false,
+            stream: false,
+            tls: false,
             util: false,
+            url: false,
+            zlib: false,
         }
     },
     // Bundle libthemis.wasm with the script.
