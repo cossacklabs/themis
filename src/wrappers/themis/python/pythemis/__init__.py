@@ -14,4 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-__all__ = ["smessage", "scell", "ssession"]
+__all__ = [
+    "scell",
+    "scomparator",
+    "skeygen",
+    "smessage",
+    "ssession",
+]
