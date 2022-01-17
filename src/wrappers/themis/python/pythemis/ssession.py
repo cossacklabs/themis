@@ -21,7 +21,7 @@ from ctypes.util import find_library
 from collections import deque
 from abc import abstractmethod
 
-from . import exception as exception
+from . import exception
 from .exception import THEMIS_CODES, ThemisError
 
 themis = ctypes.cdll.LoadLibrary(find_library('themis'))

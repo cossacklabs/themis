@@ -21,7 +21,7 @@ import ctypes
 from ctypes.util import find_library
 from enum import IntEnum
 
-from . import exception as exception
+from . import exception
 from .exception import THEMIS_CODES
 
 themis = ctypes.cdll.LoadLibrary(find_library("themis"))
