@@ -14,12 +14,10 @@
 # limitations under the License.
 #
 import warnings
-from ctypes import cdll, c_int, create_string_buffer, byref, string_at
-from ctypes.util import find_library
+from ctypes import c_int, create_string_buffer, byref, string_at
 
+from . import themis
 from .exception import ThemisError, THEMIS_CODES
-
-themis = cdll.LoadLibrary(find_library('themis'))
 
 
 class KEY_PAIR_TYPE(object):

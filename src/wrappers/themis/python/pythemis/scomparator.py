@@ -18,13 +18,10 @@
 
 import warnings
 import ctypes
-from ctypes.util import find_library
 from enum import IntEnum
 
-from . import exception
+from . import exception, themis
 from .exception import THEMIS_CODES
-
-themis = ctypes.cdll.LoadLibrary(find_library("themis"))
 
 themis.secure_comparator_get_result.restype = ctypes.c_int32
 

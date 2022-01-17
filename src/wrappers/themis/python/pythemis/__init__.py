@@ -14,6 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+from ctypes import cdll
+from ctypes.util import find_library
+
 __all__ = [
     "scell",
     "scomparator",
@@ -21,3 +25,5 @@ __all__ = [
     "smessage",
     "ssession",
 ]
+
+themis = cdll.LoadLibrary(find_library('themis'))
