@@ -660,10 +660,10 @@ fn panic_in_status_change() {
 // MockTransport implementation
 //
 
-type GetPublicKeyForId = Box<dyn FnMut(&[u8]) -> Option<EcdsaPublicKey>>;
-type SendData = Box<dyn FnMut(&[u8]) -> Result<usize, TransportError>>;
-type ReceiveData = Box<dyn FnMut(&mut [u8]) -> Result<usize, TransportError>>;
-type StateChanged = Box<dyn FnMut(SecureSessionState)>;
+type GetPublicKeyForId = Box<dyn FnMut(&[u8]) -> Option<EcdsaPublicKey> + Send>;
+type SendData = Box<dyn FnMut(&[u8]) -> Result<usize, TransportError> + Send>;
+type ReceiveData = Box<dyn FnMut(&mut [u8]) -> Result<usize, TransportError> + Send>;
+type StateChanged = Box<dyn FnMut(SecureSessionState) + Send>;
 
 #[derive(Default)]
 struct MockTransport {
@@ -712,7 +712,7 @@ impl MockTransport {
 
     fn when_get_public_key_for_id(
         &mut self,
-        f: impl FnMut(&[u8]) -> Option<EcdsaPublicKey> + 'static,
+        f: impl FnMut(&[u8]) -> Option<EcdsaPublicKey> + Send + 'static,
     ) -> &mut Self {
         self.impl_get_public_key_for_id = Some(Box::new(f));
         self
@@ -720,7 +720,7 @@ impl MockTransport {
 
     fn when_send_data(
         &mut self,
-        f: impl FnMut(&[u8]) -> Result<usize, TransportError> + 'static,
+        f: impl FnMut(&[u8]) -> Result<usize, TransportError> + Send + 'static,
     ) -> &mut Self {
         self.impl_send_data = Some(Box::new(f));
         self
@@ -728,13 +728,16 @@ impl MockTransport {
 
     fn when_receive_data(
         &mut self,
-        f: impl FnMut(&mut [u8]) -> Result<usize, TransportError> + 'static,
+        f: impl FnMut(&mut [u8]) -> Result<usize, TransportError> + Send + 'static,
     ) -> &mut Self {
         self.impl_receive_data = Some(Box::new(f));
         self
     }
 
-    fn when_state_changed(&mut self, f: impl FnMut(SecureSessionState) + 'static) -> &mut Self {
+    fn when_state_changed(
+        &mut self,
+        f: impl FnMut(SecureSessionState) + Send + 'static,
+    ) -> &mut Self {
         self.impl_state_changed = Some(Box::new(f));
         self
     }
@@ -789,7 +792,7 @@ fn connect_channel(transport: &mut MockTransport, tx: Sender<Vec<u8>>, rx: Recei
 struct SendDataOverride(Sender<SendData>);
 
 impl SendDataOverride {
-    fn will_be(&mut self, f: impl FnMut(&[u8]) -> Result<usize, TransportError> + 'static) {
+    fn will_be(&mut self, f: impl FnMut(&[u8]) -> Result<usize, TransportError> + Send + 'static) {
         self.0.send(Box::new(f)).expect("unexpected send error");
     }
 }
@@ -812,7 +815,10 @@ fn override_send(transport: &mut MockTransport) -> SendDataOverride {
 struct ReceiveDataOverride(Sender<ReceiveData>);
 
 impl ReceiveDataOverride {
-    fn will_be(&mut self, f: impl FnMut(&mut [u8]) -> Result<usize, TransportError> + 'static) {
+    fn will_be(
+        &mut self,
+        f: impl FnMut(&mut [u8]) -> Result<usize, TransportError> + Send + 'static,
+    ) {
         self.0.send(Box::new(f)).expect("unexpected send error");
     }
 }
