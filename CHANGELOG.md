@@ -4,6 +4,14 @@
 
 Changes that are currently in development and have not been released yet.
 
+_Code:_
+
+- **Rust**
+
+  - `SecureSessionTransport` implementations are now required to be `Send` ([#898](https://github.com/cossacklabs/themis/pull/898)).
+
+    This is technically a breaking change, but most reasonble implementations should be `Send` already. Please raise an issue if your code fails to build.
+
 
 ## [0.14.0](https://github.com/cossacklabs/themis/releases/tag/0.14.0), December 24th 2021
 

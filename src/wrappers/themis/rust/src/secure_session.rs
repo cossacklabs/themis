@@ -157,7 +157,7 @@ unsafe impl Send for SecureSession {}
 ///
 /// [`get_public_key_for_id`]: trait.SecureSessionTransport.html#tymethod.get_public_key_for_id
 #[allow(unused_variables)]
-pub trait SecureSessionTransport {
+pub trait SecureSessionTransport: Send {
     /// Get a public key corresponding to a remote peer ID.
     ///
     /// Return `None` if you are unable to locate a public key corresponding to the provided ID.
