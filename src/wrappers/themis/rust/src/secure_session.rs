@@ -147,6 +147,11 @@ struct SecureSessionContext {
 // state. However, it needs external synchronization for safe concurrent usage (hence no Sync).
 unsafe impl Send for SecureSession {}
 
+// secure_session_user_callbacks_t in SecureSessionContext holds a pointer to itself and thus
+// it is !Send by default. However, we keep SecureSessionContext in a box, pinned in memory,
+// and that pointer is the only extra reference.
+unsafe impl Send for SecureSessionContext {}
+
 /// Transport delegate for Secure Session.
 ///
 /// This is an interface you need to provide for Secure Session operation.
@@ -157,7 +162,7 @@ unsafe impl Send for SecureSession {}
 ///
 /// [`get_public_key_for_id`]: trait.SecureSessionTransport.html#tymethod.get_public_key_for_id
 #[allow(unused_variables)]
-pub trait SecureSessionTransport {
+pub trait SecureSessionTransport: Send {
     /// Get a public key corresponding to a remote peer ID.
     ///
     /// Return `None` if you are unable to locate a public key corresponding to the provided ID.
