@@ -30,7 +30,6 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - 8.x   # legacy
           - 10.x  # legacy
           - 12.x  # old LTS
           - 14.x  # current LTS
@@ -54,11 +53,6 @@ jobs:
         env:
           NODE_VERSION: ${{ matrix.node-version }}
         run: |
-          # Workaround for Node.js 8.x using OpenSSL 1.0.2 when Themis is built against OpenSSL 1.1
-          # https://github.com/cossacklabs/themis/issues/657
-          if [[ "$NODE_VERSION" = "8.x" ]]; then
-            export ENGINE=boringssl
-          fi
           make
           sudo -E make install
       - name: Run test suite
