@@ -27,14 +27,14 @@ import { Buffer } from 'buffer';
 import {
   keyPair64,
   symmetricKey64,
-  secureSealWithSymmetricKeyEncrypt64,
-  secureSealWithSymmetricKeyDecrypt64,
-  secureSealWithPassphraseEncrypt64,
-  secureSealWithPassphraseDecrypt64,
-  tokenProtectEncrypt64,
-  tokenProtectDecrypt64,
-  contextImprintEncrypt64,
-  contextImprintDecrypt64,
+  secureCellSealWithSymmetricKeyEncrypt64,
+  secureCellSealWithSymmetricKeyDecrypt64,
+  secureCellSealWithPassphraseEncrypt64,
+  secureCellSealWithPassphraseDecrypt64,
+  secureCellTokenProtectEncrypt64,
+  secureCellTokenProtectDecrypt64,
+  secureCellContextImprintEncrypt64,
+  secureCellContextImprintDecrypt64,
   secureMessageSign64,
   secureMessageVerify64,
   secureMessageEncrypt64,
@@ -121,9 +121,9 @@ const App: () => Node = () => {
     // Symmetric key => promise => encryption => promise => decryption 
     symmetricKey64()
       .then((key64) => {
-        secureSealWithSymmetricKeyEncrypt64(key64, plaintext, context)
+        secureCellSealWithSymmetricKeyEncrypt64(key64, plaintext, context)
           .then((encrypted64) => {
-            secureSealWithSymmetricKeyDecrypt64(key64, encrypted64, context)
+            secureCellSealWithSymmetricKeyDecrypt64(key64, encrypted64, context)
               .then((decrypted) => {
                 console.log("Decrypted with the key:", decrypted)
               })
@@ -140,18 +140,18 @@ const App: () => Node = () => {
     (async () => {
       const key64 = await symmetricKey64()
       setMasterKey(key64)
-      const encrypted64 = await secureSealWithSymmetricKeyEncrypt64(key64, plaintext, context)
+      const encrypted64 = await secureCellSealWithSymmetricKeyEncrypt64(key64, plaintext, context)
       setEncryptedWithKey(encrypted64)
-      const decrypted = await secureSealWithSymmetricKeyDecrypt64(key64, encrypted64, context)
+      const decrypted = await secureCellSealWithSymmetricKeyDecrypt64(key64, encrypted64, context)
       console.log("Async decrypted:", decrypted)
     })();
 
 
     // secure seal with passphrase encrypt and decrypt 
-    secureSealWithPassphraseEncrypt64(passphrase, plaintext, context)
+    secureCellSealWithPassphraseEncrypt64(passphrase, plaintext, context)
       .then((encrypted64) => {
         setEncryptedWithPassphrase(encrypted64)
-        secureSealWithPassphraseDecrypt64(passphrase, encrypted64, context)
+        secureCellSealWithPassphraseDecrypt64(passphrase, encrypted64, context)
           .then((decrypted) => {
             console.log("Decrypted with the passphrase:", decrypted)
           })
@@ -166,11 +166,11 @@ const App: () => Node = () => {
     // token protect 
     symmetricKey64()
       .then((key64) => {
-        tokenProtectEncrypt64(key64, plaintext, context)
+        secureCellTokenProtectEncrypt64(key64, plaintext, context)
           .then((encrypted: any) => {
             setEncryptedWithTokenProtect(encrypted.encrypted64)
             setTokenProtect(encrypted.token64)
-            tokenProtectDecrypt64(key64, encrypted.encrypted64, encrypted.token64, context)
+            secureCellTokenProtectDecrypt64(key64, encrypted.encrypted64, encrypted.token64, context)
               .then((decrypted) => {
                 console.log("Decrypted with token protect:", decrypted)
               })
@@ -187,10 +187,10 @@ const App: () => Node = () => {
 
     symmetricKey64()
       .then((key64) => {
-        contextImprintEncrypt64(key64, plaintext, context)
+        secureCellContextImprintEncrypt64(key64, plaintext, context)
           .then((encrypted64: any) => {
             setEncryptedWithContextImprint(encrypted64)
-            contextImprintDecrypt64(key64, encrypted64, context)
+            secureCellContextImprintDecrypt64(key64, encrypted64, context)
               .then((decrypted) => {
                 console.log("Decrypted with context imprint:", decrypted)
               })
@@ -263,7 +263,7 @@ const App: () => Node = () => {
 
     // New Test from Java 
     const javaTest64 = 'AAEBQQwAAAAQAAAAEwAAABYAAAADLKbW7aho9FeDMqy0iRukfGpZAGnEcYqpfAX2QA0DABAAk2Vk0xoTQzLLUoujO2L39JcNyl6AMSHF3o/V9itzchX/7PA=';
-    secureSealWithPassphraseDecrypt64('a password', javaTest64, 'Java context')
+    secureCellSealWithPassphraseDecrypt64('a password', javaTest64, 'Java context')
       .then((decrypted) => {
         console.log("Decrypted64 with passphrase from Java:", decrypted)
       })
@@ -271,14 +271,14 @@ const App: () => Node = () => {
     // Test with symmetric keys from Java
     const javaSymKey = 'Z7BY52XyuM0ss1Ma/O+4Fy9mal5lvMDRyK2nZpuA4U0=';
     const javaEnc = 'AAEBQAwAAAAQAAAAEwAAAFQFGDh5JAJFNzoXDi3SGSWqNfccYlWc/RiBf3QL8YtaT3gRlj8whlx2umdrsFE1';
-    secureSealWithSymmetricKeyDecrypt64(javaSymKey, javaEnc, 'Java context')
+    secureCellSealWithSymmetricKeyDecrypt64(javaSymKey, javaEnc, 'Java context')
       .then((decrypted) => {
         console.log("Decrypted64 with symmetric key from Java:", decrypted)
       })
 
     // Test from Python
     const buffp = 'AAEBQQwAAAAQAAAAEAAAABYAAACqaCdlWERyzPeFEWJbPP+fqksXKvYAUVWSb4caQA0DABAApYwgn2Kt+WKXtP3X3lL0lJ5gA4+b+vo7VWiJjmtf4d8=';
-    secureSealWithPassphraseDecrypt64('a password', buffp, 'Python context')
+    secureCellSealWithPassphraseDecrypt64('a password', buffp, 'Python context')
       .then((decrypted) => {
         console.log("Decrypted64 with passphrase from Python:", decrypted);
       })
@@ -286,14 +286,14 @@ const App: () => Node = () => {
     // Test with symmetric keys from Python
     const pySymKey = 'pGFN54NKRpF53bpf5YtO5PmDVT9N/Ep9Hm0N0w8UXnU=';
     const pyEnc = 'AAEBQAwAAAAQAAAAEAAAAEIBP7ow0hZg7j1mv0P+S9mYC+H0AJ172CiBOTj1Sqlxzz9wboZCtTnnNwi9';
-    secureSealWithSymmetricKeyDecrypt64(pySymKey, pyEnc, 'Python context')
+    secureCellSealWithSymmetricKeyDecrypt64(pySymKey, pyEnc, 'Python context')
       .then((decrypted) => {
         console.log("Decrypted64 with symmetric key from Python:", decrypted)
       })
 
     // Test from Obj-C
     const buff = 'AAEBQQwAAAAQAAAAFAAAABYAAAASUGtcrR36rVjhVPkbJRNFOXfP5DrmL0g41K3kQA0DABAAwDRJ9q4LtOtf2D2jRkZcIgy8rQU61NHu69wFdvKAfNPL1OdU';
-    secureSealWithPassphraseDecrypt64('test', buff, 'test')
+    secureCellSealWithPassphraseDecrypt64('test', buff, 'test')
       .then((decrypted) => {
         console.log("Decrypted64 with passphrase from ObjC:", decrypted);
       })
@@ -301,7 +301,7 @@ const App: () => Node = () => {
     // Test with symmetric keys from Obj-C 
     const objcSymKey = 'B+L00zvIOBh/qSTI0hAE2S2unSHhS+0EHspVCToi3oA=';
     const objcEnc = 'AAEBQAwAAAAQAAAAEAAAACd7hM2MWqiWu5SDNtzvgjcvN3PBY+VBg9kJQB8R1cwcXfOy8sY75+3pRCe0';
-    secureSealWithSymmetricKeyDecrypt64(objcSymKey, objcEnc, 'test')
+    secureCellSealWithSymmetricKeyDecrypt64(objcSymKey, objcEnc, 'test')
       .then((decrypted) => {
         console.log("Decrypted64 with symmetric key from ObjC:", decrypted)
       })

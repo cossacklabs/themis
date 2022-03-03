@@ -162,7 +162,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void secureSealWithSymmetricKeyEncrypt(ReadableArray symmetricKey,
+  public void secureCellSealWithSymmetricKeyEncrypt(ReadableArray symmetricKey,
                                                 String plaintext,
                                                 String context,
                                                 Callback successCallback,
@@ -184,7 +184,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void secureSealWithSymmetricKeyDecrypt(ReadableArray symmetricKey,
+  public void secureCellSealWithSymmetricKeyDecrypt(ReadableArray symmetricKey,
                                                 ReadableArray encrypted,
                                                 String context,
                                                 Callback successCallback,
@@ -218,7 +218,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void secureSealWithPassphraseEncrypt(String passphrase,
+  public void secureCellSealWithPassphraseEncrypt(String passphrase,
                                               String plaintext,
                                               String context,
                                               Callback callback)
@@ -232,7 +232,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void secureSealWithPassphraseDecrypt(String passphrase,
+  public void secureCellSealWithPassphraseDecrypt(String passphrase,
                                               ReadableArray encrypted,
                                               String context,
                                               Callback successCallback,
@@ -258,7 +258,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
 
   /* MARK: Token protect mode */
   @ReactMethod
-  public void tokenProtectEncrypt(ReadableArray symmetricKey,
+  public void secureCellTokenProtectEncrypt(ReadableArray symmetricKey,
                                   String plaintext,
                                   String context,
                                   Callback successCallback,
@@ -286,7 +286,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void tokenProtectDecrypt(ReadableArray symmetricKey,
+  public void secureCellTokenProtectDecrypt(ReadableArray symmetricKey,
                                   ReadableArray encrypted,
                                   ReadableArray token,
                                   String context,
@@ -319,7 +319,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
   /* Context imprint mode */
 
   @ReactMethod
-  public void contextImprintEncrypt(ReadableArray symmetricKey,
+  public void secureCellContextImprintEncrypt(ReadableArray symmetricKey,
                                     String plaintext,
                                     String context,
                                     Callback successCallback,
@@ -348,7 +348,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void contextImprintDecrypt(ReadableArray symmetricKey,
+  public void secureCellContextImprintDecrypt(ReadableArray symmetricKey,
                                     ReadableArray encrypted,
                                     String context,
                                     Callback successCallback,

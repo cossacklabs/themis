@@ -33,10 +33,10 @@ export function symmetricKey64() {
     });
 }
 ;
-export function secureSealWithSymmetricKeyEncrypt64(symmetricKey64, plaintext, context) {
+export function secureCellSealWithSymmetricKeyEncrypt64(symmetricKey64, plaintext, context) {
     const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
     return new Promise((resolve, reject) => {
-        Themis.secureSealWithSymmetricKeyEncrypt(symmetricKey, plaintext, context, (encrypted) => {
+        Themis.secureCellSealWithSymmetricKeyEncrypt(symmetricKey, plaintext, context, (encrypted) => {
             resolve(Buffer.from(new Uint8Array(encrypted)).toString("base64"));
         }, (error) => {
             reject(error);
@@ -44,11 +44,11 @@ export function secureSealWithSymmetricKeyEncrypt64(symmetricKey64, plaintext, c
     });
 }
 ;
-export function secureSealWithSymmetricKeyDecrypt64(symmetricKey64, encrypted64, context) {
+export function secureCellSealWithSymmetricKeyDecrypt64(symmetricKey64, encrypted64, context) {
     const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
     const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
     return new Promise((resolve, reject) => {
-        Themis.secureSealWithSymmetricKeyDecrypt(symmetricKey, encrypted, context, (decrypted) => {
+        Themis.secureCellSealWithSymmetricKeyDecrypt(symmetricKey, encrypted, context, (decrypted) => {
             resolve(Buffer.from(new Uint8Array(decrypted)).toString());
         }, (error) => {
             reject(error);
@@ -56,28 +56,28 @@ export function secureSealWithSymmetricKeyDecrypt64(symmetricKey64, encrypted64,
     });
 }
 ;
-export function secureSealWithPassphraseEncrypt64(passphrase, plaintext, context) {
+export function secureCellSealWithPassphraseEncrypt64(passphrase, plaintext, context) {
     return new Promise((resolve) => {
-        Themis.secureSealWithPassphraseEncrypt(passphrase, plaintext, context, (encrypted) => {
+        Themis.secureCellSealWithPassphraseEncrypt(passphrase, plaintext, context, (encrypted) => {
             resolve(Buffer.from(new Uint8Array(encrypted)).toString("base64"));
         });
     });
 }
 ;
-export function secureSealWithPassphraseDecrypt64(passphrase, encrypted64, context) {
+export function secureCellSealWithPassphraseDecrypt64(passphrase, encrypted64, context) {
     const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
     return new Promise((resolve, reject) => {
-        Themis.secureSealWithPassphraseDecrypt(passphrase, encrypted, context, (decrypted) => {
+        Themis.secureCellSealWithPassphraseDecrypt(passphrase, encrypted, context, (decrypted) => {
             resolve(Buffer.from(new Uint8Array(decrypted)).toString());
         }, (error) => {
             reject(error);
         });
     });
 }
-export function tokenProtectEncrypt64(symmetricKey64, plaintext, context) {
+export function secureCellTokenProtectEncrypt64(symmetricKey64, plaintext, context) {
     const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
     return new Promise((resolve, reject) => {
-        Themis.tokenProtectEncrypt(symmetricKey, plaintext, context, (encrypted) => {
+        Themis.secureCellTokenProtectEncrypt(symmetricKey, plaintext, context, (encrypted) => {
             const data = Buffer.from(new Uint8Array(encrypted.encrypted)).toString("base64");
             const token = Buffer.from(new Uint8Array(encrypted.token)).toString("base64");
             resolve({
@@ -89,12 +89,12 @@ export function tokenProtectEncrypt64(symmetricKey64, plaintext, context) {
         });
     });
 }
-export function tokenProtectDecrypt64(symmetricKey64, encrypted64, token64, context) {
+export function secureCellTokenProtectDecrypt64(symmetricKey64, encrypted64, token64, context) {
     const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
     const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
     const token = Array.from(Buffer.from(token64, 'base64'));
     return new Promise((resolve, reject) => {
-        Themis.tokenProtectDecrypt(symmetricKey, encrypted, token, context, (decrypted) => {
+        Themis.secureCellTokenProtectDecrypt(symmetricKey, encrypted, token, context, (decrypted) => {
             resolve(Buffer.from(new Uint8Array(decrypted)).toString());
         }, (error) => {
             reject(error);
@@ -102,21 +102,21 @@ export function tokenProtectDecrypt64(symmetricKey64, encrypted64, token64, cont
     });
 }
 // context imprint encrypt and decrypt 
-export function contextImprintEncrypt64(symmetricKey64, plaintext, context) {
+export function secureCellContextImprintEncrypt64(symmetricKey64, plaintext, context) {
     const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
     return new Promise((resolve, reject) => {
-        Themis.contextImprintEncrypt(symmetricKey, plaintext, context, (encrypted) => {
+        Themis.secureCellContextImprintEncrypt(symmetricKey, plaintext, context, (encrypted) => {
             resolve(Buffer.from(new Uint8Array(encrypted)).toString("base64"));
         }, (error) => {
             reject(error);
         });
     });
 }
-export function contextImprintDecrypt64(symmetricKey64, encrypted64, context) {
+export function secureCellContextImprintDecrypt64(symmetricKey64, encrypted64, context) {
     const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
     const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
     return new Promise((resolve, reject) => {
-        Themis.contextImprintDecrypt(symmetricKey, encrypted, context, (decrypted) => {
+        Themis.secureCellContextImprintDecrypt(symmetricKey, encrypted, context, (decrypted) => {
             resolve(Buffer.from(new Uint8Array(decrypted)).toString());
         }, (error) => {
             reject(error);

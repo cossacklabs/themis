@@ -118,8 +118,8 @@ RCT_EXPORT_METHOD(keyPair:(nonnull NSNumber*) algorithm
       break;
   }
 
-    NSArray  *privateKey = [RCTThemis dataSerialize: keypair.privateKey];
-    NSArray   *publicKey = [RCTThemis dataSerialize: keypair.publicKey];
+  NSArray  *privateKey = [RCTThemis dataSerialize: keypair.privateKey];
+  NSArray   *publicKey = [RCTThemis dataSerialize: keypair.publicKey];
   
   NSDictionary *dictionary = @{
        @"private" : privateKey,
@@ -153,7 +153,7 @@ RCT_EXPORT_METHOD(symmetricKey:(RCTResponseSenderBlock)callback)
 
 
 
-RCT_EXPORT_METHOD(secureSealWithSymmetricKeyEncrypt:(NSArray*) symmetricKey
+RCT_EXPORT_METHOD(secureCellSealWithSymmetricKeyEncrypt:(NSArray*) symmetricKey
                   plaintext: (NSString*)plaintext
                   context: (NSString*)context
                   successCallback: (RCTResponseSenderBlock)successCallback
@@ -177,7 +177,7 @@ RCT_EXPORT_METHOD(secureSealWithSymmetricKeyEncrypt:(NSArray*) symmetricKey
   successCallback(@[result]);
 }
 
-RCT_EXPORT_METHOD(secureSealWithSymmetricKeyDecrypt:(NSArray*) symmetricKey
+RCT_EXPORT_METHOD(secureCellSealWithSymmetricKeyDecrypt:(NSArray*) symmetricKey
                   encrypted:(NSArray*) encrypted
                   context: (NSString*) context
                   successCallback:(RCTResponseSenderBlock)successCallback
@@ -221,7 +221,7 @@ RCT_EXPORT_METHOD(secureSealWithSymmetricKeyDecrypt:(NSArray*) symmetricKey
 }
 
 
-RCT_EXPORT_METHOD(secureSealWithPassphraseEncrypt:(NSString*) passphrase
+RCT_EXPORT_METHOD(secureCellSealWithPassphraseEncrypt:(NSString*) passphrase
                   plaintext: (NSString*)plaintext
                   context: (NSString*)context
                   callback: (RCTResponseSenderBlock)callback)
@@ -238,7 +238,7 @@ RCT_EXPORT_METHOD(secureSealWithPassphraseEncrypt:(NSString*) passphrase
   callback(@[result]);
 }
 
-RCT_EXPORT_METHOD(secureSealWithPassphraseDecrypt:(NSString*) passphrase
+RCT_EXPORT_METHOD(secureCellSealWithPassphraseDecrypt:(NSString*) passphrase
                   encrypted:(NSArray*) encrypted
                   context: (NSString*) context
                   successCallback:(RCTResponseSenderBlock)successCallback
@@ -285,7 +285,7 @@ RCT_EXPORT_METHOD(secureSealWithPassphraseDecrypt:(NSString*) passphrase
   }
 }
 
-RCT_EXPORT_METHOD(tokenProtectEncrypt:(NSArray*) symmetricKey
+RCT_EXPORT_METHOD(secureCellTokenProtectEncrypt:(NSArray*) symmetricKey
                   plaintext: (NSString*)plaintext
                   context: (NSString*)context
                   successCallback: (RCTResponseSenderBlock)successCallback
@@ -317,7 +317,7 @@ RCT_EXPORT_METHOD(tokenProtectEncrypt:(NSArray*) symmetricKey
   successCallback(@[dictionary]);
 }
 
-RCT_EXPORT_METHOD(tokenProtectDecrypt:(NSArray*) symmetricKey
+RCT_EXPORT_METHOD(secureCellTokenProtectDecrypt:(NSArray*) symmetricKey
                   encrypted:(NSArray*) encrypted
                   token:(NSArray*) token
                   context: (NSString*) context
@@ -372,7 +372,7 @@ RCT_EXPORT_METHOD(tokenProtectDecrypt:(NSArray*) symmetricKey
   }
 }
 
-RCT_EXPORT_METHOD(contextImprintEncrypt:(NSArray*) symmetricKey
+RCT_EXPORT_METHOD(secureCellContextImprintEncrypt:(NSArray*) symmetricKey
                   plaintext: (NSString*)plaintext
                   context: (NSString*)context
                   successCallback: (RCTResponseSenderBlock)successCallback
@@ -404,7 +404,7 @@ RCT_EXPORT_METHOD(contextImprintEncrypt:(NSArray*) symmetricKey
   successCallback(@[result]);
 }
 
-RCT_EXPORT_METHOD(contextImprintDecrypt:(NSArray*) symmetricKey
+RCT_EXPORT_METHOD(secureCellContextImprintDecrypt:(NSArray*) symmetricKey
                   encrypted: (NSArray*) encrypted
                   context: (NSString*) context
                   successCallback:(RCTResponseSenderBlock)successCallback
