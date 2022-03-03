@@ -1,0 +1,6 @@
+git clone https://github.com/cossacklabs/themis.git 
+cd themis 
+carthage bootstrap
+./scripts/create_xcframeworks.sh
+unzip -d .. src/wrappers/themis/react-native-themis/ios build/xcf_output/themis.xcframework.zip
+ 
