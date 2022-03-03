@@ -1,6 +1,0 @@
-framework module themis {
-  umbrella header "themis.h"
-
-  export *
-  module * { export * }
-}
