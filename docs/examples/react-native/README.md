@@ -1,13 +1,16 @@
-# React Native example 
+# Example of React Native Themis 
 
-```bash
-yarn 
+## Installation 
+
+```
+git clone https://github.com/cossacklabs/themis.git
+cd docs/examples/react-native
+yarn
 cd ios
 pod install
 cd ..
-yarn start 
+yarn start & 
 yarn run ios 
 yarn run android
-```
-
+``` 
 

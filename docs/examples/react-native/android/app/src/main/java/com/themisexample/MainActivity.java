@@ -1,4 +1,4 @@
-package com.example.reactnativethemis;
+package com.themisexample;
 
 import com.facebook.react.ReactActivity;
 

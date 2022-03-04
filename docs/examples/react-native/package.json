@@ -1,22 +1,30 @@
 {
-  "name": "react-native-themis-example",
-  "description": "Example app for react-native-themis",
+  "name": "themisexample",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start": "react-native start"
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
   },
   "dependencies": {
-    "buffer": "^6.0.3",
-    "react": "16.13.1",
-    "react-native": "0.63.4"
+    "react": "17.0.2",
+    "react-native": "0.67.3",
+    "react-native-themis": "../../../src/wrappers/themis/react-native-themis/"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
+    "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
-    "babel-plugin-module-resolver": "^4.0.0",
-    "metro-react-native-babel-preset": "^0.64.0"
+    "@react-native-community/eslint-config": "^2.0.0",
+    "babel-jest": "^26.6.3",
+    "eslint": "7.14.0",
+    "jest": "^26.6.3",
+    "metro-react-native-babel-preset": "^0.66.2",
+    "react-test-renderer": "17.0.2"
+  },
+  "jest": {
+    "preset": "react-native"
   }
 }
