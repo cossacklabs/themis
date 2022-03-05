@@ -38,6 +38,7 @@ DerivedData/
 .idea/
 build
 .gradle
+src/wrappers/themis/react-native-themis/ios/themis.xcframework/*
 
 
 # python rules
