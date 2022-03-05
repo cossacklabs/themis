@@ -136,7 +136,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
         pair = KeypairGenerator.generateKeypair(AsymmetricKey.KEYTYPE_RSA);
         break;
       default:
-        pair = KeypairGenerator.generateKeypair();
+        pair = KeypairGenerator.generateKeypair(AsymmetricKey.KEYTYPE_EC);
     }
 
     KeypairGenerator.generateKeypair();
