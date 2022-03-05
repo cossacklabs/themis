@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
   s.platforms    = { :ios => "10.0" }
-  s.source       = { :git => "https://github.com/radetsky/react-native-themis.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
 
   s.vendored_frameworks = 'ios/themis.xcframework'
   s.source_files = "ios/**/*.{h,m,mm,swift}"
