@@ -63,7 +63,7 @@ That's it!
 
 Read the following resources to learn more:
 
-  - [How to use Themis with React Native](https://docs.cossacklabs.com/themis/languages/react-native-themis/).
+  - [How to use Themis with React Native](https://docs.cossacklabs.com/themis/languages/react-native/).
   - [General documentation for Themis library on Cossack Labs Documentation Server](https://docs.cossacklabs.com/themis/).
 
 
