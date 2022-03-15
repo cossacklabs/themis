@@ -52,7 +52,7 @@ export function symmetricKey64(): Promise<string> {
 export function secureCellSealWithSymmetricKeyEncrypt64(
   symmetricKey64: String,
   plaintext: String,
-  context: String): Promise<string> {
+  context: String = ""): Promise<string> {
 
   const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
 
@@ -68,7 +68,7 @@ export function secureCellSealWithSymmetricKeyEncrypt64(
 export function secureCellSealWithSymmetricKeyDecrypt64(
   symmetricKey64: String,
   encrypted64: String,
-  context: String): Promise<string> {
+  context: String = ""): Promise<string> {
 
   const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
   const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
@@ -85,7 +85,7 @@ export function secureCellSealWithSymmetricKeyDecrypt64(
 export function secureCellSealWithPassphraseEncrypt64(
   passphrase: String,
   plaintext: String,
-  context: String): Promise<string> {
+  context: String = ""): Promise<string> {
 
   return new Promise((resolve) => {
     Themis.secureCellSealWithPassphraseEncrypt(passphrase, plaintext, context, (encrypted: any) => {
@@ -97,7 +97,7 @@ export function secureCellSealWithPassphraseEncrypt64(
 export function secureCellSealWithPassphraseDecrypt64(
   passphrase: String,
   encrypted64: String,
-  context: String): Promise<string> {
+  context: String = ""): Promise<string> {
 
   const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
 
@@ -113,7 +113,7 @@ export function secureCellSealWithPassphraseDecrypt64(
 export function secureCellTokenProtectEncrypt64(
   symmetricKey64: String,
   plaintext: String,
-  context: String): Promise<Object> {
+  context: String = ""): Promise<Object> {
 
   const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
 
@@ -135,7 +135,7 @@ export function secureCellTokenProtectDecrypt64(
   symmetricKey64: String,
   encrypted64: String,
   token64: String,
-  context: String): Promise<string> {
+  context: String = ""): Promise<string> {
 
   const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
   const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
