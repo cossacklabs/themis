@@ -1,12 +1,12 @@
 export declare const COMPARATOR_NOT_READY: any, COMPARATOR_NOT_MATCH: any, COMPARATOR_MATCH: any, COMPARATOR_ERROR: any, KEYTYPE_RSA: any, KEYTYPE_EC: any;
 export declare function keyPair64(typeOfKey: any): Promise<Object>;
 export declare function symmetricKey64(): Promise<string>;
-export declare function secureCellSealWithSymmetricKeyEncrypt64(symmetricKey64: String, plaintext: String, context: String): Promise<string>;
-export declare function secureCellSealWithSymmetricKeyDecrypt64(symmetricKey64: String, encrypted64: String, context: String): Promise<string>;
-export declare function secureCellSealWithPassphraseEncrypt64(passphrase: String, plaintext: String, context: String): Promise<string>;
-export declare function secureCellSealWithPassphraseDecrypt64(passphrase: String, encrypted64: String, context: String): Promise<string>;
-export declare function secureCellTokenProtectEncrypt64(symmetricKey64: String, plaintext: String, context: String): Promise<Object>;
-export declare function secureCellTokenProtectDecrypt64(symmetricKey64: String, encrypted64: String, token64: String, context: String): Promise<string>;
+export declare function secureCellSealWithSymmetricKeyEncrypt64(symmetricKey64: String, plaintext: String, context?: String): Promise<string>;
+export declare function secureCellSealWithSymmetricKeyDecrypt64(symmetricKey64: String, encrypted64: String, context?: String): Promise<string>;
+export declare function secureCellSealWithPassphraseEncrypt64(passphrase: String, plaintext: String, context?: String): Promise<string>;
+export declare function secureCellSealWithPassphraseDecrypt64(passphrase: String, encrypted64: String, context?: String): Promise<string>;
+export declare function secureCellTokenProtectEncrypt64(symmetricKey64: String, plaintext: String, context?: String): Promise<Object>;
+export declare function secureCellTokenProtectDecrypt64(symmetricKey64: String, encrypted64: String, token64: String, context?: String): Promise<string>;
 export declare function secureCellContextImprintEncrypt64(symmetricKey64: String, plaintext: String, context: String): Promise<string>;
 export declare function secureCellContextImprintDecrypt64(symmetricKey64: String, encrypted64: String, context: String): Promise<string>;
 export declare function secureMessageSign64(plaintext: String, privateKey64: String, publicKey64: String): Promise<string>;

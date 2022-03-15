@@ -121,9 +121,9 @@ const App: () => Node = () => {
     // Symmetric key => promise => encryption => promise => decryption 
     symmetricKey64()
       .then((key64) => {
-        secureCellSealWithSymmetricKeyEncrypt64(key64, plaintext, context)
+        secureCellSealWithSymmetricKeyEncrypt64(key64, plaintext)
           .then((encrypted64) => {
-            secureCellSealWithSymmetricKeyDecrypt64(key64, encrypted64, context)
+            secureCellSealWithSymmetricKeyDecrypt64(key64, encrypted64)
               .then((decrypted) => {
                 console.log("Decrypted with the key:", decrypted)
               })
