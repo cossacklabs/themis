@@ -18,7 +18,13 @@
       ],
       "conditions": [
         [ "OS=='linux' or OS=='mac'", {
+          "include_dirs": [
+            "/opt/homebrew/include",
+            "/usr/local/include",
+            "/usr/include"
+          ],
           "libraries": [
+            "-L/opt/homebrew/lib",
             "-L/usr/local/lib",
             "-L/usr/lib",
             "-lsoter",
