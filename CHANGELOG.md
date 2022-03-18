@@ -5,6 +5,17 @@
 Changes that are currently in development and have not been released yet.
 
 
+## [0.14.1](https://github.com/cossacklabs/themis/releases/tag/0.14.1), March 18th 2022
+
+**Hotfix for JsThemis on Apple M1**
+
+_Code:_
+
+- **Node.js**
+
+  - JsThemis now works with `libthemis` installed from Homebrew on Apple M1 ([#907](https://github.com/cossacklabs/themis/pull/907)).
+
+
 ## [0.14.0](https://github.com/cossacklabs/themis/releases/tag/0.14.0), December 24th 2021
 
 **TL;DR:**
