@@ -4,6 +4,11 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.14.4](https://github.com/cossacklabs/themis/releases/tag/0.14.4), April 05th 2022
+
+**React Native Support**
+
+- Added React Native Themis with Typescript support. 
 
 ## [0.14.1](https://github.com/cossacklabs/themis/releases/tag/0.14.1), March 18th 2022
 
