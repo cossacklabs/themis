@@ -21,7 +21,7 @@
   <a href="https://circleci.com/gh/cossacklabs/themis"><img src="https://circleci.com/gh/cossacklabs/themis/tree/master.svg?style=shield" alt="Circle CI"></a>
   <a href="https://app.bitrise.io/app/69a1d5c9d42fa60f"><img src="https://app.bitrise.io/app/69a1d5c9d42fa60f/status.svg?token=Fp_06Ema5PgzBbZQyQy1bA&branch=master" alt="Bitrise"></a>
 </p>
-<h4 align="center">General purpose cryptographic library for storage and messaging for iOS (Swift, Obj-C), Android (Java, Kotlin), desktop Java, С/С++, Node.js, Python, Ruby, PHP, Go, Rust, WASM.</h4>
+<h4 align="center">General purpose cryptographic library for storage and messaging for iOS (Swift, Obj-C), Android (Java, Kotlin), React Native (iOS, Android), desktop Java, С/С++, Node.js, Python, Ruby, PHP, Go, Rust, WASM.</h4>
 <h4 align="center">Perfect fit for multi-platform apps. Hides cryptographic details. Made by cryptographers for developers 🧡</h4>
 
 
@@ -76,6 +76,7 @@ Themis is available for the following languages/platforms, refer to [language ho
 
 | Platform | Documentation | Examples | Version |
 | :----- | :----- | :------ | :--- |
+| ⚛️ React Native (iOS, Android) | [React Native Howto](https://docs.cossacklabs.com/themis/languages/react-native/) | [docs/examples/react-native](https://github.com/cossacklabs/themis/tree/master/docs/examples/react-native) | [![npm](https://img.shields.io/npm/v/react-native-themis.svg)](https://www.npmjs.com/package/react-native-themis) |
 | 🔶 Swift (iOS, macOS) | [Swift Howto](https://docs.cossacklabs.com/themis/languages/swift/) | [docs/examples/swift](https://github.com/cossacklabs/themis/tree/master/docs/examples/swift) | [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
 | 📱 Objective-C (iOS, macOS) | [Objective-C Howto](https://docs.cossacklabs.com/themis/languages/objc/) | [docs/examples/objc](https://github.com/cossacklabs/themis/tree/master/docs/examples/objc)| [![CocoaPods](https://img.shields.io/cocoapods/v/themis.svg)](https://cocoapods.org/pods/themis) |
 | ☕️ Java (Desktop) | [Java (Desktop) Howto](https://docs.cossacklabs.com/themis/languages/java/installation-desktop/) | [Java projects](https://github.com/cossacklabs/themis-java-examples) | |
@@ -98,9 +99,9 @@ Themis supports following CPU architectures: x86_64/i386, ARM, Apple Silicon (AR
 We build and verify Themis on the latest stable OS versions:
 
   - Debian (9, 10), CentOS (7, 8), Ubuntu (16.04, 18.04, 20.04)
-  - macOS (10.12–10.15, 11)
-  - Android (4–11)
-  - iOS (10–14)
+  - macOS (10.12–10.15, 11.*)
+  - Android (7–12)
+  - iOS (11–15)
   - Windows (experimental MSYS2 support)
 
 We plan to expand this list with a broader set of platforms.
