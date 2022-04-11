@@ -349,7 +349,7 @@ describe('wasm-themis', function() {
                     assert.throws(() => cell.encrypt(invalid), TypeError)
                     assert.throws(() => cell.decrypt(invalid), TypeError)
                     // null context is okay, it should not throw
-                    if (invalid !== null) {
+                    if (invalid !== null && invalid !== undefined) {
                         assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
                         assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
                     }
