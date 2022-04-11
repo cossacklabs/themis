@@ -74,7 +74,7 @@ export class SecureCellSeal {
     return new SecureCellSealWithPassphrase(passphrase);
   }
 
-  encrypt(message: Uint8Array) {
+  encrypt(message: Uint8Array, context: Uint8Array = new Uint8Array()) {
     message = coerceToBytes(message);
     if (message.length == 0) {
       throw new ThemisError(
@@ -83,12 +83,10 @@ export class SecureCellSeal {
         "message must be not empty"
       );
     }
-
-    let context;
-    if (arguments.length > 1 && arguments[1] !== null) {
-      context = coerceToBytes(arguments[1]);
-    } else {
+    if (context == null) {
       context = new Uint8Array();
+    } else {
+      context = coerceToBytes(context);
     }
 
     let status;
@@ -249,7 +247,7 @@ class SecureCellSealWithPassphrase extends SecureCellSeal {
     super(passphraseBytes(passphrase));
   }
 
-  encrypt(message: Uint8Array) {
+  encrypt(message: Uint8Array, context: Uint8Array = new Uint8Array()) {
     message = coerceToBytes(message);
     if (message.length == 0) {
       throw new ThemisError(
@@ -259,11 +257,10 @@ class SecureCellSealWithPassphrase extends SecureCellSeal {
       );
     }
 
-    let context;
-    if (arguments.length > 1 && arguments[1] !== null) {
-      context = coerceToBytes(arguments[1]);
-    } else {
+    if (context === null || context === undefined) {
       context = new Uint8Array();
+    } else {
+      context = coerceToBytes(context);
     }
 
     let status;
@@ -336,7 +333,7 @@ class SecureCellSealWithPassphrase extends SecureCellSeal {
     }
   }
 
-  decrypt(message: Uint8Array) {
+  decrypt(message: Uint8Array, context: Uint8Array = new Uint8Array()) {
     message = coerceToBytes(message);
     if (message.length == 0) {
       throw new ThemisError(
@@ -346,11 +343,10 @@ class SecureCellSealWithPassphrase extends SecureCellSeal {
       );
     }
 
-    let context;
-    if (arguments.length > 1 && arguments[1] !== null) {
-      context = coerceToBytes(arguments[1]);
-    } else {
+    if (context === null || context === undefined) {
       context = new Uint8Array();
+    } else {
+      context = coerceToBytes(context);
     }
 
     let status;
