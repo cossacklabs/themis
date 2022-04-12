@@ -83,7 +83,7 @@ export class SecureCellSeal {
         "message must be not empty"
       );
     }
-    if (context == null) {
+    if (context === null || context === undefined) {
       context = new Uint8Array();
     } else {
       context = coerceToBytes(context);
