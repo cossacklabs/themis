@@ -8,7 +8,7 @@ Changes that are currently in development and have not been released yet.
 
 **Typescript compatibility issues in WasmThemis**
 
-- Added optional context parameters to SecureCell Seal mode instead of using arguments in methods encrypt() and decrypt() ([#909]).
+- Improved SecureCell Seal in WasmThemis. Added optional context parameters to SecureCell Seal mode instead of using arguments in methods `encrypt()` and `decrypt()` to make compilers happy ([#909]).
 
 [#909]: https://github.com/cossacklabs/themis/pull/909
 
