@@ -169,7 +169,11 @@ export class SecureCellSeal {
       );
     }
 
-    context = coerceToBytes(context);
+    if (context === null || context === undefined) {
+      context = new Uint8Array();
+    } else {
+      context = coerceToBytes(context);
+    }
 
     let status;
     /// C API uses "size_t" for lengths, it's defined as "i32" in Emscripten
