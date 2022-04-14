@@ -4,6 +4,7 @@ const assert = require('assert')
 
 describe('wasm-themis', function() {
     describe('initialization', function() {
+        this.slow(5000)
         it('resolves "initialize()" promise', function(done) {
             themis.initialize().then(function() {
                 let key = new themis.SymmetricKey()
