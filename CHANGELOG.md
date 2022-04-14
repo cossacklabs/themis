@@ -4,6 +4,14 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.14.5](https://github.com/cossacklabs/themis/releases/tag/0.14.5), April 14th 2022
+
+**Typescript compatibility issues in WasmThemis**
+
+- Added optional context parameters to SecureCell Seal mode instead of using arguments in methods encrypt() and decrypt() ([#909]).
+
+[#909]: https://github.com/cossacklabs/themis/pull/909
+
 ## [0.14.4](https://github.com/cossacklabs/themis/releases/tag/0.14.4), March 15th 2022 / April 05th 2022
 
 **React Native Support**
