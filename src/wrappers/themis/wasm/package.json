@@ -1,6 +1,6 @@
 {
   "name": "wasm-themis",
-  "version": "0.14.0",
+  "version": "0.14.5",
   "description": "Themis is a convenient cryptographic library for data protection.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
