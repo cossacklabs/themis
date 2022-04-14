@@ -204,6 +204,19 @@ describe('wasm-themis', function() {
                 let decrypted = cell.decrypt(encrypted)
                 assert.deepStrictEqual(decrypted, testInput)
             })
+            it('undefined context == no context', function() {
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
+                let encrypted = cell.encrypt(testInput, undefined)
+                let decrypted = cell.decrypt(encrypted, undefined)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('omitted context == no context', function() {
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+
             it('detects invalid master key', function() {
                 let cell1 = themis.SecureCellSeal.withKey(masterKey1)
                 let cell2 = themis.SecureCellSeal.withKey(masterKey2)
@@ -294,6 +307,18 @@ describe('wasm-themis', function() {
             it('null context == no context', function() {
                 let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
                 let encrypted = cell.encrypt(testInput, null)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('undefined context == no context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput, undefined)
+                let decrypted = cell.decrypt(encrypted, undefined)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('omitted context == no context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
                 let decrypted = cell.decrypt(encrypted)
                 assert.deepStrictEqual(decrypted, testInput)
             })
