@@ -1,6 +1,6 @@
 {
   "name": "wasm-themis",
-  "version": "0.14.0",
+  "version": "0.14.5",
   "description": "Themis is a convenient cryptographic library for data protection.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,7 +15,7 @@
     "src/libthemis.wasm"
   ],
   "scripts": {
-    "test": "find test -name *.js | sort | xargs -L1 ts-mocha -p tsconfig.json",
+    "test": "find test -name *.js | sort | xargs -L1 ts-mocha -p tsconfig.json --timeout 5000",
     "tsc-cjs": "tsc -t es6 -m commonjs --outDir dist && cp src/libthemis* src/.npmignore dist/",
     "tsc-es6": "tsc -t es6 -m es6 --outDir dist-es6 && cp src/libthemis* src/.npmignore dist-es6/",
     "prepare": "npm run tsc-cjs && npm run tsc-es6"

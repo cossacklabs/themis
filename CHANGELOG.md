@@ -21,6 +21,32 @@ _Code:_
   - Node.js v8 is no longer supported ([#901](https://github.com/cossacklabs/themis/pull/901)).
 
 
+## [0.14.5](https://github.com/cossacklabs/themis/releases/tag/0.14.5), April 14th 2022
+
+**Typescript compatibility issues in WasmThemis**
+
+- Improved SecureCell Seal in WasmThemis. Added optional context parameters to SecureCell Seal mode instead of using arguments in methods `encrypt()` and `decrypt()` to make compilers happy ([#909]).
+
+[#909]: https://github.com/cossacklabs/themis/pull/909
+
+## [0.14.4](https://github.com/cossacklabs/themis/releases/tag/0.14.4), March 15th 2022 / April 05th 2022
+
+**React Native Support**
+
+- Added React Native Themis with Typescript support ([#902], [#903], [#905], [#906]).
+
+  [`react-native-themis`](https://www.npmjs.com/package/react-native-themis) is now available on npm! 🎉 
+  
+      npm install react-native-themis
+  
+  [Read more about React Native support](https://docs.cossacklabs.com/themis/languages/react-native/).
+
+[#902]: https://github.com/cossacklabs/themis/pull/902
+[#903]: https://github.com/cossacklabs/themis/pull/903
+[#905]: https://github.com/cossacklabs/themis/pull/905
+[#906]: https://github.com/cossacklabs/themis/pull/906
+
+
 ## [0.14.0](https://github.com/cossacklabs/themis/releases/tag/0.14.0), December 24th 2021
 
 **TL;DR:**

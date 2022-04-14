@@ -204,6 +204,19 @@ describe('wasm-themis', function() {
                 let decrypted = cell.decrypt(encrypted)
                 assert.deepStrictEqual(decrypted, testInput)
             })
+            it('undefined context == no context', function() {
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
+                let encrypted = cell.encrypt(testInput, undefined)
+                let decrypted = cell.decrypt(encrypted, undefined)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('omitted context == no context', function() {
+                let cell = themis.SecureCellSeal.withKey(masterKey1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+
             it('detects invalid master key', function() {
                 let cell1 = themis.SecureCellSeal.withKey(masterKey1)
                 let cell2 = themis.SecureCellSeal.withKey(masterKey2)
@@ -297,6 +310,18 @@ describe('wasm-themis', function() {
                 let decrypted = cell.decrypt(encrypted)
                 assert.deepStrictEqual(decrypted, testInput)
             })
+            it('undefined context == no context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput, undefined)
+                let decrypted = cell.decrypt(encrypted, undefined)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
+            it('omitted context == no context', function() {
+                let cell = themis.SecureCellSeal.withPassphrase(passphrase1)
+                let encrypted = cell.encrypt(testInput)
+                let decrypted = cell.decrypt(encrypted)
+                assert.deepStrictEqual(decrypted, testInput)
+            })
             it('detects invalid passphrase', function() {
                 let cell1 = themis.SecureCellSeal.withPassphrase(passphrase1)
                 let cell2 = themis.SecureCellSeal.withPassphrase(passphrase2)
@@ -349,7 +374,7 @@ describe('wasm-themis', function() {
                     assert.throws(() => cell.encrypt(invalid), TypeError)
                     assert.throws(() => cell.decrypt(invalid), TypeError)
                     // null context is okay, it should not throw
-                    if (invalid !== null) {
+                    if (invalid !== null && invalid !== undefined) {
                         assert.throws(() => cell.encrypt(testInput, invalid), TypeError)
                         assert.throws(() => cell.decrypt(encrypted, invalid), TypeError)
                     }
