@@ -61,7 +61,12 @@ This might cause ABI mismatch and crash the process.
 """,
                   category=RuntimeWarning)
 
-    return cdll.LoadLibrary(find_library('themis'))
+    themis_path = find_library('themis')
+    # find_library() returns None on failure and LoadLibrary() would
+    # happily 'load' that. We kinda need the library, make it an error.
+    if not themis_path:
+        raise RuntimeError('failed to locate Themis Core library')
+    return cdll.LoadLibrary(themis_path)
 
 
 __all__ = [
