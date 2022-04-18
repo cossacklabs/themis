@@ -10,6 +10,10 @@ _Code:_
 
   - Node.js v8 is no longer supported ([#901](https://github.com/cossacklabs/themis/pull/901)).
 
+- **Python**
+
+  - `pythemis.scomparator` and `pythemis.skeygen` are now imported with `from pythemis import *` ([#914](https://github.com/cossacklabs/themis/pull/914)).
+
 - **Rust**
 
   - `SecureSessionTransport` implementations are now required to be `Send` ([#898](https://github.com/cossacklabs/themis/pull/898)).
