@@ -1,0 +1,104 @@
+name: Audit dependencies
+# TODO: add support for other wrappers:
+# - [X] C++ (no dependencies)
+# - [ ] Go
+# - [ ] Java (desktop)
+# - [ ] Kotlin (Android)
+# - [X] Node.js
+# - [X] PHP (not going to bother)
+# - [ ] Python
+# - [X] React Native
+# - [ ] Ruby
+# - [ ] Rust
+# - [ ] Swift/Objective-C
+# - [X] WebAssembly
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/audit.yaml'
+      - '**/package.json'
+  push:
+    branches:
+      - master
+      - stable
+      - release/*
+  schedule:
+    - cron: '00 6 * * *' # every day at 6:00 UTC
+
+env:
+  MIN_NPM_SEVERITY_RELEASE:  high
+  MIN_NPM_SEVERITY_MASTER:   high
+  MIN_NPM_SEVERITY_EXAMPLES: critical
+
+jobs:
+  pull-request:
+    name: PR checks
+    if: ${{ github.event_name == 'pull_request' || github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+      - name: "Check JavaScript: Node.js"
+        if: always()
+        run: |
+          cd src/wrappers/themis/jsthemis
+          npm install --package-lock-only --ignore-scripts --no-audit
+          npm audit --audit-level $MIN_NPM_SEVERITY_MASTER
+      - name: "Check JavaScript: React Native"
+        if: always()
+        run: |
+          cd src/wrappers/themis/react-native-themis
+          npm install --package-lock-only --ignore-scripts --no-audit
+          npm audit --audit-level $MIN_NPM_SEVERITY_MASTER
+      - name: "Check JavaScript: React Native (example)"
+        if: ${{ github.base_ref == 'master' || github.ref_name == 'master' }}
+        run: |
+          cd docs/examples/react-native
+          yarn audit --level $MIN_NPM_SEVERITY_EXAMPLES
+      - name: "Check JavaScript: WebAssembly"
+        if: always()
+        run: |
+          cd src/wrappers/themis/wasm
+          npm install --package-lock-only --ignore-scripts --no-audit
+          npm audit --audit-level $MIN_NPM_SEVERITY_MASTER
+      - name: "Check JavaScript: WebAssembly (example: webpack)"
+        if: ${{ github.base_ref == 'master' || github.ref_name == 'master' }}
+        run: |
+          cd docs/examples/wasm/webpack
+          npm audit --audit-level $MIN_NPM_SEVERITY_EXAMPLES
+  release:
+    name: Release checks
+    if: ${{ github.event_name == 'schedule' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        branch:
+          - master
+          - stable
+          - release/0.14
+      fail-fast: false
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ matrix.branch }}
+      - name: "Check JavaScript: Node.js"
+        if: always()
+        run: |
+          cd src/wrappers/themis/jsthemis
+          npm install --package-lock-only --ignore-scripts --no-audit
+          npm audit --omit dev --audit-level $MIN_NPM_SEVERITY_RELEASE
+      - name: "Check JavaScript: React Native"
+        # FIXME: replace with always() once "stable" track 0.15.x with React Native Themis in it
+        if: ${{ matrix.branch != 'stable' }}
+        run: |
+          cd src/wrappers/themis/react-native-themis
+          npm install --package-lock-only --ignore-scripts --no-audit
+          npm audit --omit dev --audit-level $MIN_NPM_SEVERITY_RELEASE
+      - name: "Check JavaScript: WebAssembly"
+        if: always()
+        run: |
+          cd src/wrappers/themis/wasm
+          npm install --package-lock-only --ignore-scripts --no-audit
+          npm audit --omit dev --audit-level $MIN_NPM_SEVERITY_RELEASE
