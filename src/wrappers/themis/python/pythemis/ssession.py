@@ -17,14 +17,11 @@
 #
 import warnings
 import ctypes
-from ctypes.util import find_library
 from collections import deque
 from abc import abstractmethod
 
-from . import exception as exception
+from . import exception, themis
 from .exception import THEMIS_CODES, ThemisError
-
-themis = ctypes.cdll.LoadLibrary(find_library('themis'))
 
 ON_GET_PUBLIC_KEY = ctypes.CFUNCTYPE(
     ctypes.c_int, ctypes.POINTER(ctypes.c_byte),
