@@ -51,7 +51,7 @@ def _load_themis():
     for path in _canonical_themis_paths():
         try:
             return cdll.LoadLibrary(path)
-        except: # TODO
+        except OSError:
             continue
 
     warnings.warn("""failed to load the canonical Themis Core library
