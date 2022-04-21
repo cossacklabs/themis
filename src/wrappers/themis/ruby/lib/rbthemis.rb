@@ -32,7 +32,50 @@ end
 
 module ThemisImport
   extend FFI::Library
-  ffi_lib 'themis'
+
+  def self.canonical_themis_paths
+    host_os = RbConfig::CONFIG['host_os']
+    paths = []
+    if host_os.start_with? 'linux'
+      # Default library installation path for "make install"
+      paths.append '/usr/local/lib/libthemis.so.0'
+      # Don't bother figuring out the "right" absolute path, since
+      # that depends on the distro and non-distro-provided Rubies
+      # don't know about the right paths at all. The ones installed
+      # via RVM certainly don't. Use soname and let ld figure it out.
+      paths.append 'libthemis.so.0'
+    end
+    if host_os.start_with? 'darwin'
+      # Default library installation path for "make install"
+      paths.append '/usr/local/lib/libthemis.0.dylib'
+      # These are install names of libraries installed via Homebrew
+      # Add both M1 and Intel paths so that x86 Ruby works on M1
+      paths.append '/opt/homebrew/opt/libthemis/lib/libthemis.0.dylib'
+      paths.append '/usr/local/opt/libthemis/lib/libthemis.0.dylib'
+      # Last try, look for ABI-qualified name
+      paths.append 'libthemis.0.dylib'
+    end
+    return paths
+  end
+
+  def self.load_themis
+    for path in canonical_themis_paths
+      begin
+        return ffi_lib path
+      rescue LoadError
+        next
+      end
+    end
+    warn <<~EOF
+      WARN: failed to load the canonical Themis Core library
+
+      Proceeding to find 'themis' library in standard paths.
+      This might cause ABI mismatch and crash the process.
+    EOF
+    return ffi_lib 'themis'
+  end
+
+  load_themis
 
   callback :get_pub_key_by_id_type,
            [:pointer, :int, :pointer, :int, :pointer], :int

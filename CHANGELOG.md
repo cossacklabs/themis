@@ -15,6 +15,10 @@ _Code:_
   - `pythemis.scomparator` and `pythemis.skeygen` are now imported with `from pythemis import *` ([#914](https://github.com/cossacklabs/themis/pull/914)).
   - Improved compatibility with non-Homebrew Python installations on Apple M1 ([#915](https://github.com/cossacklabs/themis/pull/915)).
 
+- **Ruby**
+
+  - Improved compatibility with non-standard installations on Apple M1 ([#917](https://github.com/cossacklabs/themis/pull/917)).
+
 - **Rust**
 
   - `SecureSessionTransport` implementations are now required to be `Send` ([#898](https://github.com/cossacklabs/themis/pull/898)).
