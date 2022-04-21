@@ -18,13 +18,11 @@
 import six
 import warnings
 
-from ctypes import cdll, c_int, byref, create_string_buffer, string_at
-from ctypes.util import find_library
+from ctypes import c_int, byref, create_string_buffer, string_at
 
+from . import themis
 from .exception import ThemisError
 from .exception import THEMIS_CODES
-
-themis = cdll.LoadLibrary(find_library('themis'))
 
 
 class SecureCellError(ThemisError):

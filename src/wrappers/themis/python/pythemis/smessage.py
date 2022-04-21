@@ -14,13 +14,11 @@
 # limitations under the License.
 #
 import warnings
-from ctypes import cdll, create_string_buffer, c_int, string_at, byref
-from ctypes.util import find_library
+from ctypes import create_string_buffer, c_int, string_at, byref
 from enum import IntEnum
 
+from . import themis
 from .exception import ThemisError, THEMIS_CODES
-
-themis = cdll.LoadLibrary(find_library('themis'))
 
 
 class SMessage(object):
