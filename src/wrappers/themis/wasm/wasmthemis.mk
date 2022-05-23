@@ -39,7 +39,7 @@ $(BIN_PATH)/libthemis.js: LDFLAGS += -s LINKABLE=1
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s ERROR_ON_UNDEFINED_SYMBOLS=0
 $(BIN_PATH)/libthemis.js: LDFLAGS += --pre-js $(WASM_PRE_JS)
 
-$(BIN_PATH)/libthemis.js: CMD = $(CC) -o $@ $(filter %.o %a, $^) $(LDFLAGS)
+$(BIN_PATH)/libthemis.js: CMD = $(CC) -o $@ $(filter %.o %a, $^) -O3 $(LDFLAGS)
 
 $(BIN_PATH)/libthemis.js: $(THEMIS_STATIC) $(WASM_RUNTIME) $(WASM_PRE_JS)
 	@mkdir -p $(@D)
