@@ -30,6 +30,10 @@ _Code:_
   - Node.js v8 is no longer supported ([#901](https://github.com/cossacklabs/themis/pull/901)).
 
 
+## [0.14.6](https://github.com/cossacklabs/themis/releases/tag/0.14.6), May 24th 2022
+
+**Increasing the compiler optimization level for building WasmThemis**
+
 ## [0.14.5](https://github.com/cossacklabs/themis/releases/tag/0.14.5), April 14th 2022
 
 **Typescript compatibility issues in WasmThemis**
