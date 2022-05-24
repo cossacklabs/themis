@@ -6,7 +6,7 @@ Changes that are currently in development and have not been released yet.
 
 ## [0.14.6](https://github.com/cossacklabs/themis/releases/tag/0.14.6), May 24th 2022
 
-**Increasing the compiler optimization level for building WasmThemis**
+**Reduce WasmThemis binary size x3, by increasing the compiler optimization level for WasmThemis build ([919](https://github.com/cossacklabs/themis/pull/919/)).**
 
 ## [0.14.5](https://github.com/cossacklabs/themis/releases/tag/0.14.5), April 14th 2022
 
