@@ -29,6 +29,10 @@ export const {
 
 
 export function keyPair64(typeOfKey: any): Promise<Object> {
+  if (typeOfKey !== KEYTYPE_RSA && typeOfKey !== KEYTYPE_EC) {
+    throw new Error('Invalid key type');
+  }
+
   return new Promise((resolve) => {
     Themis.keyPair(typeOfKey, (pair: any) => {
       const pvtKey64 = Buffer.from(new Uint8Array(pair.private)).toString("base64");
@@ -54,6 +58,13 @@ export function secureCellSealWithSymmetricKeyEncrypt64(
   plaintext: String,
   context: String = ""): Promise<string> {
 
+  if (plaintext === "" || plaintext === undefined || plaintext === null) {
+    throw new Error("Parameter plaintext can not be empty");
+  }
+  if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
+    throw new Error("Parameter symmetricKey64 can not be empty");
+  }
+
   const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
 
   return new Promise((resolve, reject) => {
@@ -69,6 +80,14 @@ export function secureCellSealWithSymmetricKeyDecrypt64(
   symmetricKey64: String,
   encrypted64: String,
   context: String = ""): Promise<string> {
+
+  if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
+    throw new Error("Parameter symmetricKey64 can not be empty");
+  }
+
+  if (encrypted64 === "" || encrypted64 === undefined || encrypted64 === null) {
+    throw new Error("Parameter encrypted64 can not be empty");
+  }
 
   const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
   const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
@@ -87,6 +106,13 @@ export function secureCellSealWithPassphraseEncrypt64(
   plaintext: String,
   context: String = ""): Promise<string> {
 
+  if (passphrase === "" || passphrase === undefined || passphrase === null) {
+    throw new Error("Parameter passphrase can not be empty");
+  }
+  if (plaintext === "" || plaintext === undefined || plaintext === null) {
+    throw new Error("Parameter plaintext can not be empty");
+  }
+
   return new Promise((resolve) => {
     Themis.secureCellSealWithPassphraseEncrypt(passphrase, plaintext, context, (encrypted: any) => {
       resolve(Buffer.from(new Uint8Array(encrypted)).toString("base64"))
@@ -98,6 +124,14 @@ export function secureCellSealWithPassphraseDecrypt64(
   passphrase: String,
   encrypted64: String,
   context: String = ""): Promise<string> {
+
+  if (passphrase === "" || passphrase === undefined || passphrase === null) {
+    throw new Error("Parameter passphrase can not be empty");
+  }
+
+  if (encrypted64 === "" || encrypted64 === undefined || encrypted64 === null) {
+    throw new Error("Parameter encrypted64 can not be empty");
+  }
 
   const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
 
@@ -114,6 +148,13 @@ export function secureCellTokenProtectEncrypt64(
   symmetricKey64: String,
   plaintext: String,
   context: String = ""): Promise<Object> {
+
+  if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
+    throw new Error("Parameter symmetricKey64 can not be empty");
+  }
+  if (plaintext === "" || plaintext === undefined || plaintext === null) {
+    throw new Error("Parameter plaintext can not be empty");
+  }
 
   const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
 
@@ -137,6 +178,16 @@ export function secureCellTokenProtectDecrypt64(
   token64: String,
   context: String = ""): Promise<string> {
 
+  if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
+    throw new Error("Parameter symmetricKey64 can not be empty");
+  }
+  if (encrypted64 === "" || encrypted64 === undefined || encrypted64 === null) {
+    throw new Error("Parameter encrypted64 can not be empty");
+  }
+  if (token64 === "" || token64 === undefined || token64 === null) {
+    throw new Error("Parameter token64 can not be empty");
+  }
+
   const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
   const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
   const token = Array.from(Buffer.from(token64, 'base64'));
@@ -150,11 +201,21 @@ export function secureCellTokenProtectDecrypt64(
   })
 }
 
-// context imprint encrypt and decrypt 
+// context imprint encrypt and decrypt
 export function secureCellContextImprintEncrypt64(
   symmetricKey64: String,
   plaintext: String,
   context: String): Promise<string> {
+
+  if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
+    throw new Error("Parameter symmetricKey64 can not be empty");
+  }
+  if (plaintext === "" || plaintext === undefined || plaintext === null) {
+    throw new Error("Parameter plaintext can not be empty");
+  }
+  if (context === "" || context === undefined || context === null) {
+    throw new Error("Parameter context can not be empty");
+  }
 
   const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
   return new Promise((resolve, reject) => {
@@ -171,6 +232,16 @@ export function secureCellContextImprintDecrypt64(
   encrypted64: String,
   context: String): Promise<string> {
 
+  if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
+    throw new Error("Parameter symmetricKey64 can not be empty");
+  }
+  if (encrypted64 === "" || encrypted64 === undefined || encrypted64 === null) {
+    throw new Error("Parameter encrypted64 can not be empty");
+  }
+  if (context === "" || context === undefined || context === null) {
+    throw new Error("Parameter context can not be empty");
+  }
+
   const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
   const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
 
@@ -183,11 +254,18 @@ export function secureCellContextImprintDecrypt64(
   });
 }
 
-// secure message sign and verify 
+// secure message sign and verify
 export function secureMessageSign64(
   plaintext: String,
   privateKey64: String,
   publicKey64: String): Promise<string> {
+
+  if (plaintext === "" || plaintext === undefined || plaintext === null) {
+    throw new Error("Parameter plaintext can not be empty");
+  }
+  if (privateKey64 === "" || privateKey64 === undefined || privateKey64 === null) {
+    throw new Error("Parameter privateKey64 can not be empty");
+  }
 
   const privateKey = Array.from(Buffer.from(privateKey64, 'base64'));
   const publicKey = publicKey64 !== null && publicKey64 !== "" ?
@@ -207,6 +285,13 @@ export function secureMessageVerify64(
   privateKey64: String,
   publicKey64: String): Promise<string> {
 
+  if (signed64 === "" || signed64 === undefined || signed64 === null) {
+    throw new Error("Parameter signed64 can not be empty");
+  }
+  if (publicKey64 === "" || publicKey64 === undefined || publicKey64 === null) {
+    throw new Error("Parameter publicKey64 can not be empty");
+  }
+
   const signed = Array.from(Buffer.from(signed64, 'base64'));
   const privateKey = privateKey64 !== null && privateKey64 !== "" ?
     Array.from(Buffer.from(privateKey64, 'base64')) : null;
@@ -221,11 +306,22 @@ export function secureMessageVerify64(
   })
 }
 
-// secure message encrypt and decrypt 
+// secure message encrypt and decrypt
 export function secureMessageEncrypt64(
   plaintext: String,
   privateKey64: String,
   publicKey64: String): Promise<string> {
+
+  if (plaintext === "" || plaintext === undefined || plaintext === null) {
+    throw new Error("Parameter plaintext can not be empty");
+  }
+  if (privateKey64 === "" || privateKey64 === undefined || privateKey64 === null) {
+    throw new Error("Parameter privateKey64 can not be empty");
+  }
+  if (publicKey64 === "" || publicKey64 === undefined || publicKey64 === null) {
+    throw new Error("Parameter publicKey64 can not be empty");
+  }
+
 
   const privateKey = Array.from(Buffer.from(privateKey64, 'base64'));
   const publicKey = Array.from(Buffer.from(publicKey64, 'base64'));
@@ -243,6 +339,17 @@ export function secureMessageDecrypt64(
   encrypted64: String,
   privateKey64: String,
   publicKey64: String): Promise<string> {
+
+  if (encrypted64 === "" || encrypted64 === undefined || encrypted64 === null) {
+    throw new Error("Parameter encrypted64 can not be empty");
+  }
+  if (privateKey64 === "" || privateKey64 === undefined || privateKey64 === null) {
+    throw new Error("Parameter privateKey64 can not be empty");
+  }
+  if (publicKey64 === "" || publicKey64 === undefined || publicKey64 === null) {
+    throw new Error("Parameter publicKey64 can not be empty");
+  }
+
 
   const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
   const privateKey = Array.from(Buffer.from(privateKey64, 'base64'));
@@ -263,6 +370,11 @@ export function string64(input: String): String {
 
 /* Returns UUID in string value that corresponds to new comparator */
 export function comparatorInit64(data64: String): Promise<string> {
+
+  if (data64 === "" || data64 === undefined || data64 === null) {
+    throw new Error("Parameter data64 can not be empty");
+  }
+
   const data = Array.from(Buffer.from(data64, 'base64'))
   return new Promise((resolve, reject) => {
     Themis.initComparator(data, (comparator: string) => {
@@ -274,6 +386,11 @@ export function comparatorInit64(data64: String): Promise<string> {
 }
 
 export function comparatorBegin(uuidStr: String): Promise<string> {
+
+  if (uuidStr === "" || uuidStr === undefined || uuidStr === null) {
+    throw new Error("Parameter uuidStr can not be empty");
+  }
+
   return new Promise((resolve, reject) => {
     Themis.beginCompare(uuidStr, (data: any) => {
       resolve(Buffer.from(new Uint8Array(data)).toString("base64"))
@@ -287,6 +404,14 @@ export function comparatorBegin(uuidStr: String): Promise<string> {
 export function comparatorProceed64(
   uuidStr: String,
   data64: String): Promise<Object> {
+
+  if (uuidStr === "" || uuidStr === undefined || uuidStr === null) {
+    throw new Error("Parameter uuidStr can not be empty");
+  }
+  if (data64 === "" || data64 === undefined || data64 === null) {
+    throw new Error("Parameter data64 can not be empty");
+  }
+
 
   const data = Array.from(Buffer.from(data64, 'base64'))
   return new Promise((resolve, reject) => {
