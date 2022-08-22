@@ -7,8 +7,8 @@ Changes that are currently in development and have not been released yet.
 
 ## [0.14.8](https://github.com/cossacklabs/themis/releases/tag/0.14.8), Aug 22th 2022
 
-Rebuild wasm-themis with optimization flag to make package smaller again.
-
+**Rebuild wasm-themis with optimization flag to make package smaller again.
+([938](https://github.com/cossacklabs/themis/pull/938/)).**
 
 ## [0.14.7](https://github.com/cossacklabs/themis/releases/tag/0.14.7), Aug 12th 2022
 
