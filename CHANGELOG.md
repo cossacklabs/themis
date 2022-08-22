@@ -15,20 +15,22 @@ Changes that are currently in development and have not been released yet.
 
 ## [0.14.7](https://github.com/cossacklabs/themis/releases/tag/0.14.7), Aug 12th 2022
 
+### React Native Themis
 
 **Upgrade packages versions for security reasons in React Native Themis package.json
 ([934](https://github.com/cossacklabs/themis/pull/934/)).**
-
-
-**Fix the bug with encryption of large files
-([933](https://github.com/cossacklabs/themis/pull/933/)).**
-
-- Added option to build WASM file.
 
 **Resolve the issue in React Native Themis to support Javascript exceptions
 ([930](https://github.com/cossacklabs/themis/pull/930/))**
 
 - Define additional checks to generate Javascript exceptions in case of empty required parameters.
+
+### WASM Themis
+
+**Fix the bug with encryption of large files
+([933](https://github.com/cossacklabs/themis/pull/933/)).**
+
+- Added option to build WASM file.
 
 
 ## [0.14.6](https://github.com/cossacklabs/themis/releases/tag/0.14.6), May 24th 2022
