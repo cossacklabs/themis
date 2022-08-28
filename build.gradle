@@ -8,7 +8,9 @@ allprojects {
         }
 
         // Set common Kotlin version that we are going to use.
-        ext.kotlin_version = '1.3.72'
+        // Can't use higher versions if we are to maintain API 21 as our minimum.
+        // > Invoke-customs are only supported starting with Android O (--min-api 26)
+        ext.kotlin_version = '1.4.32'
     }
 
     repositories {
