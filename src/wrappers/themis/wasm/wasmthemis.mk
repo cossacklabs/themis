@@ -27,6 +27,7 @@ WASM_PACKAGE = $(BIN_PATH)/wasm-themis.tgz
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME)
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s ALLOW_TABLE_GROWTH
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s MODULARIZE=1
+$(BIN_PATH)/libthemis.js: LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
 # FIXME(ilammy, 2020-11-29): rely in EMSCRIPTEN_KEEPALIVE instead of LINKABLE
 # For some reason existing EMSCRIPTEN_KEEPALIVE macros do not work and without
 # LINKABLE flag wasm-ld ends up stripping *all* Themis functions from "*.wasm"
@@ -38,9 +39,7 @@ $(BIN_PATH)/libthemis.js: LDFLAGS += -s LINKABLE=1
 # does not use are missing the from the binary. Suppress the warnings.
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s ERROR_ON_UNDEFINED_SYMBOLS=0
 $(BIN_PATH)/libthemis.js: LDFLAGS += --pre-js $(WASM_PRE_JS)
-
 $(BIN_PATH)/libthemis.js: CMD = $(CC) -o $@ $(filter %.o %a, $^) -O3 $(LDFLAGS)
-
 $(BIN_PATH)/libthemis.js: $(THEMIS_STATIC) $(WASM_RUNTIME) $(WASM_PRE_JS)
 	@mkdir -p $(@D)
 	@echo -n "link "

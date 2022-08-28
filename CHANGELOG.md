@@ -30,6 +30,35 @@ _Code:_
   - Node.js v8 is no longer supported ([#901](https://github.com/cossacklabs/themis/pull/901)).
 
 
+
+## [0.14.8](https://github.com/cossacklabs/themis/releases/tag/0.14.8), Aug 22th 2022
+
+### WASM Themis
+
+- Rebuild wasm-themis with optimization flag to make package smaller again.
+([938](https://github.com/cossacklabs/themis/pull/938/)).
+
+
+## [0.14.7](https://github.com/cossacklabs/themis/releases/tag/0.14.7), Aug 12th 2022
+
+### React Native Themis
+
+**Upgrade packages versions for security reasons in React Native Themis package.json
+([934](https://github.com/cossacklabs/themis/pull/934/)).**
+
+**Resolve the issue in React Native Themis to support Javascript exceptions
+([930](https://github.com/cossacklabs/themis/pull/930/))**
+
+- Define additional checks to generate Javascript exceptions in case of empty required parameters.
+
+### WASM Themis
+
+**Fix the bug with encryption of large files
+([933](https://github.com/cossacklabs/themis/pull/933/)).**
+
+- Added option to build WASM file.
+
+
 ## [0.14.6](https://github.com/cossacklabs/themis/releases/tag/0.14.6), May 24th 2022
 
 **Reduce WasmThemis binary size x3, by increasing the compiler optimization level for WasmThemis build ([919](https://github.com/cossacklabs/themis/pull/919/)).**
@@ -48,10 +77,10 @@ _Code:_
 
 - Added React Native Themis with Typescript support ([#902], [#903], [#905], [#906]).
 
-  [`react-native-themis`](https://www.npmjs.com/package/react-native-themis) is now available on npm! 🎉 
-  
+  [`react-native-themis`](https://www.npmjs.com/package/react-native-themis) is now available on npm! 🎉
+
       npm install react-native-themis
-  
+
   [Read more about React Native support](https://docs.cossacklabs.com/themis/languages/react-native/).
 
 [#902]: https://github.com/cossacklabs/themis/pull/902
