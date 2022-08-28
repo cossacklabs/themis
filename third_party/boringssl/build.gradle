@@ -5,11 +5,8 @@ buildscript {
     }
 
     dependencies {
-        // Using older version since 3.6.X has issues with NDK versioning:
-        // https://github.com/gradle/gradle/issues/12440
-        // And 3.5.X fails to link ARM binaries correctly, so we're staying
-        // on this Gradle version until it breaks or we *need* an upgrade:
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        // Android Gradle plugin
+        classpath 'com.android.tools.build:gradle:7.2.2'
 
         // Kotlin plugin for Android
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -26,7 +23,8 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    buildToolsVersion "30.0.3"
+    ndkVersion "25.1.8937393"
 
     defaultConfig {
         // BoringSSL requires at least API 21 to target AArch64. Google Play

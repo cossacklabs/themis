@@ -6,6 +6,10 @@ Changes that are currently in development and have not been released yet.
 
 _Code:_
 
+- **Android**
+
+  - AndroidThemis build from source now requires Gradle 7.3, Android SDK 11, Android NDK 25 ([#942](https://github.com/cossacklabs/themis/pull/942)).
+
 - **Node.js**
 
   - Node.js v8 is no longer supported ([#901](https://github.com/cossacklabs/themis/pull/901)).
