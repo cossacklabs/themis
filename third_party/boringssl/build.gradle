@@ -22,16 +22,15 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
     buildToolsVersion "30.0.3"
     ndkVersion "25.1.8937393"
 
+    // BoringSSL requires at least API 21. Google Play as of August 2022 requires
+    // to target at least API 30 (but we can still support lower versions).
     defaultConfig {
-        // BoringSSL requires at least API 21 to target AArch64. Google Play
-        // as of August 2019 requires to target at least API 28 (but we can
-        // still support lower versions).
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 30
         externalNativeBuild {
 		    cmake {
 		        arguments "-DCMAKE_TOOLCHAIN_FILE=" + android.ndkDirectory + "/build/cmake/android.toolchain.cmake",
