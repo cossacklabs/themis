@@ -12,7 +12,6 @@ buildscript {
 }
 
 dependencies {
-    implementation project(":boringssl")
     // Use a compatibility version to support Java 6.
     implementation 'org.jetbrains:annotations-java5:16.0.2'
     // Instrumentation tests
@@ -70,29 +69,6 @@ android {
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
-
-    // TODO(ilammy, 2021-02-21): improve sanity and make this less brittle
-    // This piece of arcane magick ensures that BoringSSL is built before Android stuff.
-    // However, we also need to ensure that BoringSSL artifacts are NOT published
-    // when JavaThemis is published.
-    // There should be a better way to specify build dependencies, right?
-    // Or at least make it a list of depenedencies to add, not to exclude.
-    tasks.whenTaskAdded { task ->
-        def excludeBoringSSL = [
-            'publish',
-            'publishToMavenLocal',
-            'publishProductionPublicationToMavenRepository',
-            'publishProductionPublicationToMavenLocal',
-            'generatePomFileForProductionPublication',
-            'generateSourceJar',
-            'generateJavadoc',
-            'generateJavadocJar',
-            'signProductionPublication',
-        ]
-        if (!excludeBoringSSL.contains(task.name)) {
-            task.dependsOn(':boringssl:' + task.name)
-        }
-    }
 
     externalNativeBuild {
         cmake {
