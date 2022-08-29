@@ -36,6 +36,17 @@ android {
         targetSdkVersion 30
         // Our tests are written in JUnit, set default runner appropriately
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Configure CMake invocation, actual one below
+        externalNativeBuild {
+            cmake {
+                arguments "-DCMAKE_TOOLCHAIN_FILE=" + android.ndkDirectory + "/build/cmake/android.toolchain.cmake",
+                          "-DANDROID_NATIVE_API_LEVEL=21",
+                          "-DCMAKE_BUILD_TYPE=Release",
+                          "-GNinja"
+                targets "themis_jni"
+            }
+        }
     }
 
     // Compile for Java 7.
@@ -84,8 +95,9 @@ android {
     }
 
     externalNativeBuild {
-        ndkBuild {
-            path "../../../../jni/Android.mk"
+        cmake {
+            path "../../../../jni/CMakeLists.txt"
+            version "3.22.1"
         }
     }
 
