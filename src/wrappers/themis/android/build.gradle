@@ -93,9 +93,11 @@ android {
     // Remove them from compiled code to avoid issues.
     // https://github.com/vimeo/vimeo-networking-java/issues/285
     // https://github.com/vimeo/vimeo-networking-java/pull/321
+    // https://stackoverflow.com/a/68901181
     configurations {
         cleanedAnnotations
-        compile.exclude group: 'org.jetbrains' , module:'annotations'
+        implementation.exclude group: 'org.jetbrains', module:'annotations'
+        androidTestImplementation.exclude group: 'org.jetbrains', module:'annotations'
     }
 }
 
