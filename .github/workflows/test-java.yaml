@@ -63,7 +63,7 @@ jobs:
 
   android-tests:
     name: Android emulator
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
       # This particular version of CMake confuses Gradle by not being semver.
       # We're fine with 3.10.2 which is also installed. Keep an eye on the
