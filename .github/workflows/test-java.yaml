@@ -69,6 +69,10 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: true
+      # macos-11 defaults to Java 8, but Gradle requires Java 11.
+      # Do this after sdkmanager usage, because *it* needs Java 8.
+      - name: Use Java 11
+        run: echo "JAVA_HOME=$JAVA_HOME_11_X64" >> "$GITHUB_ENV"
       - name: Build Themis
         # This step tends to randomly hang up. Use a shorter timeout here
         # instead of the default 6-hour one.
