@@ -69,6 +69,13 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: true
+      - name: Install Android SDK
+        run: |
+          ~/Library/Android/sdk/tools/bin/sdkmanager \
+            'build-tools;30.0.3' \
+            'cmake;3.22.1' \
+            'platforms;android-30' \
+            'ndk;25.0.8775105'
       # macos-11 defaults to Java 8, but Gradle requires Java 11.
       # Do this after sdkmanager usage, because *it* needs Java 8.
       - name: Use Java 11
