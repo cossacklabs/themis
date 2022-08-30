@@ -26,7 +26,7 @@ dependencies {
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
-    ndkVersion "25.1.8937393"
+    ndkVersion "25.0.8775105"
 
     // BoringSSL requires at least API 21. Google Play as of August 2022 requires
     // to target at least API 30 (but we can still support lower versions).
