@@ -132,7 +132,7 @@ publishing {
             // so that you don't have sequence them manually. But the official way for
             // doing so seems to be way too braindead:
             // https://developer.android.com/studio/build/maven-publish-plugin
-            artifact("build/outputs/aar/android.aar")
+            artifact("build/outputs/aar/android-release.aar")
             artifact generateSourceJar
             artifact generateJavadocJar
             groupId 'com.cossacklabs.com'
