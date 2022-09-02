@@ -3,11 +3,8 @@ apply plugin: 'kotlin-android'
 
 buildscript {
     dependencies {
-        // Using older version since 3.6.X has issues with NDK versioning:
-        // https://github.com/gradle/gradle/issues/12440
-        // And 3.5.X fails to link ARM binaries correctly, so we're staying
-        // on this Gradle version until it breaks or we *need* an upgrade:
-        classpath 'com.android.tools.build:gradle:3.2.1'
+        // Android Gradle plugin
+        classpath 'com.android.tools.build:gradle:7.2.2'
 
         // Kotlin plugin for Android
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -15,12 +12,11 @@ buildscript {
 }
 
 dependencies {
-    implementation project(":boringssl")
     // Use a compatibility version to support Java 6.
     implementation 'org.jetbrains:annotations-java5:16.0.2'
     // Instrumentation tests
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test:rules:1.4.0'
     // Keep it at 1.2, see tests/themis/wrappers/android/com/cossacklabs/themis/test/Base64.java
     androidTestImplementation 'commons-codec:commons-codec:1.2'
     // Kotlin for instrumentation tests
@@ -28,16 +24,28 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+    ndkVersion "25.0.8775105"
 
-    // BoringSSL requires at least API 21. Google Play as of August 2019 requires
-    // to target at least API 28 (but we can still support lower versions).
+    // BoringSSL requires at least API 21. Google Play as of August 2022 requires
+    // to target at least API 30 (but we can still support lower versions).
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 30
         // Our tests are written in JUnit, set default runner appropriately
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // Configure CMake invocation, actual one below
+        externalNativeBuild {
+            cmake {
+                arguments "-DCMAKE_TOOLCHAIN_FILE=" + android.ndkDirectory + "/build/cmake/android.toolchain.cmake",
+                          "-DANDROID_NATIVE_API_LEVEL=21",
+                          "-DCMAKE_BUILD_TYPE=Release",
+                          "-GNinja"
+                targets "themis_jni"
+            }
+        }
     }
 
     // Compile for Java 7.
@@ -62,32 +70,10 @@ android {
     useLibrary 'android.test.base'
     useLibrary 'android.test.mock'
 
-    // TODO(ilammy, 2021-02-21): improve sanity and make this less brittle
-    // This piece of arcane magick ensures that BoringSSL is built before Android stuff.
-    // However, we also need to ensure that BoringSSL artifacts are NOT published
-    // when JavaThemis is published.
-    // There should be a better way to specify build dependencies, right?
-    // Or at least make it a list of depenedencies to add, not to exclude.
-    tasks.whenTaskAdded { task ->
-        def excludeBoringSSL = [
-            'publish',
-            'publishToMavenLocal',
-            'publishProductionPublicationToMavenRepository',
-            'publishProductionPublicationToMavenLocal',
-            'generatePomFileForProductionPublication',
-            'generateSourceJar',
-            'generateJavadoc',
-            'generateJavadocJar',
-            'signProductionPublication',
-        ]
-        if (!excludeBoringSSL.contains(task.name)) {
-            task.dependsOn(':boringssl:' + task.name)
-        }
-    }
-
     externalNativeBuild {
-        ndkBuild {
-            path "../../../../jni/Android.mk"
+        cmake {
+            path "../../../../jni/CMakeLists.txt"
+            version "3.22.1"
         }
     }
 
@@ -95,9 +81,11 @@ android {
     // Remove them from compiled code to avoid issues.
     // https://github.com/vimeo/vimeo-networking-java/issues/285
     // https://github.com/vimeo/vimeo-networking-java/pull/321
+    // https://stackoverflow.com/a/68901181
     configurations {
         cleanedAnnotations
-        compile.exclude group: 'org.jetbrains' , module:'annotations'
+        implementation.exclude group: 'org.jetbrains', module:'annotations'
+        androidTestImplementation.exclude group: 'org.jetbrains', module:'annotations'
     }
 }
 
@@ -144,7 +132,7 @@ publishing {
             // so that you don't have sequence them manually. But the official way for
             // doing so seems to be way too braindead:
             // https://developer.android.com/studio/build/maven-publish-plugin
-            artifact("build/outputs/aar/android.aar")
+            artifact("build/outputs/aar/android-release.aar")
             artifact generateSourceJar
             artifact generateJavadocJar
             groupId 'com.cossacklabs.com'
