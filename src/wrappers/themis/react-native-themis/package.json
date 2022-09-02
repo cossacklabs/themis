@@ -1,6 +1,6 @@
 {
   "name": "react-native-themis",
-  "version": "0.14.7",
+  "version": "0.14.9",
   "description": "Themis React Native is a convenient cryptographic library for data protection",
   "react-native": "src/index",
   "source": "src/index",
