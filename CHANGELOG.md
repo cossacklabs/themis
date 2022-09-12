@@ -6,10 +6,9 @@ Changes that are currently in development and have not been released yet.
 
 ## [0.14.9](https://github.com/cossacklabs/themis/releases/tag/0.14.9), Sep 12th 2022
 
-### Themis and Swift Package Manager 
+### Hotfix for macOS Themis installed via SPM
 
-- Fix the issues #940 and #941
-([944](https://github.com/cossacklabs/themis/pull/944/)).
+- Fixing the code signing issue for macOS Themis installation via SPM ([#944](https://github.com/cossacklabs/themis/pull/944/)).
 
 
 
