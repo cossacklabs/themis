@@ -4,6 +4,14 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.14.9](https://github.com/cossacklabs/themis/releases/tag/0.14.9), Sep 12th 2022
+
+### Themis and Swift Package Manager 
+
+- Fix the issues #940 and #941
+([944](https://github.com/cossacklabs/themis/pull/944/)).
+
+
 
 ## [0.14.8](https://github.com/cossacklabs/themis/releases/tag/0.14.8), Aug 22th 2022
 
