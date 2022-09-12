@@ -4,6 +4,13 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.14.9](https://github.com/cossacklabs/themis/releases/tag/0.14.9), Sep 12th 2022
+
+### Hotfix for macOS Themis installed via SPM
+
+- Fixing the code signing issue for macOS Themis installation via SPM ([#944](https://github.com/cossacklabs/themis/pull/944/)).
+
+
 
 ## [0.14.8](https://github.com/cossacklabs/themis/releases/tag/0.14.8), Aug 22th 2022
 
