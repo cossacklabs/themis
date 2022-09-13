@@ -245,7 +245,7 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ThemisTest/Pods-ThemisTest-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/themis/themis.framework",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/openssl/openssl.framework/openssl",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/CLOpenSSL-XCF/openssl.framework/openssl",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
