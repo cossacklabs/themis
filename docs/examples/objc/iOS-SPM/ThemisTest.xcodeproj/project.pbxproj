@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D0749F228D10B6A00EAF77F /* themis in Frameworks */ = {isa = PBXBuildFile; productRef = 1D0749F128D10B6A00EAF77F /* themis */; };
 		6D93CFF9263C294600ED53C4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D93CFF8263C294600ED53C4 /* AppDelegate.m */; };
 		6D93CFFC263C294600ED53C4 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D93CFFB263C294600ED53C4 /* SceneDelegate.m */; };
 		6D93CFFF263C294600ED53C4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D93CFFE263C294600ED53C4 /* ViewController.m */; };
@@ -14,7 +15,6 @@
 		6D93D004263C294900ED53C4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D93D003263C294900ED53C4 /* Assets.xcassets */; };
 		6D93D007263C294900ED53C4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D93D005263C294900ED53C4 /* LaunchScreen.storyboard */; };
 		6D93D00A263C294900ED53C4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D93D009263C294900ED53C4 /* main.m */; };
-		6DC890F2263C29EF003DA2AB /* themis in Frameworks */ = {isa = PBXBuildFile; productRef = 6DC890F1263C29EF003DA2AB /* themis */; };
 		6DC890FA263C2AF6003DA2AB /* server.priv in Resources */ = {isa = PBXBuildFile; fileRef = 6DC890F6263C2AF6003DA2AB /* server.priv */; };
 		6DC890FB263C2AF6003DA2AB /* client.pub in Resources */ = {isa = PBXBuildFile; fileRef = 6DC890F7263C2AF6003DA2AB /* client.pub */; };
 		6DC890FC263C2AF6003DA2AB /* server.pub in Resources */ = {isa = PBXBuildFile; fileRef = 6DC890F8263C2AF6003DA2AB /* server.pub */; };
@@ -45,7 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6DC890F2263C29EF003DA2AB /* themis in Frameworks */,
+				1D0749F228D10B6A00EAF77F /* themis in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,7 +115,7 @@
 			);
 			name = ThemisTest;
 			packageProductDependencies = (
-				6DC890F1263C29EF003DA2AB /* themis */,
+				1D0749F128D10B6A00EAF77F /* themis */,
 			);
 			productName = ThemisTest;
 			productReference = 6D93CFF4263C294600ED53C4 /* ThemisTest.app */;
@@ -144,7 +144,7 @@
 			);
 			mainGroup = 6D93CFEB263C294600ED53C4;
 			packageReferences = (
-				6DC890F0263C29EF003DA2AB /* XCRemoteSwiftPackageReference "themis" */,
+				1D0749F028D10B6A00EAF77F /* XCRemoteSwiftPackageReference "themis" */,
 			);
 			productRefGroup = 6D93CFF5263C294600ED53C4 /* Products */;
 			projectDirPath = "";
@@ -324,6 +324,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				CURRENT_PROJECT_VERSION = 2021122301;
 				INFOPLIST_FILE = ThemisTest/Info.plist;
@@ -331,6 +332,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis.spm2.ThemisTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -344,6 +346,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				CURRENT_PROJECT_VERSION = 2021122301;
 				INFOPLIST_FILE = ThemisTest/Info.plist;
@@ -351,6 +354,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis.spm2.ThemisTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -382,20 +386,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6DC890F0263C29EF003DA2AB /* XCRemoteSwiftPackageReference "themis" */ = {
+		1D0749F028D10B6A00EAF77F /* XCRemoteSwiftPackageReference "themis" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/cossacklabs/themis";
 			requirement = {
 				kind = exactVersion;
-				version = 0.14.0;
+				version = 0.14.9;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6DC890F1263C29EF003DA2AB /* themis */ = {
+		1D0749F128D10B6A00EAF77F /* themis */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6DC890F0263C29EF003DA2AB /* XCRemoteSwiftPackageReference "themis" */;
+			package = 1D0749F028D10B6A00EAF77F /* XCRemoteSwiftPackageReference "themis" */;
 			productName = themis;
 		};
 /* End XCSwiftPackageProductDependency section */

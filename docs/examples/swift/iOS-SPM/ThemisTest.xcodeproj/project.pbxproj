@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1DEB1C2428D0B13A00663915 /* themis in Frameworks */ = {isa = PBXBuildFile; productRef = 1DEB1C2328D0B13A00663915 /* themis */; };
 		6D445264263C2D1600871215 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D445263263C2D1600871215 /* AppDelegate.swift */; };
 		6D445266263C2D1600871215 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D445265263C2D1600871215 /* SceneDelegate.swift */; };
 		6D445268263C2D1600871215 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D445267263C2D1600871215 /* ViewController.swift */; };
 		6D44526B263C2D1600871215 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D445269263C2D1600871215 /* Main.storyboard */; };
 		6D44526D263C2D1800871215 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6D44526C263C2D1800871215 /* Assets.xcassets */; };
 		6D445270263C2D1800871215 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D44526E263C2D1800871215 /* LaunchScreen.storyboard */; };
-		6D44527A263C2D5600871215 /* themis in Frameworks */ = {isa = PBXBuildFile; productRef = 6D445279263C2D5600871215 /* themis */; };
 		6D445281263C2D6100871215 /* server.priv in Resources */ = {isa = PBXBuildFile; fileRef = 6D44527D263C2D6100871215 /* server.priv */; };
 		6D445282263C2D6100871215 /* client.pub in Resources */ = {isa = PBXBuildFile; fileRef = 6D44527E263C2D6100871215 /* client.pub */; };
 		6D445283263C2D6100871215 /* server.pub in Resources */ = {isa = PBXBuildFile; fileRef = 6D44527F263C2D6100871215 /* server.pub */; };
@@ -40,7 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6D44527A263C2D5600871215 /* themis in Frameworks */,
+				1DEB1C2428D0B13A00663915 /* themis in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,7 +106,7 @@
 			);
 			name = ThemisTest;
 			packageProductDependencies = (
-				6D445279263C2D5600871215 /* themis */,
+				1DEB1C2328D0B13A00663915 /* themis */,
 			);
 			productName = ThemisTest;
 			productReference = 6D445260263C2D1600871215 /* ThemisTest.app */;
@@ -136,7 +136,7 @@
 			);
 			mainGroup = 6D445257263C2D1600871215;
 			packageReferences = (
-				6D445278263C2D5600871215 /* XCRemoteSwiftPackageReference "themis" */,
+				1DEB1C2228D0B13A00663915 /* XCRemoteSwiftPackageReference "themis" */,
 			);
 			productRefGroup = 6D445261263C2D1600871215 /* Products */;
 			projectDirPath = "";
@@ -326,6 +326,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis.spm1.swift.ThemisTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -346,6 +347,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis.spm1.swift.ThemisTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -377,20 +379,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		6D445278263C2D5600871215 /* XCRemoteSwiftPackageReference "themis" */ = {
+		1DEB1C2228D0B13A00663915 /* XCRemoteSwiftPackageReference "themis" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/cossacklabs/themis";
 			requirement = {
 				kind = exactVersion;
-				version = 0.14.0;
+				version = 0.14.9;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6D445279263C2D5600871215 /* themis */ = {
+		1DEB1C2328D0B13A00663915 /* themis */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 6D445278263C2D5600871215 /* XCRemoteSwiftPackageReference "themis" */;
+			package = 1DEB1C2228D0B13A00663915 /* XCRemoteSwiftPackageReference "themis" */;
 			productName = themis;
 		};
 /* End XCSwiftPackageProductDependency section */
