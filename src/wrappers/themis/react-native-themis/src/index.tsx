@@ -28,6 +28,16 @@ export const {
     KEYTYPE_EC } = Themis.getConstants()
 
 
+
+export function isBase64(str: String): boolean {
+    const regex64 = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
+    return regex64.test(str as string);
+}
+
+export function string64(input: String): String {
+    return Buffer.from(input).toString('base64')
+}
+
 export function keyPair64(typeOfKey: any): Promise<Object> {
     if (typeOfKey !== KEYTYPE_RSA && typeOfKey !== KEYTYPE_EC) {
         throw new Error('Invalid key type');
@@ -64,6 +74,9 @@ export function secureCellSealWithSymmetricKeyEncrypt64(
     if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
         throw new Error("Parameter symmetricKey64 can not be empty");
     }
+    if (!isBase64(symmetricKey64)) {
+        throw new Error("Parameter symmetricKey64 is not base64 encoded");
+    }
 
     const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
 
@@ -87,6 +100,13 @@ export function secureCellSealWithSymmetricKeyDecrypt64(
 
     if (encrypted64 === "" || encrypted64 === undefined || encrypted64 === null) {
         throw new Error("Parameter encrypted64 can not be empty");
+    }
+
+    if (!isBase64(symmetricKey64)) {
+        throw new Error("Parameter symmetricKey64 is not base64 encoded");
+    }
+    if (!isBase64(encrypted64)) {
+        throw new Error("Parameter encrypted64 is not base64 encoded");
     }
 
     const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
@@ -128,9 +148,11 @@ export function secureCellSealWithPassphraseDecrypt64(
     if (passphrase === "" || passphrase === undefined || passphrase === null) {
         throw new Error("Parameter passphrase can not be empty");
     }
-
     if (encrypted64 === "" || encrypted64 === undefined || encrypted64 === null) {
         throw new Error("Parameter encrypted64 can not be empty");
+    }
+    if (!isBase64(encrypted64)) {
+        throw new Error("Parameter encrypted64 is not base64 encoded");
     }
 
     const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
@@ -154,6 +176,9 @@ export function secureCellTokenProtectEncrypt64(
     }
     if (plaintext === "" || plaintext === undefined || plaintext === null) {
         throw new Error("Parameter plaintext can not be empty");
+    }
+    if (!isBase64(symmetricKey64)) {
+        throw new Error("Parameter symmetricKey64 is not base64 encoded");
     }
 
     const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
@@ -188,6 +213,16 @@ export function secureCellTokenProtectDecrypt64(
         throw new Error("Parameter token64 can not be empty");
     }
 
+    if (!isBase64(symmetricKey64)) {
+        throw new Error("Parameter symmetricKey64 is not base64 encoded");
+    }
+    if (!isBase64(encrypted64)) {
+        throw new Error("Parameter encrypted64 is not base64 encoded");
+    }
+    if (!isBase64(token64)) {
+        throw new Error("Parameter token64 is not base64 encoded");
+    }
+
     const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
     const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
     const token = Array.from(Buffer.from(token64, 'base64'));
@@ -216,6 +251,9 @@ export function secureCellContextImprintEncrypt64(
     if (context === "" || context === undefined || context === null) {
         throw new Error("Parameter context can not be empty");
     }
+    if (!isBase64(symmetricKey64)) {
+        throw new Error("Parameter symmetricKey64 is not base64 encoded");
+    }
 
     const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
     return new Promise((resolve, reject) => {
@@ -241,6 +279,13 @@ export function secureCellContextImprintDecrypt64(
     if (context === "" || context === undefined || context === null) {
         throw new Error("Parameter context can not be empty");
     }
+    if (!isBase64(symmetricKey64)) {
+        throw new Error("Parameter symmetricKey64 is not base64 encoded");
+    }
+    if (!isBase64(encrypted64)) {
+        throw new Error("Parameter encrypted64 is not base64 encoded");
+    }
+
 
     const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
     const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
@@ -266,6 +311,12 @@ export function secureMessageSign64(
     if (privateKey64 === "" || privateKey64 === undefined || privateKey64 === null) {
         throw new Error("Parameter privateKey64 can not be empty");
     }
+    if (!isBase64(privateKey64)) {
+        throw new Error("Parameter privateKey64 is not base64 encoded");
+    }
+    if (publicKey64 && !isBase64(publicKey64)) {
+        throw new Error("Optional parameter publicKey64 is not base64 encoded");
+    }
 
     const privateKey = Array.from(Buffer.from(privateKey64, 'base64'));
     const publicKey = publicKey64 !== null && publicKey64 !== "" ?
@@ -290,6 +341,15 @@ export function secureMessageVerify64(
     }
     if (publicKey64 === "" || publicKey64 === undefined || publicKey64 === null) {
         throw new Error("Parameter publicKey64 can not be empty");
+    }
+    if (!isBase64(signed64)) {
+        throw new Error("Parameter signed64 is not base64 encoded");
+    }
+    if (!isBase64(publicKey64)) {
+        throw new Error("Parameter publicKey64 is not base64 encoded");
+    }
+    if (privateKey64 && !isBase64(privateKey64)) {
+        throw new Error("Optional parameter privateKey64 is not base64 encoded");
     }
 
     const signed = Array.from(Buffer.from(signed64, 'base64'));
@@ -321,7 +381,12 @@ export function secureMessageEncrypt64(
     if (publicKey64 === "" || publicKey64 === undefined || publicKey64 === null) {
         throw new Error("Parameter publicKey64 can not be empty");
     }
-
+    if (!isBase64(privateKey64)) {
+        throw new Error("Parameter privateKey64 is not base64 encoded");
+    }
+    if (!isBase64(publicKey64)) {
+        throw new Error("Parameter publicKey64 is not base64 encoded");
+    }
 
     const privateKey = Array.from(Buffer.from(privateKey64, 'base64'));
     const publicKey = Array.from(Buffer.from(publicKey64, 'base64'));
@@ -349,7 +414,15 @@ export function secureMessageDecrypt64(
     if (publicKey64 === "" || publicKey64 === undefined || publicKey64 === null) {
         throw new Error("Parameter publicKey64 can not be empty");
     }
-
+    if (!isBase64(encrypted64)) {
+        throw new Error("Parameter encrypted64 is not base64 encoded");
+    }
+    if (!isBase64(privateKey64)) {
+        throw new Error("Parameter privateKey64 is not base64 encoded");
+    }
+    if (!isBase64(publicKey64)) {
+        throw new Error("Parameter publicKey64 is not base64 encoded");
+    }
 
     const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
     const privateKey = Array.from(Buffer.from(privateKey64, 'base64'));
@@ -364,15 +437,15 @@ export function secureMessageDecrypt64(
     })
 }
 
-export function string64(input: String): String {
-    return Buffer.from(input).toString('base64')
-}
 
 /* Returns UUID in string value that corresponds to new comparator */
 export function comparatorInit64(data64: String): Promise<string> {
 
     if (data64 === "" || data64 === undefined || data64 === null) {
         throw new Error("Parameter data64 can not be empty");
+    }
+    if (!isBase64(data64)) {
+        throw new Error("Parameter data64 is not base64 encoded");
     }
 
     const data = Array.from(Buffer.from(data64, 'base64'))
@@ -411,7 +484,9 @@ export function comparatorProceed64(
     if (data64 === "" || data64 === undefined || data64 === null) {
         throw new Error("Parameter data64 can not be empty");
     }
-
+    if (!isBase64(data64)) {
+        throw new Error("Parameter data64 is not base64 encoded");
+    }
 
     const data = Array.from(Buffer.from(data64, 'base64'))
     return new Promise((resolve, reject) => {
