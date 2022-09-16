@@ -265,7 +265,9 @@ RCT_EXPORT_METHOD(secureCellSealWithSymmetricKeyDecrypt:(NSArray*) symmetricKey
 RCT_EXPORT_METHOD(secureCellSealWithPassphraseEncrypt:(NSString*) passphrase
                   plaintext: (NSString*)plaintext
                   context: (NSString*)context
-                  callback: (RCTResponseSenderBlock)callback)
+                  successCallback: (RCTResponseSenderBlock)successCallback
+                  errorCallback: (RCTResponseErrorBlock)errorCallback
+                  )
 {
 
     TSCellSeal *cell  = [self newSealModeWithPassphrase:passphrase];
@@ -279,7 +281,7 @@ RCT_EXPORT_METHOD(secureCellSealWithPassphraseEncrypt:(NSString*) passphrase
         errorCallback(error);
     } else {
         NSArray *result = [RCTThemis dataSerialize:encrypted];
-        callback(@[result]);
+        successCallback(@[result]);
     }
 }
 
@@ -499,7 +501,7 @@ RCT_EXPORT_METHOD(secureCellContextImprintDecrypt:(NSArray*) symmetricKey
     
     if (error != nil) {
         errorCallback(error);
-        return
+        return;
     }
     
     NSArray* result = [RCTThemis dataSerialize:decrypted];

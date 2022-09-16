@@ -94,9 +94,11 @@ export function secureCellSealWithPassphraseEncrypt64(passphrase, plaintext, con
     if (plaintext === "" || plaintext === undefined || plaintext === null) {
         throw new Error("Parameter plaintext can not be empty");
     }
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         Themis.secureCellSealWithPassphraseEncrypt(passphrase, plaintext, context, (encrypted) => {
             resolve(Buffer.from(new Uint8Array(encrypted)).toString("base64"));
+        }, (error) => {
+            reject(error);
         });
     });
 }
