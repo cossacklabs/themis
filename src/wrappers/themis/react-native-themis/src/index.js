@@ -19,7 +19,7 @@ export function isBase64(str) {
 export function string64(input) {
     return Buffer.from(input).toString('base64');
 }
-export function keyPair64(typeOfKey) {
+export function keyPair64(typeOfKey = KEYTYPE_EC) {
     if (typeOfKey !== KEYTYPE_RSA && typeOfKey !== KEYTYPE_EC) {
         throw new Error('Invalid key type');
     }
@@ -226,7 +226,7 @@ export function secureCellContextImprintDecrypt64(symmetricKey64, encrypted64, c
     });
 }
 // secure message sign and verify
-export function secureMessageSign64(plaintext, privateKey64, publicKey64) {
+export function secureMessageSign64(plaintext, privateKey64, publicKey64 = "") {
     if (plaintext === "" || plaintext === undefined || plaintext === null) {
         throw new Error("Parameter plaintext can not be empty");
     }
@@ -236,12 +236,14 @@ export function secureMessageSign64(plaintext, privateKey64, publicKey64) {
     if (!isBase64(privateKey64)) {
         throw new Error("Parameter privateKey64 is not base64 encoded");
     }
+    const privateKey = Array.from(Buffer.from(privateKey64, 'base64'));
+    if (publicKey64 === undefined || publicKey64 === null) {
+        publicKey64 = "";
+    }
     if (publicKey64 && !isBase64(publicKey64)) {
         throw new Error("Optional parameter publicKey64 is not base64 encoded");
     }
-    const privateKey = Array.from(Buffer.from(privateKey64, 'base64'));
-    const publicKey = publicKey64 !== null && publicKey64 !== "" ?
-        Array.from(Buffer.from(publicKey64, 'base64')) : null;
+    const publicKey = publicKey64 === "" ? null : Array.from(Buffer.from(publicKey64, 'base64'));
     return new Promise((resolve, reject) => {
         Themis.secureMessageSign(plaintext, privateKey, publicKey, (signed) => {
             resolve(Buffer.from(new Uint8Array(signed)).toString("base64"));
@@ -250,7 +252,7 @@ export function secureMessageSign64(plaintext, privateKey64, publicKey64) {
         });
     });
 }
-export function secureMessageVerify64(signed64, privateKey64, publicKey64) {
+export function secureMessageVerify64(signed64, privateKey64 = "", publicKey64) {
     if (signed64 === "" || signed64 === undefined || signed64 === null) {
         throw new Error("Parameter signed64 can not be empty");
     }
@@ -263,13 +265,15 @@ export function secureMessageVerify64(signed64, privateKey64, publicKey64) {
     if (!isBase64(publicKey64)) {
         throw new Error("Parameter publicKey64 is not base64 encoded");
     }
+    const publicKey = Array.from(Buffer.from(publicKey64, 'base64'));
+    if (privateKey64 === undefined || privateKey64 === null) {
+        privateKey64 = "";
+    }
     if (privateKey64 && !isBase64(privateKey64)) {
         throw new Error("Optional parameter privateKey64 is not base64 encoded");
     }
+    const privateKey = privateKey64 === "" ? null : Array.from(Buffer.from(privateKey64, 'base64'));
     const signed = Array.from(Buffer.from(signed64, 'base64'));
-    const privateKey = privateKey64 !== null && privateKey64 !== "" ?
-        Array.from(Buffer.from(privateKey64, 'base64')) : null;
-    const publicKey = Array.from(Buffer.from(publicKey64, 'base64'));
     return new Promise((resolve, reject) => {
         Themis.secureMessageVerify(signed, privateKey, publicKey, (verified) => {
             resolve(Buffer.from(new Uint8Array(verified)).toString());
