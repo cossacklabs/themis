@@ -527,7 +527,9 @@ RCT_EXPORT_METHOD(secureMessageSign:(NSString*) message
     NSData* pubKey;
     @try {
         pvtKey = [RCTThemis dataDeserialize:privateKey];
-        pubKey = [RCTThemis dataDeserialize:publicKey];
+        if (publicKey != nil) {
+            pubKey = [RCTThemis dataDeserialize:publicKey];
+        }
     }
     @catch (NSException *e) {
         NSNumber* errorCode = e.userInfo[@"errorCode"]; // Exception possible from deserialize
@@ -571,7 +573,9 @@ RCT_EXPORT_METHOD(secureMessageVerify:(NSArray*) message
     NSData* msg;
 
     @try {
-        pvtKey = [RCTThemis dataDeserialize:privateKey];
+        if (privateKey != nil) {
+            pvtKey = [RCTThemis dataDeserialize:privateKey];
+        }
         pubKey = [RCTThemis dataDeserialize:publicKey];
         msg =    [RCTThemis dataDeserialize:message];
     }
