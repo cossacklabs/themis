@@ -71,7 +71,7 @@ NSMutableDictionary* cmprs;
 {
     if ( data == nil || data.count == 0 ) {
         NSException *exception = [NSException
-                                  exceptionWithName:@"DeserializationError"
+                                  exceptionWithName:@"DeserializationError: empty input data"
                                   reason:@DESERIALIZE_ERRORREASON
                                   userInfo:@{@"errorCode": @DESERIALIZE_ERROR}
         ];
@@ -178,7 +178,7 @@ RCT_EXPORT_METHOD(secureCellSealWithSymmetricKeyEncrypt:(NSArray*) symmetricKey
         errorCallback(error);
         return;
     }
-    
+
     if (cell == nil) {
         // It is possible for few reasons
         NSError* error = SCERROR(CELL_SEAL_NIL_ERROR, @CELL_SEAL_RETURNED_NIL);
@@ -214,21 +214,21 @@ RCT_EXPORT_METHOD(secureCellSealWithSymmetricKeyDecrypt:(NSArray*) symmetricKey
     @try {
         cell = [self newSealMode:symmetricKey];
     }
-    
+
     @catch (NSException *e) {
         NSNumber* errorCode = e.userInfo[@"errorCode"]; // Exception possible from deserialize
         NSError* error = SCERROR([errorCode intValue], e.reason);
         errorCallback(error);
         return;
     }
-    
+
     if (cell == nil) {
         // It is possible for few reasons
         NSError* error = SCERROR(CELL_SEAL_NIL_ERROR, @CELL_SEAL_RETURNED_NIL);
         errorCallback(error);
         return;
     }
-    
+
     @try {
         enc  = [RCTThemis dataDeserialize:encrypted];
     }
@@ -273,10 +273,10 @@ RCT_EXPORT_METHOD(secureCellSealWithPassphraseEncrypt:(NSString*) passphrase
     TSCellSeal *cell  = [self newSealModeWithPassphrase:passphrase];
     NSData *txt  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
     NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
-    
+
     NSError *error;
     NSData *encrypted = [cell encrypt:txt context:ctx error:&error];
-    
+
     if (error != nil) {
         errorCallback(error);
     } else {
@@ -295,7 +295,7 @@ RCT_EXPORT_METHOD(secureCellSealWithPassphraseDecrypt:(NSString*) passphrase
 {
     TSCellSeal *cell  = [self newSealModeWithPassphrase:passphrase];
     NSData *enc;
-    
+
     @try {
         enc  = [RCTThemis dataDeserialize:encrypted];
     }
@@ -305,7 +305,7 @@ RCT_EXPORT_METHOD(secureCellSealWithPassphraseDecrypt:(NSString*) passphrase
         errorCallback(error);
         return;
     }
-    
+
     NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
 
     NSError *error;
@@ -355,7 +355,7 @@ RCT_EXPORT_METHOD(secureCellTokenProtectEncrypt:(NSArray*) symmetricKey
     NSData *txt  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
     NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
     NSError *error;
-    
+
     TSCellTokenEncryptedResult *result = [cell encrypt:txt context:ctx error:&error];
     if (error != nil ) {
         errorCallback(error);
@@ -454,7 +454,7 @@ RCT_EXPORT_METHOD(secureCellContextImprintEncrypt:(NSArray*) symmetricKey
     NSData *txt  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
     NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
     NSError *error;
-    
+
     NSData *encrypted = [cell encrypt:txt context:ctx error:&error];
     if (error != nil) {
         errorCallback(error);
@@ -493,17 +493,17 @@ RCT_EXPORT_METHOD(secureCellContextImprintDecrypt:(NSArray*) symmetricKey
 
     NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
     NSError *error;
-    
+
     NSData *decrypted = [cell decrypt:enc
                               context:ctx
                                 error:&error
     ];
-    
+
     if (error != nil) {
         errorCallback(error);
         return;
     }
-    
+
     NSArray* result = [RCTThemis dataSerialize:decrypted];
     successCallback(@[result]);
 }
@@ -590,7 +590,7 @@ RCT_EXPORT_METHOD(secureMessageVerify:(NSArray*) message
                                                                        peerPublicKey:pubKey];
 
     NSError *error;
-    
+
     NSData *verifiedMessage = [secureMessage unwrapData:msg error:&error];
     if (error) {
         errorCallback(error);
@@ -720,7 +720,7 @@ RCT_EXPORT_METHOD(initComparator:(NSArray*) sharedSecret
         errorCallback(error);
         return;
     }
-    
+
     TSComparator* cmp = [[TSComparator alloc] initWithMessageToCompare:sharedSecretData];
     NSString *uuid = [[NSUUID UUID] UUIDString];
     cmprs[uuid] = cmp;
@@ -764,15 +764,18 @@ RCT_EXPORT_METHOD(beginCompare:(NSString*) uuid
     }
 }
 
+
 RCT_EXPORT_METHOD(proceedCompare:(NSString*) uuid
                   previous:(NSArray*) previous
                   successCallback:(RCTResponseSenderBlock) successCallback
                   errorCallback:(RCTResponseErrorBlock) errorCallback
                   )
 {
+
     TSComparator* cmp = cmprs[uuid];
     if ( cmp == nil ) {
-        errorCallback(nil);
+        NSError* error = SCERROR(-1, @"Comparator does not exist");
+        errorCallback(error);
         return;
     }
 
@@ -798,9 +801,14 @@ RCT_EXPORT_METHOD(proceedCompare:(NSString*) uuid
         if (cmp.status != TSComparatorNotReady) {
             [cmprs removeObjectForKey:uuid];
         }
-        successCallback(@[result, status]);
+        if (result != nil) {
+            successCallback(@[result, status]);
+        } else {
+            successCallback(@[@"", status]);
+        }
     }
 }
+
 
 @end
 
