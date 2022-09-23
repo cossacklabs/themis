@@ -72,7 +72,7 @@ export async function testBase64_4(key) {
     }
     const component = <View key={ key }>
         <Text style={ styles.title }>Base64 decode test 4</Text>
-        <Text style={ styles.resolved }>Test failed: value is not base64 encoded</Text>
+        <Text style={ styles.resolved }>Test passed: value is not base64 encoded</Text>
     </View>;
     return Promise.resolve(component);
 }
@@ -97,19 +97,19 @@ export async function testBase64_5(key) {
 }
 
 export async function testBase64_6(key) {
-    const b64value = "UkVDMgAAAC2nkbvHAOx8Dy+f4wnJcetfpa1979hRg/VRIfoN2CoLsBhJZ7X"; // EC private key in base64 + '33==
+    const b64value = "UkVDMgAAAC2nkbvHAOx8Dy+f4wnJcetfpa1979hRg/VRIfoN2CoLsBhJZ7X";
     const result = regex.test(b64value);
     if (result) {
         const value = Buffer.from(b64value, "base64").toString("hex");
         const component = <View key={ key }>
             <Text style={ styles.title }>Base64 decode test 6</Text>
-            <Text style={ styles.rejected }>Test passed with result: { value }</Text>
+            <Text style={ styles.rejected }>Test failed with result: { value }</Text>
         </View>;
         return Promise.reject(component);
     }
     const component = <View key={ key }>
         <Text style={ styles.title }>Base64 decode test 6</Text>
-        <Text style={ styles.resolved }>Test failed: value is not base64 encoded</Text>
+        <Text style={ styles.resolved }>Test passed: value is not base64 encoded</Text>
     </View>;
     return Promise.resolve(component);
 }
