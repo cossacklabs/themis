@@ -237,7 +237,7 @@ const App: () => Node = () => {
     const lorem64 = string64(lorem);
 
     async function proceedCompare(data64: String, serverID: String, clientID: String): Promise<Number> {
-      console.log("Before server part of comparator");
+      console.log("Before server part of comparator", serverID, data64);
       const serverResult = await comparatorProceed64(serverID, data64);
       console.log("Server proceeded with result:", serverResult);
       console.log("Before client part of comparator", clientID, serverResult.data64);
