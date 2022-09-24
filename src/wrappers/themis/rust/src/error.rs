@@ -249,7 +249,7 @@ impl PartialEq<ErrorKind> for &ErrorKind {
 
 fn error_kinds_equal(lhs: &ErrorKind, rhs: &ErrorKind) -> bool {
     match (lhs, rhs) {
-        (ErrorKind::UnknownError(lhs), ErrorKind::UnknownError(rhs)) => (lhs == rhs),
+        (ErrorKind::UnknownError(lhs), ErrorKind::UnknownError(rhs)) => lhs == rhs,
         (ErrorKind::Success, ErrorKind::Success) => true,
 
         (ErrorKind::Fail, ErrorKind::Fail) => true,
