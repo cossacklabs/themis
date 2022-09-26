@@ -91,8 +91,8 @@ NSMutableDictionary* cmprs;
 
     for (NSInteger i = 0; i < data.count; i++) {
         NSNumber *num = data[i];
-        const unsigned char c = num.unsignedCharValue;
-        if (c < 0 || c > 255) {
+        /* Check int value before casting to char */
+        if (num.intValue < 0 || num.intValue > 255) {
             NSException *e = [NSException
                                 exceptionWithName:@"ByteOverflowException"
                                 reason:@BYTEOVERFLOWREASON
@@ -100,7 +100,7 @@ NSMutableDictionary* cmprs;
             ];
             @throw e;
         }
-        buffer[i] = c;
+        buffer[i] = num.unsignedCharValue;
     }
     NSData *result = [NSData dataWithBytesNoCopy:buffer length:data.count freeWhenDone:YES];
     return result;
