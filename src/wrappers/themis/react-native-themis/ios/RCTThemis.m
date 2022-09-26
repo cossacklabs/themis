@@ -88,7 +88,6 @@ NSMutableDictionary* cmprs;
         ];
         @throw exception;
     }
-
     NSNumber *uchar_min = [NSNumber numberWithInt:0];
     NSNumber *uchar_max = [NSNumber numberWithInt:255];
 
@@ -558,7 +557,6 @@ RCT_EXPORT_METHOD(secureMessageSign:(NSString*) message
 }
 
 RCT_EXPORT_METHOD(secureMessageVerify:(NSArray*) message
-                  privateKey:(NSArray*) privateKey
                   publicKey:(NSArray*) publicKey
                   successCallback:(RCTResponseSenderBlock)successCallback
                   errorCallback:(RCTResponseErrorBlock)errorCallback
@@ -571,14 +569,10 @@ RCT_EXPORT_METHOD(secureMessageVerify:(NSArray*) message
         return;
     }
 
-    NSData* pvtKey;
     NSData* pubKey;
     NSData* msg;
 
     @try {
-        if (privateKey != nil) {
-            pvtKey = [RCTThemis dataDeserialize:privateKey];
-        }
         pubKey = [RCTThemis dataDeserialize:publicKey];
         msg =    [RCTThemis dataDeserialize:message];
     }
@@ -589,7 +583,7 @@ RCT_EXPORT_METHOD(secureMessageVerify:(NSArray*) message
         return;
     }
 
-    TSMessage *secureMessage = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:pvtKey
+    TSMessage *secureMessage = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:nil
                                                                        peerPublicKey:pubKey];
 
     NSError *error;

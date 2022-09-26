@@ -1,5 +1,7 @@
 package com.reactnativethemis;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.cossacklabs.themis.AsymmetricKey;
@@ -388,7 +390,6 @@ public class ThemisModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void secureMessageVerify(ReadableArray message,
-                                    ReadableArray privateKey,
                                     ReadableArray publicKey,
                                          Callback successCallback,
                                          Callback errorCallback) {
@@ -404,14 +405,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
             byte[] bkey = dataDeserialize(publicKey);
             PublicKey pubKey = new PublicKey(bkey);
             byte[] msg = dataDeserialize(message);
-            SecureMessage secureMessage;
-            if (privateKey == null || privateKey.size() == 0) {
-                secureMessage = new SecureMessage(pubKey);
-            } else {
-                bkey = dataDeserialize(privateKey);
-                PrivateKey pvtKey = new PrivateKey(bkey);
-                secureMessage = new SecureMessage(pvtKey, pubKey);
-            }
+            SecureMessage secureMessage = new SecureMessage(pubKey);
             byte[] verifiedMessage = secureMessage.verify(msg, pubKey);
             WritableArray response = dataSerialize(verifiedMessage);
             successCallback.invoke(response);

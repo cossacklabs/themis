@@ -338,7 +338,6 @@ export function secureMessageSign64(
 
 export function secureMessageVerify64(
     signed64: String,
-    privateKey64: String = "",
     publicKey64: String): Promise<string> {
 
     if (signed64 === "" || signed64 === undefined || signed64 === null) {
@@ -354,19 +353,10 @@ export function secureMessageVerify64(
         throw new Error("Parameter publicKey64 is not base64 encoded");
     }
     const publicKey = Array.from(Buffer.from(publicKey64, 'base64'));
-
-    if (privateKey64 === undefined || privateKey64 === null) {
-        privateKey64 = "";
-    }
-    if (privateKey64 && !isBase64(privateKey64)) {
-        throw new Error("Optional parameter privateKey64 is not base64 encoded");
-    }
-    const privateKey = privateKey64 === "" ? null : Array.from(Buffer.from(privateKey64, 'base64'));
-
     const signed = Array.from(Buffer.from(signed64, 'base64'));
 
     return new Promise((resolve, reject) => {
-        Themis.secureMessageVerify(signed, privateKey, publicKey, (verified: any) => {
+        Themis.secureMessageVerify(signed, publicKey, (verified: any) => {
             resolve(Buffer.from(new Uint8Array(verified)).toString())
         }, (error: any) => {
             reject(error)
