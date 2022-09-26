@@ -304,8 +304,7 @@ export function secureCellContextImprintDecrypt64(
 // secure message sign and verify
 export function secureMessageSign64(
     plaintext: String,
-    privateKey64: String,
-    publicKey64: String = ""): Promise<string> {
+    privateKey64: String): Promise<string> {
 
     if (plaintext === "" || plaintext === undefined || plaintext === null) {
         throw new Error("Parameter plaintext can not be empty");
@@ -319,16 +318,8 @@ export function secureMessageSign64(
 
     const privateKey = Array.from(Buffer.from(privateKey64, 'base64'));
 
-    if (publicKey64 === undefined || publicKey64 === null) {
-        publicKey64 = "";
-    }
-    if (publicKey64 && !isBase64(publicKey64)) {
-        throw new Error("Optional parameter publicKey64 is not base64 encoded");
-    }
-    const publicKey = publicKey64 === "" ? null : Array.from(Buffer.from(publicKey64, 'base64'));
-
     return new Promise((resolve, reject) => {
-        Themis.secureMessageSign(plaintext, privateKey, publicKey, (signed: any) => {
+        Themis.secureMessageSign(plaintext, privateKey, (signed: any) => {
             resolve(Buffer.from(new Uint8Array(signed)).toString("base64"))
         }, (error: any) => {
             reject(error)

@@ -355,7 +355,6 @@ public class ThemisModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void secureMessageSign(String message,
                            ReadableArray privateKey,
-                           ReadableArray publicKey,
                                 Callback successCallback,
                                 Callback errorCallback) {
 
@@ -370,14 +369,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
             byte[] bkey = dataDeserialize(privateKey);
             PrivateKey pvtKey = new PrivateKey(bkey);
             byte[] msg = message.getBytes(StandardCharsets.UTF_8);
-            SecureMessage secureMessage;
-            if (publicKey == null) {
-                secureMessage = new SecureMessage(pvtKey);
-            } else {
-                bkey = dataDeserialize(publicKey);
-                PublicKey pubKey = new PublicKey(bkey);
-                secureMessage = new SecureMessage(pvtKey, pubKey);
-            }
+            SecureMessage secureMessage = new SecureMessage(pvtKey);
             byte[] signedMessage = secureMessage.sign(msg);
             WritableArray response = dataSerialize(signedMessage);
             successCallback.invoke(response);

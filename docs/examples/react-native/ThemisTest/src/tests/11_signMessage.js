@@ -9,7 +9,7 @@ export async function testSignMessage(key) {
         const privateKey64 = keys.private64;
         const publicKey64 = keys.public64;
         const message = "Hello, Themis!";
-        const signed = await secureMessageSign64(message, privateKey64, publicKey64);
+        const signed = await secureMessageSign64(message, privateKey64);
         const component = <View key={ key }>
             <Text style={ styles.title }>secureMessageSign64</Text>
             <Text style={ styles.text }>Wait for signed message</Text>
@@ -55,7 +55,7 @@ export async function testSignMessageWithoutPublicKey(key) {
 export async function testSignMessageWithoutPrivateKey(key) {
     try {
         const message = "Hello, Themis!";
-        const signed = await secureMessageSign64(message, undefined, undefined);
+        const signed = await secureMessageSign64(message, undefined);
         const component = <View key={ key }>
             <Text style={ styles.title }>secureMessageSign64 without private key</Text>
             <Text style={ styles.text }>Wait for error</Text>

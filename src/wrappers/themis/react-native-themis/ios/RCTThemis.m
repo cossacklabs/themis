@@ -513,7 +513,6 @@ RCT_EXPORT_METHOD(secureCellContextImprintDecrypt:(NSArray*) symmetricKey
 /* MARK: Secure Message */
 RCT_EXPORT_METHOD(secureMessageSign:(NSString*) message
                   privateKey:(NSArray*) privateKey
-                  publicKey:(NSArray*) publicKey
                   successCallback:(RCTResponseSenderBlock)successCallback
                   errorCallback:(RCTResponseErrorBlock) errorCallback
                   )
@@ -526,12 +525,8 @@ RCT_EXPORT_METHOD(secureMessageSign:(NSString*) message
     }
 
     NSData* pvtKey;
-    NSData* pubKey;
     @try {
         pvtKey = [RCTThemis dataDeserialize:privateKey];
-        if (publicKey != nil) {
-            pubKey = [RCTThemis dataDeserialize:publicKey];
-        }
     }
     @catch (NSException *e) {
         NSNumber* errorCode = e.userInfo[@"errorCode"]; // Exception possible from deserialize
@@ -543,7 +538,7 @@ RCT_EXPORT_METHOD(secureMessageSign:(NSString*) message
     NSData* msg = [message dataUsingEncoding:NSUTF8StringEncoding];
 
     TSMessage *secureMessage = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:pvtKey
-                                                                       peerPublicKey:pubKey];
+                                                                       peerPublicKey:nil];
 
     NSError *error;
     NSData *signedMessage = [secureMessage wrapData:msg error:&error];

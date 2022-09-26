@@ -9,9 +9,12 @@ Changes that are currently in development and have not been released yet.
 ### Hotfix for react-native-themis
 
 - Redesigned the code to make it less vulnerable to native exceptions
+- Removed unused public key from secureMessageSign64(message, privateKey) function
+- Removed unused private key from secureMessageVerify64(message, publicKey) function
 - Updated and moved to different directory previous react-native-example
 - Written the 'app of 70 tests of react-native-themis' and well tested it on debug, release, and TestFlight modes.
 - Fixed found issues after running the app
+
 
 ([#951](https://github.com/cossacklabs/themis/pull/951
 ))
