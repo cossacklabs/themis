@@ -104,7 +104,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
         }
         byte[] data = new byte[serializedData.size()];
         for (int i = 0; i < serializedData.size(); i++) {
-            if (serializedData.getInt(i) >= -128 && serializedData.getInt(i) <= 255) {
+            if (serializedData.getInt(i) >= 0 && serializedData.getInt(i) <= 255) {
                 byte j = (byte) serializedData.getInt(i);
                 data[i] = j;
             } else {
@@ -164,9 +164,9 @@ public class ThemisModule extends ReactContextBaseJavaModule {
         try {
             byte[] key = dataDeserialize(symmetricKey);
             SecureCell.Seal cell = SecureCell.SealWithKey(key);
-            byte[] txt = plaintext.getBytes(StandardCharsets.UTF_8);
-            byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-            byte[] encrypted = cell.encrypt(txt, ctx);
+            byte[] plaintextBinary = plaintext.getBytes(StandardCharsets.UTF_8);
+            byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+            byte[] encrypted = cell.encrypt(plaintextBinary, contextBinary);
             WritableArray response = dataSerialize(encrypted);
             successCallback.invoke(response);
         } catch (Exception e) {
@@ -188,8 +188,8 @@ public class ThemisModule extends ReactContextBaseJavaModule {
             byte[] key = dataDeserialize(symmetricKey);
             SecureCell.Seal cell = SecureCell.SealWithKey(key);
             byte[] enc = dataDeserialize(encrypted);
-            byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-            byte[] decrypted = cell.decrypt(enc, ctx);
+            byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+            byte[] decrypted = cell.decrypt(enc, contextBinary);
             WritableArray response = dataSerialize(decrypted);
             successCallback.invoke(response);
         } catch (Exception e) {
@@ -208,9 +208,9 @@ public class ThemisModule extends ReactContextBaseJavaModule {
 
         try {
             SecureCell.Seal cell = SecureCell.SealWithPassphrase(passphrase);
-            byte[] txt = plaintext.getBytes(StandardCharsets.UTF_8);
-            byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-            byte[] encrypted = cell.encrypt(txt, ctx);
+            byte[] plaintextBinary = plaintext.getBytes(StandardCharsets.UTF_8);
+            byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+            byte[] encrypted = cell.encrypt(plaintextBinary, contextBinary);
             WritableArray response = dataSerialize(encrypted);
             successCallback.invoke(response);
         } catch (Exception e) {
@@ -230,8 +230,8 @@ public class ThemisModule extends ReactContextBaseJavaModule {
         try {
             SecureCell.Seal cell = SecureCell.SealWithPassphrase(passphrase);
             byte[] enc = dataDeserialize(encrypted);
-            byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-            byte[] decrypted = cell.decrypt(enc, ctx);
+            byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+            byte[] decrypted = cell.decrypt(enc, contextBinary);
             WritableArray response = dataSerialize(decrypted);
             successCallback.invoke(response);
         } catch (Exception e) {
@@ -251,9 +251,9 @@ public class ThemisModule extends ReactContextBaseJavaModule {
         try {
             byte[] bkey = dataDeserialize(symmetricKey);
             SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(bkey);
-            byte[] txt = plaintext.getBytes(StandardCharsets.UTF_8);
-            byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-            SecureCellData result = cell.encrypt(txt, ctx);
+            byte[] plaintextBinary = plaintext.getBytes(StandardCharsets.UTF_8);
+            byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+            SecureCellData result = cell.encrypt(plaintextBinary, contextBinary);
             byte[] encrypted = result.getProtectedData();
             byte[] authToken = result.getAdditionalData();
             WritableMap response = new WritableNativeMap();
@@ -279,8 +279,8 @@ public class ThemisModule extends ReactContextBaseJavaModule {
             byte[] enc = dataDeserialize(encrypted);
             byte[] tkn = dataDeserialize(token);
             SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(bkey);
-            byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-            byte[] decrypted = cell.decrypt(enc, tkn, ctx);
+            byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+            byte[] decrypted = cell.decrypt(enc, tkn, contextBinary);
             WritableArray response = dataSerialize(decrypted);
             successCallback.invoke(response);
         } catch (Exception e) {
@@ -307,9 +307,9 @@ public class ThemisModule extends ReactContextBaseJavaModule {
         try {
             byte[] bkey = dataDeserialize(symmetricKey);
             SecureCell.ContextImprint cell = SecureCell.ContextImprintWithKey(bkey);
-            byte[] txt = plaintext.getBytes(StandardCharsets.UTF_8);
-            byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-            byte[] encrypted = cell.encrypt(txt, ctx);
+            byte[] plaintextBinary = plaintext.getBytes(StandardCharsets.UTF_8);
+            byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+            byte[] encrypted = cell.encrypt(plaintextBinary, contextBinary);
             WritableArray response = dataSerialize(encrypted);
             successCallback.invoke(response);
         } catch (Exception e) {
@@ -338,8 +338,8 @@ public class ThemisModule extends ReactContextBaseJavaModule {
             byte[] bkey = dataDeserialize(symmetricKey);
             byte[] enc = dataDeserialize(encrypted);
             SecureCell.ContextImprint cell = SecureCell.ContextImprintWithKey(bkey);
-            byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-            byte[] decrypted = cell.decrypt(enc, ctx);
+            byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+            byte[] decrypted = cell.decrypt(enc, contextBinary);
             WritableArray response = dataSerialize(decrypted);
             successCallback.invoke(response);
         } catch (Exception e) {

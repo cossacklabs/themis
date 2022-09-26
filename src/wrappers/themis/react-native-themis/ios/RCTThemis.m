@@ -89,10 +89,13 @@ NSMutableDictionary* cmprs;
         @throw exception;
     }
 
+    NSNumber *uchar_min = [NSNumber numberWithInt:0];
+    NSNumber *uchar_max = [NSNumber numberWithInt:255];
+
     for (NSInteger i = 0; i < data.count; i++) {
         NSNumber *num = data[i];
         /* Check int value before casting to char */
-        if (num.intValue < 0 || num.intValue > 255) {
+        if ([num compare:uchar_min] == NSOrderedAscending || [num compare:uchar_max] == NSOrderedDescending) {
             NSException *e = [NSException
                                 exceptionWithName:@"ByteOverflowException"
                                 reason:@BYTEOVERFLOWREASON
@@ -186,11 +189,11 @@ RCT_EXPORT_METHOD(secureCellSealWithSymmetricKeyEncrypt:(NSArray*) symmetricKey
         return;
     }
 
-    NSData *txt  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *plaintextBinary  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
     NSError *error;
-    NSData  *encrypted = [cell  encrypt:txt
-                                context:ctx
+    NSData  *encrypted = [cell  encrypt:plaintextBinary
+                                context:contextBinary
                                   error:&error];
     if (error != nil) {
         errorCallback(error);
@@ -239,11 +242,11 @@ RCT_EXPORT_METHOD(secureCellSealWithSymmetricKeyDecrypt:(NSArray*) symmetricKey
         return;
     }
 
-    NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
 
     NSError *error;
     NSData  *decrypted = [cell decrypt:enc
-                               context:ctx
+                               context:contextBinary
                                  error:&error];
     if (error != nil) {
         errorCallback(error);
@@ -271,11 +274,11 @@ RCT_EXPORT_METHOD(secureCellSealWithPassphraseEncrypt:(NSString*) passphrase
 {
 
     TSCellSeal *cell  = [self newSealModeWithPassphrase:passphrase];
-    NSData *txt  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *plaintextBinary  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
 
     NSError *error;
-    NSData *encrypted = [cell encrypt:txt context:ctx error:&error];
+    NSData *encrypted = [cell encrypt:plaintextBinary context:contextBinary error:&error];
 
     if (error != nil) {
         errorCallback(error);
@@ -306,11 +309,11 @@ RCT_EXPORT_METHOD(secureCellSealWithPassphraseDecrypt:(NSString*) passphrase
         return;
     }
 
-    NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
 
     NSError *error;
     NSData  *decrypted = [cell decrypt:enc
-                             context:ctx
+                             context:contextBinary
                                error:&error];
     if (error != nil) {
         errorCallback(error);
@@ -352,11 +355,11 @@ RCT_EXPORT_METHOD(secureCellTokenProtectEncrypt:(NSArray*) symmetricKey
         return;
     }
 
-    NSData *txt  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *plaintextBinary  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
     NSError *error;
 
-    TSCellTokenEncryptedResult *result = [cell encrypt:txt context:ctx error:&error];
+    TSCellTokenEncryptedResult *result = [cell encrypt:plaintextBinary context:contextBinary error:&error];
     if (error != nil ) {
         errorCallback(error);
         return;
@@ -397,12 +400,12 @@ RCT_EXPORT_METHOD(secureCellTokenProtectDecrypt:(NSArray*) symmetricKey
         return;
     }
 
-    NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
 
     NSError *error;
     NSData  *decrypted = [cell decrypt:enc
                                  token:tkn
-                               context:ctx
+                               context:contextBinary
                                  error:&error];
     if (error) {
         errorCallback(error);
@@ -451,11 +454,11 @@ RCT_EXPORT_METHOD(secureCellContextImprintEncrypt:(NSArray*) symmetricKey
         return;
     }
 
-    NSData *txt  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *plaintextBinary  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
     NSError *error;
 
-    NSData *encrypted = [cell encrypt:txt context:ctx error:&error];
+    NSData *encrypted = [cell encrypt:plaintextBinary context:contextBinary error:&error];
     if (error != nil) {
         errorCallback(error);
         return;
@@ -491,11 +494,11 @@ RCT_EXPORT_METHOD(secureCellContextImprintDecrypt:(NSArray*) symmetricKey
         return;
     }
 
-    NSData *ctx  = [context dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
     NSError *error;
 
     NSData *decrypted = [cell decrypt:enc
-                              context:ctx
+                              context:contextBinary
                                 error:&error
     ];
 
