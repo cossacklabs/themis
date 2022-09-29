@@ -38,6 +38,19 @@ export function string64(input: String): String {
     return Buffer.from(input).toString('base64')
 }
 
+const convertInputBase64 = (param: String, name: String, base64: Boolean): any => {
+    if (param === "" || param === undefined || param === null) {
+        throw new Error(`Parameter ${name} can not be empty`);
+    }
+    if (base64) {
+        if (!isBase64(param)) {
+            throw new Error(`Parameter ${name} is not base64 encoded`);
+        }
+        return Array.from(Buffer.from(param, 'base64')); // return Uint8Array from base64
+    }
+    return param;
+}
+
 export function keyPair64(typeOfKey: any = KEYTYPE_EC): Promise<Object> {
     if (typeOfKey !== KEYTYPE_RSA && typeOfKey !== KEYTYPE_EC) {
         throw new Error('Invalid key type');
@@ -68,17 +81,8 @@ export function secureCellSealWithSymmetricKeyEncrypt64(
     plaintext: String,
     context: String = ""): Promise<string> {
 
-    if (plaintext === "" || plaintext === undefined || plaintext === null) {
-        throw new Error("Parameter plaintext can not be empty");
-    }
-    if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
-        throw new Error("Parameter symmetricKey64 can not be empty");
-    }
-    if (!isBase64(symmetricKey64)) {
-        throw new Error("Parameter symmetricKey64 is not base64 encoded");
-    }
-
-    const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
+    convertInputBase64(plaintext, "plaintext", false); // check plaintext is not empty
+    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64", true); // check symmetricKey64 is not empty and base64 encoded
 
     return new Promise((resolve, reject) => {
         Themis.secureCellSealWithSymmetricKeyEncrypt(symmetricKey, plaintext, context, (encrypted: any) => {
@@ -94,23 +98,8 @@ export function secureCellSealWithSymmetricKeyDecrypt64(
     encrypted64: String,
     context: String = ""): Promise<string> {
 
-    if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
-        throw new Error("Parameter symmetricKey64 can not be empty");
-    }
-
-    if (encrypted64 === "" || encrypted64 === undefined || encrypted64 === null) {
-        throw new Error("Parameter encrypted64 can not be empty");
-    }
-
-    if (!isBase64(symmetricKey64)) {
-        throw new Error("Parameter symmetricKey64 is not base64 encoded");
-    }
-    if (!isBase64(encrypted64)) {
-        throw new Error("Parameter encrypted64 is not base64 encoded");
-    }
-
-    const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
-    const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
+    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64", true);
+    const encrypted = convertInputBase64(encrypted64, "encrypted64", true);
 
     return new Promise((resolve, reject) => {
         Themis.secureCellSealWithSymmetricKeyDecrypt(symmetricKey, encrypted, context, (decrypted: any) => {
@@ -126,12 +115,8 @@ export function secureCellSealWithPassphraseEncrypt64(
     plaintext: String,
     context: String = ""): Promise<string> {
 
-    if (passphrase === "" || passphrase === undefined || passphrase === null) {
-        throw new Error("Parameter passphrase can not be empty");
-    }
-    if (plaintext === "" || plaintext === undefined || plaintext === null) {
-        throw new Error("Parameter plaintext can not be empty");
-    }
+    convertInputBase64(plaintext, "plaintext", false);
+    convertInputBase64(passphrase, "passphrase", false);
 
     return new Promise((resolve, reject) => {
         Themis.secureCellSealWithPassphraseEncrypt(passphrase, plaintext, context, (encrypted: any) => {
@@ -147,17 +132,8 @@ export function secureCellSealWithPassphraseDecrypt64(
     encrypted64: String,
     context: String = ""): Promise<string> {
 
-    if (passphrase === "" || passphrase === undefined || passphrase === null) {
-        throw new Error("Parameter passphrase can not be empty");
-    }
-    if (encrypted64 === "" || encrypted64 === undefined || encrypted64 === null) {
-        throw new Error("Parameter encrypted64 can not be empty");
-    }
-    if (!isBase64(encrypted64)) {
-        throw new Error("Parameter encrypted64 is not base64 encoded");
-    }
-
-    const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
+    convertInputBase64(passphrase, "passphrase", false);
+    const encrypted = convertInputBase64(encrypted64, "encrypted64", true);
 
     return new Promise((resolve, reject) => {
         Themis.secureCellSealWithPassphraseDecrypt(passphrase, encrypted, context, (decrypted: any) => {
@@ -173,17 +149,8 @@ export function secureCellTokenProtectEncrypt64(
     plaintext: String,
     context: String = ""): Promise<Object> {
 
-    if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
-        throw new Error("Parameter symmetricKey64 can not be empty");
-    }
-    if (plaintext === "" || plaintext === undefined || plaintext === null) {
-        throw new Error("Parameter plaintext can not be empty");
-    }
-    if (!isBase64(symmetricKey64)) {
-        throw new Error("Parameter symmetricKey64 is not base64 encoded");
-    }
-
-    const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
+    convertInputBase64(plaintext, "plaintext", false);
+    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64", true);
 
     return new Promise((resolve, reject) => {
         Themis.secureCellTokenProtectEncrypt(symmetricKey, plaintext, context, (encrypted: any) => {
@@ -205,29 +172,9 @@ export function secureCellTokenProtectDecrypt64(
     token64: String,
     context: String = ""): Promise<string> {
 
-    if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
-        throw new Error("Parameter symmetricKey64 can not be empty");
-    }
-    if (encrypted64 === "" || encrypted64 === undefined || encrypted64 === null) {
-        throw new Error("Parameter encrypted64 can not be empty");
-    }
-    if (token64 === "" || token64 === undefined || token64 === null) {
-        throw new Error("Parameter token64 can not be empty");
-    }
-
-    if (!isBase64(symmetricKey64)) {
-        throw new Error("Parameter symmetricKey64 is not base64 encoded");
-    }
-    if (!isBase64(encrypted64)) {
-        throw new Error("Parameter encrypted64 is not base64 encoded");
-    }
-    if (!isBase64(token64)) {
-        throw new Error("Parameter token64 is not base64 encoded");
-    }
-
-    const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
-    const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
-    const token = Array.from(Buffer.from(token64, 'base64'));
+    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64", true);
+    const encrypted = convertInputBase64(encrypted64, "encrypted64", true);
+    const token = convertInputBase64(token64, "token64", true);
 
     return new Promise((resolve, reject) => {
         Themis.secureCellTokenProtectDecrypt(symmetricKey, encrypted, token, context, (decrypted: any) => {
@@ -244,20 +191,10 @@ export function secureCellContextImprintEncrypt64(
     plaintext: String,
     context: String): Promise<string> {
 
-    if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
-        throw new Error("Parameter symmetricKey64 can not be empty");
-    }
-    if (plaintext === "" || plaintext === undefined || plaintext === null) {
-        throw new Error("Parameter plaintext can not be empty");
-    }
-    if (context === "" || context === undefined || context === null) {
-        throw new Error("Parameter context can not be empty");
-    }
-    if (!isBase64(symmetricKey64)) {
-        throw new Error("Parameter symmetricKey64 is not base64 encoded");
-    }
+    convertInputBase64(plaintext, "plaintext", false);
+    convertInputBase64(context, "context", false);
+    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64", true);
 
-    const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
     return new Promise((resolve, reject) => {
         Themis.secureCellContextImprintEncrypt(symmetricKey, plaintext, context, (encrypted: any) => {
             resolve(Buffer.from(new Uint8Array(encrypted)).toString("base64"))
@@ -272,25 +209,9 @@ export function secureCellContextImprintDecrypt64(
     encrypted64: String,
     context: String): Promise<string> {
 
-    if (symmetricKey64 === "" || symmetricKey64 === undefined || symmetricKey64 === null) {
-        throw new Error("Parameter symmetricKey64 can not be empty");
-    }
-    if (encrypted64 === "" || encrypted64 === undefined || encrypted64 === null) {
-        throw new Error("Parameter encrypted64 can not be empty");
-    }
-    if (context === "" || context === undefined || context === null) {
-        throw new Error("Parameter context can not be empty");
-    }
-    if (!isBase64(symmetricKey64)) {
-        throw new Error("Parameter symmetricKey64 is not base64 encoded");
-    }
-    if (!isBase64(encrypted64)) {
-        throw new Error("Parameter encrypted64 is not base64 encoded");
-    }
-
-
-    const symmetricKey = Array.from(Buffer.from(symmetricKey64, 'base64'));
-    const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
+    convertInputBase64(context, "context", false);
+    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64", true);
+    const encrypted = convertInputBase64(encrypted64, "encrypted64", true);
 
     return new Promise((resolve, reject) => {
         Themis.secureCellContextImprintDecrypt(symmetricKey, encrypted, context, (decrypted: any) => {
@@ -306,17 +227,8 @@ export function secureMessageSign64(
     plaintext: String,
     privateKey64: String): Promise<string> {
 
-    if (plaintext === "" || plaintext === undefined || plaintext === null) {
-        throw new Error("Parameter plaintext can not be empty");
-    }
-    if (privateKey64 === "" || privateKey64 === undefined || privateKey64 === null) {
-        throw new Error("Parameter privateKey64 can not be empty");
-    }
-    if (!isBase64(privateKey64)) {
-        throw new Error("Parameter privateKey64 is not base64 encoded");
-    }
-
-    const privateKey = Array.from(Buffer.from(privateKey64, 'base64'));
+    convertInputBase64(plaintext, "plaintext", false);
+    const privateKey = convertInputBase64(privateKey64, "privateKey64", true);
 
     return new Promise((resolve, reject) => {
         Themis.secureMessageSign(plaintext, privateKey, (signed: any) => {
@@ -329,22 +241,11 @@ export function secureMessageSign64(
 
 export function secureMessageVerify64(
     signed64: String,
+    _privateKey64: String = "",
     publicKey64: String): Promise<string> {
 
-    if (signed64 === "" || signed64 === undefined || signed64 === null) {
-        throw new Error("Parameter signed64 can not be empty");
-    }
-    if (publicKey64 === "" || publicKey64 === undefined || publicKey64 === null) {
-        throw new Error("Parameter publicKey64 can not be empty");
-    }
-    if (!isBase64(signed64)) {
-        throw new Error("Parameter signed64 is not base64 encoded");
-    }
-    if (!isBase64(publicKey64)) {
-        throw new Error("Parameter publicKey64 is not base64 encoded");
-    }
-    const publicKey = Array.from(Buffer.from(publicKey64, 'base64'));
-    const signed = Array.from(Buffer.from(signed64, 'base64'));
+    const signed = convertInputBase64(signed64, "signed64", true);
+    const publicKey = convertInputBase64(publicKey64, "publicKey64", true);
 
     return new Promise((resolve, reject) => {
         Themis.secureMessageVerify(signed, publicKey, (verified: any) => {
@@ -361,24 +262,9 @@ export function secureMessageEncrypt64(
     privateKey64: String,
     publicKey64: String): Promise<string> {
 
-    if (plaintext === "" || plaintext === undefined || plaintext === null) {
-        throw new Error("Parameter plaintext can not be empty");
-    }
-    if (privateKey64 === "" || privateKey64 === undefined || privateKey64 === null) {
-        throw new Error("Parameter privateKey64 can not be empty");
-    }
-    if (publicKey64 === "" || publicKey64 === undefined || publicKey64 === null) {
-        throw new Error("Parameter publicKey64 can not be empty");
-    }
-    if (!isBase64(privateKey64)) {
-        throw new Error("Parameter privateKey64 is not base64 encoded");
-    }
-    if (!isBase64(publicKey64)) {
-        throw new Error("Parameter publicKey64 is not base64 encoded");
-    }
-
-    const privateKey = Array.from(Buffer.from(privateKey64, 'base64'));
-    const publicKey = Array.from(Buffer.from(publicKey64, 'base64'));
+    convertInputBase64(plaintext, "plaintext", false);
+    const privateKey = convertInputBase64(privateKey64, "privateKey64", true);
+    const publicKey = convertInputBase64(publicKey64, "publicKey64", true);
 
     return new Promise((resolve, reject) => {
         Themis.secureMessageEncrypt(plaintext, privateKey, publicKey, (encrypted: any) => {
@@ -394,28 +280,9 @@ export function secureMessageDecrypt64(
     privateKey64: String,
     publicKey64: String): Promise<string> {
 
-    if (encrypted64 === "" || encrypted64 === undefined || encrypted64 === null) {
-        throw new Error("Parameter encrypted64 can not be empty");
-    }
-    if (privateKey64 === "" || privateKey64 === undefined || privateKey64 === null) {
-        throw new Error("Parameter privateKey64 can not be empty");
-    }
-    if (publicKey64 === "" || publicKey64 === undefined || publicKey64 === null) {
-        throw new Error("Parameter publicKey64 can not be empty");
-    }
-    if (!isBase64(encrypted64)) {
-        throw new Error("Parameter encrypted64 is not base64 encoded");
-    }
-    if (!isBase64(privateKey64)) {
-        throw new Error("Parameter privateKey64 is not base64 encoded");
-    }
-    if (!isBase64(publicKey64)) {
-        throw new Error("Parameter publicKey64 is not base64 encoded");
-    }
-
-    const encrypted = Array.from(Buffer.from(encrypted64, 'base64'));
-    const privateKey = Array.from(Buffer.from(privateKey64, 'base64'));
-    const publicKey = Array.from(Buffer.from(publicKey64, 'base64'));
+    const encrypted = convertInputBase64(encrypted64, "encrypted64", true);
+    const privateKey = convertInputBase64(privateKey64, "privateKey64", true);
+    const publicKey = convertInputBase64(publicKey64, "publicKey64", true);
 
     return new Promise((resolve, reject) => {
         Themis.secureMessageDecrypt(encrypted, privateKey, publicKey, (decrypted: any) => {
@@ -430,14 +297,8 @@ export function secureMessageDecrypt64(
 /* Returns UUID in string value that corresponds to new comparator */
 export function comparatorInit64(data64: String): Promise<string> {
 
-    if (data64 === "" || data64 === undefined || data64 === null) {
-        throw new Error("Parameter data64 can not be empty");
-    }
-    if (!isBase64(data64)) {
-        throw new Error("Parameter data64 is not base64 encoded");
-    }
+    const data = convertInputBase64(data64, "data64", true);
 
-    const data = Array.from(Buffer.from(data64, 'base64'))
     return new Promise((resolve, reject) => {
         Themis.initComparator(data, (comparator: string) => {
             resolve(comparator)
@@ -448,10 +309,7 @@ export function comparatorInit64(data64: String): Promise<string> {
 }
 
 export function comparatorBegin(uuidStr: String): Promise<string> {
-
-    if (uuidStr === "" || uuidStr === undefined || uuidStr === null) {
-        throw new Error("Parameter uuidStr can not be empty");
-    }
+    convertInputBase64(uuidStr, "uuidStr", false);
 
     return new Promise((resolve, reject) => {
         Themis.beginCompare(uuidStr, (data: any) => {
@@ -467,17 +325,9 @@ export function comparatorProceed64(
     uuidStr: String,
     data64: String): Promise<Object> {
 
-    if (uuidStr === "" || uuidStr === undefined || uuidStr === null) {
-        throw new Error("Parameter uuidStr can not be empty");
-    }
-    if (data64 === "" || data64 === undefined || data64 === null) {
-        throw new Error("Parameter data64 can not be empty");
-    }
-    if (!isBase64(data64)) {
-        throw new Error("Parameter data64 is not base64 encoded");
-    }
+    convertInputBase64(uuidStr, "uuidStr", false);
+    const data = convertInputBase64(data64, "data64", true);
 
-    const data = Array.from(Buffer.from(data64, 'base64'))
     return new Promise((resolve, reject) => {
         Themis.proceedCompare(uuidStr, data, (nextData: any, status: Number) => {
             const nextdata64 = Buffer.from(new Uint8Array(nextData)).toString("base64")

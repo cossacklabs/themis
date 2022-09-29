@@ -8,7 +8,7 @@ export async function testVerifyMessage(key) {
         const privateKey64 = "UkVDMgAAAC36wNC7AAyZVdHhdB6ODitCszw7xZQy0FoPRLrNwXJ9KyIy6i1g";
         const publicKey64 = "VUVDMgAAAC1wW3YTAsPE7kDJjwDXIBdXZwddni/PqwGk15BNDKuXJw2iHDoR";
         const signed64 = "ICYEJg4AAABHAAAASGVsbG8sIFRoZW1pcyEwRQIgR/brzPiPPQRM2OxqJu+QlCLUATWhzCcUp50qsuARissCIQD0zrHKcZNn8Ao88JQsCmES2eoDZ8wisyjfg1DrrDeT3A==";
-        const verified = await secureMessageVerify64(signed64, publicKey64);
+        const verified = await secureMessageVerify64(signed64, "", publicKey64);
         const component = <View key={ key }>
             <Text style={ styles.title }>secureMessageVerify64</Text>
             <Text style={ styles.text }>Wait for verified message</Text>
@@ -31,7 +31,7 @@ export async function testVerifyMessageWithoutPrivateKey(key) {
     try {
         const publicKey64 = "VUVDMgAAAC1wW3YTAsPE7kDJjwDXIBdXZwddni/PqwGk15BNDKuXJw2iHDoR";
         const signed64 = "ICYEJg4AAABHAAAASGVsbG8sIFRoZW1pcyEwRQIgR/brzPiPPQRM2OxqJu+QlCLUATWhzCcUp50qsuARissCIQD0zrHKcZNn8Ao88JQsCmES2eoDZ8wisyjfg1DrrDeT3A==";
-        const verified = await secureMessageVerify64(signed64, publicKey64);
+        const verified = await secureMessageVerify64(signed64, "", publicKey64);
         const component = <View key={ key }>
             <Text style={ styles.title }>secureMessageVerify64</Text>
             <Text style={ styles.text }>Wait for verified message without private key</Text>
@@ -54,7 +54,7 @@ export async function testVerifyMessageWithIncorrectPublicKey(key) {
     try {
         const publicKey64 = "VUVDMgAAAC1VlAYyAh742Ur7CbzIZH0LXpo1iplumKuNDMYhcqnaAU8YnoLL";
         const signed64 = "ICYEJg4AAABHAAAASGVsbG8sIFRoZW1pcyEwRQIgR/brzPiPPQRM2OxqJu+QlCLUATWhzCcUp50qsuARissCIQD0zrHKcZNn8Ao88JQsCmES2eoDZ8wisyjfg1DrrDeT3A==";
-        const verified = await secureMessageVerify64(signed64, publicKey64);
+        const verified = await secureMessageVerify64(signed64, "", publicKey64);
         const component = <View key={ key }>
             <Text style={ styles.title }>secureMessageVerify64</Text>
             <Text style={ styles.text }>Wait for error because of incorrect public key</Text>
@@ -77,7 +77,7 @@ export async function testVerifyMessageWithEmptyPublicKey(key) {
     try {
         const publicKey64 = "";
         const signed64 = "ICYEJg4AAABHAAAASGVsbG8sIFRoZW1pcyEwRQIgR/brzPiPPQRM2OxqJu+QlCLUATWhzCcUp50qsuARissCIQD0zrHKcZNn8Ao88JQsCmES2eoDZ8wisyjfg1DrrDeT3A==";
-        const verified = await secureMessageVerify64(signed64, publicKey64);
+        const verified = await secureMessageVerify64(signed64, "", publicKey64);
         const component = <View key={ key }>
             <Text style={ styles.title }>secureMessageVerify64</Text>
             <Text style={ styles.text }>Wait for error because of empty public key</Text>
@@ -100,7 +100,7 @@ export async function testVerifyMessageWithEmptyMessage(key) {
     try {
         const publicKey64 = "VUVDMgAAAC1VlAYyAh742Ur7CbzIZH0LXpo1iplumKuNDMYhcqnaAU8YnoLL";
         const signed64 = "";
-        const verified = await secureMessageVerify64(signed64, publicKey64);
+        const verified = await secureMessageVerify64(signed64, "", publicKey64);
         const component = <View key={ key }>
             <Text style={ styles.title }>secureMessageVerify64</Text>
             <Text style={ styles.text }>Wait for error because of empty message</Text>

@@ -1,7 +1,7 @@
 export declare const COMPARATOR_NOT_READY: any, COMPARATOR_NOT_MATCH: any, COMPARATOR_MATCH: any, COMPARATOR_ERROR: any, KEYTYPE_RSA: any, KEYTYPE_EC: any;
 export declare function isBase64(str: String): boolean;
 export declare function string64(input: String): String;
-export declare function keyPair64(typeOfKey: any): Promise<Object>;
+export declare function keyPair64(typeOfKey?: any): Promise<Object>;
 export declare function symmetricKey64(): Promise<string>;
 export declare function secureCellSealWithSymmetricKeyEncrypt64(symmetricKey64: String, plaintext: String, context?: String): Promise<string>;
 export declare function secureCellSealWithSymmetricKeyDecrypt64(symmetricKey64: String, encrypted64: String, context?: String): Promise<string>;
@@ -11,8 +11,8 @@ export declare function secureCellTokenProtectEncrypt64(symmetricKey64: String, 
 export declare function secureCellTokenProtectDecrypt64(symmetricKey64: String, encrypted64: String, token64: String, context?: String): Promise<string>;
 export declare function secureCellContextImprintEncrypt64(symmetricKey64: String, plaintext: String, context: String): Promise<string>;
 export declare function secureCellContextImprintDecrypt64(symmetricKey64: String, encrypted64: String, context: String): Promise<string>;
-export declare function secureMessageSign64(plaintext: String, privateKey64: String, publicKey64: String): Promise<string>;
-export declare function secureMessageVerify64(signed64: String, privateKey64: String, publicKey64: String): Promise<string>;
+export declare function secureMessageSign64(plaintext: String, privateKey64: String): Promise<string>;
+export declare function secureMessageVerify64(signed64: String, _privateKey64: String | undefined, publicKey64: String): Promise<string>;
 export declare function secureMessageEncrypt64(plaintext: String, privateKey64: String, publicKey64: String): Promise<string>;
 export declare function secureMessageDecrypt64(encrypted64: String, privateKey64: String, publicKey64: String): Promise<string>;
 export declare function comparatorInit64(data64: String): Promise<string>;
