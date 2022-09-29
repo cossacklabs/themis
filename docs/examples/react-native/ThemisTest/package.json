@@ -13,7 +13,7 @@
     "buffer": "^6.0.3",
     "react": "18.1.0",
     "react-native": "0.70.1",
-    "react-native-themis": "/Users/rad/Downloads/react-native-themis-0.14.10.tgz"
+    "react-native-themis": "/Users/rad/git/projects/themis/themis/src/wrappers/themis/react-native-themis/"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

@@ -255,7 +255,7 @@ const App: () => Node = () => {
           setCollectedResults(collectedResults => ({ ...collectedResults, [key]: <Text key={ key }>{ result }</Text> }));
         }
       }).catch(error => {
-        console.log(error);
+        console.log(key, "===> ", error);
         setRejected(rejected => rejected + 1);
         if (error && error.type && error.type.render) {
           setCollectedResults(collectedResults => ({ ...collectedResults, [key]: error }));

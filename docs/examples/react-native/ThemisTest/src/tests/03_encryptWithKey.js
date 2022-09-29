@@ -19,7 +19,7 @@ export async function testEncryptWithKey(key) {
         const component = <View key={ key }>
             <Text style={ styles.title }>secureCellSealWithSymmetricKeyEncrypt64</Text>
             <Text style={ styles.text }>Wait for encrypted result</Text>
-            <Text style={ styles.rejected }>Test failed with error: { e }</Text>
+            <Text style={ styles.rejected }>Test failed with error: { e.message }</Text>
         </View>;
         return Promise.reject(component);
     }

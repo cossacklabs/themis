@@ -18,7 +18,7 @@ export async function testSymmetricKey(key) {
     } catch (e) {
         const component = <View key={ key }>
             <Text style={ styles.title }>Symmetric key</Text>
-            <Text style={ styles.rejected }>Test failed with error: { e }</Text>
+            <Text style={ styles.rejected }>Test failed with error: { e.message }</Text>
         </View>;
         return Promise.reject(component);
     }

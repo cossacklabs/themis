@@ -18,7 +18,7 @@ export async function testEncryptWithPassphrase(key) {
         const component = <View key={ key }>
             <Text style={ styles.title }>secureCellSealWithPassphraseEncrypt64</Text>
             <Text style={ styles.text }>Wait for encrypted result</Text>
-            <Text style={ styles.rejected }>Test failed with error: { e }</Text>
+            <Text style={ styles.rejected }>Test failed with error: { e.message }</Text>
         </View>;
         return Promise.reject(component);
     }
@@ -82,7 +82,7 @@ export async function testEncryptWithPassphraseSuccessWithContext(key) {
         const component = <View key={ key }>
             <Text style={ styles.title }>secureCellSealWithPassphraseEncrypt64</Text>
             <Text style={ styles.text }>Wait for encrypted result</Text>
-            <Text style={ styles.rejected }>Test failed with error: { e }</Text>
+            <Text style={ styles.rejected }>Test failed with error: { e.message }</Text>
         </View>;
         return Promise.reject(component);
     }

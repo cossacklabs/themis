@@ -5550,9 +5550,8 @@ react-native-gradle-plugin@^0.70.3:
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.70.3.tgz#cbcf0619cbfbddaa9128701aa2d7b4145f9c4fc8"
   integrity sha512-oOanj84fJEXUg9FoEAQomA8ISG+DVIrTZ3qF7m69VQUJyOGYyDZmPqKcjvRku4KXlEH6hWO9i4ACLzNBh8gC0A==
 
-react-native-themis@/Users/rad/Downloads/react-native-themis-0.14.10.tgz:
+react-native-themis@/Users/rad/git/projects/themis/themis/src/wrappers/themis/react-native-themis/:
   version "0.14.10"
-  resolved "/Users/rad/Downloads/react-native-themis-0.14.10.tgz#fc1db86d4b1a3c9a82ce32a8795e7057a4f33cf2"
   dependencies:
     buffer "^6.0.3"
 
