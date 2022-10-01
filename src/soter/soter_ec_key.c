@@ -58,5 +58,24 @@ soter_status_t soter_ec_priv_key_check_length(const soter_container_hdr_t* key, 
      * length as public keys, not EC_PRIV_SIZE(bits). That's one byte more
      * than necessary and that last byte is always zero.
      */
-    return soter_ec_pub_key_check_length(key, key_length);
+    switch (key->tag[3]) {
+    case EC_SIZE_TAG_256:
+        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(256)) {
+            return SOTER_SUCCESS;
+        }
+        return SOTER_INVALID_PARAMETER;
+
+    case EC_SIZE_TAG_384:
+        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(384)) {
+            return SOTER_SUCCESS;
+        }
+        return SOTER_INVALID_PARAMETER;
+
+    case EC_SIZE_TAG_521:
+        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(521)) {
+            return SOTER_SUCCESS;
+        }
+        return SOTER_INVALID_PARAMETER;
+    }
+    return SOTER_INVALID_PARAMETER;
 }
