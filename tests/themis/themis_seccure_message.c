@@ -1750,7 +1750,7 @@ out:
     free(verified_message);
 }
 
-static void secure_message_uncompressed_ec_public_keys()
+static void secure_message_uncompressed_ec_public_keys(void)
 {
     themis_status_t status;
 
