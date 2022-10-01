@@ -45,6 +45,7 @@
 
 #define EC_PRIV_SIZE(_KEY_SIZE_) EC_BYTE_SIZE(_KEY_SIZE_)
 #define EC_PUB_SIZE(_KEY_SIZE_) (EC_BYTE_SIZE(_KEY_SIZE_) + 1)
+#define EC_PUB_UNCOMPRESSED_SIZE(_KEY_SIZE_) (2 * EC_BYTE_SIZE(_KEY_SIZE_) + 1)
 
 #define DECLARE_EC_PUBLIC_KEY(_KEY_SIZE_)         \
     struct soter_ec_pub_key_##_KEY_SIZE_##_type { \
