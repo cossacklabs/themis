@@ -6,6 +6,10 @@ Changes that are currently in development and have not been released yet.
 
 _Code:_
 
+- **Core**
+
+  - Uncompressed EC public keys are now accepted (but not used yet) ([#954](https://github.com/cossacklabs/themis/pull/954))
+
 - **Android**
 
   - AndroidThemis build from source now requires Gradle 7.3, Android SDK 11, Android NDK 25 ([#942](https://github.com/cossacklabs/themis/pull/942)).
