@@ -38,17 +38,19 @@ export function string64(input: String): String {
     return Buffer.from(input).toString('base64')
 }
 
-const convertInputBase64 = (param: String, name: String, base64: Boolean): any => {
+const checkInput = (param: String, name: String) => {
     if (param === "" || param === undefined || param === null) {
         throw new Error(`Parameter ${name} can not be empty`);
     }
-    if (base64) {
-        if (!isBase64(param)) {
-            throw new Error(`Parameter ${name} is not base64 encoded`);
-        }
-        return Array.from(Buffer.from(param, 'base64')); // return Uint8Array from base64
-    }
     return param;
+}
+
+const convertInputBase64 = (param: String, name: String): any => {
+    checkInput(param, name);
+    if (!isBase64(param)) {
+        throw new Error(`Parameter ${name} is not base64 encoded`);
+    }
+    return Array.from(Buffer.from(param, 'base64'));
 }
 
 export function keyPair64(typeOfKey: any = KEYTYPE_EC): Promise<Object> {
@@ -81,8 +83,8 @@ export function secureCellSealWithSymmetricKeyEncrypt64(
     plaintext: String,
     context: String = ""): Promise<string> {
 
-    convertInputBase64(plaintext, "plaintext", false); // check plaintext is not empty
-    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64", true); // check symmetricKey64 is not empty and base64 encoded
+    checkInput(plaintext, "plaintext"); // check plaintext is not empty
+    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64"); // check symmetricKey64 is not empty and base64 encoded
 
     return new Promise((resolve, reject) => {
         Themis.secureCellSealWithSymmetricKeyEncrypt(symmetricKey, plaintext, context, (encrypted: any) => {
@@ -98,8 +100,8 @@ export function secureCellSealWithSymmetricKeyDecrypt64(
     encrypted64: String,
     context: String = ""): Promise<string> {
 
-    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64", true);
-    const encrypted = convertInputBase64(encrypted64, "encrypted64", true);
+    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64");
+    const encrypted = convertInputBase64(encrypted64, "encrypted64");
 
     return new Promise((resolve, reject) => {
         Themis.secureCellSealWithSymmetricKeyDecrypt(symmetricKey, encrypted, context, (decrypted: any) => {
@@ -115,8 +117,8 @@ export function secureCellSealWithPassphraseEncrypt64(
     plaintext: String,
     context: String = ""): Promise<string> {
 
-    convertInputBase64(plaintext, "plaintext", false);
-    convertInputBase64(passphrase, "passphrase", false);
+    checkInput(plaintext, "plaintext");
+    checkInput(passphrase, "passphrase");
 
     return new Promise((resolve, reject) => {
         Themis.secureCellSealWithPassphraseEncrypt(passphrase, plaintext, context, (encrypted: any) => {
@@ -132,8 +134,8 @@ export function secureCellSealWithPassphraseDecrypt64(
     encrypted64: String,
     context: String = ""): Promise<string> {
 
-    convertInputBase64(passphrase, "passphrase", false);
-    const encrypted = convertInputBase64(encrypted64, "encrypted64", true);
+    checkInput(passphrase, "passphrase");
+    const encrypted = convertInputBase64(encrypted64, "encrypted64");
 
     return new Promise((resolve, reject) => {
         Themis.secureCellSealWithPassphraseDecrypt(passphrase, encrypted, context, (decrypted: any) => {
@@ -149,8 +151,8 @@ export function secureCellTokenProtectEncrypt64(
     plaintext: String,
     context: String = ""): Promise<Object> {
 
-    convertInputBase64(plaintext, "plaintext", false);
-    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64", true);
+    checkInput(plaintext, "plaintext");
+    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64");
 
     return new Promise((resolve, reject) => {
         Themis.secureCellTokenProtectEncrypt(symmetricKey, plaintext, context, (encrypted: any) => {
@@ -172,9 +174,9 @@ export function secureCellTokenProtectDecrypt64(
     token64: String,
     context: String = ""): Promise<string> {
 
-    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64", true);
-    const encrypted = convertInputBase64(encrypted64, "encrypted64", true);
-    const token = convertInputBase64(token64, "token64", true);
+    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64");
+    const encrypted = convertInputBase64(encrypted64, "encrypted64");
+    const token = convertInputBase64(token64, "token64");
 
     return new Promise((resolve, reject) => {
         Themis.secureCellTokenProtectDecrypt(symmetricKey, encrypted, token, context, (decrypted: any) => {
@@ -191,9 +193,9 @@ export function secureCellContextImprintEncrypt64(
     plaintext: String,
     context: String): Promise<string> {
 
-    convertInputBase64(plaintext, "plaintext", false);
-    convertInputBase64(context, "context", false);
-    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64", true);
+    checkInput(plaintext, "plaintext");
+    checkInput(context, "context");
+    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64");
 
     return new Promise((resolve, reject) => {
         Themis.secureCellContextImprintEncrypt(symmetricKey, plaintext, context, (encrypted: any) => {
@@ -209,9 +211,9 @@ export function secureCellContextImprintDecrypt64(
     encrypted64: String,
     context: String): Promise<string> {
 
-    convertInputBase64(context, "context", false);
-    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64", true);
-    const encrypted = convertInputBase64(encrypted64, "encrypted64", true);
+    checkInput(context, "context");
+    const symmetricKey = convertInputBase64(symmetricKey64, "symmetricKey64");
+    const encrypted = convertInputBase64(encrypted64, "encrypted64");
 
     return new Promise((resolve, reject) => {
         Themis.secureCellContextImprintDecrypt(symmetricKey, encrypted, context, (decrypted: any) => {
@@ -225,10 +227,11 @@ export function secureCellContextImprintDecrypt64(
 // secure message sign and verify
 export function secureMessageSign64(
     plaintext: String,
-    privateKey64: String): Promise<string> {
+    privateKey64: String,
+    _publicKey64: String = ""): Promise<string> {
 
-    convertInputBase64(plaintext, "plaintext", false);
-    const privateKey = convertInputBase64(privateKey64, "privateKey64", true);
+    checkInput(plaintext, "plaintext");
+    const privateKey = convertInputBase64(privateKey64, "privateKey64");
 
     return new Promise((resolve, reject) => {
         Themis.secureMessageSign(plaintext, privateKey, (signed: any) => {
@@ -244,8 +247,8 @@ export function secureMessageVerify64(
     _privateKey64: String = "",
     publicKey64: String): Promise<string> {
 
-    const signed = convertInputBase64(signed64, "signed64", true);
-    const publicKey = convertInputBase64(publicKey64, "publicKey64", true);
+    const signed = convertInputBase64(signed64, "signed64");
+    const publicKey = convertInputBase64(publicKey64, "publicKey64");
 
     return new Promise((resolve, reject) => {
         Themis.secureMessageVerify(signed, publicKey, (verified: any) => {
@@ -262,9 +265,9 @@ export function secureMessageEncrypt64(
     privateKey64: String,
     publicKey64: String): Promise<string> {
 
-    convertInputBase64(plaintext, "plaintext", false);
-    const privateKey = convertInputBase64(privateKey64, "privateKey64", true);
-    const publicKey = convertInputBase64(publicKey64, "publicKey64", true);
+    checkInput(plaintext, "plaintext");
+    const privateKey = convertInputBase64(privateKey64, "privateKey64");
+    const publicKey = convertInputBase64(publicKey64, "publicKey64");
 
     return new Promise((resolve, reject) => {
         Themis.secureMessageEncrypt(plaintext, privateKey, publicKey, (encrypted: any) => {
@@ -280,9 +283,9 @@ export function secureMessageDecrypt64(
     privateKey64: String,
     publicKey64: String): Promise<string> {
 
-    const encrypted = convertInputBase64(encrypted64, "encrypted64", true);
-    const privateKey = convertInputBase64(privateKey64, "privateKey64", true);
-    const publicKey = convertInputBase64(publicKey64, "publicKey64", true);
+    const encrypted = convertInputBase64(encrypted64, "encrypted64");
+    const privateKey = convertInputBase64(privateKey64, "privateKey64");
+    const publicKey = convertInputBase64(publicKey64, "publicKey64");
 
     return new Promise((resolve, reject) => {
         Themis.secureMessageDecrypt(encrypted, privateKey, publicKey, (decrypted: any) => {
@@ -297,7 +300,7 @@ export function secureMessageDecrypt64(
 /* Returns UUID in string value that corresponds to new comparator */
 export function comparatorInit64(data64: String): Promise<string> {
 
-    const data = convertInputBase64(data64, "data64", true);
+    const data = convertInputBase64(data64, "data64");
 
     return new Promise((resolve, reject) => {
         Themis.initComparator(data, (comparator: string) => {
@@ -309,7 +312,7 @@ export function comparatorInit64(data64: String): Promise<string> {
 }
 
 export function comparatorBegin(uuidStr: String): Promise<string> {
-    convertInputBase64(uuidStr, "uuidStr", false);
+    checkInput(uuidStr, "uuidStr");
 
     return new Promise((resolve, reject) => {
         Themis.beginCompare(uuidStr, (data: any) => {
@@ -325,8 +328,8 @@ export function comparatorProceed64(
     uuidStr: String,
     data64: String): Promise<Object> {
 
-    convertInputBase64(uuidStr, "uuidStr", false);
-    const data = convertInputBase64(data64, "data64", true);
+    checkInput(uuidStr, "uuidStr");
+    const data = convertInputBase64(data64, "data64");
 
     return new Promise((resolve, reject) => {
         Themis.proceedCompare(uuidStr, data, (nextData: any, status: Number) => {

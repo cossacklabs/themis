@@ -11,7 +11,7 @@ export declare function secureCellTokenProtectEncrypt64(symmetricKey64: String, 
 export declare function secureCellTokenProtectDecrypt64(symmetricKey64: String, encrypted64: String, token64: String, context?: String): Promise<string>;
 export declare function secureCellContextImprintEncrypt64(symmetricKey64: String, plaintext: String, context: String): Promise<string>;
 export declare function secureCellContextImprintDecrypt64(symmetricKey64: String, encrypted64: String, context: String): Promise<string>;
-export declare function secureMessageSign64(plaintext: String, privateKey64: String): Promise<string>;
+export declare function secureMessageSign64(plaintext: String, privateKey64: String, _publicKey64?: String): Promise<string>;
 export declare function secureMessageVerify64(signed64: String, _privateKey64: String | undefined, publicKey64: String): Promise<string>;
 export declare function secureMessageEncrypt64(plaintext: String, privateKey64: String, publicKey64: String): Promise<string>;
 export declare function secureMessageDecrypt64(encrypted64: String, privateKey64: String, publicKey64: String): Promise<string>;
