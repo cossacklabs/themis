@@ -1,0 +1,1 @@
+../../../Target Support Files/react-native-themis/react-native-themis-umbrella.h

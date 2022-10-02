@@ -1,0 +1,24 @@
+{
+  "name": "@react-native-community/cli-types",
+  "version": "6.0.0",
+  "main": "build",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "ora": "^3.4.0"
+  },
+  "files": [
+    "build",
+    "!*.map"
+  ],
+  "types": "build/index.d.ts",
+  "license": "MIT",
+  "homepage": "https://github.com/react-native-community/cli/tree/master/packages/cli-types",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-native-community/cli.git",
+    "directory": "packages/cli-types"
+  },
+  "gitHead": "47aed081b4cbea02d4cc7f12d4fec732ee85b2a4"
+}

@@ -1,0 +1,30 @@
+{
+  "name": "react-native-themis",
+  "version": "0.14.10",
+  "summary": "Themis React Native is a convenient cryptographic library for data protection",
+  "homepage": "https://www.cossacklabs.com/themis/",
+  "license": "Apache-2.0",
+  "authors": {
+    "name": "Cossack Labs",
+    "email": "dev@cossacklabs.com",
+    "url": "https://www.cossacklabs.com/"
+  },
+  "platforms": {
+    "ios": "10.0"
+  },
+  "source": {
+    "git": "https://github.com/cossacklabs/themis.git",
+    "tag": "0.14.10"
+  },
+  "vendored_frameworks": "ios/themis.xcframework",
+  "source_files": "ios/**/*.{h,m,mm,swift}",
+  "requires_arc": true,
+  "pod_target_xcconfig": {
+    "DEFINES_MODULE": "YES"
+  },
+  "dependencies": {
+    "React-Core": [
+
+    ]
+  }
+}

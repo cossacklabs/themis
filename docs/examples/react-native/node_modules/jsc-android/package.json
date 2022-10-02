@@ -1,0 +1,37 @@
+{
+  "name": "jsc-android",
+  "version": "250230.2.1",
+  "description": "Pre-build version of JavaScriptCore to be used by React Native apps",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/react-native-community/jsc-android-buildscripts.git"
+  },
+  "keywords": [
+    "react-native",
+    "android",
+    "jsc"
+  ],
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/react-native-community/jsc-android-buildscripts/issues"
+  },
+  "homepage": "https://github.com/react-native-community/jsc-android-buildscripts#readme",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "clean": "rm -rf dist; rm -rf build",
+    "info": "./scripts/info.sh",
+    "download": "./scripts/download.sh",
+    "start": "./scripts/start.sh"
+  },
+  "config": {
+    "webkitGTK": "2.26.1",
+    "chromiumICUCommit": "64e5d7d43a1ff205e3787ab6150bbc1a1837332b"
+  },
+  "devDependencies": {
+    "commander": "^4.0.1",
+    "rimraf": "^3.0.0",
+    "semver": "^6.3.0"
+  }
+}

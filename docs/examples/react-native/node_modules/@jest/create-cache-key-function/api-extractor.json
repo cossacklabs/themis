@@ -1,0 +1,5 @@
+{
+  "extends": "../../api-extractor.json",
+  "mainEntryPointFilePath": "/Users/simen/repos/jest/packages/jest-create-cache-key-function/build/index.d.ts",
+  "projectFolder": "/Users/simen/repos/jest/packages/jest-create-cache-key-function"
+}

@@ -1,0 +1,306 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`reports filename when encountering unsupported dynamic dependency 1`] = `"local/file.js:Invalid call at line 3: require(a)"`;
+
+exports[`transforms a module with dependencies 1`] = `
+Array [
+  Array [
+    2,
+    0,
+    1,
+    0,
+  ],
+  Array [
+    6,
+    0,
+    5,
+    0,
+  ],
+  Array [
+    8,
+    0,
+    2,
+    0,
+    "require",
+  ],
+  Array [
+    8,
+    2,
+    2,
+    0,
+    "require",
+  ],
+  Array [
+    8,
+    13,
+    2,
+    7,
+  ],
+  Array [
+    8,
+    39,
+    2,
+    0,
+  ],
+  Array [
+    10,
+    0,
+    3,
+    0,
+    "arbitrary",
+  ],
+  Array [
+    10,
+    2,
+    3,
+    0,
+    "arbitrary",
+  ],
+  Array [
+    10,
+    11,
+    3,
+    9,
+  ],
+  Array [
+    10,
+    12,
+    3,
+    10,
+    "code",
+  ],
+  Array [
+    10,
+    16,
+    3,
+    9,
+  ],
+  Array [
+    10,
+    17,
+    3,
+    0,
+  ],
+  Array [
+    12,
+    0,
+    4,
+    0,
+  ],
+  Array [
+    12,
+    6,
+    4,
+    6,
+    "b",
+  ],
+  Array [
+    12,
+    7,
+    4,
+    7,
+  ],
+  Array [
+    12,
+    10,
+    4,
+    10,
+    "require",
+  ],
+  Array [
+    12,
+    21,
+    4,
+    17,
+  ],
+  Array [
+    12,
+    45,
+    4,
+    0,
+  ],
+]
+`;
+
+exports[`transforms a module with dependencies 2`] = `
+Object {
+  "mappings": "AAA",
+  "names": Array [
+    "<global>",
+  ],
+}
+`;
+
+exports[`transforms a simple module 1`] = `
+Array [
+  Array [
+    2,
+    0,
+    1,
+    0,
+    "arbitrary",
+  ],
+  Array [
+    2,
+    2,
+    1,
+    0,
+    "arbitrary",
+  ],
+  Array [
+    2,
+    11,
+    1,
+    9,
+  ],
+  Array [
+    2,
+    12,
+    1,
+    10,
+    "code",
+  ],
+  Array [
+    2,
+    16,
+    1,
+    9,
+  ],
+  Array [
+    2,
+    17,
+    1,
+    0,
+  ],
+]
+`;
+
+exports[`transforms a simple module 2`] = `
+Object {
+  "mappings": "AAA",
+  "names": Array [
+    "<global>",
+  ],
+}
+`;
+
+exports[`transforms a simple script 1`] = `
+Array [
+  Array [
+    2,
+    0,
+    1,
+    0,
+    "someReallyArbitrary",
+  ],
+  Array [
+    2,
+    2,
+    1,
+    0,
+    "someReallyArbitrary",
+  ],
+  Array [
+    2,
+    21,
+    1,
+    19,
+  ],
+  Array [
+    2,
+    22,
+    1,
+    20,
+    "code",
+  ],
+  Array [
+    2,
+    26,
+    1,
+    19,
+  ],
+  Array [
+    2,
+    27,
+    1,
+    0,
+  ],
+]
+`;
+
+exports[`transforms a simple script 2`] = `
+Object {
+  "mappings": "AAA",
+  "names": Array [
+    "<global>",
+  ],
+}
+`;
+
+exports[`transforms an es module with regenerator 1`] = `
+"__d(function (global, _$$_REQUIRE, _$$_IMPORT_DEFAULT, _$$_IMPORT_ALL, module, exports, _dependencyMap) {
+  var _interopRequireDefault = _$$_REQUIRE(_dependencyMap[0], \\"@babel/runtime/helpers/interopRequireDefault\\");
+
+  Object.defineProperty(exports, \\"__esModule\\", {
+    value: true
+  });
+  exports.test = test;
+
+  var _regenerator = _interopRequireDefault(_$$_REQUIRE(_dependencyMap[1], \\"@babel/runtime/regenerator\\"));
+
+  function test() {
+    return _regenerator.default.async(function test$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+          case \\"end\\":
+            return _context.stop();
+        }
+      }
+    }, null, this);
+  }
+});"
+`;
+
+exports[`transforms an es module with regenerator 2`] = `
+Object {
+  "mappings": "AAA,OC",
+  "names": Array [
+    "<global>",
+    "test",
+  ],
+}
+`;
+
+exports[`transforms import/export syntax when experimental flag is on 1`] = `
+Array [
+  Array [
+    4,
+    0,
+    1,
+    0,
+  ],
+  Array [
+    4,
+    6,
+    1,
+    7,
+    "c",
+  ],
+  Array [
+    4,
+    7,
+    1,
+    0,
+  ],
+]
+`;
+
+exports[`transforms import/export syntax when experimental flag is on 2`] = `
+Object {
+  "mappings": "AAA",
+  "names": Array [
+    "<global>",
+  ],
+}
+`;

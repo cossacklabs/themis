@@ -1,0 +1,6 @@
+module Pods_ThemisExample_ThemisExampleTests {
+  umbrella header "Pods-ThemisExample-ThemisExampleTests-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,6 @@
+module react_native_themis {
+  umbrella header "react-native-themis-umbrella.h"
+
+  export *
+  module * { export * }
+}

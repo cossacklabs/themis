@@ -1,0 +1,27 @@
+{
+  "name": "metro-config",
+  "version": "0.66.2",
+  "description": "🚇 Config parser for Metro.",
+  "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:facebook/metro.git"
+  },
+  "scripts": {
+    "prepare-release": "test -d build && rm -rf src.real && mv src src.real && mv build src",
+    "cleanup-release": "test ! -e build && mv src build && mv src.real src"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "cosmiconfig": "^5.0.5",
+    "jest-validate": "^26.5.2",
+    "metro": "0.66.2",
+    "metro-cache": "0.66.2",
+    "metro-core": "0.66.2",
+    "metro-runtime": "0.66.2"
+  },
+  "devDependencies": {
+    "pretty-format": "^26.5.2",
+    "strip-ansi": "^6.0.0"
+  }
+}
