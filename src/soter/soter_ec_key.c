@@ -28,9 +28,17 @@
 SOTER_PRIVATE_API
 soter_status_t soter_ec_pub_key_check_length(const soter_container_hdr_t* key, size_t key_length)
 {
+    /*
+     * Backends can import both compressed and uncompressed public keys.
+     * Themis exports public keys in compressed format, but Themis NG
+     * uses uncompressed one. Make sure to accept both.
+     */
     switch (key->tag[3]) {
     case EC_SIZE_TAG_256:
         if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(256)) {
+            return SOTER_SUCCESS;
+        }
+        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_UNCOMPRESSED_SIZE(256)) {
             return SOTER_SUCCESS;
         }
         return SOTER_INVALID_PARAMETER;
@@ -39,10 +47,16 @@ soter_status_t soter_ec_pub_key_check_length(const soter_container_hdr_t* key, s
         if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(384)) {
             return SOTER_SUCCESS;
         }
+        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_UNCOMPRESSED_SIZE(384)) {
+            return SOTER_SUCCESS;
+        }
         return SOTER_INVALID_PARAMETER;
 
     case EC_SIZE_TAG_521:
         if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(521)) {
+            return SOTER_SUCCESS;
+        }
+        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_UNCOMPRESSED_SIZE(521)) {
             return SOTER_SUCCESS;
         }
         return SOTER_INVALID_PARAMETER;
@@ -57,6 +71,36 @@ soter_status_t soter_ec_priv_key_check_length(const soter_container_hdr_t* key, 
      * Due to a historical mistake, EC private keys in Themis have the same
      * length as public keys, not EC_PRIV_SIZE(bits). That's one byte more
      * than necessary and that last byte is always zero.
+     *
+     * Themis NG uses proper serialization for private keys. Accept it too.
      */
-    return soter_ec_pub_key_check_length(key, key_length);
+    switch (key->tag[3]) {
+    case EC_SIZE_TAG_256:
+        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(256)) {
+            return SOTER_SUCCESS;
+        }
+        if (key_length == sizeof(soter_container_hdr_t) + EC_PRIV_SIZE(256)) {
+            return SOTER_SUCCESS;
+        }
+        return SOTER_INVALID_PARAMETER;
+
+    case EC_SIZE_TAG_384:
+        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(384)) {
+            return SOTER_SUCCESS;
+        }
+        if (key_length == sizeof(soter_container_hdr_t) + EC_PRIV_SIZE(384)) {
+            return SOTER_SUCCESS;
+        }
+        return SOTER_INVALID_PARAMETER;
+
+    case EC_SIZE_TAG_521:
+        if (key_length == sizeof(soter_container_hdr_t) + EC_PUB_SIZE(521)) {
+            return SOTER_SUCCESS;
+        }
+        if (key_length == sizeof(soter_container_hdr_t) + EC_PRIV_SIZE(521)) {
+            return SOTER_SUCCESS;
+        }
+        return SOTER_INVALID_PARAMETER;
+    }
+    return SOTER_INVALID_PARAMETER;
 }
