@@ -1,16 +1,14 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "themis",
-        "repositoryURL": "https://github.com/cossacklabs/themis",
-        "state": {
-          "branch": null,
-          "revision": "5d21527e76222b1e001b643aec77ff23e8c7478d",
-          "version": "0.14.0"
-        }
+  "pins" : [
+    {
+      "identity" : "themis",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/cossacklabs/themis",
+      "state" : {
+        "revision" : "b573ad970462e5ccc9dbafe5d954e57dcc386ba8",
+        "version" : "0.14.9"
       }
-    ]
-  },
-  "version": 1
+    }
+  ],
+  "version" : 2
 }
