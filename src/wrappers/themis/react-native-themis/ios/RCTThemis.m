@@ -104,7 +104,7 @@ RCT_EXPORT_METHOD(stringSerialize:(NSString*) text
                   callback:(RCTResponseSenderBlock)callback
                   )
 {
-  NSData*   data = [text dataUsingEncoding:NSUTF8StringEncoding];
+  NSData   *data = [text dataUsingEncoding:NSUTF8StringEncoding];
   NSArray *data2 = [RCTThemis dataSerialize: data];
   callback(@[data2]);
 }
@@ -168,11 +168,11 @@ RCT_EXPORT_METHOD(secureCellSealWithSymmetricKeyEncrypt:(NSArray*) symmetricKey
     return;
   }
 
-  NSData *plaintextBinary  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
-  NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
-  NSData  *encrypted = [cell  encrypt:plaintextBinary
-                              context:contextBinary
-                                error:&error];
+  NSData *plaintextBinary = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
+  NSData *contextBinary = [context dataUsingEncoding:NSUTF8StringEncoding];
+  NSData *encrypted = [cell encrypt:plaintextBinary
+                            context:contextBinary
+                              error:&error];
   if (encrypted == nil) {
     errorCallback(error);
     return;
@@ -190,7 +190,7 @@ RCT_EXPORT_METHOD(secureCellSealWithSymmetricKeyDecrypt:(NSArray*) symmetricKey
 
 {
   TSCellSeal *cell;
-  NSData *enc;
+  NSData *encryptedBinary;
   NSError *error;
 
   cell = [self newSealMode:symmetricKey error:&error];
@@ -199,16 +199,16 @@ RCT_EXPORT_METHOD(secureCellSealWithSymmetricKeyDecrypt:(NSArray*) symmetricKey
     return;
   }
 
-  enc = [RCTThemis dataDeserialize:encrypted error:&error];
-  if (enc == nil) {
+  encryptedBinary = [RCTThemis dataDeserialize:encrypted error:&error];
+  if (encryptedBinary == nil) {
     errorCallback(error);
     return;
   }
 
-  NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
-  NSData *decrypted = [cell decrypt:enc
-                             context:contextBinary
-                               error:&error];
+  NSData *contextBinary = [context dataUsingEncoding:NSUTF8StringEncoding];
+  NSData *decrypted = [cell decrypt:encryptedBinary
+                            context:contextBinary
+                              error:&error];
   if (decrypted == nil) {
     errorCallback(error);
   } else {
@@ -232,9 +232,9 @@ RCT_EXPORT_METHOD(secureCellSealWithPassphraseEncrypt:(NSString*) passphrase
                   errorCallback: (RCTResponseErrorBlock)errorCallback
                   )
 {
-  TSCellSeal *cell  = [self newSealModeWithPassphrase:passphrase];
-  NSData *plaintextBinary  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
-  NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
+  TSCellSeal *cell = [self newSealModeWithPassphrase:passphrase];
+  NSData *plaintextBinary = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
+  NSData *contextBinary = [context dataUsingEncoding:NSUTF8StringEncoding];
 
   NSError *error;
   NSData *encrypted = [cell encrypt:plaintextBinary context:contextBinary error:&error];
@@ -255,18 +255,18 @@ RCT_EXPORT_METHOD(secureCellSealWithPassphraseDecrypt:(NSString*) passphrase
                   )
 
 {
-  TSCellSeal *cell  = [self newSealModeWithPassphrase:passphrase];
-  NSData *enc;
+  TSCellSeal *cell = [self newSealModeWithPassphrase:passphrase];
+  NSData *encryptedBinary;
   NSError *error;
 
-  enc = [RCTThemis dataDeserialize:encrypted error:&error];
-  if (enc == nil) {
+  encryptedBinary = [RCTThemis dataDeserialize:encrypted error:&error];
+  if (encryptedBinary == nil) {
     errorCallback(error);
     return;
   }
 
-  NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
-  NSData *decrypted = [cell decrypt:enc
+  NSData *contextBinary = [context dataUsingEncoding:NSUTF8StringEncoding];
+  NSData *decrypted = [cell decrypt:encryptedBinary
                             context:contextBinary
                               error:&error];
   if (decrypted == nil) {
@@ -305,8 +305,8 @@ RCT_EXPORT_METHOD(secureCellTokenProtectEncrypt:(NSArray*) symmetricKey
     return;
   }
 
-  NSData *plaintextBinary  = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
-  NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
+  NSData *plaintextBinary = [plaintext dataUsingEncoding:NSUTF8StringEncoding];
+  NSData *contextBinary = [context dataUsingEncoding:NSUTF8StringEncoding];
 
   TSCellTokenEncryptedResult *result = [cell encrypt:plaintextBinary context:contextBinary error:&error];
   if (result == nil ) {
@@ -334,8 +334,8 @@ RCT_EXPORT_METHOD(secureCellTokenProtectDecrypt:(NSArray*) symmetricKey
 
 {
   TSCellToken *cell;
-  NSData *enc;
-  NSData *tkn;
+  NSData *encryptedBinary;
+  NSData *tokenBinary;
   NSError *error;
 
   cell = [self newTokenMode:symmetricKey error:&error];
@@ -344,21 +344,21 @@ RCT_EXPORT_METHOD(secureCellTokenProtectDecrypt:(NSArray*) symmetricKey
     return;
   }
 
-  enc = [RCTThemis dataDeserialize:encrypted error:&error];
-  if (enc == nil) {
+  encryptedBinary = [RCTThemis dataDeserialize:encrypted error:&error];
+  if (encryptedBinary == nil) {
     errorCallback(error);
     return;
   }
 
-  tkn = [RCTThemis dataDeserialize:token error:&error];
-  if (tkn == nil) {
+  tokenBinary = [RCTThemis dataDeserialize:token error:&error];
+  if (tokenBinary == nil) {
     errorCallback(error);
     return;
   }
 
-  NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
-  NSData *decrypted = [cell decrypt:enc
-                              token:tkn
+  NSData *contextBinary = [context dataUsingEncoding:NSUTF8StringEncoding];
+  NSData *decrypted = [cell decrypt:encryptedBinary
+                              token:tokenBinary
                             context:contextBinary
                               error:&error];
   if (decrypted == nil) {
@@ -428,7 +428,7 @@ RCT_EXPORT_METHOD(secureCellContextImprintDecrypt:(NSArray*) symmetricKey
   }
 
   TSCellContextImprint *cell;
-  NSData *enc;
+  NSData *encryptedBinary;
   NSError *error;
 
   cell = [self newContextImprint:symmetricKey error:&error];
@@ -436,14 +436,14 @@ RCT_EXPORT_METHOD(secureCellContextImprintDecrypt:(NSArray*) symmetricKey
     errorCallback(error);
     return;
   }
-  enc = [RCTThemis dataDeserialize:encrypted error:&error];
-  if (enc == nil) {
+  encryptedBinary = [RCTThemis dataDeserialize:encrypted error:&error];
+  if (encryptedBinary == nil) {
     errorCallback(error);
     return;
   }
 
   NSData *contextBinary  = [context dataUsingEncoding:NSUTF8StringEncoding];
-  NSData *decrypted = [cell decrypt:enc
+  NSData *decrypted = [cell decrypt:encryptedBinary
                             context:contextBinary
                               error:&error
   ];
@@ -470,20 +470,20 @@ RCT_EXPORT_METHOD(secureMessageSign:(NSString*) message
     return;
   }
 
-  NSData *pvtKey;
+  NSData *privateKeyBinary;
   NSError *error;
 
-  pvtKey = [RCTThemis dataDeserialize:privateKey error:&error];
-  if (pvtKey == nil) {
+  privateKeyBinary = [RCTThemis dataDeserialize:privateKey error:&error];
+  if (privateKeyBinary == nil) {
     errorCallback(error);
     return;
   }
 
-  NSData* msg = [message dataUsingEncoding:NSUTF8StringEncoding];
-  TSMessage *secureMessage = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:pvtKey
+  NSData* messageBinary = [message dataUsingEncoding:NSUTF8StringEncoding];
+  TSMessage *secureMessage = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:privateKeyBinary
                                                                      peerPublicKey:nil];
 
-  NSData *signedMessage = [secureMessage wrapData:msg error:&error];
+  NSData *signedMessage = [secureMessage wrapData:messageBinary error:&error];
   if (signedMessage == nil) {
     errorCallback(error);
   } else {
@@ -505,26 +505,26 @@ RCT_EXPORT_METHOD(secureMessageVerify:(NSArray*) message
     return;
   }
 
-  NSData  *pubKey;
-  NSData  *msg;
+  NSData  *publicKeyBinary;
+  NSData  *messageBinary;
   NSError *error;
 
-  pubKey = [RCTThemis dataDeserialize:publicKey error:&error];
-  if (pubKey == nil) {
+  publicKeyBinary = [RCTThemis dataDeserialize:publicKey error:&error];
+  if (publicKeyBinary == nil) {
     errorCallback(error);
     return;
   }
 
-  msg = [RCTThemis dataDeserialize:message error:&error];
-  if (msg == nil) {
+  messageBinary = [RCTThemis dataDeserialize:message error:&error];
+  if (messageBinary == nil) {
     errorCallback(error);
     return;
   }
 
   TSMessage *secureMessage = [[TSMessage alloc] initInSignVerifyModeWithPrivateKey:nil
-                                                                     peerPublicKey:pubKey];
+                                                                     peerPublicKey:publicKeyBinary];
 
-  NSData *verifiedMessage = [secureMessage unwrapData:msg error:&error];
+  NSData *verifiedMessage = [secureMessage unwrapData:messageBinary error:&error];
   if (verifiedMessage == nil) {
     errorCallback(error);
   } else {
@@ -553,26 +553,26 @@ RCT_EXPORT_METHOD(secureMessageEncrypt:(NSString*) message
       return;
   }
 
-  NSData *pvtKey;
-  NSData *pubKey;
+  NSData *privateKeyBinary;
+  NSData *publicKeyBinary;
   NSError *error;
 
-  pvtKey = [RCTThemis dataDeserialize:privateKey error:&error];
-  if (pvtKey == nil) {
+  privateKeyBinary = [RCTThemis dataDeserialize:privateKey error:&error];
+  if (privateKeyBinary == nil) {
     errorCallback(error);
     return;
   }
-  pubKey = [RCTThemis dataDeserialize:publicKey error:&error];
-  if (pubKey == nil) {
+  publicKeyBinary = [RCTThemis dataDeserialize:publicKey error:&error];
+  if (publicKeyBinary == nil) {
     errorCallback(error);
     return;
   }
 
-  NSData* msg = [message dataUsingEncoding:NSUTF8StringEncoding];
-  TSMessage *secureMessage = [[TSMessage alloc] initInEncryptModeWithPrivateKey:pvtKey
-                                                                  peerPublicKey:pubKey];
+  NSData* messageBinary = [message dataUsingEncoding:NSUTF8StringEncoding];
+  TSMessage *secureMessage = [[TSMessage alloc] initInEncryptModeWithPrivateKey:privateKeyBinary
+                                                                  peerPublicKey:publicKeyBinary];
 
-  NSData *encryptedMessage = [secureMessage wrapData:msg error:&error];
+  NSData *encryptedMessage = [secureMessage wrapData:messageBinary error:&error];
   if (encryptedMessage == nil) {
     errorCallback(error);
   } else {
@@ -600,31 +600,31 @@ RCT_EXPORT_METHOD(secureMessageDecrypt:(NSArray*) message
     return;
   }
 
-  NSData *pvtKey;
-  NSData *pubKey;
-  NSData *msg;
+  NSData *privateKeyBinary;
+  NSData *publicKeyBinary;
+  NSData *messageBinary;
   NSError *error;
 
-  pvtKey = [RCTThemis dataDeserialize:privateKey error:&error];
-  if (pvtKey == nil) {
+  privateKeyBinary = [RCTThemis dataDeserialize:privateKey error:&error];
+  if (privateKeyBinary == nil) {
     errorCallback(error);
     return;
   }
-  pubKey = [RCTThemis dataDeserialize:publicKey error:&error];
-  if (pubKey == nil) {
+  publicKeyBinary = [RCTThemis dataDeserialize:publicKey error:&error];
+  if (publicKeyBinary == nil) {
     errorCallback(error);
     return;
   }
-  msg = [RCTThemis dataDeserialize:message error:&error];
-  if (msg == nil) {
+  messageBinary = [RCTThemis dataDeserialize:message error:&error];
+  if (messageBinary == nil) {
     errorCallback(error);
     return;
   }
 
-  TSMessage *secureMessage = [[TSMessage alloc] initInEncryptModeWithPrivateKey:pvtKey
-                                                                  peerPublicKey:pubKey];
+  TSMessage *secureMessage = [[TSMessage alloc] initInEncryptModeWithPrivateKey:privateKeyBinary
+                                                                  peerPublicKey:publicKeyBinary];
 
-  NSData *decryptedMessage = [secureMessage unwrapData:msg error:&error];
+  NSData *decryptedMessage = [secureMessage unwrapData:messageBinary error:&error];
   if (decryptedMessage == nil) {
     errorCallback(error);
   } else {

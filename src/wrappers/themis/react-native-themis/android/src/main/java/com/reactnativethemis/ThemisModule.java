@@ -165,8 +165,8 @@ public class ThemisModule extends ReactContextBaseJavaModule {
                                                          Callback errorCallback)
   {
     try {
-      byte[] key = dataDeserialize(symmetricKey);
-      SecureCell.Seal cell = SecureCell.SealWithKey(key);
+      byte[] symmetricKeyBinary = dataDeserialize(symmetricKey);
+      SecureCell.Seal cell = SecureCell.SealWithKey(symmetricKeyBinary);
       byte[] plaintextBinary = plaintext.getBytes(StandardCharsets.UTF_8);
       byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
       byte[] encrypted = cell.encrypt(plaintextBinary, contextBinary);
@@ -187,11 +187,11 @@ public class ThemisModule extends ReactContextBaseJavaModule {
                                                          Callback errorCallback)
   {
     try {
-      byte[] key = dataDeserialize(symmetricKey);
-      SecureCell.Seal cell = SecureCell.SealWithKey(key);
-      byte[] enc = dataDeserialize(encrypted);
+      byte[] symmetricKeyBinary = dataDeserialize(symmetricKey);
+      SecureCell.Seal cell = SecureCell.SealWithKey(symmetricKeyBinary);
+      byte[] encryptedBinary = dataDeserialize(encrypted);
       byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
-      byte[] decrypted = cell.decrypt(enc, contextBinary);
+      byte[] decrypted = cell.decrypt(encryptedBinary, contextBinary);
       WritableArray response = dataSerialize(decrypted);
       successCallback.invoke(response);
     } catch (Exception e) {
@@ -231,9 +231,9 @@ public class ThemisModule extends ReactContextBaseJavaModule {
   {
     try {
       SecureCell.Seal cell = SecureCell.SealWithPassphrase(passphrase);
-      byte[] enc = dataDeserialize(encrypted);
+      byte[] encryptedBinary = dataDeserialize(encrypted);
       byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
-      byte[] decrypted = cell.decrypt(enc, contextBinary);
+      byte[] decrypted = cell.decrypt(encryptedBinary, contextBinary);
       WritableArray response = dataSerialize(decrypted);
       successCallback.invoke(response);
     } catch (Exception e) {
@@ -252,8 +252,8 @@ public class ThemisModule extends ReactContextBaseJavaModule {
                                                  Callback errorCallback)
   {
     try {
-      byte[] bkey = dataDeserialize(symmetricKey);
-      SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(bkey);
+      byte[] symmetricKeyBinary = dataDeserialize(symmetricKey);
+      SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(symmetricKeyBinary);
       byte[] plaintextBinary = plaintext.getBytes(StandardCharsets.UTF_8);
       byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
       SecureCellData result = cell.encrypt(plaintextBinary, contextBinary);
@@ -279,12 +279,12 @@ public class ThemisModule extends ReactContextBaseJavaModule {
                                                  Callback errorCallback)
   {
     try {
-      byte[] bkey = dataDeserialize(symmetricKey);
-      byte[] enc = dataDeserialize(encrypted);
-      byte[] tkn = dataDeserialize(token);
-      SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(bkey);
+      byte[] symmetricKeyBinary = dataDeserialize(symmetricKey);
+      byte[] encryptedBinary = dataDeserialize(encrypted);
+      byte[] tokenBinary = dataDeserialize(token);
+      SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(symmetricKeyBinary);
       byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
-      byte[] decrypted = cell.decrypt(enc, tkn, contextBinary);
+      byte[] decrypted = cell.decrypt(encryptedBinary, tokenBinary, contextBinary);
       WritableArray response = dataSerialize(decrypted);
       successCallback.invoke(response);
     } catch (Exception e) {
@@ -309,8 +309,8 @@ public class ThemisModule extends ReactContextBaseJavaModule {
       return;
     }
     try {
-      byte[] bkey = dataDeserialize(symmetricKey);
-      SecureCell.ContextImprint cell = SecureCell.ContextImprintWithKey(bkey);
+      byte[] symmetricKeyBinary = dataDeserialize(symmetricKey);
+      SecureCell.ContextImprint cell = SecureCell.ContextImprintWithKey(symmetricKeyBinary);
       byte[] plaintextBinary = plaintext.getBytes(StandardCharsets.UTF_8);
       byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
       byte[] encrypted = cell.encrypt(plaintextBinary, contextBinary);
@@ -337,11 +337,11 @@ public class ThemisModule extends ReactContextBaseJavaModule {
       return;
     }
     try {
-      byte[] bkey = dataDeserialize(symmetricKey);
-      byte[] enc = dataDeserialize(encrypted);
-      SecureCell.ContextImprint cell = SecureCell.ContextImprintWithKey(bkey);
+      byte[] symmetricKeyBinary = dataDeserialize(symmetricKey);
+      byte[] encryptedBinary = dataDeserialize(encrypted);
+      SecureCell.ContextImprint cell = SecureCell.ContextImprintWithKey(symmetricKeyBinary);
       byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
-      byte[] decrypted = cell.decrypt(enc, contextBinary);
+      byte[] decrypted = cell.decrypt(encryptedBinary, contextBinary);
       WritableArray response = dataSerialize(decrypted);
       successCallback.invoke(response);
     } catch (Exception e) {
@@ -365,11 +365,11 @@ public class ThemisModule extends ReactContextBaseJavaModule {
       return;
     }
     try {
-      byte[] bkey = dataDeserialize(privateKey);
-      PrivateKey pvtKey = new PrivateKey(bkey);
-      byte[] msg = message.getBytes(StandardCharsets.UTF_8);
-      SecureMessage secureMessage = new SecureMessage(pvtKey);
-      byte[] signedMessage = secureMessage.sign(msg);
+      byte[] privateKeyBinary = dataDeserialize(privateKey);
+      PrivateKey keyPrivateKey = new PrivateKey(privateKeyBinary);
+      byte[] messageBinary = message.getBytes(StandardCharsets.UTF_8);
+      SecureMessage secureMessage = new SecureMessage(keyPrivateKey);
+      byte[] signedMessage = secureMessage.sign(messageBinary);
       WritableArray response = dataSerialize(signedMessage);
       successCallback.invoke(response);
     } catch (Exception e) {
@@ -392,11 +392,11 @@ public class ThemisModule extends ReactContextBaseJavaModule {
       return;
     }
     try {
-      byte[] bkey = dataDeserialize(publicKey);
-      PublicKey pubKey = new PublicKey(bkey);
-      byte[] msg = dataDeserialize(message);
-      SecureMessage secureMessage = new SecureMessage(pubKey);
-      byte[] verifiedMessage = secureMessage.verify(msg, pubKey);
+      byte[] publicKeyBinary = dataDeserialize(publicKey);
+      PublicKey keyPublicKey = new PublicKey(publicKeyBinary);
+      byte[] messageBinary = dataDeserialize(message);
+      SecureMessage secureMessage = new SecureMessage(keyPublicKey);
+      byte[] verifiedMessage = secureMessage.verify(messageBinary, keyPublicKey);
       WritableArray response = dataSerialize(verifiedMessage);
       successCallback.invoke(response);
     } catch (Exception e) {
@@ -426,13 +426,13 @@ public class ThemisModule extends ReactContextBaseJavaModule {
       return;
     }
     try {
-      byte[] bkey = dataDeserialize(privateKey);
-      PrivateKey pvtKey = new PrivateKey(bkey);
-      bkey = dataDeserialize(publicKey);
-      PublicKey pubKey = new PublicKey(bkey);
-      byte[] msg = message.getBytes(StandardCharsets.UTF_8);
-      SecureMessage secureMessage = new SecureMessage(pvtKey, pubKey);
-      byte[] encryptedMessage = secureMessage.wrap(msg);
+      byte[] privateKeyBinary = dataDeserialize(privateKey);
+      PrivateKey keyPrivateKey = new PrivateKey(privateKeyBinary);
+      byte[] publicKeyBinary = dataDeserialize(publicKey);
+      PublicKey keyPublicKey = new PublicKey(publicKeyBinary);
+      byte[] messageBinary = message.getBytes(StandardCharsets.UTF_8);
+      SecureMessage secureMessage = new SecureMessage(keyPrivateKey, keyPublicKey);
+      byte[] encryptedMessage = secureMessage.wrap(messageBinary);
       WritableArray response = dataSerialize(encryptedMessage);
       successCallback.invoke(response);
     } catch (Exception e) {
@@ -462,13 +462,13 @@ public class ThemisModule extends ReactContextBaseJavaModule {
       return;
     }
     try {
-      byte[] bkey = dataDeserialize(privateKey);
-      PrivateKey pvtKey = new PrivateKey(bkey);
-      bkey = dataDeserialize(publicKey);
-      PublicKey pubKey = new PublicKey(bkey);
-      byte[] msg = dataDeserialize(message);
-      SecureMessage secureMessage = new SecureMessage(pvtKey, pubKey);
-      byte[] decrypted = secureMessage.unwrap(msg, pubKey);
+      byte[] privateKeyBinary = dataDeserialize(privateKey);
+      PrivateKey keyPrivateKey = new PrivateKey(privateKeyBinary);
+      byte[] publicKeyBinary = dataDeserialize(publicKey);
+      PublicKey keyPublicKey = new PublicKey(publicKeyBinary);
+      byte[] messageBinary = dataDeserialize(message);
+      SecureMessage secureMessage = new SecureMessage(keyPrivateKey, keyPublicKey);
+      byte[] decrypted = secureMessage.unwrap(messageBinary, keyPublicKey);
       WritableArray response = dataSerialize(decrypted);
       successCallback.invoke(response);
     } catch (Exception e) {
