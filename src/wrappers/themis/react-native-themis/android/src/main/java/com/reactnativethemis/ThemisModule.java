@@ -17,7 +17,6 @@ import com.cossacklabs.themis.SecureCellData;
 import com.cossacklabs.themis.SecureMessage;
 import com.cossacklabs.themis.SecureCompare;
 
-
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -33,11 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-
-
-
 public class ThemisModule extends ReactContextBaseJavaModule {
-
   public static class ByteOverflowException extends Exception {
     public ByteOverflowException(String errorMessage) {
       super(errorMessage);
@@ -91,6 +86,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
       default: return comparator_error;
     }
   }
+
   private static WritableArray dataSerialize(byte[] data)
   {
     if (data == null) {
@@ -108,7 +104,7 @@ public class ThemisModule extends ReactContextBaseJavaModule {
     }
     byte[] data = new byte[serializedData.size()];
     for (int i = 0; i < serializedData.size(); i++) {
-      if(serializedData.getInt(i) >= -128 && serializedData.getInt(i) <= 255) {
+      if (serializedData.getInt(i) >= 0 && serializedData.getInt(i) <= 255) {
         byte j = (byte) serializedData.getInt(i);
         data[i] = j;
       } else {
@@ -163,355 +159,286 @@ public class ThemisModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void secureCellSealWithSymmetricKeyEncrypt(ReadableArray symmetricKey,
-                                                String plaintext,
-                                                String context,
-                                                Callback successCallback,
-                                                Callback errorCallback)
+                                                           String plaintext,
+                                                           String context,
+                                                         Callback successCallback,
+                                                         Callback errorCallback)
   {
-    SecureCell.Seal cell = null;
     try {
-      cell = SecureCell.SealWithKey(dataDeserialize(symmetricKey));
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
+      byte[] symmetricKeyBinary = dataDeserialize(symmetricKey);
+      SecureCell.Seal cell = SecureCell.SealWithKey(symmetricKeyBinary);
+      byte[] plaintextBinary = plaintext.getBytes(StandardCharsets.UTF_8);
+      byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+      byte[] encrypted = cell.encrypt(plaintextBinary, contextBinary);
+      WritableArray response = dataSerialize(encrypted);
+      successCallback.invoke(response);
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
-
-    byte[] txt = plaintext.getBytes(StandardCharsets.UTF_8);
-    byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-    byte[] encrypted = cell.encrypt(txt, ctx);
-    WritableArray response = dataSerialize(encrypted);
-    successCallback.invoke(response);
   }
 
   @ReactMethod
   public void secureCellSealWithSymmetricKeyDecrypt(ReadableArray symmetricKey,
-                                                ReadableArray encrypted,
-                                                String context,
-                                                Callback successCallback,
-                                                Callback errorCallback)
+                                                    ReadableArray encrypted,
+                                                           String context,
+                                                         Callback successCallback,
+                                                         Callback errorCallback)
   {
-    SecureCell.Seal cell = null;
     try {
-      cell = SecureCell.SealWithKey(dataDeserialize(symmetricKey));
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
-    }
-
-    byte[] enc;
-    try {
-      enc = dataDeserialize(encrypted);
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
-    }
-
-    byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-    try {
-      byte[] decrypted = cell.decrypt(enc, ctx);
+      byte[] symmetricKeyBinary = dataDeserialize(symmetricKey);
+      SecureCell.Seal cell = SecureCell.SealWithKey(symmetricKeyBinary);
+      byte[] encryptedBinary = dataDeserialize(encrypted);
+      byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+      byte[] decrypted = cell.decrypt(encryptedBinary, contextBinary);
       WritableArray response = dataSerialize(decrypted);
       successCallback.invoke(response);
-    } catch (SecureCellException e) {
-      errorCallback.invoke(e.getMessage());
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
-
   }
 
   @ReactMethod
   public void secureCellSealWithPassphraseEncrypt(String passphrase,
-                                              String plaintext,
-                                              String context,
-                                              Callback callback)
+                                                  String plaintext,
+                                                  String context,
+                                                Callback successCallback,
+                                                Callback errorCallback)
   {
-    SecureCell.Seal cell = SecureCell.SealWithPassphrase(passphrase);
-    byte[] txt = plaintext.getBytes(StandardCharsets.UTF_8);
-    byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-    byte[] encrypted = cell.encrypt(txt, ctx);
-    WritableArray response = dataSerialize(encrypted);
-    callback.invoke(response);
+    try {
+      SecureCell.Seal cell = SecureCell.SealWithPassphrase(passphrase);
+      byte[] plaintextBinary = plaintext.getBytes(StandardCharsets.UTF_8);
+      byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+      byte[] encrypted = cell.encrypt(plaintextBinary, contextBinary);
+      WritableArray response = dataSerialize(encrypted);
+      successCallback.invoke(response);
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
+    }
   }
 
   @ReactMethod
   public void secureCellSealWithPassphraseDecrypt(String passphrase,
-                                              ReadableArray encrypted,
-                                              String context,
-                                              Callback successCallback,
-                                              Callback errorCallback)
+                                           ReadableArray encrypted,
+                                                  String context,
+                                                Callback successCallback,
+                                                Callback errorCallback)
   {
-    SecureCell.Seal cell = SecureCell.SealWithPassphrase(passphrase);
-    byte[] enc;
     try {
-      enc = dataDeserialize(encrypted);
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
-    }
-    byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-    try {
-      byte[] decrypted = cell.decrypt(enc, ctx);
+      SecureCell.Seal cell = SecureCell.SealWithPassphrase(passphrase);
+      byte[] encryptedBinary = dataDeserialize(encrypted);
+      byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+      byte[] decrypted = cell.decrypt(encryptedBinary, contextBinary);
       WritableArray response = dataSerialize(decrypted);
       successCallback.invoke(response);
-    } catch (SecureCellException e) {
-      errorCallback.invoke(e.getMessage());
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
   }
 
   /* MARK: Token protect mode */
   @ReactMethod
   public void secureCellTokenProtectEncrypt(ReadableArray symmetricKey,
-                                  String plaintext,
-                                  String context,
-                                  Callback successCallback,
-                                  Callback errorCallback)
+                                                   String plaintext,
+                                                   String context,
+                                                 Callback successCallback,
+                                                 Callback errorCallback)
   {
-    byte[] bkey;
     try {
-      bkey = dataDeserialize(symmetricKey);
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
+      byte[] symmetricKeyBinary = dataDeserialize(symmetricKey);
+      SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(symmetricKeyBinary);
+      byte[] plaintextBinary = plaintext.getBytes(StandardCharsets.UTF_8);
+      byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+      SecureCellData result = cell.encrypt(plaintextBinary, contextBinary);
+      byte[] encrypted = result.getProtectedData();
+      byte[] authToken = result.getAdditionalData();
+      WritableMap response = new WritableNativeMap();
+      response.putArray("encrypted", dataSerialize(encrypted));
+      response.putArray("token", dataSerialize(authToken));
+      successCallback.invoke(response);
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
-    SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(bkey);
-    byte[] txt = plaintext.getBytes(StandardCharsets.UTF_8);
-    byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-    SecureCellData result = cell.encrypt(txt, ctx);
-    byte[] encrypted = result.getProtectedData();
-    byte[] authToken = result.getAdditionalData();
-
-    WritableMap response = new WritableNativeMap();
-    response.putArray("encrypted", dataSerialize(encrypted));
-    response.putArray("token", dataSerialize(authToken));
-
-    successCallback.invoke(response);
   }
 
   @ReactMethod
   public void secureCellTokenProtectDecrypt(ReadableArray symmetricKey,
-                                  ReadableArray encrypted,
-                                  ReadableArray token,
-                                  String context,
-                                  Callback successCallback,
-                                  Callback errorCallback)
+                                            ReadableArray encrypted,
+                                            ReadableArray token,
+                                                   String context,
+                                                 Callback successCallback,
+                                                 Callback errorCallback)
   {
-    byte[] bkey;
-    byte[] enc;
-    byte[] tkn;
     try {
-      bkey = dataDeserialize(symmetricKey);
-      enc  = dataDeserialize(encrypted);
-      tkn  = dataDeserialize(token);
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
-    }
-    SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(bkey);
-    byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-
-    try {
-      byte[] decrypted = cell.decrypt(enc, tkn, ctx);
+      byte[] symmetricKeyBinary = dataDeserialize(symmetricKey);
+      byte[] encryptedBinary = dataDeserialize(encrypted);
+      byte[] tokenBinary = dataDeserialize(token);
+      SecureCell.TokenProtect cell = SecureCell.TokenProtectWithKey(symmetricKeyBinary);
+      byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+      byte[] decrypted = cell.decrypt(encryptedBinary, tokenBinary, contextBinary);
       WritableArray response = dataSerialize(decrypted);
       successCallback.invoke(response);
-    } catch (SecureCellException e) {
-      errorCallback.invoke(e.getMessage());
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
   }
 
   /* Context imprint mode */
-
   @ReactMethod
   public void secureCellContextImprintEncrypt(ReadableArray symmetricKey,
-                                    String plaintext,
-                                    String context,
-                                    Callback successCallback,
-                                    Callback errorCallback)
+                                                     String plaintext,
+                                                     String context,
+                                                   Callback successCallback,
+                                                   Callback errorCallback)
   {
     if (context == null || context.length() == 0) {
-      errorCallback.invoke(contextRequired);
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", contextRequired);
+      errorCallback.invoke(error);
       return;
     }
-
-    byte[] bkey;
     try {
-      bkey = dataDeserialize(symmetricKey);
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
+      byte[] symmetricKeyBinary = dataDeserialize(symmetricKey);
+      SecureCell.ContextImprint cell = SecureCell.ContextImprintWithKey(symmetricKeyBinary);
+      byte[] plaintextBinary = plaintext.getBytes(StandardCharsets.UTF_8);
+      byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+      byte[] encrypted = cell.encrypt(plaintextBinary, contextBinary);
+      WritableArray response = dataSerialize(encrypted);
+      successCallback.invoke(response);
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
-    SecureCell.ContextImprint cell = SecureCell.ContextImprintWithKey(bkey);
-
-    byte[] txt = plaintext.getBytes(StandardCharsets.UTF_8);
-    byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-    byte[] encrypted = cell.encrypt(txt, ctx);
-
-    WritableArray response = dataSerialize(encrypted);
-    successCallback.invoke(response);
   }
 
   @ReactMethod
   public void secureCellContextImprintDecrypt(ReadableArray symmetricKey,
-                                    ReadableArray encrypted,
-                                    String context,
-                                    Callback successCallback,
-                                    Callback errorCallback)
+                                              ReadableArray encrypted,
+                                                     String context,
+                                                   Callback successCallback,
+                                                   Callback errorCallback)
   {
     if (context == null || context.length() == 0) {
-      errorCallback.invoke(contextRequired);
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", contextRequired);
+      errorCallback.invoke(error);
       return;
     }
-
-    byte[] bkey;
-    byte[] enc;
     try {
-      bkey = dataDeserialize(symmetricKey);
-      enc = dataDeserialize(encrypted);
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
+      byte[] symmetricKeyBinary = dataDeserialize(symmetricKey);
+      byte[] encryptedBinary = dataDeserialize(encrypted);
+      SecureCell.ContextImprint cell = SecureCell.ContextImprintWithKey(symmetricKeyBinary);
+      byte[] contextBinary = context.getBytes(StandardCharsets.UTF_8);
+      byte[] decrypted = cell.decrypt(encryptedBinary, contextBinary);
+      WritableArray response = dataSerialize(decrypted);
+      successCallback.invoke(response);
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
-    SecureCell.ContextImprint cell = SecureCell.ContextImprintWithKey(bkey);
-
-    byte[] ctx = context.getBytes(StandardCharsets.UTF_8);
-    byte[] decrypted = cell.decrypt(enc, ctx);
-
-    WritableArray response = dataSerialize(decrypted);
-    successCallback.invoke(response);
   }
 
   /* Secure Message */
   @ReactMethod
   public void secureMessageSign(String message,
-                                ReadableArray privateKey,
-                                ReadableArray publicKey,
-                                Callback successCallback,
-                                Callback errorCallback)
+                         ReadableArray privateKey,
+                              Callback successCallback,
+                              Callback errorCallback)
   {
     if (privateKey == null || privateKey.size() == 0) {
-      errorCallback.invoke(privateKeyRequired);
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", privateKeyRequired);
+      errorCallback.invoke(error);
       return;
     }
-    byte[] bkey;
     try {
-      bkey = dataDeserialize(privateKey);
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
-    }
-    PrivateKey pvtKey = new PrivateKey(bkey);
-    SecureMessage secureMessage;
-    byte[] msg = message.getBytes(StandardCharsets.UTF_8);
-
-    if (publicKey == null ) {
-      secureMessage = new SecureMessage(pvtKey);
-    } else {
-      try {
-        bkey = dataDeserialize(publicKey);
-      } catch (ByteOverflowException e) {
-        errorCallback.invoke(e.getMessage());
-        return;
-      }
-      PublicKey pubKey = new PublicKey(bkey);
-      secureMessage = new SecureMessage(pvtKey,pubKey);
-    }
-
-    try {
-      byte[] signedMessage = secureMessage.sign(msg);
+      byte[] privateKeyBinary = dataDeserialize(privateKey);
+      PrivateKey keyPrivateKey = new PrivateKey(privateKeyBinary);
+      byte[] messageBinary = message.getBytes(StandardCharsets.UTF_8);
+      SecureMessage secureMessage = new SecureMessage(keyPrivateKey);
+      byte[] signedMessage = secureMessage.sign(messageBinary);
       WritableArray response = dataSerialize(signedMessage);
       successCallback.invoke(response);
-    } catch (NullArgumentException | SecureMessageWrapException e) {
-      errorCallback.invoke(e.getMessage());
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
-
   }
 
   @ReactMethod
   public void secureMessageVerify(ReadableArray message,
-                                  ReadableArray privateKey,
                                   ReadableArray publicKey,
-                                  Callback successCallback,
-                                  Callback errorCallback)
+                                       Callback successCallback,
+                                       Callback errorCallback)
   {
-
     if (publicKey == null || publicKey.size() == 0) {
-      errorCallback.invoke(publicKeyRequired);
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", publicKeyRequired);
+      errorCallback.invoke(error);
       return;
     }
-
-    byte[] bkey;
-    byte[] msg;
-    PrivateKey pvtKey;
-    PublicKey pubKey;
     try {
-      bkey = dataDeserialize(publicKey);
-      pubKey = new PublicKey(bkey);
-      msg = dataDeserialize(message);
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
-    }
-
-    SecureMessage secureMessage;
-
-    if ( privateKey == null || privateKey.size() == 0) {
-      secureMessage = new SecureMessage(pubKey);
-    } else {
-      try {
-        bkey = dataDeserialize(privateKey);
-        pvtKey = new PrivateKey(bkey);
-      } catch (ByteOverflowException e) {
-        errorCallback.invoke(e.getMessage());
-        return;
-      }
-
-      secureMessage = new SecureMessage(pvtKey, pubKey);
-    }
-    try {
-      byte[] verifiedMessage = secureMessage.verify(msg, pubKey);
+      byte[] publicKeyBinary = dataDeserialize(publicKey);
+      PublicKey keyPublicKey = new PublicKey(publicKeyBinary);
+      byte[] messageBinary = dataDeserialize(message);
+      SecureMessage secureMessage = new SecureMessage(keyPublicKey);
+      byte[] verifiedMessage = secureMessage.verify(messageBinary, keyPublicKey);
       WritableArray response = dataSerialize(verifiedMessage);
       successCallback.invoke(response);
-    } catch (NullArgumentException | SecureMessageWrapException e) {
-      errorCallback.invoke(e.getMessage());
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
   }
 
   @ReactMethod
   public void secureMessageEncrypt(String message,
-                                   ReadableArray privateKey,
-                                   ReadableArray publicKey,
-                                   Callback successCallback,
-                                   Callback errorCallback)
+                            ReadableArray privateKey,
+                            ReadableArray publicKey,
+                                 Callback successCallback,
+                                 Callback errorCallback)
   {
-
-    if ( privateKey == null || privateKey.size() == 0) {
-      errorCallback.invoke(privateKeyRequired);
+    if (privateKey == null || privateKey.size() == 0) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", privateKeyRequired);
+      errorCallback.invoke(error);
       return;
     }
-    if ( publicKey == null || publicKey.size() == 0 ) {
-      errorCallback.invoke(publicKeyRequired);
+    if (publicKey == null || publicKey.size() == 0) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", publicKeyRequired);
+      errorCallback.invoke(error);
       return;
     }
-
-    byte[] bkey;
-    PrivateKey pvtKey;
-    PublicKey pubKey;
     try {
-      bkey = dataDeserialize(privateKey);
-      pvtKey = new PrivateKey(bkey);
-      bkey = dataDeserialize(publicKey);
-      pubKey = new PublicKey(bkey);
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
-    }
-
-    byte[] msg = message.getBytes(StandardCharsets.UTF_8);
-
-    SecureMessage secureMessage = new SecureMessage(pvtKey, pubKey);
-    try {
-      byte[] encrypted = secureMessage.wrap(msg, pubKey);
-      WritableArray response = dataSerialize(encrypted);
+      byte[] privateKeyBinary = dataDeserialize(privateKey);
+      PrivateKey keyPrivateKey = new PrivateKey(privateKeyBinary);
+      byte[] publicKeyBinary = dataDeserialize(publicKey);
+      PublicKey keyPublicKey = new PublicKey(publicKeyBinary);
+      byte[] messageBinary = message.getBytes(StandardCharsets.UTF_8);
+      SecureMessage secureMessage = new SecureMessage(keyPrivateKey, keyPublicKey);
+      byte[] encryptedMessage = secureMessage.wrap(messageBinary);
+      WritableArray response = dataSerialize(encryptedMessage);
       successCallback.invoke(response);
-    } catch (NullArgumentException | SecureMessageWrapException e) {
-      errorCallback.invoke(e.getMessage());
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
   }
 
@@ -519,65 +446,59 @@ public class ThemisModule extends ReactContextBaseJavaModule {
   public void secureMessageDecrypt(ReadableArray message,
                                    ReadableArray privateKey,
                                    ReadableArray publicKey,
-                                   Callback successCallback,
-                                   Callback errorCallback)
+                                        Callback successCallback,
+                                        Callback errorCallback)
   {
-
-    if ( privateKey == null || privateKey.size() == 0) {
-      errorCallback.invoke(privateKeyRequired);
+    if (privateKey == null || privateKey.size() == 0) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", privateKeyRequired);
+      errorCallback.invoke(error);
       return;
     }
-    if ( publicKey == null || publicKey.size() == 0 ) {
-      errorCallback.invoke(publicKeyRequired);
+    if (publicKey == null || publicKey.size() == 0) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", publicKeyRequired);
+      errorCallback.invoke(error);
       return;
     }
-
-    byte[] bkey;
-    byte[] msg;
-    PrivateKey pvtKey;
-    PublicKey pubKey;
     try {
-      bkey = dataDeserialize(privateKey);
-      pvtKey = new PrivateKey(bkey);
-      bkey = dataDeserialize(publicKey);
-      pubKey = new PublicKey(bkey);
-      msg = dataDeserialize(message);
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
-    }
-
-    SecureMessage secureMessage = new SecureMessage(pvtKey, pubKey);
-    try {
-      byte[] decrypted = secureMessage.unwrap(msg, pubKey);
+      byte[] privateKeyBinary = dataDeserialize(privateKey);
+      PrivateKey keyPrivateKey = new PrivateKey(privateKeyBinary);
+      byte[] publicKeyBinary = dataDeserialize(publicKey);
+      PublicKey keyPublicKey = new PublicKey(publicKeyBinary);
+      byte[] messageBinary = dataDeserialize(message);
+      SecureMessage secureMessage = new SecureMessage(keyPrivateKey, keyPublicKey);
+      byte[] decrypted = secureMessage.unwrap(messageBinary, keyPublicKey);
       WritableArray response = dataSerialize(decrypted);
       successCallback.invoke(response);
-    } catch (NullArgumentException | SecureMessageWrapException e) {
-      errorCallback.invoke(e.getMessage());
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
   }
 
   @ReactMethod
   public void initComparator(ReadableArray sharedSecret,
-                             Callback successCallback,
-                             Callback errorCallback)
+                                  Callback successCallback,
+                                  Callback errorCallback)
   {
-    byte[] sharedSecretData;
     try {
-      sharedSecretData = dataDeserialize(sharedSecret);
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
+      byte[] sharedSecretData = dataDeserialize(sharedSecret);
+      SecureCompare cmp = new SecureCompare(sharedSecretData);
+      final String uuid = UUID.randomUUID().toString();
+      cmprs.put(uuid, cmp);
+      successCallback.invoke(uuid);
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
-    SecureCompare cmp = new SecureCompare(sharedSecretData);
-    final String uuid = UUID.randomUUID().toString();
-    cmprs.put(uuid, cmp);
-    successCallback.invoke(uuid);
   }
 
   @ReactMethod
   public void statusOfComparator(String uuid,
-                                 Callback callback)
+                               Callback callback)
   {
     SecureCompare cmp = cmprs.get(uuid);
     if (cmp == null) {
@@ -591,8 +512,8 @@ public class ThemisModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void beginCompare(String uuid,
-                           Callback successCallback,
-                           Callback errorCallback)
+                         Callback successCallback,
+                         Callback errorCallback)
   {
     SecureCompare cmp = cmprs.get(uuid);
     if (cmp == null) {
@@ -606,24 +527,17 @@ public class ThemisModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void proceedCompare(String uuid,
-                             ReadableArray previous,
-                             Callback successCallback,
-                             Callback errorCallback)
+                      ReadableArray previous,
+                           Callback successCallback,
+                           Callback errorCallback)
   {
     SecureCompare cmp = cmprs.get(uuid);
     if (cmp == null) {
-      errorCallback.invoke(comparator_error);
-      return;
-    }
-
-    byte[] data;
-    try {
-      data = dataDeserialize(previous);
-    } catch (ByteOverflowException e) {
-      errorCallback.invoke(e.getMessage());
-      return;
+        errorCallback.invoke(comparator_error);
+        return;
     }
     try {
+      byte[] data = dataDeserialize(previous);
       data = cmp.proceed(data);
       WritableArray response = dataSerialize(data);
       SecureCompare.CompareResult result = cmp.getResult();
@@ -632,9 +546,10 @@ public class ThemisModule extends ReactContextBaseJavaModule {
         cmprs.remove(uuid);
       }
       successCallback.invoke(response, status);
-    } catch (SecureCompareException e) {
-      errorCallback.invoke(e.getMessage());
+    } catch (Exception e) {
+      WritableMap error = new WritableNativeMap();
+      error.putString("message", e.toString());
+      errorCallback.invoke(error);
     }
   }
-
 }
