@@ -117,3 +117,24 @@ soter_status_t soter_ec_export_key(EVP_PKEY* pkey, void* key, size_t* key_length
                                                (soter_container_hdr_t*)key,
                                                key_length);
 }
+
+soter_status_t soter_ec_export_private_key(const EVP_PKEY* pkey, void* key, size_t* key_length)
+{
+    if (!pkey) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    return soter_engine_specific_to_ec_priv_key((const soter_engine_specific_ec_key_t*)pkey,
+                                                (soter_container_hdr_t*)key,
+                                                key_length);
+}
+
+soter_status_t soter_ec_export_public_key(const EVP_PKEY* pkey, bool compressed, void* key, size_t* key_length)
+{
+    if (!pkey) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    return soter_engine_specific_to_ec_pub_key((const soter_engine_specific_ec_key_t*)pkey,
+                                               compressed,
+                                               (soter_container_hdr_t*)key,
+                                               key_length);
+}
