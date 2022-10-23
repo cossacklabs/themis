@@ -221,6 +221,7 @@ soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx,
     }
 
     return soter_engine_specific_to_ec_pub_key((const soter_engine_specific_ec_key_t*)asym_ka_ctx->pkey,
+                                               true,
                                                (soter_container_hdr_t*)key,
                                                key_length);
 }

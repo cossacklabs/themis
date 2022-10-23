@@ -85,6 +85,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
                                                     soter_container_hdr_t* key,
                                                     size_t* key_length);
 soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_ec_key_t* engine_key,
+                                                   bool compressed,
                                                    soter_container_hdr_t* key,
                                                    size_t* key_length);
 

@@ -88,6 +88,7 @@ soter_status_t soter_ec_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key
                                                     key_length);
     }
     return soter_engine_specific_to_ec_pub_key((const soter_engine_specific_ec_key_t*)pkey,
+                                               true,
                                                (soter_container_hdr_t*)key,
                                                key_length);
 }

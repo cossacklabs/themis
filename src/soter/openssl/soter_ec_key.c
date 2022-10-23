@@ -107,6 +107,7 @@ static size_t bn_encode(const BIGNUM* bn, uint8_t* buffer, size_t length)
 }
 
 soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_ec_key_t* engine_key,
+                                                   bool compressed,
                                                    soter_container_hdr_t* key,
                                                    size_t* key_length)
 {
@@ -117,8 +118,6 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
     const EC_GROUP* group;
     const EC_POINT* Q;
     int curve;
-    /* TODO: accept a parameter to control this */
-    bool compressed = true;
 
     if ((!key_length) || (EVP_PKEY_EC != EVP_PKEY_id(pkey))) {
         return SOTER_INVALID_PARAMETER;
