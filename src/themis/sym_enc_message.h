@@ -145,7 +145,7 @@ static inline themis_status_t themis_read_scell_auth_token_key(const uint8_t* bu
     buffer = stream_read_uint32LE(buffer, &hdr->iv_length);
     buffer = stream_read_uint32LE(buffer, &hdr->auth_tag_length);
     buffer = stream_read_uint32LE(buffer, &hdr->message_length);
-    /* Add separately to avoid overflows in intermediade calculations */
+    /* Add separately to avoid overflows in intermediate calculations */
     need_length += hdr->iv_length;
     need_length += hdr->auth_tag_length;
     if (buffer_length < need_length) {

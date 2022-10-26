@@ -38,11 +38,11 @@ Themis helps to build both simple and complex cryptographic features easily, qui
 
 * **Encrypt sensitive data fields** before storing in database (_"application-side field-level encryption"_).
 
-* Support **searchable encryption**, data tokenisation and data masking using Themis and [Acra](https://www.cossacklabs.com/acra/).
+* Support **searchable encryption**, data tokenization and data masking using Themis and [Acra](https://www.cossacklabs.com/acra/).
 
 * Exchange secrets securely: **share sensitive data** between parties, build simple chat app between patients and doctors.
 
-* Build **end-to-end encryption schemes** with centralised or decentralised architecture: encrypt data locally on one app, use it encrypted everywhere, decrypt only for authenticated user.
+* Build **end-to-end encryption schemes** with centralized or decentralized architecture: encrypt data locally on one app, use it encrypted everywhere, decrypt only for authenticated user.
 
 * Maintain **real-time secure sessions**: send encrypted messages to control connected devices from your app, receive real-time sensitive data from your apps to your backend.
 
@@ -121,7 +121,7 @@ Refer to the documentation to learn more about:
 
 # Cryptography
 
-Themis relies on proven cryptographic algorithms implemented by well-known cryptography libraries such as OpenSSL, LibreSSL, BoringSSL. Refer to [Cryptograhy in Themis](https://docs.cossacklabs.com/themis/crypto-theory/) docs to learn more.
+Themis relies on proven cryptographic algorithms implemented by well-known cryptography libraries such as OpenSSL, LibreSSL, BoringSSL. Refer to [Cryptography in Themis](https://docs.cossacklabs.com/themis/crypto-theory/) docs to learn more.
 
 
 This distribution includes cryptographic software. The country in which you currently reside may have restrictions on the import, possession, use, and/or re-export to another country, of encryption software. BEFORE using any encryption software, please check your country's laws, regulations, and policies concerning the import, possession, or use, and re-export of encryption software, to see if this is permitted. See http://www.wassenaar.org/ for more information.
@@ -138,7 +138,7 @@ Read about [Apple export regulations on cryptography for Themis](https://docs.co
 
 Each change in Themis core library is being reviewed and approved by our internal team of cryptographers and security engineers. For every release, we perform internal audits by cryptographers who don't work on Themis.
 
-We use a lot of automated security testing, i.e. static code analysers, fuzzing tools, memory analysers, unit tests (per each platform), integration tests (to find compatibility issues between different Themis-supported languages, OS and x86/x64 architectures). Read more about our security testing practices in [Themis security docs](https://docs.cossacklabs.com/themis/security/).
+We use a lot of automated security testing, i.e. static code analyzers, fuzzing tools, memory analyzers, unit tests (per each platform), integration tests (to find compatibility issues between different Themis-supported languages, OS and x86/x64 architectures). Read more about our security testing practices in [Themis security docs](https://docs.cossacklabs.com/themis/security/).
 
 If you believe that you've found a security-related issue, please drop us an email to [dev@cossacklabs.com](mailto:dev@cossacklabs.com). Bug bounty program may apply.
 

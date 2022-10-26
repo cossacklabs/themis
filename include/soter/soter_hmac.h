@@ -69,14 +69,14 @@ typedef struct soter_hmac_ctx_type soter_hmac_ctx_t;
 /**
  * @brief creating of HMAC context
  * @param [in] algo hash algorithm to be used; see @ref soter_hash_algo_type
- * @return pointer to HMAC context on sussecc and  NULL on failure
+ * @return pointer to HMAC context on success and  NULL on failure
  */
 SOTER_API
 soter_hmac_ctx_t* soter_hmac_create(soter_hash_algo_t algo, const uint8_t* key, size_t key_length);
 
 /**
  * @brief destroy HMAC context
- * @param [in] hmac_ctx pointer to HMAC context previosly created by @ref soter_hmac_create
+ * @param [in] hmac_ctx pointer to HMAC context previously created by @ref soter_hmac_create
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
 SOTER_API
@@ -84,7 +84,7 @@ soter_status_t soter_hmac_destroy(soter_hmac_ctx_t* hmac_ctx);
 
 /**
  * @brief update HMAC context with data
- * @param [in] hmac_ctx pointer to HMAC context previosly created by @ref soter_hmac_create
+ * @param [in] hmac_ctx pointer to HMAC context previously created by @ref soter_hmac_create
  * @param [in] data pointer to buffer with data to HMAC update
  * @param [in] length of data buffer
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
@@ -94,7 +94,7 @@ soter_status_t soter_hmac_update(soter_hmac_ctx_t* hmac_ctx, const void* data, s
 
 /**
  * @brief final HMAC context and get hash value
- * @param [in] hmac_ctx pointer to hash context previosly created by @ref soter_hmac_create
+ * @param [in] hmac_ctx pointer to hash context previously created by @ref soter_hmac_create
  * @param [out] hmac_value pointer to buffer for HMAC value retrieve, may be set to NULL for HMAC
  * value length determination
  * @param [in, out] hmac_length length of hmac_value buffer

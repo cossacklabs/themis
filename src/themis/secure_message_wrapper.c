@@ -25,7 +25,7 @@
 #include "themis/secure_cell.h"
 
 #define THEMIS_RSA_SYM_ALG (SOTER_SYM_AES_CTR | SOTER_SYM_256_KEY_LENGTH | SOTER_SYM_PBKDF2)
-#define THEMIS_RSA_SYMM_PASSWD_LENGTH 70 //!!! need to aprove
+#define THEMIS_RSA_SYMM_PASSWD_LENGTH 70 //!!! need to approve
 //#define THEMIS_RSA_SYMM_ENCRYPTED_PASSWD_LENGTH 256 //encrypted password for rsa 256
 #define THEMIS_RSA_SYMM_SALT_LENGTH 16
 

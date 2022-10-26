@@ -107,7 +107,7 @@ public:
      *
      * This method is equivalent to using an empty associated context.
      *
-     * @returns Newly allocated containter with encrypted data and authentication token.
+     * @returns Newly allocated container with encrypted data and authentication token.
      *
      * @throws themispp::exception_t if `plaintext` is empty.
      * @throws themispp::exception_t on encryption failure.
@@ -133,7 +133,7 @@ public:
      * during decryption. Usually this is some plaintext data associated associated with the
      * encrypted data, such as database row number, protocol message ID, etc.
      *
-     * @returns Newly allocated containter with encrypted data and authentication token.
+     * @returns Newly allocated container with encrypted data and authentication token.
      *
      * @throws themispp::exception_t if `plaintext` is empty.
      * @throws themispp::exception_t on encryption failure.
@@ -163,7 +163,7 @@ public:
      *
      * This method is equivalent to using an empty associated context.
      *
-     * @returns Newly allocated containter with decrypted data if everything goes well.
+     * @returns Newly allocated container with decrypted data if everything goes well.
      *
      * @throws themispp::exception_t if data cannot be decrypted. Usually this means that either
      * the data has been tampered with, or the master key or associated context are not the
@@ -192,7 +192,7 @@ public:
      * You need to provide the same context as it was used during encryption (or use
      * an empty context if there was no context).
      *
-     * @returns Newly allocated containter with decrypted data if everything goes well.
+     * @returns Newly allocated container with decrypted data if everything goes well.
      *
      * @throws themispp::exception_t if data cannot be decrypted. Usually this means that either
      * the data has been tampered with, or the master key or associated context are not the
@@ -365,7 +365,7 @@ public:
      *
      * This method is equivalent to using an empty associated context.
      *
-     * @returns Newly allocated containter with encrypted data and authentication token.
+     * @returns Newly allocated container with encrypted data and authentication token.
      *
      * @throws themispp::exception_t if `plaintext` is empty.
      * @throws themispp::exception_t on encryption failure.
@@ -391,7 +391,7 @@ public:
      * during decryption. Usually this is some plaintext data associated associated with the
      * encrypted data, such as database row number, protocol message ID, etc.
      *
-     * @returns Newly allocated containter with encrypted data and authentication token.
+     * @returns Newly allocated container with encrypted data and authentication token.
      *
      * @throws themispp::exception_t if `plaintext` is empty.
      * @throws themispp::exception_t on encryption failure.
@@ -421,7 +421,7 @@ public:
      *
      * This method is equivalent to using an empty associated context.
      *
-     * @returns Newly allocated containter with decrypted data if everything goes well.
+     * @returns Newly allocated container with decrypted data if everything goes well.
      *
      * @throws themispp::exception_t if data cannot be decrypted. Usually this means that either
      * the data has been tampered with, or the master key or associated context are not the
@@ -450,7 +450,7 @@ public:
      * You need to provide the same context as it was used during encryption (or use
      * an empty context if there was no context).
      *
-     * @returns Newly allocated containter with decrypted data if everything goes well.
+     * @returns Newly allocated container with decrypted data if everything goes well.
      *
      * @throws themispp::exception_t if data cannot be decrypted. Usually this means that either
      * the data has been tampered with, or the master key or associated context are not the

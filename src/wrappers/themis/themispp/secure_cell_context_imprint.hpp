@@ -107,7 +107,7 @@ public:
      * during decryption. Usually this is some plaintext data associated associated with the
      * encrypted data, such as database row number, protocol message ID, client name, etc.
      *
-     * @returns Newly allocated containter with encrypted data, same length as input.
+     * @returns Newly allocated container with encrypted data, same length as input.
      * Context Imprint mode does not include any additional data for integrity validation.
      *
      * @throws themispp::exception_t if `plaintext` or `context` is empty.
@@ -140,7 +140,7 @@ public:
      * mismatched context has been used, or if the message data has been
      * corrupted or tampered with.
      *
-     * @returns Newly allocated containter with decrypted data. You should
+     * @returns Newly allocated container with decrypted data. You should
      * validate its correctness and integrity.
      *
      * @throws themispp::exception_t if `encrypted` or `context` is empty.

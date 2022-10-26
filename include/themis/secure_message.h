@@ -150,7 +150,7 @@ themis_status_t themis_secure_message_verify(const uint8_t* public_key,
  * message length determination
  * @param [in, out] wrapped_message_length length of wrapped_message
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
- * @note If wrapped_message==NULL or wrapped_message_length is not enought for wrapped message
+ * @note If wrapped_message==NULL or wrapped_message_length is not enough for wrapped message
  * storage then THEMIS_BUFFER_TOO_SMALL will return and wrapped_message_length will store length of
  * buffer needed for wrapped message store
  */
@@ -177,7 +177,7 @@ themis_status_t themis_secure_message_wrap(const uint8_t* private_key,
  * determination
  * @param [in, out] message_length length of message
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
- * @note If message==NULL or message_length is not enought for plain message storage then
+ * @note If message==NULL or message_length is not enough for plain message storage then
  * THEMIS_BUFFER_TOO_SMALL will return and message_length will store length of buffer needed for
  * plain message store
  */

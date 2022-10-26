@@ -116,7 +116,7 @@ public class SecureSession {
 	native long create(byte[] id, byte[] signKey);
 	native void destroy();
 	
-	native byte[] jniGenerateConntect();
+	native byte[] jniGenerateConnect();
 	native byte[] jniWrap(byte[] data);
 	native byte[][] jniUnwrap(byte[] wrappedData);
 	native boolean jniIsEstablished();
@@ -178,7 +178,7 @@ public class SecureSession {
 			throw new IllegalStateException("Secure Session is closed");
 		}
 		
-		byte[] request = jniGenerateConntect();
+		byte[] request = jniGenerateConnect();
 		
 		if (null == request) {
 			throw new RuntimeException("Secure Session cannot generate connection request", new SecureSessionException());
