@@ -87,7 +87,11 @@ soter_status_t soter_sign_export_key(soter_sign_ctx_t* ctx, void* key, size_t* k
     case SOTER_SIGN_rsa_pss_pkcs8:
         return soter_sign_export_key_rsa_pss_pkcs8(ctx, key, key_length, isprivate);
     case SOTER_SIGN_ecdsa_none_pkcs8:
-        return soter_sign_export_key_ecdsa_none_pkcs8(ctx, key, key_length, isprivate);
+        if (isprivate) {
+            return soter_sign_export_private_key_ecdsa_none_pkcs8(ctx, key, key_length);
+        } else {
+            return soter_sign_export_public_key_ecdsa_none_pkcs8(ctx, true, key, key_length);
+        }
     default:
         return SOTER_INVALID_PARAMETER;
     }
