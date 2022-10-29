@@ -103,6 +103,27 @@ soter_status_t soter_sign_export_key_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
     return soter_ec_export_key(ctx->pkey, key, key_length, isprivate);
 }
 
+soter_status_t soter_sign_export_private_key_ecdsa_none_pkcs8(const soter_sign_ctx_t* ctx,
+                                                              void* key,
+                                                              size_t* key_length)
+{
+    if (!ctx) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    return soter_ec_export_private_key(ctx->pkey, key, key_length);
+}
+
+soter_status_t soter_sign_export_public_key_ecdsa_none_pkcs8(const soter_sign_ctx_t* ctx,
+                                                             bool compressed,
+                                                             void* key,
+                                                             size_t* key_length)
+{
+    if (!ctx) {
+        return SOTER_INVALID_PARAMETER;
+    }
+    return soter_ec_export_public_key(ctx->pkey, compressed, key, key_length);
+}
+
 soter_status_t soter_sign_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
                                                   const void* data,
                                                   const size_t data_length)
