@@ -137,10 +137,131 @@ static int sign_test(soter_sign_alg_t alg)
     return 0;
 }
 
+static int sign_test2(soter_sign_alg_t alg, bool compressed)
+{
+    char test_data[] = "test message";
+    size_t test_data_length = strlen(test_data);
+
+    soter_sign_ctx_t* ctx = NULL;
+
+    uint8_t* signature = NULL;
+    size_t signature_length = 0;
+
+    ctx = soter_sign_create(alg, NULL, 0, NULL, 0);
+    if (!ctx) {
+        testsuite_fail_if(!ctx, "soter_sign_ctx_t == NULL");
+        return -1;
+    }
+
+    uint8_t private_key[8192];
+    size_t private_key_length = sizeof(private_key);
+
+    uint8_t public_key[8192];
+    size_t public_key_length = sizeof(public_key);
+
+    soter_status_t res;
+    res = soter_sign_export_private_key(ctx, private_key, &private_key_length);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_if(res != SOTER_SUCCESS, "soter_sign_export_private_key failed");
+        soter_sign_destroy(ctx);
+        return -6;
+    }
+
+    res = soter_sign_export_public_key(ctx, compressed, public_key, &public_key_length);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_if(res != SOTER_SUCCESS, "soter_sign_export_public_key failed");
+        soter_sign_destroy(ctx);
+        return -7;
+    }
+
+    res = soter_sign_destroy(ctx);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_if(res != SOTER_SUCCESS, "soter_sign_destroy fail");
+        return -8;
+    }
+
+    soter_sign_ctx_t* sctx = NULL;
+
+    sctx = soter_sign_create(alg, private_key, private_key_length, NULL, 0);
+    if (!sctx) {
+        testsuite_fail_if(!sctx, "soter_sign_ctx_t == NULL 2");
+        return -1;
+    }
+
+    res = soter_sign_update(sctx, test_data, test_data_length);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_if(res != SOTER_SUCCESS, "soter_sign_update fail");
+        soter_sign_destroy(sctx);
+        return -2;
+    }
+
+    res = soter_sign_final(sctx, signature, &signature_length);
+    if (res != SOTER_BUFFER_TOO_SMALL) {
+        testsuite_fail_if(res != SOTER_BUFFER_TOO_SMALL,
+                          "soter_sign_final (signature length determine) fail");
+        soter_sign_destroy(sctx);
+        return -3;
+    }
+
+    signature = malloc(signature_length);
+    if (!signature) {
+        testsuite_fail_if(!signature, "out of memory");
+        soter_sign_destroy(ctx);
+        return -4;
+    }
+
+    res = soter_sign_final(sctx, signature, &signature_length);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_if(res != SOTER_SUCCESS, "soter_sign_final fail");
+        soter_sign_destroy(sctx);
+        return -5;
+    }
+    res = soter_sign_destroy(sctx);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_if(res != SOTER_SUCCESS, "soter_sign_destroy fail");
+        return -8;
+    }
+
+    soter_verify_ctx_t* vctx = NULL;
+
+    vctx = soter_verify_create(alg, NULL, 0, public_key, public_key_length);
+    if (!vctx) {
+        testsuite_fail_if(!vctx, "soter_verify_ctx_t == NULL");
+        return -9;
+    }
+
+    res = soter_verify_update(vctx, test_data, test_data_length);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_if(res != SOTER_SUCCESS, "soter_verify_update fail");
+        soter_verify_destroy(vctx);
+        return -10;
+    }
+
+    res = soter_verify_final(vctx, signature, signature_length);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_if(res != SOTER_SUCCESS, "soter_verify_final fail");
+        soter_verify_destroy(vctx);
+        return -11;
+    }
+
+    res = soter_verify_destroy(vctx);
+    if (res != SOTER_SUCCESS) {
+        testsuite_fail_if(res != SOTER_SUCCESS, "soter_sign_destroy fail");
+        return -12;
+    }
+    free(signature);
+    return 0;
+}
+
 static void soter_sign_test(void)
 {
     testsuite_fail_if(sign_test(SOTER_SIGN_rsa_pss_pkcs8), "soter sign SOTER_SIGN_rsa_pss_pkcs8");
     testsuite_fail_if(sign_test(SOTER_SIGN_ecdsa_none_pkcs8), "soter sign SOTER_SIGN_ecdsa_none_pkcs8");
+    /* Compression is not supported by RSA, but test the API anyway */
+    testsuite_fail_if(sign_test2(SOTER_SIGN_rsa_pss_pkcs8, true), "soter sign RSA (compressed)");
+    testsuite_fail_if(sign_test2(SOTER_SIGN_rsa_pss_pkcs8, false), "soter sign RSA (uncompressed)");
+    testsuite_fail_if(sign_test2(SOTER_SIGN_ecdsa_none_pkcs8, true), "soter sign ECDSA (compressed)");
+    testsuite_fail_if(sign_test2(SOTER_SIGN_ecdsa_none_pkcs8, false), "soter sign ECDSA (uncompressed)");
 }
 
 static void soter_sign_api_test(void)

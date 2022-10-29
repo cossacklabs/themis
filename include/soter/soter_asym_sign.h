@@ -100,6 +100,40 @@ soter_status_t soter_sign_final(soter_sign_ctx_t* ctx, void* signature, size_t* 
 SOTER_API
 soter_status_t soter_sign_export_key(soter_sign_ctx_t* ctx, void* key, size_t* key_length, bool isprivate);
 
+/**
+ * Export private key from sign context.
+ *
+ * @param [in]     ctx        pointer to sign context
+ * @param [out]    key        buffer to store exported key
+ * @param [in,out] key_length length of key. May be set to NULL for key length determination.
+ *
+ * @return @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
+ *
+ * @note If key == NULL or if key_length is smaller than needed to store the key,
+ * @ref SOTER_BUFFER_TOO_SMALL is returned and key_length is set to required length of the buffer.
+ */
+SOTER_API
+soter_status_t soter_sign_export_private_key(const soter_sign_ctx_t* ctx, void* key, size_t* key_length);
+
+/**
+ * Export public key from sign context.
+ *
+ * @param [in]     ctx        pointer to sign context
+ * @param [in]     compressed whether to export the key in compressed format, if applicable.
+ * @param [out]    key        buffer to store exported key
+ * @param [in,out] key_length length of key. May be set to NULL for key length determination.
+ *
+ * @return @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
+ *
+ * @note If key == NULL or if key_length is smaller than needed to store the key,
+ * @ref SOTER_BUFFER_TOO_SMALL is returned and key_length is set to required length of the buffer.
+ */
+SOTER_API
+soter_status_t soter_sign_export_public_key(const soter_sign_ctx_t* ctx,
+                                            bool compressed,
+                                            void* key,
+                                            size_t* key_length);
+
 /** @brief destroy sign context
  * @param [in] ctx pointer to sign context previously created by soter_sign_create
  * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
