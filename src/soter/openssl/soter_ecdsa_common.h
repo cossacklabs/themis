@@ -23,7 +23,6 @@
 
 soter_status_t soter_ec_gen_key(EVP_PKEY** ppkey);
 soter_status_t soter_ec_import_key(EVP_PKEY* pkey, const void* key, size_t key_length);
-soter_status_t soter_ec_export_key(EVP_PKEY* pkey, void* key, size_t* key_length, bool isprivate);
 soter_status_t soter_ec_export_private_key(const EVP_PKEY* pkey, void* key, size_t* key_length);
 soter_status_t soter_ec_export_public_key(const EVP_PKEY* pkey, bool compressed, void* key, size_t* key_length);
 

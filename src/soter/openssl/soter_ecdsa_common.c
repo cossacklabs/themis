@@ -102,22 +102,6 @@ soter_status_t soter_ec_import_key(EVP_PKEY* pkey, const void* key, const size_t
     return SOTER_INVALID_PARAMETER;
 }
 
-soter_status_t soter_ec_export_key(EVP_PKEY* pkey, void* key, size_t* key_length, bool isprivate)
-{
-    if (!pkey) {
-        return SOTER_INVALID_PARAMETER;
-    }
-    if (isprivate) {
-        return soter_engine_specific_to_ec_priv_key((const soter_engine_specific_ec_key_t*)pkey,
-                                                    (soter_container_hdr_t*)key,
-                                                    key_length);
-    }
-    return soter_engine_specific_to_ec_pub_key((const soter_engine_specific_ec_key_t*)pkey,
-                                               true,
-                                               (soter_container_hdr_t*)key,
-                                               key_length);
-}
-
 soter_status_t soter_ec_export_private_key(const EVP_PKEY* pkey, void* key, size_t* key_length)
 {
     if (!pkey) {
