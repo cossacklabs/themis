@@ -92,14 +92,6 @@ free_pkey:
     return err;
 }
 
-soter_status_t soter_sign_export_key_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
-                                                      void* key,
-                                                      size_t* key_length,
-                                                      bool isprivate)
-{
-    return soter_ec_export_key(ctx, key, key_length, isprivate);
-}
-
 soter_status_t soter_sign_export_private_key_ecdsa_none_pkcs8(const soter_sign_ctx_t* ctx,
                                                               void* key,
                                                               size_t* key_length)
