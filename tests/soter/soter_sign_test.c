@@ -21,6 +21,14 @@
 #define MAX_TEST_DATA 2048
 #define MAX_TEST_KEY MAX_TEST_DATA
 
+/*
+ * Allow usage of deprecated interfaces:
+ *   - soter_sign_export_key()
+ */
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 static int sign_test(soter_sign_alg_t alg)
 {
     char test_data[] = "test message";
