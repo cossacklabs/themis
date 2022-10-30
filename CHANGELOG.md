@@ -8,7 +8,12 @@ _Code:_
 
 - **Core**
 
-  - Uncompressed EC public keys are now accepted (but not used yet) ([#954](https://github.com/cossacklabs/themis/pull/954))
+  - Uncompressed EC public keys are now supported ([#959](https://github.com/cossacklabs/themis/pull/959), [#954](https://github.com/cossacklabs/themis/pull/954))
+  - Themis will generate uncompressed EC public keys when `THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED=1` environment variable is set ([#959](https://github.com/cossacklabs/themis/pull/959))
+
+  - **Soter** (low-level security core used by Themis)
+
+    - `soter_sign_export_key()` is now deprecated, superseded by `soter_sign_export_private_key()` and `soter_sign_export_public_key()` ([#959](https://github.com/cossacklabs/themis/pull/959))
 
 - **Android**
 
