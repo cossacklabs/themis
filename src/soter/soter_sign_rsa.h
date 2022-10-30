@@ -29,7 +29,7 @@ soter_status_t soter_sign_update_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, const void
 soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
                                               void* signature,
                                               size_t* signature_length);
-soter_status_t soter_sign_export_key_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
+soter_status_t soter_sign_export_key_rsa_pss_pkcs8(const soter_sign_ctx_t* ctx,
                                                    void* key,
                                                    size_t* key_length,
                                                    bool isprivate);
