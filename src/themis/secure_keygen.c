@@ -16,6 +16,7 @@
 
 #include "themis/secure_keygen.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "soter/soter_container.h"
@@ -39,6 +40,15 @@
  * as of 2020. See: https://www.keylength.com/en/4/
  */
 #define THEMIS_SYM_KEY_LENGTH 32
+
+static bool should_generate_compressed_ec_key_pairs(void)
+{
+    const char* uncompressed = getenv("THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED");
+    if (uncompressed != NULL && strcmp(uncompressed, "1") == 0) {
+        return false;
+    }
+    return true;
+}
 
 static themis_status_t combine_key_generation_results(uint8_t* private_key,
                                                       const size_t* private_key_length,
@@ -85,6 +95,7 @@ themis_status_t themis_gen_key_pair(soter_sign_alg_t alg,
         return THEMIS_FAIL;
     }
 
+    compressed = should_generate_compressed_ec_key_pairs();
     private_result = soter_sign_export_private_key(ctx, private_key, private_key_length);
     public_result = soter_sign_export_public_key(ctx, compressed, public_key, public_key_length);
 
