@@ -80,6 +80,11 @@ jobs:
       - name: Run test suite (OpenSSL)
         if: always()
         run: make test ENGINE=openssl BUILD_PATH=build-openssl
+      - name: Run test suite (OpenSSL, uncompressed keys)
+        if: always()
+        env:
+          THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED: "1"
+        run: make test ENGINE=openssl BUILD_PATH=build-openssl
       - name: Run test suite (OpenSSL 3.0)
         if: ${{ matrix.os == 'macos-latest' }}
         run: |
@@ -90,8 +95,25 @@ jobs:
           export WITH_EXPERIMENTAL_OPENSSL_3_SUPPORT=yes
           export WITH_FATAL_WARNINGS=no
           make test BUILD_PATH=build-openssl-3.0
+      - name: Run test suite (OpenSSL 3.0, uncompressed keys)
+        if: ${{ matrix.os == 'macos-latest' }}
+        env:
+          THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED: "1"
+        run: |
+          openssl3="$(brew --prefix openssl@3)"
+          export ENGINE=openssl
+          export ENGINE_INCLUDE_PATH="$openssl3/include"
+          export ENGINE_LIB_PATH="$openssl3/lib"
+          export WITH_EXPERIMENTAL_OPENSSL_3_SUPPORT=yes
+          export WITH_FATAL_WARNINGS=no
+          make test BUILD_PATH=build-openssl-3.0
       - name: Run test suite (BoringSSL)
         if: always()
+        run: make test ENGINE=boringssl BUILD_PATH=build-boringssl
+      - name: Run test suite (BoringSSL, uncompressed keys)
+        if: always()
+        env:
+          THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED: "1"
         run: make test ENGINE=boringssl BUILD_PATH=build-boringssl
       - name: Run test suite (WITH_SCELL_COMPAT)
         if: always()
