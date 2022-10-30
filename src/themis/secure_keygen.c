@@ -74,6 +74,7 @@ themis_status_t themis_gen_key_pair(soter_sign_alg_t alg,
     themis_status_t private_result = THEMIS_FAIL;
     themis_status_t public_result = THEMIS_FAIL;
     soter_sign_ctx_t* ctx = NULL;
+    bool compressed = true;
 
     if (!private_key_length || !public_key_length) {
         return THEMIS_INVALID_PARAMETER;
@@ -84,8 +85,8 @@ themis_status_t themis_gen_key_pair(soter_sign_alg_t alg,
         return THEMIS_FAIL;
     }
 
-    private_result = soter_sign_export_key(ctx, private_key, private_key_length, true);
-    public_result = soter_sign_export_key(ctx, public_key, public_key_length, false);
+    private_result = soter_sign_export_private_key(ctx, private_key, private_key_length);
+    public_result = soter_sign_export_public_key(ctx, compressed, public_key, public_key_length);
 
     soter_sign_destroy(ctx);
 
