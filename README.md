@@ -42,7 +42,7 @@ Themis helps to build both simple and complex cryptographic features easily, qui
 
 * Exchange secrets securely: **share sensitive data** between parties, build simple chat app between patients and doctors.
 
-* Build **end-to-end encryption schemes** with centralized or decentralized architecture: encrypt data locally on one app, use it encrypted everywhere, decrypt only for authenticated user.
+* Build **end-to-end encryption schemes** with centralised or decentralised architecture: encrypt data locally on one app, use it encrypted everywhere, decrypt only for authenticated user.
 
 * Maintain **real-time secure sessions**: send encrypted messages to control connected devices from your app, receive real-time sensitive data from your apps to your backend.
 
