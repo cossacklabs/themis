@@ -66,7 +66,7 @@ soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx);
  * @param [in,out] key_length length of key. May be set to NULL for key length determination
  * @param [in] isprivate if set private key will be exported. If not set public key will be exported
  * @return result of operation, @ref  SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
- * @note If key==NULL or key_length less then need to store key, @ref SOTER_BUFFER_TOO_SMALL will
+ * @note If key==NULL or key_length less than needed to store key, @ref SOTER_BUFFER_TOO_SMALL will
  * return and key_length will contain length of buffer needed to store key.
  */
 SOTER_API
@@ -96,7 +96,7 @@ soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void
  * length determination
  * @param [in,out] shared_secret_length length of shared secret
  * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
- * @note If shared_secret==NULL or shared_secret_length less then need to store shared secret, @ref
+ * @note If shared_secret==NULL or shared_secret_length less than needed to store shared secret, @ref
  * SOTER_BUFFER_TOO_SMALL will return and shared_secret_length will contain length of buffer needed
  * to store shared secret.
  */

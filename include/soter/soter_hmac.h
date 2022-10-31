@@ -99,7 +99,7 @@ soter_status_t soter_hmac_update(soter_hmac_ctx_t* hmac_ctx, const void* data, s
  * value length determination
  * @param [in, out] hmac_length length of hmac_value buffer
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
- * @note If hmac_value==NULL or hmac_length less then need to store HMAC value, @ref
+ * @note If hmac_value==NULL or hmac_length less than needed to store HMAC value, @ref
  * SOTER_BUFFER_TOO_SMALL will return and hmac_length will contain length of buffer thet need to
  * store HMAC value.
  */

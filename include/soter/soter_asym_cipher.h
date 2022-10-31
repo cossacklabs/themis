@@ -90,7 +90,7 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher_ctx,
  * determination
  * @param [in, out] plain_data_length length of plain_data
  * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
- * @note If plain_data==NULL or plain_data_length less then need to store plain data, @ref
+ * @note If plain_data==NULL or plain_data_length less than needed to store plain data, @ref
  * SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer needed
  * to store plain data.
  */

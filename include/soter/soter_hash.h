@@ -116,7 +116,7 @@ soter_status_t soter_hash_update(soter_hash_ctx_t* hash_ctx, const void* data, s
  * value length determination
  * @param [in, out] hash_length length of hash_value buffer
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
- * @note If hash_value==NULL or hash_length less then need to store hash value, @ref
+ * @note If hash_value==NULL or hash_length less than needed to store hash value, @ref
  * SOTER_BUFFER_TOO_SMALL will return and hash_length will contain length of buffer thet need to
  * store hash value.
  */

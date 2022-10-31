@@ -81,7 +81,7 @@ soter_status_t soter_sign_update(soter_sign_ctx_t* ctx, const void* data, size_t
  * determination
  * @param [in, out] signature_length length of signature
  * @return result of operation, @ref SOTER_SUCCESS on success or SOTER_FAIL on failure
- * @note If signature==NULL or signature_length less then need to store signature, @ref
+ * @note If signature==NULL or signature_length less than needed to store signature, @ref
  * SOTER_BUFFER_TOO_SMALL will return and signature_length will contain length of buffer needed
  * to store signature.
  */
@@ -94,7 +94,7 @@ soter_status_t soter_sign_final(soter_sign_ctx_t* ctx, void* signature, size_t* 
  * @param [in,out] key_length length of key. May be set to NULL for key length determination
  * @param [in] isprivate if set private key will be exported. If not set public key will be exported
  * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
- * @note If key==NULL or key_length less then need to store key, @ref SOTER_BUFFER_TOO_SMALL will
+ * @note If key==NULL or key_length less than needed to store key, @ref SOTER_BUFFER_TOO_SMALL will
  * return and key_length will contain length of buffer needed to store key.
  */
 SOTER_API

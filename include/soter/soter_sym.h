@@ -149,7 +149,7 @@ soter_sym_ctx_t* soter_sym_encrypt_create(uint32_t alg,
  * data length determination
  * @param [in, out] cipher_data_length length of cipher_data
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
- * @note If cipher_data==NULL or cipher_data_length less then need to store cipher data, @ref
+ * @note If cipher_data==NULL or cipher_data_length less than needed to store cipher data, @ref
  * SOTER_BUFFER_TOO_SMALL will return and cipher_data_length will contain length of buffer needed
  * to store cipher data.
  */
@@ -168,7 +168,7 @@ soter_status_t soter_sym_encrypt_update(soter_sym_ctx_t* ctx,
  * data length determination
  * @param [in, out] cipher_data_length length of cipher_data
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
- * @note If cipher_data==NULL or cipher_data_length less then need to store cipher data, @ref
+ * @note If cipher_data==NULL or cipher_data_length less than needed to store cipher data, @ref
  * SOTER_BUFFER_TOO_SMALL will return and cipher_data_length will contain length of buffer needed
  * to store cipher data.
  */
@@ -221,7 +221,7 @@ soter_sym_ctx_t* soter_sym_decrypt_create(uint32_t alg,
  * length determination
  * @param [in, out] plain_data_length length of plaintext data
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
- * @note If plain_data==NULL or plain_data_length less then need to store plain data, @ref
+ * @note If plain_data==NULL or plain_data_length less than needed to store plain data, @ref
  * SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer needed
  * to store plain data.
  */
@@ -240,7 +240,7 @@ soter_status_t soter_sym_decrypt_update(soter_sym_ctx_t* ctx,
  * length determination
  * @param [in, out] plain_data_length length of plaintext data
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
- * @note If plain_data==NULL or plain_data_length less then need to store plain data, @ref
+ * @note If plain_data==NULL or plain_data_length less than needed to store plain data, @ref
  * SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer needed
  * to store plain data.
  */
@@ -311,7 +311,7 @@ soter_status_t soter_sym_aead_encrypt_aad(soter_sym_ctx_t* ctx, const void* plai
  * data length determination
  * @param [in, out] cipher_data_length  length of cipher data
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
- * @note If cipher_data==NULL or cipher_data_length less then need to store cipher data, @ref
+ * @note If cipher_data==NULL or cipher_data_length less than needed to store cipher data, @ref
  * SOTER_BUFFER_TOO_SMALL will return and cipher_data_length will contain length of buffer needed
  * to store cipher data.
  */
@@ -397,7 +397,7 @@ soter_status_t soter_sym_aead_decrypt_aad(soter_sym_ctx_t* ctx, const void* plai
  * length determination
  * @param [in, out] plain_data_length length of plain_data
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
- * @note If plain_data==NULL or plain_data_length less then need to store plain data, @ref
+ * @note If plain_data==NULL or plain_data_length less than needed to store plain data, @ref
  * SOTER_BUFFER_TOO_SMALL will return and plain_data_length will contain length of buffer needed
  * to store plain data.
  */
