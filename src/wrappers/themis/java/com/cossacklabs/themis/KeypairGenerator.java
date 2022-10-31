@@ -32,23 +32,23 @@ public abstract class KeypairGenerator {
 	static native byte[][] generateKeys(int keyType);
 	
 	/**
-	 * Generates new EC keypair
+	 * Generates new EC key pair
 	 * @return new EC Keypair
-	 * @throws KeyGenerationException when cannot generate a keypair
+	 * @throws KeyGenerationException when cannot generate a key pair
 	 */
 	public static Keypair generateKeypair() {
 		try {
 			return generateKeypair(AsymmetricKey.KEYTYPE_EC);
 		} catch (InvalidArgumentException e) {
-			throw new KeyGenerationException("failed to generate keypair", e);
+			throw new KeyGenerationException("failed to generate key pair", e);
 		}
 	}
 	
 	/**
-	 * Generates new keypair
-	 * @param keyType type of the keypair to generate (EC or RSA)
+	 * Generates new key pair
+	 * @param keyType type of the key pair to generate (EC or RSA)
 	 * @return new Keypair
-	 * @throws KeyGenerationException when cannot generate a keypair
+	 * @throws KeyGenerationException when cannot generate a key pair
 	 * @throws InvalidArgumentException when keyType is invalid
 	 */
 	public static Keypair generateKeypair(int keyType) {
@@ -60,7 +60,7 @@ public abstract class KeypairGenerator {
 		byte[][] keys = generateKeys(keyType);
 		
 		if (null == keys) {
-			throw new KeyGenerationException("failed to generate keypair");
+			throw new KeyGenerationException("failed to generate key pair");
 		}
 		
 		return new Keypair(new PrivateKey(keys[0]), new PublicKey(keys[1]));

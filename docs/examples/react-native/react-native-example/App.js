@@ -108,7 +108,7 @@ const App: () => Node = () => {
     console.log("==> Cat <==:", buf);
     // End of converting example
 
-    // Async Themis keyPair64 example. It resolves with asymmetric keypair anyway.
+    // Async Themis keyPair64 example. It resolves with asymmetric key pair anyway.
     // Always return base64 encoded strings
     keyPair64(KEYTYPE_EC)
       .then((pair: any) => {

@@ -17,7 +17,7 @@
 package com.cossacklabs.themis;
 
 /**
- * Represents Themis asymmetric keypair
+ * Represents Themis asymmetric key pair
  */
 public class Keypair {
 	
@@ -25,9 +25,9 @@ public class Keypair {
 	PublicKey publicKey;
 	
 	/**
-	 * Creates a new keypair
-	 * @param privateKey of the keypair
-	 * @param publicKey of the keypair
+	 * Creates a new key pair
+	 * @param privateKey of the key pair
+	 * @param publicKey of the key pair
 	 */
 	public Keypair(PrivateKey privateKey, PublicKey publicKey) {
 		this.privateKey = privateKey;
@@ -35,16 +35,16 @@ public class Keypair {
 	}
 	
 	/**
-	 * Returns private key of this keypair
-	 * @return PrivateKey of the keypair
+	 * Returns private key of this key pair
+	 * @return PrivateKey of the key pair
 	 */
 	public PrivateKey getPrivateKey() {
 		return this.privateKey;
 	}
 	
 	/**
-	 * Returns public key of this keypair
-	 * @return PublicKey of the keypair
+	 * Returns public key of this key pair
+	 * @return PublicKey of the key pair
 	 */
 	public PublicKey getPublicKey() {
 		return this.publicKey;
