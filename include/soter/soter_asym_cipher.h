@@ -69,7 +69,7 @@ soter_asym_cipher_t* soter_asym_cipher_create(const void* key,
  * determination
  * @param [in, out] cipher_data_length length of cipher_data
  * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
- * @note If cipher_data==NULL or cipher_data_length less then needed to store cipher data, @ref
+ * @note If cipher_data==NULL or cipher_data_length less than needed to store cipher data, @ref
  * SOTER_BUFFER_TOO_SMALL will return and cipher_data_length will contain length of buffer needed
  * to store cipher data.
  */
