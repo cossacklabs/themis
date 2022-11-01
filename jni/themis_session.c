@@ -529,7 +529,9 @@ err:
 }
 JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniGenerateConntect(JNIEnv* env, 
                                                                                            jobject thiz)
-__attribute__((alias("Java_com_cossacklabs_themis_SecureSession_jniGenerateConnect")));
+{
+    return Java_com_cossacklabs_themis_SecureSession_jniGenerateConnect(env, thiz);
+}
 
 JNIEXPORT jlong JNICALL Java_com_cossacklabs_themis_SecureSession_create(JNIEnv* env,
                                                                          jobject thiz,
