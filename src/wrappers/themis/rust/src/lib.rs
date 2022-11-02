@@ -17,7 +17,7 @@
 //! **Themis** is a high-level cryptographic library.
 //!
 //! Themis allows you to protect data at rest (in your database, files, or wherever you store it
-//! in your application) and data in motion (i.e. traveling between client and server, server
+//! in your application) and data in motion (i.e. travelling between client and server, server
 //! and server, application and application, a smart coffee machine and a smart vacuum cleaner).
 //!
 //! Themis is a portable, cross-platform implementation of several cryptosystems:
