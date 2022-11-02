@@ -1962,9 +1962,9 @@ camelcase@^6.0.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001312:
-  version "1.0.30001313"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001313.tgz#a380b079db91621e1b7120895874e2fd62ed2e2f"
-  integrity sha512-rI1UN0koZUiKINjysQDuRi2VeSCce3bYJNmDcj3PIKREiAmjakugBul1QSkg/fPrlULYl6oWfGg3PbgOSY9X4Q==
+  version "1.0.30001409"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001409.tgz"
+  integrity sha512-V0mnJ5dwarmhYv8/MzhJ//aW68UpvnQBXv8lJ2QUsvn2pHcmAuNtu8hQEDz37XnA1iE+lRR9CIfGWWpgJ5QedQ==
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -5260,10 +5260,10 @@ react-native-codegen@^0.0.8:
     jscodeshift "^0.11.0"
     nullthrows "^1.1.1"
 
-react-native-themis@0.14.3:
-  version "0.14.3"
-  resolved "https://registry.yarnpkg.com/react-native-themis/-/react-native-themis-0.14.3.tgz#f6440926a4bc9dfb37e7165e6464285f8e4ccce7"
-  integrity sha512-q5M7Jq41FYw0BlfZDWdfo2c1/eljVp3QrCkDDevBgMwWo77HQvZ8vXJIkRsdaCmWj0CHjZUzOFW6FWx3hY9Y7w==
+react-native-themis@^0.14.7:
+  version "0.14.7"
+  resolved "https://registry.yarnpkg.com/react-native-themis/-/react-native-themis-0.14.7.tgz#e93c24103a53e648154bb24656a0d12df9ff5d2d"
+  integrity sha512-qmda1gNvA/YD9T85q2tunYt9b4Y8RrBlN6hegLjGmTcZ3c9rkcsTlzQH+voY2nnRCde5S1VtRXNSyl21QBIPTQ==
   dependencies:
     buffer "^6.0.3"
 
