@@ -4,7 +4,7 @@
 
 Changes that are currently in development and have not been released yet.
 
-## [0.14.10](https://github.com/cossacklabs/themis/releases/tag/0.14.9), Nov 3rd 2022
+## [0.14.10](https://github.com/cossacklabs/themis/releases/tag/0.14.10), Nov 3rd 2022
 
 ### React Native Themis
 
