@@ -527,7 +527,7 @@ err:
 
     return output;
 }
-JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniGenerateConntect(JNIEnv* env, 
+JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniGenerateConntect(JNIEnv* env,
                                                                                            jobject thiz)
 {
     return Java_com_cossacklabs_themis_SecureSession_jniGenerateConnect(env, thiz);
