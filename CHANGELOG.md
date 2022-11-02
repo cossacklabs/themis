@@ -4,6 +4,15 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.14.10](https://github.com/cossacklabs/themis/releases/tag/0.14.9), Nov 3rd 2022
+
+### React Native Themis
+
+- Redesigned the framework to make it less vulnerable to native exceptions ([#955](https://github.com/cossacklabs/themis/pull/955)).
+
+- Updates for react native examples. ([#956](https://github.com/cossacklabs/themis/pull/956)).
+
+
 ## [0.14.9](https://github.com/cossacklabs/themis/releases/tag/0.14.9), Sep 12th 2022
 
 ### Hotfix for macOS Themis installed via SPM
