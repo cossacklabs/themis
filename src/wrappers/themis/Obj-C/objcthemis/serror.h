@@ -19,7 +19,7 @@
 
 /**
  * @file objthemis/serror.h
- * @brief Status codes defenitions for Obj-C wrapper for themis
+ * @brief Status codes definitions for Obj-C wrapper for themis
  */
 
 /**

@@ -168,7 +168,7 @@ soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void
     /*
      * soter_ec_{priv,pub}_key_to_engine_specific() expect EVP_PKEY of EVP_PKEY_EC type
      * to be already allocated and non-NULL. We might be importing it anew, or we might be
-     * replacing previously generated keypair.
+     * replacing previously generated key pair.
      */
     if (asym_ka_ctx->pkey) {
         if (EVP_PKEY_base_id(asym_ka_ctx->pkey) != EVP_PKEY_EC) {

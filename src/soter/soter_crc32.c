@@ -84,7 +84,7 @@ uint32_t soter_crc32_final(soter_crc32_t* crc)
     /*  result  now holds the negated polynomial remainder;
      *  since the table and algorithm is "reflected" [williams95].
      *  That is,  result has the same value as if we mapped the message
-     *  to a polyomial, computed the host-bit-order polynomial
+     *  to a polynomial, computed the host-bit-order polynomial
      *  remainder, performed final negation, then did an end-for-end
      *  bit-reversal.
      *  Note that a 32-bit bit-reversal is identical to four inplace

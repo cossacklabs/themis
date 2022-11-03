@@ -48,7 +48,7 @@ export class SecureComparator {
     }
   }
 
-  // Unfortunately, JavsScript does not have a ubiquitious way to handle
+  // Unfortunately, JavsScript does not have a ubiquitous way to handle
   // scoped objects and does not specify any object finalization. Thus
   // it is VERY important to call destroy() on SecureComparators after
   // using them in order to avoid exhausting Emscripten heap memory.

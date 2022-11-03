@@ -19,11 +19,11 @@ Notes on implementation strategy:
 Using schoolbook multiplication.
 Karatsuba would save a little in some cost models.
 
-Most multiplications by 2 and 19 are 32-bit precomputations;
-cheaper than 64-bit postcomputations.
+Most multiplications by 2 and 19 are 32-bit pre-computations;
+cheaper than 64-bit post-computations.
 
 There is one remaining multiplication by 19 in the carry chain;
-one *19 precomputation can be merged into this,
+one *19 pre-computation can be merged into this,
 but the resulting data flow is considerably less clean.
 
 There are 12 carries below.

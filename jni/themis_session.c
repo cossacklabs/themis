@@ -466,8 +466,8 @@ err:
     return output;
 }
 
-JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniGenerateConntect(JNIEnv* env,
-                                                                                           jobject thiz)
+JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniGenerateConnect(JNIEnv* env,
+                                                                                          jobject thiz)
 {
     size_t request_length = 0;
     session_with_callbacks_t* ctx = get_native_session(env, thiz);
@@ -526,6 +526,11 @@ err:
     ctx->thiz = NULL;
 
     return output;
+}
+JNIEXPORT jbyteArray JNICALL Java_com_cossacklabs_themis_SecureSession_jniGenerateConntect(JNIEnv* env,
+                                                                                           jobject thiz)
+{
+    return Java_com_cossacklabs_themis_SecureSession_jniGenerateConnect(env, thiz);
 }
 
 JNIEXPORT jlong JNICALL Java_com_cossacklabs_themis_SecureSession_create(JNIEnv* env,

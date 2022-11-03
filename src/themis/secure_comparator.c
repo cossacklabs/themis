@@ -945,7 +945,7 @@ static themis_status_t secure_comparator_bob_step4(secure_comparator_t* comp_ctx
 
     /* Finally Bob sends to Alice on 4 step:
      * Rb || Rb signature
-     * Bob proceeds 4 step, finishs and gets result, Alice proceeds 5 step, finishes and gets
+     * Bob proceeds 4 step, finishes and gets result, Alice proceeds 5 step, finishes and gets
      * result.
      */
     comp_ctx->state_handler = NULL;

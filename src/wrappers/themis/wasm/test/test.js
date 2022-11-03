@@ -78,7 +78,7 @@ describe('wasm-themis', function() {
                 assert.throws(() => new themis.KeyPair(invalid, keyPair.publicKey), TypeError)
             })
         })
-        describe('invididual keys', function() {
+        describe('individual keys', function() {
             it('ensure matching kinds', function() {
                 let pair = new themis.KeyPair()
                 assert.throws(() => new themis.PrivateKey(pair.publicKey))
@@ -183,7 +183,7 @@ describe('wasm-themis', function() {
                 let encrypted = cell.encrypt(testInput)
                 assert(encrypted.length > testInput.length)
             })
-            it('forbits empty inputs', function() {
+            it('forbids empty inputs', function() {
                 assert.throws(() => themis.SecureCellSeal.withKey(emptyArray),
                     expectError(ThemisErrorCode.INVALID_PARAMETER)
                 )

@@ -102,7 +102,7 @@ export const initialize = async (wasmPath?: string) => {
 // Users have been warned.
 
 // TypeScript does not allow to extend Promise nicely in ES5 [1], but since
-// JavaScript is actually duck-typed, we can just mimick the API.
+// JavaScript is actually duck-typed, we can just mimic the API.
 // [1]: https://github.com/microsoft/TypeScript/issues/15202
 class InitializedPromise {
   private initialized: boolean = false;

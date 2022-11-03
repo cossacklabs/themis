@@ -134,7 +134,7 @@ static inline uint64_t themis_scell_auth_token_passphrase_size(
     const struct themis_scell_auth_token_passphrase* hdr)
 {
     uint64_t total_size = 0;
-    /* Add separately to avoid overflows in intermediade calculations */
+    /* Add separately to avoid overflows in intermediate calculations */
     total_size += sizeof(hdr->alg);
     total_size += sizeof(hdr->iv_length);
     total_size += hdr->iv_length;
@@ -183,7 +183,7 @@ static inline themis_status_t themis_read_scell_auth_token_passphrase(
     buffer = stream_read_uint32LE(buffer, &hdr->auth_tag_length);
     buffer = stream_read_uint32LE(buffer, &hdr->message_length);
     buffer = stream_read_uint32LE(buffer, &hdr->kdf_context_length);
-    /* Add separately to avoid overflows in intermediade calculations */
+    /* Add separately to avoid overflows in intermediate calculations */
     need_length += hdr->iv_length;
     need_length += hdr->auth_tag_length;
     need_length += hdr->kdf_context_length;
@@ -226,7 +226,7 @@ static const uint32_t themis_scell_pbkdf2_context_min_size = sizeof(uint32_t) + 
 static inline uint32_t themis_scell_pbkdf2_context_size(const struct themis_scell_pbkdf2_context* ctx)
 {
     uint32_t total_size = 0;
-    /* Add separately to avoid overflows in intermediade calculations */
+    /* Add separately to avoid overflows in intermediate calculations */
     total_size += sizeof(ctx->iteration_count);
     total_size += sizeof(ctx->salt_length);
     total_size += ctx->salt_length;
@@ -245,7 +245,7 @@ static inline themis_status_t themis_write_scell_pbkdf2_context(
     if (hdr->kdf_context_length != themis_scell_pbkdf2_context_size(ctx)) {
         return THEMIS_FAIL;
     }
-    /* Add separately to avoid overflows in intermediade calculations */
+    /* Add separately to avoid overflows in intermediate calculations */
     buffer += sizeof(hdr->alg);
     buffer += sizeof(hdr->iv_length);
     buffer += hdr->iv_length;

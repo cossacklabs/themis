@@ -16,7 +16,7 @@
 
 /**
 * @file objthemis/ssession_transport_interface.h
-* @brief secure session trancport callbacs interface
+* @brief secure session transport callbacks interface
 */
 #import <Foundation/Foundation.h>
 

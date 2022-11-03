@@ -28,7 +28,7 @@ namespace themispp
  *
  * @param [in]  container   STL-compatible container of bytes
  *
- * `container` must be an STL-compatible contigous container of bytes. That is,
+ * `container` must be an STL-compatible contiguous container of bytes. That is,
  * there should be `std::begin()` and `std::end()` implementations for it which
  * return contiguous iterators over `uint8_t`.
  *
@@ -52,7 +52,7 @@ inline impl::input_buffer input_buffer(const Container& container) noexcept
  * @param [in]  begin   STL-compatible iterator over bytes
  * @param [in]  end     STL-compatible iterator over bytes
  *
- * `begin` and `end` must be STL-compatible contigous iterators over `uint8_t`.
+ * `begin` and `end` must be STL-compatible contiguous iterators over `uint8_t`.
  *
  * The following standard containers produce appropriate iterators:
  *

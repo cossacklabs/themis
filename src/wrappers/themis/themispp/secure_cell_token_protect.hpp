@@ -108,7 +108,7 @@ public:
      * are supported as input. Plaintext must not be empty.
      *
      * Data is encrypted and authentication token is produced separately. Encrypted data has
-     * the same length as the original. You will need to provide the token durinng decryption
+     * the same length as the original. You will need to provide the token during decryption
      * so maintain the association between the data and the token.
      *
      * @see encrypt(const Plaintext& plaintext, const Context& context) const
@@ -136,7 +136,7 @@ public:
      * are supported as input. Plaintext must not be empty.
      *
      * Data is encrypted and authentication token is produced separately. Encrypted data has
-     * the same length as the original. You will need to provide the token durinng decryption
+     * the same length as the original. You will need to provide the token during decryption
      * so maintain the association between the data and the token.
      *
      * The context, if provided, is cryptographically mixed with the data, but is not included
@@ -175,7 +175,7 @@ public:
      *
      * This method is equivalent to using an empty associated context.
      *
-     * @returns Newly allocated containter with decrypted data if everything goes well.
+     * @returns Newly allocated container with decrypted data if everything goes well.
      *
      * @throws themispp::exception_t if data cannot be decrypted. Usually this means that either
      * the data or the token has been tampered with, or the master key or associated context
@@ -206,7 +206,7 @@ public:
      * or empty context if there was no context). The token also must be the one produced
      * during encryption.
      *
-     * @returns Newly allocated containter with decrypted data if everything goes well.
+     * @returns Newly allocated container with decrypted data if everything goes well.
      *
      * @throws themispp::exception_t if data cannot be decrypted. Usually this means that either
      * the data or the token has been tampered with, or the master key or associated context
