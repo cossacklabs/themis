@@ -109,7 +109,7 @@ soter_status_t soter_sign_export_key(soter_sign_ctx_t* ctx, void* key, size_t* k
  * @param [out]    key        buffer to store exported key
  * @param [in,out] key_length length of key. May be set to NULL for key length determination.
  *
- * @return @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
+ * @return @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
  *
  * @note If key == NULL or if key_length is smaller than needed to store the key,
  * @ref SOTER_BUFFER_TOO_SMALL is returned and key_length is set to required length of the buffer.
@@ -125,7 +125,7 @@ soter_status_t soter_sign_export_private_key(const soter_sign_ctx_t* ctx, void* 
  * @param [out]    key        buffer to store exported key
  * @param [in,out] key_length length of key. May be set to NULL for key length determination.
  *
- * @return @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
+ * @return @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
  *
  * @note If key == NULL or if key_length is smaller than needed to store the key,
  * @ref SOTER_BUFFER_TOO_SMALL is returned and key_length is set to required length of the buffer.
