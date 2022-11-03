@@ -83,14 +83,14 @@ typedef struct soter_hash_ctx_type soter_hash_ctx_t;
 /**
  * @brief creating of hash context
  * @param [in] algo hash algorithm to be used; see @ref soter_hash_algo_type
- * @return pointer to hash context on sussecc and  NULL on failure
+ * @return pointer to hash context on success and  NULL on failure
  */
 SOTER_API
 soter_hash_ctx_t* soter_hash_create(soter_hash_algo_t algo);
 
 /**
  * @brief destroy hash context
- * @param [in] hash_ctx pointer to hash context previosly created by @ref soter_hash_create
+ * @param [in] hash_ctx pointer to hash context previously created by @ref soter_hash_create
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
  */
 SOTER_API
@@ -101,7 +101,7 @@ soter_status_t soter_hash_cleanup(soter_hash_ctx_t* hash_ctx);
 
 /**
  * @brief update hash context with data
- * @param [in] hash_ctx pointer to hash context previosly created by @ref soter_hash_create
+ * @param [in] hash_ctx pointer to hash context previously created by @ref soter_hash_create
  * @param [in] data pointer to buffer with data to hash update
  * @param [in] length of data buffer
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure
@@ -111,12 +111,12 @@ soter_status_t soter_hash_update(soter_hash_ctx_t* hash_ctx, const void* data, s
 
 /**
  * @brief final hash context and get hash value
- * @param [in] hash_ctx pointer to hash context previosly created by @ref soter_hash_create
+ * @param [in] hash_ctx pointer to hash context previously created by @ref soter_hash_create
  * @param [out] hash_value pointer to buffer for hash value retrieve, may be set to NULL for hash
  * value length determination
  * @param [in, out] hash_length length of hash_value buffer
  * @return result of operation, @ref SOTER_SUCCESS on success and @ref SOTER_FAIL on failure.
- * @note If hash_value==NULL or hash_length less then need to store hash value, @ref
+ * @note If hash_value==NULL or hash_length less than needed to store hash value, @ref
  * SOTER_BUFFER_TOO_SMALL will return and hash_length will contain length of buffer thet need to
  * store hash value.
  */

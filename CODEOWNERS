@@ -1,7 +1,7 @@
 # Default reviewer set
-*                   @vixentael @ilammy
-/src/soter/         @vixentael @Lagovas @ilammy @storojs72 @ignatk
-/src/themis/        @vixentael @Lagovas @ilammy @storojs72 @ignatk
+*                   @vixentael @Lagovas
+/src/soter/         @vixentael @Lagovas @ilammy @G1gg1L3s
+/src/themis/        @vixentael @Lagovas @ilammy @G1gg1L3s
 
 # Build system
 Makefile            @vixentael @ilammy @shadinua
@@ -9,8 +9,8 @@ Makefile            @vixentael @ilammy @shadinua
 *.sh                @vixentael @ilammy @shadinua
 
 # rust-themis
-Cargo.toml          @vixentael @ilammy @iamnotacake
-*.rs                @vixentael @ilammy @iamnotacake
+Cargo.toml          @vixentael @ilammy @iamnotacake @G1gg1L3s
+*.rs                @vixentael @ilammy @iamnotacake @G1gg1L3s
 
 # Land of the Fruit
 /docs/examples/objc         @vixentael @julepka
@@ -24,5 +24,5 @@ Cartfile*                   @vixentael @julepka
 Package.swift               @vixentael @julepka
 Podfile*                    @vixentael @julepka
 
-/docs/reference-implementation  @vixentael @Lagovas @ilammy @storojs72
-/tests/reference-implementation @vixentael @Lagovas @ilammy @storojs72
+/docs/reference-implementation  @vixentael @Lagovas @ilammy @G1gg1L3s
+/tests/reference-implementation @vixentael @Lagovas @ilammy @G1gg1L3s

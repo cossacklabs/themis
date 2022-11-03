@@ -76,7 +76,7 @@ const (
 // Errors returned by key generation.
 var (
 	ErrGetKeySize       = errors.New("failed to get needed key sizes")
-	ErrGenerateKeypair  = errors.New("failed to generate keypair")
+	ErrGenerateKeypair  = errors.New("failed to generate key pair")
 	ErrInvalidType      = errors.NewWithCode(errors.InvalidParameter, "invalid key type specified")
 	ErrOutOfMemory      = errors.NewWithCode(errors.NoMemory, "key generator cannot allocate enough memory")
 	// Deprecated: Since 0.14. Use ErrOutOfMemory instead.

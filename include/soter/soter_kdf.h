@@ -139,7 +139,7 @@ soter_status_t soter_kdf(const void* key,
  *
  * It is a good idea to periodically reevaluate your decision and increase
  * the iteration count as machines get faster. However, doing this results
- * in a different key being derived so you'd need to reencrypt data protected
+ * in a different key being derived so you'd need to re-encrypt data protected
  * by the previous key.
  *
  * @returns SOTER_SUCCESS on successful key derivation.

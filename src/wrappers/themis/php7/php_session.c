@@ -124,7 +124,7 @@ PHP_METHOD(themis_secure_session, wrap){
     }
     char* wrapped_message=emalloc((int)wrapped_message_length);
     if(wrapped_message==NULL){
-        zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in wrap: not enough mamory.", 0 TSRMLS_CC);
+        zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in wrap: not enough memory.", 0 TSRMLS_CC);
         RETURN_NULL();
     }
     if(secure_session_wrap(obj->session, message, message_length, wrapped_message, &wrapped_message_length)!=THEMIS_SUCCESS){
@@ -141,7 +141,7 @@ PHP_METHOD(themis_secure_session, unwrap){
     char* message;
     size_t message_length;
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &message, &message_length) == FAILURE) {
-        zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in uwrap: invalid parameters.", 0 TSRMLS_CC);
+        zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: themis_secure_session in unwrap: invalid parameters.", 0 TSRMLS_CC);
         RETURN_NULL();
     }
     themis_secure_session_object *obj = Z_SESSION_P(getThis());

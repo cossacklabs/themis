@@ -76,7 +76,7 @@ ZEND_FUNCTION(phpthemis_scell_seal_decrypt){
         RETURN_NULL();
     }
     if(themis_secure_cell_decrypt_seal((uint8_t*)key, key_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=THEMIS_SUCCESS){
-        zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_decrypt: decription failed.", 0 TSRMLS_CC);
+        zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_decrypt: decryption failed.", 0 TSRMLS_CC);
         RETURN_NULL();
     }
     ZVAL_STRINGL(return_value, decrypted_message, (int)decrypted_message_length);
@@ -134,7 +134,7 @@ ZEND_FUNCTION(phpthemis_scell_seal_decrypt_with_passphrase){
         RETURN_NULL();
     }
     if(themis_secure_cell_decrypt_seal_with_passphrase((uint8_t*)passphrase, passphrase_length, (uint8_t*)context, context_length, (uint8_t*)message, message_length, (uint8_t*)decrypted_message, &decrypted_message_length)!=THEMIS_SUCCESS){
-        zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_decrypt_with_passphrase: decription failed.", 0 TSRMLS_CC);
+        zend_throw_exception(zend_exception_get_default(TSRMLS_C), "Error: phpthemis_scell_seal_decrypt_with_passphrase: decryption failed.", 0 TSRMLS_CC);
         RETURN_NULL();
     }
     ZVAL_STRINGL(return_value, decrypted_message, (int)decrypted_message_length);

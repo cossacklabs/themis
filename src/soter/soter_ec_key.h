@@ -55,7 +55,7 @@
                                                   \
     typedef struct soter_ec_pub_key_##_KEY_SIZE_##_type soter_ec_pub_key_##_KEY_SIZE_##_t
 
-/* struct members are ordered this way to avoid struct member alingment on different platforms */
+/* struct members are ordered this way to avoid struct member alignment on different platforms */
 #define DECLARE_EC_PRIVATE_KEY(_KEY_SIZE_)         \
     struct soter_ec_priv_key_##_KEY_SIZE_##_type { \
         soter_container_hdr_t hdr;                 \

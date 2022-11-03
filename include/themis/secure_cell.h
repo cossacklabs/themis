@@ -54,7 +54,7 @@ extern "C" {
  * encrypted message length determination
  * @param [in, out] encrypted_message_length length of encrypted_message
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
- * @note If encrypted_message==NULL or encrypted_message_length is not enought for encrypted message
+ * @note If encrypted_message==NULL or encrypted_message_length is not enough for encrypted message
  * store then THEMIS_BUFFER_TOO_SMALL will return and encrypted_message_length will store length of
  * buffer needed for encrypted message store
  */
@@ -80,7 +80,7 @@ themis_status_t themis_secure_cell_encrypt_seal(const uint8_t* master_key,
  * length determination
  * @param [in, out] plain_message_length length of plain_message
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
- * @note If plain_message==NULL or plain_message_length is not enought for plain message store then
+ * @note If plain_message==NULL or plain_message_length is not enough for plain message store then
  * THEMIS_BUFFER_TOO_SMALL will return and plain_message_length will store length of buffer needed
  * for plain1 message store
  */
@@ -237,10 +237,10 @@ themis_status_t themis_secure_cell_decrypt_seal_with_passphrase(const uint8_t* p
  * encrypted message length determination
  * @param [in, out] encrypted_message_length length of encrypted_message
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
- * @note If encrypted_message==NULL or context==NULL or encrypted_message_length is not enought for
- * encrypted message or context_length is not enougth for additional authentication info store then
+ * @note If encrypted_message==NULL or context==NULL or encrypted_message_length is not enough for
+ * encrypted message or context_length is not enough for additional authentication info store then
  * THEMIS_BUFFER_TOO_SMALL will return and encrypted_message_length will store length of buffer
- * needed for encrypted message store and context_length will store length of buuffer needed for
+ * needed for encrypted message store and context_length will store length of buffer needed for
  * additional authentication info store
  */
 THEMIS_API
@@ -269,7 +269,7 @@ themis_status_t themis_secure_cell_encrypt_token_protect(const uint8_t* master_k
  * length determination
  * @param [in, out] plain_message_length length of plain_message
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
- * @note If plain_message==NULL or plain_message_length is not enought for plain message store then
+ * @note If plain_message==NULL or plain_message_length is not enough for plain message store then
  * THEMIS_BUFFER_TOO_SMALL will return and plain_message_length will store length of buffer needed
  * for plain1 message store
  */
@@ -288,7 +288,7 @@ themis_status_t themis_secure_cell_decrypt_token_protect(const uint8_t* master_k
 /** @} */
 
 /**
- * @defgroup THEMIS_SECURE_CELL_CONEXT_IMPIRIT_MODE context imprint mode
+ * @defgroup THEMIS_SECURE_CELL_CONTEXT_IMPRINT_MODE context imprint mode
  * @brief This API is for environments where storage constraints do not allow the size of the data
  * to grow and there is no auxiliary storage available
  * @{
@@ -306,7 +306,7 @@ themis_status_t themis_secure_cell_decrypt_token_protect(const uint8_t* master_k
  * encrypted message length determination
  * @param [in, out] encrypted_message_length length of encrypted_message
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
- * @note If encrypted_message==NULL or encrypted_message_length is not enought for encrypted message
+ * @note If encrypted_message==NULL or encrypted_message_length is not enough for encrypted message
  * store then THEMIS_BUFFER_TOO_SMALL will return and encrypted_message_length will store length of
  * buffer needed for encrypted message store
  */
@@ -332,7 +332,7 @@ themis_status_t themis_secure_cell_encrypt_context_imprint(const uint8_t* master
  * length determination
  * @param [in, out] plain_message_length length of plain_message
  * @return THEMIS_SUCCESS on success or THEMIS_FAIL on failure
- * @note If plain_message==NULL or plain_message_length is not enought for plain message store then
+ * @note If plain_message==NULL or plain_message_length is not enough for plain message store then
  * THEMIS_BUFFER_TOO_SMALL will return and plain_message_length will store length of buffer needed
  * for plain1 message store
  */

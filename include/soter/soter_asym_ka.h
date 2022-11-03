@@ -36,7 +36,7 @@ enum soter_asym_ka_alg_type {
     SOTER_ASYM_KA_EC_P256 /**< elliptic curve 256 */
 };
 
-/** @brief key agreement algorims typedef */
+/** @brief key agreement algorithms typedef */
 typedef enum soter_asym_ka_alg_type soter_asym_ka_alg_t;
 
 /** @brief key agreement context typedef */
@@ -53,7 +53,7 @@ soter_asym_ka_t* soter_asym_ka_create(soter_asym_ka_alg_t alg);
  * @brief asymmetric keys pair generation for key agreement context
  * @param [in] asym_ka_ctx pointer to key agreement context previously created by
  * soter_asym_ka_create
- * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
+ * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
  */
 SOTER_API
 soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx);
@@ -65,9 +65,9 @@ soter_status_t soter_asym_ka_gen_key(soter_asym_ka_t* asym_ka_ctx);
  * @param [out] key buffer to store exported key
  * @param [in,out] key_length length of key. May be set to NULL for key length determination
  * @param [in] isprivate if set private key will be exported. If not set public key will be exported
- * @return result of operation, @ref  SOTER_SUCESS on success or @ref SOTER_FAIL on failure
- * @note If key==NULL or key_length less then need to store key, @ref SOTER_BUFFER_TOO_SMALL will
- * return and key_length will contain length of buffer thet need to store key.
+ * @return result of operation, @ref  SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
+ * @note If key==NULL or key_length less than needed to store key, @ref SOTER_BUFFER_TOO_SMALL will
+ * return and key_length will contain length of buffer needed to store key.
  */
 SOTER_API
 soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx,
@@ -81,7 +81,7 @@ soter_status_t soter_asym_ka_export_key(soter_asym_ka_t* asym_ka_ctx,
  * soter_asym_ka_create
  * @param [in] key buffer with stored key
  * @param [in] key_length length of key
- * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
+ * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
  */
 SOTER_API
 soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void* key, size_t key_length);
@@ -95,10 +95,10 @@ soter_status_t soter_asym_ka_import_key(soter_asym_ka_t* asym_ka_ctx, const void
  * @param [out] shared_secret buffer to store shared secret. May be set to NULL for shared secret
  * length determination
  * @param [in,out] shared_secret_length length of shared secret
- * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
- * @note If shared_secret==NULL or shared_secret_length less then need to store shared secret, @ref
- * SOTER_BUFFER_TOO_SMALL will return and shared_secret_length will contain length of buffer thet
- * need to store shared secret.
+ * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
+ * @note If shared_secret==NULL or shared_secret_length less than needed to store shared secret, @ref
+ * SOTER_BUFFER_TOO_SMALL will return and shared_secret_length will contain length of buffer needed
+ * to store shared secret.
  */
 SOTER_API
 soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
@@ -111,7 +111,7 @@ soter_status_t soter_asym_ka_derive(soter_asym_ka_t* asym_ka_ctx,
  * @brief destroy key agreement context
  * @param [in] asym_ka_ctx pointer to key agreement context previously created by
  * soter_asym_ka_create
- * @return result of operation, @ref SOTER_SUCESS on success or @ref SOTER_FAIL on failure
+ * @return result of operation, @ref SOTER_SUCCESS on success or @ref SOTER_FAIL on failure
  */
 SOTER_API
 soter_status_t soter_asym_ka_destroy(soter_asym_ka_t* asym_ka_ctx);

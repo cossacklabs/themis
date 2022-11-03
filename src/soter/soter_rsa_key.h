@@ -56,7 +56,7 @@
 
 /* Our RSA private key containers include CRT params, since most crypto libraries support them. If
  * at some point CRT params are not available, respective fields a filled with zeroes. */
-/* struct members are ordered this way to avoid struct member alingment on different platforms */
+/* struct members are ordered this way to avoid struct member alignment on different platforms */
 #define DECLARE_RSA_PRIVATE_KEY(_KEY_SIZE_)          \
     struct soter_rsa_priv_key_##_KEY_SIZE_##_type {  \
         soter_container_hdr_t hdr;                   \

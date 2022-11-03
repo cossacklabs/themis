@@ -47,7 +47,7 @@ soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx
     }
 
     if (EVP_PKEY_RSA != EVP_PKEY_id(pkey)) {
-        /* We can only do assymetric encryption with RSA algorithm */
+        /* We can only do asymmetric encryption with RSA algorithm */
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -153,7 +153,7 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher,
     }
 
     if (EVP_PKEY_RSA != EVP_PKEY_id(pkey)) {
-        /* We can only do assymetric encryption with RSA algorithm */
+        /* We can only do asymmetric encryption with RSA algorithm */
         return SOTER_INVALID_PARAMETER;
     }
     rsa = EVP_PKEY_get0_RSA(pkey);
@@ -227,7 +227,7 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
     }
 
     if (EVP_PKEY_RSA != EVP_PKEY_id(pkey)) {
-        /* We can only do assymetric encryption with RSA algorithm */
+        /* We can only do asymmetric encryption with RSA algorithm */
         return SOTER_INVALID_PARAMETER;
     }
 

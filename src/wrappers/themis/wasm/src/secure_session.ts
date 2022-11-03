@@ -34,7 +34,7 @@ function isFunction(obj: any) {
   return !!(obj && obj.constructor && obj.call && obj.apply);
 }
 
-// Secure Session C API operatates with "secure_session_user_callbacks_t" context structure
+// Secure Session C API operates with "secure_session_user_callbacks_t" context structure
 // defined in <themis/secure_session.h>. It must be filled in with C function pointers and
 // an arbitrary C context pointer. Associated C functions are called by Secure Session
 // at appropriate moments. They receive the C context pointer as their last argument which
@@ -135,7 +135,7 @@ const getSecureSession = (callbacksPtr: number): SecureSession =>
 // write the key into provided buffer, and return zero on success. Non-zero return
 // values are considered errors.
 //
-// The function accepts five integer argumentes and returns an integer. Hence its
+// The function accepts five integer arguments and returns an integer. Hence its
 // LLVM signature is "iiiiii".
 //
 // We can throw JavaScript exceptions from inside the function, thanks to Emscripten.

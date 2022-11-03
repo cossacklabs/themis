@@ -47,9 +47,6 @@ pub const THEMIS_SCOMPARE_NOT_READY: u32 = 0;
 pub const STATE_IDLE: u32 = 0;
 pub const STATE_NEGOTIATING: u32 = 1;
 pub const STATE_ESTABLISHED: u32 = 2;
-pub type __uint8_t = ::std::os::raw::c_uchar;
-pub type __int32_t = ::std::os::raw::c_int;
-pub type __ssize_t = ::std::os::raw::c_long;
 pub type themis_status_t = i32;
 extern "C" {
     pub fn themis_secure_cell_encrypt_seal(

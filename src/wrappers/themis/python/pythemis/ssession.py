@@ -120,7 +120,7 @@ class SSession(object):
     def __init__(self, user_id, sign_key, transport):
         # user_id - user identification ("server" for example)
         # sign_key - private key of session owner
-        # transport - refference for transport_t object.
+        # transport - reference for transport_t object.
         self.session_ctx = ctypes.POINTER(ctypes.c_int)
         if transport is None:
             self.session_ctx = ssession_create(

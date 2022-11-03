@@ -63,13 +63,13 @@ extern "C" {
 /** @brief established state define */
 #define STATE_ESTABLISHED 2
 
-/** @brief send data callbeck tyoedef*/
+/** @brief send data callback typedef*/
 typedef ssize_t (*send_protocol_data_callback)(const uint8_t* data, size_t data_length, void* user_data);
-/** @brief receive data callbeck tyoedef*/
+/** @brief receive data callback typedef*/
 typedef ssize_t (*receive_protocol_data_callback)(uint8_t* data, size_t data_length, void* user_data);
-/** @brief state change callbeck tyoedef*/
+/** @brief state change callback typedef*/
 typedef void (*protocol_state_changed_callback)(int event, void* user_data);
-/** @brief get public key by id callbeck tyoedef*/
+/** @brief get public key by id callback typedef*/
 typedef int (*get_public_key_for_id_callback)(
     const void* id, size_t id_length, void* key_buffer, size_t key_buffer_length, void* user_data);
 
