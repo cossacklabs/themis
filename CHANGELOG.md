@@ -21,7 +21,6 @@ _Code:_
 - **Python**
 
   - `pythemis.scomparator` and `pythemis.skeygen` are now imported with `from pythemis import *` ([#914](https://github.com/cossacklabs/themis/pull/914)).
-  - Improved compatibility with non-Homebrew Python installations on Apple M1 ([#915](https://github.com/cossacklabs/themis/pull/915)).
 
 - **Ruby**
 
@@ -36,6 +35,27 @@ _Code:_
 - **WebAssembly**
 
   - Node.js v8 is no longer supported ([#901](https://github.com/cossacklabs/themis/pull/901)).
+
+
+## [0.14.10](https://github.com/cossacklabs/themis/releases/tag/0.14.10), Nov 3rd 2022
+
+### React Native Themis
+
+- Redesigned the framework to make it less vulnerable to native exceptions ([#955](https://github.com/cossacklabs/themis/pull/955)).
+
+- Updates for react native examples. ([#956](https://github.com/cossacklabs/themis/pull/956)).
+
+### PyThemis
+
+- Improved compatibility with non-Homebrew Python installations on Apple M1 ([#915](https://github.com/cossacklabs/themis/pull/915)).
+
+
+## [0.14.9](https://github.com/cossacklabs/themis/releases/tag/0.14.9), Sep 12th 2022
+
+### Hotfix for macOS Themis installed via SPM
+
+- Fixing the code signing issue for macOS Themis installation via SPM ([#944](https://github.com/cossacklabs/themis/pull/944/)).
+
 
 
 
