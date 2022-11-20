@@ -41,6 +41,13 @@
  */
 #define THEMIS_SYM_KEY_LENGTH 32
 
+/*
+ * Historically Themis used compressed format for EC keys. This resulted
+ * in a more compact representation, but is not optimal for performance.
+ * Due to Hyrum's law, we can't change the default key format that easily,
+ * so more efficient uncompressed representation can be used after opt-in.
+ * (Note that we can import both representations without special actions.)
+ */
 static bool should_generate_compressed_ec_key_pairs(void)
 {
     const char* uncompressed = getenv("THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED");
