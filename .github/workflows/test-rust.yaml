@@ -27,7 +27,7 @@ env:
 jobs:
   unit-tests:
     name: Unit tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |
@@ -73,7 +73,7 @@ jobs:
 
   examples:
     name: Code examples
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |
@@ -169,7 +169,7 @@ jobs:
 
   bindgen:
     name: libthemis-sys bindings
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |

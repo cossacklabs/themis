@@ -39,7 +39,7 @@ jobs:
       SOTER_KDF_RUN_LONG_TESTS: yes
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-20.04, macos-latest]
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -115,7 +115,7 @@ jobs:
 
   examples:
     name: Code examples
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |
@@ -142,7 +142,7 @@ jobs:
 
   sanitizers:
     name: Unit tests (with sanitizers)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
       WITH_FATAL_SANITIZERS: yes
     steps:
@@ -176,7 +176,7 @@ jobs:
 
   benchmarks:
     name: Benchmarks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |
@@ -329,7 +329,7 @@ jobs:
 
   leak-check:
     name: Memory leaks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |
@@ -367,7 +367,7 @@ jobs:
 
   coverage:
     name: Unit test coverage
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |
