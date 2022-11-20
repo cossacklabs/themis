@@ -39,7 +39,7 @@ jobs:
       SOTER_KDF_RUN_LONG_TESTS: yes
     strategy:
       matrix:
-        os: [ubuntu-20.04, macos-latest]
+        os: [ubuntu-20.04, macos-12]
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -61,7 +61,7 @@ jobs:
         run: make prepare_tests_basic ENGINE=openssl BUILD_PATH=build-openssl
       - name: Build Themis Core (OpenSSL 3.0)
         # TODO: expand this to Linux systems when OpenSSL 3.0 system library is available there
-        if: ${{ matrix.os == 'macos-latest' }}
+        if: ${{ matrix.os == 'macos-12' }}
         run: |
           openssl3="$(brew --prefix openssl@3)"
           export ENGINE=openssl
@@ -81,7 +81,7 @@ jobs:
         if: always()
         run: make test ENGINE=openssl BUILD_PATH=build-openssl
       - name: Run test suite (OpenSSL 3.0)
-        if: ${{ matrix.os == 'macos-latest' }}
+        if: ${{ matrix.os == 'macos-12' }}
         run: |
           openssl3="$(brew --prefix openssl@3)"
           export ENGINE=openssl
@@ -97,7 +97,7 @@ jobs:
         if: always()
         run: make test WITH_SCELL_COMPAT=yes BUILD_PATH=build-compat
       - name: Ensure OpenSSL 3.0 fails (macOS only)
-        if: ${{ matrix.os == 'macos-latest' }}
+        if: ${{ matrix.os == 'macos-12' }}
         run: |
           # Themis uses OpenSSL 1.1 by default if installed.
           # Explicitly request OpenSSL 3.0 by pointing the build into OpenSSL 3.0's paths.
@@ -396,7 +396,7 @@ jobs:
 
   msys2:
     name: MSYS2 environment
-    runs-on: windows-latest
+    runs-on: windows-2022
     env:
       SOTER_KDF_RUN_LONG_TESTS: yes
     defaults:

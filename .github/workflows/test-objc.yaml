@@ -64,7 +64,7 @@ env:
 jobs:
   unit-tests-cocoapods:
     name: Unit tests (CocoaPods)
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -98,7 +98,7 @@ jobs:
 
   unit-tests-carthage:
     name: Unit tests (Carthage)
-    runs-on: macos-latest
+    runs-on: macos-12
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -164,7 +164,7 @@ jobs:
 
   project-carthage:
     name: Carthage project
-    runs-on: macos-latest
+    runs-on: macos-12
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -190,7 +190,7 @@ jobs:
 
   project-cocoapods:
     name: CocoaPods project
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -233,7 +233,7 @@ jobs:
 
   examples:
     name: Code examples
-    runs-on: macos-latest
+    runs-on: macos-12
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
