@@ -38,9 +38,9 @@ bindgen bindgen.h \
     --disable-header-comment \
     --rustified-enum "themis_key_kind" \
     --size_t-is-usize \
-    --whitelist-function "$WHITELIST" \
-    --whitelist-type "$WHITELIST" \
-    --whitelist-var "$WHITELIST" \
+    --allowlist-function "$WHITELIST" \
+    --allowlist-type "$WHITELIST" \
+    --allowlist-var "$WHITELIST" \
     --output src/lib.rs \
     -- \
     -I ../../../../../include \
