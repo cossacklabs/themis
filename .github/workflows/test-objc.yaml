@@ -56,15 +56,13 @@ env:
   HACK_REPOSITORY: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
   HACK_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
 
-  # let's use Xcode 12 to test Xcode12-specifics
-  # the list is here
-  # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md
-  DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer
+  # https://github.com/actions/runner-images/blob/main/images/macos/macos-12-Readme.md#xcode
+  DEVELOPER_DIR: /Applications/Xcode_14.0.1.app/Contents/Developer
 
 jobs:
   unit-tests-cocoapods:
     name: Unit tests (CocoaPods)
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -98,7 +96,7 @@ jobs:
 
   unit-tests-carthage:
     name: Unit tests (Carthage)
-    runs-on: macos-latest
+    runs-on: macos-12
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -164,7 +162,7 @@ jobs:
 
   project-carthage:
     name: Carthage project
-    runs-on: macos-latest
+    runs-on: macos-12
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -190,7 +188,7 @@ jobs:
 
   project-cocoapods:
     name: CocoaPods project
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - name: Check out code
         uses: actions/checkout@v2
@@ -233,7 +231,7 @@ jobs:
 
   examples:
     name: Code examples
-    runs-on: macos-latest
+    runs-on: macos-12
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
