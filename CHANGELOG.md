@@ -18,8 +18,8 @@ Changes that are currently in development and have not been released yet.
 
 ### Obj-C, Swift 
 
-- Updated examples 
-
+- Updated examples ([#947](https://github.com/cossacklabs/pull/947)).
+ 
 
 ## [0.14.9](https://github.com/cossacklabs/themis/releases/tag/0.14.9), Sep 12th 2022
 
