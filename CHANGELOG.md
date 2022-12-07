@@ -4,7 +4,7 @@
 
 Changes that are currently in development and have not been released yet.
 
-## [0.14.10](https://github.com/cossacklabs/themis/releases/tag/0.14.10), Nov 3rd 2022
+## [0.14.10](https://github.com/cossacklabs/themis/releases/tag/0.14.10), Dec 7th 2022
 
 ### React Native Themis
 
@@ -15,6 +15,10 @@ Changes that are currently in development and have not been released yet.
 ### PyThemis
 
 - Improved compatibility with non-Homebrew Python installations on Apple M1 ([#915](https://github.com/cossacklabs/themis/pull/915)).
+
+### Obj-C, Swift 
+
+- Updated examples 
 
 
 ## [0.14.9](https://github.com/cossacklabs/themis/releases/tag/0.14.9), Sep 12th 2022
