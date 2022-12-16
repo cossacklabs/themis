@@ -10,6 +10,7 @@ on:
       - 'src/themis/**'
       - 'src/wrappers/themis/Obj-C/**'
       - 'tests/objcthemis/**'
+      - 'Themis.xcodeproj/**'
       - 'third_party/boringssl/src/**'
       - '**/Cartfile*'
       - '**/Podfile*'
