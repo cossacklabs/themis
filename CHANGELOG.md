@@ -32,6 +32,8 @@ _Code:_
 
     This is technically a breaking change, but most reasonble implementations should be `Send` already. Please raise an issue if your code fails to build.
 
+  - Minimum supported Rust version is now 1.56 ([#977](https://github.com/cossacklabs/themis/pull/977)).
+
 - **WebAssembly**
 
   - Node.js v8 is no longer supported ([#901](https://github.com/cossacklabs/themis/pull/901)).

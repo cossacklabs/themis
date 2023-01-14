@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        rust: [stable, '1.51']
+        rust: [stable, '1.56']
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -81,7 +81,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        rust: [stable, '1.51']
+        rust: [stable, '1.56']
       fail-fast: false
     steps:
       - name: Install system dependencies
