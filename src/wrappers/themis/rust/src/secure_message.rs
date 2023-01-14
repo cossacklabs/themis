@@ -183,7 +183,7 @@ impl SecureMessage {
                 return Err(error);
             }
             debug_assert!(encrypted_len <= encrypted.capacity());
-            encrypted.set_len(encrypted_len as usize);
+            encrypted.set_len(encrypted_len);
         }
 
         Ok(encrypted)
@@ -233,7 +233,7 @@ impl SecureMessage {
                 return Err(error);
             }
             debug_assert!(decrypted_len <= decrypted.capacity());
-            decrypted.set_len(decrypted_len as usize);
+            decrypted.set_len(decrypted_len);
         }
 
         Ok(decrypted)
@@ -365,7 +365,7 @@ impl SecureSign {
                 return Err(error);
             }
             debug_assert!(signed_len <= signed.capacity());
-            signed.set_len(signed_len as usize);
+            signed.set_len(signed_len);
         }
 
         Ok(signed)
@@ -493,7 +493,7 @@ impl SecureVerify {
                 return Err(error);
             }
             debug_assert!(original_len <= original.capacity());
-            original.set_len(original_len as usize);
+            original.set_len(original_len);
         }
 
         Ok(original)
