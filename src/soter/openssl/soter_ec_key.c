@@ -184,6 +184,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
                                                     size_t* key_length)
 {
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
+    const bool compressed = true;
     soter_status_t res;
     size_t output_length;
     EC_KEY* ec;
@@ -216,7 +217,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
      * Note that we use a buffer suitable for a public key to store a private
      * key. This was a historical mistake, now preserved for compatibility.
      */
-    output_length = ec_pub_key_size(curve, true);
+    output_length = ec_pub_key_size(curve, compressed);
     if ((!key) || (output_length > *key_length)) {
         *key_length = output_length;
         res = SOTER_BUFFER_TOO_SMALL;
@@ -259,6 +260,7 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
     const EC_GROUP* group;
     EC_POINT* Q = NULL;
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
+    const bool compressed = true;
     soter_status_t res;
 
     if ((!key) || (key_length < sizeof(soter_container_hdr_t))) {
@@ -293,7 +295,7 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
     }
 
     /* Encoded public key cannot be smaller than this */
-    if (key_length < ec_pub_key_size(curve, true)) {
+    if (key_length < ec_pub_key_size(curve, compressed)) {
         return SOTER_INVALID_PARAMETER;
     }
 
