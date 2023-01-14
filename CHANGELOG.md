@@ -9,6 +9,7 @@ _Code:_
 - **Core**
 
   - Uncompressed EC public keys are now accepted (but not used yet) ([#954](https://github.com/cossacklabs/themis/pull/954))
+  - Increased PBKDF2 iteration count to maintain security of Secure Cell passphrase mode ([#976](https://github.com/cossacklabs/themis/pull/976)).
 
 - **Android**
 
