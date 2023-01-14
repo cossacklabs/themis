@@ -84,7 +84,7 @@ jobs:
         if: ${{ matrix.os != 'ubuntu-22.04' }}
         run: make test ENGINE=openssl BUILD_PATH=build-openssl
       - name: Run test suite (OpenSSL, uncompressed keys)
-        if: always()
+        if: ${{ matrix.os != 'ubuntu-22.04' }}
         env:
           THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED: "1"
         run: make test ENGINE=openssl BUILD_PATH=build-openssl
@@ -102,14 +102,17 @@ jobs:
           export WITH_FATAL_WARNINGS=no
           make test BUILD_PATH=build-openssl-3.0
       - name: Run test suite (OpenSSL 3.0, uncompressed keys)
-        if: ${{ matrix.os == 'macos-latest' }}
+        if: ${{ matrix.os != 'ubuntu-20.04' }}
         env:
           THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED: "1"
         run: |
-          openssl3="$(brew --prefix openssl@3)"
           export ENGINE=openssl
-          export ENGINE_INCLUDE_PATH="$openssl3/include"
-          export ENGINE_LIB_PATH="$openssl3/lib"
+          # macOS has both OpenSSL 1.1.1 and 3.0 installed, be specific.
+          if [[ "$MATRIX_OS" = "macos-12" ]]; then
+            openssl3="$(brew --prefix openssl@3)"
+            export ENGINE_INCLUDE_PATH="$openssl3/include"
+            export ENGINE_LIB_PATH="$openssl3/lib"
+          fi
           export WITH_EXPERIMENTAL_OPENSSL_3_SUPPORT=yes
           export WITH_FATAL_WARNINGS=no
           make test BUILD_PATH=build-openssl-3.0
