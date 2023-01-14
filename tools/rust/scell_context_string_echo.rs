@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#![allow(clippy::needless_borrow)]
+
 use std::process::exit;
 
 use clap::clap_app;

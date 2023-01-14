@@ -41,6 +41,7 @@
 //! [Secure Cell]: secure_cell/index.html
 //! [Secure Comparator]: secure_comparator/index.html
 
+#![allow(clippy::needless_borrow)]
 #![warn(missing_docs)]
 #![doc(html_no_source)]
 #![doc(

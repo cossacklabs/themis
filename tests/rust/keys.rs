@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#![allow(clippy::needless_borrow)]
+
 use themis::keygen::{gen_ec_key_pair, gen_rsa_key_pair};
 use themis::keys::{
     EcdsaPrivateKey, EcdsaPublicKey, KeyKind, KeyPair, PrivateKey, PublicKey, RsaPrivateKey,

@@ -27,7 +27,11 @@ env:
 jobs:
   unit-tests:
     name: Unit tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        rust: [stable, '1.51']
+      fail-fast: false
     steps:
       - name: Install system dependencies
         run: |
@@ -37,7 +41,7 @@ jobs:
       - name: Install stable Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ matrix.rust }}
           profile: minimal
           components: rustfmt, clippy
       - name: Check out code
@@ -73,7 +77,11 @@ jobs:
 
   examples:
     name: Code examples
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        rust: [stable, '1.51']
+      fail-fast: false
     steps:
       - name: Install system dependencies
         run: |
@@ -83,7 +91,7 @@ jobs:
       - name: Install stable Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ matrix.rust }}
           profile: minimal
       - name: Check out code
         uses: actions/checkout@v2
@@ -169,7 +177,7 @@ jobs:
 
   bindgen:
     name: libthemis-sys bindings
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |
