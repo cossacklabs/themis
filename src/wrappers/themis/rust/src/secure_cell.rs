@@ -935,7 +935,7 @@ fn encrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Resul
         }
     }
 
-    encrypted_message.reserve(encrypted_message_len as usize);
+    encrypted_message.reserve(encrypted_message_len);
 
     unsafe {
         let status = themis_secure_cell_encrypt_seal(
@@ -953,7 +953,7 @@ fn encrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Resul
             return Err(error);
         }
         debug_assert!(encrypted_message_len <= encrypted_message.capacity());
-        encrypted_message.set_len(encrypted_message_len as usize);
+        encrypted_message.set_len(encrypted_message_len);
     }
 
     Ok(encrypted_message)
@@ -985,7 +985,7 @@ fn decrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Resul
         }
     }
 
-    decrypted_message.reserve(decrypted_message_len as usize);
+    decrypted_message.reserve(decrypted_message_len);
 
     unsafe {
         let status = themis_secure_cell_decrypt_seal(
@@ -1003,7 +1003,7 @@ fn decrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Resul
             return Err(error);
         }
         debug_assert!(decrypted_message_len <= decrypted_message.capacity());
-        decrypted_message.set_len(decrypted_message_len as usize);
+        decrypted_message.set_len(decrypted_message_len);
     }
 
     Ok(decrypted_message)
@@ -1039,7 +1039,7 @@ fn encrypt_seal_with_passphrase(
         }
     }
 
-    encrypted_message.reserve(encrypted_message_len as usize);
+    encrypted_message.reserve(encrypted_message_len);
 
     unsafe {
         let status = themis_secure_cell_encrypt_seal_with_passphrase(
@@ -1057,7 +1057,7 @@ fn encrypt_seal_with_passphrase(
             return Err(error);
         }
         debug_assert!(encrypted_message_len <= encrypted_message.capacity());
-        encrypted_message.set_len(encrypted_message_len as usize);
+        encrypted_message.set_len(encrypted_message_len);
     }
 
     Ok(encrypted_message)
@@ -1093,7 +1093,7 @@ fn decrypt_seal_with_passphrase(
         }
     }
 
-    decrypted_message.reserve(decrypted_message_len as usize);
+    decrypted_message.reserve(decrypted_message_len);
 
     unsafe {
         let status = themis_secure_cell_decrypt_seal_with_passphrase(
@@ -1111,7 +1111,7 @@ fn decrypt_seal_with_passphrase(
             return Err(error);
         }
         debug_assert!(decrypted_message_len <= decrypted_message.capacity());
-        decrypted_message.set_len(decrypted_message_len as usize);
+        decrypted_message.set_len(decrypted_message_len);
     }
 
     Ok(decrypted_message)
@@ -1549,8 +1549,8 @@ fn encrypt_token_protect(
         }
     }
 
-    token.reserve(token_len as usize);
-    encrypted_message.reserve(encrypted_message_len as usize);
+    token.reserve(token_len);
+    encrypted_message.reserve(encrypted_message_len);
 
     unsafe {
         let status = themis_secure_cell_encrypt_token_protect(
@@ -1570,9 +1570,9 @@ fn encrypt_token_protect(
             return Err(error);
         }
         debug_assert!(token_len <= token.capacity());
-        token.set_len(token_len as usize);
+        token.set_len(token_len);
         debug_assert!(encrypted_message_len <= encrypted_message.capacity());
-        encrypted_message.set_len(encrypted_message_len as usize);
+        encrypted_message.set_len(encrypted_message_len);
     }
 
     Ok((encrypted_message, token))
@@ -1612,7 +1612,7 @@ fn decrypt_token_protect(
         }
     }
 
-    decrypted_message.reserve(decrypted_message_len as usize);
+    decrypted_message.reserve(decrypted_message_len);
 
     unsafe {
         let status = themis_secure_cell_decrypt_token_protect(
@@ -1632,7 +1632,7 @@ fn decrypt_token_protect(
             return Err(error);
         }
         debug_assert!(decrypted_message_len <= decrypted_message.capacity());
-        decrypted_message.set_len(decrypted_message_len as usize);
+        decrypted_message.set_len(decrypted_message_len);
     }
 
     Ok(decrypted_message)
@@ -1866,7 +1866,7 @@ fn encrypt_context_imprint(master_key: &[u8], message: &[u8], context: &[u8]) ->
         }
     }
 
-    encrypted_message.reserve(encrypted_message_len as usize);
+    encrypted_message.reserve(encrypted_message_len);
 
     unsafe {
         let status = themis_secure_cell_encrypt_context_imprint(
@@ -1884,7 +1884,7 @@ fn encrypt_context_imprint(master_key: &[u8], message: &[u8], context: &[u8]) ->
             return Err(error);
         }
         debug_assert!(encrypted_message_len <= encrypted_message.capacity());
-        encrypted_message.set_len(encrypted_message_len as usize);
+        encrypted_message.set_len(encrypted_message_len);
     }
 
     Ok(encrypted_message)
@@ -1916,7 +1916,7 @@ fn decrypt_context_imprint(master_key: &[u8], message: &[u8], context: &[u8]) ->
         }
     }
 
-    decrypted_message.reserve(decrypted_message_len as usize);
+    decrypted_message.reserve(decrypted_message_len);
 
     unsafe {
         let status = themis_secure_cell_decrypt_context_imprint(
@@ -1934,7 +1934,7 @@ fn decrypt_context_imprint(master_key: &[u8], message: &[u8], context: &[u8]) ->
             return Err(error);
         }
         debug_assert!(decrypted_message_len <= decrypted_message.capacity());
-        decrypted_message.set_len(decrypted_message_len as usize);
+        decrypted_message.set_len(decrypted_message_len);
     }
 
     Ok(decrypted_message)
