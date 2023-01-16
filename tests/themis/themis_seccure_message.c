@@ -16,6 +16,7 @@
 
 #include "themis/themis_test.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #include <soter/soter_rand.h>
@@ -1566,6 +1567,66 @@ static void keygen_parameters_rsa(void)
                           "themis_gen_rsa_key_pair: only public key requested");
 }
 
+static void uncompressed_ec(void)
+{
+    themis_status_t status;
+    uint8_t ec_private_key[MAX_KEY_SIZE] = {0};
+    uint8_t ec_public_key[MAX_KEY_SIZE] = {0};
+    size_t ec_private_key_length = sizeof(ec_private_key);
+    size_t ec_public_key_length = sizeof(ec_public_key);
+
+    /*
+     * Resetting already set environment variables is PITA in C,
+     * so just don't run these tests when the entire testsuite
+     * is run with THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED.
+     */
+    if (getenv("THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED")) {
+        testsuite_fail_if(false, "THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED is set, skipping");
+        return;
+    }
+
+    status = themis_gen_ec_key_pair(&ec_private_key[0],
+                                    &ec_private_key_length,
+                                    &ec_public_key[0],
+                                    &ec_public_key_length);
+    if (status != THEMIS_SUCCESS) {
+        testsuite_fail_if(true, "themis_gen_ec_key_pair failed");
+        return;
+    }
+    testsuite_fail_if((ec_private_key_length != 45) || (ec_public_key_length != 45),
+                      "themis_gen_ec_key_pair generates compressed keys by default");
+
+    setenv("THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED", "1", 0);
+    ec_private_key_length = sizeof(ec_private_key);
+    ec_public_key_length = sizeof(ec_public_key);
+    status = themis_gen_ec_key_pair(&ec_private_key[0],
+                                    &ec_private_key_length,
+                                    &ec_public_key[0],
+                                    &ec_public_key_length);
+    if (status != THEMIS_SUCCESS) {
+        testsuite_fail_if(true, "themis_gen_ec_key_pair failed");
+        return;
+    }
+    unsetenv("THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED");
+    testsuite_fail_if((ec_private_key_length != 45) || (ec_public_key_length != 77),
+                      "setting THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED to 1 produces uncompressed keys");
+
+    setenv("THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED", "yes", 0);
+    ec_private_key_length = sizeof(ec_private_key);
+    ec_public_key_length = sizeof(ec_public_key);
+    status = themis_gen_ec_key_pair(&ec_private_key[0],
+                                    &ec_private_key_length,
+                                    &ec_public_key[0],
+                                    &ec_public_key_length);
+    if (status != THEMIS_SUCCESS) {
+        testsuite_fail_if(true, "themis_gen_ec_key_pair failed");
+        return;
+    }
+    unsetenv("THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED");
+    testsuite_fail_if((ec_private_key_length != 45) || (ec_public_key_length != 45),
+                      "setting THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED to anything else results in compressed keys");
+}
+
 static void secure_message_overlong_ecdsa_signature(void)
 {
     themis_status_t status;
@@ -1830,6 +1891,7 @@ void run_secure_message_test(void)
     testsuite_run_test(key_validation_test);
     testsuite_run_test(keygen_parameters_ec);
     testsuite_run_test(keygen_parameters_rsa);
+    testsuite_run_test(uncompressed_ec);
 
     testsuite_enter_suite("secure message: compatibility");
     testsuite_run_test(secure_message_overlong_ecdsa_signature);

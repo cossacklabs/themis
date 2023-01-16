@@ -37,15 +37,18 @@ static bool is_curve_supported(int curve)
 }
 
 /* Input size directly since public key type structures may be aligned to word boundary */
-static size_t ec_pub_key_size(int curve)
+static size_t ec_pub_key_size(int curve, bool compressed)
 {
     switch (curve) {
     case NID_X9_62_prime256v1: /* P-256 */
-        return sizeof(soter_container_hdr_t) + EC_PUB_SIZE(256);
+        return sizeof(soter_container_hdr_t)
+               + (compressed ? EC_PUB_SIZE(256) : EC_PUB_UNCOMPRESSED_SIZE(256));
     case NID_secp384r1: /* P-384 */
-        return sizeof(soter_container_hdr_t) + EC_PUB_SIZE(384);
+        return sizeof(soter_container_hdr_t)
+               + (compressed ? EC_PUB_SIZE(384) : EC_PUB_UNCOMPRESSED_SIZE(384));
     case NID_secp521r1: /* P-521 */
-        return sizeof(soter_container_hdr_t) + EC_PUB_SIZE(521);
+        return sizeof(soter_container_hdr_t)
+               + (compressed ? EC_PUB_SIZE(521) : EC_PUB_UNCOMPRESSED_SIZE(521));
     default:
         return 0;
     }
@@ -104,6 +107,7 @@ static size_t bn_encode(const BIGNUM* bn, uint8_t* buffer, size_t length)
 }
 
 soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_ec_key_t* engine_key,
+                                                   bool compressed,
                                                    soter_container_hdr_t* key,
                                                    size_t* key_length)
 {
@@ -136,7 +140,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
         goto err;
     }
 
-    output_length = ec_pub_key_size(curve);
+    output_length = ec_pub_key_size(curve, compressed);
     if ((!key) || (output_length > *key_length)) {
         *key_length = output_length;
         res = SOTER_BUFFER_TOO_SMALL;
@@ -154,7 +158,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
     if ((output_length - sizeof(soter_container_hdr_t))
         != EC_POINT_point2oct(group,
                               Q,
-                              POINT_CONVERSION_COMPRESSED,
+                              compressed ? POINT_CONVERSION_COMPRESSED : POINT_CONVERSION_UNCOMPRESSED,
                               (unsigned char*)(key + 1),
                               output_length - sizeof(soter_container_hdr_t),
                               NULL)) {
@@ -180,6 +184,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
                                                     size_t* key_length)
 {
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
+    const bool compressed = true;
     soter_status_t res;
     size_t output_length;
     EC_KEY* ec;
@@ -212,7 +217,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
      * Note that we use a buffer suitable for a public key to store a private
      * key. This was a historical mistake, now preserved for compatibility.
      */
-    output_length = ec_pub_key_size(curve);
+    output_length = ec_pub_key_size(curve, compressed);
     if ((!key) || (output_length > *key_length)) {
         *key_length = output_length;
         res = SOTER_BUFFER_TOO_SMALL;
@@ -255,6 +260,7 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
     const EC_GROUP* group;
     EC_POINT* Q = NULL;
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
+    const bool compressed = true;
     soter_status_t res;
 
     if ((!key) || (key_length < sizeof(soter_container_hdr_t))) {
@@ -288,7 +294,8 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
         return SOTER_INVALID_PARAMETER;
     }
 
-    if (key_length < ec_pub_key_size(curve)) {
+    /* Encoded public key cannot be smaller than this */
+    if (key_length < ec_pub_key_size(curve, compressed)) {
         return SOTER_INVALID_PARAMETER;
     }
 
