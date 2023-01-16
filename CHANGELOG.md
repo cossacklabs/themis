@@ -4,6 +4,10 @@
 
 Changes that are currently in development and have not been released yet.
 
+
+- Minimum supported Rust version is now 1.56 ([#977](https://github.com/cossacklabs/themis/pull/977)).
+
+
 ## [0.14.10](https://github.com/cossacklabs/themis/releases/tag/0.14.10), Dec 7th 2022
 
 ### React Native Themis
@@ -16,11 +20,11 @@ Changes that are currently in development and have not been released yet.
 
 - Improved compatibility with non-Homebrew Python installations on Apple M1 ([#915](https://github.com/cossacklabs/themis/pull/915)).
 
-### Obj-C, Swift 
+### Obj-C, Swift
 
 - Updated examples ([#947](https://github.com/cossacklabs/themis/pull/947)).
 
- 
+
 ## [0.14.9](https://github.com/cossacklabs/themis/releases/tag/0.14.9), Sep 12th 2022
 
 ### Hotfix for macOS Themis installed via SPM

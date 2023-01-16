@@ -28,16 +28,21 @@ jobs:
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        rust: [stable, '1.56']
+      fail-fast: false
     steps:
       - name: Install system dependencies
         run: |
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev pkg-config clang
-      - name: Install stable Rust
+      - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ matrix.rust }}
+          default: true
           profile: minimal
           components: rustfmt, clippy
       - name: Check out code
@@ -74,17 +79,22 @@ jobs:
   examples:
     name: Code examples
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        rust: [stable, '1.56']
+      fail-fast: false
     steps:
       - name: Install system dependencies
         run: |
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev pkg-config clang
-      - name: Install stable Rust
+      - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           profile: minimal
+          default: true
       - name: Check out code
         uses: actions/checkout@v2
       - name: Install Themis Core

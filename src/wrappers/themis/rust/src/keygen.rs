@@ -105,8 +105,8 @@ fn try_gen_rsa_key_pair() -> Result<RsaKeyPair> {
         }
         debug_assert!(private_key_len <= private_key.capacity());
         debug_assert!(public_key_len <= public_key.capacity());
-        private_key.set_len(private_key_len as usize);
-        public_key.set_len(public_key_len as usize);
+        private_key.set_len(private_key_len);
+        public_key.set_len(public_key_len);
     }
 
     let private_key = RsaPrivateKey::from_vec(private_key);
@@ -165,8 +165,8 @@ fn try_gen_ec_key_pair() -> Result<EcdsaKeyPair> {
         }
         debug_assert!(private_key_len <= private_key.capacity());
         debug_assert!(public_key_len <= public_key.capacity());
-        private_key.set_len(private_key_len as usize);
-        public_key.set_len(public_key_len as usize);
+        private_key.set_len(private_key_len);
+        public_key.set_len(public_key_len);
     }
 
     let private_key = EcdsaPrivateKey::from_vec(private_key);
