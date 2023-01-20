@@ -4,6 +4,14 @@
 
 Changes that are currently in development and have not been released yet.
 
+
+## [0.14.11](https://github.com/cossacklabs/themis/releases/tag/0.14.11), Jan 19th 2023
+
+### React Native Themis
+
+- Upgraded version of Android SDK
+
+
 ## [0.14.10](https://github.com/cossacklabs/themis/releases/tag/0.14.10), Dec 7th 2022
 
 ### React Native Themis
