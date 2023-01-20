@@ -109,7 +109,7 @@ soter_status_t soter_rsa_import_key(EVP_PKEY* pkey, const void* key, const size_
     return SOTER_INVALID_PARAMETER;
 }
 
-soter_status_t soter_rsa_export_key(EVP_PKEY* pkey, void* key, size_t* key_length, bool isprivate)
+soter_status_t soter_rsa_export_key(const EVP_PKEY* pkey, void* key, size_t* key_length, bool isprivate)
 {
     if (!pkey) {
         return SOTER_INVALID_PARAMETER;

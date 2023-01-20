@@ -8,8 +8,13 @@ _Code:_
 
 - **Core**
 
-  - Uncompressed EC public keys are now accepted (but not used yet) ([#954](https://github.com/cossacklabs/themis/pull/954))
+  - Uncompressed EC public keys are now supported ([#959](https://github.com/cossacklabs/themis/pull/959), [#954](https://github.com/cossacklabs/themis/pull/954))
+  - Themis will generate uncompressed EC public keys when `THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED=1` environment variable is set ([#959](https://github.com/cossacklabs/themis/pull/959))
   - Increased PBKDF2 iteration count to maintain security of Secure Cell passphrase mode ([#976](https://github.com/cossacklabs/themis/pull/976)).
+
+  - **Soter** (low-level security core used by Themis)
+
+    - `soter_sign_export_key()` is now deprecated, superseded by `soter_sign_export_private_key()` and `soter_sign_export_public_key()` ([#959](https://github.com/cossacklabs/themis/pull/959))
 
 - **Android**
 
@@ -32,6 +37,8 @@ _Code:_
   - `SecureSessionTransport` implementations are now required to be `Send` ([#898](https://github.com/cossacklabs/themis/pull/898)).
 
     This is technically a breaking change, but most reasonble implementations should be `Send` already. Please raise an issue if your code fails to build.
+
+  - Minimum supported Rust version is now 1.56 ([#977](https://github.com/cossacklabs/themis/pull/977)).
 
 - **WebAssembly**
 

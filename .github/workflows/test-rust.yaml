@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        rust: [stable, '1.51']
+        rust: [stable, '1.56']
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -38,10 +38,11 @@ jobs:
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev pkg-config clang
-      - name: Install stable Rust
+      - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.rust }}
+          default: true
           profile: minimal
           components: rustfmt, clippy
       - name: Check out code
@@ -80,7 +81,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        rust: [stable, '1.51']
+        rust: [stable, '1.56']
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -88,11 +89,12 @@ jobs:
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev pkg-config clang
-      - name: Install stable Rust
+      - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: ${{ matrix.rust }}
           profile: minimal
+          default: true
       - name: Check out code
         uses: actions/checkout@v2
       - name: Install Themis Core

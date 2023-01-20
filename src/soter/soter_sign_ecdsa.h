@@ -31,10 +31,13 @@ soter_status_t soter_sign_update_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
 soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
                                                  void* signature,
                                                  size_t* signature_length);
-soter_status_t soter_sign_export_key_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
-                                                      void* key,
-                                                      size_t* key_length,
-                                                      bool isprivate);
+soter_status_t soter_sign_export_private_key_ecdsa_none_pkcs8(const soter_sign_ctx_t* ctx,
+                                                              void* key,
+                                                              size_t* key_length);
+soter_status_t soter_sign_export_public_key_ecdsa_none_pkcs8(const soter_sign_ctx_t* ctx,
+                                                             bool compressed,
+                                                             void* key,
+                                                             size_t* key_length);
 soter_status_t soter_sign_cleanup_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx);
 
 soter_status_t soter_verify_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,

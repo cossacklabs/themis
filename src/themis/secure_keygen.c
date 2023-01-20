@@ -16,6 +16,7 @@
 
 #include "themis/secure_keygen.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "soter/soter_container.h"
@@ -39,6 +40,22 @@
  * as of 2020. See: https://www.keylength.com/en/4/
  */
 #define THEMIS_SYM_KEY_LENGTH 32
+
+/*
+ * Historically Themis used compressed format for EC keys. This resulted
+ * in a more compact representation, but is not optimal for performance.
+ * Due to Hyrum's law, we can't change the default key format that easily,
+ * so more efficient uncompressed representation can be used after opt-in.
+ * (Note that we can import both representations without special actions.)
+ */
+static bool should_generate_compressed_ec_key_pairs(void)
+{
+    const char* uncompressed = getenv("THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED");
+    if (uncompressed != NULL && strcmp(uncompressed, "1") == 0) {
+        return false;
+    }
+    return true;
+}
 
 static themis_status_t combine_key_generation_results(uint8_t* private_key,
                                                       const size_t* private_key_length,
@@ -74,6 +91,7 @@ themis_status_t themis_gen_key_pair(soter_sign_alg_t alg,
     themis_status_t private_result = THEMIS_FAIL;
     themis_status_t public_result = THEMIS_FAIL;
     soter_sign_ctx_t* ctx = NULL;
+    bool compressed = true;
 
     if (!private_key_length || !public_key_length) {
         return THEMIS_INVALID_PARAMETER;
@@ -84,8 +102,9 @@ themis_status_t themis_gen_key_pair(soter_sign_alg_t alg,
         return THEMIS_FAIL;
     }
 
-    private_result = soter_sign_export_key(ctx, private_key, private_key_length, true);
-    public_result = soter_sign_export_key(ctx, public_key, public_key_length, false);
+    compressed = should_generate_compressed_ec_key_pairs();
+    private_result = soter_sign_export_private_key(ctx, private_key, private_key_length);
+    public_result = soter_sign_export_public_key(ctx, compressed, public_key, public_key_length);
 
     soter_sign_destroy(ctx);
 
