@@ -4,8 +4,20 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.14.11](https://github.com/cossacklabs/themis/releases/tag/0.14.11), Jan 19th 2023
+
+### React Native Themis
+
+- Upgraded version of Android SDK
+
+### Rust
 
 - Minimum supported Rust version is now 1.56 ([#977](https://github.com/cossacklabs/themis/pull/977)).
+
+### CI
+
+- Use new `bindgen` binary crate name ([#958](https://github.com/cossacklabs/themis/pull/958)).
+- CI: Pin "ubuntu-20.04" et al. ([#970](https://github.com/cossacklabs/themis/pull/970)).
 
 
 ## [0.14.10](https://github.com/cossacklabs/themis/releases/tag/0.14.10), Dec 7th 2022
