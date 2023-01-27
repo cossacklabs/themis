@@ -289,8 +289,8 @@ impl fmt::Display for TransportError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match &self.inner {
             TransportErrorInner::Unspecified => write!(f, "Secure Session transport failed"),
-            TransportErrorInner::Simple(s) => write!(f, "Secure Session transport failed: {}", s),
-            TransportErrorInner::Custom(e) => write!(f, "Secure Session transport failed: {}", e),
+            TransportErrorInner::Simple(s) => write!(f, "Secure Session transport failed: {s}"),
+            TransportErrorInner::Custom(e) => write!(f, "Secure Session transport failed: {e}"),
         }
     }
 }
@@ -299,8 +299,8 @@ impl fmt::Debug for TransportError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match &self.inner {
             TransportErrorInner::Unspecified => write!(f, "TransportError::Unspecified"),
-            TransportErrorInner::Simple(s) => write!(f, "TransportError::Simple({:?})", s),
-            TransportErrorInner::Custom(e) => write!(f, "TransportError::Custom({:?})", e),
+            TransportErrorInner::Simple(s) => write!(f, "TransportError::Simple({s:?})"),
+            TransportErrorInner::Custom(e) => write!(f, "TransportError::Custom({e:?})"),
         }
     }
 }

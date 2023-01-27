@@ -594,7 +594,7 @@ mod token_protect {
             .token_protect();
         let message = b"Colorless green ideas sleep furiously".as_ref();
 
-        let (encrypted, token) = cell.encrypt(&message).unwrap();
+        let (encrypted, token) = cell.encrypt(message).unwrap();
 
         assert_eq!(encrypted.len(), message.len());
         assert!(!token.is_empty());
@@ -611,9 +611,9 @@ mod token_protect {
             b"Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo".as_ref();
 
         let (encrypted_short, token_short) =
-            cell.encrypt_with_context(&message, &context_short).unwrap();
+            cell.encrypt_with_context(message, context_short).unwrap();
         let (encrypted_long, token_long) =
-            cell.encrypt_with_context(&message, &context_long).unwrap();
+            cell.encrypt_with_context(message, context_long).unwrap();
 
         // Context is not (directly) included into encrypted message.
         assert_eq!(encrypted_short.len(), encrypted_long.len());
@@ -628,18 +628,18 @@ mod token_protect {
         let message = b"Colorless green ideas sleep furiously".as_ref();
 
         // encrypt(...) is encrypt_with_context(..., &[])
-        let (encrypted_1, token_1) = cell.encrypt(&message).unwrap();
-        let (encrypted_2, token_2) = cell.encrypt_with_context(&message, &[]).unwrap();
+        let (encrypted_1, token_1) = cell.encrypt(message).unwrap();
+        let (encrypted_2, token_2) = cell.encrypt_with_context(message, []).unwrap();
 
         assert_eq!(cell.decrypt(&encrypted_1, &token_1), Ok(message.to_vec()));
         assert_eq!(cell.decrypt(&encrypted_2, &token_2), Ok(message.to_vec()));
 
         assert_eq!(
-            cell.decrypt_with_context(&encrypted_1, &token_1, &[]),
+            cell.decrypt_with_context(&encrypted_1, &token_1, []),
             Ok(message.to_vec())
         );
         assert_eq!(
-            cell.decrypt_with_context(&encrypted_2, &token_2, &[]),
+            cell.decrypt_with_context(&encrypted_2, &token_2, []),
             Ok(message.to_vec())
         );
     }
@@ -654,7 +654,7 @@ mod token_protect {
             .token_protect();
         let message = b"Colorless green ideas sleep furiously".as_ref();
 
-        let (encrypted, token) = cell_a.encrypt(&message).unwrap();
+        let (encrypted, token) = cell_a.encrypt(message).unwrap();
 
         // You cannot use a different key to decrypt data.
         assert!(cell_b.decrypt(&encrypted, &token).is_err());
@@ -671,8 +671,8 @@ mod token_protect {
             .token_protect();
         let message = b"Colorless green ideas sleep furiously".as_ref();
 
-        let (encrypted_1, token_1) = cell.encrypt(&message).unwrap();
-        let (encrypted_2, token_2) = cell.encrypt(&message).unwrap();
+        let (encrypted_1, token_1) = cell.encrypt(message).unwrap();
+        let (encrypted_2, token_2) = cell.encrypt(message).unwrap();
 
         // You cannot use a different token to decrypt data, even the same original data.
         assert!(cell.decrypt(&encrypted_1, &token_2).is_err());
@@ -694,16 +694,16 @@ mod token_protect {
         let context_a = b"The jaws that bite, the claws that catch!".as_ref();
         let context_b = b"One, two! One, two! And through and through".as_ref();
 
-        let (encrypted, token) = cell.encrypt_with_context(&message, &context_a).unwrap();
+        let (encrypted, token) = cell.encrypt_with_context(message, context_a).unwrap();
 
         // You cannot use a different context to decrypt data.
         assert!(cell
-            .decrypt_with_context(&encrypted, &token, &context_b)
+            .decrypt_with_context(&encrypted, &token, context_b)
             .is_err());
 
         // Only the correct context will work.
         let decrypted = cell
-            .decrypt_with_context(&encrypted, &token, &context_a)
+            .decrypt_with_context(&encrypted, &token, context_a)
             .unwrap();
         assert_eq!(decrypted, message);
     }
@@ -715,7 +715,7 @@ mod token_protect {
             .token_protect();
         let message = b"Colorless green ideas sleep furiously".as_ref();
 
-        let (encrypted, token) = cell.encrypt(&message).unwrap();
+        let (encrypted, token) = cell.encrypt(message).unwrap();
 
         // Invert every odd byte, this will surely break the message.
         let mut corrupted_data = encrypted;
@@ -725,7 +725,7 @@ mod token_protect {
             }
         }
 
-        assert!(cell.decrypt(&corrupted_data, &token).is_err());
+        assert!(cell.decrypt(&corrupted_data, token).is_err());
     }
 
     #[test]
@@ -735,11 +735,11 @@ mod token_protect {
             .token_protect();
         let message = b"Colorless green ideas sleep furiously".as_ref();
 
-        let (encrypted, token) = cell.encrypt(&message).unwrap();
+        let (encrypted, token) = cell.encrypt(message).unwrap();
 
         let truncated_data = &encrypted[..encrypted.len() - 1];
 
-        assert!(cell.decrypt(&truncated_data, &token).is_err());
+        assert!(cell.decrypt(truncated_data, token).is_err());
     }
 
     #[test]
@@ -749,12 +749,12 @@ mod token_protect {
             .token_protect();
         let message = b"Colorless green ideas sleep furiously".as_ref();
 
-        let (encrypted, token) = cell.encrypt(&message).unwrap();
+        let (encrypted, token) = cell.encrypt(message).unwrap();
 
         let mut extended_data = encrypted;
         extended_data.push(0);
 
-        assert!(cell.decrypt(&extended_data, &token).is_err());
+        assert!(cell.decrypt(&extended_data, token).is_err());
     }
 
     #[test]
@@ -769,7 +769,7 @@ mod token_protect {
             .token_protect();
         let message = b"Colorless green ideas sleep furiously".as_ref();
 
-        let (encrypted, token) = cell.encrypt(&message).unwrap();
+        let (encrypted, token) = cell.encrypt(message).unwrap();
 
         // Invert every odd byte, this will surely break the token.
         let mut corrupted_token = token;
@@ -779,7 +779,7 @@ mod token_protect {
             }
         }
 
-        assert!(cell.decrypt(&encrypted, &corrupted_token).is_err());
+        assert!(cell.decrypt(encrypted, corrupted_token).is_err());
     }
 
     #[test]
@@ -789,11 +789,11 @@ mod token_protect {
             .token_protect();
         let message = b"Colorless green ideas sleep furiously".as_ref();
 
-        let (encrypted, token) = cell.encrypt(&message).unwrap();
+        let (encrypted, token) = cell.encrypt(message).unwrap();
 
         let truncated_token = &token[..token.len() - 1];
 
-        assert!(cell.decrypt(&encrypted, &truncated_token).is_err());
+        assert!(cell.decrypt(encrypted, truncated_token).is_err());
     }
 
     #[test]
@@ -803,14 +803,14 @@ mod token_protect {
             .token_protect();
         let message = b"Colorless green ideas sleep furiously".as_ref();
 
-        let (encrypted, token) = cell.encrypt(&message).unwrap();
+        let (encrypted, token) = cell.encrypt(message).unwrap();
 
         let mut extended_token = token;
         extended_token.push(0);
 
         // Current implementation of Secure Cell allows the token to be overlong.
         // Extra data is simply ignored.
-        let decrypted = cell.decrypt(&encrypted, &extended_token).unwrap();
+        let decrypted = cell.decrypt(encrypted, &extended_token).unwrap();
         assert_eq!(decrypted, message);
     }
 
@@ -826,9 +826,9 @@ mod token_protect {
             .token_protect();
         let message = b"Colorless green ideas sleep furiously".as_ref();
 
-        let (encrypted, token) = cell.encrypt(&message).unwrap();
+        let (encrypted, token) = cell.encrypt(message).unwrap();
 
-        assert!(cell.decrypt(&token, &encrypted).is_err());
+        assert!(cell.decrypt(token, encrypted).is_err());
     }
 
     #[test]
@@ -837,12 +837,12 @@ mod token_protect {
             .unwrap()
             .token_protect();
 
-        assert!(cell.encrypt(&[]).is_err());
+        assert!(cell.encrypt([]).is_err());
 
         let message = b"Colorless green ideas sleep furiously".as_ref();
-        let (encrypted, token) = cell.encrypt(&message).unwrap();
+        let (encrypted, token) = cell.encrypt(message).unwrap();
 
-        assert!(cell.decrypt(&encrypted, &[]).is_err());
-        assert!(cell.decrypt(&[], &token).is_err());
+        assert!(cell.decrypt(encrypted, []).is_err());
+        assert!(cell.decrypt([], token).is_err());
     }
 }

@@ -64,7 +64,7 @@ fn main() {
 
     let mut socket = TcpStream::connect(&remote_addr).expect("client connection");
 
-    let mut session = SecureSession::new(&CLIENT_ID, &CLIENT_PRIVATE, ExpectServer)
+    let mut session = SecureSession::new(CLIENT_ID, &CLIENT_PRIVATE, ExpectServer)
         .expect("Secure Session client");
     let mut buffer = [0; MAX_MESSAGE_SIZE];
 
@@ -73,7 +73,7 @@ fn main() {
 
     loop {
         let reply = read_framed(&mut socket, &mut buffer).expect("receive reply");
-        let response = session.negotiate_reply(&reply).expect("negotiate");
+        let response = session.negotiate_reply(reply).expect("negotiate");
         if session.is_established() {
             break;
         }
@@ -93,7 +93,7 @@ fn main() {
         write_framed(&mut socket, &message).expect("write to socket");
 
         let reply = read_framed(&mut socket, &mut buffer).expect("read from socket");
-        let reply = session.unwrap(&reply).expect("unwrap incoming");
+        let reply = session.unwrap(reply).expect("unwrap incoming");
 
         io::stdout().write_all(&reply).expect("write to stdout");
     }

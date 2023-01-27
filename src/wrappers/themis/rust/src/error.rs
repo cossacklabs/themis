@@ -121,7 +121,7 @@ impl error::Error for Error {}
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self.kind {
-            ErrorKind::UnknownError(status) => write!(f, "unknown error: {}", status),
+            ErrorKind::UnknownError(status) => write!(f, "unknown error: {status}"),
             ErrorKind::Success => write!(f, "success"),
 
             ErrorKind::Fail => write!(f, "failure"),
@@ -135,7 +135,7 @@ impl fmt::Display for Error {
             ErrorKind::SessionSendOutputToPeer => write!(f, "send key agreement data to peer"),
             ErrorKind::SessionKeyAgreementNotFinished => write!(f, "key agreement not finished"),
             ErrorKind::SessionTransportError(ref details) => {
-                write!(f, "transport layer error: {}", details)
+                write!(f, "transport layer error: {details}")
             }
             ErrorKind::SessionGetPublicKeyForIdError => {
                 write!(f, "failed to get public key for ID")

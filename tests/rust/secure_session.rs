@@ -41,8 +41,8 @@ fn no_transport() {
     let mut transport_client = MockTransport::new();
     let mut transport_server = MockTransport::new();
 
-    expect_peer(&mut transport_client, &name_server, &public_server);
-    expect_peer(&mut transport_server, &name_client, &public_client);
+    expect_peer(&mut transport_client, name_server, &public_server);
+    expect_peer(&mut transport_server, name_client, &public_client);
 
     // The client and the server.
     let mut client = SecureSession::new(name_client, &private_client, transport_client)
@@ -113,8 +113,8 @@ fn with_transport() {
     let mut transport_client = MockTransport::new();
     let mut transport_server = MockTransport::new();
 
-    expect_peer(&mut transport_client, &name_server, &public_server);
-    expect_peer(&mut transport_server, &name_client, &public_client);
+    expect_peer(&mut transport_client, name_server, &public_server);
+    expect_peer(&mut transport_server, name_client, &public_client);
 
     connect_with_channels(&mut transport_client, &mut transport_server);
 
@@ -154,8 +154,8 @@ fn connection_state_reporting() {
     let mut transport_client = MockTransport::new();
     let mut transport_server = MockTransport::new();
 
-    expect_peer(&mut transport_server, &name_client, &public_client);
-    expect_peer(&mut transport_client, &name_server, &public_server);
+    expect_peer(&mut transport_server, name_client, &public_client);
+    expect_peer(&mut transport_client, name_server, &public_server);
 
     let state_client = monitor_state_changes(&mut transport_client);
     let state_server = monitor_state_changes(&mut transport_server);
@@ -200,9 +200,9 @@ fn server_does_not_identify_client() {
     let mut transport_server = MockTransport::new();
     expect_no_peers(&mut transport_server);
 
-    let mut client = SecureSession::new(&name_client, &private_client, transport_client)
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
         .expect("Secure Session client");
-    let mut server = SecureSession::new(&name_server, &private_server, transport_server)
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
         .expect("Secure Session server");
 
     let connect_request = client.connect_request().expect("connect request");
@@ -227,11 +227,11 @@ fn client_does_not_identify_server() {
     expect_no_peers(&mut transport_client);
 
     let mut transport_server = MockTransport::new();
-    expect_peer(&mut transport_server, &name_client, &public_client);
+    expect_peer(&mut transport_server, name_client, &public_client);
 
-    let mut client = SecureSession::new(&name_client, &private_client, transport_client)
+    let mut client = SecureSession::new(name_client, &private_client, transport_client)
         .expect("Secure Session client");
-    let mut server = SecureSession::new(&name_server, &private_server, transport_server)
+    let mut server = SecureSession::new(name_server, &private_server, transport_server)
         .expect("Secure Session server");
 
     let connect_request = client.connect_request().expect("connect request");
@@ -280,8 +280,8 @@ fn forward_error_receive_at_connection() {
     let mut transport_client = MockTransport::new();
     let mut transport_server = MockTransport::new();
 
-    expect_peer(&mut transport_client, &name_server, &public_server);
-    expect_peer(&mut transport_server, &name_client, &public_client);
+    expect_peer(&mut transport_client, name_server, &public_server);
+    expect_peer(&mut transport_server, name_client, &public_client);
 
     connect_with_channels(&mut transport_client, &mut transport_server);
 
@@ -632,8 +632,8 @@ fn panic_in_status_change() {
     let mut transport_client = MockTransport::new();
     let mut transport_server = MockTransport::new();
 
-    expect_peer(&mut transport_client, &name_server, &public_server);
-    expect_peer(&mut transport_server, &name_client, &public_client);
+    expect_peer(&mut transport_client, name_server, public_server);
+    expect_peer(&mut transport_server, name_client, public_client);
 
     connect_with_channels(&mut transport_client, &mut transport_server);
 
