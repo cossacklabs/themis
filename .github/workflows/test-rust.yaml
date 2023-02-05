@@ -215,7 +215,7 @@ jobs:
             ${{ runner.os }}-cargo-build-target-unit-tests-
             ${{ runner.os }}-cargo-build-target-
       - name: Install Bindgen
-        run: cargo install bindgen-cli
+        run: cargo install bindgen
       - name: Check out code
         uses: actions/checkout@v2
       - name: Check bindgen.sh output
