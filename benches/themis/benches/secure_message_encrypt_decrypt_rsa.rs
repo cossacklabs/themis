@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#![allow(clippy::needless_borrow)]
-
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 
 use libthemis_sys::{
