@@ -150,7 +150,7 @@ fn pretty(size: usize) -> String {
     } else if size >= KB {
         format!("{} KB", size / KB)
     } else {
-        format!("{}", size)
+        format!("{size}")
     }
 }
 

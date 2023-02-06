@@ -46,7 +46,7 @@ to locate your library by setting the PKG_CONFIG_PATH environment
 variable to the path where `libthemis.pc` file is located.
 "
             );
-            eprintln!("{}", error);
+            eprintln!("{error}");
 
             if try_system_themis() {
                 eprintln!(

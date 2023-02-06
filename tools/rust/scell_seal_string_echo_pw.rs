@@ -47,26 +47,26 @@ fn main() {
             let encrypted = cell
                 .encrypt_with_context(&message, &context)
                 .unwrap_or_else(|error| {
-                    eprintln!("failed to encrypt message: {}", error);
+                    eprintln!("failed to encrypt message: {error}");
                     exit(1);
                 });
             println!("{}", base64::encode(&encrypted));
         }
         "dec" => {
             let decoded_message = base64::decode(&message).unwrap_or_else(|error| {
-                eprintln!("failed to decode message: {}", error);
+                eprintln!("failed to decode message: {error}");
                 exit(1);
             });
             let decrypted = cell
                 .decrypt_with_context(&decoded_message, &context)
                 .unwrap_or_else(|error| {
-                    eprintln!("failed to decrypt message: {}", error);
+                    eprintln!("failed to decrypt message: {error}");
                     exit(1);
                 });
             println!("{}", std::str::from_utf8(&decrypted).expect("UTF-8 string"));
         }
         other => {
-            eprintln!("invalid command \"{}\", use \"enc\" or \"dec\"", other);
+            eprintln!("invalid command \"{other}\", use \"enc\" or \"dec\"");
             exit(1);
         }
     }
