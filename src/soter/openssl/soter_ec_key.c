@@ -21,6 +21,9 @@
 #include <openssl/bn.h>
 #include <openssl/ec.h>
 #include <openssl/evp.h>
+#ifdef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
+#include <openssl/core_names.h>
+#endif
 
 #include "soter/soter_portable_endian.h"
 
@@ -32,6 +35,19 @@ static bool is_curve_supported(int curve)
     case NID_secp521r1:
         return true;
     default:
+        return false;
+    }
+}
+
+static bool is_curve_supported_2(const char* curve)
+{
+    if (strcmp(curve, "prime256v1" /* P-256 */) == 0) {
+        return true;
+    } else if (strcmp(curve, "secp384r1" /* P-384 */) == 0) {
+        return true;
+    } else if (strcmp(curve, "secp521r1" /* P-521 */) == 0) {
+        return true;
+    } else {
         return false;
     }
 }
@@ -50,6 +66,23 @@ static size_t ec_pub_key_size(int curve, bool compressed)
         return sizeof(soter_container_hdr_t)
                + (compressed ? EC_PUB_SIZE(521) : EC_PUB_UNCOMPRESSED_SIZE(521));
     default:
+        return 0;
+    }
+}
+
+/* Input size directly since public key type structures may be aligned to word boundary */
+static size_t ec_pub_key_size_2(const char* curve, bool compressed)
+{
+    if (strcmp(curve, "prime256v1" /* P-256 */) == 0) {
+        return sizeof(soter_container_hdr_t)
+               + (compressed ? EC_PUB_SIZE(256) : EC_PUB_UNCOMPRESSED_SIZE(256));
+    } else if (strcmp(curve, "secp384r1" /* P-384 */) == 0) {
+        return sizeof(soter_container_hdr_t)
+               + (compressed ? EC_PUB_SIZE(384) : EC_PUB_UNCOMPRESSED_SIZE(384));
+    } else if (strcmp(curve, "secp521r1" /* P-521 */) == 0) {
+        return sizeof(soter_container_hdr_t)
+               + (compressed ? EC_PUB_SIZE(521) : EC_PUB_UNCOMPRESSED_SIZE(521));
+    } else {
         return 0;
     }
 }
@@ -78,6 +111,19 @@ static char* ec_pub_key_tag(int curve)
     case NID_secp521r1: /* P-521 */
         return EC_PUB_KEY_TAG(521);
     default:
+        return NULL;
+    }
+}
+
+static char* ec_pub_key_tag_2(const char* curve)
+{
+    if (strcmp(curve, "prime256v1" /* P-256 */) == 0) {
+        return EC_PUB_KEY_TAG(256);
+    } else if (strcmp(curve, "secp384r1" /* P-384 */) == 0) {
+        return EC_PUB_KEY_TAG(384);
+    } else if (strcmp(curve, "secp521r1" /* P-521 */) == 0) {
+        return EC_PUB_KEY_TAG(521);
+    } else {
         return NULL;
     }
 }
@@ -114,26 +160,35 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
     soter_status_t res;
     size_t output_length;
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     EC_KEY* ec;
     const EC_GROUP* group;
     const EC_POINT* Q;
     int curve;
+#else
+    char group_str[16];
+    const char* param_name;
+    size_t serialized_len;
+#endif
 
     if ((!key_length) || (EVP_PKEY_EC != EVP_PKEY_id(pkey))) {
         return SOTER_INVALID_PARAMETER;
     }
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     ec = EVP_PKEY_get1_EC_KEY((EVP_PKEY*)pkey);
     if (NULL == ec) {
         return SOTER_FAIL;
     }
 
+    // Curve identifier as EC_GROUP*
     group = EC_KEY_get0_group(ec);
     if (NULL == group) {
         res = SOTER_INVALID_PARAMETER;
         goto err;
     }
 
+    // Curve identifier as int (NID_X9_62_prime256v1, NID_secp384r1, NID_secp521r1 etc)
     curve = EC_GROUP_get_curve_name(group);
     if (!is_curve_supported(curve)) {
         res = SOTER_INVALID_PARAMETER;
@@ -141,6 +196,24 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
     }
 
     output_length = ec_pub_key_size(curve, compressed);
+#else
+    // Curve identifier as string ("prime256v1", "secp384r1", "secp521r1" etc)
+    if (!EVP_PKEY_get_utf8_string_param(pkey,
+                                        OSSL_PKEY_PARAM_GROUP_NAME /* "group" */,
+                                        group_str,
+                                        sizeof(group_str),
+                                        NULL)) {
+        res = SOTER_INVALID_PARAMETER;
+        goto err;
+    }
+
+    if (!is_curve_supported_2(group_str)) {
+        res = SOTER_INVALID_PARAMETER;
+        goto err;
+    }
+
+    output_length = ec_pub_key_size_2(group_str, compressed);
+#endif
     if ((!key) || (output_length > *key_length)) {
         *key_length = output_length;
         res = SOTER_BUFFER_TOO_SMALL;
@@ -149,6 +222,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
 
     *key_length = output_length;
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     Q = EC_KEY_get0_public_key(ec);
     if (NULL == Q) {
         res = SOTER_INVALID_PARAMETER;
@@ -165,16 +239,43 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
         res = SOTER_FAIL;
         goto err;
     }
+#else
+    if (compressed) {
+        param_name = OSSL_PKEY_PARAM_PUB_KEY; // "pub"
+    } else {
+        param_name = OSSL_PKEY_PARAM_ENCODED_PUBLIC_KEY; // "encoded-pub-key"
+    }
 
+    if (!EVP_PKEY_get_octet_string_param(pkey,
+                                         param_name,
+                                         (unsigned char*)(key + 1),
+                                         output_length - sizeof(soter_container_hdr_t),
+                                         &serialized_len)) {
+        res = SOTER_INVALID_PARAMETER;
+        goto err;
+    }
+
+    if (serialized_len != output_length - sizeof(soter_container_hdr_t)) {
+        res = SOTER_INVALID_PARAMETER;
+        goto err;
+    }
+#endif
+
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     memcpy(key->tag, ec_pub_key_tag(curve), SOTER_CONTAINER_TAG_LENGTH);
+#else
+    memcpy(key->tag, ec_pub_key_tag_2(group_str), SOTER_CONTAINER_TAG_LENGTH);
+#endif
     key->size = htobe32(output_length);
     soter_update_container_checksum(key);
     *key_length = output_length;
     res = SOTER_SUCCESS;
 
 err:
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     /* Free extra reference on EC_KEY object provided by EVP_PKEY_get1_EC_KEY */
     EC_KEY_free(ec);
+#endif
 
     return res;
 }
