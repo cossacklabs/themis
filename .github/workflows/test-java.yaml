@@ -64,6 +64,12 @@ jobs:
   android-tests:
     name: Android emulator
     runs-on: macos-10.15
+    # Android toolchain support on GitHub Actions moves at breakneck speeds
+    # and our release schedule can't keep up with it. We can't use previous
+    # version of the toolchain and we don't want to port possibly breaking
+    # changes from the next Themis release that make the build work with
+    # newer versons of the toolchain. So unfortunately this job is disabled.
+    if: false
     steps:
       # This particular version of CMake confuses Gradle by not being semver.
       # We're fine with 3.10.2 which is also installed. Keep an eye on the

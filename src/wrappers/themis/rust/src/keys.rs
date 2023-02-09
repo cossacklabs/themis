@@ -649,7 +649,7 @@ impl SymmetricKey {
                 return Err(error);
             }
             debug_assert!(key_len <= key.capacity());
-            key.set_len(key_len);
+            key.set_len(key_len as usize);
         }
 
         Ok(Self {

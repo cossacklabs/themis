@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        rust: [stable, '1.56']
+        rust: ['1.56']
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -81,7 +81,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        rust: [stable, '1.56']
+        rust: ['1.56']
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -92,7 +92,7 @@ jobs:
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ matrix.rust }}
           profile: minimal
           default: true
       - name: Check out code
@@ -180,6 +180,10 @@ jobs:
   bindgen:
     name: libthemis-sys bindings
     runs-on: ubuntu-20.04
+    # Latest version of bindgen requires new CLI flags and makes new changes
+    # in the code. There isn't much point of running this job on maintenance
+    # branch if we aren't using the latest version, so keep it disabled.
+    if: false
     steps:
       - name: Install system dependencies
         run: |
@@ -215,7 +219,7 @@ jobs:
             ${{ runner.os }}-cargo-build-target-unit-tests-
             ${{ runner.os }}-cargo-build-target-
       - name: Install Bindgen
-        run: cargo install bindgen-cli
+        run: cargo install bindgen
       - name: Check out code
         uses: actions/checkout@v2
       - name: Check bindgen.sh output

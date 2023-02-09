@@ -78,7 +78,7 @@ impl SecureSessionTransport for SocketTransport {
         }
         self.socket.read_exact(&mut data[0..length])?;
         debug!("{:?}: received {} bytes", self.socket.peer_addr(), length);
-        Ok(length)
+        Ok(length as usize)
     }
 
     fn state_changed(&mut self, state: SecureSessionState) {
