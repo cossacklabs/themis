@@ -313,7 +313,6 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
 #else
     char group_str[16];
     BIGNUM* d = NULL;
-    size_t serialized_len;
 #endif
 
     if ((!key_length) || (EVP_PKEY_EC != EVP_PKEY_id(pkey))) {
@@ -422,11 +421,17 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
                                                    size_t key_length,
                                                    soter_engine_specific_ec_key_t** engine_key)
 {
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     int curve;
     EC_KEY* ec = NULL;
     const EC_GROUP* group;
     EC_POINT* Q = NULL;
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
+#else
+    const char *curve_str;
+    OSSL_PARAM params[3] = { [2] = OSSL_PARAM_END };
+    EVP_PKEY_CTX* ctx = NULL;
+#endif
     const bool compressed = true;
     soter_status_t res;
 
@@ -447,6 +452,7 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
         return SOTER_DATA_CORRUPT;
     }
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     switch (key->tag[3]) {
     case EC_SIZE_TAG_256:
         curve = NID_X9_62_prime256v1;
@@ -507,9 +513,54 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
     } else {
         res = SOTER_FAIL;
     }
+#else
+    switch (key->tag[3]) {
+    case EC_SIZE_TAG_256:
+        curve_str = "prime256v1";
+        break;
+    case EC_SIZE_TAG_384:
+        curve_str = "secp384r1";
+        break;
+    case EC_SIZE_TAG_521:
+        curve_str = "secp521r1";
+        break;
+    default:
+        return SOTER_INVALID_PARAMETER;
+    }
+
+    params[0] = OSSL_PARAM_construct_utf8_string(OSSL_PKEY_PARAM_GROUP_NAME /* "group" */,
+                                                 (char*)curve_str,
+                                                 strlen(curve_str));
+
+    params[1] = OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_PUB_KEY /* "pub" */,
+                                                  (unsigned char*)(key + 1),
+                                                  (int)(key_length - sizeof(soter_container_hdr_t)));
+
+    ctx = EVP_PKEY_CTX_new_from_name(NULL, "EC", NULL);
+    if (ctx == NULL) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (!EVP_PKEY_fromdata_init(ctx)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (!EVP_PKEY_fromdata(ctx,
+                           (EVP_PKEY**)engine_key,
+                           EVP_PKEY_PUBLIC_KEY,
+                           params)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    res = SOTER_SUCCESS;
+#endif
 
 err:
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     if (Q) {
         EC_POINT_free(Q);
     }
@@ -517,6 +568,9 @@ err:
     if (ec) {
         EC_KEY_free(ec);
     }
+#else
+    EVP_PKEY_CTX_free(ctx);
+#endif
 
     return res;
 }
