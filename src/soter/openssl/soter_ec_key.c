@@ -101,6 +101,7 @@ static size_t ec_priv_key_size(int curve)
     }
 }
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
 static char* ec_pub_key_tag(int curve)
 {
     switch (curve) {
@@ -114,8 +115,8 @@ static char* ec_pub_key_tag(int curve)
         return NULL;
     }
 }
-
-static char* ec_pub_key_tag_2(const char* curve)
+#else
+static char* ec_pub_key_tag(const char* curve)
 {
     if (strcmp(curve, "prime256v1" /* P-256 */) == 0) {
         return EC_PUB_KEY_TAG(256);
@@ -127,7 +128,9 @@ static char* ec_pub_key_tag_2(const char* curve)
         return NULL;
     }
 }
+#endif
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
 static char* ec_priv_key_tag(int curve)
 {
     switch (curve) {
@@ -141,6 +144,20 @@ static char* ec_priv_key_tag(int curve)
         return NULL;
     }
 }
+#else
+static char* ec_priv_key_tag(const char* curve)
+{
+    if (strcmp(curve, "prime256v1" /* P-256 */) == 0) {
+        return EC_PRIV_KEY_TAG(256);
+    } else if (strcmp(curve, "secp384r1" /* P-384 */) == 0) {
+        return EC_PRIV_KEY_TAG(384);
+    } else if (strcmp(curve, "secp521r1" /* P-521 */) == 0) {
+        return EC_PRIV_KEY_TAG(521);
+    } else {
+        return NULL;
+    }
+}
+#endif
 
 static size_t bn_encode(const BIGNUM* bn, uint8_t* buffer, size_t length)
 {
@@ -264,7 +281,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
 #ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     memcpy(key->tag, ec_pub_key_tag(curve), SOTER_CONTAINER_TAG_LENGTH);
 #else
-    memcpy(key->tag, ec_pub_key_tag_2(group_str), SOTER_CONTAINER_TAG_LENGTH);
+    memcpy(key->tag, ec_pub_key_tag(group_str), SOTER_CONTAINER_TAG_LENGTH);
 #endif
     key->size = htobe32(output_length);
     soter_update_container_checksum(key);
@@ -288,15 +305,22 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     const bool compressed = true;
     soter_status_t res;
     size_t output_length;
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     EC_KEY* ec;
     const EC_GROUP* group;
     const BIGNUM* d;
     int curve;
+#else
+    char group_str[16];
+    BIGNUM* d = NULL;
+    size_t serialized_len;
+#endif
 
     if ((!key_length) || (EVP_PKEY_EC != EVP_PKEY_id(pkey))) {
         return SOTER_INVALID_PARAMETER;
     }
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     ec = EVP_PKEY_get1_EC_KEY((EVP_PKEY*)pkey);
     if (NULL == ec) {
         return SOTER_FAIL;
@@ -332,6 +356,42 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
         res = SOTER_INVALID_PARAMETER;
         goto err;
     }
+#else
+    // Curve identifier as string ("prime256v1", "secp384r1", "secp521r1" etc)
+    if (!EVP_PKEY_get_utf8_string_param(pkey,
+                                        OSSL_PKEY_PARAM_GROUP_NAME /* "group" */,
+                                        group_str,
+                                        sizeof(group_str),
+                                        NULL)) {
+        res = SOTER_INVALID_PARAMETER;
+        goto err;
+    }
+
+    if (!is_curve_supported_2(group_str)) {
+        res = SOTER_INVALID_PARAMETER;
+        goto err;
+    }
+
+    /*
+     * Note that we use a buffer suitable for a public key to store a private
+     * key. This was a historical mistake, now preserved for compatibility.
+     */
+    output_length = ec_pub_key_size_2(group_str, compressed);
+    if ((!key) || (output_length > *key_length)) {
+        *key_length = output_length;
+        res = SOTER_BUFFER_TOO_SMALL;
+        goto err;
+    }
+
+    *key_length = output_length;
+
+    if (!EVP_PKEY_get_bn_param(pkey,
+                               OSSL_PKEY_PARAM_PRIV_KEY /* "priv" */,
+                               &d)) {
+        res = SOTER_INVALID_PARAMETER;
+        goto err;
+    }
+#endif
 
     if ((output_length - sizeof(soter_container_hdr_t))
         != bn_encode(d, (unsigned char*)(key + 1), output_length - sizeof(soter_container_hdr_t))) {
@@ -339,15 +399,21 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
         goto err;
     }
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     memcpy(key->tag, ec_priv_key_tag(curve), SOTER_CONTAINER_TAG_LENGTH);
+#else
+    memcpy(key->tag, ec_priv_key_tag(group_str), SOTER_CONTAINER_TAG_LENGTH);
+#endif
     key->size = htobe32(output_length);
     soter_update_container_checksum(key);
     *key_length = output_length;
     res = SOTER_SUCCESS;
 
 err:
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     /* Free extra reference on EC_KEY object provided by EVP_PKEY_get1_EC_KEY */
     EC_KEY_free(ec);
+#endif
 
     return res;
 }
