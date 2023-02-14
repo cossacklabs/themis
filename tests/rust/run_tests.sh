@@ -23,7 +23,7 @@ cargo fmt -- --check
 
 echo "Running static analysis..."
 echo
-cargo clippy --all --all-targets 
+cargo clippy --all --all-targets
 
 echo
 echo "Building Themis..."
