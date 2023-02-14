@@ -27,6 +27,7 @@
 
 #include "soter/soter_portable_endian.h"
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
 static bool is_curve_supported(int curve)
 {
     switch (curve) {
@@ -38,7 +39,7 @@ static bool is_curve_supported(int curve)
         return false;
     }
 }
-
+#else
 static bool is_curve_supported_2(const char* curve)
 {
     if (strcmp(curve, "prime256v1" /* P-256 */) == 0) {
@@ -51,8 +52,10 @@ static bool is_curve_supported_2(const char* curve)
         return false;
     }
 }
+#endif
 
 /* Input size directly since public key type structures may be aligned to word boundary */
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
 static size_t ec_pub_key_size(int curve, bool compressed)
 {
     switch (curve) {
@@ -69,8 +72,7 @@ static size_t ec_pub_key_size(int curve, bool compressed)
         return 0;
     }
 }
-
-/* Input size directly since public key type structures may be aligned to word boundary */
+#else
 static size_t ec_pub_key_size_2(const char* curve, bool compressed)
 {
     if (strcmp(curve, "prime256v1" /* P-256 */) == 0) {
@@ -86,6 +88,7 @@ static size_t ec_pub_key_size_2(const char* curve, bool compressed)
         return 0;
     }
 }
+#endif
 
 static size_t ec_priv_key_size(int curve)
 {
@@ -116,7 +119,7 @@ static char* ec_pub_key_tag(int curve)
     }
 }
 #else
-static char* ec_pub_key_tag(const char* curve)
+static char* ec_pub_key_tag_2(const char* curve)
 {
     if (strcmp(curve, "prime256v1" /* P-256 */) == 0) {
         return EC_PUB_KEY_TAG(256);
@@ -281,7 +284,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
 #ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     memcpy(key->tag, ec_pub_key_tag(curve), SOTER_CONTAINER_TAG_LENGTH);
 #else
-    memcpy(key->tag, ec_pub_key_tag(group_str), SOTER_CONTAINER_TAG_LENGTH);
+    memcpy(key->tag, ec_pub_key_tag_2(group_str), SOTER_CONTAINER_TAG_LENGTH);
 #endif
     key->size = htobe32(output_length);
     soter_update_container_checksum(key);
