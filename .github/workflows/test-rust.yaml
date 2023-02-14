@@ -41,7 +41,7 @@ jobs:
       - name: Install stable Rust
         uses: actions-rs/toolchain@v1
         with:
-  	  rust-version: ${{ matrix.rust }}
+  	  rust-version: 1.56
           toolchain: stable
           profile: minimal
           components: rustfmt, clippy
