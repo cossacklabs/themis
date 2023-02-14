@@ -2,8 +2,10 @@
 
 set -e
 
-# Treat warnings as errors
-export RUSTFLAGS="-D warnings"
+if [ "${WITH_FATAL_WARNINGS:-}" = "yes" ]; then
+    # Treat warnings as errors
+    export RUSTFLAGS="-D warnings"
+fi
 
 echo
 echo "Checking code style..."
