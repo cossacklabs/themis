@@ -2,6 +2,7 @@
 name = "themis"
 version = "0.14.0"
 edition = "2018"
+rust-version = "1.58.0"
 authors = ["rust-themis developers"]
 description = "High-level cryptographic services for storage and messaging"
 homepage = "https://www.cossacklabs.com/themis/"
