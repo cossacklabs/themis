@@ -261,9 +261,14 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
     }
 #else
     if (compressed) {
-        param_name = OSSL_PKEY_PARAM_PUB_KEY; // "pub"
+        param_name = OSSL_PKEY_PARAM_PUB_KEY /* "pub" */;
+
+        if (!EVP_PKEY_set_utf8_string_param(pkey, "point-format", "compressed")) {
+            res = SOTER_FAIL;
+            goto err;
+        }
     } else {
-        param_name = OSSL_PKEY_PARAM_ENCODED_PUBLIC_KEY; // "encoded-pub-key"
+        param_name = OSSL_PKEY_PARAM_ENCODED_PUBLIC_KEY /* "encoded-pub-key" */;
     }
 
     if (!EVP_PKEY_get_octet_string_param(pkey,
