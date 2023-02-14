@@ -392,9 +392,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
 
     *key_length = output_length;
 
-    if (!EVP_PKEY_get_bn_param(pkey,
-                               OSSL_PKEY_PARAM_PRIV_KEY /* "priv" */,
-                               &d)) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_PRIV_KEY /* "priv" */, &d)) {
         res = SOTER_INVALID_PARAMETER;
         goto err;
     }
@@ -436,8 +434,8 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
     EC_POINT* Q = NULL;
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
 #else
-    const char *curve_str;
-    OSSL_PARAM params[3] = { [2] = OSSL_PARAM_END };
+    const char* curve_str;
+    OSSL_PARAM params[3] = {[2] = OSSL_PARAM_END};
     EVP_PKEY_CTX* ctx = NULL;
 #endif
     const bool compressed = true;
@@ -555,10 +553,7 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
         goto err;
     }
 
-    if (!EVP_PKEY_fromdata(ctx,
-                           (EVP_PKEY**)engine_key,
-                           EVP_PKEY_PUBLIC_KEY,
-                           params)) {
+    if (!EVP_PKEY_fromdata(ctx, (EVP_PKEY**)engine_key, EVP_PKEY_PUBLIC_KEY, params)) {
         res = SOTER_FAIL;
         goto err;
     }
