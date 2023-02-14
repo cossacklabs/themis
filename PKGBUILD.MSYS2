@@ -4,7 +4,7 @@
 
 pkgname=('themis' 'themis-devel')
 pkgbase=themis
-pkgver=0.13.0
+pkgver=0.14.0
 pkgrel=1
 
 pkgdesc="Data security library for network communication and data storage"
@@ -17,9 +17,9 @@ depends=('libopenssl>=1.1.1')
 makedepends=('tar' 'gcc' 'make' 'openssl-devel>=1.1.1')
 
 source=("https://github.com/cossacklabs/themis/archive/$pkgver.tar.gz")
-sha256sums=('4dbe8faff569b8992ee091a207367604db468648503e5e6679a4c89e0918d525')
-sha1sums=('21372309e4e3d714bd637bce1e931e9be39a765f')
-md5sums=('623383678c6e73651a31b38cadcab441')
+sha256sums=('2efb793e0ef604fb97258b07671a83135ad9229d83b92d7758b43510dcc6cb07')
+sha1sums=('6d89a69014c24f39aedea684a78fc10f6019e505')
+md5sums=('46a69d51d9e8a5d96ae919f3bf547ce9')
 # TODO: verify package signature
 
 # Unfortunately, bsdtar cannot handle symlinks on MSYS2 [1] so we have to use
