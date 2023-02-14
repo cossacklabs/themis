@@ -11,11 +11,9 @@ echo "WITH_FATAL_WARNINGS=$WITH_FATAL_WARNING"
 if [ "${WITH_FATAL_WARNINGS:-}" = "yes" ]; then
     # Treat warnings as errors
     export RUSTFLAGS="-D warnings" 
-else 
-    export RUSTFLAGS="" 
 fi
 
-# Let's debug RUSTFLAGS
+# Let's debug RUSTFLAGS once again 
 echo "RUSTFLAGS=$RUSTFLAGS"
 
 echo
@@ -23,9 +21,9 @@ echo "Checking code style..."
 echo
 cargo fmt -- --check
 
-echo "Running verbose static analysis..."
+echo "Running static analysis..."
 echo
-cargo clippy --all --all-targets -vv
+cargo clippy --all --all-targets 
 
 echo
 echo "Building Themis..."
