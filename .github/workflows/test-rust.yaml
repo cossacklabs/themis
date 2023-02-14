@@ -30,9 +30,7 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        rust:
-            - 1.56.1
-            - stable
+        rust: ['1.56']
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -43,7 +41,7 @@ jobs:
       - name: Install stable Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: ${{ matrix.rust }}
+          toolchain: stable
           profile: minimal
           components: rustfmt, clippy
       - name: Check out code

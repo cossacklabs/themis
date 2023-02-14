@@ -2,9 +2,16 @@
 
 set -e
 
+
+# Let's debug RUSTFLAGS
+echo "RUSTFLAGS=$RUSTFLAGS"
+echo "WITH_FATAL_WARNINGS=$WITH_FATAL_WARNING"
+
 if [ "${WITH_FATAL_WARNINGS:-}" = "yes" ]; then
     # Treat warnings as errors
-    export RUSTFLAGS="-D warnings"
+    export RUSTFLAGS="-D warnings" 
+else 
+    export RUSTFLAGS="" 
 fi
 
 # Let's debug RUSTFLAGS
