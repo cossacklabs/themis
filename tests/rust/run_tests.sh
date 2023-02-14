@@ -7,14 +7,17 @@ if [ "${WITH_FATAL_WARNINGS:-}" = "yes" ]; then
     export RUSTFLAGS="-D warnings"
 fi
 
+# Let's debug RUSTFLAGS
+echo "RUSTFLAGS=$RUSTFLAGS"
+
 echo
 echo "Checking code style..."
 echo
 cargo fmt -- --check
 
-echo "Running static analysis..."
+echo "Running verbose static analysis..."
 echo
-cargo clippy --all --all-targets
+cargo clippy --all --all-targets -vv
 
 echo
 echo "Building Themis..."
