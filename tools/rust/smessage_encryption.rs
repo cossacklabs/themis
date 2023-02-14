@@ -49,7 +49,7 @@ fn main() {
             let encrypter = SecureMessage::new(key_pair);
 
             let encrypted = encrypter.encrypt(&message).unwrap_or_else(|error| {
-                eprintln!("failed to encrypt message: {}", error);
+                eprintln!("failed to encrypt message: {error}");
                 exit(1);
             });
 
@@ -60,11 +60,11 @@ fn main() {
             let encrypter = SecureMessage::new(key_pair);
 
             let decoded_message = base64::decode(&message).unwrap_or_else(|error| {
-                eprintln!("failed to decode message: {}", error);
+                eprintln!("failed to decode message: {error}");
                 exit(1);
             });
             let decrypted = encrypter.decrypt(&decoded_message).unwrap_or_else(|error| {
-                eprintln!("failed to decrypt message: {}", error);
+                eprintln!("failed to decrypt message: {error}");
                 exit(1);
             });
 
@@ -74,7 +74,7 @@ fn main() {
             let signer = SecureSign::new(private_key);
 
             let signed = signer.sign(&message).unwrap_or_else(|error| {
-                eprintln!("failed to sign message: {}", error);
+                eprintln!("failed to sign message: {error}");
                 exit(1);
             });
 
@@ -84,21 +84,18 @@ fn main() {
             let signer = SecureVerify::new(public_key);
 
             let decoded_message = base64::decode(&message).unwrap_or_else(|error| {
-                eprintln!("failed to decode message: {}", error);
+                eprintln!("failed to decode message: {error}");
                 exit(1);
             });
             let verified = signer.verify(&decoded_message).unwrap_or_else(|error| {
-                eprintln!("failed to verify message: {}", error);
+                eprintln!("failed to verify message: {error}");
                 exit(1);
             });
 
             println!("{}", std::str::from_utf8(&verified).expect("UTF-8 string"));
         }
         other => {
-            eprintln!(
-                "invalid command {}, use \"enc\", \"dec\", \"sign\", \"verify\"",
-                other
-            );
+            eprintln!("invalid command {other}, use \"enc\", \"dec\", \"sign\", \"verify\"",);
             exit(1);
         }
     }
