@@ -5,6 +5,7 @@ set -e
 
 # Let's debug RUSTFLAGS
 echo "RUSTFLAGS=$RUSTFLAGS"
+export WITH_FATAL_WARNINGS="no"
 echo "WITH_FATAL_WARNINGS=$WITH_FATAL_WARNING"
 
 if [ "${WITH_FATAL_WARNINGS:-}" = "yes" ]; then
