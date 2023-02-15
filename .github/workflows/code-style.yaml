@@ -32,7 +32,7 @@ env:
 jobs:
   check-formatting:
     name: Check formatting
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     # GitHub's host contains way too much crap in /etc/apt/sources.list
     # which causes package conflicts in clang-format-8 and clang-tidy-8
     # installation. Run this job in a pristine Ubuntu 20.04 container.
