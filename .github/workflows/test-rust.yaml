@@ -170,6 +170,10 @@ jobs:
   bindgen:
     name: libthemis-sys bindings
     runs-on: ubuntu-20.04
+    # Latest version of bindgen requires new CLI flags and makes new changes
+    # in the code. There isn't much point of running this job on maintenance
+    # branch if we aren't using the latest version, so keep it disabled.
+    if: false
     steps:
       - name: Install system dependencies
         run: |
