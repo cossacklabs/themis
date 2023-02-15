@@ -29,7 +29,7 @@ env:
 jobs:
   unit-tests:
     name: Unit tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         go:
@@ -63,7 +63,7 @@ jobs:
 
   examples:
     name: Code examples
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |
@@ -121,7 +121,7 @@ jobs:
 
   reference-implementation:
     name: Reference implementation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |
