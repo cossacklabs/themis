@@ -255,37 +255,6 @@
 		9F98F32922CCEB0E008E14E6 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F98F32722CCEB0E008E14E6 /* soter_wipe.c */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		9F70B2C2241D0FEC009CB629 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 738B81062239809D00A9947C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9F00E8D6223C197900EC1EF3;
-			remoteInfo = "Themis (macOS)";
-		};
-		9F70B2ED241D17A3009CB629 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 738B81062239809D00A9947C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9F4A24A0223A8D7F005CB63A;
-			remoteInfo = "Themis (iOS)";
-		};
-		9F70B3052420E16E009CB629 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 738B81062239809D00A9947C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9F4A24A0223A8D7F005CB63A;
-			remoteInfo = "Themis (iOS)";
-		};
-		9F70B31D2420E176009CB629 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 738B81062239809D00A9947C /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9F00E8D6223C197900EC1EF3;
-			remoteInfo = "Themis (macOS)";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		9F70B2DE241D172E009CB629 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -968,7 +937,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				9F70B2C3241D0FEC009CB629 /* PBXTargetDependency */,
 			);
 			name = "Test Themis (Swift 5, macOS)";
 			productName = "Test Themis (macOS)";
@@ -987,7 +955,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				9F70B2EE241D17A3009CB629 /* PBXTargetDependency */,
 			);
 			name = "Test Themis (Swift 5, iOS)";
 			productName = "Test Themis (iOS)";
@@ -1006,7 +973,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				9F70B3042420E16E009CB629 /* PBXTargetDependency */,
 			);
 			name = "Test Themis (Swift 4, iOS)";
 			productName = "Test Themis (iOS)";
@@ -1025,7 +991,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				9F70B31C2420E176009CB629 /* PBXTargetDependency */,
 			);
 			name = "Test Themis (Swift 4, macOS)";
 			productName = "Test Themis (macOS)";
@@ -1321,29 +1286,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		9F70B2C3241D0FEC009CB629 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9F00E8D6223C197900EC1EF3 /* Themis (macOS) */;
-			targetProxy = 9F70B2C2241D0FEC009CB629 /* PBXContainerItemProxy */;
-		};
-		9F70B2EE241D17A3009CB629 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9F4A24A0223A8D7F005CB63A /* Themis (iOS) */;
-			targetProxy = 9F70B2ED241D17A3009CB629 /* PBXContainerItemProxy */;
-		};
-		9F70B3042420E16E009CB629 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9F4A24A0223A8D7F005CB63A /* Themis (iOS) */;
-			targetProxy = 9F70B3052420E16E009CB629 /* PBXContainerItemProxy */;
-		};
-		9F70B31C2420E176009CB629 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9F00E8D6223C197900EC1EF3 /* Themis (macOS) */;
-			targetProxy = 9F70B31D2420E176009CB629 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		738B81152239809D00A9947C /* Debug */ = {
