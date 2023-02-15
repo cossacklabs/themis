@@ -34,7 +34,7 @@ env:
 jobs:
   cross-language:
     name: Cross-language tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |

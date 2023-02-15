@@ -33,7 +33,7 @@ env:
 jobs:
   build-wasmthemis:
     name: Build WasmThemis
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |
@@ -73,7 +73,7 @@ jobs:
 
   unit-tests:
     name: Unit tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: build-wasmthemis
     strategy:
       matrix:
@@ -106,7 +106,7 @@ jobs:
 
   examples:
     name: Code examples
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: build-wasmthemis
     strategy:
       matrix:
