@@ -37,7 +37,7 @@ jobs:
       - name: Install stable Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: '1.56'
           profile: minimal
           components: rustfmt, clippy
       - name: Check out code
@@ -83,7 +83,7 @@ jobs:
       - name: Install stable Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: '1.56'
           profile: minimal
       - name: Check out code
         uses: actions/checkout@v2
