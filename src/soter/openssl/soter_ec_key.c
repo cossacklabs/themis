@@ -23,6 +23,7 @@
 #include <openssl/evp.h>
 #ifdef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
 #include <openssl/core_names.h>
+#include <openssl/param_build.h>
 #endif
 
 #include "soter/soter_portable_endian.h"
@@ -90,6 +91,7 @@ static size_t ec_pub_key_size_2(const char* curve, bool compressed)
 }
 #endif
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
 static size_t ec_priv_key_size(int curve)
 {
     switch (curve) {
@@ -103,6 +105,20 @@ static size_t ec_priv_key_size(int curve)
         return 0;
     }
 }
+#else
+static size_t ec_priv_key_size_2(const char* curve)
+{
+    if (strcmp(curve, "prime256v1" /* P-256 */) == 0) {
+        return sizeof(soter_ec_priv_key_256_t);
+    } else if (strcmp(curve, "secp384r1" /* P-384 */) == 0) {
+        return sizeof(soter_ec_priv_key_384_t);
+    } else if (strcmp(curve, "secp521r1" /* P-521 */) == 0) {
+        return sizeof(soter_ec_priv_key_521_t);
+    } else {
+        return 0;
+    }
+}
+#endif
 
 #ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
 static char* ec_pub_key_tag(int curve)
@@ -433,12 +449,12 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
     const EC_GROUP* group;
     EC_POINT* Q = NULL;
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
+    const bool compressed = true;
 #else
     const char* curve_str;
     OSSL_PARAM params[3] = {[2] = OSSL_PARAM_END};
     EVP_PKEY_CTX* ctx = NULL;
 #endif
-    const bool compressed = true;
     soter_status_t res;
 
     if ((!key) || (key_length < sizeof(soter_container_hdr_t))) {
@@ -582,11 +598,18 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
                                                     size_t key_length,
                                                     soter_engine_specific_ec_key_t** engine_key)
 {
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     int curve;
     EC_KEY* ec = NULL;
     const EC_GROUP* group;
-    BIGNUM* d = NULL;
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
+#else
+    char curve_str[16];
+    OSSL_PARAM* params = NULL;
+    OSSL_PARAM_BLD *bld = NULL;
+    EVP_PKEY_CTX* ctx = NULL;
+#endif
+    BIGNUM* d = NULL;
     soter_status_t res;
 
     if (key_length != be32toh(key->size)) {
@@ -602,6 +625,7 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
         return SOTER_DATA_CORRUPT;
     }
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     switch (key->tag[3]) {
     case EC_SIZE_TAG_256:
         curve = NID_X9_62_prime256v1;
@@ -651,9 +675,92 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
     } else {
         res = SOTER_FAIL;
     }
+#else
+    switch (key->tag[3]) {
+    case EC_SIZE_TAG_256:
+        strcpy(curve_str, "prime256v1");
+        break;
+    case EC_SIZE_TAG_384:
+        strcpy(curve_str, "secp384r1");
+        break;
+    case EC_SIZE_TAG_521:
+        strcpy(curve_str, "secp521r1");
+        break;
+    default:
+        return SOTER_INVALID_PARAMETER;
+    }
+
+    if (key_length < ec_priv_key_size_2(curve_str)) {
+        return SOTER_INVALID_PARAMETER;
+    }
+
+    bld = OSSL_PARAM_BLD_new();
+    if (bld == NULL) {
+        res = SOTER_NO_MEMORY;
+        goto err;
+    }
+
+    if (!OSSL_PARAM_BLD_push_utf8_string(bld,
+                                         OSSL_PKEY_PARAM_GROUP_NAME /* "group" */,
+                                         curve_str,
+                                         strlen(curve_str))) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    d = BN_bin2bn((const unsigned char*)(key + 1), (int)(key_length - sizeof(soter_container_hdr_t)), NULL);
+    if (d == NULL) {
+        res = SOTER_NO_MEMORY;
+        goto err;
+    }
+
+    // Unfortunately, using on stack `OSSL_PARAM params[3]`
+    // like in soter_ec_pub_key_to_engine_specific() and setting
+    // params[1] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_PRIV_KEY /* "priv" */,
+    //                                     (unsigned char*)(key + 1) + 1,
+    //                                     (int)(key_length - sizeof(soter_container_hdr_t) - 1)))
+    // won't work properly. This is because private key number (32 bytes, not counting leading zero)
+    // is stored in one byte order and EVP_PKEY_fromdata() will read it in different byte order. As
+    // a result, `priv` property of generated `pkey` will have different value, with reversed bytes
+    // order. One working solution was to do like this, deserialize value into `BIGINT*`, then use
+    // param builder (OSSL_PARAM_BLD*) and OSSL_PARAM_BLD_push_BN() to essentially write that bigint
+    // into temporary buffer but in different byte order, so EVP_PKEY_fromdata() will work as
+    // intended. Of course, we could also simply create handwritten function for bytes reversing.
+    // And better solution could exist hidden somewhere in OpenSSL API.
+
+    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_PRIV_KEY /* "priv" */, d)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    params = OSSL_PARAM_BLD_to_param(bld);
+    if (params == NULL) {
+        res = SOTER_NO_MEMORY;
+        goto err;
+    }
+
+    ctx = EVP_PKEY_CTX_new_from_name(NULL, "EC", NULL);
+    if (ctx == NULL) {
+        res = SOTER_NO_MEMORY;
+        goto err;
+    }
+
+    if (!EVP_PKEY_fromdata_init(ctx)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (!EVP_PKEY_fromdata(ctx, (EVP_PKEY**)engine_key, EVP_PKEY_KEYPAIR, params)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    res = SOTER_SUCCESS;
+#endif
 
 err:
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     if (d) {
         BN_clear_free(d);
     }
@@ -661,6 +768,12 @@ err:
     if (ec) {
         EC_KEY_free(ec);
     }
+#else
+    EVP_PKEY_CTX_free(ctx);
+    OSSL_PARAM_free(params);
+    OSSL_PARAM_BLD_free(bld);
+    BN_clear_free(d);
+#endif
 
     return res;
 }

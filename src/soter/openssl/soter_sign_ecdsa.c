@@ -23,6 +23,9 @@
 #include "soter/openssl/soter_ecdsa_common.h"
 #include "soter/openssl/soter_engine.h"
 #include "soter/soter_ec_key.h"
+#ifdef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
+#include <openssl/core_names.h>
+#endif
 
 soter_status_t soter_sign_init_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
                                                 const void* private_key,
@@ -145,7 +148,14 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
         return SOTER_INVALID_PARAMETER;
     }
 
+#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     key_size = EVP_PKEY_size(ctx->pkey);
+#else
+    // In OpenSSL 3, EVP_PKEY_size() returns 0 for some reason. Using different method instead.
+    if (!EVP_PKEY_get_int_param(ctx->pkey, OSSL_PKEY_PARAM_MAX_SIZE /* "max-size" */, &key_size)) {
+        return SOTER_FAIL;
+    }
+#endif
     if (key_size <= 0) {
         return SOTER_FAIL;
     }
