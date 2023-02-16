@@ -38,6 +38,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: '1.56'
+          default: true
           profile: minimal
           components: rustfmt, clippy
       - name: Check out code
@@ -84,6 +85,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: '1.56'
+          default: true 
           profile: minimal
       - name: Check out code
         uses: actions/checkout@v2
