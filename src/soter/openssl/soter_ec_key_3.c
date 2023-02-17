@@ -327,7 +327,7 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
 {
     const char* curve_str;
     OSSL_PARAM* params = NULL;
-    OSSL_PARAM_BLD *bld = NULL;
+    OSSL_PARAM_BLD* bld = NULL;
     EVP_PKEY_CTX* ctx = NULL;
     BIGNUM* d = NULL;
     soter_status_t res;
