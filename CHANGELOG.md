@@ -15,6 +15,7 @@ _Code:_
   - **Soter** (low-level security core used by Themis)
 
     - `soter_sign_export_key()` is now deprecated, superseded by `soter_sign_export_private_key()` and `soter_sign_export_public_key()` ([#959](https://github.com/cossacklabs/themis/pull/959))
+    - better OpenSSL 3 support, with many EC-related deprecated functions being replaced with newer alternatives, and OpenSSL 1.X is still supported
 
 - **Android**
 
