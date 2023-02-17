@@ -432,6 +432,9 @@ jobs:
     runs-on: windows-2022
     env:
       SOTER_KDF_RUN_LONG_TESTS: yes
+      # TODO: stop using deprecated API so that warnings can be errors again
+      WITH_EXPERIMENTAL_OPENSSL_3_SUPPORT: yes
+      WITH_FATAL_WARNINGS: "no" # YAML :trollface:
     defaults:
       run:
         shell: msys2 {0}
@@ -441,8 +444,8 @@ jobs:
         with:
           install: >-
             base-devel tar git gcc make
-            libopenssl>=1.1.1
-            openssl-devel>=1.1.1
+            libopenssl>=3.0.0
+            openssl-devel>=3.0.0
             mingw-w64-x86_64-nsis
       # Git, I know you're only trying to help, but MSYS can work with
       # UNIX line endings just fine. In fact, "makepkg" *requires* them.

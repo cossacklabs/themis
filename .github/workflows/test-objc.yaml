@@ -291,7 +291,11 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/objc/iOS-Carthage
-          carthage bootstrap --platform iOS --use-xcframeworks
+          carthage bootstrap --platform iOS --use-xcframeworks --no-build
+          find Carthage/Checkouts/themis -type d -name '*.xcodeproj' \
+            | grep -v 'Carthage/Checkouts/themis/Themis.xcodeproj' \
+            | xargs rm -rf
+          carthage build --platform iOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -304,7 +308,11 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/objc/macOS-Carthage
-          carthage bootstrap --platform macOS --use-xcframeworks
+          carthage bootstrap --platform macOS --use-xcframeworks --no-build
+          find Carthage/Checkouts/themis -type d -name '*.xcodeproj' \
+            | grep -v 'Carthage/Checkouts/themis/Themis.xcodeproj' \
+            | xargs rm -rf
+          carthage build --platform macOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -331,7 +339,11 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/swift/iOS-Carthage
-          carthage bootstrap --platform iOS --use-xcframeworks
+          carthage bootstrap --platform iOS --use-xcframeworks --no-build
+          find Carthage/Checkouts/themis -type d -name '*.xcodeproj' \
+            | grep -v 'Carthage/Checkouts/themis/Themis.xcodeproj' \
+            | xargs rm -rf
+          carthage build --platform iOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
@@ -344,7 +356,11 @@ jobs:
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/swift/macOS-Carthage
-          carthage bootstrap --platform macOS --use-xcframeworks
+          carthage bootstrap --platform macOS --use-xcframeworks --no-build
+          find Carthage/Checkouts/themis -type d -name '*.xcodeproj' \
+            | grep -v 'Carthage/Checkouts/themis/Themis.xcodeproj' \
+            | xargs rm -rf
+          carthage build --platform macOS --use-xcframeworks
           rm -rf DerivedData
           xcodebuild \
             -derivedDataPath DerivedData \
