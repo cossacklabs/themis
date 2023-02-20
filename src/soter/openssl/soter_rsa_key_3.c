@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cossack Labs Limited
+ * Copyright (c) 2023 Cossack Labs Limited
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
+#ifdef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
 
 #include "soter/soter_rsa_key.h"
 
