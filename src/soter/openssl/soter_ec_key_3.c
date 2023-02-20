@@ -115,6 +115,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
     soter_status_t res;
     size_t output_length;
+    // 16 is a bit more than necessary for curve identifiers we support
     char curve_str[16];
     const char* param_name;
     size_t serialized_len;
@@ -191,6 +192,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     const bool compressed = true;
     soter_status_t res;
     size_t output_length;
+    // 16 is a bit more than necessary for curve identifiers we support
     char curve_str[16];
     BIGNUM* d = NULL;
 
@@ -245,6 +247,8 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
 
 err:
 
+    BN_clear_free(d);
+
     return res;
 }
 
@@ -253,7 +257,7 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
                                                    soter_engine_specific_ec_key_t** engine_key)
 {
     const char* curve_str;
-    OSSL_PARAM params[3] = {[2] = OSSL_PARAM_END};
+    OSSL_PARAM params[3];
     EVP_PKEY_CTX* ctx = NULL;
     soter_status_t res;
 
@@ -295,6 +299,8 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
     params[1] = OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_PUB_KEY /* "pub" */,
                                                   (unsigned char*)(key + 1),
                                                   (int)(key_length - sizeof(soter_container_hdr_t)));
+
+    params[2] = OSSL_PARAM_construct_end();
 
     ctx = EVP_PKEY_CTX_new_from_name(NULL, "EC", NULL);
     if (ctx == NULL) {
