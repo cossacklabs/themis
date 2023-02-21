@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
-
 #include "soter/soter_rsa_key.h"
 
 #include <string.h>
@@ -685,5 +683,3 @@ free_rsa:
     RSA_free(rsa);
     return err;
 }
-
-#endif
