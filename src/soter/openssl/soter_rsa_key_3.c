@@ -21,7 +21,6 @@
 #include <string.h>
 
 #include <openssl/bn.h>
-#include <openssl/core_names.h>
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
@@ -227,12 +226,13 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
                                                     size_t* key_length)
 {
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
+    RSA* rsa;
     soter_status_t res;
     int rsa_mod_size;
     size_t output_length;
     uint32_t* pub_exp;
-    BIGNUM* rsa_e = NULL;
-    BIGNUM* rsa_n = NULL;
+    const BIGNUM* rsa_e;
+    const BIGNUM* rsa_n;
 
     if (!key_length) {
         return SOTER_INVALID_PARAMETER;
@@ -242,19 +242,12 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
         return SOTER_INVALID_PARAMETER;
     }
 
-    // Relevant pkey params
-    // OSSL_PKEY_PARAM_BITS, "bits", int
-    // OSSL_PKEY_PARAM_RSA_N, "n", big uint
-    // OSSL_PKEY_PARAM_RSA_E, "e", big uint
-
-    // See https://docs.cossacklabs.com/themis/spec/asymmetric-keypairs/rsa/ for key layout
-
-    if (!EVP_PKEY_get_int_param(pkey, OSSL_PKEY_PARAM_BITS, &rsa_mod_size)) {
-        res = SOTER_FAIL;
-        goto err;
+    rsa = EVP_PKEY_get1_RSA((EVP_PKEY*)pkey);
+    if (NULL == rsa) {
+        return SOTER_FAIL;
     }
-    rsa_mod_size /= 8;
 
+    rsa_mod_size = RSA_size(rsa);
     if (!is_mod_size_supported(rsa_mod_size)) {
         res = SOTER_INVALID_PARAMETER;
         goto err;
@@ -268,15 +261,7 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     }
 
     pub_exp = (uint32_t*)((unsigned char*)(key + 1) + rsa_mod_size);
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_N, &rsa_n)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, &rsa_e)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
+    RSA_get0_key(rsa, (const BIGNUM**)&rsa_n, &rsa_e, NULL);
 
     if (BN_is_word(rsa_e, RSA_F4)) {
         *pub_exp = htobe32(RSA_F4);
@@ -299,8 +284,8 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     res = SOTER_SUCCESS;
 
 err:
-    BN_free(rsa_n);
-    BN_free(rsa_e);
+    /* Free extra reference on RSA object provided by EVP_PKEY_get1_RSA */
+    RSA_free(rsa);
 
     return res;
 }
@@ -310,18 +295,19 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
                                                      size_t* key_length)
 {
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
+    RSA* rsa;
     soter_status_t res;
     int rsa_mod_size;
     size_t output_length;
     uint32_t* pub_exp;
-    BIGNUM* rsa_e = NULL;
-    BIGNUM* rsa_d = NULL;
-    BIGNUM* rsa_n = NULL;
-    BIGNUM* rsa_p = NULL;
-    BIGNUM* rsa_q = NULL;
-    BIGNUM* rsa_dmp1 = NULL;
-    BIGNUM* rsa_dmq1 = NULL;
-    BIGNUM* rsa_iqmp = NULL;
+    const BIGNUM* rsa_e;
+    const BIGNUM* rsa_d;
+    const BIGNUM* rsa_n;
+    const BIGNUM* rsa_p;
+    const BIGNUM* rsa_q;
+    const BIGNUM* rsa_dmp1;
+    const BIGNUM* rsa_dmq1;
+    const BIGNUM* rsa_iqmp;
     unsigned char* curr_bn = (unsigned char*)(key + 1);
 
     if (!key_length) {
@@ -332,25 +318,12 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
         return SOTER_INVALID_PARAMETER;
     }
 
-    // Relevant pkey params
-    // OSSL_PKEY_PARAM_BITS, "bits", int
-    // OSSL_PKEY_PARAM_RSA_D, "d", big uint
-    // OSSL_PKEY_PARAM_RSA_FACTOR1, "rsa-factor1", big uint
-    // OSSL_PKEY_PARAM_RSA_FACTOR2, "rsa-factor2", big uint
-    // OSSL_PKEY_PARAM_RSA_EXPONENT1, "rsa-exponent1", big uint
-    // OSSL_PKEY_PARAM_RSA_EXPONENT2, "rsa-exponent2", big uint
-    // OSSL_PKEY_PARAM_RSA_COEFFICIENT1, "rsa-coefficient1", big uint
-    // OSSL_PKEY_PARAM_RSA_N, "n", big uint
-    // OSSL_PKEY_PARAM_RSA_E, "e", big uint
-
-    // See https://docs.cossacklabs.com/themis/spec/asymmetric-keypairs/rsa/ for key layout
-
-    if (!EVP_PKEY_get_int_param(pkey, OSSL_PKEY_PARAM_BITS, &rsa_mod_size)) {
-        res = SOTER_FAIL;
-        goto err;
+    rsa = EVP_PKEY_get1_RSA((EVP_PKEY*)pkey);
+    if (NULL == rsa) {
+        return SOTER_FAIL;
     }
-    rsa_mod_size /= 8;
 
+    rsa_mod_size = RSA_size(rsa);
     if (!is_mod_size_supported(rsa_mod_size)) {
         res = SOTER_INVALID_PARAMETER;
         goto err;
@@ -364,20 +337,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     }
 
     pub_exp = (uint32_t*)(curr_bn + ((rsa_mod_size * 4) + (rsa_mod_size / 2)));
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_D, &rsa_d)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_N, &rsa_n)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, &rsa_e)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
+    RSA_get0_key(rsa, &rsa_n, &rsa_e, &rsa_d);
 
     if (BN_is_word(rsa_e, RSA_F4)) {
         *pub_exp = htobe32(RSA_F4);
@@ -395,15 +355,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     }
     curr_bn += rsa_mod_size;
 
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_FACTOR1, &rsa_p)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_FACTOR2, &rsa_q)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
+    RSA_get0_factors(rsa, &rsa_p, &rsa_q);
 
     /* p */
     res = bignum_to_bytes(rsa_p, curr_bn, rsa_mod_size / 2);
@@ -419,20 +371,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     }
     curr_bn += rsa_mod_size / 2;
 
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_EXPONENT1, &rsa_dmp1)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_EXPONENT2, &rsa_dmq1)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_COEFFICIENT1, &rsa_iqmp)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
+    RSA_get0_crt_params(rsa, &rsa_dmp1, &rsa_dmq1, &rsa_iqmp);
 
     /* dp */
     res = bignum_to_bytes(rsa_dmp1, curr_bn, rsa_mod_size / 2);
@@ -468,14 +407,8 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     res = SOTER_SUCCESS;
 
 err:
-    BN_clear_free(rsa_d);
-    BN_clear_free(rsa_p);
-    BN_clear_free(rsa_q);
-    BN_clear_free(rsa_dmp1);
-    BN_clear_free(rsa_dmq1);
-    BN_clear_free(rsa_iqmp);
-    BN_free(rsa_n);
-    BN_free(rsa_e);
+    /* Free extra reference on RSA object provided by EVP_PKEY_get1_RSA */
+    RSA_free(rsa);
 
     //	if (SOTER_SUCCESS != res)
     //	{
