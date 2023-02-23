@@ -112,6 +112,8 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
                                                    soter_container_hdr_t* key,
                                                    size_t* key_length)
 {
+    // FIXME: make `pkey` const if possible; even though we don't actually modify `pkey`,
+    //        we set one property so later it gives us public key in proper form
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
     soter_status_t res;
     size_t output_length;
@@ -126,7 +128,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
 
     // Curve identifier as string ("prime256v1", "secp384r1", "secp521r1" etc)
     if (!EVP_PKEY_get_utf8_string_param(pkey,
-                                        OSSL_PKEY_PARAM_GROUP_NAME /* "group" */,
+                                        OSSL_PKEY_PARAM_GROUP_NAME,
                                         curve_str,
                                         sizeof(curve_str),
                                         NULL)) {
@@ -149,14 +151,16 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
     *key_length = output_length;
 
     if (compressed) {
-        param_name = OSSL_PKEY_PARAM_PUB_KEY /* "pub" */;
+        param_name = OSSL_PKEY_PARAM_PUB_KEY;
 
-        if (!EVP_PKEY_set_utf8_string_param(pkey, "point-format", "compressed")) {
+        if (!EVP_PKEY_set_utf8_string_param(pkey,
+                                            OSSL_PKEY_PARAM_EC_POINT_CONVERSION_FORMAT,
+                                            OSSL_PKEY_EC_POINT_CONVERSION_FORMAT_COMPRESSED)) {
             res = SOTER_FAIL;
             goto err;
         }
     } else {
-        param_name = OSSL_PKEY_PARAM_ENCODED_PUBLIC_KEY /* "encoded-pub-key" */;
+        param_name = OSSL_PKEY_PARAM_ENCODED_PUBLIC_KEY;
     }
 
     if (!EVP_PKEY_get_octet_string_param(pkey,
@@ -188,7 +192,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
                                                     soter_container_hdr_t* key,
                                                     size_t* key_length)
 {
-    EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
+    const EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
     const bool compressed = true;
     soter_status_t res;
     size_t output_length;
@@ -202,7 +206,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
 
     // Curve identifier as string (SN_X9_62_prime256v1, SN_secp384r1, SN_secp521r1 etc)
     if (!EVP_PKEY_get_utf8_string_param(pkey,
-                                        OSSL_PKEY_PARAM_GROUP_NAME /* "group" */,
+                                        OSSL_PKEY_PARAM_GROUP_NAME,
                                         curve_str,
                                         sizeof(curve_str),
                                         NULL)) {
@@ -228,7 +232,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
 
     *key_length = output_length;
 
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_PRIV_KEY /* "priv" */, &d)) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_PRIV_KEY, &d)) {
         res = SOTER_INVALID_PARAMETER;
         goto err;
     }
@@ -292,11 +296,11 @@ soter_status_t soter_ec_pub_key_to_engine_specific(const soter_container_hdr_t* 
         return SOTER_INVALID_PARAMETER;
     }
 
-    params[0] = OSSL_PARAM_construct_utf8_string(OSSL_PKEY_PARAM_GROUP_NAME /* "group" */,
+    params[0] = OSSL_PARAM_construct_utf8_string(OSSL_PKEY_PARAM_GROUP_NAME,
                                                  (char*)curve_str,
                                                  strlen(curve_str));
 
-    params[1] = OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_PUB_KEY /* "pub" */,
+    params[1] = OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_PUB_KEY,
                                                   (unsigned char*)(key + 1),
                                                   (int)(key_length - sizeof(soter_container_hdr_t)));
 
@@ -376,7 +380,7 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
     }
 
     if (!OSSL_PARAM_BLD_push_utf8_string(bld,
-                                         OSSL_PKEY_PARAM_GROUP_NAME /* "group" */,
+                                         OSSL_PKEY_PARAM_GROUP_NAME,
                                          curve_str,
                                          strlen(curve_str))) {
         res = SOTER_FAIL;
@@ -391,7 +395,7 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
 
     // Unfortunately, using on stack `OSSL_PARAM params[3]`
     // like in soter_ec_pub_key_to_engine_specific() and setting
-    // params[1] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_PRIV_KEY /* "priv" */,
+    // params[1] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_PRIV_KEY,
     //                                     (unsigned char*)(key + 1) + 1,
     //                                     (int)(key_length - sizeof(soter_container_hdr_t) - 1)))
     // won't work properly. This is because private key number (32 bytes, not counting leading zero)
@@ -403,7 +407,7 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
     // Another possible and working solution is to simply swap bytes into temporary buffer and use
     // it instead of provided one, then we can avoid using EVP_PKEY_BLD* at all.
 
-    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_PRIV_KEY /* "priv" */, d)) {
+    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_PRIV_KEY, d)) {
         res = SOTER_FAIL;
         goto err;
     }
