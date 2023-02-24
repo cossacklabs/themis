@@ -26,6 +26,7 @@
 #include <openssl/obj_mac.h>
 #include <openssl/param_build.h>
 
+#include "soter/openssl/soter_engine.h"
 #include "soter/soter_portable_endian.h"
 
 static bool is_curve_supported(const char* curve)
@@ -118,7 +119,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
     soter_status_t res;
     size_t output_length;
     // 16 is a bit more than necessary for curve identifiers we support
-    char curve_str[16];
+    char curve_str[MAX_CURVE_NAME_LEN];
     const char* param_name;
     size_t serialized_len;
 
@@ -127,11 +128,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
     }
 
     // Curve identifier as string ("prime256v1", "secp384r1", "secp521r1" etc)
-    if (!EVP_PKEY_get_utf8_string_param(pkey,
-                                        OSSL_PKEY_PARAM_GROUP_NAME,
-                                        curve_str,
-                                        sizeof(curve_str),
-                                        NULL)) {
+    if (!EVP_PKEY_get_utf8_string_param(pkey, OSSL_PKEY_PARAM_GROUP_NAME, curve_str, sizeof(curve_str), NULL)) {
         res = SOTER_INVALID_PARAMETER;
         goto err;
     }
@@ -197,7 +194,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     soter_status_t res;
     size_t output_length;
     // 16 is a bit more than necessary for curve identifiers we support
-    char curve_str[16];
+    char curve_str[MAX_CURVE_NAME_LEN];
     BIGNUM* d = NULL;
 
     if ((!key_length) || (EVP_PKEY_EC != EVP_PKEY_id(pkey))) {
@@ -205,11 +202,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     }
 
     // Curve identifier as string (SN_X9_62_prime256v1, SN_secp384r1, SN_secp521r1 etc)
-    if (!EVP_PKEY_get_utf8_string_param(pkey,
-                                        OSSL_PKEY_PARAM_GROUP_NAME,
-                                        curve_str,
-                                        sizeof(curve_str),
-                                        NULL)) {
+    if (!EVP_PKEY_get_utf8_string_param(pkey, OSSL_PKEY_PARAM_GROUP_NAME, curve_str, sizeof(curve_str), NULL)) {
         res = SOTER_INVALID_PARAMETER;
         goto err;
     }
@@ -379,10 +372,7 @@ soter_status_t soter_ec_priv_key_to_engine_specific(const soter_container_hdr_t*
         goto err;
     }
 
-    if (!OSSL_PARAM_BLD_push_utf8_string(bld,
-                                         OSSL_PKEY_PARAM_GROUP_NAME,
-                                         curve_str,
-                                         strlen(curve_str))) {
+    if (!OSSL_PARAM_BLD_push_utf8_string(bld, OSSL_PKEY_PARAM_GROUP_NAME, curve_str, strlen(curve_str))) {
         res = SOTER_FAIL;
         goto err;
     }

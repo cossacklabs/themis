@@ -150,7 +150,7 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
 
 #ifdef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
     // In OpenSSL 3, EVP_PKEY_size() returns 0 for some reason. Using different method instead.
-    if (!EVP_PKEY_get_int_param(ctx->pkey, OSSL_PKEY_PARAM_MAX_SIZE /* "max-size" */, &key_size)) {
+    if (!EVP_PKEY_get_int_param(ctx->pkey, OSSL_PKEY_PARAM_MAX_SIZE, &key_size)) {
         return SOTER_FAIL;
     }
 #else

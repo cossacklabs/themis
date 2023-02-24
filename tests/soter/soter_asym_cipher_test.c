@@ -356,9 +356,21 @@ void test_api_all(void)
     test_api(RSA_KEY_LENGTH_4096);
     //    test_api(RSA_KEY_LENGTH_8192);
 }
+
+void test_constants(void)
+{
+    testsuite_fail_if(MAX_CURVE_NAME_LEN < strlen(SN_X9_62_prime256v1) + 1,
+                      "MAX_CURVE_NAME_LEN could fit SN_X9_62_prime256v1");
+    testsuite_fail_if(MAX_CURVE_NAME_LEN < strlen(SN_secp384r1) + 1,
+                      "MAX_CURVE_NAME_LEN could fit SN_secp384r1");
+    testsuite_fail_if(MAX_CURVE_NAME_LEN < strlen(SN_secp521r1) + 1,
+                      "MAX_CURVE_NAME_LEN could fit SN_secp521r1");
+}
+
 void run_soter_asym_cipher_tests(void)
 {
     testsuite_enter_suite("soter asym cipher: basic flow");
+    testsuite_run_test(test_constants);
     testsuite_run_test(test_basic_encryption_flow);
 
     testsuite_enter_suite("soter asym cipher: api");
