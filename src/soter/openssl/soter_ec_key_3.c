@@ -24,6 +24,7 @@
 #include <openssl/core_names.h>
 #include <openssl/evp.h>
 #include <openssl/obj_mac.h>
+#include <openssl/opensslv.h>
 #include <openssl/param_build.h>
 
 #include "soter/openssl/soter_engine.h"
@@ -147,18 +148,30 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
 
     *key_length = output_length;
 
+#if OPENSSL_VERSION_MAJOR == 3 && OPENSSL_VERSION_MINOR == 0 && OPENSSL_VERSION_PATCH < 8
+    // In OpenSSL <=3.0.7 param "pub" always contains compressed public key,
+    // while uncompressed one is available in "encoded-pub-key"
+
     if (compressed) {
         param_name = OSSL_PKEY_PARAM_PUB_KEY;
-
-        if (!EVP_PKEY_set_utf8_string_param(pkey,
-                                            OSSL_PKEY_PARAM_EC_POINT_CONVERSION_FORMAT,
-                                            OSSL_PKEY_EC_POINT_CONVERSION_FORMAT_COMPRESSED)) {
-            res = SOTER_FAIL;
-            goto err;
-        }
     } else {
         param_name = OSSL_PKEY_PARAM_ENCODED_PUBLIC_KEY;
     }
+#else
+    // In OpenSSL >=3.0.8 param "pub" contains compressed or uncompressed public key
+    // based on value of "point-format" param. "encoded-pub-key" is still available,
+    // but we don't rely on it anymore
+
+    if (!EVP_PKEY_set_utf8_string_param(pkey,
+                                        OSSL_PKEY_PARAM_EC_POINT_CONVERSION_FORMAT,
+                                        compressed ? OSSL_PKEY_EC_POINT_CONVERSION_FORMAT_COMPRESSED
+                                                   : OSSL_PKEY_EC_POINT_CONVERSION_FORMAT_UNCOMPRESSED)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    param_name = OSSL_PKEY_PARAM_PUB_KEY;
+#endif
 
     if (!EVP_PKEY_get_octet_string_param(pkey,
                                          param_name,
