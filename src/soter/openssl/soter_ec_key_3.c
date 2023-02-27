@@ -16,7 +16,7 @@
 
 #include <openssl/opensslv.h>
 
-#if OPENSSL_VERSION_MAJOR == 3
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
 
 #include "soter/soter_ec_key.h"
 
@@ -388,4 +388,4 @@ err:
     return res;
 }
 
-#endif /* OPENSSL_VERSION_MAJOR == 3 */
+#endif /* OPENSSL_VERSION_NUMBER >= 0x30000000 */

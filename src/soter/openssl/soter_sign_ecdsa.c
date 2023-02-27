@@ -23,7 +23,7 @@
 #include "soter/openssl/soter_ecdsa_common.h"
 #include "soter/openssl/soter_engine.h"
 #include "soter/soter_ec_key.h"
-#if OPENSSL_VERSION_MAJOR == 3
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
 #include <openssl/core_names.h>
 #endif
 
@@ -148,7 +148,7 @@ soter_status_t soter_sign_final_ecdsa_none_pkcs8(soter_sign_ctx_t* ctx,
         return SOTER_INVALID_PARAMETER;
     }
 
-#if OPENSSL_VERSION_MAJOR == 3
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
     // In OpenSSL 3, EVP_PKEY_size() returns 0 for some reason. Using different method instead.
     if (!EVP_PKEY_get_int_param(ctx->pkey, OSSL_PKEY_PARAM_MAX_SIZE, &key_size)) {
         return SOTER_FAIL;

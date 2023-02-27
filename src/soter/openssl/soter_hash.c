@@ -62,7 +62,7 @@ soter_status_t soter_hash_update(soter_hash_ctx_t* hash_ctx, const void* data, s
         return SOTER_INVALID_PARAMETER;
     }
 
-#if OPENSSL_VERSION_MAJOR == 3
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
     if (!EVP_MD_CTX_get0_md(hash_ctx->evp_md_ctx)) {
 #else
     if (!EVP_MD_CTX_md(hash_ctx->evp_md_ctx)) {
@@ -85,7 +85,7 @@ soter_status_t soter_hash_final(soter_hash_ctx_t* hash_ctx, uint8_t* hash_value,
         return SOTER_INVALID_PARAMETER;
     }
 
-#if OPENSSL_VERSION_MAJOR == 3
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
     if (!EVP_MD_CTX_get0_md(hash_ctx->evp_md_ctx)) {
 #else
     if (!EVP_MD_CTX_md(hash_ctx->evp_md_ctx)) {

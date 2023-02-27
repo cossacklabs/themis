@@ -16,7 +16,7 @@
 
 #include <openssl/opensslv.h>
 
-#if defined(OPENSSL_VERSION_MAJOR) && OPENSSL_VERSION_MAJOR == 3
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
 
 #include "soter/openssl/soter_engine.h"
 #include "soter/soter_test.h"
