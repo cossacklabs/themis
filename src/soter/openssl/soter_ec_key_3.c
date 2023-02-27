@@ -28,89 +28,8 @@
 #include <openssl/param_build.h>
 
 #include "soter/openssl/soter_engine.h"
+#include "soter/openssl/soter_ec_key_utils.h"
 #include "soter/soter_portable_endian.h"
-
-static bool is_curve_supported(int curve)
-{
-    switch (curve) {
-    case NID_X9_62_prime256v1:
-    case NID_secp384r1:
-    case NID_secp521r1:
-        return true;
-    default:
-        return false;
-    }
-}
-
-/* Input size directly since public key type structures may be aligned to word boundary */
-static size_t ec_pub_key_size(int curve, bool compressed)
-{
-    switch (curve) {
-    case NID_X9_62_prime256v1: /* P-256 */
-        return sizeof(soter_container_hdr_t)
-               + (compressed ? EC_PUB_SIZE(256) : EC_PUB_UNCOMPRESSED_SIZE(256));
-    case NID_secp384r1: /* P-384 */
-        return sizeof(soter_container_hdr_t)
-               + (compressed ? EC_PUB_SIZE(384) : EC_PUB_UNCOMPRESSED_SIZE(384));
-    case NID_secp521r1: /* P-521 */
-        return sizeof(soter_container_hdr_t)
-               + (compressed ? EC_PUB_SIZE(521) : EC_PUB_UNCOMPRESSED_SIZE(521));
-    default:
-        return 0;
-    }
-}
-
-static size_t ec_priv_key_size(int curve)
-{
-    switch (curve) {
-    case NID_X9_62_prime256v1: /* P-256 */
-        return sizeof(soter_ec_priv_key_256_t);
-    case NID_secp384r1: /* P-384 */
-        return sizeof(soter_ec_priv_key_384_t);
-    case NID_secp521r1: /* P-521 */
-        return sizeof(soter_ec_priv_key_521_t);
-    default:
-        return 0;
-    }
-}
-
-static char* ec_pub_key_tag(int curve)
-{
-    switch (curve) {
-    case NID_X9_62_prime256v1: /* P-256 */
-        return EC_PUB_KEY_TAG(256);
-    case NID_secp384r1: /* P-384 */
-        return EC_PUB_KEY_TAG(384);
-    case NID_secp521r1: /* P-521 */
-        return EC_PUB_KEY_TAG(521);
-    default:
-        return NULL;
-    }
-}
-
-static char* ec_priv_key_tag(int curve)
-{
-    switch (curve) {
-    case NID_X9_62_prime256v1: /* P-256 */
-        return EC_PRIV_KEY_TAG(256);
-    case NID_secp384r1: /* P-384 */
-        return EC_PRIV_KEY_TAG(384);
-    case NID_secp521r1: /* P-521 */
-        return EC_PRIV_KEY_TAG(521);
-    default:
-        return NULL;
-    }
-}
-
-static size_t bn_encode(const BIGNUM* bn, uint8_t* buffer, size_t length)
-{
-    int bn_size = BN_num_bytes(bn);
-    if (length < (size_t)bn_size) {
-        return 0;
-    }
-    memset(buffer, 0, length - bn_size);
-    return (length - bn_size) + BN_bn2bin(bn, buffer + (length - bn_size));
-}
 
 soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_ec_key_t* engine_key,
                                                    bool compressed,
@@ -122,7 +41,6 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
     EVP_PKEY* pkey = (EVP_PKEY*)engine_key;
     soter_status_t res;
     size_t output_length;
-    // 16 is a bit more than necessary for curve identifiers we support
     char curve_str[MAX_CURVE_NAME_LEN];
     int curve;
     const char* param_name;
@@ -216,7 +134,6 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     const bool compressed = true;
     soter_status_t res;
     size_t output_length;
-    // 16 is a bit more than necessary for curve identifiers we support
     char curve_str[MAX_CURVE_NAME_LEN];
     int curve;
     BIGNUM* d = NULL;
