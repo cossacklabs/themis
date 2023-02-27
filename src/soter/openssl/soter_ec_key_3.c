@@ -14,7 +14,9 @@
 * limitations under the License.
 */
 
-#ifdef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
+#include <openssl/opensslv.h>
+
+#if OPENSSL_VERSION_MAJOR == 3
 
 #include "soter/soter_ec_key.h"
 
@@ -24,11 +26,10 @@
 #include <openssl/core_names.h>
 #include <openssl/evp.h>
 #include <openssl/obj_mac.h>
-#include <openssl/opensslv.h>
 #include <openssl/param_build.h>
 
-#include "soter/openssl/soter_engine.h"
 #include "soter/openssl/soter_ec_key_utils.h"
+#include "soter/openssl/soter_engine.h"
 #include "soter/soter_portable_endian.h"
 
 soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_ec_key_t* engine_key,
@@ -76,7 +77,7 @@ soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_e
 
     *key_length = output_length;
 
-#if OPENSSL_VERSION_MAJOR == 3 && OPENSSL_VERSION_MINOR == 0 && OPENSSL_VERSION_PATCH < 8
+#if OPENSSL_VERSION_MINOR == 0 && OPENSSL_VERSION_PATCH < 8
     // In OpenSSL <=3.0.7 param "pub" always contains compressed public key,
     // while uncompressed one is available in "encoded-pub-key"
 
@@ -387,4 +388,4 @@ err:
     return res;
 }
 
-#endif /* THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT */
+#endif /* OPENSSL_VERSION_MAJOR == 3 */

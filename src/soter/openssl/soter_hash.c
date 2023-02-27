@@ -17,6 +17,7 @@
 #include "soter/soter_hash.h"
 
 #include <openssl/evp.h>
+#include <openssl/opensslv.h>
 
 #include "soter/openssl/soter_engine.h"
 #include "soter/soter_api.h"
@@ -61,7 +62,7 @@ soter_status_t soter_hash_update(soter_hash_ctx_t* hash_ctx, const void* data, s
         return SOTER_INVALID_PARAMETER;
     }
 
-#ifdef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
+#if OPENSSL_VERSION_MAJOR == 3
     if (!EVP_MD_CTX_get0_md(hash_ctx->evp_md_ctx)) {
 #else
     if (!EVP_MD_CTX_md(hash_ctx->evp_md_ctx)) {
@@ -84,7 +85,7 @@ soter_status_t soter_hash_final(soter_hash_ctx_t* hash_ctx, uint8_t* hash_value,
         return SOTER_INVALID_PARAMETER;
     }
 
-#ifdef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
+#if OPENSSL_VERSION_MAJOR == 3
     if (!EVP_MD_CTX_get0_md(hash_ctx->evp_md_ctx)) {
 #else
     if (!EVP_MD_CTX_md(hash_ctx->evp_md_ctx)) {

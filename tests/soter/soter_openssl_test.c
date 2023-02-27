@@ -18,8 +18,8 @@
 
 #if defined(OPENSSL_VERSION_MAJOR) && OPENSSL_VERSION_MAJOR == 3
 
-#include "soter/soter_test.h"
 #include "soter/openssl/soter_engine.h"
+#include "soter/soter_test.h"
 
 #include <string.h>
 

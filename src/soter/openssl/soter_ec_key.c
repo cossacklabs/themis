@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-#ifndef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
+#include <openssl/opensslv.h>
+
+#if OPENSSL_VERSION_MAJOR == 1
 
 #include "soter/soter_ec_key.h"
 
@@ -364,4 +366,4 @@ err:
     return res;
 }
 
-#endif /* THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT */
+#endif /* OPENSSL_VERSION_MAJOR == 1 */
