@@ -32,6 +32,7 @@ int main(int argc, char* argv[])
     run_soter_sign_test();
     run_soter_rand_tests();
     run_soter_kdf_tests();
+    run_openssl_tests();
 
     testsuite_finish_testing();
 
