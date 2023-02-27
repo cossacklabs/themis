@@ -168,7 +168,7 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher,
     if (!EVP_PKEY_get_int_param(pkey, OSSL_PKEY_PARAM_BITS, &rsa_mod_size)) {
         return SOTER_FAIL;
     }
-    rsa_mod_size /= 8;
+    rsa_mod_size = (rsa_mod_size + 7) / 8;
 #else
     rsa = EVP_PKEY_get0(pkey);
     if (NULL == rsa) {
@@ -263,7 +263,7 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
     if (!EVP_PKEY_get_int_param(pkey, OSSL_PKEY_PARAM_BITS, &rsa_mod_size)) {
         return SOTER_FAIL;
     }
-    rsa_mod_size /= 8;
+    rsa_mod_size = (rsa_mod_size + 7) / 8;
 #else
     rsa = EVP_PKEY_get0(pkey);
     if (NULL == rsa) {
@@ -293,8 +293,11 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
     if (NULL == d) {
         return SOTER_INVALID_PARAMETER;
     }
-#else
-    // FIXME: if similar check is still needed, add it
+#else /* OPENSSL_VERSION_NUMBER >= 0x30000000 */
+    // EVP_PKEY_private_check was added in 3.0
+    if (EVP_PKEY_private_check(asym_cipher->pkey_ctx) != 1) {
+        return SOTER_INVALID_PARAMETER;
+    }
 #endif
 
     /* Currently we support only OAEP padding for RSA encryption */
