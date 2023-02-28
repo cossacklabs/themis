@@ -16,9 +16,12 @@
 
 #include "soter/soter_asym_cipher.h"
 
-#include <openssl/core_names.h>
 #include <openssl/evp.h>
+#include <openssl/opensslv.h>
 #include <openssl/rsa.h>
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
+#include <openssl/core_names.h>
+#endif
 
 #include "soter/openssl/soter_engine.h"
 #include "soter/soter_api.h"
