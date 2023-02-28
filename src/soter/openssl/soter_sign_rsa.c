@@ -17,10 +17,11 @@
 #include "soter/soter_sign_rsa.h"
 
 #include <openssl/evp.h>
+#include <openssl/opensslv.h>
+#include <openssl/rsa.h>
 #if OPENSSL_VERSION_NUMBER >= 0x30000000
 #include <openssl/core_names.h>
 #endif
-#include <openssl/rsa.h>
 
 #include "soter/openssl/soter_engine.h"
 #include "soter/openssl/soter_rsa_common.h"
