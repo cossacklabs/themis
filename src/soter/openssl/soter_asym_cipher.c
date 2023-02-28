@@ -16,6 +16,7 @@
 
 #include "soter/soter_asym_cipher.h"
 
+#include <openssl/core_names.h>
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
@@ -139,7 +140,6 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher,
                                          size_t* cipher_data_length)
 {
     EVP_PKEY* pkey;
-    RSA* rsa;
     int rsa_mod_size;
     size_t output_length;
 
@@ -158,12 +158,11 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher,
         return SOTER_INVALID_PARAMETER;
     }
 
-    rsa = EVP_PKEY_get0(pkey);
-    if (NULL == rsa) {
+    if (!EVP_PKEY_get_int_param(pkey, OSSL_PKEY_PARAM_BITS, &rsa_mod_size)) {
         return SOTER_FAIL;
     }
+    rsa_mod_size /= 8;
 
-    rsa_mod_size = RSA_size(rsa);
     int oaep_max_payload_length = (rsa_mod_size - 2 - (2 * OAEP_HASH_SIZE));
     if (oaep_max_payload_length < 0 || plain_data_length > (size_t)oaep_max_payload_length) {
         /* The plaindata is too large for this key size */
@@ -223,7 +222,6 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
                                          size_t* plain_data_length)
 {
     EVP_PKEY* pkey;
-    RSA* rsa;
     const BIGNUM* d = NULL;
     int rsa_mod_size;
     size_t output_length;
@@ -243,12 +241,10 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
         return SOTER_INVALID_PARAMETER;
     }
 
-    rsa = EVP_PKEY_get0(pkey);
-    if (NULL == rsa) {
+    if (!EVP_PKEY_get_int_param(pkey, OSSL_PKEY_PARAM_BITS, &rsa_mod_size)) {
         return SOTER_FAIL;
     }
-
-    rsa_mod_size = RSA_size(rsa);
+    rsa_mod_size /= 8;
 
     if (rsa_mod_size < 0 || cipher_data_length < (size_t)rsa_mod_size) {
         /* The cipherdata is too small for this key size */
@@ -260,12 +256,19 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
      * checks here */
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
     d = rsa->d;
-#else
-    RSA_get0_key(rsa, NULL, NULL, &d);
-#endif
+
     if (NULL == d) {
         return SOTER_INVALID_PARAMETER;
     }
+#elif OPENSSL_VERSION_NUMBER < 0x30000000
+    RSA_get0_key(rsa, NULL, NULL, &d);
+
+    if (NULL == d) {
+        return SOTER_INVALID_PARAMETER;
+    }
+#else
+    // FIXME: if similar check is still needed, add it
+#endif
 
     /* Currently we support only OAEP padding for RSA encryption */
     /* TODO: should we support "no padding" or PKCS1.5 padding? */

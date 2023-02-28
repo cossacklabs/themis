@@ -23,6 +23,7 @@
 #include <openssl/bn.h>
 #include <openssl/core_names.h>
 #include <openssl/evp.h>
+#include <openssl/param_build.h>
 #include <openssl/rsa.h>
 
 #include "soter/soter_portable_endian.h"
@@ -364,6 +365,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     }
 
     pub_exp = (uint32_t*)(curr_bn + ((rsa_mod_size * 4) + (rsa_mod_size / 2)));
+
     if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_D, &rsa_d)) {
         res = SOTER_FAIL;
         goto err;
@@ -494,11 +496,13 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
 {
     soter_status_t err = SOTER_FAIL;
     int rsa_mod_size;
-    RSA* rsa = NULL;
     BIGNUM* rsa_n = NULL;
     BIGNUM* rsa_e = NULL;
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
     const uint32_t* pub_exp;
+    OSSL_PARAM* params = NULL;
+    OSSL_PARAM_BLD* bld = NULL;
+    EVP_PKEY_CTX* ctx = NULL;
 
     if (key_length != be32toh(key->size)) {
         return SOTER_INVALID_PARAMETER;
@@ -543,10 +547,9 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
         return SOTER_INVALID_PARAMETER;
     }
 
-    rsa = RSA_new();
     rsa_n = BN_new();
     rsa_e = BN_new();
-    if (!rsa || !rsa_n || !rsa_e) {
+    if (!rsa_n || !rsa_e) {
         err = SOTER_NO_MEMORY;
         goto free_exponents;
     }
@@ -559,23 +562,55 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
         goto free_exponents;
     }
 
-    /* RSA_set0_key() transfers ownership over exponents to "rsa" */
-    if (!RSA_set0_key(rsa, rsa_n, rsa_e, NULL)) {
+    bld = OSSL_PARAM_BLD_new();
+    if (bld == NULL) {
+        err = SOTER_NO_MEMORY;
         goto free_exponents;
     }
 
-    /* EVP_PKEY_assign_RSA() transfers ownership over "rsa" to "pkey" */
-    if (!EVP_PKEY_assign_RSA(pkey, rsa)) {
-        goto free_rsa;
+    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_RSA_N, rsa_n)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
     }
 
-    return SOTER_SUCCESS;
+    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_RSA_E, rsa_e)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
+    }
+
+    params = OSSL_PARAM_BLD_to_param(bld);
+    if (params == NULL) {
+        err = SOTER_NO_MEMORY;
+        goto free_exponents;
+    }
+
+    ctx = EVP_PKEY_CTX_new_from_name(NULL, "RSA", NULL);
+    if (ctx == NULL) {
+        err = SOTER_NO_MEMORY;
+        goto free_exponents;
+    }
+
+    if (!EVP_PKEY_fromdata_init(ctx)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
+    }
+
+    if (!EVP_PKEY_fromdata(ctx, (EVP_PKEY**)engine_key, EVP_PKEY_KEYPAIR, params)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
+    }
+
+    err = SOTER_SUCCESS;
+    // goto free_builder; // pass through, BIGINTs were not consumed, need to free everything
 
 free_exponents:
     BN_free(rsa_n);
     BN_free(rsa_e);
-free_rsa:
-    RSA_free(rsa);
+free_builder:
+    EVP_PKEY_CTX_free(ctx);
+    OSSL_PARAM_free(params);
+    OSSL_PARAM_BLD_free(bld);
+
     return err;
 }
 
@@ -585,7 +620,6 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
 {
     soter_status_t err = SOTER_FAIL;
     int rsa_mod_size;
-    RSA* rsa = NULL;
     BIGNUM* rsa_e = NULL;
     BIGNUM* rsa_d = NULL;
     BIGNUM* rsa_p = NULL;
@@ -597,6 +631,9 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
     const uint32_t* pub_exp;
     const unsigned char* curr_bn = (const unsigned char*)(key + 1);
+    OSSL_PARAM* params = NULL;
+    OSSL_PARAM_BLD* bld = NULL;
+    EVP_PKEY_CTX* ctx = NULL;
 
     if (key_length != be32toh(key->size)) {
         return SOTER_INVALID_PARAMETER;
@@ -642,7 +679,6 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
         return SOTER_INVALID_PARAMETER;
     }
 
-    rsa = RSA_new();
     rsa_e = BN_new();
     rsa_d = BN_new();
     rsa_p = BN_new();
@@ -651,7 +687,7 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
     rsa_dmq1 = BN_new();
     rsa_iqmp = BN_new();
     rsa_n = BN_new();
-    if (!rsa || !rsa_e || !rsa_d || !rsa_p || !rsa_q || !rsa_dmp1 || !rsa_dmq1 || !rsa_iqmp || !rsa_n) {
+    if (!rsa_e || !rsa_d || !rsa_p || !rsa_q || !rsa_dmp1 || !rsa_dmq1 || !rsa_iqmp || !rsa_n) {
         err = SOTER_NO_MEMORY;
         goto free_exponents;
     }
@@ -719,37 +755,93 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
         rsa_iqmp = NULL;
     }
 
-    /* RSA_set0_*() functions transfer ownership over bignums to "rsa" */
-    if (!RSA_set0_key(rsa, rsa_n, rsa_e, rsa_d)) {
+    bld = OSSL_PARAM_BLD_new();
+    if (bld == NULL) {
+        err = SOTER_NO_MEMORY;
         goto free_exponents;
     }
-    if (!RSA_set0_factors(rsa, rsa_p, rsa_q)) {
-        goto free_factors;
-    }
-    if (!RSA_set0_crt_params(rsa, rsa_dmp1, rsa_dmq1, rsa_iqmp)) {
-        goto free_crt_params;
+
+    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_RSA_D, rsa_d)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
     }
 
-    /* EVP_PKEY_assign_RSA() transfers ownership over "rsa" to "pkey" */
-    if (!EVP_PKEY_assign_RSA(pkey, rsa)) {
-        goto free_rsa;
+    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_RSA_FACTOR1, rsa_p)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
     }
 
-    return SOTER_SUCCESS;
+    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_RSA_FACTOR2, rsa_q)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
+    }
+
+    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_RSA_EXPONENT1, rsa_dmp1)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
+    }
+
+    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_RSA_EXPONENT2, rsa_dmq1)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
+    }
+
+    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_RSA_COEFFICIENT1, rsa_iqmp)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
+    }
+
+    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_RSA_N, rsa_n)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
+    }
+
+    if (!OSSL_PARAM_BLD_push_BN(bld, OSSL_PKEY_PARAM_RSA_E, rsa_e)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
+    }
+
+    params = OSSL_PARAM_BLD_to_param(bld);
+    if (params == NULL) {
+        err = SOTER_NO_MEMORY;
+        goto free_exponents;
+    }
+
+    ctx = EVP_PKEY_CTX_new_from_name(NULL, "RSA", NULL);
+    if (ctx == NULL) {
+        err = SOTER_NO_MEMORY;
+        goto free_exponents;
+    }
+
+    if (!EVP_PKEY_fromdata_init(ctx)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
+    }
+
+    if (!EVP_PKEY_fromdata(ctx, (EVP_PKEY**)engine_key, EVP_PKEY_KEYPAIR, params)) {
+        err = SOTER_FAIL;
+        goto free_exponents;
+    }
+
+    err = SOTER_SUCCESS;
+    // goto free_builder; // pass through, BIGINTs were not consumed, need to free everything
 
 free_exponents:
     BN_free(rsa_n);
     BN_free(rsa_e);
-    BN_free(rsa_d);
+    BN_clear_free(rsa_d);
 free_factors:
-    BN_free(rsa_p);
-    BN_free(rsa_q);
+    BN_clear_free(rsa_p);
+    BN_clear_free(rsa_q);
 free_crt_params:
-    BN_free(rsa_dmp1);
-    BN_free(rsa_dmq1);
-    BN_free(rsa_iqmp);
-free_rsa:
-    RSA_free(rsa);
+    BN_clear_free(rsa_dmp1);
+    BN_clear_free(rsa_dmq1);
+    BN_clear_free(rsa_iqmp);
+free_builder:
+    EVP_PKEY_CTX_free(ctx);
+    OSSL_PARAM_free(params);
+    OSSL_PARAM_BLD_free(bld);
+
     return err;
 }
 

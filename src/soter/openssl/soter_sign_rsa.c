@@ -17,6 +17,7 @@
 #include "soter/soter_sign_rsa.h"
 
 #include <openssl/evp.h>
+#include <openssl/core_names.h>
 #include <openssl/rsa.h>
 
 #include "soter/openssl/soter_engine.h"
@@ -144,7 +145,16 @@ soter_status_t soter_sign_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx, void* signa
         return SOTER_INVALID_PARAMETER;
     }
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
+    // Even though EVP_PKEY_size() is not deprecated in OpenSSL 3, it works incorrectly (returns
+    // zero or even crashes) when given a pkey generated with new EVP_PKEY_fromdata() function.
+    // Using different method instead.
+    if (!EVP_PKEY_get_int_param(ctx->pkey, OSSL_PKEY_PARAM_MAX_SIZE, &key_size)) {
+        return SOTER_FAIL;
+    }
+#else
     key_size = EVP_PKEY_size(ctx->pkey);
+#endif
     if (key_size <= 0) {
         return SOTER_FAIL;
     }

@@ -16,6 +16,7 @@
 
 #include "soter/soter_sign_rsa.h"
 
+#include <openssl/core_names.h>
 #include <openssl/evp.h>
 #include <openssl/rsa.h>
 
@@ -111,6 +112,8 @@ soter_status_t soter_verify_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
                                                 const void* signature,
                                                 const size_t signature_length)
 {
+    int max_size = 0;
+
     if (!ctx || !ctx->pkey) {
         return SOTER_INVALID_PARAMETER;
     }
@@ -121,7 +124,16 @@ soter_status_t soter_verify_final_rsa_pss_pkcs8(soter_sign_ctx_t* ctx,
         return SOTER_INVALID_PARAMETER;
     }
 
-    if (signature_length != (size_t)EVP_PKEY_size(ctx->pkey)) {
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
+    // In OpenSSL 3, EVP_PKEY_size() crashes here for some reason. More precisely, when ctx->pkey
+    // was created using EVP_PKEY_fromdata() function. Using different method instead.
+    if (!EVP_PKEY_get_int_param(ctx->pkey, OSSL_PKEY_PARAM_MAX_SIZE, &max_size)) {
+        return SOTER_FAIL;
+    }
+#else
+    max_size = EVP_PKEY_size(ctx->pkey);
+#endif
+    if (signature_length != (size_t)max_size) {
         return SOTER_FAIL;
     }
     if (EVP_DigestVerifyFinal(ctx->md_ctx, (unsigned char*)signature, signature_length) != 1) {
