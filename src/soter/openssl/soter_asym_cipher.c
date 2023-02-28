@@ -143,6 +143,9 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher,
                                          size_t* cipher_data_length)
 {
     EVP_PKEY* pkey;
+#if OPENSSL_VERSION_NUMBER < 0x30000000
+    RSA* rsa;
+#endif
     int rsa_mod_size;
     size_t output_length;
 
@@ -161,10 +164,19 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher,
         return SOTER_INVALID_PARAMETER;
     }
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
     if (!EVP_PKEY_get_int_param(pkey, OSSL_PKEY_PARAM_BITS, &rsa_mod_size)) {
         return SOTER_FAIL;
     }
     rsa_mod_size /= 8;
+#else
+    rsa = EVP_PKEY_get0(pkey);
+    if (NULL == rsa) {
+        return SOTER_FAIL;
+    }
+
+    rsa_mod_size = RSA_size(rsa);
+#endif
 
     int oaep_max_payload_length = (rsa_mod_size - 2 - (2 * OAEP_HASH_SIZE));
     if (oaep_max_payload_length < 0 || plain_data_length > (size_t)oaep_max_payload_length) {
@@ -226,6 +238,7 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
 {
     EVP_PKEY* pkey;
 #if OPENSSL_VERSION_NUMBER < 0x30000000
+    RSA* rsa;
     const BIGNUM* d = NULL;
 #endif
     int rsa_mod_size;
@@ -246,10 +259,19 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
         return SOTER_INVALID_PARAMETER;
     }
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
     if (!EVP_PKEY_get_int_param(pkey, OSSL_PKEY_PARAM_BITS, &rsa_mod_size)) {
         return SOTER_FAIL;
     }
     rsa_mod_size /= 8;
+#else
+    rsa = EVP_PKEY_get0(pkey);
+    if (NULL == rsa) {
+        return SOTER_FAIL;
+    }
+
+    rsa_mod_size = RSA_size(rsa);
+#endif
 
     if (rsa_mod_size < 0 || cipher_data_length < (size_t)rsa_mod_size) {
         /* The cipherdata is too small for this key size */
