@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-#ifdef THEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT
+#include <openssl/opensslv.h>
+
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
 
 #include "soter/soter_rsa_key.h"
 
@@ -845,4 +847,4 @@ free_builder:
     return err;
 }
 
-#endif
+#endif /* OPENSSL_VERSION_NUMBER >= 0x30000000 */

@@ -222,7 +222,9 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
                                          size_t* plain_data_length)
 {
     EVP_PKEY* pkey;
+#if OPENSSL_VERSION_NUMBER < 0x30000000
     const BIGNUM* d = NULL;
+#endif
     int rsa_mod_size;
     size_t output_length;
 
