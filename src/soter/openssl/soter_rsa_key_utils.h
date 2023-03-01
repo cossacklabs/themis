@@ -100,24 +100,4 @@ static bool is_mod_size_supported(int mod_size)
     }
 }
 
-static soter_status_t bignum_to_bytes(const BIGNUM* bn, uint8_t* to, size_t to_length)
-{
-    size_t bn_size = (size_t)BN_num_bytes(bn);
-    size_t bytes_copied;
-
-    if (bn_size > to_length) {
-        return SOTER_FAIL;
-    }
-
-    bytes_copied = BN_bn2bin(bn, to + (to_length - bn_size));
-
-    if (bytes_copied != bn_size) {
-        return SOTER_FAIL;
-    }
-
-    memset(to, 0, to_length - bn_size);
-
-    return SOTER_SUCCESS;
-}
-
 #endif /* THEMIS_SOTER_RSA_KEY_UTILS_H */

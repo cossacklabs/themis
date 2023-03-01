@@ -178,8 +178,8 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
         goto err;
     }
 
-    res = bignum_to_bytes(rsa_n, (unsigned char*)(key + 1), rsa_mod_size);
-    if (SOTER_SUCCESS != res) {
+    res = BN_bn2binpad(rsa_n, (unsigned char*)(key + 1), rsa_mod_size);
+    if (res == -1) {
         goto err;
     }
 
@@ -255,8 +255,8 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     }
 
     /* Private exponent */
-    res = bignum_to_bytes(rsa_d, curr_bn, rsa_mod_size);
-    if (SOTER_SUCCESS != res) {
+    if (BN_bn2binpad(rsa_d, curr_bn, rsa_mod_size) == -1) {
+        res = SOTER_FAIL;
         goto err;
     }
     curr_bn += rsa_mod_size;
@@ -264,15 +264,15 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     RSA_get0_factors(rsa, &rsa_p, &rsa_q);
 
     /* p */
-    res = bignum_to_bytes(rsa_p, curr_bn, rsa_mod_size / 2);
-    if (SOTER_SUCCESS != res) {
+    if (BN_bn2binpad(rsa_p, curr_bn, rsa_mod_size / 2) == -1) {
+        res = SOTER_FAIL;
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* q */
-    res = bignum_to_bytes(rsa_q, curr_bn, rsa_mod_size / 2);
-    if (SOTER_SUCCESS != res) {
+    if (BN_bn2binpad(rsa_q, curr_bn, rsa_mod_size / 2) == -1) {
+        res = SOTER_FAIL;
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
@@ -280,29 +280,29 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     RSA_get0_crt_params(rsa, &rsa_dmp1, &rsa_dmq1, &rsa_iqmp);
 
     /* dp */
-    res = bignum_to_bytes(rsa_dmp1, curr_bn, rsa_mod_size / 2);
-    if (SOTER_SUCCESS != res) {
+    if (BN_bn2binpad(rsa_dmp1, curr_bn, rsa_mod_size / 2) == -1) {
+        res = SOTER_FAIL;
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* dq */
-    res = bignum_to_bytes(rsa_dmq1, curr_bn, rsa_mod_size / 2);
-    if (SOTER_SUCCESS != res) {
+    if (BN_bn2binpad(rsa_dmq1, curr_bn, rsa_mod_size / 2) == -1) {
+        res = SOTER_FAIL;
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* qp */
-    res = bignum_to_bytes(rsa_iqmp, curr_bn, rsa_mod_size / 2);
-    if (SOTER_SUCCESS != res) {
+    if (BN_bn2binpad(rsa_iqmp, curr_bn, rsa_mod_size / 2) == -1) {
+        res = SOTER_FAIL;
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* modulus */
-    res = bignum_to_bytes(rsa_n, curr_bn, rsa_mod_size);
-    if (SOTER_SUCCESS != res) {
+    if (BN_bn2binpad(rsa_n, curr_bn, rsa_mod_size) == -1) {
+        res = SOTER_FAIL;
         goto err;
     }
 
