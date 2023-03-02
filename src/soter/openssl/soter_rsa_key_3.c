@@ -170,90 +170,90 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     /* Private exponent */
     if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_D, &tmp)) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
 
     if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size) == -1) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
     curr_bn += rsa_mod_size;
 
     /* p */
     if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_FACTOR1, &tmp)) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
 
     if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* q */
     if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_FACTOR2, &tmp)) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
 
     if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* dp */
     if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_EXPONENT1, &tmp)) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
 
     if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* dq */
     if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_EXPONENT2, &tmp)) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
 
     if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* qp */
     if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_COEFFICIENT1, &tmp)) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
 
     if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* modulus */
     if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_N, &tmp)) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
 
     if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size) == -1) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
 
     /* public exponent */
     if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, &tmp)) {
         res = SOTER_FAIL;
-        goto err;
+        goto clear_key;
     }
 
     if (BN_is_word(tmp, RSA_F4)) {
@@ -262,7 +262,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
         *pub_exp = htobe32(RSA_3);
     } else {
         res = SOTER_INVALID_PARAMETER;
-        goto err;
+        goto clear_key;
     }
 
     memcpy(key->tag, rsa_priv_key_tag(rsa_mod_size), SOTER_CONTAINER_TAG_LENGTH);
@@ -271,14 +271,16 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     *key_length = output_length;
     res = SOTER_SUCCESS;
 
+clear_key:
+    if (res != SOTER_SUCCESS) {
+        /* Zero output memory to avoid leaking private key information */
+        // memset((unsigned char*)(key + 1), 0, output_length - sizeof(soter_container_hdr_t));
+        // FIXME: Do we need something better than mamset() to be sure it won't be optimized out?
+        memset(key, 0, output_length);
+    }
+
 err:
     BN_clear_free(tmp);
-
-    //	if (SOTER_SUCCESS != res)
-    //	{
-    //		/* Zero output memory to avoid leaking private key information */
-    //		memset(key, 0, *key_length);
-    //	}
 
     return res;
 }
