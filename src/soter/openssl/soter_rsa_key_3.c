@@ -40,8 +40,8 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     int rsa_mod_size;
     size_t output_length;
     uint32_t* pub_exp;
-    BIGNUM* rsa_e = NULL;
-    BIGNUM* rsa_n = NULL;
+    // This bigint is reused multiple times: read into it, serialize it, read into it...
+    BIGNUM* tmp = NULL;
 
     if (!key_length) {
         return SOTER_INVALID_PARAMETER;
@@ -77,27 +77,27 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     }
 
     pub_exp = (uint32_t*)((unsigned char*)(key + 1) + rsa_mod_size);
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_N, &rsa_n)) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_N, &tmp)) {
         res = SOTER_FAIL;
         goto err;
     }
 
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, &rsa_e)) {
+    if (BN_bn2binpad(tmp, (unsigned char*)(key + 1), rsa_mod_size) == -1) {
         res = SOTER_FAIL;
         goto err;
     }
 
-    if (BN_is_word(rsa_e, RSA_F4)) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, &tmp)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (BN_is_word(tmp, RSA_F4)) {
         *pub_exp = htobe32(RSA_F4);
-    } else if (BN_is_word(rsa_e, RSA_3)) {
+    } else if (BN_is_word(tmp, RSA_3)) {
         *pub_exp = htobe32(RSA_3);
     } else {
         res = SOTER_INVALID_PARAMETER;
-        goto err;
-    }
-
-    if (BN_bn2binpad(rsa_n, (unsigned char*)(key + 1), rsa_mod_size) == -1) {
-        res = SOTER_FAIL;
         goto err;
     }
 
@@ -108,8 +108,7 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     res = SOTER_SUCCESS;
 
 err:
-    BN_free(rsa_n);
-    BN_free(rsa_e);
+    BN_free(tmp);
 
     return res;
 }
@@ -123,14 +122,8 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     int rsa_mod_size;
     size_t output_length;
     uint32_t* pub_exp;
-    BIGNUM* rsa_e = NULL;
-    BIGNUM* rsa_d = NULL;
-    BIGNUM* rsa_n = NULL;
-    BIGNUM* rsa_p = NULL;
-    BIGNUM* rsa_q = NULL;
-    BIGNUM* rsa_dmp1 = NULL;
-    BIGNUM* rsa_dmq1 = NULL;
-    BIGNUM* rsa_iqmp = NULL;
+    // This bigint is reused multiple times: read into it, serialize it, read into it...
+    BIGNUM* tmp = NULL;
     unsigned char* curr_bn = (unsigned char*)(key + 1);
 
     if (!key_length) {
@@ -174,100 +167,101 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
     pub_exp = (uint32_t*)(curr_bn + ((rsa_mod_size * 4) + (rsa_mod_size / 2)));
 
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_D, &rsa_d)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_N, &rsa_n)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, &rsa_e)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (BN_is_word(rsa_e, RSA_F4)) {
-        *pub_exp = htobe32(RSA_F4);
-    } else if (BN_is_word(rsa_e, RSA_3)) {
-        *pub_exp = htobe32(RSA_3);
-    } else {
-        res = SOTER_INVALID_PARAMETER;
-        goto err;
-    }
-
     /* Private exponent */
-    if (BN_bn2binpad(rsa_d, curr_bn, rsa_mod_size) == -1) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_D, &tmp)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size) == -1) {
         res = SOTER_FAIL;
         goto err;
     }
     curr_bn += rsa_mod_size;
 
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_FACTOR1, &rsa_p)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_FACTOR2, &rsa_q)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
     /* p */
-    if (BN_bn2binpad(rsa_p, curr_bn, rsa_mod_size / 2) == -1) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_FACTOR1, &tmp)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
         res = SOTER_FAIL;
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* q */
-    if (BN_bn2binpad(rsa_q, curr_bn, rsa_mod_size / 2) == -1) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_FACTOR2, &tmp)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
         res = SOTER_FAIL;
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_EXPONENT1, &rsa_dmp1)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_EXPONENT2, &rsa_dmq1)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_COEFFICIENT1, &rsa_iqmp)) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
     /* dp */
-    if (BN_bn2binpad(rsa_dmp1, curr_bn, rsa_mod_size / 2) == -1) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_EXPONENT1, &tmp)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
         res = SOTER_FAIL;
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* dq */
-    if (BN_bn2binpad(rsa_dmq1, curr_bn, rsa_mod_size / 2) == -1) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_EXPONENT2, &tmp)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
         res = SOTER_FAIL;
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* qp */
-    if (BN_bn2binpad(rsa_iqmp, curr_bn, rsa_mod_size / 2) == -1) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_COEFFICIENT1, &tmp)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
         res = SOTER_FAIL;
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* modulus */
-    if (BN_bn2binpad(rsa_n, curr_bn, rsa_mod_size) == -1) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_N, &tmp)) {
         res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size) == -1) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    /* public exponent */
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, &tmp)) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (BN_is_word(tmp, RSA_F4)) {
+        *pub_exp = htobe32(RSA_F4);
+    } else if (BN_is_word(tmp, RSA_3)) {
+        *pub_exp = htobe32(RSA_3);
+    } else {
+        res = SOTER_INVALID_PARAMETER;
         goto err;
     }
 
@@ -278,14 +272,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     res = SOTER_SUCCESS;
 
 err:
-    BN_clear_free(rsa_d);
-    BN_clear_free(rsa_p);
-    BN_clear_free(rsa_q);
-    BN_clear_free(rsa_dmp1);
-    BN_clear_free(rsa_dmq1);
-    BN_clear_free(rsa_iqmp);
-    BN_free(rsa_n);
-    BN_free(rsa_e);
+    BN_clear_free(tmp);
 
     //	if (SOTER_SUCCESS != res)
     //	{
