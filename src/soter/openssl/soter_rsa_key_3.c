@@ -301,7 +301,7 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
     OSSL_PARAM_BLD* bld = NULL;
     EVP_PKEY_CTX* ctx = NULL;
 
-    if (key_length != be32toh(key->size)) {
+    if (key_length < sizeof(soter_container_hdr_t) || key_length != be32toh(key->size)) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -430,7 +430,7 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
     OSSL_PARAM_BLD* bld = NULL;
     EVP_PKEY_CTX* ctx = NULL;
 
-    if (key_length != be32toh(key->size)) {
+    if (key_length < sizeof(soter_container_hdr_t) || key_length != be32toh(key->size)) {
         return SOTER_INVALID_PARAMETER;
     }
 

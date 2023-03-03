@@ -339,7 +339,7 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
     EVP_PKEY* pkey = (EVP_PKEY*)(*engine_key);
     const uint32_t* pub_exp;
 
-    if (key_length != be32toh(key->size)) {
+    if (key_length < sizeof(soter_container_hdr_t) || key_length != be32toh(key->size)) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -437,7 +437,7 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
     const uint32_t* pub_exp;
     const unsigned char* curr_bn = (const unsigned char*)(key + 1);
 
-    if (key_length != be32toh(key->size)) {
+    if (key_length < sizeof(soter_container_hdr_t) || key_length != be32toh(key->size)) {
         return SOTER_INVALID_PARAMETER;
     }
 

@@ -58,6 +58,7 @@ static bool get_rsa_mod_size(EVP_PKEY* pkey, int* rsa_mod_size)
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
 static bool check_rsa_private_key(EVP_PKEY* pkey, EVP_PKEY_CTX* pkey_ctx)
 {
+    UNUSED(pkey_ctx);
     RSA* rsa = EVP_PKEY_get0(pkey);
 
     if (rsa->d == NULL) {
@@ -69,6 +70,7 @@ static bool check_rsa_private_key(EVP_PKEY* pkey, EVP_PKEY_CTX* pkey_ctx)
 #elif OPENSSL_VERSION_NUMBER < 0x30000000
 static bool check_rsa_private_key(EVP_PKEY* pkey, EVP_PKEY_CTX* pkey_ctx)
 {
+    UNUSED(pkey_ctx);
     RSA* rsa = EVP_PKEY_get0(pkey);
     const BIGNUM* d = NULL;
 
@@ -83,6 +85,7 @@ static bool check_rsa_private_key(EVP_PKEY* pkey, EVP_PKEY_CTX* pkey_ctx)
 #else /* OPENSSL_VERSION_NUMBER >= 0x30000000 */
 static bool check_rsa_private_key(EVP_PKEY* pkey, EVP_PKEY_CTX* pkey_ctx)
 {
+    UNUSED(pkey);
     // EVP_PKEY_private_check was added in 3.0
     return EVP_PKEY_private_check(pkey_ctx) == 1;
 }
