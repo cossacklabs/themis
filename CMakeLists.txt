@@ -6,10 +6,6 @@ if (NO_NIST_STS)
 add_definitions(-DNO_NIST_STS=1)
 endif()
 
-if (WITH_EXPERIMENTAL_OPENSSL_3_SUPPORT)
-add_definitions(-DTHEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT=1)
-endif()
-
 file(GLOB SOTER_SOURCE_FILES src/soter/*.c src/soter/openssl/*.c src/soter/ed25519/*)
 add_library(soter ${SOTER_SOURCE_FILES})
 add_library(soter_shared SHARED ${SOTER_SOURCE_FILES})
