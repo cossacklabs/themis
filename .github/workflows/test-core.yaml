@@ -69,7 +69,6 @@ jobs:
             export ENGINE_INCLUDE_PATH="$openssl3/include"
             export ENGINE_LIB_PATH="$openssl3/lib"
           fi
-          export WITH_FATAL_WARNINGS=no
           make prepare_tests_basic BUILD_PATH=build-openssl-3.0
       - name: Build Themis Core (BoringSSL)
         if: always()
@@ -92,7 +91,6 @@ jobs:
             export ENGINE_INCLUDE_PATH="$openssl3/include"
             export ENGINE_LIB_PATH="$openssl3/lib"
           fi
-          export WITH_FATAL_WARNINGS=no
           make test BUILD_PATH=build-openssl-3.0
       - name: Run test suite (OpenSSL 3.0, uncompressed keys)
         if: ${{ matrix.os != 'ubuntu-20.04' }}
@@ -106,7 +104,6 @@ jobs:
             export ENGINE_INCLUDE_PATH="$openssl3/include"
             export ENGINE_LIB_PATH="$openssl3/lib"
           fi
-          export WITH_FATAL_WARNINGS=no
           make test BUILD_PATH=build-openssl-3.0
       - name: Run test suite (BoringSSL)
         if: always()
