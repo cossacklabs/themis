@@ -205,7 +205,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     RSA* rsa;
     soter_status_t res;
     int rsa_mod_size;
-    size_t output_length;
+    size_t output_length = 0;
     uint32_t* pub_exp;
     const BIGNUM* rsa_e;
     const BIGNUM* rsa_d;
@@ -317,7 +317,7 @@ err:
     /* Free extra reference on RSA object provided by EVP_PKEY_get1_RSA */
     RSA_free(rsa);
 
-    if (res != SOTER_SUCCESS) {
+    if (res != SOTER_SUCCESS && output_length > 0) {
         /* Zero output memory to avoid leaking private key information */
         soter_wipe(key, output_length);
     }
