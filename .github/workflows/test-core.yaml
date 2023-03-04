@@ -402,6 +402,10 @@ jobs:
     runs-on: windows-2022
     env:
       SOTER_KDF_RUN_LONG_TESTS: yes
+      # TODO: remove these two options when MSYS2 build issues are solved,
+      #       because now PKGBUILD.MSYS2 just downloads latest release archive
+      #       from GitHub instead of using checked out files
+      WITH_EXPERIMENTAL_OPENSSL_3_SUPPORT: yes
       WITH_FATAL_WARNINGS: "no" # YAML :trollface:
     defaults:
       run:

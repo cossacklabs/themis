@@ -166,8 +166,6 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
         goto err;
     }
 
-    // pub_exp = (uint32_t*)(curr_bn + ((rsa_mod_size * 4) + (rsa_mod_size / 2)));
-
     /* Private exponent */
     if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_D, &tmp)) {
         res = SOTER_FAIL;
@@ -398,7 +396,6 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
     }
 
     err = SOTER_SUCCESS;
-    // goto free_builder; // pass through, BIGINTs were not consumed, need to free everything
 
 out:
     BN_free(rsa_n);
@@ -618,7 +615,6 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
     }
 
     err = SOTER_SUCCESS;
-    // goto free_builder; // pass through, BIGINTs were not consumed, need to free everything
 
 out:
     BN_free(rsa_n);

@@ -28,6 +28,7 @@
 
 #include "soter/openssl/soter_rsa_key_utils.h"
 #include "soter/soter_portable_endian.h"
+#include "soter/soter_wipe.h"
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
 static inline void RSA_get0_key(const RSA* rsa, const BIGNUM** n, const BIGNUM** e, const BIGNUM** d)
@@ -316,11 +317,10 @@ err:
     /* Free extra reference on RSA object provided by EVP_PKEY_get1_RSA */
     RSA_free(rsa);
 
-    //	if (SOTER_SUCCESS != res)
-    //	{
-    //		/* Zero output memory to avoid leaking private key information */
-    //		memset(key, 0, *key_length);
-    //	}
+    if (res != SOTER_SUCCESS) {
+        /* Zero output memory to avoid leaking private key information */
+        soter_wipe(key, output_length);
+    }
 
     return res;
 }
