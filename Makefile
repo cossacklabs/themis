@@ -186,10 +186,6 @@ ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
 
-ifeq ($(WITH_EXPERIMENTAL_OPENSSL_3_SUPPORT),yes)
-	CFLAGS += -DTHEMIS_EXPERIMENTAL_OPENSSL_3_SUPPORT=1
-endif
-
 ########################################################################
 #
 # Compilation flags for C/C++ code

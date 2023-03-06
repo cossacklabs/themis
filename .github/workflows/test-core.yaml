@@ -58,7 +58,6 @@ jobs:
         with:
           submodules: true
       - name: Build Themis Core (OpenSSL)
-        if: ${{ matrix.os != 'ubuntu-22.04' }}
         run: make prepare_tests_basic ENGINE=openssl BUILD_PATH=build-openssl
       - name: Build Themis Core (OpenSSL 3.0)
         if: ${{ matrix.os != 'ubuntu-20.04' }}
@@ -70,21 +69,15 @@ jobs:
             export ENGINE_INCLUDE_PATH="$openssl3/include"
             export ENGINE_LIB_PATH="$openssl3/lib"
           fi
-          # TODO: stop using deprecated API so that warnings can be errors again
-          export WITH_EXPERIMENTAL_OPENSSL_3_SUPPORT=yes
-          export WITH_FATAL_WARNINGS=no
           make prepare_tests_basic BUILD_PATH=build-openssl-3.0
       - name: Build Themis Core (BoringSSL)
         if: always()
         run: make prepare_tests_basic ENGINE=boringssl BUILD_PATH=build-boringssl
       - name: Build Themis Core (WITH_SCELL_COMPAT)
-        if: ${{ matrix.os != 'ubuntu-22.04' }}
         run: make prepare_tests_basic WITH_SCELL_COMPAT=yes BUILD_PATH=build-compat
       - name: Run test suite (OpenSSL)
-        if: ${{ matrix.os != 'ubuntu-22.04' }}
         run: make test ENGINE=openssl BUILD_PATH=build-openssl
       - name: Run test suite (OpenSSL, uncompressed keys)
-        if: ${{ matrix.os != 'ubuntu-22.04' }}
         env:
           THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED: "1"
         run: make test ENGINE=openssl BUILD_PATH=build-openssl
@@ -98,8 +91,6 @@ jobs:
             export ENGINE_INCLUDE_PATH="$openssl3/include"
             export ENGINE_LIB_PATH="$openssl3/lib"
           fi
-          export WITH_EXPERIMENTAL_OPENSSL_3_SUPPORT=yes
-          export WITH_FATAL_WARNINGS=no
           make test BUILD_PATH=build-openssl-3.0
       - name: Run test suite (OpenSSL 3.0, uncompressed keys)
         if: ${{ matrix.os != 'ubuntu-20.04' }}
@@ -113,8 +104,6 @@ jobs:
             export ENGINE_INCLUDE_PATH="$openssl3/include"
             export ENGINE_LIB_PATH="$openssl3/lib"
           fi
-          export WITH_EXPERIMENTAL_OPENSSL_3_SUPPORT=yes
-          export WITH_FATAL_WARNINGS=no
           make test BUILD_PATH=build-openssl-3.0
       - name: Run test suite (BoringSSL)
         if: always()
@@ -125,26 +114,7 @@ jobs:
           THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED: "1"
         run: make test ENGINE=boringssl BUILD_PATH=build-boringssl
       - name: Run test suite (WITH_SCELL_COMPAT)
-        if: ${{ matrix.os != 'ubuntu-22.04' }}
         run: make test WITH_SCELL_COMPAT=yes BUILD_PATH=build-compat
-      - name: Ensure OpenSSL 3.0 fails
-        if: ${{ matrix.os != 'ubuntu-20.04' }}
-        run: |
-          export ENGINE=openssl
-          # Themis uses OpenSSL 1.1 by default if installed.
-          # Explicitly request OpenSSL 3.0 by pointing the build into OpenSSL 3.0's paths.
-          if [[ "$MATRIX_OS" = "macos-12" ]]; then
-            openssl3=$(brew --prefix openssl@3)
-            export ENGINE_INCLUDE_PATH="$openssl3/include"
-            export ENGINE_LIB_PATH="$openssl3/lib"
-          fi
-          if ! make BUILD_PATH=build-openssl-3.0-without-magic-word
-          then
-            true
-          else
-            echo "Build with OpenSSL 3.0 did not fail when it should have"
-            exit 1
-          fi
 
   examples:
     name: Code examples
@@ -432,7 +402,9 @@ jobs:
     runs-on: windows-2022
     env:
       SOTER_KDF_RUN_LONG_TESTS: yes
-      # TODO: stop using deprecated API so that warnings can be errors again
+      # TODO: remove these two options when MSYS2 build issues are solved,
+      #       because now PKGBUILD.MSYS2 just downloads latest release archive
+      #       from GitHub instead of using checked out files
       WITH_EXPERIMENTAL_OPENSSL_3_SUPPORT: yes
       WITH_FATAL_WARNINGS: "no" # YAML :trollface:
     defaults:

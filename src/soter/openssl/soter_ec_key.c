@@ -26,6 +26,7 @@
 #include <openssl/ec.h>
 #include <openssl/evp.h>
 
+#include "soter/openssl/soter_bignum_utils.h"
 #include "soter/openssl/soter_ec_key_utils.h"
 #include "soter/soter_portable_endian.h"
 
@@ -157,8 +158,8 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
         goto err;
     }
 
-    if ((output_length - sizeof(soter_container_hdr_t))
-        != bn_encode(d, (unsigned char*)(key + 1), output_length - sizeof(soter_container_hdr_t))) {
+    if (BN_bn2binpad(d, (unsigned char*)(key + 1), (int)(output_length - sizeof(soter_container_hdr_t)))
+        == -1) {
         res = SOTER_FAIL;
         goto err;
     }

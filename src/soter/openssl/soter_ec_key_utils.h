@@ -19,7 +19,6 @@
 
 #include <string.h>
 
-#include <openssl/bn.h>
 #include <openssl/obj_mac.h>
 
 #include "soter/soter_ec_key.h"
@@ -94,16 +93,6 @@ static char* ec_priv_key_tag(int curve)
     default:
         return NULL;
     }
-}
-
-static size_t bn_encode(const BIGNUM* bn, uint8_t* buffer, size_t length)
-{
-    int bn_size = BN_num_bytes(bn);
-    if (length < (size_t)bn_size) {
-        return 0;
-    }
-    memset(buffer, 0, length - bn_size);
-    return (length - bn_size) + BN_bn2bin(bn, buffer + (length - bn_size));
 }
 
 #endif /* THEMIS_SOTER_EC_KEY_UTILS_H */
