@@ -125,7 +125,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     uint32_t* pub_exp;
     // This bigint is reused multiple times: read into it, serialize it, read into it...
     BIGNUM* tmp = NULL;
-    unsigned char* curr_bn = (unsigned char*)(key + 1);
+    unsigned char* curr_bn;
 
     if (!key_length) {
         return SOTER_INVALID_PARAMETER;
@@ -165,6 +165,8 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
         res = SOTER_BUFFER_TOO_SMALL;
         goto err;
     }
+
+    curr_bn = (unsigned char*)(key + 1);
 
     /* Private exponent */
     if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_D, &tmp)) {
@@ -299,7 +301,7 @@ soter_status_t soter_rsa_pub_key_to_engine_specific(const soter_container_hdr_t*
     OSSL_PARAM_BLD* bld = NULL;
     EVP_PKEY_CTX* ctx = NULL;
 
-    if (key_length < sizeof(soter_container_hdr_t) || key_length != be32toh(key->size)) {
+    if ((!key) || key_length < sizeof(soter_container_hdr_t) || key_length != be32toh(key->size)) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -422,12 +424,12 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
     BIGNUM* rsa_iqmp = NULL;
     BIGNUM* rsa_n = NULL;
     const uint32_t* pub_exp;
-    const unsigned char* curr_bn = (const unsigned char*)(key + 1);
+    const unsigned char* curr_bn;
     OSSL_PARAM* params = NULL;
     OSSL_PARAM_BLD* bld = NULL;
     EVP_PKEY_CTX* ctx = NULL;
 
-    if (key_length < sizeof(soter_container_hdr_t) || key_length != be32toh(key->size)) {
+    if ((!key) || key_length < sizeof(soter_container_hdr_t) || key_length != be32toh(key->size)) {
         return SOTER_INVALID_PARAMETER;
     }
 
@@ -460,6 +462,8 @@ soter_status_t soter_rsa_priv_key_to_engine_specific(const soter_container_hdr_t
     if (key_length < rsa_priv_key_size(rsa_mod_size)) {
         return SOTER_INVALID_PARAMETER;
     }
+
+    curr_bn = (const unsigned char*)(key + 1);
 
     pub_exp = (const uint32_t*)(curr_bn + ((rsa_mod_size * 4) + (rsa_mod_size / 2)));
     switch (be32toh(*pub_exp)) {

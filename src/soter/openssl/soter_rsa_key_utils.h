@@ -21,8 +21,6 @@
 
 #include <string.h>
 
-#include <openssl/bn.h>
-
 static size_t rsa_pub_key_size(int mod_size)
 {
     switch (mod_size) {
@@ -99,32 +97,5 @@ static bool is_mod_size_supported(int mod_size)
         return false;
     }
 }
-
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-/* Simple implementation for OpenSSL <1.1.0 where this function is missing */
-static int BN_bn2binpad(const BIGNUM* a, unsigned char* to, int tolen)
-{
-    int bn_size = BN_num_bytes(a);
-    int bytes_copied;
-
-    if (a == NULL || to == NULL) {
-        return -1;
-    }
-
-    if (tolen < bn_size) {
-        return -1;
-    }
-
-    bytes_copied = BN_bn2bin(a, to + (tolen - bn_size));
-
-    if (bytes_copied != bn_size) {
-        return -1;
-    }
-
-    memset(to, 0, (size_t)(tolen - bn_size));
-
-    return tolen;
-}
-#endif
 
 #endif /* THEMIS_SOTER_RSA_KEY_UTILS_H */

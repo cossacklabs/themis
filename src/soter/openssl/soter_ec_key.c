@@ -26,6 +26,7 @@
 #include <openssl/ec.h>
 #include <openssl/evp.h>
 
+#include "soter/openssl/soter_bignum_utils.h"
 #include "soter/openssl/soter_ec_key_utils.h"
 #include "soter/soter_portable_endian.h"
 
