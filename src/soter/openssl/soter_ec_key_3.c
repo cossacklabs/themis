@@ -28,9 +28,11 @@
 #include <openssl/obj_mac.h>
 #include <openssl/param_build.h>
 
+#include "soter/openssl/soter_bignum_utils.h"
 #include "soter/openssl/soter_ec_key_utils.h"
 #include "soter/openssl/soter_engine.h"
 #include "soter/soter_portable_endian.h"
+#include "soter/soter_wipe.h"
 
 soter_status_t soter_engine_specific_to_ec_pub_key(const soter_engine_specific_ec_key_t* engine_key,
                                                    bool compressed,
@@ -137,7 +139,10 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     size_t output_length;
     char curve_str[MAX_CURVE_NAME_LEN];
     int curve;
-    BIGNUM* d = NULL;
+    // Maximum supported key length is 521 bits (secp521r1), roughly 65.12 bytes, rounding to 66,
+    // +1 byte because our private keys have unneeded zero byte at the beginning
+    unsigned char bigint_buf[67] = {0};
+    OSSL_PARAM params[2];
 
     if ((!key_length) || (EVP_PKEY_EC != EVP_PKEY_id(pkey))) {
         return SOTER_INVALID_PARAMETER;
@@ -173,16 +178,18 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
 
     *key_length = output_length;
 
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_PRIV_KEY, &d)) {
-        res = SOTER_INVALID_PARAMETER;
-        goto err;
-    }
+    params[1] = OSSL_PARAM_construct_end();
 
-    if (BN_bn2binpad(d, (unsigned char*)(key + 1), (int)(output_length - sizeof(soter_container_hdr_t)))
-        == -1) {
+    params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_PRIV_KEY,
+                                        bigint_buf,
+                                        output_length - sizeof(soter_container_hdr_t));
+    if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
         goto err;
     }
+    memcpy_big_endian((unsigned char*)(key + 1),
+                      bigint_buf,
+                      output_length - sizeof(soter_container_hdr_t));
 
     memcpy(key->tag, ec_priv_key_tag(curve), SOTER_CONTAINER_TAG_LENGTH);
     key->size = htobe32(output_length);
@@ -191,8 +198,6 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     res = SOTER_SUCCESS;
 
 err:
-
-    BN_clear_free(d);
 
     return res;
 }

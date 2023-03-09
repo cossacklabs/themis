@@ -28,6 +28,7 @@
 #include <openssl/param_build.h>
 #include <openssl/rsa.h>
 
+#include "soter/openssl/soter_bignum_utils.h"
 #include "soter/openssl/soter_rsa_key_utils.h"
 #include "soter/soter_portable_endian.h"
 #include "soter/soter_wipe.h"
@@ -41,8 +42,10 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     int rsa_mod_size;
     size_t output_length;
     uint32_t* pub_exp;
-    // This bigint is reused multiple times: read into it, serialize it, read into it...
-    BIGNUM* tmp = NULL;
+    // Maximum supported RSA key is 8192 bits (1024 bytes)
+    unsigned char bigint_buf[1024];
+    OSSL_PARAM params[2];
+    BIGNUM* rsa_e = NULL;
 
     if (!key_length) {
         return SOTER_INVALID_PARAMETER;
@@ -77,25 +80,24 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
         goto err;
     }
 
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_N, &tmp)) {
+    params[1] = OSSL_PARAM_construct_end();
+
+    params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_N, bigint_buf, rsa_mod_size);
+    if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
         goto err;
     }
+    memcpy_big_endian((unsigned char*)(key + 1), bigint_buf, rsa_mod_size);
 
-    if (BN_bn2binpad(tmp, (unsigned char*)(key + 1), rsa_mod_size) == -1) {
-        res = SOTER_FAIL;
-        goto err;
-    }
-
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, &tmp)) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, &rsa_e)) {
         res = SOTER_FAIL;
         goto err;
     }
 
     pub_exp = (uint32_t*)((unsigned char*)(key + 1) + rsa_mod_size);
-    if (BN_is_word(tmp, RSA_F4)) {
+    if (BN_is_word(rsa_e, RSA_F4)) {
         *pub_exp = htobe32(RSA_F4);
-    } else if (BN_is_word(tmp, RSA_3)) {
+    } else if (BN_is_word(rsa_e, RSA_3)) {
         *pub_exp = htobe32(RSA_3);
     } else {
         res = SOTER_INVALID_PARAMETER;
@@ -109,7 +111,7 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     res = SOTER_SUCCESS;
 
 err:
-    BN_free(tmp);
+    BN_free(rsa_e);
 
     return res;
 }
@@ -123,8 +125,10 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     int rsa_mod_size;
     size_t output_length;
     uint32_t* pub_exp;
-    // This bigint is reused multiple times: read into it, serialize it, read into it...
-    BIGNUM* tmp = NULL;
+    // Maximum supported RSA key is 8192 bits (1024 bytes)
+    unsigned char bigint_buf[1024];
+    OSSL_PARAM params[2];
+    BIGNUM* rsa_e = NULL;
     unsigned char* curr_bn;
 
     if (!key_length) {
@@ -166,102 +170,82 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
         goto err;
     }
 
+    params[1] = OSSL_PARAM_construct_end();
     curr_bn = (unsigned char*)(key + 1);
 
     /* Private exponent */
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_D, &tmp)) {
+    params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_D, bigint_buf, rsa_mod_size);
+    if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
         goto err;
     }
-
-    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size) == -1) {
-        res = SOTER_FAIL;
-        goto clear_key;
-    }
+    memcpy_big_endian(curr_bn, bigint_buf, rsa_mod_size);
     curr_bn += rsa_mod_size;
 
     /* p */
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_FACTOR1, &tmp)) {
+    params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_FACTOR1, bigint_buf, rsa_mod_size / 2);
+    if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
-        goto clear_key;
+        goto err;
     }
-
-    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
-        res = SOTER_FAIL;
-        goto clear_key;
-    }
+    memcpy_big_endian(curr_bn, bigint_buf, rsa_mod_size / 2);
     curr_bn += rsa_mod_size / 2;
 
     /* q */
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_FACTOR2, &tmp)) {
+    params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_FACTOR2, bigint_buf, rsa_mod_size / 2);
+    if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
-        goto clear_key;
+        goto err;
     }
-
-    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
-        res = SOTER_FAIL;
-        goto clear_key;
-    }
+    memcpy_big_endian(curr_bn, bigint_buf, rsa_mod_size / 2);
     curr_bn += rsa_mod_size / 2;
 
     /* dp */
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_EXPONENT1, &tmp)) {
+    params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_EXPONENT1, bigint_buf, rsa_mod_size / 2);
+    if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
-        goto clear_key;
+        goto err;
     }
-
-    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
-        res = SOTER_FAIL;
-        goto clear_key;
-    }
+    memcpy_big_endian(curr_bn, bigint_buf, rsa_mod_size / 2);
     curr_bn += rsa_mod_size / 2;
 
     /* dq */
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_EXPONENT2, &tmp)) {
+    params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_EXPONENT2, bigint_buf, rsa_mod_size / 2);
+    if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
-        goto clear_key;
+        goto err;
     }
-
-    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
-        res = SOTER_FAIL;
-        goto clear_key;
-    }
+    memcpy_big_endian(curr_bn, bigint_buf, rsa_mod_size / 2);
     curr_bn += rsa_mod_size / 2;
 
     /* qp */
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_COEFFICIENT1, &tmp)) {
+    params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_COEFFICIENT1, bigint_buf, rsa_mod_size / 2);
+    if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
-        goto clear_key;
+        goto err;
     }
-
-    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size / 2) == -1) {
-        res = SOTER_FAIL;
-        goto clear_key;
-    }
+    memcpy_big_endian(curr_bn, bigint_buf, rsa_mod_size / 2);
     curr_bn += rsa_mod_size / 2;
 
     /* modulus */
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_N, &tmp)) {
+    params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_N, bigint_buf, rsa_mod_size);
+    if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
-        goto clear_key;
+        goto err;
     }
-
-    if (BN_bn2binpad(tmp, curr_bn, rsa_mod_size) == -1) {
-        res = SOTER_FAIL;
-        goto clear_key;
-    }
+    memcpy_big_endian(curr_bn, bigint_buf, rsa_mod_size);
     curr_bn += rsa_mod_size;
 
     /* public exponent */
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, &tmp)) {
+    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, &rsa_e)) {
         res = SOTER_FAIL;
         goto clear_key;
     }
 
     pub_exp = (uint32_t*)curr_bn;
-    if (BN_is_word(tmp, RSA_F4)) {
+    if (BN_is_word(rsa_e, RSA_F4)) {
         *pub_exp = htobe32(RSA_F4);
-    } else if (BN_is_word(tmp, RSA_3)) {
+    } else if (BN_is_word(rsa_e, RSA_3)) {
         *pub_exp = htobe32(RSA_3);
     } else {
         res = SOTER_INVALID_PARAMETER;
@@ -278,10 +262,12 @@ clear_key:
     if (res != SOTER_SUCCESS) {
         /* Zero output memory to avoid leaking private key information */
         soter_wipe(key, output_length);
+        /* We did not use whole buffer, only `rsa_mod_size` bytes of it */
+        soter_wipe(bigint_buf, rsa_mod_size);
     }
 
 err:
-    BN_clear_free(tmp);
+    BN_free(rsa_e);
 
     return res;
 }
