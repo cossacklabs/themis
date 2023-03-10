@@ -175,6 +175,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
     /* Private exponent */
     params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_D, bigint_buf, rsa_mod_size);
+    memset(bigint_buf, 0, rsa_mod_size);
     if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
         goto err;
@@ -184,6 +185,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
     /* p */
     params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_FACTOR1, bigint_buf, rsa_mod_size / 2);
+    memset(bigint_buf, 0, rsa_mod_size / 2);
     if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
         goto err;
@@ -193,6 +195,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
     /* q */
     params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_FACTOR2, bigint_buf, rsa_mod_size / 2);
+    memset(bigint_buf, 0, rsa_mod_size / 2);
     if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
         goto err;
@@ -202,6 +205,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
     /* dp */
     params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_EXPONENT1, bigint_buf, rsa_mod_size / 2);
+    memset(bigint_buf, 0, rsa_mod_size / 2);
     if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
         goto err;
@@ -211,6 +215,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
     /* dq */
     params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_EXPONENT2, bigint_buf, rsa_mod_size / 2);
+    memset(bigint_buf, 0, rsa_mod_size / 2);
     if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
         goto err;
@@ -220,6 +225,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
     /* qp */
     params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_COEFFICIENT1, bigint_buf, rsa_mod_size / 2);
+    memset(bigint_buf, 0, rsa_mod_size / 2);
     if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
         goto err;
@@ -229,6 +235,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
 
     /* modulus */
     params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_N, bigint_buf, rsa_mod_size);
+    memset(bigint_buf, 0, rsa_mod_size);
     if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
         goto err;

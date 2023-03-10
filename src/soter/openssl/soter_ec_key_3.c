@@ -141,7 +141,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     int curve;
     // Maximum supported key length is 521 bits (secp521r1), roughly 65.12 bytes, rounding to 66,
     // +1 byte because our private keys have unneeded zero byte at the beginning
-    unsigned char bigint_buf[67] = {0};
+    unsigned char bigint_buf[67];
     OSSL_PARAM params[2];
 
     if ((!key_length) || (EVP_PKEY_EC != EVP_PKEY_id(pkey))) {
@@ -183,6 +183,10 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_PRIV_KEY,
                                         bigint_buf,
                                         output_length - sizeof(soter_container_hdr_t));
+    // When asking EVP_PKEY_get_params() to fill 33 byte buffer with 32 byte integer,
+    // it leaves most significant byte unchanged, like it does not add padding.
+    // So, using memset() here to make sure buffer will contain valid big integer.
+    memset(bigint_buf, 0, output_length - sizeof(soter_container_hdr_t));
     if (!EVP_PKEY_get_params(pkey, params)) {
         res = SOTER_FAIL;
         goto err;
