@@ -10,7 +10,6 @@ themis = { version = "0.14", path = "../../src/wrappers/themis/rust" }
 libthemis-sys = { version = "0.14", path = "../../src/wrappers/themis/rust/libthemis-sys" }
 
 [dev-dependencies]
-criterion = { version = "0.3.4", features = ["cargo_bench_support", "html_reports"] }
 # Unpin when MSRV > 1.60
 csv = "~1.1"
 

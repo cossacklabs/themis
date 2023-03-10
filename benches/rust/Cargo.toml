@@ -2,7 +2,6 @@
 name = "rust-themis-bench"
 version = "0.0.0"
 edition = "2018"
-rust-version = "1.59.0"
 publish = false
 
 [dependencies]
