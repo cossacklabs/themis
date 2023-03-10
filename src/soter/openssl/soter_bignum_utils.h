@@ -51,27 +51,6 @@ static int BN_bn2binpad(const BIGNUM* a, unsigned char* to, int tolen)
 #endif
 
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
-// Like memcpy() but if host endianness is not "big", bytes are copied in reverse order.
-// Needed because EVP_PKEY_get_params() fills bigint buffers in native byte order
-// (which is usually "little"), but we use "big" in our keys, so need to reverse it
-// before putting into serialized key.
-#if __BYTE_ORDER == __BIG_ENDIAN
-static void memcpy_big_endian(void* dst, const void* src, size_t size)
-{
-    // Just copy the bytes, EVP_PKET_get_params() filled buffer with native order
-    memcpy(dst, src, size);
-}
-#else
-static void memcpy_big_endian(void* dst, const void* src, size_t size)
-{
-    // Host system uses different byte order, need to reverse
-    size_t i;
-    for (i = 0; i < size; i++) {
-        ((char*)dst)[size - i - 1] = ((char*)src)[i];
-    }
-}
-#endif
-
 static int get_bn_param(
     const EVP_PKEY* pkey, const char* name, unsigned char* buf, size_t buf_size, BIGNUM** bn)
 {

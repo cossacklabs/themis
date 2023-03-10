@@ -43,9 +43,8 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     size_t output_length;
     uint32_t* pub_exp;
     // Maximum supported RSA key is 8192 bits (1024 bytes)
-    unsigned char bigint_buf[1024];
-    OSSL_PARAM params[2];
-    BIGNUM* rsa_e = NULL;
+    unsigned char bignum_buf[1024];
+    BIGNUM* bignum = NULL;
 
     if (!key_length) {
         return SOTER_INVALID_PARAMETER;
@@ -80,24 +79,25 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
         goto err;
     }
 
-    params[1] = OSSL_PARAM_construct_end();
-
-    params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_RSA_N, bigint_buf, rsa_mod_size);
-    if (!EVP_PKEY_get_params(pkey, params)) {
+    if (!get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_N, bignum_buf, sizeof(bignum_buf), &bignum)) {
         res = SOTER_FAIL;
         goto err;
     }
-    memcpy_big_endian((unsigned char*)(key + 1), bigint_buf, rsa_mod_size);
 
-    if (!EVP_PKEY_get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, &rsa_e)) {
+    if (BN_bn2binpad(bignum, (unsigned char*)(key + 1), rsa_mod_size) == -1) {
+        res = SOTER_FAIL;
+        goto err;
+    }
+
+    if (!get_bn_param(pkey, OSSL_PKEY_PARAM_RSA_E, bignum_buf, sizeof(bignum_buf), &bignum)) {
         res = SOTER_FAIL;
         goto err;
     }
 
     pub_exp = (uint32_t*)((unsigned char*)(key + 1) + rsa_mod_size);
-    if (BN_is_word(rsa_e, RSA_F4)) {
+    if (BN_is_word(bignum, RSA_F4)) {
         *pub_exp = htobe32(RSA_F4);
-    } else if (BN_is_word(rsa_e, RSA_3)) {
+    } else if (BN_is_word(bignum, RSA_3)) {
         *pub_exp = htobe32(RSA_3);
     } else {
         res = SOTER_INVALID_PARAMETER;
@@ -111,7 +111,7 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     res = SOTER_SUCCESS;
 
 err:
-    BN_free(rsa_e);
+    BN_free(bignum);
 
     return res;
 }
