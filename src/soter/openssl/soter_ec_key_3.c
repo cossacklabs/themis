@@ -139,10 +139,9 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     size_t output_length;
     char curve_str[MAX_CURVE_NAME_LEN];
     int curve;
-    // Maximum supported key length is 521 bits (secp521r1), roughly 65.12 bytes, rounding to 66,
-    // +1 byte because our private keys have unneeded zero byte at the beginning
-    unsigned char bigint_buf[67];
-    OSSL_PARAM params[2];
+    // Maximum supported key length is 521 bits (secp521r1), roughly 65.12 bytes, rounding to 66
+    unsigned char bignum_buf[66];
+    BIGNUM* bignum = NULL;
 
     if ((!key_length) || (EVP_PKEY_EC != EVP_PKEY_id(pkey))) {
         return SOTER_INVALID_PARAMETER;
@@ -178,22 +177,15 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
 
     *key_length = output_length;
 
-    params[1] = OSSL_PARAM_construct_end();
-
-    params[0] = OSSL_PARAM_construct_BN(OSSL_PKEY_PARAM_PRIV_KEY,
-                                        bigint_buf,
-                                        output_length - sizeof(soter_container_hdr_t));
-    // When asking EVP_PKEY_get_params() to fill 33 byte buffer with 32 byte integer,
-    // it leaves most significant byte unchanged, like it does not add padding.
-    // So, using memset() here to make sure buffer will contain valid big integer.
-    memset(bigint_buf, 0, output_length - sizeof(soter_container_hdr_t));
-    if (!EVP_PKEY_get_params(pkey, params)) {
+    if (!get_bn_param(pkey, OSSL_PKEY_PARAM_PRIV_KEY, bignum_buf, sizeof(bignum_buf), &bignum)) {
         res = SOTER_FAIL;
         goto err;
     }
-    memcpy_big_endian((unsigned char*)(key + 1),
-                      bigint_buf,
-                      output_length - sizeof(soter_container_hdr_t));
+    if (BN_bn2binpad(bignum, (unsigned char*)(key + 1), (int)(output_length - sizeof(soter_container_hdr_t)))
+        == -1) {
+        res = SOTER_FAIL;
+        goto err;
+    }
 
     memcpy(key->tag, ec_priv_key_tag(curve), SOTER_CONTAINER_TAG_LENGTH);
     key->size = htobe32(output_length);
@@ -202,6 +194,11 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     res = SOTER_SUCCESS;
 
 err:
+    if (res != SOTER_SUCCESS) {
+        soter_wipe(bignum_buf, sizeof(bignum_buf));
+    }
+
+    BN_clear_free(bignum);
 
     return res;
 }

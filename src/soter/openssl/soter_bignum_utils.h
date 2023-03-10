@@ -19,6 +19,9 @@
 
 #include <openssl/bn.h>
 #include <openssl/opensslv.h>
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#include <openssl/params.h>
+#endif
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
 /* Simple implementation for OpenSSL <1.1.0 where this function is missing */
@@ -68,6 +71,21 @@ static void memcpy_big_endian(void* dst, const void* src, size_t size)
     }
 }
 #endif
+
+static int get_bn_param(
+    const EVP_PKEY* pkey, const char* name, unsigned char* buf, size_t buf_size, BIGNUM** bn)
+{
+    OSSL_PARAM params[2];
+
+    params[0] = OSSL_PARAM_construct_BN(name, buf, buf_size);
+    params[1] = OSSL_PARAM_construct_end();
+
+    if (!EVP_PKEY_get_params(pkey, params)) {
+        return 0;
+    }
+
+    return OSSL_PARAM_get_BN(params, bn);
+}
 #endif
 
 #endif /* THEMIS_SOTER_BIGNUM_UTILS_H */
