@@ -2,7 +2,6 @@
 name = "themis-core-bench"
 version = "0.0.0"
 edition = "2018"
-rust-version = "1.59.0"
 publish = false
 
 [dependencies]
@@ -10,6 +9,7 @@ themis = { version = "0.14", path = "../../src/wrappers/themis/rust" }
 libthemis-sys = { version = "0.14", path = "../../src/wrappers/themis/rust/libthemis-sys" }
 
 [dev-dependencies]
+criterion = { version = "0.3.4", features = ["cargo_bench_support", "html_reports"] }
 # Unpin when MSRV > 1.60
 csv = "~1.1"
 
