@@ -194,10 +194,7 @@ soter_status_t soter_engine_specific_to_ec_priv_key(const soter_engine_specific_
     res = SOTER_SUCCESS;
 
 err:
-    if (res != SOTER_SUCCESS) {
-        soter_wipe(bignum_buf, sizeof(bignum_buf));
-    }
-
+    soter_wipe(bignum_buf, sizeof(bignum_buf));
     BN_clear_free(bignum);
 
     return res;

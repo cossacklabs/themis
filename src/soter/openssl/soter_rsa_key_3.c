@@ -43,7 +43,7 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     size_t output_length;
     uint32_t* pub_exp;
     // Maximum supported RSA key is 8192 bits (1024 bytes)
-    unsigned char bignum_buf[1024];
+    unsigned char bignum_buf[RSA_KEY_BYTES_MAX];
     BIGNUM* bignum = NULL;
 
     if (!key_length) {
@@ -126,7 +126,7 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     size_t output_length;
     uint32_t* pub_exp;
     // Maximum supported RSA key is 8192 bits (1024 bytes)
-    unsigned char bignum_buf[1024];
+    unsigned char bignum_buf[RSA_KEY_BYTES_MAX];
     BIGNUM* bignum = NULL;
     unsigned char* curr_bn;
 
@@ -281,11 +281,12 @@ clear_key:
     if (res != SOTER_SUCCESS) {
         /* Zero output memory to avoid leaking private key information */
         soter_wipe(key, output_length);
-        /* We did not use whole buffer, only `rsa_mod_size` bytes of it */
-        soter_wipe(bignum_buf, rsa_mod_size);
     }
 
 err:
+    /* We did not use whole buffer, only `rsa_mod_size` bytes of it */
+    soter_wipe(bignum_buf, rsa_mod_size);
+
     BN_clear_free(bignum);
 
     return res;

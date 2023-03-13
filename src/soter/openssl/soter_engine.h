@@ -51,6 +51,7 @@ struct soter_sign_ctx_type {
     soter_sign_alg_t alg;
 };
 
+/* Enough for "prime256v1\0" */
 #define MAX_CURVE_NAME_LEN 11
 
 #endif /* SOTER_OPENSSL_ENGINE_H */

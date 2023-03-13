@@ -81,6 +81,9 @@ DECLARE_RSA_KEY(2048);
 DECLARE_RSA_KEY(4096);
 DECLARE_RSA_KEY(8192);
 
+/* Used internally when allocating large enough memory to store key components */
+#define RSA_KEY_BYTES_MAX RSA_BYTE_SIZE(8192)
+
 /* This is considered internal API */
 typedef void soter_engine_specific_rsa_key_t;
 

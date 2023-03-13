@@ -63,7 +63,7 @@ static int get_bn_param(
         return 0;
     }
 
-    return OSSL_PARAM_get_BN(params, bn);
+    return OSSL_PARAM_get_BN(&params[0], bn);
 }
 #endif
 
