@@ -12,6 +12,11 @@ libthemis-sys = { version = "0.14", path = "../../src/wrappers/themis/rust/libth
 criterion = { version = "0.3.4", features = ["cargo_bench_support", "html_reports"] }
 # Unpin when MSRV > 1.60
 csv = "~1.1"
+# Freeze `rayon` and `rayon-core` versions (first is used by `criterion`)
+# so that benchmarks still build/run with Rust 1.58.
+# FIXME: remove thiese two after we bump minimum required Rust version
+rayon = "=1.6.1"
+rayon-core = "=1.10.1"
 
 [[bench]]
 name = "secure_cell_seal_master_key"
