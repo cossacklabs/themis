@@ -9,9 +9,3 @@ members = [
 default-members = [
     "src/wrappers/themis/rust",
 ]
-
-# Freeze `rayon` version (used by `criterion` used by benchmarks)
-# so that benchmarks still build/run with Rust 1.58.
-# FIXME: remove this after we bump minimum required Rust version
-[patch.crates-io]
-rayon = { git = "https://github.com/rayon-rs/rayon.git", tag = "v1.6.1" }
