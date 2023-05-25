@@ -92,6 +92,7 @@ void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             if (status != THEMIS_BUFFER_TOO_SMALL) {
                 ThrowError("Key Pair generation failed", status);
                 args.GetReturnValue().SetUndefined();
+                return;
             }
             std::vector<uint8_t> prk(private_key_length);
             std::vector<uint8_t> puk(public_key_length);
@@ -99,6 +100,7 @@ void KeyPair::New(const Nan::FunctionCallbackInfo<v8::Value>& args)
             if (status != THEMIS_SUCCESS) {
                 ThrowError("Key Pair generation failed", status);
                 args.GetReturnValue().SetUndefined();
+                return;
             }
             KeyPair* obj = new KeyPair(prk, puk);
             obj->Wrap(args.This());

@@ -23,6 +23,7 @@ _Code:_
 - **Node.js**
 
   - Node.js v8 is no longer supported ([#901](https://github.com/cossacklabs/themis/pull/901)).
+  - Fixed bug that leads to segfauls if key pair generation fails ([#999](https://github.com/cossacklabs/themis/pull/999))
 
 - **Python**
 
