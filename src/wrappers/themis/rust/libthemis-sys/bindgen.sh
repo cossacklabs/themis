@@ -24,6 +24,16 @@ set -e -o pipefail
 # Bindgen sees Soter as well as some system libraries, we don't need that.
 WHITELIST="(THEMIS|themis|secure_(comparator|session)|STATE)_.*"
 
+EXTRA_FLAGS=
+
+# This flag was deprecated and removed in 0.65.0 [1].
+# However, older bindgen versions still require it.
+#
+# [1]: https://github.com/rust-lang/rust-bindgen/pull/2408
+if [[ $(bindgen | grep -- '--size_t-is-usize') ]]; then
+    EXTRA_FLAGS="--size_t-is-usize $EXTRA_FLAGS"
+fi
+
 # Currently, we don't pass --target since none of the symbols we're linking
 # against are architecture-specific. If this ever becomes a problem, then the
 # thing to do is to split the generated code into different files for different
@@ -37,11 +47,11 @@ bindgen bindgen.h \
     --no-layout-tests \
     --disable-header-comment \
     --rustified-enum "themis_key_kind" \
-    --size_t-is-usize \
     --allowlist-function "$WHITELIST" \
     --allowlist-type "$WHITELIST" \
     --allowlist-var "$WHITELIST" \
     --output src/lib.rs \
+    $EXTRA_FLAGS \
     -- \
     -I ../../../../../include \
     -I ../../../../../src
