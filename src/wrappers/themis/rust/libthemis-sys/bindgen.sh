@@ -30,7 +30,7 @@ EXTRA_FLAGS=
 # However, older bindgen versions still require it.
 #
 # [1]: https://github.com/rust-lang/rust-bindgen/pull/2408
-if [[ $(bindgen | grep -- '--size_t-is-usize') ]]; then
+if bindgen | grep -q -- '--size_t-is-usize'; then
     EXTRA_FLAGS="--size_t-is-usize $EXTRA_FLAGS"
 fi
 
