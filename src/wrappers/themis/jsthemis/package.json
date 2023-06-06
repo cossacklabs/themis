@@ -5,7 +5,8 @@
   "main": "build/Release/jsthemis.node",
   "scripts": {
     "test": "mocha",
-    "preuninstall": "rm -rf build/*"
+    "preuninstall": "rm -rf build/*",
+    "install_centos7_specific_deps": "./install_centos7_specific_deps.sh"
   },
   "repository": {
     "type": "git",
