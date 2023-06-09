@@ -454,7 +454,7 @@ jobs:
 
   macos-cross-compile:
     name: macOS cross toolchain
-    runs-on: macos-10.15
+    runs-on: macos-12
     steps:
       - name: Install system dependencies
         run: |
@@ -470,7 +470,7 @@ jobs:
       # and that changes the available SDKs. Check the combinations here:
       # https://github.com/actions/virtual-environments/blob/main/images/macos/macos-10.15-Readme.md#xcode
       - name: Build Themis Core (BoringSSL, arm64)
-        run: make SDK=macosx11.1 ARCH=arm64 ENGINE=boringssl
+        run: make SDK=macosx13.1 ARCH=arm64 ENGINE=boringssl
       # Of course we can't run unit tests either because there is no emulator.
       # So I will be satisifed to see the build succeed and produce binaries
       # with expected architecture.
