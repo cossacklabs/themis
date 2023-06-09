@@ -148,7 +148,7 @@ ifdef NPM_VERSION
 	@echo "Running jsthemis tests."
 	@echo "In case of errors, see https://docs.cossacklabs.com/themis/languages/nodejs/"
 	@echo "------------------------------------------------------------"
-	cd $(JSTHEMIS_SRC) && npm install && npm test
+	cd $(JSTHEMIS_SRC) && npm run install_centos7_specific_deps && npm install && npm test
 	@echo "------------------------------------------------------------"
 endif
 
