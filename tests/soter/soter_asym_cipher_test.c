@@ -356,6 +356,7 @@ void test_api_all(void)
     test_api(RSA_KEY_LENGTH_4096);
     //    test_api(RSA_KEY_LENGTH_8192);
 }
+
 void run_soter_asym_cipher_tests(void)
 {
     testsuite_enter_suite("soter asym cipher: basic flow");
