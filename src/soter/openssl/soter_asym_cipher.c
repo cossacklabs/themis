@@ -17,7 +17,11 @@
 #include "soter/soter_asym_cipher.h"
 
 #include <openssl/evp.h>
+#include <openssl/opensslv.h>
 #include <openssl/rsa.h>
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
+#include <openssl/core_names.h>
+#endif
 
 #include "soter/openssl/soter_engine.h"
 #include "soter/soter_api.h"
@@ -28,6 +32,63 @@
 
 #ifndef SOTER_RSA_KEY_LENGTH
 #define SOTER_RSA_KEY_LENGTH 2048
+#endif
+
+#if OPENSSL_VERSION_NUMBER >= 0x30000000
+static bool get_rsa_mod_size(EVP_PKEY* pkey, int* rsa_mod_size)
+{
+    if (!EVP_PKEY_get_int_param(pkey, OSSL_PKEY_PARAM_BITS, rsa_mod_size)) {
+        return false;
+    }
+    *rsa_mod_size = (*rsa_mod_size + 7) / 8;
+    return true;
+}
+#else
+static bool get_rsa_mod_size(EVP_PKEY* pkey, int* rsa_mod_size)
+{
+    RSA* rsa = EVP_PKEY_get0(pkey);
+    if (!rsa) {
+        return false;
+    }
+    *rsa_mod_size = RSA_size(rsa);
+    return true;
+}
+#endif
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+static bool check_rsa_private_key(EVP_PKEY* pkey, EVP_PKEY_CTX* pkey_ctx)
+{
+    UNUSED(pkey_ctx);
+    RSA* rsa = EVP_PKEY_get0(pkey);
+
+    if (rsa->d == NULL) {
+        return false;
+    }
+
+    return true;
+}
+#elif OPENSSL_VERSION_NUMBER < 0x30000000
+static bool check_rsa_private_key(EVP_PKEY* pkey, EVP_PKEY_CTX* pkey_ctx)
+{
+    UNUSED(pkey_ctx);
+    RSA* rsa = EVP_PKEY_get0(pkey);
+    const BIGNUM* d = NULL;
+
+    RSA_get0_key(rsa, NULL, NULL, &d);
+
+    if (NULL == d) {
+        return false;
+    }
+
+    return true;
+}
+#else /* OPENSSL_VERSION_NUMBER >= 0x30000000 */
+static bool check_rsa_private_key(EVP_PKEY* pkey, EVP_PKEY_CTX* pkey_ctx)
+{
+    UNUSED(pkey);
+    // EVP_PKEY_private_check was added in 3.0
+    return EVP_PKEY_private_check(pkey_ctx) == 1;
+}
 #endif
 
 soter_status_t soter_asym_cipher_import_key(soter_asym_cipher_t* asym_cipher_ctx,
@@ -139,7 +200,6 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher,
                                          size_t* cipher_data_length)
 {
     EVP_PKEY* pkey;
-    RSA* rsa;
     int rsa_mod_size;
     size_t output_length;
 
@@ -158,12 +218,10 @@ soter_status_t soter_asym_cipher_encrypt(soter_asym_cipher_t* asym_cipher,
         return SOTER_INVALID_PARAMETER;
     }
 
-    rsa = EVP_PKEY_get0(pkey);
-    if (NULL == rsa) {
+    if (!get_rsa_mod_size(pkey, &rsa_mod_size)) {
         return SOTER_FAIL;
     }
 
-    rsa_mod_size = RSA_size(rsa);
     int oaep_max_payload_length = (rsa_mod_size - 2 - (2 * OAEP_HASH_SIZE));
     if (oaep_max_payload_length < 0 || plain_data_length > (size_t)oaep_max_payload_length) {
         /* The plaindata is too large for this key size */
@@ -223,8 +281,6 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
                                          size_t* plain_data_length)
 {
     EVP_PKEY* pkey;
-    RSA* rsa;
-    const BIGNUM* d = NULL;
     int rsa_mod_size;
     size_t output_length;
 
@@ -243,12 +299,9 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
         return SOTER_INVALID_PARAMETER;
     }
 
-    rsa = EVP_PKEY_get0(pkey);
-    if (NULL == rsa) {
+    if (!get_rsa_mod_size(pkey, &rsa_mod_size)) {
         return SOTER_FAIL;
     }
-
-    rsa_mod_size = RSA_size(rsa);
 
     if (rsa_mod_size < 0 || cipher_data_length < (size_t)rsa_mod_size) {
         /* The cipherdata is too small for this key size */
@@ -258,12 +311,7 @@ soter_status_t soter_asym_cipher_decrypt(soter_asym_cipher_t* asym_cipher,
     /* we can only decrypt, if we have the private key */
     /* some versions of OpenSSL just crash, if you send RSA public key to EVP_PKEY_decrypt, so we do
      * checks here */
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-    d = rsa->d;
-#else
-    RSA_get0_key(rsa, NULL, NULL, &d);
-#endif
-    if (NULL == d) {
+    if (!check_rsa_private_key(pkey, asym_cipher->pkey_ctx)) {
         return SOTER_INVALID_PARAMETER;
     }
 
