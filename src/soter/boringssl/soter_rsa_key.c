@@ -101,7 +101,7 @@ static bool is_mod_size_supported(unsigned mod_size)
     }
 }
 
-static soter_status_t bignum_to_bytes(BIGNUM* bn, uint8_t* to, size_t to_length)
+static soter_status_t bignum_to_bytes(const BIGNUM* bn, uint8_t* to, size_t to_length)
 {
     size_t bn_size = (size_t)BN_num_bytes(bn);
     size_t bytes_copied;
