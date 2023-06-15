@@ -33,5 +33,6 @@ base64 = "0.10.0"
 byteorder = "1.2.7"
 clap = "2.32"
 lazy_static = "1.2.0"
-log = "0.4.6"
+# it can be unpinned when we update the minimum supported version of rustc
+log = "=0.4.18"
 env_logger = "0.6.0"
