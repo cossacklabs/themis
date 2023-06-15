@@ -11,6 +11,7 @@ _Code:_
   - Uncompressed EC public keys are now supported ([#959](https://github.com/cossacklabs/themis/pull/959), [#954](https://github.com/cossacklabs/themis/pull/954))
   - Themis will generate uncompressed EC public keys when `THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED=1` environment variable is set ([#959](https://github.com/cossacklabs/themis/pull/959))
   - Increased PBKDF2 iteration count to maintain security of Secure Cell passphrase mode ([#976](https://github.com/cossacklabs/themis/pull/976)).
+  - Bumped embedded BoringSSL to the latest version ([#1004](https://github.com/cossacklabs/themis/pull/1004)).
 
   - **Soter** (low-level security core used by Themis)
 
