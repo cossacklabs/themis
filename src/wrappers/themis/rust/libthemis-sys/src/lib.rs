@@ -44,9 +44,6 @@ pub const THEMIS_SCOMPARE_SEND_OUTPUT_TO_PEER: u32 = 1;
 pub const THEMIS_SCOMPARE_MATCH: u32 = 21;
 pub const THEMIS_SCOMPARE_NO_MATCH: u32 = 22;
 pub const THEMIS_SCOMPARE_NOT_READY: u32 = 0;
-pub const STATE_IDLE: u32 = 0;
-pub const STATE_NEGOTIATING: u32 = 1;
-pub const STATE_ESTABLISHED: u32 = 2;
 pub type themis_status_t = i32;
 extern "C" {
     pub fn themis_secure_cell_encrypt_seal(
@@ -289,6 +286,9 @@ extern "C" {
         message_length: *mut usize,
     ) -> themis_status_t;
 }
+pub const STATE_IDLE: u32 = 0;
+pub const STATE_NEGOTIATING: u32 = 1;
+pub const STATE_ESTABLISHED: u32 = 2;
 pub type send_protocol_data_callback = ::std::option::Option<
     unsafe extern "C" fn(
         data: *const u8,
