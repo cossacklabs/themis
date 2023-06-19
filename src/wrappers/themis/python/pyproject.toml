@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pythemis"
-version = "0.14.0"
+version = "0.15.0"
 authors = [{ name = "CossackLabs", email = "dev@cossacklabs.com" }]
 description = "Themis is multi-platform library with a high-level and easy-to-use cryptographic toolkit for data protection"
 readme = "README.md"
