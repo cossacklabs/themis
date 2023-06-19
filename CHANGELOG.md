@@ -30,6 +30,7 @@ _Code:_
 - **Python**
 
   - `pythemis.scomparator` and `pythemis.skeygen` are now imported with `from pythemis import *` ([#914](https://github.com/cossacklabs/themis/pull/914)).
+  - Pythemis supports `pyproject.toml` as a main way of building packages. The old `setup.py` is preserved for backwards compatibility ([#1006](https://github.com/cossacklabs/themis/pull/1006)).
 
 - **Ruby**
 
