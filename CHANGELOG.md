@@ -4,6 +4,22 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.15.0](https://github.com/cossacklabs/themis/releases/tag/0.15.0), July 1st 2023
+
+**TL;DR:**
+
+- Uncompressed EC public keys are now supported.
+- Increased PBKDF2 iteration count for Secure Cell passphrase mode.
+- OpenSSL 3.0 is now supported.
+- Pythemis now uses `pyproject.toml`.
+- And as usual: enhanced security measures and fixed bugs.
+
+**Breaking changes and deprecations:**
+- AndroidThemis build requires Gradle 7.3, Android SDK 11, Android NDK 25.
+- Some Soter functions are deprecated.
+- Node.js 8 is no longer supported.
+- Rust `SecureSessionTransport` implementations are now `Send`.
+
 _Code:_
 
 - **Core**
