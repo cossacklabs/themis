@@ -19,6 +19,7 @@ Changes that are currently in development and have not been released yet.
 - Some Soter functions are deprecated.
 - Node.js 8 is no longer supported.
 - Rust `SecureSessionTransport` implementations are now `Send`.
+- Rust 1.58 is now the minimum supported version.
 
 _Code:_
 
