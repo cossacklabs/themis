@@ -43,6 +43,7 @@ _Code:_
     This is technically a breaking change, but most reasonble implementations should be `Send` already. Please raise an issue if your code fails to build.
 
   - Minimum supported Rust version is now 1.58 ([#977](https://github.com/cossacklabs/themis/pull/977), [#984](https://github.com/cossacklabs/themis/pull/984)).
+  - Bindgen is pinned to 0.66.1 on CI ([#1008](https://github.com/cossacklabs/themis/pull/1008)).
 
 - **WebAssembly**
 
