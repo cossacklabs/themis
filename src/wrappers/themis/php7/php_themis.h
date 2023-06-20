@@ -17,7 +17,7 @@
 #ifndef _PHP_THEMIS_H_
 #define _PHP_THEMIS_H_
 
-#define PHP_THEMIS_VERSION "0.14.0"
+#define PHP_THEMIS_VERSION "0.15.0"
 #define PHP_THEMIS_EXTNAME "phpthemis"
 
 extern zend_module_entry phpthemis_module_entry;
