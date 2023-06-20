@@ -87,14 +87,12 @@ ifeq ($(RENAME_BORINGSSL_SYMBOLS),yes)
 	 $(GO) run util/read_symbols.go -out $(abspath $(BIN_PATH)/boringssl/symbols.txt) \
 	     $(abspath $(BIN_PATH)/boringssl/stage-1/crypto/libcrypto.a) \
 	     $(abspath $(BIN_PATH)/boringssl/stage-1/decrepit/libdecrepit.a)
-	@# Path to symbols must be a relative one (relative to the build directory)
-	@# because absolute paths confuse BoringSSL's make.
 	@echo "building embedded BoringSSL again with renamed symbols..."
 	@mkdir -p $(BIN_PATH)/boringssl/stage-2
 	@cd $(BIN_PATH)/boringssl/stage-2 && \
 	 $(CMAKE) $(SOTER_ENGINE_CMAKE_FLAGS) \
 	     -DBORINGSSL_PREFIX=$(SOTER_BORINGSSL_PREFIX) \
-	     -DBORINGSSL_PREFIX_SYMBOLS=../symbols.txt \
+	     -DBORINGSSL_PREFIX_SYMBOLS=$(abspath $(BIN_PATH)/boringssl/symbols.txt) \
 	     $(abspath third_party/boringssl/src)
 ifeq ($(NINJA),)
 	@$(MAKE) -C $(BIN_PATH)/boringssl/stage-2 crypto decrepit
