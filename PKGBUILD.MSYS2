@@ -4,7 +4,7 @@
 
 pkgname=('themis' 'themis-devel')
 pkgbase=themis
-pkgver=0.14.0
+pkgver=0.15.0
 pkgrel=1
 
 pkgdesc="Data security library for network communication and data storage"
