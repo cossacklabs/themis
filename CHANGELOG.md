@@ -9,7 +9,7 @@ Changes that are currently in development and have not been released yet.
 **TL;DR:**
 
 - Uncompressed EC public keys are now supported.
-- Increased PBKDF2 iteration count for Secure Cell passphrase mode.
+- Increased PBKDF2 iteration count from 200000 to 314110 for Secure Cell passphrase mode.
 - OpenSSL 3.0 is now supported.
 - Pythemis now uses `pyproject.toml`.
 - And as usual: enhanced security measures and fixed bugs.
