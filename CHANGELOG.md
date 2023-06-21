@@ -4,7 +4,7 @@
 
 Changes that are currently in development and have not been released yet.
 
-## [0.15.0](https://github.com/cossacklabs/themis/releases/tag/0.15.0), July 1st 2023
+## [0.15.0](https://github.com/cossacklabs/themis/releases/tag/0.15.0), June 21st 2023
 
 **TL;DR:**
 
