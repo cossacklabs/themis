@@ -101,7 +101,7 @@ static bool is_mod_size_supported(unsigned mod_size)
     }
 }
 
-static soter_status_t bignum_to_bytes(BIGNUM* bn, uint8_t* to, size_t to_length)
+static soter_status_t bignum_to_bytes(const BIGNUM* bn, uint8_t* to, size_t to_length)
 {
     size_t bn_size = (size_t)BN_num_bytes(bn);
     size_t bytes_copied;
@@ -159,16 +159,16 @@ soter_status_t soter_engine_specific_to_rsa_pub_key(const soter_engine_specific_
     }
 
     pub_exp = (uint32_t*)((unsigned char*)(key + 1) + rsa_mod_size);
-    if (BN_is_word(rsa->e, RSA_F4)) {
+    if (BN_is_word(RSA_get0_e(rsa), RSA_F4)) {
         *pub_exp = htobe32(RSA_F4);
-    } else if (BN_is_word(rsa->e, RSA_3)) {
+    } else if (BN_is_word(RSA_get0_e(rsa), RSA_3)) {
         *pub_exp = htobe32(RSA_3);
     } else {
         res = SOTER_INVALID_PARAMETER;
         goto err;
     }
 
-    res = bignum_to_bytes(rsa->n, (unsigned char*)(key + 1), rsa_mod_size);
+    res = bignum_to_bytes(RSA_get0_n(rsa), (unsigned char*)(key + 1), rsa_mod_size);
     if (SOTER_SUCCESS != res) {
         goto err;
     }
@@ -225,9 +225,9 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     }
 
     pub_exp = (uint32_t*)(curr_bn + ((rsa_mod_size * 4) + (rsa_mod_size / 2)));
-    if (BN_is_word(rsa->e, RSA_F4)) {
+    if (BN_is_word(RSA_get0_e(rsa), RSA_F4)) {
         *pub_exp = htobe32(RSA_F4);
-    } else if (BN_is_word(rsa->e, RSA_3)) {
+    } else if (BN_is_word(RSA_get0_e(rsa), RSA_3)) {
         *pub_exp = htobe32(RSA_3);
     } else {
         res = SOTER_INVALID_PARAMETER;
@@ -235,49 +235,49 @@ soter_status_t soter_engine_specific_to_rsa_priv_key(const soter_engine_specific
     }
 
     /* Private exponent */
-    res = bignum_to_bytes(rsa->d, curr_bn, rsa_mod_size);
+    res = bignum_to_bytes(RSA_get0_d(rsa), curr_bn, rsa_mod_size);
     if (SOTER_SUCCESS != res) {
         goto err;
     }
     curr_bn += rsa_mod_size;
 
     /* p */
-    res = bignum_to_bytes(rsa->p, curr_bn, rsa_mod_size / 2);
+    res = bignum_to_bytes(RSA_get0_p(rsa), curr_bn, rsa_mod_size / 2);
     if (SOTER_SUCCESS != res) {
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* q */
-    res = bignum_to_bytes(rsa->q, curr_bn, rsa_mod_size / 2);
+    res = bignum_to_bytes(RSA_get0_q(rsa), curr_bn, rsa_mod_size / 2);
     if (SOTER_SUCCESS != res) {
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* dp */
-    res = bignum_to_bytes(rsa->dmp1, curr_bn, rsa_mod_size / 2);
+    res = bignum_to_bytes(RSA_get0_dmp1(rsa), curr_bn, rsa_mod_size / 2);
     if (SOTER_SUCCESS != res) {
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* dq */
-    res = bignum_to_bytes(rsa->dmq1, curr_bn, rsa_mod_size / 2);
+    res = bignum_to_bytes(RSA_get0_dmq1(rsa), curr_bn, rsa_mod_size / 2);
     if (SOTER_SUCCESS != res) {
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* qp */
-    res = bignum_to_bytes(rsa->iqmp, curr_bn, rsa_mod_size / 2);
+    res = bignum_to_bytes(RSA_get0_iqmp(rsa), curr_bn, rsa_mod_size / 2);
     if (SOTER_SUCCESS != res) {
         goto err;
     }
     curr_bn += rsa_mod_size / 2;
 
     /* modulus */
-    res = bignum_to_bytes(rsa->n, curr_bn, rsa_mod_size);
+    res = bignum_to_bytes(RSA_get0_n(rsa), curr_bn, rsa_mod_size);
     if (SOTER_SUCCESS != res) {
         goto err;
     }

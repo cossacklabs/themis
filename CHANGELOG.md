@@ -4,6 +4,23 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.15.0](https://github.com/cossacklabs/themis/releases/tag/0.15.0), June 21st 2023
+
+**TL;DR:**
+
+- Uncompressed EC public keys are now supported.
+- Increased PBKDF2 iteration count from 200000 to 314110 for Secure Cell passphrase mode.
+- OpenSSL 3.0 is now supported.
+- Pythemis now uses `pyproject.toml`.
+- And as usual: enhanced security measures and fixed bugs.
+
+**Breaking changes and deprecations:**
+- AndroidThemis build requires Gradle 7.3, Android SDK 11, Android NDK 25.
+- Some Soter functions are deprecated.
+- Node.js 8 is no longer supported.
+- Rust `SecureSessionTransport` implementations are now `Send`.
+- Rust 1.58 is now the minimum supported version.
+
 _Code:_
 
 - **Core**
@@ -11,6 +28,7 @@ _Code:_
   - Uncompressed EC public keys are now supported ([#959](https://github.com/cossacklabs/themis/pull/959), [#954](https://github.com/cossacklabs/themis/pull/954))
   - Themis will generate uncompressed EC public keys when `THEMIS_GEN_EC_KEY_PAIR_UNCOMPRESSED=1` environment variable is set ([#959](https://github.com/cossacklabs/themis/pull/959))
   - Increased PBKDF2 iteration count to maintain security of Secure Cell passphrase mode ([#976](https://github.com/cossacklabs/themis/pull/976)).
+  - Bumped embedded BoringSSL to the latest version ([#1004](https://github.com/cossacklabs/themis/pull/1004)).
 
   - **Soter** (low-level security core used by Themis)
 
@@ -30,6 +48,7 @@ _Code:_
 - **Python**
 
   - `pythemis.scomparator` and `pythemis.skeygen` are now imported with `from pythemis import *` ([#914](https://github.com/cossacklabs/themis/pull/914)).
+  - Pythemis supports `pyproject.toml` as a main way of building packages. The old `setup.py` is preserved for backwards compatibility ([#1006](https://github.com/cossacklabs/themis/pull/1006)).
 
 - **Ruby**
 
@@ -42,6 +61,7 @@ _Code:_
     This is technically a breaking change, but most reasonble implementations should be `Send` already. Please raise an issue if your code fails to build.
 
   - Minimum supported Rust version is now 1.58 ([#977](https://github.com/cossacklabs/themis/pull/977), [#984](https://github.com/cossacklabs/themis/pull/984)).
+  - Bindgen is pinned to 0.66.1 on CI ([#1008](https://github.com/cossacklabs/themis/pull/1008)).
 
 - **WebAssembly**
 
