@@ -570,7 +570,8 @@ impl SecureSession {
     /// [`negotiate`]: struct.SecureSession.html#method.negotiate
     /// [`receive_data`]: trait.SecureSessionTransport.html#method.receive_data
     pub fn receive(&mut self, max_len: usize) -> Result<Vec<u8>> {
-        let mut message = Vec::with_capacity(max_len);
+        let mut message = Vec::new();
+        message.try_reserve(max_len)?;
 
         unsafe {
             let length = secure_session_receive(
