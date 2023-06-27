@@ -434,7 +434,7 @@ impl SecureSession {
             }
         }
 
-        id.reserve(id_len);
+        id.try_reserve(id_len)?;
 
         unsafe {
             let status = secure_session_get_remote_id(self.session, id.as_mut_ptr(), &mut id_len);
@@ -628,7 +628,7 @@ impl SecureSession {
             }
         }
 
-        output.reserve(output_len);
+        output.try_reserve(output_len)?;
 
         unsafe {
             let status = secure_session_generate_connect_request(
@@ -681,7 +681,7 @@ impl SecureSession {
             }
         }
 
-        message.reserve(message_len);
+        message.try_reserve(message_len)?;
 
         unsafe {
             let status = secure_session_unwrap(
@@ -736,7 +736,7 @@ impl SecureSession {
             }
         }
 
-        wrapped.reserve(wrapped_len);
+        wrapped.try_reserve(wrapped_len)?;
 
         unsafe {
             let status = secure_session_wrap(
@@ -787,7 +787,7 @@ impl SecureSession {
             }
         }
 
-        message.reserve(message_len);
+        message.try_reserve(message_len)?;
 
         unsafe {
             let status = secure_session_unwrap(
