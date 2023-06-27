@@ -149,6 +149,14 @@ impl fmt::Display for Error {
     }
 }
 
+impl From<std::collections::TryReserveError> for Error {
+    fn from(_: std::collections::TryReserveError) -> Self {
+        Self {
+            kind: ErrorKind::NoMemory,
+        }
+    }
+}
+
 /// A list of Themis error categories.
 ///
 /// This enumeration is used by [`Error`] type, returned by most Themis functions. Some error kinds
