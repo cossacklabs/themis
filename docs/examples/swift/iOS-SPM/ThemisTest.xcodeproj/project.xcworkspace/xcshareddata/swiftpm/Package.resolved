@@ -3,10 +3,10 @@
     {
       "identity" : "themis",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/cossacklabs/themis",
+      "location" : "https://github.com/radetsky/themis",
       "state" : {
-        "revision" : "b573ad970462e5ccc9dbafe5d954e57dcc386ba8",
-        "version" : "0.14.9"
+        "revision" : "56b0938d103b4cc422ba58a524d110064396f97b",
+        "version" : "0.15.0"
       }
     }
   ],
