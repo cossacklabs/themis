@@ -837,4 +837,38 @@ mod token_protect {
         assert!(cell.decrypt(&encrypted, &[]).is_err());
         assert!(cell.decrypt(&[], &token).is_err());
     }
+
+    #[test]
+    fn corruption_can_fail_with_no_memory() {
+        let cell = SecureCell::with_key(SymmetricKey::new())
+            .unwrap()
+            .token_protect();
+        let message = "Не можна зупинити ідею, час якої настав".as_bytes();
+
+        let (encrypted, token) = cell.encrypt(&message).unwrap();
+        let mut corrupted_token = token;
+
+        // set length to maximum possible, it will produce an allocation of
+        // 4GiB, which should fail on the 32 bit machines
+        corrupted_token[12..16].fill(0xff);
+
+        let err = cell.decrypt(&encrypted, &corrupted_token).unwrap_err();
+
+        if cfg!(target_pointer_width = "32") {
+            // On 32 bit machines, even if OS supports RAM with > 4GB, a single
+            // process cannot have more than that, so it should fail with no
+            // memory. Unless you use some exotic system.
+            assert_eq!(err.kind(), themis::ErrorKind::NoMemory);
+        } else {
+            // We cannot assume any particular error here. On most 64 bit machines,
+            // it will probably fail with the `Fail`, because the lengths are
+            // inconsistent.However, on systems with limited amount of memory
+            // (like Raspberry PI 4 with memory < 4GB), it will fail because of
+            // allocation.
+            assert!(matches!(
+                err.kind(),
+                themis::ErrorKind::NoMemory | themis::ErrorKind::Fail
+            ));
+        }
+    }
 }
