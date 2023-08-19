@@ -1,12 +1,12 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.14.0"
+    s.version = "0.15.0"
     s.summary = "Data security library for network communication and data storage for iOS and mac OS"
     s.description = "Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis is aimed at modern development practices and has a unified API across 12 platforms, including iOS/macOS, Ruby, JavaScript, Python, and Java/Android."
     s.homepage = "https://cossacklabs.com"
     s.license = { :type => 'Apache 2.0'}
 
-    s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
+    s.source = { :git => "https://github.com/radetsky/themis.git", :tag => "#{s.version}" }
 
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
@@ -23,8 +23,8 @@ Pod::Spec.new do |s|
 
     # This variant uses the current stable, non-legacy version of OpenSSL.
     s.subspec 'openssl-1.1.1' do |so|
-        # OpenSSL 1.1.1k
-        so.dependency 'CLOpenSSL-XCF', '1.1.11101'
+        # OpenSSL 1.1.1u
+        so.dependency 'CLOpenSSL-XCF-rad', '1.1.12102'
 
         # Enable bitcode for OpenSSL in a very specific way, but it works, thanks to @deszip
         so.ios.pod_target_xcconfig = {
