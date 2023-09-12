@@ -1344,7 +1344,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.15.0;
+				MARKETING_VERSION = 0.15.1;
 				ONLY_ACTIVE_ARCH = YES;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -1404,7 +1404,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.15.0;
+				MARKETING_VERSION = 0.15.1;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1440,7 +1440,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.15.0;
+				MARKETING_VERSION = 0.15.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1477,7 +1477,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.15.0;
+				MARKETING_VERSION = 0.15.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1518,7 +1518,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.15.0;
+				MARKETING_VERSION = 0.15.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1560,7 +1560,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.15.0;
+				MARKETING_VERSION = 0.15.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
