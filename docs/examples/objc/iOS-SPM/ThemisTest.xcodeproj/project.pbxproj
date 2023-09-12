@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1DAA3C0C2A7D5F3B0024F60F /* themis in Frameworks */ = {isa = PBXBuildFile; productRef = 1DAA3C0B2A7D5F3B0024F60F /* themis */; };
+		1DD6A1AF2AB0E1510086E940 /* themis in Frameworks */ = {isa = PBXBuildFile; productRef = 1DD6A1AE2AB0E1510086E940 /* themis */; };
 		6D93CFF9263C294600ED53C4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D93CFF8263C294600ED53C4 /* AppDelegate.m */; };
 		6D93CFFC263C294600ED53C4 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D93CFFB263C294600ED53C4 /* SceneDelegate.m */; };
 		6D93CFFF263C294600ED53C4 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6D93CFFE263C294600ED53C4 /* ViewController.m */; };
@@ -45,7 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1DAA3C0C2A7D5F3B0024F60F /* themis in Frameworks */,
+				1DD6A1AF2AB0E1510086E940 /* themis in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,7 +115,7 @@
 			);
 			name = ThemisTest;
 			packageProductDependencies = (
-				1DAA3C0B2A7D5F3B0024F60F /* themis */,
+				1DD6A1AE2AB0E1510086E940 /* themis */,
 			);
 			productName = ThemisTest;
 			productReference = 6D93CFF4263C294600ED53C4 /* ThemisTest.app */;
@@ -144,7 +144,7 @@
 			);
 			mainGroup = 6D93CFEB263C294600ED53C4;
 			packageReferences = (
-				1DAA3C0A2A7D5F3B0024F60F /* XCRemoteSwiftPackageReference "themis" */,
+				1DD6A1AD2AB0E1510086E940 /* XCRemoteSwiftPackageReference "themis" */,
 			);
 			productRefGroup = 6D93CFF5263C294600ED53C4 /* Products */;
 			projectDirPath = "";
@@ -323,9 +323,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2021122301;
-				DEVELOPMENT_TEAM = FZN2KUFR38;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ThemisTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -344,9 +345,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 2021122301;
-				DEVELOPMENT_TEAM = FZN2KUFR38;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ThemisTest/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -384,9 +386,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		1DAA3C0A2A7D5F3B0024F60F /* XCRemoteSwiftPackageReference "themis" */ = {
+		1DD6A1AD2AB0E1510086E940 /* XCRemoteSwiftPackageReference "themis" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/radetsky/themis";
+			repositoryURL = "https://github.com/cossacklabs/themis";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.15.0;
@@ -395,9 +397,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1DAA3C0B2A7D5F3B0024F60F /* themis */ = {
+		1DD6A1AE2AB0E1510086E940 /* themis */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1DAA3C0A2A7D5F3B0024F60F /* XCRemoteSwiftPackageReference "themis" */;
+			package = 1DD6A1AD2AB0E1510086E940 /* XCRemoteSwiftPackageReference "themis" */;
 			productName = themis;
 		};
 /* End XCSwiftPackageProductDependency section */
