@@ -384,7 +384,7 @@
 			repositoryURL = "https://github.com/cossacklabs/themis";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.15.0;
+				minimumVersion = 0.15.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
