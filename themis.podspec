@@ -13,8 +13,8 @@ Pod::Spec.new do |s|
     s.module_name = 'themis'
     s.default_subspec = 'openssl-1.1.1'
 
-    s.ios.deployment_target = '10.0'
-    s.osx.deployment_target = '10.11'
+    s.ios.deployment_target = '11.0'
+    s.osx.deployment_target = '10.13'
     s.ios.frameworks = 'UIKit', 'Foundation'
 
     # TODO(ilammy, 2020-03-02): resolve "pod spec lint" warnings due to dependencies
