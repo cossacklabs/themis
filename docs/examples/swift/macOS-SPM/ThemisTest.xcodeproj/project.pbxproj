@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1DB02B902A7D4E1C00A09FC6 /* themis in Frameworks */ = {isa = PBXBuildFile; productRef = 1DB02B8F2A7D4E1C00A09FC6 /* themis */; };
+		1DC827E42AB18ABB00CD51D1 /* themis in Frameworks */ = {isa = PBXBuildFile; productRef = 1DC827E32AB18ABB00CD51D1 /* themis */; };
 		6DFBC499263C2DB300DC8865 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFBC498263C2DB300DC8865 /* AppDelegate.swift */; };
 		6DFBC49B263C2DB300DC8865 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFBC49A263C2DB300DC8865 /* ViewController.swift */; };
 		6DFBC49D263C2DB600DC8865 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6DFBC49C263C2DB600DC8865 /* Assets.xcassets */; };
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1DB02B902A7D4E1C00A09FC6 /* themis in Frameworks */,
+				1DC827E42AB18ABB00CD51D1 /* themis in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,7 +102,7 @@
 			);
 			name = ThemisTest;
 			packageProductDependencies = (
-				1DB02B8F2A7D4E1C00A09FC6 /* themis */,
+				1DC827E32AB18ABB00CD51D1 /* themis */,
 			);
 			productName = ThemisTest;
 			productReference = 6DFBC495263C2DB300DC8865 /* ThemisTest.app */;
@@ -132,7 +132,7 @@
 			);
 			mainGroup = 6DFBC48C263C2DB300DC8865;
 			packageReferences = (
-				1DB02B8E2A7D4E1C00A09FC6 /* XCRemoteSwiftPackageReference "themis" */,
+				1DC827E22AB18ABB00CD51D1 /* XCRemoteSwiftPackageReference "themis" */,
 			);
 			productRefGroup = 6DFBC496263C2DB300DC8865 /* Products */;
 			projectDirPath = "";
@@ -360,9 +360,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		1DB02B8E2A7D4E1C00A09FC6 /* XCRemoteSwiftPackageReference "themis" */ = {
+		1DC827E22AB18ABB00CD51D1 /* XCRemoteSwiftPackageReference "themis" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/radetsky/themis";
+			repositoryURL = "https://github.com/cossacklabs/themis";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 0.15.0;
@@ -371,9 +371,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1DB02B8F2A7D4E1C00A09FC6 /* themis */ = {
+		1DC827E32AB18ABB00CD51D1 /* themis */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1DB02B8E2A7D4E1C00A09FC6 /* XCRemoteSwiftPackageReference "themis" */;
+			package = 1DC827E22AB18ABB00CD51D1 /* XCRemoteSwiftPackageReference "themis" */;
 			productName = themis;
 		};
 /* End XCSwiftPackageProductDependency section */
