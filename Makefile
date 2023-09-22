@@ -607,6 +607,21 @@ endif
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
 
+# TODO: Extract X.Y.Z version from VERSION macro and don't just print filename with wildcard
+pythemis_make_wheel: CMD = cd src/wrappers/themis/python/ && python3 setup.py bdist_wheel
+pythemis_make_wheel:
+ifeq ($(PYTHON3_VERSION),)
+	@echo "python3 not found"
+	@exit 1
+endif
+	@echo -n "pythemis make wheel "
+	@$(BUILD_CMD_)
+	@echo Result: src/wrappers/themis/python/dist/pythemis-*-py2.py3-none-any.whl
+
+# pythemis_make_os_pkg: CMD = TODO
+# pythemis_make_os_pkg:
+# 	TODO
+
 ########################################################################
 #
 # Packaging Themis Core: Linux distributions
