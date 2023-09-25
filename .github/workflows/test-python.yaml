@@ -49,7 +49,8 @@ jobs:
 
   unit-tests-venv:
     name: Unit tests (venv install)
-    runs-on: ubuntu-22.04
+    # TODO: Switch to something more fresh, Ubuntu 22.04 or Debian Bookworm
+    runs-on: ubuntu-20.04
     steps:
       - name: Install system dependencies
         run: |
@@ -69,7 +70,7 @@ jobs:
       - name: Install PyThemis into venv
         run: |
           make pythemis_make_wheel
-          source /tmp/test_venv/bin/activate && pip install src/wrappers/themis/python/dist/pythemis-0.14.0-py2.py3-none-any.whl
+          source /tmp/test_venv/bin/activate && make pythemis_install_wheel
       - name: Run test suite
         run: source /tmp/test_venv/bin/activate && make test_python
 

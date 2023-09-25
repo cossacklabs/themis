@@ -45,6 +45,8 @@ $(BUILD_PATH)/configure.mk:
 # then increment LIBRARY_SO_VERSION as well, and update package names.
 VERSION := $(shell test -d .git && git describe --tags || cat VERSION)
 LIBRARY_SO_VERSION = 0
+# Version in format X.Y.Z, without build number and commit hash
+VERSION_SHORT := $(shell cat VERSION)
 
 #----- Toolchain ---------------------------------------------------------------
 
@@ -607,8 +609,10 @@ endif
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
 
-# TODO: Extract X.Y.Z version from VERSION macro and don't just print filename with wildcard
-pythemis_make_wheel: CMD = cd src/wrappers/themis/python/ && python3 setup.py bdist_wheel
+# If virtual env is detected, remove its bin path from PATH.
+# This way, setuptools and other wheel building dependencies will be taken from system modules dir,
+# not from venv where they probably don't exist.
+pythemis_make_wheel: CMD = cd src/wrappers/themis/python/ && [ -z "$$VIRTUAL_ENV" ] || PATH="$${PATH/$$VIRTUAL_ENV\/bin:/}" && python3 setup.py bdist_wheel
 pythemis_make_wheel:
 ifeq ($(PYTHON3_VERSION),)
 	@echo "python3 not found"
@@ -616,7 +620,16 @@ ifeq ($(PYTHON3_VERSION),)
 endif
 	@echo -n "pythemis make wheel "
 	@$(BUILD_CMD_)
-	@echo Result: src/wrappers/themis/python/dist/pythemis-*-py2.py3-none-any.whl
+	@echo Result: src/wrappers/themis/python/dist/pythemis-$(VERSION_SHORT)-py2.py3-none-any.whl
+
+pythemis_install_wheel: CMD = pip install src/wrappers/themis/python/dist/pythemis-$(VERSION_SHORT)-py2.py3-none-any.whl
+pythemis_install_wheel:
+ifeq ($(PYTHON3_VERSION),)
+	@echo "python3 not found"
+	@exit 1
+endif
+	@echo -n "pythemis install wheel "
+	@$(BUILD_CMD_)
 
 # pythemis_make_os_pkg: CMD = TODO
 # pythemis_make_os_pkg:
