@@ -47,6 +47,35 @@ jobs:
       - name: Run test suite
         run: make test_python
 
+  unit-tests-venv:
+    name: Unit tests (venv install)
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev \
+            python  python-setuptools \
+            python3 python3-setuptools \
+            python3 python3-pip \
+            python3 python3-venv
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Prepare Themis Core
+        run: |
+          make
+          sudo make install
+          make prepare_tests_all
+      - name: Create venv
+        run: mkdir /tmp/test_venv && python3 -m venv /tmp/test_venv
+      - name: Install PyThemis into venv
+        run: |
+          make pythemis_make_wheel
+          source /tmp/test_venv/bin/activate && pip install src/wrappers/themis/python/dist/pythemis-0.14.0-py2.py3-none-any.whl
+      - name: Run test suite
+        run: source /tmp/test_venv/bin/activate && make test_python
+
   examples:
     name: Code examples
     runs-on: ubuntu-20.04
