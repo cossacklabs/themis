@@ -43,7 +43,7 @@ jobs:
           sudo make install
           make prepare_tests_all
       - name: Install PyThemis
-        run: sudo make pythemis_install
+        run: sudo make pythemis_old_install
       - name: Run test suite
         run: make test_python
 
@@ -111,7 +111,7 @@ jobs:
           make
           sudo make install
       - name: Install PyThemis
-        run: sudo make pythemis_install
+        run: sudo make pythemis_old_install
 
       - name: Test examples (Secure Cell)
         if: always()
