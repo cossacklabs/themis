@@ -583,7 +583,7 @@ else
 	@exit 1
 endif
 
-rbthemis_uninstall: CMD = gem uninstall themis
+rbthemis_uninstall: CMD = gem uninstall rbthemis
 rbthemis_uninstall:
 ifdef RUBY_GEM_VERSION
 	@echo -n "rbthemis uninstall "
