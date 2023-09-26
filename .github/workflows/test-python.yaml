@@ -73,6 +73,8 @@ jobs:
           source /tmp/test_venv/bin/activate && make pythemis_install_wheel
       - name: Run test suite
         run: source /tmp/test_venv/bin/activate && make test_python
+      - name: Uninstall PyThemis
+        run: source /tmp/test_venv/bin/activate && pip uninstall -y pythemis
 
   examples:
     name: Code examples

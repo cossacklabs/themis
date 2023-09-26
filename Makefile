@@ -631,10 +631,6 @@ endif
 	@echo -n "pythemis install wheel "
 	@$(BUILD_CMD_)
 
-# pythemis_make_os_pkg: CMD = TODO
-# pythemis_make_os_pkg:
-# 	TODO
-
 ########################################################################
 #
 # Packaging Themis Core: Linux distributions
@@ -832,6 +828,37 @@ deb: install themispp_install themis_jni_install
 		 $(foreach file,$(JNI_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
 	@find $(BIN_PATH) -name \*.deb
+
+# TODO: Add metadata/info files
+# TODO: Add Themis as dependency?
+# TODO: Rename this and/or put under `deb` target?
+# TODO: Mention need of `lsb-release` in building instruction? Otherwise result file name is... eh... incomplete
+# TODO: Use some kind of foreach/wildcard to avoid hardcoding list of files
+pythemis_deb: DEB_ARCHITECTURE = all
+pythemis_deb: DESTDIR = $(BIN_PATH)/deb/pythemis_root
+pythemis_deb:
+	@fpm --input-type dir \
+		 --output-type deb \
+		 --name python3-pythemis \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --maintainer $(MAINTAINER) \
+		 --package $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX) \
+		 --architecture $(DEB_ARCHITECTURE) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 --depends python3 --depends python3-six \
+		 --deb-priority optional \
+		 --category $(PACKAGE_CATEGORY) \
+         src/wrappers/themis/python/pythemis/__init__.py=/usr/lib/python3/dist-packages/pythemis/__init__.py \
+         src/wrappers/themis/python/pythemis/exception.py=/usr/lib/python3/dist-packages/pythemis/exception.py \
+         src/wrappers/themis/python/pythemis/scell.py=/usr/lib/python3/dist-packages/pythemis/scell.py \
+         src/wrappers/themis/python/pythemis/scomparator.py=/usr/lib/python3/dist-packages/pythemis/scomparator.py \
+         src/wrappers/themis/python/pythemis/skeygen.py=/usr/lib/python3/dist-packages/pythemis/skeygen.py \
+         src/wrappers/themis/python/pythemis/smessage.py=/usr/lib/python3/dist-packages/pythemis/smessage.py \
+         src/wrappers/themis/python/pythemis/ssession.py=/usr/lib/python3/dist-packages/pythemis/ssession.py \
+
+	@echo $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
 
 rpm: MODE_PACKAGING = 1
 rpm: DESTDIR = $(BIN_PATH)/rpm/root
