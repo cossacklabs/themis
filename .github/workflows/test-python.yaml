@@ -48,7 +48,7 @@ jobs:
         run: make test_python
 
   unit-tests-venv:
-    name: Unit tests (venv install)
+    name: Unit tests (virtualenv install)
     # TODO: Switch to something more fresh, Ubuntu 22.04 or Debian Bookworm
     runs-on: ubuntu-20.04
     steps:
@@ -65,9 +65,9 @@ jobs:
           make
           sudo make install
           make prepare_tests_all
-      - name: Create venv
+      - name: Create virtualenv
         run: mkdir /tmp/test_venv && python3 -m venv /tmp/test_venv
-      - name: Install PyThemis into venv
+      - name: Install PyThemis into virtualenv
         run: |
           make pythemis_make_wheel
           source /tmp/test_venv/bin/activate && make pythemis_install_wheel
