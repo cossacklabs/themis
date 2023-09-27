@@ -842,7 +842,7 @@ pythemis_deb: pythemis_make_wheel
 	@# Remove old dir and unpack again to make sure there are only needed and fresh files.
 	@# Also, if not removing old files, will need some option for unzip to silently rewrite them instead of asking.
 	@rm -rf $(BIN_PATH)/deb/python3
-	@mkdir $(BIN_PATH)/deb/python3
+	@mkdir -p $(BIN_PATH)/deb/python3
 	@unzip src/wrappers/themis/python/dist/pythemis-$(VERSION_SHORT)-py2.py3-none-any.whl -d $(BIN_PATH)/deb/python3
 
 	@# Remove old one to avoid error "package already exist, refusing to proceed"
