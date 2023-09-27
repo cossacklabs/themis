@@ -76,6 +76,33 @@ jobs:
       - name: Uninstall PyThemis
         run: source /tmp/test_venv/bin/activate && pip uninstall -y pythemis
 
+  unit-tests-deb-pkg:
+    name: Unit tests (deb package)
+    # TODO: Switch to something more fresh, Ubuntu 22.04 or Debian Bookworm
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev \
+            python3 python3-setuptools
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Prepare Themis Core
+        run: |
+          make
+          sudo make install
+          make prepare_tests_all
+      - name: Install PyThemis (deb package)
+        run: |
+          make pythemis_deb
+          sudo dpkg -i build/deb/python3-pythemis_*_all.deb
+      - name: Run test suite
+        run: make test_python
+      - name: Uninstall PyThemis
+        run: sudo apt uninstall pythemis
+
   examples:
     name: Code examples
     runs-on: ubuntu-20.04

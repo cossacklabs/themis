@@ -829,14 +829,22 @@ deb: install themispp_install themis_jni_install
 
 	@find $(BIN_PATH) -name \*.deb
 
-# TODO: Add metadata/info files
 # TODO: Add Themis as dependency?
-# TODO: Rename this and/or put under `deb` target?
+# TODO: Put inside `deb` target?
 # TODO: Mention need of `lsb-release` in building instruction? Otherwise result file name is... eh... incomplete
-# TODO: Use some kind of foreach/wildcard to avoid hardcoding list of files
+# Basically, this is just an unpacked version of a wheel.
+# Thus, extracting files from it to then put them in /usr/lib/python3.
+# Not just taking files from src/wrappers/themis/python because there are some files
+# that do not exist in the repo but are created by setup.py during wheel generation.
 pythemis_deb: DEB_ARCHITECTURE = all
 pythemis_deb: DESTDIR = $(BIN_PATH)/deb/pythemis_root
-pythemis_deb:
+pythemis_deb: pythemis_make_wheel
+	@# Make sure there are only needed and fresh files.
+	@# Also, othwerwise we need some option for unzip to silently rewrite old files.
+	@rm -r $(BIN_PATH)/deb/python3
+	@mkdir $(BIN_PATH)/deb/python3
+	@unzip src/wrappers/themis/python/dist/pythemis-$(VERSION_SHORT)-py2.py3-none-any.whl -d $(BIN_PATH)/deb/python3
+
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name python3-pythemis \
@@ -850,15 +858,12 @@ pythemis_deb:
 		 --depends python3 --depends python3-six \
 		 --deb-priority optional \
 		 --category $(PACKAGE_CATEGORY) \
-         src/wrappers/themis/python/pythemis/__init__.py=/usr/lib/python3/dist-packages/pythemis/__init__.py \
-         src/wrappers/themis/python/pythemis/exception.py=/usr/lib/python3/dist-packages/pythemis/exception.py \
-         src/wrappers/themis/python/pythemis/scell.py=/usr/lib/python3/dist-packages/pythemis/scell.py \
-         src/wrappers/themis/python/pythemis/scomparator.py=/usr/lib/python3/dist-packages/pythemis/scomparator.py \
-         src/wrappers/themis/python/pythemis/skeygen.py=/usr/lib/python3/dist-packages/pythemis/skeygen.py \
-         src/wrappers/themis/python/pythemis/smessage.py=/usr/lib/python3/dist-packages/pythemis/smessage.py \
-         src/wrappers/themis/python/pythemis/ssession.py=/usr/lib/python3/dist-packages/pythemis/ssession.py \
+		$(BIN_PATH)/deb/python3/pythemis=/usr/lib/python3/dist-packages \
+		$(BIN_PATH)/deb/python3/pythemis-$(VERSION_SHORT).dist-info=/usr/lib/python3/dist-packages \
 
 	@echo $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
+	@# Debug thing, TODO: remove it
+	@dpkg --contents $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
 
 rpm: MODE_PACKAGING = 1
 rpm: DESTDIR = $(BIN_PATH)/rpm/root
