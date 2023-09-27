@@ -845,6 +845,9 @@ pythemis_deb: pythemis_make_wheel
 	@mkdir $(BIN_PATH)/deb/python3
 	@unzip src/wrappers/themis/python/dist/pythemis-$(VERSION_SHORT)-py2.py3-none-any.whl -d $(BIN_PATH)/deb/python3
 
+	@# Remove old one to avoid error "package already exist, refusing to proceed"
+	@rm -f $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
+
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name python3-pythemis \
@@ -864,6 +867,12 @@ pythemis_deb: pythemis_make_wheel
 	@echo $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
 	@# Debug thing, TODO: remove it
 	@dpkg --contents $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
+
+# Using `apt` since it could install dependencies (we depend on python3-six),
+# while dpkg would just complain about missing dependency and fail
+pythemis_install_deb: DEB_ARCHITECTURE = all
+pythemis_install_deb: pythemis_deb
+	sudo apt install ./$(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
 
 rpm: MODE_PACKAGING = 1
 rpm: DESTDIR = $(BIN_PATH)/rpm/root

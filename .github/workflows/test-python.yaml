@@ -96,12 +96,11 @@ jobs:
           make prepare_tests_all
       - name: Install PyThemis (deb package)
         run: |
-          make pythemis_deb
-          sudo dpkg -i build/deb/python3-pythemis_*_all.deb
+          make pythemis_install_deb
       - name: Run test suite
         run: make test_python
       - name: Uninstall PyThemis
-        run: sudo apt uninstall pythemis
+        run: sudo apt uninstall -y pythemis
 
   examples:
     name: Code examples
