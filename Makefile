@@ -832,24 +832,17 @@ deb: install themispp_install themis_jni_install
 # TODO: Add Themis as dependency?
 # TODO: Put inside `deb` target?
 # TODO: Mention need of `lsb-release` in building instruction? Otherwise result file name is... eh... incomplete
-# Basically, this is just an unpacked version of a wheel.
-# Thus, extracting files from it to then put them in /usr/lib/python3.
-# Not just taking files from src/wrappers/themis/python because there are some files
-# that do not exist in the repo but are created by setup.py during wheel generation.
+# Use builtin feature of fpm to create a .deb package from a Python package dir.
+# Dependencies are automatically added, i.e. PyThemis depends on `six`, so fpm will add `python3-six` to deps.
 pythemis_deb: DEB_ARCHITECTURE = all
 pythemis_deb: DESTDIR = $(BIN_PATH)/deb/pythemis_root
-pythemis_deb: pythemis_make_wheel
-	@# Remove old dir and unpack again to make sure there are only needed and fresh files.
-	@# Also, if not removing old files, will need some option for unzip to silently rewrite them instead of asking.
-	@rm -rf $(BIN_PATH)/deb/python3
-	@mkdir -p $(BIN_PATH)/deb/python3
-	@unzip src/wrappers/themis/python/dist/pythemis-$(VERSION_SHORT)-py2.py3-none-any.whl -d $(BIN_PATH)/deb/python3
-
-	@# Remove old one to avoid error "package already exist, refusing to proceed"
-	@rm -f $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
-
-	@fpm --input-type dir \
+pythemis_deb: PYTHON_LIB_PATH = $(shell python3 -c 'from distutils.sysconfig import get_python_lib; print(get_python_lib())')
+pythemis_deb:
+	@fpm --input-type python \
 		 --output-type deb \
+		 --python-bin=python3 \
+		 --python-package-name-prefix=python3 \
+		 --python-install-lib=$(PYTHON_LIB_PATH) \
 		 --name python3-pythemis \
 		 --license $(LICENSE_NAME) \
 		 --url '$(COSSACKLABS_URL)' \
@@ -858,11 +851,11 @@ pythemis_deb: pythemis_make_wheel
 		 --package $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX) \
 		 --architecture $(DEB_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
-		 --depends python3 --depends python3-six \
+		 --depends python3 \
 		 --deb-priority optional \
 		 --category $(PACKAGE_CATEGORY) \
-		$(BIN_PATH)/deb/python3/pythemis=/usr/lib/python3/dist-packages \
-		$(BIN_PATH)/deb/python3/pythemis-$(VERSION_SHORT).dist-info=/usr/lib/python3/dist-packages \
+		 --force \
+		 src/wrappers/themis/python
 
 	@echo $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
 	@# Debug thing, TODO: remove it
