@@ -600,8 +600,8 @@ ifdef PIP_VERSION
 PIP_THEMIS_INSTALL := $(shell pip freeze |grep themis)
 endif
 
-pythemis_old_install: CMD = cd src/wrappers/themis/python/ && python3 setup.py install --record files3.txt
-pythemis_old_install:
+pythemis_install: CMD = cd src/wrappers/themis/python/ && python3 setup.py install --record files3.txt
+pythemis_install:
 ifeq ($(PYTHON3_VERSION),)
 	@echo "python3 not found"
 	@exit 1
