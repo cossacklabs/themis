@@ -939,31 +939,31 @@ rpm: install themispp_install themis_jni_install
 
 	@find $(BIN_PATH) -name \*.rpm
 
-pythemis_rpm: ARCHITECTURE = all
-pythemis_rpm:
-	@fpm --input-type python \
-		 --output-type rpm \
-		 --python-bin=python3 \
-		 --python-package-name-prefix=python3 \
-		 --name python3-pythemis \
-		 --license $(LICENSE_NAME) \
-		 --url '$(COSSACKLABS_URL)' \
-		 --description '$(SHORT_DESCRIPTION)' \
-		 --maintainer $(MAINTAINER) \
-		 --package $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX) \
-		 --architecture $(ARCHITECTURE) \
-		 --version $(VERSION)+$(OS_CODENAME) \
-		 --depends python3 \
-		 --deb-priority optional \
-		 --category $(PACKAGE_CATEGORY) \
-		 --force \
-		 src/wrappers/themis/python
-
-	@echo $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
-
-pythemis_install_rpm: ARCHITECTURE = all
-pythemis_install_rpm: pythemis_rpm
-	sudo yum install ./$(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
+# pythemis_rpm: ARCHITECTURE = all
+# pythemis_rpm:
+# 	@fpm --input-type python \
+# 		 --output-type rpm \
+# 		 --python-bin=python3 \
+# 		 --python-package-name-prefix=python3 \
+# 		 --name python3-pythemis \
+# 		 --license $(LICENSE_NAME) \
+# 		 --url '$(COSSACKLABS_URL)' \
+# 		 --description '$(SHORT_DESCRIPTION)' \
+# 		 --maintainer $(MAINTAINER) \
+# 		 --package $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX) \
+# 		 --architecture $(ARCHITECTURE) \
+# 		 --version $(VERSION)+$(OS_CODENAME) \
+# 		 --depends python3 \
+# 		 --deb-priority optional \
+# 		 --category $(PACKAGE_CATEGORY) \
+# 		 --force \
+# 		 src/wrappers/themis/python
+#
+# 	@echo $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
+#
+# pythemis_install_rpm: ARCHITECTURE = all
+# pythemis_install_rpm: pythemis_rpm
+# 	sudo yum install ./$(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
 
 
 ########################################################################
