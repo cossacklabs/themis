@@ -612,7 +612,7 @@ endif
 # If virtual env is detected, remove its bin path from PATH.
 # This way, setuptools and other wheel building dependencies will be taken from system modules dir,
 # not from venv where they probably don't exist.
-pythemis_make_wheel: CMD = cd src/wrappers/themis/python/ && [ -z "$$VIRTUAL_ENV" ] || PATH="$${PATH/$$VIRTUAL_ENV\/bin:/}" && python3 setup.py bdist_wheel
+pythemis_make_wheel: CMD = cd src/wrappers/themis/python/ && python3 setup.py bdist_wheel
 pythemis_make_wheel:
 ifeq ($(PYTHON3_VERSION),)
 	@echo "python3 not found"
@@ -831,18 +831,15 @@ deb: install themispp_install themis_jni_install
 
 # TODO: Add Themis as dependency?
 # TODO: Put inside `deb` target?
-# TODO: Mention need of `lsb-release` in building instruction? Otherwise result file name is... eh... incomplete
 # Use builtin feature of fpm to create a .deb package from a Python package dir.
 # Dependencies are automatically added, i.e. PyThemis depends on `six`, so fpm will add `python3-six` to deps.
 pythemis_deb: DEB_ARCHITECTURE = all
 pythemis_deb: DESTDIR = $(BIN_PATH)/deb/pythemis_root
-pythemis_deb: PYTHON_LIB_PATH = $(shell python3 -c 'from distutils.sysconfig import get_python_lib; print(get_python_lib())')
 pythemis_deb:
 	@fpm --input-type python \
 		 --output-type deb \
 		 --python-bin=python3 \
 		 --python-package-name-prefix=python3 \
-		 --python-install-lib=$(PYTHON_LIB_PATH) \
 		 --name python3-pythemis \
 		 --license $(LICENSE_NAME) \
 		 --url '$(COSSACKLABS_URL)' \
@@ -858,8 +855,6 @@ pythemis_deb:
 		 src/wrappers/themis/python
 
 	@echo $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
-	@# Debug thing, TODO: remove it
-	@dpkg --contents $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
 
 # Using `apt` since it could install dependencies (we depend on python3-six),
 # while dpkg would just complain about missing dependency and fail
@@ -943,6 +938,33 @@ rpm: install themispp_install themis_jni_install
          $(foreach file,$(JNI_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
 	@find $(BIN_PATH) -name \*.rpm
+
+pythemis_rpm: ARCHITECTURE = all
+pythemis_rpm:
+	@fpm --input-type python \
+		 --output-type rpm \
+		 --python-bin=python3 \
+		 --python-package-name-prefix=python3 \
+		 --name python3-pythemis \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --maintainer $(MAINTAINER) \
+		 --package $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX) \
+		 --architecture $(ARCHITECTURE) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 --depends python3 \
+		 --deb-priority optional \
+		 --category $(PACKAGE_CATEGORY) \
+		 --force \
+		 src/wrappers/themis/python
+
+	@echo $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
+
+pythemis_install_rpm: ARCHITECTURE = all
+pythemis_install_rpm: pythemis_rpm
+	sudo yum install ./$(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
+
 
 ########################################################################
 #

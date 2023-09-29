@@ -86,7 +86,9 @@ jobs:
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev \
-            python3 python3-setuptools
+            python3 python3-setuptools \
+            ruby
+          sudo gem install fpm
       - name: Check out code
         uses: actions/checkout@v2
       - name: Prepare Themis Core
