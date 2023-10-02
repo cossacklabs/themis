@@ -4,6 +4,14 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.15.2](https://github.com/cossacklabs/themis/releases/tag/0.15.2), October 03 2023
+
+### Android, ReactNative 
+Updated versions of dependencies. New minimum versions of iOS, Android are set.
+- Target API level 33 
+- Minimum API level 21 
+- Minumum iOS set to 12.4 due to ReactNative requirements 
+
 ## [0.15.1](https://github.com/cossacklabs/themis/releases/tag/0.15.1), September 13 2023
 
 ### Swift, Objective-C wrappers 
