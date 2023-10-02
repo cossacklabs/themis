@@ -836,6 +836,7 @@ deb: install themispp_install themis_jni_install
 pythemis_deb: DEB_ARCHITECTURE = all
 pythemis_deb: DESTDIR = $(BIN_PATH)/deb/pythemis_root
 pythemis_deb:
+	@mkdir -p $(BIN_PATH)/deb
 	@fpm --input-type python \
 		 --output-type deb \
 		 --python-bin=python3 \
@@ -941,6 +942,7 @@ rpm: install themispp_install themis_jni_install
 
 # pythemis_rpm: ARCHITECTURE = all
 # pythemis_rpm:
+# 	@mkdir -p $(BIN_PATH)/rpm
 # 	@fpm --input-type python \
 # 		 --output-type rpm \
 # 		 --python-bin=python3 \
@@ -949,8 +951,9 @@ rpm: install themispp_install themis_jni_install
 # 		 --license $(LICENSE_NAME) \
 # 		 --url '$(COSSACKLABS_URL)' \
 # 		 --description '$(SHORT_DESCRIPTION)' \
+# 		 --rpm-summary '$(RPM_SUMMARY)' \
 # 		 --maintainer $(MAINTAINER) \
-# 		 --package $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX) \
+# 		 --package $(BIN_PATH)/rpm/python3-pythemis_$(NAME_SUFFIX) \
 # 		 --architecture $(ARCHITECTURE) \
 # 		 --version $(VERSION)+$(OS_CODENAME) \
 # 		 --depends python3 \
