@@ -7,8 +7,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AppTest {
-    @Test void appHasAGreeting() {
+    @Test void appDoesNotThrow() {
         App classUnderTest = new App();
-        assertNotNull(classUnderTest.getGreeting(), "app should have a greeting");
+        assertDoesNotThrow(() -> App.encryptDataForStoring(), "encryptDataForStoring() should run without exceptions");
+        assertDoesNotThrow(() -> App.encryptDataForMessaging(), "encryptDataForMessaging() should run without exceptions");
     }
 }
+
+
