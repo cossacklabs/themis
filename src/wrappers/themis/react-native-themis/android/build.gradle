@@ -19,10 +19,10 @@ def safeExtGet(prop, fallback) {
 }
 
 android {
-    compileSdkVersion safeExtGet('Themis_compileSdkVersion', 29)
+    compileSdkVersion safeExtGet('Themis_compileSdkVersion', 33)
     defaultConfig {
-        minSdkVersion safeExtGet('Themis_minSdkVersion', 19)
-        targetSdkVersion safeExtGet('Themis_targetSdkVersion', 29)
+        minSdkVersion safeExtGet('Themis_minSdkVersion', 21)
+        targetSdkVersion safeExtGet('Themis_targetSdkVersion', 33)
         versionCode 1
         versionName "1.0"
 
@@ -37,8 +37,8 @@ android {
         disable 'GradleCompatible'
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
@@ -56,6 +56,5 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation 'com.cossacklabs.com:themis:0.13.1'
-
+    implementation 'com.cossacklabs.com:themis:0.15.2'
 }
