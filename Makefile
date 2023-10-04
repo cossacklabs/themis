@@ -94,6 +94,11 @@ LDFLAGS += -L/usr/local/lib
 # Build shared libraries
 CFLAGS  += -fPIC
 
+#----- Mode packaging ----------------------------------------------------------
+# Default value is not packaging mode. Goals: dev, rpm, deb_php will set it to 1
+MODE_PACKAGING = 0
+
+
 ########################################################################
 #
 # Pretty-printing utilities
