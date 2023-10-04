@@ -609,9 +609,6 @@ endif
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
 
-# If virtual env is detected, remove its bin path from PATH.
-# This way, setuptools and other wheel building dependencies will be taken from system modules dir,
-# not from venv where they probably don't exist.
 pythemis_make_wheel: CMD = cd src/wrappers/themis/python/ && python3 setup.py bdist_wheel
 pythemis_make_wheel:
 ifeq ($(PYTHON3_VERSION),)
@@ -829,13 +826,11 @@ deb: install themispp_install themis_jni_install
 
 	@find $(BIN_PATH) -name \*.deb
 
-# TODO: Add Themis as dependency?
-# TODO: Put inside `deb` target?
 # Use builtin feature of fpm to create a .deb package from a Python package dir.
 # Dependencies are automatically added, i.e. PyThemis depends on `six`, so fpm will add `python3-six` to deps.
-pythemis_deb: DEB_ARCHITECTURE = all
-pythemis_deb: DESTDIR = $(BIN_PATH)/deb/pythemis_root
-pythemis_deb:
+deb_python: DEB_ARCHITECTURE = all
+deb_python: DESTDIR = $(BIN_PATH)/deb/pythemis_root
+deb_python:
 	@mkdir -p $(BIN_PATH)/deb
 	@fpm --input-type python \
 		 --output-type deb \
@@ -849,7 +844,7 @@ pythemis_deb:
 		 --package $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX) \
 		 --architecture $(DEB_ARCHITECTURE) \
 		 --version $(VERSION)+$(OS_CODENAME) \
-		 --depends python3 \
+		 --depends python3 --depends libthemis \
 		 --deb-priority optional \
 		 --category $(PACKAGE_CATEGORY) \
 		 --force \
@@ -860,7 +855,7 @@ pythemis_deb:
 # Using `apt` since it could install dependencies (we depend on python3-six),
 # while dpkg would just complain about missing dependency and fail
 pythemis_install_deb: DEB_ARCHITECTURE = all
-pythemis_install_deb: pythemis_deb
+pythemis_install_deb: deb_python
 	sudo apt install ./$(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
 
 rpm: MODE_PACKAGING = 1
