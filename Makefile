@@ -856,7 +856,7 @@ deb_python:
 # while dpkg would just complain about missing dependency and fail
 pythemis_install_deb: DEB_ARCHITECTURE = all
 pythemis_install_deb: deb_python
-	sudo apt install ./$(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
+	apt install ./$(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
 
 rpm: MODE_PACKAGING = 1
 rpm: DESTDIR = $(BIN_PATH)/rpm/root
@@ -935,33 +935,33 @@ rpm: install themispp_install themis_jni_install
 
 	@find $(BIN_PATH) -name \*.rpm
 
-# pythemis_rpm: ARCHITECTURE = all
-# pythemis_rpm:
-# 	@mkdir -p $(BIN_PATH)/rpm
-# 	@fpm --input-type python \
-# 		 --output-type rpm \
-# 		 --python-bin=python3 \
-# 		 --python-package-name-prefix=python3 \
-# 		 --name python3-pythemis \
-# 		 --license $(LICENSE_NAME) \
-# 		 --url '$(COSSACKLABS_URL)' \
-# 		 --description '$(SHORT_DESCRIPTION)' \
-# 		 --rpm-summary '$(RPM_SUMMARY)' \
-# 		 --maintainer $(MAINTAINER) \
-# 		 --package $(BIN_PATH)/rpm/python3-pythemis_$(NAME_SUFFIX) \
-# 		 --architecture $(ARCHITECTURE) \
-# 		 --version $(VERSION)+$(OS_CODENAME) \
-# 		 --depends python3 \
-# 		 --deb-priority optional \
-# 		 --category $(PACKAGE_CATEGORY) \
-# 		 --force \
-# 		 src/wrappers/themis/python
-#
-# 	@echo $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
-#
-# pythemis_install_rpm: ARCHITECTURE = all
-# pythemis_install_rpm: pythemis_rpm
-# 	sudo yum install ./$(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
+rpm_python: ARCHITECTURE = all
+rpm_python:
+	@mkdir -p $(BIN_PATH)/rpm
+	@fpm --input-type python \
+		 --output-type rpm \
+		 --python-bin=python3 \
+		 --python-package-name-prefix=python3 \
+		 --name python3-pythemis \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --rpm-summary '$(RPM_SUMMARY)' \
+		 --maintainer $(MAINTAINER) \
+		 --package $(BIN_PATH)/rpm/python3-pythemis_$(NAME_SUFFIX) \
+		 --architecture $(ARCHITECTURE) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 --depends python3 --depends libthemis \
+		 --deb-priority optional \
+		 --category $(PACKAGE_CATEGORY) \
+		 --force \
+		 src/wrappers/themis/python
+
+	@echo $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
+
+pythemis_install_rpm: ARCHITECTURE = all
+pythemis_install_rpm: rpm_python
+	yum install ./$(BIN_PATH)/rpm/python3-pythemis_$(NAME_SUFFIX)
 
 
 ########################################################################

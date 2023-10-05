@@ -100,7 +100,7 @@ jobs:
           make prepare_tests_all
       - name: Install PyThemis (deb package)
         run: |
-          make pythemis_install_deb
+          sudo make pythemis_install_deb
       - name: Run test suite
         run: make test_python
       - name: Uninstall PyThemis
