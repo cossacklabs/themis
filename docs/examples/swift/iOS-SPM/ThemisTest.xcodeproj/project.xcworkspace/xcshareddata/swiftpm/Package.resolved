@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/cossacklabs/themis",
       "state" : {
-        "revision" : "d925c3ba6bb13bf1914a58f2380dfac4698aa09e",
-        "version" : "0.15.0"
+        "revision" : "7f06746a645947cf8d40cfca95d9562517457093",
+        "version" : "0.15.1"
       }
     }
   ],
