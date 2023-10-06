@@ -949,15 +949,13 @@ rpm_python:
 		 --rpm-summary '$(RPM_SUMMARY)' \
 		 --maintainer $(MAINTAINER) \
 		 --package $(BIN_PATH)/rpm/python3-pythemis_$(NAME_SUFFIX) \
-		 --architecture $(ARCHITECTURE) \
-		 --version $(VERSION)+$(OS_CODENAME) \
+		 --version $(RPM_VERSION) \
 		 --depends python3 --depends libthemis \
-		 --deb-priority optional \
 		 --category $(PACKAGE_CATEGORY) \
 		 --force \
 		 src/wrappers/themis/python
 
-	@echo $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
+	@echo $(BIN_PATH)/rpm/python3-pythemis_$(NAME_SUFFIX)
 
 pythemis_install_rpm: ARCHITECTURE = all
 pythemis_install_rpm: rpm_python
