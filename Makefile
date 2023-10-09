@@ -750,7 +750,7 @@ deb: PREFIX = /usr
 deb: libdir = $(PREFIX)$(DEB_LIBDIR)
 deb: jnidir = $(PREFIX)$(DEB_LIBDIR)/jni
 
-deb: install themispp_install themis_jni_install
+deb: install $(if $(WITHOUT_THEMISPP), , themispp_install) $(if $(WITHOUT_JAVA), , themis_jni_install)
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
 	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
 
@@ -771,6 +771,7 @@ deb: install themispp_install themis_jni_install
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --category $(PACKAGE_CATEGORY) \
+		 --force \
 		 $(foreach file,$(DEV_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
 	@fpm --input-type dir \
@@ -788,9 +789,11 @@ deb: install themispp_install themis_jni_install
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --deb-priority optional \
 		 --category $(PACKAGE_CATEGORY) \
+		 --force \
 		 $(foreach file,$(LIB_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
-	@fpm --input-type dir \
+	@$(if $(WITHOUT_THEMISPP), false, true) && \
+		fpm --input-type dir \
 		 --output-type deb \
 		 --name $(DEB_THEMISPP_PACKAGE_NAME) \
 		 --license $(LICENSE_NAME) \
@@ -805,9 +808,11 @@ deb: install themispp_install themis_jni_install
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --category $(PACKAGE_CATEGORY) \
+		 --force \
 		 $(foreach file,$(THEMISPP_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
-	@fpm --input-type dir \
+	@$(if $(WITHOUT_JAVA), false, true) && \
+		fpm --input-type dir \
 		 --output-type deb \
 		 --name $(JNI_PACKAGE_NAME) \
 		 --license $(LICENSE_NAME) \
@@ -822,6 +827,7 @@ deb: install themispp_install themis_jni_install
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --deb-priority optional \
 		 --category $(PACKAGE_CATEGORY) \
+		 --force \
 		 $(foreach file,$(JNI_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
 	@find $(BIN_PATH) -name \*.deb

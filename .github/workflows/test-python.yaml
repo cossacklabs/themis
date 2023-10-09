@@ -98,6 +98,10 @@ jobs:
           make
           sudo make install
           make prepare_tests_all
+      - name: Install libthemis deb
+        run: |
+          make deb WITHOUT_THEMISPP=1 WITHOUT_JAVA=1
+          sudo apt install ./build/deb/libthemis_*.deb
       - name: Install PyThemis (deb package)
         run: |
           sudo make pythemis_install_deb
