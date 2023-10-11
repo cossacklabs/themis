@@ -400,13 +400,19 @@ fmt: $(FMT_FIXUP)
 fmt_check: $(FMT_CHECK)
 
 clean: CMD = rm -rf $(BIN_PATH)
-clean: nist_rng_test_suite_clean clean_rust
+clean: nist_rng_test_suite_clean clean_rust clean_python
 	@$(BUILD_CMD)
 
 clean_rust:
 ifdef RUST_VERSION
 	@cargo clean
 	@rm -f tools/rust/*.rust
+endif
+
+clean_python:
+ifdef PYTHON3_VERSION
+	@rm -rf src/wrappers/themis/python/dist
+	@rm -rf src/wrappers/themis/python/pythemis.egg-info
 endif
 
 get_version:
