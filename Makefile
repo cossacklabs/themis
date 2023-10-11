@@ -798,8 +798,8 @@ deb: install $(if $(WITHOUT_THEMISPP), , themispp_install) $(if $(WITHOUT_JAVA),
 		 --force \
 		 $(foreach file,$(LIB_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
-	@$(if $(WITHOUT_THEMISPP), false, true) && \
-		fpm --input-type dir \
+ifndef WITHOUT_THEMISPP
+	@fpm --input-type dir \
 		 --output-type deb \
 		 --name $(DEB_THEMISPP_PACKAGE_NAME) \
 		 --license $(LICENSE_NAME) \
@@ -816,9 +816,10 @@ deb: install $(if $(WITHOUT_THEMISPP), , themispp_install) $(if $(WITHOUT_JAVA),
 		 --category $(PACKAGE_CATEGORY) \
 		 --force \
 		 $(foreach file,$(THEMISPP_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
+endif
 
-	@$(if $(WITHOUT_JAVA), false, true) && \
-		fpm --input-type dir \
+ifndef WITHOUT_JAVA
+	@fpm --input-type dir \
 		 --output-type deb \
 		 --name $(JNI_PACKAGE_NAME) \
 		 --license $(LICENSE_NAME) \
@@ -835,6 +836,7 @@ deb: install $(if $(WITHOUT_THEMISPP), , themispp_install) $(if $(WITHOUT_JAVA),
 		 --category $(PACKAGE_CATEGORY) \
 		 --force \
 		 $(foreach file,$(JNI_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
+endif
 
 	@find $(BIN_PATH) -name \*.deb
 
