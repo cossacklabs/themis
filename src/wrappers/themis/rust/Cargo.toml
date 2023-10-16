@@ -33,5 +33,7 @@ base64 = "0.10.0"
 byteorder = "1.2.7"
 clap = "2.32"
 lazy_static = "1.2.0"
-log = "0.4.6"
+# Freeze `log` so that tests still build/run with Rust 1.58.
+# FIXME: remove/update strict version requirement after we bump minimum required Rust version
+log = "=0.4.17"
 env_logger = "0.6.0"
