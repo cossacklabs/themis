@@ -88,9 +88,6 @@ pkgconfigdir ?= $(libdir)/pkgconfig
 # Add Themis source directory to search paths
 CFLAGS  += -I$(INC_PATH) -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/
 LDFLAGS += -L$(BIN_PATH)
-# Not all platforms include /usr/local in default search path
-CFLAGS  += -I/usr/local/include
-LDFLAGS += -L/usr/local/lib
 # Build shared libraries
 CFLAGS  += -fPIC
 
@@ -185,6 +182,12 @@ endif
 ifeq ($(RSA_KEY_LENGTH),8192)
 	CFLAGS += -DTHEMIS_RSA_KEY_LENGTH=RSA_KEY_LENGTH_8192
 endif
+
+#----- Basic compiler flags (lower priority than vendored boringssl) -----------
+
+# Not all platforms include /usr/local in default search path
+CFLAGS  += -I/usr/local/include
+LDFLAGS += -L/usr/local/lib
 
 ########################################################################
 #
