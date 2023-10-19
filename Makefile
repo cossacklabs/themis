@@ -143,12 +143,14 @@ CRYPTO_ENGINE = $(SRC_PATH)/soter/$(CRYPTO_ENGINE_PATH)
 CFLAGS += -D$(CRYPTO_ENGINE_DEF) -DCRYPTO_ENGINE_PATH=$(CRYPTO_ENGINE_PATH)
 CFLAGS += $(CRYPTO_ENGINE_CFLAGS)
 
+
 # Basic compiler flags (lower priority than vendored boringssl)
 # Not all platforms include /usr/local in default search path
 CFLAGS  += -I/usr/local/include
 LDFLAGS += -L/usr/local/lib
 # Build shared libraries
 CFLAGS  += -fPIC
+
 
 # If we're building for macOS and there's Homebrew installed then prefer
 # Homebrew's OpenSSL instead of the system one by default.
