@@ -153,20 +153,20 @@ jobs:
         run: |
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
-          sudo apt install --yes gcc-8 clang-8 make libssl-dev
+          sudo apt install --yes gcc-10 libgcc-10-dev clang-8 make libssl-dev
       - name: Check out code
         uses: actions/checkout@v2
       # We test only OpenSSL flavor to not expand the testing matrix too much
       # (rebuilding BoringSSL is not fun and takes much time)
       - name: Check with GCC (ASan)
         if: always()
-        run: make clean test CC=gcc-8 WITH_ASAN=1
+        run: make clean test CC=gcc-10 WITH_ASAN=1
       - name: Check with GCC (TSan)
         if: always()
-        run: make clean test CC=gcc-8 WITH_TSAN=1
+        run: make clean test CC=gcc-10 WITH_TSAN=1
       - name: Check with GCC (UBSan)
         if: always()
-        run: make clean test CC=gcc-8 WITH_UBSAN=1
+        run: make clean test CC=gcc-10 WITH_UBSAN=1
       - name: Check with Clang (ASan)
         if: always()
         run: make clean test CC=clang-8 WITH_ASAN=1
