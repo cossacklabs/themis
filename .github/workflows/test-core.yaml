@@ -36,6 +36,7 @@ jobs:
     name: Unit tests
     runs-on: ${{ matrix.os }}
     env:
+      VERBOSE: 1
       SOTER_KDF_RUN_LONG_TESTS: yes
       MATRIX_OS: ${{ matrix.os }}
     strategy:

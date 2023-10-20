@@ -47,7 +47,7 @@ endif
 $(THEMIS_TEST_BIN): $(BIN_PATH)/$(LIBTHEMIS_SO)
 endif
 
-$(THEMIS_TEST_BIN): CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(THEMIS_TEST_LDFLAGS)
+$(THEMIS_TEST_BIN): CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(ADDITIONAL_LDFLAGS) $(THEMIS_TEST_LDFLAGS)
 
 $(THEMIS_TEST_BIN): $(THEMIS_TEST_OBJ) $(COMMON_TEST_OBJ)
 	@mkdir -p $(@D)
