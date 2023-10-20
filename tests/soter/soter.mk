@@ -65,7 +65,7 @@ endif
 $(SOTER_TEST_BIN): $(BIN_PATH)/$(LIBSOTER_SO)
 endif
 
-$(SOTER_TEST_BIN): CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(SOTER_TEST_LDFLAGS)
+$(SOTER_TEST_BIN): CMD = $(CC) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(ADDITIONAL_LDFLAGS) $(SOTER_TEST_LDFLAGS)
 
 $(SOTER_TEST_BIN): $(SOTER_TEST_OBJ) $(COMMON_TEST_OBJ)
 	@mkdir -p $(@D)
