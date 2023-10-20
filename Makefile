@@ -169,9 +169,10 @@ ifneq ($(ENGINE_LIB_PATH),)
 endif
 
 # Basic compiler flags (lower priority than selected engine)
-# Not all platforms include /usr/local in default search path
-CFLAGS  += -I/usr/local/include
-LDFLAGS += -L/usr/local/lib
+# We got /usr/local as default PREFIX and not all platforms include that path in default search path.
+# Make sure whatever PREFIX is used, includes and libs are searched there.
+CFLAGS  += -I$(PREFIX)/include
+ADDITIONAL_LDFLAGS += -L$(PREFIX)/lib
 
 ifneq ($(AUTH_SYM_ALG),)
 	CFLAGS += -D$(AUTH_SYM_ALG)
