@@ -171,8 +171,14 @@ endif
 # Basic compiler flags (lower priority than selected engine)
 # We got /usr/local as default PREFIX and not all platforms include that path in default search path.
 # Make sure whatever PREFIX is used, includes and libs are searched there.
-CFLAGS  += -I$(PREFIX)/include
-ADDITIONAL_LDFLAGS += -L$(PREFIX)/lib
+#
+# These two additional flags, -I and -L, need to be _after_ engine flags to not override it.
+# CFLAGS is populated with CRYPTO_ENGINE_CFLAGS few lines above, so we could add -I to CFLAGS.
+# LDFLAGS and CRYPTO_ENGINE_LDFLAGS are used separately, in this same order, so new macro was
+# introduced, ADDITIONAL_LDFLAGS, to be used after CRYPTO_ENGINE_LDFLAGS, so that LDFLAGS remain
+# at the beginning of linker flags.
+CFLAGS  += -I$(includedir)
+ADDITIONAL_LDFLAGS += -L$(libdir)
 
 ifneq ($(AUTH_SYM_ALG),)
 	CFLAGS += -D$(AUTH_SYM_ALG)
