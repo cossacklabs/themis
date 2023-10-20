@@ -87,6 +87,13 @@ $(BIN_PATH)/$(LIBSOTER_SO): $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
 ifneq ($(LIBSOTER_SO),$(LIBSOTER_LINK))
 	@ln -sf $(LIBSOTER_SO) $(BIN_PATH)/$(LIBSOTER_LINK)
 endif
+ifneq ($(VERBOSE),)
+ifdef IS_MACOS
+	-otool -L "$@"
+else
+	-ldd "$@"
+endif
+endif
 
 $(BIN_PATH)/libsoter.pc:
 	@mkdir -p $(BIN_PATH)

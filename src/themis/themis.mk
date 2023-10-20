@@ -71,6 +71,13 @@ $(BIN_PATH)/$(LIBTHEMIS_SO): $(BIN_PATH)/$(LIBSOTER_SO) $(THEMIS_OBJ)
 ifneq ($(LIBTHEMIS_SO),$(LIBTHEMIS_LINK))
 	@ln -sf $(LIBTHEMIS_SO) $(BIN_PATH)/$(LIBTHEMIS_LINK)
 endif
+ifneq ($(VERBOSE),)
+ifdef IS_MACOS
+	-otool -L "$@"
+else
+	-ldd "$@"
+endif
+endif
 
 $(BIN_PATH)/libthemis.pc:
 	@mkdir -p $(BIN_PATH)

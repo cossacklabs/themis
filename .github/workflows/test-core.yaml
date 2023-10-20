@@ -36,6 +36,7 @@ jobs:
     name: Unit tests
     runs-on: ${{ matrix.os }}
     env:
+      VERBOSE: 1
       SOTER_KDF_RUN_LONG_TESTS: yes
       MATRIX_OS: ${{ matrix.os }}
     strategy:
@@ -58,7 +59,7 @@ jobs:
         with:
           submodules: true
       - name: Build Themis Core (OpenSSL)
-        run: make prepare_tests_basic ENGINE=openssl BUILD_PATH=build-openssl VERBOSE=1
+        run: make prepare_tests_basic ENGINE=openssl BUILD_PATH=build-openssl
       - name: Build Themis Core (OpenSSL 3.0)
         if: ${{ matrix.os != 'ubuntu-20.04' }}
         run: |
@@ -69,7 +70,7 @@ jobs:
             export ENGINE_INCLUDE_PATH="$openssl3/include"
             export ENGINE_LIB_PATH="$openssl3/lib"
           fi
-          make prepare_tests_basic BUILD_PATH=build-openssl-3.0 VERBOSE=1
+          make prepare_tests_basic BUILD_PATH=build-openssl-3.0
       - name: Build Themis Core (BoringSSL)
         if: always()
         run: make prepare_tests_basic ENGINE=boringssl BUILD_PATH=build-boringssl
@@ -91,7 +92,7 @@ jobs:
             export ENGINE_INCLUDE_PATH="$openssl3/include"
             export ENGINE_LIB_PATH="$openssl3/lib"
           fi
-          make test BUILD_PATH=build-openssl-3.0 VERBOSE=1
+          make test BUILD_PATH=build-openssl-3.0
       - name: Run test suite (OpenSSL 3.0, uncompressed keys)
         if: ${{ matrix.os != 'ubuntu-20.04' }}
         env:
@@ -104,10 +105,10 @@ jobs:
             export ENGINE_INCLUDE_PATH="$openssl3/include"
             export ENGINE_LIB_PATH="$openssl3/lib"
           fi
-          make test BUILD_PATH=build-openssl-3.0 VERBOSE=1
+          make test BUILD_PATH=build-openssl-3.0
       - name: Run test suite (BoringSSL)
         if: always()
-        run: make test ENGINE=boringssl BUILD_PATH=build-boringssl VERBOSE=1
+        run: make test ENGINE=boringssl BUILD_PATH=build-boringssl
       - name: Run test suite (BoringSSL, uncompressed keys)
         if: always()
         env:
