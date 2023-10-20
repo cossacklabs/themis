@@ -78,10 +78,15 @@ $(BIN_PATH)/$(LIBSOTER_A): $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-$(BIN_PATH)/$(LIBSOTER_SO): CMD = $(CC) -shared -o $@ $(filter %.o %a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS) $(LIBSOTER_SO_LDFLAGS)
+$(BIN_PATH)/$(LIBSOTER_SO): CMD = $(CC) -shared -o $@ $(filter %.o %a, $^) $(CRYPTO_ENGINE_LDFLAGS) $(LDFLAGS) $(LIBSOTER_SO_LDFLAGS)
 
 $(BIN_PATH)/$(LIBSOTER_SO): $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
 	@mkdir -p $(@D)
+ifneq ($(VERBOSE),)
+	@echo "CRYPTO_ENGINE_LDFLAGS=$(CRYPTO_ENGINE_LDFLAGS)"
+	@echo "LDFLAGS=$(LDFLAGS)"
+	@echo "LIBSOTER_SO_LDFLAGS=$(LIBSOTER_SO_LDFLAGS)"
+endif
 	@echo -n "link "
 	@$(BUILD_CMD)
 ifneq ($(LIBSOTER_SO),$(LIBSOTER_LINK))

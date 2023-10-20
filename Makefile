@@ -88,6 +88,8 @@ pkgconfigdir ?= $(libdir)/pkgconfig
 # Add Themis source directory to search paths
 CFLAGS  += -I$(INC_PATH) -I$(SRC_PATH) -I$(SRC_PATH)/wrappers/themis/
 LDFLAGS += -L$(BIN_PATH)
+# Build shared libraries
+CFLAGS  += -fPIC
 
 ########################################################################
 #
@@ -166,12 +168,10 @@ ifneq ($(ENGINE_LIB_PATH),)
 	CRYPTO_ENGINE_LIB_PATH = $(ENGINE_LIB_PATH)
 endif
 
-# Basic compiler flags (lower priority than vendored boringssl)
+# Basic compiler flags (lower priority than selected engine)
 # Not all platforms include /usr/local in default search path
 CFLAGS  += -I/usr/local/include
 LDFLAGS += -L/usr/local/lib
-# Build shared libraries
-CFLAGS  += -fPIC
 
 ifneq ($(AUTH_SYM_ALG),)
 	CFLAGS += -D$(AUTH_SYM_ALG)
