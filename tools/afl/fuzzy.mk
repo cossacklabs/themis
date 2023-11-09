@@ -38,7 +38,7 @@ FUZZ_UTILS = $(filter-out $(addsuffix .o,$(FUZZ_TOOLS)),$(FUZZ_OBJS))
 
 # Build sources with access to fuzzing headers and link tools to $(FUZZ_THEMIS_LIB).
 $(FUZZ_OBJS): CFLAGS += -I$(FUZZ_SRC_PATH)
-$(FUZZ_TOOLS): LDFLAGS += $(FUZZ_THEMIS_LIB) $(FUZZ_SOTER_LIB) $(CRYPTO_ENGINE_LDFLAGS)
+$(FUZZ_TOOLS): LDFLAGS += $(FUZZ_THEMIS_LIB) $(FUZZ_SOTER_LIB) $(CRYPTO_ENGINE_LDFLAGS) $(ADDITIONAL_LDFLAGS)
 
 # afl-clang is partially configured via environment variables. For one, it likes to
 # talk on stdout so tell it to pipe down a bit. Additionally, address sanitizer builds

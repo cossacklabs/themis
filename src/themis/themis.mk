@@ -62,7 +62,7 @@ $(BIN_PATH)/$(LIBTHEMIS_A): $(THEMIS_OBJ)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-$(BIN_PATH)/$(LIBTHEMIS_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS) -lsoter $(LIBTHEMIS_SO_LDFLAGS)
+$(BIN_PATH)/$(LIBTHEMIS_SO): CMD = $(CC) -shared -o $@ $(filter %.o %.a, $^) $(LDFLAGS) -lsoter $(ADDITIONAL_LDFLAGS) $(LIBTHEMIS_SO_LDFLAGS)
 
 $(BIN_PATH)/$(LIBTHEMIS_SO): $(BIN_PATH)/$(LIBSOTER_SO) $(THEMIS_OBJ)
 	@mkdir -p $(@D)
@@ -70,6 +70,13 @@ $(BIN_PATH)/$(LIBTHEMIS_SO): $(BIN_PATH)/$(LIBSOTER_SO) $(THEMIS_OBJ)
 	@$(BUILD_CMD)
 ifneq ($(LIBTHEMIS_SO),$(LIBTHEMIS_LINK))
 	@ln -sf $(LIBTHEMIS_SO) $(BIN_PATH)/$(LIBTHEMIS_LINK)
+endif
+ifneq ($(VERBOSE),)
+ifdef IS_MACOS
+	-otool -L "$@"
+else
+	-ldd "$@"
+endif
 endif
 
 $(BIN_PATH)/libthemis.pc:
