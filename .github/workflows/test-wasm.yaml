@@ -79,9 +79,11 @@ jobs:
       matrix:
         node-version:
           - 10.x  # legacy
-          - 12.x  # old LTS
-          - 14.x  # current LTS
-          - 16.x  # current stable
+          - 12.x  # legacy
+          - 14.x  # legacy
+          - 16.x  # legacy
+          - 18.x  # current LTS
+          - 20.x  # current active
       fail-fast: false
     steps:
       - name: Install Node.js ${{ matrix.node-version }}
