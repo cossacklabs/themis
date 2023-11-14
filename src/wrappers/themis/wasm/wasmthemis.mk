@@ -19,8 +19,9 @@ WASM_PATH = src/wrappers/themis/wasm
 WASM_SRC += $(WASM_PATH)/package.json
 WASM_SRC += $(wildcard $(WASM_PATH)/src/*.js)
 
-WASM_RUNTIME = $(abspath $(WASM_PATH)/emscripten/runtime_exports.json)
-WASM_PRE_JS  = $(abspath $(WASM_PATH)/emscripten/pre.js)
+WASM_RUNTIME            = $(abspath $(WASM_PATH)/emscripten/runtime_exports.json)
+WASM_PRE_JS             = $(abspath $(WASM_PATH)/emscripten/pre.js)
+WASM_EXPORTED_FUNCTIONS = $(abspath $(WASM_PATH)/emscripten/exported_functions.json)
 
 WASM_PACKAGE = $(BIN_PATH)/wasm-themis.tgz
 
@@ -28,7 +29,7 @@ $(BIN_PATH)/libthemis.js: LDFLAGS += -s EXPORTED_RUNTIME_METHODS=@$(WASM_RUNTIME
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s ALLOW_TABLE_GROWTH
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s MODULARIZE=1
 $(BIN_PATH)/libthemis.js: LDFLAGS += -s ALLOW_MEMORY_GROWTH=1
-$(BIN_PATH)/libthemis.js: LDFLAGS += -s EXPORTED_FUNCTIONS='["_malloc", "_free"]'
+$(BIN_PATH)/libthemis.js: LDFLAGS += -s EXPORTED_FUNCTIONS=@$(WASM_EXPORTED_FUNCTIONS)
 # FIXME(ilammy, 2020-11-29): rely in EMSCRIPTEN_KEEPALIVE instead of LINKABLE
 # For some reason existing EMSCRIPTEN_KEEPALIVE macros do not work and without
 # LINKABLE flag wasm-ld ends up stripping *all* Themis functions from "*.wasm"
