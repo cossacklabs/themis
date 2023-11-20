@@ -78,14 +78,27 @@ $(BIN_PATH)/$(LIBSOTER_A): $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
 	@echo -n "link "
 	@$(BUILD_CMD)
 
-$(BIN_PATH)/$(LIBSOTER_SO): CMD = $(CC) -shared -o $@ $(filter %.o %a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS) $(LIBSOTER_SO_LDFLAGS)
+$(BIN_PATH)/$(LIBSOTER_SO): CMD = $(CC) -shared -o $@ $(filter %.o %a, $^) $(LDFLAGS) $(CRYPTO_ENGINE_LDFLAGS) $(ADDITIONAL_LDFLAGS) $(LIBSOTER_SO_LDFLAGS)
 
 $(BIN_PATH)/$(LIBSOTER_SO): $(SOTER_OBJ) $(SOTER_ENGINE_DEPS)
 	@mkdir -p $(@D)
+ifneq ($(VERBOSE),)
+	@echo "LDFLAGS=$(LDFLAGS)"
+	@echo "CRYPTO_ENGINE_LDFLAGS=$(CRYPTO_ENGINE_LDFLAGS)"
+	@echo "ADDITIONAL_LDFLAGS=$(ADDITIONAL_LDFLAGS)"
+	@echo "LIBSOTER_SO_LDFLAGS=$(LIBSOTER_SO_LDFLAGS)"
+endif
 	@echo -n "link "
 	@$(BUILD_CMD)
 ifneq ($(LIBSOTER_SO),$(LIBSOTER_LINK))
 	@ln -sf $(LIBSOTER_SO) $(BIN_PATH)/$(LIBSOTER_LINK)
+endif
+ifneq ($(VERBOSE),)
+ifdef IS_MACOS
+	-otool -L "$@"
+else
+	-ldd "$@"
+endif
 endif
 
 $(BIN_PATH)/libsoter.pc:
