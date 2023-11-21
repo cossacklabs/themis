@@ -43,6 +43,11 @@ _Code:_
 
   - Minimum supported Rust version is now 1.58 ([#977](https://github.com/cossacklabs/themis/pull/977), [#984](https://github.com/cossacklabs/themis/pull/984)).
 
+- **WasmThemis**
+
+  - Updated required `emsdk` version to 3.1.47 ([#1036](https://github.com/cossacklabs/themis/pull/1036)).
+  - WasmThemis now works with Node v18 and v20 ([#1036](https://github.com/cossacklabs/themis/pull/1036)).
+
 - **WebAssembly**
 
   - Node.js v8 is no longer supported ([#901](https://github.com/cossacklabs/themis/pull/901)).
