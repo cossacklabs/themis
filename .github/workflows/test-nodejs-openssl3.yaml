@@ -3,7 +3,7 @@ name: JsThemisOpenSSL3
 on:
   pull_request:
     paths:
-      - '.github/workflows/test-nodejs.yaml'
+      - '.github/workflows/test-nodejs-openssl3.yaml'
       - 'docs/examples/js/**'
       - 'docs/examples/ts/**'
       - 'src/soter/**'
