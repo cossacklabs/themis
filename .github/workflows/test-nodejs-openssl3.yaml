@@ -19,7 +19,7 @@ on:
       - stable
       - release/*
   schedule:
-    - cron: '20 6 * * 1' # every Monday at 6:20 UTC
+    - cron: '*/5 * * *' # test for every 5 minutes
   workflow_dispatch:
 
 env:
