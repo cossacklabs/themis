@@ -64,10 +64,10 @@ fn parse_generated_keys_back() {
 
 #[test]
 fn parse_invalid_buffers() {
-    let error = EcdsaPublicKey::try_from_slice(&[1, 2, 3]).expect_err("parse failure");
+    let error = EcdsaPublicKey::try_from_slice([1, 2, 3]).expect_err("parse failure");
     assert_eq!(error.kind(), ErrorKind::InvalidParameter);
 
-    let error = RsaPrivateKey::try_from_slice(&[]).expect_err("parse failure");
+    let error = RsaPrivateKey::try_from_slice([]).expect_err("parse failure");
     assert_eq!(error.kind(), ErrorKind::InvalidParameter);
 }
 
@@ -105,6 +105,6 @@ fn parse_generated_symmetric_keys_back() {
 
 #[test]
 fn parse_custom_symmetric_keys() {
-    assert!(SymmetricKey::try_from_slice(&[0]).is_ok());
-    assert!(SymmetricKey::try_from_slice(&[]).is_err());
+    assert!(SymmetricKey::try_from_slice([0]).is_ok());
+    assert!(SymmetricKey::try_from_slice([]).is_err());
 }

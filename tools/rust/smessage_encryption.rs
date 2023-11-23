@@ -48,7 +48,7 @@ fn main() {
             let key_pair = KeyPair::try_join(private_key, public_key).expect("matching keys");
             let encrypter = SecureMessage::new(key_pair);
 
-            let encrypted = encrypter.encrypt(&message).unwrap_or_else(|error| {
+            let encrypted = encrypter.encrypt(message).unwrap_or_else(|error| {
                 eprintln!("failed to encrypt message: {error}");
                 exit(1);
             });
@@ -63,7 +63,7 @@ fn main() {
                 eprintln!("failed to decode message: {error}");
                 exit(1);
             });
-            let decrypted = encrypter.decrypt(&decoded_message).unwrap_or_else(|error| {
+            let decrypted = encrypter.decrypt(decoded_message).unwrap_or_else(|error| {
                 eprintln!("failed to decrypt message: {error}");
                 exit(1);
             });
@@ -73,7 +73,7 @@ fn main() {
         "sign" => {
             let signer = SecureSign::new(private_key);
 
-            let signed = signer.sign(&message).unwrap_or_else(|error| {
+            let signed = signer.sign(message).unwrap_or_else(|error| {
                 eprintln!("failed to sign message: {error}");
                 exit(1);
             });
@@ -87,7 +87,7 @@ fn main() {
                 eprintln!("failed to decode message: {error}");
                 exit(1);
             });
-            let verified = signer.verify(&decoded_message).unwrap_or_else(|error| {
+            let verified = signer.verify(decoded_message).unwrap_or_else(|error| {
                 eprintln!("failed to verify message: {error}");
                 exit(1);
             });
