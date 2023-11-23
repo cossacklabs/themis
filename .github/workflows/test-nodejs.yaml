@@ -31,9 +31,11 @@ jobs:
       matrix:
         node-version:
           - 10.x  # legacy
-          - 12.x  # old LTS
-          - 14.x  # current LTS
-          - 16.x  # current stable
+          - 12.x
+          - 14.x
+          - 16.x
+          - 18.x
+          - 20.x  # current LTS
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -68,8 +70,10 @@ jobs:
       matrix:
         node-version:
           - 12.x  # old LTS
-          - 14.x  # current LTS
-          - 16.x  # current stable
+          - 14.x
+          - 16.x
+          - 18.x
+          - 20.x
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -132,3 +136,16 @@ jobs:
           node secure_comparator_client.js
           kill -SIGTERM "$!"
           echo "ok"
+      - name: Test examples (TypeScript Secure Cell)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/ts
+          echo "Prepare to test"
+          npm init -y
+          npm install @types/node typescript
+          make jsthemis_install
+          ./node_modules/.bin/tsc secure_cell.ts
+          echo "Test TypeScript Secure Cell..."
+          node secure_cell.js
+          echo "ok"
+
