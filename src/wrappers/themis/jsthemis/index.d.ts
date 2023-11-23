@@ -45,8 +45,6 @@ export declare class SecureSession {
     constructor(peerID: Uint8Array, privateKey: Uint8Array, getPublicKeyCallback: GetPublicKeyCallback);
     isEstablished(): boolean;
     connectRequest(): Uint8Array;
-    sendToPeer(message: Uint8Array): void;
-    receiveFromPeer(): Uint8Array;
     wrap(message: Uint8Array): Uint8Array;
     unwrap(message: Uint8Array): Uint8Array;
 }
