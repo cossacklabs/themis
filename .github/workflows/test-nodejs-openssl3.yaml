@@ -25,7 +25,7 @@ on:
 env:
   WITH_FATAL_WARNINGS: yes
   OPENSSL_VERSION: 3.0.10
-  OPENSSL_PREFIX: /opt/openssl-${{ env.OPENSSL_VERSION }}
+  OPENSSL_PREFIX: /opt/openssl-3.0.10
 
 jobs:
   unit-tests:
