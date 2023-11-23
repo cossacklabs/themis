@@ -19,7 +19,7 @@ on:
       - stable
       - release/*
   schedule:
-    - cron: '*/5 * * * *' # test for every 5 minutes
+    - cron: '20 6 * * 1' # test for every 5 minutes
   workflow_dispatch:
 
 env:
@@ -50,7 +50,7 @@ jobs:
       - name: Compile OpenSSL 3.0.10
         run: |
           wget https://www.openssl.org/source/openssl-${{ env.OPENSSL_VERSION }}.tar.gz &&
-          apt purge -y openssl  && \
+          sudo apt purge -y openssl && \
           mkdir ${{ env.OPENSSL_PREFIX }} -p && \
           tar xf openssl-${{ env.OPENSSL_VERSION }}.tar.gz && \
           cd openssl-${{ env.OPENSSL_VERSION }} && \
