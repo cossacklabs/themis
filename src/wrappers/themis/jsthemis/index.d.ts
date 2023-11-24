@@ -1,4 +1,5 @@
 export declare class KeyPair {
+    constructor(privateKey?: Uint8Array, publicKey?: Uint8Array);
     public(): Uint8Array;
     private(): Uint8Array;
 }
@@ -20,6 +21,7 @@ export declare interface SecureCellTokenProtectResult {
 }
 
 export declare class SecureCellTokenProtect {
+    constructor(key: SymmetricKey);
     static withKey(key: SymmetricKey): SecureCellTokenProtect;
     encrypt(plaintext: Uint8Array, context?: Uint8Array): SecureCellTokenProtectResult;
     decrypt(encrypted: Uint8Array, token: Uint8Array, context?: Uint8Array): Uint8Array;
