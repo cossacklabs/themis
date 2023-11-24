@@ -31,9 +31,9 @@ jobs:
       matrix:
         node-version:
           - 10.x  # legacy
-          - 12.x
-          - 14.x
-          - 16.x  # The last one that supports OpenSSL 1.1.1
+          - 12.x  # old LTS
+          - 14.x  # current LTS
+          - 16.x  # current stable
       fail-fast: false
     steps:
       - name: Install system dependencies
@@ -68,8 +68,8 @@ jobs:
       matrix:
         node-version:
           - 12.x  # old LTS
-          - 14.x
-          - 16.x  # The last one that supports OpenSSL 1.1.1
+          - 14.x  # current LTS
+          - 16.x  # current stable
       fail-fast: false
     steps:
       - name: Install system dependencies
