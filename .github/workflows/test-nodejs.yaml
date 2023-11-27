@@ -165,4 +165,3 @@ jobs:
           dec=$(node secure_message.js dec "${bob[1]}" "${alice[2]}" "$enc")
           test "$dec" = "message"
           echo "ok"
-

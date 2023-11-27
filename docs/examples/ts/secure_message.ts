@@ -4,7 +4,6 @@ if (process.argv.length == 6) {
     const command = process.argv[2];
     const private_key = process.argv[3];
     const peer_public_key = process.argv[4];
-
     const secure_message = new SecureMessage(
         Buffer.from(private_key, "base64"),
         Buffer.from(peer_public_key, "base64"));
