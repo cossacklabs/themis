@@ -146,7 +146,6 @@ jobs:
           cd $GITHUB_WORKSPACE/docs/examples/ts/
           npm install
           npm run compile
-          ls -la *.js
       - name: Test Typescript examples (Secure Keygen)
         if: always()
         run: |
@@ -154,7 +153,7 @@ jobs:
           echo "Test Secure Keygen..."
           node secure_keygen.js
           echo "ok"
-        - name: Test Typescript examples (Secure Message)
+      - name: Test Typescript examples (Secure Message)
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/ts
