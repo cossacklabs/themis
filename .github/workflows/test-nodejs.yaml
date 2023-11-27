@@ -171,7 +171,7 @@ jobs:
           dec=$(node secure_message.js dec "${bob[1]}" "${alice[2]}" "$enc")
           test "$dec" = "message"
           echo "ok"
-      - name: Test examples (Secure Session)
+      - name: Test Typescript examples (Secure Session)
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/ts
@@ -182,7 +182,7 @@ jobs:
           kill -SIGTERM "$!"
           grep -q 'Hello server!!!' output.txt
           echo "ok"
-      - name: Test examples (Secure Comparator)
+      - name: Test Typescript examples (Secure Comparator)
         if: always()
         run: |
           cd $GITHUB_WORKSPACE/docs/examples/ts
