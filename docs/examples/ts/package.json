@@ -1,0 +1,17 @@
+{
+  "name": "ts_examples_themis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "secure_keygen.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rm *.js",
+    "compile": "find . -maxdepth 1 -type f -name '*.ts' -exec ./node_modules/.bin/tsc {} \\;"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^20.9.5",
+    "typescript": "^5.3.2"
+  }
+}

@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/test-nodejs.yaml'
       - 'docs/examples/js/**'
+      - 'docs/examples/ts/**'
       - 'src/soter/**'
       - 'src/themis/**'
       - 'src/wrappers/themis/jsthemis/**'
@@ -139,3 +140,10 @@ jobs:
           echo "Test import syntax..."
           node import_module.mjs
           echo "ok"
+      - name: Install Typescript deps
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/ts/
+          npm install
+          npm run compile
+
