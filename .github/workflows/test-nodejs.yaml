@@ -153,6 +153,13 @@ jobs:
           echo "Test Secure Keygen..."
           node secure_keygen.js
           echo "ok"
+      - name: Test Typescript examples (Secure Cell)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/ts
+          echo "Test Secure Cell..."
+          node secure_cell.js
+          echo "ok"
       - name: Test Typescript examples (Secure Message)
         if: always()
         run: |
@@ -163,4 +170,25 @@ jobs:
           enc=$(node secure_message.js enc "${alice[1]}" "${bob[2]}" message)
           dec=$(node secure_message.js dec "${bob[1]}" "${alice[2]}" "$enc")
           test "$dec" = "message"
+          echo "ok"
+      - name: Test examples (Secure Session)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/ts
+          echo "Test Secure Session..."
+          node secure_session_server.js &
+          sleep 1 # give the server time to launch
+          node secure_session_client.js > output.txt
+          kill -SIGTERM "$!"
+          grep -q 'Hello server!!!' output.txt
+          echo "ok"
+      - name: Test examples (Secure Comparator)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/ts
+          echo "Test Secure Comparator..."
+          node secure_comparator_server.js &
+          sleep 1 # give the server time to launch
+          node secure_comparator_client.js
+          kill -SIGTERM "$!"
           echo "ok"
