@@ -146,4 +146,16 @@ jobs:
           cd $GITHUB_WORKSPACE/docs/examples/ts/
           npm install
           npm run compile
+          ls -la *.js
+      - name: Test Typescript examples (Secure Message)
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/ts
+          echo "Test Secure Message..."
+          alice=($(node secure_keygen.js | cut -c 15-))
+          bob=($(node secure_keygen.js | cut -c 15-))
+          enc=$(node secure_message.js enc "${alice[0]}" "${bob[1]}" message)
+          dec=$(node secure_message.js dec "${bob[0]}" "${alice[1]}" "$enc")
+          test "$dec" = "message"
+          echo "ok"
 
