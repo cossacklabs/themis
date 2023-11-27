@@ -2,7 +2,7 @@
 name = "themis"
 version = "0.14.0"
 edition = "2018"
-rust-version = "1.58.0"
+rust-version = "1.60.0"
 authors = ["rust-themis developers"]
 description = "High-level cryptographic services for storage and messaging"
 homepage = "https://www.cossacklabs.com/themis/"
@@ -30,10 +30,14 @@ zeroize = "1"
 
 [dev-dependencies]
 base64 = "0.10.0"
-# Freeze `log` and `byteorder` so that tests still build/run with Rust 1.58.
+# Freeze byteorder, log, memchr, regex so that tests still build/run with Rust 1.60.
+# `regex` is dependency of `env_logger`, 1.9.6 switched to Rust 1.65.
+# `memchr` is dependency of `regex`, at the time of writing this latest version required Rust 1.65.
 # FIXME: remove/update strict version requirement after we bump minimum required Rust version
 byteorder = "=1.4.3"
 clap = "2.32"
 lazy_static = "1.2.0"
 log = "=0.4.17"
 env_logger = "0.6.0"
+regex = "=1.9.5"
+memchr = "=2.6.1"
