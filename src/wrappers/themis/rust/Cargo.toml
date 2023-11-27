@@ -2,7 +2,7 @@
 name = "themis"
 version = "0.14.0"
 edition = "2018"
-rust-version = "1.58.0"
+rust-version = "1.60.0"
 authors = ["rust-themis developers"]
 description = "High-level cryptographic services for storage and messaging"
 homepage = "https://www.cossacklabs.com/themis/"
@@ -29,11 +29,18 @@ bindings = { package = "libthemis-sys", path = "libthemis-sys", version = "0.14.
 zeroize = "1"
 
 [dev-dependencies]
-base64 = "0.10.0"
-# Freeze `log` and `byteorder` so that tests still build/run with Rust 1.58.
+# Freeze byteorder, log so that tests still build/run with Rust 1.60.
+# Other crates are frozen in hope to avoid more problems in future, where something updates
+# and requires newer toolchain version compared to what we require for RustThemis.
 # FIXME: remove/update strict version requirement after we bump minimum required Rust version
+base64 = "=0.10.1"
 byteorder = "=1.4.3"
-clap = "2.32"
-lazy_static = "1.2.0"
+clap = "=2.34.0"
+lazy_static = "=1.4.0"
 log = "=0.4.17"
-env_logger = "0.6.0"
+env_logger = "=0.6.2"
+
+# These are not used in themis tests, but are rather dependencies of dev-dependencies listed above.
+# Specifying exact versions so that tests could build/run on Rust 1.60.
+regex = "=1.9.5"
+memchr = "=2.6.1"

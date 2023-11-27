@@ -358,7 +358,7 @@ impl SecureCellSeal {
     /// # }
     /// ```
     pub fn encrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
-        self.encrypt_with_context(message, &[])
+        self.encrypt_with_context(message, [])
     }
 
     /// Encrypts the provided message with associated context.
@@ -501,7 +501,7 @@ impl SecureCellSeal {
     /// # }
     /// ```
     pub fn decrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
-        self.decrypt_with_context(message, &[])
+        self.decrypt_with_context(message, [])
     }
 
     /// Decrypts the provided message with associated context.
@@ -689,7 +689,7 @@ impl SecureCellSealWithPassphrase {
     /// # }
     /// ```
     pub fn encrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
-        self.encrypt_with_context(message, &[])
+        self.encrypt_with_context(message, [])
     }
 
     /// Encrypts the provided message with associated context.
@@ -822,7 +822,7 @@ impl SecureCellSealWithPassphrase {
     /// # }
     /// ```
     pub fn decrypt(&self, message: impl AsRef<[u8]>) -> Result<Vec<u8>> {
-        self.decrypt_with_context(message, &[])
+        self.decrypt_with_context(message, [])
     }
 
     /// Decrypts the provided message with associated context.
@@ -1225,7 +1225,7 @@ impl SecureCellTokenProtect {
     /// # }
     /// ```
     pub fn encrypt(&self, message: impl AsRef<[u8]>) -> Result<(Vec<u8>, Vec<u8>)> {
-        self.encrypt_with_context(message, &[])
+        self.encrypt_with_context(message, [])
     }
 
     /// Encrypts the provided message with associated context.
@@ -1393,7 +1393,7 @@ impl SecureCellTokenProtect {
     /// # }
     /// ```
     pub fn decrypt(&self, message: impl AsRef<[u8]>, token: impl AsRef<[u8]>) -> Result<Vec<u8>> {
-        self.decrypt_with_context(message, token, &[])
+        self.decrypt_with_context(message, token, [])
     }
 
     /// Decrypts the provided message with associated context.
