@@ -106,7 +106,7 @@ pub fn decryption(c: &mut Criterion) {
             |b, &size| {
                 let message = vec![0; size];
                 let encrypted = SecureMessage::new(key_pair.clone())
-                    .encrypt(&message)
+                    .encrypt(message)
                     .expect("failed encryption");
 
                 let mut decrypted = vec![0; size];

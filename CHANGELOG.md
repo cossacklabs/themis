@@ -41,7 +41,12 @@ _Code:_
 
     This is technically a breaking change, but most reasonble implementations should be `Send` already. Please raise an issue if your code fails to build.
 
-  - Minimum supported Rust version is now 1.58 ([#977](https://github.com/cossacklabs/themis/pull/977), [#984](https://github.com/cossacklabs/themis/pull/984)).
+  - Minimum supported Rust version is now 1.60 ([#977](https://github.com/cossacklabs/themis/pull/977), [#984](https://github.com/cossacklabs/themis/pull/984), [#1039](https://github.com/cossacklabs/themis/pull/1039)).
+
+- **WasmThemis**
+
+  - Updated required `emsdk` version to 3.1.47 ([#1036](https://github.com/cossacklabs/themis/pull/1036)).
+  - WasmThemis now works with Node v18 and v20 ([#1036](https://github.com/cossacklabs/themis/pull/1036)).
 
 - **WebAssembly**
 

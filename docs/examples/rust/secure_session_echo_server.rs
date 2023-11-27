@@ -105,7 +105,7 @@ fn main() {
         .expect("valid port");
 
     let listen_addr = SocketAddr::new([0; 16].into(), port);
-    let listen_socket = TcpListener::bind(&listen_addr).expect("server listen");
+    let listen_socket = TcpListener::bind(listen_addr).expect("server listen");
 
     info!("listening on port {}", port);
 
@@ -123,7 +123,7 @@ fn main() {
             info!("{:?}: connected", client_address);
 
             let transport = SocketTransport::new(client);
-            let mut session = SecureSession::new(&SERVER_ID, &SERVER_PRIVATE, transport)
+            let mut session = SecureSession::new(SERVER_ID, &SERVER_PRIVATE, transport)
                 .expect("Secure Session server");
 
             while !session.is_established() {

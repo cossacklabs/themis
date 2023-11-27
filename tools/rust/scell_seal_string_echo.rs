@@ -35,7 +35,7 @@ fn main() {
     let message = matches.value_of("message").unwrap();
     let context = matches.value_of("context").unwrap_or_default();
 
-    let cell = SecureCell::with_key(&key)
+    let cell = SecureCell::with_key(key)
         .unwrap_or_else(|_| {
             eprintln!("invalid parameters: empty master key");
             exit(1);
@@ -45,7 +45,7 @@ fn main() {
     match mode {
         "enc" => {
             let encrypted = cell
-                .encrypt_with_context(&message, &context)
+                .encrypt_with_context(message, context)
                 .unwrap_or_else(|error| {
                     eprintln!("failed to encrypt message: {error}");
                     exit(1);
@@ -58,7 +58,7 @@ fn main() {
                 exit(1);
             });
             let decrypted = cell
-                .decrypt_with_context(&decoded_message, &context)
+                .decrypt_with_context(decoded_message, context)
                 .unwrap_or_else(|error| {
                     eprintln!("failed to decrypt message: {error}");
                     exit(1);
