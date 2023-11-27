@@ -132,3 +132,10 @@ jobs:
           node secure_comparator_client.js
           kill -SIGTERM "$!"
           echo "ok"
+      - name: Test 'import' syntax
+        if: always()
+        run: |
+          cd $GITHUB_WORKSPACE/docs/examples/js/
+          echo "Test import syntax..."
+          node import_module.mjs
+          echo "ok"
