@@ -5,7 +5,6 @@ on:
     paths:
       - '.github/workflows/test-nodejs.yaml'
       - 'docs/examples/js/**'
-      - 'docs/examples/ts/**'
       - 'src/soter/**'
       - 'src/themis/**'
       - 'src/wrappers/themis/jsthemis/**'
