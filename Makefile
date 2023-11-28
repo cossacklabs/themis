@@ -45,6 +45,8 @@ $(BUILD_PATH)/configure.mk:
 # then increment LIBRARY_SO_VERSION as well, and update package names.
 VERSION := $(shell test -d .git && git describe --tags || cat VERSION)
 LIBRARY_SO_VERSION = 0
+# Version in format X.Y.Z, without build number and commit hash
+VERSION_SHORT := $(shell cat VERSION)
 
 #----- Toolchain ---------------------------------------------------------------
 
@@ -412,13 +414,19 @@ fmt: $(FMT_FIXUP)
 fmt_check: $(FMT_CHECK)
 
 clean: CMD = rm -rf $(BIN_PATH)
-clean: nist_rng_test_suite_clean clean_rust
+clean: nist_rng_test_suite_clean clean_rust clean_python
 	@$(BUILD_CMD)
 
 clean_rust:
 ifdef RUST_VERSION
 	@cargo clean
 	@rm -f tools/rust/*.rust
+endif
+
+clean_python:
+ifdef PYTHON3_VERSION
+	@rm -rf src/wrappers/themis/python/dist
+	@rm -rf src/wrappers/themis/python/pythemis.egg-info
 endif
 
 get_version:
@@ -621,6 +629,25 @@ endif
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
 
+pythemis_make_wheel: CMD = cd src/wrappers/themis/python/ && python3 setup.py bdist_wheel
+pythemis_make_wheel:
+ifeq ($(PYTHON3_VERSION),)
+	@echo "python3 not found"
+	@exit 1
+endif
+	@echo -n "pythemis make wheel "
+	@$(BUILD_CMD_)
+	@echo Result: src/wrappers/themis/python/dist/pythemis-$(VERSION_SHORT)-py2.py3-none-any.whl
+
+pythemis_install_wheel: CMD = pip install src/wrappers/themis/python/dist/pythemis-$(VERSION_SHORT)-py2.py3-none-any.whl
+pythemis_install_wheel:
+ifeq ($(PYTHON3_VERSION),)
+	@echo "python3 not found"
+	@exit 1
+endif
+	@echo -n "pythemis install wheel "
+	@$(BUILD_CMD_)
+
 ########################################################################
 #
 # Packaging Themis Core: Linux distributions
@@ -743,7 +770,7 @@ deb: PREFIX = /usr
 deb: libdir = $(PREFIX)$(DEB_LIBDIR)
 deb: jnidir = $(PREFIX)$(DEB_LIBDIR)/jni
 
-deb: install themispp_install themis_jni_install
+deb: install $(if $(WITHOUT_THEMISPP), , themispp_install) $(if $(WITHOUT_JAVA), , themis_jni_install)
 	@printf "ldconfig" > $(POST_INSTALL_SCRIPT)
 	@printf "ldconfig" > $(POST_UNINSTALL_SCRIPT)
 
@@ -764,6 +791,7 @@ deb: install themispp_install themis_jni_install
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --category $(PACKAGE_CATEGORY) \
+		 --force \
 		 $(foreach file,$(DEV_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
 	@fpm --input-type dir \
@@ -781,8 +809,10 @@ deb: install themispp_install themis_jni_install
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --deb-priority optional \
 		 --category $(PACKAGE_CATEGORY) \
+		 --force \
 		 $(foreach file,$(LIB_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
+ifndef WITHOUT_THEMISPP
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name $(DEB_THEMISPP_PACKAGE_NAME) \
@@ -798,8 +828,11 @@ deb: install themispp_install themis_jni_install
 		 --after-install $(POST_INSTALL_SCRIPT) \
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --category $(PACKAGE_CATEGORY) \
+		 --force \
 		 $(foreach file,$(THEMISPP_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
+endif
 
+ifndef WITHOUT_JAVA
 	@fpm --input-type dir \
 		 --output-type deb \
 		 --name $(JNI_PACKAGE_NAME) \
@@ -815,9 +848,43 @@ deb: install themispp_install themis_jni_install
 		 --after-remove $(POST_UNINSTALL_SCRIPT) \
 		 --deb-priority optional \
 		 --category $(PACKAGE_CATEGORY) \
+		 --force \
 		 $(foreach file,$(JNI_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
+endif
 
 	@find $(BIN_PATH) -name \*.deb
+
+# Use builtin feature of fpm to create a .deb package from a Python package dir.
+# Dependencies are automatically added, i.e. PyThemis depends on `six`, so fpm will add `python3-six` to deps.
+deb_python: DEB_ARCHITECTURE = all
+deb_python: DESTDIR = $(BIN_PATH)/deb/pythemis_root
+deb_python:
+	@mkdir -p $(BIN_PATH)/deb
+	@fpm --input-type python \
+		 --output-type deb \
+		 --python-bin=python3 \
+		 --python-package-name-prefix=python3 \
+		 --name python3-pythemis \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --maintainer $(MAINTAINER) \
+		 --package $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX) \
+		 --architecture $(DEB_ARCHITECTURE) \
+		 --version $(VERSION)+$(OS_CODENAME) \
+		 --depends python3 --depends libthemis \
+		 --deb-priority optional \
+		 --category $(PACKAGE_CATEGORY) \
+		 --force \
+		 src/wrappers/themis/python
+
+	@echo $(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
+
+# Using `apt` since it could install dependencies (we depend on python3-six),
+# while dpkg would just complain about missing dependency and fail
+pythemis_install_deb: DEB_ARCHITECTURE = all
+pythemis_install_deb: deb_python
+	apt install ./$(BIN_PATH)/deb/python3-pythemis_$(NAME_SUFFIX)
 
 rpm: MODE_PACKAGING = 1
 rpm: DESTDIR = $(BIN_PATH)/rpm/root
@@ -895,6 +962,33 @@ rpm: install themispp_install themis_jni_install
          $(foreach file,$(JNI_PACKAGE_FILES),$(DESTDIR)/$(file)=$(file))
 
 	@find $(BIN_PATH) -name \*.rpm
+
+rpm_python: ARCHITECTURE = all
+rpm_python:
+	@mkdir -p $(BIN_PATH)/rpm
+	@fpm --input-type python \
+		 --output-type rpm \
+		 --python-bin=python3 \
+		 --python-package-name-prefix=python3 \
+		 --name python3-pythemis \
+		 --license $(LICENSE_NAME) \
+		 --url '$(COSSACKLABS_URL)' \
+		 --description '$(SHORT_DESCRIPTION)' \
+		 --rpm-summary '$(RPM_SUMMARY)' \
+		 --maintainer $(MAINTAINER) \
+		 --package $(BIN_PATH)/rpm/python3-pythemis_$(NAME_SUFFIX) \
+		 --version $(RPM_VERSION) \
+		 --depends python3 --depends libthemis \
+		 --category $(PACKAGE_CATEGORY) \
+		 --force \
+		 src/wrappers/themis/python
+
+	@echo $(BIN_PATH)/rpm/python3-pythemis_$(NAME_SUFFIX)
+
+pythemis_install_rpm: ARCHITECTURE = all
+pythemis_install_rpm: rpm_python
+	yum install ./$(BIN_PATH)/rpm/python3-pythemis_$(NAME_SUFFIX)
+
 
 ########################################################################
 #
