@@ -31,6 +31,10 @@ _Code:_
 
   - `pythemis.scomparator` and `pythemis.skeygen` are now imported with `from pythemis import *` ([#914](https://github.com/cossacklabs/themis/pull/914)).
 
+  - New installation methods, accessible with make ([#1023](https://github.com/cossacklabs/themis/pull/1023)).
+    - create/install `.whl` package for virtualenv
+    - create/install `.deb` or `.rpm` package for system-wide installation
+
 - **Ruby**
 
   - Improved compatibility with non-standard installations on Apple M1 ([#917](https://github.com/cossacklabs/themis/pull/917)).
