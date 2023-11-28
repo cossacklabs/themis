@@ -1,8 +1,8 @@
 {
   "name": "jsthemis",
-  "version": "0.15.0",
+  "version": "0.15.2",
   "description": "Themis is a convenient cryptographic library for data protection.",
-  "main": "build/Release/jsthemis.node",
+  "main": "index.js",
   "scripts": {
     "test": "mocha",
     "preuninstall": "rm -rf build/*",

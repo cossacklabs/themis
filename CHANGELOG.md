@@ -4,7 +4,11 @@
 
 Changes that are currently in development and have not been released yet.
 
-## [0.15.2](https://github.com/cossacklabs/themis/releases/tag/0.15.2), October 03 2023
+## [0.15.2](https://github.com/cossacklabs/themis/releases/tag/0.15.2), November 24 2023
+
+### JsThemis wrapper 
+- Added the ability to use the `import` syntax for the jsthemis module. 
+- Added a declaration file for TypeScript. 
 
 ### Android, ReactNative wrappers
 Updated versions of dependencies. New minimum versions of iOS, Android are set.
