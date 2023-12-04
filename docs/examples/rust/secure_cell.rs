@@ -33,7 +33,7 @@ fn main() -> themis::Result<()> {
 
         println!("Encoded:   {}", base64::encode(&message));
 
-        let encrypted_message = scell_mk.encrypt(&message)?;
+        let encrypted_message = scell_mk.encrypt(message)?;
         println!("Encrypted: {}", base64::encode(&encrypted_message));
 
         let decrypted_message = scell_mk.decrypt(&encrypted_message)?;
@@ -44,11 +44,11 @@ fn main() -> themis::Result<()> {
 
     println!("## Passphrase API");
     {
-        let scell_pw = SecureCell::with_passphrase(&passphrase)?.seal();
+        let scell_pw = SecureCell::with_passphrase(passphrase)?.seal();
 
         println!("Encoded:   {}", base64::encode(&message));
 
-        let encrypted_message = scell_pw.encrypt(&message)?;
+        let encrypted_message = scell_pw.encrypt(message)?;
         println!("Encrypted: {}", base64::encode(&encrypted_message));
 
         let decrypted_message = scell_pw.decrypt(&encrypted_message)?;
@@ -64,7 +64,7 @@ fn main() -> themis::Result<()> {
 
         println!("Encoded:    {}", base64::encode(&message));
 
-        let (encrypted_message, auth_token) = scell_tp.encrypt(&message)?;
+        let (encrypted_message, auth_token) = scell_tp.encrypt(message)?;
         println!("Encrypted:  {}", base64::encode(&encrypted_message));
         println!("Auth token: {}", base64::encode(&auth_token));
 
@@ -81,10 +81,10 @@ fn main() -> themis::Result<()> {
 
         println!("Encoded:   {}", base64::encode(&message));
 
-        let encrypted_message = scell_ci.encrypt_with_context(&message, &context)?;
+        let encrypted_message = scell_ci.encrypt_with_context(message, context)?;
         println!("Encrypted: {}", base64::encode(&encrypted_message));
 
-        let decrypted_message = scell_ci.decrypt_with_context(&encrypted_message, &context)?;
+        let decrypted_message = scell_ci.decrypt_with_context(&encrypted_message, context)?;
         println!("Decrypted: {}", as_str(&decrypted_message));
         assert_eq!(decrypted_message, message);
     }

@@ -102,7 +102,7 @@ pub fn verification(c: &mut Criterion) {
             |b, &size| {
                 let message = vec![0; size];
                 let signature = SecureSign::new(private.clone())
-                    .sign(&message)
+                    .sign(message)
                     .expect("failed signing");
 
                 let mut received_message = vec![0; size];

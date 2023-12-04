@@ -47,6 +47,69 @@ jobs:
       - name: Run test suite
         run: make test_python
 
+  unit-tests-venv:
+    name: Unit tests (virtualenv install)
+    # TODO: Switch to something more fresh, Ubuntu 22.04 or Debian Bookworm,
+    #       after issue with deprecates in C++ tests is fixed
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev \
+            python3 python3-setuptools python3-pip python3-venv
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Prepare Themis Core
+        run: |
+          make
+          sudo make install
+          make prepare_tests_all
+      - name: Create virtualenv
+        run: mkdir /tmp/test_venv && python3 -m venv /tmp/test_venv
+      - name: Install PyThemis into virtualenv
+        run: |
+          make pythemis_make_wheel
+          source /tmp/test_venv/bin/activate && make pythemis_install_wheel
+      - name: Run test suite
+        run: source /tmp/test_venv/bin/activate && make test_python
+      - name: Uninstall PyThemis
+        run: source /tmp/test_venv/bin/activate && pip uninstall -y pythemis
+
+  unit-tests-deb-pkg:
+    name: Unit tests (deb package)
+    # TODO: Switch to something more fresh, Ubuntu 22.04 or Debian Bookworm,
+    #       after issue with deprecates in C++ tests is fixed
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
+          sudo apt update
+          sudo apt install --yes gcc make libssl-dev \
+            python3 python3-setuptools \
+            ruby
+          sudo gem install fpm
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Prepare Themis Core
+        run: |
+          make
+          sudo make install
+          make prepare_tests_all
+      - name: Install libthemis deb
+        run: |
+          make deb WITHOUT_THEMISPP=1 WITHOUT_JAVA=1
+          sudo apt install ./build/deb/libthemis_*.deb
+      - name: Install PyThemis (deb package)
+        run: |
+          sudo make pythemis_install_deb
+      - name: Run test suite
+        run: make test_python
+      - name: Uninstall PyThemis
+        run: sudo apt remove -y python3-pythemis
+
   examples:
     name: Code examples
     runs-on: ubuntu-20.04

@@ -39,7 +39,7 @@ fn main() {
     let message = parts.next().unwrap();
     let token = parts.next().unwrap_or("");
 
-    let cell = SecureCell::with_key(&key)
+    let cell = SecureCell::with_key(key)
         .unwrap_or_else(|_| {
             eprintln!("invalid parameters: empty master key");
             exit(1);
@@ -48,12 +48,12 @@ fn main() {
 
     match mode {
         "enc" => {
-            let (encrypted, token) = cell
-                .encrypt_with_context(&message, &context)
-                .unwrap_or_else(|error| {
-                    eprintln!("failed to encrypt message: {error}");
-                    exit(1);
-                });
+            let (encrypted, token) =
+                cell.encrypt_with_context(message, context)
+                    .unwrap_or_else(|error| {
+                        eprintln!("failed to encrypt message: {error}");
+                        exit(1);
+                    });
             println!("{},{}", base64::encode(&encrypted), base64::encode(&token));
         }
         "dec" => {
@@ -66,7 +66,7 @@ fn main() {
                 exit(1);
             });
             let decrypted = cell
-                .decrypt_with_context(&decoded_message, &decoded_token, &context)
+                .decrypt_with_context(decoded_message, decoded_token, context)
                 .unwrap_or_else(|error| {
                     eprintln!("failed to decrypt message: {error}");
                     exit(1);

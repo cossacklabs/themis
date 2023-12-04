@@ -49,7 +49,7 @@ fn main() {
     let public_key = PublicKey::try_from_slice(public_key).expect("parse public key");
 
     let socket = UdpSocket::bind("localhost:0").expect("client socket");
-    socket.connect(&remote_addr).expect("client connection");
+    socket.connect(remote_addr).expect("client connection");
 
     let receive_socket = socket;
     let relay_socket = receive_socket.try_clone().unwrap();

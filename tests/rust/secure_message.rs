@@ -23,8 +23,8 @@ fn mode_encrypt_decrypt() {
     let secure = SecureMessage::new(gen_rsa_key_pair());
 
     let plaintext = b"test message please ignore";
-    let encrypted = secure.encrypt(&plaintext).expect("encryption");
-    let recovered_message = secure.decrypt(&encrypted).expect("decryption");
+    let encrypted = secure.encrypt(plaintext).expect("encryption");
+    let recovered_message = secure.decrypt(encrypted).expect("decryption");
 
     assert_eq!(recovered_message, plaintext);
 }
@@ -36,8 +36,8 @@ fn mode_sign_verify() {
     let verify = SecureVerify::new(public);
 
     let plaintext = b"test message please ignore";
-    let signed_message = sign.sign(&plaintext).unwrap();
-    let recovered_message = verify.verify(&signed_message).unwrap();
+    let signed_message = sign.sign(plaintext).unwrap();
+    let recovered_message = verify.verify(signed_message).unwrap();
 
     assert_eq!(recovered_message, plaintext);
 }
@@ -48,8 +48,8 @@ fn invalid_key() {
     let secure2 = SecureMessage::new(gen_ec_key_pair());
 
     let plaintext = b"test message please ignore";
-    let encrypted = secure1.encrypt(&plaintext).expect("encryption");
-    let error = secure2.decrypt(&encrypted).expect_err("decryption error");
+    let encrypted = secure1.encrypt(plaintext).expect("encryption");
+    let error = secure2.decrypt(encrypted).expect_err("decryption error");
 
     assert_eq!(error.kind(), ErrorKind::Fail);
 }
@@ -62,7 +62,7 @@ fn corrupted_data() {
     // Using index "10" for example leads to a crash with SIGBUS, so Themis definitely
     // could use some audit because it does not really handle corrupted messages well.
     let plaintext = b"test message please ignore";
-    let mut encrypted = secure.encrypt(&plaintext).expect("encryption");
+    let mut encrypted = secure.encrypt(plaintext).expect("encryption");
     encrypted[5] = !encrypted[5];
     let error = secure.decrypt(&encrypted).expect_err("decryption error");
 

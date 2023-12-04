@@ -36,7 +36,7 @@ fn main() {
     let port = matches.value_of("port").unwrap_or("7573").parse().unwrap();
     let listen_addr = SocketAddr::new([0; 16].into(), port);
 
-    let socket = UdpSocket::bind(&listen_addr).expect("server listen");
+    let socket = UdpSocket::bind(listen_addr).expect("server listen");
     let mut peers = HashSet::new();
     let mut process_message = || -> io::Result<()> {
         let (message, sender) = recv_from(&socket)?;

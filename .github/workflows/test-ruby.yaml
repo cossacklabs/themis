@@ -59,6 +59,8 @@ jobs:
         run: |
           rvm use system
           make test_ruby
+      - name: Uninstall RubyThemis
+        run: sudo make rbthemis_uninstall
 
   examples:
     name: Code examples

@@ -51,7 +51,7 @@ fn main() {
     let key_pair = KeyPair::try_join(private_key, public_key).expect("matching keys");
 
     let socket = UdpSocket::bind("localhost:0").expect("client socket");
-    socket.connect(&remote_addr).expect("client connection");
+    socket.connect(remote_addr).expect("client connection");
 
     let receive_socket = socket;
     let relay_socket = receive_socket.try_clone().unwrap();

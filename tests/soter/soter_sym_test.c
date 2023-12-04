@@ -605,7 +605,7 @@ static void test_invalid_params(void)
     }
 }
 
-void run_soter_sym_test()
+void run_soter_sym_test(void)
 {
     testsuite_enter_suite("soter sym");
     //  testsuite_run_test(soter_sym_test);

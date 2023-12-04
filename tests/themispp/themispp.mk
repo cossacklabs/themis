@@ -39,7 +39,7 @@ endif
 $(TEST_BIN_PATH)/themispp_test: $(BIN_PATH)/$(LIBTHEMIS_SO)
 endif
 
-$(TEST_BIN_PATH)/themispp_test: CMD = $(CXX) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(THEMISPP_TEST_LDFLAGS)
+$(TEST_BIN_PATH)/themispp_test: CMD = $(CXX) -o $@ $(filter %.o %.a, $^) $(LDFLAGS) $(ADDITIONAL_LDFLAGS) $(THEMISPP_TEST_LDFLAGS)
 
 $(TEST_BIN_PATH)/themispp_test: $(THEMISPP_TEST_OBJ) $(COMMON_TEST_OBJ)
 	@echo -n "link "
