@@ -54,6 +54,10 @@ _Code:_
     - create/install `.whl` package for virtualenv
     - create/install `.deb` or `.rpm` package for system-wide installation
 
+  - New installation methods, accessible with make ([#1023](https://github.com/cossacklabs/themis/pull/1023)).
+    - create/install `.whl` package for virtualenv
+    - create/install `.deb` or `.rpm` package for system-wide installation
+
 - **Ruby**
 
   - Improved compatibility with non-standard installations on Apple M1 ([#917](https://github.com/cossacklabs/themis/pull/917)).
@@ -65,7 +69,6 @@ _Code:_
     This is technically a breaking change, but most reasonble implementations should be `Send` already. Please raise an issue if your code fails to build.
 
   - Minimum supported Rust version is now 1.60 ([#977](https://github.com/cossacklabs/themis/pull/977), [#984](https://github.com/cossacklabs/themis/pull/984), [#1039](https://github.com/cossacklabs/themis/pull/1039)).
-  - Bindgen is pinned to 0.66.1 on CI ([#1008](https://github.com/cossacklabs/themis/pull/1008)).
 
 - **WasmThemis**
 
