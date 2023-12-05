@@ -10,7 +10,7 @@
 # You need to have Bindgen, LLVM, rustfmt installed to run this script.
 # Bindgen can be installed with
 #
-#     cargo install bindgen
+#     cargo install bindgen-cli --version 0.66.1 --force
 #
 # rustfmt can be installed with
 #
