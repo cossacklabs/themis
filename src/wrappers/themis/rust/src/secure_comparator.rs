@@ -269,7 +269,7 @@ impl SecureComparator {
             }
         }
 
-        compare_data.reserve(compare_data_len);
+        compare_data.try_reserve(compare_data_len)?;
 
         unsafe {
             let status = secure_comparator_begin_compare(
@@ -327,7 +327,7 @@ impl SecureComparator {
             }
         }
 
-        compare_data.reserve(compare_data_len);
+        compare_data.try_reserve(compare_data_len)?;
 
         unsafe {
             let status = secure_comparator_proceed_compare(

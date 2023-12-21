@@ -165,7 +165,7 @@ impl SecureMessage {
             }
         }
 
-        encrypted.reserve(encrypted_len);
+        encrypted.try_reserve(encrypted_len)?;
 
         unsafe {
             let status = themis_secure_message_encrypt(
@@ -215,7 +215,7 @@ impl SecureMessage {
             }
         }
 
-        decrypted.reserve(decrypted_len);
+        decrypted.try_reserve(decrypted_len)?;
 
         unsafe {
             let status = themis_secure_message_decrypt(
@@ -349,7 +349,7 @@ impl SecureSign {
             }
         }
 
-        signed.reserve(signed_len);
+        signed.try_reserve(signed_len)?;
 
         unsafe {
             let status = themis_secure_message_sign(
@@ -477,7 +477,7 @@ impl SecureVerify {
             }
         }
 
-        original.reserve(original_len);
+        original.try_reserve(original_len)?;
 
         unsafe {
             let status = themis_secure_message_verify(

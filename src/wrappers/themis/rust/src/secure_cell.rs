@@ -935,7 +935,7 @@ fn encrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Resul
         }
     }
 
-    encrypted_message.reserve(encrypted_message_len);
+    encrypted_message.try_reserve(encrypted_message_len)?;
 
     unsafe {
         let status = themis_secure_cell_encrypt_seal(
@@ -985,7 +985,7 @@ fn decrypt_seal(master_key: &[u8], user_context: &[u8], message: &[u8]) -> Resul
         }
     }
 
-    decrypted_message.reserve(decrypted_message_len);
+    decrypted_message.try_reserve(decrypted_message_len)?;
 
     unsafe {
         let status = themis_secure_cell_decrypt_seal(
@@ -1039,7 +1039,7 @@ fn encrypt_seal_with_passphrase(
         }
     }
 
-    encrypted_message.reserve(encrypted_message_len);
+    encrypted_message.try_reserve(encrypted_message_len)?;
 
     unsafe {
         let status = themis_secure_cell_encrypt_seal_with_passphrase(
@@ -1093,7 +1093,7 @@ fn decrypt_seal_with_passphrase(
         }
     }
 
-    decrypted_message.reserve(decrypted_message_len);
+    decrypted_message.try_reserve(decrypted_message_len)?;
 
     unsafe {
         let status = themis_secure_cell_decrypt_seal_with_passphrase(
@@ -1549,8 +1549,8 @@ fn encrypt_token_protect(
         }
     }
 
-    token.reserve(token_len);
-    encrypted_message.reserve(encrypted_message_len);
+    token.try_reserve(token_len)?;
+    encrypted_message.try_reserve(encrypted_message_len)?;
 
     unsafe {
         let status = themis_secure_cell_encrypt_token_protect(
@@ -1612,7 +1612,7 @@ fn decrypt_token_protect(
         }
     }
 
-    decrypted_message.reserve(decrypted_message_len);
+    decrypted_message.try_reserve(decrypted_message_len)?;
 
     unsafe {
         let status = themis_secure_cell_decrypt_token_protect(
@@ -1866,7 +1866,7 @@ fn encrypt_context_imprint(master_key: &[u8], message: &[u8], context: &[u8]) ->
         }
     }
 
-    encrypted_message.reserve(encrypted_message_len);
+    encrypted_message.try_reserve(encrypted_message_len)?;
 
     unsafe {
         let status = themis_secure_cell_encrypt_context_imprint(
@@ -1916,7 +1916,7 @@ fn decrypt_context_imprint(master_key: &[u8], message: &[u8], context: &[u8]) ->
         }
     }
 
-    decrypted_message.reserve(decrypted_message_len);
+    decrypted_message.try_reserve(decrypted_message_len)?;
 
     unsafe {
         let status = themis_secure_cell_decrypt_context_imprint(
