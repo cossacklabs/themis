@@ -58,7 +58,7 @@ jobs:
           sudo sh -c 'echo "DEBIAN_FRONTEND=noninteractive" >> /etc/environment'
           sudo apt update
           sudo apt install --yes gcc make libssl-dev \
-            python3 python3-setuptools python3-pip python3-venv
+            python3 python3-pip python3-venv
       - name: Check out code
         uses: actions/checkout@v2
       - name: Prepare Themis Core
@@ -70,8 +70,7 @@ jobs:
         run: mkdir /tmp/test_venv && python3 -m venv /tmp/test_venv
       - name: Install PyThemis into virtualenv
         run: |
-          make pythemis_make_wheel
-          source /tmp/test_venv/bin/activate && make pythemis_install_wheel
+          source /tmp/test_venv/bin/activate && make pythemis_install
       - name: Run test suite
         run: source /tmp/test_venv/bin/activate && make test_python
       - name: Uninstall PyThemis

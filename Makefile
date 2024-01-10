@@ -634,25 +634,6 @@ endif
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
 
-pythemis_make_wheel: CMD = cd src/wrappers/themis/python/ && python3 setup.py bdist_wheel
-pythemis_make_wheel:
-ifeq ($(PYTHON3_VERSION),)
-	@echo "python3 not found"
-	@exit 1
-endif
-	@echo -n "pythemis make wheel "
-	@$(BUILD_CMD_)
-	@echo Result: src/wrappers/themis/python/dist/pythemis-$(VERSION_SHORT)-py2.py3-none-any.whl
-
-pythemis_install_wheel: CMD = pip install src/wrappers/themis/python/dist/pythemis-$(VERSION_SHORT)-py2.py3-none-any.whl
-pythemis_install_wheel:
-ifeq ($(PYTHON3_VERSION),)
-	@echo "python3 not found"
-	@exit 1
-endif
-	@echo -n "pythemis install wheel "
-	@$(BUILD_CMD_)
-
 ########################################################################
 #
 # Packaging Themis Core: Linux distributions
