@@ -14,11 +14,13 @@
         "secure_comparator.cpp",
       ],
       "include_dirs": [
+         "/opt/homebrew/include",
          "<!(node -e \"require('nan')\")",
       ],
       "conditions": [
         [ "OS=='linux' or OS=='mac'", {
           "libraries": [
+            "-L/opt/homebrew/lib",
             "-L/usr/local/lib",
             "-L/usr/lib",
             "-lsoter",

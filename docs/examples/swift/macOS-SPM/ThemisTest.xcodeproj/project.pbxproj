@@ -3,11 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1D67338B28D0F79A007FA7A5 /* themis in Frameworks */ = {isa = PBXBuildFile; productRef = 1D67338A28D0F79A007FA7A5 /* themis */; };
+		1DC827E42AB18ABB00CD51D1 /* themis in Frameworks */ = {isa = PBXBuildFile; productRef = 1DC827E32AB18ABB00CD51D1 /* themis */; };
 		6DFBC499263C2DB300DC8865 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFBC498263C2DB300DC8865 /* AppDelegate.swift */; };
 		6DFBC49B263C2DB300DC8865 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DFBC49A263C2DB300DC8865 /* ViewController.swift */; };
 		6DFBC49D263C2DB600DC8865 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6DFBC49C263C2DB600DC8865 /* Assets.xcassets */; };
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1D67338B28D0F79A007FA7A5 /* themis in Frameworks */,
+				1DC827E42AB18ABB00CD51D1 /* themis in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,7 +102,7 @@
 			);
 			name = ThemisTest;
 			packageProductDependencies = (
-				1D67338A28D0F79A007FA7A5 /* themis */,
+				1DC827E32AB18ABB00CD51D1 /* themis */,
 			);
 			productName = ThemisTest;
 			productReference = 6DFBC495263C2DB300DC8865 /* ThemisTest.app */;
@@ -132,7 +132,7 @@
 			);
 			mainGroup = 6DFBC48C263C2DB300DC8865;
 			packageReferences = (
-				1D67338928D0F79A007FA7A5 /* XCRemoteSwiftPackageReference "themis" */,
+				1DC827E22AB18ABB00CD51D1 /* XCRemoteSwiftPackageReference "themis" */,
 			);
 			productRefGroup = 6DFBC496263C2DB300DC8865 /* Products */;
 			projectDirPath = "";
@@ -234,7 +234,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -289,7 +289,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = macosx;
@@ -360,20 +360,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		1D67338928D0F79A007FA7A5 /* XCRemoteSwiftPackageReference "themis" */ = {
+		1DC827E22AB18ABB00CD51D1 /* XCRemoteSwiftPackageReference "themis" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/cossacklabs/themis";
 			requirement = {
-				kind = exactVersion;
-				version = 0.14.9;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.15.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1D67338A28D0F79A007FA7A5 /* themis */ = {
+		1DC827E32AB18ABB00CD51D1 /* themis */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 1D67338928D0F79A007FA7A5 /* XCRemoteSwiftPackageReference "themis" */;
+			package = 1DC827E22AB18ABB00CD51D1 /* XCRemoteSwiftPackageReference "themis" */;
 			productName = themis;
 		};
 /* End XCSwiftPackageProductDependency section */
