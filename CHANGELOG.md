@@ -9,7 +9,7 @@ Changes that are currently in development and have not been released yet.
 ## [0.15.3](https://github.com/cossacklabs/themis/releases/tag/0.15.3), April 30 2024
 
 ### Swift, Objective-C wrappers
-- Added the '-y' option for the zip program when archiving themis.xcframework to follow symlinks.
+- Added the '-y' option for the zip program when archiving `themis.xcframework` to follow symlinks. It will fix macOS distribution with Themis added via SPM.
 
 
 ## [0.15.2](https://github.com/cossacklabs/themis/releases/tag/0.15.2), November 24 2023
