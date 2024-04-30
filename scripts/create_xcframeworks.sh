@@ -61,7 +61,7 @@ rm -rf $output_dir/macosx
 # zip the xcodeframework
 # SPM accepts binary targets only in zip format
 cd $output_dir
-zip -r themis.xcframework.zip themis.xcframework
+zip -y -r themis.xcframework.zip themis.xcframework
 
 rm -rf themis.xcframework
 
