@@ -4,24 +4,32 @@
 
 Changes that are currently in development and have not been released yet.
 
+
+
+## [0.15.3](https://github.com/cossacklabs/themis/releases/tag/0.15.3), April 30 2024
+
+### Swift, Objective-C wrappers
+- Added the '-y' option for the zip program when archiving `themis.xcframework` to follow symlinks. It will fix macOS distribution with Themis added via SPM.
+
+
 ## [0.15.2](https://github.com/cossacklabs/themis/releases/tag/0.15.2), November 24 2023
 
-### JsThemis wrapper 
-- Added the ability to use the `import` syntax for the jsthemis module. 
-- Added a declaration file for TypeScript. 
+### JsThemis wrapper
+- Added the ability to use the `import` syntax for the jsthemis module.
+- Added a declaration file for TypeScript.
 
 ### Android, ReactNative wrappers
 Updated versions of dependencies. New minimum versions of iOS, Android are set.
-- Target API level 33 
-- Minimum API level 21 
-- Minumum iOS set to 12.4 due to ReactNative requirements 
+- Target API level 33
+- Minimum API level 21
+- Minumum iOS set to 12.4 due to ReactNative requirements
 
 ## [0.15.1](https://github.com/cossacklabs/themis/releases/tag/0.15.1), September 13 2023
 
-### Swift, Objective-C wrappers 
-- Updated OpenSSL to 1.1.1v 
-- Removed support of 32-bit platforms 
-- Minimum iOS: 11, macOS: 10.13, Catalyst: 14 
+### Swift, Objective-C wrappers
+- Updated OpenSSL to 1.1.1v
+- Removed support of 32-bit platforms
+- Minimum iOS: 11, macOS: 10.13, Catalyst: 14
 
 ## [0.15.0](https://github.com/cossacklabs/themis/releases/tag/0.15.0), June 21st 2023
 
