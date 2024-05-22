@@ -15,11 +15,11 @@ let package = Package(
     targets: [
         .binaryTarget(name: "themis",
                       // update version in URL path
-                      url: "https://github.com/cossacklabs/themis/releases/download/0.15.3/themis.xcframework.zip",
+                      url: "https://github.com/cossacklabs/themis/releases/download/0.15.4/themis.xcframework.zip",
                       // The scripts/create_xcframework.sh calculates the checksum when generating the XCF.
                       // Alternatively, run from package directory:
                       // swift package compute-checksum build/xcf_output/themis.xcframework.zip
-                      checksum: "7166aaef8de590416cb17f97ae630b63c16d4240f07ac0f6b17e0044349115aa"),
+                      checksum: "66f0f79c1ea264edf6000e3b51556c0decad9525fe26b3fd276d47bbc5e551b2"),
 
     ]
 )
