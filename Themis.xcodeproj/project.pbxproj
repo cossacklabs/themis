@@ -7,6 +7,106 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D7046872BF21577008A149A /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
+		1D70468B2BF22990008A149A /* themis.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D70468A2BF22990008A149A /* themis.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DBAD7C92BE6B50C004565B0 /* themis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DBAD7BF2BE6B50C004565B0 /* themis.framework */; };
+		1DF0CFFD2BEE10F100AAAE94 /* objcthemis.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24B5223A8FA8005CB63A /* objcthemis.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DF0CFFE2BEE10F100AAAE94 /* scell_context_imprint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24B9223A8FA8005CB63A /* scell_context_imprint.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DF0CFFF2BEE10F100AAAE94 /* scell_seal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24BC223A8FA8005CB63A /* scell_seal.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DF0D0002BEE10F100AAAE94 /* scell_token.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24C3223A8FA8005CB63A /* scell_token.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DF0D0012BEE10F100AAAE94 /* scell.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24B3223A8FA7005CB63A /* scell.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DF0D0022BEE10F100AAAE94 /* scomparator.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24C0223A8FA8005CB63A /* scomparator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DF0D0032BEE10F100AAAE94 /* serror.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24BB223A8FA8005CB63A /* serror.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DF0D0042BEE10F100AAAE94 /* skeygen.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24C1223A8FA8005CB63A /* skeygen.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DF0D0052BEE10F100AAAE94 /* smessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24C2223A8FA8005CB63A /* smessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DF0D0062BEE10F100AAAE94 /* ssession_transport_interface.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24BF223A8FA8005CB63A /* ssession_transport_interface.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DF0D0072BEE10F100AAAE94 /* ssession.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24B1223A8FA7005CB63A /* ssession.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1DF0D0082BEE115900AAAE94 /* scell_context_imprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B4223A8FA8005CB63A /* scell_context_imprint.m */; };
+		1DF0D0092BEE115900AAAE94 /* scell_seal.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B0223A8FA7005CB63A /* scell_seal.m */; };
+		1DF0D00A2BEE115900AAAE94 /* scell_token.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24BD223A8FA8005CB63A /* scell_token.m */; };
+		1DF0D00B2BEE115900AAAE94 /* scell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24BE223A8FA8005CB63A /* scell.m */; };
+		1DF0D00C2BEE115900AAAE94 /* scomparator.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B6223A8FA8005CB63A /* scomparator.m */; };
+		1DF0D00D2BEE115900AAAE94 /* skeygen.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B7223A8FA8005CB63A /* skeygen.m */; };
+		1DF0D00E2BEE115900AAAE94 /* smessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B8223A8FA8005CB63A /* smessage.m */; };
+		1DF0D00F2BEE115900AAAE94 /* ssession_transport_interface.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24B2223A8FA7005CB63A /* ssession_transport_interface.m */; };
+		1DF0D0102BEE115900AAAE94 /* ssession.m in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A24BA223A8FA8005CB63A /* ssession.m */; };
+		1DF0D0112BEE118900AAAE94 /* fe_0.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23B3223A745B005CB63A /* fe_0.c */; };
+		1DF0D0122BEE118900AAAE94 /* fe_1.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23CF223A745C005CB63A /* fe_1.c */; };
+		1DF0D0132BEE118900AAAE94 /* fe_add.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23B1223A745A005CB63A /* fe_add.c */; };
+		1DF0D0142BEE118900AAAE94 /* fe_cmov.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23A8223A745A005CB63A /* fe_cmov.c */; };
+		1DF0D0152BEE118900AAAE94 /* fe_copy.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23B6223A745B005CB63A /* fe_copy.c */; };
+		1DF0D0162BEE118900AAAE94 /* fe_frombytes.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23AC223A745A005CB63A /* fe_frombytes.c */; };
+		1DF0D0172BEE118900AAAE94 /* fe_invert.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23D3223A745D005CB63A /* fe_invert.c */; };
+		1DF0D0182BEE118900AAAE94 /* fe_isnegative.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23BE223A745B005CB63A /* fe_isnegative.c */; };
+		1DF0D0192BEE118900AAAE94 /* fe_isnonzero.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23B9223A745B005CB63A /* fe_isnonzero.c */; };
+		1DF0D01A2BEE118900AAAE94 /* fe_mul.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23D1223A745C005CB63A /* fe_mul.c */; };
+		1DF0D01B2BEE118900AAAE94 /* fe_neg.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23BC223A745B005CB63A /* fe_neg.c */; };
+		1DF0D01C2BEE118900AAAE94 /* fe_pow22523.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23DD223A745D005CB63A /* fe_pow22523.c */; };
+		1DF0D01D2BEE118900AAAE94 /* fe_sq.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23E0223A745D005CB63A /* fe_sq.c */; };
+		1DF0D01E2BEE118900AAAE94 /* fe_sq2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23B8223A745B005CB63A /* fe_sq2.c */; };
+		1DF0D01F2BEE118900AAAE94 /* fe_sub.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23A9223A745A005CB63A /* fe_sub.c */; };
+		1DF0D0202BEE118900AAAE94 /* fe_tobytes.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23D2223A745D005CB63A /* fe_tobytes.c */; };
+		1DF0D0212BEE118900AAAE94 /* ge_add.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23DA223A745D005CB63A /* ge_add.c */; };
+		1DF0D0222BEE118900AAAE94 /* ge_cmp.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23C0223A745B005CB63A /* ge_cmp.c */; };
+		1DF0D0232BEE118900AAAE94 /* ge_double_scalarmult.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23BA223A745B005CB63A /* ge_double_scalarmult.c */; };
+		1DF0D0242BEE118900AAAE94 /* ge_frombytes_no_negate.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23D5223A745D005CB63A /* ge_frombytes_no_negate.c */; };
+		1DF0D0252BEE118A00AAAE94 /* ge_frombytes.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23A7223A745A005CB63A /* ge_frombytes.c */; };
+		1DF0D0262BEE118A00AAAE94 /* ge_madd.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23DB223A745D005CB63A /* ge_madd.c */; };
+		1DF0D0272BEE118A00AAAE94 /* ge_msub.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23C6223A745C005CB63A /* ge_msub.c */; };
+		1DF0D0282BEE118A00AAAE94 /* ge_p1p1_to_p2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23CC223A745C005CB63A /* ge_p1p1_to_p2.c */; };
+		1DF0D0292BEE118A00AAAE94 /* ge_p1p1_to_p3.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23DC223A745D005CB63A /* ge_p1p1_to_p3.c */; };
+		1DF0D02A2BEE118A00AAAE94 /* ge_p2_0.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23D7223A745D005CB63A /* ge_p2_0.c */; };
+		1DF0D02B2BEE118A00AAAE94 /* ge_p2_dbl.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23B4223A745B005CB63A /* ge_p2_dbl.c */; };
+		1DF0D02C2BEE118A00AAAE94 /* ge_p2_to_p3.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23B2223A745A005CB63A /* ge_p2_to_p3.c */; };
+		1DF0D02D2BEE118A00AAAE94 /* ge_p3_0.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23BB223A745B005CB63A /* ge_p3_0.c */; };
+		1DF0D02E2BEE118A00AAAE94 /* ge_p3_dbl.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23B0223A745A005CB63A /* ge_p3_dbl.c */; };
+		1DF0D02F2BEE118A00AAAE94 /* ge_p3_sub.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23AA223A745A005CB63A /* ge_p3_sub.c */; };
+		1DF0D0302BEE118A00AAAE94 /* ge_p3_to_cached.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23B7223A745B005CB63A /* ge_p3_to_cached.c */; };
+		1DF0D0312BEE118A00AAAE94 /* ge_p3_to_p2.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23C7223A745C005CB63A /* ge_p3_to_p2.c */; };
+		1DF0D0322BEE118A00AAAE94 /* ge_p3_tobytes.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23C9223A745C005CB63A /* ge_p3_tobytes.c */; };
+		1DF0D0332BEE118A00AAAE94 /* ge_precomp_0.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23BF223A745B005CB63A /* ge_precomp_0.c */; };
+		1DF0D0342BEE118A00AAAE94 /* ge_scalarmult_base.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23DF223A745D005CB63A /* ge_scalarmult_base.c */; };
+		1DF0D0352BEE118A00AAAE94 /* ge_scalarmult.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23E1223A745E005CB63A /* ge_scalarmult.c */; };
+		1DF0D0362BEE118A00AAAE94 /* ge_sub.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23B5223A745B005CB63A /* ge_sub.c */; };
+		1DF0D0372BEE118A00AAAE94 /* ge_tobytes.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23AD223A745A005CB63A /* ge_tobytes.c */; };
+		1DF0D0382BEE118A00AAAE94 /* gen_rand_32.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23D8223A745D005CB63A /* gen_rand_32.c */; };
+		1DF0D0392BEE118A00AAAE94 /* sc_muladd.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23CE223A745C005CB63A /* sc_muladd.c */; };
+		1DF0D03A2BEE118A00AAAE94 /* sc_reduce.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A23C2223A745B005CB63A /* sc_reduce.c */; };
+		1DF0D03B2BEE11BD00AAAE94 /* soter_asym_cipher.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238F223A7426005CB63A /* soter_asym_cipher.c */; };
+		1DF0D03C2BEE11BD00AAAE94 /* soter_asym_ka.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2388223A7425005CB63A /* soter_asym_ka.c */; };
+		1DF0D03D2BEE11BD00AAAE94 /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2392223A7426005CB63A /* soter_ec_key.c */; };
+		1DF0D03E2BEE11BD00AAAE94 /* soter_ecdsa_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2387223A7425005CB63A /* soter_ecdsa_common.c */; };
+		1DF0D03F2BEE11BD00AAAE94 /* soter_hash.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2390223A7426005CB63A /* soter_hash.c */; };
+		1DF0D0402BEE11BD00AAAE94 /* soter_kdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F33485723B38D9B00368291 /* soter_kdf.c */; };
+		1DF0D0412BEE11BD00AAAE94 /* soter_rand.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238E223A7426005CB63A /* soter_rand.c */; };
+		1DF0D0422BEE11BD00AAAE94 /* soter_rsa_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2386223A7425005CB63A /* soter_rsa_common.c */; };
+		1DF0D0432BEE11BD00AAAE94 /* soter_rsa_key_pair_gen.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238A223A7425005CB63A /* soter_rsa_key_pair_gen.c */; };
+		1DF0D0442BEE11BD00AAAE94 /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2385223A7425005CB63A /* soter_rsa_key.c */; };
+		1DF0D0452BEE11BD00AAAE94 /* soter_sign_ecdsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2389223A7425005CB63A /* soter_sign_ecdsa.c */; };
+		1DF0D0462BEE11BD00AAAE94 /* soter_sign_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238C223A7425005CB63A /* soter_sign_rsa.c */; };
+		1DF0D0472BEE11BD00AAAE94 /* soter_sym.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2394223A7426005CB63A /* soter_sym.c */; };
+		1DF0D0482BEE11BD00AAAE94 /* soter_verify_ecdsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2393223A7426005CB63A /* soter_verify_ecdsa.c */; };
+		1DF0D0492BEE11BD00AAAE94 /* soter_verify_rsa.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A238D223A7426005CB63A /* soter_verify_rsa.c */; };
+		1DF0D04A2BEE11BD00AAAE94 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F98F32722CCEB0E008E14E6 /* soter_wipe.c */; };
+		1DF0D04B2BEE11BD00AAAE94 /* soter_container.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2348223A73B0005CB63A /* soter_container.c */; };
+		1DF0D04C2BEE11BD00AAAE94 /* soter_crc32.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A234D223A73B0005CB63A /* soter_crc32.c */; };
+		1DF0D04D2BEE11BD00AAAE94 /* soter_ec_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB122CCB0D100E8DECA /* soter_ec_key.c */; };
+		1DF0D04E2BEE11BD00AAAE94 /* soter_hmac.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2353223A73B1005CB63A /* soter_hmac.c */; };
+		1DF0D04F2BEE11BD00AAAE94 /* soter_kdf.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2357223A73B1005CB63A /* soter_kdf.c */; };
+		1DF0D0502BEE11BD00AAAE94 /* soter_rsa_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F874AB222CCB0D100E8DECA /* soter_rsa_key.c */; };
+		1DF0D0512BEE11BD00AAAE94 /* soter_sign.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2351223A73B1005CB63A /* soter_sign.c */; };
+		1DF0D0522BEE11BD00AAAE94 /* secure_cell.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A241E223A74AE005CB63A /* secure_cell.c */; };
+		1DF0D0532BEE11BD00AAAE94 /* secure_cell_seal_passphrase.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F6B385423D9D11600EA5D1B /* secure_cell_seal_passphrase.c */; };
+		1DF0D0542BEE11BD00AAAE94 /* secure_comparator.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2432223A74AF005CB63A /* secure_comparator.c */; };
+		1DF0D0552BEE11BD00AAAE94 /* secure_keygen.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2427223A74AE005CB63A /* secure_keygen.c */; };
+		1DF0D0562BEE11BD00AAAE94 /* secure_message_wrapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2422223A74AE005CB63A /* secure_message_wrapper.c */; };
+		1DF0D0572BEE11BD00AAAE94 /* secure_message.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2437223A74AF005CB63A /* secure_message.c */; };
+		1DF0D0582BEE11BD00AAAE94 /* secure_session_message.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2435223A74AF005CB63A /* secure_session_message.c */; };
+		1DF0D0592BEE11BD00AAAE94 /* secure_session_peer.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2429223A74AF005CB63A /* secure_session_peer.c */; };
+		1DF0D05A2BEE11BD00AAAE94 /* secure_session_serialize.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2425223A74AE005CB63A /* secure_session_serialize.c */; };
+		1DF0D05B2BEE11BD00AAAE94 /* secure_session_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A242E223A74AF005CB63A /* secure_session_utils.c */; };
+		1DF0D05C2BEE11BD00AAAE94 /* secure_session.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2438223A74AF005CB63A /* secure_session.c */; };
+		1DF0D05D2BEE11BD00AAAE94 /* sym_enc_message.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2431223A74AF005CB63A /* sym_enc_message.c */; };
 		6DB8748A26497B8C0022A1F6 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
 		6DB8748E26497B950022A1F6 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
 		6DB8749326497BEF0022A1F6 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
@@ -255,6 +355,16 @@
 		9F98F32922CCEB0E008E14E6 /* soter_wipe.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F98F32722CCEB0E008E14E6 /* soter_wipe.c */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		1DBAD7CA2BE6B50C004565B0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 738B81062239809D00A9947C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1DBAD7BE2BE6B50C004565B0;
+			remoteInfo = "Themis (visionOS)";
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		9F70B2DE241D172E009CB629 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -307,6 +417,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1D70468A2BF22990008A149A /* themis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = themis.h; path = "src/wrappers/themis/Obj-C/Themis/themis.h"; sourceTree = "<group>"; };
+		1DBAD7BF2BE6B50C004565B0 /* themis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = themis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1DBAD7C82BE6B50C004565B0 /* Themis (visionOS)Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Themis (visionOS)Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DB8748926497B8B0022A1F6 /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = Carthage/Build/openssl.xcframework; sourceTree = "<group>"; };
 		6DCCB1D5264D3223008072EF /* themis.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = themis.xcframework; path = Carthage/Build/themis.xcframework; sourceTree = "<group>"; };
 		9F00E8D7223C197900EC1EF3 /* themis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = themis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -484,6 +597,22 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1DBAD7BC2BE6B50C004565B0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1D7046872BF21577008A149A /* openssl.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1DBAD7C52BE6B50C004565B0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1DBAD7C92BE6B50C004565B0 /* themis.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9F00E8D4223C197900EC1EF3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -542,6 +671,7 @@
 		738B81052239809D00A9947C = {
 			isa = PBXGroup;
 			children = (
+				1D70468A2BF22990008A149A /* themis.h */,
 				9F4A24A9223A8E01005CB63A /* Themis */,
 				9F70B2B7241D0FA9009CB629 /* Tests */,
 				738B81102239809D00A9947C /* Products */,
@@ -558,6 +688,8 @@
 				9F70B2E7241D17A3009CB629 /* Test Themis (Swift 5, iOS).xctest */,
 				9F70B3192420E16F009CB629 /* Test Themis (Swift 4, iOS).xctest */,
 				9F70B3312420E176009CB629 /* Test Themis (Swift 4, macOS).xctest */,
+				1DBAD7BF2BE6B50C004565B0 /* themis.framework */,
+				1DBAD7C82BE6B50C004565B0 /* Themis (visionOS)Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -810,6 +942,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		1DBAD7BA2BE6B50C004565B0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1D70468B2BF22990008A149A /* themis.h in Headers */,
+				1DF0CFFD2BEE10F100AAAE94 /* objcthemis.h in Headers */,
+				1DF0CFFE2BEE10F100AAAE94 /* scell_context_imprint.h in Headers */,
+				1DF0CFFF2BEE10F100AAAE94 /* scell_seal.h in Headers */,
+				1DF0D0002BEE10F100AAAE94 /* scell_token.h in Headers */,
+				1DF0D0012BEE10F100AAAE94 /* scell.h in Headers */,
+				1DF0D0022BEE10F100AAAE94 /* scomparator.h in Headers */,
+				1DF0D0032BEE10F100AAAE94 /* serror.h in Headers */,
+				1DF0D0042BEE10F100AAAE94 /* skeygen.h in Headers */,
+				1DF0D0052BEE10F100AAAE94 /* smessage.h in Headers */,
+				1DF0D0062BEE10F100AAAE94 /* ssession_transport_interface.h in Headers */,
+				1DF0D0072BEE10F100AAAE94 /* ssession.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9F00E8D2223C197900EC1EF3 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -887,6 +1038,41 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		1DBAD7BE2BE6B50C004565B0 /* Themis (visionOS) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DBAD7D02BE6B50C004565B0 /* Build configuration list for PBXNativeTarget "Themis (visionOS)" */;
+			buildPhases = (
+				1DBAD7BA2BE6B50C004565B0 /* Headers */,
+				1DBAD7BB2BE6B50C004565B0 /* Sources */,
+				1DBAD7BC2BE6B50C004565B0 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Themis (visionOS)";
+			productName = "Themis (visionOS)";
+			productReference = 1DBAD7BF2BE6B50C004565B0 /* themis.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		1DBAD7C72BE6B50C004565B0 /* Themis (visionOS)Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DBAD7D32BE6B50C004565B0 /* Build configuration list for PBXNativeTarget "Themis (visionOS)Tests" */;
+			buildPhases = (
+				1DBAD7C42BE6B50C004565B0 /* Sources */,
+				1DBAD7C52BE6B50C004565B0 /* Frameworks */,
+				1DBAD7C62BE6B50C004565B0 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1DBAD7CB2BE6B50C004565B0 /* PBXTargetDependency */,
+			);
+			name = "Themis (visionOS)Tests";
+			productName = "Themis (visionOS)Tests";
+			productReference = 1DBAD7C82BE6B50C004565B0 /* Themis (visionOS)Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		9F00E8D6223C197900EC1EF3 /* Themis (macOS) */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9F00E8DE223C197A00EC1EF3 /* Build configuration list for PBXNativeTarget "Themis (macOS)" */;
@@ -1003,9 +1189,16 @@
 		738B81062239809D00A9947C /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1530;
 				LastUpgradeCheck = 1220;
 				ORGANIZATIONNAME = "Cossack Labs";
 				TargetAttributes = {
+					1DBAD7BE2BE6B50C004565B0 = {
+						CreatedOnToolsVersion = 15.3;
+					};
+					1DBAD7C72BE6B50C004565B0 = {
+						CreatedOnToolsVersion = 15.3;
+					};
 					9F00E8D6223C197900EC1EF3 = {
 						CreatedOnToolsVersion = 10.1;
 					};
@@ -1042,11 +1235,123 @@
 				9F70B31B2420E176009CB629 /* Test Themis (Swift 4, macOS) */,
 				9F70B2E6241D17A3009CB629 /* Test Themis (Swift 5, iOS) */,
 				9F70B2BB241D0FEC009CB629 /* Test Themis (Swift 5, macOS) */,
+				1DBAD7BE2BE6B50C004565B0 /* Themis (visionOS) */,
+				1DBAD7C72BE6B50C004565B0 /* Themis (visionOS)Tests */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		1DBAD7C62BE6B50C004565B0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		1DBAD7BB2BE6B50C004565B0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1DF0D03B2BEE11BD00AAAE94 /* soter_asym_cipher.c in Sources */,
+				1DF0D03C2BEE11BD00AAAE94 /* soter_asym_ka.c in Sources */,
+				1DF0D03D2BEE11BD00AAAE94 /* soter_ec_key.c in Sources */,
+				1DF0D03E2BEE11BD00AAAE94 /* soter_ecdsa_common.c in Sources */,
+				1DF0D03F2BEE11BD00AAAE94 /* soter_hash.c in Sources */,
+				1DF0D0402BEE11BD00AAAE94 /* soter_kdf.c in Sources */,
+				1DF0D0412BEE11BD00AAAE94 /* soter_rand.c in Sources */,
+				1DF0D0422BEE11BD00AAAE94 /* soter_rsa_common.c in Sources */,
+				1DF0D0432BEE11BD00AAAE94 /* soter_rsa_key_pair_gen.c in Sources */,
+				1DF0D0442BEE11BD00AAAE94 /* soter_rsa_key.c in Sources */,
+				1DF0D0452BEE11BD00AAAE94 /* soter_sign_ecdsa.c in Sources */,
+				1DF0D0462BEE11BD00AAAE94 /* soter_sign_rsa.c in Sources */,
+				1DF0D0472BEE11BD00AAAE94 /* soter_sym.c in Sources */,
+				1DF0D0482BEE11BD00AAAE94 /* soter_verify_ecdsa.c in Sources */,
+				1DF0D0492BEE11BD00AAAE94 /* soter_verify_rsa.c in Sources */,
+				1DF0D04A2BEE11BD00AAAE94 /* soter_wipe.c in Sources */,
+				1DF0D04B2BEE11BD00AAAE94 /* soter_container.c in Sources */,
+				1DF0D04C2BEE11BD00AAAE94 /* soter_crc32.c in Sources */,
+				1DF0D04D2BEE11BD00AAAE94 /* soter_ec_key.c in Sources */,
+				1DF0D04E2BEE11BD00AAAE94 /* soter_hmac.c in Sources */,
+				1DF0D04F2BEE11BD00AAAE94 /* soter_kdf.c in Sources */,
+				1DF0D0502BEE11BD00AAAE94 /* soter_rsa_key.c in Sources */,
+				1DF0D0512BEE11BD00AAAE94 /* soter_sign.c in Sources */,
+				1DF0D0522BEE11BD00AAAE94 /* secure_cell.c in Sources */,
+				1DF0D0532BEE11BD00AAAE94 /* secure_cell_seal_passphrase.c in Sources */,
+				1DF0D0542BEE11BD00AAAE94 /* secure_comparator.c in Sources */,
+				1DF0D0552BEE11BD00AAAE94 /* secure_keygen.c in Sources */,
+				1DF0D0562BEE11BD00AAAE94 /* secure_message_wrapper.c in Sources */,
+				1DF0D0572BEE11BD00AAAE94 /* secure_message.c in Sources */,
+				1DF0D0582BEE11BD00AAAE94 /* secure_session_message.c in Sources */,
+				1DF0D0592BEE11BD00AAAE94 /* secure_session_peer.c in Sources */,
+				1DF0D05A2BEE11BD00AAAE94 /* secure_session_serialize.c in Sources */,
+				1DF0D05B2BEE11BD00AAAE94 /* secure_session_utils.c in Sources */,
+				1DF0D05C2BEE11BD00AAAE94 /* secure_session.c in Sources */,
+				1DF0D05D2BEE11BD00AAAE94 /* sym_enc_message.c in Sources */,
+				1DF0D0112BEE118900AAAE94 /* fe_0.c in Sources */,
+				1DF0D0122BEE118900AAAE94 /* fe_1.c in Sources */,
+				1DF0D0132BEE118900AAAE94 /* fe_add.c in Sources */,
+				1DF0D0142BEE118900AAAE94 /* fe_cmov.c in Sources */,
+				1DF0D0152BEE118900AAAE94 /* fe_copy.c in Sources */,
+				1DF0D0162BEE118900AAAE94 /* fe_frombytes.c in Sources */,
+				1DF0D0172BEE118900AAAE94 /* fe_invert.c in Sources */,
+				1DF0D0182BEE118900AAAE94 /* fe_isnegative.c in Sources */,
+				1DF0D0192BEE118900AAAE94 /* fe_isnonzero.c in Sources */,
+				1DF0D01A2BEE118900AAAE94 /* fe_mul.c in Sources */,
+				1DF0D01B2BEE118900AAAE94 /* fe_neg.c in Sources */,
+				1DF0D01C2BEE118900AAAE94 /* fe_pow22523.c in Sources */,
+				1DF0D01D2BEE118900AAAE94 /* fe_sq.c in Sources */,
+				1DF0D01E2BEE118900AAAE94 /* fe_sq2.c in Sources */,
+				1DF0D01F2BEE118900AAAE94 /* fe_sub.c in Sources */,
+				1DF0D0202BEE118900AAAE94 /* fe_tobytes.c in Sources */,
+				1DF0D0212BEE118900AAAE94 /* ge_add.c in Sources */,
+				1DF0D0222BEE118900AAAE94 /* ge_cmp.c in Sources */,
+				1DF0D0232BEE118900AAAE94 /* ge_double_scalarmult.c in Sources */,
+				1DF0D0242BEE118900AAAE94 /* ge_frombytes_no_negate.c in Sources */,
+				1DF0D0252BEE118A00AAAE94 /* ge_frombytes.c in Sources */,
+				1DF0D0262BEE118A00AAAE94 /* ge_madd.c in Sources */,
+				1DF0D0272BEE118A00AAAE94 /* ge_msub.c in Sources */,
+				1DF0D0282BEE118A00AAAE94 /* ge_p1p1_to_p2.c in Sources */,
+				1DF0D0292BEE118A00AAAE94 /* ge_p1p1_to_p3.c in Sources */,
+				1DF0D02A2BEE118A00AAAE94 /* ge_p2_0.c in Sources */,
+				1DF0D02B2BEE118A00AAAE94 /* ge_p2_dbl.c in Sources */,
+				1DF0D02C2BEE118A00AAAE94 /* ge_p2_to_p3.c in Sources */,
+				1DF0D02D2BEE118A00AAAE94 /* ge_p3_0.c in Sources */,
+				1DF0D02E2BEE118A00AAAE94 /* ge_p3_dbl.c in Sources */,
+				1DF0D02F2BEE118A00AAAE94 /* ge_p3_sub.c in Sources */,
+				1DF0D0302BEE118A00AAAE94 /* ge_p3_to_cached.c in Sources */,
+				1DF0D0312BEE118A00AAAE94 /* ge_p3_to_p2.c in Sources */,
+				1DF0D0322BEE118A00AAAE94 /* ge_p3_tobytes.c in Sources */,
+				1DF0D0332BEE118A00AAAE94 /* ge_precomp_0.c in Sources */,
+				1DF0D0342BEE118A00AAAE94 /* ge_scalarmult_base.c in Sources */,
+				1DF0D0352BEE118A00AAAE94 /* ge_scalarmult.c in Sources */,
+				1DF0D0362BEE118A00AAAE94 /* ge_sub.c in Sources */,
+				1DF0D0372BEE118A00AAAE94 /* ge_tobytes.c in Sources */,
+				1DF0D0382BEE118A00AAAE94 /* gen_rand_32.c in Sources */,
+				1DF0D0392BEE118A00AAAE94 /* sc_muladd.c in Sources */,
+				1DF0D03A2BEE118A00AAAE94 /* sc_reduce.c in Sources */,
+				1DF0D0082BEE115900AAAE94 /* scell_context_imprint.m in Sources */,
+				1DF0D0092BEE115900AAAE94 /* scell_seal.m in Sources */,
+				1DF0D00A2BEE115900AAAE94 /* scell_token.m in Sources */,
+				1DF0D00B2BEE115900AAAE94 /* scell.m in Sources */,
+				1DF0D00C2BEE115900AAAE94 /* scomparator.m in Sources */,
+				1DF0D00D2BEE115900AAAE94 /* skeygen.m in Sources */,
+				1DF0D00E2BEE115900AAAE94 /* smessage.m in Sources */,
+				1DF0D00F2BEE115900AAAE94 /* ssession_transport_interface.m in Sources */,
+				1DF0D0102BEE115900AAAE94 /* ssession.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1DBAD7C42BE6B50C004565B0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9F00E8D3223C197900EC1EF3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1287,7 +1592,197 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		1DBAD7CB2BE6B50C004565B0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1DBAD7BE2BE6B50C004565B0 /* Themis (visionOS) */;
+			targetProxy = 1DBAD7CA2BE6B50C004565B0 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		1DBAD7D12BE6B50C004565B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				EXPORTED_SYMBOLS_FILE = "$(PROJECT_DIR)/src/wrappers/themis/Obj-C/exported.symbols";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include",
+					"$(PROJECT_DIR)/src",
+					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
+					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C/objthemis",
+				);
+				INFOPLIST_FILE = "src/wrappers/themis/Obj-c/Themis/Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Cossack Labs. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
+				PRODUCT_MODULE_NAME = themis;
+				PRODUCT_NAME = themis;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = xros;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				VERSION_INFO_PREFIX = "";
+				XROS_DEPLOYMENT_TARGET = 1.1;
+			};
+			name = Debug;
+		};
+		1DBAD7D22BE6B50C004565B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = "";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				EXPORTED_SYMBOLS_FILE = "$(PROJECT_DIR)/src/wrappers/themis/Obj-C/exported.symbols";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include",
+					"$(PROJECT_DIR)/src",
+					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C",
+					"$(PROJECT_DIR)/src/wrappers/themis/Obj-C/objthemis",
+				);
+				INFOPLIST_FILE = "src/wrappers/themis/Obj-c/Themis/Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Cossack Labs. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
+				PRODUCT_MODULE_NAME = themis;
+				PRODUCT_NAME = themis;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = xros;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				VERSION_INFO_PREFIX = "";
+				XROS_DEPLOYMENT_TARGET = 1.1;
+			};
+			name = Release;
+		};
+		1DBAD7D42BE6B50C004565B0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				"CODE_SIGN_IDENTITY[sdk=xros*]" = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 1.1;
+			};
+			name = Debug;
+		};
+		1DBAD7D52BE6B50C004565B0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				"CODE_SIGN_IDENTITY[sdk=xros*]" = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 1.1;
+			};
+			name = Release;
+		};
 		738B81152239809D00A9947C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1526,7 +2021,9 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-documentation";
 			};
 			name = Debug;
@@ -1570,7 +2067,9 @@
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WARNING_CFLAGS = "-Wno-documentation";
 			};
 			name = Release;
@@ -1762,6 +2261,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1DBAD7D02BE6B50C004565B0 /* Build configuration list for PBXNativeTarget "Themis (visionOS)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DBAD7D12BE6B50C004565B0 /* Debug */,
+				1DBAD7D22BE6B50C004565B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DBAD7D32BE6B50C004565B0 /* Build configuration list for PBXNativeTarget "Themis (visionOS)Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DBAD7D42BE6B50C004565B0 /* Debug */,
+				1DBAD7D52BE6B50C004565B0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		738B81092239809D00A9947C /* Build configuration list for PBXProject "Themis" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
