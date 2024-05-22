@@ -5,6 +5,16 @@
 Changes that are currently in development and have not been released yet.
 
 
+## [0.15.4](https://github.com/cossacklabs/themis/releases/tag/0.15.4), May 23 2024
+
+### Experimental VisionOS support 
+- Compiled themis.xcframework with experimental support of VisionOS. 
+- Tested only in simulators because we do not actual device now. 
+- Minimum VisionOS set to 1.1 
+
+### Swift, Objective-C wrappers 
+- Updated OpenSSL to 1.1.1w 
+
 
 ## [0.15.3](https://github.com/cossacklabs/themis/releases/tag/0.15.3), April 30 2024
 
