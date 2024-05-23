@@ -46,17 +46,41 @@ xcodebuild archive \
 SKIP_INSTALL=NO \
 BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
 
+# build the framework for visionOS
+xcodebuild archive \
+-scheme "Themis (visionOS)" \
+-destination="xrOS Simulator" \
+-archivePath $output_dir/archives/visionossimulator.xcarchive \
+-derivedDataPath $output_dir/visionos \
+-sdk xrsimulator \
+SKIP_INSTALL=NO \
+BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+
+# build the framework for visionOS
+xcodebuild archive \
+-scheme "Themis (visionOS)" \
+-destination="xrOS" \
+-archivePath $output_dir/archives/visionos.xcarchive \
+-derivedDataPath $output_dir/visionos \
+-sdk xros \
+SKIP_INSTALL=NO \
+BUILD_LIBRARIES_FOR_DISTRIBUTION=YES
+
+
 # gather separate frameworks into a single xcframework
 xcodebuild -create-xcframework \
 -framework $output_dir/archives/ios.xcarchive/Products/Library/Frameworks/themis.framework \
 -framework $output_dir/archives/iossimulator.xcarchive/Products/Library/Frameworks/themis.framework \
 -framework $output_dir/archives/macosx.xcarchive/Products/Library/Frameworks/themis.framework \
+-framework $output_dir/archives/visionossimulator.xcarchive/Products/Library/Frameworks/themis.framework \
+-framework $output_dir/archives/visionos.xcarchive/Products/Library/Frameworks/themis.framework \
 -output $output_dir/themis.xcframework
 
 # deleting the artifacts
 rm -rf $output_dir/archives
 rm -rf $output_dir/iphoneos
 rm -rf $output_dir/macosx
+rm -rf $output_dir/visionos
 
 # zip the xcodeframework
 # SPM accepts binary targets only in zip format
