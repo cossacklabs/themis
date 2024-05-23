@@ -9,7 +9,7 @@ Changes that are currently in development and have not been released yet.
 
 ### Experimental VisionOS support 
 - Compiled themis.xcframework with experimental support of VisionOS. 
-- Tested only in simulators because we do not actual device now. 
+- Tested only in simulators because we do not have the access to the actual device now. 
 - Minimum VisionOS set to 1.1 
 
 ### Swift, Objective-C wrappers 
