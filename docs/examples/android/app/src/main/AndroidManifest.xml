@@ -10,26 +10,26 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:extractNativeLibs="true"
         android:theme="@style/AppTheme">
+
+        <!-- Main launcher activity -->
         <activity android:name=".MainActivitySecureCell"
             android:label="@string/app_name"
-            android:exported="true"> <!-- Specify android:exported attribute with an explicit value -->
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".MainActivitySecureMessage"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <!-- Secondary activity -->
+        <activity android:name=".MainActivitySecureMessage"
+            android:exported="true">
+            <!-- No launcher intent filter here -->
         </activity>
 
     </application>
 
 </manifest>
+
