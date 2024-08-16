@@ -1,5 +1,6 @@
 package com.cossacklabs.themis.android.example
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
@@ -18,6 +19,9 @@ class MainActivitySecureCell : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
         }
+
+        // Call the second activity
+        openSecondActivity()
     }
 
     private fun encryptDataForStoring() {
@@ -32,5 +36,10 @@ class MainActivitySecureCell : AppCompatActivity() {
         val unprotected = sc.decrypt(decodedString)
         val decryptedData = String(unprotected, charset)
         Log.d("SMC", "decrypted data = $decryptedData")
+    }
+
+    private fun openSecondActivity() {
+        val intent = Intent(this, MainActivitySecureMessage::class.java)
+        startActivity(intent)
     }
 }
