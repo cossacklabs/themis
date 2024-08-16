@@ -4,6 +4,8 @@
 
 Changes that are currently in development and have not been released yet.
 
+### Android wrapper
+- Add support for Android devices that are configured to use a page size of 16 KB (Android 15+)
 
 ## [0.15.4](https://github.com/cossacklabs/themis/releases/tag/0.15.4), May 23 2024
 

@@ -64,3 +64,4 @@ target_include_directories(themis_jni
         ../third_party/boringssl/src/include
 )
 target_link_libraries(themis_jni PRIVATE themis soter crypto decrepit)
+target_link_options(themis_jni PRIVATE "-Wl,-z,max-page-size=16384")
