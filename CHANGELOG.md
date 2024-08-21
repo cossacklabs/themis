@@ -4,8 +4,17 @@
 
 Changes that are currently in development and have not been released yet.
 
+
+## [0.15.5](https://github.com/cossacklabs/themis/releases/tag/0.15.5), Aug 20 2024
+
 ### Android wrapper
 - Add support for Android devices that are configured to use a page size of 16 KB (Android 15+)
+
+### Android example 
+- Remove second launcher 
+- Added extractNativeLibs="true" to the manifest 
+- Made example compatible with Android 15+ (API 35) 
+
 
 ## [0.15.4](https://github.com/cossacklabs/themis/releases/tag/0.15.4), May 23 2024
 
