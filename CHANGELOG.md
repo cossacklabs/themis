@@ -4,6 +4,13 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.15.1](https://github.com/cossacklabs/themis/releases/tag/0.15.1), September 13 2023
+
+### Swift, Objective-C wrappers 
+- Updated OpenSSL to 1.1.1v 
+- Removed support of 32-bit platforms 
+- Minimum iOS: 11, macOS: 10.13, Catalyst: 14 
+
 ## [0.15.0](https://github.com/cossacklabs/themis/releases/tag/0.15.0), June 21st 2023
 
 **TL;DR:**
