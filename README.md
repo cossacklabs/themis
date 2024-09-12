@@ -98,7 +98,7 @@ Themis supports following CPU architectures: x86_64/i386, ARM, Apple Silicon (AR
 
 We build and verify Themis on the latest stable OS versions:
 
-  - Debian (9, 10), CentOS (7, 8), Ubuntu (16.04, 18.04, 20.04)
+  - Debian (10, 11, 12), CentOS 8, Ubuntu (20.04, 22.04, 24.04)
   - macOS (10.12–10.15, 11.*)
   - Android (7–12)
   - iOS (11–15)
