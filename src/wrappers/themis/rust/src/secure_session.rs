@@ -434,7 +434,7 @@ impl SecureSession {
             }
         }
 
-        id.reserve(id_len);
+        id.try_reserve(id_len)?;
 
         unsafe {
             let status = secure_session_get_remote_id(self.session, id.as_mut_ptr(), &mut id_len);
@@ -570,7 +570,8 @@ impl SecureSession {
     /// [`negotiate`]: struct.SecureSession.html#method.negotiate
     /// [`receive_data`]: trait.SecureSessionTransport.html#method.receive_data
     pub fn receive(&mut self, max_len: usize) -> Result<Vec<u8>> {
-        let mut message = Vec::with_capacity(max_len);
+        let mut message = Vec::new();
+        message.try_reserve(max_len)?;
 
         unsafe {
             let length = secure_session_receive(
@@ -628,7 +629,7 @@ impl SecureSession {
             }
         }
 
-        output.reserve(output_len);
+        output.try_reserve(output_len)?;
 
         unsafe {
             let status = secure_session_generate_connect_request(
@@ -681,7 +682,7 @@ impl SecureSession {
             }
         }
 
-        message.reserve(message_len);
+        message.try_reserve(message_len)?;
 
         unsafe {
             let status = secure_session_unwrap(
@@ -736,7 +737,7 @@ impl SecureSession {
             }
         }
 
-        wrapped.reserve(wrapped_len);
+        wrapped.try_reserve(wrapped_len)?;
 
         unsafe {
             let status = secure_session_wrap(
@@ -787,7 +788,7 @@ impl SecureSession {
             }
         }
 
-        message.reserve(message_len);
+        message.try_reserve(message_len)?;
 
         unsafe {
             let status = secure_session_unwrap(

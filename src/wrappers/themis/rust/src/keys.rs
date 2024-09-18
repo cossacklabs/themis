@@ -640,7 +640,7 @@ impl SymmetricKey {
             }
         }
 
-        key.reserve(key_len);
+        key.try_reserve(key_len)?;
 
         unsafe {
             let status = themis_gen_sym_key(key.as_mut_ptr(), &mut key_len);
