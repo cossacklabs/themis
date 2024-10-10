@@ -629,6 +629,13 @@ endif
 	@echo -n "pythemis install "
 	@$(BUILD_CMD_)
 
+pythemis_uninstall: CMD = cd src/wrappers/themis/python/ && xargs rm -rf < files3.txt
+pythemis_uninstall:
+	@echo -n "pythemis uninstall "
+	@$(BUILD_CMD_)
+
+uninstall: pythemis_uninstall
+
 ########################################################################
 #
 # Packaging Themis Core: Linux distributions
