@@ -18,10 +18,6 @@ import {
   View,
 } from 'react-native';
 
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
-
 import { Buffer } from 'buffer';
 
 import {
@@ -64,7 +60,7 @@ const Section: React.FC<SectionProps> = ({ children, title }) => {
         style={[
           styles.sectionTitle,
           {
-            color: isDarkMode ? Colors.white : Colors.black,
+            color: isDarkMode ? '#F5FCFF' : '#94cce3',
           },
         ]}>
         {title}
@@ -73,7 +69,7 @@ const Section: React.FC<SectionProps> = ({ children, title }) => {
         style={[
           styles.sectionDescription,
           {
-            color: isDarkMode ? Colors.light : Colors.dark,
+            color: isDarkMode ? '#F5FCFF' : '#94cce3',
           },
         ]}>
         {children}
@@ -86,7 +82,7 @@ const App: React.FC = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    backgroundColor: isDarkMode ? '#F5FCFF' : '#94cce3',
   };
 
   const [privateKey, setPrivateKey] = useState<string>('');
@@ -322,7 +318,7 @@ const App: React.FC = () => {
         style={ backgroundStyle }>
         <View
           style={ {
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+            backgroundColor: isDarkMode ? '#F5FCFF' : '#F5FCFF',
           } }>
           <Section title="Asymmetric Keys">
             <View>

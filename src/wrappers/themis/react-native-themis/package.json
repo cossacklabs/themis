@@ -1,6 +1,6 @@
 {
   "name": "react-native-themis",
-  "version": "0.15.2",
+  "version": "0.15.5",
   "description": "Themis React Native is a convenient cryptographic library for data protection",
   "react-native": "src/index",
   "source": "src/index",
@@ -59,7 +59,7 @@
   "devDependencies": {
     "@commitlint/config-conventional": "^11.0.0",
     "@react-native-community/eslint-config": "^2.0.0",
-    "@release-it/conventional-changelog": "^2.0.0",
+    "@release-it/conventional-changelog": "^5.0.0",
     "@types/jest": "^26.0.0",
     "@types/react": "^18.2.24",
     "@types/react-native": "0.72.3",
@@ -75,7 +75,7 @@
     "react": "18.2.0",
     "react-native": "0.72.5",
     "react-native-builder-bob": "^0.23.0",
-    "release-it": "^16.2.1",
+    "release-it": "^16.3.0",
     "typescript": "^5.2.2"
   },
   "peerDependencies": {

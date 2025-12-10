@@ -1,0 +1,4 @@
+rootProject.name = 'react-native-themis'
+
+include ':react-native-themis'
+project(':react-native-themis').projectDir = file('./android')
