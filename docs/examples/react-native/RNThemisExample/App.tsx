@@ -52,6 +52,13 @@ type SectionProps = {
   title: string;
 };
 
+  const Colors = {
+    white: '#FFFFFF',
+    black: '#000000',
+    darker: '#333333',
+    lighter: '#b2b2b2',
+  } as const;
+
 const Section: React.FC<SectionProps> = ({ children, title }) => {
   const isDarkMode = useColorScheme() === 'dark';
   return (
@@ -60,7 +67,7 @@ const Section: React.FC<SectionProps> = ({ children, title }) => {
         style={[
           styles.sectionTitle,
           {
-            color: isDarkMode ? '#F5FCFF' : '#94cce3',
+            color: isDarkMode ? Colors.white : Colors.black,
           },
         ]}>
         {title}
@@ -69,7 +76,7 @@ const Section: React.FC<SectionProps> = ({ children, title }) => {
         style={[
           styles.sectionDescription,
           {
-            color: isDarkMode ? '#F5FCFF' : '#94cce3',
+            color: isDarkMode ? Colors.textDark : Colors.textLight,
           },
         ]}>
         {children}
@@ -82,7 +89,7 @@ const App: React.FC = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? '#F5FCFF' : '#94cce3',
+    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
   const [privateKey, setPrivateKey] = useState<string>('');
@@ -318,7 +325,7 @@ const App: React.FC = () => {
         style={ backgroundStyle }>
         <View
           style={ {
-            backgroundColor: isDarkMode ? '#F5FCFF' : '#F5FCFF',
+            backgroundColor: isDarkMode ? Colors.black : Colors.white,
           } }>
           <Section title="Asymmetric Keys">
             <View>

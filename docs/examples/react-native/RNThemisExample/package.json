@@ -14,7 +14,7 @@
     "react": "19.2.0",
     "react-native": "0.83.0",
     "react-native-safe-area-context": "^5.5.2",
-    "react-native-themis": "file:../../../AndroidStudioProjects/themis/src/wrappers/themis/react-native-themis/react-native-themis-0.15.5.tgz"
+    "react-native-themis": "0.15.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
