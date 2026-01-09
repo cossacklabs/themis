@@ -1,60 +1,53 @@
 buildscript {
-    if (project == rootProject) {
-        repositories {
-            google()
-            mavenCentral()
-            jcenter()
-        }
-
-        dependencies {
-            classpath 'com.android.tools.build:gradle:3.5.3'
-        }
+  if (project == rootProject) {
+    repositories {
+      google()
+      mavenCentral()
     }
+
+    dependencies {
+      classpath("com.android.tools.build:gradle:8.1.0")
+    }
+  }
 }
 
 apply plugin: 'com.android.library'
 
 def safeExtGet(prop, fallback) {
-    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+  rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
 }
 
 android {
-    compileSdkVersion safeExtGet('Themis_compileSdkVersion', 33)
-    defaultConfig {
-        minSdkVersion safeExtGet('Themis_minSdkVersion', 21)
-        targetSdkVersion safeExtGet('Themis_targetSdkVersion', 33)
-        versionCode 1
-        versionName "1.0"
+  namespace "com.reactnativethemis"
+
+  compileSdkVersion safeExtGet('Themis_compileSdkVersion', 34)
+
+  defaultConfig {
+    minSdkVersion safeExtGet('Themis_minSdkVersion', 21)
+    targetSdkVersion safeExtGet('Themis_targetSdkVersion', 34)
 
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-        }
+  buildTypes {
+    release {
+      minifyEnabled false
     }
-    lintOptions {
-        disable 'GradleCompatible'
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
+  }
 }
 
 repositories {
-    mavenLocal()
-    maven {
-        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-        url("$rootDir/../node_modules/react-native/android")
-    }
-    google()
-    mavenCentral()
-    jcenter()
+  mavenLocal()
+  google()
+  mavenCentral()
+  maven { url("$rootDir/../node_modules/react-native/android") }
 }
 
 dependencies {
-    //noinspection GradleDynamicVersion
-    implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation 'com.cossacklabs.com:themis:0.15.2'
+  implementation "com.facebook.react:react-native:+"
+  implementation 'com.cossacklabs.com:themis:0.15.5'
 }

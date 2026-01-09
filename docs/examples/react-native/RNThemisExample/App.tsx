@@ -18,10 +18,6 @@ import {
   View,
 } from 'react-native';
 
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
-
 import { Buffer } from 'buffer';
 
 import {
@@ -56,6 +52,13 @@ type SectionProps = {
   title: string;
 };
 
+  const Colors = {
+    white: '#FFFFFF',
+    black: '#000000',
+    darker: '#333333',
+    lighter: '#b2b2b2',
+  } as const;
+
 const Section: React.FC<SectionProps> = ({ children, title }) => {
   const isDarkMode = useColorScheme() === 'dark';
   return (
@@ -73,7 +76,7 @@ const Section: React.FC<SectionProps> = ({ children, title }) => {
         style={[
           styles.sectionDescription,
           {
-            color: isDarkMode ? Colors.light : Colors.dark,
+            color: isDarkMode ? Colors.textDark : Colors.textLight,
           },
         ]}>
         {children}

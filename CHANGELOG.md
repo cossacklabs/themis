@@ -5,6 +5,18 @@
 Changes that are currently in development and have not been released yet.
 
 
+## [0.15.6](https://github.com/cossacklabs/themis/releases/tag/0.15.6), Jan 9 2026
+
+Example app refresh - updated React-Native example project to align with the updated RN Themis version.
+Code improvements and cleanup in example files.
+### RN Themis wrapper
+- Add support for Android devices that are configured to use a page size of 16 KB 
+
+### RN example
+- updated React-Native example project to align with the updated RN Themis version.
+Code improvements and cleanup in example files.
+
+
 ## [0.15.5](https://github.com/cossacklabs/themis/releases/tag/0.15.5), Aug 20 2024
 
 ### Android wrapper
