@@ -1,13 +1,12 @@
 Pod::Spec.new do |s|
     s.name = "themis"
-    s.version = "0.15.1"
+    s.version = "0.15.7"
     s.summary = "Data security library for network communication and data storage for iOS and mac OS"
     s.description = "Themis is a convenient cryptographic library for data protection. It provides secure messaging with forward secrecy and secure data storage. Themis is aimed at modern development practices and has a unified API across 12 platforms, including iOS/macOS, Ruby, JavaScript, Python, and Java/Android."
     s.homepage = "https://cossacklabs.com"
     s.license = { :type => 'Apache 2.0'}
-
     s.source = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
-
+    s.vendored_frameworks = "themis.xcframework"
     s.author = {'cossacklabs' => 'info@cossacklabs.com'}
 
     s.module_name = 'themis'
@@ -16,7 +15,9 @@ Pod::Spec.new do |s|
     s.ios.deployment_target = '11.0'
     s.osx.deployment_target = '10.13'
     s.ios.frameworks = 'UIKit', 'Foundation'
-
+    s.resource_bundles = {
+        'themis_Privacy' => ['PrivacyInfo.xcprivacy']
+      }
     # TODO(ilammy, 2020-03-02): resolve "pod spec lint" warnings due to dependencies
     # If you update dependencies, please check whether we can remove "--allow-warnings"
     # from podspec validation in .github/workflows/test-objc.yaml

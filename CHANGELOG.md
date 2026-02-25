@@ -4,6 +4,16 @@
 
 Changes that are currently in development and have not been released yet.
 
+## [0.15.7](https://github.com/cossacklabs/themis/releases/tag/0.15.7), Feb 27 2026
+
+### RN Themis wrapper
+- Updated React Native Themis wrapper to work with current React Native tooling and Android/iOS build stacks.
+- Improved compatibility with newer Xcode versions.
+
+### RN example
+- Updated React Native example project to use the latest RN Themis wrapper.
+- Refreshed Android and iOS project configuration (Gradle, Xcode) to match modern defaults.
+- Performed minor code cleanups and example app polish.
 
 ## [0.15.6](https://github.com/cossacklabs/themis/releases/tag/0.15.6), Jan 9 2026
 
