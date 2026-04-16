@@ -4,7 +4,7 @@
 
 Changes that are currently in development and have not been released yet.
 
-## [0.15.7](https://github.com/cossacklabs/themis/releases/tag/0.15.7), Feb 27 2026
+## [0.15.7](https://github.com/cossacklabs/themis/releases/tag/0.15.7), Apr 20 2026
 
 ### RN Themis wrapper
 - Updated React Native Themis wrapper to work with current React Native tooling and Android/iOS build stacks.
@@ -14,6 +14,10 @@ Changes that are currently in development and have not been released yet.
 - Updated React Native example project to use the latest RN Themis wrapper.
 - Refreshed Android and iOS project configuration (Gradle, Xcode) to match modern defaults.
 - Performed minor code cleanups and example app polish.
+
+### iOS (CocoaPods & framework project)
+- `themis.podspec` now ships `themis.xcframework` as a vendored framework and bundles `PrivacyInfo.xcprivacy` (resource bundle) for App Store privacy manifest requirements.
+- `Themis.xcodeproj` includes the privacy manifest in the framework target, bumps `IPHONEOS_DEPLOYMENT_TARGET` to 15.6.
 
 ## [0.15.6](https://github.com/cossacklabs/themis/releases/tag/0.15.6), Jan 9 2026
 
