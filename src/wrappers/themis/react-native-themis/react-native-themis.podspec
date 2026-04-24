@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/cossacklabs/themis.git", :tag => "#{s.version}" }
 
   s.vendored_frameworks = 'ios/themis.xcframework'
-  s.source_files = "ios/**/*.{h,m,mm,swift}"
+  s.source_files = "ios/RCTThemis.{h,m}"
   s.requires_arc = true
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 

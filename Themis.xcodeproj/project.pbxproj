@@ -107,7 +107,6 @@
 		1DF0D05B2BEE11BD00AAAE94 /* secure_session_utils.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A242E223A74AF005CB63A /* secure_session_utils.c */; };
 		1DF0D05C2BEE11BD00AAAE94 /* secure_session.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2438223A74AF005CB63A /* secure_session.c */; };
 		1DF0D05D2BEE11BD00AAAE94 /* sym_enc_message.c in Sources */ = {isa = PBXBuildFile; fileRef = 9F4A2431223A74AF005CB63A /* sym_enc_message.c */; };
-		6DB8748A26497B8C0022A1F6 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
 		6DB8748E26497B950022A1F6 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
 		6DB8749326497BEF0022A1F6 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
 		6DB8749426497C1E0022A1F6 /* openssl.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -125,6 +124,8 @@
 		6DCCB1E5264D3261008072EF /* themis.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB1D5264D3223008072EF /* themis.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		6DCCB1E8264D3269008072EF /* themis.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB1D5264D3223008072EF /* themis.xcframework */; };
 		6DCCB1EB264D3270008072EF /* themis.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6DCCB1D5264D3223008072EF /* themis.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9A62E3452F45BD560022601B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9A62E3422F45B3450022601B /* PrivacyInfo.xcprivacy */; };
+		9A7F6F312F4D90C400DFED07 /* openssl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6DB8748926497B8B0022A1F6 /* openssl.xcframework */; };
 		9F00E8E2223C1A3300EC1EF3 /* objcthemis.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24B5223A8FA8005CB63A /* objcthemis.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F00E8E3223C1A3300EC1EF3 /* scell_context_imprint.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24B9223A8FA8005CB63A /* scell_context_imprint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		9F00E8E4223C1A3300EC1EF3 /* scell_seal.h in Headers */ = {isa = PBXBuildFile; fileRef = 9F4A24BC223A8FA8005CB63A /* scell_seal.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -422,6 +423,7 @@
 		1DBAD7C82BE6B50C004565B0 /* Themis (visionOS)Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Themis (visionOS)Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DB8748926497B8B0022A1F6 /* openssl.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = openssl.xcframework; path = Carthage/Build/openssl.xcframework; sourceTree = "<group>"; };
 		6DCCB1D5264D3223008072EF /* themis.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = themis.xcframework; path = Carthage/Build/themis.xcframework; sourceTree = "<group>"; };
+		9A62E3422F45B3450022601B /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; explicitFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		9F00E8D7223C197900EC1EF3 /* themis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = themis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F0BBCE824E6FC810073CA52 /* themis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = themis.h; path = "src/wrappers/themis/Obj-C/Themis/themis.h"; sourceTree = "<group>"; };
 		9F33485723B38D9B00368291 /* soter_kdf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = soter_kdf.c; path = src/soter/openssl/soter_kdf.c; sourceTree = "<group>"; };
@@ -625,7 +627,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6DB8748A26497B8C0022A1F6 /* openssl.xcframework in Frameworks */,
+				9A7F6F312F4D90C400DFED07 /* openssl.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -852,6 +854,7 @@
 		9F4A24A9223A8E01005CB63A /* Themis */ = {
 			isa = PBXGroup;
 			children = (
+				9A62E3422F45B3450022601B /* PrivacyInfo.xcprivacy */,
 				9F4A24AF223A8F85005CB63A /* objcthemis */,
 				9F4A2370223A73B6005CB63A /* soter */,
 				9F4A241D223A7493005CB63A /* themis */,
@@ -1099,6 +1102,7 @@
 				9F4A249C223A8D7F005CB63A /* Headers */,
 				9F4A249D223A8D7F005CB63A /* Sources */,
 				9F4A249E223A8D7F005CB63A /* Frameworks */,
+				9A62E3432F45B3C50022601B /* Resources */,
 			);
 			buildRules = (
 			);
@@ -1224,6 +1228,7 @@
 			);
 			mainGroup = 738B81052239809D00A9947C;
 			packageReferences = (
+				9A7F6F322F4D90E200DFED07 /* XCRemoteSwiftPackageReference "openssl-apple" */,
 			);
 			productRefGroup = 738B81102239809D00A9947C /* Products */;
 			projectDirPath = "";
@@ -1246,6 +1251,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A62E3432F45B3C50022601B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A62E3452F45BD560022601B /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1839,7 +1852,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.15.1;
+				MARKETING_VERSION = 0.15.7;
 				ONLY_ACTIVE_ARCH = YES;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -1899,7 +1912,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.15.1;
+				MARKETING_VERSION = 0.15.7;
 				SUPPORTS_MACCATALYST = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1935,7 +1948,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.15.1;
+				MARKETING_VERSION = 0.15.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -1972,7 +1985,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				MARKETING_VERSION = 0.15.1;
+				MARKETING_VERSION = 0.15.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -2008,13 +2021,13 @@
 				);
 				INFOPLIST_FILE = "src/wrappers/themis/Obj-c/Themis/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.15.1;
+				MARKETING_VERSION = 0.15.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -2054,13 +2067,13 @@
 				);
 				INFOPLIST_FILE = "src/wrappers/themis/Obj-c/Themis/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.15.1;
+				MARKETING_VERSION = 0.15.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cossacklabs.themis;
 				PRODUCT_MODULE_NAME = themis;
 				PRODUCT_NAME = themis;
@@ -2343,6 +2356,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9A7F6F322F4D90E200DFED07 /* XCRemoteSwiftPackageReference "openssl-apple" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/cossacklabs/openssl-apple";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.12301;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 738B81062239809D00A9947C /* Project object */;
 }

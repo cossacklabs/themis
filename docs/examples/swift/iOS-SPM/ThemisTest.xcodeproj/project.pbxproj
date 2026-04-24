@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -384,7 +384,7 @@
 			repositoryURL = "https://github.com/cossacklabs/themis";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.15.1;
+				minimumVersion = 0.15.7;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
